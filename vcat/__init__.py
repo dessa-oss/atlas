@@ -5,16 +5,26 @@ class PipelineExecutor(object):
   def execute(self, stage_function, *args, **kwargs):
     self.pipeline_context.results.update(kwargs)
     return stage_function(self.pipeline_context, *args, **kwargs)
+
 # UGLY (DEVS)
 class Stage(object):
 
   def __init__(self, function, *args, **kwargs):
+    import uuid
+    self.uuid = uuid.uuid4()
+
     self.function = function
     self.args = args
     self.kwargs = kwargs
   
   def run(self, *local_args):
     return self.function(*(local_args + self.args), **self.kwargs)
+  
+  def name(self):
+    return str(self.uuid) + "-" + self.function_name()
+
+  def function_name(self):
+    return self.function.__name__
   
   def serialize(self):
     import dill as pickle
@@ -29,6 +39,22 @@ class StageConnector(object):
   def __init__(self, current_stage, previous_connectors):
     self._current_stage = current_stage
     self._previous_connectors = previous_connectors
+  
+  def name(self):
+    return self._current_stage.name()
+
+  def function_name(self):
+    return self._current_stage.function_name()
+
+  def args(self):
+    return self._current_stage.args
+
+  def kwargs(self):
+    return self._current_stage.kwargs
+
+  def tree_names(self):
+    parent_trees = [connector.tree_names() for connector in self._previous_connectors]
+    return {"stage": self.name(), "function_name": self.function_name(), "args": self.args(), "kwargs": self.kwargs(), "parents": parent_trees}
       
   def stage(self, next_stage):
     return StageConnector(next_stage, [self])
@@ -49,6 +75,9 @@ class StageGraph(object):
 class StageConnectorWrapper(object):
   def __init__(self, connector):
     self._connector = connector
+
+  def tree_names(self):
+    return self._connector.tree_names()
         
   def stage(self, function, *args, **kwargs):
     return StageConnectorWrapper(self._connector.stage(Stage(function, *args, **kwargs)))
