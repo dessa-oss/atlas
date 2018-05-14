@@ -1,0 +1,4 @@
+**/*bell*
+*.json
+.ipynb_checkpoints
+**/*.pyc
