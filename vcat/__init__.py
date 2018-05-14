@@ -21,20 +21,11 @@ class Stage(object):
     return self.function(*(local_args + self.args), **self.kwargs)
   
   def name(self):
-    return str(self.uuid) + "-" + self.function_name()
+    return str(self.uuid)
 
   def function_name(self):
     return self.function.__name__
   
-  def serialize(self):
-    import dill as pickle
-    return pickle.dumps(self)
-  
-  @staticmethod
-  def deserialize(serialized_self):
-    import dill as pickle
-    return pickle.loads(serialized_self)
-
 class StageConnector(object):
   def __init__(self, current_stage, previous_connectors):
     self._current_stage = current_stage
@@ -63,6 +54,16 @@ class StageConnector(object):
     previous_results = [connector.run() for connector in self._previous_connectors]
     list_args = list(args)
     return self._current_stage.run(*(previous_results + list_args), **kwargs)
+
+  def serialize(self):
+    import dill as pickle
+    return pickle.dumps(self)
+  
+  @staticmethod
+  def deserialize(serialized_self):
+    import dill as pickle
+    return pickle.loads(serialized_self)
+
 
 class StageGraph(object):
   def stage(self, stage):
@@ -101,6 +102,14 @@ class StageConnectorWrapper(object):
   
   def __call__(self, *args, **kwargs):
     return self.run(*args, **kwargs)
+
+  def serialize(self):
+    return self._connector.serialize()
+  
+  @staticmethod
+  def deserialize(serialized_self):
+    return StageConnectorWrapper(StageConnector.deserialize(serialized_self))
+
   
 class Pipeline(object):
   def __init__(self):
