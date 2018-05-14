@@ -5,7 +5,102 @@ class PipelineExecutor(object):
   def execute(self, stage_function, *args, **kwargs):
     self.pipeline_context.results.update(kwargs)
     return stage_function(self.pipeline_context, *args, **kwargs)
+# UGLY (DEVS)
+class Stage(object):
 
+  def __init__(self, function, *args, **kwargs):
+    self.function = function
+    self.args = args
+    self.kwargs = kwargs
+  
+  def run(self, *local_args):
+    return self.function(*(local_args + self.args), **self.kwargs)
+  
+  def serialize(self):
+    import dill as pickle
+    return pickle.dumps(self)
+  
+  @staticmethod
+  def deserialize(serialized_self):
+    import dill as pickle
+    return pickle.loads(serialized_self)
+
+class StageConnector(object):
+  def __init__(self, current_stage, previous_connectors):
+    self._current_stage = current_stage
+    self._previous_connectors = previous_connectors
+      
+  def stage(self, next_stage):
+    return StageConnector(next_stage, [self])
+  
+  def run(self, *args, **kwargs):
+    previous_results = [connector.run() for connector in self._previous_connectors]
+    list_args = list(args)
+    return self._current_stage.run(*(previous_results + list_args), **kwargs)
+
+class StageGraph(object):
+  def stage(self, stage):
+    return StageConnector(stage, [])
+  
+  def join(self, stage, upstream_connectors):
+    return StageConnector(stage, upstream_connectors)
+
+# PRETTY (ERIC)
+class StageConnectorWrapper(object):
+  def __init__(self, connector):
+    self._connector = connector
+        
+  def stage(self, function, *args, **kwargs):
+    return StageConnectorWrapper(self._connector.stage(Stage(function, *args, **kwargs)))
+  
+  def __or__(self, stage_args):
+    if isinstance(stage_args, tuple):
+      function = stage_args[0]
+      args = list(stage_args[1:])
+      last_argument = args[-1]
+      if isinstance(last_argument, dict):
+        kwargs = last_argument
+        args.pop()
+        return self.stage(function, *args, **kwargs)
+      else:
+        return self.stage(function, *args)
+    else:
+      return self.stage(stage_args)
+
+  def run(self, *args, **kwargs):
+    return self._connector.run(*args, **kwargs)
+  
+  def __call__(self, *args, **kwargs):
+    return self.run(*args, **kwargs)
+  
+class Pipeline(object):
+  def __init__(self):
+    self.graph = StageGraph()
+      
+  def stage(self, function, *args, **kwargs):
+    current_stage = Stage(function, *args, **kwargs)
+    return StageConnectorWrapper(self.graph.stage(current_stage))
+  
+  def join(self, upstream_connector_wrappers, function, *args, **kwargs):
+    upstream_connectors = [wrapper._connector for wrapper in upstream_connector_wrappers]
+    current_stage = Stage(function, *args, **kwargs)
+    return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors))
+  
+  def __or__(self, stage_args):
+    if isinstance(stage_args, tuple):
+      function = stage_args[0]
+      args = list(stage_args[1:])
+      last_argument = args[-1]
+      if isinstance(last_argument, dict):
+        kwargs = last_argument
+        args.pop()
+        return self.stage(function, *args, **kwargs)
+      else:
+        return self.stage(function, *args)
+    else:
+      return self.stage(stage_args)  
+
+# PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
 
   def __init__(self):
@@ -78,4 +173,6 @@ class RedisFetcher(object):
     results_serialized = [self._connection.get(key) for key in result_keys]
     return [json.loads(result_serialized) for result_serialized in results_serialized]
 
+
+pipeline = Pipeline()
 pipeline_context = PipelineContext()
