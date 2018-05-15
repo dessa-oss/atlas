@@ -77,14 +77,15 @@ class StageGraph(object):
 
 # PRETTY (ERIC)
 class StageConnectorWrapper(object):
-  def __init__(self, connector):
+  def __init__(self, connector, pipeline_context):
     self._connector = connector
+    self._pipeline_context = pipeline_context
 
   def tree_names(self):
     return self._connector.tree_names()
         
   def stage(self, function, *args, **kwargs):
-    return StageConnectorWrapper(self._connector.stage(Stage(function, *args, **kwargs)))
+    return StageConnectorWrapper(self._connector.stage(self._make_stage(function, *args, **kwargs)), self._pipeline_context)
   
   def __or__(self, stage_args):
     if isinstance(stage_args, tuple):
@@ -106,6 +107,20 @@ class StageConnectorWrapper(object):
   def __call__(self, *args, **kwargs):
     return self.run(*args, **kwargs)
 
+  def _make_stage(self, function, *args, **kwargs):
+    return Stage(self._wrapped_function(function), *args, **kwargs)
+
+  def _wrapped_function(self, function):
+    def wrapped(*args, **kwargs):
+      stage_output = function(*args, **kwargs)
+      if isinstance(stage_output, tuple):
+        return_value, result = stage_output
+        self._pipeline_context.results.update(result)
+      else:
+        return_value = stage_output
+      return return_value
+    return wrapped    
+
   def serialize(self):
     return self._connector.serialize()
   
@@ -121,19 +136,25 @@ class Pipeline(object):
       
   def stage(self, function, *args, **kwargs):
     current_stage = self._make_stage(function, *args, **kwargs)
-    return StageConnectorWrapper(self.graph.stage(current_stage))
+    return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context)
   
   def join(self, upstream_connector_wrappers, function, *args, **kwargs):
     upstream_connectors = [wrapper._connector for wrapper in upstream_connector_wrappers]
     current_stage = self._make_stage(function, *args, **kwargs)
-    return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors))
+    return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self.pipeline_context)
   
   def _make_stage(self, function, *args, **kwargs):
     return Stage(self._wrapped_function(function), *args, **kwargs)
 
   def _wrapped_function(self, function):
     def wrapped(*args, **kwargs):
-      return function(*args, **kwargs)
+      stage_output = function(*args, **kwargs)
+      if isinstance(stage_output, tuple):
+        return_value, result = stage_output
+        self.pipeline_context.results.update(result)
+      else:
+        return_value = stage_output
+      return return_value
     return wrapped    
 
   def __or__(self, stage_args):
@@ -160,9 +181,11 @@ class PipelineContext(object):
     self.predictions = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
+  # TODO: can remove
   def simple_stage(self, stage_function, *args, **kwargs):
     return PipelineExecutor(self).execute(stage_function, *args, **kwargs)
 
+  # TODO: can remove
   def stage(self, stage_function, *args, **kwargs):
     def executor_function(pipeline_context, *args, **kwargs):
       stage_output = stage_function(*args, **kwargs)
