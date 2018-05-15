@@ -91,13 +91,33 @@ class StageContext(object):
       else:
         return_value = stage_output
       return return_value
-    return wrapped    
+    return wrapped
+
+class StagePiping(object):
+  def __init__(self, pipe):
+      self._pipe = pipe
+
+  def pipe(self, stage_args):
+    if isinstance(stage_args, tuple):
+      function = stage_args[0]
+      args = list(stage_args[1:])
+      last_argument = args[-1]
+      if isinstance(last_argument, dict):
+        kwargs = last_argument
+        args.pop()
+        return self._pipe.stage(function, *args, **kwargs)
+      else:
+        return self._pipe.stage(function, *args)
+    else:
+      return self._pipe.stage(stage_args)
+    
     
 # PRETTY (ERIC)
 class StageConnectorWrapper(object):
   def __init__(self, connector, stage_context):
     self._connector = connector
     self._stage_context = stage_context
+    self._stage_piping = StagePiping(self)
 
   def tree_names(self):
     return self._connector.tree_names()
@@ -106,18 +126,7 @@ class StageConnectorWrapper(object):
     return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._stage_context)
   
   def __or__(self, stage_args):
-    if isinstance(stage_args, tuple):
-      function = stage_args[0]
-      args = list(stage_args[1:])
-      last_argument = args[-1]
-      if isinstance(last_argument, dict):
-        kwargs = last_argument
-        args.pop()
-        return self.stage(function, *args, **kwargs)
-      else:
-        return self.stage(function, *args)
-    else:
-      return self.stage(stage_args)
+    return self._stage_piping.pipe(stage_args)
 
   def run(self, *args, **kwargs):
     return self._connector.run(*args, **kwargs)
@@ -131,13 +140,13 @@ class StageConnectorWrapper(object):
   @staticmethod
   def deserialize(serialized_self):
     return StageConnectorWrapper(StageConnector.deserialize(serialized_self))
-
   
 class Pipeline(object):
   def __init__(self, pipeline_context):
     self.graph = StageGraph()
     self.pipeline_context = pipeline_context
     self._stage_context = StageContext(self.pipeline_context)
+    self._stage_piping = StagePiping(self)
       
   def stage(self, function, *args, **kwargs):
     current_stage = self._stage_context.make_stage(function, *args, **kwargs)
@@ -149,18 +158,7 @@ class Pipeline(object):
     return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self._stage_context)  
 
   def __or__(self, stage_args):
-    if isinstance(stage_args, tuple):
-      function = stage_args[0]
-      args = list(stage_args[1:])
-      last_argument = args[-1]
-      if isinstance(last_argument, dict):
-        kwargs = last_argument
-        args.pop()
-        return self.stage(function, *args, **kwargs)
-      else:
-        return self.stage(function, *args)
-    else:
-      return self.stage(stage_args)  
+    return self._stage_piping.pipe(stage_args)
 
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
