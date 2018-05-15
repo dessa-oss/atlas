@@ -210,6 +210,9 @@ class ResultReader(object):
     import pandas
     return pandas.DataFrame(self.results)
 
+  def as_json(self):
+    return self.results
+    
 class RedisFetcher(object):
   def __init__(self):
     import redis
