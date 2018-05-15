@@ -1,3 +1,4 @@
+# TODO: remove
 class PipelineExecutor(object):
   def __init__(self, pipeline_context):
     self.pipeline_context = pipeline_context
@@ -5,6 +6,8 @@ class PipelineExecutor(object):
   def execute(self, stage_function, *args, **kwargs):
     self.pipeline_context.results.update(kwargs)
     return stage_function(self.pipeline_context, *args, **kwargs)
+
+
 
 # UGLY (DEVS)
 class Stage(object):
@@ -112,18 +115,27 @@ class StageConnectorWrapper(object):
 
   
 class Pipeline(object):
-  def __init__(self):
+  def __init__(self, pipeline_context):
     self.graph = StageGraph()
+    self.pipeline_context = pipeline_context
       
   def stage(self, function, *args, **kwargs):
-    current_stage = Stage(function, *args, **kwargs)
+    current_stage = self._make_stage(function, *args, **kwargs)
     return StageConnectorWrapper(self.graph.stage(current_stage))
   
   def join(self, upstream_connector_wrappers, function, *args, **kwargs):
     upstream_connectors = [wrapper._connector for wrapper in upstream_connector_wrappers]
-    current_stage = Stage(function, *args, **kwargs)
+    current_stage = self._make_stage(function, *args, **kwargs)
     return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors))
   
+  def _make_stage(self, function, *args, **kwargs):
+    return Stage(self._wrapped_function(function), *args, **kwargs)
+
+  def _wrapped_function(self, function):
+    def wrapped(*args, **kwargs):
+      return function(*args, **kwargs)
+    return wrapped    
+
   def __or__(self, stage_args):
     if isinstance(stage_args, tuple):
       function = stage_args[0]
@@ -212,5 +224,5 @@ class RedisFetcher(object):
     return [json.loads(result_serialized) for result_serialized in results_serialized]
 
 
-pipeline = Pipeline()
 pipeline_context = PipelineContext()
+pipeline = Pipeline(pipeline_context)
