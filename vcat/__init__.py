@@ -12,11 +12,12 @@ class PipelineExecutor(object):
 # UGLY (DEVS)
 class Stage(object):
 
-  def __init__(self, uuid, function, *args, **kwargs):
+  def __init__(self, uuid, function, metadata_function, *args, **kwargs):
     self.uuid = uuid
     self.function = function
     self.args = args
     self.kwargs = kwargs
+    self._metadata_function = metadata_function
   
   def run(self, *local_args):
     return self.function(*(local_args + self.args), **self.kwargs)
@@ -25,7 +26,7 @@ class Stage(object):
     return str(self.uuid)
 
   def function_name(self):
-    return self.function.__name__
+    return self._metadata_function.__name__
   
 class StageConnector(object):
   def __init__(self, current_stage, previous_connectors):
@@ -80,7 +81,7 @@ class StageContext(object):
   def make_stage(self, function, *args, **kwargs):
     import uuid
     stage_uuid = uuid.uuid4()
-    return Stage(stage_uuid, self._wrapped_function(stage_uuid, function), *args, **kwargs)
+    return Stage(stage_uuid, self._wrapped_function(stage_uuid, function), function, *args, **kwargs)
 
   def _wrapped_function(self, stage_uuid, function):
     def wrapped(*args, **kwargs):
