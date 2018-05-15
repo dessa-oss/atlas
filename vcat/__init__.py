@@ -80,14 +80,14 @@ class StageContext(object):
   def make_stage(self, function, *args, **kwargs):
     import uuid
     stage_uuid = uuid.uuid4()
-    return Stage(stage_uuid, self._wrapped_function(function), *args, **kwargs)
+    return Stage(stage_uuid, self._wrapped_function(stage_uuid, function), *args, **kwargs)
 
-  def _wrapped_function(self, function):
+  def _wrapped_function(self, stage_uuid, function):
     def wrapped(*args, **kwargs):
       stage_output = function(*args, **kwargs)
       if isinstance(stage_output, tuple):
         return_value, result = stage_output
-        self._pipeline_context.results.update(result)
+        self._pipeline_context.results[stage_uuid] = result
       else:
         return_value = stage_output
       return return_value
