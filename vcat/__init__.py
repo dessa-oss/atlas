@@ -81,6 +81,7 @@ class StageContext(object):
   def make_stage(self, function, *args, **kwargs):
     import uuid
     stage_uuid = uuid.uuid4()
+    stage_uuid = str(stage_uuid)
     return Stage(stage_uuid, self._wrapped_function(stage_uuid, function), function, *args, **kwargs)
 
   def _wrapped_function(self, stage_uuid, function):
@@ -175,25 +176,8 @@ class PipelineContext(object):
     self.provenance = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
-  # TODO: can remove
-  def simple_stage(self, stage_function, *args, **kwargs):
-    return PipelineExecutor(self).execute(stage_function, *args, **kwargs)
-
-  # TODO: can remove
-  def stage(self, stage_function, *args, **kwargs):
-    def executor_function(pipeline_context, *args, **kwargs):
-      stage_output = stage_function(*args, **kwargs)
-      if isinstance(stage_output, tuple):
-        return_value, result = stage_output
-        self.results.update(result)
-      else:
-        return_value = stage_output
-      return return_value
-
-    return PipelineExecutor(self).execute(executor_function, *args, **kwargs)
-
   def save(self, result_saver):
-    result_saver.save(self.file_name, self.results)
+    result_saver.save(self.file_name, {'results': self.results, 'provenance': self.provenance})
 
 class RedisResultSaver(object):
   def __init__(self):
