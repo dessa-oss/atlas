@@ -1,14 +1,3 @@
-# TODO: remove
-class PipelineExecutor(object):
-  def __init__(self, pipeline_context):
-    self.pipeline_context = pipeline_context
-
-  def execute(self, stage_function, *args, **kwargs):
-    self.pipeline_context.results.update(kwargs)
-    return stage_function(self.pipeline_context, *args, **kwargs)
-
-
-
 # UGLY (DEVS)
 class Stage(object):
 
@@ -32,6 +21,8 @@ class StageConnector(object):
   def __init__(self, current_stage, previous_connectors):
     self._current_stage = current_stage
     self._previous_connectors = previous_connectors
+    self._has_run = False
+    self._result = None
   
   def name(self):
     return self._current_stage.name()
@@ -53,9 +44,14 @@ class StageConnector(object):
     return StageConnector(next_stage, [self])
   
   def run(self, *args, **kwargs):
-    previous_results = [connector.run() for connector in self._previous_connectors]
-    list_args = list(args)
-    return self._current_stage.run(*(previous_results + list_args), **kwargs)
+    if self._has_run:
+      return self._result
+    else:
+      previous_results = [connector.run() for connector in self._previous_connectors]
+      list_args = list(args)
+      self._result = self._current_stage.run(*(previous_results + list_args), **kwargs)
+      self._has_run = True
+      return self._result
 
   def serialize(self):
     import dill as pickle
@@ -86,12 +82,21 @@ class StageContext(object):
 
   def _wrapped_function(self, stage_uuid, function):
     def wrapped(*args, **kwargs):
+      import time
+
+      start_time = time.time()
       stage_output = function(*args, **kwargs)
+      end_time = time.time()
       if isinstance(stage_output, tuple):
         return_value, result = stage_output
         self._pipeline_context.results[stage_uuid] = result
       else:
         return_value = stage_output
+      self._pipeline_context.meta_data[stage_uuid] = {
+        "start_time": start_time,
+        "end_time": end_time,
+        "delta_time": end_time - start_time,
+      }
       return return_value
     return wrapped
 
@@ -174,10 +179,11 @@ class PipelineContext(object):
     self.results = {}
     self.predictions = {}
     self.provenance = {}
+    self.meta_data = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
-    result_saver.save(self.file_name, {'results': self.results, 'provenance': self.provenance})
+    result_saver.save(self.file_name, {'results': self.results, 'provenance': self.provenance, "meta_data": self.meta_data})
 
 class RedisResultSaver(object):
   def __init__(self):
@@ -186,9 +192,9 @@ class RedisResultSaver(object):
     self._connection = redis.Redis()
 
   def save(self, name, results):
-    import json
+    import pickle
 
-    results_serialized = json.dumps(results)
+    results_serialized = pickle.dumps(results)
     self._connection.sadd("result_names", name)
     self._connection.set("results:" + name, results_serialized)
 
@@ -212,7 +218,7 @@ class ResultReader(object):
 
   def as_json(self):
     return self.results
-    
+
 class RedisFetcher(object):
   def __init__(self):
     import redis
@@ -220,12 +226,12 @@ class RedisFetcher(object):
     self._connection = redis.Redis()
 
   def fetch_results(self):
-    import json
+    import pickle
 
     result_names = self._connection.smembers("result_names")
     result_keys = ["results:" + name.decode("utf-8") for name in result_names]
     results_serialized = [self._connection.get(key) for key in result_keys]
-    return [json.loads(result_serialized) for result_serialized in results_serialized]
+    return [pickle.loads(result_serialized) for result_serialized in results_serialized]
 
 
 pipeline_context = PipelineContext()
