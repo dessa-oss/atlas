@@ -115,21 +115,24 @@ class StagePiping(object):
     
 # PRETTY (ERIC)
 class StageConnectorWrapper(object):
-  def __init__(self, connector, stage_context):
+  def __init__(self, connector, pipeline_context, stage_context):
     self._connector = connector
     self._stage_context = stage_context
     self._stage_piping = StagePiping(self)
+    self._pipeline_context = pipeline_context
 
   def tree_names(self):
     return self._connector.tree_names()
         
   def stage(self, function, *args, **kwargs):
-    return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._stage_context)
+    return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._pipeline_context, self._stage_context)
   
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
 
+  # TODO: make _current_stage public
   def run(self, *args, **kwargs):
+    self._pipeline_context.provenance[self._connector._current_stage.uuid] = self._connector.tree_names() 
     return self._connector.run(*args, **kwargs)
   
   def __call__(self, *args, **kwargs):
@@ -151,12 +154,12 @@ class Pipeline(object):
       
   def stage(self, function, *args, **kwargs):
     current_stage = self._stage_context.make_stage(function, *args, **kwargs)
-    return StageConnectorWrapper(self.graph.stage(current_stage), self._stage_context)
+    return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context, self._stage_context)
   
   def join(self, upstream_connector_wrappers, function, *args, **kwargs):
     upstream_connectors = [wrapper._connector for wrapper in upstream_connector_wrappers]
     current_stage = self._stage_context.make_stage(function, *args, **kwargs)
-    return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self._stage_context)  
+    return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self.pipeline_context, self._stage_context)  
 
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
@@ -169,6 +172,7 @@ class PipelineContext(object):
 
     self.results = {}
     self.predictions = {}
+    self.provenance = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
   # TODO: can remove
