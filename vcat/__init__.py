@@ -77,9 +77,11 @@ class StageConnector(object):
   def kwargs(self):
     return self.current_stage.kwargs
 
-  def tree_names(self):
-    parent_trees = [connector.tree_names() for connector in self._previous_connectors]
-    return {"stage": self.name(), "function_name": self.function_name(), "args": self.args(), "kwargs": self.kwargs(), "parents": parent_trees}
+  def tree_names(self, filler_builder, **filler_kwargs):
+    parent_trees = [connector.tree_names(filler_builder, **filler_kwargs) for connector in self._previous_connectors]
+    filler = filler_builder(*self.args(), **self.kwargs())
+    args, kwargs = filler.fill(**filler_kwargs)
+    return {"stage": self.name(), "function_name": self.function_name(), "args": args, "kwargs": kwargs, "parents": parent_trees}
       
   def stage(self, next_stage):
     return StageConnector(next_stage, [self])
@@ -193,6 +195,19 @@ class StageConnectorWrapperFill(object):
       return True
     return False
 
+class StageConnectorWrapperNameFill(object):
+  def fill_arg_template(self, new_args, arg, kwargs):
+    if isinstance(arg, StageConnectorWrapper):
+      new_args.append("STAGE")
+      return True
+    return False
+    
+  def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
+    if isinstance(arg, StageConnectorWrapper):
+      new_kwargs[keyword] = "STAGE"
+      return True
+    return False
+
 # PRETTY (ERIC)
 class Hyperperameter(object):
   def __init__(self, name=None):
@@ -206,7 +221,7 @@ class StageConnectorWrapper(object):
     self._pipeline_context = pipeline_context
 
   def tree_names(self):
-    return self._connector.tree_names()
+    return self._connector.tree_names(self._provenance_filler_builder)
         
   def stage(self, function, *args, **kwargs):
     return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._pipeline_context, self._stage_context)
@@ -215,7 +230,7 @@ class StageConnectorWrapper(object):
     return self._stage_piping.pipe(stage_args)
 
   def run(self, **filler_kwargs):
-    self._pipeline_context.provenance[self._connector.current_stage.uuid] = self._connector.tree_names() 
+    self._pipeline_context.provenance[self._connector.current_stage.uuid] = self.tree_names() 
     return self.run_without_provenance(**filler_kwargs)
 
   def run_without_provenance(self, **filler_kwargs):
@@ -223,6 +238,9 @@ class StageConnectorWrapper(object):
 
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
+
+  def _provenance_filler_builder(self, *args, **kwargs):
+    return ArgumentFiller(StageConnectorWrapperNameFill(), *args, **kwargs)
   
   def __call__(self, *args, **kwargs):
     return self.run(*args, **kwargs)
@@ -287,7 +305,7 @@ class RedisResultSaver(object):
     self._connection = redis.Redis()
 
   def save(self, name, results):
-    import pickle
+    import dill as pickle
 
     results_serialized = pickle.dumps(results)
     self._connection.sadd("result_names", name)
