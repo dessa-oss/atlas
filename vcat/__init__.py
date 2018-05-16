@@ -148,8 +148,8 @@ class StageConnectorWrapper(object):
     return self._connector.serialize()
   
   @staticmethod
-  def deserialize(serialized_self):
-    return StageConnectorWrapper(StageConnector.deserialize(serialized_self))
+  def deserialize(serialized_self, pipeline_context, stage_context):
+    return StageConnectorWrapper(StageConnector.deserialize(serialized_self), pipeline_context, stage_context)
   
 class Pipeline(object):
   def __init__(self, pipeline_context):
