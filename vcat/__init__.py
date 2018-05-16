@@ -11,7 +11,7 @@ class ArgumentFiller(object):
       self._fill_arg(new_args, arg, kwargs)
       
     new_kwargs = {}
-    for keyword, arg in self.kwargs.iteritems():
+    for keyword, arg in self.kwargs.items():
       self._fill_kwarg(new_kwargs, keyword, arg, kwargs)
 
     return new_args, new_kwargs
