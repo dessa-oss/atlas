@@ -88,7 +88,7 @@ class StageConnector(object):
     if self._has_run:
       return self._result
     else:
-      previous_results = [connector.run(filler_builder, filler_kwargs) for connector in self._previous_connectors]
+      previous_results = [connector.run(filler_builder, **filler_kwargs) for connector in self._previous_connectors]
       self._result = self.current_stage.run(previous_results, filler_builder, **filler_kwargs)
       self._has_run = True
       return self._result
@@ -155,7 +155,14 @@ class StagePiping(object):
       else:
         return self._pipe.stage(function, *args)
     else:
-      return self._pipe.stage(stage_args)
+      if callable(stage_args):
+        function = stage_args
+      else:
+        def constant():
+          return stage_args
+        function = constant
+      
+      return self._pipe.stage(function)
 
 # PRETTY (BUT NOT ERIC)
 class HyperparameterArgumentFill(object):
@@ -201,14 +208,7 @@ class StageConnectorWrapper(object):
   def tree_names(self):
     return self._connector.tree_names()
         
-  def stage(self, function_or_value, *args, **kwargs):
-    if callable(function_or_value):
-      function = function_or_value
-    else:
-      def constant():
-        return function_or_value
-      function = constant
-    
+  def stage(self, function, *args, **kwargs):
     return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._pipeline_context, self._stage_context)
   
   def __or__(self, stage_args):
