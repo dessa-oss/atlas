@@ -19,22 +19,22 @@ class Stage(object):
   
 class StageConnector(object):
   def __init__(self, current_stage, previous_connectors):
-    self._current_stage = current_stage
+    self.current_stage = current_stage
     self._previous_connectors = previous_connectors
     self._has_run = False
     self._result = None
   
   def name(self):
-    return self._current_stage.name()
+    return self.current_stage.name()
 
   def function_name(self):
-    return self._current_stage.function_name()
+    return self.current_stage.function_name()
 
   def args(self):
-    return self._current_stage.args
+    return self.current_stage.args
 
   def kwargs(self):
-    return self._current_stage.kwargs
+    return self.current_stage.kwargs
 
   def tree_names(self):
     parent_trees = [connector.tree_names() for connector in self._previous_connectors]
@@ -49,7 +49,7 @@ class StageConnector(object):
     else:
       previous_results = [connector.run() for connector in self._previous_connectors]
       list_args = list(args)
-      self._result = self._current_stage.run(*(previous_results + list_args), **kwargs)
+      self._result = self.current_stage.run(*(previous_results + list_args), **kwargs)
       self._has_run = True
       return self._result
 
@@ -136,9 +136,8 @@ class StageConnectorWrapper(object):
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
 
-  # TODO: make _current_stage public
   def run(self, *args, **kwargs):
-    self._pipeline_context.provenance[self._connector._current_stage.uuid] = self._connector.tree_names() 
+    self._pipeline_context.provenance[self._connector.current_stage.uuid] = self._connector.tree_names()
     return self._connector.run(*args, **kwargs)
   
   def __call__(self, *args, **kwargs):
