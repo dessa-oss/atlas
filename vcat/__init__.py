@@ -151,6 +151,18 @@ class StageConnectorWrapper(object):
   def deserialize(serialized_self, pipeline_context, stage_context):
     return StageConnectorWrapper(StageConnector.deserialize(serialized_self), pipeline_context, stage_context)
   
+  def splice(self, num_children):
+    def splice_at(data_frames, slot_num):
+      return data_frames[slot_num]
+
+    children = []
+
+    for i in range(num_children):
+      child = self | (splice_at, i)
+      children.append(child)
+
+    return children
+
 class Pipeline(object):
   def __init__(self, pipeline_context):
     self.graph = StageGraph()
