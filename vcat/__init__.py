@@ -271,8 +271,8 @@ class StageConnectorWrapper(object):
 
     children = []
 
-    for i in range(num_children):
-      child = self | (splice_at, i)
+    for child_index in range(num_children):
+      child = self | (splice_at, child_index)
       children.append(child)
 
     return children
