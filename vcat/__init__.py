@@ -1,4 +1,43 @@
 # UGLY (DEVS)
+class ArgumentFiller(object):
+  def __init__(self, argument_fill, *args, **kwargs):
+    self._argument_fill = argument_fill
+    self.args = args
+    self.kwargs = kwargs
+
+  def fill(self, **kwargs):
+    new_args = []
+    for arg in self.args:
+      self._fill_arg(new_args, arg, kwargs)
+      
+    new_kwargs = {}
+    for keyword, arg in self.kwargs.iteritems():
+      self._fill_kwarg(new_kwargs, keyword, arg, kwargs)
+
+    return new_args, new_kwargs
+
+  def _fill_arg(self, new_args, arg, kwargs):
+    if not self._argument_fill.fill_arg_template(new_args, arg, kwargs):
+      new_args.append(arg)
+
+  def _fill_kwarg(self, new_kwargs, keyword, arg, kwargs):
+    if not self._argument_fill.fill_kwarg_template(new_kwargs, keyword, arg, kwargs):
+      new_kwargs[keyword] = arg
+
+class SuccessiveArgumentFiller(object):
+  def __init__(self, fill_types, *args, **kwargs):
+    self.fills = [fill_type() for fill_type in fill_types]
+    self.start_args = args
+    self.start_kwargs = kwargs
+
+  def fill(self, **fill_kwargs):
+    args = self.start_args
+    kwargs = self.start_kwargs
+    for fill in self.fills:
+      filler = ArgumentFiller(fill, *args, **kwargs)
+      args, kwargs = filler.fill(**fill_kwargs)
+    return args, kwargs
+
 class Stage(object):
 
   def __init__(self, uuid, function, metadata_function, *args, **kwargs):
@@ -117,9 +156,41 @@ class StagePiping(object):
         return self._pipe.stage(function, *args)
     else:
       return self._pipe.stage(stage_args)
+
+# PRETTY (BUT NOT ERIC)
+class HyperparameterArgumentFill(object):
+  def fill_arg_template(self, new_args, arg, kwargs):
+    if isinstance(arg, Hyperperameter):
+      if arg.name in kwargs:
+        new_args.append(kwargs[arg.name])
+      return True
+    return False
     
+  def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
+    if isinstance(arg, Hyperperameter):
+      if keyword in kwargs:
+        new_kwargs[keyword] = kwargs[keyword]
+      return True
+    return False
+
+class StageConnectorWrapperFill(object):
+  def fill_arg_template(self, new_args, arg, kwargs):
+    if isinstance(arg, StageConnectorWrapper):
+      new_args.append(arg.run_without_provenance(**kwargs))
+      return True
+    return False
     
+  def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
+    if isinstance(arg, StageConnectorWrapper):
+      new_kwargs[keyword] = arg.run_without_provenance(**kwargs)
+      return True
+    return False
+
 # PRETTY (ERIC)
+class Hyperperameter(object):
+  def __init__(self, name=None):
+    self.name = name 
+
 class StageConnectorWrapper(object):
   def __init__(self, connector, pipeline_context, stage_context):
     self._connector = connector
@@ -139,6 +210,9 @@ class StageConnectorWrapper(object):
   # TODO: make _current_stage public
   def run(self, *args, **kwargs):
     self._pipeline_context.provenance[self._connector._current_stage.uuid] = self._connector.tree_names() 
+    return self.run_without_provenance(*args, **kwargs)
+
+  def run_without_provenance(self, *args, **kwargs):
     return self._connector.run(*args, **kwargs)
   
   def __call__(self, *args, **kwargs):
