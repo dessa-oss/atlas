@@ -47,8 +47,10 @@ class Stage(object):
     self.kwargs = kwargs
     self._metadata_function = metadata_function
   
-  def run(self, *local_args):
-    return self.function(*(local_args + self.args), **self.kwargs)
+  def run(self, previous_results, filler_builder, **filler_kwargs):
+    filler = filler_builder(*self.args, **self.kwargs)
+    new_args, new_kwargs = filler.fill(**filler_kwargs)
+    return self.function(*(previous_results + new_args), **new_kwargs)
   
   def name(self):
     return str(self.uuid)
@@ -82,13 +84,12 @@ class StageConnector(object):
   def stage(self, next_stage):
     return StageConnector(next_stage, [self])
   
-  def run(self, *args, **kwargs):
+  def run(self, filler_builder, **filler_kwargs):
     if self._has_run:
       return self._result
     else:
-      previous_results = [connector.run() for connector in self._previous_connectors]
-      list_args = list(args)
-      self._result = self._current_stage.run(*(previous_results + list_args), **kwargs)
+      previous_results = [connector.run(filler_builder, filler_kwargs) for connector in self._previous_connectors]
+      self._result = self._current_stage.run(previous_results, filler_builder, **filler_kwargs)
       self._has_run = True
       return self._result
 
@@ -100,7 +101,6 @@ class StageConnector(object):
   def deserialize(serialized_self):
     import dill as pickle
     return pickle.loads(serialized_self)
-
 
 class StageGraph(object):
   def stage(self, stage):
@@ -208,12 +208,15 @@ class StageConnectorWrapper(object):
     return self._stage_piping.pipe(stage_args)
 
   # TODO: make _current_stage public
-  def run(self, *args, **kwargs):
+  def run(self, **filler_kwargs):
     self._pipeline_context.provenance[self._connector._current_stage.uuid] = self._connector.tree_names() 
-    return self.run_without_provenance(*args, **kwargs)
+    return self.run_without_provenance(**filler_kwargs)
 
-  def run_without_provenance(self, *args, **kwargs):
-    return self._connector.run(*args, **kwargs)
+  def run_without_provenance(self, **filler_kwargs):
+    return self._connector.run(self._filler_builder, **filler_kwargs)
+
+  def _filler_builder(self, *args, **kwargs):
+    return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
   
   def __call__(self, *args, **kwargs):
     return self.run(*args, **kwargs)
