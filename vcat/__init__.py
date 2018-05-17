@@ -102,15 +102,6 @@ class StageConnector(object):
       self._has_run = True
       return self._result
 
-  def serialize(self):
-    import dill as pickle
-    return pickle.dumps(self)
-  
-  @staticmethod
-  def deserialize(serialized_self):
-    import dill as pickle
-    return pickle.loads(serialized_self)
-
 class StageGraph(object):
   def stage(self, stage):
     return StageConnector(stage, [])
@@ -227,6 +218,24 @@ class StageConnectorWrapperNameFill(object):
       new_kwargs[keyword] = "STAGE"
       return True
     return False
+
+class Job(object):
+  def __init__(self, pipeline_connector, **kwargs):
+    self.kwargs = kwargs
+    self.pipeline_connector = pipeline_connector
+  
+  def run(self):
+    return self.pipeline_connector.run(**self.kwargs)
+  
+  def serialize(self):
+    import dill as pickle
+    return pickle.dumps(self)
+  
+  @staticmethod
+  def deserialize(serialized_self):
+    import dill as pickle
+    return pickle.loads(serialized_self)
+
 
 # PRETTY (ERIC)
 class Hyperparameter(object):
