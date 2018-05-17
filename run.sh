@@ -8,4 +8,5 @@ cd $BASEDIR && \
   . venv/bin/activate && \
   python -m pip install -r requirements.txt && \
   python main.py && \
-  deactivate
+  deactivate && \
+  rm -rf venv
