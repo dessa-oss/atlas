@@ -222,10 +222,10 @@ class StageConnectorWrapperNameFill(object):
 class Job(object):
   def __init__(self, pipeline_connector, **kwargs):
     self.kwargs = kwargs
-    self.pipeline_connector = pipeline_connector
+    self._pipeline_connector = pipeline_connector
   
   def run(self):
-    return self.pipeline_connector.run(**self.kwargs)
+    return self._pipeline_connector.run(**self.kwargs)
   
   def serialize(self):
     import dill as pickle
@@ -388,6 +388,14 @@ class PipelineContext(object):
   def save(self, result_saver):
     result_saver.save(self.file_name, {'results': self.results, 'provenance': self.provenance, "meta_data": self.meta_data})
 
+class LocalFileSystemResultSaver(object):
+  def save(self, name, results):
+    import pickle
+
+    file_name = name + ".pkl"
+    with open(file_name, 'w+b') as file:
+      pickle.dump(results, file)
+
 class RedisResultSaver(object):
   def __init__(self):
     import redis
@@ -406,23 +414,26 @@ class RedisResultSaver(object):
 
 class ResultReader(object):
   
-  def __init__(self):
-    # import glob
-    # import json
-
-    # self.results = []
-    # file_list = glob.glob('*.json')
-    # for file_name in file_list:
-    #   with open(file_name) as file:
-    #     self.results.append(json.load(file))
-
-    self.results = RedisFetcher().fetch_results()
+  def __init__(self, result_fetcher):
+    self.results = result_fetcher.fetch_results()
   
   def to_pandas(self):
     import pandas
     return pandas.DataFrame(self.results)
 
   def as_json(self):
+    return self.results
+
+class LocalFileSystemFetcher(object):
+  def fetch_results(self):
+    import glob
+    import pickle
+
+    self.results = []
+    file_list = glob.glob('*.pkl')
+    for file_name in file_list:
+      with open(file_name, 'rb') as file:
+        self.results.append(pickle.load(file))
     return self.results
 
 class RedisFetcher(object):
