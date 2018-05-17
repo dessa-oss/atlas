@@ -365,6 +365,11 @@ class GCPJobDeployment(object):
     with open(self._job_name + ".tgz", 'rb') as file:
       job_object.upload_from_file(file)
 
+def gcp_deploy_job(job, job_name):
+  save_job(job)
+  bundle_job(job_name)
+  GCPJobDeployment(job_name).deploy()
+
 def save_job(job):
   with open("job.bin", "w+b") as file:
     file.write(job.serialize())
