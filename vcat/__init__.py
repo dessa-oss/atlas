@@ -296,7 +296,8 @@ class StageConnectorWrapper(object):
         hype_dict[key] = [val]
 
     for param_set in grid_param_set_generator(hype_dict):
-      yield Job(self._connector, **param_set)
+      yield Job(self, **param_set)
+      self._reset_state()
 
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
