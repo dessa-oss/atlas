@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-python -m pip install virtualenv && \
+BASEDIR=$(dirname "$0")
+
+cd $BASEDIR && \
+  python -m pip install virtualenv && \
   virtualenv venv && \
   . venv/bin/activate && \
   python -m pip install -r requirements.txt && \
