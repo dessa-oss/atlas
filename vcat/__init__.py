@@ -356,12 +356,12 @@ class GCPJobDeployment(object):
     from googleapiclient import discovery
 
     self._gcp_bucket_connection = Client()
-    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
+    self._code_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
 
     self._job_name = job_name
 
   def deploy(self):
-    job_object = self._result_bucket_connection.blob(self._job_name + ".tgz")
+    job_object = self._code_bucket_connection.blob(self._job_name + ".tgz")
     with open(self._job_name + ".tgz", 'rb') as file:
       job_object.upload_from_file(file)
 
