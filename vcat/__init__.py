@@ -287,7 +287,6 @@ class StageConnectorWrapper(object):
 
   def run_without_provenance(self, **filler_kwargs):
     to_return = self._connector.run(self._filler_builder, **filler_kwargs)
-    self._reset_state()
     return to_return
 
   def grid_search(self, **hype_kwargs):
@@ -300,8 +299,8 @@ class StageConnectorWrapper(object):
         hype_dict[key] = [val]
 
     for param_set in grid_param_set_generator(hype_dict):
-      yield Job(self, **param_set)
       self._reset_state()
+      yield Job(self, **param_set)
 
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
@@ -364,6 +363,11 @@ class GCPJobDeployment(object):
     job_object = self._code_bucket_connection.blob(self._job_name + ".tgz")
     with open(self._job_name + ".tgz", 'rb') as file:
       job_object.upload_from_file(file)
+
+def gcp_deploy_job(job, job_name):
+  save_job(job)
+  bundle_job(job_name)
+  GCPJobDeployment(job_name).deploy()
 
 def save_job(job):
   with open("job.bin", "w+b") as file:
