@@ -365,12 +365,11 @@ class GCPJobDeployment(object):
     with open(self._job_name + ".tgz", 'rb') as file:
       job_object.upload_from_file(file)
 
-def save_pipeline(connector_wrapper, **kwargs):
-  job = Job(connector_wrapper, **kwargs)
+def save_job(job):
   with open("job.bin", "w+b") as file:
     file.write(job.serialize())
 
-def bundle_pipeline(job_name):
+def bundle_job(job_name):
   import tarfile
 
   with tarfile.open(job_name + ".tgz", "w:gz") as tar:

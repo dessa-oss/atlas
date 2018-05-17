@@ -1,4 +1,5 @@
 import argparse
+import uuid
 
 from vcat import *
 
@@ -11,7 +12,9 @@ parser = argparse.ArgumentParser(description='Bundle a job.')
 parser.add_argument('name', metavar='N', type=str, help='name of the job')
 args = parser.parse_args()
 
-save_pipeline(pipe)
-bundle_pipeline(args.name)
-GCPJobDeployment(args.name).deploy()
+job = Job(pipe)
+job_name = str(uuid.uuid4())
+save_job(job)
+bundle_job(job_name)
+GCPJobDeployment(job_name).deploy()
 
