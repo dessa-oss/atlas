@@ -350,6 +350,33 @@ class Pipeline(object):
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
 
+class GCPJobDeployment(object):
+  def __init__(self, job_name):
+    from google.cloud.storage import Client
+    from googleapiclient import discovery
+
+    self._gcp_bucket_connection = Client()
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
+
+    self._job_name = job_name
+
+  def deploy(self):
+    job_object = self._result_bucket_connection.blob(self._job_name + ".tgz")
+    with open(self._job_name + ".tgz", 'rb') as file:
+      job_object.upload_from_file(file)
+
+def save_pipeline(connector_wrapper, **kwargs):
+  job = Job(connector_wrapper, **kwargs)
+  with open("job.bin", "w+b") as file:
+    file.write(job.serialize())
+
+def bundle_pipeline(job_name):
+  import tarfile
+
+  with tarfile.open(job_name + ".tgz", "w:gz") as tar:
+    for name in ["job.bin", "run.sh", "main.py", "requirements.txt", "vcat"]:
+        tar.add(name, arcname=job_name + "/" + name)
+
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
 

@@ -1,3 +1,5 @@
+import argparse
+
 from vcat import *
 
 def print_it(self):
@@ -5,18 +7,11 @@ def print_it(self):
 
 pipe = pipeline | 'wonderful' | print_it
 
-def deploy(connector_wrapper, **kwargs):
-  import tarfile
-  
-  job = Job(pipe)
-  with open('job.bin', 'w+b') as file:
-    file.write(job.serialize())
+parser = argparse.ArgumentParser(description='Bundle a job.')
+parser.add_argument('name', metavar='N', type=str, help='name of the job')
+args = parser.parse_args()
 
-  tar = tarfile.open("job.tar", "w")
-  for name in ["job.bin", "main.sh", "main.py", "requirements.txt", "vcat"]:
-      tar.add(name)
-  tar.close()
-  
-  return job
+save_pipeline(pipe)
+bundle_pipeline(args.name)
+GCPJobDeployment(args.name).deploy()
 
-deploy(pipe)
