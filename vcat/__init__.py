@@ -346,6 +346,18 @@ class Pipeline(object):
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
 
+def save_pipeline(connector_wrapper, **kwargs):
+  job = Job(connector_wrapper, **kwargs)
+  with open("job.bin", "w+b") as file:
+    file.write(job.serialize())
+
+def bundle_pipeline(job_name):
+  import tarfile
+
+  with tarfile.open(job_name + ".tgz", "w:gz") as tar:
+    for name in ["job.bin", "run.sh", "main.py", "requirements.txt", "vcat"]:
+        tar.add(name, arcname=job_name + "/" + name)
+
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
 
