@@ -65,6 +65,13 @@ class StageConnector(object):
     self._has_run = False
     self._result = None
   
+  def _reset_state(self):
+    self._has_run = False
+    self._result = None
+
+    for previous_connector in self._previous_connectors:
+      previous_connector._reset_state()
+
   def name(self):
     return self.current_stage.name()
 
@@ -169,14 +176,14 @@ class StagePiping(object):
 # PRETTY (BUT NOT ERIC)
 class HyperparameterArgumentFill(object):
   def fill_arg_template(self, new_args, arg, kwargs):
-    if isinstance(arg, Hyperperameter):
+    if isinstance(arg, Hyperparameter):
       if arg.name in kwargs:
         new_args.append(kwargs[arg.name])
       return True
     return False
     
   def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
-    if isinstance(arg, Hyperperameter):
+    if isinstance(arg, Hyperparameter):
       if keyword in kwargs:
         new_kwargs[keyword] = kwargs[keyword]
       return True
@@ -222,9 +229,27 @@ class StageConnectorWrapperNameFill(object):
     return False
 
 # PRETTY (ERIC)
-class Hyperperameter(object):
+class Hyperparameter(object):
   def __init__(self, name=None):
     self.name = name 
+
+def grid_param_set_generator(dict_of_hyper_params):
+  import itertools
+
+  param_keys = []
+  param_vals_to_select = []
+
+  for key, val in dict_of_hyper_params.iteritems():
+    param_keys.append(key)
+    param_vals_to_select.append(val)
+
+  for param_vals in itertools.product(*param_vals_to_select):
+    param_set_entry = {}
+
+    for param_key, param_val in zip(param_keys, param_vals):
+      param_set_entry[param_key] = param_val
+
+    yield param_set_entry
 
 class StageConnectorWrapper(object):
   def __init__(self, connector, pipeline_context, stage_context):
@@ -232,6 +257,9 @@ class StageConnectorWrapper(object):
     self._stage_context = stage_context
     self._stage_piping = StagePiping(self)
     self._pipeline_context = pipeline_context
+
+  def _reset_state(self):
+    self._connector._reset_state()
 
   def tree_names(self):
     return self._connector.tree_names(self._provenance_filler_builder)
@@ -248,6 +276,21 @@ class StageConnectorWrapper(object):
 
   def run_without_provenance(self, **filler_kwargs):
     return self._connector.run(self._filler_builder, **filler_kwargs)
+
+  def grid_search(self, **hype_kwargs):
+    hype_dict = {}
+
+    for key, val in hype_kwargs.iteritems():
+      if isinstance(val, list):
+        hype_dict[key] = val
+      else:
+        hype_dict[key] = [val]
+
+    for param_set in grid_param_set_generator(hype_dict):
+      output = self.run(**param_set)
+      yield output, self._pipeline_context
+
+      self._reset_state()
 
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
@@ -324,6 +367,9 @@ class RedisResultSaver(object):
     self._connection.sadd("result_names", name)
     self._connection.set("results:" + name, results_serialized)
 
+  def clear(self):
+    return self._connection.delete("result_names")
+
 class ResultReader(object):
   
   def __init__(self):
@@ -358,7 +404,6 @@ class RedisFetcher(object):
     result_keys = ["results:" + name.decode("utf-8") for name in result_names]
     results_serialized = [self._connection.get(key) for key in result_keys]
     return [pickle.loads(result_serialized) for result_serialized in results_serialized]
-
 
 pipeline_context = PipelineContext()
 pipeline = Pipeline(pipeline_context)
