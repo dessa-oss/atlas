@@ -84,11 +84,13 @@ class StageConnector(object):
   def kwargs(self):
     return self.current_stage.kwargs
 
-  def tree_names(self, filler_builder, **filler_kwargs):
-    parent_trees = [connector.tree_names(filler_builder, **filler_kwargs) for connector in self._previous_connectors]
+  def add_tree_names(self, stages_dict, filler_builder, **filler_kwargs):
+    parent_ids = [connector.add_tree_names(stages_dict, filler_builder, **filler_kwargs) for connector in self._previous_connectors]
     filler = filler_builder(*self.args(), **self.kwargs())
     args, kwargs = filler.fill(**filler_kwargs)
-    return {"stage": self.name(), "function_name": self.function_name(), "args": args, "kwargs": kwargs, "parents": parent_trees}
+    this_stage = {"function_name": self.function_name(), "args": args, "kwargs": kwargs, "parents": parent_ids}
+    stages_dict[self.name()] = this_stage
+    return self.name()
       
   def stage(self, next_stage):
     return StageConnector(next_stage, [self])
@@ -211,13 +213,13 @@ class HyperparameterArgumentNameFill(object):
 class StageConnectorWrapperNameFill(object):
   def fill_arg_template(self, new_args, arg, kwargs):
     if isinstance(arg, StageConnectorWrapper):
-      new_args.append("STAGE")
+      new_args.append("Stage(" + arg._connector.name() + ")")
       return True
     return False
     
   def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
     if isinstance(arg, StageConnectorWrapper):
-      new_kwargs[keyword] = "STAGE"
+      new_kwargs[keyword] = "Stage(" + arg._connector.name() + ")"
       return True
     return False
 
@@ -273,7 +275,9 @@ class StageConnectorWrapper(object):
     self._connector._reset_state()
 
   def tree_names(self, **filler_kwargs):
-    return self._connector.tree_names(self._provenance_filler_builder, **filler_kwargs)
+    all_stages = {}
+    self._connector.add_tree_names(all_stages, self._provenance_filler_builder, **filler_kwargs)
+    return all_stages
         
   def stage(self, function, *args, **kwargs):
     return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._pipeline_context, self._stage_context)
@@ -286,8 +290,7 @@ class StageConnectorWrapper(object):
     return self.run_without_provenance(**filler_kwargs)
 
   def run_without_provenance(self, **filler_kwargs):
-    to_return = self._connector.run(self._filler_builder, **filler_kwargs)
-    return to_return
+    return self._connector.run(self._filler_builder, **filler_kwargs)
 
   def grid_search(self, **hype_kwargs):
     hype_dict = {}
