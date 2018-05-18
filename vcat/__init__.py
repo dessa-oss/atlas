@@ -396,7 +396,7 @@ class PipelineContext(object):
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
-    result_saver.save(self.file_name, {'results': self.results, 'provenance': self.provenance, "meta_data": self.meta_data})
+    result_saver.save(self.file_name, {"results": self.results, "provenance": self.provenance, "meta_data": self.meta_data})
 
 class LocalFileSystemResultSaver(object):
   def save(self, name, results):
@@ -431,8 +431,12 @@ class ResultReader(object):
     import pandas
     return pandas.DataFrame(self.results)
 
-  def as_json(self):
+  def as_dict(self):
     return self.results
+
+  def as_json(self):
+    import json
+    return json.dumps(self.results)
 
 class LocalFileSystemFetcher(object):
   def fetch_results(self):
