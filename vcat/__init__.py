@@ -359,29 +359,74 @@ class GCPJobDeployment(object):
 
     self._gcp_bucket_connection = Client()
     self._code_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
 
     self._job_name = job_name
+    self._job_result_object = self._result_bucket_connection.blob(self._job_archive())
+
+  def job_name(self):
+    return self._job_name
 
   def deploy(self):
-    job_object = self._code_bucket_connection.blob(self._job_name + ".tgz")
-    with open(self._job_name + ".tgz", 'rb') as file:
+    self._bundle_job()
+
+    job_object = self._code_bucket_connection.blob(self._job_archive())
+    with open(self._job_archive(), 'rb') as file:
       job_object.upload_from_file(file)
+
+    self._remove_job_archive()      
+
+  def is_job_complete(self):
+    return self._job_result_object.exists()
+
+  def fetch_job_results(self):
+    import os
+    import tarfile
+    import pickle
+
+    with open(self._job_results_archive(), 'w+b') as file:
+      self._job_result_object.download_to_file(file)
+
+    result = None
+    with tarfile.open(self._job_results_archive(), "r:gz") as tar:
+      for tarinfo in tar:
+          if os.path.splitext(tarinfo.name)[1] == ".pkl":
+              file = tar.extractfile(tarinfo)
+              result = pickle.load(file)
+              file.close()
+
+    self._remove_job_results_archive()
+
+    return result
+
+  def _job_archive(self):
+    return self._job_name + ".tgz"
+
+  def _job_results_archive(self):
+    return self._job_name + ".results.tgz"
+
+  def _remove_job_archive(self):
+    import os
+    os.remove(self._job_archive())
+
+  def _remove_job_results_archive(self):
+    import os
+    os.remove(self._job_results_archive())
+
+  def _bundle_job(self):
+    import tarfile
+
+    with tarfile.open(self._job_archive(), "w:gz") as tar:
+      for name in ["job.bin", "run.sh", "main.py", "requirements.txt", "vcat"]:
+          tar.add(name, arcname=self._job_name + "/" + name)
 
 def gcp_deploy_job(job, job_name):
   save_job(job)
-  bundle_job(job_name)
   GCPJobDeployment(job_name).deploy()
 
 def save_job(job):
   with open("job.bin", "w+b") as file:
     file.write(job.serialize())
-
-def bundle_job(job_name):
-  import tarfile
-
-  with tarfile.open(job_name + ".tgz", "w:gz") as tar:
-    for name in ["job.bin", "run.sh", "main.py", "requirements.txt", "vcat"]:
-        tar.add(name, arcname=job_name + "/" + name)
 
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
