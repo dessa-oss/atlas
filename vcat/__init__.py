@@ -309,6 +309,43 @@ class StageConnectorWrapper(object):
       self._reset_state()
       yield Job(self, **param_set)
 
+  def adaptive_search(self, deployer_type, initial_generator, generator_function):
+    def extract_results(results_dict):
+      results = {}
+    
+      for result_entry in results_dict["results"].values():
+          results.update(result_entry)
+          
+      return results
+
+    import Queue
+    import time
+
+    queue = Queue.Queue()
+
+    for job_name, initial_params in initial_generator:
+      queue.put((job_name, initial_params))
+    
+    while not queue.empty():
+      self._reset_state()
+
+      job_name, param_set = queue.get()
+      deployer = deployer_type(job_name)
+      save_job(Job(self, **param_set))
+      deployer.deploy()
+
+      while not deployer.is_job_complete():
+        print "Waiting for job \"" + deployer.job_name() + "\" to finish..."
+        time.sleep(5)
+
+      print "Fetching results..."
+      results_dict = deployer.fetch_job_results()
+
+      print "Job \"" + deployer.job_name() + "\" has completed."
+
+      for new_job_name, new_params in generator_function(extract_results(results_dict)):
+        queue.put((new_job_name, new_params))
+
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
 
