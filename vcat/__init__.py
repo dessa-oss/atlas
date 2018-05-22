@@ -503,6 +503,24 @@ class RedisResultSaver(object):
   def clear(self):
     return self._connection.delete("result_names")
 
+class GCPResultSaver(object):
+  def __init__(self):
+    from google.cloud.storage import Client
+    from googleapiclient import discovery
+
+    self._gcp_bucket_connection = Client()
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
+
+  def save(self, name, results):
+    import dill as pickle
+
+    result_object = self._result_bucket_connection.blob("contexts/" + name + ".pkl")
+    serialized_results = pickle.dumps(results)
+    result_object.upload_from_string(serialized_results)
+
+  def clear(self):
+    pass
+
 class ResultReader(object):
   
   def __init__(self, result_fetcher):
@@ -543,6 +561,21 @@ class RedisFetcher(object):
     result_names = self._connection.smembers("result_names")
     result_keys = ["results:" + name.decode("utf-8") for name in result_names]
     results_serialized = [self._connection.get(key) for key in result_keys]
+    return [pickle.loads(result_serialized) for result_serialized in results_serialized]
+
+class GCPFetcher(object):
+  def __init__(self):
+    from google.cloud.storage import Client
+    from googleapiclient import discovery
+
+    self._gcp_bucket_connection = Client()
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
+
+  def fetch_results(self):
+    import dill as pickle
+
+    objects = self._result_bucket_connection.list_blobs(prefix="contexts/")
+    results_serialized = [result_object.download_as_string() for result_object in objects]
     return [pickle.loads(result_serialized) for result_serialized in results_serialized]
 
 pipeline_context = PipelineContext()
