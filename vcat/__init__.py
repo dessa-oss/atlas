@@ -1,3 +1,7 @@
+plain_value = "plain_value"
+hyperparameter_value = "hyperparameter_value"
+stage_value = "stage_value"
+
 # UGLY (DEVS)
 class ArgumentFiller(object):
   def __init__(self, argument_fill, *args, **kwargs):
@@ -199,27 +203,27 @@ class HyperparameterArgumentNameFill(object):
   def fill_arg_template(self, new_args, arg, kwargs):
     if isinstance(arg, Hyperparameter):
       arg_display = kwargs.get(arg.name, "<using default>")
-      new_args.append("Hyperparameter(" + str(arg_display) + ")")
+      new_args.append({hyperparameter_value: arg_display})
       return True
     return False
     
   def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
     if isinstance(arg, Hyperparameter):
       kwarg_display = kwargs.get(keyword, "<using default>")
-      new_kwargs[keyword] = "Hyperparameter(" + str(kwarg_display) + ")"
+      new_kwargs[keyword] = {hyperparameter_value: kwarg_display}
       return True
     return False
 
 class StageConnectorWrapperNameFill(object):
   def fill_arg_template(self, new_args, arg, kwargs):
     if isinstance(arg, StageConnectorWrapper):
-      new_args.append("Stage(" + arg._connector.name() + ")")
+      new_args.append({stage_value: arg._connector.name()})
       return True
     return False
     
   def fill_kwarg_template(self, new_kwargs, keyword, arg, kwargs):
     if isinstance(arg, StageConnectorWrapper):
-      new_kwargs[keyword] = "Stage(" + arg._connector.name() + ")"
+      new_kwargs[keyword] = {stage_value: arg._connector.name()}
       return True
     return False
 
@@ -316,6 +320,9 @@ class StageConnectorWrapper(object):
 
   def serialize(self):
     return self._connector.serialize()
+
+  def name(self):
+    return self._connector.name()
   
   @staticmethod
   def deserialize(serialized_self, pipeline_context, stage_context):
