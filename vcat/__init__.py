@@ -429,7 +429,9 @@ class GCPJobDeployment(object):
 
 def gcp_deploy_job(job, job_name):
   save_job(job)
-  GCPJobDeployment(job_name).deploy()
+  deployment = GCPJobDeployment(job_name)
+  deployment.deploy()
+  return deployment
 
 def save_job(job):
   with open("job.bin", "w+b") as file:
