@@ -397,28 +397,36 @@ class Pipeline(object):
     return self._stage_piping.pipe(stage_args)
 
 class GCPJobDeployment(object):
-  def __init__(self, job_name):
+  def __init__(self, job_name, job):
     from google.cloud.storage import Client
     from googleapiclient import discovery
+
+    self.config = {'job_name': job_name}
 
     self._gcp_bucket_connection = Client()
     self._code_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
     self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
 
     self._job_name = job_name
+    self._job = job
     self._job_result_object = self._result_bucket_connection.blob(self._job_archive())
 
   def job_name(self):
     return self._job_name
 
   def deploy(self):
+    self._save_job()
+    self._save_config()
+
     self._bundle_job()
 
     job_object = self._code_bucket_connection.blob(self._job_archive())
     with open(self._job_archive(), 'rb') as file:
       job_object.upload_from_file(file)
 
-    self._remove_job_archive()      
+    self._remove_job_archive()
+    self._remove_job_binary()
+    self._remove_config()
 
   def is_job_complete(self):
     return self._job_result_object.exists()
@@ -445,34 +453,52 @@ class GCPJobDeployment(object):
 
   def _job_archive(self):
     return self._job_name + ".tgz"
+  
+  def _job_binary(self):
+    return self._job_name + ".bin"
 
   def _job_results_archive(self):
     return self._job_name + ".results.tgz"
+  
+  def _job_config_yaml(self):
+    return self._job_name + ".config.yaml"
 
   def _remove_job_archive(self):
     import os
     os.remove(self._job_archive())
 
+  def _remove_job_binary(self):
+    import os
+    os.remove(self._job_binary())
+
   def _remove_job_results_archive(self):
     import os
     os.remove(self._job_results_archive())
+
+  def _remove_config(self):
+    import os
+    os.remove(self._job_config_yaml())
+
+  def _save_job(self):
+    with open(self._job_binary(), "w+b") as file:
+      file.write(self._job.serialize())
+
+  def _save_config(self):
+    import yaml
+    with open(self._job_config_yaml(), 'w+') as file:
+      yaml.dump(self.config, file)
 
   def _bundle_job(self):
     import tarfile
 
     with tarfile.open(self._job_archive(), "w:gz") as tar:
-      for name in ["job.bin", "run.sh", "main.py", "requirements.txt", "vcat"]:
+      for name in [self._job_binary(), self._job_config_yaml(), "run.sh", "main.py", "requirements.txt", "vcat"]:
           tar.add(name, arcname=self._job_name + "/" + name)
 
 def gcp_deploy_job(job, job_name):
-  save_job(job)
-  deployment = GCPJobDeployment(job_name)
+  deployment = GCPJobDeployment(job_name, job)
   deployment.deploy()
   return deployment
-
-def save_job(job):
-  with open("job.bin", "w+b") as file:
-    file.write(job.serialize())
 
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
@@ -481,13 +507,14 @@ class PipelineContext(object):
     import uuid
 
     self.results = {}
+    self.config = {}
     self.predictions = {}
     self.provenance = {}
     self.meta_data = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
-    result_saver.save(self.file_name, {"results": self.results, "provenance": self.provenance, "meta_data": self.meta_data})
+    result_saver.save(self.file_name, {"results": self.results, "config": self.config, "provenance": self.provenance, "meta_data": self.meta_data})
 
 class LocalFileSystemResultSaver(object):
   def save(self, name, results):
@@ -512,6 +539,24 @@ class RedisResultSaver(object):
 
   def clear(self):
     return self._connection.delete("result_names")
+
+class GCPResultSaver(object):
+  def __init__(self):
+    from google.cloud.storage import Client
+    from googleapiclient import discovery
+
+    self._gcp_bucket_connection = Client()
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
+
+  def save(self, name, results):
+    import dill as pickle
+
+    result_object = self._result_bucket_connection.blob("contexts/" + name + ".pkl")
+    serialized_results = pickle.dumps(results)
+    result_object.upload_from_string(serialized_results)
+
+  def clear(self):
+    pass
 
 class ResultReader(object):
   
@@ -553,6 +598,21 @@ class RedisFetcher(object):
     result_names = self._connection.smembers("result_names")
     result_keys = ["results:" + name.decode("utf-8") for name in result_names]
     results_serialized = [self._connection.get(key) for key in result_keys]
+    return [pickle.loads(result_serialized) for result_serialized in results_serialized]
+
+class GCPFetcher(object):
+  def __init__(self):
+    from google.cloud.storage import Client
+    from googleapiclient import discovery
+
+    self._gcp_bucket_connection = Client()
+    self._result_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-result-test')
+
+  def fetch_results(self):
+    import dill as pickle
+
+    objects = self._result_bucket_connection.list_blobs(prefix="contexts/")
+    results_serialized = [result_object.download_as_string() for result_object in objects]
     return [pickle.loads(result_serialized) for result_serialized in results_serialized]
 
 pipeline_context = PipelineContext()

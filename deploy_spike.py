@@ -26,8 +26,7 @@ def wait_for_job(deployment):
 
 job = Job(pipe)
 job_name = str(uuid.uuid4())
-save_job(job)
-deployment = GCPJobDeployment(job_name)
+deployment = GCPJobDeployment(job_name, job)
 deployment.deploy()
 wait_for_job(deployment)
 result = deployment.fetch_job_results()
