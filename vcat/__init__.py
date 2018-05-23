@@ -274,6 +274,7 @@ class StageConnectorWrapper(object):
     self._stage_context = stage_context
     self._stage_piping = StagePiping(self)
     self._pipeline_context = pipeline_context
+    self._persist = False
 
   def _reset_state(self):
     self._connector._reset_state()
@@ -285,6 +286,9 @@ class StageConnectorWrapper(object):
         
   def stage(self, function, *args, **kwargs):
     return StageConnectorWrapper(self._connector.stage(self._stage_context.make_stage(function, *args, **kwargs)), self._pipeline_context, self._stage_context)
+
+  def persist(self):
+    self._persist = True
   
   def __or__(self, stage_args):
     return self._stage_piping.pipe(stage_args)
@@ -294,7 +298,9 @@ class StageConnectorWrapper(object):
     return self.run_without_provenance(**filler_kwargs)
 
   def run_without_provenance(self, **filler_kwargs):
-    return self._connector.run(self._filler_builder, **filler_kwargs)
+    result = self._connector.run(self._filler_builder, **filler_kwargs)
+    self._pipeline_context.persisted_data[self._connector.name()] = result
+    return result
 
   def grid_search(self, **hype_kwargs):
     hype_dict = {}
@@ -511,10 +517,20 @@ class PipelineContext(object):
     self.predictions = {}
     self.provenance = {}
     self.meta_data = {}
+    self.persisted_data = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
-    result_saver.save(self.file_name, {"results": self.results, "config": self.config, "provenance": self.provenance, "meta_data": self.meta_data})
+    result_saver.save(self.file_name, self._context())
+
+  def _context(self):
+    return {
+      "results": self.results, 
+      "config": self.config, 
+      "provenance": self.provenance, 
+      "meta_data": self.meta_data,
+      "persisted_data": self.persisted_data,
+    }
 
 class LocalFileSystemResultSaver(object):
   def save(self, name, results):
