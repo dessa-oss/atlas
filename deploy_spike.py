@@ -8,8 +8,10 @@ from vcat import *
 
 def print_it(self):
   print(self)
+  return self
 
 pipe = pipeline | 'wonderful' | print_it
+pipe.persist()
 
 parser = argparse.ArgumentParser(description='Bundle a job.')
 parser.add_argument('name', metavar='N', type=str, help='name of the job')
@@ -31,3 +33,7 @@ deployment.deploy()
 wait_for_job(deployment)
 result = deployment.fetch_job_results()
 print(result)
+
+# pipe.run()
+# pipeline_context = pipe._pipeline_context
+# pipeline_context.save(GCPBundledResultSaver())

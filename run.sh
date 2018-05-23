@@ -9,4 +9,6 @@ cd $BASEDIR && \
   python -m pip install -r requirements.txt && \
   python main.py && \
   deactivate && \
-  rm -rf venv
+  rm -rf venv && \
+  rm -rf /tmp/pip* && \
+  rm -rf /root/.cache/pip
