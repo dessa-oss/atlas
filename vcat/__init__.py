@@ -330,8 +330,8 @@ class StageConnectorWrapper(object):
       self._reset_state()
 
       job_name, param_set = queue.get()
-      deployer = deployer_type(job_name)
-      save_job(Job(self, **param_set))
+      job = Job(self, **param_set)
+      deployer = deployer_type(job_name, job)
       deployer.deploy()
 
       while not deployer.is_job_complete():
