@@ -1,7 +1,7 @@
-from vcat import ResultReader, GCPFetcher
+from vcat import *
 
 def main():
-  reader = ResultReader(GCPFetcher())
+  reader = ResultReader(GCPBundleFetcher())
   print(reader.as_dict())
 
 if __name__ == "__main__":
