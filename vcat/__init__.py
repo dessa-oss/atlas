@@ -302,7 +302,10 @@ class StageConnectorWrapper(object):
     self._pipeline_context.persisted_data[self._connector.name()] = result
     return result
 
-  def grid_search(self, **hype_kwargs):
+  def grid_search(self, deployer_type, **hype_kwargs):
+    import time
+    import uuid
+
     hype_dict = {}
 
     for key, val in hype_kwargs.iteritems():
@@ -313,7 +316,19 @@ class StageConnectorWrapper(object):
 
     for param_set in grid_param_set_generator(hype_dict):
       self._reset_state()
-      yield Job(self, **param_set)
+      job = Job(self, **param_set)
+      deployer = deployer_type(str(uuid.uuid4()), job)
+
+      deployer.deploy()
+
+      while not deployer.is_job_complete():
+        print "Waiting for job \"" + deployer.job_name() + "\" to finish..."
+        time.sleep(5)
+
+      print "Fetching results..."
+      # results_dict = deployer.fetch_job_results()
+
+      print "Job \"" + deployer.job_name() + "\" has completed."
 
   def adaptive_search(self, deployer_type, initial_generator, generator_function):
     def extract_results(results_dict):
@@ -326,18 +341,19 @@ class StageConnectorWrapper(object):
 
     import Queue
     import time
+    import uuid
 
     queue = Queue.Queue()
 
-    for job_name, initial_params in initial_generator:
-      queue.put((job_name, initial_params))
+    for initial_params in initial_generator:
+      queue.put(initial_params)
     
     while not queue.empty():
       self._reset_state()
 
-      job_name, param_set = queue.get()
+      param_set = queue.get()
       job = Job(self, **param_set)
-      deployer = deployer_type(job_name, job)
+      deployer = deployer_type(str(uuid.uuid4()), job)
       deployer.deploy()
 
       while not deployer.is_job_complete():
@@ -349,8 +365,8 @@ class StageConnectorWrapper(object):
 
       print "Job \"" + deployer.job_name() + "\" has completed."
 
-      for new_job_name, new_params in generator_function(extract_results(results_dict)):
-        queue.put((new_job_name, new_params))
+      for new_params in generator_function(extract_results(results_dict)):
+        queue.put(new_params)
 
   def _filler_builder(self, *args, **kwargs):
     return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
