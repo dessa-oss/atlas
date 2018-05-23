@@ -1,21 +1,9 @@
-import argparse
 import uuid
-
-from google.cloud.storage import Client
-from googleapiclient import discovery
-
 from vcat import *
-
-def print_it(self):
-  print(self)
-  return self
+from spike_pipe import print_it
 
 pipe = pipeline | 'wonderful' | print_it
 pipe.persist()
-
-parser = argparse.ArgumentParser(description='Bundle a job.')
-parser.add_argument('name', metavar='N', type=str, help='name of the job')
-args = parser.parse_args()
 
 def wait_for_job(deployment):
   import time

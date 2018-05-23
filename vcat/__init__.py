@@ -512,9 +512,13 @@ class GCPJobDeployment(object):
 
   def _bundle_job(self):
     import tarfile
+    import glob
 
     with tarfile.open(self._job_archive(), "w:gz") as tar:
-      for name in [self._job_binary(), self._job_config_yaml(), "run.sh", "main.py", "requirements.txt", "vcat"]:
+      # TODO: ADD "main.py" separately
+      for name in [self._job_binary(), self._job_config_yaml(), "run.sh", "requirements.txt", "vcat"]:
+          tar.add(name, arcname=self._job_name + "/" + name)
+      for name in glob.glob('*.py'):
           tar.add(name, arcname=self._job_name + "/" + name)
 
 def gcp_deploy_job(job, job_name):
