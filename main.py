@@ -1,4 +1,4 @@
-from vcat import Job, LocalFileSystemResultSaver, GCPResultSaver
+from vcat import Job, LocalFileSystemResultSaver, GCPResultSaver, GCPBundledResultSaver
 
 import glob
 import yaml
@@ -21,6 +21,7 @@ def main():
     pipeline_context.config.update(config)
     pipeline_context.save(LocalFileSystemResultSaver())
     pipeline_context.save(GCPResultSaver())
+    pipeline_context.save(GCPBundledResultSaver())
 
 if __name__ == "__main__":
   main()
