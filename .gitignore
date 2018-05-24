@@ -6,3 +6,7 @@ venv
 **/*.bin
 **/*.config.yaml
 **/*.tgz
+vcat_sdk/build
+vcat_sdk/dist
+vcat_sdk/vcat.egg-info
+vcat_sdk/src/vcat.egg-info
