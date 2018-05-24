@@ -14,6 +14,6 @@ status=$?
 deactivate
 rm -rf venv && \
   rm -rf /tmp/pip* && \
-  rm -rf /root/.cache/pip
+  rm -rf $HOME/.cache/pip
 
 exit $status

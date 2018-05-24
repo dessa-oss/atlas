@@ -20,8 +20,8 @@ def main():
     pipeline_context = job._pipeline_connector._pipeline_context
     pipeline_context.config.update(config)
     pipeline_context.save(LocalFileSystemResultSaver())
-    pipeline_context.save(GCPResultSaver())
-    pipeline_context.save(GCPBundledResultSaver())
+    # pipeline_context.save(GCPResultSaver())
+    # pipeline_context.save(GCPBundledResultSaver())
 
 if __name__ == "__main__":
   main()

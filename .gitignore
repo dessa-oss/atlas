@@ -3,3 +3,6 @@
 .ipynb_checkpoints
 **/*.pyc
 venv
+**/*.bin
+**/*.config.yaml
+**/*.tgz

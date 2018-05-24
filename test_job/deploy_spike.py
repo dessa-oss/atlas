@@ -31,4 +31,4 @@ job = Job(pipe)
 job_name = "test"
 bundler = JobBundler(job_name, job)
 bundler.bundle()
-bundler.cleanup()
+# bundler.cleanup()

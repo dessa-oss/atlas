@@ -179,6 +179,7 @@ class JobBundler(object):
     self._job_name = job_name
     self._job = job
     self._module_directory = os.path.dirname(os.path.abspath(__file__))
+    self._resource_directory = self._module_directory + "/resources"
 
   def job_name(self):
     return self._job_name
@@ -195,7 +196,7 @@ class JobBundler(object):
     os.remove(self._job_config_yaml())
 
   def job_archive(self):
-    return self._job_name + ".tgz"
+    return "../" + self._job_name + ".tgz"
   
   def _job_binary(self):
     return self._job_name + ".bin"
@@ -224,11 +225,15 @@ class JobBundler(object):
     # os.chdir(self._module_directory)
 
     with tarfile.open(self.job_archive(), "w:gz") as tar:
-      # TODO: ADD "main.py" separately
-      for name in [self._job_binary(), self._job_config_yaml(), "run.sh", "requirements.txt", "vcat"]:
-          tar.add(name, arcname=self._job_name + "/" + name)
-      for name in glob.glob('*.py'):
-          tar.add(name, arcname=self._job_name + "/" + name)
+      tar.add(".", arcname=self._job_name)
+
+      os.chdir(self._module_directory)
+      tar.add(".", arcname=self._job_name + "/vcat")
+
+      os.chdir(self._resource_directory)
+      tar.add(".", arcname=self._job_name)
+
+    os.chdir(current_directory)
 
 # PRETTY (BUT NOT ERIC)
 class HyperparameterArgumentFill(object):
