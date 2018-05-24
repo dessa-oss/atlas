@@ -171,10 +171,11 @@ class StagePiping(object):
       return self._pipe.stage(function)
 
 class JobBundler(object):
-  def __init__(self, job_name, job):
+  def __init__(self, job_name, config, job):
     import os
 
-    self.config = {'job_name': job_name}
+    self._config = config
+    self._config['job_name'] = job_name
 
     self._job_name = job_name
     self._job = job
@@ -214,7 +215,7 @@ class JobBundler(object):
   def _save_config(self):
     import yaml
     with open(self._job_config_yaml(), 'w+') as file:
-      yaml.dump(self.config, file)
+      yaml.dump(self._config, file)
 
   def _bundle_job(self):
     import tarfile
@@ -488,7 +489,7 @@ class GCPJobDeployment(object):
     from google.cloud.storage import Client
     from googleapiclient import discovery
 
-    self.config = {'job_name': job_name}
+    self.config = {}
 
     self._gcp_bucket_connection = Client()
     self._code_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
@@ -498,22 +499,19 @@ class GCPJobDeployment(object):
     self._job = job
     self._job_result_object = self._result_bucket_connection.blob(self._job_archive())
 
+    self._job_bundler = JobBundler(self._job_name, self.config, self._job)
+
   def job_name(self):
     return self._job_name
 
   def deploy(self):
-    self._save_job()
-    self._save_config()
+    self._job_bundler.bundle()
 
-    self._bundle_job()
-
-    job_object = self._code_bucket_connection.blob(self._job_archive())
+    job_object = self._code_bucket_connection.blob(self._job_bundler.job_archive())
     with open(self._job_archive(), 'rb') as file:
       job_object.upload_from_file(file)
 
-    self._remove_job_archive()
-    self._remove_job_binary()
-    self._remove_config()
+    self._job_bundler.cleanup()
 
   def is_job_complete(self):
     return self._job_result_object.exists()
@@ -538,53 +536,12 @@ class GCPJobDeployment(object):
 
     return result
 
-  def _job_archive(self):
-    return self._job_name + ".tgz"
-  
-  def _job_binary(self):
-    return self._job_name + ".bin"
-
   def _job_results_archive(self):
     return self._job_name + ".results.tgz"
-  
-  def _job_config_yaml(self):
-    return self._job_name + ".config.yaml"
-
-  def _remove_job_archive(self):
-    import os
-    os.remove(self._job_archive())
-
-  def _remove_job_binary(self):
-    import os
-    os.remove(self._job_binary())
 
   def _remove_job_results_archive(self):
     import os
     os.remove(self._job_results_archive())
-
-  def _remove_config(self):
-    import os
-    os.remove(self._job_config_yaml())
-
-  def _save_job(self):
-    with open(self._job_binary(), "w+b") as file:
-      file.write(self._job.serialize())
-
-  def _save_config(self):
-    import yaml
-    with open(self._job_config_yaml(), 'w+') as file:
-      yaml.dump(self.config, file)
-
-  def _bundle_job(self):
-    import tarfile
-    import glob
-
-    with tarfile.open(self._job_archive(), "w:gz") as tar:
-      # TODO: ADD "main.py" separately
-      for name in [self._job_binary(), self._job_config_yaml(), "run.sh", "requirements.txt", "vcat"]:
-          tar.add(name, arcname=self._job_name + "/" + name)
-      for name in glob.glob('*.py'):
-          tar.add(name, arcname=self._job_name + "/" + name)
 
 def gcp_deploy_job(job, job_name):
   deployment = GCPJobDeployment(job_name, job)
