@@ -591,6 +591,15 @@ def gcp_deploy_job(job, job_name):
   deployment.deploy()
   return deployment
 
+def wait_for_deployment_to_complete(deployment):
+  import time
+
+  while not deployment.is_job_complete():
+    print("waiting for job `" + deployment.job_name() + "` to finish")
+    time.sleep(6)
+  
+  print("job `" + deployment.job_name() + "`completed")
+
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
 
