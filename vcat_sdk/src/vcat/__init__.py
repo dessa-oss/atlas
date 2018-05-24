@@ -489,7 +489,7 @@ class GCPJobDeployment(object):
     from google.cloud.storage import Client
     from googleapiclient import discovery
 
-    self.config = {}
+    self._config = {}
 
     self._gcp_bucket_connection = Client()
     self._code_bucket_connection = self._gcp_bucket_connection.get_bucket('tango-code-test')
@@ -499,7 +499,10 @@ class GCPJobDeployment(object):
     self._job = job
     self._job_result_object = self._result_bucket_connection.blob(self._job_archive())
 
-    self._job_bundler = JobBundler(self._job_name, self.config, self._job)
+    self._job_bundler = JobBundler(self._job_name, self._config, self._job)
+
+  def config(self):
+    return self._config
 
   def job_name(self):
     return self._job_name
