@@ -2,3 +2,4 @@
 *.json
 .ipynb_checkpoints
 **/*.pyc
+venv
