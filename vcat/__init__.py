@@ -707,73 +707,75 @@ class ResultReader(object):
 
       meta_data = job_result["meta_data"]
 
-      for stage_set in job_result["provenance"].values():
-        for stage_id, stage_info in stage_set.iteritems():
-          column_headers = list(main_headers)
-          
-          start_time = None
-          end_time = None
-          elapsed_time = None
+      for entry_key, stage_set in job_result["provenance"].iteritems():
+        if entry_key != "global":
+          for stage_id, stage_info in stage_set.iteritems():
+            stage_name = stage_info["function_name"]
+            column_headers = list(main_headers)
+            
+            start_time = None
+            end_time = None
+            elapsed_time = None
 
-          try:
-            meta_data_entry = meta_data[stage_id]
+            try:
+              meta_data_entry = meta_data[stage_id]
 
-            start_time = datetime.datetime.fromtimestamp(meta_data_entry["start_time"])
-            end_time = datetime.datetime.fromtimestamp(meta_data_entry["end_time"])
-            elapsed_time = meta_data_entry["delta_time"]
-          except:
-            pass
+              start_time = datetime.datetime.fromtimestamp(meta_data_entry["start_time"])
+              end_time = datetime.datetime.fromtimestamp(meta_data_entry["end_time"])
+              elapsed_time = meta_data_entry["delta_time"]
+            except:
+              pass
 
-          stage_name = stage_info["function_name"]
-          parent_stage_ids = stage_info["parents"]
+            stage_name = stage_info.get("function_name", None)
+            parent_stage_ids = stage_info["parents"]
 
-          args = []
-          kwargs = {}
-          row_data = [job_id, job_status, stage_id, parent_stage_ids, stage_name, args, kwargs, start_time, end_time, elapsed_time]
-          
-          for arg in stage_info["args"]:
-            if isinstance(arg, dict):
-              try:
-                arg_stage_id = arg["stage_id"]
-                args.append(arg_stage_id)
+            args = []
+            kwargs = {}
+            row_data = [job_id, job_status, stage_id, parent_stage_ids, stage_name, args, kwargs, start_time, end_time, elapsed_time]
+            
+            for arg in stage_info["args"]:
+              if isinstance(arg, dict):
+                try:
+                  arg_stage_id = arg["stage_id"]
+                  args.append(arg_stage_id)
 
-                parent_stage_ids.append(arg_stage_id)
-              except:
-                hyperparameter_name = arg.get("hyperparameter_name", None)
-                hyperparameter_value = arg["hyperparameter_value"]
+                  parent_stage_ids.append(arg_stage_id)
+                except:
+                  hyperparameter_name = arg.get("hyperparameter_name", None)
+                  hyperparameter_value = arg["hyperparameter_value"]
 
-                if hyperparameter_name:
-                  args.append(hyperparameter_name)
+                  if hyperparameter_name:
+                    args.append(hyperparameter_name)
 
-                  column_headers.append(hyperparameter_name)
-                  row_data.append(hyperparameter_value)
-                else:
-                  args.append(hyperparameter_value)
-            else:
-              args.append(arg)
+                    column_headers.append(hyperparameter_name)
+                    row_data.append(hyperparameter_value)
+                  else:
+                    args.append(hyperparameter_value)
+              else:
+                args.append(arg)
 
-          for arg_name, arg_val in stage_info["kwargs"].iteritems():
-            if isinstance(arg_val, dict):
-              try:
-                arg_val_stage_id = arg_val["stage_id"]
-                kwargs.update({arg_name: arg_val_stage_id})
+            for arg_name, arg_val in stage_info["kwargs"].iteritems():
+              if isinstance(arg_val, dict):
+                try:
+                  arg_val_stage_id = arg_val["stage_id"]
+                  kwargs.update({arg_name: arg_val_stage_id})
 
-                parent_stage_ids.append(arg_val_stage_id)
-              except:
-                hyperparameter_name = arg_val.get("hyperparameter_name", None)
-                hyperparameter_value = arg_val["hyperparameter_value"]
+                  parent_stage_ids.append(arg_val_stage_id)
+                except:
+                  hyperparameter_name = arg_val.get("hyperparameter_name", None)
+                  hyperparameter_value = arg_val["hyperparameter_value"]
 
-                if hyperparameter_name:
-                  kwargs.update({arg_name: hyperparameter_name})
+                  if hyperparameter_name:
+                    kwargs.update({arg_name: hyperparameter_name})
 
-                  column_headers.append(hyperparameter_name)
-                  row_data.append(hyperparameter_value)
-                else:
-                  kwargs.append({arg_name: hyperparameter_value})
-            else:
-              kwargs.update({arg_name: arg_val})
+                    column_headers.append(hyperparameter_name)
+                    row_data.append(hyperparameter_value)
+                  else:
+                    kwargs.append({arg_name: hyperparameter_value})
+              else:
+                kwargs.update({arg_name: arg_val})
 
-          all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+            all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
     output_dataframe = pd.concat(all_job_information, ignore_index=True)
     fixed_headers = restructure_headers(list(output_dataframe), main_headers)
@@ -792,10 +794,11 @@ class ResultReader(object):
       structured_results = job_result["results"]
       stage_ids_with_names = {}
 
-      for stage_set in job_result["provenance"].values():
-        for stage_id, stage_info in stage_set.iteritems():
-          stage_name = stage_info["function_name"]
-          stage_ids_with_names.update({stage_id: stage_name})
+      for entry_key, stage_set in job_result["provenance"].iteritems():
+        if entry_key != "global":
+          for stage_id, stage_info in stage_set.iteritems():
+            stage_name = stage_info["function_name"]
+            stage_ids_with_names.update({stage_id: stage_name})
 
       for stage_id, stage_name in stage_ids_with_names.iteritems():
         column_headers = list(main_headers)
