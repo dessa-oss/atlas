@@ -196,8 +196,11 @@ class JobBundler(object):
     os.remove(self._job_binary())
     os.remove(self._job_config_yaml())
 
+  def job_archive_name(self):
+    return self._job_name + ".tgz"
+
   def job_archive(self):
-    return "../" + self._job_name + ".tgz"
+    return "../" + self.job_archive_name()
   
   def _job_binary(self):
     return self._job_name + ".bin"
@@ -497,9 +500,8 @@ class GCPJobDeployment(object):
 
     self._job_name = job_name
     self._job = job
-    self._job_result_object = self._result_bucket_connection.blob(self._job_archive())
-
     self._job_bundler = JobBundler(self._job_name, self._config, self._job)
+    self._job_result_object = self._result_bucket_connection.blob(self._job_archive_name())
 
   def config(self):
     return self._config
@@ -509,12 +511,10 @@ class GCPJobDeployment(object):
 
   def deploy(self):
     self._job_bundler.bundle()
-
-    job_object = self._code_bucket_connection.blob(self._job_bundler.job_archive())
-    with open(self._job_archive(), 'rb') as file:
-      job_object.upload_from_file(file)
-
-    self._job_bundler.cleanup()
+    try:
+      self._run()
+    finally:
+      self._job_bundler.cleanup()
 
   def is_job_complete(self):
     return self._job_result_object.exists()
@@ -539,6 +539,17 @@ class GCPJobDeployment(object):
 
     return result
 
+  def _run(self):
+    job_object = self._code_bucket_connection.blob(self._job_archive_name())
+    with open(self._job_archive(), 'rb') as file:
+      job_object.upload_from_file(file)
+
+  def _job_archive_name(self):
+    return self._job_bundler.job_archive_name()
+
+  def _job_archive(self):
+    return self._job_bundler.job_archive()
+
   def _job_results_archive(self):
     return self._job_name + ".results.tgz"
 
@@ -562,8 +573,10 @@ class LocalShellJobDeployment(object):
 
   def deploy(self):
     self._job_bundler.bundle()
-    self._run()
-    self._job_bundler.cleanup()
+    try:
+      self._run()
+    finally:
+      self._job_bundler.cleanup()
 
   def is_job_complete(self):
     return True
@@ -612,6 +625,7 @@ class PipelineContext(object):
     self.provenance = {}
     self.meta_data = {}
     self.persisted_data = {}
+    self.error = None
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
@@ -624,6 +638,7 @@ class PipelineContext(object):
       "provenance": self.provenance, 
       "meta_data": self.meta_data,
       "persisted_data": self.persisted_data,
+      "error": self.error,
     }
 
 class LocalFileSystemResultSaver(object):
