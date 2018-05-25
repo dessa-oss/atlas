@@ -22,13 +22,9 @@ def main():
   try:
     job.run()
   except Exception as error:
-    import sys, traceback
+    import sys
     exception_info = sys.exc_info()
-    pipeline_context.error = {
-      "type": exception_info[0],
-      "exception": exception_info[1],
-      "traceback": traceback.extract_tb(exception_info[2])
-    }
+    pipeline_context.error = pipeline_context.nice_error(exception_info)
 
   pipeline_context.save(LocalFileSystemResultSaver())
   pipeline_context.save(GCPResultSaver())

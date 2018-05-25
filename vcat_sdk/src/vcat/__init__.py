@@ -367,7 +367,12 @@ class StageConnectorWrapper(object):
     return self.run_without_provenance(**filler_kwargs)
 
   def run_without_provenance(self, **filler_kwargs):
-    result = self._connector.run(self._filler_builder, **filler_kwargs)
+    try:
+      result = self._connector.run(self._filler_builder, **filler_kwargs)
+    except:
+      import sys
+      self._pipeline_context.pipeline_errors[self._connector.name()] = self._pipeline_context.nice_error(sys.exc_info())
+      raise
     self._pipeline_context.persisted_data[self._connector.name()] = result
     return result
 
@@ -626,10 +631,19 @@ class PipelineContext(object):
     self.meta_data = {}
     self.persisted_data = {}
     self.error = None
+    self.pipeline_errors = {}
     self.file_name = str(uuid.uuid4()) + ".json"
 
   def save(self, result_saver):
     result_saver.save(self.file_name, self._context())
+
+  def nice_error(self, exception_info):
+    import traceback
+    return {
+      "type": exception_info[0],
+      "exception": exception_info[1],
+      "traceback": traceback.extract_tb(exception_info[2])
+    }
 
   def _context(self):
     return {
@@ -639,6 +653,7 @@ class PipelineContext(object):
       "meta_data": self.meta_data,
       "persisted_data": self.persisted_data,
       "error": self.error,
+      "pipeline_errors": self.pipeline_errors,
     }
 
 class LocalFileSystemResultSaver(object):
