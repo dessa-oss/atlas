@@ -2,6 +2,8 @@ from vcat import Job, LocalFileSystemResultSaver, GCPResultSaver, GCPBundledResu
 
 import glob
 import yaml
+import time
+import sys
 
 def main():
   config = {}
@@ -19,12 +21,28 @@ def main():
   pipeline_context = job._pipeline_connector._pipeline_context
   pipeline_context.config.update(config)
 
+  global_meta_data = {}
+  pipeline_context.meta_data["global"] = global_meta_data
+  
+  global_provenance = {}
+  pipeline_context.provenance["global"] = global_provenance
+
+  global_meta_data["start_time"] = time.time()
   try:
     job.run()
   except Exception as error:
-    import sys
     exception_info = sys.exc_info()
     pipeline_context.error = pipeline_context.nice_error(exception_info)
+  global_meta_data["end_time"] = time.time()
+  global_meta_data["delta_time"] = global_meta_data["end_time"] - global_meta_data["start_time"]
+
+  global_meta_data["python_version"] = {
+    "major": sys.version_info.major,
+    "minor": sys.version_info.minor,
+    "micro": sys.version_info.micro,
+    "releaselevel": sys.version_info.releaselevel,
+    "serial": sys.version_info.serial,
+  }
 
   pipeline_context.save(LocalFileSystemResultSaver())
   pipeline_context.save(GCPResultSaver())
