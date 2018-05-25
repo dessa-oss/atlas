@@ -663,6 +663,13 @@ class GCPBundledResultSaver(object):
   def clear(self):
     pass
 
+def restructure_headers(all_headers, first_headers):
+  def diff(list_0, list_1):
+    set_1 = set(list_1)
+    return [item for item in list_0 if item not in set_1]
+
+  return first_headers + diff(all_headers, first_headers)
+
 class ResultReader(object):
   def __init__(self, result_fetcher):
     self.results = result_fetcher.fetch_results()
@@ -679,30 +686,50 @@ class ResultReader(object):
     return json.dumps(self.results)
 
   def get_job_information(self):
+    import datetime
     import pandas as pd
 
     all_job_information = []
 
+    main_headers = ["Job ID", "Job Status", "Stage ID", "Parent Stage IDs", "Stage Name", "Args", "Kwargs", "Start Time", "End Time", "Elapsed Time"]
+
     for job_result in self.results:
       job_id = job_result["config"]["job_name"]
+      job_status = None
+
+      try:
+        if job_result["error"]:
+          job_status = "failed"
+        else:
+          job_status = "succeeded"
+      except:
+        job_status = "succeeded"
 
       meta_data = job_result["meta_data"]
 
       for stage_set in job_result["provenance"].values():
         for stage_id, stage_info in stage_set.iteritems():
-          column_headers = ["Job ID", "Stage ID", "Parent Stage IDs", "Stage Name", "Args", "Kwargs", "Start Time", "End Time", "Elapsed Time"]
-          meta_data_entry = meta_data[stage_id]
+          column_headers = list(main_headers)
+          
+          start_time = None
+          end_time = None
+          elapsed_time = None
 
-          start_time = meta_data_entry["start_time"]
-          end_time = meta_data_entry["end_time"]
-          elapsed_time = meta_data_entry["delta_time"]
+          try:
+            meta_data_entry = meta_data[stage_id]
+
+            start_time = datetime.datetime.fromtimestamp(meta_data_entry["start_time"])
+            end_time = datetime.datetime.fromtimestamp(meta_data_entry["end_time"])
+            elapsed_time = meta_data_entry["delta_time"]
+          except:
+            pass
 
           stage_name = stage_info["function_name"]
           parent_stage_ids = stage_info["parents"]
 
           args = []
           kwargs = {}
-          row_data = [job_id, stage_id, parent_stage_ids, stage_name, args, kwargs, start_time, end_time, elapsed_time]
+          row_data = [job_id, job_status, stage_id, parent_stage_ids, stage_name, args, kwargs, start_time, end_time, elapsed_time]
           
           for arg in stage_info["args"]:
             if isinstance(arg, dict):
@@ -748,12 +775,15 @@ class ResultReader(object):
 
           all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
-    return pd.concat(all_job_information, ignore_index=True)
+    output_dataframe = pd.concat(all_job_information, ignore_index=True)
+    fixed_headers = restructure_headers(list(output_dataframe), main_headers)
+    return output_dataframe[fixed_headers]
 
   def get_results(self):
     import pandas as pd
 
     all_job_information = []
+    main_headers = ["Job ID", "Stage ID", "Stage Name", "Has Unstructured Result?"]
 
     for job_result in self.results:
       job_id = job_result["config"]["job_name"]
@@ -768,7 +798,7 @@ class ResultReader(object):
           stage_ids_with_names.update({stage_id: stage_name})
 
       for stage_id, stage_name in stage_ids_with_names.iteritems():
-        column_headers = ["Job ID", "Stage ID", "Stage Name", "Has Unstructured Result?"]
+        column_headers = list(main_headers)
         has_unstructured_result = None
 
         try:
@@ -787,7 +817,9 @@ class ResultReader(object):
 
         all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
-    return pd.concat(all_job_information, ignore_index=True)
+    output_dataframe = pd.concat(all_job_information, ignore_index=True)
+    fixed_headers = restructure_headers(list(output_dataframe), main_headers)
+    return output_dataframe[fixed_headers]
 
   def get_unstructured_results(self, stage_ids):
     def get_unstructured_result(stage_id):
