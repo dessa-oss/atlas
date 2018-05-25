@@ -508,6 +508,8 @@ class GCPJobDeployment(object):
     self._job_bundler = JobBundler(self._job_name, self._config, self._job)
     self._job_result_object = self._result_bucket_connection.blob(self._job_archive_name())
 
+    self._job_results = None
+
   def config(self):
     return self._config
 
@@ -529,20 +531,22 @@ class GCPJobDeployment(object):
     import tarfile
     import pickle
 
-    with open(self._job_results_archive(), 'w+b') as file:
-      self._job_result_object.download_to_file(file)
+    if self._job_results is None:
+      with open(self._job_results_archive(), 'w+b') as file:
+        self._job_result_object.download_to_file(file)
 
-    result = None
-    with tarfile.open(self._job_results_archive(), "r:gz") as tar:
-      for tarinfo in tar:
-          if os.path.splitext(tarinfo.name)[1] == ".pkl":
-              file = tar.extractfile(tarinfo)
-              result = pickle.load(file)
-              file.close()
+      result = None
+      with tarfile.open(self._job_results_archive(), "r:gz") as tar:
+        for tarinfo in tar:
+            if os.path.splitext(tarinfo.name)[1] == ".pkl":
+                file = tar.extractfile(tarinfo)
+                result = pickle.load(file)
+                file.close()
 
-    self._remove_job_results_archive()
+      self._remove_job_results_archive()
+      self._job_results = result
 
-    return result
+    return self._job_results
 
   def _run(self):
     job_object = self._code_bucket_connection.blob(self._job_archive_name())
@@ -617,6 +621,12 @@ def wait_for_deployment_to_complete(deployment):
     time.sleep(6)
   
   print("job `" + deployment.job_name() + "`completed")
+
+def raise_error_if_job_failed(deployment):
+  if deployment.is_job_complete():
+    results = deployment.fetch_job_results()
+    if results and results["error"]:
+      raise results["error"]["type"], results["error"]["exception"], None
 
 # PRETTY (BUT NOT ERIC)
 class PipelineContext(object):
