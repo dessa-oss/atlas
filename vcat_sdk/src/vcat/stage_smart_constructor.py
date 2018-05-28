@@ -1,7 +1,7 @@
 from vcat.stage import Stage
 
 
-class StageContext(object):
+class StageSmartConstructor(object):
 
     def __init__(self, pipeline_context):
         self._pipeline_context = pipeline_context
