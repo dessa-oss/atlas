@@ -23,6 +23,14 @@ class Provenance(object):
         self.module_versions = {}
         self.pip_freeze = None
 
+    def fill_config(self):
+        import yaml
+
+        file_list = self.job_bundle.get_files('*.config.yaml')
+        for bundled_file in file_list:
+            with bundled_file.open('r') as file:
+                self.config.update(yaml.load(file))        
+
     def fill_environment(self):
         for key, value in os.environ.items():
             self.environment[key] = value
