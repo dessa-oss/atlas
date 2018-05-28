@@ -1,4 +1,4 @@
-from vcat import Job, LocalFileSystemResultSaver, GCPResultSaver, GCPBundledResultSaver
+from vcat import Job, LocalFileSystemResultSaver
 
 import glob
 import yaml
@@ -36,7 +36,7 @@ def main():
   global_meta_data["end_time"] = time.time()
   global_meta_data["delta_time"] = global_meta_data["end_time"] - global_meta_data["start_time"]
 
-  global_meta_data["python_version"] = {
+  global_provenance["python_version"] = {
     "major": sys.version_info.major,
     "minor": sys.version_info.minor,
     "micro": sys.version_info.micro,
@@ -45,8 +45,9 @@ def main():
   }
 
   pipeline_context.save(LocalFileSystemResultSaver())
-  pipeline_context.save(GCPResultSaver())
-  pipeline_context.save(GCPBundledResultSaver())
+  if "result_savers" in pipeline_context.config:
+    for result_saver_type in pipeline_context.config["result_savers"]:
+      pipeline_context.save(result_saver_type())
 
   if pipeline_context.error is not None:
     raise exception_info[0], exception_info[1], exception_info[2]
