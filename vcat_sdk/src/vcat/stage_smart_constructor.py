@@ -21,11 +21,11 @@ class StageSmartConstructor(object):
             end_time = time.time()
             if isinstance(stage_output, tuple):
                 return_value, result = stage_output
-                self._stage_context._stage_log = result
+                self._stage_context.stage_log = result
             else:
                 return_value = stage_output
-            self._stage_context._start_time = start_time
-            self._stage_context._end_time = end_time
-            self._stage_context._delta_time = end_time - start_time
+            self._stage_context.start_time = start_time
+            self._stage_context.end_time = end_time
+            self._stage_context.delta_time = end_time - start_time
             return return_value
         return wrapped

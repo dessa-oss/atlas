@@ -16,7 +16,7 @@ class PipelineContext(object):
         self.stage_contexts = {}
 
     def add_stage_context(self, stage_context):
-        self.stage_contexts[stage_context._uuid] = stage_context
+        self.stage_contexts[stage_context.uuid] = stage_context
 
     def fill_provenance(self):
         self.provenance.fill_all()
