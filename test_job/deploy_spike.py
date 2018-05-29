@@ -3,17 +3,20 @@ import uuid
 from spike_pipe import print_it, destroy_it
 from vcat import *
 
-pipe = pipeline | 'wonderful' | print_it # | destroy_it
+pipe = pipeline | 'wonderful' | print_it  # | destroy_it
 pipe.persist()
 
 job = Job(pipe)
 job_name = str(uuid.uuid4())
-# deployment = LocalShellJobDeployment(job_name, job)
-deployment = GCPJobDeployment(job_name, job)
-deployment.config()["result_savers"] = [
-  GCPResultSaver,
-  GCPBundledResultSaver
-]
+
+bundle_name = str(uuid.uuid4())
+job_source_bundle = JobSourceBundle(bundle_name, '../')
+deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+# deployment = GCPJobDeployment(job_name, job, job_source_bundle)
+# deployment.config()["result_savers"] = [
+#     GCPResultSaver,
+#     GCPBundledResultSaver
+# ]
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
 # raise_error_if_job_failed(deployment)
