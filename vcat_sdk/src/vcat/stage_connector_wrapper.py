@@ -33,7 +33,7 @@ class StageConnectorWrapper(object):
         stage_smart_constructor = StageSmartConstructor(new_context)
 
         if isinstance(function, ContextAware):
-            function.set_context(new_context)
+            function._set_context(new_context)
 
         new_stage = stage_smart_constructor.make_stage(self._stage_context, function, *args, **kwargs)
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)

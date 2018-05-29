@@ -4,7 +4,7 @@ class ContextAware(object):
         self.__name__ = self._function.__name__
         self._stage_context = None
 
-    def set_context(self, stage_context):
+    def _set_context(self, stage_context):
         self._stage_context = stage_context
         stage_context.is_context_aware = True
 

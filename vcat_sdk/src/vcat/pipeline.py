@@ -17,7 +17,7 @@ class Pipeline(object):
         stage_smart_constructor = StageSmartConstructor(new_context)
 
         if isinstance(function, ContextAware):
-            function.set_context(new_context)
+            function._set_context(new_context)
 
         current_stage = stage_smart_constructor.make_stage(
             new_context, function, *args, **kwargs)
