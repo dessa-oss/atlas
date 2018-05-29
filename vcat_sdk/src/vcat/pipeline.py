@@ -4,6 +4,7 @@ from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_connector_wrapper import StageConnectorWrapper
 from vcat.stage_context import StageContext
 
+
 class Pipeline(object):
 
     def __init__(self, pipeline_context):
@@ -15,7 +16,7 @@ class Pipeline(object):
         new_context = StageContext()
         stage_smart_constructor = StageSmartConstructor(new_context)
         current_stage = stage_smart_constructor.make_stage(
-            function, *args, **kwargs)
+            new_context, function, *args, **kwargs)
         return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context, new_context)
 
     def join(self, upstream_connector_wrappers, function, *args, **kwargs):
@@ -25,7 +26,7 @@ class Pipeline(object):
         new_context = StageContext()
         stage_smart_constructor = StageSmartConstructor(new_context)
         current_stage = stage_smart_constructor.make_stage(
-            function, *args, **kwargs)
+            new_context, function, *args, **kwargs)
         return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self.pipeline_context, new_context)
 
     def __or__(self, stage_args):

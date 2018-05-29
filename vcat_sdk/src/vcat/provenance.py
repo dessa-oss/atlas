@@ -16,6 +16,9 @@ class Provenance(object):
         self.pip_freeze = None
         self.stage_provenance = {}
 
+    def save_to_archive(self, archiver):
+        pass
+
     def fill_all(self):
         self.fill_config()
         self.fill_environment()

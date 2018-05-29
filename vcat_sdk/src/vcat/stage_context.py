@@ -20,8 +20,9 @@ class StageContext(object):
             "traceback": traceback.extract_tb(exception_info[2])
         }
 
-    def save_model(self, model):
-        self._model_data = model
+    def save_to_archive(self, archiver):
+        archiver.append_stage_log(self.uuid, self.stage_log)
+        archiver.append_stage_persisted_data(self.uuid, self.stage_output)
 
     def _context(self):
         return {

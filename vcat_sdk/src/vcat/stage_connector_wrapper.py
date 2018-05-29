@@ -5,6 +5,7 @@ from vcat.stage_connector import StageConnector
 from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_context import StageContext
 
+
 class StageConnectorWrapper(object):
 
     def __init__(self, connector, pipeline_context, stage_context):
@@ -14,7 +15,7 @@ class StageConnectorWrapper(object):
 
         self._stage_context.uuid = self._connector.current_stage.uuid
         self._pipeline_context.add_stage_context(self._stage_context)
-        
+
         self._stage_piping = StagePiping(self)
         self._persist = False
 
@@ -30,7 +31,8 @@ class StageConnectorWrapper(object):
     def stage(self, function, *args, **kwargs):
         new_context = StageContext()
         stage_smart_constructor = StageSmartConstructor(new_context)
-        return StageConnectorWrapper(self._connector.stage(stage_smart_constructor.make_stage(function, *args, **kwargs)), self._pipeline_context, new_context)
+        new_stage = stage_smart_constructor.make_stage(self._stage_context, function, *args, **kwargs)
+        return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 
     def persist(self):
         self._persist = True
@@ -50,7 +52,10 @@ class StageConnectorWrapper(object):
             import sys
             self._stage_context.add_error_information(sys.exc_info())
             raise
-        self._stage_context.stage_output = result
+
+        if self._persist:
+            self._stage_context.stage_output = result
+
         return result
 
     def _grid_param_set_generator(self, dict_of_hyper_params):

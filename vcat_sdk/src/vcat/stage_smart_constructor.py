@@ -6,10 +6,11 @@ class StageSmartConstructor(object):
     def __init__(self, stage_context):
         self._stage_context = stage_context
 
-    def make_stage(self, function, *args, **kwargs):
+    def make_stage(self, stage_context, function, *args, **kwargs):
         import uuid
         stage_uuid = uuid.uuid4()
         stage_uuid = str(stage_uuid)
+        stage_context.uuid = stage_uuid
         return Stage(stage_uuid, self._wrapped_function(stage_uuid, function), function, *args, **kwargs)
 
     def _wrapped_function(self, stage_uuid, function):
