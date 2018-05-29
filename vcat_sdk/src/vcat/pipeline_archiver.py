@@ -1,6 +1,6 @@
 class PipelineArchiver(object):
 
-    def __init__(self, pipeline_name, archive_listing, stage_log_archive, persisted_data_archive, provenance_archive, job_source_archive, artifact_archive, miscellanous_archive):
+    def __init__(self, pipeline_name, archive_listing, stage_log_archive, persisted_data_archive, provenance_archive, job_source_archive, artifact_archive, miscellaneous_archive):
         self._archive_listing = archive_listing
         self._pipeline_name = pipeline_name
         self._stage_log_archive = stage_log_archive
@@ -8,7 +8,7 @@ class PipelineArchiver(object):
         self._provenance_archive = provenance_archive
         self._job_source_archive = job_source_archive
         self._artifact_archive = artifact_archive
-        self._miscellanous_archive = miscellanous_archive
+        self._miscellaneous_archive = miscellaneous_archive
 
     def append_stage_log(self, stage_uuid_string, log):
         if log is not None:
@@ -36,9 +36,12 @@ class PipelineArchiver(object):
         if artifact is not None:
             return self._artifact_archive.append('artifacts/' + name, artifact, self._pipeline_name)
 
-    def append_miscellanous(self, name, data):
+    def append_stage_miscellaneous(self, stage_uuid_string, name, data):
+        return self.append_miscellaneous('stages/' + stage_uuid_string + '/' + name, data)
+
+    def append_miscellaneous(self, name, data):
         if data is not None:
-            return self._miscellanous_archive.append('miscellaneous/' + name, data, self._pipeline_name)
+            return self._miscellaneous_archive.append('miscellaneous/' + name, data, self._pipeline_name)
 
     def append_tracker(self):
         return self._archive_listing.track_pipeline(self._pipeline_name)
@@ -64,5 +67,8 @@ class PipelineArchiver(object):
     def fetch_artifact(self, name):
         return self._artifact_archive.fetch('artifacts/' + name, self._pipeline_name)
 
-    def fetch_miscellanous(self, name):
-        return self._miscellanous_archive.fetch('miscellaneous/' + name, self._pipeline_name)
+    def fetch_stage_miscellaneous(self, stage_uuid_string, name):
+        return self.fetch_miscellaneous('stages/' + stage_uuid_string + '/' + name)
+
+    def fetch_miscellaneous(self, name):
+        return self._miscellaneous_archive.fetch('miscellaneous/' + name, self._pipeline_name)
