@@ -23,6 +23,8 @@ def main():
   pipeline_context = job._pipeline_connector._pipeline_context
   pipeline_context.provenance.config.update(config)
   config = pipeline_context.provenance.config
+
+  pipeline_context.provenance.job_source_bundle = job_source_bundle
   
   global_provenance = {}
   pipeline_context.provenance.stage_provenance["global"] = global_provenance
