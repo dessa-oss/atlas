@@ -61,7 +61,8 @@ class JobBundler(object):
         # os.chdir(self._module_directory)
 
         with tarfile.open(self.job_archive(), "w:gz") as tar:
-            tar.add(self._job_source_bundle.job_archive(), arcname=self._job_name + '/job.tgz')
+            tar.add(self._job_source_bundle.job_archive(),
+                    arcname=self._job_name + '/job.tgz')
 
             os.chdir(self._module_directory)
             tar.add(".", arcname=self._job_name + '/vcat')

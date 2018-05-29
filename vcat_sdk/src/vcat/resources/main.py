@@ -7,7 +7,6 @@ import sys
 
 def main():
   job_source_bundle = JobSourceBundle('job', './')
-  job_source_bundle.unbundle()
 
   config = {}
   file_list = glob.glob('*.config.yaml')
