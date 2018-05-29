@@ -14,7 +14,7 @@ class PipelineContext(object):
         self.stage_contexts = {}
 
     def add_stage_context(self, stage_context):
-        self.stage_contexts[stage_context._uuid] = stage_context
+        self.stage_contexts[stage_context.uuid] = stage_context
 
     def save(self, result_saver):
         result_saver.save(self.file_name, self._context())

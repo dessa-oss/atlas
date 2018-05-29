@@ -2,19 +2,22 @@ from vcat.stage_piping import StagePiping
 from vcat.job import Job
 from vcat.successive_argument_filler import SuccessiveArgumentFiller
 from vcat.stage_connector import StageConnector
+from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_context import StageContext
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context, stage_context, stage_smart_constructor):
+    def __init__(self, connector, pipeline_context):
         self._connector = connector
-        self._stage_smart_constructor = stage_smart_constructor
-        self._stage_piping = StagePiping(self)
         self._pipeline_context = pipeline_context
-        self._stage_context = stage_context
-        self._persist = False
 
+        self._stage_context = StageContext()
+        self._stage_context.uuid = self._connector.current_stage.uuid
         self._pipeline_context.add_stage_context(self._stage_context)
+
+        self._stage_smart_constructor = StageSmartConstructor(self._stage_context)
+        self._stage_piping = StagePiping(self)
+        self._persist = False
 
     def _reset_state(self):
         self._connector._reset_state()
@@ -26,7 +29,7 @@ class StageConnectorWrapper(object):
         return all_stages
 
     def stage(self, function, *args, **kwargs):
-        return StageConnectorWrapper(self._connector.stage(self._stage_smart_constructor.make_stage(function, *args, **kwargs)), self._pipeline_context, StageContext(), self._stage_smart_constructor)
+        return StageConnectorWrapper(self._connector.stage(self._stage_smart_constructor.make_stage(function, *args, **kwargs)), self._pipeline_context)
 
     def persist(self):
         self._persist = True
@@ -46,8 +49,7 @@ class StageConnectorWrapper(object):
             import sys
             self._stage_context.add_error_information(sys.exc_info())
             raise
-        self._stage_context._uuid = self._connector.current_stage.uuid
-        self._stage_context._stage_output = result
+        self._stage_context.stage_output = result
         return result
 
     def _grid_param_set_generator(self, dict_of_hyper_params):

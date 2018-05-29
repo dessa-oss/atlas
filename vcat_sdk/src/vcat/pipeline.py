@@ -15,14 +15,14 @@ class Pipeline(object):
     def stage(self, function, *args, **kwargs):
         current_stage = self._stage_smart_constructor.make_stage(
             function, *args, **kwargs)
-        return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context, StageContext(), self._stage_smart_constructor)
+        return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context)
 
     def join(self, upstream_connector_wrappers, function, *args, **kwargs):
         upstream_connectors = [
             wrapper._connector for wrapper in upstream_connector_wrappers]
         current_stage = self._stage_smart_constructor.make_stage(
             function, *args, **kwargs)
-        return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self.pipeline_context, StageContext(), self._stage_smart_constructor)
+        return StageConnectorWrapper(self.graph.join(current_stage, upstream_connectors), self.pipeline_context)
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
