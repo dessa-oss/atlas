@@ -17,7 +17,11 @@ from vcat.stage_context import StageContext
 from vcat.job_source_bundle import JobSourceBundle
 
 def gcp_deploy_job(job, job_name):
-  deployment = GCPJobDeployment(job_name, job)
+  from uuid import uuid4
+
+  bundle_name = str(uuid4())
+  job_source_bundle = JobSourceBundle(bundle_name, '../')
+  deployment = GCPJobDeployment(job_name, job, job_source_bundle)
   deployment.deploy()
   return deployment
 
