@@ -1,6 +1,7 @@
 class PipelineArchiver(object):
 
-    def __init__(self, pipeline_name, stage_log_archive, persisted_data_archive, provenance_archive, job_source_archive, artifact_archive, miscellanous_archive):
+    def __init__(self, pipeline_name, archive_listing, stage_log_archive, persisted_data_archive, provenance_archive, job_source_archive, artifact_archive, miscellanous_archive):
+        self._archive_listing = archive_listing
         self._pipeline_name = pipeline_name
         self._stage_log_archive = stage_log_archive
         self._persisted_data_archive = persisted_data_archive
@@ -37,7 +38,7 @@ class PipelineArchiver(object):
             return self._miscellanous_archive.append('miscellaneous/' + name, data, self._pipeline_name)
 
     def append_tracker(self):
-        return self._miscellanous_archive.append_binary(self._pipeline_name + '.tracker', self._pipeline_name)
+        return self._archive_listing.track_pipeline(self._pipeline_name)
 
     def fetch_stage_log(self, stage_uuid_string):
         return self._stage_log_archive.fetch('stage_contexts/' + stage_uuid_string + '/stage_log', self._pipeline_name)
