@@ -32,7 +32,7 @@ class StageConnectorWrapper(object):
         return self._stage_piping.pipe(stage_args)
 
     def run(self, **filler_kwargs):
-        self._pipeline_context.provenance[
+        self._pipeline_context.provenance.stage_provenance[
             self._connector.current_stage.uuid] = self.tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 

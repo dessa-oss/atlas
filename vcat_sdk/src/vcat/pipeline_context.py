@@ -1,3 +1,6 @@
+from vcat.provenance import Provenance
+
+
 class PipelineContext(object):
 
     def __init__(self):
@@ -6,12 +9,15 @@ class PipelineContext(object):
         self.results = {}
         self.config = {}
         self.predictions = {}
-        self.provenance = {}
+        self.provenance = Provenance()
         self.meta_data = {}
         self.persisted_data = {}
         self.error = None
         self.pipeline_errors = {}
         self.file_name = str(uuid.uuid4()) + ".json"
+
+    def fill_provenance(self):
+        self.provenance.fill_all()
 
     def save(self, result_saver):
         result_saver.save(self.file_name, self._context())

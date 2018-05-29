@@ -27,7 +27,7 @@ def main():
   pipeline_context.meta_data["global"] = global_meta_data
   
   global_provenance = {}
-  pipeline_context.provenance["global"] = global_provenance
+  pipeline_context.provenance.stage_provenance["global"] = global_provenance
 
   global_meta_data["start_time"] = time.time()
   try:
