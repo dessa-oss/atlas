@@ -3,15 +3,15 @@ class StageHierarchy(object):
   def __init__(self):
     self.entries = {}
   
-  def add_entry(self, uuid, function_name):
-    entry = StageHierarchyEntry(uuid, function_name)
+  def add_entry(self, uuid, function_name, parents):
+    entry = StageHierarchyEntry(uuid, function_name, parents)
     self.entries[uuid] = entry
 
     
 class StageHierarchyEntry(object):
 
-  def __init__(self, uuid, function_name):
-    # self.parents = parents
+  def __init__(self, uuid, function_name, parents):
+    self.parents = parents
     self.function_name = function_name
     self.uuid = uuid
     # self.args = args
