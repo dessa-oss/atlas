@@ -10,7 +10,6 @@ class PipelineContext(object):
         self.file_name = str(uuid.uuid4()) + ".json"
         self.provenance = Provenance()
         self.stage_contexts = {}
-
         self.global_stage_context = StageContext()
         self.global_stage_context.uuid = 'global'
 
@@ -21,7 +20,7 @@ class PipelineContext(object):
         self.provenance.fill_all()
 
     def save(self, result_saver):
-        result_saver.save(self.file_name, self._context())
+        result_saver.save(self.file_name, self._context(), self.cache_uuid)
 
     def save_to_archive(self, archiver):
         archiver.append_tracker()
