@@ -21,6 +21,7 @@ def main():
     job = Job.deserialize(file.read())
 
   pipeline_context = job._pipeline_connector._pipeline_context
+  global_stage_context = pipeline_context.global_stage_context
   pipeline_context.provenance.config.update(config)
   config = pipeline_context.provenance.config
 
@@ -29,14 +30,14 @@ def main():
   global_provenance = {}
   pipeline_context.provenance.stage_provenance["global"] = global_provenance
 
-  pipeline_context.start_time = time.time()
+  global_stage_context.start_time = time.time()
   try:
     job.run()
   except Exception as error:
     exception_info = sys.exc_info()
-    pipeline_context.add_pipeline_error(exception_info)
-  pipeline_context.end_time = time.time()
-  pipeline_context.delta_time = pipeline_context.end_time - pipeline_context.start_time
+    global_stage_context.add_error_information(exception_info)
+  global_stage_context.end_time = time.time()
+  global_stage_context.delta_time = global_stage_context.end_time - global_stage_context.start_time
 
   global_provenance["python_version"] = {
     "major": sys.version_info.major,
@@ -51,7 +52,7 @@ def main():
     for result_saver_type in config["result_savers"]:
       pipeline_context.save(result_saver_type())
 
-  if pipeline_context.pipeline_error is not None:
+  if global_stage_context.error_information is not None:
     raise exception_info[0], exception_info[1], exception_info[2]
 
 if __name__ == "__main__":
