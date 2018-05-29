@@ -20,7 +20,7 @@ class PipelineContext(object):
         self.provenance.fill_all()
 
     def save(self, result_saver):
-        result_saver.save(self.file_name, self._context(), self.cache_uuid)
+        result_saver.save(self.file_name, self._context())
 
     def save_to_archive(self, archiver):
         archiver.append_tracker()
