@@ -21,7 +21,8 @@ def main():
     job = Job.deserialize(file.read())
 
   pipeline_context = job._pipeline_connector._pipeline_context
-  pipeline_context.config.update(config)
+  pipeline_context.provenance.config.update(config)
+  config = pipeline_context.provenance.config
   
   global_provenance = {}
   pipeline_context.provenance.stage_provenance["global"] = global_provenance
@@ -44,8 +45,8 @@ def main():
   }
 
   pipeline_context.save(LocalFileSystemResultSaver())
-  if "result_savers" in pipeline_context.config:
-    for result_saver_type in pipeline_context.config["result_savers"]:
+  if "result_savers" in config:
+    for result_saver_type in config["result_savers"]:
       pipeline_context.save(result_saver_type())
 
   if pipeline_context.pipeline_error is not None:

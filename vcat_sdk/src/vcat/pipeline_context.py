@@ -6,7 +6,6 @@ class PipelineContext(object):
     def __init__(self):
         import uuid
 
-        self.config = {}
         self.predictions = {}
         self.provenance = Provenance()
         self.pipeline_error = None
@@ -40,7 +39,6 @@ class PipelineContext(object):
             stringified_stage_contexts[uuid] = context._context()
 
         return {
-            "config": self.config,
             "start_time": self.start_time,
             "end_time": self.end_time,
             "delta_time": self.delta_time,

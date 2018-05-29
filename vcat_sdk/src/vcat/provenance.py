@@ -6,16 +6,6 @@ from vcat.local_directory import LocalDirectory
 
 class Provenance(object):
 
-    # - env variables for configuration
-    # - Bundled files (source code)
-    #     - Code
-    #     - Config files
-    #     - Data files
-    # - 'Pip freeze' for versioning
-    # - Seed
-    # - Config
-    # - tags
-
     def __init__(self):
         self.job_source_bundle = None
         self.environment = {}
