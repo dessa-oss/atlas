@@ -10,3 +10,9 @@ class ContextAware(object):
 
     def __call__(self, *args, **kwargs):
         return self._function(self._stage_context, *args, **kwargs)
+
+def context_aware(function, *args):
+    if len(args) == 0:
+        return ContextAware(function)
+    else:
+        return (ContextAware(function),) + args
