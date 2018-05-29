@@ -21,6 +21,12 @@ class Provenance(object):
         if self.job_source_bundle is not None:
             archiver.append_job_source(self.job_source_bundle.job_archive())
 
+    def load_from_archive(self, archiver):
+        archive_provenance = archiver.fetch_provenance()
+        self._load_archive_provenance(archive_provenance)
+        if self.job_source_bundle is not None:
+            archiver.fetch_job_source(self.job_source_bundle.job_archive())
+
     def fill_all(self):
         self.fill_config()
         self.fill_environment()
@@ -62,5 +68,14 @@ class Provenance(object):
             "random_state": self.random_state,
             "module_versions": self.module_versions,
             "pip_freeze": self.pip_freeze,
-            "stage_provenance": self.stage_provenance,
+            "stage_provenance": self.stage_provenance
         }
+
+    def _load_archive_provenance(self, archive_provenance):
+        self.environment = archive_provenance["environment"]
+        self.config = archive_provenance["config"]
+        self.tags = archive_provenance["tags"]
+        self.random_state = archive_provenance["random_state"]
+        self.module_versions = archive_provenance["module_versions"]
+        self.pip_freeze = archive_provenance["pip_freeze"]
+        self.stage_provenance = archive_provenance["stage_provenance"]

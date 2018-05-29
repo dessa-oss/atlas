@@ -34,3 +34,24 @@ class PipelineArchiver(object):
     def append_miscellanous(self, name, data):
         if data is not None:
             return self._miscellanous_archive.append('miscellaneous/' + name, data)
+
+    def fetch_stage_log(self, stage_uuid_string):
+        return self._stage_log_archive.fetch('stage_contexts/' + stage_uuid_string + '/stage_log')
+
+    def fetch_stage_persisted_data(self, stage_uuid_string):
+        return self.fetch_persisted_data('stage_persisted/' + stage_uuid_string + '/persisted')
+
+    def fetch_persisted_data(self, name):
+        return self._persisted_data_archive.fetch(name)
+
+    def fetch_provenance(self):
+        return self._provenance_archive.fetch('provenance')
+
+    def fetch_job_source(self, target_file_path):
+        return self._job_source_archive.fetch_to_file('job_source', target_file_path)
+
+    def fetch_artifact(self, name):
+        return self._artifact_archive.fetch('artifacts/' + name)
+
+    def fetch_miscellanous(self, name):
+        return self._miscellanous_archive.fetch('miscellaneous/' + name)

@@ -25,10 +25,13 @@ class LocalPipelineArchive(object):
             finally:
                 os.remove(self.path)
 
-    def __init__(self, name):
+    def __init__(self, name, open_for_reading=False):
         import tarfile
         self._name = name
-        self._tar = tarfile.open(self.archive(), "w:gz")
+        if open_for_reading:
+            self._tar = tarfile.open(self.archive(), "r:gz")
+        else:
+            self._tar = tarfile.open(self.archive(), "w:gz")
 
     def __enter__(self):
         self._tar.__enter__()
@@ -49,6 +52,12 @@ class LocalPipelineArchive(object):
         from os.path import basename
         name = basename(file_path)
         self._tar.add(file_path, arcname=prefix + '/' + name)
+
+    def fetch(self, name):
+        raise NotImplementedError()
+
+    def fetch_to_file(self, prefix, file_path):
+        raise NotImplementedError()
 
     def archive_name(self):
         return self._name + ".tgz"
