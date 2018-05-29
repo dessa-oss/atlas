@@ -97,7 +97,7 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
 
     print deployer.fetch_job_results()
 
-def extract_results(results_dict):
+def _extract_results(results_dict):
   results = {}
 
   for result_entry in results_dict["results"].values():
@@ -129,7 +129,8 @@ def adaptive_search(connector_wrapper, deployer_type, initial_generator, generat
 
     wait_for_deployment_to_complete(deployer)
     
-    print deployer.fetch_job_results()
+    results_dict = deployer.fetch_job_results()
+    print results_dict
 
     for new_params in generator_function(_extract_results(results_dict)):
       queue.put(new_params)
