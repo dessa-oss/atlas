@@ -4,7 +4,7 @@ from vcat.successive_argument_filler import SuccessiveArgumentFiller
 from vcat.stage_connector import StageConnector
 from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_context import StageContext
-
+from vcat.context_aware import ContextAware
 
 class StageConnectorWrapper(object):
 
@@ -31,6 +31,10 @@ class StageConnectorWrapper(object):
     def stage(self, function, *args, **kwargs):
         new_context = StageContext()
         stage_smart_constructor = StageSmartConstructor(new_context)
+
+        if isinstance(function, ContextAware):
+            function.set_context(new_context)
+
         new_stage = stage_smart_constructor.make_stage(self._stage_context, function, *args, **kwargs)
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 

@@ -19,6 +19,7 @@ from vcat.job_source_bundle import JobSourceBundle
 from vcat.pipeline_archive_result_saver import PipelineArchiveResultSaver
 from vcat.local_pipeline_archive import LocalPipelineArchive
 from vcat.pipeline_archiver import PipelineArchiver
+from vcat.context_aware import ContextAware
 
 def gcp_deploy_job(job, job_name):
   from uuid import uuid4

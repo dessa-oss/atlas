@@ -11,6 +11,7 @@ class StageContext(object):
         self.start_time = None
         self.end_time = None
         self.delta_time = None
+        self.is_context_aware = False
 
     def add_error_information(self, exception_info):
         import traceback
@@ -34,5 +35,6 @@ class StageContext(object):
             "error_information": self.error_information,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "delta_time": self.delta_time
+            "delta_time": self.delta_time,
+            "is_context_aware": self.is_context_aware
         }
