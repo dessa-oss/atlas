@@ -14,7 +14,7 @@ class LocalPipelineArchive(object):
             file_descriptor, self.path = tempfile.mkstemp()
             self.file = os.fdopen(file_descriptor, self._mode)
             self.file.__enter__()
-            
+
             return self
 
         def __exit__(self, exception_type, exception_value, traceback):
@@ -41,9 +41,9 @@ class LocalPipelineArchive(object):
         import dill as pickle
 
         with self.Tempfile('w+b') as tempfile:
-          pickle.dump(item, tempfile.file)
-          tempfile.file.flush()
-          self._tar.add(tempfile.path, arcname=name + '.pkl')
+            pickle.dump(item, tempfile.file)
+            tempfile.file.flush()
+            self._tar.add(tempfile.path, arcname=name + '.pkl')
 
     def append_file(self, prefix, file_path):
         from os.path import basename
