@@ -15,6 +15,8 @@ from vcat.redis_result_saver import RedisResultSaver
 from vcat.result_reader import ResultReader
 from vcat.stage_context import StageContext
 from vcat.job_source_bundle import JobSourceBundle
+from vcat.pipeline_archive_result_saver import PipelineArchiveResultSaver
+from vcat.local_pipeline_archive import LocalPipelineArchive
 
 def gcp_deploy_job(job, job_name):
   from uuid import uuid4
