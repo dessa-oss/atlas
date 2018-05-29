@@ -45,6 +45,11 @@ class LocalPipelineArchive(object):
           tempfile.file.flush()
           self._tar.add(tempfile.path, arcname=name + '.pkl')
 
+    def append_file(self, prefix, file_path):
+        from os.path import basename
+        name = basename(file_path)
+        self._tar.add(file_path, arcname=prefix + '/' + name)
+
     def archive_name(self):
         return self._name + ".tgz"
 

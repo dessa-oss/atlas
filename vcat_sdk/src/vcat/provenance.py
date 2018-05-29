@@ -17,7 +17,9 @@ class Provenance(object):
         self.stage_provenance = {}
 
     def save_to_archive(self, archiver):
-        pass
+        archiver.append_provenance(self._archive_provenance())
+        if self.job_source_bundle is not None:
+            archiver.append_job_source(self.job_source_bundle.job_archive())
 
     def fill_all(self):
         self.fill_config()
@@ -51,3 +53,14 @@ class Provenance(object):
                        for line in self.pip_freeze.split("\n")]
         versioned_lines = filter(lambda line: len(line) == 2, split_lines)
         self.module_versions = dict(versioned_lines)
+
+    def _archive_provenance(self):
+        return {
+            "environment": self.environment,
+            "config": self.config,
+            "tags": self.tags,
+            "random_state": self.random_state,
+            "module_versions": self.module_versions,
+            "pip_freeze": self.pip_freeze,
+            "stage_provenance": self.stage_provenance,
+        }

@@ -10,10 +10,10 @@ class PipelineArchiver(object):
 
     def append_stage_log(self, stage_uuid_string, log):
         if log is not None:
-            return self._stage_log_archive.append('stages/' + stage_uuid_string + '/stage_log', log)
+            return self._stage_log_archive.append('stage_contexts/' + stage_uuid_string + '/stage_log', log)
 
     def append_stage_persisted_data(self, stage_uuid_string, data):
-        return self.append_persisted_data('stages/' + stage_uuid_string + '/persisted', data)
+        return self.append_persisted_data('stage_persisted/' + stage_uuid_string + '/persisted', data)
 
     def append_persisted_data(self, name, data):
         if data is not None:
@@ -23,14 +23,14 @@ class PipelineArchiver(object):
         if provenance is not None:
             return self._provenance_archive.append('provenance', provenance)
 
-    def append_job_source(self, source):
-        if source is not None:
-            return self._job_source_archive.append('job_source', source)
+    def append_job_source(self, source_file_path):
+        if source_file_path is not None:
+            return self._job_source_archive.append_file('job_source', source_file_path)
 
     def append_artifact(self, name, artifact):
         if artifact is not None:
-            return self._artifact_archive.append(name, artifact)
+            return self._artifact_archive.append('artifacts/' + name, artifact)
 
     def append_miscellanous(self, name, data):
         if data is not None:
-            return self._miscellanous_archive.append(name, data)
+            return self._miscellanous_archive.append('miscellaneous/' + name, data)
