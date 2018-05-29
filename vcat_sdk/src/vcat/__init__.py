@@ -13,6 +13,7 @@ from vcat.pipeline import Pipeline
 from vcat.redis_fetcher import RedisFetcher
 from vcat.redis_result_saver import RedisResultSaver
 from vcat.result_reader import ResultReader
+from vcat.stage_context import StageContext
 from vcat.job_source_bundle import JobSourceBundle
 
 def gcp_deploy_job(job, job_name):
