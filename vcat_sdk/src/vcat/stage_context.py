@@ -1,4 +1,5 @@
 class StageContext(object):
+
     def __init__(self):
         self.stage_log = {}
         self.meta_data = {}
@@ -19,7 +20,7 @@ class StageContext(object):
             "traceback": traceback.extract_tb(exception_info[2])
         }
 
-    def save_model(model):
+    def save_model(self, model):
         self._model_data = model
 
     def _context(self):
