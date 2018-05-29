@@ -3,34 +3,42 @@ class PipelineContext(object):
     def __init__(self):
         import uuid
 
-        self.results = {}
         self.config = {}
         self.predictions = {}
         self.provenance = {}
-        self.meta_data = {}
-        self.persisted_data = {}
-        self.error = None
-        self.pipeline_errors = {}
+        self.pipeline_error = None
+        self.start_time = None
+        self.end_time = None
+        self.delta_time = None
         self.file_name = str(uuid.uuid4()) + ".json"
+        self.stage_contexts = {}
+
+    def add_stage_context(self, stage_context):
+        self.stage_contexts[stage_context._uuid] = stage_context
 
     def save(self, result_saver):
         result_saver.save(self.file_name, self._context())
 
-    def nice_error(self, exception_info):
+    def add_error_information(self, exception_info):
         import traceback
-        return {
+        self.pipeline_error = {
             "type": exception_info[0],
             "exception": exception_info[1],
             "traceback": traceback.extract_tb(exception_info[2])
         }
 
     def _context(self):
+        stringified_stage_contexts = {}
+
+        for uuid, context in self.stage_contexts.iteritems():
+            stringified_stage_contexts[uuid] = context._context()
+
         return {
-            "results": self.results,
             "config": self.config,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "delta_time": self.delta_time,
             "provenance": self.provenance,
-            "meta_data": self.meta_data,
-            "persisted_data": self.persisted_data,
-            "error": self.error,
-            "pipeline_errors": self.pipeline_errors,
+            "pipeline_errors": self.pipeline_error,
+            "stage_contexts": stringified_stage_contexts
         }

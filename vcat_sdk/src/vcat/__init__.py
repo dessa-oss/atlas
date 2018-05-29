@@ -13,6 +13,7 @@ from pipeline import Pipeline
 from redis_fetcher import RedisFetcher
 from redis_result_saver import RedisResultSaver
 from result_reader import ResultReader
+from stage_context import StageContext
 
 def gcp_deploy_job(job, job_name):
   deployment = GCPJobDeployment(job_name, job)

@@ -3,8 +3,8 @@ from vcat.stage import Stage
 
 class StageSmartConstructor(object):
 
-    def __init__(self, pipeline_context):
-        self._pipeline_context = pipeline_context
+    def __init__(self, stage_context):
+        self._stage_context = stage_context
 
     def make_stage(self, function, *args, **kwargs):
         import uuid
@@ -21,13 +21,11 @@ class StageSmartConstructor(object):
             end_time = time.time()
             if isinstance(stage_output, tuple):
                 return_value, result = stage_output
-                self._pipeline_context.results[stage_uuid] = result
+                self._stage_context._stage_log = result
             else:
                 return_value = stage_output
-            self._pipeline_context.meta_data[stage_uuid] = {
-                "start_time": start_time,
-                "end_time": end_time,
-                "delta_time": end_time - start_time,
-            }
+            self._stage_context._start_time = start_time
+            self._stage_context._end_time = end_time
+            self._stage_context._delta_time = end_time - start_time
             return return_value
         return wrapped
