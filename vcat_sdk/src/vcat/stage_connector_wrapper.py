@@ -7,15 +7,14 @@ from vcat.stage_context import StageContext
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context):
+    def __init__(self, connector, pipeline_context, stage_context):
         self._connector = connector
         self._pipeline_context = pipeline_context
+        self._stage_context = stage_context
 
-        self._stage_context = StageContext()
         self._stage_context.uuid = self._connector.current_stage.uuid
         self._pipeline_context.add_stage_context(self._stage_context)
-
-        self._stage_smart_constructor = StageSmartConstructor(self._stage_context)
+        
         self._stage_piping = StagePiping(self)
         self._persist = False
 
@@ -29,7 +28,9 @@ class StageConnectorWrapper(object):
         return all_stages
 
     def stage(self, function, *args, **kwargs):
-        return StageConnectorWrapper(self._connector.stage(self._stage_smart_constructor.make_stage(function, *args, **kwargs)), self._pipeline_context)
+        new_context = StageContext()
+        stage_smart_constructor = StageSmartConstructor(new_context)
+        return StageConnectorWrapper(self._connector.stage(stage_smart_constructor.make_stage(function, *args, **kwargs)), self._pipeline_context, new_context)
 
     def persist(self):
         self._persist = True
