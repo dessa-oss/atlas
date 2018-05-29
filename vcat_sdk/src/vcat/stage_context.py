@@ -24,10 +24,12 @@ class StageContext(object):
     def save_to_archive(self, archiver):
         archiver.append_stage_log(self.uuid, self.stage_log)
         archiver.append_stage_persisted_data(self.uuid, self.stage_output)
+        archiver.append_stage_model_data(self.uuid, self.model_data)
 
     def load_from_archive(self, archiver):
         self.stage_log = archiver.fetch_stage_log(self.uuid)
         self.stage_output = archiver.fetch_stage_persisted_data(self.uuid)
+        self.model_data = archiver.fetch_stage_model_data(self.uuid)
 
     def _context(self):
         return {

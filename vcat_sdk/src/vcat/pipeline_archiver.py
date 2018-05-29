@@ -17,6 +17,9 @@ class PipelineArchiver(object):
     def append_stage_persisted_data(self, stage_uuid_string, data):
         return self.append_persisted_data('stage_persisted/' + stage_uuid_string + '/persisted', data)
 
+    def append_stage_model_data(self, stage_uuid_string, data):
+        return self.append_persisted_data('stage_persisted/' + stage_uuid_string + '/model', data)
+
     def append_persisted_data(self, name, data):
         if data is not None:
             return self._persisted_data_archive.append(name, data, self._pipeline_name)
@@ -45,6 +48,9 @@ class PipelineArchiver(object):
 
     def fetch_stage_persisted_data(self, stage_uuid_string):
         return self.fetch_persisted_data('stage_persisted/' + stage_uuid_string + '/persisted')
+
+    def fetch_stage_model_data(self, stage_uuid_string):
+        return self.fetch_persisted_data('stage_persisted/' + stage_uuid_string + '/model')
 
     def fetch_persisted_data(self, name):
         return self._persisted_data_archive.fetch(name, self._pipeline_name)
