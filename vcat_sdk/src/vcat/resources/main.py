@@ -1,4 +1,4 @@
-from vcat import Job, LocalFileSystemResultSaver
+from vcat import Job, LocalFileSystemResultSaver, JobSourceBundle
 
 import glob
 import yaml
@@ -6,6 +6,8 @@ import time
 import sys
 
 def main():
+  job_source_bundle = JobSourceBundle('job', './')
+
   config = {}
   file_list = glob.glob('*.config.yaml')
   for file_name in file_list:
@@ -22,7 +24,7 @@ def main():
   pipeline_context.config.update(config)
   
   global_provenance = {}
-  pipeline_context.provenance["global"] = global_provenance
+  pipeline_context.provenance.stage_provenance["global"] = global_provenance
 
   pipeline_context.start_time = time.time()
   try:

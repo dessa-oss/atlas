@@ -3,6 +3,7 @@
 BASEDIR=$(dirname "$0")
 
 cd $BASEDIR && \
+  tar -xvf job.tgz && \
   python -m pip install virtualenv && \
   virtualenv venv && \
   . venv/bin/activate && \

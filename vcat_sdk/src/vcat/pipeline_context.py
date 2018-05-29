@@ -1,3 +1,6 @@
+from vcat.provenance import Provenance
+
+
 class PipelineContext(object):
 
     def __init__(self):
@@ -5,7 +8,7 @@ class PipelineContext(object):
 
         self.config = {}
         self.predictions = {}
-        self.provenance = {}
+        self.provenance = Provenance()
         self.pipeline_error = None
         self.start_time = None
         self.end_time = None
@@ -15,6 +18,9 @@ class PipelineContext(object):
 
     def add_stage_context(self, stage_context):
         self.stage_contexts[stage_context.uuid] = stage_context
+
+    def fill_provenance(self):
+        self.provenance.fill_all()
 
     def save(self, result_saver):
         result_saver.save(self.file_name, self._context())

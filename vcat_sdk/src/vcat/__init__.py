@@ -1,22 +1,27 @@
-from gcp_bundle_fetcher import GCPBundleFetcher
-from gcp_bundled_result_saver import GCPBundledResultSaver
-from gcp_fetcher import GCPFetcher
-from gcp_job_deployment import GCPJobDeployment
-from gcp_result_saver import GCPResultSaver
-from hyperparameter import Hyperparameter
-from job import Job
-from local_file_system_fetcher import LocalFileSystemFetcher
-from local_file_system_result_saver import LocalFileSystemResultSaver
-from local_shell_job_deployment import LocalShellJobDeployment
-from pipeline_context import PipelineContext
-from pipeline import Pipeline
-from redis_fetcher import RedisFetcher
-from redis_result_saver import RedisResultSaver
-from result_reader import ResultReader
-from stage_context import StageContext
+from vcat.gcp_bundle_fetcher import GCPBundleFetcher
+from vcat.gcp_bundled_result_saver import GCPBundledResultSaver
+from vcat.gcp_fetcher import GCPFetcher
+from vcat.gcp_job_deployment import GCPJobDeployment
+from vcat.gcp_result_saver import GCPResultSaver
+from vcat.hyperparameter import Hyperparameter
+from vcat.job import Job
+from vcat.local_file_system_fetcher import LocalFileSystemFetcher
+from vcat.local_file_system_result_saver import LocalFileSystemResultSaver
+from vcat.local_shell_job_deployment import LocalShellJobDeployment
+from vcat.pipeline_context import PipelineContext
+from vcat.pipeline import Pipeline
+from vcat.redis_fetcher import RedisFetcher
+from vcat.redis_result_saver import RedisResultSaver
+from vcat.result_reader import ResultReader
+from vcat.stage_context import StageContext
+from vcat.job_source_bundle import JobSourceBundle
 
 def gcp_deploy_job(job, job_name):
-  deployment = GCPJobDeployment(job_name, job)
+  from uuid import uuid4
+
+  bundle_name = str(uuid4())
+  job_source_bundle = JobSourceBundle(bundle_name, '../')
+  deployment = GCPJobDeployment(job_name, job, job_source_bundle)
   deployment.deploy()
   return deployment
 

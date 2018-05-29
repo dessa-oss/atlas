@@ -1,7 +1,7 @@
 import os
 
 
-class LocalJobBundle(object):
+class LocalDirectory(object):
 
     class File(object):
 
