@@ -81,7 +81,7 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
   import time
   import uuid
 
-  for param_set in grid_param_set_generator(hype_kwargs):
+  for param_set in _grid_param_set_generator(hype_kwargs):
     connector_wrapper._reset_state()
     deployer_uuid = str(uuid.uuid4())
 
