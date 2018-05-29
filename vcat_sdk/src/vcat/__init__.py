@@ -97,7 +97,7 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
 
     print deployer.fetch_job_results()
 
-def extract_results(results_dict):
+def _extract_results(results_dict):
   results = {}
 
   for result_entry in results_dict["results"].values():
