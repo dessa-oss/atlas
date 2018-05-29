@@ -1,6 +1,6 @@
 class JobBundler(object):
 
-    def __init__(self, job_name, config, job):
+    def __init__(self, job_name, config, job, job_source_bundle):
         import os
 
         self._config = config
@@ -8,6 +8,7 @@ class JobBundler(object):
 
         self._job_name = job_name
         self._job = job
+        self._job_source_bundle = job_source_bundle
         self._module_directory = os.path.dirname(os.path.abspath(__file__))
         self._resource_directory = self._module_directory + "/resources"
 
@@ -17,7 +18,9 @@ class JobBundler(object):
     def bundle(self):
         self._save_job()
         self._save_config()
+        self._job_source_bundle.bundle()
         self._bundle_job()
+        self._job_source_bundle.cleanup()
 
     def cleanup(self):
         import os
@@ -58,10 +61,10 @@ class JobBundler(object):
         # os.chdir(self._module_directory)
 
         with tarfile.open(self.job_archive(), "w:gz") as tar:
-            tar.add(".", arcname=self._job_name)
+            tar.add(self._job_source_bundle.job_archive(), arcname=self._job_name + '/job.tgz')
 
             os.chdir(self._module_directory)
-            tar.add(".", arcname=self._job_name + "/vcat")
+            tar.add(".", arcname=self._job_name + '/vcat')
 
             os.chdir(self._resource_directory)
             tar.add(".", arcname=self._job_name)

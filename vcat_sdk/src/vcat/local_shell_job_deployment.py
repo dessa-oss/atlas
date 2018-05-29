@@ -3,11 +3,11 @@ from vcat.job_bundler import JobBundler
 
 class LocalShellJobDeployment(object):
 
-    def __init__(self, job_name, job):
+    def __init__(self, job_name, job, job_source_bundle):
         self._config = {}
         self._job_name = job_name
         self._job = job
-        self._job_bundler = JobBundler(self._job_name, self._config, self._job)
+        self._job_bundler = JobBundler(self._job_name, self._config, self._job, job_source_bundle)
         self._results = {}
 
     def config(self):
