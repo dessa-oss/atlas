@@ -3,7 +3,7 @@ from vcat.stage_piping import StagePiping
 from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_connector_wrapper import StageConnectorWrapper
 from vcat.stage_context import StageContext
-
+from vcat.context_aware import ContextAware
 
 class Pipeline(object):
 
@@ -15,6 +15,10 @@ class Pipeline(object):
     def stage(self, function, *args, **kwargs):
         new_context = StageContext()
         stage_smart_constructor = StageSmartConstructor(new_context)
+
+        if isinstance(function, ContextAware):
+            function._set_context(new_context)
+
         current_stage = stage_smart_constructor.make_stage(
             new_context, function, *args, **kwargs)
         return StageConnectorWrapper(self.graph.stage(current_stage), self.pipeline_context, new_context)
