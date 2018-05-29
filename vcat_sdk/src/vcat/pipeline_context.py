@@ -23,6 +23,7 @@ class PipelineContext(object):
         result_saver.save(self.file_name, self._context())
 
     def save_to_archive(self, archiver):
+        archiver.append_tracker()
         archiver.append_miscellanous('stages', self.stage_contexts.keys())
         self.global_stage_context.save_to_archive(archiver)
         for stage_context in self.stage_contexts.values():

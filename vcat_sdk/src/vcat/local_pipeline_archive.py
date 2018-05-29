@@ -1,3 +1,7 @@
+from vcat.utils import file_archive_name
+from vcat.utils import file_archive_name_with_additional_prefix
+
+
 class LocalPipelineArchive(object):
 
     class Tempfile(object):
@@ -25,9 +29,8 @@ class LocalPipelineArchive(object):
             finally:
                 os.remove(self.path)
 
-    def __init__(self, name, open_for_reading=False):
+    def __init__(self, open_for_reading=False):
         import tarfile
-        self._name = name
         if open_for_reading:
             self._tar = tarfile.open(self.archive(), "r:gz")
         else:
@@ -40,27 +43,38 @@ class LocalPipelineArchive(object):
     def __exit__(self, exception_type, exception_value, traceback):
         return self._tar.__exit__(exception_type, exception_value, traceback)
 
-    def append(self, name, item):
+    def append(self, name, item, prefix=None):
         import dill as pickle
 
         with self.Tempfile('w+b') as tempfile:
             pickle.dump(item, tempfile.file)
-            tempfile.file.flush()
-            self._tar.add(tempfile.path, arcname=name + '.pkl')
+            self._add_to_tar(tempfile, prefix, name + '.pkl')
 
-    def append_file(self, prefix, file_path):
+    def append_binary(self, name, serialized_item, prefix=None):
+        with self.Tempfile('w+b') as tempfile:
+            tempfile.file.write(serialized_item)
+            self._add_to_tar(tempfile, prefix, name)
+
+    def append_file(self, file_prefix, file_path, prefix=None):
         from os.path import basename
         name = basename(file_path)
-        self._tar.add(file_path, arcname=prefix + '/' + name)
+        arcname = file_archive_name_with_additional_prefix(
+            prefix, file_prefix, name)
+        self._tar.add(file_path, arcname=arcname)
 
-    def fetch(self, name):
+    def fetch(self, name, prefix=None):
         raise NotImplementedError()
 
-    def fetch_to_file(self, prefix, file_path):
+    def fetch_to_file(self, file_prefix, file_path, prefix=None):
         raise NotImplementedError()
 
     def archive_name(self):
-        return self._name + ".tgz"
+        raise NotImplementedError()
 
     def archive(self):
         return self.archive_name()
+
+    def _add_to_tar(self, tempfile, prefix, name):
+        tempfile.file.flush()
+        arcname = file_archive_name(prefix, name)
+        self._tar.add(tempfile.path, arcname=arcname)
