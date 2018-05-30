@@ -1,188 +1,155 @@
 class ResultReader(object):
 
-    def __init__(self, result_fetcher):
-        self.results = result_fetcher.fetch_results()
+    def __init__(self, archive_listing, archive):
+        from vcat.pipeline_context import PipelineContext
+        from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
 
-    def _to_pandas(self):
-        import pandas
-        return pandas.DataFrame(self.results)
+        self._pipeline_contexts = {}
 
-    def _as_dict(self):
-        return self.results
+        with archive as archive_handle:
+            pipeline_archiver_fetch = PipelineArchiverFetch(archive_listing, archive_handle,
+                archive_handle, archive_handle, archive_handle, archive_handle, archive_handle)
+            
+        for pipeline_archiver in pipeline_archiver_fetch.fetch_archivers():
+            pipeline_context = PipelineContext()
+            pipeline_context.load_from_archive(pipeline_archiver)
 
-    def _as_json(self):
-        import json
-        return json.dumps(self.results)
+            self._pipeline_contexts[pipeline_archiver.pipeline_name()] = pipeline_context
 
     def get_job_information(self):
         import datetime
         import pandas as pd
 
+        from vcat import restructure_headers
+
+        pretty_time = datetime.datetime.fromtimestamp
+
         all_job_information = []
 
-        main_headers = ["Job ID", "Job Status", "Stage ID", "Parent Stage IDs",
-                        "Stage Name", "Args", "Kwargs", "Start Time", "End Time", "Elapsed Time"]
+        main_headers = ["pipeline_name", "stage_status", "stage_id", "parent_ids",
+            "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
 
-        for job_result in self.results:
-            job_id = job_result["config"]["job_name"]
-            job_status = None
+        for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
+            stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
-            try:
-                if job_result["error"]:
-                    job_status = "failed"
+            for stage_id, stage_info in stage_hierarchy_entries.iteritems():
+                column_headers = list(main_headers)
+
+                parent_ids = stage_info.parents
+                stage_name = stage_info.function_name
+                args = []
+                kwargs = []
+
+                stage_context = pipeline_context.stage_contexts[stage_id]
+
+                start_time = pretty_time(stage_context.start_time)
+                end_time = pretty_time(stage_context.end_time)
+                delta_time = stage_context.delta_time
+
+                if stage_context.error_information:
+                    stage_status = "failed"
                 else:
-                    job_status = "succeeded"
-            except:
-                job_status = "succeeded"
+                    stage_status = "succeeded"
 
-            meta_data = job_result["meta_data"]
+                row_data = [pipeline_name, stage_status, stage_id, parent_ids, stage_name,
+                    args, kwargs, start_time, end_time, delta_time]
 
-            for entry_key, stage_set in job_result["provenance"].iteritems():
-                if entry_key != "global":
-                    for stage_id, stage_info in stage_set.iteritems():
-                        stage_name = stage_info["function_name"]
-                        column_headers = list(main_headers)
-
-                        start_time = None
-                        end_time = None
-                        elapsed_time = None
-
+                for arg in stage_info.stage_args:
+                    if isinstance(arg, dict):
                         try:
-                            meta_data_entry = meta_data[stage_id]
+                            arg_stage_id = arg["stage_id"]
+                            args.append(arg_stage_id)
 
-                            start_time = datetime.datetime.fromtimestamp(
-                                meta_data_entry["start_time"])
-                            end_time = datetime.datetime.fromtimestamp(
-                                meta_data_entry["end_time"])
-                            elapsed_time = meta_data_entry["delta_time"]
+                            parent_ids.append(arg_stage_id)
                         except:
-                            pass
+                            hyperparameter_name = arg.get(
+                                "hyperparameter_name", None)
+                            hyperparameter_value = arg[
+                                "hyperparameter_value"]
 
-                        stage_name = stage_info.get("function_name", None)
-                        parent_stage_ids = stage_info["parents"]
+                            if hyperparameter_name:
+                                args.append(hyperparameter_name)
 
-                        args = []
-                        kwargs = {}
-                        row_data = [job_id, job_status, stage_id, parent_stage_ids,
-                                    stage_name, args, kwargs, start_time, end_time, elapsed_time]
-
-                        for arg in stage_info["args"]:
-                            if isinstance(arg, dict):
-                                try:
-                                    arg_stage_id = arg["stage_id"]
-                                    args.append(arg_stage_id)
-
-                                    parent_stage_ids.append(arg_stage_id)
-                                except:
-                                    hyperparameter_name = arg.get(
-                                        "hyperparameter_name", None)
-                                    hyperparameter_value = arg[
-                                        "hyperparameter_value"]
-
-                                    if hyperparameter_name:
-                                        args.append(hyperparameter_name)
-
-                                        column_headers.append(
-                                            hyperparameter_name)
-                                        row_data.append(hyperparameter_value)
-                                    else:
-                                        args.append(hyperparameter_value)
+                                column_headers.append(
+                                    hyperparameter_name)
+                                row_data.append(hyperparameter_value)
                             else:
-                                args.append(arg)
+                                args.append(hyperparameter_value)
+                    else:
+                        args.append(arg)
 
-                        for arg_name, arg_val in stage_info["kwargs"].iteritems():
-                            if isinstance(arg_val, dict):
-                                try:
-                                    arg_val_stage_id = arg_val["stage_id"]
-                                    kwargs.update({arg_name: arg_val_stage_id})
+                for arg_name, arg_val in stage_info.stage_kwargs.iteritems():
+                    if isinstance(arg_val, dict):
+                        try:
+                            arg_val_stage_id = arg_val["stage_id"]
+                            kwargs.update({arg_name: arg_val_stage_id})
 
-                                    parent_stage_ids.append(arg_val_stage_id)
-                                except:
-                                    hyperparameter_name = arg_val.get(
-                                        "hyperparameter_name", None)
-                                    hyperparameter_value = arg_val[
-                                        "hyperparameter_value"]
+                            parent_ids.append(arg_val_stage_id)
+                        except:
+                            hyperparameter_name = arg_val.get(
+                                "hyperparameter_name", None)
+                            hyperparameter_value = arg_val[
+                                "hyperparameter_value"]
 
-                                    if hyperparameter_name:
-                                        kwargs.update(
-                                            {arg_name: hyperparameter_name})
+                            if hyperparameter_name:
+                                kwargs.update(
+                                    {arg_name: hyperparameter_name})
 
-                                        column_headers.append(
-                                            hyperparameter_name)
-                                        row_data.append(hyperparameter_value)
-                                    else:
-                                        kwargs.append(
-                                            {arg_name: hyperparameter_value})
+                                column_headers.append(
+                                    hyperparameter_name)
+                                row_data.append(hyperparameter_value)
                             else:
-                                kwargs.update({arg_name: arg_val})
+                                kwargs.append(
+                                    {arg_name: hyperparameter_value})
+                    else:
+                        kwargs.update({arg_name: arg_val})
 
-                        all_job_information.append(pd.DataFrame(
-                            data=[row_data], columns=column_headers))
-
-        output_dataframe = pd.concat(all_job_information, ignore_index=True)
-        fixed_headers = restructure_headers(
-            list(output_dataframe), main_headers)
+                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+    
+        output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
+        fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
     def get_results(self):
         import pandas as pd
 
+        from vcat import restructure_headers
+
         all_job_information = []
-        main_headers = ["Job ID", "Stage ID",
-                        "Stage Name", "Has Unstructured Result?"]
+        main_headers = ["pipeline_name", "stage_id",
+                        "stage_name", "has_unstructured_result"]
 
-        for job_result in self.results:
-            job_id = job_result["config"]["job_name"]
-            persisted_data = job_result["persisted_data"]
+        for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
+            stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
-            structured_results = job_result["results"]
-            stage_ids_with_names = {}
-
-            for entry_key, stage_set in job_result["provenance"].iteritems():
-                if entry_key != "global":
-                    for stage_id, stage_info in stage_set.iteritems():
-                        stage_name = stage_info["function_name"]
-                        stage_ids_with_names.update({stage_id: stage_name})
-
-            for stage_id, stage_name in stage_ids_with_names.iteritems():
+            for stage_id, stage_info in stage_hierarchy_entries.iteritems():
                 column_headers = list(main_headers)
-                has_unstructured_result = None
 
-                try:
-                    has_unstructured_result = persisted_data[
-                        stage_id] is not None
-                except:
-                    has_unstructured_result = False
+                stage_name = stage_info.function_name
+                stage_context = pipeline_context.stage_contexts[stage_id]
 
-                row_data = [job_id, stage_id,
-                            stage_name, has_unstructured_result]
+                has_unstructured_result = stage_context.stage_output is not None
 
-                try:
-                    for structured_result_name, structured_result_val in structured_results[stage_id].iteritems():
-                        column_headers.append(structured_result_name)
-                        row_data.append(structured_result_val)
-                except:
-                    pass
+                row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
 
-                all_job_information.append(pd.DataFrame(
-                    data=[row_data], columns=column_headers))
+                for structured_result_name, structured_result_val in stage_context.stage_log.iteritems():
+                    column_headers.append(structured_result_name)
+                    row_data.append(structured_result_val)
 
-        output_dataframe = pd.concat(all_job_information, ignore_index=True)
-        fixed_headers = restructure_headers(
-            list(output_dataframe), main_headers)
+                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+
+        output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
+        fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
     def get_unstructured_results(self, stage_ids):
         def get_unstructured_result(stage_id):
-            result = None
-
-            for job_result in self.results:
-                persisted_data = job_result["persisted_data"]
+            for pipeline_context in self._pipeline_contexts.values():
                 try:
-                    result = persisted_data[stage_id]
+                    return pipeline_context.stage_contexts[stage_id].stage_output
                 except:
                     continue
 
-            return result
+            return None
 
         return map(get_unstructured_result, stage_ids)

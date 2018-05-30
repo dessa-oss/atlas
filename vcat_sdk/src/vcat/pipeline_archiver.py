@@ -46,6 +46,9 @@ class PipelineArchiver(object):
     def append_tracker(self):
         return self._archive_listing.track_pipeline(self._pipeline_name)
 
+    def pipeline_name(self):
+        return self._pipeline_name
+
     def fetch_stage_log(self, stage_uuid_string):
         return self._stage_log_archive.fetch('stage_contexts/' + stage_uuid_string + '/stage_log', self._pipeline_name)
 

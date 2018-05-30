@@ -3,7 +3,10 @@ import uuid
 from spike_pipe import print_it, destroy_it
 from vcat import *
 
-pipe = pipeline | 'wonderful' | print_it  # | destroy_it
+def wonderful(to_print):
+    return to_print, {"logged": to_print}
+
+pipe = pipeline | (wonderful, Hyperparameter("test")) | print_it  # | destroy_it
 pipe.persist()
 
 job = Job(pipe)
@@ -34,7 +37,7 @@ job_name = str(uuid.uuid4())
 # bundler.cleanup()
 
 pipeline_context.file_name = "test_job"
-pipe.run()
+pipe.run(test="wonderful")
 pipeline_context.provenance.job_source_bundle = JobSourceBundle('test_job', '../')
 pipeline_context.provenance.job_source_bundle.bundle()
 pipeline_listing = GCPPipelineArchiveListing()
@@ -43,5 +46,5 @@ with GCPPipelineArchive() as archive:
     archiver = PipelineArchiver(pipeline_context.file_name, pipeline_listing, archive, archive, archive, archive, archive, archive)
     pipeline_context.save_to_archive(archiver)
 
-    pc = PipelineContext()
-    pc.load_from_archive(archiver)
+    # pc = PipelineContext()
+    # pc.load_from_archive(archiver)

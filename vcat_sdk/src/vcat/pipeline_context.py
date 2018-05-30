@@ -37,6 +37,7 @@ class PipelineContext(object):
             stage_context = StageContext()
             stage_context.uuid = stage_uuid
             stage_context.load_from_archive(archiver)
+            self.add_stage_context(stage_context)
         self.provenance.load_from_archive(archiver)
 
     def _context(self):

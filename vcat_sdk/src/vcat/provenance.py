@@ -14,7 +14,6 @@ class Provenance(object):
         self.random_state = None
         self.module_versions = {}
         self.pip_freeze = None
-        self.stage_provenance = {}
         self.stage_hierarchy = StageHierarchy()
 
     def save_to_archive(self, archiver):
@@ -69,7 +68,7 @@ class Provenance(object):
             "random_state": self.random_state,
             "module_versions": self.module_versions,
             "pip_freeze": self.pip_freeze,
-            "stage_provenance": self.stage_provenance
+            "stage_hierarchy": self.stage_hierarchy
         }
 
     def _load_archive_provenance(self, archive_provenance):
@@ -79,4 +78,4 @@ class Provenance(object):
         self.random_state = archive_provenance["random_state"]
         self.module_versions = archive_provenance["module_versions"]
         self.pip_freeze = archive_provenance["pip_freeze"]
-        self.stage_provenance = archive_provenance["stage_provenance"]
+        self.stage_hierarchy = archive_provenance["stage_hierarchy"]
