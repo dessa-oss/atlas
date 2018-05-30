@@ -10,7 +10,6 @@ class PipelineContext(object):
         self.file_name = str(uuid.uuid4()) + ".json"
         self.provenance = Provenance()
         self.stage_contexts = {}
-
         self.global_stage_context = StageContext()
         self.global_stage_context.uuid = 'global'
 
