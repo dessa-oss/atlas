@@ -33,3 +33,7 @@ class Stage(object):
     def source_file(self):
         import inspect
         return inspect.getsourcefile(self._metadata_function)
+
+    def source_line(self):
+        import inspect
+        return inspect.getsourcelines(self._metadata_function)[1]
