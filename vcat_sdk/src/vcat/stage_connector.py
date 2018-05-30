@@ -35,12 +35,22 @@ class StageConnector(object):
         parent_results = [connector._fold_tree(fold_action) for connector in self._previous_connectors]
         return fold_action(parent_results, self)
 
+    def _lazy_fold_tree(self, fold_action):
+        def parent_results():
+            for connector in self._previous_connectors:
+                yield connector._fold_tree(fold_action)
+
+        return fold_action(parent_results(), self)
+
     def _reset_state(self):
         def reset_action(parent_results, this_connector):
             this_connector._has_run = False
             this_connector._result = None
 
         self._fold_tree(reset_action)
+
+    def _force(self, lazy_iterable):
+        return list(lazy_iterable)
 
     def add_tree_names(self, stages_dict, filler_builder, **filler_kwargs):
         def add_tree_names_action(parent_ids, this_connector):
@@ -72,9 +82,9 @@ class StageConnector(object):
                 return cached_result
 
             this_connector._result = this_connector.current_stage.run(
-                previous_results, filler_builder, **filler_kwargs)
+                self._force(previous_results), filler_builder, **filler_kwargs)
             this_connector._has_run = True
             this_connector._cache.set(this_connector._cache_name, this_connector._result)
             return this_connector._result
 
-        return self._fold_tree(run_action)
+        return self._lazy_fold_tree(run_action)
