@@ -1,4 +1,5 @@
 from vcat.stage import Stage
+from vcat.argument_hasher import ArgumentHasher
 
 
 class StageSmartConstructor(object):

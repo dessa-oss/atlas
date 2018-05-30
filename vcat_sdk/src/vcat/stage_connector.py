@@ -7,7 +7,11 @@ class StageConnector(object):
         self._has_run = False
         self._result = None
         self._is_persisted = False
-        self._cache_name = current_stage.uuid()
+        self._cache_name = self._make_cache_name()
+
+    def _make_cache_name(self):
+        from uuid import uuid4
+        return str(uuid4())
 
     def uuid(self):
         return self.current_stage.uuid()
