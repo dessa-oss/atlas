@@ -40,3 +40,6 @@ class Stage(object):
 
     def stage_args(self):
         return self.args
+
+    def stage_kwargs(self):
+        return self.kwargs
