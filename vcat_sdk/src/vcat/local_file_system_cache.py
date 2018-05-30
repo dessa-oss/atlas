@@ -7,7 +7,7 @@ class LocalFileSystemCache(object):
         import dill as pickle
         import os.path
 
-        if os.path.isfile(self._file_path(key))
+        if os.path.isfile(self._file_path(key)):
             with open(self._file_path(key), 'rb') as file:
                 return pickle.load(file)
         else:
@@ -27,4 +27,4 @@ class LocalFileSystemCache(object):
       return self.get(key) or self.set(key, callback())
 
     def _file_path(self, key):
-        return self._path + '/' + key, 'rb'
+        return self._path + '/' + key

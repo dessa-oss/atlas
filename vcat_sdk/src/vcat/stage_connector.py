@@ -6,6 +6,7 @@ class StageConnector(object):
         self._previous_connectors = previous_connectors
         self._has_run = False
         self._result = None
+        self._cache_name = current_stage.uuid
 
     def _reset_state(self):
         self._has_run = False
@@ -36,16 +37,26 @@ class StageConnector(object):
         stages_dict[self.name()] = this_stage
         return self.name()
 
+    def cache(self, name):
+        self._cache_name = name
+
     def stage(self, next_stage):
         return StageConnector(self._cache, next_stage, [self])
 
     def run(self, filler_builder, **filler_kwargs):
         if self._has_run:
             return self._result
-        else:
-            previous_results = [connector.run(
-                filler_builder, **filler_kwargs) for connector in self._previous_connectors]
-            self._result = self.current_stage.run(
-                previous_results, filler_builder, **filler_kwargs)
+
+        cached_result = self._cache.get(self._cache_name)
+        if cached_result:
             self._has_run = True
-            return self._result
+            self._result = cached_result
+            return cached_result
+
+        previous_results = [connector.run(
+            filler_builder, **filler_kwargs) for connector in self._previous_connectors]
+        self._result = self.current_stage.run(
+            previous_results, filler_builder, **filler_kwargs)
+        self._has_run = True
+        self._cache.set(self._cache_name, self._result)
+        return self._result
