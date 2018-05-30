@@ -31,7 +31,7 @@ class Pipeline(object):
         current_stage = stage_smart_constructor.make_stage(
             self.uuid(), new_context, function, *args, **kwargs)
         stage_hierarchy = self.pipeline_context.provenance.stage_hierarchy
-        stage_hierarchy.add_entry(current_stage.uuid(), current_stage.function_name(), [self.uuid()], current_stage.function_source_code(), current_stage.source_file(), current_stage.source_line())
+        stage_hierarchy.add_entry(current_stage.uuid(), current_stage.function_name(), [self.uuid()], current_stage.function_source_code(), current_stage.source_file(), current_stage.source_line(), current_stage.stage_args())
         return StageConnectorWrapper(self.graph.stage(self.cache, current_stage), self.pipeline_context, new_context)
 
     def join(self, upstream_connector_wrappers, function, *args, **kwargs):
@@ -47,7 +47,7 @@ class Pipeline(object):
         current_stage = stage_smart_constructor.make_stage(
             current_uuid, new_context, function, *args, **kwargs)
         stage_hierarchy = self.pipeline_context.provenance.stage_hierarchy
-        stage_hierarchy.add_entry(current_stage.uuid(), current_stage.function_name(), parent_uuids, current_stage.function_source_code(), current_stage.source_file(), current_stage.source_line())
+        stage_hierarchy.add_entry(current_stage.uuid(), current_stage.function_name(), parent_uuids, current_stage.function_source_code(), current_stage.source_file(), current_stage.source_line(), current_stage.stage_args())
         return StageConnectorWrapper(self.graph.join(self.cache, current_stage, upstream_connectors), self.pipeline_context, new_context)
 
     def __or__(self, stage_args):

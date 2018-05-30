@@ -37,3 +37,6 @@ class Stage(object):
     def source_line(self):
         import inspect
         return inspect.getsourcelines(self._metadata_function)[1]
+
+    def stage_args(self):
+        return self.args
