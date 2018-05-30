@@ -9,13 +9,6 @@ class StageConnector(object):
         self._is_persisted = False
         self._cache_name = current_stage.uuid
 
-    def _reset_state(self):
-        self._has_run = False
-        self._result = None
-
-        for previous_connector in self._previous_connectors:
-            previous_connector._reset_state()
-
     def uuid(self):
         return self.current_stage.uuid
 
