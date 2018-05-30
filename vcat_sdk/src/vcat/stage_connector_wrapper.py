@@ -57,13 +57,15 @@ class StageConnectorWrapper(object):
         return self.run_without_provenance(**filler_kwargs)
 
     def _fill_stage_output(self):
+        from vcat.rose_tree_traversable import traverse
+
         stage_contexts = self._pipeline_context.stage_contexts
 
         def get_persisted_data(parent_results, this_connector):
             if this_connector._is_persisted:
                 stage_contexts[this_connector.name()].stage_output = this_connector._result
         
-        self._connector._fold_tree(get_persisted_data)
+        traverse(get_persisted_data, self._connector)
 
     def run_without_provenance(self, **filler_kwargs):
         try:

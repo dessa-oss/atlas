@@ -31,28 +31,21 @@ class StageConnector(object):
     def persist(self):
         self._is_persisted = True
 
-    def _fold_tree(self, fold_action):
-        parent_results = [connector._fold_tree(fold_action) for connector in self._previous_connectors]
-        return fold_action(parent_results, self)
-
-    def _lazy_fold_tree(self, fold_action):
-        def parent_results():
-            for connector in self._previous_connectors:
-                yield connector._fold_tree(fold_action)
-
-        return fold_action(parent_results(), self)
+    def previous_nodes(self):
+        return self._previous_connectors
 
     def _reset_state(self):
+        from vcat.rose_tree_traversable import traverse
+
         def reset_action(parent_results, this_connector):
             this_connector._has_run = False
             this_connector._result = None
 
-        self._fold_tree(reset_action)
-
-    def _force(self, lazy_iterable):
-        return list(lazy_iterable)
+        traverse(reset_action, self)
 
     def add_tree_names(self, stages_dict, filler_builder, **filler_kwargs):
+        from vcat.rose_tree_traversable import traverse
+
         def add_tree_names_action(parent_ids, this_connector):
             filler = filler_builder(*this_connector.args(), **this_connector.kwargs())
             args, kwargs = filler.fill(**filler_kwargs)
@@ -61,7 +54,7 @@ class StageConnector(object):
             stages_dict[this_connector.name()] = this_stage
             return this_connector.name()
 
-        return self._fold_tree(add_tree_names_action)
+        return traverse(add_tree_names_action, self)
 
     def cache(self, name):
         self._cache_name = name
@@ -70,6 +63,8 @@ class StageConnector(object):
         return StageConnector(self._cache, next_stage, [self])
 
     def run(self, filler_builder, **filler_kwargs):
+        from vcat.rose_tree_traversable import lazy_traverse, force_results
+        
         def run_action(previous_results, this_connector):
             if this_connector._has_run:
                 return this_connector._result
@@ -82,9 +77,9 @@ class StageConnector(object):
                 return cached_result
 
             this_connector._result = this_connector.current_stage.run(
-                self._force(previous_results), filler_builder, **filler_kwargs)
+                force_results(previous_results), filler_builder, **filler_kwargs)
             this_connector._has_run = True
             this_connector._cache.set(this_connector._cache_name, this_connector._result)
             return this_connector._result
 
-        return self._lazy_fold_tree(run_action)
+        return lazy_traverse(run_action, self)
