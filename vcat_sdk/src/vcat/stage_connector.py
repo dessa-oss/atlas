@@ -1,7 +1,8 @@
 class StageConnector(object):
 
-    def __init__(self, current_stage, previous_connectors):
+    def __init__(self, cache, current_stage, previous_connectors):
         self.current_stage = current_stage
+        self._cache = cache
         self._previous_connectors = previous_connectors
         self._has_run = False
         self._result = None
@@ -36,7 +37,7 @@ class StageConnector(object):
         return self.name()
 
     def stage(self, next_stage):
-        return StageConnector(next_stage, [self])
+        return StageConnector(self._cache, next_stage, [self])
 
     def run(self, filler_builder, **filler_kwargs):
         if self._has_run:
