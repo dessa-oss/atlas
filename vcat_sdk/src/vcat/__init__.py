@@ -25,6 +25,7 @@ from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
 from vcat.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
 from vcat.null_cache import NullCache
 from vcat.local_file_system_cache import LocalFileSystemCache
+from vcat.gcp_cache import GCPCache
 
 def gcp_deploy_job(job, job_name):
   from uuid import uuid4
