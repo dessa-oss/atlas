@@ -4,6 +4,7 @@ import glob
 import yaml
 import time
 import sys
+import dill as pickle
 
 def main():
   job_source_bundle = JobSourceBundle('job', './')
@@ -47,10 +48,8 @@ def main():
     "serial": sys.version_info.serial,
   }
 
-  pipeline_context.save(LocalFileSystemResultSaver())
-  if "result_savers" in config:
-    for result_saver_type in config["result_savers"]:
-      pipeline_context.save(result_saver_type())
+  with open('results.pkl', 'w+b') as file:
+    pickle.dump(pipeline_context._context(), file)
 
   if global_stage_context.error_information is not None:
     raise exception_info[0], exception_info[1], exception_info[2]
