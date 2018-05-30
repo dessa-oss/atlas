@@ -113,4 +113,4 @@ class StageConnector(object):
     def _result_hash(self, result):
         from vcat.utils import make_uuid
 
-        return make_uuid(result)
+        return make_uuid(result, self._result_hash)

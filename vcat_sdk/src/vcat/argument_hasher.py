@@ -34,4 +34,4 @@ class ArgumentHasher(object):
         if isinstance(item, Hyperparameter):
             return generate_uuid(item.name)
 
-        return make_uuid(item)
+        return make_uuid(item, self._make_argument_hash)
