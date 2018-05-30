@@ -15,6 +15,7 @@ def generate_uuid(string):
     digest.update(string)
     return digest.hexdigest()
 
+
 def merged_uuids(uuids):
     from hashlib import sha1
     digest = sha1()
@@ -22,10 +23,8 @@ def merged_uuids(uuids):
         digest.update(uuid)
     return digest.hexdigest()
 
-def make_uuid(item, iterable_callback):
-    from vcat.utils import generate_uuid
-    from vcat.utils import merged_uuids
 
+def make_uuid(item, iterable_callback):
     if isinstance(item, list):
         return merged_uuids([iterable_callback(sub_item) for sub_item in item])
 
