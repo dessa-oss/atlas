@@ -21,6 +21,9 @@ class StageConnectorWrapper(object):
 
     def _reset_state(self):
         self._connector._reset_state()
+    
+    def uuid(self):
+        return self._connector.uuid()
 
     def tree_names(self, **filler_kwargs):
         all_stages = {}
@@ -35,7 +38,7 @@ class StageConnectorWrapper(object):
         if isinstance(function, ContextAware):
             function._set_context(new_context)
 
-        new_stage = stage_smart_constructor.make_stage(new_context, function, *args, **kwargs)
+        new_stage = stage_smart_constructor.make_stage(self.uuid(), new_context, function, *args, **kwargs)
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 
     def persist(self):

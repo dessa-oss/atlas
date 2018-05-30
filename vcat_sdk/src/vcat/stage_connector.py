@@ -15,6 +15,9 @@ class StageConnector(object):
         for previous_connector in self._previous_connectors:
             previous_connector._reset_state()
 
+    def uuid(self):
+        return self.current_stage.uuid
+
     def name(self):
         return self.current_stage.name()
 
