@@ -16,7 +16,7 @@ class StageHierarchyEntry(object):
     self.uuid = uuid
     # self.args = args
     # self.kwargs = kwargs
-    # self.cache_uuid = cache_uuid
+    self.cache_uuid = "fake0-00000-00000-00000-00000"
     # self.function_source_code = function_source_code
     # self.source_file = source_file
     # self.source_line = source_line
