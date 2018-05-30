@@ -40,6 +40,9 @@ class StageConnectorWrapper(object):
     def persist(self):
         self._connector.persist()
 
+    def cache(self, name):
+        self._connector.cache(name)
+
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
@@ -55,9 +58,6 @@ class StageConnectorWrapper(object):
             import sys
             self._stage_context.add_error_information(sys.exc_info())
             raise
-
-        if self._persist:
-            self._stage_context.stage_output = result
 
         return result
 
