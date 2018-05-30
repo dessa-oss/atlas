@@ -48,7 +48,8 @@ class StageConnector(object):
             return self._result
 
         cached_result = self._cache.get(self._cache_name)
-        if cached_result:
+        # TODO: SUPPORT `MISSING` VS `None`
+        if cached_result is not None:
             self._has_run = True
             self._result = cached_result
             return cached_result
