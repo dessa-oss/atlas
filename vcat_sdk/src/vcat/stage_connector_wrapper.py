@@ -17,7 +17,6 @@ class StageConnectorWrapper(object):
         self._pipeline_context.add_stage_context(self._stage_context)
 
         self._stage_piping = StagePiping(self)
-        self._persist = False
 
     def _reset_state(self):
         self._connector._reset_state()
@@ -39,7 +38,7 @@ class StageConnectorWrapper(object):
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 
     def persist(self):
-        self._persist = True
+        self._connector.persist()
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
