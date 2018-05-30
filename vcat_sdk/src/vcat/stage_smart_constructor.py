@@ -16,7 +16,19 @@ class StageSmartConstructor(object):
     def _make_uuid(self, current_uuid, function, args, kwargs):
         argument_hasher = ArgumentHasher(args, kwargs)
         argument_uuid = argument_hasher.make_hash()
-        return merged_uuids([current_uuid, function.__name__, argument_uuid])
+        function_uuid = self._function_hash(function)
+        return merged_uuids([current_uuid, function_uuid, argument_uuid])
+
+    def _function_hash(self, function):
+        from vcat.utils import generate_uuid
+        from vcat.utils import merged_uuids
+        from inspect import getsource
+        from inspect import getsourcefile
+
+        name_uuid = generate_uuid(function.__name__)
+        source_uuid = generate_uuid(getsource(function))
+        file_uuid = generate_uuid(getsourcefile(function))
+        return merged_uuids([name_uuid, source_uuid, file_uuid])
 
     def _wrapped_function(self, stage_uuid, function):
         def wrapped(*args, **kwargs):
