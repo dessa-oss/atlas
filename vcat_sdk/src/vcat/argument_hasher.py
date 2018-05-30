@@ -22,13 +22,11 @@ class ArgumentHasher(object):
         return results
 
     def _make_argument_hash(self, item):
+        from vcat.utils import make_uuid
         from vcat.utils import generate_uuid
         from vcat.pipeline import Pipeline
         from vcat.stage_connector_wrapper import StageConnectorWrapper
         from vcat.hyperparameter import Hyperparameter
-
-        if isinstance(item, basestring):
-            return generate_uuid(item)
 
         if isinstance(item, Pipeline) or isinstance(item, StageConnectorWrapper) or isinstance(item, Pipeline):
             return item.uuid()
@@ -36,4 +34,4 @@ class ArgumentHasher(object):
         if isinstance(item, Hyperparameter):
             return generate_uuid(item.name)
 
-        return generate_uuid(str(item))
+        return make_uuid(item)

@@ -21,3 +21,15 @@ def merged_uuids(uuids):
     for uuid in uuids:
         digest.update(uuid)
     return digest.hexdigest()
+
+def make_uuid(item):
+    from vcat.utils import generate_uuid
+    from vcat.utils import merged_uuids
+
+    if isinstance(item, list):
+        return merged_uuids([generate_uuid(sub_item) for sub_item in item])
+
+    if isinstance(item, basestring):
+        return generate_uuid(item)
+
+    return generate_uuid(str(item))

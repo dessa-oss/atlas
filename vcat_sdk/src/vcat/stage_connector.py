@@ -7,11 +7,7 @@ class StageConnector(object):
         self._has_run = False
         self._result = None
         self._is_persisted = False
-        self._cache_name = self._make_cache_name()
-
-    def _make_cache_name(self):
-        from uuid import uuid4
-        return str(uuid4())
+        self._cache_name = None
 
     def uuid(self):
         return self.current_stage.uuid()
@@ -47,10 +43,11 @@ class StageConnector(object):
         from vcat.rose_tree_traversable import traverse
 
         def add_tree_names_action(parent_ids, this_connector):
-            filler = filler_builder(*this_connector.args(), **this_connector.kwargs())
+            filler = filler_builder(
+                *this_connector.args(), **this_connector.kwargs())
             args, kwargs = filler.fill(**filler_kwargs)
             this_stage = {"function_name": this_connector.function_name(
-                ), "args": args, "kwargs": kwargs, "parents": parent_ids}
+            ), "args": args, "kwargs": kwargs, "parents": parent_ids}
             stages_dict[this_connector.name()] = this_stage
             return this_connector.name()
 
@@ -64,22 +61,48 @@ class StageConnector(object):
 
     def run(self, filler_builder, **filler_kwargs):
         from vcat.rose_tree_traversable import lazy_traverse, force_results
-        
-        def run_action(previous_results, this_connector):
-            if this_connector._has_run:
-                return this_connector._result
 
-            cached_result = this_connector._cache.get(this_connector._cache_name)
+        def run_action(previous_results, self):
+            if self._has_run:
+                return self._result
+
+            upstream_result = None
+            cache_name = self._cache_name
+            if cache_name is None:
+                upstream_result = force_results(previous_results)
+                cache_name = self._auto_cache_name(upstream_result, filler_builder, **filler_kwargs)
+
+            cached_result = self._cache.get(cache_name)
             # TODO: SUPPORT `MISSING` VS `None`
             if cached_result is not None:
-                this_connector._has_run = True
-                this_connector._result = cached_result
+                self._has_run = True
+                self._result = cached_result
                 return cached_result
 
-            this_connector._result = this_connector.current_stage.run(
-                force_results(previous_results), filler_builder, **filler_kwargs)
-            this_connector._has_run = True
-            this_connector._cache.set(this_connector._cache_name, this_connector._result)
-            return this_connector._result
+            if upstream_result is None:
+                upstream_result = force_results(previous_results)
+
+            self._result = self.current_stage.run(
+                upstream_result, filler_builder, **filler_kwargs)
+            self._has_run = True
+            self._cache.set(cache_name, self._result)
+            return self._result
 
         return lazy_traverse(run_action, self)
+
+    def _auto_cache_name(self, result, filler_builder, **filler_kwargs):
+        from vcat.argument_hasher import ArgumentHasher
+        from vcat.utils import merged_uuids
+
+        new_args, new_kwargs = self.current_stage.fill_args_and_kwargs(filler_builder, **filler_kwargs)
+        hasher = ArgumentHasher(new_args, new_kwargs)
+        argument_hash = hasher.make_hash()
+
+        upstream_hash = self._result_hash(result)
+
+        return merged_uuids([argument_hash, upstream_hash, self.uuid()])
+
+    def _result_hash(self, result):
+        from vcat.utils import make_uuid
+
+        return make_uuid(result)

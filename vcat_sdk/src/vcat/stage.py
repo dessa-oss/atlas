@@ -11,9 +11,14 @@ class Stage(object):
         return self._uuid
 
     def run(self, previous_results, filler_builder, **filler_kwargs):
-        filler = filler_builder(*self.args, **self.kwargs)
-        new_args, new_kwargs = filler.fill(**filler_kwargs)
+        new_args, new_kwargs = self.fill_args_and_kwargs(filler_builder, **filler_kwargs)
         return self.function(*(previous_results + new_args), **new_kwargs)
+
+    def filler(self, filler_builder):
+        return filler_builder(*self.args, **self.kwargs)
+
+    def fill_args_and_kwargs(self, filler_builder, **filler_kwargs):
+        return self.filler(filler_builder).fill(**filler_kwargs)
 
     def name(self):
         return str(self.uuid())
