@@ -6,6 +6,7 @@ from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
 
+
 class StageConnectorWrapper(object):
 
     def __init__(self, connector, pipeline_context, stage_context):
@@ -13,13 +14,16 @@ class StageConnectorWrapper(object):
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
 
-        self._stage_context.uuid = self._connector.current_stage.uuid
+        self._stage_context.uuid = self.uuid()
         self._pipeline_context.add_stage_context(self._stage_context)
 
         self._stage_piping = StagePiping(self)
 
     def _reset_state(self):
         self._connector._reset_state()
+
+    def uuid(self):
+        return self._connector.uuid()
 
     def tree_names(self, **filler_kwargs):
         all_stages = {}
@@ -34,7 +38,8 @@ class StageConnectorWrapper(object):
         if isinstance(function, ContextAware):
             function._set_context(new_context)
 
-        new_stage = stage_smart_constructor.make_stage(new_context, function, *args, **kwargs)
+        new_stage = stage_smart_constructor.make_stage(
+            self.uuid(), new_context, function, *args, **kwargs)
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 
     def persist(self):
@@ -48,7 +53,7 @@ class StageConnectorWrapper(object):
 
     def run(self, **filler_kwargs):
         self._pipeline_context.provenance.stage_provenance[
-            self._connector.current_stage.uuid] = self.tree_names(**filler_kwargs)
+            self.uuid()] = self.tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 
     def _fill_stage_output(self):
