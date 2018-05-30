@@ -1,6 +1,7 @@
 from vcat.provenance import Provenance
 from vcat.stage_context import StageContext
 
+
 class PipelineContext(object):
 
     def __init__(self):
@@ -9,7 +10,7 @@ class PipelineContext(object):
         self.file_name = str(uuid.uuid4()) + ".json"
         self.provenance = Provenance()
         self.stage_contexts = {}
-        
+
         self.global_stage_context = StageContext()
         self.global_stage_context.uuid = 'global'
 
