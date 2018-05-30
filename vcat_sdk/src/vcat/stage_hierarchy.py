@@ -3,9 +3,9 @@ class StageHierarchy(object):
   def __init__(self):
     self.entries = {}
   
-  def add_entry(self, uuid, function_name, parents, function_source_code, source_file, source_line, stage_args, stage_kwargs):
-    entry = StageHierarchyEntry(uuid, function_name, parents, function_source_code, source_file, source_line, stage_args, stage_kwargs)
-    self.entries[uuid] = entry
+  def add_entry(self, stage, parents):
+    entry = StageHierarchyEntry(stage.uuid(), stage.function_name(), parents, stage.function_source_code(), stage.source_file(), stage.source_line(), stage.stage_args(), stage.stage_kwargs())
+    self.entries[stage.uuid()] = entry
 
     
 class StageHierarchyEntry(object):
