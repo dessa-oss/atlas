@@ -8,6 +8,7 @@ class StageConnector(object):
         self._result = None
         self._is_persisted = False
         self._cache_name = None
+        self._allow_caching = True
 
     def uuid(self):
         return self.current_stage.uuid()
@@ -53,8 +54,11 @@ class StageConnector(object):
 
         return traverse(add_tree_names_action, self)
 
-    def cache(self, name):
+    def set_global_cache_name(self, name):
         self._cache_name = name
+
+    def disable_caching(self):
+        self._allow_caching = False
 
     def stage(self, next_stage):
         return StageConnector(self._cache, next_stage, [self])
@@ -67,17 +71,18 @@ class StageConnector(object):
                 return self._result
 
             upstream_result = None
-            cache_name = self._cache_name
-            if cache_name is None:
-                upstream_result = force_results(previous_results)
-                cache_name = self._auto_cache_name(upstream_result, filler_builder, **filler_kwargs)
+            if self._allow_caching:
+                cache_name = self._cache_name
+                if cache_name is None:
+                    upstream_result = force_results(previous_results)
+                    cache_name = self._auto_cache_name(upstream_result, filler_builder, **filler_kwargs)
 
-            cached_result = self._cache.get(cache_name)
-            # TODO: SUPPORT `MISSING` VS `None`
-            if cached_result is not None:
-                self._has_run = True
-                self._result = cached_result
-                return cached_result
+                cached_result = self._cache.get(cache_name)
+                # TODO: SUPPORT `MISSING` VS `None`
+                if cached_result is not None:
+                    self._has_run = True
+                    self._result = cached_result
+                    return cached_result
 
             if upstream_result is None:
                 upstream_result = force_results(previous_results)
@@ -85,7 +90,10 @@ class StageConnector(object):
             self._result = self.current_stage.run(
                 upstream_result, filler_builder, **filler_kwargs)
             self._has_run = True
-            self._cache.set(cache_name, self._result)
+
+            if self._allow_caching:
+                self._cache.set(cache_name, self._result)
+                
             return self._result
 
         return lazy_traverse(run_action, self)

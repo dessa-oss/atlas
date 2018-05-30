@@ -45,8 +45,11 @@ class StageConnectorWrapper(object):
     def persist(self):
         self._connector.persist()
 
-    def cache(self, name):
-        self._connector.cache(name)
+    def set_global_cache_name(self, name):
+        self._connector.set_global_cache_name(name)
+
+    def disable_caching(self):
+        self._connector.disable_caching()
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
