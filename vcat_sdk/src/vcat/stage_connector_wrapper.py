@@ -38,8 +38,12 @@ class StageConnectorWrapper(object):
         if isinstance(function, ContextAware):
             function._set_context(new_context)
 
-        new_stage = stage_smart_constructor.make_stage(
-            self.uuid(), new_context, function, *args, **kwargs)
+        new_stage = stage_smart_constructor.make_stage(self.uuid(), new_context, function, *args, **kwargs)
+        new_connector_wrapper = StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
+        parent_connectors = new_connector_wrapper._connector._previous_connectors
+        parent_uuids = [self.uuid()]
+        stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
+        stage_hierarchy.add_entry(new_stage, parent_uuids)
         return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
 
     def persist(self):

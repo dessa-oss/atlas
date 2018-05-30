@@ -2,7 +2,7 @@ import os
 import random
 
 from vcat.local_directory import LocalDirectory
-
+from vcat.stage_hierarchy import StageHierarchy
 
 class Provenance(object):
 
@@ -15,6 +15,7 @@ class Provenance(object):
         self.module_versions = {}
         self.pip_freeze = None
         self.stage_provenance = {}
+        self.stage_hierarchy = StageHierarchy()
 
     def save_to_archive(self, archiver):
         archiver.append_provenance(self._archive_provenance())

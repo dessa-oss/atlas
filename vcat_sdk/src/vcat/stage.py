@@ -25,3 +25,21 @@ class Stage(object):
 
     def function_name(self):
         return self._metadata_function.__name__
+    
+    def function_source_code(self):
+        import inspect
+        return inspect.getsource(self._metadata_function)
+    
+    def source_file(self):
+        import inspect
+        return inspect.getsourcefile(self._metadata_function)
+
+    def source_line(self):
+        import inspect
+        return inspect.getsourcelines(self._metadata_function)[1]
+
+    def stage_args(self):
+        return self.args
+
+    def stage_kwargs(self):
+        return self.kwargs
