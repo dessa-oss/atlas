@@ -19,6 +19,7 @@ class ArgumentHasher(object):
         for key, value in self._kwargs.items():
             results.append(generate_uuid(key))
             results.append(self._make_argument_hash(value))
+        return results
 
     def _make_argument_hash(self, item):
         from vcat.utils import generate_uuid
