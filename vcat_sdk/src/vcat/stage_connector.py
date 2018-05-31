@@ -99,11 +99,11 @@ class StageConnector(object):
 
     def _fetch_cache(self, cache_name):
         from vcat.global_state import cache_manager
-        return cache_manager.cache.get(cache_name)
+        return cache_manager.cache().get(cache_name)
 
     def _submit_cache(self, cache_name, value):
         from vcat.global_state import cache_manager
-        return cache_manager.cache.set(cache_name, value)
+        return cache_manager.cache().set(cache_name, value)
 
     def _auto_cache_name(self, result, filler_builder, **filler_kwargs):
         from vcat.argument_hasher import ArgumentHasher

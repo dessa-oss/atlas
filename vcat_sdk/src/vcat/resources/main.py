@@ -5,7 +5,7 @@ import dill as pickle
 def main():
     job_source_bundle = JobSourceBundle('job', './')
 
-    config = config_manager.config
+    config = config_manager.config()
 
     job_name = config.get('job_name', 'job')
     job_binary_path = job_name + '.bin'
