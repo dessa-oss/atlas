@@ -8,5 +8,5 @@ PyYAML
 tensorflow
 fastai==0.7.0
 torch==0.4
-../vcat_sdk/dist/vcat-0.0.1-py2-none-any.whl 
+vcat_sdk/dist/vcat-0.0.1-py2-none-any.whl 
 
