@@ -22,13 +22,18 @@ class StageSmartConstructor(object):
     def _function_hash(self, function):
         from vcat.utils import generate_uuid
         from vcat.utils import merged_uuids
+        from vcat.context_aware import ContextAware
         from inspect import getsource
         from inspect import getsourcefile
 
         name_uuid = generate_uuid(function.__name__)
-        source_uuid = generate_uuid(getsource(function))
-        file_uuid = generate_uuid(getsourcefile(function))
-        return merged_uuids([name_uuid, source_uuid, file_uuid])
+
+        if isinstance(function, ContextAware):
+            source_uuid = generate_uuid(getsource(function._metadata_function))
+        else:
+            source_uuid = generate_uuid(getsource(function))
+
+        return merged_uuids([name_uuid, source_uuid])
 
     def _wrapped_function(self, stage_uuid, function):
         def wrapped(*args, **kwargs):
