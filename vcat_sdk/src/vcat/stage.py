@@ -27,15 +27,15 @@ class Stage(object):
         return self._metadata_function.__name__
     
     def function_source_code(self):
-        import inspect
+        import vcat.safe_inspect as inspect
         return inspect.getsource(self._metadata_function)
     
     def source_file(self):
-        import inspect
+        import vcat.safe_inspect as inspect
         return inspect.getsourcefile(self._metadata_function)
 
     def source_line(self):
-        import inspect
+        import vcat.safe_inspect as inspect
         return inspect.getsourcelines(self._metadata_function)[1]
 
     def stage_args(self):
