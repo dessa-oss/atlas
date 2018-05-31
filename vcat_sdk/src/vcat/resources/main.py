@@ -1,6 +1,7 @@
-from vcat import Job, JobSourceBundle, config_manager
+from vcat import Job, JobSourceBundle, JobPersister, config_manager
 
 import dill as pickle
+
 
 def main():
     job_source_bundle = JobSourceBundle('job', './')
@@ -14,6 +15,7 @@ def main():
         job = Job.deserialize(file.read())
 
     pipeline_context = job.pipeline_context()
+    pipeline_context.file_name = job_name
     global_stage_context = pipeline_context.global_stage_context
     pipeline_context.provenance.config.update(config)
     config = pipeline_context.provenance.config
@@ -30,6 +32,8 @@ def main():
             global_stage_context.add_error_information(exception_info)
             return exception_info
     exception_info = global_stage_context.time_callback(execute_job)
+
+    JobPersister(job).persist()
 
     with open('results.pkl', 'w+b') as file:
         pickle.dump(pipeline_context._context(), file)

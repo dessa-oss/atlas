@@ -19,4 +19,6 @@ from vcat.local_file_system_cache import LocalFileSystemCache
 from vcat.gcp_cache import GCPCache
 from vcat.global_state import *
 from vcat.deployment_utils import *
-
+from vcat.job_persister import JobPersister
+from vcat.null_archive import NullArchive
+from vcat.null_pipeline_archive_listing import NullArchiveListing
