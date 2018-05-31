@@ -16,9 +16,9 @@ class JobBundler(object):
         return self._job_name
 
     def bundle(self):
+        self._job_source_bundle.bundle()
         self._save_job()
         self._save_config()
-        self._job_source_bundle.bundle()
         self._bundle_job()
         self._job_source_bundle.cleanup()
 
@@ -60,14 +60,21 @@ class JobBundler(object):
         current_directory = os.getcwd()
         # os.chdir(self._module_directory)
 
-        with tarfile.open(self.job_archive(), "w:gz") as tar:
-            tar.add(self._job_source_bundle.job_archive(),
-                    arcname=self._job_name + '/job.tgz')
+        try:
+            with tarfile.open(self.job_archive(), "w:gz") as tar:
+                tar.add(self._job_source_bundle.job_archive(),
+                        arcname=self._job_name + '/job.tgz')
 
-            os.chdir(self._module_directory)
-            tar.add(".", arcname=self._job_name + '/vcat')
+                tar.add(self._job_binary(), arcname=self._job_name + '/' + self._job_binary())
 
-            os.chdir(self._resource_directory)
-            tar.add(".", arcname=self._job_name)
+                for config_file in glob.glob('*.config.yaml'):
+                    tar.add(config_file,
+                            arcname=self._job_name + '/' + config_file)
 
-        os.chdir(current_directory)
+                os.chdir(self._module_directory)
+                tar.add(".", arcname=self._job_name + '/vcat')
+
+                os.chdir(self._resource_directory)
+                tar.add(".", arcname=self._job_name)
+        finally:
+            os.chdir(current_directory)

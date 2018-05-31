@@ -21,7 +21,8 @@ class LocalShellJobDeployment(object):
         try:
             self._run()
         finally:
-            self._job_bundler.cleanup()
+            pass
+            # self._job_bundler.cleanup()
 
     def is_job_complete(self):
         return True
