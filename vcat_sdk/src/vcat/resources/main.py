@@ -38,7 +38,7 @@ def main():
     with open('results.pkl', 'w+b') as file:
         pickle.dump(pipeline_context._context(), file)
 
-    if global_stage_context.error_information is not None:
+    if exception_info is not None:
         raise exception_info[0], exception_info[1], exception_info[2]
 
 if __name__ == "__main__":
