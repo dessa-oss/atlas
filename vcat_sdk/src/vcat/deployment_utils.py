@@ -64,6 +64,7 @@ def _grid_param_set_generator(hype_kwargs):
 
 def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
     from vcat.job_source_bundle import JobSourceBundle
+    from vcat.job import Job
     import time
     import uuid
 
@@ -95,8 +96,8 @@ def _extract_results(results_dict):
 
 def adaptive_search(connector_wrapper, deployer_type, initial_generator, generator_function):
     from vcat.job_source_bundle import JobSourceBundle
+    from vcat.job import Job
     import Queue
-    import time
     import uuid
 
     queue = Queue.Queue()
