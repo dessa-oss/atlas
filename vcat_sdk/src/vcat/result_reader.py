@@ -173,3 +173,7 @@ class ResultReader(object):
             except:
                 continue
         return None
+
+    def create_working_copy(self, pipeline_name, path_to_save):
+        job_source_bundle = self._pipeline_contexts[pipeline_name].provenance.job_source_bundle
+        job_source_bundle.unbundle(path_to_save)

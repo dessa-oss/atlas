@@ -10,11 +10,21 @@ class JobSourceBundle(object):
         with tarfile.open(self.job_archive(), "w:gz") as tar:
             tar.add(".")
 
-    def unbundle(self):
+    def unbundle(self, path_to_save):
         import tarfile
+        from os import getcwd, chdir
+        from distutils.dir_util import mkpath
 
         with tarfile.open(self.job_archive(), "r:gz") as tar:
-            tar.extractall()
+            old_path = getcwd()
+            mkpath(path_to_save)
+            chdir(path_to_save)
+
+            try:
+                tar.extractall()
+            finally:
+                chdir(old_path)
+        
 
     def cleanup(self):
         import os
