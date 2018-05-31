@@ -2,7 +2,6 @@ from vcat import Job, JobSourceBundle, config_manager
 
 import dill as pickle
 
-
 def main():
     job_source_bundle = JobSourceBundle('job', './')
 
@@ -26,6 +25,7 @@ def main():
             job.run()
             return None
         except Exception as error:
+            import sys
             exception_info = sys.exc_info()
             global_stage_context.add_error_information(exception_info)
             return exception_info
