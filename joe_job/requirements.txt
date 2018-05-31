@@ -1,0 +1,12 @@
+dill
+redis
+pandas
+google-api-python-client
+google-auth-httplib2
+google-cloud-storage
+PyYAML
+tensorflow
+fastai==0.7.0
+torch==0.4
+../vcat_sdk/dist/vcat-0.0.1-py2-none-any.whl 
+
