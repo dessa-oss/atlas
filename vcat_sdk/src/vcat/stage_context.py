@@ -46,6 +46,19 @@ class StageContext(object):
         self.delta_time = archive_stage_context['delta_time']
         self.is_context_aware = archive_stage_context['is_context_aware']
 
+    def time_callback(self, callback):
+        import time
+
+        start_time = time.time()
+        return_value = callback()
+        end_time = time.time()
+        
+        self.start_time = start_time
+        self.end_time = end_time
+        self.delta_time = end_time - start_time
+
+        return return_value
+
     def _archive_stage_context(self):
         return {
             'meta_data': self.meta_data,

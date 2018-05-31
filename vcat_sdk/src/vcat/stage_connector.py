@@ -1,8 +1,7 @@
 class StageConnector(object):
 
-    def __init__(self, cache, current_stage, previous_connectors):
+    def __init__(self, current_stage, previous_connectors):
         self.current_stage = current_stage
-        self._cache = cache
         self._previous_connectors = previous_connectors
         self._has_run = False
         self._result = None
@@ -48,7 +47,8 @@ class StageConnector(object):
                 *this_connector.args(), **this_connector.kwargs())
             args, kwargs = filler.fill(**filler_kwargs)
             stage_hierarchy.entries[this_connector.uuid()].stage_args = args
-            stage_hierarchy.entries[this_connector.uuid()].stage_kwargs = kwargs
+            stage_hierarchy.entries[
+                this_connector.uuid()].stage_kwargs = kwargs
 
         traverse(add_tree_names_action, self)
 
@@ -59,7 +59,7 @@ class StageConnector(object):
         self._allow_caching = False
 
     def stage(self, next_stage):
-        return StageConnector(self._cache, next_stage, [self])
+        return StageConnector(next_stage, [self])
 
     def run(self, filler_builder, **filler_kwargs):
         from vcat.rose_tree_traversable import lazy_traverse, force_results
@@ -73,9 +73,10 @@ class StageConnector(object):
                 cache_name = self._cache_name
                 if cache_name is None:
                     upstream_result = force_results(previous_results)
-                    cache_name = self._auto_cache_name(upstream_result, filler_builder, **filler_kwargs)
+                    cache_name = self._auto_cache_name(
+                        upstream_result, filler_builder, **filler_kwargs)
 
-                cached_result = self._cache.get(cache_name)
+                cached_result = self._fetch_cache(cache_name)
                 # TODO: SUPPORT `MISSING` VS `None`
                 if cached_result is not None:
                     self._has_run = True
@@ -90,17 +91,26 @@ class StageConnector(object):
             self._has_run = True
 
             if self._allow_caching:
-                self._cache.set(cache_name, self._result)
-                
+                self._submit_cache(cache_name, self._result)
+
             return self._result
 
         return lazy_traverse(run_action, self)
+
+    def _fetch_cache(self, cache_name):
+        from vcat.global_state import cache_manager
+        return cache_manager.cache.get(cache_name)
+
+    def _submit_cache(self, cache_name, value):
+        from vcat.global_state import cache_manager
+        return cache_manager.cache.set(cache_name, value)
 
     def _auto_cache_name(self, result, filler_builder, **filler_kwargs):
         from vcat.argument_hasher import ArgumentHasher
         from vcat.utils import merged_uuids
 
-        new_args, new_kwargs = self.current_stage.fill_args_and_kwargs(filler_builder, **filler_kwargs)
+        new_args, new_kwargs = self.current_stage.fill_args_and_kwargs(
+            filler_builder, **filler_kwargs)
         hasher = ArgumentHasher(new_args, new_kwargs)
         argument_hash = hasher.make_hash()
 
