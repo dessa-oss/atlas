@@ -6,7 +6,7 @@ from vcat import *
 
 # pipeline.cache = GCPCache()
 pipe = pipeline | 'wonderful' | print_it  # | destroy_it
-pipe2 = pipeline | 'wonderful' | print_it  | destroy_it
+pipe2 = pipeline | 'wonderful' | print_it | destroy_it
 pipe.persist()
 
 job = Job(pipe)
@@ -17,8 +17,8 @@ job_source_bundle = JobSourceBundle(bundle_name, '../')
 deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
 deployment.config()['cache_implementation'] = {
-  'cache_type': GCPCache,
-  # 'constructor_arguments': [],
+    'cache_type': GCPCache,
+    # 'constructor_arguments': [],
 }
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
