@@ -80,4 +80,4 @@ def test_bullnet(datasets, batch_size, n_batches, max_embedding, emb_size_diviso
             loss.backward()
             optimizer.step()
 
-    return None, results
+    return x_train_cat, results

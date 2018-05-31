@@ -3,6 +3,7 @@ class ResultReader(object):
     def __init__(self, archive_listing, archive):
         from vcat.pipeline_context import PipelineContext
         from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
+        from vcat.job_source_bundle import JobSourceBundle
 
         self._pipeline_contexts = {}
 
@@ -12,17 +13,28 @@ class ResultReader(object):
             
         for pipeline_archiver in pipeline_archiver_fetch.fetch_archivers():
             pipeline_context = PipelineContext()
+            pipeline_context.provenance.job_source_bundle = JobSourceBundle(pipeline_archiver.pipeline_name(), "./")
             pipeline_context.load_from_archive(pipeline_archiver)
 
             self._pipeline_contexts[pipeline_archiver.pipeline_name()] = pipeline_context
+
+    def cleanup(self):
+        for pipeline_context in self._pipeline_contexts.values():
+            pipeline_context.provenance.job_source_bundle.cleanup()
+
+    def _pretty_time(self, timestamp):
+        import datetime
+
+        try:
+            return datetime.datetime.fromtimestamp(timestamp)
+        except:
+            return timestamp
 
     def get_job_information(self):
         import datetime
         import pandas as pd
 
         from vcat import restructure_headers
-
-        pretty_time = datetime.datetime.fromtimestamp
 
         all_job_information = []
 
@@ -42,8 +54,8 @@ class ResultReader(object):
 
                 stage_context = pipeline_context.stage_contexts[stage_id]
 
-                start_time = pretty_time(stage_context.start_time)
-                end_time = pretty_time(stage_context.end_time)
+                start_time = self._pretty_time(stage_context.start_time)
+                end_time = self._pretty_time(stage_context.end_time)
                 delta_time = stage_context.delta_time
 
                 if stage_context.error_information:
