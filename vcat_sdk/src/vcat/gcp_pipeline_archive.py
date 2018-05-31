@@ -29,9 +29,9 @@ class GCPPipelineArchive(object):
         bucket_object = self._bucket_object(arcname)
         bucket_object.upload_from_string(serialized_item)
 
-    def append_file(self, file_prefix, file_path, prefix=None):
+    def append_file(self, file_prefix, file_path, prefix=None, target_name=None):
         from os.path import basename
-        name = basename(file_path)
+        name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
         bucket_object = self._bucket_object(arcname)
@@ -57,9 +57,9 @@ class GCPPipelineArchive(object):
         else:
             return None
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None):
+    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
         from os.path import basename
-        name = basename(file_path)
+        name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
         bucket_object = self._bucket_object(arcname)

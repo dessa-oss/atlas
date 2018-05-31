@@ -55,9 +55,9 @@ class LocalPipelineArchive(object):
             tempfile.file.write(serialized_item)
             self._add_to_tar(tempfile, prefix, name)
 
-    def append_file(self, file_prefix, file_path, prefix=None):
+    def append_file(self, file_prefix, file_path, prefix=None, target_name=None):
         from os.path import basename
-        name = basename(file_path)
+        name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
         self._tar.add(file_path, arcname=arcname)
@@ -65,7 +65,7 @@ class LocalPipelineArchive(object):
     def fetch(self, name, prefix=None):
         raise NotImplementedError()
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None):
+    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
         raise NotImplementedError()
 
     def archive_name(self):

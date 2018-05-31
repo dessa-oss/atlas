@@ -30,7 +30,7 @@ class PipelineArchiver(object):
 
     def append_job_source(self, source_file_path):
         if source_file_path is not None:
-            return self._job_source_archive.append_file('job_source', source_file_path, self._pipeline_name)
+            return self._job_source_archive.append_file('job_source', source_file_path, self._pipeline_name, self._pipeline_name + '.tgz')
 
     def append_artifact(self, name, artifact):
         if artifact is not None:
