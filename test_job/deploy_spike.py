@@ -16,8 +16,37 @@ bundle_name = str(uuid.uuid4())
 job_source_bundle = JobSourceBundle(bundle_name, '../')
 deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
-deployment.config()['cache_implementation'] = {
+config = deployment.config()
+config['cache_implementation'] = {
     'cache_type': GCPCache,
+    # 'constructor_arguments': [],
+}
+config['archive_listing_implementation'] = {
+    'archive_listing_type': GCPPipelineArchiveListing,
+    # 'constructor_arguments': [],
+}
+config['stage_log_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
+    # 'constructor_arguments': [],
+}
+config['persisted_data_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
+    # 'constructor_arguments': [],
+}
+config['provenance_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
+    # 'constructor_arguments': [],
+}
+config['job_source_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
+    # 'constructor_arguments': [],
+}
+config['artifact_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
+    # 'constructor_arguments': [],
+}
+config['miscellaneous_archive_implementation'] = {
+    'archive_type': GCPPipelineArchive,
     # 'constructor_arguments': [],
 }
 deployment.deploy()
@@ -40,6 +69,7 @@ print(result)
 # # pipe.set_global_cache_name('wonderful.txt')
 # # pipe.disable_caching()
 # pipe.run()
+# JobPersister(job).persist()
 # print(pipe.tree_names())
 # print(pipe2.tree_names())
 # # pipeline_context.provenance.job_source_bundle = JobSourceBundle('test_job', '../')
