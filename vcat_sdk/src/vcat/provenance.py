@@ -19,6 +19,7 @@ class Provenance(object):
         self.python_version = None
 
     def fill_python_version(self):
+        import sys
         self.python_version = {
             "major": sys.version_info.major,
             "minor": sys.version_info.minor,
