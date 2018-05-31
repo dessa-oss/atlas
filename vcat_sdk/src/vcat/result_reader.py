@@ -165,3 +165,11 @@ class ResultReader(object):
             return None
 
         return map(get_unstructured_result, stage_ids)
+
+    def get_source_code(self, stage_id):
+        for pipeline_context in self._pipeline_contexts.values():
+            try:
+                return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
+            except:
+                continue
+        return None
