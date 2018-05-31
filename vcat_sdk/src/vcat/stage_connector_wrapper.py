@@ -22,6 +22,9 @@ class StageConnectorWrapper(object):
     def _reset_state(self):
         self._connector._reset_state()
 
+    def pipeline_context(self):
+        return self._pipeline_context
+
     def uuid(self):
         return self._connector.uuid()
 

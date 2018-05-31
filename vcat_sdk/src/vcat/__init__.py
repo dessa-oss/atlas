@@ -19,3 +19,6 @@ from vcat.local_file_system_cache import LocalFileSystemCache
 from vcat.gcp_cache import GCPCache
 from vcat.global_state import *
 from vcat.deployment_utils import *
+
+config_manager.load()
+cache_manager.load()

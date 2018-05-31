@@ -34,13 +34,8 @@ class Provenance(object):
         self.fill_pip_modules()
 
     def fill_config(self):
-        import yaml
-
-        directory = LocalDirectory()
-        file_list = directory.get_files('*.config.yaml')
-        for bundled_file in file_list:
-            with bundled_file.open('r') as file:
-                self.config.update(yaml.load(file))
+        from vcat.global_state import config_manager
+        self.config.update(config_manager.config)
 
     def fill_environment(self):
         for key, value in os.environ.items():

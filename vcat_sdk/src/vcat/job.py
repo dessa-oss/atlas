@@ -7,6 +7,9 @@ class Job(object):
     def run(self):
         return self._pipeline_connector.run(**self.kwargs)
 
+    def pipeline_context(self):
+        return self._pipeline_connector.pipeline_context()
+
     def serialize(self):
         import dill as pickle
         return pickle.dumps(self)

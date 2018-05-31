@@ -1,4 +1,4 @@
-from vcat import Job, LocalFileSystemResultSaver, JobSourceBundle
+from vcat import Job, JobSourceBundle, config_manager
 
 import glob
 import yaml
@@ -9,11 +9,7 @@ import dill as pickle
 def main():
   job_source_bundle = JobSourceBundle('job', './')
 
-  config = {}
-  file_list = glob.glob('*.config.yaml')
-  for file_name in file_list:
-    with open(file_name, 'r') as file:
-      config.update(yaml.load(file))
+  config = config_manager.config
 
   job_name = config.get('job_name', 'job')
   job_binary_path = job_name + '.bin'
@@ -21,7 +17,7 @@ def main():
   with open(job_binary_path, 'rb') as file:
     job = Job.deserialize(file.read())
 
-  pipeline_context = job._pipeline_connector._pipeline_context
+  pipeline_context = job.pipeline_context()
   global_stage_context = pipeline_context.global_stage_context
   pipeline_context.provenance.config.update(config)
   config = pipeline_context.provenance.config
