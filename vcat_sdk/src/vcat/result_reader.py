@@ -1,16 +1,11 @@
 class ResultReader(object):
 
-    def __init__(self, archive_listing, archive):
+    def __init__(self, pipeline_archiver_fetch):
         from vcat.pipeline_context import PipelineContext
-        from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
         from vcat.job_source_bundle import JobSourceBundle
 
         self._pipeline_contexts = {}
 
-        with archive as archive_handle:
-            pipeline_archiver_fetch = PipelineArchiverFetch(archive_listing, archive_handle,
-                archive_handle, archive_handle, archive_handle, archive_handle, archive_handle)
-            
         for pipeline_archiver in pipeline_archiver_fetch.fetch_archivers():
             pipeline_context = PipelineContext()
             pipeline_context.provenance.job_source_bundle = JobSourceBundle(pipeline_archiver.pipeline_name(), "./")
