@@ -16,10 +16,10 @@ bundle_name = str(uuid.uuid4())
 job_source_bundle = JobSourceBundle(bundle_name, '../')
 deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
-# deployment.config()["result_savers"] = [
-#     GCPResultSaver,
-#     GCPBundledResultSaver
-# ]
+deployment.config()['cache_implementation'] = {
+  'cache_type': GCPCache,
+  # 'constructor_arguments': [],
+}
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
 # raise_error_if_job_failed(deployment)

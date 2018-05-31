@@ -11,7 +11,7 @@ class CacheManager(object):
             cache_implementation = config_manager.config[
                 'cache_implementation']
             cache_klass = cache_implementation['cache_type']
-            cache_args = cache_implementation['constructor_arguments']
+            cache_args = cache_implementation.get('constructor_arguments', [])
             self.cache = cache_klass(*cache_args)
         else:
             self.cache = NullCache()
