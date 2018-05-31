@@ -80,11 +80,11 @@ class Provenance(object):
         }
 
     def _load_archive_provenance(self, archive_provenance):
-        self.environment = archive_provenance["environment"]
-        self.config = archive_provenance["config"]
-        self.tags = archive_provenance["tags"]
-        self.random_state = archive_provenance["random_state"]
-        self.module_versions = archive_provenance["module_versions"]
-        self.pip_freeze = archive_provenance["pip_freeze"]
-        self.stage_hierarchy = archive_provenance["stage_hierarchy"]
-        self.python_version = archive_provenance["python_version"]
+        self.environment = archive_provenance.get("environment", self.environment)
+        self.config = archive_provenance.get("config", self.config)
+        self.tags = archive_provenance.get("tags", self.tags)
+        self.random_state = archive_provenance.get("random_state", self.random_state)
+        self.module_versions = archive_provenance.get("module_versions", self.module_versions)
+        self.pip_freeze = archive_provenance.get("pip_freeze", self.pip_freeze)
+        self.stage_hierarchy = archive_provenance.get("stage_hierarchy", self.stage_hierarchy)
+        self.python_version = archive_provenance.get("python_version", self.python_version)

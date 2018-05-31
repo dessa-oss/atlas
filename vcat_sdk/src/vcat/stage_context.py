@@ -37,14 +37,14 @@ class StageContext(object):
         self._load_archive_stage_context(archive_stage_context)
 
     def _load_archive_stage_context(self, archive_stage_context):
-        self.meta_data = archive_stage_context['meta_data']
-        self.data_uuid = archive_stage_context['data_uuid']
-        self.uuid = archive_stage_context['uuid']
-        self.error_information = archive_stage_context['error_information']
-        self.start_time = archive_stage_context['start_time']
-        self.end_time = archive_stage_context['end_time']
-        self.delta_time = archive_stage_context['delta_time']
-        self.is_context_aware = archive_stage_context['is_context_aware']
+        self.meta_data = archive_stage_context.get('meta_data', self.meta_data)
+        self.data_uuid = archive_stage_context.get('data_uuid', self.data_uuid)
+        self.uuid = archive_stage_context.get('uuid', self.uuid)
+        self.error_information = archive_stage_context.get('error_information', self.error_information)
+        self.start_time = archive_stage_context.get('start_time', self.start_time)
+        self.end_time = archive_stage_context.get('end_time', self.end_time)
+        self.delta_time = archive_stage_context.get('delta_time', self.delta_time)
+        self.is_context_aware = archive_stage_context.get('is_context_aware', self.is_context_aware)
 
     def time_callback(self, callback):
         import time
