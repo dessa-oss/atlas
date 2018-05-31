@@ -25,11 +25,9 @@ class StageConnectorWrapper(object):
     def uuid(self):
         return self._connector.uuid()
 
-    def tree_names(self, **filler_kwargs):
-        all_stages = {}
+    def add_tree_names(self, **filler_kwargs):
         self._connector.add_tree_names(
-            all_stages, self._provenance_filler_builder, **filler_kwargs)
-        return all_stages
+            self._pipeline_context.provenance.stage_hierarchy, self._provenance_filler_builder, **filler_kwargs)
 
     def stage(self, function, *args, **kwargs):
         new_context = StageContext()
@@ -59,8 +57,7 @@ class StageConnectorWrapper(object):
         return self._stage_piping.pipe(stage_args)
 
     def run(self, **filler_kwargs):
-        # self._pipeline_context.provenance.stage_provenance[
-        #     self.uuid()] = self.tree_names(**filler_kwargs)
+        self.add_tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 
     def _fill_stage_output(self):

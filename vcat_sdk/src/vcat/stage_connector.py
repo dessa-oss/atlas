@@ -40,19 +40,17 @@ class StageConnector(object):
 
         traverse(reset_action, self)
 
-    def add_tree_names(self, stages_dict, filler_builder, **filler_kwargs):
+    def add_tree_names(self, stage_hierarchy, filler_builder, **filler_kwargs):
         from vcat.rose_tree_traversable import traverse
 
         def add_tree_names_action(parent_ids, this_connector):
             filler = filler_builder(
                 *this_connector.args(), **this_connector.kwargs())
             args, kwargs = filler.fill(**filler_kwargs)
-            this_stage = {"function_name": this_connector.function_name(
-            ), "args": args, "kwargs": kwargs, "parents": parent_ids}
-            stages_dict[this_connector.name()] = this_stage
-            return this_connector.name()
+            stage_hierarchy.entries[this_connector.uuid()].stage_args = args
+            stage_hierarchy.entries[this_connector.uuid()].stage_kwargs = kwargs
 
-        return traverse(add_tree_names_action, self)
+        traverse(add_tree_names_action, self)
 
     def set_global_cache_name(self, name):
         self._cache_name = name
