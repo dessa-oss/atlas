@@ -25,7 +25,7 @@ job_source_bundle_path = "test_bundle"
 
 job_source_bundle = JobSourceBundle(job_source_bundle_name, job_source_bundle_path)
 
-deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+deployment = GCPJobDeployment(job_name, job, job_source_bundle)
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
 

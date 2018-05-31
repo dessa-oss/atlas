@@ -28,8 +28,7 @@ def main():
 
   pipeline_context.provenance.job_source_bundle = job_source_bundle
   
-  global_provenance = {}
-  pipeline_context.provenance.stage_provenance["global"] = global_provenance
+  global_provenance = pipeline_context.global_provenance
 
   global_stage_context.start_time = time.time()
   try:

@@ -9,6 +9,7 @@ class PipelineContext(object):
 
         self.file_name = str(uuid.uuid4()) + ".json"
         self.provenance = Provenance()
+        self.global_provenance = {}
         self.stage_contexts = {}
         self.global_stage_context = StageContext()
         self.global_stage_context.uuid = 'global'
@@ -29,6 +30,7 @@ class PipelineContext(object):
         for stage_context in self.stage_contexts.values():
             stage_context.save_to_archive(archiver)
         self.provenance.save_to_archive(archiver)
+        archiver.append_miscellaneous('global_provenance', self.global_provenance)
 
     def load_from_archive(self, archiver):
         stage_uuids = archiver.fetch_miscellaneous('stages')
@@ -39,6 +41,7 @@ class PipelineContext(object):
             stage_context.load_from_archive(archiver)
             self.add_stage_context(stage_context)
         self.provenance.load_from_archive(archiver)
+        self.global_provenance = archiver.fetch_miscellaneous('global_provenance')
 
     def _context(self):
         stringified_stage_contexts = {}
@@ -48,6 +51,7 @@ class PipelineContext(object):
 
         return {
             "provenance": self.provenance,
+            "global_provenance": self.global_provenance,
             "stage_contexts": stringified_stage_contexts,
             "global_stage_context": self.global_stage_context._context()
         }
