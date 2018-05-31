@@ -24,25 +24,15 @@ def main():
 
   pipeline_context.provenance.job_source_bundle = job_source_bundle
   
-  global_provenance = {}
-  pipeline_context.provenance.stage_provenance["global"] = global_provenance
-
-  global_stage_context.start_time = time.time()
-  try:
-    job.run()
-  except Exception as error:
-    exception_info = sys.exc_info()
-    global_stage_context.add_error_information(exception_info)
-  global_stage_context.end_time = time.time()
-  global_stage_context.delta_time = global_stage_context.end_time - global_stage_context.start_time
-
-  global_provenance["python_version"] = {
-    "major": sys.version_info.major,
-    "minor": sys.version_info.minor,
-    "micro": sys.version_info.micro,
-    "releaselevel": sys.version_info.releaselevel,
-    "serial": sys.version_info.serial,
-  }
+  def execute_job():
+    try:
+      job.run()
+      return None
+    except Exception as error:
+      exception_info = sys.exc_info()
+      global_stage_context.add_error_information(exception_info)
+      return exception_info
+  exception_info = global_stage_context.time_callback(execute_job)
 
   with open('results.pkl', 'w+b') as file:
     pickle.dump(pipeline_context._context(), file)

@@ -4,6 +4,7 @@ import random
 from vcat.local_directory import LocalDirectory
 from vcat.stage_hierarchy import StageHierarchy
 
+
 class Provenance(object):
 
     def __init__(self):
@@ -15,6 +16,16 @@ class Provenance(object):
         self.module_versions = {}
         self.pip_freeze = None
         self.stage_hierarchy = StageHierarchy()
+        self.python_version = None
+
+    def fill_python_version(self):
+        self.python_version = {
+            "major": sys.version_info.major,
+            "minor": sys.version_info.minor,
+            "micro": sys.version_info.micro,
+            "releaselevel": sys.version_info.releaselevel,
+            "serial": sys.version_info.serial,
+        }
 
     def save_to_archive(self, archiver):
         archiver.append_provenance(self._archive_provenance())
@@ -28,6 +39,7 @@ class Provenance(object):
             archiver.fetch_job_source(self.job_source_bundle.job_archive())
 
     def fill_all(self):
+        self.fill_python_version()
         self.fill_config()
         self.fill_environment()
         self.fill_random_state()
@@ -63,7 +75,8 @@ class Provenance(object):
             "random_state": self.random_state,
             "module_versions": self.module_versions,
             "pip_freeze": self.pip_freeze,
-            "stage_hierarchy": self.stage_hierarchy
+            "stage_hierarchy": self.stage_hierarchy,
+            "python_version": self.python_version
         }
 
     def _load_archive_provenance(self, archive_provenance):
@@ -74,3 +87,4 @@ class Provenance(object):
         self.module_versions = archive_provenance["module_versions"]
         self.pip_freeze = archive_provenance["pip_freeze"]
         self.stage_hierarchy = archive_provenance["stage_hierarchy"]
+        self.python_version = archive_provenance["python_version"]
