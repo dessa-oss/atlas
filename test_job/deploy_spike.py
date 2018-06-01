@@ -26,7 +26,7 @@ deployment_config = {
         # 'constructor_arguments': [],
     },
     'stage_log_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': [],
     },
     'persisted_data_archive_implementation': {
