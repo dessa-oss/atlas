@@ -56,9 +56,9 @@ class JobBundler(object):
         import tarfile
         import glob
         import os
+        from vcat.global_state import module_manager
 
         current_directory = os.getcwd()
-        # os.chdir(self._module_directory)
 
         try:
             with tarfile.open(self.job_archive(), "w:gz") as tar:
@@ -71,8 +71,9 @@ class JobBundler(object):
                     tar.add(config_file,
                             arcname=self._job_name + '/' + config_file)
 
-                os.chdir(self._module_directory)
-                tar.add(".", arcname=self._job_name + '/vcat')
+                for module_name, module_directory in module_manager.module_directories_and_names():
+                    os.chdir(module_directory)
+                    tar.add(".", arcname=self._job_name + '/' + module_name)
 
                 os.chdir(self._resource_directory)
                 tar.add(".", arcname=self._job_name)
