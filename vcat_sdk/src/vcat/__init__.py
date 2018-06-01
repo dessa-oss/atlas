@@ -14,9 +14,9 @@ from vcat.context_aware import context_aware
 from vcat.gcp_pipeline_archive import GCPPipelineArchive
 from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
 from vcat.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
-from vcat.null_cache import NullCache
-from vcat.local_file_system_cache import LocalFileSystemCache
-from vcat.gcp_cache import GCPCache
+from vcat.null_cache_backend import NullCacheBackend
+from vcat.local_file_system_cache_backend import LocalFileSystemCacheBackend
+from vcat.gcp_cache_backend import GCPCacheBackend
 from vcat.global_state import *
 from vcat.deployment_utils import *
 from vcat.job_persister import JobPersister

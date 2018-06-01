@@ -23,6 +23,12 @@ class ConfigManager(object):
         self._config = config
 
     def reflect_instance(self, name, type_name, default_callback):
+        reflected_klass, reflected_args, reflected_kwargs = self.reflect_constructor(
+            name, type_name, default_callback)
+
+        return reflected_klass(*reflected_args, **reflected_kwargs)
+
+    def reflect_constructor(self, name, type_name, default_callback):
         config = self.config()
         implementation_key = name + '_implementation'
         if implementation_key in config:
@@ -32,6 +38,6 @@ class ConfigManager(object):
                 'constructor_arguments', [])
             reflected_kwargs = reflected_implementation.get(
                 'constructor_keword_arguments', {})
-            return reflected_klass(*reflected_args, **reflected_kwargs)
+            return reflected_klass, reflected_args, reflected_kwargs
         else:
-            return default_callback()
+            return default_callback, [], {}

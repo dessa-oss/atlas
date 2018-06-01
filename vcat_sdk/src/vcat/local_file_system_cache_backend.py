@@ -1,4 +1,4 @@
-class LocalFileSystemCache(object):
+class LocalFileSystemCacheBackend(object):
 
     def __init__(self, path):
         self._path = path
@@ -18,13 +18,6 @@ class LocalFileSystemCache(object):
 
         with open(self._file_path(key), 'w+b') as file:
             return pickle.dump(value, file)
-        return value
-
-    def get_or_set(self, key, value):
-      return self.get(key) or self.set(key, value)
-
-    def get_or_set_callback(self, key, callback):
-      return self.get(key) or self.set(key, callback())
 
     def _file_path(self, key):
         return self._path + '/' + key

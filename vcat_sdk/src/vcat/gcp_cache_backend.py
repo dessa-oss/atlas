@@ -1,4 +1,4 @@
-class GCPCache(object):
+class GCPCacheBackend(object):
 
     def __init__(self):
         from google.cloud.storage import Client
@@ -21,13 +21,6 @@ class GCPCache(object):
         serialized_value = pickle.dumps(value)
         bucket_object = self._bucket_object(key)
         bucket_object.upload_from_string(serialized_value)
-        return value
-
-    def get_or_set(self, key, value):
-        return self.get(key) or self.set(key, value)
-
-    def get_or_set_callback(self, key, callback):
-        return self.get(key) or self.set(key, callback())
 
     def _bucket_object(self, key):
         return self._result_bucket_connection.blob('cache/' + key)

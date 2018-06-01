@@ -10,6 +10,9 @@ class CacheManager(object):
 
     def _load(self):
         from vcat.global_state import config_manager
-        from vcat.null_cache import NullCache
+        from vcat.null_cache_backend import NullCacheBackend
+        from vcat.cache import Cache
 
-        self._cache = config_manager.reflect_instance('cache', 'cache', lambda: NullCache())
+        cache_backend = config_manager.reflect_instance(
+            'cache', 'cache', lambda: NullCacheBackend())
+        self._cache = Cache(cache_backend)
