@@ -10,3 +10,7 @@ vcat_sdk/build
 vcat_sdk/dist
 vcat_sdk/vcat.egg-info
 vcat_sdk/src/vcat.egg-info
+vcat_gcp_utils/build
+vcat_gcp_utils/dist
+vcat_gcp_utils/vcat_gcp.egg-info
+vcat_gcp_utils/src/vcat_gcp.egg-info

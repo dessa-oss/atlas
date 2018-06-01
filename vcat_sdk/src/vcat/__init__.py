@@ -1,4 +1,3 @@
-from vcat.gcp_job_deployment import GCPJobDeployment
 from vcat.hyperparameter import Hyperparameter
 from vcat.job import Job
 from vcat.job_source_bundle import JobSourceBundle
@@ -11,14 +10,18 @@ from vcat.job_source_bundle import JobSourceBundle
 from vcat.local_pipeline_archive import LocalPipelineArchive
 from vcat.pipeline_archiver import PipelineArchiver
 from vcat.context_aware import context_aware
-from vcat.gcp_pipeline_archive import GCPPipelineArchive
 from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
-from vcat.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
 from vcat.null_cache_backend import NullCacheBackend
 from vcat.local_file_system_cache_backend import LocalFileSystemCacheBackend
-from vcat.gcp_cache_backend import GCPCacheBackend
 from vcat.global_state import *
 from vcat.deployment_utils import *
 from vcat.job_persister import JobPersister
 from vcat.null_archive import NullArchive
 from vcat.null_pipeline_archive_listing import NullArchiveListing
+
+
+def _append_module():
+    import sys
+    module_manager.append_module(sys.modules[__name__])
+
+_append_module()
