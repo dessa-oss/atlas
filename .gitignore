@@ -14,3 +14,8 @@ vcat_gcp_utils/build
 vcat_gcp_utils/dist
 vcat_gcp_utils/vcat_gcp.egg-info
 vcat_gcp_utils/src/vcat_gcp.egg-info
+ssh_utils/build
+ssh_utils/dist
+ssh_utils/ssh.egg-info
+ssh_utils/src/ssh.egg-info
+tmp
