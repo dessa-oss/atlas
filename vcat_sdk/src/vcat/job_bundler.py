@@ -1,3 +1,6 @@
+from vcat.working_directory_stack import WorkingDirectoryStack
+
+
 class JobBundler(object):
 
     def __init__(self, job_name, config, job, job_source_bundle):
@@ -58,14 +61,13 @@ class JobBundler(object):
         import os
         from vcat.global_state import module_manager
 
-        current_directory = os.getcwd()
-
-        try:
+        with WorkingDirectoryStack():
             with tarfile.open(self.job_archive(), "w:gz") as tar:
                 tar.add(self._job_source_bundle.job_archive(),
                         arcname=self._job_name + '/job.tgz')
 
-                tar.add(self._job_binary(), arcname=self._job_name + '/' + self._job_binary())
+                tar.add(self._job_binary(), arcname=self._job_name +
+                        '/' + self._job_binary())
 
                 for config_file in glob.glob('*.config.yaml'):
                     tar.add(config_file,
@@ -77,5 +79,3 @@ class JobBundler(object):
 
                 os.chdir(self._resource_directory)
                 tar.add(".", arcname=self._job_name)
-        finally:
-            os.chdir(current_directory)
