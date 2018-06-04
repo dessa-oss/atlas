@@ -38,18 +38,22 @@ class SSHJobDeployment(object):
     def fetch_job_results(self):
         from subprocess import call
         from os.path import basename
+        from os import remove
         import dill as pickle
         import tarfile
 
         command = self._retrieve_scp_command()
         call(command)
-        result = None
-        with tarfile.open(self._results_archive_path(), 'r:gz') as tar:
-            for tarinfo in tar:
-                if basename(tarinfo.name) == "results.pkl":
-                    file = tar.extractfile(tarinfo)
-                    result = pickle.load(file)
-                    file.close()
+        try:
+            result = None
+            with tarfile.open(self._results_archive_path(), 'r:gz') as tar:
+                for tarinfo in tar:
+                    if basename(tarinfo.name) == "results.pkl":
+                        file = tar.extractfile(tarinfo)
+                        result = pickle.load(file)
+                        file.close()
+        finally:
+            remove(self._results_archive_path())
 
         return result
 
