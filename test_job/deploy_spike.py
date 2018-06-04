@@ -4,6 +4,7 @@ from spike_pipe import print_it, destroy_it
 from pandas import DataFrame
 from vcat import *
 from vcat_gcp import *
+from vcat_ssh import *
 
 # pipeline.cache = GCPCache()
 pipe = pipeline | 'wonderful' | print_it  # | destroy_it
@@ -25,7 +26,7 @@ deployment_config = {
         # 'constructor_arguments': [],
     },
     'stage_log_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': [],
     },
     'persisted_data_archive_implementation': {
@@ -48,10 +49,19 @@ deployment_config = {
         'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': [],
     },
+    'remote_user': 'thomas',
+    'remote_host': 'localhost',
+    'shell_command': '/bin/bash',
+    'code_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/code',
+    'result_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/results',
+    'key_path': '/home/thomas/.ssh/id_local',
 }
-deployment = deployment_manager.deploy(
-    deployment_config, job_name, job, job_source_bundle)
+# deployment = deployment_manager.deploy(
+#     deployment_config, job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
+# deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+deployment = SSHJobDeployment(job_name, job, job_source_bundle)
+deployment.config().update(deployment_config)
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
 # raise_error_if_job_failed(deployment)
