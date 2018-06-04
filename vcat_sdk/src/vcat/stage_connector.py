@@ -78,9 +78,9 @@ class StageConnector(object):
                 return upstream_result
 
             stage_cache = StageCache(
-                self._allow_caching, 
-                self._cache_name, 
-                self.current_stage, 
+                self._allow_caching,
+                self._cache_name,
+                self.current_stage,
                 filler_builder,
                 filler_kwargs,
                 fetch_upstream_result
