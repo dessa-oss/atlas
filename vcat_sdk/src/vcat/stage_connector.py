@@ -1,3 +1,6 @@
+from vcat.stage_cache import StageCache
+
+
 class StageConnector(object):
 
     def __init__(self, current_stage, previous_connectors):
@@ -69,19 +72,26 @@ class StageConnector(object):
                 return self._result
 
             upstream_result = None
-            if self._allow_caching:
-                cache_name = self._cache_name
-                if cache_name is None:
-                    upstream_result = force_results(previous_results)
-                    cache_name = self._auto_cache_name(
-                        upstream_result, filler_builder, **filler_kwargs)
 
-                cached_result = self._fetch_cache(cache_name)
-                # TODO: SUPPORT `MISSING` VS `None`
-                if cached_result is not None:
-                    self._has_run = True
-                    self._result = cached_result
-                    return cached_result
+            def fetch_upstream_result():
+                upstream_result = force_results(previous_results)
+                return upstream_result
+
+            stage_cache = StageCache(
+                self._allow_caching, 
+                self._cache_name, 
+                self.current_stage, 
+                filler_builder,
+                filler_kwargs,
+                fetch_upstream_result
+            )
+
+            # TODO: SUPPORT `MISSING` VS `None`
+            cached_result = stage_cache.fetch_cache()
+            if cached_result is not None:
+                self._has_run = True
+                self._result = cached_result
+                return cached_result
 
             if upstream_result is None:
                 upstream_result = force_results(previous_results)
@@ -91,34 +101,8 @@ class StageConnector(object):
             self._has_run = True
 
             if self._allow_caching:
-                self._submit_cache(cache_name, self._result)
+                stage_cache.submit_cache(self._result)
 
             return self._result
 
         return lazy_traverse(run_action, self)
-
-    def _fetch_cache(self, cache_name):
-        from vcat.global_state import cache_manager
-        return cache_manager.cache().get(cache_name)
-
-    def _submit_cache(self, cache_name, value):
-        from vcat.global_state import cache_manager
-        return cache_manager.cache().set(cache_name, value)
-
-    def _auto_cache_name(self, upstream_result, filler_builder, **filler_kwargs):
-        from vcat.argument_hasher import ArgumentHasher
-        from vcat.utils import merged_uuids
-
-        new_args, new_kwargs = self.current_stage.fill_args_and_kwargs(
-            filler_builder, **filler_kwargs)
-        hasher = ArgumentHasher(new_args, new_kwargs)
-        argument_hash = hasher.make_hash()
-
-        upstream_hash = self._result_hash(upstream_result)
-
-        return merged_uuids([argument_hash, upstream_hash, self.uuid()])
-
-    def _result_hash(self, result):
-        from vcat.utils import make_uuid
-
-        return make_uuid(result, self._result_hash)
