@@ -32,8 +32,6 @@ class SimpleWorker(object):
             self._extract_archive(archive_path)
             self._execute_job(archive_path)
         finally:
-            from os import getcwd
-            print(getcwd())
             self._remove_job_directory(archive_path)
 
     def _execute_job(self, archive_path):
