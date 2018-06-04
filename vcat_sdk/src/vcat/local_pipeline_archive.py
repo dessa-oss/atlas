@@ -65,6 +65,9 @@ class LocalPipelineArchive(object):
     def fetch(self, name, prefix=None):
         raise NotImplementedError()
 
+    def fetch_binary(self, name, prefix=None):
+        raise NotImplementedError()
+
     def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
         raise NotImplementedError()
 

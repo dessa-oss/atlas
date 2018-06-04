@@ -8,6 +8,9 @@ class ConfigManager(object):
             self._load()
         return self._config
 
+    def ensure_logging_configured(self):
+        self.config()
+
     def _load(self):
         from vcat.local_directory import LocalDirectory
         import yaml
@@ -21,6 +24,17 @@ class ConfigManager(object):
                 config.update(yaml.load(file))
 
         self._config = config
+
+        self._configure_logging()
+
+    def _configure_logging(self):
+        from logging import basicConfig
+        from logging import getLevelName
+        from sys import stdout
+
+        log_level = self._config.get('log_level', 'DEBUG')
+        log_level = getLevelName(log_level)
+        basicConfig(stream=stdout, level=log_level)
 
     def reflect_instance(self, name, type_name, default_callback):
         reflected_klass, reflected_args, reflected_kwargs = self.reflect_constructor(
