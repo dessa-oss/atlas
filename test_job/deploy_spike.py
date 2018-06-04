@@ -27,26 +27,32 @@ deployment_config = {
     },
     'stage_log_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'persisted_data_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'provenance_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'job_source_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'artifact_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'miscellaneous_archive_implementation': {
-        'archive_type': GCPPipelineArchive,
+        # 'archive_type': GCPPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
         # 'constructor_arguments': [],
     },
     'remote_user': 'thomas',
@@ -59,8 +65,8 @@ deployment_config = {
 # deployment = deployment_manager.deploy(
 #     deployment_config, job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
-# deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
-deployment = SSHJobDeployment(job_name, job, job_source_bundle)
+deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+# deployment = SSHJobDeployment(job_name, job, job_source_bundle)
 deployment.config().update(deployment_config)
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
