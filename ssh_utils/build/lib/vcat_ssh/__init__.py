@@ -1,4 +1,5 @@
 from vcat_bell.ssh_job_deployment import SSHJobDeployment
+from vcat_bell.ssh_listing import SSHListing
 
 def _append_module():
     import sys
