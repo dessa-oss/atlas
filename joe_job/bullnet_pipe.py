@@ -1,6 +1,7 @@
 from preproc import *
 from test_bullnet import *
 from vcat import *
+from vcat_gcp import *
 
 import time
 
@@ -18,7 +19,7 @@ bullnet_pipe = pipeline | preproc | (test_bullnet, batch_size, n_batches, max_em
 bullnet_pipe.persist()
 
 job = Job(bullnet_pipe, max_embedding=50, emb_size_divisor=2, lr=1e-4, l2=1e-3)
-job_name = "job_bob_2"
+job_name = "job_bob_22"
 
 job_source_bundle_name = "test_bundle"
 job_source_bundle_path = "test_bundle"
@@ -29,7 +30,7 @@ deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 
 config = deployment.config()
 config['cache_implementation'] = {
-    'cache_type': GCPCache,
+    'cache_type': GCPCacheBackend,
     # 'constructor_arguments': [],
 }
 config['archive_listing_implementation'] = {
