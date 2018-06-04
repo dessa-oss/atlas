@@ -43,6 +43,19 @@ class LocalFileSystemBucket(object):
         with open(self._full_path(name), 'rb') as file:
             copyfileobj(file, output_file)
 
+    def list_files(self, pathname):
+        from glob import glob
+        from os import chdir
+        from os import getcwd
+
+        previous_path = getcwd()
+
+        try:
+            chdir(self._path)
+            return glob(pathname)
+        finally:
+            chdir(previous_path)
+
     def _full_path(self, name):
         from os.path import join
         return join(self._path + '/' + name)
