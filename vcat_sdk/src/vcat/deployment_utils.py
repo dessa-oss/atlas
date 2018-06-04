@@ -21,10 +21,12 @@ def wait_for_deployment_to_complete(deployment):
 
 
 def raise_error_if_job_failed(deployment):
+    from vcat.compat import compat_raise
+
     if deployment.is_job_complete():
         results = deployment.fetch_job_results()
         if results and results["error"]:
-            raise [results["error"]["type"], results["error"]["exception"], None]
+            compat_raise(results["error"]["type"], results["error"]["exception"], None)
 
 
 def restructure_headers(all_headers, first_headers):

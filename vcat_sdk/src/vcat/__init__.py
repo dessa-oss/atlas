@@ -18,7 +18,7 @@ from vcat.deployment_utils import *
 from vcat.job_persister import JobPersister
 from vcat.null_archive import NullArchive
 from vcat.null_pipeline_archive_listing import NullArchiveListing
-
+from vcat.compat import compat_raise
 
 def _append_module():
     import sys

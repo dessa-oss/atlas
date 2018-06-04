@@ -1,4 +1,4 @@
-from vcat import Job, JobSourceBundle, JobPersister, config_manager
+from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise
 
 import dill as pickle
 
@@ -39,7 +39,7 @@ def main():
         pickle.dump(pipeline_context._context(), file, protocol=2)
 
     if exception_info is not None:
-        raise exception_info[0](exception_info[1], exception_info[2])
+        compat_raise(exception_info[0], exception_info[1], exception_info[2])
 
 if __name__ == "__main__":
     main()

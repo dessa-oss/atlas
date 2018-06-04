@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
 BASEDIR=$(dirname "$0")
-PYTHON=python2.7
 
 cd $BASEDIR && \
   tar -xvf job.tgz && \
-  $PYTHON -m pip install virtualenv && \
-  virtualenv -p $PYTHON venv && \
+  python -m pip install virtualenv && \
+  virtualenv venv && \
   . venv/bin/activate && \
-  $PYTHON -m pip install -r requirements.txt && \
-  $PYTHON main.py
+  python -m pip install -r requirements.txt && \
+  python main.py
   
 status=$?
 
