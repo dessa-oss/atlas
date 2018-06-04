@@ -19,6 +19,7 @@ from vcat.job_persister import JobPersister
 from vcat.null_archive import NullArchive
 from vcat.null_pipeline_archive_listing import NullArchiveListing
 from vcat.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
+from vcat.local_file_system_bucket import LocalFileSystemBucket
 
 
 def _append_module():

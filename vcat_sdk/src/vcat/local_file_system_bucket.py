@@ -2,8 +2,10 @@ class LocalFileSystemBucket(object):
 
     def __init__(self, path):
         from logging import getLogger
+        from os.path import abspath
+
         self._log = getLogger(__name__)
-        self._path = path
+        self._path = abspath(path)
 
     def upload_from_string(self, name, data):
         self._log.debug('Uploading %s from string', name)
@@ -50,11 +52,11 @@ class LocalFileSystemBucket(object):
 
         previous_path = getcwd()
 
-        try:
-            chdir(self._path)
-            return glob(pathname)
-        finally:
-            chdir(previous_path)
+        self._log.debug('Getting listing with pathname %s', pathname)
+
+        full_pathname = self._full_path(pathname)
+        self._log.debug('Listing with expanded pathname is %s', full_pathname)
+        return glob(full_pathname)
 
     def _full_path(self, name):
         from os.path import join
