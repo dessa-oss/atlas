@@ -105,7 +105,7 @@ class StageConnector(object):
         from vcat.global_state import cache_manager
         return cache_manager.cache().set(cache_name, value)
 
-    def _auto_cache_name(self, result, filler_builder, **filler_kwargs):
+    def _auto_cache_name(self, upstream_result, filler_builder, **filler_kwargs):
         from vcat.argument_hasher import ArgumentHasher
         from vcat.utils import merged_uuids
 
@@ -114,7 +114,7 @@ class StageConnector(object):
         hasher = ArgumentHasher(new_args, new_kwargs)
         argument_hash = hasher.make_hash()
 
-        upstream_hash = self._result_hash(result)
+        upstream_hash = self._result_hash(upstream_result)
 
         return merged_uuids([argument_hash, upstream_hash, self.uuid()])
 
