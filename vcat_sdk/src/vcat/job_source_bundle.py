@@ -1,3 +1,6 @@
+from vcat.change_directory import ChangeDirectory
+
+
 class JobSourceBundle(object):
 
     def __init__(self, bundle_name, target_path):
@@ -12,19 +15,12 @@ class JobSourceBundle(object):
 
     def unbundle(self, path_to_save):
         import tarfile
-        from os import getcwd, chdir
         from distutils.dir_util import mkpath
 
         with tarfile.open(self.job_archive(), "r:gz") as tar:
-            old_path = getcwd()
             mkpath(path_to_save)
-            chdir(path_to_save)
-
-            try:
+            with ChangeDirectory(path_to_save):
                 tar.extractall()
-            finally:
-                chdir(old_path)
-        
 
     def cleanup(self):
         import os
@@ -42,4 +38,3 @@ class JobSourceBundle(object):
         with tarfile.open(self.job_archive(), "r:gz") as tar:
             for tarinfo in tar:
                 yield tarinfo.name
-        

@@ -47,10 +47,7 @@ class LocalFileSystemBucket(object):
 
     def list_files(self, pathname):
         from glob import glob
-        from os import chdir
         from os import getcwd
-
-        previous_path = getcwd()
 
         self._log.debug('Getting listing with pathname %s', pathname)
 

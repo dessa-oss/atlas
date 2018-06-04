@@ -1,4 +1,4 @@
-import os
+from vcat.change_directory import ChangeDirectory
 
 
 class LocalDirectory(object):
@@ -13,13 +13,12 @@ class LocalDirectory(object):
             return open(self._path, mode)
 
     def __init__(self):
-        self._path = os.getcwd()
+        from os import getcwd
+        self._path = getcwd()
 
     def get_files(self, pathname):
         from glob import glob
 
-        cwd = os.getcwd()
-        os.chdir(self._path)
-        for file_path in glob(pathname):
-            yield self.File(file_path)
-        os.chdir(cwd)
+        with ChangeDirectory(self._path):
+            for file_path in glob(pathname):
+                yield self.File(file_path)
