@@ -30,7 +30,7 @@ class SSHJobDeployment(object):
         from os import devnull
 
         command = self._check_job_done_ssh_command()
-        return call(command, stdout=devnull) == 0
+        return call(command) == 0
 
     def fetch_job_results(self):
         pass
@@ -40,7 +40,7 @@ class SSHJobDeployment(object):
         from os import devnull
 
         command = self._deploy_scp_command()
-        call(command, stdout=devnull)
+        call(command)
 
     def _deploy_scp_command(self):
         ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._full_archive_path() + ' ' + \
