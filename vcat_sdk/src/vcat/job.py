@@ -12,7 +12,7 @@ class Job(object):
 
     def serialize(self):
         import dill as pickle
-        return pickle.dumps(self)
+        return pickle.dumps(self, protocol=2)
 
     @staticmethod
     def deserialize(serialized_self):

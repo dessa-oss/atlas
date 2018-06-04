@@ -47,7 +47,7 @@ class LocalPipelineArchive(object):
         import dill as pickle
 
         with self.Tempfile('w+b') as tempfile:
-            pickle.dump(item, tempfile.file)
+            pickle.dump(item, tempfile.file, protocol=2)
             self._add_to_tar(tempfile, prefix, name + '.pkl')
 
     def append_binary(self, name, serialized_item, prefix=None):
