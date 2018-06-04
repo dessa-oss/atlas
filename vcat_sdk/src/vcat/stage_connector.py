@@ -11,6 +11,7 @@ class StageConnector(object):
         self._is_persisted = False
         self._cache_name = None
         self._allow_caching = True
+        self._upstream_result = None
 
     def uuid(self):
         return self.current_stage.uuid()
@@ -71,11 +72,10 @@ class StageConnector(object):
             if self._has_run:
                 return self._result
 
-            upstream_result = None
-
             def fetch_upstream_result():
-                upstream_result = force_results(previous_results)
-                return upstream_result
+                if self._upstream_result is None:
+                    self._upstream_result = force_results(previous_results)
+                return self._upstream_result
 
             stage_cache = StageCache(
                 self._allow_caching,
@@ -93,11 +93,11 @@ class StageConnector(object):
                 self._result = cached_result
                 return cached_result
 
-            if upstream_result is None:
-                upstream_result = force_results(previous_results)
+            if self._upstream_result is None:
+                self._upstream_result = force_results(previous_results)
 
             self._result = self.current_stage.run(
-                upstream_result, filler_builder, **filler_kwargs)
+                self._upstream_result, filler_builder, **filler_kwargs)
             self._has_run = True
 
             if self._allow_caching:
