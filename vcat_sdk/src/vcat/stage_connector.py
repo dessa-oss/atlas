@@ -66,7 +66,13 @@ class StageConnector(object):
         return StageConnector(next_stage, [self])
 
     def run(self, filler_builder, **filler_kwargs):
-        from vcat.rose_tree_traversable import lazy_traverse, force_results
+        from vcat.rose_tree_traversable import lazy_traverse
+
+        return lazy_traverse(StageConnector._run_action(filler_builder, filler_kwargs), self)
+
+    @staticmethod
+    def _run_action(filler_builder, filler_kwargs):
+        from vcat.rose_tree_traversable import force_results
 
         def run_action(previous_results, self):
             if self._has_run:
@@ -105,4 +111,4 @@ class StageConnector(object):
 
             return self._result
 
-        return lazy_traverse(run_action, self)
+        return run_action
