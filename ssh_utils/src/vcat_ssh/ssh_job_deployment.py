@@ -1,5 +1,5 @@
 from vcat.job_bundler import JobBundler
-from vcat.ssh_utils import SSHUtils
+from vcat_ssh.ssh_utils import SSHUtils
 
 
 class SSHJobDeployment(object):
