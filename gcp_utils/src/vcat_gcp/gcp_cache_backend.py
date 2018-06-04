@@ -18,7 +18,7 @@ class GCPCacheBackend(object):
     def set(self, key, value):
         import dill as pickle
 
-        serialized_value = pickle.dumps(value)
+        serialized_value = pickle.dumps(value, protocol=2)
         bucket_object = self._bucket_object(key)
         bucket_object.upload_from_string(serialized_value)
 

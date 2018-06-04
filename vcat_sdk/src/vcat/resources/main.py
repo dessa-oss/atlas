@@ -1,4 +1,4 @@
-from vcat import Job, JobSourceBundle, JobPersister, config_manager
+from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise
 
 import dill as pickle
 
@@ -26,7 +26,7 @@ def main():
         try:
             job.run()
             return None
-        except Exception as error:
+        except Exception as error: # might need to be BaseException.Exception for python 3
             import sys
             exception_info = sys.exc_info()
             global_stage_context.add_error_information(exception_info)
@@ -36,10 +36,10 @@ def main():
     JobPersister(job).persist()
 
     with open('results.pkl', 'w+b') as file:
-        pickle.dump(pipeline_context._context(), file)
+        pickle.dump(pipeline_context._context(), file, protocol=2)
 
     if exception_info is not None:
-        raise exception_info[0], exception_info[1], exception_info[2]
+        compat_raise(exception_info[0], exception_info[1], exception_info[2])
 
 if __name__ == "__main__":
     main()

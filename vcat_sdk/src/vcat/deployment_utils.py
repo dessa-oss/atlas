@@ -21,10 +21,12 @@ def wait_for_deployment_to_complete(deployment):
 
 
 def raise_error_if_job_failed(deployment):
+    from vcat.compat import compat_raise
+
     if deployment.is_job_complete():
         results = deployment.fetch_job_results()
         if results and results["error"]:
-            raise results["error"]["type"], results["error"]["exception"], None
+            compat_raise(results["error"]["type"], results["error"]["exception"], None)
 
 
 def restructure_headers(all_headers, first_headers):
@@ -40,7 +42,7 @@ def _grid_param_set_generator(hype_kwargs):
 
     hype_dict = {}
 
-    for key, val in hype_kwargs.iteritems():
+    for key, val in hype_kwargs.items():
         if isinstance(val, list):
             hype_dict[key] = val
         else:
@@ -49,7 +51,7 @@ def _grid_param_set_generator(hype_kwargs):
     param_keys = []
     param_vals_to_select = []
 
-    for key, val in hype_dict.iteritems():
+    for key, val in hype_dict.items():
         param_keys.append(key)
         param_vals_to_select.append(val)
 
@@ -82,7 +84,7 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
 
         wait_for_deployment_to_complete(deployer)
 
-        print deployer.fetch_job_results()
+        print(deployer.fetch_job_results())
 
 
 def _extract_results(results_dict):
@@ -120,7 +122,7 @@ def adaptive_search(connector_wrapper, deployer_type, initial_generator, generat
         wait_for_deployment_to_complete(deployer)
 
         results_dict = deployer.fetch_job_results()
-        print results_dict
+        print(results_dict)
 
         for new_params in generator_function(_extract_results(results_dict)):
             queue.put(new_params)

@@ -24,11 +24,14 @@ class PipelineContext(object):
 
     def save_to_archive(self, archiver):
         archiver.append_tracker()
-        archiver.append_miscellaneous('stage_listing', self.stage_contexts.keys())
+        archiver.append_miscellaneous('stage_listing', self._stage_keys())
         self.global_stage_context.save_to_archive(archiver)
         for stage_context in self.stage_contexts.values():
             stage_context.save_to_archive(archiver)
         self.provenance.save_to_archive(archiver)
+
+    def _stage_keys(self):
+        return list(self.stage_contexts.keys())
 
     def load_from_archive(self, archiver):
         stage_uuids = archiver.fetch_miscellaneous('stage_listing')
@@ -43,7 +46,7 @@ class PipelineContext(object):
     def _context(self):
         stringified_stage_contexts = {}
 
-        for uuid, context in self.stage_contexts.iteritems():
+        for uuid, context in self.stage_contexts.items():
             stringified_stage_contexts[uuid] = context._context()
 
         return {

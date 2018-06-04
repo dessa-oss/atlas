@@ -21,7 +21,7 @@ from vcat.null_pipeline_archive_listing import NullArchiveListing
 from vcat.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
 from vcat.local_file_system_bucket import LocalFileSystemBucket
 from vcat.simple_worker import SimpleWorker
-
+from vcat.compat import compat_raise
 
 def _append_module():
     import sys

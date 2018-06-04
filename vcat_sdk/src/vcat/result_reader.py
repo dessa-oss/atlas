@@ -36,10 +36,10 @@ class ResultReader(object):
 
         all_job_information = [pd.DataFrame(columns=main_headers)]
 
-        for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
+        for pipeline_name, pipeline_context in self._pipeline_contexts.items():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
-            for stage_id, stage_info in stage_hierarchy_entries.iteritems():
+            for stage_id, stage_info in stage_hierarchy_entries.items():
                 column_headers = list(main_headers)
 
                 parent_ids = stage_info.parents
@@ -85,7 +85,7 @@ class ResultReader(object):
                     else:
                         args.append(arg)
 
-                for arg_name, arg_val in stage_info.stage_kwargs.iteritems():
+                for arg_name, arg_val in stage_info.stage_kwargs.items():
                     if isinstance(arg_val, dict):
                         try:
                             arg_val_stage_id = arg_val["stage_id"]
@@ -129,10 +129,10 @@ class ResultReader(object):
 
         all_job_information = [pd.DataFrame(columns=main_headers)]
 
-        for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
+        for pipeline_name, pipeline_context in self._pipeline_contexts.items():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
-            for stage_id, stage_info in stage_hierarchy_entries.iteritems():
+            for stage_id, stage_info in stage_hierarchy_entries.items():
                 column_headers = list(main_headers)
 
                 stage_name = stage_info.function_name
@@ -142,7 +142,7 @@ class ResultReader(object):
 
                 row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
 
-                for structured_result_name, structured_result_val in stage_context.stage_log.iteritems():
+                for structured_result_name, structured_result_val in stage_context.stage_log.items():
                     column_headers.append(structured_result_name)
                     row_data.append(structured_result_val)
 

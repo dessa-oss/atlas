@@ -17,7 +17,7 @@ class LocalFileSystemCacheBackend(object):
         import dill as pickle
 
         with open(self._file_path(key), 'w+b') as file:
-            return pickle.dump(value, file)
+            return pickle.dump(value, file, protocol=2)
 
     def _file_path(self, key):
         return self._path + '/' + key

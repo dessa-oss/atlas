@@ -21,7 +21,7 @@ class GCPPipelineArchive(object):
     def append(self, name, item, prefix=None):
         import dill as pickle
 
-        serialized_item = pickle.dumps(item)
+        serialized_item = pickle.dumps(item, protocol=2)
         self.append_binary(name + '.pkl', serialized_item, prefix)
 
     def append_binary(self, name, serialized_item, prefix=None):
