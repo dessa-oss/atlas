@@ -31,10 +31,10 @@ class ResultReader(object):
 
         from vcat import restructure_headers
 
-        all_job_information = []
-
         main_headers = ["pipeline_name", "stage_status", "stage_id", "parent_ids",
             "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
+
+        all_job_information = [pd.DataFrame(columns=main_headers)]
 
         for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
@@ -113,6 +113,8 @@ class ResultReader(object):
 
                 all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
     
+
+
         output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
@@ -122,9 +124,10 @@ class ResultReader(object):
 
         from vcat import restructure_headers
 
-        all_job_information = []
         main_headers = ["pipeline_name", "stage_id",
                         "stage_name", "has_unstructured_result"]
+
+        all_job_information = [pd.DataFrame(columns=main_headers)]
 
         for pipeline_name, pipeline_context in self._pipeline_contexts.iteritems():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
