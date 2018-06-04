@@ -21,21 +21,40 @@ class SimpleWorker(object):
             for archive_path in self._code_bucket.list_files('*.tgz'):
                 if not archive_path in started_jobs:
                     started_jobs.add(archive_path)
-                    self._log.info('Running job %s', archive_path)
-                    status_code = self._run_job(archive_path)
-                    if status_code == 0:
-                        self._log.info('Job %s is complete', archive_path)
-                    else:
-                        self._log.info('Job failed with status code %d', status_code)
+                    self._handle_job(archive_path)
 
             sleep(0.5)
+
+    def _handle_job(self, archive_path):
+        self._log.info('Running job %s', archive_path)
+        status_code = self._run_job(archive_path)
+        if status_code == 0:
+            self._log.info('Job %s is complete', archive_path)
+        else:
+            self._log.info('Job failed with status code %d', status_code)
 
     def _run_job(self, archive_path):
         try:
             self._extract_archive(archive_path)
             return self._execute_job(archive_path)
         finally:
+            self._bundle_job_results(archive_path)
             self._remove_job_directory(archive_path)
+
+    def _bundle_job_results(self, archive_path):
+        import tarfile
+        from shutil import move
+
+        job_name = self._job_name(archive_path)
+        with tarfile.open(self._source_job_results_archive(job_name), 'w:gz') as tar:
+            tar.add(job_name)
+        move(self._source_job_results_archive(job_name), self._target_job_results_archive(job_name))
+
+    def _source_job_results_archive(self, job_name):
+        return job_name + '.results.tgz'
+
+    def _target_job_results_archive(self, job_name):
+        return self._result_path + '/' + job_name + '.tgz'
 
     def _execute_job(self, archive_path):
         job_name = self._job_name(archive_path)
