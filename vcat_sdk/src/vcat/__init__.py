@@ -20,6 +20,7 @@ from vcat.null_archive import NullArchive
 from vcat.null_pipeline_archive_listing import NullArchiveListing
 from vcat.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
 from vcat.local_file_system_bucket import LocalFileSystemBucket
+from vcat.simple_worker import SimpleWorker
 
 
 def _append_module():
