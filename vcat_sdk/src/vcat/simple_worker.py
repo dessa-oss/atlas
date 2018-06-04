@@ -22,32 +22,43 @@ class SimpleWorker(object):
                 if not archive_path in started_jobs:
                     started_jobs.add(archive_path)
                     self._log.info('Running job %s', archive_path)
-                    self._run_job(archive_path)
-                    self._log.info('Job %s is complete', archive_path)
+                    status_code = self._run_job(archive_path)
+                    if status_code == 0:
+                        self._log.info('Job %s is complete', archive_path)
+                    else:
+                        self._log.info('Job failed with status code %d', status_code)
 
             sleep(0.5)
 
     def _run_job(self, archive_path):
         try:
             self._extract_archive(archive_path)
-            self._execute_job(archive_path)
+            return self._execute_job(archive_path)
         finally:
             self._remove_job_directory(archive_path)
 
     def _execute_job(self, archive_path):
-        with ChangeDirectory.from_file_path(archive_path):
-            self._execute_job_command()
+        job_name = self._job_name(archive_path)
+        with ChangeDirectory(job_name):
+            from os import getcwd
+            print(archive_path, getcwd())
+            return self._execute_job_command()
 
     def _execute_job_command(self):
-        pass
+        from subprocess import call
+        return call(['/usr/bin/env', 'sh', '-c', './run.sh'])
 
     def _remove_job_directory(self, archive_path):
         from shutil import rmtree
+
+        job_path = self._job_name(archive_path)
+        rmtree(job_path)
+
+    def _job_name(self, archive_path):
         from os.path import basename
 
         archive_name = basename(archive_path)
-        job_path = tgz_archive_without_extension(archive_name)
-        rmtree(job_path)
+        return tgz_archive_without_extension(archive_name)
 
     def _extract_archive(self, archive_path):
         import tarfile
