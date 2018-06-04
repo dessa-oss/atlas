@@ -1,5 +1,6 @@
 from vcat.utils import tgz_archive_without_extension
 from vcat.local_file_system_bucket import LocalFileSystemBucket
+from vcat.change_directory import ChangeDirectory
 
 
 class SimpleWorker(object):
@@ -17,26 +18,35 @@ class SimpleWorker(object):
 
         started_jobs = set()
         while True:
-            for path in self._code_bucket.list_files('*.tgz'):
-                if not path in started_jobs:
-                    started_jobs.add(path)
-                    self._run_job(path)
+            for archive_path in self._code_bucket.list_files('*.tgz'):
+                if not archive_path in started_jobs:
+                    started_jobs.add(archive_path)
+                    self._log.info('Running job %s', archive_path)
+                    self._run_job(archive_path)
+                    self._log.info('Job %s is complete', archive_path)
 
             sleep(0.5)
 
     def _run_job(self, archive_path):
         try:
-            self._log.info('Running job %s', archive_path)
             self._extract_archive(archive_path)
-            self._log.info('Job %s is complete', archive_path)
-
+            self._execute_job(archive_path)
         finally:
+            from os import getcwd
+            print(getcwd())
             self._remove_job_directory(archive_path)
+
+    def _execute_job(self, archive_path):
+        with ChangeDirectory.from_file_path(archive_path):
+            self._execute_job_command()
+
+    def _execute_job_command(self):
+        pass
 
     def _remove_job_directory(self, archive_path):
         from shutil import rmtree
         from os.path import basename
-        
+
         archive_name = basename(archive_path)
         job_path = tgz_archive_without_extension(archive_name)
         rmtree(job_path)
