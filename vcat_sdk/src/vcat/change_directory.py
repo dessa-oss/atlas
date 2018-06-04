@@ -1,3 +1,6 @@
+from vcat.working_directory_stack import WorkingDirectoryStack
+
+
 class ChangeDirectory(object):
 
     @staticmethod
@@ -9,18 +12,15 @@ class ChangeDirectory(object):
 
     def __init__(self, path):
         self._path = path
-        self._current_directory = None
+        self._stack = WorkingDirectoryStack()
 
     def __enter__(self):
         from os import chdir
-        from os import getcwd
 
-        self._current_directory = getcwd()
+        self._stack.__enter__()
         chdir(self._path)
 
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        from os import chdir
-
-        chdir(self._current_directory)
+        self._stack.__exit__(exception_type, exception_value, traceback)
