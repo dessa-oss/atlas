@@ -40,6 +40,11 @@ class SimpleWorker(object):
         finally:
             self._bundle_job_results(archive_path)
             self._remove_job_directory(archive_path)
+            self._remove_archive(archive_path)
+
+    def _remove_archive(self, archive_path):
+        from os import remove
+        remove(archive_path)
 
     def _bundle_job_results(self, archive_path):
         import tarfile
