@@ -4,10 +4,12 @@ from vcat.job_bundler import JobBundler
 class GCPJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
+        from vcat.global_state import config_manager
         from google.cloud.storage import Client
         from googleapiclient import discovery
 
         self._config = {}
+        self._config.update(config_manager.config())
 
         self._gcp_bucket_connection = Client()
         self._code_bucket_connection = self._gcp_bucket_connection.get_bucket(
@@ -17,7 +19,8 @@ class GCPJobDeployment(object):
 
         self._job_name = job_name
         self._job = job
-        self._job_bundler = JobBundler(self._job_name, self._config, self._job, job_source_bundle)
+        self._job_bundler = JobBundler(
+            self._job_name, self._config, self._job, job_source_bundle)
         self._job_result_object = self._result_bucket_connection.blob(
             self._job_archive_name())
 

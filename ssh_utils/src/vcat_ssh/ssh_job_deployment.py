@@ -5,7 +5,11 @@ from vcat_ssh.ssh_utils import SSHUtils
 class SSHJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
+        from vcat.global_state import config_manager
+
         self._config = {}
+        self._config.update(config_manager.config())
+
         self._job_name = job_name
         self._job = job
         self._job_bundler = JobBundler(

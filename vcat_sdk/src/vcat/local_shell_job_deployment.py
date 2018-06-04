@@ -4,10 +4,14 @@ from vcat.job_bundler import JobBundler
 class LocalShellJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
+        from vcat.global_state import config_manager
         self._config = {}
+        self._config.update(config_manager.config())
+
         self._job_name = job_name
         self._job = job
-        self._job_bundler = JobBundler(self._job_name, self._config, self._job, job_source_bundle)
+        self._job_bundler = JobBundler(
+            self._job_name, self._config, self._job, job_source_bundle)
         self._results = {}
 
     def config(self):
