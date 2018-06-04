@@ -1,4 +1,4 @@
-from pipeline_archiver import PipelineArchiver
+from vcat.pipeline_archiver import PipelineArchiver
 
 
 class PipelineArchiverFetch(object):

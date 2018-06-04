@@ -65,6 +65,6 @@ config['miscellaneous_archive_implementation'] = {
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
 
-print deployment.fetch_job_results()
+print(deployment.fetch_job_results())
 
 # bullnet_pipe.grid_search(LocalShellJobDeployment, max_embedding=[50], emb_size_divisor=2, lr=[1e-4], l2=1e-3)

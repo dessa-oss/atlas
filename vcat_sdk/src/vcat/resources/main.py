@@ -26,7 +26,7 @@ def main():
         try:
             job.run()
             return None
-        except Exception as error:
+        except BaseException.Exception as error:
             import sys
             exception_info = sys.exc_info()
             global_stage_context.add_error_information(exception_info)
@@ -39,7 +39,7 @@ def main():
         pickle.dump(pipeline_context._context(), file)
 
     if exception_info is not None:
-        raise exception_info[0], exception_info[1], exception_info[2]
+        raise exception_info[0](exception_info[1], exception_info[2])
 
 if __name__ == "__main__":
     main()

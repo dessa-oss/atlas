@@ -22,7 +22,7 @@ class StageSmartConstructor(object):
     def _function_hash(self, function):
         from vcat.utils import generate_uuid
         from vcat.utils import merged_uuids
-        from vcat.safe_inspect import *
+        from vcat.safe_inspect import getsource
 
         name_uuid = generate_uuid(function.__name__)
         source_uuid = generate_uuid(getsource(function))

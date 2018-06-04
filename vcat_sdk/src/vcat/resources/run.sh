@@ -4,11 +4,11 @@ BASEDIR=$(dirname "$0")
 
 cd $BASEDIR && \
   tar -xvf job.tgz && \
-  python -m pip install virtualenv && \
+  python3 -m pip install virtualenv && \
   virtualenv venv && \
   . venv/bin/activate && \
-  python -m pip install -r requirements.txt && \
-  python main.py
+  python3 -m pip install -r requirements.txt && \
+  python3 main.py
   
 status=$?
 
