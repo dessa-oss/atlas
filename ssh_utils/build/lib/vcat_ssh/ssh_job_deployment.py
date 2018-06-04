@@ -48,9 +48,9 @@ class SSHJobDeployment(object):
         return self._ssh_utils.command_in_shell_command(ssh_command)
 
     def _check_job_done_ssh_command(self):
-        scp_command = 'ssh ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ' "stat ' + \
+        ssh_command = 'ssh ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ' "stat ' + \
             self._result_path() + '/' + self._job_bundler.job_archive_name() + '"'
-        return self._ssh_utils.command_in_shell_command(scp_command)
+        return self._ssh_utils.command_in_shell_command(ssh_command)
 
     def _full_archive_path(self):
         from os.path import abspath
