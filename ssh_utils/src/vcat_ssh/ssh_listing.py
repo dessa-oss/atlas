@@ -1,3 +1,4 @@
+from vcat.utils import tgz_archive_without_extension
 from vcat_ssh.ssh_utils import SSHUtils
 
 
@@ -13,10 +14,7 @@ class SSHListing(object):
 
     def get_pipeline_names(self):
         archives = self._list_archive_names()
-        return [self._archive_without_extension(archive_name) for archive_name in archives]
-
-    def _archive_without_extension(self, archive):
-        return archive[0:-4]
+        return [tgz_archive_without_extension(archive_name) for archive_name in archives]
 
     def _list_archive_names(self):
         from os.path import basename

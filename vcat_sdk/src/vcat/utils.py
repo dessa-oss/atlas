@@ -32,3 +32,6 @@ def make_uuid(item, iterable_callback):
         return generate_uuid(item)
 
     return generate_uuid(str(item))
+
+def tgz_archive_without_extension(archive_path):
+    return archive_path[0:-4]
