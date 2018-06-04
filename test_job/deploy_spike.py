@@ -65,8 +65,8 @@ deployment_config = {
 # deployment = deployment_manager.deploy(
 #     deployment_config, job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
-deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
-# deployment = SSHJobDeployment(job_name, job, job_source_bundle)
+# deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+deployment = SSHJobDeployment(job_name, job, job_source_bundle)
 deployment.config().update(deployment_config)
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
