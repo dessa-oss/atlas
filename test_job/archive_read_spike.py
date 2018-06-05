@@ -19,3 +19,5 @@ with MultiSSHBundledPipelineArchive() as bundled_archive:
                                   bundled_archive, bundled_archive, bundled_archive, bundled_archive)
     reader = ResultReader(fetch)
     print(reader.get_job_information())
+    print(reader.get_results())
+    reader.cleanup()
