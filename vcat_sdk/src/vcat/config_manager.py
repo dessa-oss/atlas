@@ -10,6 +10,7 @@ class ConfigManager(object):
 
     def ensure_logging_configured(self):
         self.config()
+        self._configure_logging()
 
     def _load(self):
         from vcat.local_directory import LocalDirectory

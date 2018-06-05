@@ -12,7 +12,7 @@ class StageConfig(object):
         self._is_persisted = True
         
     def cache_name(self):
-        return self._is_persisted
+        return self._cache_name
 
     def cache(self, name):
         self._cache_name = name

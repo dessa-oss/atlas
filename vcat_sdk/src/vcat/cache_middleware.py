@@ -21,4 +21,5 @@ class CacheMiddleware(object):
         if cached_result is not None:
             return cached_result
 
-        return callback(args, kwargs)
+        result = callback(args, kwargs)
+        return stage_cache.submit_cache(result)
