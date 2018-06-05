@@ -12,6 +12,7 @@ class StageContext(object):
         self.end_time = None
         self.delta_time = None
         self.is_context_aware = False
+        self.used_cache = False
 
     def add_error_information(self, exception_info):
         import traceback
@@ -45,6 +46,7 @@ class StageContext(object):
         self.end_time = archive_stage_context.get('end_time', self.end_time)
         self.delta_time = archive_stage_context.get('delta_time', self.delta_time)
         self.is_context_aware = archive_stage_context.get('is_context_aware', self.is_context_aware)
+        self.used_cache = archive_stage_context.get('used_cache', self.used_cache)
 
     def time_callback(self, callback):
         import time
@@ -68,7 +70,8 @@ class StageContext(object):
             'start_time': self.start_time,
             'end_time': self.end_time,
             'delta_time': self.delta_time,
-            'is_context_aware': self.is_context_aware
+            'is_context_aware': self.is_context_aware,
+            'used_cache': self.used_cache,
         }
 
     def _context(self):
@@ -82,5 +85,6 @@ class StageContext(object):
             "start_time": self.start_time,
             "end_time": self.end_time,
             "delta_time": self.delta_time,
-            "is_context_aware": self.is_context_aware
+            "is_context_aware": self.is_context_aware,
+            "used_cache": self.used_cache,
         }
