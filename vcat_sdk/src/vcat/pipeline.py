@@ -1,6 +1,5 @@
 from vcat.stage_graph import StageGraph
 from vcat.stage_piping import StagePiping
-from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_connector_wrapper import StageConnectorWrapper
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
