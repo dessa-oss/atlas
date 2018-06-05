@@ -15,15 +15,22 @@ config_manager.config()['log_level'] = 'DEBUG'
 class SpikePipelineArchive(object):
 
     def __init__(self, open_for_reading=False):
+        from vcat_ssh.ssh_utils import SSHUtils
+
         self._archives = {}
+        self._config = config_manager.config()
         self._open_for_reading = open_for_reading
+        self._ssh_utils = SSHUtils(self._config)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        for archive in self._archives.values():
+        from os import remove
+
+        for name, archive in self._archives.items():
             archive.__exit__(exception_type, exception_value, traceback)
+            remove(self._results_archive_path(name))
         self._archives = {}
 
     def append(self, name, item, prefix=None):
@@ -54,14 +61,35 @@ class SpikePipelineArchive(object):
             raise StandardError('Cannot have a missing archive name')
 
         if not name in self._archives:
+            self._retrieve_results(name)
             archive = LocalBundledPipelineArchive(
-                '/home/thomas/Dev/Spiking/vcat-results/tmp/results/' + name + '.tgz',
+                self._results_archive_path(name),
                 self._open_for_reading
             )
             archive.__enter__()
             self._archives[name] = archive
 
         return self._archives[name]
+
+    def _retrieve_results(self, name):
+        from subprocess import call
+
+        command = self._retrieve_scp_command(name)
+        call(command)
+
+    def _retrieve_scp_command(self, name):
+        ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ':' + self._results_remote_archive_path(name) + ' ' + \
+            self._results_archive_path(name)
+        return self._ssh_utils.command_in_shell_command(ssh_command)
+
+    def _results_archive_path(self, name):
+        return '/tmp/' + name + '.tgz'
+
+    def _results_remote_archive_path(self, name):
+        return self._result_path() + '/' + name + '.tgz'
+
+    def _result_path(self):
+        return self._config['result_path']
 
 
 archive_listing = SSHListing()
