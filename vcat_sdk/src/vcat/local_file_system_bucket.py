@@ -1,14 +1,12 @@
 class LocalFileSystemBucket(object):
 
     def __init__(self, path):
-        from logging import getLogger
         from os.path import abspath
 
-        self._log = getLogger(__name__)
         self._path = abspath(path)
 
     def upload_from_string(self, name, data):
-        self._log.debug('Uploading %s from string', name)
+        self._log().debug('Uploading %s from string', name)
 
         self._ensure_path_exists(name)
         with open(self._full_path(name), 'w+b') as file:
@@ -17,7 +15,7 @@ class LocalFileSystemBucket(object):
     def upload_from_file(self, name, input_file):
         from shutil import copyfileobj
 
-        self._log.debug('Uploading %s from %s', name, input_file.name)
+        self._log().debug('Uploading %s from %s', name, input_file.name)
 
         self._ensure_path_exists(name)
         with open(self._full_path(name), 'w+b') as file:
@@ -26,13 +24,13 @@ class LocalFileSystemBucket(object):
     def exists(self, name):
         from os.path import isfile
 
-        self._log.debug('Checking if %s exists', name)
+        self._log().debug('Checking if %s exists', name)
 
         path = self._full_path(name)
         return isfile(path)
 
     def download_as_string(self, name):
-        self._log.debug('Downloading %s', name)
+        self._log().debug('Downloading %s', name)
 
         with open(self._full_path(name), 'rb') as file:
             return file.read()
@@ -40,7 +38,7 @@ class LocalFileSystemBucket(object):
     def download_to_file(self, name, output_file):
         from shutil import copyfileobj
 
-        self._log.debug('Downloading %s to %s', name, output_file.name)
+        self._log().debug('Downloading %s to %s', name, output_file.name)
 
         with open(self._full_path(name), 'rb') as file:
             copyfileobj(file, output_file)
@@ -49,10 +47,10 @@ class LocalFileSystemBucket(object):
         from glob import glob
         from os import getcwd
 
-        self._log.debug('Getting listing with pathname %s', pathname)
+        self._log().debug('Getting listing with pathname %s', pathname)
 
         full_pathname = self._full_path(pathname)
-        self._log.debug('Listing with expanded pathname is %s', full_pathname)
+        self._log().debug('Listing with expanded pathname is %s', full_pathname)
         return glob(full_pathname)
 
     def _full_path(self, name):
@@ -72,3 +70,7 @@ class LocalFileSystemBucket(object):
         from os.path import join
 
         return join(self._path + '/' + dirname(name))
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

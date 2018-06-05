@@ -6,9 +6,6 @@ from vcat.change_directory import ChangeDirectory
 class SimpleWorker(object):
 
     def __init__(self, code_path, result_path):
-        from logging import getLogger
-
-        self._log = getLogger(__name__)
         self._code_path = code_path
         self._result_path = result_path
         self._code_bucket = LocalFileSystemBucket(self._code_path)
@@ -26,12 +23,12 @@ class SimpleWorker(object):
             sleep(0.5)
 
     def _handle_job(self, archive_path):
-        self._log.info('Running job %s', archive_path)
+        self._log().info('Running job %s', archive_path)
         status_code = self._run_job(archive_path)
         if status_code == 0:
-            self._log.info('Job %s is complete', archive_path)
+            self._log().info('Job %s is complete', archive_path)
         else:
-            self._log.info('Job failed with status code %d', status_code)
+            self._log().info('Job failed with status code %d', status_code)
 
     def _run_job(self, archive_path):
         try:
@@ -89,3 +86,7 @@ class SimpleWorker(object):
 
         with tarfile.open(archive_path, 'r:gz') as tar:
             tar.extractall()
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

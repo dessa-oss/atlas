@@ -1,22 +1,19 @@
 class StageCacheForMiddleware(object):
 
     def __init__(self, allow_caching, cache_name, stage_uuid, new_args, new_kwargs, fetch_upstream_result_callback):
-        from logging import getLogger
-
         self._allow_caching = allow_caching
         self._cache_name = cache_name
         self._stage_uuid = stage_uuid
         self._upstream_result = None
         self._new_args = new_args
         self._new_kwargs = new_kwargs
-        self._log = getLogger(__name__)
 
         if self._allow_caching:
             if self._cache_name is None:
                 self._upstream_result = fetch_upstream_result_callback()
                 self._cache_name = self._auto_cache_name()
 
-        self._log.debug('Stage %s cache name is %s', stage_uuid, repr(self._cache_name))
+        self._log().debug('Stage %s cache name is %s', stage_uuid, repr(self._cache_name))
 
     def fetch_cache(self):
         from vcat.global_state import cache_manager
@@ -45,3 +42,7 @@ class StageCacheForMiddleware(object):
         from vcat.utils import make_uuid
 
         return make_uuid(result, self._result_hash)
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

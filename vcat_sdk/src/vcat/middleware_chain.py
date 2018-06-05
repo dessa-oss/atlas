@@ -1,10 +1,7 @@
 class MiddlewareChain(object):
 
     def __init__(self):
-        from logging import getLogger
-
         self._chain = []
-        self._log = getLogger(__name__)
 
     def chain(self):
         return self._chain
@@ -16,9 +13,9 @@ class MiddlewareChain(object):
         self._chain.extend(list_of_middleware)
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        self._log.debug('Start middleware')
+        self._log().debug('Start middleware')
         result = self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, 0)
-        self._log.debug('Complete middleware')
+        self._log().debug('Complete middleware')
         return result
 
     def _call_internal(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, middleware_index):
@@ -39,10 +36,14 @@ class MiddlewareChain(object):
             return callback(args, kwargs)
 
     def _execute_middleware(self, current_middleware, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback):
-        self._log.debug('Calling middleware %s', repr(current_middleware))
+        self._log().debug('Calling middleware %s', repr(current_middleware))
         result = current_middleware.call(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
-        self._log.debug('Middleware %s returned %s', repr(current_middleware), repr(result))
+        self._log().debug('Middleware %s returned %s', repr(current_middleware), repr(result))
         return result
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
 
     def __add__(self, other):
         new_chain = MiddlewareChain()
