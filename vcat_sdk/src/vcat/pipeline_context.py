@@ -34,7 +34,7 @@ class PipelineContext(object):
         return list(self.stage_contexts.keys())
 
     def load_from_archive(self, archiver):
-        stage_uuids = archiver.fetch_miscellaneous('stage_listing')
+        stage_uuids = archiver.fetch_miscellaneous('stage_listing') or []
         self.global_stage_context.load_from_archive(archiver)
         for stage_uuid in stage_uuids:
             stage_context = StageContext()

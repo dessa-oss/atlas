@@ -33,7 +33,7 @@ class StageContext(object):
         self.stage_output = archiver.fetch_stage_persisted_data(self.uuid)
         self.model_data = archiver.fetch_stage_model_data(self.uuid)
         archive_stage_context = archiver.fetch_stage_miscellaneous(
-            self.uuid, 'stage_context')
+            self.uuid, 'stage_context') or {}
         self._load_archive_stage_context(archive_stage_context)
 
     def _load_archive_stage_context(self, archive_stage_context):

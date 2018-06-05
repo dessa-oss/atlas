@@ -34,7 +34,7 @@ class Provenance(object):
             archiver.append_job_source(self.job_source_bundle.job_archive())
 
     def load_from_archive(self, archiver):
-        archive_provenance = archiver.fetch_provenance()
+        archive_provenance = archiver.fetch_provenance() or {}
         self._load_archive_provenance(archive_provenance)
         if self.job_source_bundle is not None:
             archiver.fetch_job_source(self.job_source_bundle.job_archive())

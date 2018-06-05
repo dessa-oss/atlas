@@ -29,12 +29,13 @@ class LocalBundledPipelineArchive(object):
             finally:
                 os.remove(self.path)
 
-    def __init__(self, open_for_reading=False):
+    def __init__(self, archive_path, open_for_reading=False):
         import tarfile
+
         if open_for_reading:
-            self._tar = tarfile.open(self.archive(), "r:gz")
+            self._tar = tarfile.open(archive_path, "r:gz")
         else:
-            self._tar = tarfile.open(self.archive(), "w:gz")
+            self._tar = tarfile.open(archive_path, "w:gz")
 
     def __enter__(self):
         self._tar.__enter__()
@@ -63,19 +64,46 @@ class LocalBundledPipelineArchive(object):
         self._tar.add(file_path, arcname=arcname)
 
     def fetch(self, name, prefix=None):
-        raise NotImplementedError()
+        import dill as pickle
+
+        arcname = file_archive_name(prefix, name)
+
+        for tar_info in self._tar:
+            if tar_info.name == arcname:
+                input_file = self._tar.extractfile(tar_info)
+                try:
+                    return pickle.load(input_file)
+                finally:
+                    input_file.close()
 
     def fetch_binary(self, name, prefix=None):
-        raise NotImplementedError()
+        arcname = file_archive_name(prefix, name)
+
+        for tar_info in self._tar:
+            if tar_info.name == arcname:
+                input_file = self._tar.extractfile(tar_info)
+                try:
+                    return input_file.read()
+                finally:
+                    input_file.close()
 
     def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
-        raise NotImplementedError()
+        from os.path import basename
+        from shutil import copyfileobj
 
-    def archive_name(self):
-        raise NotImplementedError()
+        name = target_name or basename(file_path)
+        arcname = file_archive_name_with_additional_prefix(
+            prefix, file_prefix, name)
 
-    def archive(self):
-        return self.archive_name()
+        for tar_info in self._tar:
+            if tar_info.name == arcname:
+                input_file = self._tar.extractfile(tar_info)
+                try:
+                    with open(file_path, 'w+b') as file:
+                        copyfileobj(input_file, file)
+                finally:
+                    input_file.close()
+                return
 
     def _add_to_tar(self, tempfile, prefix, name):
         tempfile.file.flush()
