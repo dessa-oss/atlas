@@ -32,7 +32,7 @@ class ConfigManager(object):
         from logging import getLevelName
         from sys import stdout
 
-        log_level = self._config.get('log_level', 'DEBUG')
+        log_level = self._config.get('log_level', 'INFO')
         log_level = getLevelName(log_level)
         basicConfig(stream=stdout, level=log_level)
 
