@@ -1,6 +1,7 @@
 class Stage(object):
 
-    def __init__(self, uuid, function, metadata_function, *args, **kwargs):
+    def __init__(self, middleware, uuid, function, metadata_function, *args, **kwargs):
+        self._middleware = middleware
         self._uuid = uuid
         self.function = function
         self.args = args
@@ -10,9 +11,10 @@ class Stage(object):
     def uuid(self):
         return self._uuid
 
-    def run(self, previous_results, filler_builder, **filler_kwargs):
-        new_args, new_kwargs = self.fill_args_and_kwargs(filler_builder, **filler_kwargs)
-        return self.function(*(previous_results + new_args), **new_kwargs)
+    def run(self, upstream_result_callback, filler_builder, **filler_kwargs):
+        def execute(args, kwargs):
+            return self.function(*args, **kwargs)
+        self._middleware.call(upstream_result_callback, filler_builder, filler_kwargs, self.args, self.kwargs, execute)
 
     def filler(self, filler_builder):
         return filler_builder(*self.args, **self.kwargs)

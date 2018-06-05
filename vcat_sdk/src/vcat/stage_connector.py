@@ -8,9 +8,6 @@ class StageConnector(object):
         self._previous_connectors = previous_connectors
         self._has_run = False
         self._result = None
-        self._is_persisted = False
-        self._cache_name = None
-        self._allow_caching = True
         self._upstream_result = None
 
     def uuid(self):
@@ -27,9 +24,6 @@ class StageConnector(object):
 
     def kwargs(self):
         return self.current_stage.kwargs
-
-    def persist(self):
-        self._is_persisted = True
 
     def previous_nodes(self):
         return self._previous_connectors
@@ -56,12 +50,6 @@ class StageConnector(object):
 
         traverse(add_tree_names_action, self)
 
-    def set_global_cache_name(self, name):
-        self._cache_name = name
-
-    def disable_caching(self):
-        self._allow_caching = False
-
     def stage(self, next_stage):
         return StageConnector(next_stage, [self])
 
@@ -75,40 +63,11 @@ class StageConnector(object):
         from vcat.rose_tree_traversable import force_results
 
         def run_action(previous_results, self):
-            if self._has_run:
-                return self._result
-
             def fetch_upstream_result():
                 if self._upstream_result is None:
                     self._upstream_result = force_results(previous_results)
                 return self._upstream_result
 
-            stage_cache = StageCache(
-                self._allow_caching,
-                self._cache_name,
-                self.current_stage,
-                filler_builder,
-                filler_kwargs,
-                fetch_upstream_result
-            )
-
-            # TODO: SUPPORT `MISSING` VS `None`
-            cached_result = stage_cache.fetch_cache()
-            if cached_result is not None:
-                self._has_run = True
-                self._result = cached_result
-                return cached_result
-
-            if self._upstream_result is None:
-                self._upstream_result = force_results(previous_results)
-
-            self._result = self.current_stage.run(
-                self._upstream_result, filler_builder, **filler_kwargs)
-            self._has_run = True
-
-            if self._allow_caching:
-                stage_cache.submit_cache(self._result)
-
-            return self._result
+            return self.current_stage.run(fetch_upstream_result, filler_builder, **filler_kwargs)
 
         return run_action

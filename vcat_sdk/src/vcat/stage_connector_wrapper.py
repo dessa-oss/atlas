@@ -2,17 +2,17 @@ from vcat.stage_piping import StagePiping
 from vcat.job import Job
 from vcat.successive_argument_filler import SuccessiveArgumentFiller
 from vcat.stage_connector import StageConnector
-from vcat.stage_smart_constructor import StageSmartConstructor
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
 
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context, stage_context):
+    def __init__(self, connector, pipeline_context, stage_context, stage_config):
         self._connector = connector
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
+        self._stage_config = stage_config
 
         self._stage_context.uuid = self.uuid()
         self._pipeline_context.add_stage_context(self._stage_context)
@@ -33,28 +33,22 @@ class StageConnectorWrapper(object):
             self._pipeline_context.provenance.stage_hierarchy, self._provenance_filler_builder, **filler_kwargs)
 
     def stage(self, function, *args, **kwargs):
-        new_context = StageContext()
-        stage_smart_constructor = StageSmartConstructor(new_context)
+        from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
 
-        if isinstance(function, ContextAware):
-            function._set_context(new_context)
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
+        builder = builder.stage(self.uuid(), function, args, kwargs)
+        builder = builder.hierarchy([self.uuid()])
 
-        new_stage = stage_smart_constructor.make_stage(self.uuid(), new_context, function, *args, **kwargs)
-        new_connector_wrapper = StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
-        parent_connectors = new_connector_wrapper._connector._previous_connectors
-        parent_uuids = [self.uuid()]
-        stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
-        stage_hierarchy.add_entry(new_stage, parent_uuids)
-        return StageConnectorWrapper(self._connector.stage(new_stage), self._pipeline_context, new_context)
+        return builder.build(self._connector.stage)
 
     def persist(self):
-        self._connector.persist()
+        self._stage_config.persist()
 
     def set_global_cache_name(self, name):
-        self._connector.set_global_cache_name(name)
+        self._stage_config.cache(name)
 
     def disable_caching(self):
-        self._connector.disable_caching()
+        self._stage_config.disable_caching()
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
@@ -63,27 +57,8 @@ class StageConnectorWrapper(object):
         self.add_tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 
-    def _fill_stage_output(self):
-        from vcat.rose_tree_traversable import traverse
-
-        stage_contexts = self._pipeline_context.stage_contexts
-
-        def get_persisted_data(parent_results, this_connector):
-            if this_connector._is_persisted:
-                stage_contexts[this_connector.name()].stage_output = this_connector._result
-        
-        traverse(get_persisted_data, self._connector)
-
     def run_without_provenance(self, **filler_kwargs):
-        try:
-            result = self._connector.run(self._filler_builder, **filler_kwargs)
-            self._fill_stage_output()
-        except:
-            import sys
-            self._stage_context.add_error_information(sys.exc_info())
-            raise
-
-        return result
+        return self._connector.run(self._filler_builder, **filler_kwargs)
 
     def _filler_builder(self, *args, **kwargs):
         from vcat.hyperparameter_argument_fill import HyperparameterArgumentFill
