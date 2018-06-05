@@ -2,7 +2,7 @@ from vcat.utils import file_archive_name
 from vcat.utils import file_archive_name_with_additional_prefix
 
 
-class LocalPipelineArchive(object):
+class LocalBundledPipelineArchive(object):
 
     class Tempfile(object):
 

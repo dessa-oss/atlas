@@ -61,6 +61,7 @@ deployment_config = {
     'code_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/code',
     'result_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/results',
     'key_path': '/home/thomas/.ssh/id_local',
+    'log_level': 'DEBUG',
 }
 # deployment = deployment_manager.deploy(
 #     deployment_config, job_name, job, job_source_bundle)
@@ -95,7 +96,7 @@ print(result)
 # # pipeline_context.provenance.job_source_bundle.bundle()
 # # pipeline_listing = GCPPipelineArchiveListing()
 # # with GCPPipelineArchive() as archive:
-# # # with LocalPipelineArchive() as archive:
+# # # with LocalBundledPipelineArchive() as archive:
 # #     archiver = PipelineArchiver(pipeline_context.file_name, pipeline_listing, archive, archive, archive, archive, archive, archive)
 # #     pipeline_context.save_to_archive(archiver)
 

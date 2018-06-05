@@ -7,7 +7,7 @@ from vcat.pipeline import Pipeline
 from vcat.result_reader import ResultReader
 from vcat.stage_context import StageContext
 from vcat.job_source_bundle import JobSourceBundle
-from vcat.local_pipeline_archive import LocalPipelineArchive
+from vcat.local_bundled_pipeline_archive import LocalBundledPipelineArchive
 from vcat.pipeline_archiver import PipelineArchiver
 from vcat.context_aware import context_aware
 from vcat.pipeline_archiver_fetch import PipelineArchiverFetch
