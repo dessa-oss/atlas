@@ -16,42 +16,33 @@ class MiddlewareChain(object):
         self._chain.extend(list_of_middleware)
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        return self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, 0)
+        self._log.debug('Start middleware')
+        result = self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, 0)
+        self._log.debug('Complete middleware')
+        return result
 
     def _call_internal(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, middleware_index):
-        def recursive_callback(args, kwargs):
-            return self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, middleware_index + 1)
-
-        def execute_callback(args, kwargs):
-            return callback(*args, **kwargs)
-
         if middleware_index < len(self._chain):
-            next_callback = recursive_callback
-        else:
-            next_callback = execute_callback
+            def recursive_callback(args, kwargs):
+                return self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, middleware_index + 1)
 
-        return self._execute_middleware(
-            self._chain[middleware_index], 
-            upstream_result_callback, 
-            filler_builder, 
-            filler_kwargs, 
-            args, 
-            kwargs, 
-            next_callback
-        )
+            return self._execute_middleware(
+                self._chain[middleware_index],
+                upstream_result_callback,
+                filler_builder,
+                filler_kwargs,
+                args,
+                kwargs,
+                recursive_callback
+            )
+        else:
+            return callback(args, kwargs)
 
     def _execute_middleware(self, current_middleware, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback):
-        log_string = 'Calling middleware {} with {}, {}, {}, {}, {}, {}'.format(
-                current_middleware, 
-                upstream_result_callback, 
-                filler_builder, 
-                filler_kwargs, 
-                args, 
-                kwargs, 
-                next_callback
-            )
-        self._log.debug(log_string)
-        return current_middleware.call(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
+        self._log.debug('Calling middleware %s', repr(current_middleware))
+        result = current_middleware.call(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
+        self._log.debug('Middleware %s returned %s', repr(current_middleware), repr(result))
+        return result
 
     def __add__(self, other):
         new_chain = MiddlewareChain()

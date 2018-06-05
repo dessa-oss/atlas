@@ -8,7 +8,7 @@ class StageConnector(object):
         self._previous_connectors = previous_connectors
         self._has_run = False
         self._result = None
-        self._upstream_result = None
+        self._upstream_results = None
 
     def uuid(self):
         return self.current_stage.uuid()
@@ -64,9 +64,9 @@ class StageConnector(object):
 
         def run_action(previous_results, self):
             def fetch_upstream_result():
-                if self._upstream_result is None:
-                    self._upstream_result = force_results(previous_results)
-                return self._upstream_result
+                if self._upstream_results is None:
+                    self._upstream_results = force_results(previous_results)
+                return self._upstream_results
 
             return self.current_stage.run(fetch_upstream_result, filler_builder, **filler_kwargs)
 
