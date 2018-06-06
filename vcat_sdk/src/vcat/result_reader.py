@@ -119,6 +119,26 @@ class ResultReader(object):
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
+    @staticmethod
+    def _add_stage_results(all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers):
+        import pandas as pd
+
+        for stage_id, stage_info in stage_hierarchy_entries.items():
+            column_headers = list(main_headers)
+
+            stage_name = stage_info.function_name
+            stage_context = pipeline_context.stage_contexts[stage_id]
+
+            has_unstructured_result = stage_context.stage_output is not None
+
+            row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
+
+            for structured_result_name, structured_result_val in stage_context.stage_log.items():
+                column_headers.append(structured_result_name)
+                row_data.append(structured_result_val)
+
+            all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+
     def get_results(self):
         import pandas as pd
 
@@ -132,21 +152,8 @@ class ResultReader(object):
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
-            for stage_id, stage_info in stage_hierarchy_entries.items():
-                column_headers = list(main_headers)
-
-                stage_name = stage_info.function_name
-                stage_context = pipeline_context.stage_contexts[stage_id]
-
-                has_unstructured_result = stage_context.stage_output is not None
-
-                row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
-
-                for structured_result_name, structured_result_val in stage_context.stage_log.items():
-                    column_headers.append(structured_result_name)
-                    row_data.append(structured_result_val)
-
-                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+            ResultReader._add_stage_results(
+                all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
 
         output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
