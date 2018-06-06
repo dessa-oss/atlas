@@ -26,7 +26,7 @@ class SSHFileSystemBucket(object):
         from subprocess import call
 
         command = self._list_files_command(name)
-        return call(command) == 0
+        return self._ssh_utils.call_command(command) == 0
 
     def download_as_string(self, name):
         with SimpleTempfile('w+b') as temp_file:

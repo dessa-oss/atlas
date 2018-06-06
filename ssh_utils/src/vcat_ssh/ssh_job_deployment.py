@@ -30,20 +30,17 @@ class SSHJobDeployment(object):
             self._job_bundler.cleanup()
 
     def is_job_complete(self):
-        from subprocess import call
-
         command = self._check_job_done_ssh_command()
-        return call(command) == 0
+        return self._ssh_utils.call_command(command) == 0
 
     def fetch_job_results(self):
-        from subprocess import call
         from os.path import basename
         from os import remove
         import dill as pickle
         import tarfile
 
         command = self._retrieve_scp_command()
-        call(command)
+        self._ssh_utils.call_command(command)
         try:
             result = None
             with tarfile.open(self._results_archive_path(), 'r:gz') as tar:
@@ -58,10 +55,8 @@ class SSHJobDeployment(object):
         return result
 
     def _deploy_internal(self):
-        from subprocess import call
-
         command = self._deploy_scp_command()
-        call(command)
+        self._ssh_utils.call_command(command)
 
     def _retrieve_scp_command(self):
         ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ':' + self._results_remote_archive_path() + ' ' + \

@@ -43,6 +43,10 @@ class SSHUtils(object):
             self._remote_path(remote_path) + ' ' + local_path
         return self.command_in_shell_command(ssh_command)
 
+    def call_command(self, command):
+        _, _, status_code = self.execute_command(command)
+        return status_code
+
     def execute_command(self, command):
         from subprocess import PIPE
         from subprocess import Popen
