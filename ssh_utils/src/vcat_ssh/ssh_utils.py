@@ -21,7 +21,7 @@ class SSHUtils(object):
 
     def execute_to_remote_scp(self, local_path, remote_path):
         command = self.to_remote_scp_command(local_path, remote_path)
-        _, _, code = self._execute_command(command)
+        _, _, code = self.execute_command(command)
         if code != 0:
             raise StandardError('Unable to upload {} to {} (code: {})'.format(
                 local_path, remote_path, code))
@@ -33,7 +33,7 @@ class SSHUtils(object):
 
     def execute_to_local_scp(self, remote_path, local_path):
         command = self.to_local_scp_command(remote_path, local_path)
-        _, _, code = self._execute_command(command)
+        _, _, code = self.execute_command(command)
         if code != 0:
             raise StandardError('Unable to download {} to {} (code: {})'.format(
                 remote_path, local_path, code))
@@ -43,7 +43,7 @@ class SSHUtils(object):
             self._remote_path(remote_path) + ' ' + local_path
         return self.command_in_shell_command(ssh_command)
 
-    def _execute_command(self, command):
+    def execute_command(self, command):
         from subprocess import PIPE
         from subprocess import Popen
 
