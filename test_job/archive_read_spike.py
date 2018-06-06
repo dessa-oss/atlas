@@ -17,7 +17,8 @@ config_manager.config()['log_level'] = 'DEBUG'
 archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
 
 # with MultiSSHBundledPipelineArchive() as bundled_archive:
-with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
+# with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
+with BucketPipelineArchive(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
     fetch = PipelineArchiverFetch(archive_listing, bundled_archive, bundled_archive,
                                   bundled_archive, bundled_archive, bundled_archive, bundled_archive)
     reader = ResultReader(fetch)
