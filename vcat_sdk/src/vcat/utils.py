@@ -35,3 +35,36 @@ def make_uuid(item, iterable_callback):
 
 def tgz_archive_without_extension(archive_path):
     return archive_path[0:-4]
+
+def _list_items(arr):
+    for i in range(len(arr)):
+        yield i, arr[i]
+
+def dict_like_iter(dict_like):
+    if isinstance(dict_like, list):
+        return _list_items(dict_like)
+    
+    if isinstance(dict_like, dict):
+        return dict_like.items()
+    
+def dict_like_append(dict_like, key, val):
+    if isinstance(dict_like, list):
+        dict_like.append(val)
+        
+    if isinstance(dict_like, dict):
+        dict_like[key] = val
+
+def pretty_time(timestamp):
+    import datetime
+
+    try:
+        return datetime.datetime.fromtimestamp(timestamp)
+    except:
+        return timestamp
+
+def restructure_headers(all_headers, first_headers):
+    def diff(list_0, list_1):
+        set_1 = set(list_1)
+        return [item for item in list_0 if item not in set_1]
+
+    return first_headers + diff(all_headers, first_headers)

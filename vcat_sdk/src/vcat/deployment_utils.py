@@ -28,15 +28,6 @@ def raise_error_if_job_failed(deployment):
         if results and results["error"]:
             compat_raise(results["error"]["type"], results["error"]["exception"], None)
 
-
-def restructure_headers(all_headers, first_headers):
-    def diff(list_0, list_1):
-        set_1 = set(list_1)
-        return [item for item in list_0 if item not in set_1]
-
-    return first_headers + diff(all_headers, first_headers)
-
-
 def _grid_param_set_generator(hype_kwargs):
     import itertools
 
