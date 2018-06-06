@@ -1,33 +1,9 @@
 from vcat.utils import file_archive_name
 from vcat.utils import file_archive_name_with_additional_prefix
+from vcat.simple_tempfile import SimpleTempfile
 
 
 class LocalBundledPipelineArchive(object):
-
-    class Tempfile(object):
-
-        def __init__(self, mode):
-            self.path = None
-            self.file = None
-            self._mode = mode
-
-        def __enter__(self):
-            import tempfile
-            import os
-
-            file_descriptor, self.path = tempfile.mkstemp()
-            self.file = os.fdopen(file_descriptor, self._mode)
-            self.file.__enter__()
-
-            return self
-
-        def __exit__(self, exception_type, exception_value, traceback):
-            import os
-
-            try:
-                self.file.__exit__()
-            finally:
-                os.remove(self.path)
 
     def __init__(self, archive_path, open_for_reading=False):
         import tarfile
@@ -47,12 +23,12 @@ class LocalBundledPipelineArchive(object):
     def append(self, name, item, prefix=None):
         import dill as pickle
 
-        with self.Tempfile('w+b') as tempfile:
+        with SimpleTempfile('w+b') as tempfile:
             pickle.dump(item, tempfile.file, protocol=2)
             self._add_to_tar(tempfile, prefix, name + '.pkl')
 
     def append_binary(self, name, serialized_item, prefix=None):
-        with self.Tempfile('w+b') as tempfile:
+        with SimpleTempfile('w+b') as tempfile:
             tempfile.file.write(serialized_item)
             self._add_to_tar(tempfile, prefix, name)
 
