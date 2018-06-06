@@ -1,7 +1,7 @@
 class BucketPipelineListing(object):
 
-    def __init__(self, bucket_constructor, constructor_arguments):
-        self._bucket = bucket_constructor(constructor_arguments)
+    def __init__(self, bucket_constructor, *constructor_arguments):
+        self._bucket = bucket_constructor(*constructor_arguments)
 
     def track_pipeline(self, pipeline_name):
         self._bucket.upload_from_string(pipeline_name + '.tracker', pipeline_name)
