@@ -4,8 +4,8 @@ from vcat.utils import file_archive_name_with_additional_prefix
 
 class BucketPipelineArchive(object):
 
-    def __init__(self, bucket_implementation, *constructor_args):
-        self._bucket = bucket_implementation(*constructor_args)
+    def __init__(self, bucket_constructor, *constructor_args):
+        self._bucket = bucket_constructor(*constructor_args)
 
     def __enter__(self):
         return self
