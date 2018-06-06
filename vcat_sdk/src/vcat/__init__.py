@@ -25,6 +25,7 @@ from vcat.compat import compat_raise
 from vcat.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 from vcat.bucket_pipeline_archive import BucketPipelineArchive
 from vcat.bucket_pipeline_listing import BucketPipelineListing
+from vcat.simple_tempfile import SimpleTempfile
 
 def _append_module():
     import sys

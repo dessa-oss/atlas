@@ -6,6 +6,9 @@ class SimpleTempfile(object):
         self.name = None
         self._mode = mode
 
+    def seek(self, *args, **kwargs):
+        return self.file.seek(*args, **kwargs)
+
     def write(self, *args, **kwargs):
         return self.file.write(*args, **kwargs)
 
