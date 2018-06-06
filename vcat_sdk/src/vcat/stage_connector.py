@@ -1,6 +1,3 @@
-from vcat.stage_cache import StageCache
-
-
 class StageConnector(object):
 
     def __init__(self, current_stage, previous_connectors):

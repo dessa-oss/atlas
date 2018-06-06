@@ -28,6 +28,7 @@ class StageCacheForMiddleware(object):
         return cache_manager.cache().set(self._cache_name, value)
 
     def _auto_cache_name(self):
+        from sys import version_info
         from vcat.argument_hasher import ArgumentHasher
         from vcat.utils import merged_uuids
 
@@ -35,8 +36,9 @@ class StageCacheForMiddleware(object):
         argument_hash = hasher.make_hash()
 
         upstream_hash = self._result_hash(self._upstream_result)
+        version_hash = self._result_hash(version_info.major)
 
-        return merged_uuids([argument_hash, upstream_hash, self._stage_uuid])
+        return merged_uuids([argument_hash, upstream_hash, version_hash, self._stage_uuid])
 
     def _result_hash(self, result):
         from vcat.utils import make_uuid
