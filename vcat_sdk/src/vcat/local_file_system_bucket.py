@@ -51,7 +51,11 @@ class LocalFileSystemBucket(object):
 
         full_pathname = self._full_path(pathname)
         self._log().debug('Listing with expanded pathname is %s', full_pathname)
-        return glob(full_pathname)
+        full_paths = glob(full_pathname)
+        return [self._remove_bucket_path_from_file(path) for path in full_paths]
+
+    def _remove_bucket_path_from_file(self, path):
+        return path[len(self._path)+1:]
 
     def _full_path(self, name):
         from os.path import join
