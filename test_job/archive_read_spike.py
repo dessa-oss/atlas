@@ -10,11 +10,12 @@ config_manager.config()[
 config_manager.config()[
     'result_path'] = '/home/thomas/Dev/Spiking/vcat-results/tmp/results'
 config_manager.config()['key_path'] = '/home/thomas/.ssh/id_local'
-config_manager.config()['log_level'] = 'DEBUG'
+# config_manager.config()['log_level'] = 'DEBUG'
 
 
 # archive_listing = SSHListing()
-archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
+# archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
+archive_listing = BucketPipelineListing(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
 
 # with MultiSSHBundledPipelineArchive() as bundled_archive:
 # with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
