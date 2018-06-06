@@ -1,5 +1,6 @@
 from vcat import *
 from vcat_ssh import *
+from vcat_gcp import *
 
 config_manager.config()['remote_user'] = 'thomas'
 config_manager.config()['remote_host'] = 'localhost'
@@ -12,9 +13,11 @@ config_manager.config()['key_path'] = '/home/thomas/.ssh/id_local'
 config_manager.config()['log_level'] = 'DEBUG'
 
 
-archive_listing = SSHListing()
+# archive_listing = SSHListing()
+archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
 
-with MultiSSHBundledPipelineArchive() as bundled_archive:
+# with MultiSSHBundledPipelineArchive() as bundled_archive:
+with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
     fetch = PipelineArchiverFetch(archive_listing, bundled_archive, bundled_archive,
                                   bundled_archive, bundled_archive, bundled_archive, bundled_archive)
     reader = ResultReader(fetch)

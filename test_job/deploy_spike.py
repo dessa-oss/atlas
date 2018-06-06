@@ -18,42 +18,44 @@ bundle_name = str(uuid.uuid4())
 job_source_bundle = JobSourceBundle(bundle_name, '../')
 deployment_config = {
     'cache_implementation': {
-        'cache_type': GCPCacheBackend,
-        # 'constructor_arguments': [],
+        # 'cache_type': GCPCacheBackend,
+        'cache_type': LocalFileSystemCacheBackend,
+        'constructor_arguments': ['/tmp'],
     },
     'archive_listing_implementation': {
-        'archive_listing_type': GCPPipelineArchiveListing,
-        # 'constructor_arguments': [],
+        # 'archive_listing_type': GCPPipelineArchiveListing,
+        'archive_listing_type': LocalFileSystemPipelineListing,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'stage_log_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'persisted_data_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'provenance_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'job_source_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'artifact_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'miscellaneous_archive_implementation': {
         # 'archive_type': GCPPipelineArchive,
         'archive_type': LocalFileSystemPipelineArchive,
-        # 'constructor_arguments': [],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
     },
     'remote_user': 'thomas',
     'remote_host': 'localhost',
@@ -66,8 +68,8 @@ deployment_config = {
 # deployment = deployment_manager.deploy(
 #     deployment_config, job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle)
-# deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
-deployment = SSHJobDeployment(job_name, job, job_source_bundle)
+deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+# deployment = SSHJobDeployment(job_name, job, job_source_bundle)
 deployment.config().update(deployment_config)
 deployment.deploy()
 wait_for_deployment_to_complete(deployment)
