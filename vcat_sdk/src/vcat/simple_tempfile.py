@@ -26,7 +26,7 @@ class SimpleTempfile(object):
         file_descriptor, self.path = tempfile.mkstemp()
         self.file = os.fdopen(file_descriptor, self._mode)
         self.file.__enter__()
-        self.name = self.file.name
+        self.name = self.path
 
         return self
 
