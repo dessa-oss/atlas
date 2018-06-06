@@ -5,9 +5,13 @@ from vcat.local_file_system_bucket import LocalFileSystemBucket
 
 class LocalFileSystemPipelineArchive(object):
 
-    def __init__(self):
+    def __init__(self, path=None):
         from os import getcwd
-        self._bucket = LocalFileSystemBucket(getcwd())
+        from os.path import abspath
+
+        bucket_path = path or getcwd()
+        bucket_path = abspath(bucket_path)
+        self._bucket = LocalFileSystemBucket(bucket_path)
 
     def __enter__(self):
         return self
@@ -38,16 +42,23 @@ class LocalFileSystemPipelineArchive(object):
         import dill as pickle
 
         serialized_item = self.fetch_binary(name, prefix)
-        return pickle.loads(serialized_item)
+        if serialized_item is None:
+            return None
+        else:
+            return pickle.loads(serialized_item)
 
     def fetch_binary(self, name, prefix=None):
         arcname = file_archive_name(prefix, name)
-        return self._bucket.download_as_string(arcname)
+        if self._bucket.exists(arcname):
+            return self._bucket.download_as_string(arcname)
+        else:
+            return None
 
     def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
         from os.path import basename
         name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
-        with open(file_path, 'w+b') as file:
-            self._bucket.download_to_file(arcname, file)
+        if self._bucket.exists(arcname):
+            with open(file_path, 'w+b') as file:
+                self._bucket.download_to_file(arcname, file)

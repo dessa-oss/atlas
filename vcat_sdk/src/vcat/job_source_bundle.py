@@ -23,8 +23,11 @@ class JobSourceBundle(object):
                 tar.extractall()
 
     def cleanup(self):
-        import os
-        os.remove(self.job_archive())
+        from os import remove
+        from os.path import exists
+        
+        if exists(self.job_archive()):
+            remove(self.job_archive())
 
     def job_archive_name(self):
         return self._bundle_name + ".tgz"
