@@ -9,9 +9,9 @@ class DeploymentManager(object):
     def _create_deployment(self, job_name, job, job_source_bundle):
         from vcat.global_state import config_manager
 
-        deployment_constructor, _, _ = config_manager.reflect_constructor(
+        deployment_constructor, constructor_args, constructor_kwargs = config_manager.reflect_constructor(
             'deployment', 'deployment', DeploymentManager._create_default_deployment)
-        return deployment_constructor(job_name, job, job_source_bundle)
+        return deployment_constructor(job_name, job, job_source_bundle, *constructor_args, **constructor_kwargs)
 
     @staticmethod
     def _create_default_deployment(job_name, job, job_source_bundle):
