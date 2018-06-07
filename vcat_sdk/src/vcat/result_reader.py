@@ -118,6 +118,8 @@ class ResultReader(object):
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             for stage_id, stage_info in stage_hierarchy_entries.items():
+                self._log().debug('Loading job information for %s at stage %s', repr(pipeline_name), repr(stage_id))
+
                 column_headers = list(main_headers)
                 stage_context = pipeline_context.stage_contexts[stage_id]
 
@@ -167,3 +169,11 @@ class ResultReader(object):
     def create_working_copy(self, pipeline_name, path_to_save):
         job_source_bundle = self._pipeline_contexts[pipeline_name].provenance.job_source_bundle
         job_source_bundle.unbundle(path_to_save)
+
+    @staticmethod
+    def _static_log():
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
+
+    def _log(self):
+        return ResultReader._static_log()

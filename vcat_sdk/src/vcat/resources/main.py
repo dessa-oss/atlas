@@ -15,6 +15,7 @@ def main():
         job = Job.deserialize(file.read())
 
     pipeline_context = job.pipeline_context()
+    pipeline_context.mark_fully_loaded()
     pipeline_context.file_name = job_name
     global_stage_context = pipeline_context.global_stage_context
     pipeline_context.provenance.config.update(config)

@@ -29,24 +29,26 @@ class StageContext(object):
         archiver.append_stage_miscellaneous(
             self.uuid, 'stage_context', self._archive_stage_context())
 
-    def load_from_archive(self, archiver):
+    def load_stage_log_from_archive(self, archiver):
         self.stage_log = archiver.fetch_stage_log(self.uuid)
+
+    def load_persisted_data_from_archive(self, archiver):
         self.stage_output = archiver.fetch_stage_persisted_data(self.uuid)
         self.model_data = archiver.fetch_stage_model_data(self.uuid)
+
+    def load_provenance_from_archive(self, archiver):
+        pass
+
+    def load_job_source_from_archive(self, archiver):
+        pass
+
+    def load_artifact_from_archive(self, archiver):
+        pass
+
+    def load_miscellaneous_from_archive(self, archiver):
         archive_stage_context = archiver.fetch_stage_miscellaneous(
             self.uuid, 'stage_context') or {}
         self._load_archive_stage_context(archive_stage_context)
-
-    def _load_archive_stage_context(self, archive_stage_context):
-        self.meta_data = archive_stage_context.get('meta_data', self.meta_data)
-        self.data_uuid = archive_stage_context.get('data_uuid', self.data_uuid)
-        self.uuid = archive_stage_context.get('uuid', self.uuid)
-        self.error_information = archive_stage_context.get('error_information', self.error_information)
-        self.start_time = archive_stage_context.get('start_time', self.start_time)
-        self.end_time = archive_stage_context.get('end_time', self.end_time)
-        self.delta_time = archive_stage_context.get('delta_time', self.delta_time)
-        self.is_context_aware = archive_stage_context.get('is_context_aware', self.is_context_aware)
-        self.used_cache = archive_stage_context.get('used_cache', self.used_cache)
 
     def time_callback(self, callback):
         import time
@@ -54,12 +56,28 @@ class StageContext(object):
         start_time = time.time()
         return_value = callback()
         end_time = time.time()
-        
+
         self.start_time = start_time
         self.end_time = end_time
         self.delta_time = end_time - start_time
 
         return return_value
+
+    def _load_archive_stage_context(self, archive_stage_context):
+        self.meta_data = archive_stage_context.get('meta_data', self.meta_data)
+        self.data_uuid = archive_stage_context.get('data_uuid', self.data_uuid)
+        self.uuid = archive_stage_context.get('uuid', self.uuid)
+        self.error_information = archive_stage_context.get(
+            'error_information', self.error_information)
+        self.start_time = archive_stage_context.get(
+            'start_time', self.start_time)
+        self.end_time = archive_stage_context.get('end_time', self.end_time)
+        self.delta_time = archive_stage_context.get(
+            'delta_time', self.delta_time)
+        self.is_context_aware = archive_stage_context.get(
+            'is_context_aware', self.is_context_aware)
+        self.used_cache = archive_stage_context.get(
+            'used_cache', self.used_cache)
 
     def _archive_stage_context(self):
         return {

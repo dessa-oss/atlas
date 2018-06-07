@@ -12,6 +12,20 @@ class PipelineContext(object):
         self.stage_contexts = {}
         self.global_stage_context = StageContext()
         self.global_stage_context.uuid = 'global'
+        self._stage_log_archive_loaded = False
+        self._persisted_data_archive_loaded = False
+        self._provenance_archive_loaded = False
+        self._job_source_archive_loaded = False
+        self._artifact_archive_loaded = False
+        self._miscellaneous_archive_loaded = False
+
+    def mark_fully_loaded(self):
+        self._stage_log_archive_loaded = True
+        self._persisted_data_archive_loaded = True
+        self._provenance_archive_loaded = True
+        self._job_source_archive_loaded = True
+        self._artifact_archive_loaded = True
+        self._miscellaneous_archive_loaded = True
 
     def add_stage_context(self, stage_context):
         self.stage_contexts[stage_context.uuid] = stage_context
@@ -33,15 +47,74 @@ class PipelineContext(object):
     def _stage_keys(self):
         return list(self.stage_contexts.keys())
 
+    def load_stage_log_from_archive(self, archiver):
+        self.load_miscellaneous_from_archive(archiver)
+        if not self._stage_log_archive_loaded:
+            self._stage_log_archive_loaded = True
+
+            self.provenance.load_stage_log_from_archive(archiver)
+            self.global_stage_context.load_stage_log_from_archive(archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_stage_log_from_archive(archiver)
+
+    def load_persisted_data_from_archive(self, archiver):
+        self.load_miscellaneous_from_archive(archiver)
+        if not self._persisted_data_archive_loaded:
+            self._persisted_data_archive_loaded = True
+
+            self.provenance.load_persisted_data_from_archive(archiver)
+            self.global_stage_context.load_persisted_data_from_archive(archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_persisted_data_from_archive(archiver)
+
+    def load_provenance_from_archive(self, archiver):
+        self.load_miscellaneous_from_archive(archiver)
+        if not self._provenance_archive_loaded:
+            self._provenance_archive_loaded = True
+
+            self.provenance.load_provenance_from_archive(archiver)
+            self.global_stage_context.load_provenance_from_archive(archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_provenance_from_archive(archiver)
+
+    def load_job_source_from_archive(self, archiver):
+        if not self._job_source_archive_loaded:
+            self._job_source_archive_loaded = True
+
+            self.provenance.load_job_source_from_archive(archiver)
+            self.global_stage_context.load_job_source_from_archive(archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_job_source_from_archive(archiver)
+
+    def load_artifact_from_archive(self, archiver):
+        if not self._artifact_archive_loaded:
+            self._artifact_archive_loaded = True
+
+            self.provenance.load_artifact_from_archive(archiver)
+            self.global_stage_context.load_artifact_from_archive(archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_artifact_from_archive(archiver)
+
+    def load_miscellaneous_from_archive(self, archiver):
+        if not self._miscellaneous_archive_loaded:
+            self._miscellaneous_archive_loaded = True
+
+            self.provenance.load_miscellaneous_from_archive(archiver)
+            self.global_stage_context.load_miscellaneous_from_archive(archiver)
+            stage_uuids = archiver.fetch_miscellaneous('stage_listing') or []
+            for stage_uuid in stage_uuids:
+                stage_context = StageContext()
+                stage_context.uuid = stage_uuid
+                stage_context.load_miscellaneous_from_archive(archiver)
+                self.add_stage_context(stage_context)
+
     def load_from_archive(self, archiver):
-        stage_uuids = archiver.fetch_miscellaneous('stage_listing') or []
-        self.global_stage_context.load_from_archive(archiver)
-        for stage_uuid in stage_uuids:
-            stage_context = StageContext()
-            stage_context.uuid = stage_uuid
-            stage_context.load_from_archive(archiver)
-            self.add_stage_context(stage_context)
-        self.provenance.load_from_archive(archiver)
+        self.load_stage_log_from_archive(archiver)
+        self.load_persisted_data_from_archive(archiver)
+        self.load_provenance_from_archive(archiver)
+        self.load_job_source_from_archive(archiver)
+        self.load_artifact_from_archive(archiver)
+        self.load_miscellaneous_from_archive(archiver)
 
     def _context(self):
         stringified_stage_contexts = {}
