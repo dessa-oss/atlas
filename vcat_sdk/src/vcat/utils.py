@@ -41,18 +41,24 @@ def _list_items(arr):
         yield i, arr[i]
 
 def dict_like_iter(dict_like):
-    if isinstance(dict_like, list):
-        return _list_items(dict_like)
-    
+    from collections import Iterable
+
     if isinstance(dict_like, dict):
         return dict_like.items()
+
+    if isinstance(dict_like, Iterable):
+        return _list_items(dict_like)
+
+    return []
     
 def dict_like_append(dict_like, key, val):
-    if isinstance(dict_like, list):
-        dict_like.append(val)
+    from collections import Iterable
         
     if isinstance(dict_like, dict):
         dict_like[key] = val
+
+    if isinstance(dict_like, Iterable):
+        dict_like.append(val)
 
 def pretty_time(timestamp):
     import datetime
