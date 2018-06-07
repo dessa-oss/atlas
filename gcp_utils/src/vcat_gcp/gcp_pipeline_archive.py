@@ -7,8 +7,9 @@ class GCPPipelineArchive(object):
     def __init__(self, bucket):
         from vcat_gcp.gcp_bucket import GCPBucket
         from vcat.bucket_pipeline_archive import BucketPipelineArchive
+        from vcat.prefixed_bucket import PrefixedBucket
 
-        self._archive =  BucketPipelineArchive(GCPBucket, bucket)
+        self._archive =  BucketPipelineArchive(PrefixedBucket, 'pipeline_archives', GCPBucket, bucket)
 
     def __enter__(self):
         return self._archive.__enter__()
