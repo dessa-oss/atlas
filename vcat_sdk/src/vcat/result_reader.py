@@ -140,25 +140,29 @@ class ResultReader(object):
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_job_information)
 
-    def get_unstructured_results(self, stage_ids):
-        def get_unstructured_result(stage_id):
-            for pipeline_context in self._pipeline_contexts.values():
-                try:
-                    return pipeline_context.stage_contexts[stage_id].stage_output
-                except:
-                    continue
-
-            return None
-
-        return map(get_unstructured_result, stage_ids)
-
-    def get_source_code(self, stage_id):
+    def _over_pipeline_contexts(self, callback):
         for pipeline_context in self._pipeline_contexts.values():
             try:
-                return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
+                return callback(pipeline_context)
             except:
                 continue
+        
         return None
+
+    def _get_unstructured_result(self, stage_id):
+        def _try_get_unstructured_result(pipeline_context):
+            return pipeline_context.stage_contexts[stage_id].stage_output
+        
+        return self._over_pipeline_contexts(_try_get_unstructured_result)
+
+    def get_unstructured_results(self, stage_ids):
+        return map(self._get_unstructured_result, stage_ids)
+
+    def get_source_code(self, stage_id):
+        def _try_get_source_code(pipeline_context):
+            return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
+            
+        return self._over_pipeline_contexts(_try_get_source_code)
 
     def create_working_copy(self, pipeline_name, path_to_save):
         job_source_bundle = self._pipeline_contexts[pipeline_name].provenance.job_source_bundle
