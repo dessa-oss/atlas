@@ -1,19 +1,14 @@
 class GCPPipelineArchiveListing(object):
 
-    def __init__(self):
-        from google.cloud.storage import Client
-        from googleapiclient import discovery
+    def __init__(self, bucket):
+        from vcat_gcp.gcp_bucket import GCPBucket
 
-        self._gcp_bucket_connection = Client()
-        self._result_bucket_connection = self._gcp_bucket_connection.get_bucket(
-            'tango-result-test')
+        self._gcp_bucket = GCPBucket(bucket)
 
     def track_pipeline(self, pipeline_name):
-        bucket_object = self._result_bucket_connection.blob('pipeline_archives/' + pipeline_name + '.tracker')
-        bucket_object.upload_from_string(pipeline_name)
+        self._gcp_bucket.upload_from_string('pipeline_archives/' + pipeline_name + '.tracker', pipeline_name)
 
     def get_pipeline_names(self):
-        objects = self._result_bucket_connection.list_blobs(
-            prefix='pipeline_archives/', delimiter='/')
+        file_paths = self._gcp_bucket.list_files('pipeline_archives/*.tracker')
 
-        return [bucket_object.download_as_string() for bucket_object in objects]
+        return [self._gcp_bucket.download_as_string(path) for path in file_paths]
