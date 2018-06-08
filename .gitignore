@@ -19,3 +19,4 @@ ssh_utils/dist
 ssh_utils/vcat_ssh.egg-info
 ssh_utils/src/vcat_ssh.egg-info
 tmp
+**/*.csv
