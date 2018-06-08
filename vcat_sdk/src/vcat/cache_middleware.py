@@ -18,7 +18,7 @@ class CacheMiddleware(object):
             upstream_result_callback
         )
 
-        cached_result = stage_cache.fetch_cache()
+        cached_result = self._time(True, stage_cache.fetch_cache)
         if cached_result is not None:
             self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
             self._stage_context.used_cache = True
@@ -26,7 +26,22 @@ class CacheMiddleware(object):
 
         self._log().debug('Stage %s data not in cache', self._stage_uuid)
         result = callback(args, kwargs)
-        return stage_cache.submit_cache(result)
+        return self._time(False, lambda: stage_cache.submit_cache(result))
+
+    def _time(self, is_read, callback):
+        import time
+
+        start_time = time.time()
+        return_value = callback()
+        end_time = time.time()
+        delta_time = end_time - start_time
+
+        if is_read:
+            self._stage_context.cache_read_time = delta_time
+        else:
+            self._stage_context.cache_write_time = delta_time
+
+        return return_value
 
     def _log(self):
         from vcat.global_state import log_manager

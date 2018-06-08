@@ -33,18 +33,18 @@ class StageConnectorWrapperBuilder(object):
 
         stage_uuid = self._make_uuid(current_uuid, function, args, kwargs)
         self._stage_context.uuid = stage_uuid
-        self._stage = Stage(self._middleware, stage_uuid, function, function, *args, **kwargs)
+        self._stage = Stage(self._middleware, stage_uuid,
+                            function, function, *args, **kwargs)
         self._append_stage_middleware()
         return self
 
     def _append_initial_middleware(self):
         from vcat.error_middleware import ErrorMiddleware
-        from vcat.time_stage_middleware import TimeStageMiddleware
         from vcat.redundant_execution_middleware import RedundantExecutionMiddleware
 
         self._middleware.append_middleware(RedundantExecutionMiddleware())
-        self._middleware.append_middleware(TimeStageMiddleware(self._stage_context))
-        self._middleware.append_middleware(ErrorMiddleware(self._stage_context))
+        self._middleware.append_middleware(
+            ErrorMiddleware(self._stage_context))
 
     def _append_stage_middleware(self):
         from vcat.argument_filler_middleware import ArgumentFillerMiddleware
@@ -53,13 +53,21 @@ class StageConnectorWrapperBuilder(object):
         from vcat.stage_log_middleware import StageLogMiddleware
         from vcat.upstream_result_middleware import UpstreamResultMiddleware
         from vcat.context_aware_middleware import ContextAwareMiddleware
+        from vcat.time_stage_middleware import TimeStageMiddleware
 
-        self._middleware.append_middleware(StageOutputMiddleware(self._pipeline_context, self._stage_config, self._uuid(), self._stage_context))
-        self._middleware.append_middleware(StageLogMiddleware(self._stage_context))
-        self._middleware.append_middleware(ArgumentFillerMiddleware(self._stage))
-        self._middleware.append_middleware(CacheMiddleware(self._stage_config, self._stage_context, self._uuid()))
+        self._middleware.append_middleware(StageOutputMiddleware(
+            self._pipeline_context, self._stage_config, self._uuid(), self._stage_context))
+        self._middleware.append_middleware(
+            StageLogMiddleware(self._stage_context))
+        self._middleware.append_middleware(
+            ArgumentFillerMiddleware(self._stage))
+        self._middleware.append_middleware(CacheMiddleware(
+            self._stage_config, self._stage_context, self._uuid()))
         self._middleware.append_middleware(UpstreamResultMiddleware())
-        self._middleware.append_middleware(ContextAwareMiddleware(self._stage_context, self._stage))
+        self._middleware.append_middleware(
+            ContextAwareMiddleware(self._stage_context, self._stage))
+        self._middleware.append_middleware(
+            TimeStageMiddleware(self._stage_context))
 
     def _uuid(self):
         return self._stage.uuid()
@@ -82,4 +90,3 @@ class StageConnectorWrapperBuilder(object):
         source_uuid = generate_uuid(getsource(function))
 
         return merged_uuids([name_uuid, source_uuid])
-

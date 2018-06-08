@@ -43,6 +43,8 @@ class LocalFileSystemBucket(object):
 
         with open(self._full_path(name), 'rb') as file:
             copyfileobj(file, output_file)
+            output_file.flush()
+            output_file.seek(0)
 
     def list_files(self, pathname):
         from glob import glob

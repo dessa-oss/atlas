@@ -12,6 +12,10 @@ class JobSourceBundle(object):
 
         with tarfile.open(self.job_archive(), "w:gz") as tar:
             tar.add(".")
+            for item in tar:
+                self._log().debug('Added %s to source bundle', item.name)
+                if item.name == './main.py':
+                    raise StandardError('Cannot add main.py to job bundle - please rename!')
 
     def unbundle(self, path_to_save):
         import tarfile
@@ -41,3 +45,7 @@ class JobSourceBundle(object):
         with tarfile.open(self.job_archive(), "r:gz") as tar:
             for tarinfo in tar:
                 yield tarinfo.name
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
