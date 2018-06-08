@@ -14,12 +14,12 @@ config_manager.config()['key_path'] = '/home/thomas/.ssh/id_local'
 
 
 # archive_listing = SSHListing()
-# archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
-archive_listing = BucketPipelineListing(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
+archive_listing = LocalFileSystemPipelineListing('/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
+# archive_listing = BucketPipelineListing(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives')
 
 # with MultiSSHBundledPipelineArchive() as bundled_archive:
-# with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
-with BucketPipelineArchive(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
+with LocalFileSystemPipelineArchive('/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
+# with BucketPipelineArchive(SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives') as bundled_archive:
     fetch = PipelineArchiverFetch(archive_listing, bundled_archive, bundled_archive,
                                   bundled_archive, bundled_archive, bundled_archive, bundled_archive)
     reader = ResultReader(fetch)

@@ -6,6 +6,12 @@ from vcat import *
 from vcat_gcp import *
 from vcat_ssh import *
 
+config_manager.config()['deployment_implementation'] = {
+    # 'deployment_type': GCPJobDeployment,
+    # 'constructor_arguments': ['tango-code-test', 'tango-result-test']
+    'deployment_type': LocalShellJobDeployment,
+}
+
 # pipeline.cache = GCPCache()
 pipe = pipeline | 'wonderful' | print_it  # | destroy_it
 pipe2 = pipeline | 'wonderful' | print_it | destroy_it
@@ -18,58 +24,64 @@ bundle_name = str(uuid.uuid4())
 job_source_bundle = JobSourceBundle(bundle_name, '../')
 deployment_config = {
     'cache_implementation': {
-        # 'cache_type': LocalFileSystemCacheBackend,
-        # 'constructor_arguments': ['/tmp'],
-        'cache_type': GCPCacheBackend,
-        'constructor_arguments': ['tango-result-test'],
+        'cache_type': LocalFileSystemCacheBackend,
+        'constructor_arguments': ['/tmp'],
+        # 'cache_type': GCPCacheBackend,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'archive_listing_implementation': {
-        # 'archive_listing_type': LocalFileSystemPipelineListing,
-        # 'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_listing_type': GCPPipelineArchiveListing,
-        'constructor_arguments': ['tango-result-test'],
+        'archive_listing_type': LocalFileSystemPipelineListing,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'archive_listing_type': GCPPipelineArchiveListing,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'stage_log_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'persisted_data_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'provenance_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'job_source_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'artifact_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'miscellaneous_archive_implementation': {
-        # 'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
         # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': ['tango-result-test'],
+        # 'archive_type': GCPPipelineArchive,
+        # 'constructor_arguments': ['tango-result-test'],
     },
     'remote_user': 'thomas',
     'remote_host': 'localhost',
@@ -82,10 +94,11 @@ deployment_config = {
 # deployment = deployment_manager.deploy(
 #     deployment_config, job_name, job, job_source_bundle)
 # deployment = GCPJobDeployment(job_name, job, job_source_bundle, 'tango-code-test', 'tango-result-test')
-deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
+# deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 # deployment = SSHJobDeployment(job_name, job, job_source_bundle)
-deployment.config().update(deployment_config)
-deployment.deploy()
+# deployment.config().update(deployment_config)
+# deployment.deploy()
+deployment = deployment_manager.deploy(deployment_config, job_name, job, job_source_bundle)
 wait_for_deployment_to_complete(deployment)
 # raise_error_if_job_failed(deployment)
 result = deployment.fetch_job_results()
