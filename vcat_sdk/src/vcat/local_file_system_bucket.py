@@ -2,8 +2,9 @@ class LocalFileSystemBucket(object):
 
     def __init__(self, path):
         from os.path import abspath
+        from os import getcwd
 
-        self._path = abspath(path)
+        self._path = abspath(path or getcwd())
 
     def upload_from_string(self, name, data):
         self._log().debug('Uploading %s from string', name)
