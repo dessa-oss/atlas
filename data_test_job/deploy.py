@@ -35,7 +35,7 @@ def main():
         'log_level': 'DEBUG',
     }
 
-    pipe = pipeline | load_data('/home/thomas/Documents/test_data/Resources.csv') | describe
+    pipe = pipeline | (load_data, '/home/thomas/Documents/test_data/Resources.csv') | describe
 
     job = Job(pipe)
     job_name = str(uuid4())
