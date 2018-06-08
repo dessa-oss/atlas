@@ -9,5 +9,5 @@ class StageOutputMiddleware(object):
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         result = callback(args, kwargs)
         if self._stage_config.persisted():
-            self._pipeline_context.stage_contexts[self._stage_uuid].stage_output = result
+            self._pipeline_context.stage_contexts[self._stage_uuid].set_stage_output(result)
         return result

@@ -5,11 +5,13 @@ class ResultReader(object):
         from vcat.job_source_bundle import JobSourceBundle
 
         self._pipeline_contexts = {}
+        self._archivers = {}
 
         for pipeline_archiver in pipeline_archiver_fetch.fetch_archivers():
             pipeline_context = PipelineContext()
-            pipeline_context.provenance.job_source_bundle = JobSourceBundle(pipeline_archiver.pipeline_name(), "./")
-            pipeline_context.load_from_archive(pipeline_archiver)
+            pipeline_context.file_name = pipeline_archiver.pipeline_name()
+            pipeline_context.provenance.job_source_bundle = JobSourceBundle(pipeline_context.file_name, "./")
+            self._archivers[pipeline_context.file_name] = pipeline_archiver
 
             self._pipeline_contexts[pipeline_archiver.pipeline_name()] = pipeline_context
 
@@ -74,7 +76,7 @@ class ResultReader(object):
             stage_name = stage_info.function_name
             stage_context = pipeline_context.stage_contexts[stage_id]
 
-            has_unstructured_result = stage_context.stage_output is not None
+            has_unstructured_result = stage_context.has_stage_output
 
             row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
 
@@ -100,6 +102,8 @@ class ResultReader(object):
 
     def _get_results(self, main_headers, all_job_information):
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+            pipeline_context.load_stage_log_from_archive(self._archivers[pipeline_name])
+
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             ResultReader._add_stage_results(
@@ -115,9 +119,12 @@ class ResultReader(object):
         import pandas as pd
 
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+            pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             for stage_id, stage_info in stage_hierarchy_entries.items():
+                self._log().debug('Loading job information for %s at stage %s', repr(pipeline_name), repr(stage_id))
+
                 column_headers = list(main_headers)
                 stage_context = pipeline_context.stage_contexts[stage_id]
 
@@ -151,6 +158,8 @@ class ResultReader(object):
 
     def _get_unstructured_result(self, stage_id):
         def _try_get_unstructured_result(pipeline_context):
+            pipeline_name = pipeline_context.file_name
+            pipeline_context.load_persisted_data_from_archive(self._archivers[pipeline_name])
             return pipeline_context.stage_contexts[stage_id].stage_output
         
         return self._over_pipeline_contexts(_try_get_unstructured_result)
@@ -160,10 +169,22 @@ class ResultReader(object):
 
     def get_source_code(self, stage_id):
         def _try_get_source_code(pipeline_context):
+            pipeline_name = pipeline_context.file_name
+            pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
             return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
             
         return self._over_pipeline_contexts(_try_get_source_code)
 
     def create_working_copy(self, pipeline_name, path_to_save):
+        pipeline_context = self._pipeline_contexts[pipeline_name]
+        pipeline_context.load_job_source_from_archive(self._archivers[pipeline_name])
         job_source_bundle = self._pipeline_contexts[pipeline_name].provenance.job_source_bundle
         job_source_bundle.unbundle(path_to_save)
+
+    @staticmethod
+    def _static_log():
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
+
+    def _log(self):
+        return ResultReader._static_log()

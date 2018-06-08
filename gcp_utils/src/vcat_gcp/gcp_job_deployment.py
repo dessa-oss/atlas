@@ -3,19 +3,18 @@ from vcat.job_bundler import JobBundler
 
 class GCPJobDeployment(object):
 
-    def __init__(self, job_name, job, job_source_bundle):
+    def __init__(self, job_name, job, job_source_bundle, code_bucket, result_bucket):
         from vcat.global_state import config_manager
-        from google.cloud.storage import Client
-        from googleapiclient import discovery
+        from vcat_gcp.global_state import connection_manager
 
         self._config = {}
         self._config.update(config_manager.config())
 
-        self._gcp_bucket_connection = Client()
+        self._gcp_bucket_connection = connection_manager.bucket_connection()
         self._code_bucket_connection = self._gcp_bucket_connection.get_bucket(
-            'tango-code-test')
+            code_bucket)
         self._result_bucket_connection = self._gcp_bucket_connection.get_bucket(
-            'tango-result-test')
+            result_bucket)
 
         self._job_name = job_name
         self._job = job

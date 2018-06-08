@@ -1,9 +1,9 @@
 class GCPBucket(object):
 
     def __init__(self, name):
-        from google.cloud.storage import Client
+        from vcat_gcp.global_state import connection_manager
 
-        self._connection = Client()
+        self._connection = connection_manager.bucket_connection()
         self._bucket = self._connection.get_bucket(name)
 
     def upload_from_string(self, name, data):

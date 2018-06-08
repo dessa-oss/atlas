@@ -33,11 +33,25 @@ class Provenance(object):
         if self.job_source_bundle is not None:
             archiver.append_job_source(self.job_source_bundle.job_archive())
 
-    def load_from_archive(self, archiver):
+    def load_stage_log_from_archive(self, archiver):
+        pass
+
+    def load_persisted_data_from_archive(self, archiver):
+        pass
+
+    def load_provenance_from_archive(self, archiver):
         archive_provenance = archiver.fetch_provenance() or {}
         self._load_archive_provenance(archive_provenance)
+
+    def load_job_source_from_archive(self, archiver):
         if self.job_source_bundle is not None:
             archiver.fetch_job_source(self.job_source_bundle.job_archive())
+
+    def load_artifact_from_archive(self, archiver):
+        pass
+
+    def load_miscellaneous_from_archive(self, archiver):
+        pass
 
     def fill_all(self):
         self.fill_python_version()
@@ -81,11 +95,16 @@ class Provenance(object):
         }
 
     def _load_archive_provenance(self, archive_provenance):
-        self.environment = archive_provenance.get("environment", self.environment)
+        self.environment = archive_provenance.get(
+            "environment", self.environment)
         self.config = archive_provenance.get("config", self.config)
         self.tags = archive_provenance.get("tags", self.tags)
-        self.random_state = archive_provenance.get("random_state", self.random_state)
-        self.module_versions = archive_provenance.get("module_versions", self.module_versions)
+        self.random_state = archive_provenance.get(
+            "random_state", self.random_state)
+        self.module_versions = archive_provenance.get(
+            "module_versions", self.module_versions)
         self.pip_freeze = archive_provenance.get("pip_freeze", self.pip_freeze)
-        self.stage_hierarchy = archive_provenance.get("stage_hierarchy", self.stage_hierarchy)
-        self.python_version = archive_provenance.get("python_version", self.python_version)
+        self.stage_hierarchy = archive_provenance.get(
+            "stage_hierarchy", self.stage_hierarchy)
+        self.python_version = archive_provenance.get(
+            "python_version", self.python_version)
