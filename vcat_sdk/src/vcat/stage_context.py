@@ -13,6 +13,7 @@ class StageContext(object):
         self.delta_time = None
         self.is_context_aware = False
         self.used_cache = False
+        self.cache_uuid = None
         self.cache_read_time = False
         self.cache_write_time = None
         self.has_stage_output = None
@@ -85,6 +86,8 @@ class StageContext(object):
             'is_context_aware', self.is_context_aware)
         self.used_cache = archive_stage_context.get(
             'used_cache', self.used_cache)
+        self.cache_uuid = archive_stage_context.get(
+            'cache_uuid', self.cache_uuid)
         self.cache_read_time = archive_stage_context.get(
             'cache_read_time', self.cache_read_time)
         self.cache_write_time = archive_stage_context.get(
@@ -103,6 +106,7 @@ class StageContext(object):
             'delta_time': self.delta_time,
             'is_context_aware': self.is_context_aware,
             'used_cache': self.used_cache,
+            'cache_uuid': self.cache_uuid,
             'cache_read_time': self.cache_read_time,
             'cache_write_time': self.cache_write_time,
             'has_stage_output': self.has_stage_output,
@@ -121,6 +125,7 @@ class StageContext(object):
             "delta_time": self.delta_time,
             "is_context_aware": self.is_context_aware,
             "used_cache": self.used_cache,
+            "cache_uuid": self.cache_uuid,
             "cache_read_time": self.cache_read_time,
             "cache_write_time": self.cache_write_time,
             "has_stage_output": self.has_stage_output,

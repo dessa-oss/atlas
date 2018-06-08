@@ -15,6 +15,9 @@ class StageCacheForMiddleware(object):
 
         self._log().debug('Stage %s cache name is %s', stage_uuid, repr(self._cache_name))
 
+    def cache_name(self):
+        return self._cache_name
+
     def fetch_cache(self):
         from vcat.global_state import cache_manager
 

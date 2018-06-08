@@ -9,24 +9,30 @@ class CacheMiddleware(object):
         self._stage_uuid = stage_uuid
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        stage_cache = StageCacheForMiddleware(
-            self._stage_config.allow_caching(),
-            self._stage_config.cache_name(),
-            self._stage_uuid,
-            args,
-            kwargs,
-            upstream_result_callback
-        )
+        if self._stage_config.allow_caching():
+            stage_cache = StageCacheForMiddleware(
+                self._stage_config.allow_caching(),
+                self._stage_config.cache_name(),
+                self._stage_uuid,
+                args,
+                kwargs,
+                upstream_result_callback
+            )
 
-        cached_result = self._time(True, stage_cache.fetch_cache)
-        if cached_result is not None:
-            self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
-            self._stage_context.used_cache = True
-            return cached_result
+            self._stage_context.cache_name = stage_cache.cache_name()
 
-        self._log().debug('Stage %s data not in cache', self._stage_uuid)
-        result = callback(args, kwargs)
-        return self._time(False, lambda: stage_cache.submit_cache(result))
+            cached_result = self._time(True, stage_cache.fetch_cache)
+            if cached_result is not None:
+                self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
+                self._stage_context.used_cache = True
+                return cached_result
+
+            self._log().debug('Stage %s data not in cache', self._stage_uuid)
+            result = callback(args, kwargs)
+            return self._time(False, lambda: stage_cache.submit_cache(result))
+        else:
+            self._log().debug('Cache disabled for stage %s', self._stage_uuid)
+            return callback(args, kwargs)
 
     def _time(self, is_read, callback):
         import time
