@@ -47,6 +47,9 @@ class StageConnectorWrapper(object):
     def set_global_cache_name(self, name):
         self._stage_config.cache(name)
 
+    def enable_caching(self):
+        self._stage_config.enable_caching()
+
     def disable_caching(self):
         self._stage_config.disable_caching()
 

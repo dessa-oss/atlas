@@ -3,7 +3,7 @@ class StageConfig(object):
     def __init__(self):
         self._is_persisted = False
         self._cache_name = None
-        self._allow_caching = True
+        self._allow_caching = False
         
     def persisted(self):
         return self._is_persisted
@@ -19,6 +19,9 @@ class StageConfig(object):
 
     def allow_caching(self):
         return self._allow_caching
+
+    def enable_caching(self):
+        self._allow_caching = True
 
     def disable_caching(self):
         self._allow_caching = False
