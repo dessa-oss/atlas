@@ -23,24 +23,28 @@ class SSHUtils(object):
         command = self.to_remote_scp_command(local_path, remote_path)
         _, _, code = self.execute_command(command)
         if code != 0:
-            raise StandardError('Unable to upload {} to {} (code: {})'.format(
+            raise Exception('Unable to upload {} to {} (code: {})'.format(
                 local_path, remote_path, code))
 
     def to_remote_scp_command(self, local_path, remote_path):
-        ssh_command = 'scp ' + self.ssh_arguments() + ' ' + local_path + ' ' + \
-            self._remote_path(remote_path)
+        from pipes import quote
+
+        ssh_command = 'scp ' + self.ssh_arguments() + ' ' + quote(local_path) + ' ' + \
+            quote(self._remote_path(remote_path))
         return self.command_in_shell_command(ssh_command)
 
     def execute_to_local_scp(self, remote_path, local_path):
         command = self.to_local_scp_command(remote_path, local_path)
         _, _, code = self.execute_command(command)
         if code != 0:
-            raise StandardError('Unable to download {} to {} (code: {})'.format(
+            raise Exception('Unable to download {} to {} (code: {})'.format(
                 remote_path, local_path, code))
 
     def to_local_scp_command(self, remote_path, local_path):
+        from pipes import quote
+        
         ssh_command = 'scp ' + self.ssh_arguments() + ' ' + \
-            self._remote_path(remote_path) + ' ' + local_path
+            quote(self._remote_path(remote_path)) + ' ' + quote(local_path)
         return self.command_in_shell_command(ssh_command)
 
     def call_command(self, command):
