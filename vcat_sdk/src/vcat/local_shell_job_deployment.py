@@ -37,10 +37,8 @@ class LocalShellJobDeployment(object):
     def is_job_complete(self):
         return True
 
-    def fetch_job_results(self, verbose_errors=False):
-        from vcat.remote_exception import check_result
-
-        return check_result(self._job_name, self._results, verbose_errors)
+    def fetch_job_results(self):
+        return self._results
 
     def _run(self):
         import shutil
