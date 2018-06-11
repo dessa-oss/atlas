@@ -28,6 +28,5 @@ setup(
     package_dir={'':'src'},
     package_data={
         'vcat_gcp': ['resources/*'],
-    },
-    data_files = [("", ["LICENSE.txt"])]
+    }
 )
