@@ -9,16 +9,16 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from utils import *
 from Bullnet import Bullnet
-from google.cloud.storage import Client
+# from google.cloud.storage import Client
 
 def preproc():
     # read data
-    gcp_bucket_connection = Client()
-    result_bucket_connection = gcp_bucket_connection.get_bucket('tango-data-test')
-    raw_file = result_bucket_connection.blob("train_and_val.csv")
+    # gcp_bucket_connection = Client()
+    # result_bucket_connection = gcp_bucket_connection.get_bucket('tango-data-test')
+    # raw_file = result_bucket_connection.blob("train_and_val.csv")
 
-    with open("train_and_val.csv", "wb") as file:
-        raw_file.download_to_file(file)
+    # with open("train_and_val.csv", "wb") as file:
+    #     raw_file.download_to_file(file)
 
     df = pd.read_csv("train_and_val.csv")
 

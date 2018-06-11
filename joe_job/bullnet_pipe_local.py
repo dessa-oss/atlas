@@ -30,38 +30,39 @@ job_source_bundle = JobSourceBundle(job_source_bundle_name, job_source_bundle_pa
 deployment_config = {
     'cache_implementation': {
         'cache_type': LocalFileSystemCacheBackend,
-        'constructor_arguments': ['/home/ja/cache'],
+        'constructor_arguments': ['/home/ja/tmp/vcat-cache'],
     },
     'archive_listing_implementation': {
-        'archive_listing_type': SSHListing
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'stage_log_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'persisted_data_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'provenance_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'job_source_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'artifact_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
     },
     'miscellaneous_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'remote_user': 'ja',
-    'remote_host': '192.168.128.58',
-    'shell_command': '/bin/bash',
-    'code_path': '/home/ja/jobs',
-    'result_path': '/home/ja/job_results',
-    'key_path': './bare_metal.pem',
+        'archive_listing_type': BucketPipelineListing,
+        'constructor_arguments': [LocalFileSystemBucket, '/home/ja/tmp/vcat-archives']
+    }
 }
 
-deployment = SSHJobDeployment(job_name, job, job_source_bundle)
+deployment = LocalShellJobDeployment(job_name, job, job_source_bundle)
 deployment.config().update(deployment_config)
 
 deployment.deploy()

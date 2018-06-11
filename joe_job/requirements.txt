@@ -1,9 +1,9 @@
 dill
 redis
 pandas
-google-api-python-client
-google-auth-httplib2
-google-cloud-storage
+# google-api-python-client
+# google-auth-httplib2
+# google-cloud-storage
 PyYAML
 tensorflow
 fastai==0.7.0

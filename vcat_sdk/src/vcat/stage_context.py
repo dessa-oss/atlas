@@ -31,7 +31,7 @@ class StageContext(object):
 
     def add_error_information(self, exception_info):
         import traceback
-        self._error_information = {
+        self.error_information = {
             "type": exception_info[0],
             "exception": exception_info[1],
             "traceback": traceback.extract_tb(exception_info[2])
