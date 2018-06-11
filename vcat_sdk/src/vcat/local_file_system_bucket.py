@@ -14,10 +14,13 @@ class LocalFileSystemBucket(object):
         self._path = abspath(path or getcwd())
 
     def upload_from_string(self, name, data):
+        from vcat.utils import byte_string
+
         self._log().debug('Uploading %s from string', name)
 
         self._ensure_path_exists(name)
         with open(self._full_path(name), 'w+b') as file:
+            data_bytes = byte_string(data)
             file.write(data)
 
     def upload_from_file(self, name, input_file):
@@ -38,10 +41,13 @@ class LocalFileSystemBucket(object):
         return isfile(path)
 
     def download_as_string(self, name):
+        from vcat.utils import string_from_bytes
+
         self._log().debug('Downloading %s', name)
 
         with open(self._full_path(name), 'rb') as file:
-            return file.read()
+            data_bytes = file.read()
+            return string_from_bytes(data_bytes)
 
     def download_to_file(self, name, output_file):
         from shutil import copyfileobj

@@ -24,6 +24,18 @@ else:
     def force_encoding(string):
         return string.encode('utf-8', 'ignore')
 
+def byte_string(string):
+    if isinstance(string, bytes):
+        return string
+    else:
+        return bytes(force_encoding(string))
+
+def string_from_bytes(string):
+    if isintance(string, string):
+        return string
+    else:
+        return string.decode()
+  
 def generate_uuid(string):
     from hashlib import sha1
     digest = sha1()
