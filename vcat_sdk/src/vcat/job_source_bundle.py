@@ -22,7 +22,7 @@ class JobSourceBundle(object):
             for item in tar:
                 self._log().debug('Added %s to source bundle', item.name)
                 if item.name == './main.py':
-                    raise StandardError('Cannot add main.py to job bundle - please rename!')
+                    raise Exception('Cannot add main.py to job bundle - please rename!')
 
     def unbundle(self, path_to_save):
         import tarfile
