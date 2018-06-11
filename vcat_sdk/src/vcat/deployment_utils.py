@@ -26,14 +26,14 @@ def wait_for_deployment_to_complete(deployment):
 
     print("job `" + deployment.job_name() + "` completed")
 
+def fetch_job_results(deployment, verbose_errors=False):
+    from vcat.remote_exception import check_result
+    
+    if not deployment.is_job_complete():
+        wait_for_deployment_to_complete(deployment)
 
-def raise_error_if_job_failed(deployment):
-    from vcat.compat import compat_raise
-
-    if deployment.is_job_complete():
-        results = deployment.fetch_job_results()
-        if results and results["error"]:
-            compat_raise(results["error"]["type"], results["error"]["exception"], None)
+    result = deployment.fetch_job_results()
+    return check_result(deployment.job_name(), result, verbose_errors)
 
 def _grid_param_set_generator(hype_kwargs):
     import itertools

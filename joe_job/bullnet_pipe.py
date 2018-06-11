@@ -65,8 +65,7 @@ deployment = SSHJobDeployment(job_name, job, job_source_bundle)
 deployment.config().update(deployment_config)
 
 deployment.deploy()
-wait_for_deployment_to_complete(deployment)
 
-print(deployment.fetch_job_results())
+print(fetch_job_results(deployment))
 
 # bullnet_pipe.grid_search(LocalShellJobDeployment, max_embedding=[50], emb_size_divisor=2, lr=[1e-4], l2=1e-3)

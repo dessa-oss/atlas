@@ -23,8 +23,9 @@ job = Job(pipe)
 job_name = 'some wonderful job name'
 deployment = LocalShellJobDeployment(job_name, job)
 deployment.deploy()
-wait_for_deployment_to_complete(deployment)
-result = deployment.fetch_job_results()
+# wait_for_deployment_to_complete(deployment)
+# result = deployment.fetch_job_results()
+result = fetch_job_results(deployment, verbose_errors=False)
 print(result)
 ```
 

@@ -125,7 +125,7 @@ def pretty_error(pipeline_name, error_info, verbose=False):
     if error_info is None:
         return None
 
-    error_name = ["Error: " + str(error_info["exception"]) + "\n"]
+    error_name = [error_info["type"].__name__ + ": " + str(error_info["exception"]) + "\n"]
     traceback_items = error_info["traceback"]
 
     if not verbose:
