@@ -33,7 +33,7 @@ class SSHJobDeployment(object):
         command = self._check_job_done_ssh_command()
         return self._ssh_utils.call_command(command) == 0
 
-    def fetch_job_results(self):
+    def _fetch_job_results(self):
         from os.path import basename
         from os import remove
         import dill as pickle
@@ -53,6 +53,12 @@ class SSHJobDeployment(object):
             remove(self._results_archive_path())
 
         return result
+
+    def fetch_job_results(self, verbose_errors=False):
+        from vcat.remote_exception import check_result
+
+        result = self._fetch_job_results()
+        return check_result(self._job_name, result, verbose_errors)
 
     def _deploy_internal(self):
         command = self._deploy_scp_command()

@@ -182,23 +182,8 @@ class ResultReader(object):
             
         return self._over_pipeline_contexts(_try_get_source_code)
 
-    # currently *nix / osx only
-    @staticmethod
-    def _path_regex(pipeline_id):
-        import re
-
-        return re.compile('.*/' + pipeline_id + '/vcat/.*')
-
-    @staticmethod
-    def _is_not_vcat_line(vcat_line_regex):
-        def action(line):
-            path = line[0]
-            return vcat_line_regex.match(path) is None
-        return action
-
     def get_error_information(self, pipeline_id, stage_id=None, verbose=False):
-        import traceback
-        from vcat.utils import concat_strings
+        from vcat.utils import pretty_error
 
         pipeline_context = self._pipeline_contexts[pipeline_id]
 
@@ -207,16 +192,7 @@ class ResultReader(object):
         else:
             error_info = pipeline_context.stage_contexts[stage_id].error_information
 
-        error_name = ["Error: " + str(error_info["exception"]) + "\n"]
-        traceback_items = error_info["traceback"]
-
-        if not verbose:
-            vcat_line_regex = ResultReader._path_regex(pipeline_id)
-            traceback_items = filter(ResultReader._is_not_vcat_line(vcat_line_regex), traceback_items)
-
-        traceback_strings = traceback.format_list(traceback_items)
-
-        return concat_strings(error_name + traceback_strings)
+        return pretty_error(pipeline_id, error_info, verbose=verbose)
 
     def create_working_copy(self, pipeline_name, path_to_save):
         pipeline_context = self._pipeline_contexts[pipeline_name]
