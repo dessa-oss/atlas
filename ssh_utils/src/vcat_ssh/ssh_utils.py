@@ -28,9 +28,11 @@ class SSHUtils(object):
 
     def to_remote_scp_command(self, local_path, remote_path):
         from pipes import quote
+        from os.path import basename
 
+        file_name = basename(local_path)
         ssh_command = 'scp ' + self.ssh_arguments() + ' ' + quote(local_path) + ' ' + \
-            quote(self._remote_path(remote_path))
+            quote(self._remote_path(remote_path) + '/' + file_name)
         return self.command_in_shell_command(ssh_command)
 
     def execute_to_local_scp(self, remote_path, local_path):

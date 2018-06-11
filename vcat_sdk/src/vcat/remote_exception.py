@@ -13,7 +13,7 @@ def check_result(pipeline_name, result, verbose_errors=False):
     from vcat.compat import compat_raise
     from vcat.utils import pretty_error
 
-    error_info = result["global_stage_context"]["error_information"]
+    error_info = (result or {}).get("global_stage_context", {}).get("error_information", None)
 
     if error_info is None:
         return result
