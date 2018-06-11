@@ -59,14 +59,10 @@ class SSHJobDeployment(object):
         self._ssh_utils.call_command(command)
 
     def _retrieve_scp_command(self):
-        ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ':' + self._results_remote_archive_path() + ' ' + \
-            self._results_archive_path()
-        return self._ssh_utils.command_in_shell_command(ssh_command)
+        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(), self._results_archive_path())
 
     def _deploy_scp_command(self):
-        ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._full_archive_path() + ' ' + \
-            self._ssh_utils.user_at_host() + ':' + self._code_path()
-        return self._ssh_utils.command_in_shell_command(ssh_command)
+        return self._ssh_utils.to_remote_scp_command(self._full_archive_path(), self._code_path())
 
     def _check_job_done_ssh_command(self):
         ssh_command = 'ssh ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ' "stat ' + \

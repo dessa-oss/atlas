@@ -61,7 +61,7 @@ class SSHFileSystemBucket(object):
         command = self._ensure_path_exists_command(name)
         _, _, status_code = self._ssh_utils.execute_command(command)
         if status_code != 0:
-            raise StandardError('Unable to create directory for remote path {}'.format(
+            raise Exception('Unable to create directory for remote path {}'.format(
                 self._remote_path(name)))
 
     def _ensure_path_exists_command(self, name):

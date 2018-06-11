@@ -44,7 +44,7 @@ class MultiSSHBundledPipelineArchive(object):
         from vcat.local_bundled_pipeline_archive import LocalBundledPipelineArchive
 
         if name is None:
-            raise StandardError('Cannot have a missing archive name')
+            raise Exception('Cannot have a missing archive name')
 
         if not name in self._archives:
             self._retrieve_results(name)
