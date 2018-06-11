@@ -1,3 +1,10 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 from vcat.utils import tgz_archive_without_extension
 from vcat.local_file_system_bucket import LocalFileSystemBucket
 from vcat.change_directory import ChangeDirectory

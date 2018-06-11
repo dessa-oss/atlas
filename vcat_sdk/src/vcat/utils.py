@@ -1,3 +1,12 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+from sys import version_info
+
 def file_archive_name(prefix, name):
     if prefix is not None:
         return prefix + '/' + name
@@ -8,8 +17,12 @@ def file_archive_name(prefix, name):
 def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
     return file_archive_name(prefix, additional_prefix + '/' + name)
 
-def force_encoding(string):
-    return string.decode('utf-8').encode('utf-8', 'ignore')
+if version_info[0] < 3:
+    def force_encoding(string):
+        return string.decode('utf-8').encode('utf-8', 'ignore')
+else:
+    def force_encoding(string):
+        return string.encode('utf-8', 'ignore')
 
 def generate_uuid(string):
     from hashlib import sha1

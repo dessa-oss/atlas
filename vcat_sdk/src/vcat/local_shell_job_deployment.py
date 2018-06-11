@@ -1,3 +1,10 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 from vcat.job_bundler import JobBundler
 
 
@@ -38,14 +45,25 @@ class LocalShellJobDeployment(object):
         import subprocess
         import glob
         import dill as pickle
-        script = "tar -xvf " + self._job_bundler.job_archive() + " && " + \
-            "cd " + self._job_name + " && " + \
-            "sh ./run.sh"
-        args = ['/usr/bin/env', 'sh', '-c', script]
-        subprocess.call(args)
+        import tarfile
+        from vcat.change_directory import ChangeDirectory
+
+        with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
+            tar.extractall()
+            
+        with ChangeDirectory(self._job_name):
+            script = "sh ./run.sh"
+            args = self._command_in_shell_command(script)
+            subprocess.call(args)
 
         file_name = glob.glob(self._job_name + '/*.pkl')[0]
         with open(file_name, 'rb') as file:
             self._results = pickle.load(file)
 
         shutil.rmtree(self._job_name)
+
+    def _command_in_shell_command(self, command):
+        return [self._shell_command(), '-c', command]
+
+    def _shell_command(self):
+        return self._config.get('shell_command', '/bin/bash')
