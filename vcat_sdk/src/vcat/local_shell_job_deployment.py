@@ -45,11 +45,16 @@ class LocalShellJobDeployment(object):
         import subprocess
         import glob
         import dill as pickle
-        script = "tar -xvf " + self._job_bundler.job_archive() + " && " + \
-            "cd " + self._job_name + " && " + \
-            "sh ./run.sh"
-        args = ['/usr/bin/env', 'sh', '-c', script]
-        subprocess.call(args)
+        import tarfile
+        from vcat.change_directory import ChangeDirectory
+
+        with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
+            tar.extractall()
+            
+        with ChangeDirectory(self._job_name):
+            script = "sh ./run.sh"
+            args = ['/usr/bin/env', 'sh', '-c', script]
+            subprocess.call(args)
 
         file_name = glob.glob(self._job_name + '/*.pkl')[0]
         with open(file_name, 'rb') as file:
