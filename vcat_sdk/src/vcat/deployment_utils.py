@@ -1,3 +1,10 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 def gcp_deploy_job(job, job_name):
     from vcat.job_source_bundle import JobSourceBundle
     from vcat.gcp_job_deployment import GCPJobDeployment

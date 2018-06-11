@@ -1,3 +1,10 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 class StageCacheForMiddleware(object):
 
     def __init__(self, allow_caching, cache_name, stage_uuid, new_args, new_kwargs, fetch_upstream_result_callback):
