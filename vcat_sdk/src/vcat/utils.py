@@ -19,10 +19,10 @@ def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
 
 if version_info[0] < 3:
     def force_encoding(string):
-        return string.encode('utf-8', 'ignore')
+        return string.decode('utf-8').encode('utf-8', 'ignore')
 else:
     def force_encoding(string):
-        return string.decode('utf-8').encode('utf-8', 'ignore')
+        return string.encode('utf-8', 'ignore')
 
 def generate_uuid(string):
     from hashlib import sha1
