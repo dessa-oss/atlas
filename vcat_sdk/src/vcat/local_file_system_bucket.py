@@ -21,7 +21,7 @@ class LocalFileSystemBucket(object):
         self._ensure_path_exists(name)
         with open(self._full_path(name), 'w+b') as file:
             data_bytes = byte_string(data)
-            file.write(data)
+            file.write(data_bytes)
 
     def upload_from_file(self, name, input_file):
         from shutil import copyfileobj
