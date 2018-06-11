@@ -15,8 +15,12 @@ def file_archive_name(prefix, name):
 def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
     return file_archive_name(prefix, additional_prefix + '/' + name)
 
-def force_encoding(string):
-    return string.decode('utf-8').encode('utf-8', 'ignore')
+if sys.version_info[0] < 3:
+    def force_encoding(string):
+        return string.encode('utf-8', 'ignore')
+else:
+    def force_encoding(string):
+        return string.decode('utf-8').encode('utf-8', 'ignore')
 
 def generate_uuid(string):
     from hashlib import sha1
