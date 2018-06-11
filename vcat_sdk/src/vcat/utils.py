@@ -91,3 +91,6 @@ def restructure_headers(all_headers, first_headers):
         return [item for item in list_0 if item not in set_1]
 
     return first_headers + diff(all_headers, first_headers)
+
+def concat_strings(iterable):
+    return "".join(iterable)
