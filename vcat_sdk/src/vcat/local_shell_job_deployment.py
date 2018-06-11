@@ -53,7 +53,7 @@ class LocalShellJobDeployment(object):
             
         with ChangeDirectory(self._job_name):
             script = "sh ./run.sh"
-            args = ['/usr/bin/env', 'sh', '-c', script]
+            args = self._command_in_shell_command(script)
             subprocess.call(args)
 
         file_name = glob.glob(self._job_name + '/*.pkl')[0]
@@ -61,3 +61,9 @@ class LocalShellJobDeployment(object):
             self._results = pickle.load(file)
 
         shutil.rmtree(self._job_name)
+
+    def _command_in_shell_command(self, command):
+        return [self._shell_command(), '-c', command]
+
+    def _shell_command(self):
+        return self._config.get('shell_command', '/bin/bash')
