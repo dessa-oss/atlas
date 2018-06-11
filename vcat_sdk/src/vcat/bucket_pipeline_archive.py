@@ -36,7 +36,7 @@ class BucketPipelineArchive(object):
         name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
-        with open(file_path) as file:
+        with open(file_path, 'rb') as file:
             self._bucket.upload_from_file(arcname, file)
 
     def fetch(self, name, prefix=None):

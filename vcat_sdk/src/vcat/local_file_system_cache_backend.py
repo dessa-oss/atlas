@@ -17,7 +17,7 @@ class LocalFileSystemCacheBackend(object):
         import dill as pickle
 
         if self._bucket.exists(key):
-            with SimpleTempfile('rw+b') as temp_file:
+            with SimpleTempfile('w+b') as temp_file:
                 self._bucket.download_to_file(key, temp_file.file)
                 return pickle.load(temp_file.file)
         else:
@@ -27,7 +27,7 @@ class LocalFileSystemCacheBackend(object):
         import dill as pickle
         from vcat.simple_tempfile import SimpleTempfile
 
-        with SimpleTempfile('rw+b') as temp_file:
+        with SimpleTempfile('w+b') as temp_file:
             pickle.dump(value, temp_file.file)
             temp_file.flush()
             temp_file.seek(0)
