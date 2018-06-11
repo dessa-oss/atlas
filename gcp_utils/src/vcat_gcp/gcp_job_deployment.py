@@ -41,7 +41,7 @@ class GCPJobDeployment(object):
     def is_job_complete(self):
         return self._job_result_object.exists()
 
-    def fetch_job_results(self):
+    def _fetch_job_results(self):
         import os
         import tarfile
         import pickle
@@ -62,6 +62,12 @@ class GCPJobDeployment(object):
             self._job_results = result
 
         return self._job_results
+
+    def fetch_job_results(self, verbose_errors=False):
+        from vcat.remote_exception import check_result
+
+        self._fetch_job_results()
+        return check_result(self._job_name, self._job_results, verbose_errors)
 
     def _run(self):
         job_object = self._code_bucket_connection.blob(

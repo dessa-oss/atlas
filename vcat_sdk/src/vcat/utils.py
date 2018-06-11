@@ -106,3 +106,32 @@ def restructure_headers(all_headers, first_headers):
 
 def concat_strings(iterable):
     return "".join(iterable)
+
+# currently *nix / osx only
+def _path_regex(pipeline_id):
+    import re
+
+    return re.compile('.*/' + pipeline_id + '/vcat/.*')
+
+def _is_not_vcat_line(vcat_line_regex):
+    def action(line):
+        path = line[0]
+        return vcat_line_regex.match(path) is None
+    return action
+
+def pretty_error(pipeline_name, error_info, verbose=False):
+    import traceback
+
+    if error_info is None:
+        return None
+
+    error_name = ["Error: " + str(error_info["exception"]) + "\n"]
+    traceback_items = error_info["traceback"]
+
+    if not verbose:
+        vcat_line_regex = _path_regex(pipeline_name)
+        traceback_items = filter(_is_not_vcat_line(vcat_line_regex), traceback_items)
+
+    traceback_strings = traceback.format_list(traceback_items)
+
+    return concat_strings(error_name + traceback_strings)
