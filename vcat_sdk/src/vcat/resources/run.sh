@@ -13,7 +13,7 @@ fi
 cd $BASEDIR && \
   tar -xvf job.tgz && \
   $python_path -m pip install virtualenv && \
-  virtualenv --system-site-packages venv
+  $python_path -m virtualenv --system-site-packages venv
 
 stat $BASEDIR/venv/bin/activate
 if [ $? -eq 0 ]; then 
@@ -24,8 +24,9 @@ fi
 
 cd $BASEDIR && \
   . $activate_path && \
-  $python_path -m pip install -r requirements.txt && \
-  $python_path main.py
+  echo Running python version `python --version` located at `which python` && \
+  python -m pip install -r requirements.txt && \
+  python main.py
   
 status=$?
 
