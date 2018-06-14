@@ -5,7 +5,7 @@ BASEDIR=$(dirname "$0")
 cd $BASEDIR && \
   tar -xvf job.tgz && \
   python -m pip install virtualenv && \
-  virtualenv venv
+  virtualenv --system-site-packages venv
 
 stat $BASEDIR/venv/bin/activate
 if [ $? -eq 0 ]; then 
