@@ -66,6 +66,8 @@ class JobBundler(object):
         import tarfile
         import glob
         import os
+        from pipes import quote
+        from vcat.simple_tempfile import SimpleTempfile
         from vcat.global_state import module_manager
 
         with WorkingDirectoryStack():
@@ -83,6 +85,14 @@ class JobBundler(object):
                 for module_name, module_directory in module_manager.module_directories_and_names():
                     os.chdir(module_directory)
                     tar.add(".", arcname=self._job_name + '/' + module_name)
+
+                if 'run_script_environment' in self._config:
+                    with SimpleTempfile('w+') as temp_file:
+                        for name, value in self._config['run_script_environment'].items():
+                            temp_file.write('export {}={}'.format(quote(name), quote(value)))
+                        temp_file.flush()
+                        temp_file.seek(0)
+                        tar.add(temp_file.name, arcname=self._job_name + '/run.env')
 
                 os.chdir(self._resource_directory)
                 tar.add(".", arcname=self._job_name)

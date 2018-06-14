@@ -3,8 +3,16 @@
 BASEDIR=$(dirname "$0")
 
 cd $BASEDIR && \
+  stat run.env && \
+  . ./run.env
+
+if [[ -z "${python_path}" ]]; then
+  python_path=`which python`
+fi
+
+cd $BASEDIR && \
   tar -xvf job.tgz && \
-  python -m pip install virtualenv && \
+  $python_path -m pip install virtualenv && \
   virtualenv --system-site-packages venv
 
 stat $BASEDIR/venv/bin/activate
@@ -16,8 +24,8 @@ fi
 
 cd $BASEDIR && \
   . $activate_path && \
-  python -m pip install -r requirements.txt && \
-  python main.py
+  $python_path -m pip install -r requirements.txt && \
+  $python_path main.py
   
 status=$?
 
