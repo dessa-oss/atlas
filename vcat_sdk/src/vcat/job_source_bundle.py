@@ -23,6 +23,8 @@ class JobSourceBundle(object):
                 self._log().debug('Added %s to source bundle', item.name)
                 if item.name == './main.py':
                     raise Exception('Cannot add main.py to job bundle - please rename!')
+                if item.name == './run.sh':
+                    raise Exception('Cannot add run.sh to job bundle - please rename!')
 
     def unbundle(self, path_to_save):
         import tarfile
