@@ -61,6 +61,7 @@ class StageConnectorWrapperBuilder(object):
         from vcat.upstream_result_middleware import UpstreamResultMiddleware
         from vcat.context_aware_middleware import ContextAwareMiddleware
         from vcat.time_stage_middleware import TimeStageMiddleware
+        from vcat.stage_logging_middleware import StageLoggingMiddleware
 
         self._middleware.append_middleware(StageOutputMiddleware(
             self._pipeline_context, self._stage_config, self._uuid(), self._stage_context))
@@ -75,6 +76,9 @@ class StageConnectorWrapperBuilder(object):
             ContextAwareMiddleware(self._stage_context, self._stage))
         self._middleware.append_middleware(
             TimeStageMiddleware(self._stage_context))
+        self._middleware.append_middleware(
+            StageLoggingMiddleware(self._stage)
+        )
 
     def _uuid(self):
         return self._stage.uuid()
