@@ -31,9 +31,17 @@ class StageContext(object):
 
     def add_error_information(self, exception_info):
         import traceback
+        import dill as pickle
+
+        try:
+            pickle.dumps(exception_info[1])
+            exception_value = exception_info[1]
+        except:
+            exception_value = exception_info[1].__name__
+
         self.error_information = {
             "type": exception_info[0],
-            "exception": exception_info[1],
+            "exception": exception_value,
             "traceback": traceback.extract_tb(exception_info[2])
         }
 
