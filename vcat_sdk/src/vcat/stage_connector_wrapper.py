@@ -114,3 +114,9 @@ class StageConnectorWrapper(object):
             return self.stage(call_method_on_instance, *args, **kwargs)
 
         return auto_stage
+
+    def __getitem__(self, key):
+        def getitem(data, key):
+            return data[key]
+
+        return self.stage(getitem, key)
