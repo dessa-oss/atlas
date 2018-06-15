@@ -163,16 +163,17 @@ class ResultReader(object):
         
         return None
 
-    def _get_unstructured_result(self, stage_id):
-        def _try_get_unstructured_result(pipeline_context):
-            pipeline_name = pipeline_context.file_name
+    def _get_unstructured_result(self, pipeline_name):
+        def _with_pipeline_id(stage_id):
+            pipeline_context = self._pipeline_contexts[pipeline_name]
             pipeline_context.load_persisted_data_from_archive(self._archivers[pipeline_name])
+            
             return pipeline_context.stage_contexts[stage_id].stage_output
-        
-        return self._over_pipeline_contexts(_try_get_unstructured_result)
+            
+        return _with_pipeline_id
 
-    def get_unstructured_results(self, stage_ids):
-        return map(self._get_unstructured_result, stage_ids)
+    def get_unstructured_results(self, pipeline_name, stage_ids):
+        return map(self._get_unstructured_result(pipeline_name), stage_ids)
 
     def get_source_code(self, stage_id):
         def _try_get_source_code(pipeline_context):
