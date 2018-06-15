@@ -37,7 +37,7 @@ class StageContext(object):
             pickle.dumps(exception_info[1])
             exception_value = exception_info[1]
         except:
-            exception_value = exception_info[1].__name__
+            exception_value = repr(exception_info[1])
 
         self.error_information = {
             "type": exception_info[0],
