@@ -53,6 +53,12 @@ class SSHUtils(object):
         _, _, status_code = self.execute_command(command)
         return status_code
 
+    def safe_execute_command(self, command):
+        stdout, stderr, status_code = self.execute_command(command)
+        if status_code != 0:
+            raise Exception("Error running command {} (code: {}):\n{}".format(command, status_code, stderr))
+        return stdout, stderr
+
     def execute_command(self, command):
         from subprocess import PIPE
         from subprocess import Popen

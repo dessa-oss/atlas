@@ -58,18 +58,17 @@ class MultiSSHBundledPipelineArchive(object):
         return self._archives[name]
 
     def _retrieve_results(self, name):
-        from subprocess import call
-
         command = self._retrieve_scp_command(name)
-        call(command)
+        self._ssh_utils.safe_execute_command(command)
 
     def _retrieve_scp_command(self, name):
-        ssh_command = 'scp ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ':' + self._results_remote_archive_path(name) + ' ' + \
-            self._results_archive_path(name)
-        return self._ssh_utils.command_in_shell_command(ssh_command)
+        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(name), self._results_archive_path(name))
 
     def _results_archive_path(self, name):
-        return '/tmp/' + name + '.tgz'
+        from tempfile import gettempdir
+        from os.path import join
+
+        return join(gettempdir(), name + '.tgz')
 
     def _results_remote_archive_path(self, name):
         return self._result_path() + '/' + name + '.tgz'
