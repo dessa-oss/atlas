@@ -31,7 +31,7 @@ def byte_string(string):
         return bytes(force_encoding(string))
 
 def string_from_bytes(string):
-    if isintance(string, string):
+    if isinstance(string, string):
         return string
     else:
         return string.decode()
@@ -135,3 +135,6 @@ def pretty_error(pipeline_name, error_info, verbose=False):
     traceback_strings = traceback.format_list(traceback_items)
 
     return concat_strings(error_name + traceback_strings)
+
+def split_process_output(output):
+    return output.decode().strip().split("\n")
