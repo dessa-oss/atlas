@@ -103,7 +103,7 @@ class ResultReader(object):
 
         callback(main_headers, all_job_information)
 
-        output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
+        output_dataframe = pd.concat(all_job_information, ignore_index=True)
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
