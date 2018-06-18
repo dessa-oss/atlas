@@ -14,10 +14,13 @@ class Cache(object):
     def get(self, key):
         from vcat.serializer import deserialize
 
-        return deserialize(self._cache_backend.get(key))
+        return deserialize(self.get_binary(key))
 
     def get_binary(self, key):
-        return self._cache_backend.get(key)
+        result = self._cache_backend.get(key)
+        if result is None:
+            self._log().debug('Cache miss for key: %s', key)
+        return result
 
     def set(self, key, value):
         from vcat.serializer import serialize
@@ -34,3 +37,7 @@ class Cache(object):
 
     def get_or_set_callback(self, key, callback):
         return self.get(key) or self.set(key, callback())
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

@@ -37,7 +37,7 @@ def byte_string(string):
         return bytes(force_encoding(string))
 
 def string_from_bytes(string):
-    if isinstance(string, basestring):
+    if is_string(string):
         return string
     else:
         return string.decode()
@@ -63,7 +63,7 @@ def make_uuid(item, iterable_callback):
     if isinstance(item, list):
         return merged_uuids([iterable_callback(sub_item) for sub_item in item])
 
-    if isinstance(item, str):
+    if is_string(item):
         return generate_uuid(item)
 
     return generate_uuid(str(item))

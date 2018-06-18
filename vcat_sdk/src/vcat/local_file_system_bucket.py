@@ -41,13 +41,13 @@ class LocalFileSystemBucket(object):
         return isfile(path)
 
     def download_as_string(self, name):
-        from vcat.utils import string_from_bytes
+        from vcat.utils import byte_string
 
         self._log().debug('Downloading %s', name)
 
         with open(self._full_path(name), 'rb') as file:
             data_bytes = file.read()
-            return string_from_bytes(data_bytes)
+            return byte_string(data_bytes)
 
     def download_to_file(self, name, output_file):
         from shutil import copyfileobj

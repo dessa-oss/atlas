@@ -16,7 +16,10 @@ class GCPBucket(object):
         return self._blob(name).exists()
 
     def download_as_string(self, name):
-        return self._blob(name).download_as_string()
+        from vcat.utils import byte_string
+
+        data_bytes = self._blob(name).download_as_string()
+        return byte_string(data_bytes)
 
     def download_to_file(self, name, output_file):
         return self._blob(name).download_to_file(output_file)

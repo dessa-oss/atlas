@@ -79,4 +79,8 @@ class CachedPipelineArchive(object):
         return cache_manager.cache().get_binary(key)
 
     def _cache_name(self, file_prefix, file_path, prefix, name, target_name):
-        pass
+        from vcat.utils import merged_uuids
+
+        key_parts = (file_prefix, file_path, prefix, name, target_name)
+        string_key_parts = [str(part) for part in key_parts]
+        return merged_uuids(string_key_parts)

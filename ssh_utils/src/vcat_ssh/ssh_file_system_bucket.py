@@ -29,10 +29,13 @@ class SSHFileSystemBucket(object):
         return self._ssh_utils.call_command(command) == 0
 
     def download_as_string(self, name):
+        from vcat.utils import byte_string
+
         with SimpleTempfile('w+b') as temp_file:
             self._ssh_utils.execute_to_local_scp(
                 self._remote_path(name), temp_file.name)
-            return temp_file.read()
+            data_bytes = temp_file.read()
+            return byte_string(data_bytes)
 
     def download_to_file(self, name, output_file):
         self._ssh_utils.execute_to_local_scp(
