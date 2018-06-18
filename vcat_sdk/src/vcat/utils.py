@@ -20,9 +20,15 @@ def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
 if version_info[0] < 3:
     def force_encoding(string):
         return string.decode('utf-8').encode('utf-8', 'ignore')
+
+    def is_string(string):
+        return isinstance(string, basestring)
 else:
     def force_encoding(string):
         return string.encode('utf-8', 'ignore')
+
+    def is_string(string):
+        return isinstance(string, str)
 
 def byte_string(string):
     if isinstance(string, bytes):
@@ -31,7 +37,7 @@ def byte_string(string):
         return bytes(force_encoding(string))
 
 def string_from_bytes(string):
-    if isinstance(string, string):
+    if isinstance(string, basestring):
         return string
     else:
         return string.decode()

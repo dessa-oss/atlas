@@ -29,4 +29,4 @@ class NullArchive(object):
         return None
 
     def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
-        pass
+        return False

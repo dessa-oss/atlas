@@ -21,9 +21,9 @@ class BucketPipelineArchive(object):
         pass
 
     def append(self, name, item, prefix=None):
-        import dill as pickle
+        from vcat.serializer import serialize
 
-        serialized_item = pickle.dumps(item)
+        serialized_item = serialize(item)
         self.append_binary(name, serialized_item, prefix)
 
     def append_binary(self, name, serialized_item, prefix=None):
@@ -40,13 +40,10 @@ class BucketPipelineArchive(object):
             self._bucket.upload_from_file(arcname, file)
 
     def fetch(self, name, prefix=None):
-        import dill as pickle
+        from vcat.serializer import deserialize
 
         serialized_item = self.fetch_binary(name, prefix)
-        if serialized_item is None:
-            return None
-        else:
-            return pickle.loads(serialized_item)
+        return deserialize(serialized_item)
 
     def fetch_binary(self, name, prefix=None):
         arcname = file_archive_name(prefix, name)
@@ -60,6 +57,10 @@ class BucketPipelineArchive(object):
         name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
             prefix, file_prefix, name)
+
         if self._bucket.exists(arcname):
             with open(file_path, 'w+b') as file:
                 self._bucket.download_to_file(arcname, file)
+            return True
+
+        return False

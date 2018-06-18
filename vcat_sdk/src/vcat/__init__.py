@@ -34,6 +34,7 @@ from vcat.bucket_pipeline_archive import BucketPipelineArchive
 from vcat.bucket_pipeline_listing import BucketPipelineListing
 from vcat.simple_tempfile import SimpleTempfile
 from vcat.prefixed_bucket import PrefixedBucket
+from vcat.cached_pipeline_archive import CachedPipelineArchive
 
 def _append_module():
     import sys

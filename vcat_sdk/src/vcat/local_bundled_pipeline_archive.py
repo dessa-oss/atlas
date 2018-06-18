@@ -89,7 +89,8 @@ class LocalBundledPipelineArchive(object):
                         copyfileobj(input_file, file)
                 finally:
                     input_file.close()
-                return
+                return True
+        return False
 
     def _add_to_tar(self, tempfile, prefix, name):
         tempfile.file.flush()
