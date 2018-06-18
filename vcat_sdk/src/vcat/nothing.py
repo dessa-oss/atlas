@@ -15,3 +15,6 @@ class Nothing(object):
     def fallback(self, callback):
         from vcat.option import Option
         return Option(callback())
+
+    def __eq__(self, other):
+        return isinstance(other, Nothing)

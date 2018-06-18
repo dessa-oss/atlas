@@ -17,3 +17,9 @@ class Something(object):
 
     def fallback(self, callback):
         return self
+
+    def __eq__(self, other):
+        if isinstance(other, Something):
+            return self._value == other._value
+        else:
+            return False

@@ -11,6 +11,6 @@ class TestCompat(unittest.TestCase):
         try:
             compat_raise(DummyException, "test_value")
         except DummyException as e:
-            self.assertEquals(str(e), "test_value")
+            self.assertEqual(str(e), "test_value")
         except Exception as e:
             self.fail("Did not properly throw exception")
