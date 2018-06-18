@@ -16,7 +16,7 @@ class MultiSSHBundledPipelineArchive(object):
 
         for name, archive in self._archives.items():
             archive.__exit__(exception_type, exception_value, traceback)
-            remove(self._results_archive_path(name))
+            archive.remove_archive()
         self._archives = {}
 
     def append(self, name, item, prefix=None):
@@ -47,9 +47,10 @@ class MultiSSHBundledPipelineArchive(object):
             raise Exception('Cannot have a missing archive name')
 
         if not name in self._archives:
-            self._retrieve_results(name)
+            target = self._generate_results_archive_path()
+            self._retrieve_results(name, target)
             archive = LocalBundledPipelineArchive(
-                self._results_archive_path(name),
+                target,
                 True
             )
             archive.__enter__()
@@ -57,17 +58,19 @@ class MultiSSHBundledPipelineArchive(object):
 
         return self._archives[name]
 
-    def _retrieve_results(self, name):
-        command = self._retrieve_scp_command(name)
+    def _retrieve_results(self, name, target):
+        command = self._retrieve_scp_command(name, target)
         self._ssh_utils.safe_execute_command(command)
 
-    def _retrieve_scp_command(self, name):
-        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(name), self._results_archive_path(name))
+    def _retrieve_scp_command(self, name, target):
+        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(name), target)
 
-    def _results_archive_path(self, name):
+    def _generate_results_archive_path(self):
         from tempfile import gettempdir
         from os.path import join
+        from uuid import uuid4
 
+        name = str(uuid4())
         return join(gettempdir(), name + '.tgz')
 
     def _results_remote_archive_path(self, name):
