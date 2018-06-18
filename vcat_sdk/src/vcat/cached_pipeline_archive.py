@@ -28,55 +28,48 @@ class CachedPipelineArchive(object):
         return self._archive.append_file(file_prefix, file_path, prefix, target_name)
 
     def fetch(self, name, prefix=None):
+        def fallback():
+            return self._archive.fetch(name, prefix)
+
         key = self._cache_name(None, None, prefix, name, None)
-        result = self._get_cache(key)
-        if result is not None:
-            return result
-
-        result = self._archive.fetch(name, prefix)
-        if result is not None:
-            self._set_cache(key, result)
-
-        return result
+        return self._cache().get_or_set_callback(key, fallback)
 
     def fetch_binary(self, name, prefix=None):
-        key = self._cache_name(None, None, prefix, name, None)
-        result = self._get_cache_binary(key)
-        if result is not None:
-            return result
+        def fallback():
+            return self._archive.fetch_binary(name, prefix)
 
-        result = self._archive.fetch_binary(name, prefix)
+        key = self._cache_name(None, None, prefix, name, None)
+        return self._cache().get_or_set_binary_callback(key, fallback)
 
     def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
-        key = self._cache_name(file_prefix, file_path,
-                               prefix, None, target_name)
-        result = self._get_cache_binary(key)
-        if result is not None:
+        def write_from_cache(result):
             with open(file_path, 'w+b') as file:
                 file.write(result)
 
-        if self._archive.fetch_to_file(file_prefix, file_path, prefix, target_name):
-            with open(file_path, 'rb') as file:
-                self._set_cache(key, file.read(result))
-            return True
+        def fallback():
+            if self._archive.fetch_to_file(file_prefix, file_path, prefix, target_name):
+                with open(file_path, 'rb') as file:
+                    data = file.read()
+                    self._set_cache(key, data)
+                    return data
+            else:
+                self._set_cache(key, None)
+                return None
 
-        return False
+        key = self._cache_name(file_prefix, file_path,
+                               prefix, None, target_name)
+        self._cache().get_binary_option(key).map(write_from_cache).fallback(fallback)
+        return True
+
+    def _cache(self):
+        from vcat.global_state import cache_manager
+        return cache_manager.cache()
 
     def _set_cache(self, key, value):
-        from vcat.global_state import cache_manager
-        cache_manager.cache().set(key, value)
+        self._cache().set(key, value)
 
     def _set_cache_binary(self, key, serialized_value):
-        from vcat.global_state import cache_manager
-        cache_manager.cache().set_binary(key, serialized_value)
-
-    def _get_cache(self, key):
-        from vcat.global_state import cache_manager
-        return cache_manager.cache().get(key)
-
-    def _get_cache_binary(self, key):
-        from vcat.global_state import cache_manager
-        return cache_manager.cache().get_binary(key)
+        self._cache().set_binary(key, serialized_value)
 
     def _cache_name(self, file_prefix, file_path, prefix, name, target_name):
         from vcat.utils import merged_uuids

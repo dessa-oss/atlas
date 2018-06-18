@@ -12,15 +12,22 @@ class Cache(object):
         self._cache_backend = cache_backend
 
     def get(self, key):
-        from vcat.serializer import deserialize
+        return self.get_option(key).get_or_else(None)
 
-        return deserialize(self.get_binary(key))
+    def get_option(self, key):
+        from vcat.serializer import deserialize
+        return self.get_binary_option(key).map(deserialize)
 
     def get_binary(self, key):
+        return self.get_binary_option(key).get_or_else(None)
+
+    def get_binary_option(self, key):
+        from vcat.option import Option
+
         result = self._cache_backend.get(key)
         if result is None:
             self._log().debug('Cache miss for key: %s', key)
-        return result
+        return Option(result)
 
     def set(self, key, value):
         from vcat.serializer import serialize
@@ -33,10 +40,42 @@ class Cache(object):
         return serialized_value
 
     def get_or_set(self, key, value):
-        return self.get(key) or self.set(key, value)
+        def _set():
+            from vcat.something import Something
+
+            self.set(key, value)
+            return Something(value)
+
+        return self.get_option(key).fallback(_set).get()
 
     def get_or_set_callback(self, key, callback):
-        return self.get(key) or self.set(key, callback())
+        def _set():
+            from vcat.something import Something
+
+            value = callback()
+            self.set(key, value)
+            return Something(value)
+
+        return self.get_option(key).fallback(_set).get()
+
+    def get_or_set_binary(self, key, value):
+        def _set_binary():
+            from vcat.something import Something
+
+            self.set_binary(key, value)
+            return Something(value)
+
+        return self.get_option(key).fallback(_set_binary).get()
+
+    def get_or_set_binary_callback(self, key, callback):
+        def _set_binary():
+            from vcat.something import Something
+
+            value = callback()
+            self.set_binary(key, value)
+            return Something(value)
+
+        return self.get_option(key).fallback(_set_binary).get()
 
     def _log(self):
         from vcat.global_state import log_manager
