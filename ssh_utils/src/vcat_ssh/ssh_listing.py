@@ -4,10 +4,11 @@ from vcat_ssh.ssh_utils import SSHUtils
 
 class SSHListing(object):
 
-    def __init__(self):
+    def __init__(self, path_filter='*.tgz'):
         from vcat.global_state import config_manager
         self._config = config_manager.config()
         self._ssh_utils = SSHUtils(self._config)
+        self._path_filter = path_filter
 
     def track_pipeline(self, pipeline_name):
         pass
@@ -25,16 +26,14 @@ class SSHListing(object):
     def _list_archives(self):
         from subprocess import Popen
         from subprocess import PIPE
+        from vcat.utils import split_process_output
 
         command = self._list_archives_command()
-        process = Popen(command, stdout=PIPE)
-        stdout, _ = process.communicate()
-        return stdout.strip().split("\n")
+        stdout, _, _ = self._ssh_utils.execute_command(command)
+        return split_process_output(stdout)
 
     def _list_archives_command(self):
-        ssh_command = 'ssh ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ' "ls -1 ' + \
-            self._result_path() + '/*.tgz' + '"'
-        return self._ssh_utils.command_in_shell_command(ssh_command)
+        return self._ssh_utils.command_in_ssh_command('ls -1 ' + self._result_path() + '/' + self._path_filter)
 
     def _result_path(self):
         return self._config['result_path']

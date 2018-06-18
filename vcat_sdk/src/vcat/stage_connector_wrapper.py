@@ -99,3 +99,24 @@ class StageConnectorWrapper(object):
             children.append(child)
 
         return children
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+
+    def __getstate__(self):
+        return self.__dict__
+
+    def __getattr__(self, name):
+        def call_method_on_instance(instance, *args, **kwargs):
+            return getattr(instance, name)(*args, **kwargs)
+
+        def auto_stage(*args, **kwargs):
+            return self.stage(call_method_on_instance, *args, **kwargs)
+
+        return auto_stage
+
+    def __getitem__(self, key):
+        def getitem(data, key):
+            return data[key]
+
+        return self.stage(getitem, key)
