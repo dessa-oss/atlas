@@ -15,6 +15,7 @@ class LocalBundledPipelineArchive(object):
     def __init__(self, archive_path, open_for_reading=False):
         self._archive_path = archive_path
         self._open_for_reading = open_for_reading
+        self._tar = None
 
     def __enter__(self):
         self._open_archive()
