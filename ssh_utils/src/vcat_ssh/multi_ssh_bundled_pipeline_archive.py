@@ -12,9 +12,7 @@ class MultiSSHBundledPipelineArchive(object):
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        from os import remove
-
-        for name, archive in self._archives.items():
+        for archive in self._archives.values():
             archive.__exit__(exception_type, exception_value, traceback)
             archive.remove_archive()
         self._archives = {}
