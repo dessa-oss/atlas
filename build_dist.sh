@@ -16,16 +16,14 @@ else
 fi
 
 cd vcat_sdk/ && \
-    ${python_version} setup.py sdist bdist_wheel
+    ${python_version} setup.py sdist bdist_wheel && \
     cd ../ && \
-    ${python_version} -m pip install -U vcat_sdk/dist/vcat-0.0.1-${wheel_suffix}-none-any.whl
-
-cd gcp_utils/ && \
-    ${python_version} setup.py sdist bdist_wheel
+    ${python_version} -m pip install -U vcat_sdk/dist/vcat-0.0.1-${wheel_suffix}-none-any.whl && \
+    cd gcp_utils/ && \
+    ${python_version} setup.py sdist bdist_wheel && \
     cd ../ && \
-    ${python_version} -m pip install -U gcp_utils/dist/vcat_gcp-0.0.1-${wheel_suffix}-none-any.whl
-
-cd ssh_utils/ && \
-    ${python_version} setup.py sdist bdist_wheel
+    ${python_version} -m pip install -U gcp_utils/dist/vcat_gcp-0.0.1-${wheel_suffix}-none-any.whl && \
+    cd ssh_utils/ && \
+    ${python_version} setup.py sdist bdist_wheel &&\
     cd ../ && \
     ${python_version} -m pip install -U ssh_utils/dist/vcat_ssh-0.0.1-${wheel_suffix}-none-any.whl
