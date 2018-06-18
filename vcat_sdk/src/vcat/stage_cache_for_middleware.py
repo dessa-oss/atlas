@@ -26,12 +26,16 @@ class StageCacheForMiddleware(object):
         return self._cache_name
 
     def fetch_cache(self):
+        return self.fetch_cache_option().get_or_else(None)
+
+    def fetch_cache_option(self):
         from vcat.global_state import cache_manager
+        from vcat.nothing import Nothing
 
         if self._allow_caching:
-            return cache_manager.cache().get(self._cache_name)
+            return cache_manager.cache().get_option(self._cache_name)
         else:
-            return None
+            return Nothing
 
     def submit_cache(self, value):
         from vcat.global_state import cache_manager
