@@ -13,19 +13,21 @@ from vcat.simple_tempfile import SimpleTempfile
 class LocalBundledPipelineArchive(object):
 
     def __init__(self, archive_path, open_for_reading=False):
-        import tarfile
-
-        if open_for_reading:
-            self._tar = tarfile.open(archive_path, "r:gz")
-        else:
-            self._tar = tarfile.open(archive_path, "w:gz")
+        self._archive_path = archive_path
+        self._open_for_reading = open_for_reading
 
     def __enter__(self):
-        self._tar.__enter__()
+        self._open_archive()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
-        return self._tar.__exit__(exception_type, exception_value, traceback)
+        self._log().debug('Closing %s', self._archive_path)
+        self._tar.close()
+        self._tar = None
+
+    def remove_archive(self):
+        from os import remove
+        remove(self._archive_path)
 
     def append(self, name, item, prefix=None):
         import dill as pickle
@@ -92,3 +94,14 @@ class LocalBundledPipelineArchive(object):
         tempfile.file.flush()
         arcname = file_archive_name(prefix, name)
         self._tar.add(tempfile.path, arcname=arcname)
+
+    def _open_archive(self):
+        import tarfile
+
+        open_mode = 'r:gz' if self._open_for_reading else 'w:gz'
+        self._log().debug('Opening %s with `%s` open mode', self._archive_path, open_mode)
+        self._tar = tarfile.open(self._archive_path, open_mode)
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
