@@ -16,45 +16,49 @@ class LocalFileSystemBucket(object):
     def upload_from_string(self, name, data):
         from vcat.utils import byte_string
 
-        self._log().debug('Uploading %s from string', name)
+        path = self._full_path(name)
+        self._log().debug('Uploading %s (%s) from string', name, path)
 
         self._ensure_path_exists(name)
-        with open(self._full_path(name), 'w+b') as file:
+        with open(path, 'w+b') as file:
             data_bytes = byte_string(data)
             file.write(data_bytes)
 
     def upload_from_file(self, name, input_file):
         from shutil import copyfileobj
 
-        self._log().debug('Uploading %s from %s', name, input_file.name)
+        path = self._full_path(name)
+        self._log().debug('Uploading %s (%s) from %s', name, path, input_file.name)
 
         self._ensure_path_exists(name)
-        with open(self._full_path(name), 'w+b') as file:
+        with open(path, 'w+b') as file:
             copyfileobj(input_file, file)
 
     def exists(self, name):
         from os.path import isfile
 
-        self._log().debug('Checking if %s exists', name)
-
         path = self._full_path(name)
+        self._log().debug('Checking if %s exists (%s)', name, path)
+
         return isfile(path)
 
     def download_as_string(self, name):
         from vcat.utils import byte_string
 
-        self._log().debug('Downloading %s', name)
+        path = self._full_path(name)
+        self._log().debug('Downloading %s (%s)', name, path)
 
-        with open(self._full_path(name), 'rb') as file:
+        with open(path, 'rb') as file:
             data_bytes = file.read()
             return byte_string(data_bytes)
 
     def download_to_file(self, name, output_file):
         from shutil import copyfileobj
 
-        self._log().debug('Downloading %s to %s', name, output_file.name)
+        path = self._full_path(name)
+        self._log().debug('Downloading %s (%s) to %s', name, path, output_file.name)
 
-        with open(self._full_path(name), 'rb') as file:
+        with open(path, 'rb') as file:
             copyfileobj(file, output_file)
             output_file.flush()
             output_file.seek(0)
@@ -75,7 +79,7 @@ class LocalFileSystemBucket(object):
 
     def _full_path(self, name):
         from os.path import join
-        return join(self._path + '/' + name)
+        return join(self._path, name)
 
     def _ensure_path_exists(self, name):
         from distutils.dir_util import mkpath
@@ -89,7 +93,7 @@ class LocalFileSystemBucket(object):
         from os.path import dirname
         from os.path import join
 
-        return join(self._path + '/' + dirname(name))
+        return join(self._path, dirname(name))
 
     def _log(self):
         from vcat.global_state import log_manager
