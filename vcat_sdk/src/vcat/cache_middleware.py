@@ -28,11 +28,11 @@ class CacheMiddleware(object):
 
             self._stage_context.cache_name = stage_cache.cache_name()
 
-            cached_result = self._time(True, stage_cache.fetch_cache)
-            if cached_result is not None:
+            cached_result = self._time(True, stage_cache.fetch_cache_option)
+            if cached_result.is_present():
                 self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
                 self._stage_context.used_cache = True
-                return cached_result
+                return cached_result.get()
 
             self._log().debug('Stage %s data not in cache', self._stage_uuid)
             result = callback(args, kwargs)
