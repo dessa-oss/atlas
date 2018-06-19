@@ -60,3 +60,15 @@ class TestJob(unittest.TestCase):
             self.assertEqual(str(e), "<lambda>() got an unexpected keyword argument 'w'")
         except:
             self.fail("Caught wrong exception")
+
+    def test_serialize_deserialize(self):
+        def test_func(x, y, z):
+            return x + y - z
+
+        job = Job(DummyPipeline(test_func), x=5, y=6, z=7)
+
+        serialized = job.serialize()
+        deserialized_job = Job.deserialize(serialized)
+
+        self.assertEqual(deserialized_job.run(), job.run())
+        self.assertEqual(deserialized_job.pipeline_context(), job.pipeline_context())
