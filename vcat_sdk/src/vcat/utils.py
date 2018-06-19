@@ -108,7 +108,11 @@ def restructure_headers(all_headers, first_headers):
         set_1 = set(list_1)
         return [item for item in list_0 if item not in set_1]
 
-    return first_headers + diff(all_headers, first_headers)
+    def intersect(list_0, list_1):
+        set_1 = set(list_1)
+        return [item for item in list_0 if item in set_1]
+
+    return intersect(first_headers, all_headers) + diff(all_headers, first_headers)
 
 def concat_strings(iterable):
     return "".join(iterable)
