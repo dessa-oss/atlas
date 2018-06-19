@@ -15,4 +15,29 @@ class TestRemoteException(unittest.TestCase):
         self.assertEqual(check_result("dummy", result, verbose_errors=True), result)
 
     def test_check_result_error(self):
-        self.fail("fill me in!")
+        import sys
+        import traceback
+        from vcat.utils import pretty_error
+
+        try:
+            1/0
+        except:
+            error_info = sys.exc_info()
+            result = {
+                "global_stage_context": {
+                    "error_information": {
+                        "type": error_info[0],
+                        "exception": error_info[1],
+                        "traceback": traceback.extract_tb(error_info[2])
+                    }
+                }
+            }
+
+        try:
+            check_result("dummy", result, verbose_errors=True)
+            self.fail("Did not throw exception")
+        except RemoteException as e:
+            error_information = result["global_stage_context"]["error_information"]
+            self.assertEqual(str(e), pretty_error("dummy", error_information, verbose=True))
+        except:
+            self.fail("Did not throw the proper exception")
