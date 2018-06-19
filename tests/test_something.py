@@ -9,7 +9,7 @@ import unittest
 
 from vcat.something import Something
 
-class TestNothing(unittest.TestCase):
+class TestSomething(unittest.TestCase):
     def test_map(self):
         something = Something("asdfasdf")
         self.assertEqual(something.map(lambda x: len(x)), Something(8))
