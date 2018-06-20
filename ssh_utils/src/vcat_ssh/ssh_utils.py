@@ -1,3 +1,11 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+
 class SSHUtils(object):
 
     def __init__(self, config):
@@ -44,7 +52,7 @@ class SSHUtils(object):
 
     def to_local_scp_command(self, remote_path, local_path):
         from pipes import quote
-        
+
         ssh_command = 'scp ' + self.ssh_arguments() + ' ' + \
             quote(self._remote_path(remote_path)) + ' ' + quote(local_path)
         return self.command_in_shell_command(ssh_command)
@@ -56,7 +64,8 @@ class SSHUtils(object):
     def safe_execute_command(self, command):
         stdout, stderr, status_code = self.execute_command(command)
         if status_code != 0:
-            raise Exception("Error running command {} (code: {}):\n{}".format(command, status_code, stderr))
+            raise Exception("Error running command {} (code: {}):\n{}".format(
+                command, status_code, stderr))
         return stdout, stderr
 
     def execute_command(self, command):
