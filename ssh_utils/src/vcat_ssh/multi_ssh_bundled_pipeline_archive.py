@@ -9,12 +9,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class MultiSSHBundledPipelineArchive(object):
 
     def __init__(self):
-        from vcat_ssh.ssh_utils import SSHUtils
         from vcat.global_state import config_manager
+        from vcat_ssh.ssh_file_system_bucket import SSHFileSystemBucket
 
         self._archives = {}
         self._config = config_manager.config()
-        self._ssh_utils = SSHUtils(self._config)
+        self._bucket = SSHFileSystemBucket(self._result_path())
 
     def __enter__(self):
         return self
@@ -65,11 +65,8 @@ class MultiSSHBundledPipelineArchive(object):
         return self._archives[name]
 
     def _retrieve_results(self, name, target):
-        command = self._retrieve_scp_command(name, target)
-        self._ssh_utils.safe_execute_command(command)
-
-    def _retrieve_scp_command(self, name, target):
-        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(name), target)
+        with open(target, 'w+b') as file:
+            self._bucket.download_to_file(name + '.tgz', file)
 
     def _generate_results_archive_path(self):
         from tempfile import gettempdir
@@ -78,9 +75,6 @@ class MultiSSHBundledPipelineArchive(object):
 
         name = str(uuid4())
         return join(gettempdir(), name + '.tgz')
-
-    def _results_remote_archive_path(self, name):
-        return self._result_path() + '/' + name + '.tgz'
 
     def _result_path(self):
         return self._config['result_path']
