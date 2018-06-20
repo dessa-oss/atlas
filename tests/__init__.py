@@ -5,11 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def Option(value):
-    from vcat.something import Something
-    from vcat.nothing import Nothing
+import unittest
 
-    if isinstance(value, Nothing) or isinstance(value, Something):
-        return value
+def suite_factory():
+    loader = unittest.TestLoader()
+    return loader.discover(".", pattern="test*.py")
 
-    return Nothing() if value is None else Something(value)
+if __name__ == "__main__":
+    runner = unittest.TextTestRunner()
+    runner.run(suite_factory())
