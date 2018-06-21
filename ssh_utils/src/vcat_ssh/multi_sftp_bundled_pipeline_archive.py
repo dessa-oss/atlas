@@ -6,15 +6,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-class MultiSSHBundledPipelineArchive(object):
+class MultiSFTPBundledPipelineArchive(object):
 
     def __init__(self):
         from vcat.global_state import config_manager
-        from vcat_ssh.sftp_bucket import SFTPBucket
+        from vcat_ssh.ssh_file_system_bucket import SSHFileSystemBucket
 
         self._archives = {}
         self._config = config_manager.config()
-        self._bucket = SFTPBucket(self._result_path())
+        self._bucket = SSHFileSystemBucket(self._result_path())
 
     def __enter__(self):
         return self

@@ -55,10 +55,11 @@ class SSHFileSystemBucket(object):
         return self._path + '/' + name
 
     def _list_remote_files(self, pathname):
+        from vcat.utils import split_process_output
+
         command = self._list_files_command(pathname)
         listing, _, _ = self._ssh_utils.execute_command(command)
-        listing = listing.strip()
-        return listing.split("\n")
+        return split_process_output(listing)
 
     def _list_files_command(self, pathname):
         shell_command = 'ls -1 ' + self._path + '/' + pathname
