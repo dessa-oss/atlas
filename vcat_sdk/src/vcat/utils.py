@@ -147,4 +147,6 @@ def pretty_error(pipeline_name, error_info, verbose=False):
     return concat_strings(error_name + traceback_strings)
 
 def split_process_output(output):
-    return output.decode().strip().split("\n")
+    lines = output.decode().strip().split("\n")
+    lines = filter(lambda line: len(line) > 0, lines)
+    return lines
