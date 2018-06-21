@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 from vcat_ssh.ssh_job_deployment import SSHJobDeployment
+from vcat_ssh.sftp_job_deployment import SFTPJobDeployment
 from vcat_ssh.ssh_listing import SSHListing
 from vcat_ssh.sftp_listing import SFTPListing
 from vcat_ssh.multi_ssh_bundled_pipeline_archive import MultiSSHBundledPipelineArchive
