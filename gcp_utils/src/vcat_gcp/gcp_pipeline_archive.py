@@ -1,3 +1,10 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 from vcat.utils import file_archive_name
 from vcat.utils import file_archive_name_with_additional_prefix
 
@@ -9,7 +16,8 @@ class GCPPipelineArchive(object):
         from vcat.bucket_pipeline_archive import BucketPipelineArchive
         from vcat.prefixed_bucket import PrefixedBucket
 
-        self._archive =  BucketPipelineArchive(PrefixedBucket, 'pipeline_archives', GCPBucket, bucket)
+        self._archive = BucketPipelineArchive(
+            PrefixedBucket, 'pipeline_archives', GCPBucket, bucket)
 
     def __enter__(self):
         return self._archive.__enter__()
