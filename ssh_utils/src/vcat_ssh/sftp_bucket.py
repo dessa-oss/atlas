@@ -33,7 +33,8 @@ class SFTPBucket(object):
 
         self._ensure_path_exists(name)
         with self.change_directory_for_name(name):
-            self._connection.put(input_file.name)
+            self._connection.put(input_file.name, self._temporary_name(name))
+            self._connection.rename(self._temporary_name(name), name)
 
     def exists(self, name):
         from os.path import basename
@@ -78,6 +79,9 @@ class SFTPBucket(object):
 
     def change_directory_for_name(self, name):
         return self._connection.cd(self._directory_path(name))
+
+    def _temporary_name(self, name):
+        return name + '.vtmpfile'
 
     def _directory_path(self, name):
         from os.path import dirname
