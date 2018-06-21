@@ -19,15 +19,21 @@ class SimpleWorker(object):
 
     def run(self):
         from time import sleep
+        from vcat.change_directory import ChangeDirectory
 
         started_jobs = set()
         while True:
-            for archive_path in self._code_bucket.list_files('*.tgz'):
-                if not archive_path in started_jobs:
-                    started_jobs.add(archive_path)
+            for archive_name in self._code_bucket.list_files('*.tgz'):
+                if not archive_name in started_jobs:
+                    started_jobs.add(archive_name)
+                    archive_path = self._job_code_path(archive_name)
                     self._handle_job(archive_path)
 
             sleep(0.5)
+
+    def _job_code_path(self, archive_name):
+        from os.path import join
+        return join(self._code_path, archive_name)
 
     def _handle_job(self, archive_path):
         self._log().info('Running job %s', archive_path)
@@ -68,8 +74,6 @@ class SimpleWorker(object):
     def _execute_job(self, archive_path):
         job_name = self._job_name(archive_path)
         with ChangeDirectory(job_name):
-            from os import getcwd
-            print(archive_path, getcwd())
             return self._execute_job_command()
 
     def _execute_job_command(self):

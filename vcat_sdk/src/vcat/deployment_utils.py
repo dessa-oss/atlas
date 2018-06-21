@@ -19,12 +19,15 @@ def gcp_deploy_job(job, job_name):
 
 def wait_for_deployment_to_complete(deployment):
     import time
+    from vcat.global_state import log_manager
+
+    log = log_manager.get_logger(__name__)
 
     while not deployment.is_job_complete():
-        print("waiting for job `" + deployment.job_name() + "` to finish")
+        log.info("waiting for job `" + deployment.job_name() + "` to finish")
         time.sleep(6)
 
-    print("job `" + deployment.job_name() + "` completed")
+    log.info("job `" + deployment.job_name() + "` completed")
 
 def fetch_job_results(deployment, verbose_errors=False):
     from vcat.remote_exception import check_result
@@ -67,6 +70,9 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
     from vcat.job import Job
     import time
     import uuid
+    from vcat.global_state import log_manager
+
+    log = log_manager.get_logger(__name__)
 
     for param_set in _grid_param_set_generator(hype_kwargs):
         connector_wrapper._reset_state()
@@ -82,7 +88,7 @@ def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
 
         wait_for_deployment_to_complete(deployer)
 
-        print(deployer.fetch_job_results())
+        log.debug(deployer.fetch_job_results())
 
 
 def _extract_results(results_dict):

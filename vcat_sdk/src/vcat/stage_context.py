@@ -31,10 +31,10 @@ class StageContext(object):
 
     def add_error_information(self, exception_info):
         import traceback
-        import dill as pickle
+        from vcat.serializer import serialize
 
         try:
-            pickle.dumps(exception_info[1])
+            serialize(exception_info[1])
             exception_value = exception_info[1]
         except:
             exception_value = repr(exception_info[1])

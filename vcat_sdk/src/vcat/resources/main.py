@@ -5,9 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise
-
-import dill as pickle
+from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file
 
 
 def main():
@@ -44,7 +42,7 @@ def main():
     JobPersister(job).persist()
 
     with open('results.pkl', 'w+b') as file:
-        pickle.dump(pipeline_context._context(), file, protocol=2)
+        serialize_to_file(pipeline_context._context(), file)
 
     if exception_info is not None:
         compat_raise(exception_info[0], exception_info[1], exception_info[2])

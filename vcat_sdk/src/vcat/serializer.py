@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def serialize(item):
     import dill as pickle
-    return pickle.dumps(item)
+    return pickle.dumps(item, protocol=2)
 
 
 def deserialize(serialized_item):
@@ -20,7 +20,7 @@ def deserialize(serialized_item):
 
 def serialize_to_file(item, file):
     import dill as pickle
-    return pickle.dump(item, file)
+    return pickle.dump(item, file, protocol=2)
 
 
 def deserialize_from_file(file):

@@ -31,10 +31,10 @@ class LocalBundledPipelineArchive(object):
         remove(self._archive_path)
 
     def append(self, name, item, prefix=None):
-        import dill as pickle
+        from vcat.serializer import serialize_to_file
 
         with SimpleTempfile('w+b') as tempfile:
-            pickle.dump(item, tempfile.file, protocol=2)
+            serialize_to_file(item, tempfile.file)
             self._add_to_tar(tempfile, prefix, name + '.pkl')
 
     def append_binary(self, name, serialized_item, prefix=None):
@@ -50,7 +50,7 @@ class LocalBundledPipelineArchive(object):
         self._tar.add(file_path, arcname=arcname)
 
     def fetch(self, name, prefix=None):
-        import dill as pickle
+        from vcat.serializer import deserialize_from_file
 
         arcname = file_archive_name(prefix, name)
 
@@ -58,7 +58,7 @@ class LocalBundledPipelineArchive(object):
             if tar_info.name == arcname:
                 input_file = self._tar.extractfile(tar_info)
                 try:
-                    return pickle.load(input_file)
+                    return deserialize_from_file(input_file)
                 finally:
                     input_file.close()
 

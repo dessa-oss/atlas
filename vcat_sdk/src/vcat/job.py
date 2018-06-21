@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class Job(object):
 
     def __init__(self, pipeline_connector, **kwargs):
@@ -18,10 +19,10 @@ class Job(object):
         return self._pipeline_connector.pipeline_context()
 
     def serialize(self):
-        import dill as pickle
-        return pickle.dumps(self, protocol=2)
+        from vcat.serializer import serialize
+        return serialize(self)
 
     @staticmethod
     def deserialize(serialized_self):
-        import dill as pickle
-        return pickle.loads(serialized_self)
+        from vcat.serializer import deserialize
+        return deserialize(serialized_self)
