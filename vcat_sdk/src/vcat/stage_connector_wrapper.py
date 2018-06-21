@@ -107,6 +107,9 @@ class StageConnectorWrapper(object):
         return self.__dict__
 
     def __getattr__(self, name):
+        if name.startswith('__') and name.endswith('__'):
+            return super(StageConnectorWrapper, self).__getattr__(name)
+
         def call_method_on_instance(instance, *args, **kwargs):
             result = getattr(instance, name)(*args, **kwargs)
             if result is None:
@@ -116,7 +119,7 @@ class StageConnectorWrapper(object):
             return self.stage(call_method_on_instance, *args, **kwargs)
 
         return auto_stage
-        
+
     def __getitem__(self, key):
         def getitem(data, key):
             return data[key]
