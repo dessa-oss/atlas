@@ -5,13 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat.job_bundler import JobBundler
-from vcat_ssh.ssh_utils import SSHUtils
-
 
 class SSHJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
+        from vcat.job_bundler import JobBundler
         from vcat.global_state import config_manager
 
         self._config = {}
@@ -21,7 +19,8 @@ class SSHJobDeployment(object):
         self._job = job
         self._job_bundler = JobBundler(
             self._job_name, self._config, self._job, job_source_bundle)
-        self._ssh_utils = SSHUtils(self._config)
+        self._code_bucket = None
+        self._result_bucket = None
 
     def config(self):
         return self._config
@@ -32,60 +31,46 @@ class SSHJobDeployment(object):
     def deploy(self):
         self._job_bundler.bundle()
         try:
-            self._deploy_internal()
+            with open(self._job_bundler.job_archive(), 'rb') as file:
+                self._get_code_bucket().upload_from_file(self._job_bundler.job_archive_name(), file)
         finally:
             self._job_bundler.cleanup()
 
     def is_job_complete(self):
-        command = self._check_job_done_ssh_command()
-        return self._ssh_utils.call_command(command) == 0
+        return self._get_result_bucket().exists(self._job_bundler.job_archive_name())
 
     def fetch_job_results(self):
         from os.path import basename
-        from os import remove
-        import dill as pickle
         import tarfile
+        from vcat.simple_tempfile import SimpleTempfile
+        from vcat.serializer import deserialize_from_file
 
-        command = self._retrieve_scp_command()
-        self._ssh_utils.call_command(command)
-        try:
-            result = None
-            with tarfile.open(self._results_archive_path(), 'r:gz') as tar:
+        result = None
+        with SimpleTempfile('w+b') as temp_file:
+            self._get_result_bucket().download_to_file(
+                self._job_bundler.job_archive_name(), temp_file)
+            with tarfile.open(temp_file.name, 'r:gz') as tar:
                 for tarinfo in tar:
                     if basename(tarinfo.name) == "results.pkl":
                         file = tar.extractfile(tarinfo)
-                        result = pickle.load(file)
+                        result = deserialize_from_file(file)
                         file.close()
-        finally:
-            remove(self._results_archive_path())
 
         return result
 
-    def _deploy_internal(self):
-        command = self._deploy_scp_command()
-        self._ssh_utils.call_command(command)
+    def _get_code_bucket(self):
+        from vcat_ssh.sftp_bucket import SFTPBucket
 
-    def _retrieve_scp_command(self):
-        return self._ssh_utils.to_local_scp_command(self._results_remote_archive_path(), self._results_archive_path())
+        if self._code_bucket is None:
+            self._code_bucket = SFTPBucket(self._code_path())
+        return self._code_bucket
 
-    def _deploy_scp_command(self):
-        return self._ssh_utils.to_remote_scp_command(self._full_archive_path(), self._code_path())
+    def _get_result_bucket(self):
+        from vcat_ssh.sftp_bucket import SFTPBucket
 
-    def _check_job_done_ssh_command(self):
-        ssh_command = 'ssh ' + self._ssh_utils.ssh_arguments() + ' ' + self._ssh_utils.user_at_host() + ' "stat ' + \
-            self._result_path() + '/' + self._job_bundler.job_archive_name() + '"'
-        return self._ssh_utils.command_in_shell_command(ssh_command)
-
-    def _results_remote_archive_path(self):
-        return self._result_path() + '/' + self._job_bundler.job_archive_name()
-
-    def _results_archive_path(self):
-        from os.path import abspath
-        return abspath('../' + self._job_name + '.results.tgz')
-
-    def _full_archive_path(self):
-        from os.path import abspath
-        return abspath(self._job_bundler.job_archive())
+        if self._result_bucket is None:
+            self._result_bucket = SFTPBucket(self._result_path())
+        return self._result_bucket
 
     def _code_path(self):
         return self._config['code_path']

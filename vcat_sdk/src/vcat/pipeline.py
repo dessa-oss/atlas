@@ -18,9 +18,12 @@ class Pipeline(object):
 
     def __init__(self, pipeline_context):
         self.graph = StageGraph()
-        self.pipeline_context = pipeline_context
+        self._pipeline_context = pipeline_context
         self._stage_piping = StagePiping(self)
         self._uuid = generate_uuid('Humble beginnings...')
+
+    def pipeline_context(self):
+        return self._pipeline_context
 
     def uuid(self):
         return self._uuid
@@ -28,7 +31,7 @@ class Pipeline(object):
     def stage(self, function, *args, **kwargs):
         from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
 
-        builder = StageConnectorWrapperBuilder(self.pipeline_context)
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
         builder = builder.stage(self.uuid(), function, args, kwargs)
         builder = builder.hierarchy([self.uuid()])
 
@@ -43,11 +46,20 @@ class Pipeline(object):
                           for connector in upstream_connectors]
         current_uuid = merged_uuids(upstream_uuids)
 
-        builder = StageConnectorWrapperBuilder(self.pipeline_context)
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
         builder = builder.stage(current_uuid, function, args, kwargs)
         builder = builder.hierarchy(upstream_uuids)
 
         return builder.build(self.graph.join, upstream_connectors)
+
+    def run(self, **filler_kwargs):
+        return None
+
+    def __call__(self, *args, **kwargs):
+        return self.run(*args, **kwargs)
+
+    def persist(self):
+        pass
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)

@@ -44,21 +44,21 @@ class LocalShellJobDeployment(object):
         import shutil
         import subprocess
         import glob
-        import dill as pickle
         import tarfile
         from vcat.change_directory import ChangeDirectory
+        from vcat.serializer import deserialize_from_file
 
         with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
             tar.extractall()
             
         with ChangeDirectory(self._job_name):
-            script = "sh ./run.sh"
+            script = "./run.sh"
             args = self._command_in_shell_command(script)
             subprocess.call(args)
 
         file_name = glob.glob(self._job_name + '/*.pkl')[0]
         with open(file_name, 'rb') as file:
-            self._results = pickle.load(file)
+            self._results = deserialize_from_file(file)
 
         shutil.rmtree(self._job_name)
 
