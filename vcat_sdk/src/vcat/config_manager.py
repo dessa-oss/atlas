@@ -29,6 +29,12 @@ class ConfigManager(object):
 
         self._config = config
 
+    def __getitem__(self, key):
+        return self.config()[key]
+
+    def __setitem__(self, key, value):
+        self.config()[key] = value
+
     def reflect_instance(self, name, type_name, default_callback):
         reflected_klass, reflected_args, reflected_kwargs = self.reflect_constructor(
             name, type_name, default_callback)

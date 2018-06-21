@@ -18,11 +18,9 @@ class SSHFileSystemBucket(object):
         self._ssh_utils = SSHUtils(config_manager.config())
 
     def upload_from_string(self, name, data):
-        self._ensure_path_exists(name)
         with SimpleTempfile('w+b') as temp_file:
             temp_file.write_and_flush(data)
-            self._ssh_utils.execute_to_remote_scp(
-                temp_file.name, self._remote_path(name))
+            self.upload_from_file(name, temp_file)
 
     def upload_from_file(self, name, input_file):
         self._ensure_path_exists(name)
@@ -39,8 +37,7 @@ class SSHFileSystemBucket(object):
         from vcat.utils import byte_string
 
         with SimpleTempfile('w+b') as temp_file:
-            self._ssh_utils.execute_to_local_scp(
-                self._remote_path(name), temp_file.name)
+            self.download_to_file(name, temp_file)
             data_bytes = temp_file.read()
             return byte_string(data_bytes)
 
