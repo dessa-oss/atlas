@@ -41,10 +41,9 @@ class S3Bucket(object):
         objects = self._objs_with_directory(directory)
         object_names = [bucket_object.key for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
-        return filter(lambda path: fnmatch(path, path_filter), object_file_names)
+        output = filter(lambda path: fnmatch(path, path_filter), object_file_names)
 
-        objs = self._objs_with_prefix(pathname)
-        return [obj.key for obj in objs]
+        return output if isinstance(output, list) else list(output)
 
     def _objs_with_prefix(self, prefix):
         return self._bucket.objects.filter(Prefix=prefix)
