@@ -20,12 +20,12 @@ setup(
     name='vcat_ssh',
     version='0.0.1',
     description='A tool for machine learning development',
-    classifiers=[ 
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
     packages=find_packages('src'),
-    package_dir={'':'src'},
+    package_dir={'': 'src'},
     package_data={
         'vcat_ssh': ['resources/*'],
     }
