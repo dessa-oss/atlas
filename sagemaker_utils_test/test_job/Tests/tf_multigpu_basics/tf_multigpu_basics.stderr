@@ -1,0 +1,102 @@
+2018-06-21 14:41:15.757257: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2018-06-21 14:41:16.754155: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:898] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-06-21 14:41:16.754706: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties: 
+name: Tesla P100-PCIE-16GB major: 6 minor: 0 memoryClockRate(GHz): 1.3285
+pciBusID: 0000:00:04.0
+totalMemory: 15.90GiB freeMemory: 15.61GiB
+2018-06-21 14:41:16.891890: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:898] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-06-21 14:41:16.893291: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 1 with properties: 
+name: Tesla P100-PCIE-16GB major: 6 minor: 0 memoryClockRate(GHz): 1.3285
+pciBusID: 0000:00:05.0
+totalMemory: 15.90GiB freeMemory: 15.61GiB
+2018-06-21 14:41:16.894037: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0, 1
+2018-06-21 14:41:27.272552: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-06-21 14:41:27.272642: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 1 
+2018-06-21 14:41:27.272658: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N N 
+2018-06-21 14:41:27.272670: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 1:   N N 
+2018-06-21 14:41:27.273243: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 15135 MB memory) -> physical GPU (device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:04.0, compute capability: 6.0)
+2018-06-21 14:41:27.653531: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 15135 MB memory) -> physical GPU (device: 1, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:05.0, compute capability: 6.0)
+2018-06-21 14:41:28.023446: I tensorflow/core/common_runtime/direct_session.cc:284] Device mapping:
+/job:localhost/replica:0/task:0/device:GPU:0 -> device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:04.0, compute capability: 6.0
+/job:localhost/replica:0/task:0/device:GPU:1 -> device: 1, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:05.0, compute capability: 6.0
+
+2018-06-21 14:41:28.044312: I tensorflow/core/common_runtime/placer.cc:886] MatMul_10: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044360: I tensorflow/core/common_runtime/placer.cc:886] MatMul_11: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044376: I tensorflow/core/common_runtime/placer.cc:886] MatMul_12: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044390: I tensorflow/core/common_runtime/placer.cc:886] MatMul_13: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044403: I tensorflow/core/common_runtime/placer.cc:886] MatMul_14: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044417: I tensorflow/core/common_runtime/placer.cc:886] MatMul_15: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044430: I tensorflow/core/common_runtime/placer.cc:886] MatMul_16: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044444: I tensorflow/core/common_runtime/placer.cc:886] MatMul_17: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044457: I tensorflow/core/common_runtime/placer.cc:886] MatMul_18: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044471: I tensorflow/core/common_runtime/placer.cc:886] MatMul_19: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044485: I tensorflow/core/common_runtime/placer.cc:886] MatMul: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044509: I tensorflow/core/common_runtime/placer.cc:886] MatMul_1: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044523: I tensorflow/core/common_runtime/placer.cc:886] MatMul_2: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044536: I tensorflow/core/common_runtime/placer.cc:886] MatMul_3: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044550: I tensorflow/core/common_runtime/placer.cc:886] MatMul_4: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044564: I tensorflow/core/common_runtime/placer.cc:886] MatMul_5: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044589: I tensorflow/core/common_runtime/placer.cc:886] MatMul_6: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044603: I tensorflow/core/common_runtime/placer.cc:886] MatMul_7: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044616: I tensorflow/core/common_runtime/placer.cc:886] MatMul_8: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044630: I tensorflow/core/common_runtime/placer.cc:886] MatMul_9: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044644: I tensorflow/core/common_runtime/placer.cc:886] AddN: (AddN)/job:localhost/replica:0/task:0/device:CPU:0
+2018-06-21 14:41:28.044660: I tensorflow/core/common_runtime/placer.cc:886] Placeholder_1: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:28.044674: I tensorflow/core/common_runtime/placer.cc:886] Placeholder: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.252443: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0, 1
+2018-06-21 14:41:30.252539: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-06-21 14:41:30.252554: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 1 
+2018-06-21 14:41:30.252567: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N N 
+2018-06-21 14:41:30.252595: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 1:   N N 
+2018-06-21 14:41:30.252795: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 15135 MB memory) -> physical GPU (device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:04.0, compute capability: 6.0)
+2018-06-21 14:41:30.252924: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:1 with 15135 MB memory) -> physical GPU (device: 1, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:05.0, compute capability: 6.0)
+2018-06-21 14:41:30.253071: I tensorflow/core/common_runtime/direct_session.cc:284] Device mapping:
+/job:localhost/replica:0/task:0/device:GPU:0 -> device: 0, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:04.0, compute capability: 6.0
+/job:localhost/replica:0/task:0/device:GPU:1 -> device: 1, name: Tesla P100-PCIE-16GB, pci bus id: 0000:00:05.0, compute capability: 6.0
+
+2018-06-21 14:41:30.267558: I tensorflow/core/common_runtime/placer.cc:886] MatMul_30: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267611: I tensorflow/core/common_runtime/placer.cc:886] MatMul_31: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267627: I tensorflow/core/common_runtime/placer.cc:886] MatMul_32: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267641: I tensorflow/core/common_runtime/placer.cc:886] MatMul_33: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267654: I tensorflow/core/common_runtime/placer.cc:886] MatMul_34: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267667: I tensorflow/core/common_runtime/placer.cc:886] MatMul_35: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267681: I tensorflow/core/common_runtime/placer.cc:886] MatMul_36: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267702: I tensorflow/core/common_runtime/placer.cc:886] MatMul_37: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267716: I tensorflow/core/common_runtime/placer.cc:886] MatMul_38: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267730: I tensorflow/core/common_runtime/placer.cc:886] MatMul_39: (MatMul)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.267744: I tensorflow/core/common_runtime/placer.cc:886] MatMul_20: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267757: I tensorflow/core/common_runtime/placer.cc:886] MatMul_21: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267771: I tensorflow/core/common_runtime/placer.cc:886] MatMul_22: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267784: I tensorflow/core/common_runtime/placer.cc:886] MatMul_23: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267797: I tensorflow/core/common_runtime/placer.cc:886] MatMul_24: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267811: I tensorflow/core/common_runtime/placer.cc:886] MatMul_25: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267824: I tensorflow/core/common_runtime/placer.cc:886] MatMul_26: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267838: I tensorflow/core/common_runtime/placer.cc:886] MatMul_27: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267851: I tensorflow/core/common_runtime/placer.cc:886] MatMul_28: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267865: I tensorflow/core/common_runtime/placer.cc:886] MatMul_29: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267879: I tensorflow/core/common_runtime/placer.cc:886] AddN_1: (AddN)/job:localhost/replica:0/task:0/device:CPU:0
+2018-06-21 14:41:30.267892: I tensorflow/core/common_runtime/placer.cc:886] MatMul_10: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267906: I tensorflow/core/common_runtime/placer.cc:886] MatMul_11: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267919: I tensorflow/core/common_runtime/placer.cc:886] MatMul_12: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267932: I tensorflow/core/common_runtime/placer.cc:886] MatMul_13: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267946: I tensorflow/core/common_runtime/placer.cc:886] MatMul_14: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267960: I tensorflow/core/common_runtime/placer.cc:886] MatMul_15: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267973: I tensorflow/core/common_runtime/placer.cc:886] MatMul_16: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267986: I tensorflow/core/common_runtime/placer.cc:886] MatMul_17: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.267999: I tensorflow/core/common_runtime/placer.cc:886] MatMul_18: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268022: I tensorflow/core/common_runtime/placer.cc:886] MatMul_19: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268036: I tensorflow/core/common_runtime/placer.cc:886] MatMul: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268049: I tensorflow/core/common_runtime/placer.cc:886] MatMul_1: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268062: I tensorflow/core/common_runtime/placer.cc:886] MatMul_2: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268076: I tensorflow/core/common_runtime/placer.cc:886] MatMul_3: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268089: I tensorflow/core/common_runtime/placer.cc:886] MatMul_4: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268105: I tensorflow/core/common_runtime/placer.cc:886] MatMul_5: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268119: I tensorflow/core/common_runtime/placer.cc:886] MatMul_6: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268132: I tensorflow/core/common_runtime/placer.cc:886] MatMul_7: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268145: I tensorflow/core/common_runtime/placer.cc:886] MatMul_8: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268159: I tensorflow/core/common_runtime/placer.cc:886] MatMul_9: (MatMul)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268172: I tensorflow/core/common_runtime/placer.cc:886] AddN: (AddN)/job:localhost/replica:0/task:0/device:CPU:0
+2018-06-21 14:41:30.268187: I tensorflow/core/common_runtime/placer.cc:886] Placeholder_3: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:1
+2018-06-21 14:41:30.268202: I tensorflow/core/common_runtime/placer.cc:886] Placeholder_2: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268216: I tensorflow/core/common_runtime/placer.cc:886] Placeholder_1: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:0
+2018-06-21 14:41:30.268230: I tensorflow/core/common_runtime/placer.cc:886] Placeholder: (Placeholder)/job:localhost/replica:0/task:0/device:GPU:0

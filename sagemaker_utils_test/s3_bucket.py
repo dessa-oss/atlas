@@ -45,6 +45,15 @@ class S3Bucket(object):
 
         return output if isinstance(output, list) else list(output)
 
+    def delete_remote_objects(self, names):
+        objects = []
+        for name in names:
+            objects.append({'Key': name})
+        self._bucket.delete_objects({'Objects': objects})
+
+    def s3_address(self, name):
+        return "s3://{}/{}".format(self._bucket.name, name)
+
     def _objs_with_prefix(self, prefix):
         return self._bucket.objects.filter(Prefix=prefix)
 

@@ -1,0 +1,32 @@
+running cross validation
+[0]	train-error:0.0506682+0.009201	test-error:0.0557316+0.0158887
+[1]	train-error:0.0213034+0.00205561	test-error:0.0211884+0.00365323
+running cross validation, disable standard deviation display
+[0]	train-error:0.0506682	test-error:0.0557316
+Multiple eval metrics have been passed: 'test-error' will be used for early stopping.
+
+Will train until test-error hasn't improved in 3 rounds.
+[1]	train-error:0.0213034	test-error:0.0211884
+[2]	train-error:0.0099418	test-error:0.0099786
+[3]	train-error:0.0141256	test-error:0.0144336
+[4]	train-error:0.0059878	test-error:0.0062948
+[5]	train-error:0.0020344	test-error:0.0016886
+[6]	train-error:0.0012284	test-error:0.001228
+[7]	train-error:0.0012284	test-error:0.001228
+[8]	train-error:0.0009212	test-error:0.001228
+[9]	train-error:0.0006142	test-error:0.001228
+Stopping. Best iteration:
+[6]	train-error:0.0012284+0.000260265	test-error:0.001228+0.00104094
+
+   test-error-mean       ...         train-error-std
+0         0.055732       ...                0.009201
+1         0.021188       ...                0.002056
+2         0.009979       ...                0.006076
+3         0.014434       ...                0.001706
+4         0.006295       ...                0.001878
+5         0.001689       ...                0.001470
+6         0.001228       ...                0.000260
+
+[7 rows x 4 columns]
+running cross validation, with preprocessing function
+running cross validation, with cutomsized loss function
