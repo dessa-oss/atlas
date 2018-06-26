@@ -8,6 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class StagedMetaHelper(object):
     """Used to create define specs for loading staged modules in importing modules
+        Arguments:
+            fullname {str} -- Full name of the module to be loaded
     """
 
     STAGED_PREFIX = 'staged_'
@@ -17,6 +19,12 @@ class StagedMetaHelper(object):
         self._fullname = fullname
 
     def inner_module(self):
+        """Finds the underlying module for a staged module
+        
+        Returns:
+            module -- The module, if it exists and the outer module is staged
+        """
+
         if self._is_staged_module():
             return self._find_module()
 
