@@ -17,7 +17,7 @@ class TestStagedModuleLoader(unittest.TestCase):
             self.__file__ = None
 
             def fake_dumps(obj):
-                pass
+                return lambda: None
             self.dumps = fake_dumps
 
     def test_loader_is_loader(self):

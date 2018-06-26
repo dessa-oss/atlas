@@ -18,7 +18,7 @@ class TestStagedModuleInternalLoader(unittest.TestCase):
             self.__file__ = None
 
             def fake_dumps(obj):
-                pass
+                return lambda: None
             self.dumps = fake_dumps
 
     def test_exec_module_loads_vars(self):
