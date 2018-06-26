@@ -6,14 +6,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from importlib.abc import MetaPathFinder
+from vcat.staged_meta_helper import StagedMetaHelper
 
 
 class StagedMetaFinder(MetaPathFinder):
     """Used to create define specs for loading staged modules in importing modules
     """
-
-    STAGED_PREFIX = 'staged_'
-    STAGED_PREFIX_LENGTH = len(STAGED_PREFIX)
 
     def find_spec(self, fullname, path, target=None):
         """Find a module spec for loading
@@ -29,26 +27,14 @@ class StagedMetaFinder(MetaPathFinder):
           importlib._bootstrap.ModuleSpec -- ModuleSpec containing information required to import the module
         """
 
-        if self._is_staged_module(fullname):
-            return self._load_spec(fullname)
+        inner_module = StagedMetaHelper(fullname).inner_module()
+        if inner_module is not None:
+            return self._load_spec(fullname, inner_module)
 
         return None
 
-    def _load_spec(self, staged_name):
-        from vcat.staged_module_loader import StagedModuleLoader
+    def _load_spec(self, fullname, inner_module):
         from importlib.util import spec_from_file_location
+        from vcat.staged_module_loader import StagedModuleLoader
 
-        inner_module = self._find_module(staged_name)
-        return spec_from_file_location(staged_name, loader=StagedModuleLoader(inner_module))
-
-    def _find_module(self, staged_named):
-        from importlib import import_module
-
-        module_name = self._module_without_staged_prefix(staged_named)
-        return import_module(module_name)
-
-    def _module_without_staged_prefix(self, fullname):
-        return fullname[StagedMetaFinder.STAGED_PREFIX_LENGTH:]
-
-    def _is_staged_module(self, fullname):
-        return fullname.startswith(StagedMetaFinder.STAGED_PREFIX)
+        return spec_from_file_location(fullname, loader=StagedModuleLoader(inner_module))
