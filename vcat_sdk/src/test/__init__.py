@@ -14,3 +14,4 @@ else:
     from .test_staged_module_py2_loader import TestStagedModulePy2Loader
 
 from .test_staged_module_internal_loader import TestStagedModuleInternalLoader
+from .test_staged_meta_helper import TestStagedMetaHelper
