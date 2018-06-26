@@ -14,6 +14,9 @@ def main():
             'cache_type': LocalFileSystemCacheBackend,
             'constructor_arguments': ['/tmp'],
         },
+        'archive_listing_implementation': {
+            'archive_listing_type': LocalFileSystemPipelineListing
+        },
         'stage_log_archive_implementation': {
             'archive_type': LocalFileSystemPipelineArchive,
         },
