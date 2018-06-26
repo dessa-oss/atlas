@@ -1,1 +1,2 @@
 from .test_staged_module_loader import TestStagedModuleLoader
+from .test_staged_meta_finder import TestStagedMetaFinder
