@@ -19,7 +19,7 @@ class StagedMetaFinder(MetaPathFinder):
           target {str} -- Unused (default: {None})
 
         Returns:
-          importlib._bootstrap.ModuleSpec -- [description]
+          importlib._bootstrap.ModuleSpec -- ModuleSpec containing information required to import the module
         """
 
         if self._is_staged_module(fullname):
