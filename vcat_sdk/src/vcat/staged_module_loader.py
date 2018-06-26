@@ -2,14 +2,13 @@ from importlib.abc import Loader
 
 
 class StagedModuleLoader(Loader):
+    """Used to create cloned modules with functions replaced with stages
+
+    Arguments:
+        inner_module {module} -- Module to duplicate
+    """
 
     def __init__(self, inner_module):
-        """Used to create cloned modules with functions replaced with stages
-
-        Arguments:
-          inner_module {module} -- Module to duplicate
-        """
-
         self._inner_module = inner_module
 
     def exec_module(self, module):
