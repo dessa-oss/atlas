@@ -9,7 +9,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def _install():
     import sys
     if sys.version_info[0] < 3:
-        pass
+        from vcat.staged_meta_py2_finder import StagedMetaPy2Finder
+        sys.meta_path.append(StagedMetaPy2Finder())
     else:
         from vcat.staged_meta_finder import StagedMetaFinder
         sys.meta_path.insert(0, StagedMetaFinder())
