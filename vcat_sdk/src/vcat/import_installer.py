@@ -8,8 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def _install():
     import sys
-    from vcat.staged_meta_finder import StagedMetaFinder
-    sys.meta_path.insert(0, StagedMetaFinder())
+    if sys.version_info[0] < 3:
+        pass
+    else:
+        from vcat.staged_meta_finder import StagedMetaFinder
+        sys.meta_path.insert(0, StagedMetaFinder())
 
 
 _install()

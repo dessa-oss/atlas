@@ -5,5 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_staged_module_loader import TestStagedModuleLoader
-from .test_staged_meta_finder import TestStagedMetaFinder
+import sys
+
+if sys.version_info[0] >= 3:
+    from .test_staged_module_loader import TestStagedModuleLoader
+    from .test_staged_meta_finder import TestStagedMetaFinder
+
+from .test_staged_module_internal_loader import TestStagedModuleInternalLoader
