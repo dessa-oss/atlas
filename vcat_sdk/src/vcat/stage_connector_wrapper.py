@@ -63,7 +63,7 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, **filler_kwargs):
+    def run_same_process(self, **filler_kwargs):
         self.add_tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 

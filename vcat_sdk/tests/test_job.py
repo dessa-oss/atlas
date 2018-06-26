@@ -14,7 +14,7 @@ class DummyPipeline(object):
         self._func = func
         self._pipeline_context = "test_context"
 
-    def run(self, **kwargs):
+    def run_same_process(self, **kwargs):
         return self._func(**kwargs)
 
     def pipeline_context(self):
