@@ -83,5 +83,63 @@ class TestUtils(unittest.TestCase):
         for key, val in utils.dict_like_iter(test_dict):
             self.assertEqual(val, test_dict[key])
 
-    def test_unfinished(self):
-        self.fail("do the rest of the tests!")
+    def test_dict_like_append_with_list(self):
+        test_list = ["asdf", "fdas"]
+        utils.dict_like_append(test_list, None, "dfd")
+        utils.dict_like_append(test_list, None, "fdas")
+
+        self.assertEqual(test_list, ["asdf", "fdas", "dfd", "fdas"])
+
+    def test_dict_like_append_with_dict(self):
+        test_dict = {
+            "asdf": 0,
+            "fdsa": 1
+        }
+
+        utils.dict_like_append(test_dict, "dfd", 33)
+        utils.dict_like_append(test_dict, "fdsa", 100)
+
+        result_dict = {
+            "asdf": 0,
+            "fdsa": 100,
+            "dfd": 33
+        }
+
+        self.assertEqual(test_dict, result_dict)
+
+    def test_split_process_output_zero_length(self):
+        self.assertEqual([u""], utils.split_process_output(""))
+
+    def test_split_process_output_few_lines(self):
+        self.assertEqual([u"This", u"is", u"a", u"test"], utils.split_process_output("      This\nis\na\ntest  "))
+
+    def test_force_encoding_utf_8(self):
+        string_utf_8 = u"asdf"
+        bytes_string = utils.force_encoding(string_utf_8)
+
+        self.assertTrue(isinstance(bytes_string, bytes))
+        self.assertEqual(b"asdf", bytes_string)
+
+    def test_force_encoding_bytes(self):
+        string_bytes = b"asdf"
+        bytes_string = utils.force_encoding(string_bytes)
+
+        self.assertTrue(isinstance(bytes_string, bytes))
+        self.assertEqual(string_bytes, bytes_string)
+
+    def test_is_string(self):
+        from sys import version_info
+
+        string_unicode = u"asdf"
+        string_bytes = b"asdf"
+        not_a_string = 1234
+
+        self.assertTrue(utils.is_string(string_unicode))
+        self.assertFalse(utils.is_string(not_a_string))
+
+        bytes_is_string = utils.is_string(string_bytes)
+
+        if version_info[0] < 3:
+            self.assertTrue(bytes_is_string)
+        else:
+            self.assertFalse(bytes_is_string)
