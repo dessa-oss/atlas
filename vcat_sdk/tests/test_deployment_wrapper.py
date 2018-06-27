@@ -53,7 +53,7 @@ class TestDeploymentWrapper(unittest.TestCase):
 
         self.assertIsNone(deployment._deployment.fetch_job_results())
 
-        deployment.wait_for_deployment_to_complete()
+        deployment.wait_for_deployment_to_complete(wait_seconds=0.1)
         
         result = deployment._deployment.fetch_job_results()
         self.assertIsNone(result["global_stage_context"]["error_information"])
@@ -67,7 +67,7 @@ class TestDeploymentWrapper(unittest.TestCase):
         deployment = DeploymentWrapper(dwf.FailedMockDeployment("job_name"))
 
         try:
-            result = deployment.fetch_job_results()
+            result = deployment.fetch_job_results(wait_seconds=0.1)
             self.fail("RemoteException not thrown")
         except RemoteException as e:
             inner_result = deployment._deployment.fetch_job_results()
@@ -76,21 +76,21 @@ class TestDeploymentWrapper(unittest.TestCase):
     def test_fetch_job_results_successful_job(self):
         deployment = DeploymentWrapper(dwf.SuccessfulMockDeployment("job_name"))
 
-        result = deployment.fetch_job_results()
+        result = deployment.fetch_job_results(wait_seconds=0.1)
         self.assertIsNone(result["global_stage_context"]["error_information"])
         self.assertEqual(result["dummy_result"], "dummy_result")
 
     def test_fetch_job_results_successful_takes_time(self):
         deployment = DeploymentWrapper(dwf.SuccessfulTakesTime("job_name"))
 
-        result = deployment.fetch_job_results()
+        result = deployment.fetch_job_results(wait_seconds=0.1)
         self.assertIsNone(result["global_stage_context"]["error_information"])
         self.assertEqual(result["dummy_result"], "dummy_result")
 
     def test_fetch_job_results_successful_takes_random_time(self):
         deployment = DeploymentWrapper(dwf.SuccessfulTakesRandomTime("job_name"))
 
-        result = deployment.fetch_job_results()
+        result = deployment.fetch_job_results(wait_seconds=0.1)
         self.assertIsNone(result["global_stage_context"]["error_information"])
         self.assertEqual(result["dummy_result"], "dummy_result")
 
@@ -102,7 +102,7 @@ class TestDeploymentWrapper(unittest.TestCase):
         deployment = DeploymentWrapper(dwf.FailedTakesRandomTime("job_name"))
 
         try:
-            result = deployment.fetch_job_results()
+            result = deployment.fetch_job_results(wait_seconds=0.1)
             self.fail("RemoteException not thrown")
         except RemoteException as e:
             inner_result = deployment._deployment.fetch_job_results()

@@ -15,23 +15,23 @@ class DeploymentWrapper(object):
     def is_job_complete(self):
         return self._deployment.is_job_complete()
 
-    def fetch_job_results(self, verbose_errors=False):
+    def fetch_job_results(self, wait_seconds=5, verbose_errors=False):
         from vcat.remote_exception import check_result
         
         if not self.is_job_complete():
-            self.wait_for_deployment_to_complete()
+            self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
 
         result = self._deployment.fetch_job_results()
         return check_result(self.job_name(), result, verbose_errors)
 
-    def wait_for_deployment_to_complete(self):
+    def wait_for_deployment_to_complete(self, wait_seconds=5):
         import time
         from vcat.global_state import log_manager
 
         log = log_manager.get_logger(__name__)
 
-        while not self._deployment.is_job_complete():
-            log.info("waiting for job `" + self._deployment.job_name() + "` to finish")
-            time.sleep(5)
+        while not self.is_job_complete():
+            log.info("waiting for job `" + self.job_name() + "` to finish")
+            time.sleep(wait_seconds)
 
-        log.info("job `" + self._deployment.job_name() + "` completed")
+        log.info("job `" + self.job_name() + "` completed")
