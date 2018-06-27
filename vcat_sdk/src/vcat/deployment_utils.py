@@ -16,28 +16,6 @@ def gcp_deploy_job(job, job_name):
     deployment.deploy()
     return deployment
 
-
-def wait_for_deployment_to_complete(deployment):
-    import time
-    from vcat.global_state import log_manager
-
-    log = log_manager.get_logger(__name__)
-
-    while not deployment.is_job_complete():
-        log.info("waiting for job `" + deployment.job_name() + "` to finish")
-        time.sleep(6)
-
-    log.info("job `" + deployment.job_name() + "` completed")
-
-def fetch_job_results(deployment, verbose_errors=False):
-    from vcat.remote_exception import check_result
-    
-    if not deployment.is_job_complete():
-        wait_for_deployment_to_complete(deployment)
-
-    result = deployment.fetch_job_results()
-    return check_result(deployment.job_name(), result, verbose_errors)
-
 def _grid_param_set_generator(hype_kwargs):
     import itertools
 

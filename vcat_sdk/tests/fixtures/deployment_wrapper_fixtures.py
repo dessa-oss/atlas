@@ -16,10 +16,10 @@ class MockDeployment(object):
         pass
 
     def is_job_complete(self):
-        pass
+        return True
 
     def fetch_job_results(self):
-        pass
+        return None
 
 class InstantFinishDeployment(MockDeployment):
     def __init__(self, job_name):
@@ -41,7 +41,19 @@ class TakesOneSecond(MockDeployment):
         super(TakesOneSecond, self).__init__(job_name)
 
     def is_job_complete(self):
-        if self._counter < 5:
+        if self._counter < 1:
+            self._counter += 1
+            return False
+        else:
+            return True
+
+class TakesTwoSeconds(MockDeployment):
+    def __init__(self, job_name):
+        self._counter = 0
+        super(TakesTwoSeconds, self).__init__(job_name)
+
+    def is_job_complete(self):
+        if self._counter < 2:
             self._counter += 1
             return False
         else:
@@ -56,9 +68,47 @@ class SuccessfulMockDeployment(MockDeployment):
             "global_stage_context": {
                 "error_information": None
             },
-            'dummy_result': self._job_name + "_" + str(self._progress)
+            'dummy_result': "dummy_result"
         }
         return result
+
+class SuccessfulTakesTime(SuccessfulMockDeployment):
+    def __init__(self, job_name):
+        super(SuccessfulTakesTime, self).__init__(job_name)
+        self._progress = 0
+
+    def is_job_complete(self):
+        if self._progress < 1:
+            self._progress += 1
+            return False
+        else:
+            return True
+
+    def fetch_job_results(self):
+        if self._progress < 1:
+            return None
+        else:
+            return super(SuccessfulTakesTime, self).fetch_job_results()
+
+class SuccessfulTakesRandomTime(SuccessfulMockDeployment):
+    def __init__(self, job_name):
+        super(SuccessfulTakesRandomTime, self).__init__(job_name)
+        self._progress = 0
+
+    def is_job_complete(self):
+        import random
+
+        if self._progress < 10:
+            self._progress += random.randint(4, 10)
+            return False
+        else:
+            return True
+
+    def fetch_job_results(self):
+        if self._progress < 10:
+            return None
+        else:
+            return super(SuccessfulTakesRandomTime, self).fetch_job_results()
 
 class FailedMockDeployment(MockDeployment):
     def __init__(self, job_name):
@@ -66,6 +116,7 @@ class FailedMockDeployment(MockDeployment):
 
     def fetch_job_results(self):
         import sys
+        import traceback
 
         try:
             1/0
@@ -79,7 +130,27 @@ class FailedMockDeployment(MockDeployment):
                         "traceback": traceback.extract_tb(error_info[2])
                     }
                 },
-                'dummy_result': self._job_name + "_" + str(self._progress)
+                'dummy_result': "dummy_result"
             }
 
         return result
+
+class FailedTakesRandomTime(FailedMockDeployment):
+    def __init__(self, job_name):
+        super(FailedTakesRandomTime, self).__init__(job_name)
+        self._progress = 0
+
+    def is_job_complete(self):
+        import random
+
+        if self._progress < 10:
+            self._progress += random.randint(4, 10)
+            return False
+        else:
+            return True
+
+    def fetch_job_results(self):
+        if self._progress < 10:
+            return None
+        else:
+            return super(FailedTakesRandomTime, self).fetch_job_results()
