@@ -25,6 +25,7 @@ fi
 cd $BASEDIR && \
   . $activate_path && \
   echo Running python version `python --version` located at `which python` && \
+  touch requirements.txt && \
   python -m pip install -r requirements.txt && \
   python main.py
   

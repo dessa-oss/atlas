@@ -2,7 +2,7 @@
 *.json
 .ipynb_checkpoints
 **/*.pyc
-venv
+venv*
 **/*.bin
 **/*.config.yaml
 **/*.tgz
