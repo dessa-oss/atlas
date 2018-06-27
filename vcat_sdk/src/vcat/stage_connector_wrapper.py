@@ -69,7 +69,7 @@ class StageConnectorWrapper(object):
         from vcat.deployment_wrapper import DeploymentWrapper
 
         job_name = str(uuid.uuid4())
-        job = Job(job_name, **params)
+        job = Job(self, **params)
         deployment = deployment_manager.deploy({}, job_name, job)
 
         return DeploymentWrapper(deployment)
