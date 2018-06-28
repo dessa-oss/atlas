@@ -91,8 +91,7 @@ def dict_like_append(dict_like, key, val):
         
     if isinstance(dict_like, dict):
         dict_like[key] = val
-
-    if isinstance(dict_like, Iterable):
+    elif isinstance(dict_like, Iterable):
         dict_like.append(val)
 
 def pretty_time(timestamp):

@@ -14,6 +14,10 @@ class JobSourceBundle(object):
         self._bundle_name = bundle_name
         self._path = target_path
 
+    @staticmethod
+    def from_dict(job_source_bundle_dict):
+        return JobSourceBundle(job_source_bundle_dict['bundle_name'], job_source_bundle_dict['target_path'])
+
     def bundle(self):
         import tarfile
 

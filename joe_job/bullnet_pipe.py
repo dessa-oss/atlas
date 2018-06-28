@@ -1,10 +1,6 @@
 from preproc import *
 from test_bullnet import *
 from vcat import *
-from vcat_ssh import *
-from uuid import uuid4
-
-import time
 
 # training parameters
 batch_size = 256
@@ -19,53 +15,5 @@ l2 = Hyperparameter("l2")
 bullnet_pipe = pipeline | preproc | (test_bullnet, batch_size, n_batches, max_embedding, emb_size_divisor, lr, l2)
 bullnet_pipe.persist()
 
-job = Job(bullnet_pipe, max_embedding=50, emb_size_divisor=2, lr=1e-4, l2=1e-3)
-job_name = str(uuid4())
-
-job_source_bundle_name = "test_bundle"
-job_source_bundle_path = "."
-
-job_source_bundle = JobSourceBundle(job_source_bundle_name, job_source_bundle_path)
-
-deployment_config = {
-    'cache_implementation': {
-        'cache_type': LocalFileSystemCacheBackend,
-        'constructor_arguments': ['/home/ja/cache'],
-    },
-    'archive_listing_implementation': {
-        'archive_listing_type': SSHListing
-    },
-    'stage_log_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'persisted_data_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'provenance_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'job_source_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'artifact_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'miscellaneous_archive_implementation': {
-        'archive_type': LocalFileSystemPipelineArchive
-    },
-    'remote_user': 'ja',
-    'remote_host': '192.168.128.58',
-    'shell_command': '/bin/bash',
-    'code_path': '/home/ja/jobs',
-    'result_path': '/home/ja/job_results',
-    'key_path': './bare_metal.pem',
-}
-
-deployment = SSHJobDeployment(job_name, job, job_source_bundle)
-deployment.config().update(deployment_config)
-
-deployment.deploy()
-
-print(fetch_job_results(deployment))
-
-# bullnet_pipe.grid_search(LocalShellJobDeployment, max_embedding=[50], emb_size_divisor=2, lr=[1e-4], l2=1e-3)
+deployment = bullnet_pipe.run(max_embedding=50, emb_size_divisor=2, lr=1e-4, l2=1e-3)
+print(deployment.fetch_job_results())
