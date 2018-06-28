@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file
 
-
 def main():
     job_source_bundle = JobSourceBundle('job', './')
 

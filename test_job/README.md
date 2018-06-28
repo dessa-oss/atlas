@@ -16,25 +16,70 @@ Projects may now be deployed outside the `vcat` project directory, assuming `vca
 
 ## Workflow
 
+### Python Code
+
 Given a pipeline `pipe`, one may run the following to deploy the pipeline locally:
 
 ```python
-job = Job(pipe)
-job_name = 'some wonderful job name'
-deployment = LocalShellJobDeployment(job_name, job)
-deployment.deploy()
-# wait_for_deployment_to_complete(deployment)
+deployment = pipe.run()
+# deployment.wait_for_deployment_to_complete()
 # result = deployment.fetch_job_results()
-result = fetch_job_results(deployment, verbose_errors=False)
+result = deployment.fetch_job_results()
 print(result)
 ```
 
+### Configuration YAML
+
+```
+# local_deploy.config.yaml
+# must be in same directory as where the above code is being run
+
+# default of local shell job deployment
+
+cache_implementation:
+  cache_type: vcat.LocalFileSystemCacheBackend
+  constructor_arguments: [/tmp/foundations-cache]
+
+archive_listing_implementation:
+  archive_listing_type: vcat.LocalFileSystemPipelineListing
+  constructor_arguments: [/tmp/foundations-archive]
+
+stage_log_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+persisted_data_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+provenance_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+job_source_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+artifact_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+miscellaneous_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+job_source_bundle:
+  bundle_name: test_bundle
+  target_path: .
+
+```
 Which should print the result of the deployed job to `STDOUT`
 
 ## What happens under the hood
 
 ### Bundling a job
 
+- `vcat` reads a YAML file containing configs re: where to run the job and put the results
 - `vcat` serializes a job and it's configuration
 - `vcat` bundles the job directory (current working directory)
 - `vcat` bundles the `vcat` module

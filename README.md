@@ -178,7 +178,7 @@ Necessary configuration by installer. For all configurations a python type that 
 * `job_source_archive_implementation`
 * `artifact_archive_implementation`
 * `miscellaneous_archive_implementation`
-
+* `deployment_implementation`
 
 Example config:
 
@@ -207,6 +207,9 @@ deployment_config = {
     },
     'miscellaneous_archive_implementation': {
         'archive_type': GCPPipelineArchive,
+    },
+    'deployment_implementation': {
+        'deployment_type': SSHJobDeployment
     },
     'remote_user': 'thomas',
     'remote_host': 'localhost',
