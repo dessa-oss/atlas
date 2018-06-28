@@ -38,7 +38,12 @@ class GCPJobDeployment(object):
         else:
             results = self.fetch_job_results()
 
-            if results["global_stage_context"]["error_information"] is not None:
+            try:
+                error_information = results["global_stage_context"]["error_information"]
+
+                if error_information is not None:
+                    return "Error"
+                else:
+                    return "Completed"
+            except:
                 return "Error"
-            else:
-                return "Completed"

@@ -5,6 +5,31 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+RESULT_SUCCESS = {
+    "global_stage_context": {
+        "error_information": None
+    },
+    'dummy_result': "dummy_result"
+}
+
+import sys
+import traceback
+
+try:
+    1/0
+except:
+    error_info = sys.exc_info()
+    RESULT_FAILURE = {
+        "global_stage_context": {
+            "error_information": {
+                "type": error_info[0],
+                "exception": error_info[1],
+                "traceback": traceback.extract_tb(error_info[2])
+            }
+        },
+        'dummy_result': "dummy_result"
+    }
+
 class MockDeployment(object):
     def __init__(self, job_name):
         self._job_name = job_name
@@ -12,21 +37,35 @@ class MockDeployment(object):
     def job_name(self):
         return self._job_name
 
-    def deploy(self):
+    def is_job_complete(self):
         pass
 
+    def get_job_status(self):
+        if not self.is_job_complete():
+            return "Running"
+        else:
+            results = self.fetch_job_results()
+
+            try:
+                error_information = results["global_stage_context"]["error_information"]
+
+                if error_information is not None:
+                    return "Error"
+                else:
+                    return "Completed"
+            except:
+                return "Error"
+
+class SuccessfulMockDeployment(MockDeployment):
+    def __init__(self, job_name):
+        super(SuccessfulMockDeployment, self).__init__(job_name)
+    
     def is_job_complete(self):
         return True
 
     def fetch_job_results(self):
-        return None
-
-class InstantFinishDeployment(MockDeployment):
-    def __init__(self, job_name):
-        super(InstantFinishDeployment, self).__init__(job_name)
-
-    def is_job_complete(self):
-        return True
+        result = RESULT_SUCCESS
+        return result
 
 class NeverFinishDeployment(MockDeployment):
     def __init__(self, job_name):
@@ -35,7 +74,7 @@ class NeverFinishDeployment(MockDeployment):
     def is_job_complete(self):
         return False
 
-class TakesOneSecond(MockDeployment):
+class TakesOneSecond(SuccessfulMockDeployment):
     def __init__(self, job_name):
         self._counter = 0
         super(TakesOneSecond, self).__init__(job_name)
@@ -47,7 +86,7 @@ class TakesOneSecond(MockDeployment):
         else:
             return True
 
-class TakesTwoSeconds(MockDeployment):
+class TakesTwoSeconds(SuccessfulMockDeployment):
     def __init__(self, job_name):
         self._counter = 0
         super(TakesTwoSeconds, self).__init__(job_name)
@@ -58,19 +97,6 @@ class TakesTwoSeconds(MockDeployment):
             return False
         else:
             return True
-
-class SuccessfulMockDeployment(MockDeployment):
-    def __init__(self, job_name):
-        super(SuccessfulMockDeployment, self).__init__(job_name)
-    
-    def fetch_job_results(self):
-        result = {
-            "global_stage_context": {
-                "error_information": None
-            },
-            'dummy_result': "dummy_result"
-        }
-        return result
 
 class SuccessfulTakesTime(SuccessfulMockDeployment):
     def __init__(self, job_name):
@@ -114,25 +140,11 @@ class FailedMockDeployment(MockDeployment):
     def __init__(self, job_name):
         super(FailedMockDeployment, self).__init__(job_name)
 
+    def is_job_complete(self):
+        return True
+
     def fetch_job_results(self):
-        import sys
-        import traceback
-
-        try:
-            1/0
-        except:
-            error_info = sys.exc_info()
-            result = {
-                "global_stage_context": {
-                    "error_information": {
-                        "type": error_info[0],
-                        "exception": error_info[1],
-                        "traceback": traceback.extract_tb(error_info[2])
-                    }
-                },
-                'dummy_result': "dummy_result"
-            }
-
+        result = RESULT_FAILURE
         return result
 
 class FailedTakesRandomTime(FailedMockDeployment):
