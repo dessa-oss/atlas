@@ -6,16 +6,43 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class DeploymentWrapper(object):
+    """Provides user-facing functionality to deployment classes created through integrations (e.g. LocalShellJobDeployment, GCPJobDeployment)
+        Arguments:
+            deployment: {*JobDeployment} -- The integration-level job deployment to wrap
+    """
+
     def __init__(self, deployment):
         self._deployment = deployment
 
     def job_name(self):
+        """Gets the name of the job being run
+
+        Returns:
+            job_name -- The name of the job being run
+        """
+
         return self._deployment.job_name()
 
     def is_job_complete(self):
+        """Returns whether the job being run has completed
+
+        Returns:
+            is_job_complete -- Boolean value - True if the job is done, False otherwise (regardless of success / failure)
+        """
+
         return self._deployment.is_job_complete()
 
     def fetch_job_results(self, wait_seconds=5, verbose_errors=False):
+        """Waits for the job to complete and then fetches the results for the job
+
+            Arguments:
+                wait_seconds: {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
+                verbose_errors: {bool} -- Whether to output stack trace entries relating to Foundations in the event of an exception (defaults to False)
+        
+        Returns:
+            results_dict -- Dict representing a more-or-less "serialized" PipelineContext for the job.  Will raise a RemoteException in the event of an exception thrown in the execution environment
+        """
+
         from vcat.remote_exception import check_result
         
         if not self.is_job_complete():
@@ -25,6 +52,12 @@ class DeploymentWrapper(object):
         return check_result(self.job_name(), result, verbose_errors)
 
     def wait_for_deployment_to_complete(self, wait_seconds=5):
+        """Waits for the job to complete
+
+            Arguments:
+                wait_seconds: {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
+        """
+
         import time
         from vcat.global_state import log_manager
 
