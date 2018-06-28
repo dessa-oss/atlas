@@ -30,6 +30,9 @@ miscellaneous_archive_implementation:
   archive_type: vcat.LocalFileSystemPipelineArchive
   constructor_arguments: [/tmp/foundations-archive]
 
+deployment_implementation:
+  deployment_type: vcat.LocalShellJobDeployment
+
 job_source_bundle:
   bundle_name: test_bundle
   target_path: .
