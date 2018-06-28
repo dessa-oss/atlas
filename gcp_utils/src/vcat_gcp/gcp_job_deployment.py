@@ -31,3 +31,14 @@ class GCPJobDeployment(object):
 
     def fetch_job_results(self):
         return self._deployment.fetch_job_results()
+
+    def get_job_status(self):
+        if not self.is_job_complete():
+            return "Running"
+        else:
+            results = self.fetch_job_results()
+
+            if results["global_stage_context"]["error_information"] is not None:
+                return "Error"
+            else:
+                return "Completed"
