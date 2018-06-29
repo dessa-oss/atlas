@@ -44,8 +44,12 @@ class ConfigManager(object):
     @staticmethod
     def _string_to_type(type_as_string):
         from pydoc import locate
+        from vcat.utils import is_string
 
-        return locate(type_as_string)
+        if is_string(type_as_string):
+            return locate(type_as_string)
+        else:
+            return type_as_string
 
     def reflect_constructor(self, name, type_name, default_callback):
         config = self.config()
