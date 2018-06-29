@@ -68,3 +68,13 @@ class DeploymentWrapper(object):
             time.sleep(wait_seconds)
 
         log.info("job `" + self.job_name() + "` completed")
+
+    def get_job_status(self):
+        """Similar to is_job_complete, but with more information
+
+        Returns:
+            status -- String, which is either "Queued", "Running", "Completed", or "Error"
+
+        """
+
+        return self._deployment.get_job_status()

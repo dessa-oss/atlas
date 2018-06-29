@@ -30,7 +30,9 @@ class GCPBucket(object):
         return byte_string(data_bytes)
 
     def download_to_file(self, name, output_file):
-        return self._blob(name).download_to_file(output_file)
+        self._blob(name).download_to_file(output_file)
+        output_file.flush()
+        output_file.seek(0)
 
     def list_files(self, pathname):
         from os.path import dirname

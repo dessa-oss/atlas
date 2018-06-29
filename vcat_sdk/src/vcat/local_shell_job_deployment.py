@@ -36,6 +36,19 @@ class LocalShellJobDeployment(object):
 
     def is_job_complete(self):
         return True
+    
+    def get_job_status(self):
+        results = self.fetch_job_results()
+
+        try:
+            error_information = results["global_stage_context"]["error_information"]
+
+            if error_information is not None:
+                return "Error"
+            else:
+                return "Completed"
+        except:
+            return "Error"
 
     def fetch_job_results(self):
         return self._results
