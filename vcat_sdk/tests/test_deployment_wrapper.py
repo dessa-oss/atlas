@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from vcat.deployment_wrapper import DeploymentWrapper
-import fixtures.deployment_wrapper_fixtures as dwf
+import vcat_sdk_fixtures.deployment_wrapper_fixtures as dwf
 
 class TestDeploymentWrapper(unittest.TestCase):
     def test_get_job_name(self):
@@ -21,10 +21,6 @@ class TestDeploymentWrapper(unittest.TestCase):
 
         deployment = DeploymentWrapper(dwf.MockDeployment(job_name))
         self.assertEqual(job_name, deployment.job_name())
-
-    def test_is_job_complete_instantly_complete(self):
-        deployment = DeploymentWrapper(dwf.InstantFinishDeployment("job_name"))
-        self.assertTrue(deployment.is_job_complete())
 
     def test_is_job_complete_never_finish(self):
         deployment = DeploymentWrapper(dwf.NeverFinishDeployment("job_name"))
@@ -107,3 +103,27 @@ class TestDeploymentWrapper(unittest.TestCase):
         except RemoteException as e:
             inner_result = deployment._deployment.fetch_job_results()
             self.assertEqual(str(e), pretty_error("job_name", inner_result["global_stage_context"]["error_information"]))
+
+    def test_get_job_status_forwards_call(self):
+        neverending_deployment = DeploymentWrapper(dwf.NeverFinishDeployment("job_name"))
+
+        for _ in range(0, 5):
+            self.assertEqual(neverending_deployment.get_job_status(), neverending_deployment._deployment.get_job_status())
+
+        mock_deployment_classes = [
+            dwf.FailedMockDeployment,
+            dwf.FailedTakesRandomTime,
+            dwf.SuccessfulMockDeployment,
+            dwf.SuccessfulTakesRandomTime,
+            dwf.SuccessfulTakesTime,
+            dwf.TakesOneSecond,
+            dwf.TakesTwoSeconds
+        ]
+
+        for mock_class in mock_deployment_classes:
+            mock_deployment = DeploymentWrapper(mock_class("job_name"))
+            while mock_deployment.get_job_status() == "Running":
+                pass
+
+            self.assertEqual(mock_deployment.get_job_status(), mock_deployment._deployment.get_job_status())
+            self.assertEqual(mock_deployment.get_job_status(), mock_deployment._deployment.get_job_status())
