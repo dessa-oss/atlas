@@ -34,14 +34,14 @@ class TestStagedModulePy2Loader(unittest.TestCase):
         import dill as pickle
 
         module = StagedModulePy2Loader(pickle).load_module('staged_dill')
-        result = module.dumps('hello')()
+        result = module.dumps('hello').run_same_process()
         self.assertTrue(pickle.loads(result), 'hello')
 
     def test_load_module_stage_function_supports_kwargs(self):
         import dill as pickle
 
         module = StagedModulePy2Loader(pickle).load_module('staged_dill')
-        result = module.dumps(obj='hello')()
+        result = module.dumps(obj='hello').run_same_process()
         self.assertTrue(pickle.loads(result), 'hello')
 
     def test_load_module_stores_sys_module(self):
