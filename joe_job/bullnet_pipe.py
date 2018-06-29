@@ -16,7 +16,7 @@ bullnet_pipe = pipeline | preproc | (test_bullnet, batch_size, n_batches, max_em
 bullnet_pipe.persist()
 
 deployment = bullnet_pipe.run(max_embedding=50, emb_size_divisor=2, lr=1e-4, l2=1e-3)
-print(deployment.fetch_job_results())
 
 # Returns "Completed" finished successfully, "Error" if finished but unsuccessful
 print(deployment.get_job_status())
+print(deployment.fetch_job_results())

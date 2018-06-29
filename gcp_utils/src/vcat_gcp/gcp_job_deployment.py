@@ -33,8 +33,9 @@ class GCPJobDeployment(object):
         return self._deployment.fetch_job_results()
 
     def get_job_status(self):
+        import vcat.constants as constants
         if not self.is_job_complete():
-            return "Running"
+            return constants.deployment_running
         else:
             results = self.fetch_job_results()
 
@@ -42,8 +43,8 @@ class GCPJobDeployment(object):
                 error_information = results["global_stage_context"]["error_information"]
 
                 if error_information is not None:
-                    return "Error"
+                    return constants.deployment_error
                 else:
-                    return "Completed"
+                    return constants.deployment_completed
             except:
-                return "Error"
+                return constants.deployment_error
