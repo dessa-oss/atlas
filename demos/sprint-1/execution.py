@@ -3,6 +3,9 @@ from staged_methods import *
 
 # create a stage from the create_data_frame method
 data = create_data_frame()
+
+# union the data frame with itself
+data = join_data(data, data)
  
 # create a stage from the print_it metho
 log = print_it(data)
