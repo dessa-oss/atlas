@@ -20,9 +20,7 @@ class DeploymentManager(object):
         deployment_constructor, constructor_args, constructor_kwargs = config_manager.reflect_constructor(
             'deployment', 'deployment', DeploymentManager._create_default_deployment)
 
-        config = config_manager.config()
-        job_source_bundle_dict = config['job_source_bundle']
-        job_source_bundle = JobSourceBundle.from_dict(job_source_bundle_dict)
+        job_source_bundle = JobSourceBundle.for_deployment()
 
         return deployment_constructor(job_name, job, job_source_bundle, *constructor_args, **constructor_kwargs)
 
