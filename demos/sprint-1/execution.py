@@ -8,4 +8,10 @@ data = create_data_frame()
 log = print_it(data)
  
 # execute the stage
-log.run()
+job = log.run()
+
+# we can print the status of the job
+print("Job Status: {}".format(job.get_job_status()))
+
+# we can wait for the job to complete
+job.wait_for_deployment_to_complete()
