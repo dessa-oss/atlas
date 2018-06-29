@@ -19,4 +19,4 @@ deployment = bullnet_pipe.run(max_embedding=50, emb_size_divisor=2, lr=1e-4, l2=
 print(deployment.fetch_job_results())
 
 # Returns "Completed" finished successfully, "Error" if finished but unsuccessful
-print(LocalShellJobDeployment.get_job_status(deployment))
+print(deployment.get_job_status())
