@@ -76,35 +76,3 @@ def _extract_results(results_dict):
         results.update(result_entry)
 
     return results
-
-
-def adaptive_search(connector_wrapper, deployer_type, initial_generator, generator_function):
-    from vcat.job_source_bundle import JobSourceBundle
-    from vcat.job import Job
-    import Queue
-    import uuid
-
-    queue = Queue.Queue()
-
-    for initial_params in initial_generator:
-        queue.put(initial_params)
-
-    while not queue.empty():
-        connector_wrapper._reset_state()
-
-        param_set = queue.get()
-
-        deployer_uuid = str(uuid.uuid4())
-        bundle_base = deployer_uuid + "_bundle"
-
-        job = Job(connector_wrapper, **param_set)
-        job_source_bundle = JobSourceBundle(bundle_base, bundle_base)
-        deployer = deployer_type(deployer_uuid, job, job_source_bundle)
-
-        wait_for_deployment_to_complete(deployer)
-
-        results_dict = deployer.fetch_job_results()
-        print(results_dict)
-
-        for new_params in generator_function(_extract_results(results_dict)):
-            queue.put(new_params)

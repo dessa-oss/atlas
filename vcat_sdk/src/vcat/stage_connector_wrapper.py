@@ -62,14 +62,17 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, **params):
+    def run(self, params_dict={}, **kw_params):
         import uuid
 
         from vcat.global_state import deployment_manager
         from vcat.deployment_wrapper import DeploymentWrapper
 
+        all_params = params_dict.copy()
+        all_params.update(kw_params)
+
         job_name = str(uuid.uuid4())
-        job = Job(self, **params)
+        job = Job(self, **all_params)
         deployment = deployment_manager.deploy({}, job_name, job)
 
         return DeploymentWrapper(deployment)
@@ -136,3 +139,23 @@ class StageConnectorWrapper(object):
             return data[key]
 
         return self.stage(getitem, key)
+
+    # def adaptive_search(self, set_of_initial_params, params_generator, n_iterations=None):
+    #     import Queue
+    #     import uuid
+
+    #     from vcat.deployment_utils import _extract_results
+
+    #     queue = Queue.Queue()
+
+    #     for initial_params in set_of_initial_params:
+    #         queue.put(initial_params)
+
+    #     while not queue.empty():
+    #         self._reset_state()
+
+    #         param_set = queue.get()
+    #         deployment = self.run(param_set)
+
+    #         for new_params in generator_function(_extract_results(results_dict)):
+    #             queue.put(new_params)
