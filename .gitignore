@@ -21,3 +21,4 @@ ssh_utils/src/vcat_ssh.egg-info
 tmp
 **/*.csv
 vcat.zip
+.vscode
