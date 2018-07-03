@@ -20,6 +20,11 @@ class TestDiscreteHyperparameter(unittest.TestCase):
         sample = disc.grid_sample()
         self.assertEqual([1], list(sample))
 
+    def test_grid_sample_two_elements(self):
+        disc = DiscreteHyperparameter([1, 2])
+        sample = disc.grid_sample()
+        self.assertEqual([1, 2], list(sample))
+
     def test_random_sample_no_elements(self):
         disc = DiscreteHyperparameter([])
         sample = disc.random_sample()

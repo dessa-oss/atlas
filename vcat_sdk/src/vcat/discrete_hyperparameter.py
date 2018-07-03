@@ -10,7 +10,8 @@ class DiscreteHyperparameter(object):
         self._values = values
     
     def grid_sample(self):
-        return self._values
+        for value in self._values:
+            yield value
 
     def random_sample(self):
         import random
