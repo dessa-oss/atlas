@@ -35,6 +35,26 @@ class SFTPJobDeployment(object):
     def fetch_job_results(self):
         return self._deployment.fetch_job_results()
 
+    def get_job_status(self):
+        import vcat.constants as constants
+        if not self.is_job_complete():
+            if self._is_job_queued():
+                return constants.deployment_queued
+            else:
+                return constants.deployment_running
+        else:
+            results = self.fetch_job_results()
+
+            try:
+                error_information = results["global_stage_context"]["error_information"]
+
+                if error_information is not None:
+                    return constants.deployment_error
+                else:
+                    return constants.deployment_completed
+            except:
+                return constants.deployment_error
+
     def _code_path(self):
         from vcat.global_state import config_manager
         return config_manager['code_path']
@@ -42,3 +62,8 @@ class SFTPJobDeployment(object):
     def _result_path(self):
         from vcat.global_state import config_manager
         return config_manager['result_path']
+
+    def _is_job_queued(self):
+        bucket = self._deployment._code_bucket
+        job_name = self.job_name()
+        return bucket.exists(job_name + ".tgz")

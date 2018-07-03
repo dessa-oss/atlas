@@ -12,7 +12,6 @@ from vcat.stage_connector import StageConnector
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
 
-
 class StageConnectorWrapper(object):
 
     def __init__(self, connector, pipeline_context, stage_context, stage_config):
@@ -63,7 +62,19 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, **filler_kwargs):
+    def run(self, **params):
+        import uuid
+
+        from vcat.global_state import deployment_manager
+        from vcat.deployment_wrapper import DeploymentWrapper
+
+        job_name = str(uuid.uuid4())
+        job = Job(self, **params)
+        deployment = deployment_manager.deploy({}, job_name, job)
+
+        return DeploymentWrapper(deployment)
+
+    def run_same_process(self, **filler_kwargs):
         self.add_tree_names(**filler_kwargs)
         return self.run_without_provenance(**filler_kwargs)
 

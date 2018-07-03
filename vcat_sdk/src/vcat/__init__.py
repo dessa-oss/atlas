@@ -37,6 +37,8 @@ from vcat.prefixed_bucket import PrefixedBucket
 from vcat.cached_pipeline_archive import CachedPipelineArchive
 from vcat.serializer import *
 
+import vcat.import_installer
+
 def _append_module():
     import sys
     module_manager.append_module(sys.modules[__name__])

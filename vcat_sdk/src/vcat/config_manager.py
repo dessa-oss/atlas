@@ -41,12 +41,23 @@ class ConfigManager(object):
 
         return reflected_klass(*reflected_args, **reflected_kwargs)
 
+    @staticmethod
+    def _string_to_type(type_as_string):
+        from pydoc import locate
+        from vcat.utils import is_string
+
+        if is_string(type_as_string):
+            return locate(type_as_string)
+        else:
+            return type_as_string
+
     def reflect_constructor(self, name, type_name, default_callback):
         config = self.config()
         implementation_key = name + '_implementation'
         if implementation_key in config:
             reflected_implementation = config[implementation_key]
-            reflected_klass = reflected_implementation[type_name + '_type']
+            reflected_klass_string = reflected_implementation[type_name + '_type']
+            reflected_klass = ConfigManager._string_to_type(reflected_klass_string)
             reflected_args = reflected_implementation.get(
                 'constructor_arguments', [])
             reflected_kwargs = reflected_implementation.get(

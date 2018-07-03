@@ -108,7 +108,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(test_dict, result_dict)
 
     def test_split_process_output_zero_length(self):
-        self.assertEqual([u""], utils.split_process_output(""))
+        self.assertEqual([], utils.split_process_output(""))
 
     def test_split_process_output_few_lines(self):
         self.assertEqual([u"This", u"is", u"a", u"test"], utils.split_process_output("      This\nis\na\ntest  "))
