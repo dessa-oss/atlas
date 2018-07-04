@@ -36,21 +36,21 @@ def main():
 
     # impute numeric columns using mean
     encoder = Imputer()
-    impute_columns = ['Age', 'Fare']
-    encoder = encoder.fit(x_train[impute_columns])
-    x_train = encode(x_train, encoder, impute_columns)
-    x_valid = encode(x_valid, encoder, impute_columns)
+    numeric_columns = ['Age', 'Fare']
+    encoder = encoder.fit(x_train[numeric_columns])
+    x_train = encode(x_train, encoder, numeric_columns)
+    x_valid = encode(x_valid, encoder, numeric_columns)
 
     # one hot encode categorical columns
     encoder = OneHotEncoder()
-    one_hot_columns = ['Pclass', 'Sex', 'Cabin', 'Embarked']
-    encoder = encoder.fit(x_train[one_hot_columns])
-    x_train = encode(x_train, encoder, one_hot_columns)
-    x_valid = encode(x_valid, encoder, one_hot_columns)
+    categorical_columns = ['Pclass', 'Sex', 'Cabin', 'Embarked']
+    encoder = encoder.fit(x_train[categorical_columns])
+    x_train = encode(x_train, encoder, categorical_columns)
+    x_valid = encode(x_valid, encoder, categorical_columns)
 
     # remove non numerical columns
-    x_train = x_train.drop(columns=['Pclass', 'Sex', 'Cabin', 'Embarked'])
-    x_valid = x_valid.drop(columns=['Pclass', 'Sex', 'Cabin', 'Embarked'])
+    x_train = x_train.drop(columns=categorical_columns)
+    x_valid = x_valid.drop(columns=categorical_columns)
 
     # train the model
     model = train_logistic_regression(x_train, y_train)
