@@ -41,3 +41,6 @@ def assign_columns(data_frame, columns, value):
 
 def union(first, second):
     return pd.concat([first, second])
+
+def require(data, *args):
+    return data
