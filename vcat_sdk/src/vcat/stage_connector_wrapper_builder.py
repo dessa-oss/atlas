@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class StageConnectorWrapperBuilder(object):
 
     def __init__(self, pipeline_context):
@@ -46,39 +47,17 @@ class StageConnectorWrapperBuilder(object):
         return self
 
     def _append_initial_middleware(self):
-        from vcat.error_middleware import ErrorMiddleware
-        from vcat.redundant_execution_middleware import RedundantExecutionMiddleware
+        from vcat.global_state import middleware_manager
 
-        self._middleware.append_middleware(RedundantExecutionMiddleware())
-        self._middleware.append_middleware(
-            ErrorMiddleware(self._stage_context))
+        for middleware in middleware_manager.initial_middleware():
+            self._middleware.append_middleware(middleware.callback(self._stage_context))
 
     def _append_stage_middleware(self):
-        from vcat.argument_filler_middleware import ArgumentFillerMiddleware
-        from vcat.cache_middleware import CacheMiddleware
-        from vcat.stage_output_middleware import StageOutputMiddleware
-        from vcat.stage_log_middleware import StageLogMiddleware
-        from vcat.upstream_result_middleware import UpstreamResultMiddleware
-        from vcat.context_aware_middleware import ContextAwareMiddleware
-        from vcat.time_stage_middleware import TimeStageMiddleware
-        from vcat.stage_logging_middleware import StageLoggingMiddleware
+        from vcat.global_state import middleware_manager
 
-        self._middleware.append_middleware(StageOutputMiddleware(
-            self._pipeline_context, self._stage_config, self._uuid(), self._stage_context))
-        self._middleware.append_middleware(
-            StageLogMiddleware(self._stage_context))
-        self._middleware.append_middleware(
-            ArgumentFillerMiddleware(self._stage))
-        self._middleware.append_middleware(CacheMiddleware(
-            self._stage_config, self._stage_context, self._stage))
-        self._middleware.append_middleware(UpstreamResultMiddleware())
-        self._middleware.append_middleware(
-            ContextAwareMiddleware(self._stage_context, self._stage))
-        self._middleware.append_middleware(
-            TimeStageMiddleware(self._stage_context, self._stage))
-        self._middleware.append_middleware(
-            StageLoggingMiddleware(self._stage)
-        )
+        for middleware in middleware_manager.stage_middleware():
+            self._middleware.append_middleware(middleware.callback(self._pipeline_context,
+                                self._stage_config, self._stage_context, self._stage))
 
     def _uuid(self):
         return self._stage.uuid()
