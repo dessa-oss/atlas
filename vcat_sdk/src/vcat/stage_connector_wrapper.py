@@ -125,6 +125,7 @@ class StageConnectorWrapper(object):
             result = getattr(instance, name)(*args, **kwargs)
             if result is None:
                 return instance
+            return result
 
         def auto_stage(*args, **kwargs):
             return self.stage(call_method_on_instance, *args, **kwargs)
