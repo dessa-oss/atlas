@@ -9,4 +9,4 @@ import pandas as pd
 
 
 def load_titanic():
-    return pd.read_csv('examples/titanic.csv')
+    return pd.read_csv('titanic.csv')

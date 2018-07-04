@@ -6,12 +6,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import vcat
-from staged_examples.common.data import load_titanic
-from staged_examples.common.prep import fillna
-from staged_examples.common.logging import log_data
+from staged_common.data import load_titanic
+from staged_common.prep import fillna
+from staged_common.logging import log_data
 
 if __name__ == '__main__':
     data = load_titanic()
     data = fillna(data, 'Cabin', 'NULLCABIN')
     data = fillna(data, 'Embarked', 'NULLEMBARKED')
-    log_data(data).run_same_process()
+    log_data(data).run()
