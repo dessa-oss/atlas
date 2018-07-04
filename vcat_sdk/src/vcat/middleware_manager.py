@@ -21,8 +21,8 @@ class MiddlewareManager(object):
     def initial_middleware(self):
         if self._initial_middleware is None:
             self._initial_middleware = [
-                MiddlewareManager.NamedMiddleware('Redundant', MiddlewareManager._create_redundant_middleware),
-                MiddlewareManager.NamedMiddleware('Error', MiddlewareManager._create_error_middleware)
+                self._make_middleware('Redundant', MiddlewareManager._create_redundant_middleware),
+                self._make_middleware('Error', MiddlewareManager._create_error_middleware)
             ]
 
         return self._initial_middleware
@@ -30,23 +30,28 @@ class MiddlewareManager(object):
     def stage_middleware(self):
         if self._stage_middleware is None:
             self._stage_middleware = [
-                MiddlewareManager.NamedMiddleware('StageOutput', MiddlewareManager._create_stage_output_middleware),
-                MiddlewareManager.NamedMiddleware('StageLog', MiddlewareManager._create_stage_log_middleware),
-                MiddlewareManager.NamedMiddleware('ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
-                MiddlewareManager.NamedMiddleware('Cache', MiddlewareManager._create_cache_middleware),
-                MiddlewareManager.NamedMiddleware('UpstreamResult', MiddlewareManager._create_upstream_result_middleware),
-                MiddlewareManager.NamedMiddleware('ContextAware', MiddlewareManager._create_context_aware_middleware),
-                MiddlewareManager.NamedMiddleware('TimeStage', MiddlewareManager._create_time_stage_middleware),
-                MiddlewareManager.NamedMiddleware('StageLogging', MiddlewareManager._create_stage_logging_middleware)
+                self._make_middleware('StageOutput', MiddlewareManager._create_stage_output_middleware),
+                self._make_middleware('StageLog', MiddlewareManager._create_stage_log_middleware),
+                self._make_middleware('ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
+                self._make_middleware('Cache', MiddlewareManager._create_cache_middleware),
+                self._make_middleware('UpstreamResult', MiddlewareManager._create_upstream_result_middleware),
+                self._make_middleware('ContextAware', MiddlewareManager._create_context_aware_middleware),
+                self._make_middleware('TimeStage', MiddlewareManager._create_time_stage_middleware),
+                self._make_middleware('StageLogging', MiddlewareManager._create_stage_logging_middleware)
             ]
 
         return self._stage_middleware
 
-    def append_initial(self, middleware):
+    def append_initial(self, name, middleware_callback):
+        middleware = self._make_middleware(name, middleware_callback)
         self.initial_middleware().append(middleware)
 
-    def append_stage(self, middleware):
+    def append_stage(self, name, middleware_callback):
+        middleware = self._make_middleware(name, middleware_callback)
         self.stage_middleware().append(middleware)
+
+    def _make_middleware(self, name, callback):
+        return MiddlewareManager.NamedMiddleware(name, callback)
 
     @staticmethod
     def _create_redundant_middleware(stage_context):
