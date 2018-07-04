@@ -8,10 +8,20 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import vcat
 import config
 from staged_common.data import load_titanic
-from staged_common.prep import fillna, one_hot_encode
+from staged_common.prep import require
 from staged_common.logging import log_data
 
+def main():
+    # defining the stage twice while explicitly enabling caching will prevent the method from running twice
+    data = 'hello world'
+    log = log_data(data)
+    log.enable_caching()
+
+    log2 = log_data(data)
+    log2.enable_caching()
+    
+    executor = require(log, log2)
+    executor.run_same_process()
+
 if __name__ == '__main__':
-    data = load_titanic()
-    data = one_hot_encode(data, 'Sex')
-    log_data(data).run()
+    main()

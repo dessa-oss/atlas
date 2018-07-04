@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import vcat
+import config
 from staged_common.data import load_titanic
 from staged_common.prep import get_mode, fillna, one_hot_encode, encode, assign_columns, union
 from staged_common.models import train_logistic_regression, get_metrics
