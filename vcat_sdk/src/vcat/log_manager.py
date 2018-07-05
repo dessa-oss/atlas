@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class LogManager(object):
 
     def __init__(self):
@@ -33,4 +34,26 @@ class LogManager(object):
 
     def _add_logger(self, name):
         from logging import getLogger
-        self._loggers[name] = getLogger(name)
+        from logging import getLevelName
+
+        new_logger = getLogger(name)
+
+        log_level = self._find_log_level(name)
+        if log_level is not None:
+            new_logger.level = getLevelName(log_level)
+
+        self._loggers[name] = new_logger
+
+    def _find_log_level(self, name):
+        from vcat.global_state import config_manager
+
+        longest_match = 0
+        log_level = None
+
+        log_levels = config_manager.config().get('namespaced_log_levels', {})
+        for key, value in log_levels.items():
+            if len(key) > longest_match and name.startswith(key):
+                longest_match = len(key)
+                log_level = value
+
+        return log_level
