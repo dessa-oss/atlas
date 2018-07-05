@@ -7,10 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SimpleTempfile(object):
 
-    def __init__(self, mode):
+    def __init__(self, mode, suffix=None):
         self.path = None
         self.file = None
         self.name = None
+        self._suffix = suffix
         self._mode = mode
 
     def seek(self, *args, **kwargs):
@@ -33,7 +34,7 @@ class SimpleTempfile(object):
         import tempfile
         import os
 
-        file_descriptor, self.path = tempfile.mkstemp()
+        file_descriptor, self.path = tempfile.mkstemp(suffix=self._suffix)
         self.file = os.fdopen(file_descriptor, self._mode)
         self.file.__enter__()
         self.name = self.path
