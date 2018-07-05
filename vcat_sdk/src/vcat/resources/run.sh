@@ -3,7 +3,7 @@
 BASEDIR=$(dirname "$0")
 
 cd $BASEDIR && \
-  stat run.env && \
+  stat run.env> /dev/null 2>&1 && \
   . ./run.env
 
 if [[ -z "${python_path}" ]]; then
