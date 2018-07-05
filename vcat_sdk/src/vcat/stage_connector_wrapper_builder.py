@@ -75,7 +75,7 @@ class StageConnectorWrapperBuilder(object):
         self._middleware.append_middleware(
             ContextAwareMiddleware(self._stage_context, self._stage))
         self._middleware.append_middleware(
-            TimeStageMiddleware(self._stage_context))
+            TimeStageMiddleware(self._stage_context, self._stage))
         self._middleware.append_middleware(
             StageLoggingMiddleware(self._stage)
         )

@@ -30,7 +30,7 @@ class CacheMiddleware(object):
 
             cached_result = self._time(True, stage_cache.fetch_cache_option)
             if cached_result.is_present():
-                self._log().debug('Fetched stage %s (%s) data from cache in %d ms', self._uuid(), self._name(), self._cache_read_time())
+                self._log().debug('Fetched stage %s (%s) data from cache in %f s', self._uuid(), self._name(), self._cache_read_time())
                 self._stage_context.used_cache = True
                 return cached_result.get()
 
