@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from vcat import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
 from uuid import uuid4
+from os import getcwd
 
 # configure caching layer
 config_manager['cache_implementation'] = {
@@ -15,13 +16,15 @@ config_manager['cache_implementation'] = {
 }
 
 # configure all archive types to use the sample implementation
+archive_root = getcwd() + '/tmp/archives'
+
 archive_implementation = {
     'archive_type': LocalFileSystemPipelineArchive,
-    'constructor_arguments': ['tmp/archives'],
+    'constructor_arguments': [archive_root],
 }
 config_manager['archive_listing_implementation'] = {
     'archive_listing_type': LocalFileSystemPipelineListing,
-    'constructor_arguments': ['tmp/archives'],
+    'constructor_arguments': [archive_root],
 }
 config_manager['stage_log_archive_implementation'] = archive_implementation
 config_manager['persisted_data_archive_implementation'] = archive_implementation
