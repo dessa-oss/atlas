@@ -11,11 +11,11 @@ if [[ -z "${python_path}" ]]; then
 fi
 
 cd $BASEDIR && \
-  tar -xvf job.tgz && \
-  $python_path -m pip install virtualenv && \
-  $python_path -m virtualenv --system-site-packages venv
+  tar -xf job.tgz && \
+  $python_path -m pip install -q virtualenv && \
+  $python_path -m virtualenv -q --system-site-packages venv
 
-stat $BASEDIR/venv/bin/activate
+stat $BASEDIR/venv/bin/activate > /dev/null 2>&1
 if [ $? -eq 0 ]; then 
   activate_path=venv/bin/activate
 else
@@ -26,7 +26,7 @@ cd $BASEDIR && \
   . $activate_path && \
   echo Running python version `python --version` located at `which python` && \
   touch requirements.txt && \
-  python -m pip install -r requirements.txt && \
+  python -m pip install -q -r requirements.txt && \
   python main.py
   
 status=$?
