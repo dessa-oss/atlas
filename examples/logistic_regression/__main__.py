@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import vcat
 import config
 from staged_common.data import load_titanic
-from staged_common.prep import get_mode, fillna, one_hot_encode, encode, assign_columns, union
+from staged_common.prep import get_mode, fillna, one_hot_encode, encode, assign_columns, union, train_imputer, train_one_hot_encoder, drop_non_numeric
 from staged_common.models import train_logistic_regression, get_metrics
 from staged_sklearn.model_selection import train_test_split
 from staged_common.one_hot_encoder import OneHotEncoder
@@ -18,9 +18,6 @@ from staged_common.logging import log_data, log_formatted
 def main():
     # load the data set
     data = load_titanic()
-
-    # remove unused columns
-    data = data.drop(columns=['Ticket'])
 
     # replace null category values with real ones
     data = fillna(data, 'Cabin', 'NULLCABIN')
@@ -36,22 +33,18 @@ def main():
         inputs, targets, test_size=0.2, random_state=42, stratify=targets.as_matrix()).splice(4)
 
     # impute numeric columns using mean
-    encoder = Imputer()
-    numeric_columns = ['Age', 'Fare']
-    encoder = encoder.fit(x_train[numeric_columns])
-    x_train = encode(x_train, encoder, numeric_columns)
-    x_valid = encode(x_valid, encoder, numeric_columns)
+    encoder = train_imputer(x_train, ['Age', 'Fare'])
+    x_train = encoder.transform(x_train)
+    x_valid = encoder.transform(x_valid)
 
     # one hot encode categorical columns
-    encoder = OneHotEncoder()
-    categorical_columns = ['Pclass', 'Sex', 'Cabin', 'Embarked']
-    encoder = encoder.fit(x_train[categorical_columns])
-    x_train = encode(x_train, encoder, categorical_columns)
-    x_valid = encode(x_valid, encoder, categorical_columns)
+    encoder = train_one_hot_encoder(x_train, ['Pclass', 'Sex', 'Cabin', 'Embarked'])
+    x_train = encoder.transform(x_train)
+    x_valid = encoder.transform(x_valid)
 
     # remove non numerical columns
-    x_train = x_train.drop(columns=categorical_columns)
-    x_valid = x_valid.drop(columns=categorical_columns)
+    x_train = drop_non_numeric(x_train)
+    x_valid = drop_non_numeric(x_valid)
 
     # train the model
     model = train_logistic_regression(x_train, y_train)
