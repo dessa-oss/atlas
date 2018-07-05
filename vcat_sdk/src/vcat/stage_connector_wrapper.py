@@ -140,6 +140,25 @@ class StageConnectorWrapper(object):
 
         return self.stage(getitem, key)
 
+    @staticmethod
+    def _generate_params_set(params_range_dict):
+        params_set = {}
+
+        for key, params_range in params_range_dict.items():
+            params_set[key] = params_range.random_sample()
+
+        return params_set
+
+    def random_search(self, params_range_dict, max_iterations):
+        all_deployments = []
+
+        for _ in range(max_iterations):
+            params_set = StageConnectorWrapper._generate_params_set()
+            deployment = self.run(params_set)
+            all_deployments.append(deployment)
+
+        return all_deployments
+
     # def adaptive_search(self, set_of_initial_params, params_generator, n_iterations=None):
     #     import Queue
     #     import uuid

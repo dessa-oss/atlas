@@ -12,48 +12,36 @@ from vcat.discrete_hyperparameter import DiscreteHyperparameter
 class TestDiscreteHyperparameter(unittest.TestCase):
     def test_grid_sample_no_elements(self):
         disc = DiscreteHyperparameter([])
-        sample = disc.grid_sample()
-        self.assertEqual([], list(sample))
+        sample = disc.grid_elements()
+        self.assertEqual([], sample)
 
     def test_grid_sample_one_element(self):
         disc = DiscreteHyperparameter([1])
-        sample = disc.grid_sample()
-        self.assertEqual([1], list(sample))
+        sample = disc.grid_elements()
+        self.assertEqual([1], sample)
 
     def test_grid_sample_two_elements(self):
         disc = DiscreteHyperparameter([1, 2])
-        sample = disc.grid_sample()
-        self.assertEqual([1, 2], list(sample))
+        sample = disc.grid_elements()
+        self.assertEqual([1, 2], sample)
 
     def test_random_sample_no_elements(self):
         disc = DiscreteHyperparameter([])
-        sample = disc.random_sample()
-        for item in sample:
+        try:
+            sample = disc.random_sample()
             self.fail("should not be anything in this sample")
+        except ValueError:
+            pass
 
     def test_random_sample_one_element_one_time(self):
         disc = DiscreteHyperparameter([1])
-        sample = disc.random_sample()
-        items = []
-        for item in sample:
-            if len(items) < 1:
-                items.append(item)
-            else:
-                break
-
-        self.assertEqual(items, [1])
+        for _ in range(1):
+            self.assertEqual(1, disc.random_sample())
 
     def test_random_sample_one_element_two_times(self):
         disc = DiscreteHyperparameter([1])
-        sample = disc.random_sample()
-        items = []
-        for item in sample:
-            if len(items) < 2:
-                items.append(item)
-            else:
-                break
-
-        self.assertEqual(items, [1] * 2)
+        for _ in range(2):
+            self.assertEqual(1, disc.random_sample())
 
     def test_random_sample_two_elements_ten_times(self):
         import random
@@ -62,21 +50,10 @@ class TestDiscreteHyperparameter(unittest.TestCase):
         random.seed(1001)
 
         def generate_random_sample():
-            sample = disc.random_sample()
-            items = []
-            for item in sample:
-                if len(items) < 10:
-                    items.append(item)
-                else:
-                    break
-
-            return items
+            return [disc.random_sample() for _ in range(10)]
 
         items0 = generate_random_sample()
         items1 = generate_random_sample()
-
-        self.assertEqual(len(items0), 10)
-        self.assertEqual(len(items1), 10)
 
         for item in items0 + items1:
             self.assertIn(item, [1, 2])

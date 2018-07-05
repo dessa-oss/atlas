@@ -9,15 +9,13 @@ class DiscreteHyperparameter(object):
     def __init__(self, values):
         self._values = values
     
-    def grid_sample(self):
-        for value in self._values:
-            yield value
+    def grid_elements(self):
+        return self._values
 
     def random_sample(self):
         import random
 
         if len(self._values) > 0:
-            while True:
-                yield random.choice(self._values)
+            return random.choice(self._values)
         else:
-            raise StopIteration
+            raise ValueError("cannot sample from empty list")
