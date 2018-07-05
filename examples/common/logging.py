@@ -12,7 +12,7 @@ def log_data(data):
 
 def log_formatted(format_string, *args):
     _log().info(format_string.format(*args))
-    return args
+    return list(args)
 
 def _log():
     from vcat import log_manager
