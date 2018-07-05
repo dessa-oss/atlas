@@ -97,7 +97,7 @@ class MiddlewareManager(object):
     @staticmethod
     def _create_cache_middleware(pipeline_context, stage_config, stage_context, stage):
         from vcat.cache_middleware import CacheMiddleware
-        return CacheMiddleware(stage_config, stage_context, stage.uuid())
+        return CacheMiddleware(stage_config, stage_context, stage)
 
     @staticmethod
     def _create_upstream_result_middleware(pipeline_context, stage_config, stage_context, stage):
@@ -112,7 +112,7 @@ class MiddlewareManager(object):
     @staticmethod
     def _create_time_stage_middleware(pipeline_context, stage_config, stage_context, stage):
         from vcat.time_stage_middleware import TimeStageMiddleware
-        return TimeStageMiddleware(stage_context)
+        return TimeStageMiddleware(stage_context, stage)
 
     @staticmethod
     def _create_stage_logging_middleware(pipeline_context, stage_config, stage_context, stage):
