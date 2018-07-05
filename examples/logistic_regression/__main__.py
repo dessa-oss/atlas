@@ -28,8 +28,8 @@ def main():
 
     # model training and scoring
     model = train_logistic_regression(x_train, y_train)
-    y_train, train_score = get_metrics(model, x_train, y_train).splice(2)
-    y_valid, valid_score = get_metrics(model, x_valid, y_valid).splice(2)
+    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').splice(2)
+    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').splice(2)
     results = union(y_train, y_valid)
 
     # print out the results

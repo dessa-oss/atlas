@@ -33,8 +33,8 @@ def main():
     }
 
     model = train_logistic_regression(x_train, y_train, **params)
-    y_train, train_score = get_metrics(model, x_train, y_train).splice(2)
-    y_valid, valid_score = get_metrics(model, x_valid, y_valid).splice(2)
+    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').splice(2)
+    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').splice(2)
 
     # print out the results
     log = log_formatted('\nTraining score was {}\nValidation score was {}', train_score, valid_score)

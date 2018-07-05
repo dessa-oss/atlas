@@ -60,9 +60,9 @@ def drop_non_numeric_columns(x_train, x_valid):
     return [x_train, x_valid]
 
 
-def get_metrics(model, inputs, targets):
-    targets_predications, train_score = get_metrics_internal(
+def get_metrics(model, inputs, targets, data_set_name):
+    targets_predications, score = get_metrics_internal(
         model, inputs, targets)
     targets['PredictedSurvived'] = targets_predications
     targets['Type'] = 'Training'
-    return [targets, train_score]
+    return [targets, score], {'score': score, 'data_set_name': data_set_name}
