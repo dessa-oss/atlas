@@ -30,13 +30,17 @@ class CacheMiddleware(object):
 
             cached_result = self._time(True, stage_cache.fetch_cache_option)
             if cached_result.is_present():
-                self._log().debug('Fetched stage %s (%s) data from cache', self._uuid(), self._name())
+                self._log().debug('Fetched stage %s (%s) data from cache in %d ms', self._uuid(), self._name(), self._cache_read_time())
                 self._stage_context.used_cache = True
                 return cached_result.get()
 
             self._log().debug('Stage %s (%s) data not in cache', self._uuid(), self._name())
             result = callback(args, kwargs)
-            return self._time(False, lambda: stage_cache.submit_cache(result))
+
+            if cached_result.is_present():
+                return result
+            else:
+                return self._time(False, lambda: stage_cache.submit_cache(result))
         else:
             self._log().debug('Cache disabled for stage %s (%s)', self._uuid(), self._name())
             return callback(args, kwargs)
@@ -46,6 +50,12 @@ class CacheMiddleware(object):
 
     def _name(self):
         return self._stage.function_name()
+
+    def _cache_read_time(self):
+        return self._stage_context.cache_read_time
+
+    def _cache_write_time(self):
+        return self._stage_context.cache_write_time
 
     def _time(self, is_read, callback):
         import time
