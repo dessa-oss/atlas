@@ -10,7 +10,7 @@ import vcat
 import vcat_mlflow
 import mlflow
 
-from staged_methods import *
+from staged_methods import create_data_frame, scale_data
 from random import randint
 
 # create a stage from the create_data_frame method
