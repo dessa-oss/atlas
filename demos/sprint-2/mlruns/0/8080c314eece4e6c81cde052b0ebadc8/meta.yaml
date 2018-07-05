@@ -1,0 +1,13 @@
+artifact_uri: /home/thomas/Dev/Spiking/vcat-results/demos/sprint-2/mlruns/0/8080c314eece4e6c81cde052b0ebadc8/artifacts
+end_time: 1530820745599
+entry_point_name: ''
+experiment_id: 0
+name: Run 0
+run_uuid: 8080c314eece4e6c81cde052b0ebadc8
+source_name: execution.py
+source_type: 4
+source_version: 31a24933a6fd861abb8c3277da6ec190b3921da2
+start_time: 1530820745488
+status: 3
+tags: []
+user_id: thomas

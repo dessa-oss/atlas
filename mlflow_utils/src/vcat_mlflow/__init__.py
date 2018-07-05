@@ -5,6 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from vcat_mlflow.installer import _install
+
+
 def _append_module():
     import sys
     from vcat.global_state import module_manager
@@ -12,3 +15,4 @@ def _append_module():
 
 
 _append_module()
+_install()
