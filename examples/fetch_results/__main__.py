@@ -5,16 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import JobPersister, ResultReader, LocalFileSystemPipelineListing
+from vcat import JobPersister, ResultReader, LocalFileSystemPipelineListing, log_manager
 import config
 
 def main():
+    log = log_manager.get_logger(__name__)
     listing = LocalFileSystemPipelineListing(config.archive_root)
-    print(listing.get_pipeline_names())
 
     with JobPersister.load_archiver_fetch() as fetch:
         reader = ResultReader(fetch)
-        print(reader.get_results())
+        log.info("\n{}".format(reader.get_results()))
 
 if __name__ == '__main__':
     main()
