@@ -142,50 +142,50 @@ class StageConnectorWrapper(object):
 
     @staticmethod
     def _generate_random_params_set(params_range_dict):
-        params_set = {}
-
-        for key, params_range in params_range_dict.items():
-            params_set[key] = params_range.random_sample()
-
-        return params_set
+        return {key: params_range.random_sample() for key, params_range in params_range_dict.items()}
 
     @staticmethod
-    def _create_random_params_set_generator(params_range_dict, max_iterations):
-        for _ in range(max_iterations):
-            yield StageConnectorWrapper._generate_random_params_set()
+    def _create_random_params_set_generator(params_range_dict):
+        while True:
+            yield StageConnectorWrapper._generate_random_params_set(params_range_dict)
 
-    def _create_and_run_param_sets(self, params_set_generator):
-        all_deployments = map(self.run, params_set_generator)
-        return all_deployments
-
-    def random_search(self, params_range_dict, max_iterations):
-        random_params_set_generator = StageConnectorWrapper._create_random_params_set_generator(params_range_dict, max_iterations)
-        return self._create_and_run_param_sets(random_params_set_generator)
-
-    @staticmethod
-    def _lazily_generate_all_grid_search_params(params_range_dict):
-        
-
-    @staticmethod
-    def _generate_grid_search_params(params_range_dict, max_iterations):
+    def _create_and_run_param_sets(self, params_set_generator, max_iterations):
         from vcat.utils import take_from_generator
 
-        all_params_set_generator = StageConnectorWrapper._lazily_generate_all_grid_search_params(params_range_dict)
-        
         if max_iterations is None:
-            return all_params_set_generator
+            truncated_params_set_generator = params_set_generator
         else:
-            return take_from_generator(max_iterations, all_params_set_generator)
+            truncated_params_set_generator = take_from_generator(max_iterations, params_set_generator)
+
+        all_deployments = map(self.run, truncated_params_set_generator)
+        return {deployment.job_name(): deployment for deployment in all_deployments}
+
+    def random_search(self, params_range_dict, max_iterations):
+        random_params_set_generator = StageConnectorWrapper._create_random_params_set_generator(params_range_dict)
+        return self._create_and_run_param_sets(random_params_set_generator, max_iterations)
+
+    @staticmethod
+    def _create_grid_search_params_set_generator(params_range_dict):
+        import itertools
+
+        keys = params_range_dict.keys()
+        params_ranges = params_range_dict.values()
+        params_grid_elements = map(lambda params_range: params_range.grid_elements(), params_ranges)
+
+        params_cartesian_product = itertools.product(*params_grid_elements)
+
+        for params_tuple in params_cartesian_product:
+            yield {key: param for key, param in zip(keys, params_tuple)}
 
     def grid_search(self, params_range_dict, max_iterations=None):
-        grid_params_set_generator = StageConnectorWrapper._generate_grid_search_params(params_range_dict, max_iterations)
-        return self._create_and_run_param_sets(grid_params_set_generator)
+        grid_params_set_generator = StageConnectorWrapper._create_grid_search_params_set_generator(params_range_dict)
+        return self._create_and_run_param_sets(grid_params_set_generator, max_iterations)
 
-    # def adaptive_search(self, set_of_initial_params, params_generator, n_iterations=None):
+    # def adaptive_search(self, set_of_initial_params, params_generator_function, max_iterations=None):
     #     import Queue
     #     import uuid
 
-    #     from vcat.deployment_utils import _extract_results
+    #     from vcat.deployment_utils import extract_results
 
     #     queue = Queue.Queue()
 
@@ -193,10 +193,4 @@ class StageConnectorWrapper(object):
     #         queue.put(initial_params)
 
     #     while not queue.empty():
-    #         self._reset_state()
-
-    #         param_set = queue.get()
-    #         deployment = self.run(param_set)
-
-    #         for new_params in generator_function(_extract_results(results_dict)):
-    #             queue.put(new_params)
+            

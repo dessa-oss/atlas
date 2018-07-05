@@ -1,0 +1,43 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+from vcat.stage_connector_wrapper import StageConnectorWrapper
+from vcat.discrete_hyperparameter import DiscreteHyperparameter
+
+class DummyConnectorWrapper(StageConnectorWrapper):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def run(self, kwargs):
+        return DummyDeploymentWrapper(kwargs)
+
+class DummyDeploymentWrapper(object):
+    def __init__(self, data):
+        import uuid
+
+        self._job_name = str(uuid.uuid4())
+        self._data = data
+
+    def job_name(self):
+        return self._job_name
+
+    def fetch_job_results(self):
+        return self._data
+
+dummy_pipeline = DummyConnectorWrapper()
+
+simple_param_set = {'a': DiscreteHyperparameter([1])}
+
+less_simple_param_set = {
+    'a': DiscreteHyperparameter([1, 2])
+}
+
+params_ranges_dict = {
+    'param_0': DiscreteHyperparameter([1, 2]),
+    'param_1': DiscreteHyperparameter([3]),
+    'param_2': DiscreteHyperparameter([4, 5, 6, 7])
+}

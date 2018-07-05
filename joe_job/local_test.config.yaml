@@ -79,6 +79,27 @@ cache_implementation:
   cache_type: vcat.LocalFileSystemCacheBackend
   constructor_arguments: [/tmp/foundations-cache]
 
+archive_listing_implementation:
+  archive_listing_type: vcat.LocalFileSystemPipelineListing
+
+stage_log_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
+persisted_data_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
+provenance_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
+job_source_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
+artifact_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
+miscellaneous_archive_implementation:
+  archive_type: vcat.LocalFileSystemPipelineArchive
+
 deployment_implementation:
   deployment_type: vcat_ssh.SFTPJobDeployment
 
@@ -88,9 +109,3 @@ shell_command: /bin/bash
 code_path: /home/ja/jobs
 result_path: /home/ja/job_results
 key_path: ./bare_metal.pem
-
-##### leave this in for now
-
-job_source_bundle:
-  bundle_name: test_bundle
-  target_path: .

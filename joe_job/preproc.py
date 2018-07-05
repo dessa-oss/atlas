@@ -20,7 +20,7 @@ def preproc():
     # with open("train_and_val.csv", "wb") as file:
     #     raw_file.download_to_file(file)
 
-    df = pd.read_csv("train_and_val.csv")
+    df = pd.read_csv("~/data_bucket/train_and_val.csv")
 
     # initial preprocessing
     add_datepart(df, 'saledate')
