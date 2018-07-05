@@ -15,9 +15,11 @@ from random import randint
 
 # create a stage from the create_data_frame method
 data = create_data_frame()
+data.persist()
 
 # union the data frame with itself
 data = scale_data(data, vcat.Hyperparameter("scale"))
+data.persist()
 
 # execute the stage locally with mlflow
 with mlflow.start_run():
