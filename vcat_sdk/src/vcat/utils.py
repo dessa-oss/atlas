@@ -149,3 +149,10 @@ def split_process_output(output):
     lines = output.decode().strip().split("\n")
     lines = filter(lambda line: len(line) > 0, lines)
     return lines
+
+def take_from_generator(elems_to_take, generator):
+    for _ in range(elems_to_take):
+        try:
+            yield next(generator)
+        except StopIteration:
+            return

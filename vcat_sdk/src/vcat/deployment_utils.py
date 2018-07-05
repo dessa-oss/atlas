@@ -43,32 +43,6 @@ def _grid_param_set_generator(hype_kwargs):
         yield param_set_entry
 
 
-def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
-    from vcat.job_source_bundle import JobSourceBundle
-    from vcat.job import Job
-    import time
-    import uuid
-    from vcat.global_state import log_manager
-
-    log = log_manager.get_logger(__name__)
-
-    for param_set in _grid_param_set_generator(hype_kwargs):
-        connector_wrapper._reset_state()
-        deployer_uuid = str(uuid.uuid4())
-
-        bundle_base = deployer_uuid + "_bundle"
-
-        job = Job(connector_wrapper, **param_set)
-        job_source_bundle = JobSourceBundle(bundle_base, bundle_base)
-        deployer = deployer_type(deployer_uuid, job, job_source_bundle)
-
-        deployer.deploy()
-
-        wait_for_deployment_to_complete(deployer)
-
-        log.debug(deployer.fetch_job_results())
-
-
 def _extract_results(results_dict):
     results = {}
 

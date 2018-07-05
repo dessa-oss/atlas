@@ -143,3 +143,63 @@ class TestUtils(unittest.TestCase):
             self.assertTrue(bytes_is_string)
         else:
             self.assertFalse(bytes_is_string)
+
+    def test_take_one_element_from_empty_generator(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_empty_generator
+
+        empty_gen = utils.take_from_generator(1, create_empty_generator())
+
+        for _ in empty_gen:
+            self.fail("should not be any values in an empty generator")
+
+    def test_take_nothing_from_generator(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_generator
+
+        empty_gen = utils.take_from_generator(0, create_generator())
+
+        for _ in empty_gen:
+            self.fail("should not be any values in an empty generator")
+
+    def test_take_one_element_from_generator(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_generator
+
+        one_elem_gen = utils.take_from_generator(1, create_generator())
+
+        elems = []
+        for item in one_elem_gen:
+            elems.append(item)
+
+        self.assertEqual([0], elems)
+
+    def test_take_two_elements_from_generator(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_generator
+
+        two_elem_gen = utils.take_from_generator(2, create_generator())
+
+        elems = []
+        for item in two_elem_gen:
+            elems.append(item)
+
+        self.assertEqual([0, 1], elems)
+
+    def test_take_too_many_elements_from_generator(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_generator
+
+        ten_elem_gen = utils.take_from_generator(10000, create_generator())
+
+        elems = []
+        for item in ten_elem_gen:
+            elems.append(item)
+
+        self.assertEqual(range(10), elems)
+
+    def test_take_from_generator_lazy_generation(self):
+        from vcat_sdk_fixtures.utils_fixtures import create_effectful_generator
+
+        # should throw an exception if take_from_generator does not create a generator (lazy list)
+        ten_elem_gen = utils.take_from_generator(10, create_effectful_generator())
+
+        # take only the first item
+        elems = [next(ten_elem_gen)]
+
+        self.assertEqual([0], elems)
