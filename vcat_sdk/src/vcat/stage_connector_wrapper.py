@@ -153,7 +153,7 @@ class StageConnectorWrapper(object):
         all_deployments = []
 
         for _ in range(max_iterations):
-            params_set = StageConnectorWrapper._generate_params_set()
+            params_set = StageConnectorWrapper._generate_params_set(params_range_dict)
             deployment = self.run(params_set)
             all_deployments.append(deployment)
 
