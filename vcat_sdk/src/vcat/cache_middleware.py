@@ -10,17 +10,17 @@ from vcat.stage_cache_for_middleware import StageCacheForMiddleware
 
 class CacheMiddleware(object):
 
-    def __init__(self, stage_config, stage_context, stage_uuid):
+    def __init__(self, stage_config, stage_context, stage):
         self._stage_config = stage_config
         self._stage_context = stage_context
-        self._stage_uuid = stage_uuid
+        self._stage = stage
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         if self._stage_config.allow_caching():
             stage_cache = StageCacheForMiddleware(
                 self._stage_config.allow_caching(),
                 self._stage_config.cache_name(),
-                self._stage_uuid,
+                self._stage.uuid(),
                 args,
                 kwargs,
                 upstream_result_callback
@@ -30,15 +30,15 @@ class CacheMiddleware(object):
 
             cached_result = self._time(True, stage_cache.fetch_cache_option)
             if cached_result.is_present():
-                self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
+                self._log().debug('Fetched stage %s data from cache', self._stage.uuid())
                 self._stage_context.used_cache = True
                 return cached_result.get()
 
-            self._log().debug('Stage %s data not in cache', self._stage_uuid)
+            self._log().debug('Stage %s data not in cache', self._stage.uuid())
             result = callback(args, kwargs)
             return self._time(False, lambda: stage_cache.submit_cache(result))
         else:
-            self._log().debug('Cache disabled for stage %s', self._stage_uuid)
+            self._log().debug('Cache disabled for stage %s (%s)', self._stage.uuid(), self._stage.function_name())
             return callback(args, kwargs)
 
     def _time(self, is_read, callback):
