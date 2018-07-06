@@ -36,19 +36,22 @@ class StageOutputMiddleware(object):
             Object -- The result of calling callback
         """
 
-        from vcat.simple_tempfile import SimpleTempfile
-        from vcat.serializer import serialize_to_file
-        from pandas import DataFrame
-        from mlflow import log_artifact
-
         result = callback(args, kwargs)
-        if self._stage_context.has_stage_output:
-            if isinstance(result, DataFrame):
-                self._save_csv_artifact(result)
-            else:
-                self._save_binary_artifact(result)
+        if self._has_stage_output():
+            self._save_stage_output(result)
 
         return result
+
+    def _has_stage_output(self):
+        return self._stage_context.has_stage_output
+
+    def _save_stage_output(self, result):
+        from pandas import DataFrame
+
+        if isinstance(result, DataFrame):
+            self._save_csv_artifact(result)
+        else:
+            self._save_binary_artifact(result)
 
     def _save_csv_artifact(self, result):
         from vcat.simple_tempfile import SimpleTempfile
