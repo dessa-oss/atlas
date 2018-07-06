@@ -55,21 +55,30 @@ class StageOutputMiddleware(object):
 
     def _save_csv_artifact(self, result):
         from vcat.simple_tempfile import SimpleTempfile
-        from mlflow import log_artifact
 
         with SimpleTempfile('w+b', '.csv') as temp_file:
-            result.to_csv(temp_file.name)
-            log_artifact(temp_file.name, self._name())
+            self._write_csv(result, temp_file)
+            self._log_artifact(temp_file)
+
+    def _write_csv(self, result, temp_file):
+        result.to_csv(temp_file.name)
 
     def _save_binary_artifact(self, result):
-        from vcat.serializer import serialize_to_file
         from vcat.simple_tempfile import SimpleTempfile
-        from mlflow import log_artifact
 
         with SimpleTempfile('w+b', '.bin') as temp_file:
-            serialize_to_file(result, temp_file.file)
-            temp_file.flush()
-            log_artifact(temp_file.name, self._name())
+            self._write_binary(result, temp_file)
+            self._log_artifact(temp_file)
+
+    def _write_binary(self, result, temp_file):
+        from vcat.serializer import serialize_to_file
+
+        serialize_to_file(result, temp_file.file)
+        temp_file.flush()
+
+    def _log_artifact(self, file):
+        from mlflow import log_artifact
+        log_artifact(file.name, self._name())
 
     def _name(self):
         return self._stage.function_name()
