@@ -181,16 +181,65 @@ class StageConnectorWrapper(object):
         grid_params_set_generator = StageConnectorWrapper._create_grid_search_params_set_generator(params_range_dict)
         return self._create_and_run_param_sets(grid_params_set_generator, max_iterations)
 
-    # def adaptive_search(self, set_of_initial_params, params_generator_function, max_iterations=None):
-    #     import Queue
-    #     import uuid
+    def _drain_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
+        from vcat.global_state import log_manager
 
-    #     from vcat.deployment_utils import extract_results
+        log = log_manager.get_logger(__name__)
 
-    #     queue = Queue.Queue()
+        while not params_queue.empty():
+            params_to_run = params_queue.get()
+            deployment = self.run(params_to_run)
+            deployments_map[deployment.job_name()] = deployment
+            log.info(deployment.job_name() + ' created')
 
-    #     for initial_params in set_of_initial_params:
-    #         queue.put(initial_params)
+        log.info('----------\n')
 
-    #     while not queue.empty():
-            
+        self._populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
+
+    def _populate_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
+        import time
+
+        from vcat.global_state import log_manager
+
+        log = log_manager.get_logger(__name__)
+
+        if deployments_map != {}:
+            completed_deployments = []
+
+            for job_name, deployment in deployments_map.items():
+                log.info(job_name + ': ' + deployment.get_job_status())
+
+                if deployment.is_job_complete():
+                    completed_deployments.append(job_name)
+
+                    logged_results = deployment._try_get_results(error_handler)
+                    log.info(job_name + ': ' + str(logged_results))
+
+                    for params_set in params_generator_function(logged_results):
+                        params_queue.put(params_set)
+
+            log.info('----------\n')
+
+            if completed_deployments != []:
+                for job_name in completed_deployments:
+                    deployments_map.pop(job_name)
+
+                self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
+            else:
+                time.sleep(5)
+                self._populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
+        else:
+            log.info('Adaptive search completed.')
+
+    def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
+        import Queue
+
+        params_queue = Queue.Queue()
+        deployments_map = {}
+
+        for initial_params in set_of_initial_params:
+            params_queue.put(initial_params)
+
+        self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
+
+        

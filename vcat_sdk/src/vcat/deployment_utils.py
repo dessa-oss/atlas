@@ -24,3 +24,27 @@ def extract_results(fetched_results):
         results.update(stage_log_entry)
 
     return results
+
+def wait_on_deployments_map(deployments_map, time_to_sleep=5):
+    from vcat.global_state import log_manager
+
+    log = log_manager.get_logger(__name__)
+
+    while deployments_map != {}:
+        jobs_done = []
+
+        for job_name, deployment in deployments_map.items():
+            job_status = deployment.get_job_status()
+
+            log.info(job_name + ": " + job_status)
+
+            if deployment.is_job_complete():
+                log.info(str(deployment.fetch_job_results()))
+                jobs_done.append(job_name)
+
+        for job_name in jobs_done:
+            deployments_map.pop(job_name)
+
+        log.info("----------\n")
+
+        time.sleep(time_to_sleep)

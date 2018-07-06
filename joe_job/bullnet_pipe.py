@@ -26,23 +26,4 @@ params_dict = {
 
 deployments_map = bullnet_pipe.grid_search(params_dict)
 
-time_to_sleep = 5
-
-while deployments_map != {}:
-    jobs_done = []
-
-    for job_name, deployment in deployments_map.items():
-        job_status = deployment.get_job_status()
-
-        print(job_name + ": " + job_status)
-
-        if deployment.is_job_complete():
-            print deployment.fetch_job_results()
-            jobs_done.append(job_name)
-
-    for job_name in jobs_done:
-        deployments_map.pop(job_name)
-
-    print("----------\n")
-
-    time.sleep(time_to_sleep)
+wait_on_deployments_map(deployments_map)
