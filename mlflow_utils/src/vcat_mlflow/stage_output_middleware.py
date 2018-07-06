@@ -44,16 +44,29 @@ class StageOutputMiddleware(object):
         result = callback(args, kwargs)
         if self._stage_context.has_stage_output:
             if isinstance(result, DataFrame):
-                with SimpleTempfile('w+b', '.csv') as temp_file:
-                    result.to_csv(temp_file.name)
-                    log_artifact(temp_file.name, self._name())
+                self._save_csv_artifact(result)
             else:
-                with SimpleTempfile('w+b', '.bin') as temp_file:
-                    serialize_to_file(result, temp_file.file)
-                    temp_file.flush()
-                    log_artifact(temp_file.name, self._name())
+                self._save_binary_artifact(result)
 
         return result
+
+    def _save_csv_artifact(self, result):
+        from vcat.simple_tempfile import SimpleTempfile
+        from mlflow import log_artifact
+
+        with SimpleTempfile('w+b', '.csv') as temp_file:
+            result.to_csv(temp_file.name)
+            log_artifact(temp_file.name, self._name())
+
+    def _save_binary_artifact(self, result):
+        from vcat.serializer import serialize_to_file
+        from vcat.simple_tempfile import SimpleTempfile
+        from mlflow import log_artifact
+
+        with SimpleTempfile('w+b', '.bin') as temp_file:
+            serialize_to_file(result, temp_file.file)
+            temp_file.flush()
+            log_artifact(temp_file.name, self._name())
 
     def _name(self):
         return self._stage.function_name()
