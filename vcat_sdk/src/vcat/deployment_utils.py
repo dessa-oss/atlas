@@ -39,7 +39,7 @@ def wait_on_deployments_map(deployments_map, time_to_sleep=5):
             log.info(job_name + ": " + job_status)
 
             if deployment.is_job_complete():
-                log.info(str(deployment.fetch_job_results()))
+                log.info(job_name + ": " + str(deployment.fetch_job_results()))
                 jobs_done.append(job_name)
 
         for job_name in jobs_done:
