@@ -26,6 +26,8 @@ def extract_results(fetched_results):
     return results
 
 def wait_on_deployments_map(deployments_map, time_to_sleep=5):
+    import time
+
     from vcat.global_state import log_manager
 
     log = log_manager.get_logger(__name__)
