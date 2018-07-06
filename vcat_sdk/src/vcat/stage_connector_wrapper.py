@@ -49,15 +49,19 @@ class StageConnectorWrapper(object):
 
     def persist(self):
         self._stage_config.persist()
+        return self
 
     def set_global_cache_name(self, name):
         self._stage_config.cache(name)
+        return self
 
     def enable_caching(self):
         self._stage_config.enable_caching()
+        return self
 
     def disable_caching(self):
         self._stage_config.disable_caching()
+        return self
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
@@ -125,6 +129,7 @@ class StageConnectorWrapper(object):
             result = getattr(instance, name)(*args, **kwargs)
             if result is None:
                 return instance
+            return result
 
         def auto_stage(*args, **kwargs):
             return self.stage(call_method_on_instance, *args, **kwargs)

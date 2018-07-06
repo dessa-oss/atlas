@@ -10,17 +10,17 @@ from vcat.stage_cache_for_middleware import StageCacheForMiddleware
 
 class CacheMiddleware(object):
 
-    def __init__(self, stage_config, stage_context, stage_uuid):
+    def __init__(self, stage_config, stage_context, stage):
         self._stage_config = stage_config
         self._stage_context = stage_context
-        self._stage_uuid = stage_uuid
+        self._stage = stage
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         if self._stage_config.allow_caching():
             stage_cache = StageCacheForMiddleware(
                 self._stage_config.allow_caching(),
                 self._stage_config.cache_name(),
-                self._stage_uuid,
+                self._stage.uuid(),
                 args,
                 kwargs,
                 upstream_result_callback
@@ -30,16 +30,32 @@ class CacheMiddleware(object):
 
             cached_result = self._time(True, stage_cache.fetch_cache_option)
             if cached_result.is_present():
-                self._log().debug('Fetched stage %s data from cache', self._stage_uuid)
+                self._log().debug('Fetched stage %s (%s) data from cache in %f s', self._uuid(), self._name(), self._cache_read_time())
                 self._stage_context.used_cache = True
                 return cached_result.get()
 
-            self._log().debug('Stage %s data not in cache', self._stage_uuid)
+            self._log().debug('Stage %s (%s) data not in cache', self._uuid(), self._name())
             result = callback(args, kwargs)
-            return self._time(False, lambda: stage_cache.submit_cache(result))
+
+            if cached_result.is_present():
+                return result
+            else:
+                return self._time(False, lambda: stage_cache.submit_cache(result))
         else:
-            self._log().debug('Cache disabled for stage %s', self._stage_uuid)
+            self._log().debug('Cache disabled for stage %s (%s)', self._uuid(), self._name())
             return callback(args, kwargs)
+
+    def _uuid(self):
+        return self._stage.uuid()
+
+    def _name(self):
+        return self._stage.function_name()
+
+    def _cache_read_time(self):
+        return self._stage_context.cache_read_time
+
+    def _cache_write_time(self):
+        return self._stage_context.cache_write_time
 
     def _time(self, is_read, callback):
         import time
