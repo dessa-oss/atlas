@@ -12,7 +12,7 @@ class StageLogMiddleware(object):
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         stage_output = callback(args, kwargs)
-        if isinstance(stage_output, tuple):
+        if isinstance(stage_output, tuple) and len(stage_output) == 2:
             return_value, result = stage_output
             self._stage_context.stage_log = result
         else:

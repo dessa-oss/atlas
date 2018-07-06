@@ -70,12 +70,12 @@ class StageConnectorWrapperBuilder(object):
         self._middleware.append_middleware(
             ArgumentFillerMiddleware(self._stage))
         self._middleware.append_middleware(CacheMiddleware(
-            self._stage_config, self._stage_context, self._uuid()))
+            self._stage_config, self._stage_context, self._stage))
         self._middleware.append_middleware(UpstreamResultMiddleware())
         self._middleware.append_middleware(
             ContextAwareMiddleware(self._stage_context, self._stage))
         self._middleware.append_middleware(
-            TimeStageMiddleware(self._stage_context))
+            TimeStageMiddleware(self._stage_context, self._stage))
         self._middleware.append_middleware(
             StageLoggingMiddleware(self._stage)
         )
