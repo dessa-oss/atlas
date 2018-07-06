@@ -200,30 +200,18 @@ class StageConnectorWrapper(object):
         import time
 
         from vcat.global_state import log_manager
+        from vcat.deployment_utils import _collect_results_and_remove_finished_deployments
 
         log = log_manager.get_logger(__name__)
 
         if deployments_map != {}:
-            completed_deployments = []
+            all_logged_results = _collect_results_and_remove_finished_deployments(deployments_map, error_handler)
 
-            for job_name, deployment in deployments_map.items():
-                log.info(job_name + ': ' + deployment.get_job_status())
+            for logged_results in all_logged_results:
+                for params_set in params_generator_function(logged_results):
+                    params_queue.put(params_set)
 
-                if deployment.is_job_complete():
-                    completed_deployments.append(job_name)
-
-                    logged_results = deployment._try_get_results(error_handler)
-                    log.info(job_name + ': ' + str(logged_results))
-
-                    for params_set in params_generator_function(logged_results):
-                        params_queue.put(params_set)
-
-            log.info('----------\n')
-
-            if completed_deployments != []:
-                for job_name in completed_deployments:
-                    deployments_map.pop(job_name)
-
+            if all_logged_results != []:
                 self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
             else:
                 time.sleep(5)

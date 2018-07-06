@@ -25,28 +25,49 @@ def extract_results(fetched_results):
 
     return results
 
-def wait_on_deployments_map(deployments_map, time_to_sleep=5):
+def _remove_items_by_key(dictionary, keys):
+    for key in keys:
+        dictionary.pop(key)
+
+def _add_results_to_list(deployment, jobs_done, all_logged_results, error_handler):
+    from vcat.global_state import log_manager
+
+    log = log_manager.get_logger(__name__)
+
+    logged_results = deployment._try_get_results(error_handler)
+    log.info(deployment.job_name() + ": " + str(logged_results))
+    jobs_done.append(deployment.job_name())
+    all_logged_results.append(logged_results)
+
+def _collect_results_and_remove_finished_deployments(deployments_map, error_handler):
+    from vcat.global_state import log_manager
+
+    log = log_manager.get_logger(__name__)
+
+    jobs_done = []
+    all_logged_results = []
+
+    for job_name, deployment in deployments_map.items():
+        log.info(job_name + ": " + deployment.get_job_status())
+
+        if deployment.is_job_complete():
+            _add_results_to_list(deployment, jobs_done, all_logged_results, error_handler)
+
+    _remove_items_by_key(deployments_map, jobs_done)
+
+    log.info("----------\n")
+
+    return all_logged_results
+
+def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     import time
 
     from vcat.global_state import log_manager
 
     log = log_manager.get_logger(__name__)
 
-    while deployments_map != {}:
-        jobs_done = []
-
-        for job_name, deployment in deployments_map.items():
-            job_status = deployment.get_job_status()
-
-            log.info(job_name + ": " + job_status)
-
-            if deployment.is_job_complete():
-                log.info(job_name + ": " + str(deployment.fetch_job_results()))
-                jobs_done.append(job_name)
-
-        for job_name in jobs_done:
-            deployments_map.pop(job_name)
-
-        log.info("----------\n")
-
+    while deployment_set != {}:
+        _collect_results_and_remove_finished_deployments(deployment_set, error_handler)
         time.sleep(time_to_sleep)
+
+    log.info('All deployments completed.')
