@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class StageLogMiddleware(object):
     """MFLow integration for logging stage metrics to a UI
-    
+
     Arguments:
         pipeline_context {PipelineContext} -- Unused
         stage_config {StageConfig} -- Unused
@@ -21,7 +21,7 @@ class StageLogMiddleware(object):
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         """Executes the middleware
-        
+
         Arguments:
             upstream_result_callback {function} -- Unused
             filler_builder {function} -- Unused
@@ -29,17 +29,21 @@ class StageLogMiddleware(object):
             args {tuple} -- Passed to callback
             kwargs {dict} -- Passed to callback
             callback {function} -- Callback to call before storing the output
-        
+
         Returns:
             Object -- The result of calling callback
         """
 
-
         stage_output = callback(args, kwargs)
-        if isinstance(stage_output, tuple):
+
+        if self._has_metrics(stage_output):
             _, metrics = stage_output
             self._log_metrics(metrics)
+
         return stage_output
+
+    def _has_metrics(self, stage_output):
+        return isinstance(stage_output, tuple)
 
     def _log_metrics(self, metrics):
         from mlflow import log_metric
