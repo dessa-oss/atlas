@@ -16,3 +16,4 @@ _hack_mlflow()
 
 from test.test_stage_output_middleware import TestStageOutputMiddleware
 from test.test_stage_log_middleware import TestStageLogMiddleware
+from test.test_parameter_middleware import TestParameterMiddleware

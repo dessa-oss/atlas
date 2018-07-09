@@ -16,12 +16,6 @@ class ParameterMiddleware(object):
 
         for key, value in filler_kwargs.items():
             param_name = key
-            self._log().debug('Saving parameter {} with value {}'.format(param_name, value))
-            string_value = repr(value)
-            log_param(param_name, string_value)
+            log_param(param_name, value)
 
         return callback(args, kwargs)
-
-    def _log(self):
-        from vcat.global_state import log_manager
-        return log_manager.get_logger(__name__)
