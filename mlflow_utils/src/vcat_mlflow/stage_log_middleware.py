@@ -35,12 +35,15 @@ class StageLogMiddleware(object):
         """
 
 
-        from mlflow import log_metric
-
         stage_output = callback(args, kwargs)
         if isinstance(stage_output, tuple):
             _, metrics = stage_output
-            for key, value in metrics.items():
-                metric_name = "{}.{}".format(self._stage.function_name(), key)
-                log_metric(metric_name, value)
+            self._log_metrics(metrics)
         return stage_output
+
+    def _log_metrics(self, metrics):
+        from mlflow import log_metric
+
+        for key, value in metrics.items():
+            metric_name = "{}.{}".format(self._stage.function_name(), key)
+            log_metric(metric_name, value)
