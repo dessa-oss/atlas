@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 import vcat_sdk_fixtures.stage_connector_wrapper_fixtures as scf
+import vcat_sdk_helpers.stage_connector_wrapper_helpers as sch
 
 class TestStageConnectorWrapper(unittest.TestCase):
     def test_random_search_empty_params_dict_zero_iterations(self):
@@ -39,10 +40,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 1)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertEqual({'a': 1}, results)
+        all_results = sch.get_results_list(deployments)
+        self.assertEqual([{'a': 1}], all_results)
 
     def test_random_search_simple_params_dict_two_iterations(self):
         from vcat.deployment_utils import extract_results
@@ -52,10 +51,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 2)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertEqual({'a': 1}, results)
+        all_results = sch.get_results_list(deployments)
+        self.assertEqual([{'a': 1}] * 2, all_results)
 
     def test_random_search_less_simple_param_set_two_iterations(self):
         from vcat.deployment_utils import extract_results
@@ -65,10 +62,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 2)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertIn(results['a'], [1, 2])
+        for result in sch.get_results_list(deployments):
+            self.assertIn(result['a'], [1, 2])
 
     def test_random_search_more_complex_param_set_twenty_iterations(self):
         from vcat.deployment_utils import extract_results
@@ -78,12 +73,10 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 20)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertIn(results['param_0'], [1, 2])
-            self.assertIn(results['param_1'], [3])
-            self.assertIn(results['param_2'], [4, 5, 6, 7])
+        for result in sch.get_results_list(deployments):
+            self.assertIn(result['param_0'], [1, 2])
+            self.assertIn(result['param_1'], [3])
+            self.assertIn(result['param_2'], [4, 5, 6, 7])
 
     def test_grid_search_empty_params_dict_zero_iterations(self):
         dummy_pipeline = scf.make_dummy_pipeline()
@@ -105,10 +98,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 1)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertEqual({'a': 1}, results)
+        all_results = sch.get_results_list(deployments)
+        self.assertEqual([{'a': 1}], all_results)
 
     def test_grid_search_simple_params_dict_two_iterations(self):
         from vcat.deployment_utils import extract_results
@@ -118,10 +109,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 1) # will not do same hyperparam set twice
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            self.assertEqual({'a': 1}, results)
+        all_results = sch.get_results_list(deployments)
+        self.assertEqual([{'a': 1}], all_results)
 
     def test_grid_search_less_simple_param_set_two_iterations(self):
         from vcat.deployment_utils import extract_results
@@ -131,15 +120,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 2)
 
-        all_results = []
-
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            all_results.append(list(results.items()))
-
-        all_results.sort()
-
+        all_results = sch.get_sorted_results_items_list(deployments)
         self.assertEqual([[('a', 1)], [('a', 2)]], all_results)
 
     def test_grid_search_less_simple_param_set_ten_iterations(self):
@@ -150,15 +131,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 2)
 
-        all_results = []
-
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            all_results.append(list(results.items()))
-
-        all_results.sort()
-
+        all_results = sch.get_sorted_results_items_list(deployments)
         self.assertEqual([[('a', 1)], [('a', 2)]], all_results)
 
     def test_grid_search_less_simple_param_set_one_iteration(self):
@@ -169,88 +142,38 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(len(deployments), 1)
 
-        all_results = []
-
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            all_results.append(list(results.items()))
-
-        all_results.sort()
-
+        all_results = sch.get_sorted_results_items_list(deployments)
         self.assertEqual([[('a', 1)]], all_results)
 
     def test_grid_search_more_complex_param_set_all_iterations(self):
         from vcat.deployment_utils import extract_results
-
-        def p_items(p0, p1, p2):
-            return [
-                ('param_0', p0),
-                ('param_1', p1),
-                ('param_2', p2)
-            ]
 
         dummy_pipeline = scf.make_dummy_pipeline()
         deployments = dummy_pipeline.grid_search(scf.params_ranges_dict)
 
         self.assertEqual(len(deployments), 8)
 
-        all_results = []
-
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            results = list(results.items())
-            results.sort()
-            all_results.append(results)
-
-        all_results.sort()
-
-        expected_results = []
-
-        for param_0 in [1, 2]:
-            for param_1 in [3]:
-                for param_2 in [4, 5, 6, 7]:
-                    expected_results.append(p_items(param_0, param_1, param_2))
-                    
+        expected_results = sch.params_cart_prod([1, 2], [3], [4, 5, 6, 7])
         expected_results.sort()
 
+        all_results = sch.get_sorted_results_items_list(deployments)
         self.assertEqual(expected_results, all_results)
 
     def test_grid_search_more_complex_param_set_five_out_of_eight_iterations(self):
         from vcat.deployment_utils import extract_results
-
-        def p_items(p0, p1, p2):
-            return [
-                ('param_0', p0),
-                ('param_1', p1),
-                ('param_2', p2)
-            ]
 
         dummy_pipeline = scf.make_dummy_pipeline()
         deployments = dummy_pipeline.grid_search(scf.params_ranges_dict, max_iterations=5)
 
         self.assertEqual(len(deployments), 5)
 
-        all_results = []
+        all_results = sch.get_sorted_results_items_list(deployments)
 
-        for _, deployment in deployments.items():
-            results = deployment.fetch_job_results()
-            results = extract_results(results)
-            results = list(results.items())
-            results.sort()
-            all_results.append(results)
-
-        all_results.sort()
-
-        expected_results = []
-
-        for param_0 in [1, 2]:
-            for param_1 in [3]:
-                for param_2 in [4, 5, 6, 7]:
-                    expected_results.append(p_items(param_0, param_1, param_2))
+        expected_results = sch.params_cart_prod([1, 2], [3], [4, 5, 6, 7])
 
         expected_results = expected_results[0:5]
         expected_results.sort()
 
         self.assertEqual(expected_results, all_results)
+
+    # def test_adaptive_search_

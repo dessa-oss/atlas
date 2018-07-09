@@ -173,9 +173,9 @@ class StageConnectorWrapper(object):
     def _create_grid_search_params_set_generator(params_range_dict):
         import itertools
 
-        keys = params_range_dict.keys()
-        params_ranges = params_range_dict.values()
-        params_grid_elements = list(map(lambda params_range: params_range.grid_elements(), params_ranges))
+        keys = list(params_range_dict.keys())
+        keys.sort()
+        params_grid_elements = list(map(lambda key: params_range_dict[key].grid_elements(), keys))
 
         if params_grid_elements != []:
             params_cartesian_product = itertools.product(*params_grid_elements)
@@ -225,14 +225,18 @@ class StageConnectorWrapper(object):
         else:
             log.info('Adaptive search completed.')
 
+    @staticmethod
+    def _initialize_queue(params_queue, set_of_initial_params):
+        for initial_params in set_of_initial_params:
+            params_queue.put(initial_params)
+
     def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
         import Queue
 
         params_queue = Queue.Queue()
         deployments_map = {}
 
-        for initial_params in set_of_initial_params:
-            params_queue.put(initial_params)
+        StageConnectorWrapper._initialize_queue(params_queue, set_of_initial_params)
 
         self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
 
