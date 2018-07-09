@@ -4,11 +4,13 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
 import unittest
 from vcat_mlflow.stage_output_middleware import StageOutputMiddleware
 
 
 class TestStageOutputMiddleware(unittest.TestCase):
+
     def test_call_calls_callback(self):
         middleware = StageOutputMiddleware(
             None, None, self._make_context(), self._make_stage())
@@ -33,6 +35,20 @@ class TestStageOutputMiddleware(unittest.TestCase):
         result_artifact = deserialize(serialized_result_artifact)
 
         self.assertEqual(result, result_artifact)
+
+    def test_call_does_not_persist(self):
+        from test.helpers.mlflow_hacks import get_artifact_info
+        from test.helpers import mlflow_hacks
+        from vcat.serializer import deserialize
+
+        mlflow_hacks.reset()
+
+        middleware = StageOutputMiddleware(
+            None, None, self._make_context(), self._make_stage())
+        result = middleware.call(None, None, None, [], {}, self._callback)
+
+        serialized_result_artifact, _ = get_artifact_info()
+        self.assertEqual(serialized_result_artifact, None)
 
     def test_call_uses_stage_name(self):
         from test.helpers.mlflow_hacks import get_artifact_info
@@ -110,7 +126,7 @@ class TestStageOutputMiddleware(unittest.TestCase):
         stage_output = DataFrame([[randint(1, 10)]])
         setattr(self, 'stage_result', stage_output)
         return stage_output
-    
+
     def _stage_result(self):
         return getattr(self, 'stage_result', None)
 
@@ -124,7 +140,7 @@ class TestStageOutputMiddleware(unittest.TestCase):
         import sys
         from vcat.utils import string_from_bytes
 
-        if sys.version_info[0] < 3: 
+        if sys.version_info[0] < 3:
             from StringIO import StringIO
         else:
             from io import StringIO

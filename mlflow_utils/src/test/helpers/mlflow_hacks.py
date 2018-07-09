@@ -14,6 +14,11 @@ class ArtifactInfo(object):
 
 ARTIFACT_INFO = ArtifactInfo()
 
+def reset():
+    ARTIFACT_INFO.artifact = None
+    ARTIFACT_INFO.artifact_name = None
+
+
 def log_artifact(file_path, name):
     with open(file_path, 'rb') as file:
         ARTIFACT_INFO.artifact = file.read()
@@ -22,3 +27,6 @@ def log_artifact(file_path, name):
 
 def get_artifact_info():
     return ARTIFACT_INFO.artifact, ARTIFACT_INFO.artifact_name
+
+def log_metric(metric_name, value):
+    pass
