@@ -21,7 +21,3 @@ class StageLogMiddleware(object):
                 metric_name = "{}.{}".format(self._stage.function_name(), key)
                 log_metric(metric_name, value)
         return stage_output
-
-    def _log(self):
-        from vcat.global_state import log_manager
-        return log_manager.get_logger(__name__)

@@ -12,11 +12,18 @@ class ArtifactInfo(object):
         self.artifact = None
         self.artifact_name = None
 
+    def reset(self):
+        self.artifact = None
+        self.artifact_name = None
+
+
 ARTIFACT_INFO = ArtifactInfo()
+METRIC_INFOS = {}
+
 
 def reset():
-    ARTIFACT_INFO.artifact = None
-    ARTIFACT_INFO.artifact_name = None
+    ARTIFACT_INFO.reset()
+    METRIC_INFOS.clear()
 
 
 def log_artifact(file_path, name):
@@ -28,5 +35,10 @@ def log_artifact(file_path, name):
 def get_artifact_info():
     return ARTIFACT_INFO.artifact, ARTIFACT_INFO.artifact_name
 
+
 def log_metric(metric_name, value):
-    pass
+    METRIC_INFOS[metric_name] = value
+
+
+def get_metric_info(name):
+    return METRIC_INFOS[name]

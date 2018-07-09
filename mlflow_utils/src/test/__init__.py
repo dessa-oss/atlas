@@ -15,3 +15,4 @@ def _hack_mlflow():
 _hack_mlflow()
 
 from test.test_stage_output_middleware import TestStageOutputMiddleware
+from test.test_stage_log_middleware import TestStageLogMiddleware
