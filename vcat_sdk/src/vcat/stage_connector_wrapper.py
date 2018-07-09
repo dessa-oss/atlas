@@ -200,9 +200,14 @@ class StageConnectorWrapper(object):
 
         log.info('----------\n')
 
-        self._populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
+        self._check_deployments_and_populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
 
-    def _populate_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
+    @staticmethod
+    def _populate_queue(params_queue, set_of_initial_params):
+        for initial_params in set_of_initial_params:
+            params_queue.put(initial_params)
+
+    def _check_deployments_and_populate_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
         import time
 
         from vcat.global_state import log_manager
@@ -214,8 +219,8 @@ class StageConnectorWrapper(object):
             all_logged_results = _collect_results_and_remove_finished_deployments(deployments_map, error_handler)
 
             for logged_results in all_logged_results:
-                for params_set in params_generator_function(logged_results):
-                    params_queue.put(params_set)
+                new_params_sets = params_generator_function(logged_results)
+                StageConnectorWrapper._populate_queue(params_queue, new_params_sets)
 
             if all_logged_results != []:
                 self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
@@ -225,19 +230,12 @@ class StageConnectorWrapper(object):
         else:
             log.info('Adaptive search completed.')
 
-    @staticmethod
-    def _initialize_queue(params_queue, set_of_initial_params):
-        for initial_params in set_of_initial_params:
-            params_queue.put(initial_params)
-
     def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
-        import Queue
+        from vcat.compat import make_queue
 
-        params_queue = Queue.Queue()
+        params_queue = make_queue()
         deployments_map = {}
 
-        StageConnectorWrapper._initialize_queue(params_queue, set_of_initial_params)
+        StageConnectorWrapper._populate_queue(params_queue, set_of_initial_params)
 
         self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
-
-        

@@ -12,7 +12,7 @@ class DiscreteHyperparameter(object):
     """
 
     def __init__(self, values):
-        self._values = values
+        self._values = list(values)
     
     def grid_elements(self):
         """Retrieve the internal list of values intended for use in grid search.

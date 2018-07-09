@@ -11,9 +11,10 @@ from vcat.deployment_wrapper import DeploymentWrapper
 
 class DummyConnectorWrapper(StageConnectorWrapper):
     def __init__(self, *args, **kwargs):
-        pass
+        self.params_run = []
 
     def run(self, kwargs):
+        self.params_run.append(kwargs)
         return DummyDeploymentWrapper(kwargs)
 
 class DummyDeploymentWrapper(DeploymentWrapper):
@@ -56,3 +57,9 @@ params_ranges_dict = {
     'param_1': DiscreteHyperparameter([3]),
     'param_2': DiscreteHyperparameter([4, 5, 6, 7])
 }
+
+def bad_params_generator(results):
+    raise Exception
+
+def dead_end(results):
+    return []
