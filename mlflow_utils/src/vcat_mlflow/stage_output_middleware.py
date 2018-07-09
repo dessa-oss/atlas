@@ -26,10 +26,10 @@ class StageOutputMiddleware(object):
 
         Arguments:
             upstream_result_callback {function} -- Unused
-            filler_builder {[type]} -- Unused
-            filler_kwargs {[type]} -- Unused
-            args {[type]} -- Passed to callback
-            kwargs {[type]} -- Passed to callback
+            filler_builder {function} -- Unused
+            filler_kwargs {dict} -- Unused
+            args {tuple} -- Passed to callback
+            kwargs {dict} -- Passed to callback
             callback {function} -- Callback to call before storing the output
 
         Returns:

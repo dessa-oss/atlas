@@ -7,11 +7,34 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class StageLogMiddleware(object):
+    """MFLow integration for logging stage metrics to a UI
+    
+    Arguments:
+        pipeline_context {PipelineContext} -- Unused
+        stage_config {StageConfig} -- Unused
+        stage_context {StageContext} -- Unused
+        stage {Stage} -- Stage to execute and collect data from
+    """
 
     def __init__(self, pipeline_context, stage_config, stage_context, stage):
         self._stage = stage
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
+        """Executes the middleware
+        
+        Arguments:
+            upstream_result_callback {function} -- Unused
+            filler_builder {function} -- Unused
+            filler_kwargs {dict} -- Unused
+            args {tuple} -- Passed to callback
+            kwargs {dict} -- Passed to callback
+            callback {function} -- Callback to call before storing the output
+        
+        Returns:
+            Object -- The result of calling callback
+        """
+
+
         from mlflow import log_metric
 
         stage_output = callback(args, kwargs)
