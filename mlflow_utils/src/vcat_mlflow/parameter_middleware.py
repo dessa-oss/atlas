@@ -34,10 +34,13 @@ class ParameterMiddleware(object):
             Object -- The result of calling callback
         """
 
-        from mlflow import log_param
-
-        for key, value in filler_kwargs.items():
-            param_name = key
-            log_param(param_name, value)
+        self._log_parameters(filler_kwargs)
 
         return callback(args, kwargs)
+
+    def _log_parameters(self, parameters):
+        from mlflow import log_param
+
+        for key, value in parameters.items():
+            param_name = key
+            log_param(param_name, value)
