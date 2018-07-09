@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from vcat.stage_connector_wrapper import StageConnectorWrapper
 from vcat.discrete_hyperparameter import DiscreteHyperparameter
+from vcat.deployment_wrapper import DeploymentWrapper
 
 class DummyConnectorWrapper(StageConnectorWrapper):
     def __init__(self, *args, **kwargs):
@@ -15,7 +16,7 @@ class DummyConnectorWrapper(StageConnectorWrapper):
     def run(self, kwargs):
         return DummyDeploymentWrapper(kwargs)
 
-class DummyDeploymentWrapper(object):
+class DummyDeploymentWrapper(DeploymentWrapper):
     def __init__(self, data):
         import uuid
 
@@ -26,9 +27,23 @@ class DummyDeploymentWrapper(object):
         return self._job_name
 
     def fetch_job_results(self):
-        return self._data
+        import uuid
+        return {
+            'stage_contexts': {
+                str(uuid.uuid4()): {
+                    'stage_log': self._data
+                }
+            }
+        }
+    
+    def is_job_complete(self):
+        return True
+    
+    def get_job_status(self):
+        return 'Completed'
 
-dummy_pipeline = DummyConnectorWrapper()
+def make_dummy_pipeline():
+    return DummyConnectorWrapper()
 
 simple_param_set = {'a': DiscreteHyperparameter([1])}
 

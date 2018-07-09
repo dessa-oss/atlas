@@ -175,12 +175,13 @@ class StageConnectorWrapper(object):
 
         keys = params_range_dict.keys()
         params_ranges = params_range_dict.values()
-        params_grid_elements = map(lambda params_range: params_range.grid_elements(), params_ranges)
+        params_grid_elements = list(map(lambda params_range: params_range.grid_elements(), params_ranges))
 
-        params_cartesian_product = itertools.product(*params_grid_elements)
+        if params_grid_elements != []:
+            params_cartesian_product = itertools.product(*params_grid_elements)
 
-        for params_tuple in params_cartesian_product:
-            yield {key: param for key, param in zip(keys, params_tuple)}
+            for params_tuple in params_cartesian_product:
+                yield {key: param for key, param in zip(keys, params_tuple)}
 
     def grid_search(self, params_range_dict, max_iterations=None):
         grid_params_set_generator = StageConnectorWrapper._create_grid_search_params_set_generator(params_range_dict)
