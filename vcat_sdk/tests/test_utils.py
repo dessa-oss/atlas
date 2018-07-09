@@ -108,10 +108,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(test_dict, result_dict)
 
     def test_split_process_output_zero_length(self):
-        self.assertEqual([], utils.split_process_output(""))
+        lazy_output = utils.split_process_output(b"")
+        self.assertEqual([], list(lazy_output))
 
     def test_split_process_output_few_lines(self):
-        self.assertEqual([u"This", u"is", u"a", u"test"], utils.split_process_output("      This\nis\na\ntest  "))
+        lazy_output = utils.split_process_output(b"      This\nis\na\ntest  ")
+        self.assertEqual([u"This", u"is", u"a", u"test"], list(lazy_output))
 
     def test_force_encoding_utf_8(self):
         string_utf_8 = u"asdf"
@@ -121,11 +123,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(b"asdf", bytes_string)
 
     def test_force_encoding_bytes(self):
-        string_bytes = b"asdf"
-        bytes_string = utils.force_encoding(string_bytes)
+        string_unicode = u"asdf"
+        bytes_string = utils.force_encoding(string_unicode)
 
         self.assertTrue(isinstance(bytes_string, bytes))
-        self.assertEqual(string_bytes, bytes_string)
+        self.assertEqual(string_unicode, bytes_string.decode('utf-8'))
 
     def test_is_string(self):
         from sys import version_info
@@ -191,7 +193,7 @@ class TestUtils(unittest.TestCase):
         for item in ten_elem_gen:
             elems.append(item)
 
-        self.assertEqual(range(10), elems)
+        self.assertEqual(list(range(10)), elems)
 
     def test_take_from_generator_lazy_generation(self):
         from vcat_sdk_fixtures.utils_fixtures import create_effectful_generator
