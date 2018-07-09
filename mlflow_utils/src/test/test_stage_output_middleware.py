@@ -48,7 +48,6 @@ class TestStageOutputMiddleware(unittest.TestCase):
 
     def test_call_uses_stage_name_different_name(self):
         from test.helpers.mlflow_hacks import get_artifact_info
-        from pandas import read_csv
 
         middleware = StageOutputMiddleware(
             None, None, self._make_context(True), self._make_stage(self._stage_function_two))
