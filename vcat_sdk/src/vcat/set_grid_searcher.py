@@ -13,15 +13,26 @@ class SetGridSearcher(SetSearcher):
         super(SetGridSearcher, self).__init__(params_set_generator, max_iterations)
 
     @staticmethod
-    def _create_grid_search_params_set_generator(params_range_dict):
-        import itertools
+    def _get_grid_elements_from_dict(sorted_keys, params_range_dict):
+        def _get_single_grid_element_set(key):
+            return params_range_dict[key].grid_elements()
 
-        keys = list(params_range_dict.keys())
-        keys.sort()
-        params_grid_elements = list(map(lambda key: params_range_dict[key].grid_elements(), keys))
+        return list(map(_get_single_grid_element_set, sorted_keys))
+
+    @staticmethod
+    def _create_cartesian_product_generator(sorted_keys, params_grid_elements):
+        import itertools
 
         if params_grid_elements != []:
             params_cartesian_product = itertools.product(*params_grid_elements)
 
             for params_tuple in params_cartesian_product:
-                yield {key: param for key, param in zip(keys, params_tuple)}
+                yield {key: param for key, param in zip(sorted_keys, params_tuple)}
+
+    @staticmethod
+    def _create_grid_search_params_set_generator(params_range_dict):
+        keys = list(params_range_dict.keys())
+        keys.sort()
+        params_grid_elements = SetGridSearcher._get_grid_elements_from_dict(keys, params_range_dict)
+
+        return SetGridSearcher._create_cartesian_product_generator(keys, params_grid_elements)
