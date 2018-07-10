@@ -174,4 +174,39 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         self.assertEqual(dummy_pipeline.params_run, [{'a': 1}, {'a': 2}])
 
-    
+    def test_adaptive_search_one_initial_param_good_generator(self):
+        dummy_pipeline = scf.make_dummy_pipeline()
+        dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}], scf.good_generator)
+
+        expected_results = [
+            {'a': 1, 'b': 2},
+            {'a': 3, 'b': 3},
+            {'a': 2, 'b': 2},
+            {'a': 4, 'b': 3},
+            {'a': 3, 'b': 2}
+        ]
+
+        expected_results = sch.make_list_of_dicts_comparable(expected_results)
+
+        self.assertEqual(sch.make_list_of_dicts_comparable(dummy_pipeline.params_run), expected_results)
+
+    def test_adaptive_search_two_initial_params_good_generator(self):
+        dummy_pipeline = scf.make_dummy_pipeline()
+        dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}, {'a': 0, 'b': 3}], scf.good_generator)
+
+        expected_results = [
+            {'a': 1, 'b': 2},
+            {'a': 0, 'b': 3},
+            {'a': 3, 'b': 3},
+            {'a': 2, 'b': 2},
+            {'a': 2, 'b': 4},
+            {'a': 1, 'b': 3},
+            {'a': 4, 'b': 3},
+            {'a': 3, 'b': 2},
+            {'a': 3, 'b': 4},
+            {'a': 2, 'b': 3}
+        ]
+
+        expected_results = sch.make_list_of_dicts_comparable(expected_results)
+
+        self.assertEqual(sch.make_list_of_dicts_comparable(dummy_pipeline.params_run), expected_results)

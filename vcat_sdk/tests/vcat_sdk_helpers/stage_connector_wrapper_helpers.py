@@ -17,17 +17,7 @@ def get_results_list(deployments):
     return all_results
 
 def get_sorted_results_items_list(deployments):
-    sorted_items_list = []
-
-    for result in get_results_list(deployments):
-        items = list(result.items())
-        items.sort()
-
-        sorted_items_list.append(items)
-
-    sorted_items_list.sort()
-
-    return sorted_items_list
+    return make_list_of_dicts_comparable(get_results_list(deployments))
 
 def p_items(*args):
     p0, p1, p2 = args[0]
@@ -45,3 +35,15 @@ def params_cart_prod(*params_lists):
     mapped = map(p_items, cart_prod)
 
     return list(mapped)
+
+def make_list_of_dicts_comparable(list_of_dicts):
+    to_return = []
+
+    for dict_obj in list_of_dicts:
+        entry = list(dict_obj.items())
+        entry.sort()
+        to_return.append(entry)
+
+    to_return.sort()
+
+    return to_return

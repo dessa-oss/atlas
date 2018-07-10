@@ -63,3 +63,9 @@ def bad_params_generator(results):
 
 def dead_end(results):
     return []
+
+def good_generator(results):
+    if results['a'] + results['b'] < 5:
+        return [{'a': results['a'] + 2, 'b': results['b'] + 1}, {'a': results['a'] + 1, 'b': results['b']}]
+    else:
+        return []
