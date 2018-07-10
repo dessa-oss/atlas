@@ -226,7 +226,7 @@ class StageConnectorWrapper(object):
                 self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
             else:
                 time.sleep(5)
-                self._populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
+                self._check_deployments_and_populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
         else:
             log.info('Adaptive search completed.')
 
