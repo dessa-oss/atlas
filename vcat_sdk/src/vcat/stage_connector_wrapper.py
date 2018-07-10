@@ -145,97 +145,20 @@ class StageConnectorWrapper(object):
 
         return self.stage(getitem, key)
 
-    @staticmethod
-    def _generate_random_params_set(params_range_dict):
-        return {key: params_range.random_sample() for key, params_range in params_range_dict.items()}
-
-    @staticmethod
-    def _create_random_params_set_generator(params_range_dict):
-        while True:
-            yield StageConnectorWrapper._generate_random_params_set(params_range_dict)
-
-    def _create_and_run_param_sets(self, params_set_generator, max_iterations):
-        from vcat.utils import take_from_generator
-
-        if max_iterations is None:
-            truncated_params_set_generator = params_set_generator
-        else:
-            truncated_params_set_generator = take_from_generator(max_iterations, params_set_generator)
-
-        all_deployments = map(self.run, truncated_params_set_generator)
-        return {deployment.job_name(): deployment for deployment in all_deployments}
-
     def random_search(self, params_range_dict, max_iterations):
-        random_params_set_generator = StageConnectorWrapper._create_random_params_set_generator(params_range_dict)
-        return self._create_and_run_param_sets(random_params_set_generator, max_iterations)
+        from vcat.set_random_searcher import SetRandomSearcher
 
-    @staticmethod
-    def _create_grid_search_params_set_generator(params_range_dict):
-        import itertools
-
-        keys = list(params_range_dict.keys())
-        keys.sort()
-        params_grid_elements = list(map(lambda key: params_range_dict[key].grid_elements(), keys))
-
-        if params_grid_elements != []:
-            params_cartesian_product = itertools.product(*params_grid_elements)
-
-            for params_tuple in params_cartesian_product:
-                yield {key: param for key, param in zip(keys, params_tuple)}
+        set_random_searcher = SetRandomSearcher(params_range_dict, max_iterations)
+        return set_random_searcher.run_param_sets(self)
 
     def grid_search(self, params_range_dict, max_iterations=None):
-        grid_params_set_generator = StageConnectorWrapper._create_grid_search_params_set_generator(params_range_dict)
-        return self._create_and_run_param_sets(grid_params_set_generator, max_iterations)
+        from vcat.set_grid_searcher import SetGridSearcher
 
-    def _drain_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
-        from vcat.global_state import log_manager
-
-        log = log_manager.get_logger(__name__)
-
-        while not params_queue.empty():
-            params_to_run = params_queue.get()
-            deployment = self.run(params_to_run)
-            deployments_map[deployment.job_name()] = deployment
-            log.info(deployment.job_name() + ' created')
-
-        log.info('----------\n')
-
-        self._check_deployments_and_populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
-
-    @staticmethod
-    def _populate_queue(params_queue, set_of_initial_params):
-        for initial_params in set_of_initial_params:
-            params_queue.put(initial_params)
-
-    def _check_deployments_and_populate_queue(self, params_queue, deployments_map, params_generator_function, error_handler):
-        import time
-
-        from vcat.global_state import log_manager
-        from vcat.deployment_utils import _collect_results_and_remove_finished_deployments
-
-        log = log_manager.get_logger(__name__)
-
-        if deployments_map != {}:
-            all_logged_results = _collect_results_and_remove_finished_deployments(deployments_map, error_handler)
-
-            for logged_results in all_logged_results:
-                new_params_sets = params_generator_function(logged_results)
-                StageConnectorWrapper._populate_queue(params_queue, new_params_sets)
-
-            if all_logged_results != []:
-                self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
-            else:
-                time.sleep(5)
-                self._check_deployments_and_populate_queue(params_queue, deployments_map, params_generator_function, error_handler)
-        else:
-            log.info('Adaptive search completed.')
+        grid_searcher = SetGridSearcher(params_range_dict, max_iterations)
+        return grid_searcher.run_param_sets(self)
 
     def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
-        from vcat.compat import make_queue
+        from vcat.adaptive_searcher import AdaptiveSearcher
 
-        params_queue = make_queue()
-        deployments_map = {}
-
-        StageConnectorWrapper._populate_queue(params_queue, set_of_initial_params)
-
-        self._drain_queue(params_queue, deployments_map, params_generator_function, error_handler)
+        adaptive_searcher = AdaptiveSearcher(set_of_initial_params, params_generator_function, error_handler)
+        adaptive_searcher.search(self)
