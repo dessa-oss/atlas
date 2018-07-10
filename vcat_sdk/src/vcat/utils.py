@@ -156,3 +156,7 @@ def take_from_generator(elems_to_take, generator):
             yield next(generator)
         except StopIteration:
             return
+
+def _remove_items_by_key(dictionary, keys):
+    for key in keys:
+        dictionary.pop(key)

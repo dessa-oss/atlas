@@ -20,6 +20,10 @@ class SetGridSearcher(SetSearcher):
         return list(map(_get_single_grid_element_set, sorted_keys))
 
     @staticmethod
+    def _create_grid_params_set(sorted_keys, params_tuple):
+        return {key: param for key, param in zip(sorted_keys, params_tuple)}
+
+    @staticmethod
     def _create_cartesian_product_generator(sorted_keys, params_grid_elements):
         import itertools
 
@@ -27,7 +31,7 @@ class SetGridSearcher(SetSearcher):
             params_cartesian_product = itertools.product(*params_grid_elements)
 
             for params_tuple in params_cartesian_product:
-                yield {key: param for key, param in zip(sorted_keys, params_tuple)}
+                yield SetGridSearcher._create_grid_params_set(sorted_keys, params_tuple)
 
     @staticmethod
     def _create_grid_search_params_set_generator(params_range_dict):
