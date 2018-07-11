@@ -32,3 +32,7 @@ config_manager['provenance_archive_implementation'] = archive_implementation
 config_manager['job_source_archive_implementation'] = archive_implementation
 config_manager['artifact_archive_implementation'] = archive_implementation
 config_manager['miscellaneous_archive_implementation'] = archive_implementation
+# config_manager['log_level'] = 'DEBUG'
+# config_manager['namespaced_log_levels'] = {
+#     'vcat.redundant_execution_middleware': 'DEBUG'
+# }

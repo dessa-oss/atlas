@@ -3,6 +3,7 @@ import uuid
 from spike_pipe import print_it, destroy_it
 from pandas import DataFrame
 from vcat import *
+from vcat.deployment_wrapper import DeploymentWrapper
 from vcat_gcp import *
 from vcat_ssh import *
 
@@ -22,6 +23,10 @@ job_name = str(uuid.uuid4())
 
 bundle_name = str(uuid.uuid4())
 job_source_bundle = JobSourceBundle(bundle_name, '../')
+config_manager.config()['job_source_bundle'] = {
+    'bundle_name': bundle_name,
+    'target_path': '../',
+}
 deployment_config = {
     'cache_implementation': {
         'cache_type': LocalFileSystemCacheBackend,
@@ -98,10 +103,11 @@ deployment_config = {
 # deployment = SSHJobDeployment(job_name, job, job_source_bundle)
 # deployment.config().update(deployment_config)
 # deployment.deploy()
-deployment = deployment_manager.deploy(deployment_config, job_name, job, job_source_bundle)
-wait_for_deployment_to_complete(deployment)
+deployment = deployment_manager.deploy(deployment_config, job_name, job)
+wrapper = DeploymentWrapper(deployment)
+wrapper.wait_for_deployment_to_complete(deployment)
 # raise_error_if_job_failed(deployment)
-result = deployment.fetch_job_results()
+result = wrapper.fetch_job_results()
 print(result)
 
 # pipe.run()

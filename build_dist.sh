@@ -26,8 +26,5 @@ cd vcat_sdk/ && \
     cd ssh_utils/ && \
     ${python_version} setup.py sdist bdist_wheel &&\
     cd ../ && \
-    ${python_version} -m pip install -U ssh_utils/dist/vcat_ssh-0.0.1-${wheel_suffix}-none-any.whl && \
-    cd ui_utils/ && \
-    ${python_version} setup.py sdist bdist_wheel &&\
-    cd ../ && \
-    ${python_version} -m pip install -U ui_utils/dist/vcat_ui-0.0.1-${wheel_suffix}-none-any.whl
+    ${python_version} -m pip install -U ssh_utils/dist/vcat_ssh-0.0.1-${wheel_suffix}-none-any.whl
+    
