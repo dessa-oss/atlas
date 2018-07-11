@@ -31,7 +31,12 @@ def main():
     for C in [0.0125, 0.125, 0.25, 1.0, 2.0]:
         for intercept_scaling in [0.75, 1.0, 2]:
             # model training and scoring
-            model = train_logistic_regression(x_train, y_train, C=C, intercept_scaling=intercept_scaling)
+            model = train_logistic_regression(
+                x_train, 
+                y_train, 
+                C=vcat.Hyperparameter('inverse_regularization_strength'), 
+                intercept_scaling=vcat.Hyperparameter('intercept_scaling')
+            )
             _, train_score = get_metrics(model, x_train, y_train.copy(), 'Training').splice(2)
             _, valid_score = get_metrics(model, x_valid, y_valid.copy(), 'Validation').splice(2)
 
@@ -40,7 +45,7 @@ def main():
 
             # run everything
             with vcat_ui.start_run():
-                log.run_same_process(C=C, intercept_scaling=intercept_scaling)
+                log.run_same_process(inverse_regularization_strength=C, intercept_scaling=intercept_scaling)
 
 if __name__ == '__main__':
     main()

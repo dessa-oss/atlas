@@ -65,4 +65,7 @@ def get_metrics(model, inputs, targets, data_set_name):
         model, inputs, targets)
     targets['PredictedSurvived'] = targets_predications
     targets['Type'] = 'Training'
-    return [targets, score], {'score': score, 'data_set_name': data_set_name}
+
+    metric_prefix = str(data_set_name).lower()
+
+    return [targets, score], {'{}_score'.format(metric_prefix): score, 'data_set_name': data_set_name}
