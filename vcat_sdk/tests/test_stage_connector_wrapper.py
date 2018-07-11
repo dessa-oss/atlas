@@ -11,17 +11,17 @@ import vcat_sdk_fixtures.stage_connector_wrapper_fixtures as scf
 import vcat_sdk_helpers.stage_connector_wrapper_helpers as sch
 
 class TestStageConnectorWrapper(unittest.TestCase):
+    def setUp(self):
+        self.dummy_pipeline = scf.make_dummy_pipeline()
+
     def test_random_search_empty_params_dict_zero_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        self.assertEqual({}, dummy_pipeline.random_search({}, max_iterations=0))
+        self.assertEqual({}, self.dummy_pipeline.random_search({}, max_iterations=0))
 
     def test_random_search_non_empty_params_dict_zero_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        self.assertEqual({}, dummy_pipeline.random_search(scf.params_ranges_dict, max_iterations=0))
+        self.assertEqual({}, self.dummy_pipeline.random_search(scf.params_ranges_dict, max_iterations=0))
 
     def test_random_search_empty_params_dict_one_iteration(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.random_search({}, max_iterations=1)
+        deployments = self.dummy_pipeline.random_search({}, max_iterations=1)
 
         self.assertEqual(len(deployments), 1)
 
@@ -29,8 +29,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([{}], all_results)
 
     def test_random_search_simple_params_dict_one_iteration(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.random_search(scf.simple_param_set, max_iterations=1)
+        deployments = self.dummy_pipeline.random_search(scf.simple_param_set, max_iterations=1)
 
         self.assertEqual(len(deployments), 1)
 
@@ -38,8 +37,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([{'a': 1}], all_results)
 
     def test_random_search_simple_params_dict_two_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.random_search(scf.simple_param_set, max_iterations=2)
+        deployments = self.dummy_pipeline.random_search(scf.simple_param_set, max_iterations=2)
 
         self.assertEqual(len(deployments), 2)
 
@@ -47,8 +45,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([{'a': 1}] * 2, all_results)
 
     def test_random_search_less_simple_param_set_two_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.random_search(scf.less_simple_param_set, max_iterations=2)
+        deployments = self.dummy_pipeline.random_search(scf.less_simple_param_set, max_iterations=2)
 
         self.assertEqual(len(deployments), 2)
 
@@ -56,8 +53,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
             self.assertIn(result['a'], [1, 2])
 
     def test_random_search_more_complex_param_set_twenty_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.random_search(scf.params_ranges_dict, max_iterations=20)
+        deployments = self.dummy_pipeline.random_search(scf.params_ranges_dict, max_iterations=20)
 
         self.assertEqual(len(deployments), 20)
 
@@ -67,20 +63,16 @@ class TestStageConnectorWrapper(unittest.TestCase):
             self.assertIn(result['param_2'], [4, 5, 6, 7])
 
     def test_grid_search_empty_params_dict_zero_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        self.assertEqual({}, dummy_pipeline.grid_search({}, max_iterations=0))
+        self.assertEqual({}, self.dummy_pipeline.grid_search({}, max_iterations=0))
 
     def test_grid_search_empty_params_dict_no_max_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        self.assertEqual({}, dummy_pipeline.grid_search({}))
+        self.assertEqual({}, self.dummy_pipeline.grid_search({}))
 
     def test_grid_search_simple_params_dict_zero_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        self.assertEqual({}, dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=0))
+        self.assertEqual({}, self.dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=0))
 
     def test_grid_search_simple_params_dict_one_iteration(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=1)
+        deployments = self.dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=1)
 
         self.assertEqual(len(deployments), 1)
 
@@ -88,8 +80,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([{'a': 1}], all_results)
 
     def test_grid_search_simple_params_dict_two_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=2)
+        deployments = self.dummy_pipeline.grid_search(scf.simple_param_set, max_iterations=2)
 
         self.assertEqual(len(deployments), 1) # will not do same hyperparam set twice
 
@@ -97,8 +88,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([{'a': 1}], all_results)
 
     def test_grid_search_less_simple_param_set_two_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=2)
+        deployments = self.dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=2)
 
         self.assertEqual(len(deployments), 2)
 
@@ -106,8 +96,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([[('a', 1)], [('a', 2)]], all_results)
 
     def test_grid_search_less_simple_param_set_ten_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=10)
+        deployments = self.dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=10)
 
         self.assertEqual(len(deployments), 2)
 
@@ -115,8 +104,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([[('a', 1)], [('a', 2)]], all_results)
 
     def test_grid_search_less_simple_param_set_one_iteration(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=1)
+        deployments = self.dummy_pipeline.grid_search(scf.less_simple_param_set, max_iterations=1)
 
         self.assertEqual(len(deployments), 1)
 
@@ -124,8 +112,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual([[('a', 1)]], all_results)
 
     def test_grid_search_more_complex_param_set_all_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.params_ranges_dict)
+        deployments = self.dummy_pipeline.grid_search(scf.params_ranges_dict)
 
         self.assertEqual(len(deployments), 8)
 
@@ -136,8 +123,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual(expected_results, all_results)
 
     def test_grid_search_more_complex_param_set_five_out_of_eight_iterations(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        deployments = dummy_pipeline.grid_search(scf.params_ranges_dict, max_iterations=5)
+        deployments = self.dummy_pipeline.grid_search(scf.params_ranges_dict, max_iterations=5)
 
         self.assertEqual(len(deployments), 5)
 
@@ -151,32 +137,27 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self.assertEqual(expected_results, all_results)
 
     def test_adaptive_search_no_initial_params_bad_generator_function(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([], scf.bad_params_generator)
+        self.dummy_pipeline.adaptive_search([], scf.bad_params_generator)
 
-        self.assertEqual(dummy_pipeline.params_run, [])
+        self.assertEqual(self.dummy_pipeline.params_run, [])
 
     def test_adaptive_search_one_initial_param_set_dead_end(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([{'a': 1}], scf.dead_end)
+        self.dummy_pipeline.adaptive_search([{'a': 1}], scf.dead_end)
 
-        self.assertEqual(dummy_pipeline.params_run, [{'a': 1}])
+        self.assertEqual(self.dummy_pipeline.params_run, [{'a': 1}])
 
     def test_adaptive_search_one_initial_param_but_twice_dead_end(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([{'a': 1}, {'a': 1}], scf.dead_end)
+        self.dummy_pipeline.adaptive_search([{'a': 1}, {'a': 1}], scf.dead_end)
 
-        self.assertEqual(dummy_pipeline.params_run, [{'a': 1}] * 2)
+        self.assertEqual(self.dummy_pipeline.params_run, [{'a': 1}] * 2)
 
     def test_adaptive_search_two_initial_params_dead_end(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([{'a': 1}, {'a': 2}], scf.dead_end)
+        self.dummy_pipeline.adaptive_search([{'a': 1}, {'a': 2}], scf.dead_end)
 
-        self.assertEqual(dummy_pipeline.params_run, [{'a': 1}, {'a': 2}])
+        self.assertEqual(self.dummy_pipeline.params_run, [{'a': 1}, {'a': 2}])
 
     def test_adaptive_search_one_initial_param_good_generator(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}], scf.good_generator)
+        self.dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}], scf.good_generator)
 
         expected_results = [
             {'a': 1, 'b': 2},
@@ -188,11 +169,10 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         expected_results = sch.make_list_of_dicts_comparable(expected_results)
 
-        self.assertEqual(sch.make_list_of_dicts_comparable(dummy_pipeline.params_run), expected_results)
+        self.assertEqual(sch.make_list_of_dicts_comparable(self.dummy_pipeline.params_run), expected_results)
 
     def test_adaptive_search_two_initial_params_good_generator(self):
-        dummy_pipeline = scf.make_dummy_pipeline()
-        dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}, {'a': 0, 'b': 3}], scf.good_generator)
+        self.dummy_pipeline.adaptive_search([{'a': 1, 'b': 2}, {'a': 0, 'b': 3}], scf.good_generator)
 
         expected_results = [
             {'a': 1, 'b': 2},
@@ -209,4 +189,4 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         expected_results = sch.make_list_of_dicts_comparable(expected_results)
 
-        self.assertEqual(sch.make_list_of_dicts_comparable(dummy_pipeline.params_run), expected_results)
+        self.assertEqual(sch.make_list_of_dicts_comparable(self.dummy_pipeline.params_run), expected_results)
