@@ -12,12 +12,13 @@ class FloatingHyperparameter(object):
         Arguments:
             min: {float} -- Left end of uniform distribution
             max: {float} -- Right end of uniform distribution
-            step: {float} -- Grid size for grid search - think range(min, max, step), where max is actually included.
+            step: {float} -- Grid size for grid search - think range(min, max, step), where max is actually included.  Defaults to None (useful for random search)
     """
 
-    def __init__(self, min, max, step):
+    def __init__(self, min, max, step=None):
         self._min = min
         self._max = max
+
         self._step = step
 
         self._values = None
@@ -28,6 +29,12 @@ class FloatingHyperparameter(object):
         Returns:
             values -- The list of values over which to iterate for grid search
         """
+        if self._step == 0:
+            raise ValueError("step cannot be 0 for grid search")
+
+        if self._step is None:
+            raise TypeError("step cannot be None")
+
         if self._values is None:
             self._values = []
             current = self._min
