@@ -32,8 +32,6 @@ class AdaptiveSearcher(object):
 
         self._log.info('----------\n')
 
-        self._check_deployments_and_populate_queue(pipeline_to_run)
-
     def _add_results_to_list(self, deployment, jobs_done, all_logged_results):
         logged_results = deployment._try_get_results(self._error_handler)
         self._log.info(deployment.job_name() + ": " + str(logged_results))
@@ -58,23 +56,40 @@ class AdaptiveSearcher(object):
 
         return all_logged_results
 
-    def _check_deployments_and_populate_queue(self, pipeline_to_run):
+    def _check_deployments_and_populate_queue(self):
         import time
 
-        if self._deployments_map != {}:
-            all_logged_results = self._collect_results_and_remove_finished_deployments()
+        all_logged_results = self._collect_results_and_remove_finished_deployments()
 
-            for logged_results in all_logged_results:
-                new_params_sets = self._params_generator_function(logged_results)
-                self._populate_queue(new_params_sets)
+        for logged_results in all_logged_results:
+            new_params_sets = self._params_generator_function(logged_results)
+            self._populate_queue(new_params_sets)
 
-            if all_logged_results != []:
-                self._drain_queue(pipeline_to_run)
-            else:
-                time.sleep(5)
-                self._check_deployments_and_populate_queue(pipeline_to_run)
-        else:
-            self._log.info('Adaptive search completed.')
+        return all_logged_results            
+
+    def _is_search_done(self):
+        return self._deployments_map == {} and self._params_queue.empty()
 
     def search(self, pipeline_to_run):
-        self._drain_queue(pipeline_to_run)
+        import time
+
+        STATE_DRAINING = "DRAINING"
+        STATE_POPULATING = "POPULATING"
+
+        current_state = STATE_DRAINING
+
+        while not self._is_search_done():
+            if current_state == STATE_DRAINING:
+                self._drain_queue(pipeline_to_run)
+                current_state = STATE_POPULATING
+            elif current_state == STATE_POPULATING:
+                all_logged_results = self._check_deployments_and_populate_queue()
+
+                if all_logged_results != []:
+                    current_state = STATE_DRAINING
+                else:
+                    time.sleep(5)
+            else:
+                raise ValueError("unknown state: " + current_state)
+        
+        self._log.info('Adaptive search completed.')
