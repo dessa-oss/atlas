@@ -25,6 +25,31 @@ def extract_results(fetched_results):
 
     return results
 
+def _grab_and_log_results(logger, deployment, error_handler):
+    logged_results = deployment._try_get_results(error_handler)
+    logger.info(deployment.job_name() + ": " + str(logged_results))
+    return logged_results
+
+def collect_results_and_remove_finished_deployments(logger, deployment_set, error_handler):
+    from vcat.utils import _remove_items_by_key
+
+    jobs_done = []
+    all_logged_results = []
+
+    for job_name, deployment in deployment_set.items():
+        logger.info(job_name + ": " + deployment.get_job_status())
+
+        if deployment.is_job_complete():
+            logged_results = _grab_and_log_results(logger, deployment, error_handler)
+            jobs_done.append(deployment.job_name())
+            all_logged_results.append(logged_results)
+
+    _remove_items_by_key(deployment_set, jobs_done)
+
+    logger.info("----------\n")
+
+    return all_logged_results
+
 def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     import time
 
@@ -33,7 +58,7 @@ def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     log = log_manager.get_logger(__name__)
 
     while deployment_set != {}:
-        _collect_results_and_remove_finished_deployments(deployment_set, error_handler)
+        collect_results_and_remove_finished_deployments(log, deployment_set, error_handler)
         time.sleep(time_to_sleep)
 
     log.info('All deployments completed.')

@@ -32,29 +32,10 @@ class AdaptiveSearcher(object):
 
         self._log.info('----------\n')
 
-    def _add_results_to_list(self, deployment, jobs_done, all_logged_results):
-        logged_results = deployment._try_get_results(self._error_handler)
-        self._log.info(deployment.job_name() + ": " + str(logged_results))
-        jobs_done.append(deployment.job_name())
-        all_logged_results.append(logged_results)
-
     def _collect_results_and_remove_finished_deployments(self):
-        from vcat.utils import _remove_items_by_key
+        from vcat.deployment_utils import collect_results_and_remove_finished_deployments
 
-        jobs_done = []
-        all_logged_results = []
-
-        for job_name, deployment in self._deployments_map.items():
-            self._log.info(job_name + ": " + deployment.get_job_status())
-
-            if deployment.is_job_complete():
-                self._add_results_to_list(deployment, jobs_done, all_logged_results)
-
-        _remove_items_by_key(self._deployments_map, jobs_done)
-
-        self._log.info("----------\n")
-
-        return all_logged_results
+        return collect_results_and_remove_finished_deployments(self._log, self._deployments_map, self._error_handler)
 
     def _check_deployments_and_populate_queue(self):
         import time
