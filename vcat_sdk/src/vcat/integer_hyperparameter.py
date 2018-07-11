@@ -11,10 +11,10 @@ class IntegerHyperparameter(DiscreteHyperparameter):
     """Represents a range of integer values for use in hyperparameter substitution.
 
         Arguments:
-            start: {int} -- The start of the range of values (defaults to 0)
+            start: {int} -- The start of the range of values
             stop: {int} -- The end of the range of values (exclusive)
             step: {int} -- The number to increment by (defaults to 1)
     """
 
-    def __init__(self, *args, **kwargs):
-        super(IntegerHyperparameter, self).__init__(range(*args, **kwargs))
+    def __init__(self, start, stop, step=1):
+        super(IntegerHyperparameter, self).__init__(range(start, stop, step))
