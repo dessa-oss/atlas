@@ -6,72 +6,56 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from vcat_mlflow.stage_log_middleware import StageLogMiddleware
+from vcat_ui.parameter_middleware import ParameterMiddleware
 
 
-class TestStageLogMiddleware(unittest.TestCase):
+class TestParameterMiddleware(unittest.TestCase):
 
     def test_call_calls_callback(self):
-        middleware = StageLogMiddleware(
+        middleware = ParameterMiddleware(
             None, None, self._make_context(), self._make_stage())
-        middleware.call(None, None, None, [], {}, self._callback)
+        middleware.call(None, None, {}, [], {}, self._callback)
         self.assertEqual(True, self._callback_called())
 
     def test_call_returns_callback_result(self):
-        middleware = StageLogMiddleware(
+        middleware = ParameterMiddleware(
             None, None, self._make_context(), self._make_stage())
-        result = middleware.call(None, None, None, [], {}, self._callback)
+        result = middleware.call(None, None, {}, [], {}, self._callback)
         self.assertEqual(self._stage_result(), result)
 
     def test_call_creates_metric(self):
         from test.helpers import mlflow_hacks
-        from test.helpers.mlflow_hacks import get_metric_info
+        from test.helpers.mlflow_hacks import get_parameter_info
 
         mlflow_hacks.reset()
 
-        stage_output = {'score': 0.95}
-        middleware = StageLogMiddleware(
+        filler_kwargs = {'tolerance': 0.95}
+        middleware = ParameterMiddleware(
             None, None, self._make_context(True), self._make_stage())
-        middleware.call(None, None, None, [],
-                                 {}, self._make_callback(stage_output))
+        middleware.call(None, None, filler_kwargs, [],
+                        {}, self._callback)
 
-        result_metric = get_metric_info('_stage_function.score')
-
-        self.assertEqual(0.95, result_metric)
-
-    def test_call_creates_metric_different_stage_name(self):
-        from test.helpers import mlflow_hacks
-        from test.helpers.mlflow_hacks import get_metric_info
-
-        mlflow_hacks.reset()
-
-        stage_output = {'score': 0.95}
-        middleware = StageLogMiddleware(
-            None, None, self._make_context(True), self._make_stage(self._other_stage_function))
-        middleware.call(None, None, None, [],
-                                 {}, self._make_callback(stage_output))
-
-        result_metric = get_metric_info('_other_stage_function.score')
+        result_metric = get_parameter_info('tolerance')
 
         self.assertEqual(0.95, result_metric)
 
     def test_call_creates_multiple_metrics(self):
         from test.helpers import mlflow_hacks
-        from test.helpers.mlflow_hacks import get_metric_info
+        from test.helpers.mlflow_hacks import get_parameter_info
 
         mlflow_hacks.reset()
 
-        stage_output = {'score': 0.35, 'loss': 9.44}
-        middleware = StageLogMiddleware(
+        filler_kwargs = {'tolerance': 0.35, 'number_of_layers': 67}
+        middleware = ParameterMiddleware(
             None, None, self._make_context(True), self._make_stage())
-        middleware.call(None, None, None, [],
-                                 {}, self._make_callback(stage_output))
+        middleware.call(None, None, filler_kwargs, [],
+                        {}, self._callback)
 
-        result_metric = get_metric_info('_stage_function.score')
+        result_metric = get_parameter_info('tolerance')
         self.assertEqual(0.35, result_metric)
 
-        result_metric = get_metric_info('_stage_function.loss')
-        self.assertEqual(9.44, result_metric)
+        result_metric = get_parameter_info('number_of_layers')
+        self.assertEqual(67, result_metric)
 
     def _make_stage(self, function=None):
         from vcat.stage import Stage
@@ -113,9 +97,3 @@ class TestStageLogMiddleware(unittest.TestCase):
         stage_output = uuid4()
         setattr(self, 'stage_result', stage_output)
         return stage_output
-
-    def _make_callback(self, output):
-        def callback(args, kwargs):
-            return self._callback(args, kwargs), output
-
-        return callback

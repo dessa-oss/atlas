@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def _install():
     from vcat.global_state import middleware_manager
-    from vcat_mlflow.stage_log_middleware import StageLogMiddleware
-    from vcat_mlflow.parameter_middleware import ParameterMiddleware
-    from vcat_mlflow.stage_output_middleware import StageOutputMiddleware
+    from vcat_ui.stage_log_middleware import StageLogMiddleware
+    from vcat_ui.parameter_middleware import ParameterMiddleware
+    from vcat_ui.stage_output_middleware import StageOutputMiddleware
 
     middleware_manager.append_stage('MLFlowStageLog', StageLogMiddleware)
     middleware_manager.add_stage_middleware_before(

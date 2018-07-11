@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat_mlflow.installer import _install
+from vcat_ui.installer import _install
+from mlflow import start_run
 
 
 def _append_module():

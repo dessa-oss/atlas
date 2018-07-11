@@ -17,7 +17,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='vcat_mlflow',
+    name='vcat_ui',
     version='0.0.1',
     description='A tool for machine learning development',
     classifiers=[ 
@@ -27,6 +27,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
-        'vcat_mlflow': ['resources/*'],
+        'vcat_ui': ['resources/*'],
     }
 )

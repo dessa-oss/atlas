@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from vcat_mlflow.stage_output_middleware import StageOutputMiddleware
+from vcat_ui.stage_output_middleware import StageOutputMiddleware
 
 
 class TestStageOutputMiddleware(unittest.TestCase):

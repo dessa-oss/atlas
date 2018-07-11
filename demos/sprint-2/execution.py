@@ -7,8 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import vcat
-import vcat_mlflow
-import mlflow
+import vcat_ui
 
 from staged_methods import create_data_frame, scale_data
 from random import randint
@@ -21,6 +20,6 @@ data.persist()
 data = scale_data(data, vcat.Hyperparameter("scale"))
 data.persist()
 
-# execute the stage locally with mlflow
-with mlflow.start_run():
+# execute the stage locally with vcat_ui
+with vcat_ui.start_run():
     data.run_same_process(scale=randint(5, 15))
