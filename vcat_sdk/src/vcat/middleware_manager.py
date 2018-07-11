@@ -20,16 +20,15 @@ class MiddlewareManager(object):
 
     def initial_middleware(self):
         if self._initial_middleware is None:
-            self._initial_middleware = [
-                self._make_middleware('Redundant', MiddlewareManager._create_redundant_middleware),
-                self._make_middleware('Error', MiddlewareManager._create_error_middleware)
-            ]
+            self._initial_middleware = []
 
         return self._initial_middleware
 
     def stage_middleware(self):
         if self._stage_middleware is None:
             self._stage_middleware = [
+                self._make_middleware('Redundant', MiddlewareManager._create_redundant_middleware),
+                self._make_middleware('Error', MiddlewareManager._create_error_middleware),
                 self._make_middleware('StageOutput', MiddlewareManager._create_stage_output_middleware),
                 self._make_middleware('StageLog', MiddlewareManager._create_stage_log_middleware),
                 self._make_middleware('ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
@@ -70,12 +69,12 @@ class MiddlewareManager(object):
         return MiddlewareManager.NamedMiddleware(name, callback)
 
     @staticmethod
-    def _create_redundant_middleware(stage_context):
+    def _create_redundant_middleware(pipeline_context, stage_config, stage_context, stage):
         from vcat.redundant_execution_middleware import RedundantExecutionMiddleware
-        return RedundantExecutionMiddleware()
+        return RedundantExecutionMiddleware(stage)
 
     @staticmethod
-    def _create_error_middleware(stage_context):
+    def _create_error_middleware(pipeline_context, stage_config, stage_context, stage):
         from vcat.error_middleware import ErrorMiddleware
         return ErrorMiddleware(stage_context)
 
