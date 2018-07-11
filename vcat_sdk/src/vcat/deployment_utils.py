@@ -16,95 +16,49 @@ def gcp_deploy_job(job, job_name):
     deployment.deploy()
     return deployment
 
-def _grid_param_set_generator(hype_kwargs):
-    import itertools
+def extract_results(fetched_results):
+    results = {}
 
-    hype_dict = {}
+    for stage_context in fetched_results["stage_contexts"].values():
+        stage_log_entry = stage_context["stage_log"]
+        results.update(stage_log_entry)
 
-    for key, val in hype_kwargs.items():
-        if isinstance(val, list):
-            hype_dict[key] = val
-        else:
-            hype_dict[key] = [val]
+    return results
 
-    param_keys = []
-    param_vals_to_select = []
+def _grab_and_log_results(logger, deployment, error_handler):
+    logged_results = deployment._try_get_results(error_handler)
+    logger.info(deployment.job_name() + ": " + str(logged_results))
+    return logged_results
 
-    for key, val in hype_dict.items():
-        param_keys.append(key)
-        param_vals_to_select.append(val)
+def collect_results_and_remove_finished_deployments(logger, deployment_set, error_handler):
+    from vcat.utils import _remove_items_by_key
 
-    for param_vals in itertools.product(*param_vals_to_select):
-        param_set_entry = {}
+    jobs_done = []
+    all_logged_results = []
 
-        for param_key, param_val in zip(param_keys, param_vals):
-            param_set_entry[param_key] = param_val
+    for job_name, deployment in deployment_set.items():
+        logger.info(job_name + ": " + deployment.get_job_status())
 
-        yield param_set_entry
+        if deployment.is_job_complete():
+            logged_results = _grab_and_log_results(logger, deployment, error_handler)
+            jobs_done.append(deployment.job_name())
+            all_logged_results.append(logged_results)
 
+    _remove_items_by_key(deployment_set, jobs_done)
 
-def grid_search(connector_wrapper, deployer_type, **hype_kwargs):
-    from vcat.job_source_bundle import JobSourceBundle
-    from vcat.job import Job
+    logger.info("----------\n")
+
+    return all_logged_results
+
+def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     import time
-    import uuid
+
     from vcat.global_state import log_manager
 
     log = log_manager.get_logger(__name__)
 
-    for param_set in _grid_param_set_generator(hype_kwargs):
-        connector_wrapper._reset_state()
-        deployer_uuid = str(uuid.uuid4())
+    while deployment_set != {}:
+        collect_results_and_remove_finished_deployments(log, deployment_set, error_handler)
+        time.sleep(time_to_sleep)
 
-        bundle_base = deployer_uuid + "_bundle"
-
-        job = Job(connector_wrapper, **param_set)
-        job_source_bundle = JobSourceBundle(bundle_base, bundle_base)
-        deployer = deployer_type(deployer_uuid, job, job_source_bundle)
-
-        deployer.deploy()
-
-        wait_for_deployment_to_complete(deployer)
-
-        log.debug(deployer.fetch_job_results())
-
-
-def _extract_results(results_dict):
-    results = {}
-
-    for result_entry in results_dict["results"].values():
-        results.update(result_entry)
-
-    return results
-
-
-def adaptive_search(connector_wrapper, deployer_type, initial_generator, generator_function):
-    from vcat.job_source_bundle import JobSourceBundle
-    from vcat.job import Job
-    import Queue
-    import uuid
-
-    queue = Queue.Queue()
-
-    for initial_params in initial_generator:
-        queue.put(initial_params)
-
-    while not queue.empty():
-        connector_wrapper._reset_state()
-
-        param_set = queue.get()
-
-        deployer_uuid = str(uuid.uuid4())
-        bundle_base = deployer_uuid + "_bundle"
-
-        job = Job(connector_wrapper, **param_set)
-        job_source_bundle = JobSourceBundle(bundle_base, bundle_base)
-        deployer = deployer_type(deployer_uuid, job, job_source_bundle)
-
-        wait_for_deployment_to_complete(deployer)
-
-        results_dict = deployer.fetch_job_results()
-        print(results_dict)
-
-        for new_params in generator_function(_extract_results(results_dict)):
-            queue.put(new_params)
+    log.info('All deployments completed.')
