@@ -53,12 +53,12 @@ class TestStagedModuleLoader(unittest.TestCase):
         import dill as pickle
         module = self.MockModule()
         StagedModuleLoader(pickle).exec_module(module)
-        result = module.dumps('hello')()
+        result = module.dumps('hello').run_same_process()
         self.assertTrue(pickle.loads(result), 'hello')
 
     def test_exec_module_stage_function_supports_kwargs(self):
         import dill as pickle
         module = self.MockModule()
         StagedModuleLoader(pickle).exec_module(module)
-        result = module.dumps(obj='hello')()
+        result = module.dumps(obj='hello').run_same_process()
         self.assertTrue(pickle.loads(result), 'hello')
