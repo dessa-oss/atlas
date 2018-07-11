@@ -28,10 +28,10 @@ def main():
     x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).enable_caching().splice(2)
 
     # hyper parameter search
-    for C in [0.25, 0.125, 1.0]:
-        for max_iter in [100, 200]:
+    for C in [0.0125, 0.125, 0.25, 1.0, 2.0]:
+        for intercept_scaling in [0.75, 1.0, 2]:
             # model training and scoring
-            model = train_logistic_regression(x_train, y_train, C=C, max_iter=max_iter)
+            model = train_logistic_regression(x_train, y_train, C=C, intercept_scaling=intercept_scaling)
             _, train_score = get_metrics(model, x_train, y_train.copy(), 'Training').splice(2)
             _, valid_score = get_metrics(model, x_valid, y_valid.copy(), 'Validation').splice(2)
 
@@ -40,7 +40,7 @@ def main():
 
             # run everything
             with vcat_ui.start_run():
-                log.run_same_process(C=C, max_iter=max_iter)
+                log.run_same_process(C=C, intercept_scaling=intercept_scaling)
 
 if __name__ == '__main__':
     main()
