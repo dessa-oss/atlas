@@ -14,7 +14,8 @@ from vcat.context_aware import ContextAware
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context, stage_context, stage_config):
+    def __init__(self, graph, connector, pipeline_context, stage_context, stage_config):
+        self._graph = graph
         self._connector = connector
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
@@ -41,11 +42,14 @@ class StageConnectorWrapper(object):
     def stage(self, function, *args, **kwargs):
         from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
 
-        builder = StageConnectorWrapperBuilder(self._pipeline_context)
+        builder = StageConnectorWrapperBuilder(self._graph, self._pipeline_context)
         builder = builder.stage(self.uuid(), function, args, kwargs)
         builder = builder.hierarchy([self.uuid()])
 
         return builder.build(self._connector.stage)
+    
+    def require(self, *args):
+        pass
 
     def persist(self):
         self._stage_config.persist()
