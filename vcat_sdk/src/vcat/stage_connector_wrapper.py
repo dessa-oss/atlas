@@ -12,6 +12,7 @@ from vcat.stage_connector import StageConnector
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
 
+
 class StageConnectorWrapper(object):
 
     def __init__(self, graph, connector, pipeline_context, stage_context, stage_config):
@@ -40,16 +41,22 @@ class StageConnectorWrapper(object):
             self._pipeline_context.provenance.stage_hierarchy, self._provenance_filler_builder, **filler_kwargs)
 
     def stage(self, function, *args, **kwargs):
-        from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
-
-        builder = StageConnectorWrapperBuilder(self._graph, self._pipeline_context)
-        builder = builder.stage(self.uuid(), function, args, kwargs)
-        builder = builder.hierarchy([self.uuid()])
+        builder = self._make_builder()
+        builder = self._set_builder_stage(builder, function, args, kwargs)
+        builder = self._set_builder_hierarchy(builder)
 
         return builder.build(self._connector.stage)
-    
-    def require(self, *args):
-        pass
+
+    def require(self, *required_args):
+        def _require(*args, data):
+            return data
+
+        builder = self._make_builder()
+        builder = self._set_builder_stage(
+            builder, _require, required_args, {'data': self})
+        builder = self._set_builder_hierarchy(builder)
+
+        return builder.build(self._connector.stage)
 
     def persist(self):
         self._stage_config.persist()
@@ -90,6 +97,16 @@ class StageConnectorWrapper(object):
 
     def run_without_provenance(self, **filler_kwargs):
         return self._connector.run(self._filler_builder, **filler_kwargs)
+
+    def _make_builder(self):
+        from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+        return StageConnectorWrapperBuilder(self._graph, self._pipeline_context)
+
+    def _set_builder_stage(self, builder, function, args, kwargs):
+        return builder.stage(self.uuid(), function, args, kwargs)
+
+    def _set_builder_hierarchy(self, builder):
+        return builder.hierarchy([self.uuid()])
 
     def _filler_builder(self, *args, **kwargs):
         from vcat.hyperparameter_argument_fill import HyperparameterArgumentFill
@@ -151,7 +168,8 @@ class StageConnectorWrapper(object):
     def random_search(self, params_range_dict, max_iterations):
         from vcat.set_random_searcher import SetRandomSearcher
 
-        set_random_searcher = SetRandomSearcher(params_range_dict, max_iterations)
+        set_random_searcher = SetRandomSearcher(
+            params_range_dict, max_iterations)
         return set_random_searcher.run_param_sets(self)
 
     def grid_search(self, params_range_dict, max_iterations=None):
@@ -163,5 +181,6 @@ class StageConnectorWrapper(object):
     def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
         from vcat.adaptive_searcher import AdaptiveSearcher
 
-        adaptive_searcher = AdaptiveSearcher(set_of_initial_params, params_generator_function, error_handler)
+        adaptive_searcher = AdaptiveSearcher(
+            set_of_initial_params, params_generator_function, error_handler)
         adaptive_searcher.search(self)
