@@ -55,3 +55,10 @@ class TestRunStages(unittest.TestCase):
         stage = pipeline.stage(make_value, 7)
         stage2 = pipeline.stage(double_value, stage)
         self.assertEqual(14, stage2.run_same_process())
+
+    def test_can_run_method_on_stage(self):
+        def method():
+            return 'hello'
+
+        stage = pipeline.stage(method).replace('l', 'p')
+        self.assertEqual('heppo', stage.run_same_process())
