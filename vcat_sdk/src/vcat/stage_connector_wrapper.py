@@ -66,18 +66,17 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, params_dict={}, **kw_params):
-        import uuid
-
+    def run(self, params_dict=None, **kw_params):
         from vcat.global_state import deployment_manager
         from vcat.deployment_wrapper import DeploymentWrapper
+
+        if params_dict is None:
+            params_dict = {}
 
         all_params = params_dict.copy()
         all_params.update(kw_params)
 
-        job_name = str(uuid.uuid4())
-        job = Job(self, **all_params)
-        deployment = deployment_manager.deploy({}, job_name, job)
+        deployment = deployment_manager.simple_deploy(self, all_params)
 
         return DeploymentWrapper(deployment)
 
