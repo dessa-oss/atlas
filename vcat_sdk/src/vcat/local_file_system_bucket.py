@@ -12,6 +12,7 @@ class LocalFileSystemBucket(object):
         from os import getcwd
 
         self._path = abspath(path or getcwd())
+        self._log().debug('Creating bucket at path {}'.format(self._path))
 
     def upload_from_string(self, name, data):
         from vcat.utils import byte_string

@@ -5,15 +5,29 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class ConfigManager(object):
 
     def __init__(self):
         self._config = None
+        self._frozen = False
 
     def config(self):
+        import copy
+
         if self._config is None:
             self._load()
-        return self._config
+
+        if self._frozen:
+            return copy.deepcopy(self._config)
+        else:
+            return self._config
+
+    def freeze(self):
+        self._frozen = True
+
+    def frozen(self):
+        return self._frozen
 
     def _load(self):
         from vcat.local_directory import LocalDirectory
@@ -33,7 +47,11 @@ class ConfigManager(object):
         return self.config()[key]
 
     def __setitem__(self, key, value):
-        self.config()[key] = value
+        if self._frozen:
+            self._log().debug('Unable to set {} to {} due to frozen configuration'.format(key, value))
+        else:
+            self.config()[key] = value
+            self._log().debug('Setting {} to {}'.format(key, value))
 
     def reflect_instance(self, name, type_name, default_callback):
         reflected_klass, reflected_args, reflected_kwargs = self.reflect_constructor(
@@ -54,14 +72,25 @@ class ConfigManager(object):
     def reflect_constructor(self, name, type_name, default_callback):
         config = self.config()
         implementation_key = name + '_implementation'
+        implementation_type = type_name + '_type'
+        self._log().debug('Reflecting constructor for {} ({}) via {} ({})'.format(
+            name, type_name, implementation_key, implementation_type))
         if implementation_key in config:
             reflected_implementation = config[implementation_key]
-            reflected_klass_string = reflected_implementation[type_name + '_type']
-            reflected_klass = ConfigManager._string_to_type(reflected_klass_string)
+            self._log().debug('Configured with {}'.format(reflected_implementation))
+
+            reflected_klass_string = reflected_implementation[implementation_type]
+            reflected_klass = ConfigManager._string_to_type(
+                reflected_klass_string)
             reflected_args = reflected_implementation.get(
                 'constructor_arguments', [])
             reflected_kwargs = reflected_implementation.get(
                 'constructor_keword_arguments', {})
             return reflected_klass, reflected_args, reflected_kwargs
         else:
+            self._log().debug('Returning {}, {}, {}'.format(default_callback, [], {}))
             return default_callback, [], {}
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

@@ -11,6 +11,7 @@ def main():
     log = log_manager.get_logger(__name__)
     job_source_bundle = JobSourceBundle('job', './')
 
+    config_manager.freeze()
     config = config_manager.config()
 
     job_name = config.get('job_name', 'job')
