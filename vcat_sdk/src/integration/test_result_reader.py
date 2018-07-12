@@ -21,6 +21,27 @@ class TestResultReader(unittest.TestCase):
         job_information = self._create_reader_and_get_job_information(stage)
         self.assertFalse(job_information.empty)
 
+    def test_multiple_runs_do_not_break(self):
+        def method():
+            pass
+
+        def method2():
+            pass
+
+        pipeline = self._make_pipeline()
+
+        stage = pipeline.stage(method)
+        self._run_and_persist(stage)
+
+        stage2 = pipeline.stage(method2)
+        self._run_and_persist(stage2)
+
+        job_information = self._create_reader_and_get_job_information(stage)
+        self.assertFalse(job_information.empty)
+
+        job_information = self._create_reader_and_get_job_information(stage2)
+        self.assertFalse(job_information.empty)
+
     def test_stores_hierarchy(self):
         def method():
             pass
