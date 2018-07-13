@@ -61,5 +61,11 @@ class Pipeline(object):
     def persist(self):
         pass
 
+    def require(self, *required_args):
+        def _require(*args):
+            pass
+            
+        return self.stage(_require, *required_args)
+
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
