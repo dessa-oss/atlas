@@ -77,6 +77,8 @@ class MiddlewareManager(object):
 
         configured_middleware = config_manager.config().get('stage_middleware', [])
         for middleware_config in configured_middleware:
+            self._log().debug('Loading configured stage middleware {}'.format(middleware_config))
+
             middleware = self._make_middleware(middleware_config['name'], middleware_config['constructor'])
             if 'insert_before' in middleware_config:
                 previous_index = self._find_middleware_index(self._stage_middleware, middleware_config['insert_before'])
@@ -93,6 +95,10 @@ class MiddlewareManager(object):
 
     def _make_middleware(self, name, callback):
         return MiddlewareManager.NamedMiddleware(name, callback)
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)
 
     @staticmethod
     def _create_redundant_middleware(pipeline_context, stage_config, stage_context, stage):
