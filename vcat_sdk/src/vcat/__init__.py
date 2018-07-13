@@ -39,6 +39,7 @@ from vcat.serializer import *
 from vcat.discrete_hyperparameter import DiscreteHyperparameter
 from vcat.integer_hyperparameter import IntegerHyperparameter
 from vcat.floating_hyperparameter import FloatingHyperparameter
+from vcat.basic_stage_middleware import BasicStageMiddleware
 
 import vcat.import_installer
 
