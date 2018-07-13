@@ -27,17 +27,28 @@ class MiddlewareManager(object):
     def stage_middleware(self):
         if self._stage_middleware is None:
             self._stage_middleware = [
-                self._make_middleware('Redundant', MiddlewareManager._create_redundant_middleware),
-                self._make_middleware('Error', MiddlewareManager._create_error_middleware),
-                self._make_middleware('StageOutput', MiddlewareManager._create_stage_output_middleware),
-                self._make_middleware('StageLog', MiddlewareManager._create_stage_log_middleware),
-                self._make_middleware('ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
-                self._make_middleware('Cache', MiddlewareManager._create_cache_middleware),
-                self._make_middleware('UpstreamResult', MiddlewareManager._create_upstream_result_middleware),
-                self._make_middleware('ContextAware', MiddlewareManager._create_context_aware_middleware),
-                self._make_middleware('TimeStage', MiddlewareManager._create_time_stage_middleware),
-                self._make_middleware('StageLogging', MiddlewareManager._create_stage_logging_middleware)
+                self._make_middleware(
+                    'Redundant', MiddlewareManager._create_redundant_middleware),
+                self._make_middleware(
+                    'Error', MiddlewareManager._create_error_middleware),
+                self._make_middleware(
+                    'StageOutput', MiddlewareManager._create_stage_output_middleware),
+                self._make_middleware(
+                    'StageLog', MiddlewareManager._create_stage_log_middleware),
+                self._make_middleware(
+                    'ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
+                self._make_middleware(
+                    'Cache', MiddlewareManager._create_cache_middleware),
+                self._make_middleware(
+                    'UpstreamResult', MiddlewareManager._create_upstream_result_middleware),
+                self._make_middleware(
+                    'ContextAware', MiddlewareManager._create_context_aware_middleware),
+                self._make_middleware(
+                    'TimeStage', MiddlewareManager._create_time_stage_middleware),
+                self._make_middleware(
+                    'StageLogging', MiddlewareManager._create_stage_logging_middleware)
             ]
+            self._load_configured_stage_middleware()
 
         return self._stage_middleware
 
@@ -46,7 +57,8 @@ class MiddlewareManager(object):
         self.initial_middleware().append(middleware)
 
     def add_initial_middleware_before(self, before, name, middleware_callback):
-        previous_index = self._find_middleware_index(self.initial_middleware(), before)
+        previous_index = self._find_middleware_index(
+            self.initial_middleware(), before)
         middleware = self._make_middleware(name, middleware_callback)
         self.initial_middleware().insert(previous_index, middleware)
 
@@ -55,15 +67,29 @@ class MiddlewareManager(object):
         self.stage_middleware().append(middleware)
 
     def add_stage_middleware_before(self, before, name, middleware_callback):
-        previous_index = self._find_middleware_index(self.stage_middleware(), before)
+        previous_index = self._find_middleware_index(
+            self.stage_middleware(), before)
         middleware = self._make_middleware(name, middleware_callback)
         self.stage_middleware().insert(previous_index, middleware)
+
+    def _load_configured_stage_middleware(self):
+        from vcat.global_state import config_manager
+
+        configured_middleware = config_manager.config().get('stage_middleware', [])
+        for middleware_config in configured_middleware:
+            middleware = self._make_middleware(middleware_config['name'], middleware_config['constructor'])
+            if 'insert_before' in middleware_config:
+                previous_index = self._find_middleware_index(self._stage_middleware, middleware_config['insert_before'])
+                self._stage_middleware.insert(previous_index, middleware)
+            else:
+                self._stage_middleware.append(middleware)
 
     def _find_middleware_index(self, middleware, name):
         for index, value in enumerate(middleware):
             if value.name == name:
                 return index
-        raise ValueError('Previous middleware `{}` does not exist'.format(name))
+        raise ValueError(
+            'Previous middleware `{}` does not exist'.format(name))
 
     def _make_middleware(self, name, callback):
         return MiddlewareManager.NamedMiddleware(name, callback)
