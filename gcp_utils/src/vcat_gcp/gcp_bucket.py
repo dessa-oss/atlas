@@ -47,6 +47,9 @@ class GCPBucket(object):
         object_names = [bucket_object.name for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
         return filter(lambda path: fnmatch(path, path_filter), object_file_names)
+    
+    def move(self, source, destination):
+        self._blob(source).rename_blob(destination)
 
     def _blob(self, name):
         return self._bucket.blob(name)

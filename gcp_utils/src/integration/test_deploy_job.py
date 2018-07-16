@@ -17,7 +17,7 @@ class TestDeployJob(unittest.TestCase):
     def test_can_deploy_job_remotely(self):
         from vcat import pipeline
         from os.path import isfile
-        from integration.config import code_path
+        from integration.config import make_code_bucket
         from vcat_gcp import GCPBucket
 
         def method():
@@ -27,18 +27,17 @@ class TestDeployJob(unittest.TestCase):
         deployment = self._make_deployment(stage)
         deployment.deploy()
 
-        bucket = GCPBucket(code_path())
+        bucket = make_code_bucket()
         code_path = '{}.tgz'.format(deployment.job_name())
         self.assertTrue(bucket.exists(code_path))
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat_gcp import GCPJobDeployment
-        from vcat import Job, JobSourceBundle
+        from vcat import Job, JobSourceBundle, BucketJobDeployment
         from uuid import uuid4
-        from integration.config import code_path, result_path
+        from integration.config import make_code_bucket, make_result_bucket
 
         job = Job(stage, **kwargs)
         job_name = str(uuid4())
         source_bundle = JobSourceBundle.for_deployment()
 
-        return GCPJobDeployment(job_name, job, source_bundle, code_path(), result_path())
+        return BucketJobDeployment(job_name, job, source_bundle, make_code_bucket(), make_result_bucket())
