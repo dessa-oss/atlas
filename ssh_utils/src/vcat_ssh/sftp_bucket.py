@@ -82,6 +82,9 @@ class SFTPBucket(object):
                 self._log().debug('Got file %s', path)
             return filter(lambda path: fnmatch(path, pathname), paths)
     
+    def remove(self, name):
+        raise NotImplementedError
+    
     def move(self, source, destination):
         raise NotImplementedError
 
