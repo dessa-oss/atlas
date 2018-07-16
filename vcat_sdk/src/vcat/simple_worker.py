@@ -67,7 +67,12 @@ class SimpleWorker(object):
         with tarfile.open(self._source_job_results_archive(job_name), 'w:gz') as tar:
             tar.add(job_name)
         
-        ensure_path_exists(self._result_path, job_name + '.tgz')
+        source_path = self._source_job_results_archive(job_name)
+        target_path = self._target_job_results_archive(job_name)
+
+        ensure_path_exists('/', target_path)
+        self._log().debug('Moving source results {} to {}'.format(source_path, target_path))
+
         move(self._source_job_results_archive(job_name), self._target_job_results_archive(job_name))
 
     def _source_job_results_archive(self, job_name):

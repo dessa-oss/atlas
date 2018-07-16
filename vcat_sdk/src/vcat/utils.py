@@ -172,5 +172,14 @@ def ensure_path_exists(path, name):
     from os.path import isdir
 
     directory = directory_path(path, name)
+    _log().debug('Ensuring that {} exists'.format(directory))
     if not isdir(directory):
-        mkpath(directory)
+        _log().debug('Creating {}'.format(directory))
+        result = mkpath(directory)
+        _log().debug('{} created'.format(result))
+    else:
+        _log().debug('{} Already exists'.format(directory))
+
+def _log():
+    from vcat.global_state import log_manager
+    return log_manager.get_logger(__name__)

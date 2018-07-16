@@ -40,6 +40,7 @@ from vcat.discrete_hyperparameter import DiscreteHyperparameter
 from vcat.integer_hyperparameter import IntegerHyperparameter
 from vcat.floating_hyperparameter import FloatingHyperparameter
 from vcat.basic_stage_middleware import BasicStageMiddleware
+from vcat.change_directory import ChangeDirectory
 
 import vcat.import_installer
 
