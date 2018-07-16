@@ -83,18 +83,8 @@ class LocalFileSystemBucket(object):
         return join(self._path, name)
 
     def _ensure_path_exists(self, name):
-        from distutils.dir_util import mkpath
-        from os.path import isdir
-
-        directory = self._directory_path(name)
-        if not isdir(directory):
-            mkpath(directory)
-
-    def _directory_path(self, name):
-        from os.path import dirname
-        from os.path import join
-
-        return join(self._path, dirname(name))
+        from vcat.utils import ensure_path_exists
+        ensure_path_exists(self._path, name)
 
     def _log(self):
         from vcat.global_state import log_manager

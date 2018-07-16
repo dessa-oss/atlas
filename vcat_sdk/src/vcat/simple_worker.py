@@ -19,17 +19,19 @@ class SimpleWorker(object):
 
     def run(self):
         from time import sleep
-        from vcat.change_directory import ChangeDirectory
 
         started_jobs = set()
         while True:
-            for archive_name in self._code_bucket.list_files('*.tgz'):
-                if not archive_name in started_jobs:
-                    started_jobs.add(archive_name)
-                    archive_path = self._job_code_path(archive_name)
-                    self._handle_job(archive_path)
+            self.run_once(started_jobs)
 
             sleep(0.5)
+
+    def run_once(self, started_jobs):
+        for archive_name in self._code_bucket.list_files('*.tgz'):
+            if not archive_name in started_jobs:
+                started_jobs.add(archive_name)
+                archive_path = self._job_code_path(archive_name)
+                self._handle_job(archive_path)
 
     def _job_code_path(self, archive_name):
         from os.path import join
@@ -59,10 +61,13 @@ class SimpleWorker(object):
     def _bundle_job_results(self, archive_path):
         import tarfile
         from shutil import move
+        from vcat.utils import ensure_path_exists
 
         job_name = self._job_name(archive_path)
         with tarfile.open(self._source_job_results_archive(job_name), 'w:gz') as tar:
             tar.add(job_name)
+        
+        ensure_path_exists(self._result_path, job_name + '.tgz')
         move(self._source_job_results_archive(job_name), self._target_job_results_archive(job_name))
 
     def _source_job_results_archive(self, job_name):

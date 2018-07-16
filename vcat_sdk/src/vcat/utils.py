@@ -160,3 +160,17 @@ def take_from_generator(elems_to_take, generator):
 def _remove_items_by_key(dictionary, keys):
     for key in keys:
         dictionary.pop(key)
+
+def directory_path(path, name):
+    from os.path import dirname
+    from os.path import join
+
+    return join(path, dirname(name))
+
+def ensure_path_exists(path, name):
+    from distutils.dir_util import mkpath
+    from os.path import isdir
+
+    directory = directory_path(path, name)
+    if not isdir(directory):
+        mkpath(directory)
