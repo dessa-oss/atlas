@@ -5,23 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+# separates test runs
+from uuid import uuid4
+TEST_UUID = uuid4()
+
 
 def _config():
-    from uuid import uuid4
     from os import getcwd
     from vcat import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
-
-    # separates test runs
-    test_uuid = uuid4()
 
     # below is used to ensure we get a different cache for every run
     config_manager['cache_implementation'] = {
         'cache_type': LocalFileSystemCacheBackend,
-        'constructor_arguments': ['/tmp/vcat_example_{}'.format(test_uuid)],
+        'constructor_arguments': ['/tmp/vcat_example_{}'.format(TEST_UUID)],
     }
 
     # below is used to create archives for all different types
-    archive_root = getcwd() + '/tmp/archives_{}'.format(test_uuid)
+    archive_root = getcwd() + '/tmp/archives_{}'.format(TEST_UUID)
 
     archive_implementation = {
         'archive_type': LocalFileSystemPipelineArchive,
