@@ -8,9 +8,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class StageConfig(object):
 
     def __init__(self):
+        from vcat.global_state import cache_manager
+
         self._is_persisted = False
         self._cache_name = None
-        self._allow_caching = False
+
+        self._allow_caching = cache_manager.default_cache_enabled()
         
     def persisted(self):
         return self._is_persisted

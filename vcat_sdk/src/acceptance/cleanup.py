@@ -5,9 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+def cleanup():
+    import shutil
+    from os import getcwd, remove
+    from glob import glob
 
-import vcat
-import acceptance.config
-from acceptance.test_pipeline_interface import TestPipelineInterface
-from acceptance.test_run_job import TestRunJob
-from acceptance.test_duplicate_job_source import TestDuplicateJobSource
+    shutil.rmtree(getcwd() + "/tmp")
+    for file in glob('*.tgz'):
+        remove(file)

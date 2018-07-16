@@ -17,7 +17,7 @@ class ArgumentHasher(object):
         return merged_uuids(self._arg_hashes() + self._kwarg_hashes())
 
     def _arg_hashes(self):
-        return [self._make_argument_hash(arg) for arg in self._args]
+        return [self._make_argument_hash(None, arg) for arg in self._args]
 
     def _kwarg_hashes(self):
         from vcat.utils import generate_uuid
@@ -25,10 +25,10 @@ class ArgumentHasher(object):
         results = []
         for key, value in self._kwargs.items():
             results.append(generate_uuid(key))
-            results.append(self._make_argument_hash(value))
+            results.append(self._make_argument_hash(key, value))
         return results
 
-    def _make_argument_hash(self, item):
+    def _make_argument_hash(self, key, item):
         from vcat.utils import make_uuid
         from vcat.utils import generate_uuid
         from vcat.pipeline import Pipeline
@@ -39,6 +39,6 @@ class ArgumentHasher(object):
             return item.uuid()
 
         if isinstance(item, Hyperparameter):
-            return generate_uuid(item.name)
+            return generate_uuid(item.name or key)
 
         return make_uuid(item, self._make_argument_hash)

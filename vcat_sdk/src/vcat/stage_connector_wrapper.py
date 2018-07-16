@@ -12,9 +12,11 @@ from vcat.stage_connector import StageConnector
 from vcat.stage_context import StageContext
 from vcat.context_aware import ContextAware
 
+
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context, stage_context, stage_config):
+    def __init__(self, graph, connector, pipeline_context, stage_context, stage_config):
+        self._graph = graph
         self._connector = connector
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
@@ -39,11 +41,20 @@ class StageConnectorWrapper(object):
             self._pipeline_context.provenance.stage_hierarchy, self._provenance_filler_builder, **filler_kwargs)
 
     def stage(self, function, *args, **kwargs):
-        from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+        builder = self._make_builder()
+        builder = self._set_builder_stage(builder, function, args, kwargs)
+        builder = self._set_builder_hierarchy(builder)
 
-        builder = StageConnectorWrapperBuilder(self._pipeline_context)
-        builder = builder.stage(self.uuid(), function, args, kwargs)
-        builder = builder.hierarchy([self.uuid()])
+        return builder.build(self._connector.stage)
+
+    def require(self, *required_args):
+        def _require(*args, data):
+            return data
+
+        builder = self._make_builder()
+        builder = self._set_builder_stage(
+            builder, _require, required_args, {'data': self})
+        builder = self._set_builder_hierarchy(builder)
 
         return builder.build(self._connector.stage)
 
@@ -66,18 +77,17 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, params_dict={}, **kw_params):
-        import uuid
-
+    def run(self, params_dict=None, **kw_params):
         from vcat.global_state import deployment_manager
         from vcat.deployment_wrapper import DeploymentWrapper
+
+        if params_dict is None:
+            params_dict = {}
 
         all_params = params_dict.copy()
         all_params.update(kw_params)
 
-        job_name = str(uuid.uuid4())
-        job = Job(self, **all_params)
-        deployment = deployment_manager.deploy({}, job_name, job)
+        deployment = deployment_manager.simple_deploy(self, all_params)
 
         return DeploymentWrapper(deployment)
 
@@ -87,6 +97,16 @@ class StageConnectorWrapper(object):
 
     def run_without_provenance(self, **filler_kwargs):
         return self._connector.run(self._filler_builder, **filler_kwargs)
+
+    def _make_builder(self):
+        from vcat.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+        return StageConnectorWrapperBuilder(self._graph, self._pipeline_context)
+
+    def _set_builder_stage(self, builder, function, args, kwargs):
+        return builder.stage(self.uuid(), function, args, kwargs)
+
+    def _set_builder_hierarchy(self, builder):
+        return builder.hierarchy([self.uuid()])
 
     def _filler_builder(self, *args, **kwargs):
         from vcat.hyperparameter_argument_fill import HyperparameterArgumentFill
@@ -148,7 +168,8 @@ class StageConnectorWrapper(object):
     def random_search(self, params_range_dict, max_iterations):
         from vcat.set_random_searcher import SetRandomSearcher
 
-        set_random_searcher = SetRandomSearcher(params_range_dict, max_iterations)
+        set_random_searcher = SetRandomSearcher(
+            params_range_dict, max_iterations)
         return set_random_searcher.run_param_sets(self)
 
     def grid_search(self, params_range_dict, max_iterations=None):
@@ -160,5 +181,6 @@ class StageConnectorWrapper(object):
     def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
         from vcat.adaptive_searcher import AdaptiveSearcher
 
-        adaptive_searcher = AdaptiveSearcher(set_of_initial_params, params_generator_function, error_handler)
+        adaptive_searcher = AdaptiveSearcher(
+            set_of_initial_params, params_generator_function, error_handler)
         adaptive_searcher.search(self)

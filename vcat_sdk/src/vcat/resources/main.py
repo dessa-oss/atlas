@@ -5,15 +5,19 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file
+from vcat import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager
 
 def main():
+    log = log_manager.get_logger(__name__)
     job_source_bundle = JobSourceBundle('job', './')
 
+    config_manager.freeze()
     config = config_manager.config()
 
     job_name = config.get('job_name', 'job')
     job_binary_path = job_name + '.bin'
+
+    log.debug('Running job {} with configuration {}'.format(job_name, config))
 
     with open(job_binary_path, 'rb') as file:
         job = Job.deserialize(file.read())
