@@ -23,7 +23,8 @@ class TestDeployJob(unittest.TestCase):
         stage = pipeline.stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
-        deployment.wait_for_deployment_to_complete()
+
+        self._run_worker()
 
         results = deployment.fetch_job_results()
 
@@ -39,7 +40,8 @@ class TestDeployJob(unittest.TestCase):
         stage = pipeline.stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
-        deployment.wait_for_deployment_to_complete()
+
+        self._run_worker()
 
         with JobPersister.load_archiver_fetch() as archiver:
             reader = ResultReader(archiver)
@@ -56,7 +58,8 @@ class TestDeployJob(unittest.TestCase):
         stage = pipeline.stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
-        deployment.wait_for_deployment_to_complete()
+
+        self._run_worker()
 
         with JobPersister.load_archiver_fetch() as archiver:
             reader = ResultReader(archiver)
@@ -74,11 +77,9 @@ class TestDeployJob(unittest.TestCase):
         stage.persist()
 
         deployment = self._make_deployment(stage)
-
         deployment2 = self._make_deployment(stage)
 
-        deployment.wait_for_deployment_to_complete()
-        deployment2.wait_for_deployment_to_complete()
+        self._run_worker()
 
         with JobPersister.load_archiver_fetch() as archiver:
             reader = ResultReader(archiver)
@@ -91,13 +92,12 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_results2)
 
     def _run_worker(self):
-        from vcat import SimpleWorker
-        from acceptance.config import code_path, result_path
+        from vcat import SimpleBucketWorker
+        from acceptance.config import make_code_bucket, make_result_bucket
 
-        SimpleWorker(code_path(), result_path()).run_once(set())
+        SimpleBucketWorker(make_code_bucket(), make_result_bucket()).run_once(set())
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat_gcp import GCPJobDeployment
         from vcat import Job, JobSourceBundle, DeploymentWrapper, BucketJobDeployment
         from uuid import uuid4
         from acceptance.config import make_code_bucket, make_result_bucket
