@@ -50,6 +50,12 @@ class SSHFileSystemBucket(object):
 
         file_paths = self._list_remote_files(pathname)
         return [basename(path) for path in file_paths]
+    
+    def remove(self, name):
+        raise NotImplementedError
+    
+    def move(self, source, destination):
+        raise NotImplementedError
 
     def _remote_path(self, name):
         return self._path + '/' + name

@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class LocalFileSystemBucket(object):
 
     def __init__(self, path):
@@ -66,7 +67,6 @@ class LocalFileSystemBucket(object):
 
     def list_files(self, pathname):
         from glob import glob
-        from os import getcwd
 
         self._log().debug('Getting listing with pathname %s', pathname)
 
@@ -74,6 +74,16 @@ class LocalFileSystemBucket(object):
         self._log().debug('Listing with expanded pathname is %s', full_pathname)
         full_paths = glob(full_pathname)
         return [self._remove_bucket_path_from_file(path) for path in full_paths]
+
+    def remove(self, name):
+        from os import remove
+        remove(self._full_path(name))
+
+    def move(self, source, destination):
+        from shutil import move
+
+        self._ensure_path_exists(destination)
+        move(self._full_path(source), self._full_path(destination))
 
     def _remove_bucket_path_from_file(self, path):
         return path[len(self._path)+1:]

@@ -48,5 +48,17 @@ class GCPBucket(object):
         object_file_names = [basename(path) for path in object_names]
         return filter(lambda path: fnmatch(path, path_filter), object_file_names)
 
+    def remove(self, name):
+        self._log().debug('Removing {}'.format(name))
+        self._blob(name).delete()
+    
+    def move(self, source, destination):
+        blob = self._blob(source)
+        self._bucket.rename_blob(blob, destination)
+
     def _blob(self, name):
         return self._bucket.blob(name)
+
+    def _log(self):
+        from vcat.global_state import log_manager
+        return log_manager.get_logger(__name__)

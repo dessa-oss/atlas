@@ -23,7 +23,6 @@ class SimpleWorker(object):
         started_jobs = set()
         while True:
             self.run_once(started_jobs)
-
             sleep(0.5)
 
     def run_once(self, started_jobs):
@@ -64,16 +63,17 @@ class SimpleWorker(object):
         from vcat.utils import ensure_path_exists
 
         job_name = self._job_name(archive_path)
-        with tarfile.open(self._source_job_results_archive(job_name), 'w:gz') as tar:
-            tar.add(job_name)
-        
+
         source_path = self._source_job_results_archive(job_name)
         target_path = self._target_job_results_archive(job_name)
 
+        with tarfile.open(source_path, 'w:gz') as tar:
+            tar.add(job_name)
+        
         ensure_path_exists('/', target_path)
         self._log().debug('Moving source results {} to {}'.format(source_path, target_path))
 
-        move(self._source_job_results_archive(job_name), self._target_job_results_archive(job_name))
+        move(source_path, target_path)
 
     def _source_job_results_archive(self, job_name):
         return job_name + '.results.tgz'
