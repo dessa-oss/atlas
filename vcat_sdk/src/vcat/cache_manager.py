@@ -15,6 +15,10 @@ class CacheManager(object):
             self._load()
         return self._cache
 
+    def default_cache_enabled(self):
+        from vcat.global_state import config_manager
+        return config_manager.config().get('default_cache_enabled', False)
+
     def _load(self):
         from vcat.global_state import config_manager
         from vcat.null_cache_backend import NullCacheBackend

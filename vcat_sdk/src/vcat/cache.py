@@ -15,7 +15,7 @@ class Cache(object):
         return self.get_option(key).get_or_else(None)
 
     def get_option(self, key):
-        from vcat.serializer import deserialize
+        from vcat.fast_serializer import deserialize
         return self.get_binary_option(key).map(deserialize)
 
     def get_binary(self, key):
@@ -30,7 +30,7 @@ class Cache(object):
         return Option(result)
 
     def set(self, key, value):
-        from vcat.serializer import serialize
+        from vcat.fast_serializer import serialize
 
         self._cache_backend.set(key, serialize(value))
         return value
