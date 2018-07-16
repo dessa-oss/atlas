@@ -64,6 +64,24 @@ class TestDeployJob(unittest.TestCase):
             current_job_information = job_information[job_information['pipeline_name'] == deployment.job_name()].iloc[0]
             self.assertIsNotNone(current_job_information)
 
+    def test_can_fetch_results(self):
+        from vcat import pipeline, JobPersister, ResultReader
+
+        def method():
+            pass
+
+        stage = pipeline.stage(method)
+        stage.persist()
+        deployment = self._make_deployment(stage)
+        deployment.deploy()
+
+        self._run_worker()
+        with JobPersister.load_archiver_fetch() as archiver:
+            reader = ResultReader(archiver)
+            results = reader.get_results()
+            current_results = results[results['pipeline_name'] == deployment.job_name()].iloc[0]
+            self.assertIsNotNone(current_results)
+
     def _run_worker(self):
         from vcat import SimpleWorker
         from integration.config import code_path, result_path
