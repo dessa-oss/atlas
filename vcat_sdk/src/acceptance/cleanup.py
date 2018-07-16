@@ -5,11 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def cleanup():
     import shutil
     from os import getcwd, remove
+    from os.path import isdir
     from glob import glob
 
-    shutil.rmtree(getcwd() + "/tmp")
+    tmp_dir = getcwd() + '/tmp'
+    if isdir(tmp_dir):
+        shutil.rmtree(tmp_dir)
+
     for file in glob('*.tgz'):
         remove(file)
