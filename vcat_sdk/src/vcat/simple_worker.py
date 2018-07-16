@@ -23,7 +23,6 @@ class SimpleWorker(object):
         started_jobs = set()
         while True:
             self.run_once(started_jobs)
-
             sleep(0.5)
 
     def run_once(self, started_jobs):

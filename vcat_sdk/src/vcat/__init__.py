@@ -28,6 +28,7 @@ from vcat.null_pipeline_archive_listing import NullArchiveListing
 from vcat.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
 from vcat.local_file_system_bucket import LocalFileSystemBucket
 from vcat.simple_worker import SimpleWorker
+from vcat.simple_bucket_worker import SimpleBucketWorker
 from vcat.compat import compat_raise
 from vcat.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 from vcat.bucket_pipeline_archive import BucketPipelineArchive
@@ -42,6 +43,7 @@ from vcat.floating_hyperparameter import FloatingHyperparameter
 from vcat.basic_stage_middleware import BasicStageMiddleware
 from vcat.change_directory import ChangeDirectory
 from vcat.bucket_job_deployment import BucketJobDeployment
+from vcat.deployment_wrapper import DeploymentWrapper
 
 import vcat.import_installer
 
