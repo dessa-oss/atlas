@@ -29,6 +29,9 @@ class PrefixedBucket(object):
 
     def list_files(self, pathname):
         return self._bucket.list_files(self._name(pathname))
+    
+    def move(self, source, destination):
+        return self._bucket.move(self._name(source), self._name(destination))
 
     def _name(self, name):
         return self._prefix + '/' + name

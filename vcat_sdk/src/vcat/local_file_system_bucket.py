@@ -74,6 +74,12 @@ class LocalFileSystemBucket(object):
         self._log().debug('Listing with expanded pathname is %s', full_pathname)
         full_paths = glob(full_pathname)
         return [self._remove_bucket_path_from_file(path) for path in full_paths]
+    
+    def move(self, source, destination):
+        from shutil import move
+
+        self._ensure_path_exists(destination)
+        move(self._full_path(source), self._full_path(destination))
 
     def _remove_bucket_path_from_file(self, path):
         return path[len(self._path)+1:]
