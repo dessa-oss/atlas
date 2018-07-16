@@ -5,16 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-
-def cleanup():
-    import shutil
-    from os import getcwd, remove
-    from os.path import isdir
-    from glob import glob
-
-    tmp_dir = getcwd() + '/tmp'
-    if isdir(tmp_dir):
-        shutil.rmtree(tmp_dir)
-
-    for file in glob('*.tgz'):
-        remove(file)
+from uuid import uuid4
+import vcat
+import acceptance.config
+from acceptance.test_deploy_job import TestDeployJob

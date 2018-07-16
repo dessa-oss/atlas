@@ -160,3 +160,26 @@ def take_from_generator(elems_to_take, generator):
 def _remove_items_by_key(dictionary, keys):
     for key in keys:
         dictionary.pop(key)
+
+def directory_path(path, name):
+    from os.path import dirname
+    from os.path import join
+
+    return join(path, dirname(name))
+
+def ensure_path_exists(path, name):
+    from distutils.dir_util import mkpath
+    from os.path import isdir
+
+    directory = directory_path(path, name)
+    _log().debug('Ensuring that {} exists'.format(directory))
+    if not isdir(directory):
+        _log().debug('Creating {}'.format(directory))
+        result = mkpath(directory)
+        _log().debug('{} created'.format(result))
+    else:
+        _log().debug('{} Already exists'.format(directory))
+
+def _log():
+    from vcat.global_state import log_manager
+    return log_manager.get_logger(__name__)

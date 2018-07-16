@@ -11,6 +11,7 @@ def cleanup():
     from os import getcwd, remove
     from os.path import isdir
     from glob import glob
+    from distutils.dir_util import _path_created
 
     tmp_dir = getcwd() + '/tmp'
     if isdir(tmp_dir):
@@ -18,3 +19,6 @@ def cleanup():
 
     for file in glob('*.tgz'):
         remove(file)
+
+    # hack so that we can already create paths we delete
+    _path_created.clear()
