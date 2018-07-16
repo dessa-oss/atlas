@@ -9,6 +9,11 @@ import unittest
 
 
 class TestPipelineInterface(unittest.TestCase):
+
+    def setUp(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
+
     def test_pipeline_interface(self):
         from staged_acceptance.fixtures.stages import bundle_value, add
         import acceptance.fixtures.stages as stages

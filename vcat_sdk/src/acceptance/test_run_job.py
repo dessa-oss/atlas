@@ -10,6 +10,10 @@ import unittest
 
 class TestRunJob(unittest.TestCase):
 
+    def setUp(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
+
     def test_can_run_job(self):
         import acceptance.fixtures.stages as stages
         from vcat import pipeline
