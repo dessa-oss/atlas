@@ -41,6 +41,7 @@ from vcat.integer_hyperparameter import IntegerHyperparameter
 from vcat.floating_hyperparameter import FloatingHyperparameter
 from vcat.basic_stage_middleware import BasicStageMiddleware
 from vcat.change_directory import ChangeDirectory
+from vcat.bucket_job_deployment import BucketJobDeployment
 
 import vcat.import_installer
 
