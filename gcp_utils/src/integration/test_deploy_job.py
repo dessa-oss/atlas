@@ -15,10 +15,10 @@ class TestDeployJob(unittest.TestCase):
         cleanup()
 
     def test_can_deploy_job_remotely(self):
-        from vcat import pipeline
+        from foundations import pipeline
         from os.path import isfile
         from integration.config import make_code_bucket
-        from vcat_gcp import GCPBucket
+        from foundations_gcp import GCPBucket
 
         def method():
             pass
@@ -32,7 +32,7 @@ class TestDeployJob(unittest.TestCase):
         self.assertTrue(bucket.exists(code_path))
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat import Job, JobSourceBundle, BucketJobDeployment
+        from foundations import Job, JobSourceBundle, BucketJobDeployment
         from uuid import uuid4
         from integration.config import make_code_bucket, make_result_bucket
 

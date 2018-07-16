@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+import foundations
 import config
 from staged_common.prep import union
 from staged_common.models import train_logistic_regression

@@ -15,7 +15,7 @@ class TestDeployJob(unittest.TestCase):
         cleanup()
 
     def test_can_fetch_job_results(self):
-        from vcat import pipeline
+        from foundations import pipeline
 
         def method():
             return 27
@@ -32,7 +32,7 @@ class TestDeployJob(unittest.TestCase):
                          [stage.uuid()]['stage_output'])
 
     def test_can_fetch_job_info(self):
-        from vcat import pipeline, JobPersister, ResultReader
+        from foundations import pipeline, JobPersister, ResultReader
 
         def method():
             pass
@@ -50,7 +50,7 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_job_information)
 
     def test_can_fetch_results(self):
-        from vcat import pipeline, JobPersister, ResultReader
+        from foundations import pipeline, JobPersister, ResultReader
 
         def method():
             pass
@@ -68,7 +68,7 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_results)
 
     def test_can_fetch_results_multiple_jobs(self):
-        from vcat import pipeline, JobPersister, ResultReader
+        from foundations import pipeline, JobPersister, ResultReader
 
         def method():
             pass
@@ -94,14 +94,14 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_results2)
 
     def _run_worker(self):
-        from vcat import SimpleWorker
+        from foundations import SimpleWorker
         from acceptance.config import code_path, result_path
 
         SimpleWorker(code_path(), result_path()).run_once(set())
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat_ssh import SFTPJobDeployment
-        from vcat import Job, JobSourceBundle
+        from foundations_ssh import SFTPJobDeployment
+        from foundations import Job, JobSourceBundle
         from acceptance.config import DEPLOYMENT_CONFIG
         from uuid import uuid4
 

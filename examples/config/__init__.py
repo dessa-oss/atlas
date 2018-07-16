@@ -5,14 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
+from foundations import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
 from uuid import uuid4
 from os import getcwd
 
 # configure caching layer
 config_manager['cache_implementation'] = {
     'cache_type': LocalFileSystemCacheBackend,
-    'constructor_arguments': ['/tmp/vcat_example_' + str(uuid4())],
+    'constructor_arguments': ['/tmp/foundations_example_' + str(uuid4())],
 }
 
 # configure all archive types to use the sample implementation

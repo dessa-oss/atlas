@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 import gcp_utils_fixtures.gcp_job_deployment_fixtures as gcf
-import vcat.constants as constants
+import foundations.constants as constants
 
 class TestGCPJobDeployment(unittest.TestCase):
     def test_job_never_finishes(self):

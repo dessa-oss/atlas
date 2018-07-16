@@ -9,5 +9,5 @@ def describe(data_frame):
     return data_frame, {'description': description}
 
 def log():
-    from vcat import log_manager
+    from foundations import log_manager
     return log_manager.get_logger(__name__)

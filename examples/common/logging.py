@@ -15,5 +15,5 @@ def log_formatted(format_string, *args):
     return list(args)
 
 def _log():
-    from vcat import log_manager
+    from foundations import log_manager
     return log_manager.get_logger(__name__)

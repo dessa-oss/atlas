@@ -16,8 +16,8 @@ def _code_bucket():
 
 
 def make_code_bucket():
-    from vcat import PrefixedBucket
-    from vcat_gcp import GCPBucket
+    from foundations import PrefixedBucket
+    from foundations_gcp import GCPBucket
 
     return PrefixedBucket(TEST_UUID, GCPBucket, _code_bucket())
 
@@ -27,16 +27,16 @@ def _result_bucket():
 
 
 def make_result_bucket():
-    from vcat import PrefixedBucket
-    from vcat_gcp import GCPBucket
+    from foundations import PrefixedBucket
+    from foundations_gcp import GCPBucket
 
     return PrefixedBucket(TEST_UUID, GCPBucket, _result_bucket())
 
 
 def _config():
-    from vcat import config_manager
-    from vcat import PrefixedBucket, BucketPipelineArchive, BucketPipelineListing
-    from vcat_gcp import GCPBucket
+    from foundations import config_manager
+    from foundations import PrefixedBucket, BucketPipelineArchive, BucketPipelineListing
+    from foundations_gcp import GCPBucket
 
     # archive implementations
     archive_implementation = {

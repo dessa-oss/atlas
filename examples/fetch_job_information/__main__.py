@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import JobPersister, ResultReader, LocalFileSystemPipelineListing, log_manager
+from foundations import JobPersister, ResultReader, LocalFileSystemPipelineListing, log_manager
 import config
 
 def main():

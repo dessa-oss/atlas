@@ -4,7 +4,7 @@ class S3Bucket(object):
         self._bucket = boto3.resource('s3').Bucket(bucket_name)
 
     def upload_from_string(self, name, data):
-        from vcat.utils import byte_string
+        from foundations.utils import byte_string
         self._bucket.put_object(Key=name, Body=byte_string(data))
 
     def upload_from_file(self, name, input_file):
@@ -20,7 +20,7 @@ class S3Bucket(object):
         return False
 
     def download_as_string(self, name):
-        from vcat.utils import byte_string
+        from foundations.utils import byte_string
 
         objs = self._objs_with_prefix(name)
         for obj in objs:

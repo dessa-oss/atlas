@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+import foundations
 import config
 from staged_common.prep import union
 from staged_common.models import train_logistic_regression
@@ -28,8 +28,8 @@ def main():
 
     # model training and scoring
     params = {
-        'C': vcat.Hyperparameter('C'),
-        'max_iter': vcat.Hyperparameter('max_iter'),
+        'C': foundations.Hyperparameter('C'),
+        'max_iter': foundations.Hyperparameter('max_iter'),
     }
 
     model = train_logistic_regression(x_train, y_train, **params)

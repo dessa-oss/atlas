@@ -214,8 +214,8 @@ deployment_config = {
     'remote_user': 'thomas',
     'remote_host': 'localhost',
     'shell_command': '/bin/bash',
-    'code_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/code',
-    'result_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/results',
+    'code_path': '/home/thomas/Dev/Spiking/foundations-results/tmp/code',
+    'result_path': '/home/thomas/Dev/Spiking/foundations-results/tmp/results',
     'key_path': '/home/thomas/.ssh/id_local',
 }
 ```

@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-from vcat import *  # required for below to work
+from foundations import *  # required for below to work
 from staged_methods import *
 
 # create a stage from the create_data_frame method

@@ -1,5 +1,5 @@
-from vcat_gcp import *
-from vcat import *
+from foundations_gcp import *
+from foundations import *
 
 bucket = GCPBucket('tango-result-test')
 bucket.upload_from_string('sandbox/hello', 'world')

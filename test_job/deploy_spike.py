@@ -2,10 +2,10 @@ import uuid
 
 from spike_pipe import print_it, destroy_it
 from pandas import DataFrame
-from vcat import *
-from vcat.deployment_wrapper import DeploymentWrapper
-from vcat_gcp import *
-from vcat_ssh import *
+from foundations import *
+from foundations.deployment_wrapper import DeploymentWrapper
+from foundations_gcp import *
+from foundations_ssh import *
 
 config_manager.config()['deployment_implementation'] = {
     # 'deployment_type': GCPJobDeployment,
@@ -36,63 +36,63 @@ deployment_config = {
     },
     'archive_listing_implementation': {
         'archive_listing_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_listing_type': GCPPipelineArchiveListing,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'stage_log_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'persisted_data_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'provenance_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'job_source_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'artifact_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'miscellaneous_archive_implementation': {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        'constructor_arguments': ['/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': BucketPipelineArchive,
-        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/vcat-results/tmp/archives'],
+        # 'constructor_arguments': [SSHFileSystemBucket, '/home/thomas/Dev/Spiking/foundations-results/tmp/archives'],
         # 'archive_type': GCPPipelineArchive,
         # 'constructor_arguments': ['tango-result-test'],
     },
     'remote_user': 'thomas',
     'remote_host': 'localhost',
     'shell_command': '/bin/bash',
-    'code_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/code',
-    'result_path': '/home/thomas/Dev/Spiking/vcat-results/tmp/results',
+    'code_path': '/home/thomas/Dev/Spiking/foundations-results/tmp/code',
+    'result_path': '/home/thomas/Dev/Spiking/foundations-results/tmp/results',
     'key_path': '/home/thomas/.ssh/id_local',
     'log_level': 'DEBUG',
 }

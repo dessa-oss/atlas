@@ -15,7 +15,7 @@ class TestDeployJob(unittest.TestCase):
         cleanup()
 
     def test_can_deploy_job_remotely(self):
-        from vcat import pipeline
+        from foundations import pipeline
         from os.path import isfile
         from integration.config import code_path
 
@@ -30,8 +30,8 @@ class TestDeployJob(unittest.TestCase):
         self.assertTrue(isfile(job_path))
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat_ssh import SFTPJobDeployment
-        from vcat import Job, JobSourceBundle
+        from foundations_ssh import SFTPJobDeployment
+        from foundations import Job, JobSourceBundle
         from integration.config import DEPLOYMENT_CONFIG
         from uuid import uuid4
 

@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+import foundations
 import config
 from staged_common.data import load_titanic
 from staged_common.prep import fillna, one_hot_encode
