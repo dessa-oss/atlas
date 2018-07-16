@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 
-class TestDeployJob(unittest.TestCase):
+class TestDuplicateJobSource(unittest.TestCase):
 
     def setUp(self):
         from acceptance.cleanup import cleanup

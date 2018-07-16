@@ -7,18 +7,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def cleanup():
-    import shutil
-    from os import getcwd, remove
-    from os.path import isdir
-    from glob import glob
-    from distutils.dir_util import _path_created
+    from integration.config import make_code_bucket
 
-    tmp_dir = getcwd() + '/tmp'
-    if isdir(tmp_dir):
-        shutil.rmtree(tmp_dir)
+    bucket = make_code_bucket()
+    files = list(bucket.list_files('*.tgz'))
+    _log().debug('Cleaning up {}'.format(files))
+    for path in files:
+        _log().debug('Removing {}'.format(path))
+        bucket.remove(path)
 
-    for file in glob('*.tgz'):
-        remove(file)
-
-    # hack so that we can already create paths we delete
-    _path_created.clear()
+def _log():
+    from vcat.global_state import log_manager
+    return log_manager.get_logger(__name__)    

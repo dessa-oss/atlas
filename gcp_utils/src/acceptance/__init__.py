@@ -9,3 +9,4 @@ from uuid import uuid4
 import vcat
 import acceptance.config
 from acceptance.test_deploy_job import TestDeployJob
+from acceptance.test_duplicate_job_source import TestDuplicateJobSource
