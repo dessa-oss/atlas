@@ -30,6 +30,18 @@ def _config():
     from vcat import config_manager, LocalFileSystemPipelineArchive
     from vcat_ssh import MultiSFTPBundledPipelineArchive, SFTPListing
 
+    # write archive implementations
+    archive_implementation = {
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': [],
+    }
+    DEPLOYMENT_CONFIG['stage_log_archive_implementation'] = archive_implementation
+    DEPLOYMENT_CONFIG['persisted_data_archive_implementation'] = archive_implementation
+    DEPLOYMENT_CONFIG['provenance_archive_implementation'] = archive_implementation
+    DEPLOYMENT_CONFIG['job_source_archive_implementation'] = archive_implementation
+    DEPLOYMENT_CONFIG['artifact_archive_implementation'] = archive_implementation
+    DEPLOYMENT_CONFIG['miscellaneous_archive_implementation'] = archive_implementation
+
     # read archive implementations
     archive_implementation = {
         'archive_type': MultiSFTPBundledPipelineArchive,
@@ -60,7 +72,7 @@ def _config():
     key_path = expanduser('~/.ssh/id_local')
     if not isfile(key_path):
         raise Exception(
-            'Please create a local ssh key at ~/.ssh/id_local and add the public key to ~/.ssh/authorized_keys to run integration tests')
+            'Please create a local ssh key at ~/.ssh/id_local and add the public key to ~/.ssh/authorized_keys to run acceptance tests')
     config_manager['key_path'] = key_path
 
 
