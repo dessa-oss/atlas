@@ -81,6 +81,9 @@ class SFTPBucket(object):
             for path in paths:
                 self._log().debug('Got file %s', path)
             return filter(lambda path: fnmatch(path, pathname), paths)
+    
+    def move(self, source, destination):
+        raise NotImplementedError
 
     def _ensure_path_exists(self, name):
         self._connection.makedirs(self._directory_path(name))
