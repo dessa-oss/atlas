@@ -78,3 +78,14 @@ class DeploymentWrapper(object):
         """
 
         return self._deployment.get_job_status()
+
+    def _try_get_results(self, error_handler):
+        from vcat.deployment_utils import extract_results
+
+        try:
+            return extract_results(self.fetch_job_results())
+        except Exception as e:
+            if error_handler is not None:
+                error_handler(e)
+            else:
+                raise e

@@ -21,3 +21,11 @@ else:
     python_2_raise += "        raise exception_type, message\n"
 
     exec(python_2_raise)
+
+def make_queue():
+    if sys.version_info.major == 3:
+        import queue
+        return queue.Queue()
+    else:
+        import Queue
+        return Queue.Queue()

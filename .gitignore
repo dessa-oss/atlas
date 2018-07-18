@@ -18,6 +18,12 @@ ssh_utils/build
 ssh_utils/dist
 ssh_utils/vcat_ssh.egg-info
 ssh_utils/src/vcat_ssh.egg-info
+ui_utils/build
+ui_utils/dist
+ui_utils/vcat_ui.egg-info
+ui_utils/src/vcat_ui.egg-info
 tmp
 **/*.csv
 vcat.zip
+.vscode
+**/mlruns

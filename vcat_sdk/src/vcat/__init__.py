@@ -36,6 +36,9 @@ from vcat.simple_tempfile import SimpleTempfile
 from vcat.prefixed_bucket import PrefixedBucket
 from vcat.cached_pipeline_archive import CachedPipelineArchive
 from vcat.serializer import *
+from vcat.discrete_hyperparameter import DiscreteHyperparameter
+from vcat.integer_hyperparameter import IntegerHyperparameter
+from vcat.floating_hyperparameter import FloatingHyperparameter
 
 import vcat.import_installer
 

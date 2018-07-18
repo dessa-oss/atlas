@@ -103,12 +103,16 @@ class ResultReader(object):
 
         callback(main_headers, all_job_information)
 
-        output_dataframe = pd.concat(all_job_information, ignore_index=True)
+        output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
+    def _load_job_provenance(self, pipeline_context, pipeline_name):
+        pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
+
     def _get_results(self, main_headers, all_job_information):
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+            self._load_job_provenance(pipeline_context, pipeline_name)
             pipeline_context.load_stage_log_from_archive(self._archivers[pipeline_name])
 
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
@@ -126,7 +130,7 @@ class ResultReader(object):
         import pandas as pd
 
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
-            pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
+            self._load_job_provenance(pipeline_context, pipeline_name)
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             for stage_id, stage_info in stage_hierarchy_entries.items():
@@ -178,7 +182,7 @@ class ResultReader(object):
     def get_source_code(self, stage_id):
         def _try_get_source_code(pipeline_context):
             pipeline_name = pipeline_context.file_name
-            pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
+            self._load_job_provenance(pipeline_context, pipeline_name)
             return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
             
         return self._over_pipeline_contexts(_try_get_source_code)

@@ -12,6 +12,7 @@ from vcat.cache_manager import CacheManager
 from vcat.deployment_manager import DeploymentManager
 from vcat.module_manager import ModuleManager
 from vcat.log_manager import LogManager
+from vcat.middleware_manager import MiddlewareManager
 
 
 pipeline_context = PipelineContext()
@@ -21,3 +22,4 @@ cache_manager = CacheManager()
 deployment_manager = DeploymentManager()
 module_manager = ModuleManager()
 log_manager = LogManager()
+middleware_manager = MiddlewareManager()

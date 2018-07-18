@@ -49,27 +49,34 @@ class StageConnectorWrapper(object):
 
     def persist(self):
         self._stage_config.persist()
+        return self
 
     def set_global_cache_name(self, name):
         self._stage_config.cache(name)
+        return self
 
     def enable_caching(self):
         self._stage_config.enable_caching()
+        return self
 
     def disable_caching(self):
         self._stage_config.disable_caching()
+        return self
 
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, **params):
+    def run(self, params_dict={}, **kw_params):
         import uuid
 
         from vcat.global_state import deployment_manager
         from vcat.deployment_wrapper import DeploymentWrapper
 
+        all_params = params_dict.copy()
+        all_params.update(kw_params)
+
         job_name = str(uuid.uuid4())
-        job = Job(self, **params)
+        job = Job(self, **all_params)
         deployment = deployment_manager.deploy({}, job_name, job)
 
         return DeploymentWrapper(deployment)
@@ -125,6 +132,7 @@ class StageConnectorWrapper(object):
             result = getattr(instance, name)(*args, **kwargs)
             if result is None:
                 return instance
+            return result
 
         def auto_stage(*args, **kwargs):
             return self.stage(call_method_on_instance, *args, **kwargs)
@@ -136,3 +144,21 @@ class StageConnectorWrapper(object):
             return data[key]
 
         return self.stage(getitem, key)
+
+    def random_search(self, params_range_dict, max_iterations):
+        from vcat.set_random_searcher import SetRandomSearcher
+
+        set_random_searcher = SetRandomSearcher(params_range_dict, max_iterations)
+        return set_random_searcher.run_param_sets(self)
+
+    def grid_search(self, params_range_dict, max_iterations=None):
+        from vcat.set_grid_searcher import SetGridSearcher
+
+        grid_searcher = SetGridSearcher(params_range_dict, max_iterations)
+        return grid_searcher.run_param_sets(self)
+
+    def adaptive_search(self, set_of_initial_params, params_generator_function, error_handler=None):
+        from vcat.adaptive_searcher import AdaptiveSearcher
+
+        adaptive_searcher = AdaptiveSearcher(set_of_initial_params, params_generator_function, error_handler)
+        adaptive_searcher.search(self)

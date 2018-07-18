@@ -10,7 +10,7 @@ import unittest
 
 class TestPipelineInterface(unittest.TestCase):
     def test_pipeline_interface(self):
-        from staged_acceptance.fixtures.stages import *
+        from staged_acceptance.fixtures.stages import bundle_value, add
         import acceptance.fixtures.stages as stages
         from vcat import Hyperparameter, Job, JobSourceBundle, deployment_manager
 

@@ -27,6 +27,7 @@ class JobSourceBundle(object):
     def bundle(self):
         import tarfile
 
+        self._log().debug('Adding current directory to source bundle')
         with tarfile.open(self.job_archive(), "w:gz") as tar:
             tar.add(".")
             for item in tar:
