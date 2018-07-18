@@ -65,7 +65,7 @@ class LocalShellJobDeployment(object):
             tar.extractall()
             
         with ChangeDirectory(self._job_name):
-            script = "./run.sh"
+            script = "{} ./run.sh".format(self._shell_command())
             args = self._command_in_shell_command(script)
             subprocess.call(args)
 
