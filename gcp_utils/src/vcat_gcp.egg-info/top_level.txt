@@ -1,3 +1,0 @@
-acceptance
-integration
-vcat_gcp
