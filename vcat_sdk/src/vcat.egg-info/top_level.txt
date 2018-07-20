@@ -1,4 +1,0 @@
-acceptance
-integration
-test
-vcat
