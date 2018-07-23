@@ -101,11 +101,11 @@ class SFTPBucket(object):
         from os.path import dirname
         from os.path import join
 
-        return join(self._path, dirname(name))
+        return '{}/{}'.format(self._path, dirname(name))
 
     def _full_path(self, name):
         from os.path import join
-        return join(self._path, name)
+        return '{}/{}'.format(self._path, name)
 
     def _log(self):
         from vcat.global_state import log_manager
