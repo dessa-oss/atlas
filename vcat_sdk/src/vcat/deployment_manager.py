@@ -7,13 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DeploymentManager(object):
 
-    def simple_deploy(self, stage, job_params):
+    def simple_deploy(self, stage, job_name, job_params):
         import uuid
 
         from vcat.global_state import deployment_manager
         from vcat.job import Job
 
-        job_name = str(uuid.uuid4())
+        if not job_name:
+            job_name = str(uuid.uuid4())
         job = Job(stage, **job_params)
         return deployment_manager.deploy({}, job_name, job)
 
