@@ -26,6 +26,8 @@ class ConfigManager(object):
 
     def add_config_path(self, path):
         self._config_paths.append(path)
+        if self._config is not None:
+            self._load_config(self._config, path)
 
     def freeze(self):
         self._frozen = True
@@ -39,10 +41,15 @@ class ConfigManager(object):
         config = {}
 
         for path in self._get_config_paths():
-            with open(path, 'r') as file:
-                config.update(yaml.load(file))
+            self._load_config(config, path)
 
         self._config = config
+    
+    def _load_config(self, config, path):
+        import yaml
+
+        with open(path, 'r') as file:
+            config.update(yaml.load(file))
 
     def _get_config_paths(self):
         if len(self._config_paths) < 1:
