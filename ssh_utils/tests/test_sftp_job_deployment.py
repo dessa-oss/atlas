@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 import ssh_utils_fixtures.sftp_job_deployment_fixtures as sjf
-import vcat.constants as constants
+import foundations.constants as constants
 
 class TestSFTPJobDeployment(unittest.TestCase):
     def test_job_queued(self):

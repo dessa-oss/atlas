@@ -16,7 +16,7 @@ class TestDuplicateJobSource(unittest.TestCase):
 
     def test_can_duplicate_job_source(self):
         from acceptance.config import TEST_UUID
-        from vcat import pipeline, JobPersister, ResultReader
+        from foundations import pipeline, JobPersister, ResultReader
 
         def method():
             pass
@@ -41,13 +41,13 @@ class TestDuplicateJobSource(unittest.TestCase):
             self.assertEqual(expected_content, result_content)
 
     def _run_worker(self):
-        from vcat import SimpleBucketWorker
+        from foundations import SimpleBucketWorker
         from acceptance.config import make_code_bucket, make_result_bucket
 
         SimpleBucketWorker(make_code_bucket(), make_result_bucket()).run_once(set())
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat import Job, JobSourceBundle, DeploymentWrapper, BucketJobDeployment
+        from foundations import Job, JobSourceBundle, DeploymentWrapper, BucketJobDeployment
         from uuid import uuid4
         from acceptance.config import make_code_bucket, make_result_bucket
 

@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat_gcp import GCPJobDeployment
+from foundations_gcp import GCPJobDeployment
 
 RESULT_SUCCESS = {
     "global_stage_context": {

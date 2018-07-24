@@ -16,7 +16,7 @@ class TestDeployJob(unittest.TestCase):
 
     def test_can_duplicate_job_source(self):
         from acceptance.config import TEST_UUID
-        from vcat import pipeline, JobPersister, ResultReader
+        from foundations import pipeline, JobPersister, ResultReader
 
         def method():
             pass
@@ -42,14 +42,14 @@ class TestDeployJob(unittest.TestCase):
             self.assertEqual(expected_content, result_content)
 
     def _run_worker(self):
-        from vcat import SimpleWorker
+        from foundations import SimpleWorker
         from acceptance.config import code_path, result_path
 
         SimpleWorker(code_path(), result_path()).run_once(set())
 
     def _make_deployment(self, stage, **kwargs):
-        from vcat_ssh import SFTPJobDeployment
-        from vcat import Job, JobSourceBundle
+        from foundations_ssh import SFTPJobDeployment
+        from foundations import Job, JobSourceBundle
         from acceptance.config import DEPLOYMENT_CONFIG
         from uuid import uuid4
 
