@@ -51,4 +51,30 @@ class TestConfigManager(unittest.TestCase):
         config_manager.add_config_path('test/fixtures/multiple_configs/second.config.yaml')
         self.assertEqual({'title': 'test config', 'value': 'different value'}, config)
 
+    def test_indexer(self):
+        config_manager = ConfigManager()
+        config_manager.config()['hello'] = 'goodbye'
+        self.assertEqual('goodbye', config_manager['hello'])
 
+    def test_indexer_different_key(self):
+        config_manager = ConfigManager()
+        config_manager.config()['next'] = 'thing'
+        self.assertEqual('thing', config_manager['next'])
+
+    def test_indexer_multiple_value(self):
+        config_manager = ConfigManager()
+        config_manager.config()['hello'] = 'goodbye'
+        config_manager.config()['next'] = 'thing'
+        self.assertEqual('thing', config_manager['next'])
+
+    def test_indexer_assignment_operator(self):
+        config_manager = ConfigManager()
+        config_manager['hello'] = 'goodbye'
+        self.assertEqual('goodbye', config_manager['hello'])
+
+    def test_indexer_assignment_operator_with_different_value(self):
+        config_manager = ConfigManager()
+        config_manager['cat'] = 'dog'
+        self.assertEqual('dog', config_manager['cat'])
+    
+    
