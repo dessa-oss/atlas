@@ -8,11 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import sys
 
 if sys.version_info[0] >= 3:
-    from .test_staged_module_loader import TestStagedModuleLoader
-    from .test_staged_meta_finder import TestStagedMetaFinder
+    from test.test_staged_module_loader import TestStagedModuleLoader
+    from test.test_staged_meta_finder import TestStagedMetaFinder
 else:
-    from .test_staged_module_py2_loader import TestStagedModulePy2Loader
-    from .test_staged_meta_py2_finder import TestStagedMetaPy2Finder
+    from test.test_staged_module_py2_loader import TestStagedModulePy2Loader
+    from test.test_staged_meta_py2_finder import TestStagedMetaPy2Finder
 
 from .test_staged_module_internal_loader import TestStagedModuleInternalLoader
 from .test_staged_meta_helper import TestStagedMetaHelper
@@ -21,3 +21,5 @@ from .test_bucket_pipeline_listing import TestBucketPipelineListing
 from .test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing
 from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
+from .test.test_config_manager import TestConfigManager
+
