@@ -77,4 +77,25 @@ class TestConfigManager(unittest.TestCase):
         config_manager['cat'] = 'dog'
         self.assertEqual('dog', config_manager['cat'])
     
+    def test_not_frozen(self):
+        config_manager = ConfigManager()
+        self.assertFalse(config_manager.frozen())
+
+    def test_frozen(self):
+        config_manager = ConfigManager()
+        config_manager.freeze()
+        self.assertTrue(config_manager.frozen())
     
+    def test_config_does_not_persist_after_freeze(self):
+        config_manager = ConfigManager()
+        config_manager['hello'] = 'goodbye'
+        config_manager.freeze()
+        config_manager['second'] = 'changed thing'
+        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+    
+    def test_config_returns_copy_after_freeze(self):
+        config_manager = ConfigManager()
+        config_manager['hello'] = 'goodbye'
+        config_manager.freeze()
+        config_manager.config()['second'] = 'changed thing'
+        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
