@@ -22,13 +22,19 @@ class LogManager(object):
 
     def _load(self):
         from vcat.global_state import config_manager
-        from logging import basicConfig
-        from logging import getLevelName
+        import logging
         from sys import stdout
 
         log_level = config_manager.config().get('log_level', 'INFO')
-        log_level = getLevelName(log_level)
-        basicConfig(stream=stdout, level=log_level)
+        log_level = logging.getLevelName(log_level)
+        
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        log_handler = logging.StreamHandler(stdout)
+        log_handler.setFormatter(formatter)
+        logging.basicConfig(stream=stdout, level=log_level)
+        logger = logging.getLogger()
+        logger.handlers.clear()
+        logger.addHandler(log_handler)
 
         self._loggers = {}
 
