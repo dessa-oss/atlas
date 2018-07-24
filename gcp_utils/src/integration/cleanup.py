@@ -17,5 +17,5 @@ def cleanup():
         bucket.remove(path)
 
 def _log():
-    from vcat.global_state import log_manager
+    from foundations.global_state import log_manager
     return log_manager.get_logger(__name__)    

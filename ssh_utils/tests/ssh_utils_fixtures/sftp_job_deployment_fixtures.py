@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat_ssh import SFTPJobDeployment
+from foundations_ssh import SFTPJobDeployment
 
 RESULT_SUCCESS = {
     "global_stage_context": {

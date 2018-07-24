@@ -6,6 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from uuid import uuid4
-import vcat
+import foundations
 import acceptance.config
 from acceptance.test_deploy_job import TestDeployJob

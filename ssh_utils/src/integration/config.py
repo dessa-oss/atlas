@@ -27,8 +27,8 @@ def result_path():
 def _config():
     from os.path import isfile, expanduser
     from getpass import getuser
-    from vcat import config_manager, LocalFileSystemPipelineArchive
-    from vcat_ssh import MultiSFTPBundledPipelineArchive, SFTPListing
+    from foundations import config_manager, LocalFileSystemPipelineArchive
+    from foundations_ssh import MultiSFTPBundledPipelineArchive, SFTPListing
 
     # read archive implementations
     archive_implementation = {
