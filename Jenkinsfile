@@ -1,6 +1,6 @@
 node {
     stage('Preparation') { // for display purposes
-        git url: 'git@github.com:DeepLearnI/foundations.git', branch: 'rc', credentialsId: 'devops'
+        checkout scm
     }
     container("python2") {
         ws("${WORKSPACE}/foundations_sdk/") {
