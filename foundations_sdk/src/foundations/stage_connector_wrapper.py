@@ -48,12 +48,12 @@ class StageConnectorWrapper(object):
         return builder.build(self._connector.stage)
 
     def require(self, *required_args):
-        def _require(*args, data):
-            return data
+        def _require(*args):
+            return args[-1]
 
         builder = self._make_builder()
         builder = self._set_builder_stage(
-            builder, _require, required_args, {'data': self})
+            builder, _require, required_args + (self,), {})
         builder = self._set_builder_hierarchy(builder)
 
         return builder.build(self._connector.stage)
