@@ -3,7 +3,7 @@ node {
         git url: 'git@github.com:DeepLearnI/foundations.git', branch: 'rc', credentialsId: 'devops'
     }
     container("python2") {
-        ws("${WORKSPACE}/vcat_sdk/") {
+        ws("${WORKSPACE}/foundations_sdk/") {
             stage('Install Requirements') {
                 sh "python -m pip install PyYaml dill pandas"
             }
@@ -44,7 +44,7 @@ node {
         }
     }
     container("python3") {
-        ws("${WORKSPACE}/vcat_sdk/") {
+        ws("${WORKSPACE}/foundations_sdk/") {
             stage('Install Requirements') {
                 sh "python -m pip install PyYaml dill pandas"
             }
