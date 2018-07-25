@@ -22,4 +22,5 @@ from .test_local_file_system_pipeline_listing import TestLocalFileSystemPipeline
 from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
 from .test.test_config_manager import TestConfigManager
+from .test.test_log_manager import TestLogManager
 

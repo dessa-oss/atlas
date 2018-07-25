@@ -179,7 +179,6 @@ class TestConfigManager(unittest.TestCase):
     def test_reflect_instance_creates_configured_callback_with_keyword_arguments(self):
         def MyClass(first, second):
             return '{} {}'.format(first, second)
-
         config_manager = ConfigManager()
         config_manager['box_implementation'] = {
             'cat_type': MyClass,

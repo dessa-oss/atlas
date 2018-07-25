@@ -103,7 +103,7 @@ class ConfigManager(object):
             reflected_args = reflected_implementation.get(
                 'constructor_arguments', [])
             reflected_kwargs = reflected_implementation.get(
-                'constructor_keword_arguments', {})
+                'constructor_keyword_arguments', {})
             return reflected_klass, reflected_args, reflected_kwargs
         else:
             self._log().debug('Returning {}, {}, {}'.format(default_callback, [], {}))
