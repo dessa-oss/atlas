@@ -16,14 +16,14 @@ class TestLocalFileSystemBucket(unittest.TestCase):
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_number', '12323')
         with self._open_bucket_file(path, 'some_number') as file:
-            self.assertEqual('12323', file.read())
+            self.assertEqual(b'12323', file.read())
 
     def test_string_upload_different_values(self):
         path = self._make_path()
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_float', '12.3')
         with self._open_bucket_file(path, 'some_float') as file:
-            self.assertEqual('12.3', file.read())
+            self.assertEqual(b'12.3', file.read())
 
     def test_existence(self):
         path = self._make_path()
@@ -51,33 +51,33 @@ class TestLocalFileSystemBucket(unittest.TestCase):
         path = self._make_path()
         bucket = self._create_bucket(path)
         with self._make_temp_file() as file:
-            file.write_and_flush('potatoes')
+            file.write_and_flush(b'potatoes')
             file.seek(0)
             bucket.upload_from_file('some_number', file)
         with self._open_bucket_file(path, 'some_number') as file:
-            self.assertEqual('potatoes', file.read())
+            self.assertEqual(b'potatoes', file.read())
 
     def test_file_upload_different_values(self):
         path = self._make_path()
         bucket = self._create_bucket(path)
         with self._make_temp_file() as file:
-            file.write_and_flush('hello')
+            file.write_and_flush(b'hello')
             file.seek(0)
             bucket.upload_from_file('some_float', file)
         with self._open_bucket_file(path, 'some_float') as file:
-            self.assertEqual('hello', file.read())
+            self.assertEqual(b'hello', file.read())
 
     def test_string_download(self):
         path = self._make_path()
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_number', '12323')
-        self.assertEqual('12323', bucket.download_as_string('some_number'))
+        self.assertEqual(b'12323', bucket.download_as_string('some_number'))
 
     def test_string_download_different_values(self):
         path = self._make_path()
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_string', 'yup')
-        self.assertEqual('yup', bucket.download_as_string('some_string'))
+        self.assertEqual(b'yup', bucket.download_as_string('some_string'))
 
     def test_file_download(self):
         path = self._make_path()
@@ -85,7 +85,7 @@ class TestLocalFileSystemBucket(unittest.TestCase):
         bucket.upload_from_string('some_string', 'yup')
         with self._make_temp_file() as file:
             bucket.download_to_file('some_string', file)
-            self.assertEqual('yup', file.read())
+            self.assertEqual(b'yup', file.read())
 
     def test_file_download_different_values(self):
         path = self._make_path()
@@ -93,7 +93,7 @@ class TestLocalFileSystemBucket(unittest.TestCase):
         bucket.upload_from_string('bags', 'are dangerous')
         with self._make_temp_file() as file:
             bucket.download_to_file('bags', file)
-            self.assertEqual('are dangerous', file.read())
+            self.assertEqual(b'are dangerous', file.read())
 
     def test_list_files(self):
         path = self._make_path()
@@ -130,18 +130,18 @@ class TestLocalFileSystemBucket(unittest.TestCase):
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_number', '12323')
         bucket.move('some_number', 'some_other_number')
-        self.assertEqual('12323', bucket.download_as_string('some_other_number'))
+        self.assertEqual(b'12323', bucket.download_as_string('some_other_number'))
 
     def test_moves_file_different_name(self):
         path = self._make_path()
         bucket = self._create_bucket(path)
         bucket.upload_from_string('some_float', '12.33')
         bucket.move('some_float', 'some_other_float')
-        self.assertEqual('12.33', bucket.download_as_string('some_other_float'))
+        self.assertEqual(b'12.33', bucket.download_as_string('some_other_float'))
 
     def _open_bucket_file(self, path, name):
         from os.path import join
-        return open(join(path, name), 'r')
+        return open(join(path, name), 'rb')
 
     def _make_path(self):
         from uuid import uuid4
@@ -152,4 +152,4 @@ class TestLocalFileSystemBucket(unittest.TestCase):
 
     def _make_temp_file(self):
         from foundations.simple_tempfile import SimpleTempfile
-        return SimpleTempfile('w+')
+        return SimpleTempfile('w+b')
