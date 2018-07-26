@@ -23,4 +23,5 @@ from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
 from .test.test_config_manager import TestConfigManager
 from .test.test_log_manager import TestLogManager
+from .test.test_module_manager import TestModuleManager
 
