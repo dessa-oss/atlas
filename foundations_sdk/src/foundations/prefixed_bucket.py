@@ -5,10 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class PrefixedBucket(object):
 
     def __init__(self, prefix, bucket_contructor, *constructor_args, **constructor_kwargs):
         self._prefix = prefix
+        self._prefix_length = len(self._prefix)
         self._bucket = bucket_contructor(
             *constructor_args, **constructor_kwargs)
 
@@ -28,13 +30,17 @@ class PrefixedBucket(object):
         return self._bucket.download_to_file(self._name(name), output_file)
 
     def list_files(self, pathname):
-        return self._bucket.list_files(self._name(pathname))
-    
+        prefixed_files = self._bucket.list_files(self._name(pathname))
+        return [self._remove_prefix(name) for name in prefixed_files]
+
     def remove(self, name):
         return self._bucket.remove(self._name(name))
-    
+
     def move(self, source, destination):
         return self._bucket.move(self._name(source), self._name(destination))
 
     def _name(self, name):
         return self._prefix + '/' + name
+
+    def _remove_prefix(self, name):
+        return name[self._prefix_length + 1:]
