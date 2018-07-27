@@ -13,9 +13,9 @@ class TestModuleManager(unittest.TestCase):
     class MockModule(object):
         import os
         def __init__(self):
-            self._pi = None
             self.__file__ = __name__
             self.module_directory = 'foundations_sdk/src/test'
+            self._module_listing = []
 
     def test_module_directories_and_names_with_name(self):
         import sys
@@ -32,18 +32,18 @@ class TestModuleManager(unittest.TestCase):
         for module_name, module_directory in module_manager.module_directories_and_names():
             self.assertEqual(module.__file__, module_name)
 
-    def test_module_directories_and_names_with_directory_with_mock_module(self):
+    def test_module_append_directories(self):
         import sys
         mock_module = self.MockModule()
         module_manager = ModuleManager()
         appended_module = module_manager.append_module(sys.modules[__name__])
         for module_name, module_directory in module_manager.module_directories_and_names():
-            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1] )
+            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1])
 
-    def test_module_directories_and_names_with_directory_with_mock_module(self):
+    def test_module_directories_with_multiple_modules(self):
         import sys
         mock_module = self.MockModule()
         module_manager = ModuleManager()
-        appended_module = module_manager.append_module(sys.modules[__name__])
-        for module_name, module_directory in module_manager.module_directories_and_names():
-            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1] )
+        module_manager.append_module(sys.modules[__name__])
+        module_manager.append_module(sys.modules[__name__])
+        self.assertEqual(2, len(list(module_manager.module_directories_and_names())) )
