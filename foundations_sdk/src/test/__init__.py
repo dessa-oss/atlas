@@ -16,3 +16,5 @@ else:
 
 from .test_staged_module_internal_loader import TestStagedModuleInternalLoader
 from .test_staged_meta_helper import TestStagedMetaHelper
+from .test_prefixed_bucket import TestPrefixedBucket
+from .test_local_file_system_bucket import TestLocalFileSystemBucket
