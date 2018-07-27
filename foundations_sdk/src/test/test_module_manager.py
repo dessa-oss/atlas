@@ -11,13 +11,11 @@ from foundations.module_manager import ModuleManager
 
 class TestModuleManager(unittest.TestCase):
     class MockModule(object):
+        import os
         def __init__(self):
             self._pi = None
-            self.__file__ = None
-
-            def fake_dumps(obj):
-                return lambda: None
-            self.dumps = fake_dumps
+            self.__file__ = __name__
+            self.module_directory = 'foundations_sdk/src/test'
 
     def test_module_directories_and_names_with_name(self):
         import sys
@@ -25,3 +23,27 @@ class TestModuleManager(unittest.TestCase):
         module = module_manager.append_module(sys.modules[__name__])
         for module_name, module_directory in module_manager.module_directories_and_names():
             self.assertEqual('test.test_module_manager', module_name)
+
+    def test_module_directories_and_names_with_name_with_mock_module(self):
+        import sys
+        module = self.MockModule()
+        module_manager = ModuleManager()
+        appended_module = module_manager.append_module(sys.modules[__name__])
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self.assertEqual(module.__file__, module_name)
+
+    def test_module_directories_and_names_with_directory_with_mock_module(self):
+        import sys
+        mock_module = self.MockModule()
+        module_manager = ModuleManager()
+        appended_module = module_manager.append_module(sys.modules[__name__])
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1] )
+
+    def test_module_directories_and_names_with_directory_with_mock_module(self):
+        import sys
+        mock_module = self.MockModule()
+        module_manager = ModuleManager()
+        appended_module = module_manager.append_module(sys.modules[__name__])
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1] )
