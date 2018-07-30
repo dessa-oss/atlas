@@ -23,3 +23,4 @@ from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
 from .test_basic_stage_middleware import TestBasicStageMiddleware
 from .test_context_aware_middleware import TestContextAwareMiddleware
+from .test_error_middleware import TestErrorMiddleware
