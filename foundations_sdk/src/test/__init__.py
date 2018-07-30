@@ -21,3 +21,4 @@ from .test_bucket_pipeline_listing import TestBucketPipelineListing
 from .test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing
 from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
+from .test_basic_stage_middleware import TestBasicStageMiddleware
