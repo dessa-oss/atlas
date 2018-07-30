@@ -83,6 +83,7 @@ class JobBundler(object):
                             arcname=self._job_name + '/' + config_file)
 
                 for module_name, module_directory in module_manager.module_directories_and_names():
+                    self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
                     os.chdir(module_directory)
                     tar.add(".", arcname=self._job_name + '/' + module_name)
 
@@ -96,3 +97,7 @@ class JobBundler(object):
 
                 os.chdir(self._resource_directory)
                 tar.add(".", arcname=self._job_name)
+
+    def _log(self):
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__)
