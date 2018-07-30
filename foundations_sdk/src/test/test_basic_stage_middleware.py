@@ -46,6 +46,10 @@ class TestBasicStageMiddleware(unittest.TestCase):
         self._uuid = str(uuid4())
         self._stage = Stage(None, self._uuid, self._function, self._function)
 
+        self._called_callback = False
+        self._callback_args = None
+        self._callback_kwargs = None
+
     def test_stores_pipeline_context(self):
         middleware = self._make_middleware()
         self.assertEqual(self._pipeline_context, middleware.pipeline_context())
@@ -73,9 +77,35 @@ class TestBasicStageMiddleware(unittest.TestCase):
     def test_name_different_function(self):
         from foundations.stage import Stage
 
-        self._stage = Stage(None, self._uuid, self._other_function, self._other_function)
+        self._stage = Stage(
+            None, self._uuid, self._other_function, self._other_function)
         middleware = self._make_middleware()
         self.assertEqual('_other_function', middleware.name())
+
+    def test_calls_callback(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, (), {}, self._callback)
+        self.assertTrue(self._called_callback)
+
+    def test_calls_callback_with_args(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, ('hello', 'world'), {}, self._callback)
+        self.assertEqual(('hello', 'world'), self._callback_args)
+
+    def test_calls_callback_with_different_args(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, ('goodbye'), {}, self._callback)
+        self.assertEqual(('goodbye'), self._callback_args)
+
+    def test_calls_callback_with_kwargs(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, (), {'hello': 'world'}, self._callback)
+        self.assertEqual({'hello': 'world'}, self._callback_kwargs)
+
+    def test_calls_callback_with_different_kwargs(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, (), {'basket': 'case'}, self._callback)
+        self.assertEqual({'basket': 'case'}, self._callback_kwargs)
 
     def _make_middleware(self):
         return self.MockStageMiddleware(self._pipeline_context, self._stage_config, self._stage_context, self._stage)
@@ -85,3 +115,8 @@ class TestBasicStageMiddleware(unittest.TestCase):
 
     def _other_function(self):
         pass
+
+    def _callback(self, args, kwargs):
+        self._called_callback = True
+        self._callback_args = args
+        self._callback_kwargs = kwargs
