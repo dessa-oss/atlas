@@ -24,7 +24,7 @@ class TestModuleManager(unittest.TestCase):
         for module_name, module_directory in module_manager.module_directories_and_names():
             self.assertEqual('test.test_module_manager', module_name)
 
-    def test_module_directories_and_names_with_name_with_mock_module(self):
+    def test_module_append_with_name(self):
         import sys
         module = self.MockModule()
         module_manager = ModuleManager()
@@ -32,7 +32,7 @@ class TestModuleManager(unittest.TestCase):
         for module_name, module_directory in module_manager.module_directories_and_names():
             self.assertEqual(module.__file__, module_name)
 
-    def test_module_append_directories(self):
+    def test_module_append_with_directory(self):
         import sys
         mock_module = self.MockModule()
         module_manager = ModuleManager()

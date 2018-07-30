@@ -10,18 +10,34 @@ from foundations.log_manager import LogManager
 
 
 class TestLogManager(unittest.TestCase):
+  
+    def test_logger_with_empty_config(self):
+        from foundations.config_manager import ConfigManager
 
-    def test_get_logger_if_string_value(self):
-        log_manager = LogManager()
-        logging = log_manager.get_logger('plato').info('Adding current directory to source bundle')
-        self.assertEqual(None, logging)
+        config_manager = ConfigManager()
+        
+        log_manager = LogManager(config_manager)
+        self.assertEqual({}, config_manager.config())
+    
+    def test_logger_with_
+    
 
-    def test_get_logger_if_none_value(self):
-        log_manager = LogManager()
-        logging = log_manager.get_logger(None).info('Tests with none value')
-        self.assertEqual(None, logging)
+    def test_logger_returns_string(self):
+        
+        from foundations.config_manager import ConfigManager
 
-    def test_get_logger_with_template_string(self):
-        log_manager = LogManager()
-        test_value = 'a thing'
-        logging = log_manager.get_logger('plato').info('Adding current directory to source bundle %s', test_value)
+        config_manager = ConfigManager()
+        config_manager.config()['foo'] = 'bar'
+        log_manager = LogManager(config_manager)
+        log_manager.get_logger('namespaced_log_levels')
+        self.assertEqual({'foo': 'bar'}, config_manager.config())
+
+    def test_logger_with_dictionary(self):
+        
+        from foundations.config_manager import ConfigManager
+
+        config_manager = ConfigManager()
+        log_manager = LogManager(config_manager)
+        config_manager['namespaced_log_levels'] = { 'foundations_gcp.gcp_bucket': 'DEBUG' }
+        log_manager.get_logger('namespaced_log_levels')
+        self.assertEqual({'foundations_gcp.gcp_bucket': 'DEBUG'}, config_manager.config()['namespaced_log_levels'])

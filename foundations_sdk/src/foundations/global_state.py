@@ -21,5 +21,7 @@ config_manager = ConfigManager()
 cache_manager = CacheManager()
 deployment_manager = DeploymentManager()
 module_manager = ModuleManager()
-log_manager = LogManager()
+log_manager = LogManager(config_manager)
 middleware_manager = MiddlewareManager()
+
+
