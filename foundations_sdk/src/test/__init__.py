@@ -22,3 +22,4 @@ from .test_local_file_system_pipeline_listing import TestLocalFileSystemPipeline
 from .test_prefixed_bucket import TestPrefixedBucket
 from .test_local_file_system_bucket import TestLocalFileSystemBucket
 from .test_basic_stage_middleware import TestBasicStageMiddleware
+from .test_context_aware_middleware import TestContextAwareMiddleware
