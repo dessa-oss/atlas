@@ -24,14 +24,11 @@ class LogManager(object):
     def _load(self):
         import logging
         from sys import stdout
-
-        log_level = self._config_manager.config().get('log_level', 'INFO')
-        log_level = logging.getLevelName(log_level)
         
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         log_handler = logging.StreamHandler(stdout)
         log_handler.setFormatter(formatter)
-        logging.basicConfig(stream=stdout, level=log_level)
+        logging.basicConfig(stream=stdout)
         logger = logging.getLogger()
         logger.handlers.clear()
         logger.addHandler(log_handler)
@@ -44,9 +41,10 @@ class LogManager(object):
 
         new_logger = getLogger(name)
         log_level = self._find_log_level(name)
-        if log_level is not None:
-            new_logger.level = getLevelName(log_level)
-
+        if log_level is None:
+            log_level = self._config_manager.config().get('log_level', 'INFO')
+        
+        new_logger.level = getLevelName(log_level)
         self._loggers[name] = new_logger
 
     def _find_log_level(self, name):
