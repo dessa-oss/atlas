@@ -113,7 +113,7 @@ class MiddlewareManager(object):
     @staticmethod
     def _create_stage_output_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations.stage_output_middleware import StageOutputMiddleware
-        return StageOutputMiddleware(pipeline_context, stage_config, stage.uuid(), stage_context)
+        return StageOutputMiddleware(stage_config, stage_context)
 
     @staticmethod
     def _create_stage_log_middleware(pipeline_context, stage_config, stage_context, stage):
