@@ -5,8 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from test.shared_examples.test_callback import TestCallback
 
-class TestMiddlewareCallback(object):
+class TestMiddlewareCallback(TestCallback):
 
     def test_calls_callback(self):
         middleware = self._make_middleware()
@@ -21,8 +22,8 @@ class TestMiddlewareCallback(object):
 
     def test_calls_callback_with_different_args(self):
         middleware = self._make_middleware()
-        middleware.call(None, None, None, ('goodbye'), {}, self._callback)
-        self.assertEqual(('goodbye'), self._callback_args)
+        middleware.call(None, None, None, ('goodbye',), {}, self._callback)
+        self.assertEqual(('goodbye',), self._callback_args)
 
     def test_calls_callback_with_kwargs(self):
         middleware = self._make_middleware()
@@ -44,8 +45,3 @@ class TestMiddlewareCallback(object):
 
     def _make_middleware(self):
         raise NotImplementedError()
-
-    def _callback(self, args, kwargs):
-        self._called_callback = True
-        self._callback_args = args
-        self._callback_kwargs = kwargs
