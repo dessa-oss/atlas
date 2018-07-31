@@ -57,6 +57,11 @@ class TestUpstreamResultMiddleware(unittest.TestCase, TestCallback):
                         'basket': 'case'}, self._callback)
         self.assertEqual({'basket': 'case'}, self._callback_kwargs)
 
+    def test_calls_returns_callback_result(self):
+        middleware = self._make_middleware()
+        result = middleware.call(self._upstream_result, None, None, (), {}, self._callback)
+        self.assertEqual(self._callback_result, result)
+
     def _upstream_result(self):
         return (self._result,)
 

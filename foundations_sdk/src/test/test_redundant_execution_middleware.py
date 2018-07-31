@@ -7,26 +7,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.time_stage_middleware import TimeStageMiddleware
-from foundations.stage_context import StageContext
+from foundations.redundant_execution_middleware import RedundantExecutionMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
 
-class TestTimeStageMiddleware(unittest.TestCase, TestMiddlewareCallback):
-
-    class MockStageContext(StageContext):
-
-        def time_callback(self, callback):
-            self.callback = callback
-            return self.callback()
+class TestRedundantExecutionMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     def setUp(self):
         from foundations.stage import Stage
 
         from uuid import uuid4
 
-        self._stage_context = self.MockStageContext()
         self._uuid = str(uuid4())
         self._stage = Stage(None, self._uuid, self._function, self._function)
 
@@ -34,16 +26,21 @@ class TestTimeStageMiddleware(unittest.TestCase, TestMiddlewareCallback):
         self._callback_args = None
         self._callback_kwargs = None
 
-    def test_calls_time_callback_with_callback(self):
+    def test_executes_callback_only_once(self):
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, self._callback)
-
         self._called_callback = False
-        self._stage_context.callback()
-        self.assertTrue(self._called_callback)
+        middleware.call(None, None, None, (), {}, self._callback)
+        self.assertFalse(self._called_callback)
+
+    def test_calls_returns_stored_callback_result(self):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, (), {}, self._callback)
+        result = middleware.call(None, None, None, (), {}, self._callback)
+        self.assertEqual(self._callback_result, result)
 
     def _function(self):
         pass
 
     def _make_middleware(self):
-        return TimeStageMiddleware(self._stage_context, self._stage)
+        return RedundantExecutionMiddleware(self._stage)

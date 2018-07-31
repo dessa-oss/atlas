@@ -37,6 +37,11 @@ class TestMiddlewareCallback(TestCallback):
                         'basket': 'case'}, self._callback)
         self.assertEqual({'basket': 'case'}, self._callback_kwargs)
 
+    def test_calls_returns_callback_result(self):
+        middleware = self._make_middleware()
+        result = middleware.call(None, None, None, (), {}, self._callback)
+        self.assertEqual(self._callback_result, result)
+
     def assertTrue(self, value):
         raise NotImplementedError()
 
