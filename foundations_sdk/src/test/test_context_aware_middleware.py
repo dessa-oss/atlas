@@ -9,8 +9,10 @@ import unittest
 
 from foundations.context_aware_middleware import ContextAwareMiddleware
 
+from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
-class TestContextAwareMiddleware(unittest.TestCase):
+
+class TestContextAwareMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     def setUp(self):
         from foundations.stage_context import StageContext
@@ -20,22 +22,6 @@ class TestContextAwareMiddleware(unittest.TestCase):
         self._called_callback = False
         self._callback_args = None
         self._callback_kwargs = None
-
-    def test_calls_callback(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {}, self._callback)
-        self.assertTrue(self._called_callback)
-
-    def test_calls_callback_with_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('hello', 'world'),
-                        {}, self._callback)
-        self.assertEqual(('hello', 'world'), self._callback_args)
-
-    def test_calls_callback_with_different_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('goodbye'), {}, self._callback)
-        self.assertEqual(('goodbye'), self._callback_args)
 
     def test_calls_callback_with_context(self):
         middleware = self._make_middleware(context_aware=True)
@@ -48,18 +34,6 @@ class TestContextAwareMiddleware(unittest.TestCase):
         middleware = self._make_middleware(context_aware=True)
         middleware.call(None, None, None, ('goodbye',), {}, self._callback)
         self.assertEqual((self._stage_context, 'goodbye'), self._callback_args)
-
-    def test_calls_callback_with_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {
-                        'hello': 'world'}, self._callback)
-        self.assertEqual({'hello': 'world'}, self._callback_kwargs)
-
-    def test_calls_callback_with_different_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {
-                        'basket': 'case'}, self._callback)
-        self.assertEqual({'basket': 'case'}, self._callback_kwargs)
 
     def _make_middleware(self, context_aware=False):
         from foundations.context_aware import ContextAware
@@ -75,8 +49,3 @@ class TestContextAwareMiddleware(unittest.TestCase):
 
     def _method(self, *args, **kwargs):
         pass
-
-    def _callback(self, args, kwargs):
-        self._called_callback = True
-        self._callback_args = args
-        self._callback_kwargs = kwargs

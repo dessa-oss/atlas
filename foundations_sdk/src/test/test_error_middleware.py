@@ -10,8 +10,10 @@ import unittest
 from foundations.error_middleware import ErrorMiddleware
 from foundations.stage_context import StageContext
 
+from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
-class TestErrorMiddleware(unittest.TestCase):
+
+class TestErrorMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     class MockStageContext(StageContext):
 
@@ -24,34 +26,6 @@ class TestErrorMiddleware(unittest.TestCase):
         self._called_callback = False
         self._callback_args = None
         self._callback_kwargs = None
-
-    def test_calls_callback(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {}, self._callback)
-        self.assertTrue(self._called_callback)
-
-    def test_calls_callback_with_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('hello', 'world'),
-                        {}, self._callback)
-        self.assertEqual(('hello', 'world'), self._callback_args)
-
-    def test_calls_callback_with_different_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('goodbye'), {}, self._callback)
-        self.assertEqual(('goodbye'), self._callback_args)
-
-    def test_calls_callback_with_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {
-                        'hello': 'world'}, self._callback)
-        self.assertEqual({'hello': 'world'}, self._callback_kwargs)
-
-    def test_calls_callback_with_different_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {
-                        'basket': 'case'}, self._callback)
-        self.assertEqual({'basket': 'case'}, self._callback_kwargs)
 
     def test_calls_callback_and_saves_error_information(self):
         middleware = self._make_middleware()
@@ -68,11 +42,6 @@ class TestErrorMiddleware(unittest.TestCase):
 
     def _make_middleware(self):
         return ErrorMiddleware(self._stage_context)
-
-    def _callback(self, args, kwargs):
-        self._called_callback = True
-        self._callback_args = args
-        self._callback_kwargs = kwargs
 
     def _error_callback(self, args, kwargs):
         raise Exception('NOPE')
