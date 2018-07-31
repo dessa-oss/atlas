@@ -8,9 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.basic_stage_middleware import BasicStageMiddleware
+from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
 
-class TestBasicStageMiddleware(unittest.TestCase):
+class TestBasicStageMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     class MockStageMiddleware(BasicStageMiddleware):
 
@@ -82,31 +83,6 @@ class TestBasicStageMiddleware(unittest.TestCase):
         middleware = self._make_middleware()
         self.assertEqual('_other_function', middleware.name())
 
-    def test_calls_callback(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {}, self._callback)
-        self.assertTrue(self._called_callback)
-
-    def test_calls_callback_with_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('hello', 'world'), {}, self._callback)
-        self.assertEqual(('hello', 'world'), self._callback_args)
-
-    def test_calls_callback_with_different_args(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, ('goodbye'), {}, self._callback)
-        self.assertEqual(('goodbye'), self._callback_args)
-
-    def test_calls_callback_with_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {'hello': 'world'}, self._callback)
-        self.assertEqual({'hello': 'world'}, self._callback_kwargs)
-
-    def test_calls_callback_with_different_kwargs(self):
-        middleware = self._make_middleware()
-        middleware.call(None, None, None, (), {'basket': 'case'}, self._callback)
-        self.assertEqual({'basket': 'case'}, self._callback_kwargs)
-
     def _make_middleware(self):
         return self.MockStageMiddleware(self._pipeline_context, self._stage_config, self._stage_context, self._stage)
 
@@ -115,8 +91,3 @@ class TestBasicStageMiddleware(unittest.TestCase):
 
     def _other_function(self):
         pass
-
-    def _callback(self, args, kwargs):
-        self._called_callback = True
-        self._callback_args = args
-        self._callback_kwargs = kwargs
