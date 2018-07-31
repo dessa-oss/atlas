@@ -19,8 +19,6 @@ class TestLogManager(unittest.TestCase):
         log_manager = LogManager(config_manager)
         self.assertEqual({}, config_manager.config())
     
-    def test_logger_with_
-    
 
     def test_logger_returns_string(self):
         
