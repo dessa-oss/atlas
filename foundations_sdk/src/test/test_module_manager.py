@@ -1,3 +1,4 @@
+
 """
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
@@ -11,44 +12,78 @@ from foundations.module_manager import ModuleManager
 
 class TestModuleManager(unittest.TestCase):
     class MockModule(object):
-        import os
+        def __init__(self, file, name):
+            self.__file__ = file
+            self.__name__ = name
 
-        def __init__(self):
-            self.__file__ = __name__
-            self.module_directory = 'foundations_sdk/src/test'
-            self._module_listing = []
+    def test_module_directories_and_names_returns_name_and_directory(self):
+        module_manager = ModuleManager()
+        mock_module = self.MockModule(
+            '/path/to/some/python/file.py', 'python.file')
 
-    def test_module_directories_and_names_with_name(self):
-        import sys
+        module_manager.append_module(mock_module)
+        result_module_directories = list(
+            module_manager.module_directories_and_names())
+        expected_module_directories = [('python.file', '/path/to/some/python')]
+        self.assertEqual(expected_module_directories,
+                         result_module_directories)
+
+    def test_module_directories_and_names_with_different_name_and_path(self):
+        module_manager = ModuleManager()
+        mock_module = self.MockModule(
+            '/another/file/path/file.py', 'another.pythonfile')
+
+        module_manager.append_module(mock_module)
+        result_module_directories = list(
+            module_manager.module_directories_and_names())
+        expected_module_directories = [
+            ('another.pythonfile', '/another/file/path')]
+        self.assertEqual(expected_module_directories,
+                         result_module_directories)
+
+    def test_module_directories_and_names_with_mutliple_names_and_directories(self):
+        module_manager = ModuleManager()
+        mock_module = self.MockModule(
+            '/path/to/some/python/file.py', 'python.file')
+        mock_module_two = self.MockModule(
+            '/another/file/path/file.py', 'another.pythonfile')
+
+        module_manager.append_module(mock_module)
+        module_manager.append_module(mock_module_two)
+
+        result_module_directories = list(
+            module_manager.module_directories_and_names())
+        expected_module_directories = [
+            ('python.file', '/path/to/some/python'), ('another.pythonfile', '/another/file/path')]
+        self.assertEqual(expected_module_directories,
+                         result_module_directories)
+
+    def test_module_directories_return_absolute_path(self):
+        from os import getcwd
 
         module_manager = ModuleManager()
-        module = module_manager.append_module(sys.modules[__name__])
-        for module_name, module_directory in module_manager.module_directories_and_names():
-            self.assertEqual('test.test_module_manager', module_name)
+        mock_module = self.MockModule(
+            'python/file.py', 'python.file')
+        module_manager.append_module(mock_module)
+        
+        result_module_directories = list(
+            module_manager.module_directories_and_names())
+        expected_module_directories = [('python.file', '{}/python'.format(getcwd()))]
 
-    def test_module_append_with_name(self):
-        import sys
+        self.assertEquals(expected_module_directories, result_module_directories)
+    
 
-        module = self.MockModule()
+    def test_module_directories_return_absolute_path_even_if_cwd_changes(self):
+        from os import getcwd
+        from foundations import ChangeDirectory
+
         module_manager = ModuleManager()
-        appended_module = module_manager.append_module(sys.modules[__name__])
-        for module_name, module_directory in module_manager.module_directories_and_names():
-            self.assertEqual(module.__file__, module_name)
-
-    def test_module_append_with_directory(self):
-        import sys
-
-        mock_module = self.MockModule()
-        module_manager = ModuleManager()
-        appended_module = module_manager.append_module(sys.modules[__name__])
-        for module_name, module_directory in module_manager.module_directories_and_names():
-            self.assertEqual(mock_module.module_directory, (module_directory.split('/foundations/'))[1])
-
-    def test_module_directories_with_multiple_modules(self):
-        import sys
-
-        mock_module = self.MockModule()
-        module_manager = ModuleManager()
-        module_manager.append_module(sys.modules[__name__])
-        module_manager.append_module(sys.modules[__name__])
-        self.assertEqual(2, len(list(module_manager.module_directories_and_names())) )
+        mock_module = self.MockModule(
+            'python/file.py', 'python.file')
+        module_manager.append_module(mock_module)
+        
+        expected_module_directories = [('python.file', '{}/python'.format(getcwd()))]
+        with ChangeDirectory('/etc'):
+            result_module_directories = list(
+                module_manager.module_directories_and_names())
+            self.assertEquals(expected_module_directories, result_module_directories)
