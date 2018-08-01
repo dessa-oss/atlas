@@ -111,6 +111,27 @@ class TestMiddlewareChain(unittest.TestCase):
         expected_result = [self._middleware, middleware_two]
         self.assertEqual(expected_result, self._middleware_chain.chain())
 
+    def test_add_concatenates_middleware(self):
+        middleware_chain_two = MiddlewareChain()
+        middleware_two = self.MockMiddleware()
+        middleware_chain_two.append_middleware(middleware_two)
+
+        expected_result = [self._middleware, middleware_two]
+        result = self._middleware_chain + middleware_chain_two
+        self.assertEqual(expected_result, result.chain())
+
+    def test_add_is_non_destructive(self):
+        expected_result = [self._middleware]
+        self._middleware_chain + self._middleware_chain
+        self.assertEqual(expected_result, self._middleware_chain.chain())
+
+    def test_add_concatenates_middleware_with_list(self):
+        middleware_two = self.MockMiddleware()
+
+        expected_result = [self._middleware, middleware_two]
+        result = self._middleware_chain + [middleware_two]
+        self.assertEqual(expected_result, result.chain())
+
     def _random_args(self):
         import random
         from uuid import uuid4
