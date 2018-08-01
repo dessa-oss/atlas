@@ -29,7 +29,7 @@ class MiddlewareManager(object):
                 self._make_middleware(
                     'StageLog', MiddlewareManager._create_stage_log_middleware),
                 self._make_middleware(
-                    'ArugmentFiller', MiddlewareManager._create_argument_filler_middleware),
+                    'ArgumentFiller', MiddlewareManager._create_argument_filler_middleware),
                 self._make_middleware(
                     'Cache', MiddlewareManager._create_cache_middleware),
                 self._make_middleware(
