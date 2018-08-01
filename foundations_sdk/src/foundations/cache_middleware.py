@@ -10,7 +10,8 @@ from foundations.stage_cache_for_middleware import StageCacheForMiddleware
 
 class CacheMiddleware(object):
 
-    def __init__(self, stage_config, stage_context, stage):
+    def __init__(self, cache_implementation, stage_config, stage_context, stage):
+        self._cache_implementation = cache_implementation
         self._stage_config = stage_config
         self._stage_context = stage_context
         self._stage = stage

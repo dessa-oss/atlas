@@ -128,7 +128,9 @@ class MiddlewareManager(object):
     @staticmethod
     def _create_cache_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations.cache_middleware import CacheMiddleware
-        return CacheMiddleware(stage_config, stage_context, stage)
+        from foundations.stage_cache_for_middleware import StageCacheForMiddleware
+
+        return CacheMiddleware(StageCacheForMiddleware, stage_config, stage_context, stage)
 
     @staticmethod
     def _create_upstream_result_middleware(pipeline_context, stage_config, stage_context, stage):
