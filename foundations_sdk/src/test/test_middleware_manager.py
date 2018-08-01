@@ -12,11 +12,20 @@ from foundations.middleware_manager import MiddlewareManager
 
 class TestMiddlewareManager(unittest.TestCase):
 
+    class MockMiddleware(object):
+        def __init__(self, pipeline_context, stage_config, stage_context, stage):
+            pass
+
+    class MockMiddlewareTwo(object):
+        def __init__(self, pipeline_context, stage_config, stage_context, stage):
+            pass
+
     def setUp(self):
         from foundations.pipeline_context import PipelineContext
         from foundations.stage_config import StageConfig
         from foundations.stage_context import StageContext
         from foundations.stage import Stage
+        from foundations.config_manager import ConfigManager
 
         from uuid import uuid4
 
@@ -27,6 +36,8 @@ class TestMiddlewareManager(unittest.TestCase):
         self._stage_uuid = str(uuid4())
         self._stage = Stage(None, self._stage_uuid,
                             self._function, self._function)
+
+        self._config_manager = ConfigManager()
 
     def test_has_redundant_middleware(self):
         from foundations.redundant_execution_middleware import RedundantExecutionMiddleware
@@ -68,8 +79,24 @@ class TestMiddlewareManager(unittest.TestCase):
         from foundations.stage_logging_middleware import StageLoggingMiddleware
         self._test_has_middleware('StageLogging', StageLoggingMiddleware)
 
+    def test_has_configured_middleware(self):
+        from foundations.stage_logging_middleware import StageLoggingMiddleware
+
+        self._config_manager['stage_middleware'] = [
+            {'name': 'Mock', 'constructor': self.MockMiddleware}
+        ]
+        self._test_has_middleware('Mock', self.MockMiddleware)
+
+    def test_has_configured_middleware_different_middleware(self):
+        from foundations.stage_logging_middleware import StageLoggingMiddleware
+
+        self._config_manager['stage_middleware'] = [
+            {'name': 'MockTwo', 'constructor': self.MockMiddlewareTwo}
+        ]
+        self._test_has_middleware('MockTwo', self.MockMiddlewareTwo)
+
     def _test_has_middleware(self, name, middleware_type):
-        middleware_manager = MiddlewareManager()
+        middleware_manager = MiddlewareManager(self._config_manager)
         middleware = self._construct_middleware(middleware_manager, name)
         self.assertTrue(isinstance(middleware, middleware_type))
 

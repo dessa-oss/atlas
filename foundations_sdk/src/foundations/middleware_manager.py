@@ -14,8 +14,9 @@ class MiddlewareManager(object):
             self.name = name
             self.callback = callback
 
-    def __init__(self):
+    def __init__(self, config_manager):
         self._stage_middleware = None
+        self._config_manager = config_manager
 
     def stage_middleware(self):
         if self._stage_middleware is None:
@@ -56,9 +57,7 @@ class MiddlewareManager(object):
         self.stage_middleware().insert(previous_index, middleware)
 
     def _load_configured_stage_middleware(self):
-        from foundations.global_state import config_manager
-
-        configured_middleware = config_manager.config().get('stage_middleware', [])
+        configured_middleware = self._config_manager.config().get('stage_middleware', [])
         for middleware_config in configured_middleware:
             self._log().debug('Loading configured stage middleware {}'.format(middleware_config))
 
