@@ -18,8 +18,8 @@ class CacheMiddleware(object):
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         if self._stage_config.allow_caching():
-            stage_cache = StageCacheForMiddleware(
-                self._stage_config.allow_caching(),
+            stage_cache = self._cache_implementation(
+                True,
                 self._stage_config.cache_name(),
                 self._stage.uuid(),
                 args,
