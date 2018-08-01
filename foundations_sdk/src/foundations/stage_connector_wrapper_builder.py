@@ -20,7 +20,6 @@ class StageConnectorWrapperBuilder(object):
         self._stage_config = StageConfig()
 
         self._middleware = MiddlewareChain()
-        self._append_initial_middleware()
 
         self._stage = None
         self._connector = None
@@ -46,12 +45,6 @@ class StageConnectorWrapperBuilder(object):
                             function, function, *args, **kwargs)
         self._append_stage_middleware()
         return self
-
-    def _append_initial_middleware(self):
-        from foundations.global_state import middleware_manager
-
-        for middleware in middleware_manager.initial_middleware():
-            self._middleware.append_middleware(middleware.callback(self._stage_context))
 
     def _append_stage_middleware(self):
         from foundations.global_state import middleware_manager

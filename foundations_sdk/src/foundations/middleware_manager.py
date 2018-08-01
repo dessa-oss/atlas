@@ -15,14 +15,7 @@ class MiddlewareManager(object):
             self.callback = callback
 
     def __init__(self):
-        self._initial_middleware = None
         self._stage_middleware = None
-
-    def initial_middleware(self):
-        if self._initial_middleware is None:
-            self._initial_middleware = []
-
-        return self._initial_middleware
 
     def stage_middleware(self):
         if self._stage_middleware is None:
@@ -51,16 +44,6 @@ class MiddlewareManager(object):
             self._load_configured_stage_middleware()
 
         return self._stage_middleware
-
-    def append_initial(self, name, middleware_callback):
-        middleware = self._make_middleware(name, middleware_callback)
-        self.initial_middleware().append(middleware)
-
-    def add_initial_middleware_before(self, before, name, middleware_callback):
-        previous_index = self._find_middleware_index(
-            self.initial_middleware(), before)
-        middleware = self._make_middleware(name, middleware_callback)
-        self.initial_middleware().insert(previous_index, middleware)
 
     def append_stage(self, name, middleware_callback):
         middleware = self._make_middleware(name, middleware_callback)
