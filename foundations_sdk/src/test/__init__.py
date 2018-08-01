@@ -31,3 +31,4 @@ from .test_stage_log_middleware import TestStageLogMiddleware
 from .test_stage_logging_middleware import TestStageLoggingMiddleware
 from .test_stage_output_middleware import TestStageOutputMiddleware
 from .test_argument_filler_middleware import TestArgumentFillerMiddleware
+from .test_middleware_chain import TestMiddlewareChain
