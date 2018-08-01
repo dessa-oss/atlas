@@ -12,6 +12,7 @@ from foundations.module_manager import ModuleManager
 class TestModuleManager(unittest.TestCase):
     class MockModule(object):
         import os
+
         def __init__(self):
             self.__file__ = __name__
             self.module_directory = 'foundations_sdk/src/test'
@@ -19,6 +20,7 @@ class TestModuleManager(unittest.TestCase):
 
     def test_module_directories_and_names_with_name(self):
         import sys
+
         module_manager = ModuleManager()
         module = module_manager.append_module(sys.modules[__name__])
         for module_name, module_directory in module_manager.module_directories_and_names():
@@ -26,6 +28,7 @@ class TestModuleManager(unittest.TestCase):
 
     def test_module_append_with_name(self):
         import sys
+
         module = self.MockModule()
         module_manager = ModuleManager()
         appended_module = module_manager.append_module(sys.modules[__name__])
@@ -34,6 +37,7 @@ class TestModuleManager(unittest.TestCase):
 
     def test_module_append_with_directory(self):
         import sys
+
         mock_module = self.MockModule()
         module_manager = ModuleManager()
         appended_module = module_manager.append_module(sys.modules[__name__])
@@ -42,6 +46,7 @@ class TestModuleManager(unittest.TestCase):
 
     def test_module_directories_with_multiple_modules(self):
         import sys
+
         mock_module = self.MockModule()
         module_manager = ModuleManager()
         module_manager.append_module(sys.modules[__name__])
