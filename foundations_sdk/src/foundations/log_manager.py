@@ -30,7 +30,7 @@ class LogManager(object):
         log_handler.setFormatter(formatter)
         logging.basicConfig(stream=stdout)
         logger = logging.getLogger()
-        logger.handlers.clear()
+        del logger.handlers[:]
         logger.addHandler(log_handler)
 
         self._loggers = {}
