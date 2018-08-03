@@ -87,11 +87,12 @@ class ResultReader(object):
 
             row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
 
-            for structured_result_name, structured_result_val in stage_context.stage_log.items():
-                column_headers.append(structured_result_name)
-                row_data.append(structured_result_val)
+            if stage_context.has_stage_output or len(stage_context.stage_log) > 0:
+                for structured_result_name, structured_result_val in stage_context.stage_log.items():
+                    column_headers.append(structured_result_name)
+                    row_data.append(structured_result_val)
 
-            all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
     @staticmethod
     def _create_frame_with_ordered_headers(main_headers, callback):
@@ -103,7 +104,7 @@ class ResultReader(object):
 
         callback(main_headers, all_job_information)
 
-        output_dataframe = pd.concat(all_job_information, ignore_index=True, sort=False)
+        output_dataframe = pd.concat(all_job_information, ignore_index=True)
         fixed_headers = restructure_headers(list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
