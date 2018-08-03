@@ -1,8 +1,8 @@
-dill
-redis
-pandas
-google-api-python-client
-google-auth-httplib2
-google-cloud-storage
-PyYAML
-pysftp
+dill==0.2.8.2
+redis==2.10.6
+pandas==0.23.3
+google-api-python-client==1.7.3
+google-auth-httplib2==0.0.3
+google-cloud-storage==1.10.0
+PyYAML==3.13
+pysftp==0.2.9
