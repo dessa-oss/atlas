@@ -11,6 +11,7 @@ class ConfigManager(object):
     def __init__(self):
         self._config = None
         self._frozen = False
+        self._config_paths = []
 
     def config(self):
         import copy
@@ -23,6 +24,9 @@ class ConfigManager(object):
         else:
             return self._config
 
+    def add_config_path(self, path):
+        self._config_paths.append(path)
+
     def freeze(self):
         self._frozen = True
 
@@ -30,18 +34,25 @@ class ConfigManager(object):
         return self._frozen
 
     def _load(self):
-        from foundations.local_directory import LocalDirectory
         import yaml
 
         config = {}
 
-        directory = LocalDirectory()
-        file_list = directory.get_files('*.config.yaml')
-        for bundled_file in file_list:
-            with bundled_file.open('r') as file:
+        for path in self._get_config_paths():
+            with open(path, 'r') as file:
                 config.update(yaml.load(file))
 
         self._config = config
+
+    def _get_config_paths(self):
+        if len(self._config_paths) < 1:
+            self._config_paths = self._default_config_paths()
+
+        return self._config_paths
+
+    def _default_config_paths(self):
+        from glob import glob
+        return glob('*.config.yaml')
 
     def __getitem__(self, key):
         return self.config()[key]
