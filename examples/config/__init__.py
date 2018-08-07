@@ -5,7 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from vcat import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
+"""
+This file contains the configurations used by Foundations to define, for example,
+where to deploy a job and store its results.  Feel free to have a look at this file,
+but know that you'll never need to create one youself.
+"""
+
+from foundations import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
 from uuid import uuid4
 from os import getcwd
 

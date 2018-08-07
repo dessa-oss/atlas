@@ -19,8 +19,9 @@ The signature of such a function is as follows:
     - it should return as its first value the object to pass to the next stage
     - if you want to pass multiple items to the next stage, or return multiple items,
         explicitly return a list (see "split_inputs_and_targets" below)
-    - if logging is to be done, the item to be logged should be stored in a dict with some
-        key, and the dict should be returned as a second return value (see "get_metrics" below)
+    - if logging is to be done, the item to be logged (a metric for example) should be 
+        stored in a dict with some key, and the dict should be returned as a second
+        return value (see "get_metrics" below)
 """
 
 from common.data import load_titanic

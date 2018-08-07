@@ -19,6 +19,9 @@ the in-memory caching.  Since there are two handles, there will be two execution
 
 On the other hand 'bye bye' will be printed exactly once.  Since log_data is called only once,
 but the handle is reused, the stage will only be executed once.
+
+The main takeaway is that you will most likely want to call a stage function only once and reuse
+the result as needed.
 """
 
 import foundations

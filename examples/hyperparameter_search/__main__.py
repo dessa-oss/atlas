@@ -5,7 +5,32 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+"""
+Please have a look at the "logistic_regression" module before looking at this one.
+
+There are three main things to look at: .enable_caching(), "Hyperparameter"s, and
+calling .run() multiple times with arguments.
+
+.enable_caching():
+    Please look at the cache module for an explanation.
+
+Hyperparameter:
+    Typically, you'll have parameters that you'll want to vary across jobs while keeping
+    the basic structure the same - e.g. learning rate, number of neurons in a fully-
+    connected layer, etc.  By providing a Hyperparameter object in place of an actual value
+    (see lines 61 - 66 below), you create a hole that can be filled during invocation of .run()
+
+calling .run() multiple times with arguments:
+    This ties very heavily with Hyperparameters.  When you want to substitute actual values
+    into the holes created by Hyperparameter objects, you do it here.  Provide a keyword
+    argument when calling the run method to fill the placeholder with that value - see lines
+    72 - 74 for an example.  This makes it super easy to deploy a job multiple times with different
+    hyperparameter choices.
+
+These three concepts work together to allow you to perform a hyperparameter search very efficiently!
+"""
+
+import foundations
 import config
 from staged_common.prep import union
 from staged_common.models import train_logistic_regression
