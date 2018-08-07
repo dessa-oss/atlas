@@ -5,7 +5,20 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+"""
+If you haven't seen the "replacing_nulls" or "one_hot_encode" modules yet, have a look
+at one of those before you look at this one.
+
+This is structured in much the same way as those other two modules, but there's a key
+difference - there's a .splice() method.  Due to the fact that Python is dynamically typed,
+among other things, Foundations simply cannot know how many values a stage returns when
+wrapping it.  You'll need to help just a little bit by calling the splice method.
+
+The usage is simple enough - do stage.splice(n) if the stage wants to return n elements to
+other stages.  See lines 36 - 40 in this file for examples of usage.
+"""
+
+import foundations
 import config
 from staged_common.prep import union
 from staged_common.models import train_logistic_regression

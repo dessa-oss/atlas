@@ -5,6 +5,24 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+"""
+This file contains code used in the ETL pipeline for the (in)famous Titanic example.
+In the Foundations framework, code is expected to be structured into stages - instead
+of a monolithic code block, you have functions which represent stages in a pipeline.
+
+Something very important to note: there is no usage of the Foundations library itself
+in this file.  The main thing that you need to do is simply structure your code
+as composable functions.
+
+The signature of such a function is as follows:
+    - arguments are unrestricted - there can be as many as you want, in any order
+    - it should return as its first value the object to pass to the next stage
+    - if you want to pass multiple items to the next stage, or return multiple items,
+        explicitly return a list (see "split_inputs_and_targets" below)
+    - if logging is to be done, the item to be logged should be stored in a dict with some
+        key, and the dict should be returned as a second return value (see "get_metrics" below)
+"""
+
 from common.data import load_titanic
 from common.prep import fillna, train_imputer, train_one_hot_encoder, drop_non_numeric
 from common.models import get_metrics_internal

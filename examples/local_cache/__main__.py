@@ -5,7 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import vcat
+"""
+The purpose of this module is to show what happens when you have redundant execution.
+When a stage is defined and invoked more than once in a single job, its result will be
+cached in memory for the lifetime of that job so that it is not recomputed unnecessarily.
+The main use case for this is if you have a larger dataset or some result that is computationally
+expensive and you wish to use it more than once.
+
+If you execute this module, you will see 'hello world' printed twice - this is because even
+though log_data is defined already, it is being called directly twice.  When wrapping your code
+via import with the "staged_" prefix, your function is changed to return a handle that performs
+the in-memory caching.  Since there are two handles, there will be two executions for log_data.
+
+On the other hand 'bye bye' will be printed exactly once.  Since log_data is called only once,
+but the handle is reused, the stage will only be executed once.
+"""
+
+import foundations
 import config
 from staged_common.data import load_titanic
 from staged_common.prep import require
