@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class ContextAwareMiddleware(object):
 
     def __init__(self, stage_context, stage):
@@ -15,6 +16,7 @@ class ContextAwareMiddleware(object):
         from foundations.context_aware import ContextAware
 
         if isinstance(self._stage.function, ContextAware):
-            self._stage.function.set_context(self._stage_context)
+            self._stage_context.is_context_aware = True
+            args = (self._stage_context,) + args
 
         return callback(args, kwargs)
