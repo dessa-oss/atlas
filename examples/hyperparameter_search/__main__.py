@@ -53,8 +53,8 @@ def main():
 
     # model training and scoring
     params = {
-        'C': vcat.Hyperparameter('C'),
-        'max_iter': vcat.Hyperparameter('max_iter'),
+        'C': foundations.Hyperparameter('C'),
+        'max_iter': foundations.Hyperparameter('max_iter'),
     }
 
     model = train_logistic_regression(x_train, y_train, **params)
