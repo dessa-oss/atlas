@@ -22,7 +22,7 @@ config_manager['cache_implementation'] = {
 }
 
 # configure all archive types to use the sample implementation
-archive_root = getcwd() + '/tmp/archives'
+archive_root = '/tmp/archives'
 
 archive_implementation = {
     'archive_type': LocalFileSystemPipelineArchive,
