@@ -20,9 +20,9 @@ As a walkthrough (line numbers given):
         and the result reader itself
     29: configure Foundations to read from the local filesystem - don't worry about this line
     32: get a logger - like using print, but more configurable
-    33: create a lookup object (already configured to read from local filesystem)
-    34: create a result reader from the lookup object
-    35: get and print results
+    34: create a lookup object (already configured to read from local filesystem)
+    35: create a result reader from the lookup object
+    36: get and print results
 """
 
 from foundations import JobPersister, ResultReader, log_manager
