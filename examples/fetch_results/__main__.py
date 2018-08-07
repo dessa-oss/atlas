@@ -18,19 +18,18 @@ of a stage; see "get_metrics()" in titanic/etl.py for an example.
 As a walkthrough (line numbers given):
     28: import utilities that aid in deserialization as well reading from the file system,
         and the result reader itself
+    29: configure Foundations to read from the local filesystem - don't worry about this line
     32: get a logger - like using print, but more configurable
-    33: create an adapter to read from the local filesystem
-    35: create a lookup object for use with the filesystem adapter
-    36: create a result reader from the lookup object
-    37: get and print results
+    33: create a lookup object (already configured to read from local filesystem)
+    34: create a result reader from the lookup object
+    35: get and print results
 """
 
-from foundations import JobPersister, ResultReader, LocalFileSystemPipelineListing, log_manager
+from foundations import JobPersister, ResultReader, log_manager
 import config
 
 def main():
     log = log_manager.get_logger(__name__)
-    # listing = LocalFileSystemPipelineListing(config.archive_root)
 
     with JobPersister.load_archiver_fetch() as fetch:
         reader = ResultReader(fetch)
