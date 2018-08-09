@@ -16,21 +16,21 @@ This module demonstrates the use of a user-configured global cache, which allows
 
 ### fetch_job_information
 
-This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job metadata for jobs that have already run.  Job metadata includes how long a job took to run as well as job name and how stages connect to each other.  There's no point in running this module if you haven't run a job - run the hyperparameter_search module or logistic_regression module first to generate some illustrative output.
+This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job metadata for jobs that have already run.  Job metadata includes how long a job took to run as well as job name and how stages connect to each other.  There's no point in running this module if you haven't run a job - run the grid_search module or logistic_regression module first to generate some illustrative output.
 
 `python -m logistic_regression && python -m fetch_job_information`
 
 ### fetch_results
 
-This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job results for jobs that have already run.  A job result is something explicitly logged by the user in their stage function code.  There's no point in running this module if you haven't run a job - run the hyperparameter_search module or logistic_regression module first to generate some illustrative output.
+This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job results for jobs that have already run.  A job result is something explicitly logged by the user in their stage function code.  There's no point in running this module if you haven't run a job - run the grid_search module or logistic_regression module first to generate some illustrative output.
 
 `python -m logistic_regression && python -m fetch_results`
 
-### hyperparameter_search
+### grid_search
 
-This module gives an example implementation of hyperparameter search using the Hyperparameter placeholder provided by Foundations as well as calling the `.run()` method with multiple parameters.  See `hyperparameter_search/__main__.py` for more in-depth information.
+This module gives an example implementation of hyperparameter (grid) search using the Hyperparameter placeholder provided by Foundations as well as calling the `.grid_search()` method with ranges of parameters.  See `grid_search/__main__.py` for more in-depth information.
 
-`python -m hyperparameter_search`
+`python -m grid_search`
 
 ### impute_data
 
