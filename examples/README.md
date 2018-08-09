@@ -34,13 +34,13 @@ This module gives an example implementation of hyperparameter search using the H
 
 ### impute_data
 
-Simple illustration of the unobtrusiveness of Foundations syntax.
+Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `impute_data/__main__.py` for more info.
 
 `python -m impute_data`
 
 ### loading_data
 
-Simple illustration of the unobtrusiveness of Foundations syntax.
+Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `loading_data/__main__.py` for more info.
 
 `python -m loading_data`
 
@@ -58,13 +58,13 @@ Titanic!  The code in this module applies a logistic regression model to the Tit
 
 ### one_hot_encode
 
-Simple illustration of the unobtrusiveness of Foundations syntax.
+Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `one_hot_encode/__main__.py` for more info.
 
 `python -m one_hot_encode`
 
 ### replacing_nulls
 
-Simple illustration of the unobtrusiveness of Foundations syntax.
+Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `replacing_nulls/__main__.py` for more info.
 
 `python -m replacing_nulls`
 
