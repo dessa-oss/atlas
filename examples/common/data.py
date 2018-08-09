@@ -9,7 +9,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 Though data loading is just another step in a job, it could be useful for the MLE
 to separate and collect common functionalities in appropriate files.
 
-This one just loads the titanic dataset from the appropriate csv.
+This one just loads the titanic dataset from the appropriate csv and returns it as
+a pandas dataframe.
 """
 
 import pandas as pd
