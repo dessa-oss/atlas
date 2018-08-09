@@ -2,7 +2,7 @@
 
 The purpose of this directory is to provide examples of Foundations-based code in action as well as explanations of what specific pieces of the Foundations API allow you to do.
 
-To run any of these examples, first install requirements via `requirements.txt` and then `python -m <main_module_name>`.  Make sure to install Foundations as well, of course.  Let's now go through the main modules that exist here (in alpha order) as well what they aim to show.  We'll also quickly talk the library modules in this directory - they aren't intended to be run.
+To run any of these examples, first `pip install -r requirements.txt` and then `python -m <main_module_name>`.  Make sure to install Foundations as well, of course.  Let's now go through the main modules that exist here (in alpha order) as well what they aim to show.  We'll also quickly talk the library modules in this directory - they aren't intended to be run.
 
 Each python file in each subdirectory contains a more in-depth description of what the code is doing, should you want further information.
 
