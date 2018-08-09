@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 """
 Please have a look at and understand the local_cache module before looking at this one -
-it is similar to this one but there is a key, subtle similarity.
+it is similar to this one but there is a key, subtle difference.
 
 This concept of caching is more of a global one.  If you expect that your job
 has stages in common with another job you've previously run, and that the output
