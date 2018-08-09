@@ -5,11 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-"""
-A convenience class that wraps an arbitrary class which provides encoding functionality.
-"""
-
 class EncoderWrapper(object):
+    """
+    A convenience class that wraps an arbitrary class which provides encoding functionality.
+    """
+    
     def __init__(self, encoder, columns):
         self._encoder = encoder
         self._columns = columns

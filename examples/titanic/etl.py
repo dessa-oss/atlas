@@ -6,9 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 """
-This file contains code used in the ETL pipeline for the (in)famous Titanic example.
+This file contains code used in the ETL process for the (in)famous Titanic example.
 In the Foundations framework, code is expected to be structured into stages - instead
-of a monolithic code block, you have functions which represent stages in a pipeline.
+of a monolithic code block, you have functions which represent stages in a job.
 
 Something very important to note: there is no usage of the Foundations library itself
 in this file.  The main thing that you need to do is simply structure your code
