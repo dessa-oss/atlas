@@ -15,24 +15,27 @@ and return them into a dataframe - this allows for sorting, filtering, and so fo
 Note: a result is defined as something explicitly logged into a dict during execution
 of a stage; see "get_metrics()" in titanic/etl.py for an example.
 
-As a walkthrough (line numbers given):
-    28: import utilities that aid in deserialization as well reading from the file system,
-        and the result reader itself
-    29: configure Foundations to read from the local filesystem - don't worry about this line
-    32: get a logger - like using print, but more configurable
-    34: create a lookup object (already configured to read from local filesystem)
-    35: create a result reader from the lookup object
-    36: get and print results
+See comments below for a walkthrough.
 """
 
+# import utilities that aid in deserialization as well as reading from the file system,
+# and the result reader itself
 from foundations import JobPersister, ResultReader, log_manager
+
+# configure Foundations to read from the local filesystem - don't worry about this line
 import config
 
 def main():
+    # get a logger - like using print, but more configurable
     log = log_manager.get_logger(__name__)
 
+    # create a lookup object (already configured to read from local filesystem)
     with JobPersister.load_archiver_fetch() as fetch:
+
+        # create a result reader from the lookup object
         reader = ResultReader(fetch)
+
+        # get and print results
         log.info("\n{}".format(reader.get_results()))
 
 if __name__ == '__main__':

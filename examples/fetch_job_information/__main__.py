@@ -14,23 +14,27 @@ S3, GS, local directory).  In this example, we query job information stored on t
 local filesystem and return them into a dataframe - this allows for sorting, filtering,
 and so forth.
 
-As a walkthrough (line numbers given):
-    27: import utilities that aid in deserialization as well reading from the file system,
-        and the result reader itself
-    28: configure Foundations to read from the local filesystem - don't worry about this line
-    31: get a logger - like using print, but more configurable
-    32: create a lookup object (already configured to read from local filesystem)
-    33: create a result reader from the lookup object
-    34: get and print job information
+See comments below for a walkthrough.
 """
 
+# import utilities that aid in deserialization as well as reading from the file system,
+# and the result reader itself
 from foundations import JobPersister, ResultReader, log_manager
+
+# configure Foundations to read from the local filesystem - don't worry about this line
 import config
 
 def main():
+    # get a logger - like using print, but more configurable
     log = log_manager.get_logger(__name__)
+
+    # create a lookup object (already configured to read from local filesystem)
     with JobPersister.load_archiver_fetch() as fetch:
+
+        # create a result reader from the lookup object
         reader = ResultReader(fetch)
+
+        # get and print job information
         log.info("\n{}".format(reader.get_job_information()))
 
 if __name__ == '__main__':
