@@ -6,26 +6,31 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 """
-Please have a look at the "logistic_regression" module before looking at this one.
+Please have a look at the "logistic_regression" and "cache" modules before looking at this one.
 
-There are three main things to look at: .enable_caching(), "Hyperparameter"s, and
-calling .run() multiple times with arguments.
-
-.enable_caching():
-    Please look at the cache module for an explanation.
+There are three main things to look at: "Hyperparameter"s, "DiscreteHyperparameter"s, and .grid_search().
 
 Hyperparameter:
     Typically, you'll have parameters that you'll want to vary across jobs while keeping
     the basic structure the same - e.g. learning rate, number of neurons in a fully-
-    connected layer, etc.  By providing a Hyperparameter object in place of an actual value
-    (see lines 61 - 66 below), you create a hole that can be filled during invocation of .run()
+    connected layer, etc.  By providing a Hyperparameter object in place of an actual value,
+    you create a hole that can be filled during invocation of .run() - or more importantly,
+    a hyperparameter search.  An example of which is...
 
-calling .run() multiple times with arguments:
-    This ties very heavily with Hyperparameters.  When you want to substitute actual values
-    into the holes created by Hyperparameter objects, you do it here.  Provide a keyword
-    argument when calling the run method to fill the placeholder with that value - see lines
-    72 - 74 for an example.  This makes it super easy to deploy a job multiple times with different
-    hyperparameter choices.
+.grid_search():
+    When you call .run() on a stage, you can supply to it arguments with which to fill a
+    hyperparameter-shaped hole.  Below, we could have run the "log" stage like so:
+    log.run(C=0.25, max_iter=100).  This would be suitable for a single run.  You could then
+    use nested for loops to iterate over a search space in a grid search, where you call log.run()
+    multiple times.  That sounds like annoying boilerplate, and it is!  Foundations provides a
+    .grid_search() method that automates this.  All you need to do is supply ranges that your
+    hyperparameters may take.  Among other classes provided, you can do this with...
+
+DiscreteHyperparameter:
+    A DiscreteHyperparameter object represents a discrete iterable of values a hyperparameter may
+    take.  It is essentially a list with an interface better tuned toward hyperparameter search.
+    The constructor takes the list of allowed values.  There are other hyperparameter range objects
+    too, such as FloatingHyperparameter, which represents a uniform distribution over a closed interval.
 
 These three concepts work together to allow you to perform a hyperparameter search very efficiently!
 """
@@ -63,9 +68,13 @@ def main():
 
     # print out the results
     log = log_formatted('\nTraining score was {}\nValidation score was {}', train_score, valid_score)
-    for C in [0.25, 0.125, 1.0]:
-        for max_iter in [100, 200]:
-            log.run(C=C, max_iter=max_iter)
+
+    params_ranges = {
+        'C': foundations.DiscreteHyperparameter([0.25, 0.125, 1.0]),
+        'max_iter': foundations.DiscreteHyperparameter([100, 200])
+    }
+
+    log.grid_search(params_ranges)
 
 if __name__ == '__main__':
     main()
