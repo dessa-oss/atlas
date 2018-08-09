@@ -18,13 +18,13 @@ This module demonstrates the use of a user-configured global cache, which allows
 
 This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job metadata for jobs that have already run.  Job metadata includes how long a job took to run as well as job name and how stages connect to each other.  There's no point in running this module if you haven't run a job - run the hyperparameter_search module or logistic_regression module first to generate some illustrative output.
 
-`python -m fetch_job_information`
+`python -m logistic_regression && python -m fetch_job_information`
 
 ### fetch_results
 
 This module demonstrates the use of the result reader.  Specifically, it demonstrates using the result reader to grab job results for jobs that have already run.  A job result is something explicitly logged by the user in their stage function code.  There's no point in running this module if you haven't run a job - run the hyperparameter_search module or logistic_regression module first to generate some illustrative output.
 
-`python -m fetch_results`
+`python -m logistic_regression && python -m fetch_results`
 
 ### hyperparameter_search
 
