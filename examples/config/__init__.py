@@ -8,7 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 This file contains the configurations used by Foundations to define, for example,
 where to deploy a job and store its results.  Feel free to have a look at this file,
-but know that you'll never need to create one youself.
+but know that an MLE will never need to create one.  That responsability falls to
+a user who wishes to create or configure an integration with an execution environment
+(e.g. GCP, remote machine) or remote storage (e.g. S3, GS) on an MLE's behalf.
 """
 
 from foundations import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineListing, LocalFileSystemPipelineArchive
