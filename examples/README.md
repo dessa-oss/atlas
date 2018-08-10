@@ -7,6 +7,7 @@ To run any of these examples, first `pip install -r requirements.txt` and then `
 Each python file in each subdirectory contains a more in-depth description of what the code is doing, should you want further information.
 
 If you'd like a place to start, have a look at [impute_data](./impute_data/__main__.py).
+
 For an example of how to structure model code for Foundations, have a look at [common/models.py](./common/models.py).
 
 ## Main Modules
