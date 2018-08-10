@@ -6,7 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 """
-Foundations provides a logging utility which can be wrapped as you see fit.
+Foundations provides a logging utility which provides a more configurable alternative
+to simply using "print".
+
 Here, it is used to create stages intended to run in a job.  They act similarly
 to the "tee" linux utility, where they print the result to stdout and also return
 it for further downstream use.
