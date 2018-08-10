@@ -15,9 +15,13 @@ With that "staged_" prefix, Foundations does some magic that wraps your code in 
 which perform provenance tracking, caching, prepping your job for deployment to compute, and so on.
 
 The "main" code below is exactly what you'd write without Foundations, save for that
-.run() method.  That method deploys your job to some configured compute - could be GCP,
-your local machine, or even an NVIDIA DGX!  You can in principle use the .run() method
-on any stage, but using it on the final stage is usually what you want.
+.run() method.  When you call .run(), the job code is packaged and sent to a configured compute -
+could be GCP, your local machine, or even an NVIDIA DGX!  This configuration will be set in
+a configuration yaml provided as a result of installation / integration of Foundations.  It
+can also be set programmatically, as shown in the config module.
+
+You can in principle use the .run() method on any stage, but using it on the final stage is
+usually what you want.
 """
 
 import foundations
