@@ -47,6 +47,15 @@ def main():
     # data prep
     data = load_data().enable_caching()
     data = fill_categorical_nulls(data).enable_caching()
+
+    # this line is dense, so step-by-step:
+    #     1. before doing anything, check to see if this stage's output exists in cache
+    #     2a. if it does, grab from cache
+    #     2b. if it does not,
+    #         * grab the output from fill_categorical_nulls
+    #         * split inputs and targets
+    #         * save these to cache
+    #     3. the stage result is a list with two elements, so we split it into two elements (inputs, targets)
     inputs, targets = split_inputs_and_targets(data).enable_caching().splice(2)
 
     # feature engineering
@@ -74,6 +83,13 @@ def main():
         'max_iter': foundations.DiscreteHyperparameter([100, 200])
     }
 
+    # the below line of code is equivalent to:
+    #
+    # for C in [0.25, 0.125, 1.0]:
+    #     for max_iter in [100, 200]:
+    #         log.run(C=C, max_iter=max_iter)
+    #
+    # Foundations automates this boilerplate away with the .grid_search() method
     log.grid_search(params_ranges)
 
 if __name__ == '__main__':
