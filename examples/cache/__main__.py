@@ -17,6 +17,10 @@ happen.  If the stage has not been run before, it will run the stage and store t
 result in a configurable location (e.g. S3, local filesystem).  If the stage is run
 a second time within a different job, its result will be recalled and used.
 
+The cache location is set in a configuration yaml provided as result of integration /
+installation of Foundations.  It can also be set programmatically - see the config
+module for an example of how to do this.  
+
 Contrast this with the caching described in local_cache; the cache there exists for the
 lifetime of the job.  It is always enabled and exists in memory.  The cache here
 exists across jobs and exists on a filesystem-like storage.  It must be called manually.
@@ -29,12 +33,25 @@ from staged_common.prep import require
 from staged_common.logging import log_data
 
 def main():
-    # defining the stage twice while explicitly enabling caching will prevent the method from running twice
+    # we have two stages log, and log2
+    # since they are derived from the same code ("log_data"),
+    # there'd be no point in actually executing both
+
     data = 'hello world'
     log = log_data(data)
+
+    # mark the stage ("log") as cacheable
+    # this means its result will be:
+    #     1. looked up in cache
+    #     2a. if success, the result will be returned without further computation
+    #     2b. if failure, the result will be computed and saved to cache
     log.enable_caching()
 
     log2 = log_data(data)
+
+    # see previous comment - since log2 is derived from the same code as log,
+    # its result should be successfully looked up from the cache - log2 should not actually be executed
+    # (assuming the log2 stage executes after log)
     log2.enable_caching()
     
     executor = require(log, log2)
