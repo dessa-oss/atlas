@@ -36,9 +36,14 @@ def main():
     log = log_data(data)
     log2 = log_data(data)
     executor = require(log, log2)
+
+    # when you do .run(), you deploy a job to run in a (possibly remote) execution environment
+    # when you do .run_same_process(), the stage runs in the driver process
+    # this is used purely to show that in the execution environment, there is an in-memory cache as described above
+    # the user will want to use .run() instead of .run_same_process() essentially 100% of the time
     executor.run_same_process()
 
-    # however, reusing the same stage will cache the data
+    # reusing the same stage will read the data from the in-memory cache
     data = 'bye bye'
     log = log_data(data)
     executor = require(log, log)
