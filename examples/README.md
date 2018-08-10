@@ -38,13 +38,13 @@ This module gives an example implementation of hyperparameter (grid) search usin
 
 ### [impute_data](./impute_data/__main__.py)
 
-Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `impute_data/__main__.py` for more info.
+Simple code example showing how easy it is to structure code in a Foundations-compatible way.  This particular example demonstrates data imputation - filling null or empty entries in a dataset with a dynamically-computed value (usually the mean of non-empty values).
 
 `python -m impute_data`
 
 ### [loading_data](./loading_data/__main__.py)
 
-Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `loading_data/__main__.py` for more info.
+Simple code example showing how easy it is to structure code in a Foundations-compatible way.  This particular example demonstrates loading data from a csv.
 
 `python -m loading_data`
 
@@ -56,19 +56,19 @@ This module demonstrates how Foundations handles redundant execution.  If you ha
 
 ### [logistic_regression](./logistic_regression/__main__.py)
 
-Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.splice()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.splice()` method.  See `logistic_regression/__main__.py` for examples.
+Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.splice()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.splice()` method.
 
 `python -m logistic_regression`
 
 ### [one_hot_encode](./one_hot_encode/__main__.py)
 
-Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `one_hot_encode/__main__.py` for more info.
+Simple code example showing how easy it is to structure code in a Foundations-compatible way.  This particular example demonstrates one-hot encoding - taking a column of data whose type is categorical / an enumeration and encoding it using [one-hot vectors](https://en.wikipedia.org/wiki/One-hot).
 
 `python -m one_hot_encode`
 
 ### [replacing_nulls](./replacing_nulls/__main__.py)
 
-Simple illustration of the unobtrusiveness of Foundations syntax.  Please have a look at `replacing_nulls/__main__.py` for more info.
+Simple code example showing how easy it is to structure code in a Foundations-compatible way.  This particular example demonstrates replacing null or empty values in a dataset with a constant, user-specified value.
 
 `python -m replacing_nulls`
 
