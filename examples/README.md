@@ -6,7 +6,8 @@ To run any of these examples, first `pip install -r requirements.txt` and then `
 
 Each python file in each subdirectory contains a more in-depth description of what the code is doing, should you want further information.
 
-If you'd like a place to start, have a look at [impute_data](./impute_data/__main__.py)
+If you'd like a place to start, have a look at [impute_data](./impute_data/__main__.py).
+For an example of how to structure model code for Foundations, have a look at [common/models.py](./common/models.py).
 
 ## Main Modules
 
@@ -30,7 +31,7 @@ This module provides an example of how to grab results for a completed job.  Spe
 
 ### [grid_search](./grid_search/__main__.py)
 
-This module gives an example implementation of hyperparameter (grid) search using the Hyperparameter placeholder provided by Foundations as well as calling the `.grid_search()` method with ranges of parameters.  See `grid_search/__main__.py` for more in-depth information.
+This module gives an example implementation of hyperparameter (grid) search using the Hyperparameter placeholder provided by Foundations as well as calling the `.grid_search()` method with ranges of parameters.  See the source file for more in-depth information.
 
 `python -m grid_search`
 
