@@ -37,7 +37,10 @@ class Provenance(object):
 
     def save_to_archive(self, archiver):
         archiver.append_provenance(self._archive_provenance())
+        print('thing')
+        print(self.job_source_bundle)
         if self.job_source_bundle is not None:
+            print('hello')
             archiver.append_job_source(self.job_source_bundle.job_archive())
 
     def load_stage_log_from_archive(self, archiver):
@@ -47,7 +50,10 @@ class Provenance(object):
         pass
 
     def load_provenance_from_archive(self, archiver):
-        archive_provenance = archiver.fetch_provenance() or {}
+        try:
+            archive_provenance = archiver.fetch_provenance() or {}
+        except AttributeError:
+            archive_provenance = {}
         self._load_archive_provenance(archive_provenance)
 
     def load_job_source_from_archive(self, archiver):
@@ -69,7 +75,7 @@ class Provenance(object):
 
     def fill_config(self):
         from foundations.global_state import config_manager
-        self.config.update(config_manager.config)
+        self.config.update(config_manager.config())
 
     def fill_environment(self):
         for key, value in os.environ.items():
@@ -83,9 +89,8 @@ class Provenance(object):
 
         reader, writer = os.pipe()
         subprocess.call(['python', '-m', 'pip', 'freeze'], stdout=writer)
-        self.pip_freeze = os.read(reader, 65536).strip()
-        split_lines = [line.split('==')
-                       for line in self.pip_freeze.split("\n")]
+        self.pip_freeze = os.read(reader, 65536).decode('utf8').strip()
+        split_lines = [line.split('==') for line in self.pip_freeze.split("\n")]
         versioned_lines = filter(lambda line: len(line) == 2, split_lines)
         self.module_versions = dict(versioned_lines)
 
