@@ -37,10 +37,7 @@ class Provenance(object):
 
     def save_to_archive(self, archiver):
         archiver.append_provenance(self._archive_provenance())
-        print('thing')
-        print(self.job_source_bundle)
         if self.job_source_bundle is not None:
-            print('hello')
             archiver.append_job_source(self.job_source_bundle.job_archive())
 
     def load_stage_log_from_archive(self, archiver):
@@ -50,10 +47,7 @@ class Provenance(object):
         pass
 
     def load_provenance_from_archive(self, archiver):
-        try:
-            archive_provenance = archiver.fetch_provenance() or {}
-        except AttributeError:
-            archive_provenance = {}
+        archive_provenance = archiver.fetch_provenance() or {}
         self._load_archive_provenance(archive_provenance)
 
     def load_job_source_from_archive(self, archiver):
@@ -66,15 +60,14 @@ class Provenance(object):
     def load_miscellaneous_from_archive(self, archiver):
         pass
 
-    def fill_all(self):
+    def fill_all(self, config_manager):
         self.fill_python_version()
-        self.fill_config()
+        self.fill_config(config_manager)
         self.fill_environment()
         self.fill_random_state()
         self.fill_pip_modules()
 
-    def fill_config(self):
-        from foundations.global_state import config_manager
+    def fill_config(self, config_manager):
         self.config.update(config_manager.config())
 
     def fill_environment(self):
@@ -86,10 +79,12 @@ class Provenance(object):
 
     def fill_pip_modules(self):
         import subprocess
+        from foundations.utils import string_from_bytes
 
         reader, writer = os.pipe()
         subprocess.call(['python', '-m', 'pip', 'freeze'], stdout=writer)
-        self.pip_freeze = os.read(reader, 65536).decode('utf8').strip()
+        pip_freeze_string = string_from_bytes(os.read(reader, 65536))
+        self.pip_freeze = pip_freeze_string.strip()
         split_lines = [line.split('==') for line in self.pip_freeze.split("\n")]
         versioned_lines = filter(lambda line: len(line) == 2, split_lines)
         self.module_versions = dict(versioned_lines)
