@@ -44,6 +44,9 @@ class TestProvenance(unittest.TestCase):
             return {
                 "hello": "goodbye"
             }
+        
+        def fetch_provenance(self):
+            return None
 
 
     # Test fill
@@ -153,21 +156,53 @@ class TestProvenance(unittest.TestCase):
 
     # Test load
 
-    # def test_load_provenance_from_archive_with_empty_archive(self):
-    #     provenance = Provenance()
-    #     archive_provenance = False
+    def test_load_provenance_from_archive_with_empty_archive(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
 
-    #     provenance.load_provenance_from_archive(archive_provenance)
-    #     self.assertEqual(provenance.environment, {})
+        provenance.load_provenance_from_archive(mock_archive)
+        self.assertEqual(provenance.environment, {})
+        self.assertEqual(provenance.config, {})
+        self.assertEqual(provenance.tags, [])
+        self.assertEqual(provenance.random_state, None)
+        self.assertEqual(provenance.module_versions, {})
+        self.assertEqual(provenance.pip_freeze, None)
+        self.assertEqual(provenance.python_version, None)
+        self.assertEqual(provenance.stage_hierarchy.entries, {})
+    
+    def test_load_provenance_from_archive_with_specific_value_persists(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+
+        provenance.environment = {'python': 2}
+        provenance.config = {'log_level': 'DEBUG'}
+        provenance.tags = ['run_one']
+        provenance.random_state = 'this is a random state'
+        provenance.module_versions = {'pandas': 0.2}
+        provenance.pip_freeze = 'pandas==0.2'
+        provenance.python_version = {'major': 2}
+        provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
+
+        provenance.load_provenance_from_archive(mock_archive)
+        self.assertEqual(provenance.environment, {'python': 2})
+        self.assertEqual(provenance.config, {'log_level': 'DEBUG'})
+        self.assertEqual(provenance.tags, ['run_one'])
+        self.assertEqual(provenance.random_state, 'this is a random state')
+        self.assertEqual(provenance.module_versions, {'pandas': 0.2})
+        self.assertEqual(provenance.pip_freeze, 'pandas==0.2')
+        self.assertEqual(provenance.python_version, {'major': 2})
+        self.assertEqual(provenance.stage_hierarchy.entries, {'fake_one': 'fake_data'})
+        
+        
     
     # Test save
 
-    def test_save_to_archive_job_source_none(self):
-        provenance = Provenance()
-        instance_of_mock = self.MockArchive()
+    # def test_save_to_archive_job_source_none(self):
+    #     provenance = Provenance()
+    #     instance_of_mock = self.MockArchive()
         
-        provenance.save_to_archive(instance_of_mock)
-        self.assertEqual(None, provenance.job_source_bundle)
+    #     provenance.save_to_archive(instance_of_mock)
+    #     self.assertEqual(None, provenance.job_source_bundle)
     
     # def test_save_to_archive_with_job_source(self):
     #     provenance = Provenance()
