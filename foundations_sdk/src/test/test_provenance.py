@@ -35,6 +35,15 @@ class TestProvenance(unittest.TestCase):
         
         def fetch_provenance(self):
             return None
+    
+    class MockArchiveWithJobArchive(object):
+        
+        def job_archive(self):
+            return 'space'
+            
+
+        
+
 
 
     # Test fill
@@ -224,6 +233,15 @@ class TestProvenance(unittest.TestCase):
                             'tags': ['run_one']
                         }, mock_archive.archive_provenance)
         self.assertEqual({'fake_one': 'fake_data'}, mock_archive.archive_provenance['stage_hierarchy'].entries)
+
+    def test_save_to_archive_with_job_source(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+
+        provenance.job_source_bundle = self.MockArchiveWithJobArchive()
+        provenance.save_to_archive(mock_archive)
+
+        self.assertEqual('space', mock_archive.job_source_bundle)
     
     
     
