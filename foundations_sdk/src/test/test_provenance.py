@@ -33,6 +33,8 @@ class TestProvenance(unittest.TestCase):
         def append_provenance(self, archive_provenance):
             self.archive_provenance = archive_provenance
     
+        def fetch_provenance(self):
+            return None
 
     class MockArchiveWithJobArchive(object):
         
@@ -231,7 +233,28 @@ class TestProvenance(unittest.TestCase):
         provenance.job_source_bundle = self.MockArchiveWithJobArchive()
         provenance.save_to_archive(mock_archive)
         self.assertEqual('space', mock_archive.job_source_bundle)
+    
+    def test_load_artifact_from_archive(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+
+        provenance.load_artifact_from_archive(mock_archive)
+
+    def test_load_miscellaneous_from_archive(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+
+        provenance.load_miscellaneous_from_archive(mock_archive)
+
+    def test_load_stage_log_from_archive(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+
+        provenance.load_stage_log_from_archive(mock_archive)
 
 
+    def test_load_persisted_data_from_archive(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
 
-
+        provenance.load_persisted_data_from_archive(mock_archive)
