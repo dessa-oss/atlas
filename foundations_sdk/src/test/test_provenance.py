@@ -32,21 +32,13 @@ class TestProvenance(unittest.TestCase):
         
         def append_provenance(self, archive_provenance):
             self.archive_provenance = archive_provenance
-        
-        def fetch_provenance(self):
-            return None
     
+
     class MockArchiveWithJobArchive(object):
         
         def job_archive(self):
             return 'space'
             
-
-        
-
-
-
-    # Test fill
 
     def setUp(self):
         from foundations.config_manager import ConfigManager
@@ -67,6 +59,7 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_python_version()
         self.assertEqual(provenance.python_version, python_version )
     
+
     def test_random_state_has_correct_value(self):
         import random
         provenance = Provenance()
@@ -79,7 +72,8 @@ class TestProvenance(unittest.TestCase):
         random.setstate(old_state)
 
         self.assertEqual(expected_state, provenance.random_state)
-    
+
+
     def test_fill_environment_has_correct_value(self):
         import os
         provenance = Provenance()
@@ -101,6 +95,7 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_config(self.config_manager)
         self.assertEqual(provenance.config, config_return)
     
+
     def test_fill_config_with_correct_value_from_config_manager_with_multiple_keys(self):
         provenance = Provenance()
         self.config_manager['other'] = 'value'
@@ -110,6 +105,7 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_config(self.config_manager)
         self.assertEqual(provenance.config, config_return)
     
+
     def test_fill_config_with_correct_value_from_config_manager_with_empty_config(self):
         provenance = Provenance()
         config_return = {}
@@ -125,6 +121,7 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_pip_modules()
         self.assertNotEqual({}, provenance.module_versions)
 
+
     def test_fill_pip_modules_with_freeze(self):
         provenance = Provenance()
 
@@ -132,7 +129,7 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_pip_modules()
         self.assertNotEqual({}, provenance.pip_freeze)
 
-    
+
     def test_fill_all(self):
         provenance = Provenance()
         self.assertEqual(None, provenance.python_version)
@@ -149,9 +146,6 @@ class TestProvenance(unittest.TestCase):
         self.assertNotEqual({}, provenance.environment)
         self.assertNotEqual({}, provenance.module_versions)
         self.assertNotEqual(None, provenance.pip_freeze)
-        
-
-    # Test load
 
     def test_load_provenance_from_archive_with_empty_archive(self):
         provenance = Provenance()
@@ -189,8 +183,6 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.pip_freeze, 'pandas==0.2')
         self.assertEqual(provenance.python_version, {'major': 2})
         self.assertEqual(provenance.stage_hierarchy.entries, {'fake_one': 'fake_data'})
-
-    # Test save
     
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
@@ -220,9 +212,7 @@ class TestProvenance(unittest.TestCase):
         provenance.pip_freeze = 'pandas==0.2'
         provenance.python_version = {'major': 2}
         provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
-
         provenance.save_to_archive(mock_archive)
-
 
         self.assertDictContainsSubset({'config': {'log_level': 'DEBUG'},
                             'environment': {'python': 2},
@@ -240,34 +230,7 @@ class TestProvenance(unittest.TestCase):
 
         provenance.job_source_bundle = self.MockArchiveWithJobArchive()
         provenance.save_to_archive(mock_archive)
-
         self.assertEqual('space', mock_archive.job_source_bundle)
-    
-    
-    
-    # def test_save_to_archive_with_job_source(self):
-    #     provenance = Provenance()
-    #     mock_archive = self.MockArchive()
-
-    #     provenance.save_to_archive(mock_archive)
-    #     self.assertEqual({}, mock_archive.append_job_source)
-        
-
-
-
-
-
-    # def test_save_to_archive_with_job_source(self):
-    #     provenance = Provenance()
-    #     instance_of_mock = self.MockArchive()
-
-    #     instance_of_mock.append_provenance('foo')
-    #     expected_result = 'hello'
-    #     self.assertEqual(expected_result, provenance.tags)
-
-    #     provenance.save_to_archive(instance_of_mock)
-    #     expected_result = 'hello'
-    #     self.assertEqual(expected_result, instance_of_mock.stuff)
 
 
 
