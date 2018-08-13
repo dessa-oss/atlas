@@ -17,7 +17,7 @@ class TestProvenance(unittest.TestCase):
             self.job_source_bundle = None
             self.environment = {}
             self.config = {}
-            # self.tags = []
+            self.tags = []
             self.random_state = None
             self.module_versions = {}
             self.pip_freeze = None
@@ -25,25 +25,13 @@ class TestProvenance(unittest.TestCase):
             self.python_version = None
             self.job_archive_stuff = None
             self.other_stuff = None
-            self.archive_provenance_store = None
-            self.stuff = None
+            self.archive_provenance = None
         
         def append_job_source(self, job_source_bundle):
-            pass
+            self.job_source_bundle = job_source_bundle
         
         def append_provenance(self, archive_provenance):
-            return {'version': 10}
-        
-        def job_archive(self):
-            return 'hello'
-        
-        def job_source_bundle(self):
-            self.job_archive_stuff = 'hana'
-        
-        def archive_provenance(self):
-            return {
-                "hello": "goodbye"
-            }
+            self.archive_provenance = archive_provenance
         
         def fetch_provenance(self):
             return None
@@ -192,18 +180,65 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.pip_freeze, 'pandas==0.2')
         self.assertEqual(provenance.python_version, {'major': 2})
         self.assertEqual(provenance.stage_hierarchy.entries, {'fake_one': 'fake_data'})
-        
-        
-    
-    # Test save
 
-    # def test_save_to_archive_job_source_none(self):
-    #     provenance = Provenance()
-    #     instance_of_mock = self.MockArchive()
-        
-    #     provenance.save_to_archive(instance_of_mock)
-    #     self.assertEqual(None, provenance.job_source_bundle)
+    # Test save
     
+    def test_save_to_archive_with_no_job_source(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+        
+        provenance.save_to_archive(mock_archive)
+        self.assertDictContainsSubset({'config': {},
+                            'environment': {},
+                            'module_versions': {},
+                            'pip_freeze': None,
+                            'python_version': None,
+                            'random_state': None,
+                            'tags': []
+                        }, mock_archive.archive_provenance)
+        self.assertEqual({}, mock_archive.archive_provenance['stage_hierarchy'].entries)
+
+
+    def test_save_to_archive_with_no_job_source_with_values(self):
+        provenance = Provenance()
+        mock_archive = self.MockArchive()
+        
+        provenance.environment = {'python': 2}
+        provenance.config = {'log_level': 'DEBUG'}
+        provenance.tags = ['run_one']
+        provenance.random_state = 'this is a random state'
+        provenance.module_versions = {'pandas': 0.2}
+        provenance.pip_freeze = 'pandas==0.2'
+        provenance.python_version = {'major': 2}
+        provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
+
+        provenance.save_to_archive(mock_archive)
+
+
+        self.assertDictContainsSubset({'config': {'log_level': 'DEBUG'},
+                            'environment': {'python': 2},
+                            'module_versions': {'pandas': 0.2},
+                            'pip_freeze': 'pandas==0.2',
+                            'python_version': {'major': 2},
+                            'random_state': 'this is a random state',
+                            'tags': ['run_one']
+                        }, mock_archive.archive_provenance)
+        self.assertEqual({'fake_one': 'fake_data'}, mock_archive.archive_provenance['stage_hierarchy'].entries)
+    
+    
+    
+    # def test_save_to_archive_with_job_source(self):
+    #     provenance = Provenance()
+    #     mock_archive = self.MockArchive()
+
+    #     provenance.save_to_archive(mock_archive)
+    #     self.assertEqual({}, mock_archive.append_job_source)
+        
+
+
+
+
+
     # def test_save_to_archive_with_job_source(self):
     #     provenance = Provenance()
     #     instance_of_mock = self.MockArchive()
