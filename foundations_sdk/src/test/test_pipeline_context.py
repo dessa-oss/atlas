@@ -18,9 +18,16 @@ class TestPipelineContext(unittest.TestCase):
       def set_uuid(self):
         self.uuid = '9sdf9'
 
-    def setUp(self):
-        from foundations.config_manager import ConfigManager
-        self.config_manager = ConfigManager()
+
+    class MockResultSaver(object):
+          
+      def __init__(self):
+        self.filename = None
+        self.context = None
+        
+      def save(self, file_name, context):
+        self.file_name = file_name
+        self.context = context
     
     def test_mark_fully_loaded(self):
       pipeline_context = PipelineContext()
@@ -50,7 +57,23 @@ class TestPipelineContext(unittest.TestCase):
       pipeline_context.add_stage_context(mock_pipeline)
       self.assertEqual({'9sdf9': mock_pipeline}, pipeline_context.stage_contexts)
 
-    def test_fill_provenance(self): 
+    def test_fill_provenance(self):
+      from foundations.config_manager import ConfigManager
+      self.config_manager = ConfigManager()
       pipeline_context = PipelineContext()
 
+      self.config_manager['other_world'] = 'aliens'
+      config_return = {'other_world': 'aliens'}
+
       pipeline_context.fill_provenance(self.config_manager)
+      self.assertEqual(pipeline_context.provenance.config, config_return)
+
+    def test_save_reset_file_name_after_run(self):
+      pipeline_context = PipelineContext()
+      mock_result_saver = self.MockResultSaver()
+
+      mock_result_saver.file_name = '8s97df.json'
+      pipeline_context.save(mock_result_saver)
+      self.assertNotEqual('8s97df.json', mock_result_saver.file_name)
+          
+    
