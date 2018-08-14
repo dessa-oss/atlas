@@ -17,6 +17,10 @@ class TestPipelineContext(unittest.TestCase):
       
       def set_uuid(self):
         self.uuid = '9sdf9'
+
+    def setUp(self):
+        from foundations.config_manager import ConfigManager
+        self.config_manager = ConfigManager()
     
     def test_mark_fully_loaded(self):
       pipeline_context = PipelineContext()
@@ -42,7 +46,11 @@ class TestPipelineContext(unittest.TestCase):
 
       mock_pipeline = self.MockPipeline()
       mock_pipeline.set_uuid()
-      
+
       pipeline_context.add_stage_context(mock_pipeline)
       self.assertEqual({'9sdf9': mock_pipeline}, pipeline_context.stage_contexts)
 
+    def test_fill_provenance(self): 
+      pipeline_context = PipelineContext()
+
+      pipeline_context.fill_provenance(self.config_manager)
