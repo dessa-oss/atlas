@@ -136,7 +136,6 @@ class TestProvenance(unittest.TestCase):
         self.assertNotEqual(None, provenance.python_version)
         self.assertNotEqual(None, provenance.random_state)
         self.assertNotEqual({}, provenance.environment)
-        self.assertNotEqual({}, provenance.environment)
         self.assertNotEqual({}, provenance.module_versions)
         self.assertNotEqual(None, provenance.pip_freeze)
 
