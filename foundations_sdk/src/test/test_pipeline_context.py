@@ -35,7 +35,7 @@ class TestPipelineContext(unittest.TestCase):
         self.stage_keys = None
         self.archive_provenance = None
         self.uuid = None
-        self.fetch_counter = 0
+        self.stage_repeats = 0
       
       def append_tracker(self):
         return None
@@ -60,7 +60,7 @@ class TestPipelineContext(unittest.TestCase):
       
       def fetch_stage_log(self, uuid):
         self.uuid = uuid
-        self.fetch_counter += 1
+        self.stage_repeats += 1
         return self.uuid
       
       def fetch_stage_miscellaneous(self, uuid, archive_type):
@@ -69,7 +69,15 @@ class TestPipelineContext(unittest.TestCase):
       def fetch_miscellaneous(self, stage_listing):
         pass
 
-      def fetch_stage_persisted_data(self):
+      def fetch_stage_persisted_data(self, uuid):
+        self.uuid = uuid
+        return self.uuid
+      
+      def fetch_stage_model_data(self, uuid):
+        self.uuid = uuid
+        return self.uuid
+
+      def fetch_provenance(self):
         pass
 
         
@@ -163,22 +171,35 @@ class TestPipelineContext(unittest.TestCase):
       pipeline_context = PipelineContext()
       mock_archive = self.MockArchive()
 
-      self.assertFalse(pipeline_context._stage_log_archive_loaded)
       pipeline_context.load_stage_log_from_archive(mock_archive)
-      self.assertTrue(pipeline_context._stage_log_archive_loaded)
+      self.assertFalse(0, mock_archive.stage_repeats)
 
     
-    # def test_load_persisted_data_from_archive_able_to_call_all_methods(self):
+    def test_load_persisted_data_from_archive_able_to_set_stage_output(self):
+      pipeline_context = PipelineContext()
+      mock_archive = self.MockArchive()
+
+      pipeline_context.load_persisted_data_from_archive(mock_archive)
+      self.assertEqual(pipeline_context.global_stage_context.stage_output, mock_archive.uuid)
+    
+    def test_load_persisted_data_from_archive_able_to_set_model_data(self):
+      pipeline_context = PipelineContext()
+      mock_archive = self.MockArchive()
+
+      pipeline_context.load_persisted_data_from_archive(mock_archive)
+      self.assertEqual(pipeline_context.global_stage_context.model_data, mock_archive.uuid)
+
+    def test_load_persisted_data_from_archive_updates_already_loaded_flag_on_run(self):
+      pipeline_context = PipelineContext()
+      mock_archive = self.MockArchive()
+
+      pipeline_context.load_persisted_data_from_archive(mock_archive)
+      self.assertEqual(0, mock_archive.stage_repeats)
+
+    
+    # def test_load_provenance_from_archive(self):
     #   pipeline_context = PipelineContext()
     #   mock_archive = self.MockArchive()
 
-    #   pipeline_context.load_persisted_data_from_archive(mock_archive)
-    #   self.assertEqual(pipeline_context.global_stage_context.stage_log, mock_archive.uuid)
-    
-    # def test_load_persisted_data_from_archive_updates_already_loaded_flag_on_run(self):
-    #   pipeline_context = PipelineContext()
-    #   mock_archive = self.MockArchive()
-
-    #   self.assertFalse(pipeline_context._persisted_data_archive_loaded)
-    #   pipeline_context._persisted_data_archive_loaded(mock_archive)
-    #   self.assertTrue(pipeline_context._persisted_data_archive_loaded)
+    #   pipeline_context.load_provenance_from_archive(mock_archive)
+    #   self.assertEqual()
