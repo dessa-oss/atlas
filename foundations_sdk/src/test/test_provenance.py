@@ -10,9 +10,9 @@ from foundations.provenance import Provenance
 
 
 class TestProvenance(unittest.TestCase):
-    
+
     class MockArchive(object):
-        
+
         def __init__(self):
             self.job_source_bundle = None
             self.environment = {}
@@ -26,21 +26,20 @@ class TestProvenance(unittest.TestCase):
             self.job_archive_stuff = None
             self.other_stuff = None
             self.archive_provenance = None
-        
+
         def append_job_source(self, job_source_bundle):
             self.job_source_bundle = job_source_bundle
-        
+
         def append_provenance(self, archive_provenance):
             self.archive_provenance = archive_provenance
-    
+
         def fetch_provenance(self):
             return None
 
     class MockArchiveWithJobArchive(object):
-        
+
         def job_archive(self):
             return 'space'
-            
 
     def setUp(self):
         from foundations.config_manager import ConfigManager
@@ -59,8 +58,7 @@ class TestProvenance(unittest.TestCase):
         }
 
         provenance.fill_python_version()
-        self.assertEqual(provenance.python_version, python_version )
-    
+        self.assertEqual(provenance.python_version, python_version)
 
     def test_random_state_has_correct_value(self):
         import random
@@ -75,7 +73,6 @@ class TestProvenance(unittest.TestCase):
 
         self.assertEqual(expected_state, provenance.random_state)
 
-
     def test_fill_environment_has_correct_value(self):
         import os
         provenance = Provenance()
@@ -84,11 +81,10 @@ class TestProvenance(unittest.TestCase):
         provenance_env = {}
         for key, value in provenance_env_items:
             provenance_env[key] = value
-            
+
         provenance.fill_environment()
         self.assertEqual(provenance.environment, provenance_env)
 
-    
     def test_fill_config_with_correct_value_from_config_manager(self):
         provenance = Provenance()
         self.config_manager['other_world'] = 'aliens'
@@ -96,7 +92,6 @@ class TestProvenance(unittest.TestCase):
 
         provenance.fill_config(self.config_manager)
         self.assertEqual(provenance.config, config_return)
-    
 
     def test_fill_config_with_correct_value_from_config_manager_with_multiple_keys(self):
         provenance = Provenance()
@@ -106,7 +101,6 @@ class TestProvenance(unittest.TestCase):
 
         provenance.fill_config(self.config_manager)
         self.assertEqual(provenance.config, config_return)
-    
 
     def test_fill_config_with_correct_value_from_config_manager_with_empty_config(self):
         provenance = Provenance()
@@ -115,7 +109,6 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_config(self.config_manager)
         self.assertEqual(provenance.config, config_return)
 
-
     def test_fill_pip_modules_module_versions(self):
         provenance = Provenance()
 
@@ -123,14 +116,12 @@ class TestProvenance(unittest.TestCase):
         provenance.fill_pip_modules()
         self.assertNotEqual({}, provenance.module_versions)
 
-
     def test_fill_pip_modules_with_freeze(self):
         provenance = Provenance()
 
         self.assertEqual(None, provenance.pip_freeze)
         provenance.fill_pip_modules()
         self.assertNotEqual({}, provenance.pip_freeze)
-
 
     def test_fill_all(self):
         provenance = Provenance()
@@ -162,7 +153,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.pip_freeze, None)
         self.assertEqual(provenance.python_version, None)
         self.assertEqual(provenance.stage_hierarchy.entries, {})
-    
+
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -184,28 +175,29 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.module_versions, {'pandas': 0.2})
         self.assertEqual(provenance.pip_freeze, 'pandas==0.2')
         self.assertEqual(provenance.python_version, {'major': 2})
-        self.assertEqual(provenance.stage_hierarchy.entries, {'fake_one': 'fake_data'})
-    
+        self.assertEqual(provenance.stage_hierarchy.entries,
+                         {'fake_one': 'fake_data'})
+
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
-        
+
         provenance.save_to_archive(mock_archive)
         self.assertDictContainsSubset({'config': {},
-                            'environment': {},
-                            'module_versions': {},
-                            'pip_freeze': None,
-                            'python_version': None,
-                            'random_state': None,
-                            'tags': []
-                        }, mock_archive.archive_provenance)
-        self.assertEqual({}, mock_archive.archive_provenance['stage_hierarchy'].entries)
-
+                                       'environment': {},
+                                       'module_versions': {},
+                                       'pip_freeze': None,
+                                       'python_version': None,
+                                       'random_state': None,
+                                       'tags': []
+                                       }, mock_archive.archive_provenance)
+        self.assertEqual(
+            {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
 
     def test_save_to_archive_with_no_job_source_with_values(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
-        
+
         provenance.environment = {'python': 2}
         provenance.config = {'log_level': 'DEBUG'}
         provenance.tags = ['run_one']
@@ -217,14 +209,15 @@ class TestProvenance(unittest.TestCase):
         provenance.save_to_archive(mock_archive)
 
         self.assertDictContainsSubset({'config': {'log_level': 'DEBUG'},
-                            'environment': {'python': 2},
-                            'module_versions': {'pandas': 0.2},
-                            'pip_freeze': 'pandas==0.2',
-                            'python_version': {'major': 2},
-                            'random_state': 'this is a random state',
-                            'tags': ['run_one']
-                        }, mock_archive.archive_provenance)
-        self.assertEqual({'fake_one': 'fake_data'}, mock_archive.archive_provenance['stage_hierarchy'].entries)
+                                       'environment': {'python': 2},
+                                       'module_versions': {'pandas': 0.2},
+                                       'pip_freeze': 'pandas==0.2',
+                                       'python_version': {'major': 2},
+                                       'random_state': 'this is a random state',
+                                       'tags': ['run_one']
+                                       }, mock_archive.archive_provenance)
+        self.assertEqual({'fake_one': 'fake_data'},
+                         mock_archive.archive_provenance['stage_hierarchy'].entries)
 
     def test_save_to_archive_with_job_source(self):
         provenance = Provenance()
@@ -233,7 +226,7 @@ class TestProvenance(unittest.TestCase):
         provenance.job_source_bundle = self.MockArchiveWithJobArchive()
         provenance.save_to_archive(mock_archive)
         self.assertEqual('space', mock_archive.job_source_bundle)
-    
+
     def test_load_artifact_from_archive(self):
         provenance = Provenance()
         mock_archive = self.MockArchive()
@@ -251,7 +244,6 @@ class TestProvenance(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         provenance.load_stage_log_from_archive(mock_archive)
-
 
     def test_load_persisted_data_from_archive(self):
         provenance = Provenance()
