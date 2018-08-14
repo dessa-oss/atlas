@@ -26,7 +26,7 @@ def main():
     pipeline_context.mark_fully_loaded()
     pipeline_context.file_name = job_name
     global_stage_context = pipeline_context.global_stage_context
-    pipeline_context.provenance.config.update(config)
+    pipeline_context.fill_provenance(config_manager)
     config = pipeline_context.provenance.config
 
     pipeline_context.provenance.job_source_bundle = job_source_bundle
