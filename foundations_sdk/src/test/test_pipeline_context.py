@@ -34,7 +34,8 @@ class TestPipelineContext(unittest.TestCase):
             self.stage_keys = None
             self.archive_provenance = None
             self.uuid = None
-            self.stage_repeats = 0
+            self.stage_repeats_log_archive = 0
+            self.stage_repeats_persisted_data = 0
 
         def append_tracker(self):
             return None
@@ -59,7 +60,7 @@ class TestPipelineContext(unittest.TestCase):
 
         def fetch_stage_log(self, uuid):
             self.uuid = uuid
-            self.stage_repeats += 1
+            self.stage_repeats_log_archive += 1
             return self.uuid
 
         def fetch_stage_miscellaneous(self, uuid, archive_type):
@@ -70,7 +71,7 @@ class TestPipelineContext(unittest.TestCase):
 
         def fetch_stage_persisted_data(self, uuid):
             self.uuid = uuid
-            self.stage_repeats += 1
+            self.stage_repeats_persisted_data += 1
             return self.uuid
 
         def fetch_stage_model_data(self, uuid):
@@ -175,7 +176,7 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_stage_log_from_archive(mock_archive)
-        self.assertFalse(0, mock_archive.stage_repeats)
+        self.assertFalse(0, mock_archive.stage_repeats_log_archive)
 
     def test_load_persisted_data_from_archive_able_to_set_stage_output(self):
         pipeline_context = PipelineContext()
@@ -198,7 +199,16 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_persisted_data_from_archive(mock_archive)
-        self.assertFalse(0, mock_archive.stage_repeats)
+        pipeline_context.load_persisted_data_from_archive(mock_archive)
+        self.assertEqual(1, mock_archive.stage_repeats_persisted_data)
+    
+    def test_load_persisted_data_when_marked_fully_loaded(self):
+        pipeline_context = PipelineContext()
+        mock_archive = self.MockArchive()
+
+        pipeline_context.mark_fully_loaded()
+        pipeline_context.load_persisted_data_from_archive(mock_archive)
+        self.assertEqual(0, mock_archive.stage_repeats_persisted_data)
 
     def test_load_provenance_from_archive(self):
         pipeline_context = PipelineContext()
@@ -222,11 +232,11 @@ class TestPipelineContext(unittest.TestCase):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
-        self.assertEqual(pipeline_context.global_stage_context.stage_log, {})
+        self.assertEqual({}, pipeline_context.global_stage_context.stage_log)
         self.assertEqual(
-            pipeline_context.global_stage_context.stage_output, None)
+            None, pipeline_context.global_stage_context.stage_output)
         self.assertEqual(
-            pipeline_context.global_stage_context.model_data, None)
+            None, pipeline_context.global_stage_context.model_data)
 
         pipeline_context.load_from_archive(mock_archive)
 
