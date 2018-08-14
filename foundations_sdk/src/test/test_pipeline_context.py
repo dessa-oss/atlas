@@ -166,6 +166,7 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_stage_log_from_archive(mock_archive)
+        print(pipeline_context.global_stage_context.stage_log)
         self.assertEqual(
             pipeline_context.global_stage_context.stage_log, mock_archive.uuid)
 
@@ -203,36 +204,29 @@ class TestPipelineContext(unittest.TestCase):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
-        # load_provenance_from_archive has pass in body so not necessary to assert
         pipeline_context.load_provenance_from_archive(mock_archive)
 
     def test_load_job_source_from_archive(self):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
-        # load_job_source_from_archive has pass in body so not necessary to assert
         pipeline_context.load_job_source_from_archive(mock_archive)
 
     def test_load_artifact_from_archive(self):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
-        # load_job_source_from_archive has pass in body so not necessary to assert
         pipeline_context.load_artifact_from_archive(mock_archive)
-
-    # def test_load_miscellaneous_from_archive(self):
-    #   pipeline_context = PipelineContext()
-    #   mock_archive = self.MockArchive()
-
-    #   pipeline_context.load_miscellaneous_from_archive(mock_archive)
-    #   self.assertEqual(pipeline_context.global_stage_context.stage_log, mock_archive.uuid)
 
     def test_load_from_archive_all(self):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
         self.assertEqual(pipeline_context.global_stage_context.stage_log, {})
-        self.assertEqual(pipeline_context.global_stage_context.stage_log, {})
+        self.assertEqual(
+            pipeline_context.global_stage_context.stage_output, None)
+        self.assertEqual(
+            pipeline_context.global_stage_context.model_data, None)
 
         pipeline_context.load_from_archive(mock_archive)
 
