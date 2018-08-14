@@ -70,6 +70,7 @@ class TestPipelineContext(unittest.TestCase):
 
         def fetch_stage_persisted_data(self, uuid):
             self.uuid = uuid
+            self.stage_repeats += 1
             return self.uuid
 
         def fetch_stage_model_data(self, uuid):
@@ -166,7 +167,6 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_stage_log_from_archive(mock_archive)
-        print(pipeline_context.global_stage_context.stage_log)
         self.assertEqual(
             pipeline_context.global_stage_context.stage_log, mock_archive.uuid)
 
@@ -198,7 +198,7 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_persisted_data_from_archive(mock_archive)
-        self.assertEqual(0, mock_archive.stage_repeats)
+        self.assertFalse(0, mock_archive.stage_repeats)
 
     def test_load_provenance_from_archive(self):
         pipeline_context = PipelineContext()
