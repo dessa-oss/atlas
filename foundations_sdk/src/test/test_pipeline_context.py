@@ -104,25 +104,6 @@ class TestPipelineContext(unittest.TestCase):
             self.archiver = archiver
             self.load_artifact_counter += 1
 
-    def test_mark_fully_loaded(self):
-        pipeline_context = PipelineContext()
-
-        self.assertFalse(pipeline_context._stage_log_archive_loaded)
-        self.assertFalse(pipeline_context._persisted_data_archive_loaded)
-        self.assertFalse(pipeline_context._provenance_archive_loaded)
-        self.assertFalse(pipeline_context._job_source_archive_loaded)
-        self.assertFalse(pipeline_context._artifact_archive_loaded)
-        self.assertFalse(pipeline_context._miscellaneous_archive_loaded)
-
-        pipeline_context.mark_fully_loaded()
-
-        self.assertTrue(pipeline_context._stage_log_archive_loaded)
-        self.assertTrue(pipeline_context._persisted_data_archive_loaded)
-        self.assertTrue(pipeline_context._provenance_archive_loaded)
-        self.assertTrue(pipeline_context._job_source_archive_loaded)
-        self.assertTrue(pipeline_context._artifact_archive_loaded)
-        self.assertTrue(pipeline_context._miscellaneous_archive_loaded)
-
     def test_add_stage_context(self):
         pipeline_context = PipelineContext()
 
