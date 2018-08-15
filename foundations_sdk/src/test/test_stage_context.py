@@ -15,6 +15,7 @@ class TestStageContext(unittest.TestCase):
 
         def __init__(self):
             self.archive_provenance = None
+            self.archive_stage_context = None
 
         def append_stage_log(self, uuid, stage_log):
             pass
@@ -26,7 +27,7 @@ class TestStageContext(unittest.TestCase):
             pass
 
         def append_stage_miscellaneous(self, uuid, stage_context, archive_stage_context):
-            pass
+            self.archive_stage_context = archive_stage_context
 
         def fetch_stage_log(self, uuid):
             return '90s8d'
@@ -65,6 +66,30 @@ class TestStageContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         stage_context.save_to_archive(mock_archive)
+
+    def test_save_to_archive_with_specific_values(self):
+        stage_context = StageContext()
+        mock_archive = self.MockArchive()
+
+        stage_context.meta_data = {'value': 'one'}
+        stage_context.data_uuid = 'sd9f8sdf'
+        stage_context.stage_output = 'some output from model'
+        stage_context.uuid = '89s7df987sdf7'
+        stage_context.error_information = 'an error message'
+        stage_context.model_data = 'model data'
+        stage_context.start_time = 3289798798732
+        stage_context.end_time = 92380982309
+        stage_context.delta_time = 398098
+        stage_context.is_context_aware = False
+        stage_context.used_cache = False
+        stage_context.cache_uuid = None
+        stage_context.cache_read_time = False
+        stage_context.cache_write_time = None
+        stage_context.has_stage_output = None
+        stage_context.save_to_archive(mock_archive)
+
+        self.assertEqual({'cache_read_time': False, 'cache_uuid': None, 'cache_write_time': None, 'data_uuid': 'sd9f8sdf', 'delta_time': 398098, 'end_time': 92380982309, 'error_information': 'an error message',
+                          'has_stage_output': None, 'is_context_aware': False, 'meta_data': {'value': 'one'}, 'start_time': 3289798798732, 'used_cache': False, 'uuid': '89s7df987sdf7'}, mock_archive.archive_stage_context)
 
     def test_load_stage_log_from_archive(self):
         stage_context = StageContext()
