@@ -48,9 +48,12 @@ class TestStageContext(unittest.TestCase):
 
     def test_set_stage_output_has_stage_after_run(self):
         stage_context = StageContext()
-        self.assertEqual(None, stage_context.has_stage_output)
         stage_context.set_stage_output('some stage output')
         self.assertTrue(stage_context.has_stage_output)
+    
+    def test_set_stage_output_has_none_stage_output(self):
+        stage_context = StageContext()
+        self.assertEqual(None, stage_context.has_stage_output)
 
     def test_add_error_information(self):
         import sys
