@@ -107,36 +107,36 @@ class TestPipelineContext(unittest.TestCase):
     def test_add_stage_context(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockStageContext()
-        mock_pipeline.set_uuid('9sdf9')
+        mock_stage_context = self.MockStageContext()
+        mock_stage_context.set_uuid('9sdf9')
 
-        pipeline_context.add_stage_context(mock_pipeline)
-        self.assertEqual({'9sdf9': mock_pipeline},
+        pipeline_context.add_stage_context(mock_stage_context)
+        self.assertEqual({'9sdf9': mock_stage_context},
                          pipeline_context.stage_contexts)
 
     def test_add_stage_context_with_multiple_stages(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockStageContext()
-        mock_pipeline.set_uuid('9sdf9')
+        mock_stage_context = self.MockStageContext()
+        mock_stage_context.set_uuid('9sdf9')
 
-        mock_pipeline_two = self.MockStageContext()
-        mock_pipeline_two.set_uuid('s9d0f')
+        mock_stage_context_two = self.MockStageContext()
+        mock_stage_context_two.set_uuid('s9d0f')
 
-        pipeline_context.add_stage_context(mock_pipeline)
-        pipeline_context.add_stage_context(mock_pipeline_two)
-        self.assertEqual({'s9d0f': mock_pipeline_two,
-                          '9sdf9': mock_pipeline}, pipeline_context.stage_contexts)
+        pipeline_context.add_stage_context(mock_stage_context)
+        pipeline_context.add_stage_context(mock_stage_context_two)
+        self.assertEqual({'s9d0f': mock_stage_context_two,
+                          '9sdf9': mock_stage_context}, pipeline_context.stage_contexts)
 
     def test_add_stage_context_add_stage_twice(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockStageContext()
-        mock_pipeline.set_uuid('9sdf9')
+        mock_stage_context = self.MockStageContext()
+        mock_stage_context.set_uuid('9sdf9')
 
-        pipeline_context.add_stage_context(mock_pipeline)
-        pipeline_context.add_stage_context(mock_pipeline)
-        self.assertEqual({'9sdf9': mock_pipeline},
+        pipeline_context.add_stage_context(mock_stage_context)
+        pipeline_context.add_stage_context(mock_stage_context)
+        self.assertEqual({'9sdf9': mock_stage_context},
                          pipeline_context.stage_contexts)
 
     def test_fill_provenance(self):
