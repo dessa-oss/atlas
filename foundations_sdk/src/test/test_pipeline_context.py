@@ -81,6 +81,20 @@ class TestPipelineContext(unittest.TestCase):
         def fetch_provenance(self):
             pass
 
+    class MockProvenance(object):
+        
+        def __init__(self):
+            self.archiver = None
+            self.load_provenace_counter = 0
+        
+        def load_provenance_from_archive(self, archiver):
+            self.archiver = archiver
+            self.load_provenace_counter += 1
+        
+        def load_miscellaneous_from_archive(self, archiver):
+            pass
+            
+
     def test_mark_fully_loaded(self):
         pipeline_context = PipelineContext()
 
@@ -171,6 +185,15 @@ class TestPipelineContext(unittest.TestCase):
         self.assertEqual(
             pipeline_context.global_stage_context.stage_log, mock_archive.uuid)
 
+    def test_load_stage_log_from_archive_fully_loaded(self):
+        pipeline_context = PipelineContext()
+        mock_archive = self.MockArchive()
+
+        pipeline_context.mark_fully_loaded()
+        pipeline_context.load_stage_log_from_archive(mock_archive)
+        self.assertEqual(
+            0, mock_archive.stage_repeats_log_archive)
+
     def test_load_stage_log_from_archive_updates_already_loaded_flag_on_run(self):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
@@ -215,6 +238,29 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         pipeline_context.load_provenance_from_archive(mock_archive)
+
+    def test_load_provenance_from_archive_with_mock_provenance(self):
+        pipeline_context = PipelineContext()
+        mock_archive = self.MockArchive()
+        mock_provenance = self.MockProvenance()
+
+        pipeline_context.provenance = mock_provenance
+        pipeline_context.load_provenance_from_archive(mock_archive)
+
+        self.assertEqual(mock_archive, mock_provenance.archiver)
+
+    
+    def test_load_provenance_from_archive_fully_loaded(self):
+        pipeline_context = PipelineContext()
+        mock_archive = self.MockArchive()
+        mock_provenance = self.MockProvenance()
+
+        pipeline_context.mark_fully_loaded()
+        pipeline_context.provenance = mock_provenance
+        pipeline_context.load_provenance_from_archive(mock_archive)
+
+        self.assertEqual(0, mock_provenance.load_provenace_counter)
+
 
     def test_load_job_source_from_archive(self):
         pipeline_context = PipelineContext()
