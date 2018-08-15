@@ -16,6 +16,9 @@ class TestStageContext(unittest.TestCase):
         def __init__(self):
             self.archive_provenance = None
             self.archive_stage_context = None
+            self.fetch_stage_uuid = None
+            self.fetch_persisted_uuid = None
+            self.fetch_model_uuid = None
 
         def append_stage_log(self, uuid, stage_log):
             pass
@@ -30,13 +33,13 @@ class TestStageContext(unittest.TestCase):
             self.archive_stage_context = archive_stage_context
 
         def fetch_stage_log(self, uuid):
-            return '90s8d'
+            return self.fetch_stage_uuid
 
         def fetch_stage_persisted_data(self, stage_uuid_string):
-            return '190uh23'
+            return self.fetch_persisted_uuid
 
         def fetch_stage_model_data(self, stage_uuid_string):
-            return '0912h1'
+            return self.fetch_model_uuid
 
         def fetch_stage_miscellaneous(self, stage_uuid_string, name):
             pass
@@ -97,7 +100,8 @@ class TestStageContext(unittest.TestCase):
     def test_load_stage_log_from_archive(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
-
+        
+        mock_archive.fetch_stage_uuid = '90s8d'
         stage_context.load_stage_log_from_archive(mock_archive)
         self.assertEqual('90s8d', stage_context.stage_log)
 
@@ -105,6 +109,8 @@ class TestStageContext(unittest.TestCase):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
 
+        mock_archive.fetch_persisted_uuid = '190uh23'
+        mock_archive.fetch_model_uuid = '0912h1'
         stage_context.load_persisted_data_from_archive(mock_archive)
         self.assertEqual('190uh23', stage_context.stage_output)
         self.assertEqual('0912h1', stage_context.model_data)
