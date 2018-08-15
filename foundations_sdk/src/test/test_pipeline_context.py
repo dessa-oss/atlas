@@ -11,7 +11,7 @@ from foundations.pipeline_context import PipelineContext
 
 class TestPipelineContext(unittest.TestCase):
 
-    class MockPipeline(object):
+    class MockStageContext(object):
         def __init__(self):
             self.uuid = None
 
@@ -107,7 +107,7 @@ class TestPipelineContext(unittest.TestCase):
     def test_add_stage_context(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockPipeline()
+        mock_pipeline = self.MockStageContext()
         mock_pipeline.set_uuid('9sdf9')
 
         pipeline_context.add_stage_context(mock_pipeline)
@@ -117,10 +117,10 @@ class TestPipelineContext(unittest.TestCase):
     def test_add_stage_context_with_multiple_stages(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockPipeline()
+        mock_pipeline = self.MockStageContext()
         mock_pipeline.set_uuid('9sdf9')
 
-        mock_pipeline_two = self.MockPipeline()
+        mock_pipeline_two = self.MockStageContext()
         mock_pipeline_two.set_uuid('s9d0f')
 
         pipeline_context.add_stage_context(mock_pipeline)
@@ -131,7 +131,7 @@ class TestPipelineContext(unittest.TestCase):
     def test_add_stage_context_add_stage_twice(self):
         pipeline_context = PipelineContext()
 
-        mock_pipeline = self.MockPipeline()
+        mock_pipeline = self.MockStageContext()
         mock_pipeline.set_uuid('9sdf9')
 
         pipeline_context.add_stage_context(mock_pipeline)
@@ -309,10 +309,8 @@ class TestPipelineContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         self.assertEqual({}, pipeline_context.global_stage_context.stage_log)
-        self.assertEqual(
-            None, pipeline_context.global_stage_context.stage_output)
-        self.assertEqual(
-            None, pipeline_context.global_stage_context.model_data)
+        self.assertIsNone(pipeline_context.global_stage_context.stage_output)
+        self.assertIsNone(pipeline_context.global_stage_context.model_data)
 
         pipeline_context.load_from_archive(mock_archive)
 
