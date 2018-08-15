@@ -39,7 +39,6 @@ class TestStageContext(unittest.TestCase):
 
         def fetch_stage_miscellaneous(self, stage_uuid_string, name):
             pass
-            
 
     def test_set_stage_output(self):
         stage_context = StageContext()
@@ -99,7 +98,7 @@ class TestStageContext(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         stage_context.load_artifact_from_archive(mock_archive)
-    
+
     def test_load_miscellaneous_from_archive(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
@@ -118,12 +117,12 @@ class TestStageContext(unittest.TestCase):
         self.assertEqual(False, stage_context.cache_read_time)
         self.assertEqual(None, stage_context.cache_write_time)
         self.assertEqual(None, stage_context.has_stage_output)
-    
+
     def test_load_miscellaneous_from_archive_with_specific_values(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
 
-        stage_context.meta_data = { 'value': 'one'}
+        stage_context.meta_data = {'value': 'one'}
         stage_context.data_uuid = 'sd9f8sdf'
         stage_context.stage_output = 'some output from model'
         stage_context.uuid = '89s7df987sdf7'
@@ -141,7 +140,7 @@ class TestStageContext(unittest.TestCase):
 
         stage_context.load_miscellaneous_from_archive(mock_archive)
 
-        self.assertEqual(stage_context.meta_data, { 'value': 'one'})
+        self.assertEqual(stage_context.meta_data, {'value': 'one'})
         self.assertEqual(stage_context.data_uuid, 'sd9f8sdf')
         self.assertEqual(stage_context.stage_output, 'some output from model')
         self.assertEqual(stage_context.uuid, '89s7df987sdf7')
@@ -157,17 +156,15 @@ class TestStageContext(unittest.TestCase):
         self.assertEqual(stage_context.cache_write_time, None)
         self.assertEqual(stage_context.has_stage_output, None)
 
-
-    
     def mock_sleeping_callback(self, sleep_time):
         import time
-    
+
         def callback():
             time.sleep(sleep_time)
             return "sleep_time=" + str(sleep_time)
 
         return callback
-    
+
     def test_time_callback_one_second(self):
         import time
 
