@@ -5,19 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations.bucket_cache_backend import BucketCacheBackend
 
-class LocalFileSystemCacheBackend(object):
+class LocalFileSystemCacheBackend(BucketCacheBackend):
 
     def __init__(self, path):
         from foundations.local_file_system_bucket import LocalFileSystemBucket
 
-        self._bucket = LocalFileSystemBucket(path)
-
-    def get(self, key):
-        if self._bucket.exists(key):
-            return self._bucket.download_as_string(key)
-        else:
-            return None
-
-    def set(self, key, serialized_value):
-        self._bucket.upload_from_string(key, serialized_value)
+        super(LocalFileSystemCacheBackend, self).__init__(LocalFileSystemBucket(path))
