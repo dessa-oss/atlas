@@ -101,8 +101,21 @@ class TestStageContext(unittest.TestCase):
         stage_context.has_stage_output = None
         stage_context.save_to_archive(mock_archive)
 
-        self.assertEqual({'cache_read_time': False, 'cache_uuid': None, 'cache_write_time': None, 'data_uuid': 'sd9f8sdf', 'delta_time': 398098, 'end_time': 92380982309, 'error_information': 'an error message',
-                          'has_stage_output': None, 'is_context_aware': False, 'meta_data': {'value': 'one'}, 'start_time': 3289798798732, 'used_cache': False, 'uuid': '89s7df987sdf7'}, mock_archive.archive_stage_context)
+        self.assertEqual({
+            'cache_read_time': False,
+            'cache_uuid': None,
+            'cache_write_time': None,
+            'data_uuid': 'sd9f8sdf',
+            'delta_time': 398098,
+            'end_time': 92380982309,
+            'error_information': 'an error message',
+            'has_stage_output': None,
+            'is_context_aware': False,
+            'meta_data': {'value': 'one'},
+            'start_time': 3289798798732,
+            'used_cache': False,
+            'uuid': '89s7df987sdf7'},
+            mock_archive.archive_stage_context)
 
     def test_load_stage_log_from_archive(self):
         stage_context = StageContext()
