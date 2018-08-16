@@ -16,9 +16,8 @@ class GCPCacheBackend(object):
     def get(self, key):
         if self._bucket.exists(key):
             return self._bucket.download_as_string(key)
+        else:
+            return None
 
-    def get_metadata(self, key):
-        pass
-
-    def set(self, key, serialized_value, metadata, **flags):
+    def set(self, key, serialized_value):
         self._bucket.upload_from_string(key, serialized_value)
