@@ -39,7 +39,7 @@ class StageCacheForMiddleware(object):
 
     def submit_cache(self, value):
         from foundations.global_state import cache_manager
-        return cache_manager.cache().set(self._cache_name, value, {})
+        return cache_manager.cache().set(self._cache_name, value)
 
     def _auto_cache_name(self):
         from sys import version_info

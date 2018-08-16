@@ -44,7 +44,7 @@ class Cache(object):
             self._log().debug('Cache miss for key: %s', key)
         return Option(result)
 
-    def set(self, key, value, metadata, **flags):
+    def set(self, key, value, metadata={}, **flags):
         from foundations.fast_serializer import serialize
 
         self.set_binary(key, serialize(value), serialize(metadata), **flags)
