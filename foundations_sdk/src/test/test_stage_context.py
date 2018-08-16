@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from unittest.mock import patch
 from foundations.stage_context import StageContext
 
 
@@ -210,7 +211,8 @@ class TestStageContext(unittest.TestCase):
         self.assertEqual(stage_context.cache_write_time, None)
         self.assertEqual(stage_context.has_stage_output, None)
 
-    def mock_sleeping_callback(self, sleep_time):
+    @patch('time.sleep', return_value=1)
+    def mock_sleeping_callback(self, patched_time_sleep, sleep_time):
         import time
 
         def callback():
@@ -219,16 +221,16 @@ class TestStageContext(unittest.TestCase):
 
         return callback
 
-    def test_time_callback_one_second(self):
+    @patch('time.time', return_value=1)
+    def test_time_callback_one_second(self, patched_time_sleep):
         import time
 
         stage_context = StageContext()
 
         start_time = time.time()
-        result = stage_context.time_callback(self.mock_sleeping_callback(1))
+        stage_context.time_callback(self.mock_sleeping_callback(1))
         end_time = time.time()
 
-        self.assertAlmostEqual(result, "sleep_time=1")
-        self.assertAlmostEqual(start_time, stage_context.start_time, places=1)
-        self.assertAlmostEqual(end_time, stage_context.end_time, places=1)
-        self.assertAlmostEqual(1, stage_context.delta_time, places=1)
+        self.assertEqual(start_time, stage_context.start_time)
+        self.assertEqual(end_time, stage_context.end_time)
+        self.assertEqual(0, stage_context.delta_time)
