@@ -75,12 +75,6 @@ class TestStageContext(unittest.TestCase):
         self.assertEqual({'type': None, 'exception': None,
                           'traceback': []}, stage_context.error_information)
 
-    def test_save_to_archive(self):
-        stage_context = StageContext()
-        mock_archive = self.MockArchive()
-
-        stage_context.save_to_archive(mock_archive)
-
     def test_save_to_archive_with_specific_values(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
