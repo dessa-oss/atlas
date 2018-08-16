@@ -44,6 +44,12 @@ class TestStageContext(unittest.TestCase):
         def fetch_stage_miscellaneous(self, stage_uuid_string, name):
             pass
 
+    class MockException(object):
+
+        def mock_output(self):
+            import sys
+            return sys.exc_info()
+
     def test_set_stage_output(self):
         stage_context = StageContext()
         stage_context.set_stage_output('some stage output')
@@ -53,16 +59,17 @@ class TestStageContext(unittest.TestCase):
         stage_context = StageContext()
         stage_context.set_stage_output('some stage output')
         self.assertTrue(stage_context.has_stage_output)
-    
+
     def test_set_stage_output_has_none_stage_output(self):
         stage_context = StageContext()
         self.assertEqual(None, stage_context.has_stage_output)
 
     def test_add_error_information(self):
-        import sys
         stage_context = StageContext()
 
-        mock_exception = sys.exc_info()
+        mock_exception_instance = self.MockException()
+        mock_exception = mock_exception_instance.mock_output()
+
         stage_context.add_error_information(mock_exception)
         self.assertEqual({'type': None, 'exception': None,
                           'traceback': []}, stage_context.error_information)
@@ -100,7 +107,7 @@ class TestStageContext(unittest.TestCase):
     def test_load_stage_log_from_archive(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
-        
+
         mock_archive.fetch_stage_uuid = '90s8d'
         stage_context.load_stage_log_from_archive(mock_archive)
         self.assertEqual('90s8d', stage_context.stage_log)
