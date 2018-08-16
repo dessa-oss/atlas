@@ -5,17 +5,20 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class BucketCacheBackend(object):
     def __init__(self, bucket):
         self._bucket = bucket
 
     def get(self, key):
-        if self._bucket.exists(key):
-            return self._bucket.download_as_string(key)
-        else:
-            return None
+        object_path = BucketCacheBackend._make_object_path(key)
+        return self._get_if_exists(object_path)
 
     def get_metadata(self, key):
+        metadata_path = BucketCacheBackend._make_metadata_path(key)
+        return self._get_if_exists(metadata_path)
+
+    def _get_if_exists(self, key):
         if self._bucket.exists(key):
             return self._bucket.download_as_string(key)
         else:
