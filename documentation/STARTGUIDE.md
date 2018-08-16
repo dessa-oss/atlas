@@ -30,3 +30,6 @@ Specify Python version and run:
 ```
 
 ### Examples guide
+We have a [step by step guide](https://github.com/DeepLearnI/foundations/STEPBYSTEPGUIDE.md) on using Foundatoins with a very simple example.
+
+We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](https://github.com/DeepLearnI/foundations/examples).
