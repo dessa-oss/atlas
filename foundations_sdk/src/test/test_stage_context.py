@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from unittest.mock import patch
+from mock import patch
 from foundations.stage_context import StageContext
 
 
