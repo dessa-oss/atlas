@@ -39,3 +39,6 @@ from test.test_cache_middleware import TestCacheMiddleware
 from test.test_middleware_manager import TestMiddlewareManager
 from test.test_provenance import TestProvenance
 from test.test_pipeline_context import TestPipelineContext
+from test.test_cache import TestCache
+from test.test_null_cache_backend import TestNullCacheBackend
+from test.test_bucket_cache_backend import TestBucketCacheBackend
