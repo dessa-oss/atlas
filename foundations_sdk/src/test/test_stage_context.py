@@ -130,19 +130,19 @@ class TestStageContext(unittest.TestCase):
         self.assertEqual('190uh23', stage_context.stage_output)
         self.assertEqual('0912h1', stage_context.model_data)
 
-    def test_load_provenance_from_archive(self):
+    def test_load_provenance_from_archive_has_complete_mock_attributes(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
 
         stage_context.load_provenance_from_archive(mock_archive)
 
-    def test_load_job_source_from_archive(self):
+    def test_load_job_source_from_archive_has_complete_mock_attributes(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
 
         stage_context.load_job_source_from_archive(mock_archive)
 
-    def test_load_artifact_from_archive(self):
+    def test_load_artifact_from_archive_has_complete_mock_attributes(self):
         stage_context = StageContext()
         mock_archive = self.MockArchive()
 
