@@ -10,15 +10,15 @@ This package has a [naive model](https://github.com/DeepLearnI/foundations/docum
 
 This model consists of two steps:
 1. To increase value by 10
-2. To multiple this increased value certain number
-In the end, this model outputs an multiplied value
+2. To multiple this increased value by a given number
+In the end, this model outputs a multiplied value
 
-We recommend, best coding practices, to break down model code into different small functions(steps). Breaking code into functions is maintainable and re-usable(more on that in next few steps).
+We recommend, best coding practices, to break down model code into different small functions(steps). Structuring code into functions makes for more maintainable and re-usable code in the long run.
 
 ## Step 2: Use Foundations to run model code
 
 
-The [driver.py file](https://github.com/DeepLearnI/foundations/documentation/sample_code/driver.py) shows how to use Foundations to run model code. Lets look at it line by line.
+The [driver.py file](https://github.com/DeepLearnI/foundations/documentation/sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
 
 ```from foundations import * ```
 will import all function from Foundations.
@@ -36,7 +36,7 @@ incr_value = incr_by_10(x)
 # build step2 of model
 result = mult(x, incr_value)
 ```
-This behave exactly same as above, `result` is `stage_object`. Notice, we are passing `incr_value` to `mult` function. `incr_value` is a stage_object and has not been executed yet.
+This behaves the same as above, `result` is `stage_object`. Notice, we are passing `incr_value` to `mult` function. `incr_value` is a stage_object and has not been executed yet.
 
 ```
 # run the model
