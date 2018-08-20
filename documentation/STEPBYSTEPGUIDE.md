@@ -5,8 +5,8 @@
 Consider a naive model which takes an input(x), increases it's value by 10 and then multiples it(x+10) by some value(y) to output result(y * (x+10))
 
 This very naive model code is all under one package.
-The example package is [here](https://github.com/DeepLearnI/foundations/documentation/sample_code/models).
-This package has a [naive model](https://github.com/DeepLearnI/foundations/documentation/sample_code/models/model.py).
+The example package is [here](sample_code).
+This package has a [naive model](sample_code/model.py).
 
 This model consists of two steps:
 1. To increase value by 10
@@ -18,7 +18,7 @@ For best coding practices we recommend breaking down model code into different s
 
 ## Step 2: Use Foundations to run model code
 
-The [driver.py file](https://github.com/DeepLearnI/foundations/documentation/sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
+The [driver.py file](sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
 
 ```from foundations import * ```
 will import all function from Foundations.
