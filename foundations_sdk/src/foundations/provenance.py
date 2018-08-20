@@ -60,16 +60,15 @@ class Provenance(object):
     def load_miscellaneous_from_archive(self, archiver):
         pass
 
-    def fill_all(self):
+    def fill_all(self, config_manager):
         self.fill_python_version()
-        self.fill_config()
+        self.fill_config(config_manager)
         self.fill_environment()
         self.fill_random_state()
         self.fill_pip_modules()
 
-    def fill_config(self):
-        from foundations.global_state import config_manager
-        self.config.update(config_manager.config)
+    def fill_config(self, config_manager):
+        self.config.update(config_manager.config())
 
     def fill_environment(self):
         for key, value in os.environ.items():
@@ -78,14 +77,16 @@ class Provenance(object):
     def fill_random_state(self):
         self.random_state = random.getstate()
 
+    # TODO: look into better way to test pip modules
     def fill_pip_modules(self):
         import subprocess
+        from foundations.utils import string_from_bytes
 
         reader, writer = os.pipe()
         subprocess.call(['python', '-m', 'pip', 'freeze'], stdout=writer)
-        self.pip_freeze = os.read(reader, 65536).strip()
-        split_lines = [line.split('==')
-                       for line in self.pip_freeze.split("\n")]
+        pip_freeze_string = string_from_bytes(os.read(reader, 65536))
+        self.pip_freeze = pip_freeze_string.strip()
+        split_lines = [line.split('==') for line in self.pip_freeze.split("\n")]
         versioned_lines = filter(lambda line: len(line) == 2, split_lines)
         self.module_versions = dict(versioned_lines)
 
