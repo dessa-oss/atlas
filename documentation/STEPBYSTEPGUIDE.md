@@ -10,7 +10,7 @@ This package has a [naive model](https://github.com/DeepLearnI/foundations/docum
 
 This model consists of two steps:
 1. To increase value by 10
-2. To multiple this increased value by a given number
+2. To multiply this increased value by a given number
 
 In the end, this model outputs a multiplied value.
 

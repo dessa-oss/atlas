@@ -1,5 +1,5 @@
 from foundations import *
-from staged_models.model import incr_by_10, mult
+from staged_model import incr_by_10, mult
 
 # input to model
 x = 20
