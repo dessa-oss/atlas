@@ -6,3 +6,4 @@ google-auth-httplib2==0.0.3
 google-cloud-storage==1.10.0
 PyYAML==3.13
 pysftp==0.2.9
+mock==2.0.0
