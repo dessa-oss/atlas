@@ -12,7 +12,7 @@ Note: if using `virtualenv` make sure to create the environment outside the proj
 Dependencies: You will need to have `PyYAML` and `dill` installed on the machine before using Foundations.
 
 There are two ways to install Foundations library:
-[Wheel installation](https://github.com/DeepLearnI/foundations/blob/master/documentation/STARTGUIDE.md#wheel-installation) or [Install from source](https://github.com/DeepLearnI/foundations/blob/master/documentation/STARTGUIDE.md#install-from-source)
+[Wheel installation](STARTGUIDE.md#wheel-installation) or [Install from source](STARTGUIDE.md#install-from-source)
 
 ### Wheel Installation
 The `.whl` files for Python versions 2 and 3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
@@ -37,6 +37,6 @@ In the root of the repo specify Python version and run:
 This builds a new `.whl` file of Foundations and installs it within your `conda` or `virtualenv` environment.
 
 ### Examples guide
-We have a [step by step guide](documentation/STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
+We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 
-We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](https://github.com/DeepLearnI/foundations/tree/master//examples).
+We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](/examples).
