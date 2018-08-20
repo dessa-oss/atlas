@@ -39,4 +39,4 @@ This builds a new `.whl` file of Foundations and installs it within your `conda`
 ### Examples guide
 We have a [step by step guide](https://github.com/DeepLearnI/foundations/blob/master/documentation/STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 
-We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](https://github.com/DeepLearnI/foundations/examples).
+We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](https://github.com/DeepLearnI/foundations/tree/master//examples).
