@@ -27,4 +27,3 @@ tmp
 **/*.csv
 foundations.zip
 .vscode
-**/mlruns
