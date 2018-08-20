@@ -46,7 +46,9 @@ class GCPBucket(object):
             prefix=directory + '/', delimiter='/')
         object_names = [bucket_object.name for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
-        return filter(lambda path: fnmatch(path, path_filter), object_file_names)
+        for path in object_file_names:
+            if fnmatch(path, path_filter):
+                yield '{}/{}'.format(directory, path)
 
     def remove(self, name):
         self._log().debug('Removing {}'.format(name))
