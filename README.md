@@ -5,7 +5,7 @@ It provides functionality of log experimental outputs, cache re-usable data, rec
 
 ## Documenation
 
-[StartGuide](https://github.com/DeepLearnI/foundations/documentation/STARTGUIDE.md)
+[StartGuide](https://github.com/DeepLearnI/foundations/blob/master/documentation/STARTGUIDE.md)
 
 Concepts
 
