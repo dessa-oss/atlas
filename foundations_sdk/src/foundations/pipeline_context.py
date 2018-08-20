@@ -37,8 +37,8 @@ class PipelineContext(object):
     def add_stage_context(self, stage_context):
         self.stage_contexts[stage_context.uuid] = stage_context
 
-    def fill_provenance(self):
-        self.provenance.fill_all()
+    def fill_provenance(self, config_manager):
+        self.provenance.fill_all(config_manager)
 
     def save(self, result_saver):
         result_saver.save(self.file_name, self._context())

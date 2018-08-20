@@ -10,5 +10,8 @@ class NullCacheBackend(object):
     def get(self, key):
         return None
 
-    def set(self, key, serialized_value):
+    def get_metadata(self, key):
+        return None
+
+    def set(self, key, serialized_value, metadata, **flags):
         pass
