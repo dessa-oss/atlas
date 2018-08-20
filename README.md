@@ -5,7 +5,7 @@ It provides functionality of log experimental outputs, cache re-usable data, rec
 
 ## Documenation
 
-[StartGuide](STARTGUIDE.md)
+[StartGuide](documentation/STARTGUIDE.md)
 
 Concepts
 
