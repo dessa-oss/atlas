@@ -48,12 +48,12 @@ class StageConnectorWrapper(object):
         return builder.build(self._connector.stage)
 
     def require(self, *required_args):
-        def _require(*args, data):
-            return data
+        def _require(*args):
+            return args[-1]
 
         builder = self._make_builder()
         builder = self._set_builder_stage(
-            builder, _require, required_args, {'data': self})
+            builder, _require, required_args + (self,), {})
         builder = self._set_builder_hierarchy(builder)
 
         return builder.build(self._connector.stage)
@@ -77,7 +77,7 @@ class StageConnectorWrapper(object):
     def __or__(self, stage_args):
         return self._stage_piping.pipe(stage_args)
 
-    def run(self, params_dict=None, **kw_params):
+    def run(self, params_dict=None, job_name=None, **kw_params):
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
 
@@ -87,7 +87,7 @@ class StageConnectorWrapper(object):
         all_params = params_dict.copy()
         all_params.update(kw_params)
 
-        deployment = deployment_manager.simple_deploy(self, all_params)
+        deployment = deployment_manager.simple_deploy(self, job_name, all_params)
 
         return DeploymentWrapper(deployment)
 

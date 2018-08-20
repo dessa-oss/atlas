@@ -5,13 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class SimpleTempfile(object):
 
     def __init__(self, mode, suffix=None):
         self.path = None
         self.file = None
         self.name = None
-        self._suffix = suffix
+        self._suffix = suffix or ''
         self._mode = mode
 
     def seek(self, *args, **kwargs):
