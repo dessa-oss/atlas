@@ -11,12 +11,12 @@ This package has a [naive model](https://github.com/DeepLearnI/foundations/docum
 This model consists of two steps:
 1. To increase value by 10
 2. To multiple this increased value by a given number
-In the end, this model outputs a multiplied value
 
-We recommend, best coding practices, to break down model code into different small functions(steps). Structuring code into functions makes for more maintainable and re-usable code in the long run.
+In the end, this model outputs a multiplied value.
+
+For best coding practices we recommend breaking down model code into different small functions(steps). Structuring code into functions makes for more maintainable and re-usable code in the long run.
 
 ## Step 2: Use Foundations to run model code
-
 
 The [driver.py file](https://github.com/DeepLearnI/foundations/documentation/sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
 
@@ -24,6 +24,7 @@ The [driver.py file](https://github.com/DeepLearnI/foundations/documentation/sam
 will import all function from Foundations.
 
 ```from staged_models.model import incr_by_10, mult```
+
 Notice, we prefix module name with `staged_`. This wraps imported functions (`incr_by_10, mult`) through Foundations package.
 
 ```

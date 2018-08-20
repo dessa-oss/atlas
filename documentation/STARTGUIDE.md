@@ -28,8 +28,8 @@ python -m pip install -U <path-to-downloaded-whl-file>
 
 ### Install from source
 
-Download sourcecode from Github.
-Specify Python version and run:
+Download Foundations' source code from Github.
+In the root of the repo specify Python version and run:
 ```
 ./build_dist.sh python<2_or_3>
 ```
