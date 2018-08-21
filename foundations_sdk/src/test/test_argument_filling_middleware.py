@@ -83,7 +83,7 @@ class TestArgumentFillingMiddleware(unittest.TestCase, TestMiddlewareCallback):
         middleware.call(None, None, {}, (argument,), {}, self._callback)
         self.assertEqual(self._callback_kwargs, {'world': 878})
 
-    def test_resolves_named_arguments_without_duplication(self):
+    def test_resolves_named_arguments_without_storing_named_arguments_in_regular_arguments(self):
         from foundations.live_argument import LiveArgument
 
         argument = self.MockArgument('hello', 5)
