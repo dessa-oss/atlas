@@ -18,11 +18,9 @@ class TestArgument(unittest.TestCase):
         def __init__(self, value, value_hash):
             self._value = value
             self._hash = value_hash
-            self.computed_count = 0
             self.cache_enabled = False
 
         def compute_value(self, runtime_data):
-            self.computed_count += 1
             return self._value * runtime_data
 
         def hash(self, runtime_data):
