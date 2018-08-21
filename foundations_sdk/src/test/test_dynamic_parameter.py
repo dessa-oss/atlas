@@ -69,4 +69,23 @@ class TestDynamicParameter(unittest.TestCase):
         hyper_parameter = Hyperparameter('goodbye')
         parameter = DynamicParameter(hyper_parameter)
         parameter.enable_caching()
+
+    def test_str_returns_parameter_and_name(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('goodbye')
+
+        parameter = DynamicParameter(hyper_parameter)
+        expected_string = 'parameter::goodbye'
+        self.assertEqual(expected_string, str(parameter))
+        
+
+    def test_str_returns_parameter_and_name_different_name(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('fire burns')
+
+        parameter = DynamicParameter(hyper_parameter)
+        expected_string = 'parameter::fire burns'
+        self.assertEqual(expected_string, str(parameter))
         
