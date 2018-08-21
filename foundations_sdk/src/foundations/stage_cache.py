@@ -8,9 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class StageCache(object):
 
-    def __init__(self, stage, stage_config, live_arguments):
+    def __init__(self, pipeline_context, stage, stage_config, live_arguments):
         from foundations.cache_name_generator import CacheNameGenerator
 
+        self._pipeline_context = pipeline_context
         self._stage_config = stage_config
         self._cache_name = CacheNameGenerator(stage, live_arguments).hash()
 
@@ -30,7 +31,7 @@ class StageCache(object):
         from foundations.global_state import cache_manager
 
         if self._allow_caching():
-            return cache_manager.cache().set(self._cache_name, value)
+            return cache_manager.cache().set(self._cache_name, value, {'job_uuid': self._pipeline_context.file_name})
 
         return value
 
