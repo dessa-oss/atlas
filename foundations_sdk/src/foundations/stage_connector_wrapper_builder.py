@@ -42,8 +42,12 @@ class StageConnectorWrapperBuilder(object):
 
         new_args = tuple(Argument.generate_from(argument, None)
                          for argument in args)
+
+        kwarg_keys = list(kwargs.keys())
+        kwarg_keys.sort()
+        new_kwargs = [(key, kwargs[key]) for key in kwarg_keys]
         new_args += tuple(Argument.generate_from(argument, keyword)
-                          for keyword, argument in kwargs.items())
+                          for keyword, argument in new_kwargs)
 
         stage_uuid = self._make_uuid(current_uuid, function, new_args, {})
         self._stage_context.uuid = stage_uuid
