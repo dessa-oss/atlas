@@ -42,3 +42,6 @@ class Argument(object):
 
     def enable_caching(self):
         self._parameter.enable_caching()
+
+    def __str__(self):
+        return self._parameter.__str__()

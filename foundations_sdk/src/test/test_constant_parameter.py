@@ -34,3 +34,11 @@ class TestConstantParameter(unittest.TestCase):
     def test_has_enable_caching_method(self):
         parameter = ConstantParameter('mashed potato')
         parameter.enable_caching()
+
+    def test_str_returns_underlying_str(self):
+        parameter = ConstantParameter('1')
+        self.assertEqual('1', str(parameter))
+
+    def test_str_returns_underlying_str_different_value(self):
+        parameter = ConstantParameter('hello world')
+        self.assertEqual('hello world', str(parameter))

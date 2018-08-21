@@ -22,3 +22,6 @@ class StageParameter(object):
 
     def enable_caching(self):
         self._stage.enable_caching()
+
+    def __str__(self):
+        return 'stage::{}'.format(self._stage.uuid())

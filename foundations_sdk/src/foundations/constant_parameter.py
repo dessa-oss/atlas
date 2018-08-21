@@ -20,3 +20,6 @@ class ConstantParameter(object):
 
     def enable_caching(self):
         pass
+
+    def __str__(self):
+        return self._value.__str__()

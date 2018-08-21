@@ -16,10 +16,16 @@ class TestStageParameter(unittest.TestCase):
     class MockStage(object):
 
         def __init__(self):
+            from uuid import uuid4
+
             self.cache_enabled = False
+            self._uuid = str(uuid4())
 
         def enable_caching(self):
             self.cache_enabled = True
+
+        def uuid(self):
+            return self._uuid
 
     def test_runs_stage(self):
         def method():
@@ -87,9 +93,17 @@ class TestStageParameter(unittest.TestCase):
 
         self.assertTrue(stage.cache_enabled)
 
+    def test_str_returns_stage_and_name(self):
+        stage = self.MockStage()
+
+        parameter = StageParameter(stage)
+        expected_string = 'stage::{}'.format(stage.uuid())
+        self.assertEqual(expected_string, str(parameter))
+
     def _make_parameter(self, method, *args):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
 
         stage = Pipeline(PipelineContext()).stage(method, *args)
         return StageParameter(stage)
+
