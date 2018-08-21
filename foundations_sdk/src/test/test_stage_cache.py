@@ -62,9 +62,6 @@ class TestStageCache(unittest.TestCase):
     @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_cache_name(self):
-        from foundations.global_state import cache_manager
-        from foundations.something import Something
-
         stage = self.MockStage('some uuid')
         stage_cache = StageCache(stage, self._make_config(True), ())
         self.assertEqual('6bbe865851bc74298ad8bbae0113745a618eb27f', stage_cache.cache_name())
@@ -72,9 +69,6 @@ class TestStageCache(unittest.TestCase):
     @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_cache_name_different_name(self):
-        from foundations.global_state import cache_manager
-        from foundations.something import Something
-
         stage = self.MockStage('some other uuid')
         stage_cache = StageCache(stage, self._make_config(True), ())
         self.assertEqual('4632ba0ef31b2b9022a3991625cc075f9025ee31', stage_cache.cache_name())
@@ -200,9 +194,6 @@ class TestStageCache(unittest.TestCase):
     @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_nothing_and_returns_the_value_when_set_but_cache_disabled(self):
-        from foundations.global_state import cache_manager
-        from foundations.nothing import Nothing
-
         stage = self.MockStage('some uuid')
         stage_cache = StageCache(stage, self._make_config(False), ())
         result = stage_cache.submit('some value')
