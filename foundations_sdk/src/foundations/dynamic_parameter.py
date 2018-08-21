@@ -12,6 +12,9 @@ class DynamicParameter(object):
         self._hyper_parameter = hyper_parameter
 
     def compute_value(self, runtime_data):
+        if not self._hyper_parameter.name in runtime_data:
+            raise ValueError('No value provided for dynamic parameter `{}`'.format(self._hyper_parameter.name))
+
         return runtime_data[self._hyper_parameter.name]
 
     def hash(self, runtime_data):

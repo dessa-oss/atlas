@@ -27,6 +27,28 @@ class TestDynamicParameter(unittest.TestCase):
         parameter = DynamicParameter(hyper_parameter)
         self.assertEqual(87, parameter.compute_value({'hello': 87}))
 
+    def test_raises_value_error_on_missing_value(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('hello')
+        parameter = DynamicParameter(hyper_parameter)
+
+        with self.assertRaises(ValueError) as context:
+            parameter.compute_value({})
+
+        self.assertIn('No value provided for dynamic parameter `hello`', context.exception.args)
+
+    def test_raises_value_error_on_missing_value_different_name(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('why am I here')
+        parameter = DynamicParameter(hyper_parameter)
+
+        with self.assertRaises(ValueError) as context:
+            parameter.compute_value({})
+
+        self.assertIn('No value provided for dynamic parameter `why am I here`', context.exception.args)
+
     def test_value_hash(self):
         from foundations.hyperparameter import Hyperparameter
 
