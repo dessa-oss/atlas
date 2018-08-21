@@ -15,12 +15,10 @@ class Cache(object):
         return self.get_option(key).get_or_else(None)
 
     def get_option(self, key):
-        from foundations.fast_serializer import deserialize
-        return self.get_binary_option(key).map(deserialize)
+        return self.get_binary_option(key).map(self._safe_deserialize)
 
     def get_metadata_option(self, key):
-        from foundations.fast_serializer import deserialize
-        return self.get_metadata_binary_option(key).map(deserialize)
+        return self.get_metadata_binary_option(key).map(self._safe_deserialize)
 
     def get_binary(self, key):
         return self.get_binary_option(key).get_or_else(None)
@@ -51,7 +49,8 @@ class Cache(object):
         return value
 
     def set_binary(self, key, serialized_value, serialized_metadata, **flags):
-        self._cache_backend.set(key, serialized_value, serialized_metadata, **flags)
+        self._cache_backend.set(key, serialized_value,
+                                serialized_metadata, **flags)
         return serialized_value
 
     def get_or_set(self, key, value, metadata, **flags):
@@ -95,3 +94,12 @@ class Cache(object):
     def _log(self):
         from foundations.global_state import log_manager
         return log_manager.get_logger(__name__)
+
+    def _safe_deserialize(self, data):
+        from foundations.fast_serializer import deserialize
+        from _pickle import UnpicklingError
+
+        try:
+            return deserialize(data)
+        except UnpicklingError:
+            return None
