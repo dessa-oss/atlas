@@ -18,11 +18,9 @@ class TestArgument(unittest.TestCase):
         def __init__(self, value, value_hash):
             self._value = value
             self._hash = value_hash
-            self.computed_count = 0
             self.cache_enabled = False
 
         def compute_value(self, runtime_data):
-            self.computed_count += 1
             return self._value * runtime_data
 
         def hash(self, runtime_data):
@@ -75,8 +73,12 @@ class TestArgument(unittest.TestCase):
     def test_generate_argument_generates_stage_parameter_different_runtime_data(self):
         from foundations.hyperparameter import Hyperparameter
 
-        argument = Argument.generate_from(Hyperparameter('hello'), None)
-        self.assertEqual(15, argument.value({'hello': 15}))
+        def method(hello):
+            return hello
+
+        hyper_parameter = Hyperparameter('hello')
+        argument = Argument.generate_from(self._make_stage(method, hyper_parameter), None)
+        self.assertEqual(77, argument.value({'hello': 77}))
 
     def test_stores_name(self):
         parameter = self.Parameter('hello', None)
@@ -108,11 +110,11 @@ class TestArgument(unittest.TestCase):
         argument = Argument('world', parameter)
         self.assertEqual('byebye', argument.value(1))
 
-    def _make_stage(self, function):
+    def _make_stage(self, function, *args, **kwargs):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
 
-        return Pipeline(PipelineContext()).stage(function)
+        return Pipeline(PipelineContext()).stage(function, *args, **kwargs)
 
     def test_forwards_hash(self):
         from foundations.argument import Argument
