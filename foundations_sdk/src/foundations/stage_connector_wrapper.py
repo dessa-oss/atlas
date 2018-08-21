@@ -68,6 +68,10 @@ class StageConnectorWrapper(object):
 
     def enable_caching(self):
         self._stage_config.enable_caching()
+        for argument in self._connector.args():
+            argument.enable_caching()
+        for argument in self._connector.kwargs().values():
+            argument.enable_caching()
         return self
 
     def disable_caching(self):
