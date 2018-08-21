@@ -80,9 +80,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_new_cache_middleware_configured(self):
         self._test_constructor_attributes('NewCache')
 
-    def test_has_new_cache_middleware_configured_with_proper_stage_cache(self):
-        pass
-
     def test_has_argument_filling_middleware(self):
         from foundations.argument_filling_middleware import ArgumentFillingMiddleware
         self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
