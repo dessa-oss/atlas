@@ -138,10 +138,15 @@ class TestArgument(unittest.TestCase):
         self.assertEqual('fedcbafedcba', argument.hash(2))
 
     def test_forwards_enable_caching(self):
-        from foundations.argument import Argument
-
         parameter = self.Parameter(None, 'abcdef')
         argument = Argument('world', parameter)
         argument.enable_caching()
         self.assertTrue(parameter.cache_enabled)
+
+    def test_forwards_string_representation(self):
+        parameter = self.Parameter(None, 'abcdef')
+        string_parameter = str(parameter)
+
+        argument = Argument('world', parameter)
+        self.assertEqual(string_parameter, str(argument))
 
