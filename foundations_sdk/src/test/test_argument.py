@@ -18,9 +18,11 @@ class TestArgument(unittest.TestCase):
         def __init__(self, value, value_hash):
             self._value = value
             self._hash = value_hash
+            self.computed_count = 0
             self.cache_enabled = False
 
         def compute_value(self, runtime_data):
+            self.computed_count += 1
             return self._value * runtime_data
 
         def hash(self, runtime_data):
@@ -28,6 +30,53 @@ class TestArgument(unittest.TestCase):
 
         def enable_caching(self):
             self.cache_enabled = True
+
+    def test_generate_argument_generates_constant(self):
+        argument = Argument.generate_from(5, None)
+        self.assertEqual(5, argument.value(None))
+
+    def test_generate_argument_generates_constant_different_value(self):
+        argument = Argument.generate_from(11, None)
+        self.assertEqual(11, argument.value(None))
+
+    def test_generate_argument_stores_name(self):
+        argument = Argument.generate_from(5, 'hello')
+        self.assertEqual('hello', argument.name())
+
+    def test_generate_argument_stores_name_different_name(self):
+        argument = Argument.generate_from(5, 'nope')
+        self.assertEqual('nope', argument.name())
+
+    def test_generate_argument_generates_dynamic_parameter(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter('hello'), None)
+        self.assertEqual(5, argument.value({'hello': 5}))
+
+    def test_generate_argument_generates_dynamic_parameter_without_name(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter(), 'hello')
+        self.assertEqual(5, argument.value({'hello': 5}))
+
+    def test_generate_argument_generates_dynamic_parameter_different_runtime_data(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter('hello'), None)
+        self.assertEqual(15, argument.value({'hello': 15}))
+
+    def test_generate_argument_generates_stage_parameter(self):
+        def method():
+            return 1233
+
+        argument = Argument.generate_from(self._make_stage(method), None)
+        self.assertEqual(1233, argument.value({}))
+
+    def test_generate_argument_generates_stage_parameter_different_runtime_data(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter('hello'), None)
+        self.assertEqual(15, argument.value({'hello': 15}))
 
     def test_stores_name(self):
         parameter = self.Parameter('hello', None)
