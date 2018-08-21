@@ -29,6 +29,57 @@ class TestArgument(unittest.TestCase):
         def enable_caching(self):
             self.cache_enabled = True
 
+    def test_generate_argument_generates_constant(self):
+        argument = Argument.generate_from(5, None)
+        self.assertEqual(5, argument.value(None))
+
+    def test_generate_argument_generates_constant_different_value(self):
+        argument = Argument.generate_from(11, None)
+        self.assertEqual(11, argument.value(None))
+
+    def test_generate_argument_stores_name(self):
+        argument = Argument.generate_from(5, 'hello')
+        self.assertEqual('hello', argument.name())
+
+    def test_generate_argument_stores_name_different_name(self):
+        argument = Argument.generate_from(5, 'nope')
+        self.assertEqual('nope', argument.name())
+
+    def test_generate_argument_generates_dynamic_parameter(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter('hello'), None)
+        self.assertEqual(5, argument.value({'hello': 5}))
+
+    def test_generate_argument_generates_dynamic_parameter_without_name(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter(), 'hello')
+        self.assertEqual(5, argument.value({'hello': 5}))
+
+    def test_generate_argument_generates_dynamic_parameter_different_runtime_data(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        argument = Argument.generate_from(Hyperparameter('hello'), None)
+        self.assertEqual(15, argument.value({'hello': 15}))
+
+    def test_generate_argument_generates_stage_parameter(self):
+        def method():
+            return 1233
+
+        argument = Argument.generate_from(self._make_stage(method), None)
+        self.assertEqual(1233, argument.value({}))
+
+    def test_generate_argument_generates_stage_parameter_different_runtime_data(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        def method(hello):
+            return hello
+
+        hyper_parameter = Hyperparameter('hello')
+        argument = Argument.generate_from(self._make_stage(method, hyper_parameter), None)
+        self.assertEqual(77, argument.value({'hello': 77}))
+
     def test_stores_name(self):
         parameter = self.Parameter('hello', None)
         argument = Argument('world', parameter)
@@ -59,11 +110,11 @@ class TestArgument(unittest.TestCase):
         argument = Argument('world', parameter)
         self.assertEqual('byebye', argument.value(1))
 
-    def _make_stage(self, function):
+    def _make_stage(self, function, *args, **kwargs):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
 
-        return Pipeline(PipelineContext()).stage(function)
+        return Pipeline(PipelineContext()).stage(function, *args, **kwargs)
 
     def test_forwards_hash(self):
         from foundations.argument import Argument
