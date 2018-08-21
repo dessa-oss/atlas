@@ -47,6 +47,16 @@ class TestCache(unittest.TestCase):
         metadata = self.cache.get_metadata_option("cache-uuid2")
         self.assertEqual(metadata.get(), {"job_id": "asdf", "ser_vers": 3})
 
+    def test_get_metadata_does_not_return_broken_data(self):
+        data = serialize('some data here')
+        self.cache.set_binary('hello', data, b'some garbage')
+        self.assertIsNone(self.cache.get_metadata_option('hello').get_or_else(None))
+
+    def test_get_does_not_return_broken_data(self):
+        serialized_meta_data = serialize({})
+        self.cache.set_binary('hello', b'some garbage', serialized_meta_data)
+        self.assertIsNone(self.cache.get('hello'))
+
     def test_set_no_flags(self):
         self.cache.set("asdf", None, {})
         flags = self.backend._store["asdf"].flags
