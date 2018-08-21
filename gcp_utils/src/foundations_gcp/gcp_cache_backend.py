@@ -5,17 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations.bucket_cache_backend import BucketCacheBackend
 
-class GCPCacheBackend(object):
+class GCPCacheBackend(BucketCacheBackend):
 
     def __init__(self, bucket):
         from foundations_gcp.gcp_bucket import GCPBucket
 
-        self._bucket = GCPBucket(bucket)
-
-    def get(self, key):
-        if self._bucket.exists(key):
-            return self._bucket.download_as_string(key)
-
-    def set(self, key, serialized_value):
-        self._bucket.upload_from_string(key, serialized_value)
+        super(GCPCacheBackend, self).__init__(GCPBucket(bucket))
