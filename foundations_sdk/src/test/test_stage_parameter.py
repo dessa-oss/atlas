@@ -97,8 +97,6 @@ class TestStageParameter(unittest.TestCase):
         stage = self.MockStage()
 
         parameter = StageParameter(stage)
-        parameter.enable_caching()
-
         expected_string = 'stage::{}'.format(stage.uuid())
         self.assertEqual(expected_string, str(parameter))
 
