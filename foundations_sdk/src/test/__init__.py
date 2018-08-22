@@ -55,3 +55,4 @@ from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_bucket_cache_backend import TestBucketCacheBackend
 from test.test_stage_context import TestStageContext
 from test.test_stage_logging_context import TestStageLoggingContext
+from test.test_null_stage_logger import TestNullStageLogger
