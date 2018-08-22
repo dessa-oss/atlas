@@ -6,26 +6,26 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def serialize(item):
-    import dill as pickle
-    return pickle.dumps(item, protocol=2)
+    import dill
+    return dill.dumps(item, protocol=2, recurse=True)
 
 
 def deserialize(serialized_item):
     try:
-        import dill as pickle
-        return None if serialized_item is None else pickle.loads(serialized_item)
+        import dill
+        return None if serialized_item is None else dill.loads(serialized_item)
     except ValueError:
         return None
 
 
 def serialize_to_file(item, file):
     import dill as pickle
-    return pickle.dump(item, file, protocol=2)
+    return pickle.dump(item, file, protocol=2, recurse=True)
 
 
 def deserialize_from_file(file):
     try:
-        import dill as pickle
-        return None if file is None else pickle.load(file)
+        import dill
+        return None if file is None else dill.load(file)
     except ValueError:
         return None
