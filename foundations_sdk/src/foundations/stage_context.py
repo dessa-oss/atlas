@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class StageContext(object):
 
     def __init__(self):
-        self.stage_log = []
+        self.stage_log = {}
         self.meta_data = {}
         self.data_uuid = None
         self.stage_output = None
