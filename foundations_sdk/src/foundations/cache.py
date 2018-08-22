@@ -97,9 +97,8 @@ class Cache(object):
 
     def _safe_deserialize(self, data):
         from foundations.fast_serializer import deserialize
-        from _pickle import UnpicklingError
 
         try:
             return deserialize(data)
-        except UnpicklingError:
+        except:
             return None
