@@ -43,7 +43,7 @@ class TestStageLoggingContext(unittest.TestCase):
         with self.assertRaises(ValueError) as error_context:
             context.log_metric(5, 0.554)
 
-        self.assertIn('Invalid metric name `5`', error_context.exception)
+        self.assertIn('Invalid metric name `5`', error_context.exception.args)
 
     def test_log_metric_logs_key_invalid_key_type_different_key(self):
         logger = self.MockLogger()
@@ -52,7 +52,7 @@ class TestStageLoggingContext(unittest.TestCase):
         with self.assertRaises(ValueError) as error_context:
             context.log_metric(5.44, 0.554)
 
-        self.assertIn('Invalid metric name `5.44`', error_context.exception)
+        self.assertIn('Invalid metric name `5.44`', error_context.exception.args)
 
     def test_log_metric_logs_value(self):
         logger = self.MockLogger()
