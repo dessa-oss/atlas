@@ -26,7 +26,29 @@ class StageLoggingContext(object):
         self._logger = logger
 
     def log_metric(self, key, value):
+        """Logs a named metric to the internal logger
+
+        Arguments:
+            key {str} -- name of the metric
+            value {object} -- value of the metric
+        """
+        
+        from foundations.utils import is_string
+
+        if not is_string(key):
+            raise ValueError('Invalid metric name `{}`'.format(key))
+
         self._logger.log_metric(key, value)
 
     def change_logger(self, new_logger):
+        """Changes the current logging backend for the context
+        and resets it when when the with block goes out of scope
+        
+        Arguments:
+            new_logger {StageLogger} -- new logger to use
+        
+        Returns:
+            ChangeLogger -- the internal mechanism for changing the logger
+        """
+
         return self.ChangeLogger(self, new_logger)

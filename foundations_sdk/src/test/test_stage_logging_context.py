@@ -36,6 +36,24 @@ class TestStageLoggingContext(unittest.TestCase):
         context.log_metric('accuracy', 0.554)
         self.assertEqual('accuracy', logger.key)
 
+    def test_log_metric_logs_key_invalid_key_type(self):
+        logger = self.MockLogger()
+        context = StageLoggingContext(logger)
+
+        with self.assertRaises(ValueError) as error_context:
+            context.log_metric(5, 0.554)
+
+        self.assertIn('Invalid metric name `5`', error_context.exception)
+
+    def test_log_metric_logs_key_invalid_key_type_different_key(self):
+        logger = self.MockLogger()
+        context = StageLoggingContext(logger)
+
+        with self.assertRaises(ValueError) as error_context:
+            context.log_metric(5.44, 0.554)
+
+        self.assertIn('Invalid metric name `5.44`', error_context.exception)
+
     def test_log_metric_logs_value(self):
         logger = self.MockLogger()
         context = StageLoggingContext(logger)
