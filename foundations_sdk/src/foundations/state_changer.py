@@ -7,18 +7,24 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class StateChanger(object):
     
-    def __init__(self, state_to_change, value):
+    def __init__(self, module_name, state_to_change, value):
+        self._module = self._load_module(module_name)
         self._state_to_change = state_to_change
         self._value = value
         self._previous_value = None
 
     def __enter__(self):
-        import foundations
-
-        self._previous_value = getattr(foundations, self._state_to_change)
-        setattr(foundations, self._state_to_change, self._value)
+        self._previous_value = getattr(self._module, self._state_to_change)
+        setattr(self._module, self._state_to_change, self._value)
 
     def __exit__(self, exception_type, exception_value, traceback):
-        import foundations
-        setattr(foundations, self._state_to_change, self._previous_value)
+        setattr(self._module, self._state_to_change, self._previous_value)
         
+    def _load_module(self, module_name):
+        module = __import__(module_name)
+
+        module_components = module_name.split('.')
+        for component in module_components[1:]:
+            module = getattr(module, component)
+
+        return module
