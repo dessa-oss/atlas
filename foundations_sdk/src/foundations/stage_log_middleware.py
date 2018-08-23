@@ -14,7 +14,8 @@ class StageLogMiddleware(object):
         stage_output = callback(args, kwargs)
         if isinstance(stage_output, tuple) and len(stage_output) == 2:
             return_value, result = stage_output
-            self._stage_context.stage_log = result
+            for key, value in result.items():
+                self._stage_context.stage_log.append({'key': key, 'value': value})
         else:
             return_value = stage_output
         return return_value
