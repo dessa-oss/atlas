@@ -15,14 +15,7 @@ class StageLogger(object):
         self._stage_context = stage_context
 
     def log_metric(self, key, value):
-        if key in self._stage_context.stage_log:
-            previous_value = self._stage_context.stage_log[key]
-            if isinstance(previous_value, list):
-                self._stage_context.stage_log[key].append(value)
-            else:
-                self._stage_context.stage_log[key] = [previous_value, value]
-        else:
-            self._stage_context.stage_log[key] = value
+        self._stage_context.stage_log.append({'key': key, 'value': value})
 
     def pipeline_context(self):
         return self._pipeline_context
