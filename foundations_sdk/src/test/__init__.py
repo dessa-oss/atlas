@@ -58,4 +58,5 @@ from test.test_stage_logging_context import TestStageLoggingContext
 from test.test_stage_logger import TestStageLogger
 from test.test_global_import_serialize import TestGlobalImportSerialization
 from test.test_null_stage_logger import TestNullStageLogger
+from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
