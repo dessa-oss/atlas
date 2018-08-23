@@ -5,7 +5,7 @@ node {
     container("python2") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python2 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock"
+                sh "python -m pip install PyYaml dill pandas mock freezegun"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations Unit Tests') {
@@ -46,7 +46,7 @@ node {
     container("python3") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python3 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock"
+                sh "python -m pip install PyYaml dill pandas mock freezegun"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Unit Tests') {
