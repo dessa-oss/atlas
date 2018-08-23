@@ -15,8 +15,8 @@ class NullStageLogger(object):
         """Not implemented
 
         Arguments:
-            key {string}
-            value {object}
+            key {string} -- unused
+            value {object} -- unused
 
         Raises:
             NotImplementedError
