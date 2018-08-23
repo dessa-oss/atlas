@@ -8,8 +8,26 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations.basic_stage_middleware import BasicStageMiddleware
 
 class NewStageLogMiddleware(BasicStageMiddleware):
+    """As below
+    """
+
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
+        """Sets up the stage logger for the current context of the stage
+        
+        Arguments:
+            upstream_result_callback {callable} -- unused
+            filler_builder {callable} -- unused
+            filler_kwargs {dict} -- unused
+            args {tuple} -- passed to the callback
+            kwargs {dict} -- passed to the callback
+            callback {callable} -- callback to call once the stage logger is set
+        
+        Returns:
+            [type] -- [description]
+        """
+
+
         from foundations.stage_logger import StageLogger
         from foundations.stage_logging import stage_logging_context
 
