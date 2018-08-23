@@ -47,6 +47,12 @@ class TestStaging(unittest.TestCase):
         create_stage(self._method)(nope='yup', maybe='possibly').run_same_process()
         self.assertEqual({'nope': 'yup', 'maybe': 'possibly'}, self._kwargs)
 
+    def test_global_create_stage_uses_create_stage(self):
+        from foundations.staging import create_stage
+        import foundations
+
+        self.assertEqual(foundations.create_stage, create_stage)
+
     def _method(self, *args, **kwargs):
         self._called = True
         self._args = args
