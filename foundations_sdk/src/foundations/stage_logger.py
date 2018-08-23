@@ -7,6 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class StageLogger(object):
+    """Responsible for providing the current logging state of the system
+
+    Arguments:
+        pipeline_context {PipelineContext} -- The current pipeline context associated with the set stage
+        stage {Stage} -- The current stage we are logging against
+        stage_config {StageConfig} -- The stage config used to set up the stage
+        stage_context {StageContext} -- The stage context set up against the stage
+    """
 
     def __init__(self, pipeline_context, stage, stage_config, stage_context):
         self._pipeline_context = pipeline_context
