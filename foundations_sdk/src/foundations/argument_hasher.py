@@ -35,10 +35,10 @@ class ArgumentHasher(object):
         from foundations.stage_connector_wrapper import StageConnectorWrapper
         from foundations.hyperparameter import Hyperparameter
 
-        if isinstance(item, Pipeline) or isinstance(item, StageConnectorWrapper) or isinstance(item, Pipeline):
+        if isinstance(item, Pipeline) or isinstance(item, StageConnectorWrapper):
             return item.uuid()
 
         if isinstance(item, Hyperparameter):
             return generate_uuid(item.name or key)
 
-        return make_uuid(item, self._make_argument_hash)
+        return make_uuid(item, lambda item_to_hash: self._make_argument_hash(key, item_to_hash))
