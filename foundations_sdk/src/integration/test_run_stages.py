@@ -68,3 +68,4 @@ class TestRunStages(unittest.TestCase):
 
         elems = pipeline.stage(my_len, [1, 2, 3, 4, 5])
         self.assertEqual(5, elems.run_same_process())
+        
