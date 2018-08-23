@@ -50,4 +50,15 @@ class FoundationsContext(object):
         return self._pipeline.pipeline_context()
 
     def change_pipeline(self, new_pipeline):
+        """Replaces the pipeline entrypoint for stages within a with block
+        and then resets it upon exitting
+        
+        Arguments:
+            new_pipeline {Pipeline} -- The pipeline to set
+        
+        Returns:
+            ChangePipeline -- The class to implement the above functionality
+        """
+
+
         return self.ChangePipeline(self, new_pipeline)
