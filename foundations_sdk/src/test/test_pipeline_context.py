@@ -308,7 +308,7 @@ class TestPipelineContext(unittest.TestCase):
         pipeline_context = PipelineContext()
         mock_archive = self.MockArchive()
 
-        self.assertEqual({}, pipeline_context.global_stage_context.stage_log)
+        self.assertEqual([], pipeline_context.global_stage_context.stage_log)
         self.assertIsNone(pipeline_context.global_stage_context.stage_output)
         self.assertIsNone(pipeline_context.global_stage_context.model_data)
 

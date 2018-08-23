@@ -88,7 +88,9 @@ class ResultReader(object):
             row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
 
             if stage_context.has_stage_output or len(stage_context.stage_log) > 0:
-                for structured_result_name, structured_result_val in stage_context.stage_log.items():
+                for log_item in stage_context.stage_log:
+                    structured_result_name = log_item['key']
+                    structured_result_val = log_item['value']
                     column_headers.append(structured_result_name)
                     row_data.append(structured_result_val)
 
