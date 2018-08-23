@@ -7,9 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class StageLogger(object):
-    """Stage logging
-    """
-
 
     def __init__(self, pipeline_context, stage, stage_config, stage_context):
         self._pipeline_context = pipeline_context
@@ -18,54 +15,49 @@ class StageLogger(object):
         self._stage_context = stage_context
 
     def log_metric(self, key, value):
-        """Saves metrics
-        
+        """Logs a metric to the stage log
+
         Arguments:
-            key {string}
-            value {int}
+            key {string} -- The name of the metric to log
+            value {object} -- The value to store
         """
 
-        if key in self._stage_context.stage_log:
-            previous_value = self._stage_context.stage_log[key]
-            if isinstance(previous_value, list):
-                self._stage_context.stage_log[key].append(value)
-            else:
-                self._stage_context.stage_log[key] = [previous_value, value]
-        else:
-            self._stage_context.stage_log[key] = value
+        from time import time
+        self._stage_context.stage_log.append(
+            {'key': key, 'value': value, 'timestamp': time()})
 
     def pipeline_context(self):
-        """Logs pipeline context
-        
+        """The PipelineContext associated with the Stage
+
         Returns:
-            [object]
+            PipelineContext -- As above
         """
 
         return self._pipeline_context
 
     def stage(self):
-        """Logs stage
-        
+        """The Stage itself
+
         Returns:
-            [object]
+            Stage -- As above
         """
 
         return self._stage
 
     def stage_config(self):
-        """Logs stage config
-        
+        """The StageConfig associated with the Stage
+
         Returns:
-            [object]
+            StageConfig -- As above
         """
 
         return self._stage_config
 
     def stage_context(self):
-        """Logs stage context
-        
+        """The StageContext associated with the Stage
+
         Returns:
-            [object]
+            StageContext -- As above
         """
 
         return self._stage_context
