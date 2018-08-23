@@ -32,6 +32,13 @@ class TestStageLogger(unittest.TestCase):
         self._logger.log_metric('rocauc', 0.77)
         self.assertEqual({'rocauc': 0.77}, self._stage_log_to_dict())
 
+    def test_log_metric_stores_current_time(self):
+        with freeze_time():
+            from time import time
+
+            self._logger.log_metric('rocauc', 0.77)
+            self.assertDictContainsSubset({'timestamp': time()}, self._stage_context.stage_log[0])
+
     def test_log_metric_stores_metric_multiple_metrics(self):
         self._logger.log_metric('rocauc', 0.77)
         self._logger.log_metric('loss', 0.553)

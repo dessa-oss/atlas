@@ -15,7 +15,8 @@ class StageLogger(object):
         self._stage_context = stage_context
 
     def log_metric(self, key, value):
-        self._stage_context.stage_log.append({'key': key, 'value': value})
+        from time import time
+        self._stage_context.stage_log.append({'key': key, 'value': value, 'timestamp': time()})
 
     def pipeline_context(self):
         return self._pipeline_context
