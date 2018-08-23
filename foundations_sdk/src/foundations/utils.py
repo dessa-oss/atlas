@@ -58,7 +58,6 @@ def merged_uuids(uuids):
         digest.update(encoded_string)
     return digest.hexdigest()
 
-
 def make_uuid(item, iterable_callback):
     if isinstance(item, list):
         return merged_uuids([iterable_callback(sub_item) for sub_item in item])
