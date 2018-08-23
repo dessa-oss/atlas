@@ -7,18 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class FoundationsContext(object):
-    """[summary]
+    """The global state for all staging related functionality for Foundations.
+    This is where everything awesome begins!!!
 
     Arguments:
         pipeline {Pipeline} -- The initial Foundation pipeline to use for stages
     """
 
     class ChangePipeline(object):
-        """Internal support class for managing state
-            Arguments:
-            context {StageLoggingContext} -- The owning context
-            pipeline {Pipeline} -- The pipeline used to update the context
-        """
 
         def __init__(self, context, pipeline):
             self._context = context
