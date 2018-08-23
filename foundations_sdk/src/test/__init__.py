@@ -62,3 +62,4 @@ from test.test_null_stage_logger import TestNullStageLogger
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
 from test.test_staging import TestStaging
+from test.test_new_stage_log_middleware import TestNewStageLogMiddleware

@@ -105,6 +105,13 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_stage_logging_middleware_configured(self):
         self._test_constructor_attributes('StageLogging')
 
+    def test_has_new_stage_log_middleware(self):
+        from foundations.new_stage_log_middleware import NewStageLogMiddleware
+        self._test_has_middleware('NewStageLog', NewStageLogMiddleware)
+
+    def test_has_new_stage_log_middleware_configured(self):
+        self._test_constructor_attributes('NewStageLog')
+
     def test_has_configured_middleware(self):
         self._config_manager['stage_middleware'] = [
             {'name': 'Mock', 'constructor': self.MockMiddleware}
