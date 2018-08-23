@@ -15,12 +15,12 @@ class TestDeployJob(unittest.TestCase):
         cleanup()
 
     def test_can_fetch_job_results(self):
-        from foundations import pipeline
+        from foundations.global_state import foundations_context
 
         def method():
             return 27
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
 
@@ -32,12 +32,13 @@ class TestDeployJob(unittest.TestCase):
                          [stage.uuid()]['stage_output'])
 
     def test_can_fetch_job_info(self):
-        from foundations import pipeline, JobPersister, ResultReader
+        from foundations import JobPersister, ResultReader
+        from foundations.global_state import foundations_context
 
         def method():
             pass
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
 
@@ -50,12 +51,13 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_job_information)
 
     def test_can_fetch_results(self):
-        from foundations import pipeline, JobPersister, ResultReader
+        from foundations import JobPersister, ResultReader
+        from foundations.global_state import foundations_context
 
         def method():
             pass
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.persist()
         deployment = self._make_deployment(stage)
 
@@ -68,12 +70,13 @@ class TestDeployJob(unittest.TestCase):
             self.assertIsNotNone(current_results)
 
     def test_can_fetch_results_multiple_jobs(self):
-        from foundations import pipeline, JobPersister, ResultReader
+        from foundations import JobPersister, ResultReader
+        from foundations.global_state import foundations_context
 
         def method():
             pass
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.persist()
 
         deployment = self._make_deployment(stage)

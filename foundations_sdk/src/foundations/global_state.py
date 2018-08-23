@@ -16,9 +16,9 @@ from foundations.middleware_manager import MiddlewareManager
 from foundations.foundations_context import FoundationsContext
 
 
-pipeline_context = PipelineContext()
-pipeline = Pipeline(pipeline_context)
-foundations_context = FoundationsContext(pipeline)
+_pipeline_context = PipelineContext()
+_pipeline = Pipeline(_pipeline_context)
+foundations_context = FoundationsContext(_pipeline)
 config_manager = ConfigManager()
 cache_manager = CacheManager()
 deployment_manager = DeploymentManager()
