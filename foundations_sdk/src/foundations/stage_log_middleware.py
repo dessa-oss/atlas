@@ -11,11 +11,14 @@ class StageLogMiddleware(object):
         self._stage_context = stage_context
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
+        from foundations.stage_logger import StageLogger
+
         stage_output = callback(args, kwargs)
         if isinstance(stage_output, tuple) and len(stage_output) == 2:
+            logger = StageLogger(None, None, None, self._stage_context)
             return_value, result = stage_output
             for key, value in result.items():
-                self._stage_context.stage_log.append({'key': key, 'value': value})
+                logger.log_metric(key, value)
         else:
             return_value = stage_output
         return return_value
