@@ -37,6 +37,6 @@ class StagedModuleInternalLoader(object):
     @staticmethod
     def _make_stage(function):
         def stage(*args, **kwargs):
-            from foundations import pipeline
-            return pipeline.stage(function, *args, **kwargs)
+            from foundations.global_state import foundations_context
+            return foundations_context.pipeline().stage(function, *args, **kwargs)
         return stage

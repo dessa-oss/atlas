@@ -45,6 +45,7 @@ from foundations.change_directory import ChangeDirectory
 from foundations.bucket_job_deployment import BucketJobDeployment
 from foundations.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
+from foundations.staging import create_stage
 
 import foundations.import_installer
 

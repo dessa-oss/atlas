@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations import *
+from foundations.global_state import foundations_context
 
 
 class TestCaching(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestCaching(unittest.TestCase):
         def method():
             self.value = self.value * 2
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.run_same_process()
         stage.run_same_process()
         self.assertEqual(6, self.value)
@@ -28,10 +28,10 @@ class TestCaching(unittest.TestCase):
         def method():
             self.value = self.value * 2
 
-        stage = pipeline.stage(method).enable_caching()
+        stage = foundations_context.pipeline().stage(method).enable_caching()
         stage.run_same_process()
         
-        stage2 = pipeline.stage(method).enable_caching()
+        stage2 = foundations_context.pipeline().stage(method).enable_caching()
         stage2.run_same_process()
         self.assertEqual(6, self.value)
 
@@ -40,9 +40,9 @@ class TestCaching(unittest.TestCase):
             from random import randint
             self.value = randint(1, 1000)
 
-        stage = pipeline.stage(method).enable_caching()
+        stage = foundations_context.pipeline().stage(method).enable_caching()
         expected_value = stage.run_same_process()
         
-        stage2 = pipeline.stage(method).enable_caching()
+        stage2 = foundations_context.pipeline().stage(method).enable_caching()
         result = stage2.run_same_process()
         self.assertEqual(expected_value, result)

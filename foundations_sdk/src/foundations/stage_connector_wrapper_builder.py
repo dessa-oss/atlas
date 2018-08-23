@@ -8,12 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class StageConnectorWrapperBuilder(object):
 
-    def __init__(self, graph, pipeline_context):
+    def __init__(self, pipeline_context):
         from foundations.stage_context import StageContext
         from foundations.stage_config import StageConfig
         from foundations.middleware_chain import MiddlewareChain
 
-        self._graph = graph
         self._pipeline_context = pipeline_context
 
         self._stage_context = StageContext()
@@ -28,7 +27,7 @@ class StageConnectorWrapperBuilder(object):
         from foundations.stage_connector_wrapper import StageConnectorWrapper
 
         connector = stage_function(self._stage, *additional_args)
-        return StageConnectorWrapper(self._graph, connector, self._pipeline_context, self._stage_context, self._stage_config)
+        return StageConnectorWrapper(connector, self._pipeline_context, self._stage_context, self._stage_config)
 
     def hierarchy(self, parent_uuids):
         stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy

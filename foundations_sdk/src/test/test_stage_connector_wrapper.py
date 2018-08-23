@@ -52,8 +52,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self._pipeline_context = PipelineContext()
         self._stage_context = StageContext()
         self._stage_config = StageConfig()
-        self._stage = StageConnectorWrapper(
-            None, self._connector, self._pipeline_context, self._stage_context, self._stage_config)
+        self._stage = StageConnectorWrapper(self._connector, self._pipeline_context, self._stage_context, self._stage_config)
 
     def test_enable_caching_returns_self(self):
         self._stage.enable_caching()

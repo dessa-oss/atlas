@@ -15,7 +15,7 @@ class TestDeployJob(unittest.TestCase):
         cleanup()
 
     def test_can_deploy_job_remotely(self):
-        from foundations import pipeline
+        from foundations.global_state import foundations_context
         from os.path import isfile
         from integration.config import make_code_bucket
         from foundations_gcp import GCPBucket
@@ -23,7 +23,7 @@ class TestDeployJob(unittest.TestCase):
         def method():
             pass
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         deployment = self._make_deployment(stage)
         deployment.deploy()
 
