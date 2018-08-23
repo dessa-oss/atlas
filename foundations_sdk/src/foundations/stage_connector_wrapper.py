@@ -15,8 +15,7 @@ from foundations.context_aware import ContextAware
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, graph, connector, pipeline_context, stage_context, stage_config):
-        self._graph = graph
+    def __init__(self, connector, pipeline_context, stage_context, stage_config):
         self._connector = connector
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
@@ -104,7 +103,7 @@ class StageConnectorWrapper(object):
 
     def _make_builder(self):
         from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
-        return StageConnectorWrapperBuilder(self._graph, self._pipeline_context)
+        return StageConnectorWrapperBuilder(self._pipeline_context)
 
     def _set_builder_stage(self, builder, function, args, kwargs):
         return builder.stage(self.uuid(), function, args, kwargs)

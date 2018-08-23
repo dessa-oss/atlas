@@ -31,7 +31,7 @@ class Pipeline(object):
     def stage(self, function, *args, **kwargs):
         from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
 
-        builder = StageConnectorWrapperBuilder(self.graph, self._pipeline_context)
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
         builder = builder.stage(self.uuid(), function, args, kwargs)
         builder = builder.hierarchy([self.uuid()])
 
@@ -46,7 +46,7 @@ class Pipeline(object):
                           for connector in upstream_connectors]
         current_uuid = merged_uuids(upstream_uuids)
 
-        builder = StageConnectorWrapperBuilder(self.graph, self._pipeline_context)
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
         builder = builder.stage(current_uuid, function, args, kwargs)
         builder = builder.hierarchy(upstream_uuids)
 
