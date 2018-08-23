@@ -14,13 +14,7 @@ class StageLoggingContext(object):
     """
 
     class ChangeLogger(object):
-        """Internal support class for managing state
-
-        Arguments:
-            context {StageLoggingContext} -- The owning context
-            logger {StageLogger} -- The stage logger used to update the context
-        """
-
+        
         def __init__(self, context, logger):
             self._context = context
             self._logger = logger
