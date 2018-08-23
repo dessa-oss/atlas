@@ -63,5 +63,8 @@ class TestRunStages(unittest.TestCase):
         self.assertEqual('heppo', stage.run_same_process())
 
     def test_can_pass_list_as_constant_arg(self):
-        elems = pipeline.stage(len, [1, 2, 3, 4, 5])
+        def my_len(list_to_len):
+            return len(list_to_len)
+
+        elems = pipeline.stage(my_len, [1, 2, 3, 4, 5])
         self.assertEqual(5, elems.run_same_process())
