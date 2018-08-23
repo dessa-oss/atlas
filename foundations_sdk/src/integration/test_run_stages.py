@@ -23,12 +23,6 @@ class TestRunStages(unittest.TestCase):
         stage = pipeline.stage(method)
         self.assertEqual({'hello': 125, 'world': 555}, stage.run_same_process())
 
-    def test_ignores_metrics(self):
-        def method():
-            return 17, {'hello': 125, 'world': 555}
-        stage = pipeline.stage(method)
-        self.assertEqual(17, stage.run_same_process())
-
     def test_can_take_input(self):
         def method(value):
             return value
