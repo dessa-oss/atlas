@@ -53,8 +53,6 @@ class MiddlewareManager(object):
             'NewCache', MiddlewareManager._create_new_cache_middleware)
         self._append_middleware('ArgumentFilling', ArgumentFillingMiddleware)
         self._append_middleware(
-            'StageLog', MiddlewareManager._create_stage_log_middleware)
-        self._append_middleware(
             'ContextAware', MiddlewareManager._create_context_aware_middleware)
         self._append_middleware(
             'TimeStage', MiddlewareManager._create_time_stage_middleware)
@@ -107,11 +105,6 @@ class MiddlewareManager(object):
     def _create_stage_output_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations.stage_output_middleware import StageOutputMiddleware
         return StageOutputMiddleware(stage_config, stage_context)
-
-    @staticmethod
-    def _create_stage_log_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.stage_log_middleware import StageLogMiddleware
-        return StageLogMiddleware(stage_context)
 
     @staticmethod
     def _create_argument_filler_middleware(pipeline_context, stage_config, stage_context, stage):
