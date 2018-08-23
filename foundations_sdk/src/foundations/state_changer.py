@@ -37,7 +37,7 @@ class StateChanger(object):
 
         
     def _load_module(self, module_name):
-        module = importlib.import_module(module_name)
+        module = __import__(module_name)
 
         module_components = module_name.split('.')
         for component in module_components[1:]:
