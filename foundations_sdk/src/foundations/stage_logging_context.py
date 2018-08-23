@@ -7,8 +7,19 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class StageLoggingContext(object):
+    """Global context to be used across foundations
+
+    Arguments:
+        logger {StageLogger} -- Initial logger to be used
+    """
 
     class ChangeLogger(object):
+        """Internal support class for managing state
+
+        Arguments:
+            context {StageLoggingContext} -- The owning context
+            logger {StageLogger} -- The stage logger used to update the context
+        """
 
         def __init__(self, context, logger):
             self._context = context
@@ -32,7 +43,7 @@ class StageLoggingContext(object):
             key {str} -- name of the metric
             value {object} -- value of the metric
         """
-        
+
         from foundations.utils import is_string
 
         if not is_string(key):
@@ -43,10 +54,10 @@ class StageLoggingContext(object):
     def change_logger(self, new_logger):
         """Changes the current logging backend for the context
         and resets it when when the with block goes out of scope
-        
+
         Arguments:
             new_logger {StageLogger} -- new logger to use
-        
+
         Returns:
             ChangeLogger -- the internal mechanism for changing the logger
         """
