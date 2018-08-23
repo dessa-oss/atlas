@@ -59,13 +59,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_stage_output_middleware_configured(self):
         self._test_constructor_attributes('StageOutput')
 
-    def test_has_stage_log_middleware(self):
-        from foundations.stage_log_middleware import StageLogMiddleware
-        self._test_has_middleware('StageLog', StageLogMiddleware)
-
-    def test_has_stage_log_middleware_configured(self):
-        self._test_constructor_attributes('StageLog')
-
     def test_has_argument_middleware(self):
         from foundations.argument_middleware import ArgumentMiddleware
         self._test_has_middleware('Argument', ArgumentMiddleware)
