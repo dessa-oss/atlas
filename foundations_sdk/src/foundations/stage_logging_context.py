@@ -14,7 +14,7 @@ class StageLoggingContext(object):
     """
 
     class ChangeLogger(object):
-        
+
         def __init__(self, context, logger):
             self._context = context
             self._logger = logger
