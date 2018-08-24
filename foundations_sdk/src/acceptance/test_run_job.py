@@ -16,9 +16,9 @@ class TestRunJob(unittest.TestCase):
 
     def test_can_run_job(self):
         import acceptance.fixtures.stages as stages
-        from foundations import pipeline
+        from foundations.global_state import foundations_context
 
-        stage = pipeline.stage(stages.bundle_value, 5)
+        stage = foundations_context.pipeline().stage(stages.bundle_value, 5)
         stage.persist()
 
         deployment = stage.run()

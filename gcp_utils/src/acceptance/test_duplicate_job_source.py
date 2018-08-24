@@ -16,12 +16,13 @@ class TestDuplicateJobSource(unittest.TestCase):
 
     def test_can_duplicate_job_source(self):
         from acceptance.config import TEST_UUID
-        from foundations import pipeline, JobPersister, ResultReader
+        from foundations import JobPersister, ResultReader
+        from foundations.global_state import foundations_context
 
         def method():
             pass
 
-        stage = pipeline.stage(method)
+        stage = foundations_context.pipeline().stage(method)
         stage.persist()
 
         deployment = self._make_deployment(stage)

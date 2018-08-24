@@ -15,6 +15,6 @@ class TestCallback(object):
         self._callback_args = args
         self._callback_kwargs = kwargs
 
-        if not hasattr(self, '_callback_result'):
+        if not hasattr(self, '_callback_result') or self._callback_result is None:
             self._callback_result = uuid4()
         return self._callback_result

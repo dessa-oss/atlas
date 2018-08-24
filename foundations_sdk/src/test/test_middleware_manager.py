@@ -59,26 +59,26 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_stage_output_middleware_configured(self):
         self._test_constructor_attributes('StageOutput')
 
-    def test_has_stage_log_middleware(self):
-        from foundations.stage_log_middleware import StageLogMiddleware
-        self._test_has_middleware('StageLog', StageLogMiddleware)
+    def test_has_argument_middleware(self):
+        from foundations.argument_middleware import ArgumentMiddleware
+        self._test_has_middleware('Argument', ArgumentMiddleware)
 
-    def test_has_stage_log_middleware_configured(self):
-        self._test_constructor_attributes('StageLog')
+    def test_has_argument_middleware_configured(self):
+        self._test_constructor_attributes('Argument')
 
-    def test_has_argument_filler_middleware(self):
-        from foundations.argument_filler_middleware import ArgumentFillerMiddleware
-        self._test_has_middleware('ArgumentFiller', ArgumentFillerMiddleware)
+    def test_has_new_cache_middleware(self):
+        from foundations.new_cache_middleware import NewCacheMiddleware
+        self._test_has_middleware('NewCache', NewCacheMiddleware)
 
-    def test_has_argument_filler_middleware_configured(self):
-        self._test_constructor_attributes('ArgumentFiller')
+    def test_has_new_cache_middleware_configured(self):
+        self._test_constructor_attributes('NewCache')
 
-    def test_has_cache_middleware(self):
-        from foundations.cache_middleware import CacheMiddleware
-        self._test_has_middleware('Cache', CacheMiddleware)
+    def test_has_argument_filling_middleware(self):
+        from foundations.argument_filling_middleware import ArgumentFillingMiddleware
+        self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
 
-    def test_has_cache_middleware_configured(self):
-        self._test_constructor_attributes('Cache')
+    def test_has_argument_filling_middleware_configured(self):
+        self._test_constructor_attributes('ArgumentFilling')
 
     def test_has_upstream_result_middleware(self):
         from foundations.upstream_result_middleware import UpstreamResultMiddleware
@@ -104,6 +104,13 @@ class TestMiddlewareManager(unittest.TestCase):
 
     def test_has_stage_logging_middleware_configured(self):
         self._test_constructor_attributes('StageLogging')
+
+    def test_has_new_stage_log_middleware(self):
+        from foundations.new_stage_log_middleware import NewStageLogMiddleware
+        self._test_has_middleware('NewStageLog', NewStageLogMiddleware)
+
+    def test_has_new_stage_log_middleware_configured(self):
+        self._test_constructor_attributes('NewStageLog')
 
     def test_has_configured_middleware(self):
         self._config_manager['stage_middleware'] = [

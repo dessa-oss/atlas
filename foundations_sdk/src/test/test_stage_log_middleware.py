@@ -27,7 +27,7 @@ class TestStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {},
                         self._log_callback('hello', {'loss': 56.33}))
-        self.assertEqual({'loss': 56.33}, self._stage_context.stage_log)
+        self.assertEqual({'loss': 56.33}, self._parse_stage_log())
 
     def test_ignores_bad_stage_log(self):
         def _wide_tuple_callback(args, kwargs):
@@ -42,7 +42,7 @@ class TestStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
         middleware.call(None, None, None, (), {},
                         self._log_callback('hello', {'gain': 36.33, 'rock_n_awk': 9001}))
         self.assertEqual({'gain': 36.33, 'rock_n_awk': 9001},
-                         self._stage_context.stage_log)
+                         self._parse_stage_log())
 
     def test_stores_removes_log_from_result(self):
         middleware = self._make_middleware()
@@ -63,3 +63,10 @@ class TestStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     def _make_middleware(self):
         return StageLogMiddleware(self._stage_context)
+
+    def _parse_stage_log(self):
+        result = {}
+        for log_item in self._stage_context.stage_log:
+            result[log_item['key']] = log_item['value']
+        return result
+
