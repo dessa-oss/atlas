@@ -25,6 +25,7 @@ The signature of such a function is as follows:
 """
 
 from sklearn.linear_model import LogisticRegression
+import foundations
 
 def train_logistic_regression(x_train, y_train, *logistic_regression_args, **logistic_regression_kwargs):
     model = LogisticRegression(*logistic_regression_args, **logistic_regression_kwargs)
@@ -35,8 +36,9 @@ def train_logistic_regression(x_train, y_train, *logistic_regression_args, **log
 def get_metrics_internal(model, x_values, y_values):
     score = model.score(x_values, y_values)
     y_valid_predications = model.predict(x_values)
-    return [y_valid_predications, score]
+    return y_valid_predications, score
 
 def get_metrics(model, x_values, y_values):
     y_valid_predications, score = get_metrics_internal(model, x_values, y_values)
-    return [y_valid_predications, score], {'score': score}
+    foundations.log_metric('score', score)
+    return y_valid_predications, score
