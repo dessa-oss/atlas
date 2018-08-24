@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
-from os import path
+from os import path, environ
 
 here = path.abspath(path.dirname(__file__))
 
@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='foundations_gcp',
-    version='0.0.1',
+    version=environ.get('build_version', '0.0.0'),
     description='A tool for machine learning development',
     classifiers=[ 
         'Development Status :: 2 - Pre-Alpha',

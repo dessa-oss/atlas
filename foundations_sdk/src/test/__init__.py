@@ -37,6 +37,7 @@ from test.test_argument_filler_middleware import TestArgumentFillerMiddleware
 from test.test_middleware_chain import TestMiddlewareChain
 from test.test_cache_middleware import TestCacheMiddleware
 from test.test_middleware_manager import TestMiddlewareManager
+from test.test_argument_hasher import TestArgumentHasher
 from test.test_argument import TestArgument
 from test.test_live_argument import TestLiveArgument
 from test.test_constant_parameter import TestConstantParameter
