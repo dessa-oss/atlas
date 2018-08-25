@@ -28,6 +28,7 @@ from common.data import load_titanic
 from common.prep import fillna, train_imputer, train_one_hot_encoder, drop_non_numeric
 from common.models import get_metrics_internal
 from sklearn.model_selection import train_test_split
+import foundations
 
 
 def load_data():
@@ -44,7 +45,7 @@ def split_inputs_and_targets(data):
     inputs = data[['Age', 'SibSp', 'Parch', 'Fare',
                    'Pclass', 'Sex', 'Cabin', 'Embarked']]
     targets = data[['Survived']]
-    return [inputs, targets]
+    return inputs, targets
 
 
 def split_training_and_validation(inputs, targets):
@@ -59,7 +60,7 @@ def impute(x_train, x_valid):
     encoder = create_imputer(x_train)
     x_train = encoder.transform(x_train)
     x_valid = encoder.transform(x_valid)
-    return [x_train, x_valid]
+    return x_train, x_valid
 
 
 def create_one_hot_encoder(data):
@@ -70,13 +71,13 @@ def one_hot_encode(x_train, x_valid):
     encoder = create_one_hot_encoder(x_train)
     x_train = encoder.transform(x_train)
     x_valid = encoder.transform(x_valid)
-    return [x_train, x_valid]
+    return x_train, x_valid
 
 
 def drop_non_numeric_columns(x_train, x_valid):
     x_train = drop_non_numeric(x_train)
     x_valid = drop_non_numeric(x_valid)
-    return [x_train, x_valid]
+    return x_train, x_valid
 
 
 def get_metrics(model, inputs, targets, data_set_name):
@@ -87,4 +88,7 @@ def get_metrics(model, inputs, targets, data_set_name):
 
     metric_prefix = str(data_set_name).lower()
 
-    return [targets, score], {'{}_score'.format(metric_prefix): score, 'data_set_name': data_set_name}
+    foundations.log_metric('{}_score'.format(metric_prefix), score)
+    foundations.log_metric('data_set_name', data_set_name)
+
+    return targets, score
