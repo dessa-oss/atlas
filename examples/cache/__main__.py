@@ -36,7 +36,6 @@ load_titanic = foundations.create_stage(load_titanic)
 require = foundations.create_stage(load_titanic)
 log_data = foundations.create_stage(log_data)
 
-
 def main():
     # we have two stages log, and log2
     # since they are derived from the same code ("log_data"),
