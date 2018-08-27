@@ -25,9 +25,15 @@ usually what you want.
 """
 
 import foundations
-from staged_common.data import load_titanic
-from staged_common.prep import get_mode, fillna
-from staged_common.logging import log_data
+from common.data import load_titanic
+from common.prep import get_mode, fillna
+from common.logging import log_data
+
+load_titanic = foundations.create_stage(load_titanic)
+get_mode = foundations.create_stage(get_mode)
+fillna = foundations.create_stage(fillna)
+log_data = foundations.create_stage(log_data)
+
 
 if __name__ == '__main__':
     data = load_titanic()
