@@ -8,10 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 This very simple module shows the lightweight syntax introduced by Foundations.
 After importing Foundations, you can import the modules containing code you created
-almost as usual.  The only difference is that you should prefix the module name with
-"staged_".
+as usual.  You can use "create_stage()" with any imported function ot create a stage.
 
-With that "staged_" prefix, Foundations does some magic that wraps your code in layers
+With create_stage(), Foundations does some magic that wraps your code in layers
 which perform provenance tracking, caching, prepping your job for deployment to compute, and so on.
 
 The "main" code below is exactly what you'd write without Foundations, save for that
@@ -22,9 +21,13 @@ on any stage, but using it on the final stage is usually what you want.
 
 import foundations
 import config
-from staged_common.data import load_titanic
-from staged_common.prep import fillna
-from staged_common.logging import log_data
+from common.data import load_titanic
+from common.prep import fillna
+from common.logging import log_data
+
+load_titanic = foundations.create_stage(load_titanic)
+fillna = foundations.create_stage(fillna)
+log_data = foundations.create_stage(log_data)
 
 if __name__ == '__main__':
     data = load_titanic()

@@ -20,10 +20,22 @@ other stages.  See lines 36 - 40 in this file for examples of usage.
 
 import foundations
 import config
-from staged_common.prep import union
-from staged_common.models import train_logistic_regression
-from staged_common.logging import log_formatted
-from staged_titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+from common.prep import union
+from common.models import train_logistic_regression
+from common.logging import log_formatted
+from titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+
+union = foundations.create_stage(union)
+train_logistic_regression = foundations.create_stage(train_logistic_regression)
+log_formatted = foundations.create_stage(log_formatted)
+load_data = foundations.create_stage(load_data)
+fill_categorical_nulls = foundations.create_stage(fill_categorical_nulls)
+split_inputs_and_targets = foundations.create_stage(split_inputs_and_targets)
+split_training_and_validation = foundations.create_stage(split_training_and_validation)
+impute = foundations.create_stage(impute)
+one_hot_encode = foundations.create_stage(one_hot_encode)
+drop_non_numeric_columns = foundations.create_stage(drop_non_numeric_columns)
+get_metrics = foundations.create_stage(get_metrics)
 
 
 def main():
