@@ -34,7 +34,6 @@ get_mode = foundations.create_stage(get_mode)
 fillna = foundations.create_stage(fillna)
 log_data = foundations.create_stage(log_data)
 
-
 if __name__ == '__main__':
     data = load_titanic()
     mode = get_mode(data, 'Cabin')
