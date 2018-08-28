@@ -22,13 +22,18 @@ cleanup () {
 }
 
 cleanup_and_exit () {
+    if [ $# = 2 ]
+    then
+        echo -e "\n\n\nMODULE FAILED: $1\nPYTHON VERSION: $2\n\n\n"
+    fi
+
     cleanup
     exit 1
 }
 
 trap 'cleanup_and_exit' SIGINT SIGTERM
 
-for python_version in python python3
+for python_version in python2 python3
 do
     rm -rf /tmp/archives
 
@@ -44,7 +49,7 @@ do
 
     for module in ${modules}
     do
-        python -Wi -m ${module} || cleanup_and_exit
+        python -Wi -m ${module} || cleanup_and_exit ${module} ${python_version}
     done
 
     cleanup
