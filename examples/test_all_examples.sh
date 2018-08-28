@@ -54,3 +54,5 @@ do
 
     cleanup
 done
+
+exit 0
