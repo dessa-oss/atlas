@@ -42,10 +42,6 @@ node {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
-        stage('Python2 Test Examples'){
-            sh "python -m pip install virtualenv"
-            sh "bash test_all_examples.sh"
-        }
     }
     container("python3") {
         ws("${WORKSPACE}/foundations_sdk/") {
@@ -86,10 +82,6 @@ node {
             stage('Python3 GCP Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
             }
-        }
-        stage('Python3 Test Examples'){
-            sh "python -m pip install virtualenv"
-            sh "bash test_all_examples.sh"
         }
     }
     stage('Results') {
