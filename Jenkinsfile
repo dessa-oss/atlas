@@ -44,6 +44,7 @@ node {
         }
         ws("${WORKSPACE}"){
             stage('Python2 Test Examples'){
+                sh "python -m pip install virtualenv"
                 sh "bash test_all_examples.sh"
             }
         }
@@ -90,6 +91,7 @@ node {
         }
         ws("${WORKSPACE}"){
             stage('Python3 Test Examples'){
+                sh "python -m pip install virtualenv"
                 sh "bash test_all_examples.sh"
             }
         }
