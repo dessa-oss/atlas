@@ -34,10 +34,10 @@ do
 
     python -m virtualenv -p ${python_version} /tmp/examples-venv
     source /tmp/examples-venv/bin/activate
+
+    cd ..
     python -m pip install -r requirements.txt
-
     bash build_dist.sh
-
     cd examples
 
     python -m pip install -r requirements.txt
@@ -48,6 +48,4 @@ do
     done
 
     cleanup
-
-    cd ..
 done
