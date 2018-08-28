@@ -5,7 +5,7 @@ node {
     container("python2") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python2 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun"
+                sh "python -m pip install PyYaml dill pandas mock freezegun virtualenv"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations Unit Tests') {
@@ -42,11 +42,16 @@ node {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
+        ws("${WORKSPACE}/examples/"){
+            stage('Python2 Test Examples'){
+                sh "bash test_all_examples.sh"
+            }
+        }
     }
     container("python3") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python3 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun"
+                sh "python -m pip install PyYaml dill pandas mock freezegun virtualenv"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Unit Tests') {
@@ -81,6 +86,11 @@ node {
             }
             stage('Python3 GCP Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
+            }
+        }
+        ws("${WORKSPACE}/examples/"){
+            stage('Python3 Test Examples'){
+                sh "bash test_all_examples.sh"
             }
         }
     }
