@@ -42,11 +42,9 @@ node {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
-        ws("${WORKSPACE}"){
-            stage('Python2 Test Examples'){
-                sh "python -m pip install virtualenv"
-                sh "bash test_all_examples.sh"
-            }
+        stage('Python2 Test Examples'){
+            sh "python -m pip install virtualenv"
+            sh "bash test_all_examples.sh"
         }
     }
     container("python3") {
@@ -89,11 +87,9 @@ node {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
-        ws("${WORKSPACE}"){
-            stage('Python3 Test Examples'){
-                sh "python -m pip install virtualenv"
-                sh "bash test_all_examples.sh"
-            }
+        stage('Python3 Test Examples'){
+            sh "python -m pip install virtualenv"
+            sh "bash test_all_examples.sh"
         }
     }
     stage('Results') {
