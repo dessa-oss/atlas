@@ -182,3 +182,6 @@ def ensure_path_exists(path, name):
 def _log():
     from foundations.global_state import log_manager
     return log_manager.get_logger(__name__)
+
+def splice_at(list_of_results, slot_index):
+    return list_of_results[slot_index]

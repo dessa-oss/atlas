@@ -130,8 +130,7 @@ class StageConnectorWrapper(object):
         return self._connector.name()
 
     def splice(self, num_children):
-        def splice_at(data_frames, slot_num):
-            return data_frames[slot_num]
+        from foundations.utils import splice_at
 
         children = []
 
