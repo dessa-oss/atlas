@@ -20,29 +20,45 @@ Foundations works with three different types of deployments:
 
 Local Deployment: this will run directly on the machine where the `.yaml` file is. It should be noted that this deployment doesn't require a queuing system–-this is mainly used for testing and development purposes.
 
-Google Cloud Platform (GCP) Deployment: for use with Google's cloud service. A queuing system is require for use of this deployment configuration.
+Google Cloud Platform (GCP) Deployment: for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
 
-SSH Deployment: this type of deployment is used at a few client premises. It's a simple way of sending a job to a compute box and getting results. It expects to work with our SCP-style queueing system.
-
+SSH Deployment: this type of deployment is used at a few clients. It's a simple way of sending a job to a compute box and getting results. It expects to work with our SCP-style queueing system.
 
 
 
 ## Configuration Options
 
-All configurations take two arguements, `cache_type` (object), and `constructor_argument` (list)
+*Note: If no `config.yaml` is provided default values are provided.*
+
+All configurations take two arguments, `cache_type` (object), and `constructor_argument` (list). `constructor_argument` is how you can define the file path for any type of storage on the execution environment.
 
 
-*cache_implementation*: defines what cache type to use
+*cache_implementation*: Foundations uses caching to save time on rerunning stages that haven't changed, this configuration allows the integrator to define where caching should occur in the execution environment.
+
+*archive_listing_implementation*: The archives listings configuration allows Foundations to specify how to list and enumerate items within archive storage
+
+*Archive configurations:*
+
+The below configurations allow Foundations to specify how the different pieces of information, whether that be source code with `job_source_archive` or stage relationships with `provenance_archive_implementation`, are store and where in the execution environment.
+
+*persisted_data_archive_implementation*: persisted data is how Foundations save the return returns from a stage.
+
+*provenance_archive_implementation*: provenance is information about stage relationships that Foundations uses.
+
+*job_source_archive_implementation*: job source is where the source code lives for a job.
+
+*artifact_archive_implementation*: this is how Foundations interacts with the model artifact for the job.
+
+*miscellaneous_archive_implementation*: additional information about the job.
 
 
-*archive_listing_implementation*: defines what archive listing type to use
+## Additional Configurations
 
-*persisted_data_archive_implementation*: defines what persisted data archive
+For SHH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
-*provenance_archive_implementation*:
-
-*job_source_archive_implementation*:
-
-*artifact_archive_implementation*:
-
-*miscellaneous_archive_implementation*:
+remote_user: lou
+remote_host: 422.428.428.42
+shell_command: /bin/bash
+code_path: /home/lou/mount/testbed/jobs
+result_path: /home/lou/mount/testbed/results
+key_path: <key_path>
