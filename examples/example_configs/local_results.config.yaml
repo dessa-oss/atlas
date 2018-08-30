@@ -25,3 +25,4 @@ artifact_archive_implementation:
 miscellaneous_archive_implementation:
   archive_type: foundations.LocalFileSystemPipelineArchive
   constructor_arguments: [/tmp/foundations-archive]
+  
