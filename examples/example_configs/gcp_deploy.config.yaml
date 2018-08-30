@@ -1,35 +1,35 @@
 cache_implementation:
-  cache_type: foundations.GCPCacheBackend
+  cache_type: foundations_gcp.GCPCacheBackend
   constructor_arguments: [result-test]
 
 archive_listing_implementation:
-  archive_listing_type: foundations.GCPPipelineArchiveListing
+  archive_listing_type: foundations_gcp.GCPPipelineArchiveListing
   constructor_arguments: [result-test]
 
 stage_log_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 persisted_data_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 provenance_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 job_source_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 artifact_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 miscellaneous_archive_implementation:
-  archive_type: foundations.GCPPipelineArchive
+  archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
 
 deployment_implementation:
-  deployment_type: foundations.GCPJobDeployment
+  deployment_type: foundations_gcp.GCPJobDeployment
   constructor_arguments: [code-test, result-test]
