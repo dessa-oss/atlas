@@ -33,23 +33,23 @@ SSH Deployment: this type of deployment is used at a few clients. It's a simple 
 All configurations take two arguments, `cache_type` (object), and `constructor_argument` (list). `constructor_argument` is how you can define the file path for any type of storage on the execution environment.
 
 
-*cache_implementation*: Foundations uses caching to save time on rerunning stages that haven't changed, this configuration allows the integrator to define where caching should occur in the execution environment.
+**cache_implementation**: Foundations uses caching to save time on rerunning stages that haven't changed, this configuration allows the integrator to define where caching should occur in the execution environment.
 
-*archive_listing_implementation*: The archives listings configuration allows Foundations to specify how to list and enumerate items within archive storage
+**archive_listing_implementation**: The archives listings configuration allows Foundations to specify how to list and enumerate items within archive storage
 
-*Archive configurations:*
+## Archive configurations:
 
 The below configurations allow Foundations to specify how the different pieces of information, whether that be source code with `job_source_archive` or stage relationships with `provenance_archive_implementation`, are store and where in the execution environment.
 
-*persisted_data_archive_implementation*: persisted data is how Foundations save the return returns from a stage.
+**persisted_data_archive_implementation**: persisted data is how Foundations save the return returns from a stage.
 
-*provenance_archive_implementation*: provenance is information about stage relationships that Foundations uses.
+**provenance_archive_implementation**: provenance is information about stage relationships that Foundations uses.
 
-*job_source_archive_implementation*: job source is where the source code lives for a job.
+**job_source_archive_implementation**: job source is where the source code lives for a job.
 
-*artifact_archive_implementation*: this is how Foundations interacts with the model artifact for the job.
+**artifact_archive_implementation**: this is how Foundations interacts with the model artifact for the job.
 
-*miscellaneous_archive_implementation*: additional information about the job.
+**miscellaneous_archive_implementation**: additional information about the job.
 
 
 ## Additional Configurations
@@ -57,8 +57,13 @@ The below configurations allow Foundations to specify how the different pieces o
 For SHH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
 remote_user: lou
+
 remote_host: 422.428.428.42
+
 shell_command: /bin/bash
+
 code_path: /home/lou/mount/testbed/jobs
+
 result_path: /home/lou/mount/testbed/results
+
 key_path: <key_path>

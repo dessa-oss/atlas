@@ -26,9 +26,9 @@ miscellaneous_archive_implementation:
 deployment_implementation:
   deployment_type: foundations_ssh.SFTPJobDeployment
 
-remote_user: ja
-remote_host: 192.168.128.63
+remote_user: lou
+remote_host: 422.428.428.42
 shell_command: /bin/bash
-code_path: /home/ja/mount/testbed/jobs
-result_path: /home/ja/mount/testbed/results
+code_path: /home/lou/mount/testbed/jobs
+result_path: /home/lou/mount/testbed/results
 key_path: <key_path>
