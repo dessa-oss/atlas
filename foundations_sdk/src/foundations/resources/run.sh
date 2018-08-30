@@ -27,7 +27,7 @@ else
 fi
 
 if [[ -z "${python_path}" ]]; then
-  python_path=`which python`
+  python_path=$(which python || which python3)
 fi
 
 cd $BASEDIR && \
@@ -44,7 +44,7 @@ fi
 
 cd $BASEDIR && \
   . $activate_path && \
-  echo Running python version `python --version` located at `which python` >$debug_log && \
+  echo Running python version `${python_path} --version` located at ${python_path} >$debug_log && \
   touch requirements.txt && \
   python -m pip install -r requirements.txt >$debug_log 2>$error_log && \
   python main.py
