@@ -1,30 +1,23 @@
-cache_implementation:
-  cache_type: foundations.LocalFileSystemCacheBackend
-  constructor_arguments: [/tmp/foundations-cache]
-
 archive_listing_implementation:
-  archive_listing_type: foundations.LocalFileSystemPipelineListing
+  archive_listing_type: foundations_ssh.SFTPListing
 
 stage_log_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 persisted_data_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 provenance_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 job_source_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 artifact_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 miscellaneous_archive_implementation:
-  archive_type: foundations.LocalFileSystemPipelineArchive
-
-deployment_implementation:
-  deployment_type: foundations_ssh.SFTPJobDeployment
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
 
 remote_user: lou
 remote_host: 422.428.428.42
