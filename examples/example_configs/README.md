@@ -18,11 +18,11 @@ Execution environment: this is where models are computed. Could be GCP, or even 
 
 Foundations works with three different types of deployments:
 
-Local Deployment: this will run directly on the machine where the `.yaml` file is. It should be noted that this deployment doesn't require a queuing system–-this is mainly used for testing and development purposes.
+**Local Deployment:** this will run directly on the machine where the `.yaml` file is. It should be noted that this deployment doesn't require a queuing system–-this is mainly used for testing and development purposes.
 
-Google Cloud Platform (GCP) Deployment: for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
+**Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
 
-SSH Deployment: this type of deployment is used at a few clients. It's a simple way of sending a job to a compute box and getting results. It expects to work with our SCP-style queueing system.
+**SSH Deployment:** this type of deployment is used at a few clients. It's a simple way of sending a job to a compute box and getting results. It expects to work with our SCP-style queueing system.
 
 
 
