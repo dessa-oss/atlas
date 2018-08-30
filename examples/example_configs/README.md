@@ -2,7 +2,7 @@
 
 The goal of this document is to outline how Foundations uses a configuration-driven approach to deployment, and how to setup your configurations depending on where the execution environment(compute) will occur.
 
-Configuration files should not done by MLEs, and should instead be implemented by the network's integration engineer––that said the examples in this directory should hopefully give some guidance in best practices for configurations.
+Configuration files should not done by machine learning engineers, and should instead be implemented by the network's integration engineer––that said the examples in this directory should hopefully give some guidance in best practices for configurations.
 
 Configuration in Foundations is done through `config.yaml` files.
 
@@ -37,7 +37,7 @@ All configurations take two arguments, `cache_type` (object), and `constructor_a
 
 **archive_listing_implementation**: The archives listings configuration allows Foundations to specify how to list and enumerate items within archive storage
 
-## Archive configurations:
+## Archive Configurations:
 
 The below configurations allow Foundations to specify how the different pieces of information, whether that be source code with `job_source_archive` or stage relationships with `provenance_archive_implementation`, are store and where in the execution environment.
 
@@ -56,6 +56,7 @@ The below configurations allow Foundations to specify how the different pieces o
 
 For SHH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
+```
 remote_user: lou
 
 remote_host: 422.428.428.42
@@ -67,3 +68,4 @@ code_path: /home/lou/mount/testbed/jobs
 result_path: /home/lou/mount/testbed/results
 
 key_path: <key_path>
+```
