@@ -46,6 +46,11 @@ For job deployment the default is `LocalShellJobDeployment`.
 
 All configurations take two arguments, `cache_type` (object), and `constructor_argument` (list). `constructor_argument` is how you can define the file path for any type of storage on the execution environment.
 
+`constructor_argument` has different defaults depending on the type of deployment used. When using GCP deployment there is no default so `constructor_argument` will need to be defined for each configuration.
+
+For SSH deployment you can use the defaults with LocalFilesystem archives and listing, which is defined as the current working directory.
+
+For local deployments it's advised to not use the default as it will mean every job gets put into the current working directory.
 
 **cache_implementation**: Foundations uses caching to save time on rerunning stages that haven't changed, this configuration allows the integrator to define where caching should occur in the execution environment.
 
