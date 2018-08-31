@@ -20,7 +20,7 @@ Queuing system: a way for multiple jobs to be sent to the execution environment,
 
 ## Types of Deployments
 
-You'll find a set of example configurations for different deployment types in `/examples/example_config`. For each type of deployment there's an example deploy and results config. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results. This is usually done in two separate driver files, and each file would define which config it would use using the ConfigManager like so:
+You'll find a set of example configurations for different deployment types in `/examples/example_config`. For each type of deployment there's an example `_deploy` and `_results` config. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results. This is usually done in two separate driver files, and each file would define which config it would use using the ConfigManager like so:
 
 `config_manager.add_config_path('example.config.yaml')`
 
@@ -70,6 +70,8 @@ The below configurations allow Foundations to know where and how data is stored 
 **artifact_archive_implementation**: this is how Foundations interacts with the model artifact for the job. Model artifacts are the way Foundations can save a model for later use.
 
 **stage_log_archive_implementation**: stage logs are where you can save results from your model.
+
+**deployment_implementation**: defines either GCP, local, or SSH type deployment.
 
 **miscellaneous_archive_implementation**: additional information about the job.
 
