@@ -50,20 +50,22 @@ All configurations take two arguments, `cache_type` (object), and `constructor_a
 The below configurations allow Foundations to know where and how data is stored in the execution environment.
 
 
-**persisted_data_archive_implementation**: persisted data is how Foundations saves the returns value from a stage. 
+**persisted_data_archive_implementation**: persisted data is how Foundations saves the returns value from a stage. If you want to run a job and see results, you'll need to persist the data and define where it should be saved.
 
-**provenance_archive_implementation**: provenance is information about stage relationships that Foundations can save in order to have a historical record or how a series of stages ran.
+**provenance_archive_implementation**: provenance is information about stage relationships that Foundations can save in order to have a historical record of how a series of stages ran.
 
-**job_source_archive_implementation**: job source is where the source code lives for a job.
+**job_source_archive_implementation**: this is all the source code wrapped up in an archive object that will allow for a job to be fully reproducible. 
 
-**artifact_archive_implementation**: this is how Foundations interacts with the model artifact for the job.
+**artifact_archive_implementation**: this is how Foundations interacts with the model artifact for the job. Model artifacts are the way Foundations can save a model for later use.
+
+**stage_log_archive_implementation**: stage logs are where you can save results from your model.
 
 **miscellaneous_archive_implementation**: additional information about the job.
 
 
 ## Additional Configurations
 
-For SHH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
+For SSH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
 ```
 remote_user: lou
@@ -77,4 +79,18 @@ code_path: /home/lou/mount/testbed/jobs
 result_path: /home/lou/mount/testbed/results
 
 key_path: <key_path>
+
+log_level: DEBUG
 ```
+
+Just like with SSH the `remote_user` and `remote_host` value will be the login for the execution environment machine.
+
+`shell_command`: needed for the queuing system to know how to run a `.sh` file. This is a necessary configuration as different platforms require different paths to running shell scripts.
+
+`code_path`: the directory where jobs should be stored.
+
+`result_path`: the directory where job results should be stored after they've been run.
+
+`key_path`: the private key necessary for using SSH.
+
+`log_level`: for debugging purposes if set to `DEBUG` Foundations will be verbose in its output. Remove this configuration will turn off debug mode and will default to using `INFO`. This is a wrapper on top of Python's logging.
