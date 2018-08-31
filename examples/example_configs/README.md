@@ -20,6 +20,12 @@ Queuing system: a way for multiple jobs to be sent to the execution environment,
 
 ## Types of Deployments
 
+You'll find a set of example configurations for different deployment types in `/examples/example_config`. For each type of deployment there's an example deploy and results config. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results. This is usually done in two separate driver files, and each file would define which config it would use using the ConfigManager like so:
+
+`config_manager.add_config_path('example.config.yaml')`
+
+If no config is specified the application will try use all the configurations which will likely lead to unexpected failures.
+
 Foundations works with three different types of deployments:
 
 **Local Deployment:** this will run directly on the machine where the `.yaml` file is. It should be noted that this deployment is the only one that doesn't require a queuing system.
