@@ -76,6 +76,8 @@ remote_user: lou
 
 remote_host: 422.428.428.42
 
+port: 22222
+
 shell_command: /bin/bash
 
 code_path: /home/lou/mount/testbed/jobs
