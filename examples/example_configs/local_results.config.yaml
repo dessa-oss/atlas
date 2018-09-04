@@ -1,0 +1,27 @@
+archive_listing_implementation:
+  archive_listing_type: foundations.LocalFileSystemPipelineListing
+  constructor_arguments: [/tmp/foundations-archive]
+
+stage_log_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+persisted_data_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+provenance_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+job_source_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+artifact_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+miscellaneous_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]

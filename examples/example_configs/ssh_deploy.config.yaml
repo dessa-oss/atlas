@@ -1,0 +1,36 @@
+cache_implementation:
+  cache_type: foundations.LocalFileSystemCacheBackend
+  constructor_arguments: [/tmp/foundations-cache]
+
+archive_listing_implementation:
+  archive_listing_type: foundations.LocalFileSystemPipelineListing
+
+stage_log_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+persisted_data_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+provenance_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+job_source_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+artifact_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+miscellaneous_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+
+deployment_implementation:
+  deployment_type: foundations_ssh.SFTPJobDeployment
+
+remote_user: lou
+remote_host: 422.428.428.42
+shell_command: /bin/bash
+code_path: /home/lou/mount/testbed/jobs
+result_path: /home/lou/mount/testbed/results
+key_path: <key_path>
+
+log_level: DEBUG

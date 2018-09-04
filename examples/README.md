@@ -85,3 +85,8 @@ Loads config used by Foundations to determine where to store job results as well
 ### [titanic](./titanic/etl.py)
 
 Contains ETL code specific to our solution of the [Titanic problem](https://www.kaggle.com/c/titanic).
+
+## Configuration Examples
+
+Foundations uses a configuration-driven approach to deployment. [Config Examples](./example_configs) gives examples on how to setup config for different enviornments.
+ 
