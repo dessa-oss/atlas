@@ -89,7 +89,7 @@ key_path: <key_path>
 log_level: DEBUG
 ```
 
-Just like with SSH the `remote_user` and `remote_host` value will be the login for the execution environment machine.
+Just like with SSH the `remote_user` and `remote_host` value will be the login for the execution environment machine.  The `port` entry specifies what port the SSH service is listening to on the remote machine.  It is optional - not specifying it will give it the default of 22.
 
 `shell_command`: needed for the queuing system to know how to run a `.sh` file. This is a necessary configuration as different platforms require different paths to running shell scripts.
 
