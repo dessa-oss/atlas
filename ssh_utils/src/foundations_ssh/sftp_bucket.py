@@ -12,17 +12,21 @@ class SFTPBucket(object):
         from pysftp import Connection
         from foundations.global_state import config_manager
 
+        port = config_manager.config().get('port', 22)
+
         self._path = path
         self._connection = Connection(
             config_manager['remote_host'],
             config_manager['remote_user'],
-            private_key=config_manager['key_path']
+            private_key=config_manager['key_path'],
+            port=port
         )
 
         self._log().debug(
-            'Creating connection to %s@%s using key %s at location %s',
+            'Creating connection to %s@%s on port %d using key %s at location %s',
             config_manager['remote_user'],
             config_manager['remote_host'],
+            port,
             config_manager['key_path'],
             self._path
         )

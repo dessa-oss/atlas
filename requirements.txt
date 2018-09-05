@@ -5,6 +5,6 @@ google-api-python-client==1.7.3
 google-auth-httplib2==0.0.3
 google-cloud-storage==1.10.0
 PyYAML==3.13
-pysftp==0.2.9
+pysftp==0.2.8
 mock==2.0.0
 freezegun==0.3.8
