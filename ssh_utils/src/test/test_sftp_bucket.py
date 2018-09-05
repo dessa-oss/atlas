@@ -21,23 +21,24 @@ class TestSFTPBucket(unittest.TestCase):
                 self['port'] = port
 
     class MockConnection(object):
-        def __init__(self, remote_host, remote_user, private_key, port):
-            self._port = port
+        @classmethod
+        def __init__(cls, remote_host, remote_user, private_key, port):
+            cls.port = port
 
     @patch('foundations.global_state.config_manager', MockConfigManager(22))
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_22(self):
-        bucket = SFTPBucket("path")
-        self.assertEqual(22, bucket._connection._port)
+        SFTPBucket("path")
+        self.assertEqual(22, self.MockConnection.port)
 
     @patch('foundations.global_state.config_manager', MockConfigManager(23))
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_23(self):
-        bucket = SFTPBucket("path")
-        self.assertEqual(23, bucket._connection._port)
+        SFTPBucket("path")
+        self.assertEqual(23, self.MockConnection.port)
 
     @patch('foundations.global_state.config_manager', MockConfigManager())
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_unset(self):
-        bucket = SFTPBucket("path")
-        self.assertEqual(22, bucket._connection._port)
+        SFTPBucket("path")
+        self.assertEqual(22, self.MockConnection.port)
