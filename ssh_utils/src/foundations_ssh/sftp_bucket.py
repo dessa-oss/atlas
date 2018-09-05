@@ -12,10 +12,7 @@ class SFTPBucket(object):
         from pysftp import Connection
         from foundations.global_state import config_manager
 
-        try:
-            port = config_manager['port']
-        except:
-            port = 22
+        port = config_manager.config().get('port', 22)
 
         self._path = path
         self._connection = Connection(

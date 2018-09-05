@@ -11,36 +11,35 @@ from mock import patch
 from foundations_ssh.sftp_bucket import SFTPBucket
 
 class TestSFTPBucket(unittest.TestCase):
-    class MockConfigManager(dict):
-        def __init__(self, port=None):
-            self['remote_host'] = "remote_host"
-            self['remote_user'] = "remote_user"
-            self['key_path'] = "key_path"
-
-            if port:
-                self['port'] = port
-
     class MockConnection(object):
         @classmethod
         def __init__(cls, remote_host, remote_user, private_key, port):
             cls.port = port
 
     def setUp(self):
+        from foundations.global_state import config_manager
+        
+        self.config_manager = config_manager
+        self.config_manager["remote_host"] = "remote_host"
+        self.config_manager["remote_user"] = "remote_user"
+        self.config_manager["key_path"] = "key_path"
+
+    def tearDown(self):
         self.MockConnection.port = None
+        self.config_manager.config().pop("port", None)
 
-    @patch('foundations.global_state.config_manager', MockConfigManager(22))
     @patch('pysftp.Connection', MockConnection)
-    def test_set_port_22(self):
+    def test_set_port_24(self):
+        self.config_manager["port"] = 24
         SFTPBucket("path")
-        self.assertEqual(22, self.MockConnection.port)
+        self.assertEqual(24, self.MockConnection.port)
 
-    @patch('foundations.global_state.config_manager', MockConfigManager(23))
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_23(self):
+        self.config_manager["port"] = 23
         SFTPBucket("path")
         self.assertEqual(23, self.MockConnection.port)
 
-    @patch('foundations.global_state.config_manager', MockConfigManager())
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_unset(self):
         SFTPBucket("path")
