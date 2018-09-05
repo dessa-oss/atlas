@@ -26,8 +26,6 @@ Examples for each release version:
 
 [0.0.2](https://github.com/DeepLearnI/foundations/tree/0.0.2/examples)
 
-[0.0.1](https://github.com/DeepLearnI/foundations/tree/0.0.1/examples)
-
 
 ## License
 
