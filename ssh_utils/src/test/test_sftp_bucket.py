@@ -25,6 +25,9 @@ class TestSFTPBucket(unittest.TestCase):
         def __init__(cls, remote_host, remote_user, private_key, port):
             cls.port = port
 
+    def setUp(self):
+        self.MockConnection.port = None
+
     @patch('foundations.global_state.config_manager', MockConfigManager(22))
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_22(self):
