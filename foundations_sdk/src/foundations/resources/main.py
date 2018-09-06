@@ -41,7 +41,7 @@ def main():
         try:
             job.run()
             return None
-        except Exception as error: # might need to be BaseException.Exception for python 3
+        except Exception as error:
             return fetch_error_information(pipeline_context)
     exception_info = global_stage_context.time_callback(execute_job)
 
@@ -55,7 +55,7 @@ def main():
 
             save_context(pipeline_context)
             return exception_info
-        except Exception as error: # might need to be BaseException.Exception for python 3
+        except Exception as error:
             from foundations.pipeline_context import PipelineContext
 
             error_pipeline_context = PipelineContext()
