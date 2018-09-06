@@ -41,19 +41,6 @@ class StageConnector(object):
 
         traverse(reset_action, self)
 
-    def add_tree_names(self, stage_hierarchy, filler_builder, **filler_kwargs):
-        from foundations.rose_tree_traversable import traverse
-
-        def add_tree_names_action(parent_ids, this_connector):
-            filler = filler_builder(
-                *this_connector.args(), **this_connector.kwargs())
-            args, kwargs = filler.fill(**filler_kwargs)
-            stage_hierarchy.entries[this_connector.uuid()].stage_args = args
-            stage_hierarchy.entries[
-                this_connector.uuid()].stage_kwargs = kwargs
-
-        traverse(add_tree_names_action, self)
-
     def stage(self, next_stage):
         return StageConnector(next_stage, [self])
 

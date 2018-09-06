@@ -49,6 +49,20 @@ class TestDynamicParameter(unittest.TestCase):
 
         self.assertIn('No value provided for dynamic parameter `why am I here`', context.exception.args)
 
+    def test_provenance(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('why am I here')
+        parameter = DynamicParameter(hyper_parameter)
+        self.assertEqual(('dynamic', 'why am I here'), parameter.provenance())
+
+    def test_provenance_different_value(self):
+        from foundations.hyperparameter import Hyperparameter
+
+        hyper_parameter = Hyperparameter('haro')
+        parameter = DynamicParameter(hyper_parameter)
+        self.assertEqual(('dynamic', 'haro'), parameter.provenance())
+
     def test_value_hash(self):
         from foundations.hyperparameter import Hyperparameter
 
