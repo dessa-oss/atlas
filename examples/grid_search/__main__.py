@@ -68,14 +68,14 @@ def main():
     #         * split inputs and targets
     #         * save these to cache
     #     3. the stage result is a list with two elements, so we split it into two elements (inputs, targets)
-    inputs, targets = split_inputs_and_targets(data).enable_caching().splice(2)
+    inputs, targets = split_inputs_and_targets(data).enable_caching().split(2)
 
     # feature engineering
     x_train, x_valid, y_train, y_valid = split_training_and_validation(
-        inputs, targets).enable_caching().splice(4)
-    x_train, x_valid = impute(x_train, x_valid).enable_caching().splice(2)
-    x_train, x_valid = one_hot_encode(x_train, x_valid).enable_caching().splice(2)
-    x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).enable_caching().splice(2)
+        inputs, targets).enable_caching().split(4)
+    x_train, x_valid = impute(x_train, x_valid).enable_caching().split(2)
+    x_train, x_valid = one_hot_encode(x_train, x_valid).enable_caching().split(2)
+    x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).enable_caching().split(2)
 
     # model training and scoring
     params = {
@@ -84,8 +84,8 @@ def main():
     }
 
     model = train_logistic_regression(x_train, y_train, **params)
-    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').splice(2)
-    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').splice(2)
+    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').split(2)
+    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').split(2)
 
     # print out the results
     log = log_formatted('\nTraining score was {}\nValidation score was {}', train_score, valid_score)
