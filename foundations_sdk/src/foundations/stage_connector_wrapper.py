@@ -127,7 +127,8 @@ class StageConnectorWrapper(object):
         return self.run(*args, **kwargs)
 
     def name(self):
-        return self._connector.function_name()
+        function_name_and_uuid = self._connector.function_name() + ' ' + self._connector.name()
+        return function_name_and_uuid
 
     def splice(self, num_children):
         from foundations.utils import splice_at

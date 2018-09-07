@@ -30,8 +30,8 @@ log_data = foundations.create_stage(log_data)
 Once the stage is created, if we want to debug and understand which stage is 
 running we can use StageConnectorWrapper's .name() to see the stage name
 """
-pipeline = log_data()
-log_formatted('name of function: ' + pipeline.name())
+stage = log_data()
+log_formatted(stage.name())
 
 if __name__ == '__main__':
     data = load_titanic()
