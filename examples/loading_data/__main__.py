@@ -26,7 +26,10 @@ from common.logging import log_data, log_formatted
 load_titanic = foundations.create_stage(load_titanic)
 log_data = foundations.create_stage(log_data)
 
-# once the stage is created, if we want to debug and understand which stage is # running we can use StageConnectorWrapper's .name() to see the stage name 
+"""
+Once the stage is created, if we want to debug and understand which stage is 
+running we can use StageConnectorWrapper's .name() to see the stage name
+"""
 pipeline = log_data()
 log_formatted('name of function: ' + pipeline.name())
 
