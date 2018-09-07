@@ -121,13 +121,13 @@ class StageConnectorWrapper(object):
     def name(self):
         return self._connector.name()
 
-    def splice(self, num_children):
-        from foundations.utils import splice_at
+    def split(self, num_children):
+        from foundations.utils import split_at
 
         children = []
 
         for child_index in range(num_children):
-            child = self | (splice_at, child_index)
+            child = self | (split_at, child_index)
             children.append(child)
 
         return children
