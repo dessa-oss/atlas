@@ -123,11 +123,12 @@ class StageConnectorWrapper(object):
 
     def split(self, num_children):
         from foundations.utils import split_at
+        from foundations import foundations_context
 
         children = []
 
         for child_index in range(num_children):
-            child = self | (split_at, child_index)
+            child = foundations_context.pipeline().stage(split_at, self, child_index)
             children.append(child)
 
         return children
