@@ -21,10 +21,17 @@ on any stage, but using it on the final stage is usually what you want.
 
 import foundations
 from common.data import load_titanic
-from common.logging import log_data
+from common.logging import log_data, log_formatted
 
 load_titanic = foundations.create_stage(load_titanic)
 log_data = foundations.create_stage(log_data)
+
+"""
+Once the stage is created, if we want to debug and understand which stage is 
+running we can use StageConnectorWrapper's .name() to see the stage name
+"""
+stage = log_data()
+log_formatted(stage.name())
 
 if __name__ == '__main__':
     data = load_titanic()

@@ -119,7 +119,8 @@ class StageConnectorWrapper(object):
         return self.run(*args, **kwargs)
 
     def name(self):
-        return self._connector.name()
+        function_name_and_uuid = self._connector.function_name() + ' ' + self._connector.name()
+        return function_name_and_uuid
 
     def split(self, num_children):
         from foundations.utils import split_at
