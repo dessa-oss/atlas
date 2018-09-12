@@ -37,6 +37,9 @@ class Argument(object):
     def value(self, runtime_data):
         return self._parameter.compute_value(runtime_data)
 
+    def provenance(self):
+        return self._parameter.provenance()
+
     def hash(self, runtime_data):
         return self._parameter.hash(runtime_data)
 

@@ -15,17 +15,21 @@ class TestStageParameter(unittest.TestCase):
 
     class MockStage(object):
 
-        def __init__(self):
+        def __init__(self, name=None):
             from uuid import uuid4
 
             self.cache_enabled = False
             self._uuid = str(uuid4())
+            self._name = name
 
         def enable_caching(self):
             self.cache_enabled = True
 
         def uuid(self):
             return self._uuid
+
+        def name(self):
+            return self._name
 
     def test_runs_stage(self):
         def method():
@@ -92,6 +96,18 @@ class TestStageParameter(unittest.TestCase):
         parameter.enable_caching()
 
         self.assertTrue(stage.cache_enabled)
+
+    def test_provenance_returns_name(self):
+        stage = self.MockStage('potato')
+        parameter = StageParameter(stage)
+
+        self.assertEqual(('stage', 'potato'), parameter.provenance())
+
+    def test_provenance_returns_name_different_value(self):
+        stage = self.MockStage('tomako')
+        parameter = StageParameter(stage)
+
+        self.assertEqual(('stage', 'tomako'), parameter.provenance())
 
     def test_str_returns_stage_and_name(self):
         stage = self.MockStage()

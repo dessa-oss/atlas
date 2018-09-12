@@ -35,10 +35,6 @@ class StageConnectorWrapper(object):
     def uuid(self):
         return self._connector.uuid()
 
-    def add_tree_names(self, **filler_kwargs):
-        self._connector.add_tree_names(
-            self._pipeline_context.provenance.stage_hierarchy, self._provenance_filler_builder, **filler_kwargs)
-
     def stage(self, function, *args, **kwargs):
         builder = self._make_builder()
         builder = self._set_builder_stage(builder, function, args, kwargs)
@@ -95,10 +91,6 @@ class StageConnectorWrapper(object):
         return DeploymentWrapper(deployment)
 
     def run_same_process(self, **filler_kwargs):
-        self.add_tree_names(**filler_kwargs)
-        return self.run_without_provenance(**filler_kwargs)
-
-    def run_without_provenance(self, **filler_kwargs):
         return self._connector.run(self._filler_builder, **filler_kwargs)
 
     def _make_builder(self):
@@ -127,15 +119,17 @@ class StageConnectorWrapper(object):
         return self.run(*args, **kwargs)
 
     def name(self):
-        return self._connector.name()
+        function_name_and_uuid = self._connector.function_name() + ' ' + self._connector.name()
+        return function_name_and_uuid
 
-    def splice(self, num_children):
-        from foundations.utils import splice_at
+    def split(self, num_children):
+        from foundations.utils import split_at
+        from foundations import foundations_context
 
         children = []
 
         for child_index in range(num_children):
-            child = self | (splice_at, child_index)
+            child = foundations_context.pipeline().stage(split_at, self, child_index)
             children.append(child)
 
         return children

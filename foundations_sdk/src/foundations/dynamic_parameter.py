@@ -17,6 +17,9 @@ class DynamicParameter(object):
 
         return runtime_data[self._hyper_parameter.name]
 
+    def provenance(self):
+        return ('dynamic', self._hyper_parameter.name)
+
     def hash(self, runtime_data):
         from foundations.utils import generate_uuid
 

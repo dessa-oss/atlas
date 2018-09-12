@@ -1,0 +1,28 @@
+archive_listing_implementation:
+  archive_listing_type: foundations_ssh.SFTPListing
+
+stage_log_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+persisted_data_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+provenance_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+job_source_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+artifact_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+miscellaneous_archive_implementation:
+  archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+remote_user: lou
+remote_host: 422.428.428.42
+port: 22222
+shell_command: /bin/bash
+code_path: /home/lou/mount/testbed/jobs
+result_path: /home/lou/mount/testbed/results
+key_path: <key_path>

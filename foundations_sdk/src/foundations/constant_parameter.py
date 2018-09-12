@@ -14,6 +14,9 @@ class ConstantParameter(object):
     def compute_value(self, runtime_data):
         return self._value
 
+    def provenance(self):
+        return ('constant', self._value)
+
     def hash(self, runtime_data):
         from foundations.utils import generate_uuid
         return generate_uuid(str(self._value))

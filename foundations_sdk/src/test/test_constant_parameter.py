@@ -21,6 +21,14 @@ class TestConstantParameter(unittest.TestCase):
         parameter = ConstantParameter('potato')
         self.assertEqual('potato', parameter.compute_value(None))
 
+    def test_provenance(self):
+        parameter = ConstantParameter('world')
+        self.assertEqual(('constant', 'world'), parameter.provenance())
+
+    def test_provenance_different_value(self):
+        parameter = ConstantParameter('potato')
+        self.assertEqual(('constant', 'potato'), parameter.provenance())
+
     def test_value_hash(self):
         parameter = ConstantParameter('potato')
         self.assertEqual(

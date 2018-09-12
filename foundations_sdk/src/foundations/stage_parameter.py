@@ -14,6 +14,9 @@ class StageParameter(object):
     def compute_value(self, runtime_data):
         return self._stage.run_same_process(**runtime_data)
 
+    def provenance(self):
+        return ('stage', self._stage.name())
+
     def hash(self, runtime_data):
         from foundations.utils import generate_uuid
 

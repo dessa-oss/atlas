@@ -13,9 +13,9 @@ The main use case for this is if you have a larger dataset or some result that i
 expensive and you wish to use it more than once.
 
 If you execute this module, you will see 'hello world' printed twice - this is because even
-though log_data is defined already, it is being called directly twice.  When wrapping your code
-via import with the "staged_" prefix, your function is changed to return a handle that performs
-the in-memory caching.  Since there are two handles, there will be two executions for log_data.
+though log_data is defined already, it is being called directly twice.  When creating a stage with
+create_stage(), your function is changed to return a handle that performs the in-memory
+caching.  Since there are two handles, there will be two executions for log_data.
 
 On the other hand 'bye bye' will be printed exactly once.  Since log_data is called only once,
 but the handle is reused, the stage will only be executed once.
@@ -26,9 +26,13 @@ the result as needed.
 
 import foundations
 import config
-from staged_common.data import load_titanic
-from staged_common.prep import require
-from staged_common.logging import log_data
+from common.data import load_titanic
+from common.prep import require
+from common.logging import log_data
+
+load_titanic = foundations.create_stage(load_titanic)
+require = foundations.create_stage(require)
+log_data = foundations.create_stage(log_data)
 
 def main():
     # redefining the stage twice will not cache the data
