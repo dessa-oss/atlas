@@ -56,7 +56,7 @@ This module demonstrates how Foundations handles redundant execution.  If you ha
 
 ### [logistic_regression](./logistic_regression/__main__.py)
 
-Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.splice()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.splice()` method.
+Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.split()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.split()` method.
 
 `python -m logistic_regression`
 
@@ -85,3 +85,8 @@ Loads config used by Foundations to determine where to store job results as well
 ### [titanic](./titanic/etl.py)
 
 Contains ETL code specific to our solution of the [Titanic problem](https://www.kaggle.com/c/titanic).
+
+## Configuration Examples
+
+Foundations uses a configuration-driven approach to deployment. [Config Examples](./example_configs) gives examples on how to setup config for different enviornments.
+ 

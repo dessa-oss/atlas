@@ -37,10 +37,22 @@ These three concepts work together to allow you to perform a hyperparameter sear
 
 import foundations
 import config
-from staged_common.prep import union
-from staged_common.models import train_logistic_regression
-from staged_common.logging import log_formatted
-from staged_titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+from common.prep import union
+from common.models import train_logistic_regression
+from common.logging import log_formatted
+from titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+
+union = foundations.create_stage(union)
+train_logistic_regression = foundations.create_stage(train_logistic_regression)
+log_formatted = foundations.create_stage(log_formatted)
+load_data = foundations.create_stage(load_data)
+fill_categorical_nulls = foundations.create_stage(fill_categorical_nulls)
+split_inputs_and_targets = foundations.create_stage(split_inputs_and_targets)
+split_training_and_validation = foundations.create_stage(split_training_and_validation)
+impute = foundations.create_stage(impute)
+one_hot_encode = foundations.create_stage(one_hot_encode)
+drop_non_numeric_columns = foundations.create_stage(drop_non_numeric_columns)
+get_metrics = foundations.create_stage(get_metrics)
 
 
 def main():
@@ -56,14 +68,14 @@ def main():
     #         * split inputs and targets
     #         * save these to cache
     #     3. the stage result is a list with two elements, so we split it into two elements (inputs, targets)
-    inputs, targets = split_inputs_and_targets(data).enable_caching().splice(2)
+    inputs, targets = split_inputs_and_targets(data).enable_caching().split(2)
 
     # feature engineering
     x_train, x_valid, y_train, y_valid = split_training_and_validation(
-        inputs, targets).enable_caching().splice(4)
-    x_train, x_valid = impute(x_train, x_valid).enable_caching().splice(2)
-    x_train, x_valid = one_hot_encode(x_train, x_valid).enable_caching().splice(2)
-    x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).enable_caching().splice(2)
+        inputs, targets).enable_caching().split(4)
+    x_train, x_valid = impute(x_train, x_valid).enable_caching().split(2)
+    x_train, x_valid = one_hot_encode(x_train, x_valid).enable_caching().split(2)
+    x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).enable_caching().split(2)
 
     # model training and scoring
     params = {
@@ -72,8 +84,8 @@ def main():
     }
 
     model = train_logistic_regression(x_train, y_train, **params)
-    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').splice(2)
-    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').splice(2)
+    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').split(2)
+    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').split(2)
 
     # print out the results
     log = log_formatted('\nTraining score was {}\nValidation score was {}', train_score, valid_score)

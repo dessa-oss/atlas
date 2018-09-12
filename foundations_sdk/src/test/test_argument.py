@@ -15,9 +15,10 @@ class TestArgument(unittest.TestCase):
 
     class Parameter(object):
 
-        def __init__(self, value, value_hash):
+        def __init__(self, value, value_hash, provenance):
             self._value = value
             self._hash = value_hash
+            self._provenance = provenance
             self.cache_enabled = False
 
         def compute_value(self, runtime_data):
@@ -25,6 +26,9 @@ class TestArgument(unittest.TestCase):
 
         def hash(self, runtime_data):
             return self._hash * runtime_data
+
+        def provenance(self):
+            return self._provenance
 
         def enable_caching(self):
             self.cache_enabled = True
@@ -81,34 +85,44 @@ class TestArgument(unittest.TestCase):
         self.assertEqual(77, argument.value({'hello': 77}))
 
     def test_stores_name(self):
-        parameter = self.Parameter('hello', None)
+        parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)
         self.assertEqual('world', argument.name())
 
     def test_stores_name_different_name(self):
-        parameter = self.Parameter('potato', None)
+        parameter = self.Parameter('potato', None, None)
         argument = Argument('spinach', parameter)
         self.assertEqual('spinach', argument.name())
 
     def test_uses_run_parameters(self):
-        parameter = self.Parameter('hello', None)
+        parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)
         self.assertEqual('hellohellohello', argument.value(3))
 
     def test_uses_run_parameters_different_value(self):
-        parameter = self.Parameter('hello', None)
+        parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)
         self.assertEqual('hellohello', argument.value(2))
 
     def test_returns_computed_value(self):
-        parameter = self.Parameter('hello', None)
+        parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)
         self.assertEqual('hello', argument.value(1))
 
     def test_returns_computed_value_different_value(self):
-        parameter = self.Parameter('byebye', None)
+        parameter = self.Parameter('byebye', None, None)
         argument = Argument('world', parameter)
         self.assertEqual('byebye', argument.value(1))
+
+    def test_returns_provenance(self):
+        parameter = self.Parameter(None, None, 'okaype')
+        argument = Argument('world', parameter)
+        self.assertEqual('okaype', argument.provenance())
+
+    def test_returns_provenance_different_value(self):
+        parameter = self.Parameter(None, None, 'fet')
+        argument = Argument('world', parameter)
+        self.assertEqual('fet', argument.provenance())
 
     def _make_stage(self, function, *args, **kwargs):
         from foundations.pipeline import Pipeline
@@ -119,32 +133,32 @@ class TestArgument(unittest.TestCase):
     def test_forwards_hash(self):
         from foundations.argument import Argument
 
-        parameter = self.Parameter(None, 'abcdef')
+        parameter = self.Parameter(None, 'abcdef', None)
         argument = Argument('world', parameter)
         self.assertEqual('abcdef', argument.hash(1))
 
     def test_forwards_hash_different_hash(self):
         from foundations.argument import Argument
 
-        parameter = self.Parameter(None, 'fedcba')
+        parameter = self.Parameter(None, 'fedcba', None)
         argument = Argument('world', parameter)
         self.assertEqual('fedcba', argument.hash(1))
 
     def test_forwards_hash_different_runtime_data(self):
         from foundations.argument import Argument
 
-        parameter = self.Parameter(None, 'fedcba')
+        parameter = self.Parameter(None, 'fedcba', None)
         argument = Argument('world', parameter)
         self.assertEqual('fedcbafedcba', argument.hash(2))
 
     def test_forwards_enable_caching(self):
-        parameter = self.Parameter(None, 'abcdef')
+        parameter = self.Parameter(None, 'abcdef', None)
         argument = Argument('world', parameter)
         argument.enable_caching()
         self.assertTrue(parameter.cache_enabled)
 
     def test_forwards_string_representation(self):
-        parameter = self.Parameter(None, 'abcdef')
+        parameter = self.Parameter(None, 'abcdef', None)
         string_parameter = str(parameter)
 
         argument = Argument('world', parameter)

@@ -31,21 +31,41 @@ def main():
 
     pipeline_context.provenance.job_source_bundle = job_source_bundle
 
+    def fetch_error_information(context):
+        import sys
+        exception_info = sys.exc_info()
+        context.global_stage_context.add_error_information(exception_info)
+        return exception_info
+
     def execute_job():
         try:
             job.run()
             return None
-        except Exception as error: # might need to be BaseException.Exception for python 3
-            import sys
-            exception_info = sys.exc_info()
-            global_stage_context.add_error_information(exception_info)
-            return exception_info
+        except Exception as error:
+            return fetch_error_information(pipeline_context)
     exception_info = global_stage_context.time_callback(execute_job)
 
-    JobPersister(job).persist()
+    def save_context(context):
+        with open('results.pkl', 'w+b') as file:
+            serialize_to_file(context._context(), file)
 
-    with open('results.pkl', 'w+b') as file:
-        serialize_to_file(pipeline_context._context(), file)
+    def serialize_job_results(exception_info):
+        try:
+            JobPersister(job).persist()
+
+            save_context(pipeline_context)
+            return exception_info
+        except Exception as error:
+            from foundations.pipeline_context import PipelineContext
+
+            error_pipeline_context = PipelineContext()
+
+            exception_info = fetch_error_information(error_pipeline_context)
+            save_context(error_pipeline_context)
+
+            return exception_info
+
+    exception_info = serialize_job_results(exception_info)
 
     if exception_info is not None:
         compat_raise(exception_info[0], exception_info[1], exception_info[2])
