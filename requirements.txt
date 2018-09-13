@@ -8,3 +8,4 @@ PyYAML==3.13
 pysftp==0.2.8
 mock==2.0.0
 freezegun==0.3.8
+boto3==1.9.4

@@ -2,20 +2,20 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
 from foundations.job_bundler import JobBundler
 
 
-class GCPJobDeployment(object):
+class AWSJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle, code_bucket_name, result_bucket_name):
         from foundations.bucket_job_deployment import BucketJobDeployment
-        from foundations_gcp.gcp_bucket import GCPBucket
+        from foundations_aws.aws_bucket import AWSBucket
 
-        self._deployment = BucketJobDeployment(job_name, job, job_source_bundle, GCPBucket(
-            code_bucket_name), GCPBucket(result_bucket_name))
+        self._deployment = BucketJobDeployment(job_name, job, job_source_bundle, AWSBucket(
+            code_bucket_name), AWSBucket(result_bucket_name))
 
     def config(self):
         return self._deployment.config()

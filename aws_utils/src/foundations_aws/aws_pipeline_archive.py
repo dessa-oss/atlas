@@ -2,22 +2,22 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
 from foundations.utils import file_archive_name
 from foundations.utils import file_archive_name_with_additional_prefix
 
 
-class GCPPipelineArchive(object):
+class AWSPipelineArchive(object):
 
     def __init__(self, bucket):
-        from foundations_gcp.gcp_bucket import GCPBucket
+        from foundations_aws.aws_bucket import AWSBucket
         from foundations.bucket_pipeline_archive import BucketPipelineArchive
         from foundations.prefixed_bucket import PrefixedBucket
 
         self._archive = BucketPipelineArchive(
-            PrefixedBucket, 'pipeline_archives', GCPBucket, bucket)
+            PrefixedBucket, 'pipeline_archives', AWSBucket, bucket)
 
     def __enter__(self):
         return self._archive.__enter__()

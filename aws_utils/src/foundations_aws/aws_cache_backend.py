@@ -2,14 +2,14 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
 from foundations.bucket_cache_backend import BucketCacheBackend
 
-class GCPCacheBackend(BucketCacheBackend):
+class AWSCacheBackend(BucketCacheBackend):
 
     def __init__(self, bucket):
-        from foundations_gcp.gcp_bucket import GCPBucket
+        from foundations_aws.aws_bucket import AWSBucket
 
-        super(GCPCacheBackend, self).__init__(GCPBucket(bucket))
+        super(AWSCacheBackend, self).__init__(AWSBucket(bucket))
