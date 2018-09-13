@@ -15,4 +15,8 @@ cd foundations_sdk/ && \
     cd ssh_utils/ && \
     python setup.py sdist bdist_wheel &&\
     cd ../ && \
-    python -m pip install -U ssh_utils/dist/foundations_ssh-${build_version}-py${wheel_suffix}-none-any.whl
+    python -m pip install -U ssh_utils/dist/foundations_ssh-${build_version}-py${wheel_suffix}-none-any.whl && \
+    cd aws_utils/ && \
+    python setup.py sdist bdist_wheel &&\
+    cd ../ && \
+    python -m pip install -U aws_utils/dist/foundations_aws-${build_version}-py${wheel_suffix}-none-any.whl
