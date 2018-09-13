@@ -18,6 +18,8 @@ There is a new release on every second Friday. Old releases can be found by navi
 
 Examples for each release version: 
 
+[0.0.4](https://github.com/DeepLearnI/foundations/tree/0.0.4/examples) 
+
 [0.0.3.1](https://github.com/DeepLearnI/foundations/tree/0.0.3.1/examples) 
 
 [0.0.3](https://github.com/DeepLearnI/foundations/tree/0.0.3/examples)
