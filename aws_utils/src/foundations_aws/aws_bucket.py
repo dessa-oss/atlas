@@ -47,6 +47,10 @@ class AWSBucket(object):
 
         object_responses = self._connection.list_objects_v2(
             Bucket=self._bucket_name, Prefix=directory + '/', Delimiter='/')
+        
+        if 'Contents' not in object_responses:
+            return []
+
         object_names = [bucket_object['Key'] for bucket_object in object_responses['Contents']]
         object_file_names = [basename(path) for path in object_names]
         for path in object_file_names:
