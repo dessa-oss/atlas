@@ -19,4 +19,4 @@ class ConnectionManager(object):
 
     def _load(self):
         import boto3
-        self._bucket_connection = boto.resource('s3')
+        self._bucket_connection = boto3.client('s3')
