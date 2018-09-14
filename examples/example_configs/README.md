@@ -30,6 +30,8 @@ Foundations works with three different types of deployments:
 
 **Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
 
+**Amazon Web Services (AWS) Deployment:** for use with Amazon's cloud service. A queuing system is required for use of this deployment configuration.  This has been tested using AWS Lambda + AWS Batch as the queuing + scheduling system.
+
 **SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system.
 
 ## Configuration Options
