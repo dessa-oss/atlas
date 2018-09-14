@@ -18,7 +18,7 @@ class TestDeployJob(unittest.TestCase):
         from foundations.global_state import foundations_context
         from os.path import isfile
         from integration.config import make_code_bucket
-        from foundations_gcp import GCPBucket
+        from foundations_aws import AWSBucket
 
         def method():
             pass

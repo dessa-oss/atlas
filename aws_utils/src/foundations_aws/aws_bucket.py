@@ -20,8 +20,10 @@ class AWSBucket(object):
         self._upload_object(name, input_file)
 
     def exists(self, name):
+        from botocore.exceptions import ClientError
+
         try:
-            s3.head_object(Bucket=self._bucket_name, Key=name)
+            self._connection.head_object(Bucket=self._bucket_name, Key=name)
             return True
         except ClientError:
             return False
