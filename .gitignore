@@ -27,3 +27,4 @@ tmp
 **/*.csv
 foundations.zip
 .vscode
+**/spike*
