@@ -5,18 +5,21 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def returns(*types):
     def _internal(function):
         return function
     return _internal
 
+
 def api_resource(klass):
-    print(dir(klass()) )
+    print(dir(klass()))
     if hasattr(klass, 'index'):
         print('has index')
     else:
         print('no index')
     return klass
+
 
 def description(description):
     def _internal(klass):
