@@ -7,6 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class PropertyModel(object):
+    """Convenience class for automatically assigning values to named
+    properties from a constructor.
+    """
 
     def __init__(self, **kwargs):
         for property_name, model_property in self.__class__.__dict__.items():
@@ -15,6 +18,13 @@ class PropertyModel(object):
 
     @staticmethod
     def define_property():
+        """Defines an attribute on a model automatically and creates properties for it
+        
+        Returns:
+            property -- The property defined
+        """
+
+
         import random
         attribute_name = '_%08x' % random.getrandbits(32)
 
