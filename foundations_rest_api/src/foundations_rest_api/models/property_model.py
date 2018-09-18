@@ -1,0 +1,27 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+
+class PropertyModel(object):
+
+    def __init__(self, **kwargs):
+        for property_name, model_property in self.__class__.__dict__.items():
+            if isinstance(model_property, property):
+                model_property.fset(self, kwargs.get(property_name))
+
+    @staticmethod
+    def define_property():
+        import random
+        attribute_name = '_%08x' % random.getrandbits(32)
+
+        def getter(self):
+            return getattr(self, attribute_name)
+
+        def setter(self, value):
+            setattr(self, attribute_name, value)
+
+        return property(getter, setter)

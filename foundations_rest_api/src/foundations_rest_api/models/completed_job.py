@@ -5,32 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_rest_api.models.property_model import PropertyModel
 
-class CompletedJob(object):
-    
-    def __init__(self, job_id=None, user=None, input_params=None, output_metrics=None, status=None):
-        self._job_id = job_id
-        self._user = user
-        self._input_params = input_params
-        self._output_metrics = output_metrics
-        self._status = status
 
-    @property
-    def job_id(self):
-        return self._job_id
+class CompletedJob(PropertyModel):
 
-    @property
-    def user(self):
-        return self._user
-
-    @property
-    def input_params(self):
-        return self._input_params
-
-    @property
-    def output_metrics(self):
-        return self._output_metrics
-
-    @property
-    def status(self):
-        return self._status
+    job_id = PropertyModel.define_property()
+    user = PropertyModel.define_property()
+    input_params = PropertyModel.define_property()
+    output_metrics = PropertyModel.define_property()
+    status = PropertyModel.define_property()
