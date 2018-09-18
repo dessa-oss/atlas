@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.test_response import TestResponse
-from test.v1 import *
+from test.v1.models.test_property_model import TestPropertyModel
+from test.v1.models.test_completed_job import TestCompletedJob
+from test.v1.models.test_project import TestProject
