@@ -17,7 +17,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_api',
+    name='foundations_rest_api',
     version=environ.get('build_version', '0.0.0'),
     description='An API for Foundations',
     classifiers=[ 
@@ -27,6 +27,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
-        'foundations_api': ['resources/*'],
+        'foundations_rest_api': ['resources/*'],
     }
 )
