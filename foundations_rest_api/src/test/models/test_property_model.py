@@ -13,6 +13,7 @@ class TestPropertyModel(unittest.TestCase):
 
     class Mock(PropertyModel):
         my_property = PropertyModel.define_property()
+        my_other_property = PropertyModel.define_property()
 
     class MockTwo(PropertyModel):
         my_different_property = PropertyModel.define_property()
@@ -28,6 +29,17 @@ class TestPropertyModel(unittest.TestCase):
         self.assertEqual(14, mock.my_property)
     
     def test_defines_property_different_property(self):
+        mock = self.Mock()
+        mock.my_other_property = 14
+        self.assertEqual(14, mock.my_other_property)
+    
+    def test_defines_property_different_property_no_conflict(self):
+        mock = self.Mock()
+        mock.my_property = 23
+        mock.my_other_property = 14
+        self.assertEqual(23, mock.my_property)
+    
+    def test_defines_property_different_class(self):
         mock = self.MockTwo()
         mock.my_different_property = 14
         self.assertEqual(14, mock.my_different_property)
