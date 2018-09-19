@@ -6,9 +6,23 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
 class Scheduler(object):
-    def __init__(self, scheduler_backend=None):
+    """This class models a scheduler, which (currently) only keeps track of jobs that are queued, running, and completed.  Requires a backend to function.
+        Arguments:
+            scheduler_backend: {*Backend} -- The backend to use with the scheduler.
+    """
+
+
+    def __init__(self, scheduler_backend):
         self._backend = scheduler_backend
 
     def get_job_information(self, status=None):
-        for job_info in self._backend.get_paginated(None, None, status):
-            yield job_info
+        """Get a generator for all jobs with a certain status (or all jobs).
+            Arguments:
+                status: {str} -- The status to filter on.  If None, get all jobs.  Defaults to None.
+
+        Returns:
+            generator -- An iterable that yields foundations.scheduler_job_information.JobInformation objects.  Handles pagination internally.
+        """
+
+        for job_information in self._backend.get_paginated(None, None, status):
+            yield job_information
