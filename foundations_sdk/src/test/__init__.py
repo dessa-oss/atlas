@@ -64,3 +64,4 @@ from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
 from test.test_staging import TestStaging
 from test.test_new_stage_log_middleware import TestNewStageLogMiddleware
+from test.test_job import TestJob
