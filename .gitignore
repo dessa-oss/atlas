@@ -11,12 +11,10 @@ foundations_sdk/build
 foundations_sdk/dist
 foundations_sdk/foundations.egg-info
 foundations_sdk/src/foundations.egg-info
-
 foundations_rest_api/build
 foundations_rest_api/dist
 foundations_rest_api/foundations_rest_api.egg-info
 foundations_rest_api/src/foundations_rest_api.egg-info
-
 gcp_utils/build
 gcp_utils/dist
 gcp_utils/foundations_gcp.egg-info
