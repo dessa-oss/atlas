@@ -16,3 +16,7 @@ cd foundations_sdk/ && \
     python setup.py sdist bdist_wheel &&\
     cd ../ && \
     python -m pip install -U ssh_utils/dist/foundations_ssh-${build_version}-py${wheel_suffix}-none-any.whl
+    cd foundations_rest_api/ && \
+    python setup.py sdist bdist_wheel &&\
+    cd ../ && \
+    python -m pip install -U foundations_rest_api/dist/foundations_rest_api-${build_version}-py${wheel_suffix}-none-any.whl

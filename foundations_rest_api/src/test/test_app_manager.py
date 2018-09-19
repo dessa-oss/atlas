@@ -23,8 +23,3 @@ class TestAppManager(unittest.TestCase):
         initial_app = app_manager.app()
         second_app = app_manager.app()
         self.assertEqual(initial_app, second_app)
-
-    def test_app_name(self):
-        app_manager = AppManager()
-        app = app_manager.app()
-        print(__name__)
