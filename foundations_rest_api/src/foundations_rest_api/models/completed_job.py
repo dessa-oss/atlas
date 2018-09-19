@@ -23,24 +23,34 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _all_internal():
-        from foundations.job_persister import JobPersister
-        from foundations.pipeline_context import PipelineContext
-
         result = []
+
+        for job_id, context in CompletedJob.contexts():
+            stage_metrics = {}
+            for stage_context in context.stage_contexts.values():
+                for item in stage_context.stage_log:
+                    stage_metrics[item['key']] = item['value']
+
+            job = CompletedJob(job_id=job_id, user='Unspecified',
+                               input_params=context.provenance.job_run_data, output_metrics=stage_metrics, status='Completed')
+            result.append(job)
+
+        return result
+
+    @staticmethod
+    def contexts():
+        from foundations.job_persister import JobPersister
 
         with JobPersister.load_archiver_fetch() as archiver_fetch:
             for archiver in archiver_fetch.fetch_archivers():
-                context = PipelineContext()
-                context.load_stage_log_from_archive(archiver)
-                context.load_provenance_from_archive(archiver)
+                yield archiver.pipeline_name(), CompletedJob.load_context(archiver)
 
-                stage_metrics = {}
-                for stage_context in context.stage_contexts.values():
-                    for item in stage_context.stage_log:
-                        stage_metrics[item['key']] = item['value']
+    @staticmethod
+    def load_context(archiver):
+        from foundations.pipeline_context import PipelineContext
 
-                job = CompletedJob(job_id=archiver.pipeline_name(), user='Unspecified',
-                                   input_params=context.provenance.job_run_data, output_metrics=stage_metrics, status='Completed')
-                result.append(job)
+        context = PipelineContext()
+        context.load_stage_log_from_archive(archiver)
+        context.load_provenance_from_archive(archiver)
 
-        return result
+        return context
