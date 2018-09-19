@@ -7,6 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def description(description):
+    """Decorator for defining description for controllers
+    """
     def _internal(klass):
         return klass
     return _internal

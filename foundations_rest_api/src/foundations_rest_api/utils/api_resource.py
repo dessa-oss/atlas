@@ -15,6 +15,8 @@ api = Api(app)
 
 
 def api_resource(klass):
+    """Decorator for defining resource for controllers
+    """
     from flask_restful import Resource
 
     if hasattr(klass, 'index'):

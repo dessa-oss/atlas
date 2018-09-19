@@ -7,10 +7,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class AppManager(object):
+    """A class to manage the initilization of the Flask server.
+        Arguments:
+            
+    """    
     def __init__(self):
         self._app = None
 
     def app(self):
+        """Create and instantiate Flask object
+        """
         from flask import Flask
 
         if self._app is None:

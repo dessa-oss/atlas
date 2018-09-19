@@ -7,6 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def returns(*types):
+    """Decorator for defining returns for controllers
+    """
     def _internal(function):
         return function
     return _internal
