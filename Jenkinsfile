@@ -42,6 +42,19 @@ node {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
+        ws("${WORKSPACE}/foundations_rest_api/") {
+            stage('Python2 REST API Install Requirements') {
+                sh "python -m pip install flask flask-restful"
+            }
+            ws("${WORKSPACE}/src") {
+                stage('Python2 Foundations Unit Tests') {
+                    sh "python -Wi -m unittest test"
+                }
+            }
+            stage('Python2 Foundations Create Artifact') {
+                sh "python setup.py sdist bdist_wheel"
+            }
+        }
     }
     container("python3") {
         ws("${WORKSPACE}/foundations_sdk/") {
@@ -80,6 +93,19 @@ node {
             ws("${WORKSPACE}/src") {
             }
             stage('Python3 GCP Create Artifact') {
+                sh "python setup.py sdist bdist_wheel"
+            }
+        }
+        ws("${WORKSPACE}/foundations_rest_api/") {
+            stage('Python3 REST API Install Requirements') {
+                sh "python -m pip install flask flask-restful"
+            }
+            ws("${WORKSPACE}/src") {
+                stage('Python3 Foundations Unit Tests') {
+                    sh "python -Wi -m unittest test"
+                }
+            }
+            stage('Python3 Foundations Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
