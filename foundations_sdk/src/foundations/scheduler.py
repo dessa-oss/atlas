@@ -10,4 +10,5 @@ class Scheduler(object):
         self._backend = scheduler_backend
 
     def get_job_information(self, status=None):
-        return self._backend.get_paginated(None, None, status)
+        for job_info in self._backend.get_paginated(None, None, status):
+            yield job_info

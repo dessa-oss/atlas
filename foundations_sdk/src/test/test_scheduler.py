@@ -41,6 +41,12 @@ class TestScheduler(unittest.TestCase):
 
         return Scheduler(backend)
 
+    def test_returns_non_list_iterable(self):
+        scheduler = self._prep_scheduler([], [], [])
+
+        jobs = scheduler.get_job_information()
+        self.assertTrue(hasattr(jobs, "__iter__") and not isinstance(jobs, list))
+
     def test_get_queued_jobs_no_jobs(self):
         scheduler = self._prep_scheduler([], [], [])
 
@@ -115,3 +121,21 @@ class TestScheduler(unittest.TestCase):
         completed_jobs = list(scheduler.get_job_information(status="COMPLETED"))
         expected_completed_jobs = [self._make_job("one_job", "COMPLETED"), self._make_job("another_job", "COMPLETED")]
         self.assertEqual(completed_jobs, expected_completed_jobs)
+
+    def test_all_jobs(self):
+        scheduler = self._prep_scheduler(["qj_0", "qj_1"], ["rj_0"], ["cj_0", "cj_1"])
+
+        all_jobs = list(scheduler.get_job_information())
+        expected_queued_jobs = [self._make_job("qj_0", "QUEUED"), self._make_job("qj_1", "QUEUED")]
+        expected_running_jobs = [self._make_job("rj_0", "RUNNING")]
+        expected_completed_jobs = [self._make_job("cj_0", "COMPLETED"), self._make_job("cj_1", "COMPLETED")]
+        self.assertEqual(all_jobs, expected_queued_jobs + expected_running_jobs + expected_completed_jobs)
+
+    def test_all_jobs_different_arrangement(self):
+        scheduler = self._prep_scheduler([], ["rj_0", "rj_1"], ["cj_0", "cj_1", "cj_2"])
+
+        all_jobs = list(scheduler.get_job_information())
+        expected_queued_jobs = []
+        expected_running_jobs = [self._make_job("rj_0", "RUNNING"), self._make_job("rj_1", "RUNNING")]
+        expected_completed_jobs = [self._make_job("cj_0", "COMPLETED"), self._make_job("cj_1", "COMPLETED"), self._make_job("cj_2", "COMPLETED")]
+        self.assertEqual(all_jobs, expected_queued_jobs + expected_running_jobs + expected_completed_jobs)
