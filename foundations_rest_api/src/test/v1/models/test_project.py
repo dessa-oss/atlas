@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from mock import patch
 from foundations_rest_api.v1.models.project import Project
 
 
@@ -28,3 +29,31 @@ class TestProject(unittest.TestCase):
     def test_new_project_has_name_different_name(self):
         response = Project.new(name='my favourite project')
         self.assertEqual('my favourite project', response.evaluate().name)
+
+    def test_find_by_name_project_is_response(self):
+        from foundations_rest_api.response import Response
+
+        response = Project.find_by(name='my first project')
+        self.assertTrue(isinstance(response, Response))
+    
+    def test_find_by_name_project_is_response_containing_project(self):
+        response = Project.find_by(name='my first project')
+        self.assertTrue(isinstance(response.evaluate(), Project))
+    
+    def test_find_by_name_project_has_name(self):
+        response = Project.find_by(name='my first project')
+        self.assertEqual('my first project', response.evaluate().name)
+    
+    def test_find_by_name_project_has_name_different_name(self):
+        response = Project.find_by(name='my favourite project')
+        self.assertEqual('my favourite project', response.evaluate().name)
+    
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some completed jobs')
+    def test_find_by_name_project_has_completed_jobs(self):
+        response = Project.find_by(name='my favourite project')
+        self.assertEqual('some completed jobs', response.evaluate().completed_jobs)
+    
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some other completed jobs')
+    def test_find_by_name_project_has_completed_jobs(self):
+        response = Project.find_by(name='my favourite project')
+        self.assertEqual('some other completed jobs', response.evaluate().completed_jobs)
