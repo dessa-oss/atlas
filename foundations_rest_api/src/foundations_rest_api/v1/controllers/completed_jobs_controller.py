@@ -5,5 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.test_response import TestResponse
-from test.v1 import *
+from foundations_rest_api.utils import api_resource
+
+
+@api_resource
+class CompletedJobsController(object):
+
+    def index(self):
+        from foundations_rest_api.v1.models.project import Project
+
+        return Project.find_by(name=self.params['project_name'])

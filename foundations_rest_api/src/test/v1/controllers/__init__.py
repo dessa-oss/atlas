@@ -5,5 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.test_response import TestResponse
-from test.v1 import *
+from test.v1.controllers.test_completed_jobs_controller import TestCompletedJobsController
