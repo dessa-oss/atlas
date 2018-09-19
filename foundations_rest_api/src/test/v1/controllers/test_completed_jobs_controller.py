@@ -10,14 +10,23 @@ from mock import patch
 from foundations_rest_api.v1.controllers.completed_jobs_controller import CompletedJobsController
 
 
+def _mock_project(expected_name, result):
+    def _mock(name):
+        if expected_name == name:
+            return result
+        return None
+    return _mock
+
 class TestCompletedJobsController(unittest.TestCase):
 
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some completed jobs')
+    @patch('foundations_rest_api.v1.models.project.Project.find_by', _mock_project('the great potato project', 'some project'))
     def test_index_returns_all_completed_jobs(self):
         controller = CompletedJobsController()
-        self.assertEqual('some completed jobs', controller.index())
+        controller.params = {'project_name': 'the great potato project'}
+        self.assertEqual('some project', controller.index())
 
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some other completed jobs')
+    @patch('foundations_rest_api.v1.models.project.Project.find_by', _mock_project('the not so great potato project', 'some other project'))
     def test_index_returns_all_completed_jobs_different_value(self):
         controller = CompletedJobsController()
-        self.assertEqual('some other completed jobs', controller.index())
+        controller.params = {'project_name': 'the not so great potato project'}
+        self.assertEqual('some other project', controller.index())

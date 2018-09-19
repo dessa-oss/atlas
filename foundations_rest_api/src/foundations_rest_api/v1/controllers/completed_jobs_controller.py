@@ -12,5 +12,6 @@ from foundations_rest_api.utils import api_resource
 class CompletedJobsController(object):
 
     def index(self):
-        from foundations_rest_api.v1.models.completed_job import CompletedJob
-        return CompletedJob.all()
+        from foundations_rest_api.v1.models.project import Project
+
+        return Project.find_by(name=self.params['project_name'])
