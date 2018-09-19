@@ -9,7 +9,6 @@ import unittest
 from mock import patch
 from foundations_rest_api.v1.models.project import Project
 
-
 class TestProject(unittest.TestCase):
     
     def test_new_project_is_response(self):
@@ -48,12 +47,16 @@ class TestProject(unittest.TestCase):
         response = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', response.evaluate().name)
     
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some completed jobs')
-    def test_find_by_name_project_has_completed_jobs(self):
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
+    def test_find_by_name_project_has_completed_jobs(self, mock):
+        mock.return_value = 'some completed jobs'
+
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some completed jobs', response.evaluate().completed_jobs)
     
-    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all', lambda: 'some other completed jobs')
-    def test_find_by_name_project_has_completed_jobs(self):
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
+    def test_find_by_name_project_has_completed_jobs_different_result(self, mock):
+        mock.return_value = 'some other completed jobs'
+
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some other completed jobs', response.evaluate().completed_jobs)
