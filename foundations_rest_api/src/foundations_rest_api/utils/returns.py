@@ -5,4 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_rest_api.utils import *
+def returns(*types):
+    def _internal(function):
+        return function
+    return _internal

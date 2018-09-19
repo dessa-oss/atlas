@@ -4,17 +4,13 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-from flask import Flask
+from foundations_rest_api.app_manager import AppManager
 from flask_restful import Api
 
-app = Flask(__name__)
+app_manager = AppManager()
+app = app_manager.app()
+
 api = Api(app)
-
-
-def returns(*types):
-    def _internal(function):
-        return function
-    return _internal
 
 
 def api_resource(klass):
@@ -25,9 +21,3 @@ def api_resource(klass):
         resource_class = type('blah', (Resource,), {'get': _get})
         api.add_resource(resource_class, '/lou')
     return klass
-
-
-def description(description):
-    def _internal(klass):
-        return klass
-    return _internal
