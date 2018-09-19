@@ -27,6 +27,9 @@ node {
                 sh "python -m pip install pysftp"
             }
             ws("${WORKSPACE}/src") {
+                stage('Python2 SSH Unit Tests'){
+                    sh "python -Wi -m unittest test"
+                }
             }
             stage('Python2 SSH Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
@@ -47,7 +50,7 @@ node {
                 sh "python -m pip install flask flask-restful"
             }
             ws("${WORKSPACE}/src") {
-                stage('Python2 Foundations Unit Tests') {
+                stage('Python2 REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
                 }
             }
@@ -81,6 +84,9 @@ node {
                 sh "python -m pip install pysftp"
             }
             ws("${WORKSPACE}/src") {
+                stage('Python3 SSH Unit Tests'){
+                    sh "python -Wi -m unittest test"
+                }
             }
             stage('Python3 SSH Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
@@ -101,7 +107,7 @@ node {
                 sh "python -m pip install flask flask-restful"
             }
             ws("${WORKSPACE}/src") {
-                stage('Python3 Foundations Unit Tests') {
+                stage('Python3 REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
                 }
             }
