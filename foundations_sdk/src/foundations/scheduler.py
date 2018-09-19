@@ -7,7 +7,7 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 
 class Scheduler(object):
     def __init__(self, scheduler_backend=None):
-        pass
+        self._backend = scheduler_backend
 
     def get_job_information(self, status=None):
-        pass
+        return self._backend.get_paginated(None, None, status)

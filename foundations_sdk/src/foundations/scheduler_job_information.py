@@ -68,3 +68,26 @@ class JobInformation(object):
         """
 
         return self._duration_timestamp
+
+    def __eq__(self, other):
+        if isinstance(other, JobInformation):
+            for attribute in ["_uuid", "_submission_timestamp", "_duration_timestamp", "_status", "_user"]:
+                if self.__dict__[attribute] != other.__dict__[attribute]:
+                    return False
+            return True
+        return False
+
+    # necessary in python 2
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        repr_dict = {
+            "uuid": self.uuid(),
+            "submission_datetime": self.submission_datetime(),
+            "duration": self.duration(),
+            "status": self.status(),
+            "user_submitted": self.user_submitted()
+        }
+
+        return "JobInformation " + str(repr_dict)
