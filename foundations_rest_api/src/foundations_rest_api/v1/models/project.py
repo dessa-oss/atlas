@@ -5,13 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_rest_api.v1.models.property_model import PropertyModel
 
-class Project(object):
+
+class Project(PropertyModel):
     """Project data model
 
     Arguments:
         name {str} -- Name of the project
     """
+
+    name = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -27,19 +31,6 @@ class Project(object):
         from foundations_rest_api.response import Response
 
         def callback():
-            return Project(name)
+            return Project(name=name)
 
         return Response(None, callback)
-
-    def __init__(self, name):
-        self._name = name
-
-    @property
-    def name(self):
-        """Name of the project
-
-        Returns:
-            str -- Name of the project
-        """
-
-        return self._name
