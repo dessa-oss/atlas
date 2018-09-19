@@ -5,7 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.v1.models.test_property_model import TestPropertyModel
-from test.v1.models.test_completed_job import TestCompletedJob
-from test.v1.models.test_running_job import TestRunningJob
-from test.v1.models.test_project import TestProject
+from foundations_rest_api.utils import api_resource
+
+
+@api_resource
+class RunningJobsController(object):
+
+    def index(self):
+        from foundations_rest_api.v1.models.project import Project
+
+        return Project.find_by(name=self.params['project_name'])

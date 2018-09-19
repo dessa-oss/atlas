@@ -17,6 +17,7 @@ class Project(PropertyModel):
 
     name = PropertyModel.define_property()
     completed_jobs = PropertyModel.define_property()
+    running_jobs = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -42,9 +43,11 @@ class Project(PropertyModel):
 
         def callback():
             from foundations_rest_api.v1.models.completed_job import CompletedJob
+            from foundations_rest_api.v1.models.running_job import RunningJob
 
             project = Project(name=name)
             project.completed_jobs = CompletedJob.all()
+            project.running_jobs = RunningJob.all()
             return project
 
         return Response(None, callback)
