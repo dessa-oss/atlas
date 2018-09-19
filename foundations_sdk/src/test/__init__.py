@@ -66,3 +66,4 @@ from test.test_staging import TestStaging
 from test.test_new_stage_log_middleware import TestNewStageLogMiddleware
 from test.test_scheduler import TestScheduler
 from test.test_scheduler_job_information import TestSchedulerJobInformation
+from test.test_job import TestJob
