@@ -47,11 +47,11 @@ node {
                 sh "python -m pip install flask flask-restful"
             }
             ws("${WORKSPACE}/src") {
-                stage('Python2 Foundations Unit Tests') {
+                stage('Python2 Foundations REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
                 }
             }
-            stage('Python2 Foundations Create Artifact') {
+            stage('Python2 Foundations REST API Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
@@ -101,11 +101,11 @@ node {
                 sh "python -m pip install flask flask-restful"
             }
             ws("${WORKSPACE}/src") {
-                stage('Python3 Foundations Unit Tests') {
+                stage('Python3 Foundations REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
                 }
             }
-            stage('Python3 Foundations Create Artifact') {
+            stage('Python3 Foundations REST API Create Artifact') {
                 sh "python setup.py sdist bdist_wheel"
             }
         }
