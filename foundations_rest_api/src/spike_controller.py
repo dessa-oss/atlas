@@ -1,21 +1,16 @@
 
-from foundations_api import returns, description, api_resource
+from foundations_rest_api import returns, description, api_resource
 from spike_model import MyModel
-
+from foundations_rest_api.utils import app
 
  
 @api_resource
 class MyListController(object):
  
-    @description('Get an empty my model')
-    @returns(MyModel)
-    def new(self):
-        return MyModel.new()
- 
     @description('Get lots of my models')
     @returns(list, MyModel)
     def index(self):
-        return MyModel.where(self.params)
+        return {'thing1': 9108}
  
     @description('Get one of my models')
     @returns(list, MyModel)
@@ -36,3 +31,6 @@ class MyListController(object):
     @returns(MyModel)
     def update(self):
         return MyModel.find(self.params['id']).update(params['my_model'])
+
+if __name__ == '__main__':
+    app.run(debug=True)        

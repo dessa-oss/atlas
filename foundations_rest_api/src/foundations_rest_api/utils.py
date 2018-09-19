@@ -4,6 +4,11 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+from flask import Flask
+from flask_restful import Api
+
+app = Flask(__name__)
+api = Api(app)
 
 def returns(*types):
     def _internal(function):
@@ -11,14 +16,35 @@ def returns(*types):
     return _internal
 
 def api_resource(klass):
-    print(dir(klass()) )
+    from flask_restful import Resource
     if hasattr(klass, 'index'):
-        print('has index')
-    else:
-        print('no index')
+        def _get(self):
+            return klass().index()
+        resource_class = type('blah', (Resource,), {'get': _get})
+        api.add_resource(resource_class, '/lou')
     return klass
 
 def description(description):
     def _internal(klass):
         return klass
     return _internal
+
+
+# # Used if list of models
+# class MyListResource(Resource):
+#     def get(self):
+#         return MyListController().index()
+
+#     def post(self):
+#         return MyListController().create()
+
+# # Used if interacting with single model
+# class MySingleResource(Resource):
+#     def get(self):
+#         return MyListController().show()
+
+#     def delete(self):
+#         return MyListController().destroy()
+    
+#     def patch(self):
+#         return MyListController().update()
