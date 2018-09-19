@@ -17,29 +17,70 @@ class TestPropertyModel(unittest.TestCase):
 
     class MockTwo(PropertyModel):
         my_different_property = PropertyModel.define_property()
-    
+
+    class MockThree(PropertyModel):
+        my_different_property = PropertyModel.define_property()
+
     def test_defines_property(self):
         mock = self.Mock()
         mock.my_property = 5
         self.assertEqual(5, mock.my_property)
-    
+
     def test_defines_property_different_value(self):
         mock = self.Mock()
         mock.my_property = 14
         self.assertEqual(14, mock.my_property)
-    
+
     def test_defines_property_different_property(self):
         mock = self.Mock()
         mock.my_other_property = 14
         self.assertEqual(14, mock.my_other_property)
-    
+
     def test_defines_property_different_property_no_conflict(self):
         mock = self.Mock()
         mock.my_property = 23
         mock.my_other_property = 14
         self.assertEqual(23, mock.my_property)
-    
+
     def test_defines_property_different_class(self):
         mock = self.MockTwo()
         mock.my_different_property = 14
         self.assertEqual(14, mock.my_different_property)
+
+    def test_equality_equals(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockTwo(my_different_property=5)
+        self.assertEqual(mock, mock2)
+
+    def test_equality_not_equal(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockTwo(my_different_property=7)
+        self.assertNotEqual(mock, mock2)
+
+    def test_equality_not_same_type(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockThree(my_different_property=5)
+        self.assertNotEqual(mock, mock2)
+
+    def test_inequality_equals(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockTwo(my_different_property=5)
+        self.assertFalse(mock.__ne__(mock2))
+
+    def test_inequality_not_equal(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockTwo(my_different_property=7)
+        self.assertTrue(mock.__ne__(mock2))
+
+    def test_inequality_not_same_type(self):
+        mock = self.MockTwo(my_different_property=5)
+        mock2 = self.MockThree(my_different_property=5)
+        self.assertTrue(mock.__ne__(mock2))
+
+    def test_attributes(self):
+        mock = self.MockTwo(my_different_property=5)
+        self.assertEqual({'my_different_property': 5}, mock.attributes)
+
+    def test_attributes_different_class(self):
+        mock = self.Mock(my_property=23, my_other_property=233)
+        self.assertEqual({'my_property': 23, 'my_other_property': 233}, mock.attributes)

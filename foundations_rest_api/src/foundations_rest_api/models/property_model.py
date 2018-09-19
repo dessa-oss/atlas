@@ -12,9 +12,8 @@ class PropertyModel(object):
     """
 
     def __init__(self, **kwargs):
-        for property_name, model_property in self.__class__.__dict__.items():
-            if isinstance(model_property, property):
-                model_property.fset(self, kwargs.get(property_name))
+        for property_name, model_property in self._properties():
+            model_property.fset(self, kwargs.get(property_name))
 
     @staticmethod
     def define_property():
@@ -35,3 +34,29 @@ class PropertyModel(object):
             setattr(self, attribute_name, value)
 
         return property(getter, setter)
+
+    @property
+    def attributes(self):
+        attributes = {}
+
+        for property_name, model_property in self._properties():
+            attributes[property_name] = model_property.fget(self)
+        
+        return attributes
+
+    def _properties(self):
+        for property_name, model_property in self.__class__.__dict__.items():
+            if isinstance(model_property, property):
+                yield property_name, model_property
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.attributes == other.attributes
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return self.attributes.__str__()
+
+    def __repr__(self):
+        return self.attributes.__repr__()
