@@ -4,6 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
 from foundations_rest_api.app_manager import AppManager
 from flask_restful import Api
 

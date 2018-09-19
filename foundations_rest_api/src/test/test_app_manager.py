@@ -6,7 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_rest_api.app_manager import AppManager 
+
+from foundations_rest_api.app_manager import AppManager
 
 
 class TestAppManager(unittest.TestCase):
@@ -16,10 +17,9 @@ class TestAppManager(unittest.TestCase):
         app_manager = AppManager()
         app_manager.app()
         self.assertTrue(isinstance(app_manager.app(), Flask))
-    
+
     def test_always_returns_same_app(self):
         app_manager = AppManager()
         initial_app = app_manager.app()
         second_app = app_manager.app()
         self.assertEqual(initial_app, second_app)
-
