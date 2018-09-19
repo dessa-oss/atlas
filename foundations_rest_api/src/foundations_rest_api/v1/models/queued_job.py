@@ -13,3 +13,13 @@ class QueuedJob(PropertyModel):
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
     submitted_time = PropertyModel.define_property()
+
+    @staticmethod
+    def all():
+        from foundations_rest_api.response import Response
+
+        def _all():
+            return []
+
+        return Response('QueueJob', _all)
+        

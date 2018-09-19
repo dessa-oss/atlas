@@ -118,3 +118,6 @@ class TestQueuedJob(unittest.TestCase):
     def test_has_submitted_time_different_params(self):
         job = QueuedJob(submitted_time=984222255555546)
         self.assertEqual(984222255555546, job.submitted_time)
+
+    def test_all_is_empty_response(self):
+        self.assertEqual([], QueuedJob.all().evaluate())
