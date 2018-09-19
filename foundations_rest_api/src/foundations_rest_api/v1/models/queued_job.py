@@ -16,6 +16,13 @@ class QueuedJob(PropertyModel):
 
     @staticmethod
     def all():
+        """Placeholder method that will eventually return all QueueJobs
+        
+        Returns:
+            list<QueuedJob> -- All queued jobs
+        """
+
+
         from foundations_rest_api.response import Response
 
         def _all():
