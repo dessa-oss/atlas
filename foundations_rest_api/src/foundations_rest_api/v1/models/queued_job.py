@@ -5,7 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.v1.models.test_property_model import TestPropertyModel
-from test.v1.models.test_completed_job import TestCompletedJob
-from test.v1.models.test_queued_job import TestQueuedJob
-from test.v1.models.test_project import TestProject
+from foundations_rest_api.v1.models.property_model import PropertyModel
+
+
+class QueuedJob(PropertyModel):
+
+    job_id = PropertyModel.define_property()
+    user = PropertyModel.define_property()
+    submitted_time = PropertyModel.define_property()
