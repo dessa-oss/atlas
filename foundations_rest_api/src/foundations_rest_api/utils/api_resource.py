@@ -12,18 +12,24 @@ def api_resource(base_path):
         """
         _create_index_route(klass, base_path)
         return klass
-        
+
     return _make_api_resource
 
 def _create_index_route(klass, base_path):
-    from flask_restful import Resource
+    if hasattr(klass, 'index'):
+        resource_class = _create_api_resource(klass)
+        _add_resource(resource_class, base_path)
+
+def _add_resource(resource_class, base_path):
     from foundations_rest_api.global_state import app_manager
+    app_manager.api().add_resource(resource_class, base_path)
+
+def _create_api_resource(klass):
+    from flask_restful import Resource
     import random
 
-    if hasattr(klass, 'index'):
-        class_name = '_%08x' % random.getrandbits(32)
-        resource_class = type(class_name, (Resource,), {'get': _get_api_index(klass)})
-        app_manager.api().add_resource(resource_class, base_path)
+    class_name = '_%08x' % random.getrandbits(32)
+    return type(class_name, (Resource,), {'get': _get_api_index(klass)})
 
 def _get_api_index(klass):
     def _get(self, **kwargs):
