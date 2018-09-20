@@ -12,18 +12,12 @@ class SFTPBucketStatScanner(object):
     """
 
     def __init__(self, path):
-        from paramiko.client import SSHClient
+        from foundations_ssh.paramiko_manager import ParamikoManager
 
-        from foundations.global_state import config_manager
-
-        self._remote_user = config_manager['remote_user']
-        self._remote_host = config_manager['remote_host']
-        self._private_key_path = config_manager['key_path']
-        self._port = config_manager.config().get('port', 22)
-        
         self._path = path
-        self._client = SSHClient()
-        self._client.load_system_host_keys()
+        self._paramiko = ParamikoManager()
+
+        self._health_check()
 
     def scan(self):
         """Returns an iterable of dicts containing file information, one for each file at the path passed into the constructor.
@@ -40,25 +34,30 @@ class SFTPBucketStatScanner(object):
 
         import os.path as path
 
-        with self._client as client:
-            client.connect(self._remote_host, port=self._port, username=self._remote_user, key_filename=self._private_key_path)
-            
-            with client.open_sftp() as sftp:
+        with self._paramiko as client:
+            with client.get_paramiko_sftp() as sftp:
                 for attr in sftp.listdir_iter(path=self._path):
-                    user_name = SFTPBucketScanner._translate_uid_to_user_name(client, attr.st_uid)
-                    file_info = SFTPBucketScanner._construct_file_info(attr.filename, attr.st_mtime, user_name)
+                    user_name = self._translate_uid_to_user_name(attr.st_uid)
+                    file_info = SFTPBucketStatScanner._construct_file_info(attr.filename, attr.st_mtime, user_name)
 
                     yield file_info
 
-    @staticmethod
-    def _translate_uid_to_user_name(client, uid):
+    def _translate_uid_to_user_name(self, uid):
+        # assumes client is connected
         command_to_exec = "getent passwd " + str(uid) + " | cut -d: -f1"
-        _, stdout_stream, _ = client.exec_command(command_to_exec)
+        return self._paramiko.exec_command(command_to_exec)
 
-        user_name = stdout_stream.read()
-        stdout_stream.close()
+    def _health_check(self):
+        with self._paramiko as client:
+            with client.get_paramiko_sftp() as sftp:
+                try:
+                    sftp.lstat(self._path)
+                    dead = False
+                except IOError:
+                    dead = True
 
-        return user_name.decode("utf-8").rstrip("\n")
+                if dead:
+                    raise IOError("SFTPBucketStatScanner could not connect to path " + self._path)
 
     @staticmethod
     def _construct_file_info(filename, last_modified, owner):
