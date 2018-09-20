@@ -52,10 +52,33 @@ class TestResponse(unittest.TestCase):
 
         self.assertEqual({'data': 'hello world'}, response2.as_json())
 
+    def test_as_json_recursive_response_via_dictionary(self):
+        mock = self.Mock('hello world')
+        response = Response('mock', mock.value)
+
+        mock2 = self.Mock({'data': response})
+        response2 = Response('mock', mock2.value)
+
+        self.assertEqual({'data': 'hello world'}, response2.as_json())
+
+    def test_as_json_recursive_response_via_list(self):
+        mock = self.Mock('hello world')
+        response = Response('mock', mock.value)
+
+        mock2 = self.Mock([response])
+        response2 = Response('mock', mock2.value)
+
+        self.assertEqual(['hello world'], response2.as_json())
+
     def test_as_json_non_property(self):
         mock = self.Mock('hello world')
         response = Response('mock', mock.value)
         self.assertEqual('hello world', response.as_json())
+
+    def test_as_json_list(self):
+        mock = self.Mock(['hello', 'world'])
+        response = Response('mock', mock.value)
+        self.assertEqual(['hello', 'world'], response.as_json())
 
     def test_as_json_with_parent(self):
         mock_parent = self.Mock('hello world')

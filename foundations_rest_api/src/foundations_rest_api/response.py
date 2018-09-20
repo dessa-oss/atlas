@@ -39,9 +39,15 @@ class Response(object):
 
         result = self.evaluate()
 
+        if isinstance(result, list):
+            return [self._value_as_json(value) for value in result]
+
         if isinstance(result, PropertyModel):
+            result = result.attributes
+
+        if isinstance(result, dict):
             attributes = {}
-            for key, value in result.attributes.items():
+            for key, value in result.items():
                 attributes[key] = self._value_as_json(value)
             return attributes
 
