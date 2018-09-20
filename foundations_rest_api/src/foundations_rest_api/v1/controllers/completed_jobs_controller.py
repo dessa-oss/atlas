@@ -5,10 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_rest_api.utils import api_resource
+from foundations_rest_api.utils.api_resource import api_resource
 
 
-@api_resource
+@api_resource('/api/v1/projects/<string:project_name>/jobs/completed')
 class CompletedJobsController(object):
 
     def index(self):

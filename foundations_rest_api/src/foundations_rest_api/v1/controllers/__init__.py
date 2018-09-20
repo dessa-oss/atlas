@@ -4,3 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
+from foundations_rest_api.v1.controllers.completed_jobs_controller import CompletedJobsController
+from foundations_rest_api.v1.controllers.queued_jobs_controller import QueuedJobsController
+from foundations_rest_api.v1.controllers.running_jobs_controller import RunningJobsController
