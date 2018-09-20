@@ -74,3 +74,17 @@ class TestProject(unittest.TestCase):
 
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some other running jobs', response.evaluate().running_jobs)
+        
+    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
+    def test_find_by_name_project_has_queued_jobs(self, mock):
+        mock.return_value = 'some queued jobs'
+
+        response = Project.find_by(name='my favourite project')
+        self.assertEqual('some queued jobs', response.evaluate().queued_jobs)
+    
+    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
+    def test_find_by_name_project_has_queued_jobs_different_result(self, mock):
+        mock.return_value = 'some other queued jobs'
+
+        response = Project.find_by(name='my favourite project')
+        self.assertEqual('some other queued jobs', response.evaluate().queued_jobs)
