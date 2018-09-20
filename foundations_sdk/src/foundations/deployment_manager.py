@@ -29,6 +29,13 @@ class DeploymentManager(object):
         return deployment
 
     def scheduler(self):
+        """Returns the scheduler associated with the configure job deployment implementation
+        
+        Returns:
+            Scheduler -- The scheduler as above
+        """
+
+
         from foundations.scheduler import Scheduler
 
         if self._scheduler is None:

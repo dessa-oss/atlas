@@ -22,6 +22,12 @@ class SFTPJobDeployment(object):
 
     @staticmethod
     def scheduler_backend():
+        """Returns the default legacy scheduler backend implementation
+        
+        Returns:
+            LegacyScheduler -- As above
+        """
+
         from foundations.scheduler_legacy_backend import LegacyBackend
         return LegacyBackend.create_default
 

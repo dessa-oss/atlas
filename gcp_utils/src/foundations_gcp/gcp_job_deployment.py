@@ -19,6 +19,12 @@ class GCPJobDeployment(object):
 
     @staticmethod
     def scheduler_backend():
+        """Returns the null scheduler backend implementation
+
+        Returns:
+            LegacyScheduler -- As above
+        """
+
         from foundations.null_scheduler_backend import NullSchedulerBackend
         return NullSchedulerBackend
 
