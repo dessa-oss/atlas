@@ -8,6 +8,15 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 from foundations.scheduler_job_information import JobInformation
 
 class LegacyBackend(object):
+    """The legacy backend for the Scheduler class, where job information is based off of file metadata.
+        Arguments:
+            remote_clock: {*Clock} -- Implementation of a class that gets the time on a remote machine.
+            bucket_stat_scanner_class: {Class} -- Class name for a class that gets metadata for all files in a directory-like entity.
+            jobs_path: {str} -- Path to directory-like entity which contains jobs that are queued to run.
+            archive_path: {str} -- Path to directory-like entity which contains jobs that are either running or have finished running.
+            results_path: {str} -- Path to directory-like entity which contains results tarballs for jobs that have finished running.
+    """
+
     def __init__(self, remote_clock, bucket_stat_scanner_class, jobs_path, archive_path, results_path):
         self._remote_clock = remote_clock
         self._jobs_path_scanner = bucket_stat_scanner_class(jobs_path)
@@ -15,6 +24,16 @@ class LegacyBackend(object):
         self._results_path_scanner = bucket_stat_scanner_class(results_path)
 
     def get_paginated(self, start_index, number_to_get, status):
+    """Get paginated job information.  Will raise a ValueError if the status on which to filter is not supported.
+        Arguments:
+            start_index: {int} -- The index at which to start getting jobs.  Ignored for this class.
+            number_to_get: {int} -- The number of jobs to return.  Ignored for this class.
+            status: {str} -- The status string on which to filter.  'QUEUED', 'RUNNING', and 'COMPLETED' are supported here.  The None value is supported as well - it will get all jobs.
+
+    Returns:
+        generator -- An iterable containing the jobs as specified by the arguments.
+    """
+
         if status == "QUEUED":
             return self._get_queued_jobs()
         elif status == "RUNNING":

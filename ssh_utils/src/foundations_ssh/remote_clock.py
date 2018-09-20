@@ -15,6 +15,12 @@ class RemoteClock(object):
         self._paramiko = ParamikoManager()       
 
     def time(self):
+        """Get the UTC timestamp for current time on the remote machine as configured by the paramiko manager.
+
+        Returns:
+            timestamp -- Integer timestamp for current time on remote machine (UTC)
+        """
+
         with self._paramiko as client:
             timestamp_string = self._paramiko.exec_command("date +%s")
         
