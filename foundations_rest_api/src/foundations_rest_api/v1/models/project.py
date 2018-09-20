@@ -54,4 +54,3 @@ class Project(PropertyModel):
             return project
 
         return Response(None, callback)
-        
