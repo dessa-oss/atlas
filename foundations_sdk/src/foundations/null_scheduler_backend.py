@@ -9,11 +9,11 @@ from foundations.scheduler_legacy_backend import LegacyBackend
 
 
 class NullSchedulerBackend(LegacyBackend):
+    """Default implementation for scheduler job information for use when no backend is supported
+    """
+
 
     def __init__(self):
-        """Default implementation for scheduler job information for use when no backend is supported
-        """
-
         pass
 
     def get_paginated(self, start_index, number_to_get, status):
