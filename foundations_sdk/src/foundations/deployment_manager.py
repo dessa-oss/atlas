@@ -33,7 +33,13 @@ class DeploymentManager(object):
 
         if self._scheduler is None:
             deployment_constructor, _, _ = self._deployment_constructor_and_args_and_kwargs()
-            self._scheduler = Scheduler(deployment_constructor.scheduler_backend())
+
+            if hasattr(deployment_constructor, 'scheduler_backend'):
+                scheduler_backend_callback = deployment_constructor.scheduler_backend()
+            else:
+                scheduler_backend_callback = DeploymentManager._default_scheduler_backend()
+
+            self._scheduler = Scheduler(scheduler_backend_callback())
             
         return self._scheduler
 
@@ -49,6 +55,11 @@ class DeploymentManager(object):
     def _deployment_constructor_and_args_and_kwargs(self):
         from foundations.global_state import config_manager
         return config_manager.reflect_constructor('deployment', 'deployment', DeploymentManager._create_default_deployment)
+
+    @staticmethod
+    def _default_scheduler_backend():
+        from foundations.null_scheduler_backend import NullSchedulerBackend
+        return NullSchedulerBackend
 
     @staticmethod
     def _create_default_deployment(job_name, job, job_source_bundle):
