@@ -18,11 +18,13 @@ def api_resource(klass):
     """Decorator for defining resource for controllers
     """
     from flask_restful import Resource
+    import random
 
     if hasattr(klass, 'index'):
         def _get(self):
             return klass().index()
-        resource_class = type('', (Resource,), {'get': _get})
+        class_name = '_%08x' % random.getrandbits(32)
+        resource_class = type(class_name, (Resource,), {'get': _get})
         api.add_resource(resource_class, '/lou')
 
     return klass
