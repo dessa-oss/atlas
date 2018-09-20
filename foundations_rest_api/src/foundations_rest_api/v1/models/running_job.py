@@ -14,6 +14,7 @@ class RunningJob(PropertyModel):
     user = PropertyModel.define_property()
     input_params = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
+    start_time = PropertyModel.define_property()
 
     @staticmethod
     def all():

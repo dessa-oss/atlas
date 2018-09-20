@@ -15,6 +15,7 @@ class CompletedJob(PropertyModel):
     input_params = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     status = PropertyModel.define_property()
+    start_time = PropertyModel.define_property()
 
     @staticmethod
     def all():

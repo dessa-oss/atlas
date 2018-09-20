@@ -43,5 +43,13 @@ class TestRunningJob(unittest.TestCase):
         job = RunningJob(output_metrics={'b': 3, 'c': 4})
         self.assertEqual({'b': 3, 'c': 4}, job.output_metrics)
 
+    def test_has_start_time(self):
+        job = RunningJob(start_time=123423423434)
+        self.assertEqual(123423423434, job.start_time)
+
+    def test_has_start_time_different_params(self):
+        job = RunningJob(start_time=884234222323)
+        self.assertEqual(884234222323, job.start_time)
+
     def test_all_is_empty_response(self):
         self.assertEqual([], RunningJob.all().evaluate())
