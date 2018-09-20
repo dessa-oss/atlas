@@ -24,15 +24,15 @@ class LegacyBackend(object):
         self._results_path_scanner = bucket_stat_scanner_class(results_path)
 
     def get_paginated(self, start_index, number_to_get, status):
-    """Get paginated job information.  Will raise a ValueError if the status on which to filter is not supported.
-        Arguments:
-            start_index: {int} -- The index at which to start getting jobs.  Ignored for this class.
-            number_to_get: {int} -- The number of jobs to return.  Ignored for this class.
-            status: {str} -- The status string on which to filter.  'QUEUED', 'RUNNING', and 'COMPLETED' are supported here.  The None value is supported as well - it will get all jobs.
+        """Get paginated job information.  Will raise a ValueError if the status on which to filter is not supported.
+            Arguments:
+                start_index: {int} -- The index at which to start getting jobs.  Ignored for this class.
+                number_to_get: {int} -- The number of jobs to return.  Ignored for this class.
+                status: {str} -- The status string on which to filter.  'QUEUED', 'RUNNING', and 'COMPLETED' are supported here.  The None value is supported as well - it will get all jobs.
 
-    Returns:
-        generator -- An iterable containing the jobs as specified by the arguments.
-    """
+        Returns:
+            generator -- An iterable containing the jobs as specified by the arguments.
+        """
 
         if status == "QUEUED":
             return self._get_queued_jobs()
