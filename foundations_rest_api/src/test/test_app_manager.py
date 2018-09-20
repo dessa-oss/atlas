@@ -15,7 +15,6 @@ class TestAppManager(unittest.TestCase):
         from flask import Flask
 
         app_manager = AppManager()
-        app_manager.app()
         self.assertTrue(isinstance(app_manager.app(), Flask))
 
     def test_always_returns_same_app(self):
@@ -23,3 +22,20 @@ class TestAppManager(unittest.TestCase):
         initial_app = app_manager.app()
         second_app = app_manager.app()
         self.assertEqual(initial_app, second_app)
+
+    def test_api_initialize(self):
+        from flask_restful import Api
+
+        app_manager = AppManager()
+        self.assertTrue(isinstance(app_manager.api(), Api))
+
+    def test_always_returns_same_api(self):
+        app_manager = AppManager()
+        initial_api = app_manager.api()
+        second_api = app_manager.api()
+        self.assertEqual(initial_api, second_api)
+
+    def test_that_api_uses_proper_app(self):
+        app_manager = AppManager()
+        api = app_manager.api()
+        self.assertEqual(api.app, app_manager.app())

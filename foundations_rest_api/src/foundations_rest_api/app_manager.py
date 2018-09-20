@@ -13,6 +13,7 @@ class AppManager(object):
     """    
     def __init__(self):
         self._app = None
+        self._api = None
 
     def app(self):
         """Create and instantiate Flask object
@@ -23,3 +24,10 @@ class AppManager(object):
             self._app = Flask(__name__)
 
         return self._app
+
+    def api(self):
+        from flask_restful import Api
+
+        if self._api is None:
+            self._api = Api(self.app())
+        return self._api
