@@ -7,8 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.response import Response
+from foundations_rest_api.v1.models.property_model import PropertyModel
 
 class TestResponse(unittest.TestCase):
+
+    class MockModel(PropertyModel):
+        data = PropertyModel.define_property()
 
     class Mock(object):
         def __init__(self, value):
@@ -29,7 +33,31 @@ class TestResponse(unittest.TestCase):
         response = Response('mock', mock.value)
         self.assertEqual('hello world', response.evaluate())
 
-    def test_evaluate_with_parent(self):
+    def test_as_json(self):
+        mock = self.Mock(self.MockModel(data='hello'))
+        response = Response('mock', mock.value)
+        self.assertEqual({'data': 'hello'}, response.as_json())
+
+    def test_as_json_different_action(self):
+        mock = self.Mock(self.MockModel(data='hello world'))
+        response = Response('mock', mock.value)
+        self.assertEqual({'data': 'hello world'}, response.as_json())
+
+    def test_as_json_recursive_response(self):
+        mock = self.Mock('hello world')
+        response = Response('mock', mock.value)
+
+        mock2 = self.Mock(self.MockModel(data=response))
+        response2 = Response('mock', mock2.value)
+
+        self.assertEqual({'data': 'hello world'}, response2.as_json())
+
+    def test_as_json_non_property(self):
+        mock = self.Mock('hello world')
+        response = Response('mock', mock.value)
+        self.assertEqual('hello world', response.as_json())
+
+    def test_as_json_with_parent(self):
         mock_parent = self.Mock('hello world')
         response_parent = Response('mock', mock_parent.value)
         

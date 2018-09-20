@@ -33,3 +33,22 @@ class Response(object):
         if self._parent is not None:
             self._parent.evaluate()
         return self._action_callback()
+
+    def as_json(self):
+        from foundations_rest_api.v1.models.property_model import PropertyModel
+
+        result = self.evaluate()
+
+        if isinstance(result, PropertyModel):
+            attributes = {}
+            for key, value in result.attributes.items():
+                attributes[key] = self._value_as_json(value)
+            return attributes
+
+        return result
+
+    def _value_as_json(self, value):
+        return value.as_json() if self._is_response(value) else value
+
+    def _is_response(self, value):
+        return isinstance(value, Response)
