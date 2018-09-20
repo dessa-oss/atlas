@@ -22,8 +22,8 @@ class SFTPJobDeployment(object):
 
     @staticmethod
     def scheduler_backend():
-        from foundations.null_scheduler_backend import NullSchedulerBackend
-        return NullSchedulerBackend
+        from foundations.scheduler_legacy_backend import LegacyBackend
+        return LegacyBackend.create_default
 
     def config(self):
         return self._deployment.config()
