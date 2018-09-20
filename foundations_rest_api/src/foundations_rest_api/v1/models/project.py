@@ -17,7 +17,6 @@ class Project(PropertyModel):
 
     name = PropertyModel.define_property()
     completed_jobs = PropertyModel.define_property()
-
     running_jobs = PropertyModel.define_property()
     queued_jobs = PropertyModel.define_property()
 
@@ -50,8 +49,8 @@ class Project(PropertyModel):
 
             project = Project(name=name)
             project.completed_jobs = CompletedJob.all()
-            project.queued_jobs = QueuedJob.all()
             project.running_jobs = RunningJob.all()
+            project.queued_jobs = QueuedJob.all()
             return project
 
         return Response(None, callback)

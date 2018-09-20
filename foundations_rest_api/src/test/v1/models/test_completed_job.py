@@ -135,6 +135,14 @@ class TestCompletedJob(unittest.TestCase):
         job = CompletedJob(status='completed in error')
         self.assertEqual('completed in error', job.status)
 
+    def test_has_start_time(self):
+        job = CompletedJob(start_time=123423423434)
+        self.assertEqual(123423423434, job.start_time)
+
+    def test_has_start_time_different_params(self):
+        job = CompletedJob(start_time=884234222323)
+        self.assertEqual(884234222323, job.start_time)
+
     def test_all_returns_a_job(self):
         def method():
             from foundations.stage_logging import log_metric
