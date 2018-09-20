@@ -52,11 +52,7 @@ class SFTPBucketStatScanner(object):
             with client.get_paramiko_sftp() as sftp:
                 try:
                     sftp.lstat(self._path)
-                    dead = False
                 except IOError:
-                    dead = True
-
-                if dead:
                     raise IOError("SFTPBucketStatScanner could not connect to path " + self._path)
 
     @staticmethod
