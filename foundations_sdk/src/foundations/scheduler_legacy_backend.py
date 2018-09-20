@@ -21,8 +21,10 @@ class LegacyBackend(object):
             return self._get_running_jobs()
         elif status == "COMPLETED":
             return self._get_completed_jobs()
+        elif status is None:
+            return self._get_all_jobs()
 
-        return self._get_all_jobs()
+        raise ValueError("Unsupported status: " + status)
 
     def _get_queued_jobs(self):
         host_time = self._remote_clock.time()

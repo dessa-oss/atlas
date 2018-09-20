@@ -12,10 +12,14 @@ class Scheduler(object):
     """
 
     def __init__(self, scheduler_backend=None):
+        from foundations.scheduler_legacy_backend import LegacyBackend
+
         if not scheduler_backend:
-            from foundations.scheduler_legacy_backend import LegacyBackend
             self._backend = LegacyBackend.create_default() # requires foundations_ssh
         else:
+            if not isinstance(scheduler_backend, LegacyBackend):
+                raise TypeError("Unsupported backend.")
+
             self._backend = scheduler_backend
 
     def get_job_information(self, status=None):
