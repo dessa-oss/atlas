@@ -27,6 +27,9 @@ node {
                 sh "python -m pip install pysftp"
             }
             ws("${WORKSPACE}/src") {
+                stage('Python2 SSH Unit Tests'){
+                    sh "python -Wi -m unittest test"
+                }
             }
             stage('Python2 SSH Create Artifact') {
                 sh "python setup.py sdist bdist_wheel && python -m pip install dist/foundations_ssh-0.0.0-py2-none-any.whl"
@@ -81,6 +84,9 @@ node {
                 sh "python -m pip install pysftp"
             }
             ws("${WORKSPACE}/src") {
+                stage('Python3 SSH Unit Tests'){
+                    sh "python -Wi -m unittest test"
+                }
             }
             stage('Python3 SSH Create Artifact') {
                 sh "python setup.py sdist bdist_wheel && python -m pip install dist/foundations_ssh-0.0.0-py3-none-any.whl"

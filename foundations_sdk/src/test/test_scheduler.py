@@ -8,9 +8,10 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 import unittest
 
 from foundations.scheduler import Scheduler
+from foundations.scheduler_legacy_backend import LegacyBackend
 
 class TestScheduler(unittest.TestCase):
-    class MockBackend(object):
+    class MockBackend(LegacyBackend):
         def __init__(self, queued_jobs, running_jobs, completed_jobs):
             self._queued_jobs = queued_jobs
             self._running_jobs = running_jobs
@@ -27,6 +28,10 @@ class TestScheduler(unittest.TestCase):
                 return self._completed_jobs
 
             return self._queued_jobs + self._running_jobs + self._completed_jobs
+
+    class BadBackend(object):
+        def __init__(self):
+            pass
 
     def _make_job(self, job_name, status):
         from foundations.scheduler_job_information import JobInformation
@@ -139,3 +144,7 @@ class TestScheduler(unittest.TestCase):
         expected_running_jobs = [self._make_job("rj_0", "RUNNING"), self._make_job("rj_1", "RUNNING")]
         expected_completed_jobs = [self._make_job("cj_0", "COMPLETED"), self._make_job("cj_1", "COMPLETED"), self._make_job("cj_2", "COMPLETED")]
         self.assertEqual(all_jobs, expected_queued_jobs + expected_running_jobs + expected_completed_jobs)
+
+    def test_unsupported_backend(self):
+        with self.assertRaises(TypeError):
+            scheduler = Scheduler(TestScheduler.BadBackend())
