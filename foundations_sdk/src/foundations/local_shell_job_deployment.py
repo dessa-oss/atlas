@@ -21,6 +21,11 @@ class LocalShellJobDeployment(object):
             self._job_name, self._config, self._job, job_source_bundle)
         self._results = {}
 
+    @staticmethod
+    def scheduler_backend():
+        from foundations.null_scheduler_backend import NullSchedulerBackend
+        return NullSchedulerBackend
+
     def config(self):
         return self._config
 

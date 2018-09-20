@@ -20,6 +20,11 @@ class SFTPJobDeployment(object):
             SFTPBucket(self._result_path())
         )
 
+    @staticmethod
+    def scheduler_backend():
+        from foundations.null_scheduler_backend import NullSchedulerBackend
+        return NullSchedulerBackend
+
     def config(self):
         return self._deployment.config()
 
