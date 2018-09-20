@@ -12,7 +12,6 @@ def api_resource(base_path):
         """
         from flask_restful import Resource
         from foundations_rest_api.global_state import app_manager
-        from flask_restful import Resource
 
         import random
 
