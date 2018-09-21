@@ -7,86 +7,42 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.v1.models.queued_job import QueuedJob
+from foundations.scheduler_legacy_backend import LegacyBackend
 
 
 class TestQueuedJob(unittest.TestCase):
 
-    class MockArchiveListing(object):
+    class MockSchedulerBackend(LegacyBackend):
 
-        def __init__(self):
-            self._listing = []
+        def __init__(self, expected_status, job_information):
+            self._expected_status = expected_status
+            self._job_information = job_information
 
-        def track_pipeline(self, name):
-            self._listing.append(name)
+        def get_paginated(self, start_index, number_to_get, status):
+            if self._expected_status == status:
+                return self._job_information
 
-        def get_pipeline_names(self):
-            return self._listing
+            return []
 
-    class MemoryBucket(object):
+    class MockDeployment(object):
 
-        def __init__(self):
-            self._bucket = {}
+        def __init__(self, scheduler_backend_callback):
+            self._scheduler_backend_callback = scheduler_backend_callback
 
-        def upload_from_string(self, name, data):
-            self._bucket[name] = data
-
-        def upload_from_file(self, name, input_file):
-            self._bucket[name] = input_file.read()
-
-        def exists(self, name):
-            return name in self._bucket
-
-        def download_as_string(self, name):
-            return self._bucket[name]
-
-        def download_to_file(self, name, output_file):
-            output_file.write(self._bucket[name])
-            output_file.flush()
-            output_file.seek(0)
-
-        def list_files(self, pathname):
-            return self._bucket.keys()
-
-        def remove(self, name):
-            del self._bucket[name]
-
-        def move(self, source, destination):
-            value = self.download_as_string(source)
-            self.remove(source)
-            self.upload_from_string(destination, value)
+        def scheduler_backend(self):
+            return self._scheduler_backend_callback
 
     def setUp(self):
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
         from foundations.global_state import config_manager
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
+        from foundations.global_state import deployment_manager
 
-        self._listing = self.MockArchiveListing()
+        deployment_manager._scheduler = None # ugh...
+        self._scheduler_backend_instance = self.MockSchedulerBackend('QUEUED', [])
+        self._mock_deployment = self.MockDeployment(self._scheduler_backend)
 
-        def get_listing():
-            return self._listing
-
-        self._bucket = self.MemoryBucket()
-
-        def get_bucket():
-            return self._bucket
-
-        config_manager['archive_listing_implementation'] = {
-            'archive_listing_type': get_listing
+        config_manager['deployment_implementation'] = {
+            'deployment_type': self._mock_deployment,
         }
-        archive_implementation = {
-            'archive_type': BucketPipelineArchive,
-            'constructor_arguments': [get_bucket],
-        }
-        config_manager['stage_log_archive_implementation'] = archive_implementation
-        config_manager['persisted_data_archive_implementation'] = archive_implementation
-        config_manager['provenance_archive_implementation'] = archive_implementation
-        config_manager['job_source_archive_implementation'] = archive_implementation
-        config_manager['artifact_archive_implementation'] = archive_implementation
-        config_manager['miscellaneous_archive_implementation'] = archive_implementation
-
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
 
     def tearDown(self):
         from foundations.global_state import config_manager
@@ -121,3 +77,31 @@ class TestQueuedJob(unittest.TestCase):
 
     def test_all_is_empty_response(self):
         self.assertEqual([], QueuedJob.all().evaluate())
+
+    def test_all_returns_job_information_from_scheduler(self):
+        from foundations.scheduler_job_information import JobInformation
+
+        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'QUEUED', 'soju hero')
+        self._scheduler_backend_instance = self.MockSchedulerBackend('QUEUED', [job_information])
+
+        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju hero', submitted_time='1973-11-29 21:33:09')
+        result = QueuedJob.all().evaluate()[0]
+
+        self.assertEqual(expected_job, result)
+
+    def test_all_returns_job_information_from_scheduler_with_different_jobs(self):
+        from foundations.scheduler_job_information import JobInformation
+
+        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'QUEUED', 'soju zero')
+        job_information_two = JobInformation('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'QUEUED', 'potato hero')
+        self._scheduler_backend_instance = self.MockSchedulerBackend('QUEUED', [job_information, job_information_two])
+
+        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju zero', submitted_time='2001-04-19 04:25:21')
+        expected_job_two = QueuedJob(job_id='00000000-0000-0000-0000-000000000001', user='potato hero', submitted_time='1998-03-03 01:34:48')
+        expected_jobs = [expected_job, expected_job_two]
+        result = QueuedJob.all().evaluate()
+
+        self.assertEqual(expected_jobs, result)
+
+    def _scheduler_backend(self):
+        return self._scheduler_backend_instance

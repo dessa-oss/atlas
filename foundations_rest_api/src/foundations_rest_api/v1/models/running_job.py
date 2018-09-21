@@ -26,7 +26,20 @@ class RunningJob(PropertyModel):
         from foundations_rest_api.response import Response
 
         def _all():
-            return []
+            from foundations.global_state import deployment_manager
+
+            jobs = []
+            for info in deployment_manager.scheduler().get_job_information('RUNNING'):
+                job = RunningJob(
+                    job_id=info.uuid(),
+                    user=info.user_submitted(),
+                    submitted_time=str(info.submission_datetime()),
+                    input_params={}, 
+                    output_metrics={}
+                )
+                jobs.append(job)
+
+            return jobs
 
         return Response('QueueJob', _all)
 
