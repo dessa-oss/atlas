@@ -111,7 +111,8 @@ class TestRunningJob(unittest.TestCase):
             job_id='00000000-0000-0000-0000-000000000000', 
             user='soju hero', 
             submitted_time='1973-11-29 21:33:09', 
-            input_params={}, 
+            job_parameters={},
+            input_params=[], 
             output_metrics={}
         )
         result = RunningJob.all().evaluate()[0]
@@ -129,14 +130,16 @@ class TestRunningJob(unittest.TestCase):
             job_id='00000000-0000-0000-0000-000000000000', 
             user='soju zero', 
             submitted_time='2001-04-19 04:25:21', 
-            input_params={}, 
+            job_parameters={},
+            input_params=[], 
             output_metrics={}
         )
         expected_job_two = RunningJob(
             job_id='00000000-0000-0000-0000-000000000001', 
             user='potato hero', 
             submitted_time='1998-03-03 01:34:48', 
-            input_params={}, 
+            job_parameters={},
+            input_params=[], 
             output_metrics={}
         )
         expected_jobs = [expected_job, expected_job_two]
