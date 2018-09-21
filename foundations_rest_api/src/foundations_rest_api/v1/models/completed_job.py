@@ -12,7 +12,7 @@ class CompletedJob(PropertyModel):
 
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
-    input_params = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
@@ -35,7 +35,7 @@ class CompletedJob(PropertyModel):
 
             job = CompletedJob(
                 job_id=job_id, user='Unspecified',
-                input_params=context.provenance.job_run_data, 
+                job_parameters=context.provenance.job_run_data, 
                 output_metrics=stage_metrics, 
                 status='Completed',
                 start_time=CompletedJob._datetime_string(context.global_stage_context.start_time),
