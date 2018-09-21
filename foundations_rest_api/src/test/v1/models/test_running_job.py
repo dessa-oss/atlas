@@ -66,6 +66,14 @@ class TestRunningJob(unittest.TestCase):
         job = RunningJob(user='Lenny')
         self.assertEqual('Lenny', job.user)
 
+    def test_has_job_parameters(self):
+        job = RunningJob(job_parameters={'a': 5})
+        self.assertEqual({'a': 5}, job.job_parameters)
+
+    def test_has_job_parameters_different_params(self):
+        job = RunningJob(job_parameters={'b': 3, 'c': 4})
+        self.assertEqual({'b': 3, 'c': 4}, job.job_parameters)
+
     def test_has_input_params(self):
         job = RunningJob(input_params={'a': 5})
         self.assertEqual({'a': 5}, job.input_params)

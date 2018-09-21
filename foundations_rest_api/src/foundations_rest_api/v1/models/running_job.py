@@ -12,6 +12,7 @@ class RunningJob(PropertyModel):
 
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
     input_params = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
