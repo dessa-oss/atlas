@@ -143,6 +143,14 @@ class TestCompletedJob(unittest.TestCase):
         job = CompletedJob(start_time=884234222323)
         self.assertEqual(884234222323, job.start_time)
 
+    def test_has_completed_time(self):
+        job = CompletedJob(completed_time=123423423434)
+        self.assertEqual(123423423434, job.completed_time)
+
+    def test_has_completed_time_different_params(self):
+        job = CompletedJob(completed_time=884234222323)
+        self.assertEqual(884234222323, job.completed_time)
+
     def test_all_returns_a_job(self):
         def method():
             from foundations.stage_logging import log_metric
@@ -150,11 +158,18 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage)
+        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
 
         job = CompletedJob.all().evaluate()[0]
-        expected_job = CompletedJob(job_id='my job', user='Unspecified',
-                                    input_params={}, output_metrics={'loss': 15.33}, status='Completed')
+        expected_job = CompletedJob(
+            job_id='my job', 
+            user='Unspecified',
+            input_params={}, 
+            output_metrics={'loss': 15.33}, 
+            status='Completed',
+            start_time='2286-11-20 17:46:39',
+            completed_time='2286-11-20 17:46:39'
+        )
         self.assertEqual(expected_job, job)
 
     def test_all_returns_a_job_different_name(self):
@@ -163,11 +178,18 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my other job', stage)
+        self._make_and_persist_job('my other job', stage, 123232233, 312333333)
 
         job = CompletedJob.all().evaluate()[0]
-        expected_job = CompletedJob(job_id='my other job', user='Unspecified',
-                                    input_params={}, output_metrics={}, status='Completed')
+        expected_job = CompletedJob(
+            job_id='my other job', 
+            user='Unspecified',
+            input_params={}, 
+            output_metrics={}, 
+            status='Completed',
+            start_time='1973-11-27 07:10:33',
+            completed_time='1979-11-24 23:15:33'
+        )
         self.assertEqual(expected_job, job)
 
     def test_all_returns_a_job_different_metrics(self):
@@ -178,11 +200,18 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage)
+        self._make_and_persist_job('my job', stage, 444444, 5555555)
 
         job = CompletedJob.all().evaluate()[0]
-        expected_job = CompletedJob(job_id='my job', user='Unspecified',
-                                    input_params={}, output_metrics={'win': 99.9, 'accuracy': 0}, status='Completed')
+        expected_job = CompletedJob(
+            job_id='my job', 
+            user='Unspecified',
+            input_params={}, 
+            output_metrics={'win': 99.9, 'accuracy': 0}, 
+            status='Completed',
+            start_time='1970-01-06 03:27:24',
+            completed_time='1970-03-06 07:12:35'
+        )
         self.assertEqual(expected_job, job)
 
     def test_all_returns_a_job_with_run_data(self):
@@ -191,19 +220,29 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage, hello='world')
+        self._make_and_persist_job('my job', stage, 343433, 43444, hello='world')
 
         job = CompletedJob.all().evaluate()[0]
-        expected_job = CompletedJob(job_id='my job', user='Unspecified',
-                                    input_params={'hello': 'world'}, output_metrics={}, status='Completed')
+        expected_job = CompletedJob(
+            job_id='my job', 
+            user='Unspecified',
+            input_params={'hello': 'world'}, 
+            output_metrics={}, 
+            status='Completed',
+            start_time='1970-01-04 23:23:53',
+            completed_time='1970-01-01 12:04:04',
+        )
         self.assertEqual(expected_job, job)
 
-    def _make_and_persist_job(self, job_name, stage, **job_parameters):
+    def _make_and_persist_job(self, job_name, stage, start_time, end_time, **job_parameters):
         from foundations.job import Job
         from foundations.job_persister import JobPersister
 
         self._pipeline_context.file_name = job_name
+        self._pipeline_context.global_stage_context.start_time = start_time
 
         job = Job(stage, **job_parameters)
         job.run()
+
+        self._pipeline_context.global_stage_context.end_time = end_time
         JobPersister(job).persist()
