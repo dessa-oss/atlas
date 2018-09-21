@@ -5,7 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class DeploymentManager(object):
+
+    def __init__(self):
+        self._scheduler = None
 
     def simple_deploy(self, stage, job_name, job_params):
         import uuid
@@ -24,16 +28,45 @@ class DeploymentManager(object):
         deployment.deploy()
         return deployment
 
+    def scheduler(self):
+        """Returns the scheduler associated with the configure job deployment implementation
+        
+        Returns:
+            Scheduler -- The scheduler as above
+        """
+
+
+        from foundations.scheduler import Scheduler
+
+        if self._scheduler is None:
+            deployment_constructor, _, _ = self._deployment_constructor_and_args_and_kwargs()
+
+            if hasattr(deployment_constructor, 'scheduler_backend'):
+                scheduler_backend_callback = deployment_constructor.scheduler_backend()
+            else:
+                scheduler_backend_callback = DeploymentManager._default_scheduler_backend()
+
+            self._scheduler = Scheduler(scheduler_backend_callback())
+            
+        return self._scheduler
+
     def _create_deployment(self, job_name, job):
         from foundations.job_source_bundle import JobSourceBundle
-        from foundations.global_state import config_manager
 
-        deployment_constructor, constructor_args, constructor_kwargs = config_manager.reflect_constructor(
-            'deployment', 'deployment', DeploymentManager._create_default_deployment)
+        deployment_constructor, constructor_args, constructor_kwargs = self._deployment_constructor_and_args_and_kwargs()
 
         job_source_bundle = JobSourceBundle.for_deployment()
 
         return deployment_constructor(job_name, job, job_source_bundle, *constructor_args, **constructor_kwargs)
+
+    def _deployment_constructor_and_args_and_kwargs(self):
+        from foundations.global_state import config_manager
+        return config_manager.reflect_constructor('deployment', 'deployment', DeploymentManager._create_default_deployment)
+
+    @staticmethod
+    def _default_scheduler_backend():
+        from foundations.null_scheduler_backend import NullSchedulerBackend
+        return NullSchedulerBackend
 
     @staticmethod
     def _create_default_deployment(job_name, job, job_source_bundle):

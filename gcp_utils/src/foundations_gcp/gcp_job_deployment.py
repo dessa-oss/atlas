@@ -17,6 +17,17 @@ class GCPJobDeployment(object):
         self._deployment = BucketJobDeployment(job_name, job, job_source_bundle, GCPBucket(
             code_bucket_name), GCPBucket(result_bucket_name))
 
+    @staticmethod
+    def scheduler_backend():
+        """Returns the null scheduler backend implementation
+
+        Returns:
+            LegacyScheduler -- As above
+        """
+
+        from foundations.null_scheduler_backend import NullSchedulerBackend
+        return NullSchedulerBackend
+
     def config(self):
         return self._deployment.config()
 
