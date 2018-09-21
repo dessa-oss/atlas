@@ -18,7 +18,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/completed_jobs")
+    fetch("http://localhost:37722/api/v1/projects/protato/jobs/completed")
       .then(res => res.json())
       .then(
         (result) => {
@@ -26,6 +26,7 @@ class App extends Component {
             isLoaded: true,
             result: result,
           });
+          console.log(result)
         },
         (error) => {
           this.setState({
@@ -40,7 +41,7 @@ class App extends Component {
 
     const { error, isLoaded, result } = this.state;
     var data;
-    data = result;
+    data = result.completed_jobs;
 
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;

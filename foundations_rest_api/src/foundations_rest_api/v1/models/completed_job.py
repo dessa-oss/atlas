@@ -91,5 +91,8 @@ class CompletedJob(PropertyModel):
     def _datetime_string(time):
         from datetime import datetime
 
-        date_time = datetime.utcfromtimestamp(time)
-        return str(date_time)
+        if time is not None:
+            date_time = datetime.utcfromtimestamp(time)
+            return str(date_time)
+
+        return 'Time missing'

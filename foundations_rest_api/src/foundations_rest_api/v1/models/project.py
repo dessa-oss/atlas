@@ -48,9 +48,10 @@ class Project(PropertyModel):
             from foundations_rest_api.v1.models.queued_job import QueuedJob
 
             project = Project(name=name)
-            project.completed_jobs = CompletedJob.all()
-            project.running_jobs = RunningJob.all()
-            project.queued_jobs = QueuedJob.all()
+            project.completed_jobs = [t.attributes for t in CompletedJob.all().as_json()]
+            project.running_jobs = [t.attributes for t in RunningJob.all().as_json()]
+            project.queued_jobs = [t.attributes for t in QueuedJob.all().as_json()]
+
             return project
 
         return Response(None, callback)

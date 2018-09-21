@@ -10,9 +10,7 @@ const columns = [{
   }, {
     Header: 'Duration',
     accessor: 'start_time'
-  }, {
-    Header: 'Name',
-    accessor: 'name'
-}]
+  }
+]
 
 module.exports.columns = columns;

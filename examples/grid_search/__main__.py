@@ -36,7 +36,7 @@ These three concepts work together to allow you to perform a hyperparameter sear
 """
 
 import foundations
-import config
+#import config
 from common.prep import union
 from common.models import train_logistic_regression
 from common.logging import log_formatted
