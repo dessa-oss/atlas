@@ -239,7 +239,8 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
+            input_params=[], 
             output_metrics={'win': [99.9, 99.99]}, 
             status='Completed',
             start_time='1970-01-06 03:27:24',
