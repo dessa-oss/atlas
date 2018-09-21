@@ -55,8 +55,8 @@ class PropertyModel(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __str__(self):
-        return self.attributes.__str__()
+    # def __str__(self):
+    #     return self.attributes.__str__()
 
-    def __repr__(self):
-        return self.attributes.__repr__()
+    # def __repr__(self):
+    #     return self.attributes.__repr__()

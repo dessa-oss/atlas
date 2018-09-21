@@ -19,9 +19,11 @@ class AppManager(object):
         """Create and instantiate Flask object
         """
         from flask import Flask
+        from flask_cors import CORS
 
         if self._app is None:
             self._app = Flask(__name__)
+            CORS(self._app)
 
         return self._app
 

@@ -20,4 +20,3 @@ API_PID=$!
 echo 'api server started'
 
 yarn start
-
