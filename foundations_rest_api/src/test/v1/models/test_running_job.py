@@ -134,5 +134,7 @@ class TestRunningJob(unittest.TestCase):
         expected_jobs = [expected_job, expected_job_two]
         result = RunningJob.all().evaluate()
 
+        self.assertEqual(expected_jobs, result)
+
     def _scheduler_backend(self):
         return self._scheduler_backend_instance
