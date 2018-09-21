@@ -9,4 +9,4 @@ pysftp==0.2.8
 paramiko==2.4.1
 mock==2.0.0
 freezegun==0.3.8
-flask-restful
+flask-restful==0.3.6
