@@ -101,13 +101,13 @@ class TestStageParameter(unittest.TestCase):
         stage = self.MockStage('potato')
         parameter = StageParameter(stage)
 
-        self.assertEqual(('stage', 'potato'), parameter.provenance())
+        self.assertEqual({'type': 'stage', 'stage_name': 'potato', 'stage_uuid': stage.uuid()}, parameter.provenance())
 
     def test_provenance_returns_name_different_value(self):
         stage = self.MockStage('tomako')
         parameter = StageParameter(stage)
 
-        self.assertEqual(('stage', 'tomako'), parameter.provenance())
+        self.assertEqual({'type': 'stage', 'stage_name': 'tomako', 'stage_uuid': stage.uuid()}, parameter.provenance())
 
     def test_str_returns_stage_and_name(self):
         stage = self.MockStage()

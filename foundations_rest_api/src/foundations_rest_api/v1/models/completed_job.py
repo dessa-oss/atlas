@@ -12,6 +12,7 @@ class CompletedJob(PropertyModel):
 
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
     input_params = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     status = PropertyModel.define_property()
@@ -29,13 +30,21 @@ class CompletedJob(PropertyModel):
 
         for job_id, context in CompletedJob.contexts():
             stage_metrics = {}
+            input_params = []
             for stage_context in context.stage_contexts.values():
                 for item in stage_context.stage_log:
                     CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
 
+            for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
+                for argument in entry.stage_args:
+                    parameter = {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
+                    input_params.append(parameter)
+                    
+
             job = CompletedJob(
                 job_id=job_id, user='Unspecified',
-                input_params=context.provenance.job_run_data, 
+                job_parameters=context.provenance.job_run_data, 
+                input_params=input_params,
                 output_metrics=stage_metrics, 
                 status='Completed',
                 start_time=CompletedJob._datetime_string(context.global_stage_context.start_time),
@@ -44,6 +53,10 @@ class CompletedJob(PropertyModel):
             result.append(job)
 
         return result
+
+    @staticmethod
+    def _stage_hierarchy_entries(context):
+        return context.provenance.stage_hierarchy.entries.items()
 
     @staticmethod
     def _add_metric(metrics, key, value):

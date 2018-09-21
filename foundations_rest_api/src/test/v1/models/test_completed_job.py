@@ -111,13 +111,21 @@ class TestCompletedJob(unittest.TestCase):
         job = CompletedJob(user='Lenny')
         self.assertEqual('Lenny', job.user)
 
+    def test_has_job_parameters(self):
+        job = CompletedJob(job_parameters={'a': 5})
+        self.assertEqual({'a': 5}, job.job_parameters)
+
+    def test_has_job_parameters_different_params(self):
+        job = CompletedJob(job_parameters={'b': 3, 'c': 4})
+        self.assertEqual({'b': 3, 'c': 4}, job.job_parameters)
+
     def test_has_input_params(self):
-        job = CompletedJob(input_params={'a': 5})
-        self.assertEqual({'a': 5}, job.input_params)
+        job = CompletedJob(input_params=['some list of parameters'])
+        self.assertEqual(['some list of parameters'], job.input_params)
 
     def test_has_input_params_different_params(self):
-        job = CompletedJob(input_params={'b': 3, 'c': 4})
-        self.assertEqual({'b': 3, 'c': 4}, job.input_params)
+        job = CompletedJob(input_params=['some different list of parameters'])
+        self.assertEqual(['some different list of parameters'], job.input_params)
 
     def test_has_output_metrics(self):
         job = CompletedJob(output_metrics={'a': 5})
@@ -164,7 +172,8 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
+            input_params=[],
             output_metrics={'loss': 15.33}, 
             status='Completed',
             start_time='2286-11-20 17:46:39',
@@ -184,7 +193,8 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my other job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
+            input_params=[],
             output_metrics={}, 
             status='Completed',
             start_time='1973-11-27 07:10:33',
@@ -206,7 +216,8 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
+            input_params=[],
             output_metrics={'win': 99.9, 'accuracy': 0}, 
             status='Completed',
             start_time='1970-01-06 03:27:24',
@@ -228,7 +239,8 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
+            input_params=[], 
             output_metrics={'win': [99.9, 99.99]}, 
             status='Completed',
             start_time='1970-01-06 03:27:24',
@@ -237,18 +249,22 @@ class TestCompletedJob(unittest.TestCase):
         self.assertEqual(expected_job, job)
 
     def test_all_returns_a_job_with_run_data(self):
-        def method(**kwargs):
+        from foundations.hyperparameter import Hyperparameter
+
+        def method(hello):
             pass
 
-        stage = self._pipeline.stage(method)
+        stage = self._pipeline.stage(method, hello=Hyperparameter('hello'))
 
         self._make_and_persist_job('my job', stage, 343433, 43444, hello='world')
 
         job = CompletedJob.all().evaluate()[0]
+        input_params = [{'stage_uuid': 'e56573879d1a601ec8845955e194dff00942bf30', 'name': 'hello', 'value': {'type': 'dynamic', 'name': 'hello'}}]
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={'hello': 'world'}, 
+            job_parameters={'hello': 'world'}, 
+            input_params=input_params,
             output_metrics={}, 
             status='Completed',
             start_time='1970-01-04 23:23:53',

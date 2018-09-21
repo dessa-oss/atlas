@@ -15,7 +15,7 @@ class StageParameter(object):
         return self._stage.run_same_process(**runtime_data)
 
     def provenance(self):
-        return ('stage', self._stage.name())
+        return {'type': 'stage', 'stage_name': self._stage.name(), 'stage_uuid': self._stage.uuid()}
 
     def hash(self, runtime_data):
         from foundations.utils import generate_uuid
