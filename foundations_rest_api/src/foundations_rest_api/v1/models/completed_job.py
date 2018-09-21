@@ -30,13 +30,21 @@ class CompletedJob(PropertyModel):
 
         for job_id, context in CompletedJob.contexts():
             stage_metrics = {}
+            input_params = []
             for stage_context in context.stage_contexts.values():
                 for item in stage_context.stage_log:
                     stage_metrics[item['key']] = item['value']
 
+            for stage_uuid, entry in context.provenance.stage_hierarchy.entries.items():
+                for argument in entry.stage_args:
+                    parameter = {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
+                    input_params.append(parameter)
+                    
+
             job = CompletedJob(
                 job_id=job_id, user='Unspecified',
                 job_parameters=context.provenance.job_run_data, 
+                input_params=input_params,
                 output_metrics=stage_metrics, 
                 status='Completed',
                 start_time=CompletedJob._datetime_string(context.global_stage_context.start_time),

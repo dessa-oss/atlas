@@ -173,6 +173,7 @@ class TestCompletedJob(unittest.TestCase):
             job_id='my job', 
             user='Unspecified',
             job_parameters={}, 
+            input_params=[],
             output_metrics={'loss': 15.33}, 
             status='Completed',
             start_time='2286-11-20 17:46:39',
@@ -193,6 +194,7 @@ class TestCompletedJob(unittest.TestCase):
             job_id='my other job', 
             user='Unspecified',
             job_parameters={}, 
+            input_params=[],
             output_metrics={}, 
             status='Completed',
             start_time='1973-11-27 07:10:33',
@@ -215,6 +217,7 @@ class TestCompletedJob(unittest.TestCase):
             job_id='my job', 
             user='Unspecified',
             job_parameters={}, 
+            input_params=[],
             output_metrics={'win': 99.9, 'accuracy': 0}, 
             status='Completed',
             start_time='1970-01-06 03:27:24',
@@ -223,18 +226,22 @@ class TestCompletedJob(unittest.TestCase):
         self.assertEqual(expected_job, job)
 
     def test_all_returns_a_job_with_run_data(self):
-        def method(**kwargs):
+        from foundations.hyperparameter import Hyperparameter
+
+        def method(hello):
             pass
 
-        stage = self._pipeline.stage(method)
+        stage = self._pipeline.stage(method, hello=Hyperparameter('hello'))
 
         self._make_and_persist_job('my job', stage, 343433, 43444, hello='world')
 
         job = CompletedJob.all().evaluate()[0]
+        input_params = [{'stage_uuid': 'e56573879d1a601ec8845955e194dff00942bf30', 'name': 'hello', 'value': {'type': 'dynamic', 'name': 'hello'}}]
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
             job_parameters={'hello': 'world'}, 
+            input_params=input_params,
             output_metrics={}, 
             status='Completed',
             start_time='1970-01-04 23:23:53',
