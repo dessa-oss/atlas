@@ -3,12 +3,9 @@
 
 function trap_ctrlc ()
 {
-    # perform cleanup here
-    echo "Ctrl-C caught...performing clean up"
 
-    echo "Doing cleanup"
     kill $API_PID
-    echo 'API killed'
+    echo 'Closing API server'
 
     exit 2
 }
