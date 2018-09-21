@@ -214,6 +214,28 @@ class TestCompletedJob(unittest.TestCase):
         )
         self.assertEqual(expected_job, job)
 
+    def test_all_returns_a_job_metric_multiple_instances(self):
+        def method():
+            from foundations.stage_logging import log_metric
+            log_metric('win', 99.9)
+            log_metric('win', 99.99)
+
+        stage = self._pipeline.stage(method)
+
+        self._make_and_persist_job('my job', stage, 444444, 5555555)
+
+        job = CompletedJob.all().evaluate()[0]
+        expected_job = CompletedJob(
+            job_id='my job', 
+            user='Unspecified',
+            input_params={}, 
+            output_metrics={'win': [99.9, 99.99]}, 
+            status='Completed',
+            start_time='1970-01-06 03:27:24',
+            completed_time='1970-03-06 07:12:35'
+        )
+        self.assertEqual(expected_job, job)
+
     def test_all_returns_a_job_with_run_data(self):
         def method(**kwargs):
             pass
