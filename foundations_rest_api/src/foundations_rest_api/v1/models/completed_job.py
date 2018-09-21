@@ -31,7 +31,7 @@ class CompletedJob(PropertyModel):
             stage_metrics = {}
             for stage_context in context.stage_contexts.values():
                 for item in stage_context.stage_log:
-                    stage_metrics[item['key']] = item['value']
+                    CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
 
             job = CompletedJob(
                 job_id=job_id, user='Unspecified',
@@ -44,6 +44,17 @@ class CompletedJob(PropertyModel):
             result.append(job)
 
         return result
+
+    @staticmethod
+    def _add_metric(metrics, key, value):
+        if key in metrics:
+            if isinstance(metrics[key], list):
+                metrics[key].append(value)
+            else:
+                metrics[key] = [metrics[key], value]
+        else:
+            metrics[key] = value
+
 
     @staticmethod
     def contexts():
