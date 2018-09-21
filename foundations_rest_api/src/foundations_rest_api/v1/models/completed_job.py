@@ -33,7 +33,7 @@ class CompletedJob(PropertyModel):
             input_params = []
             for stage_context in context.stage_contexts.values():
                 for item in stage_context.stage_log:
-                    stage_metrics[item['key']] = item['value']
+                    CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
 
             for stage_uuid, entry in context.provenance.stage_hierarchy.entries.items():
                 for argument in entry.stage_args:
@@ -53,6 +53,17 @@ class CompletedJob(PropertyModel):
             result.append(job)
 
         return result
+
+    @staticmethod
+    def _add_metric(metrics, key, value):
+        if key in metrics:
+            if isinstance(metrics[key], list):
+                metrics[key].append(value)
+            else:
+                metrics[key] = [metrics[key], value]
+        else:
+            metrics[key] = value
+
 
     @staticmethod
     def contexts():
