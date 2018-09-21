@@ -119,6 +119,14 @@ class TestCompletedJob(unittest.TestCase):
         job = CompletedJob(job_parameters={'b': 3, 'c': 4})
         self.assertEqual({'b': 3, 'c': 4}, job.job_parameters)
 
+    def test_has_input_params(self):
+        job = CompletedJob(input_params=['some list of parameters'])
+        self.assertEqual(['some list of parameters'], job.input_params)
+
+    def test_has_input_params_different_params(self):
+        job = CompletedJob(input_params=['some different list of parameters'])
+        self.assertEqual(['some different list of parameters'], job.input_params)
+
     def test_has_output_metrics(self):
         job = CompletedJob(output_metrics={'a': 5})
         self.assertEqual({'a': 5}, job.output_metrics)
