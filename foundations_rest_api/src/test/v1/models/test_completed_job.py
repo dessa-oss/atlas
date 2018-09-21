@@ -111,13 +111,13 @@ class TestCompletedJob(unittest.TestCase):
         job = CompletedJob(user='Lenny')
         self.assertEqual('Lenny', job.user)
 
-    def test_has_input_params(self):
-        job = CompletedJob(input_params={'a': 5})
-        self.assertEqual({'a': 5}, job.input_params)
+    def test_has_job_parameters(self):
+        job = CompletedJob(job_parameters={'a': 5})
+        self.assertEqual({'a': 5}, job.job_parameters)
 
-    def test_has_input_params_different_params(self):
-        job = CompletedJob(input_params={'b': 3, 'c': 4})
-        self.assertEqual({'b': 3, 'c': 4}, job.input_params)
+    def test_has_job_parameters_different_params(self):
+        job = CompletedJob(job_parameters={'b': 3, 'c': 4})
+        self.assertEqual({'b': 3, 'c': 4}, job.job_parameters)
 
     def test_has_output_metrics(self):
         job = CompletedJob(output_metrics={'a': 5})
@@ -164,7 +164,7 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
             output_metrics={'loss': 15.33}, 
             status='Completed',
             start_time='2286-11-20 17:46:39',
@@ -184,7 +184,7 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my other job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
             output_metrics={}, 
             status='Completed',
             start_time='1973-11-27 07:10:33',
@@ -206,7 +206,7 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={}, 
+            job_parameters={}, 
             output_metrics={'win': 99.9, 'accuracy': 0}, 
             status='Completed',
             start_time='1970-01-06 03:27:24',
@@ -248,7 +248,7 @@ class TestCompletedJob(unittest.TestCase):
         expected_job = CompletedJob(
             job_id='my job', 
             user='Unspecified',
-            input_params={'hello': 'world'}, 
+            job_parameters={'hello': 'world'}, 
             output_metrics={}, 
             status='Completed',
             start_time='1970-01-04 23:23:53',
