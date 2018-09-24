@@ -187,6 +187,12 @@ def split_at(list_of_results, slot_index):
     return list_of_results[slot_index]
 
 def whoami():
+    """Get the currently logged-in user.
+
+    Returns:
+        user_name -- The name of the currently logged-in user as a string.
+    """
+
     import os
 
     # if LOGNAME is not set but user is, using ".get()" will fail
