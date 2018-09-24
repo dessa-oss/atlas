@@ -21,6 +21,7 @@ class Response(object):
     def __init__(self, resource_name, action_callback, parent=None):
         self._action_callback = action_callback
         self._parent = parent
+        self._only = None
 
     def evaluate(self):
         """Calls the action callback and returns the result. 
@@ -34,6 +35,10 @@ class Response(object):
             self._parent.evaluate()
         return self._action_callback()
 
+    def only(self, only):
+        self._only = only
+        return self
+
     def as_json(self):
         from foundations_rest_api.v1.models.property_model import PropertyModel
 
@@ -43,12 +48,22 @@ class Response(object):
             return [self._value_as_json(value) for value in result]
 
         if self._is_property_model(result):
-            result = result.attributes
+            result = self._filtered_properties(result)
 
         if isinstance(result, dict):
             return self._dictionary_attributes(result)
 
         return result
+
+    def _filtered_properties(self, value):
+        value = value.attributes
+        if self._only:
+            attributes = {}
+            for key in self._only:
+                attributes[key] = value[key]
+            return  attributes
+
+        return value
 
     def _dictionary_attributes(self, value):
         attributes = {}
