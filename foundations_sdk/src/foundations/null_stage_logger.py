@@ -14,15 +14,13 @@ class NullStageLogger(object):
     def log_metric(self, key, value):
         """Does nothing effectively, but provides warning upon 
         useage to encourage a user to use #log_metric within a stage
-        
+
         Arguments:
             key {str} -- Name of the metric
             value {object} -- Unused
         """
 
-
         self._log().warn('Tried to save metric `{}` outside the context of a stage'.format(key))
-        
 
     def pipeline_context(self):
         """Not implemented
@@ -30,7 +28,7 @@ class NullStageLogger(object):
         Raises:
             NotImplementedError
         """
-        
+
         raise NotImplementedError()
 
     def stage(self):
