@@ -21,6 +21,7 @@ class Response(object):
     def __init__(self, resource_name, action_callback, parent=None):
         self._action_callback = action_callback
         self._parent = parent
+        self._only = None
 
     def evaluate(self):
         """Calls the action callback and returns the result. 
@@ -34,6 +35,10 @@ class Response(object):
             self._parent.evaluate()
         return self._action_callback()
 
+    def only(self, only):
+        self._only = only
+        return self
+
     def as_json(self):
         from foundations_rest_api.v1.models.property_model import PropertyModel
 
@@ -42,19 +47,42 @@ class Response(object):
         if isinstance(result, list):
             return [self._value_as_json(value) for value in result]
 
-        if isinstance(result, PropertyModel):
-            result = result.attributes
+        if self._is_property_model(result):
+            result = self._filtered_properties(result)
 
         if isinstance(result, dict):
-            attributes = {}
-            for key, value in result.items():
-                attributes[key] = self._value_as_json(value)
-            return attributes
+            return self._dictionary_attributes(result)
 
         return result
 
+    def _filtered_properties(self, value):
+        value = value.attributes
+        if self._only:
+            attributes = {}
+            for key in self._only:
+                attributes[key] = value[key]
+            return  attributes
+
+        return value
+
+    def _dictionary_attributes(self, value):
+        attributes = {}
+        for key, value in value.items():
+            attributes[key] = self._value_as_json(value)
+        return attributes
+
     def _value_as_json(self, value):
-        return value.as_json() if self._is_response(value) else value
+        if self._is_response(value):
+            return value.as_json()
+
+        if self._is_property_model(value):
+            return value.attributes
+
+        return value
 
     def _is_response(self, value):
         return isinstance(value, Response)
+
+    def _is_property_model(self, value):
+        from foundations_rest_api.v1.models.property_model import PropertyModel
+        return isinstance(value, PropertyModel)
