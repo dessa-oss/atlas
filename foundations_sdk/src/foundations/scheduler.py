@@ -12,6 +12,8 @@ class Scheduler(object):
     """
 
     def __init__(self, scheduler_backend=None):
+        from foundations.scheduler_legacy_backend import LegacyBackend
+
         if not scheduler_backend:
             from foundations_ssh.default_legacy_backend import DefaultLegacyBackend
             self._backend = DefaultLegacyBackend()
