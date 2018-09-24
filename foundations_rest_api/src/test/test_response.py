@@ -14,6 +14,10 @@ class TestResponse(unittest.TestCase):
     class MockModel(PropertyModel):
         data = PropertyModel.define_property()
 
+    class MockModelTwo(PropertyModel):
+        some_data = PropertyModel.define_property()
+        some_other_data = PropertyModel.define_property()
+
     class Mock(object):
         def __init__(self, value):
             self._value = value
@@ -37,6 +41,21 @@ class TestResponse(unittest.TestCase):
         mock = self.Mock(self.MockModel(data='hello'))
         response = Response('mock', mock.value)
         self.assertEqual({'data': 'hello'}, response.as_json())
+
+    def test_as_json_filter_properties(self):
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
+        response = Response('mock', mock.value)
+        self.assertEqual({'some_data': 'hello'}, response.as_json(only=['some_data']))
+
+    def test_as_json_filter_properties_different_property(self):
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
+        response = Response('mock', mock.value)
+        self.assertEqual({'some_other_data': 'world'}, response.as_json(only=['some_other_data']))
+
+    def test_as_json_filter_properties_multiple_properties(self):
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
+        response = Response('mock', mock.value)
+        self.assertEqual({'some_data': 'hello', 'some_other_data': 'world'}, response.as_json(only=['some_data', 'some_other_data']))
 
     def test_as_json_different_action(self):
         mock = self.Mock(self.MockModel(data='hello world'))

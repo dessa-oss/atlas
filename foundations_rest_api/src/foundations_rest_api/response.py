@@ -34,7 +34,7 @@ class Response(object):
             self._parent.evaluate()
         return self._action_callback()
 
-    def as_json(self):
+    def as_json(self, only=None):
         from foundations_rest_api.v1.models.property_model import PropertyModel
 
         result = self.evaluate()
@@ -44,6 +44,11 @@ class Response(object):
 
         if self._is_property_model(result):
             result = result.attributes
+            if only:
+                attributes = {}
+                for key in only:
+                    attributes[key] = result[key]
+                result = attributes
 
         if isinstance(result, dict):
             return self._dictionary_attributes(result)
