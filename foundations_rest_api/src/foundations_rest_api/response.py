@@ -43,17 +43,22 @@ class Response(object):
             return [self._value_as_json(value) for value in result]
 
         if self._is_property_model(result):
-            result = result.attributes
-            if only:
-                attributes = {}
-                for key in only:
-                    attributes[key] = result[key]
-                result = attributes
+            result = self._filtered_properties(result, only)
 
         if isinstance(result, dict):
             return self._dictionary_attributes(result)
 
         return result
+
+    def _filtered_properties(self, value, only):
+        value = value.attributes
+        if only:
+            attributes = {}
+            for key in only:
+                attributes[key] = value[key]
+            return  attributes
+
+        return value
 
     def _dictionary_attributes(self, value):
         attributes = {}
