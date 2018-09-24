@@ -9,10 +9,15 @@ import unittest
 from mock import patch
 
 from foundations_ssh.default_legacy_backend import DefaultLegacyBackend
-from foundations_ssh.remote_clock import RemoteClock
 from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
 from foundations.scheduler_legacy_backend import LegacyBackend
 from foundations.global_state import config_manager
+
+class MockSFTPBucketStatScanner
+
+class MockClock(object):
+    def __init__(self):
+        MockClock.was_instantiated = True
 
 class MockLegacyBackend(object):
     def __init__(self, clock, bucket_class, code_path, archives_path, results_path):
@@ -22,6 +27,7 @@ class MockLegacyBackend(object):
         MockLegacyBackend.archives_path = archives_path
         MockLegacyBackend.results_path = results_path
 
+@patch("foundations_ssh.remote_clock.RemoteClock", MockClock)
 @patch("foundations.scheduler_legacy_backend.LegacyBackend", MockLegacyBackend)
 class TestDefaultLegacyBackend(unittest.TestCase):
     def setUp(self):
@@ -31,6 +37,8 @@ class TestDefaultLegacyBackend(unittest.TestCase):
         MockLegacyBackend.archive_path = None
         MockLegacyBackend.result_path = None
 
+        MockClock.was_instantiated = False
+
     def test_uses_legacy_backend_properly(self):
         config_manager["code_path"] = "code_path"
         config_manager["archive_path"] = "archive_path"
@@ -38,7 +46,7 @@ class TestDefaultLegacyBackend(unittest.TestCase):
 
         DefaultLegacyBackend()
 
-        self.assertTrue(isinstance(MockLegacyBackend.clock, RemoteClock))
+        self.assertTrue(MockClock.was_instantiated)
         self.assertEqual(MockLegacyBackend.bucket_class, SFTPBucketStatScanner)
         self.assertEqual(MockLegacyBackend.code_path, "code_path")
         self.assertEqual(MockLegacyBackend.archive_path, "archive_path")
