@@ -12,6 +12,7 @@ from foundations_ssh.multi_ssh_bundled_pipeline_archive import MultiSSHBundledPi
 from foundations_ssh.multi_sftp_bundled_pipeline_archive import MultiSFTPBundledPipelineArchive
 from foundations_ssh.ssh_file_system_bucket import SSHFileSystemBucket
 from foundations_ssh.sftp_bucket import SFTPBucket
+from foundations_ssh.versioning import __version__
 
 
 def _append_module():

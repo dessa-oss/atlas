@@ -47,6 +47,7 @@ from foundations.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
 from foundations.staging import create_stage
 from foundations.scheduler import Scheduler
+from foundations.versioning import __version__
 
 import foundations.import_installer
 
