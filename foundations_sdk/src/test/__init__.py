@@ -68,3 +68,6 @@ from test.test_scheduler import TestScheduler
 from test.test_scheduler_job_information import TestSchedulerJobInformation
 from test.test_job import TestJob
 from test.test_scheduler_legacy_backend import TestSchedulerLegacyBackend
+from test.test_scheduler_local_backend import TestSchedulerLocalBackend
+from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
+from test.test_utils import TestUtils
