@@ -46,16 +46,19 @@ class Response(object):
             result = result.attributes
 
         if isinstance(result, dict):
-            attributes = {}
-            for key, value in result.items():
-                attributes[key] = self._value_as_json(value)
-            return attributes
+            return self._dictionary_attributes(result)
 
         return result
 
+    def _dictionary_attributes(self, value):
+        attributes = {}
+        for key, value in value.items():
+            attributes[key] = self._value_as_json(value)
+        return attributes
+
     def _value_as_json(self, value):
         if self._is_response(value):
-            return value.as_json() 
+            return value.as_json()
 
         if self._is_property_model(value):
             return value.attributes
