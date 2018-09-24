@@ -88,11 +88,17 @@ class TestSchedulerLocalBackend(unittest.TestCase):
 
         JobPersister(MockJob(pipeline_context)).persist()
 
-    def test_running_status_unsupported(self):
+    def test_running_status_returns_empty_list(self):
         backend = LocalBackend()
 
-        with self.assertRaises(ValueError):
-            backend.get_paginated(None, None, "RUNNING")
+        running_jobs = list(backend.get_paginated(None, None, "RUNNING"))
+        self.assertEqual(running_jobs, [])
+
+    def test_queued_status_returns_empty_list(self):
+        backend = LocalBackend()
+
+        queued_jobs = list(backend.get_paginated(None, None, "QUEUED"))
+        self.assertEqual(queued_jobs, [])
 
     def test_get_completed_jobs_no_jobs(self):
         backend = LocalBackend()
@@ -169,3 +175,15 @@ class TestSchedulerLocalBackend(unittest.TestCase):
         ]
         
         self.assertEqual(completed_jobs, expected_completed_jobs)
+
+    def test_any_other_status_raises_exception(self):
+        backend = LocalBackend()
+
+        with self.assertRaises(ValueError):
+            backend.get_paginated(None, None, "ASDF")
+
+    def test_any_other_other_status_raises_exception(self):
+        backend = LocalBackend()
+
+        with self.assertRaises(ValueError):
+            backend.get_paginated(None, None, "ASDF2")

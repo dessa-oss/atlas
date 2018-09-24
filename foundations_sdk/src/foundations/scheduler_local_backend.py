@@ -19,7 +19,7 @@ class LocalBackend(LegacyBackend):
             Arguments:
                 start_index: {int} -- The index at which to start getting jobs.  Ignored for this class.
                 number_to_get: {int} -- The number of jobs to return.  Ignored for this class.
-                status: {str} -- The status string on which to filter.  'COMPLETED' is supported here.  The None value is supported as well and is equivalent to 'COMPLETED'.
+                status: {str} -- The status string on which to filter.  'COMPLETED' is supported here.  The None value is supported as well and is equivalent to 'COMPLETED'.  'RUNNING' and 'QUEUED' are semi-supported - will return an empty list instead of raising an exception outright.
 
         Returns:
             generator -- An iterable containing the jobs as specified by the arguments.
@@ -27,6 +27,8 @@ class LocalBackend(LegacyBackend):
 
         if status == "COMPLETED" or status is None:
             return LocalBackend._get_all_jobs()
+        elif status == "RUNNING" or status == "QUEUED":
+            return []
         else:
             raise ValueError("Unsupported status: " + status)
 
