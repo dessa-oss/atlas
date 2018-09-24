@@ -42,7 +42,7 @@ class Response(object):
         if isinstance(result, list):
             return [self._value_as_json(value) for value in result]
 
-        if isinstance(result, PropertyModel):
+        if self._is_property_model(result):
             result = result.attributes
 
         if isinstance(result, dict):
@@ -54,7 +54,17 @@ class Response(object):
         return result
 
     def _value_as_json(self, value):
-        return value.as_json() if self._is_response(value) else value
+        if self._is_response(value):
+            return value.as_json() 
+
+        if self._is_property_model(value):
+            return value.attributes
+
+        return value
 
     def _is_response(self, value):
         return isinstance(value, Response)
+
+    def _is_property_model(self, value):
+        from foundations_rest_api.v1.models.property_model import PropertyModel
+        return isinstance(value, PropertyModel)

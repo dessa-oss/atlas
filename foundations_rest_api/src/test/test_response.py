@@ -70,6 +70,15 @@ class TestResponse(unittest.TestCase):
 
         self.assertEqual(['hello world'], response2.as_json())
 
+    def test_as_json_recursive_response_via_response_in_property_containing_model(self):
+        mock = self.Mock([self.MockModel(data='hello world')])
+        response = Response('mock', mock.value)
+
+        mock2 = self.Mock(self.MockModel(data=response))
+        response2 = Response('mock', mock2.value)
+
+        self.assertEqual({'data': [{'data': 'hello world'}]}, response2.as_json())
+
     def test_as_json_non_property(self):
         mock = self.Mock('hello world')
         response = Response('mock', mock.value)
