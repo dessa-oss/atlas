@@ -28,8 +28,8 @@ class SFTPJobDeployment(object):
             LegacyScheduler -- As above
         """
 
-        from foundations.scheduler_legacy_backend import LegacyBackend
-        return LegacyBackend.create_default
+        from foundations_ssh.default_legacy_backend import DefaultLegacyBackend
+        return DefaultLegacyBackend
 
     def config(self):
         return self._deployment.config()

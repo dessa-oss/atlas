@@ -88,16 +88,3 @@ class LegacyBackend(object):
         submitted_timestamp = dir_entry["last_modified"]
         
         return uuid, user_submitted, submitted_timestamp
-
-    @staticmethod
-    def create_default():
-        from foundations_ssh.remote_clock import RemoteClock
-        from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
-
-        from foundations.global_state import config_manager
-
-        code_path = config_manager['code_path']
-        archive_path = config_manager['archive_path']
-        result_path = config_manager['result_path']
-
-        return LegacyBackend(RemoteClock(), SFTPBucketStatScanner, code_path, archive_path, result_path)
