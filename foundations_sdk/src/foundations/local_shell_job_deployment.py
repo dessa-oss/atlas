@@ -23,14 +23,14 @@ class LocalShellJobDeployment(object):
 
     @staticmethod
     def scheduler_backend():
-        """Returns the null scheduler backend implementation
+        """Returns the local shell deployment scheduler backend implementation
         
         Returns:
             LegacyScheduler -- As above
         """
 
-        from foundations.null_scheduler_backend import NullSchedulerBackend
-        return NullSchedulerBackend
+        from foundations.scheduler_local_backend import LocalBackend
+        return LocalBackend
 
     def config(self):
         return self._config

@@ -185,3 +185,9 @@ def _log():
 
 def split_at(list_of_results, slot_index):
     return list_of_results[slot_index]
+
+def whoami():
+    import os
+
+    # if LOGNAME is not set but user is, using ".get()" will fail
+    return os.environ["USER"] if "USER" in os.environ else os.environ["LOGNAME"]
