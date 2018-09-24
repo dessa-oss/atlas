@@ -84,3 +84,13 @@ class TestPropertyModel(unittest.TestCase):
     def test_attributes_different_class(self):
         mock = self.Mock(my_property=23, my_other_property=233)
         self.assertEqual({'my_property': 23, 'my_other_property': 233}, mock.attributes)
+
+    def test_raises_error_on_invalid_property(self):
+        with self.assertRaises(ValueError) as context:
+            mock = self.Mock(bad_property=23)
+        self.assertTrue('Invalid property `bad_property` given' in context.exception)
+
+    def test_raises_error_on_invalid_property_different_property(self):
+        with self.assertRaises(ValueError) as context:
+            mock = self.Mock(bad_property_again=2323232323)
+        self.assertTrue('Invalid property `bad_property_again` given' in context.exception)
