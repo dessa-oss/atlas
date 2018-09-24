@@ -1,71 +1,38 @@
 import React, { Component } from 'react';
-import ReactTable from "react-table";
-
+import Home from "./Home";
+import Queued from "./Queued";
+import Completed from "./Completed";
 import logo from './dessa_logo.svg';
-import 'react-table/react-table.css'
 import './App.css';
-let columns = require('./columns');
+import {
+  Route,
+  NavLink,
+  BrowserRouter
+  } from "react-router-dom";
 
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null,
-      isLoaded: false,
-      result: []
-    };
-  }
-
-  componentDidMount() {
-    fetch("http://localhost:37722/api/v1/projects/protato/jobs/completed")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            result: result,
-          });
-          console.log(result)
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-  }
-
   render() {
-
-    const { error, isLoaded, result } = this.state;
-    var data;
-    data = result.completed_jobs;
-
-    if (error && result[0]) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
-      return (
+    return (
+      <BrowserRouter>
         <div className="App">
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <h1 className="App-title">Foundations</h1>
-            <h1 className="App-docs">Docs</h1>
+            <ul className="header">
+              <li><NavLink exact to="/">Home</NavLink> </li>
+              <li><NavLink to="/completed">Completed</NavLink></li>
+              <li><NavLink to="/queued">Queued</NavLink></li>
+            </ul>
           </header>
-          <div className="App-body">
-            <h1 className="project-name">Project name: Detect Supernovas</h1>
-            <h3 className="project-source">Source: /tmp/foundations/test-foundations</h3>
-            <ReactTable
-              data={data}
-              columns={columns.columns}
-            />
+          <div className="content">
+            <Route exact path="/" component={Home} />
+            <Route path="/queued" component={Queued} />
+            <Route path="/completed" component={Completed} />
           </div>
         </div>
-      );
-    }
+      </BrowserRouter>
+    );
   }
 }
 
