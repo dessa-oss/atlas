@@ -12,17 +12,8 @@ class NullStageLogger(object):
     """
 
     def log_metric(self, key, value):
-        """Not implemented
-
-        Arguments:
-            key {string} -- unused
-            value {object} -- unused
-
-        Raises:
-            NotImplementedError
-        """
-
-        raise NotImplementedError()
+        self._log().warn('Tried to save metric `{}` outside the context of a stage'.format(key))
+        
 
     def pipeline_context(self):
         """Not implemented
@@ -59,3 +50,7 @@ class NullStageLogger(object):
         """
 
         raise NotImplementedError()
+
+    def _log(self):
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__)
