@@ -51,7 +51,6 @@ class Project(PropertyModel):
             project.completed_jobs = CompletedJob.all()
             project.running_jobs = RunningJob.all()
             project.queued_jobs = QueuedJob.all()
-
             return project
 
         return Response(None, callback)
