@@ -12,6 +12,7 @@ class RunningJob(PropertyModel):
 
     job_id = PropertyModel.define_property()
     user = PropertyModel.define_property()
+    job_parameters = PropertyModel.define_property()
     input_params = PropertyModel.define_property()
     output_metrics = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
@@ -34,7 +35,8 @@ class RunningJob(PropertyModel):
                     job_id=info.uuid(),
                     user=info.user_submitted(),
                     submitted_time=str(info.submission_datetime()),
-                    input_params={}, 
+                    job_parameters={},
+                    input_params=[], 
                     output_metrics={}
                 )
                 jobs.append(job)
