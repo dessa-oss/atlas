@@ -34,27 +34,37 @@ class LocalBackend(LegacyBackend):
 
     @staticmethod
     def _get_all_jobs():
-        from foundations.scheduler_job_information import JobInformation
         from foundations.utils import whoami
 
         user_name = whoami()
 
         for job_name, pipeline_context in LocalBackend._get_contexts():
-            global_stage_context = pipeline_context.global_stage_context
+            yield LocalBackend._construct_job_information(job_name, pipeline_context, user_name)
 
-            start_time = global_stage_context.start_time
-            duration = global_stage_context.delta_time
+    @staticmethod
+    def _construct_job_information(job_name, pipeline_context, user_name):
+        from foundations.scheduler_job_information import JobInformation
 
-            yield JobInformation(job_name, int(start_time), int(duration), "COMPLETED", user_name)
+        global_stage_context = pipeline_context.global_stage_context
+
+        start_time = global_stage_context.start_time
+        duration = global_stage_context.delta_time
+
+        return JobInformation(job_name, int(start_time), int(duration), "COMPLETED", user_name)
 
     @staticmethod
     def _get_contexts():
-        from foundations.pipeline_context import PipelineContext
         from foundations.job_persister import JobPersister
 
         with JobPersister.load_archiver_fetch() as archiver_fetch:
             for archiver in archiver_fetch.fetch_archivers():
-                pipeline_context = PipelineContext()
-                pipeline_context.load_miscellaneous_from_archive(archiver)
+                yield LocalBackend._load_pipeline_context(archiver)
 
-                yield archiver.pipeline_name(), pipeline_context
+    @staticmethod
+    def _load_pipeline_context(archiver):
+        from foundations.pipeline_context import PipelineContext
+
+        pipeline_context = PipelineContext()
+        pipeline_context.load_miscellaneous_from_archive(archiver)
+
+        return archiver.pipeline_name(), pipeline_context
