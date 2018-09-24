@@ -32,8 +32,6 @@ class LocalBackend(LegacyBackend):
 
     @staticmethod
     def _get_all_jobs():
-        import calendar
-
         from foundations.scheduler_job_information import JobInformation
         from foundations.utils import whoami
 
@@ -42,12 +40,10 @@ class LocalBackend(LegacyBackend):
         for job_name, pipeline_context in LocalBackend._get_contexts():
             global_stage_context = pipeline_context.global_stage_context
 
-            start_time_datetime = global_stage_context.start_time
-            start_time = calendar.timegm(start_time_datetime.utctimetuple())
-
+            start_time = global_stage_context.start_time
             duration = global_stage_context.delta_time
 
-            yield JobInformation(job_name, start_time, duration, "COMPLETED", user_name)
+            yield JobInformation(job_name, int(start_time), int(duration), "COMPLETED", user_name)
 
     @staticmethod
     def _get_contexts():

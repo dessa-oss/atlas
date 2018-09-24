@@ -77,15 +77,13 @@ class TestSchedulerLocalBackend(unittest.TestCase):
         MockOS.whoami = user_name
 
     def _add_job(self, job_name, begin_time, duration):
-        from datetime import datetime
-
         from foundations.pipeline_context import PipelineContext
         from foundations.job_persister import JobPersister
 
         pipeline_context = PipelineContext()
 
         pipeline_context.file_name = job_name
-        pipeline_context.global_stage_context.start_time = datetime.utcfromtimestamp(begin_time)
+        pipeline_context.global_stage_context.start_time = begin_time
         pipeline_context.global_stage_context.delta_time = duration
 
         JobPersister(MockJob(pipeline_context)).persist()
@@ -113,6 +111,16 @@ class TestSchedulerLocalBackend(unittest.TestCase):
     def test_get_completed_one_job(self):
         self._set_user("ja")
         self._add_job("this_job", 123, 22)
+
+        backend = LocalBackend()
+
+        completed_jobs = list(backend.get_paginated(None, None, "COMPLETED"))
+        expected_completed_jobs = [JobInformation("this_job", 123, 22, "COMPLETED", "ja")]
+        self.assertEqual(completed_jobs, expected_completed_jobs)
+
+    def test_get_completed_one_job_contains_ints_only(self):
+        self._set_user("ja")
+        self._add_job("this_job", 123.33, 22.44)
 
         backend = LocalBackend()
 
