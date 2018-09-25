@@ -197,3 +197,15 @@ def whoami():
 
     # if LOGNAME is not set but user is, using ".get()" will fail
     return os.environ["USER"] if "USER" in os.environ else os.environ["LOGNAME"]
+
+def get_foundations_root():
+    """Return the directory containing the foundations module's init py.
+
+    Returns:
+        dir_path -- As above
+    """
+
+    import sys
+    from os.path import dirname
+
+    return dirname(sys.modules["foundations"].__file__)

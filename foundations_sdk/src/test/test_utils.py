@@ -10,6 +10,10 @@ from mock import patch
 
 import foundations.utils as utils
 
+class MockModule(object):
+    def __init__(self, file_path):
+        self.__file__ = file_path
+
 class TestUtils(unittest.TestCase):
     def test_whoami_user_pl(self):
         env = {"USER": "pl"}
@@ -30,3 +34,23 @@ class TestUtils(unittest.TestCase):
         env = {"LOGNAME": "pl"}
         with patch("os.environ", env):
             self.assertEqual(utils.whoami(), "pl")
+
+    def test_get_foundations_root(self):
+        mock_modules = {
+            "foundations": MockModule("path/to/foundations/__init__.py")
+        } 
+
+        expected_root = "path/to/foundations"
+
+        with patch("sys.modules", mock_modules):
+            self.assertEqual(utils.get_foundations_root(), expected_root)
+
+    def test_get_foundations_root_different_root(self):
+        mock_modules = {
+            "foundations": MockModule("/different/for/foundations/__init__.py")
+        } 
+
+        expected_root = "/different/for/foundations"
+
+        with patch("sys.modules", mock_modules):
+            self.assertEqual(utils.get_foundations_root(), expected_root)
