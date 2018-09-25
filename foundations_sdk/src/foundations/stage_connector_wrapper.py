@@ -91,7 +91,14 @@ class StageConnectorWrapper(object):
         return DeploymentWrapper(deployment)
 
     def run_same_process(self, **filler_kwargs):
-        return self._connector.run(self._filler_builder, **filler_kwargs)
+        import sys
+        from foundations.error_printer import ErrorPrinter
+
+        error_printer = ErrorPrinter()
+        sys.excepthook = error_printer.printer_action()
+        connector_output = self._connector.run(self._filler_builder, **filler_kwargs)
+        sys.excepthook = sys.__excepthook__
+        return connector_output
 
     def _make_builder(self):
         from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
