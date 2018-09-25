@@ -83,7 +83,9 @@ class LegacyBackend(object):
 
     @staticmethod
     def _extract_info(dir_entry):
-        uuid = dir_entry["filename"][:-4]
+        from os.path import splitext
+
+        uuid, _ = splitext(dir_entry["filename"])
         user_submitted = dir_entry["owner"]
         submitted_timestamp = dir_entry["last_modified"]
         
