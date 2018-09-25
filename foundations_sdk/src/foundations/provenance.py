@@ -25,6 +25,7 @@ class Provenance(object):
         self.stage_hierarchy = StageHierarchy()
         self.python_version = None
         self.job_run_data = {}
+        self.project_name = ''
 
     def fill_python_version(self):
         import sys
@@ -101,7 +102,8 @@ class Provenance(object):
             "pip_freeze": self.pip_freeze,
             "stage_hierarchy": self.stage_hierarchy,
             "python_version": self.python_version,
-            "job_run_data": self.job_run_data
+            "job_run_data": self.job_run_data,
+            "project_name": self.project_name,
         }
 
     def _load_archive_provenance(self, archive_provenance):
@@ -119,3 +121,4 @@ class Provenance(object):
         self.python_version = archive_provenance.get(
             "python_version", self.python_version)
         self.job_run_data = archive_provenance.get('job_run_data', self.job_run_data)
+        self.project_name = archive_provenance.get('project_name', self.project_name)
