@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_rest_api.v1 import *
+from foundations_rest_api.versioning import __version__

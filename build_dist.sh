@@ -2,7 +2,8 @@
 
 wheel_suffix=`python -c "import sys; print(sys.version_info.major)"`
 
-export build_version=0.0.4
+python -m pip install setuptools_scm
+export build_version=`python get_version.py`
 
 cd foundations_sdk/ && \
     python setup.py sdist bdist_wheel && \
