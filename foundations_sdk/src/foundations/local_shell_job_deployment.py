@@ -39,10 +39,12 @@ class LocalShellJobDeployment(object):
         return self._job_name
 
     def deploy(self):
+        import shutil
         self._job_bundler.bundle()
         try:
             self._run()
         finally:
+            shutil.rmtree(self._job_name)
             self._job_bundler.cleanup()
 
     def is_job_complete(self):
@@ -65,7 +67,6 @@ class LocalShellJobDeployment(object):
         return self._results
 
     def _run(self):
-        import shutil
         import subprocess
         import glob
         import tarfile
@@ -74,7 +75,7 @@ class LocalShellJobDeployment(object):
 
         with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
             tar.extractall()
-            
+
         with ChangeDirectory(self._job_name):
             script = "{} ./run.sh".format(self._shell_command())
             args = self._command_in_shell_command(script)
@@ -84,7 +85,6 @@ class LocalShellJobDeployment(object):
         with open(file_name, 'rb') as file:
             self._results = deserialize_from_file(file)
 
-        shutil.rmtree(self._job_name)
 
     def _command_in_shell_command(self, command):
         return [self._shell_command(), '-c', command]
