@@ -209,3 +209,18 @@ def get_foundations_root():
     from os.path import dirname
 
     return dirname(sys.modules["foundations"].__file__)
+
+def check_is_in_dir(parent_directory, child_file):
+    """Check to see whether a filepath could in principle exist in a directory.  Does not check whether the file nor directory exists - just checks to see whether the names are plausible.
+        Arguments:
+            parent_directory: {str} -- The absolute path of a candidate parent directory.
+            child_file: {str} -- The absolute filepath of a candidate child file
+
+    Returns:
+        bool -- Whether child_file could be in parent_directory (in principle).
+    """
+
+    from os.path import dirname
+
+    child_directory = dirname(child_file)
+    return child_directory.startswith(parent_directory)
