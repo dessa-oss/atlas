@@ -83,7 +83,7 @@ class LegacyBackend(object):
 
     @staticmethod
     def _extract_info(dir_entry):
-        uuid = dir_entry["filename"]
+        uuid = dir_entry["filename"][:-4]
         user_submitted = dir_entry["owner"]
         submitted_timestamp = dir_entry["last_modified"]
         
