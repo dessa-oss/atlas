@@ -8,8 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DeploymentManager(object):
 
-    def __init__(self):
+    def __init__(self, config_manager):
         self._scheduler = None
+        self._config_manager = config_manager
 
     def simple_deploy(self, stage, job_name, job_params):
         import uuid
@@ -60,8 +61,7 @@ class DeploymentManager(object):
         return deployment_constructor(job_name, job, job_source_bundle, *constructor_args, **constructor_kwargs)
 
     def _deployment_constructor_and_args_and_kwargs(self):
-        from foundations.global_state import config_manager
-        return config_manager.reflect_constructor('deployment', 'deployment', DeploymentManager._create_default_deployment)
+        return self._config_manager.reflect_constructor('deployment', 'deployment', DeploymentManager._create_default_deployment)
 
     @staticmethod
     def _default_scheduler_backend():
