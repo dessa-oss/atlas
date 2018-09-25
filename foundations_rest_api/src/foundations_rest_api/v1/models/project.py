@@ -41,14 +41,13 @@ class Project(PropertyModel):
     @staticmethod
     def find_by(name):
         """Finds a project by name
-        
+
         Arguments:
             name {str} -- Name of the project to find
-        
+
         Returns:
             Project -- The project
         """
-
 
         from foundations_rest_api.response import Response
 
@@ -68,4 +67,3 @@ class Project(PropertyModel):
         project.running_jobs = RunningJob.all()
         project.queued_jobs = QueuedJob.all()
         return project
-        
