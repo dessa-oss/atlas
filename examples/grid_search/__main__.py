@@ -56,6 +56,9 @@ get_metrics = foundations.create_stage(get_metrics)
 
 
 def main():
+    # set the project name
+    foundations.set_project_name('Titanic Survival')
+
     # data prep
     data = load_data().enable_caching()
     data = fill_categorical_nulls(data).enable_caching()
