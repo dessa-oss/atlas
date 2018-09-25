@@ -22,7 +22,11 @@ class CompletedJob(PropertyModel):
     @staticmethod
     def all():
         from foundations_rest_api.response import Response
-        return Response('CompletedJob', CompletedJob._all_internal)
+
+        def _all():
+            return CompletedJob._all_internal()
+
+        return Response('CompletedJob', _all)
 
     @staticmethod
     def _all_internal():
@@ -33,22 +37,28 @@ class CompletedJob(PropertyModel):
             input_params = []
             for stage_context in context.stage_contexts.values():
                 for item in stage_context.stage_log:
-                    CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
+                    CompletedJob._add_metric(
+                        stage_metrics, item['key'], item['value'])
 
             for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
                 for argument in entry.stage_args:
-                    parameter = {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
+                    parameter = {
+                        'name': argument['name'],
+                        'value': argument['value'],
+                        'stage_uuid': stage_uuid
+                    }
                     input_params.append(parameter)
-                    
 
             job = CompletedJob(
                 job_id=job_id, user='Unspecified',
-                job_parameters=context.provenance.job_run_data, 
+                job_parameters=context.provenance.job_run_data,
                 input_params=input_params,
-                output_metrics=stage_metrics, 
+                output_metrics=stage_metrics,
                 status='Completed',
-                start_time=CompletedJob._datetime_string(context.global_stage_context.start_time),
-                completed_time=CompletedJob._datetime_string(context.global_stage_context.end_time)
+                start_time=CompletedJob._datetime_string(
+                    context.global_stage_context.start_time),
+                completed_time=CompletedJob._datetime_string(
+                    context.global_stage_context.end_time)
             )
             result.append(job)
 
@@ -67,7 +77,6 @@ class CompletedJob(PropertyModel):
                 metrics[key] = [metrics[key], value]
         else:
             metrics[key] = value
-
 
     @staticmethod
     def contexts():
