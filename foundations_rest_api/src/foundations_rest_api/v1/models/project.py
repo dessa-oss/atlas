@@ -40,6 +40,16 @@ class Project(PropertyModel):
 
     @staticmethod
     def find_by(name):
+        """Finds a project by name
+        
+        Arguments:
+            name {str} -- Name of the project to find
+        
+        Returns:
+            Project -- The project
+        """
+
+
         from foundations_rest_api.response import Response
 
         def callback():
