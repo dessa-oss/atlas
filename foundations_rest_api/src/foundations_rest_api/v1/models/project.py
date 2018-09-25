@@ -43,14 +43,19 @@ class Project(PropertyModel):
         from foundations_rest_api.response import Response
 
         def callback():
-            from foundations_rest_api.v1.models.completed_job import CompletedJob
-            from foundations_rest_api.v1.models.running_job import RunningJob
-            from foundations_rest_api.v1.models.queued_job import QueuedJob
-
-            project = Project(name=name)
-            project.completed_jobs = CompletedJob.all(project_name=name)
-            project.running_jobs = RunningJob.all()
-            project.queued_jobs = QueuedJob.all()
-            return project
+            return Project._find_by_internal(name)
 
         return Response(None, callback)
+
+    @staticmethod
+    def _find_by_internal(name):
+        from foundations_rest_api.v1.models.completed_job import CompletedJob
+        from foundations_rest_api.v1.models.running_job import RunningJob
+        from foundations_rest_api.v1.models.queued_job import QueuedJob
+
+        project = Project(name=name)
+        project.completed_jobs = CompletedJob.all(project_name=name)
+        project.running_jobs = RunningJob.all()
+        project.queued_jobs = QueuedJob.all()
+        return project
+        
