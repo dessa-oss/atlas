@@ -20,19 +20,19 @@ class CompletedJob(PropertyModel):
     completed_time = PropertyModel.define_property()
 
     @staticmethod
-    def all():
+    def all(project_name=None):
         from foundations_rest_api.response import Response
 
         def _all():
-            return CompletedJob._all_internal()
+            return CompletedJob._all_internal(project_name)
 
         return Response('CompletedJob', _all)
 
     @staticmethod
-    def _all_internal():
+    def _all_internal(project_name):
         result = []
 
-        for job_id, context in CompletedJob.contexts():
+        for job_id, context in CompletedJob.contexts(project_name):
             stage_metrics = {}
             input_params = []
             for stage_context in context.stage_contexts.values():
@@ -79,20 +79,24 @@ class CompletedJob(PropertyModel):
             metrics[key] = value
 
     @staticmethod
-    def contexts():
+    def contexts(project_name):
         from foundations.job_persister import JobPersister
 
         with JobPersister.load_archiver_fetch() as archiver_fetch:
             for archiver in archiver_fetch.fetch_archivers():
-                yield archiver.pipeline_name(), CompletedJob.load_context(archiver)
+                context = CompletedJob.load_context(archiver, project_name)
+                if context is not None:
+                    yield archiver.pipeline_name(), context
 
     @staticmethod
-    def load_context(archiver):
+    def load_context(archiver, project_name):
         from foundations.pipeline_context import PipelineContext
 
         context = PipelineContext()
-        context.load_stage_log_from_archive(archiver)
         context.load_provenance_from_archive(archiver)
+        if project_name and project_name != context.provenance.project_name:
+            return None
+        context.load_stage_log_from_archive(archiver)
 
         return context
 
