@@ -53,6 +53,7 @@ class TestProject(unittest.TestCase):
 
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some completed jobs', response.evaluate().completed_jobs)
+        mock.assert_called_with(project_name='my favourite project')
     
     @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
     def test_find_by_name_project_has_completed_jobs_different_result(self, mock):
@@ -60,6 +61,15 @@ class TestProject(unittest.TestCase):
 
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some other completed jobs', response.evaluate().completed_jobs)
+        mock.assert_called_with(project_name='my favourite project')
+    
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
+    def test_find_by_name_project_has_completed_jobs_different_name(self, mock):
+        mock.return_value = 'some other completed jobs'
+
+        response = Project.find_by(name='my other favourite project')
+        self.assertEqual('some other completed jobs', response.evaluate().completed_jobs)
+        mock.assert_called_with(project_name='my other favourite project')
     
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     def test_find_by_name_project_has_running_jobs(self, mock):
