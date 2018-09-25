@@ -8,46 +8,47 @@ Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 import unittest
 from mock import patch
 
-from foundations_ssh.default_legacy_backend import DefaultLegacyBackend
+from foundations_ssh.default_legacy_backend import default_legacy_backend
 from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
-from foundations.scheduler_legacy_backend import LegacyBackend
 from foundations.global_state import config_manager
-
-class MockSFTPBucketStatScanner
 
 class MockClock(object):
     def __init__(self):
-        MockClock.was_instantiated = True
+        pass
 
 class MockLegacyBackend(object):
-    def __init__(self, clock, bucket_class, code_path, archives_path, results_path):
-        MockLegacyBackend.clock = clock
-        MockLegacyBackend.bucket_class = bucket_class
-        MockLegacyBackend.code_path = code_path
-        MockLegacyBackend.archives_path = archives_path
-        MockLegacyBackend.results_path = results_path
+    def __init__(self, clock, bucket_class, code_path, archive_path, result_path):
+        self.clock = clock
+        self.bucket_class = bucket_class
+        self.code_path = code_path
+        self.archive_path = archive_path
+        self.result_path = result_path
 
-@patch("foundations_ssh.remote_clock.RemoteClock", MockClock)
 @patch("foundations.scheduler_legacy_backend.LegacyBackend", MockLegacyBackend)
+@patch("foundations_ssh.remote_clock.RemoteClock", MockClock)
 class TestDefaultLegacyBackend(unittest.TestCase):
-    def setUp(self):
-        MockLegacyBackend.clock = None
-        MockLegacyBackend.bucket_class = None
-        MockLegacyBackend.code_path = None
-        MockLegacyBackend.archive_path = None
-        MockLegacyBackend.result_path = None
-
-        MockClock.was_instantiated = False
-
     def test_uses_legacy_backend_properly(self):
         config_manager["code_path"] = "code_path"
         config_manager["archive_path"] = "archive_path"
         config_manager["result_path"] = "result_path"
 
-        DefaultLegacyBackend()
+        backend = default_legacy_backend()
 
-        self.assertTrue(MockClock.was_instantiated)
-        self.assertEqual(MockLegacyBackend.bucket_class, SFTPBucketStatScanner)
-        self.assertEqual(MockLegacyBackend.code_path, "code_path")
-        self.assertEqual(MockLegacyBackend.archive_path, "archive_path")
-        self.assertEqual(MockLegacyBackend.result_path, "result_path")
+        self.assertTrue(isinstance(backend.clock, MockClock))
+        self.assertEqual(backend.bucket_class, SFTPBucketStatScanner)
+        self.assertEqual(backend.code_path, "code_path")
+        self.assertEqual(backend.archive_path, "archive_path")
+        self.assertEqual(backend.result_path, "result_path")
+
+    def test_uses_legacy_backend_properly_different_config(self):
+        config_manager["code_path"] = "code_path2"
+        config_manager["archive_path"] = "archive_path2"
+        config_manager["result_path"] = "result_path2"
+
+        backend = default_legacy_backend()
+
+        self.assertTrue(isinstance(backend.clock, MockClock))
+        self.assertEqual(backend.bucket_class, SFTPBucketStatScanner)
+        self.assertEqual(backend.code_path, "code_path2")
+        self.assertEqual(backend.archive_path, "archive_path2")
+        self.assertEqual(backend.result_path, "result_path2")

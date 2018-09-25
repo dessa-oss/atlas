@@ -5,22 +5,23 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
-from foundations.scheduler_legacy_backend import LegacyBackend
+def default_legacy_backend():
+    """Returns a LegacyBackend configured using predefined configs from a yaml file.
 
-class DefaultLegacyBackend(LegacyBackend):
-    """This is the same as the LegacyBackend, but it initializes itself using predefined configs from a yaml file.
+    Returns:
+        LegacyBackend -- as above
     """
 
-    def __init__(self):
-        from foundations_ssh.remote_clock import RemoteClock
-        from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
+    from foundations.scheduler_legacy_backend import LegacyBackend
+    from foundations_ssh.remote_clock import RemoteClock
+    from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
 
-        from foundations.global_state import config_manager
+    from foundations.global_state import config_manager
 
-        clock = RemoteClock()
+    clock = RemoteClock()
 
-        code_path = config_manager['code_path']
-        archive_path = config_manager['archive_path']
-        result_path = config_manager['result_path']
+    code_path = config_manager['code_path']
+    archive_path = config_manager['archive_path']
+    result_path = config_manager['result_path']
 
-        super(DefaultLegacyBackend, self).__init__(clock, SFTPBucketStatScanner, code_path, archive_path, result_path)
+    return LegacyBackend(clock, SFTPBucketStatScanner, code_path, archive_path, result_path)

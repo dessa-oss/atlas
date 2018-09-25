@@ -11,5 +11,5 @@ from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
 
 class TestSFTPJobDeployment(unittest.TestCase):
     def test_scheduler_backend(self):
-        from foundations_ssh.default_legacy_backend import DefaultLegacyBackend
-        self.assertEqual(SFTPJobDeployment.scheduler_backend(), DefaultLegacyBackend)
+        from foundations_ssh.default_legacy_backend import default_legacy_backend
+        self.assertEqual(SFTPJobDeployment.scheduler_backend(), default_legacy_backend)
