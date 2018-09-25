@@ -21,10 +21,7 @@ class TestProject(unittest.TestCase):
             return self.list
 
     def setUp(self):
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
         from foundations.global_state import config_manager
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
 
         self._listing = self.MockListing()
 
