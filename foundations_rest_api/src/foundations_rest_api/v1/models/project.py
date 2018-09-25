@@ -57,6 +57,25 @@ class Project(PropertyModel):
         return Response(None, callback)
 
     @staticmethod
+    def all():
+        from foundations_rest_api.response import Response
+
+        def callback():
+            from foundations.global_state import config_manager
+
+            listing = Project._construct_project_listing()
+            return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
+
+        return Response(None, callback)
+
+    @staticmethod
+    def _construct_project_listing():
+        from foundations.global_state import deployment_manager
+
+        constructor, args, kwargs = deployment_manager.project_listing_constructor_and_args_and_kwargs()
+        return constructor(*args, **kwargs)
+
+    @staticmethod
     def _find_by_internal(name):
         from foundations_rest_api.v1.models.completed_job import CompletedJob
         from foundations_rest_api.v1.models.running_job import RunningJob

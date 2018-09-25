@@ -12,6 +12,36 @@ from foundations_rest_api.v1.models.project import Project
 
 class TestProject(unittest.TestCase):
 
+    class MockListing(object):
+
+        def __init__(self):
+            self.list = []
+
+        def get_pipeline_names(self):
+            return self.list
+
+    def setUp(self):
+        from foundations.pipeline import Pipeline
+        from foundations.pipeline_context import PipelineContext
+        from foundations.global_state import config_manager
+        from foundations.bucket_pipeline_archive import BucketPipelineArchive
+
+        self._listing = self.MockListing()
+
+        def get_listing():
+            return self._listing
+
+        config_manager['project_listing_implementation'] = {
+            'project_listing_type': get_listing
+        }
+
+    def tearDown(self):
+        from foundations.global_state import config_manager
+
+        keys = list(config_manager.config().keys())
+        for key in keys:
+            del config_manager.config()[key]
+
     def test_new_project_is_response(self):
         from foundations_rest_api.response import Response
 
@@ -104,3 +134,47 @@ class TestProject(unittest.TestCase):
         response = Project.find_by(name='my favourite project')
         self.assertEqual('some other queued jobs',
                          response.evaluate().queued_jobs)
+
+    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
+    @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
+    def test_all_returns_all_projects(self, mock_completed, mock_running, mock_queued):
+        mock_completed.return_value = 'completed'
+        mock_running.return_value = 'running'
+        mock_queued.return_value = 'queued'
+
+        self._listing.list = ['project1']
+
+        project = Project.all().evaluate()[0].evaluate()
+        expected_project = Project(
+            name='project1',
+            completed_jobs='completed',
+            running_jobs='running',
+            queued_jobs='queued'
+        )
+        self.assertEqual(expected_project, project)
+
+    @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
+    @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
+    def test_all_returns_all_projects_multiple_projects(self, mock_completed, mock_running, mock_queued):
+        mock_completed.return_value = 'completed'
+        mock_running.return_value = 'running'
+        mock_queued.return_value = 'queued'
+
+        self._listing.list = ['project1', 'project2']
+
+        project = [project.evaluate() for project in Project.all().evaluate()]
+        expected_project = Project(
+            name='project1',
+            completed_jobs='completed',
+            running_jobs='running',
+            queued_jobs='queued'
+        )
+        expected_project_two = Project(
+            name='project2',
+            completed_jobs='completed',
+            running_jobs='running',
+            queued_jobs='queued'
+        )
+        self.assertEqual([expected_project, expected_project_two], project)

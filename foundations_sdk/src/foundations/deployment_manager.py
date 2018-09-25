@@ -55,7 +55,7 @@ class DeploymentManager(object):
         return self._scheduler
 
     def _record_project(self, stage):
-        constructor, constructor_args, constructor_kwargs = self._project_listing_constructor_and_args_and_kwargs()
+        constructor, constructor_args, constructor_kwargs = self.project_listing_constructor_and_args_and_kwargs()
         listing = constructor(*constructor_args, **constructor_kwargs)
         listing.track_pipeline(stage.pipeline_context().provenance.project_name)
 
@@ -71,7 +71,7 @@ class DeploymentManager(object):
     def _deployment_constructor_and_args_and_kwargs(self):
         return self._config_manager.reflect_constructor('deployment', 'deployment', DeploymentManager._create_default_deployment)
 
-    def _project_listing_constructor_and_args_and_kwargs(self):
+    def project_listing_constructor_and_args_and_kwargs(self):
         return self._config_manager.reflect_constructor('project_listing', 'project_listing', DeploymentManager._create_default_project_listing)
 
     @staticmethod
