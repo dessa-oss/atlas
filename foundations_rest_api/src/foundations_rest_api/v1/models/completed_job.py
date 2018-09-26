@@ -29,30 +29,62 @@ class CompletedJob(PropertyModel):
         result = []
 
         for job_id, context in CompletedJob.contexts():
-            stage_metrics = {}
-            input_params = []
-            for stage_context in context.stage_contexts.values():
-                for item in stage_context.stage_log:
-                    CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
-
-            for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
-                for argument in entry.stage_args:
-                    parameter = {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
-                    input_params.append(parameter)
-                    
-
-            job = CompletedJob(
-                job_id=job_id, user='Unspecified',
-                job_parameters=context.provenance.job_run_data, 
-                input_params=input_params,
-                output_metrics=stage_metrics, 
-                status='Completed',
-                start_time=CompletedJob._datetime_string(context.global_stage_context.start_time),
-                completed_time=CompletedJob._datetime_string(context.global_stage_context.end_time)
-            )
+            job = CompletedJob._load_job(job_id, context)
             result.append(job)
 
         return result
+
+    @staticmethod
+    def _load_job(job_id, context):
+        job_metrics = CompletedJob._load_job_metrics(context)
+        input_params = CompletedJob._load_input_params(context)
+        return CompletedJob._assign_job_param(job_id, context, job_metrics, input_params)
+
+    @staticmethod
+    def _load_input_params(context):
+        input_params = []
+        for stage_uuid, argument in CompletedJob._stage_arguments(context):
+            parameter = CompletedJob._job_parameter(stage_uuid, argument)
+            input_params.append(parameter)
+        return input_params
+
+    @staticmethod
+    def _job_parameter(stage_uuid, argument):
+        return {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
+
+    @staticmethod
+    def _stage_arguments(context):
+        for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
+            for argument in entry.stage_args:
+                yield stage_uuid, argument
+
+    @staticmethod
+    def _load_job_metrics(context):
+        stage_metrics = {}
+        for item in CompletedJob._stage_metrics(context):
+            CompletedJob._add_metric(stage_metrics, item['key'], item['value'])
+        return stage_metrics
+
+    @staticmethod
+    def _stage_metrics(context):
+        for stage_context in context.stage_contexts.values():
+            for item in stage_context.stage_log:
+                yield item
+
+    @staticmethod
+    def _assign_job_param(job_id, context, stage_metrics, input_params):
+        return CompletedJob(
+            job_id=job_id,
+            user='Unspecified',
+            job_parameters=context.provenance.job_run_data,
+            input_params=input_params,
+            output_metrics=stage_metrics,
+            status='Completed',
+            start_time=CompletedJob._datetime_string(
+                context.global_stage_context.start_time),
+            completed_time=CompletedJob._datetime_string(
+                context.global_stage_context.end_time)
+        )
 
     @staticmethod
     def _stage_hierarchy_entries(context):
@@ -67,7 +99,6 @@ class CompletedJob(PropertyModel):
                 metrics[key] = [metrics[key], value]
         else:
             metrics[key] = value
-
 
     @staticmethod
     def contexts():
