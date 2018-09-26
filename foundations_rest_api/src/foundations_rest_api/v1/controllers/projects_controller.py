@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+@api_resource('/api/v1/projects')
 class ProjectsController(object):
     
     def index(self):
