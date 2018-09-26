@@ -124,7 +124,7 @@ class ResultReader(object):
                 all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
 
     def get_results(self):
-        main_headers = ["pipeline_name", "stage_id",
+        main_headers = ["job_name", "stage_id",
                         "stage_name", "has_unstructured_result"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_results)
@@ -168,7 +168,7 @@ class ResultReader(object):
                 all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
     def get_job_information(self):
-        main_headers = ["pipeline_name", "stage_status", "stage_id", "parent_ids",
+        main_headers = ["job_name", "stage_status", "stage_id", "parent_ids",
             "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_job_information)
