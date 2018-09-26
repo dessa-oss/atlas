@@ -11,3 +11,13 @@ def make_data(data='created some data here'):
 
 def concat_data(left, right):
     return left + right
+
+def divide_by_zero():
+    return 1 / 0
+
+def empty_dataframe():
+    import pandas as pd
+    return pd.DataFrame()
+
+def get_asdf(df):
+    return df["asdf"]
