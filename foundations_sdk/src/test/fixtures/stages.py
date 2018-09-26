@@ -24,8 +24,14 @@ def implicit_chained_exception():
     except:
         return {}["asdf"]
 
+
 def explicit_chained_exception():
     try:
         1 / 0
     except Exception as ex:
-        raise TypeError() from ex
+        import sys
+
+        if sys.version_info.major < 3:
+            exec("raise TypeError('python 2')")
+        else:
+            exec("raise TypeError() from ex")
