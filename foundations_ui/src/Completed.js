@@ -47,9 +47,9 @@ class Completed extends Component {
       return (
         <div>
             <h2>Completed Jobs</h2>
-            <h1 className="project-name">Project name: {result.name}</h1>
+            <h3 className="project-name">Project name: {result.name}</h3>
             <h3 className="project-source">Source: not known</h3>
-            <ReactTable data={completedJobs} columns={columns.columns} />
+            <ReactTable data={completedJobs} columns={columns.completed_columns} />
         </div>
       );
     }

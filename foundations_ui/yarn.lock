@@ -1879,9 +1879,17 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+date-diff@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/date-diff/-/date-diff-0.2.1.tgz#5ebc707baddf56bd7cbd1e5d4fcec4acaf50d259"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
+
+datetime-difference@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/datetime-difference/-/datetime-difference-1.0.0.tgz#cd305448ada630bf1177ddd32ce6d74314f720de"
 
 debug@*:
   version "4.0.1"
