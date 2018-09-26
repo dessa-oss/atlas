@@ -5,23 +5,26 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
-from __future__ import print_function
-
 class ErrorPrinter(object):
+    """A class which provides functionality used for controlling error verbosity.
+    """
+
     def __init__(self):
         from foundations.global_state import config_manager
 
         self._error_verbosity = config_manager.config().get("error_verbosity", "QUIET")
 
-    def get_callback(self):
-        def _callback(*args):
-            import sys
-
-            sys.stderr.write(self.traceback_string(*args))
-
-        return _callback
-
     def traceback_string(self, ex_type, ex_value, ex_traceback):
+        """Filters the stack trace (recursively, in the case of python 3) as defined by the error verbosity set in the config_manager.
+            Arguments:
+                ex_type: {type} -- The type of the exception to which the stack trace belongs.
+                ex_value: {Exception} -- The exception value itself.
+                ex_traceback: {TracebackType} -- The traceback for the exception.
+        
+        Returns:
+            string -- A string representation of the filtered traceback, ready for output to stderr.
+        """
+
         traceback_list = self._pretty_print(ex_type, ex_value, ex_traceback)
 
         if ErrorPrinter._has_nested_exception(ex_value):
@@ -36,6 +39,20 @@ class ErrorPrinter(object):
             traceback_list = inner_traceback_list + [separator] + traceback_list
 
         return ErrorPrinter._concat(traceback_list)
+
+    def get_callback(self):
+        """Returns a callback for use in overriding sys.excepthook that filters the traceback in the same manner as traceback_string.
+
+        Returns:
+            callback -- As in the description.
+        """
+
+        def _callback(*args):
+            import sys
+
+            sys.stderr.write(self.traceback_string(*args))
+
+        return _callback
 
     def _pretty_print(self, ex_type, ex_value, ex_traceback):
         if self._error_verbosity == "QUIET":
