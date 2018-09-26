@@ -24,7 +24,6 @@ def implicit_chained_exception():
     except:
         return {}["asdf"]
 
-
 def explicit_chained_exception():
     try:
         1 / 0

@@ -13,6 +13,14 @@ class ErrorPrinter(object):
 
         self._error_verbosity = config_manager.config().get("error_verbosity", "QUIET")
 
+    def get_callback(self):
+        def _callback(*args):
+            import sys
+
+            sys.stderr.write(self.traceback_string(*args))
+
+        return _callback
+
     def traceback_string(self, ex_type, ex_value, ex_traceback):
         traceback_list = self._pretty_print(ex_type, ex_value, ex_traceback)
 
@@ -81,7 +89,7 @@ class ErrorPrinter(object):
         foundations_root = get_foundations_root()
 
         def _is_disallowed(stack_file_name):
-            return check_is_in_dir(foundations_root, stack_file_name)
+            return check_is_in_dir(foundations_root, stack_file_name) or stack_file_name == "main.py"
 
         def _filter_to_return(stack_info):
             stack_file_name = stack_info[0]
