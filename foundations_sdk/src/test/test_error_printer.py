@@ -13,6 +13,7 @@ import test.fixtures.stages as stages
 
 class TestErrorPrinter(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         config_manager.config().pop("error_verbosity", None)
 
     def test_traceback_string_verbose_run_same_process(self):
@@ -65,8 +66,6 @@ class TestErrorPrinter(unittest.TestCase):
     def test_explicit_chained_exception(self):
         explicit = create_stage(stages.explicit_chained_exception)
         self._base_test(explicit)
-
-    # def test_
 
     @staticmethod
     def _create_bad_job():
