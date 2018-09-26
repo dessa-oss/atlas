@@ -17,10 +17,15 @@ class ErrorPrinter(object):
         traceback_list = self._pretty_print(ex_type, ex_value, ex_traceback)
 
         if ErrorPrinter._has_nested_exception(ex_value):
-            inner_type, inner_value, inner_traceback = ErrorPrinter._get_inner_info(ex_value)
+            inner_type, inner_value, inner_traceback, is_explicit = ErrorPrinter._get_inner_info(ex_value)
             inner_traceback_list = self._pretty_print(inner_type, inner_value, inner_traceback)
-            separator = ["\nDuring handling of the above exception, another exception occurred:\n\n"]
-            traceback_list = inner_traceback_list + separator + traceback_list
+
+            if is_explicit:
+                separator = "\nThe above exception was the direct cause of the following exception:\n\n"
+            else:
+                separator = "\nDuring handling of the above exception, another exception occurred:\n\n"
+
+            traceback_list = inner_traceback_list + [separator] + traceback_list
 
         return ErrorPrinter._concat(traceback_list)
 
@@ -34,28 +39,41 @@ class ErrorPrinter(object):
 
     @staticmethod
     def _get_inner_info(ex_value):
-        inner_exception = ex_value.__context__
-        return type(inner_exception), inner_exception, inner_exception.__traceback__
+        if ex_value.__cause__ is not None:
+            inner_exception = ex_value.__cause__
+            is_explicit = True
+        else:
+            inner_exception = ex_value.__context__
+            is_explicit = False
+
+        return type(inner_exception), inner_exception, inner_exception.__traceback__, is_explicit
 
     @staticmethod
     def _quiet_traceback_strings(ex_type, ex_value, ex_traceback):
+        def _transform(traceback):
+            return filter(ErrorPrinter._stack_trace_filter(), traceback)
+        
+        return ErrorPrinter._transformed_traceback_strings(_transform, ex_type, ex_value, ex_traceback)
+
+    @staticmethod
+    def _verbose_traceback_strings(ex_type, ex_value, ex_traceback):
+        def _transform(traceback):
+            return traceback
+        
+        return ErrorPrinter._transformed_traceback_strings(_transform, ex_type, ex_value, ex_traceback)
+
+    @staticmethod
+    def _transformed_traceback_strings(transform, ex_type, ex_value, ex_traceback):
         import traceback
 
         extracted_traceback = traceback.extract_tb(ex_traceback)
-        cleaned_stack_trace = filter(ErrorPrinter._stack_trace_filter(), extracted_traceback)
+        cleaned_stack_trace = transform(extracted_traceback)
 
         header = ["Traceback (most recent call last):\n"]
         traceback_body = traceback.format_list(cleaned_stack_trace)
         exception_tail = traceback.format_exception_only(ex_type, ex_value)
 
         return header + traceback_body + exception_tail
-
-    @staticmethod
-    def _verbose_traceback_strings(ex_type, ex_value, ex_traceback):
-        import traceback
-        
-        list_of_traceback_strings = traceback.format_exception(ex_type, ex_value, ex_traceback)
-        return list_of_traceback_strings
 
     @staticmethod
     def _stack_trace_filter():
@@ -77,4 +95,9 @@ class ErrorPrinter(object):
 
     @staticmethod
     def _has_nested_exception(ex_value):
-        return "__context__" in dir(ex_value) and ex_value.__context__ is not None
+        import sys
+
+        if sys.version_info.major < 3:
+            return False
+
+        return ex_value.__cause__ is not None or ex_value.__context__ is not None

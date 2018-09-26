@@ -59,19 +59,44 @@ class TestErrorPrinter(unittest.TestCase):
 
         self._base_test(rip)
 
+    def test_traceback_string_third_party_verbose(self):
+        import pandas as pd
+
+        config_manager["error_verbosity"] = "VERBOSE"
+
+        empty_dataframe = create_stage(stages.empty_dataframe)
+        illegal_access = create_stage(stages.get_asdf)
+
+        df = empty_dataframe()
+        rip = illegal_access(df)
+
+        self._base_test(rip, no_alter=True)
+
     def test_implicit_chained_exception(self):
         implicit = create_stage(stages.implicit_chained_exception)
-        self._base_test(implicit)
+        self._base_test(implicit())
 
     def test_explicit_chained_exception(self):
         explicit = create_stage(stages.explicit_chained_exception)
-        self._base_test(explicit)
+        self._base_test(explicit())
+
+    def test_implicit_chained_exception_verbose(self):
+        config_manager["error_verbosity"] = "VERBOSE"
+
+        implicit = create_stage(stages.implicit_chained_exception)
+        self._base_test(implicit(), no_alter=True)
+
+    def test_explicit_chained_exception_verbose(self):
+        config_manager["error_verbosity"] = "VERBOSE"
+
+        explicit = create_stage(stages.explicit_chained_exception)
+        self._base_test(explicit(), no_alter=True)
 
     @staticmethod
     def _create_bad_job():
         return create_stage(stages.divide_by_zero)()
 
-    def _base_test(self, job_to_run, no_alter=False, debug=False):
+    def _base_test(self, job_to_run, no_alter=False):
         if no_alter:
             string_list_transform = lambda list_of_strings: list_of_strings
         else:
@@ -79,6 +104,7 @@ class TestErrorPrinter(unittest.TestCase):
 
         try:
             job_to_run.run_same_process()
+            self.fail("Bad test case - job needs to fail!")
         except:
             import sys
             import traceback
