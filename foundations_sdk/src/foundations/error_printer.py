@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
+from __future__ import print_function
+
 class ErrorPrinter(object):
     def __init__(self):
         from foundations.global_state import config_manager
@@ -19,6 +21,7 @@ class ErrorPrinter(object):
 
     @staticmethod
     def _print_quietly(ex_type, ex_value, ex_traceback):
+        import sys
         import traceback
 
         extracted_traceback = traceback.extract_tb(ex_traceback)
@@ -29,7 +32,7 @@ class ErrorPrinter(object):
         to_print += traceback.format_exception_only(ex_type, ex_value)
 
         for line in to_print:
-            print(line.rstrip('\n'))
+            print(line.rstrip('\n'), file=sys.stderr)
     
     @staticmethod
     def _print_verbosely(ex_type, ex_value, ex_traceback):
@@ -41,8 +44,11 @@ class ErrorPrinter(object):
         from foundations.utils import get_foundations_root, check_is_in_dir
         foundations_root = get_foundations_root()
 
+        def _is_disallowed(stack_file_name):
+            return check_is_in_dir(foundations_root, stack_file_name)
+
         def _filter_to_return(stack_info):
             stack_file_name = stack_info[0]
-            return not check_is_in_dir(foundations_root, stack_file_name)
+            return not _is_disallowed(stack_file_name)
 
         return _filter_to_return
