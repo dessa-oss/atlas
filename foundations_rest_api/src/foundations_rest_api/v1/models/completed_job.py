@@ -31,6 +31,8 @@ class CompletedJob(PropertyModel):
 
         for job_id, context in CompletedJob.contexts():
             job_properties = CompletedJobData(context, job_id).load_job()
+            job_properties['start_time'] = CompletedJob._datetime_string(job_properties['start_time'])
+            job_properties['completed_time'] = CompletedJob._datetime_string(job_properties['completed_time'])
             job = CompletedJob(**job_properties)
             result.append(job)
 

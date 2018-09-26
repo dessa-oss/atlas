@@ -42,7 +42,6 @@ class CompletedJobData(object):
                 yield item
 
     def _assign_job_param(self, stage_metrics, input_params):
-        from foundations_rest_api.v1.models.completed_job import CompletedJob
 
         return {
             'job_id': self._job_id,
@@ -51,10 +50,8 @@ class CompletedJobData(object):
             'input_params': input_params,
             'output_metrics': stage_metrics,
             'status': 'Completed',
-            'start_time': CompletedJob._datetime_string(
-                self._context.global_stage_context.start_time),
-            'completed_time': CompletedJob._datetime_string(
-                self._context.global_stage_context.end_time)
+            'start_time': self._context.global_stage_context.start_time,
+            'completed_time': self._context.global_stage_context.end_time
         }
 
     def _stage_hierarchy_entries(self):
