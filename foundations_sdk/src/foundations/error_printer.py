@@ -5,14 +5,19 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
+import sys
+
 class ErrorPrinter(object):
     """A class which provides functionality used for controlling error verbosity.
+        Arguments:
+            excepthook: {callback} -- The old exception hook.  Defaults to sys.__excepthook__.
     """
 
-    def __init__(self):
+    def __init__(self, excepthook=sys.__excepthook__):
         from foundations.global_state import config_manager
 
         self._error_verbosity = config_manager.config().get("error_verbosity", "QUIET")
+        self._excepthook = excepthook
 
     def traceback_string(self, ex_type, ex_value, ex_traceback):
         """Filters the stack trace (recursively, in the case of python 3) as defined by the error verbosity set in the config_manager.
@@ -53,6 +58,15 @@ class ErrorPrinter(object):
             sys.stderr.write(self.traceback_string(*args))
 
         return _callback
+
+    def get_old_excepthook(self):
+        """Returns the old exception hook that was passed in.
+        
+        Returns:
+            callback -- As in the description.
+        """
+
+        return self._excepthook
 
     def _pretty_print(self, ex_type, ex_value, ex_traceback):
         if self._error_verbosity == "QUIET":

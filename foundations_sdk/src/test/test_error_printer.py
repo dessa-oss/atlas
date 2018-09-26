@@ -92,6 +92,14 @@ class TestErrorPrinter(unittest.TestCase):
         explicit = create_stage(stages.explicit_chained_exception)
         self._base_test(explicit(), no_alter=True)
 
+    def test_old_callback_default(self):
+        import sys
+        self.assertEqual(ErrorPrinter().get_old_excepthook(), sys.__excepthook__)
+
+    def test_old_callback_supplied(self):
+        import sys
+        self.assertEqual(ErrorPrinter("asdf").get_old_excepthook(), "asdf")
+
     @staticmethod
     def _create_bad_job():
         return create_stage(stages.divide_by_zero)()

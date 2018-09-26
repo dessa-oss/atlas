@@ -94,8 +94,13 @@ class StageConnectorWrapper(object):
         import sys
         from foundations.error_printer import ErrorPrinter
 
-        sys.excepthook = ErrorPrinter().get_callback()
-        return self._connector.run(self._filler_builder, **filler_kwargs)
+        error_printer = ErrorPrinter(sys.excepthook)
+
+        sys.excepthook = error_printer.get_callback()
+        connector_result = self._connector.run(self._filler_builder, **filler_kwargs)
+        sys.excepthook = error_printer.get_old_excepthook()
+
+        return connector_result
 
     def _make_builder(self):
         from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
