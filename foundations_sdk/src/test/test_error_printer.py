@@ -9,7 +9,7 @@ import unittest
 
 from foundations.error_printer import ErrorPrinter
 from foundations import config_manager, create_stage
-import integration.fixtures.stages as stages
+import test.fixtures.stages as stages
 
 class TestErrorPrinter(unittest.TestCase):
     def setUp(self):
@@ -57,6 +57,16 @@ class TestErrorPrinter(unittest.TestCase):
         rip = illegal_access(df)
 
         self._base_test(rip)
+
+    def test_implicit_chained_exception(self):
+        implicit = create_stage(stages.implicit_chained_exception)
+        self._base_test(implicit)
+
+    def test_explicit_chained_exception(self):
+        explicit = create_stage(stages.explicit_chained_exception)
+        self._base_test(explicit)
+
+    # def test_
 
     @staticmethod
     def _create_bad_job():
