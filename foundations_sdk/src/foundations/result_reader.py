@@ -55,7 +55,7 @@ class ResultReader(object):
                 dict_like_append(params_to_write, arg_name, argument_value)
 
     @staticmethod
-    def _create_initial_row_data(args, kwargs, stage_context, stage_info, stage_id, pipeline_name):
+    def _create_initial_row_data(args, kwargs, stage_context, stage_info, stage_id, project_name, pipeline_name):
         from foundations.utils import pretty_time
 
         parent_ids = stage_info.parents
@@ -70,7 +70,7 @@ class ResultReader(object):
         else:
             stage_status = "succeeded"
 
-        return [pipeline_name, stage_status, stage_id, parent_ids, stage_name,
+        return [project_name, pipeline_name, stage_status, stage_id, parent_ids, stage_name,
             args, kwargs, start_time, end_time, delta_time]
 
     @staticmethod
@@ -146,7 +146,7 @@ class ResultReader(object):
                 kwargs = []
 
                 row_data = ResultReader._create_initial_row_data(
-                    args, kwargs, stage_context, stage_info, stage_id, pipeline_name)
+                    args, kwargs, stage_context, stage_info, stage_id, pipeline_context.provenance.project_name, pipeline_name)
 
                 ResultReader._fill_placeholders(
                     pipeline_context.provenance,
@@ -168,7 +168,7 @@ class ResultReader(object):
                 all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
     def get_job_information(self):
-        main_headers = ["job_name", "stage_status", "stage_id", "parent_ids",
+        main_headers = ["project_name", "job_name", "stage_status", "stage_id", "parent_ids",
             "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_job_information)
