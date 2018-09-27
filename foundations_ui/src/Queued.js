@@ -17,7 +17,7 @@ class Queued extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/data")
+    fetch("http://localhost:3000/")
       .then(res => res.json())
       .then(
         (result) => {
