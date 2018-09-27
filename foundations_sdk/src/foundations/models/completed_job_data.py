@@ -11,6 +11,7 @@ class CompletedJobData(object):
         self._context.load_stage_log_from_archive()
         self._context.load_provenance_from_archive()
         self._job_id = job_id
+        self._project_name = self._context.provenance.project_name
 
     def load_job(self):
         job_metrics = self._load_job_metrics()
@@ -46,6 +47,7 @@ class CompletedJobData(object):
     def _assign_job_param(self, stage_metrics, input_params):
 
         return {
+            'project_name': self._project_name,
             'job_id': self._job_id,
             'user': 'Unspecified',
             'job_parameters': self._context.provenance.job_run_data,

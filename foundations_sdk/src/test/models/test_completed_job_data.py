@@ -99,7 +99,7 @@ class TestCompletedJobData(unittest.TestCase):
         def method():
             from foundations.stage_logging import log_metric
             log_metric('loss', 15.33)
-
+    
         stage = self._pipeline.stage(method)
 
         self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
@@ -107,6 +107,7 @@ class TestCompletedJobData(unittest.TestCase):
         job = CompletedJobData(
             self._make_wrapped_context(), 'my job').load_job()
         expected_job = {
+            'project_name': 'my job',
             'job_id': 'my job',
             'user': 'Unspecified',
             'job_parameters': {},
@@ -129,6 +130,7 @@ class TestCompletedJobData(unittest.TestCase):
         job = CompletedJobData(
             self._make_wrapped_context(), 'my other job').load_job()
         expected_job = {
+            'project_name': 'my other job',
             'job_id': 'my other job',
             'user': 'Unspecified',
             'job_parameters': {},
@@ -153,6 +155,7 @@ class TestCompletedJobData(unittest.TestCase):
         job = CompletedJobData(
             self._make_wrapped_context(), 'my job').load_job()
         expected_job = {
+            'project_name': 'my job',
             'job_id': 'my job',
             'user': 'Unspecified',
             'job_parameters': {},
@@ -177,6 +180,7 @@ class TestCompletedJobData(unittest.TestCase):
         job = CompletedJobData(
             self._make_wrapped_context(), 'my job').load_job()
         expected_job = {
+            'project_name': 'my job',
             'job_id': 'my job',
             'user': 'Unspecified',
             'job_parameters': {},
@@ -204,6 +208,7 @@ class TestCompletedJobData(unittest.TestCase):
         input_params = [{'stage_uuid': 'e56573879d1a601ec8845955e194dff00942bf30',
                          'name': 'hello', 'value': {'type': 'dynamic', 'name': 'hello'}}]
         expected_job = {
+            'project_name': 'my job',
             'job_id': 'my job',
             'user': 'Unspecified',
             'job_parameters': {'hello': 'world'},
@@ -220,6 +225,7 @@ class TestCompletedJobData(unittest.TestCase):
         from foundations.job_persister import JobPersister
 
         self._pipeline_context.file_name = job_name
+        self._pipeline_context.provenance.project_name = job_name
         self._pipeline_context.global_stage_context.start_time = start_time
 
         job = Job(stage, **job_parameters)
