@@ -130,7 +130,9 @@ def pretty_error(pipeline_name, error_info):
     filtered_traceback = error_printer.transform_extracted_traceback(traceback_items)
     filtered_traceback_strings = traceback.format_list(filtered_traceback)
 
-    return concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
+    error_message = concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
+
+    return error_message, error_printer.get_callback()
 
 def split_process_output(output):
     lines = output.decode().strip().split("\n")

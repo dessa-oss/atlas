@@ -10,6 +10,8 @@ class RemoteException(Exception):
         super(RemoteException, self).__init__(msg)
 
 def check_result(pipeline_name, result):
+    import sys
+
     from foundations.compat import compat_raise
     from foundations.utils import pretty_error
 
@@ -18,4 +20,6 @@ def check_result(pipeline_name, result):
     if error_info is None:
         return result
     else:
-        compat_raise(RemoteException, pretty_error(pipeline_name, error_info))
+        error_message, callback = pretty_error(pipeline_name, error_info)
+        sys.excepthook = callback
+        compat_raise(RemoteException, error_message)
