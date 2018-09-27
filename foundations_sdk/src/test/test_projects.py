@@ -6,8 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from mock import patch
 
 from foundations.projects import set_project_name
+from foundations.projects import get_metrics_for_all_jobs
 
 
 class TestProjects(unittest.TestCase):
@@ -41,3 +43,34 @@ class TestProjects(unittest.TestCase):
         foundations.set_project_name('some different project name')
         self.assertEqual('some different project name',
                          foundations_context.pipeline_context().provenance.project_name)
+
+
+    @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data(self, mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        mock.return_value = [{'project_name': 'project1', 'stuff': 'more stuff'}]
+
+        expected_result = DataFrame(mock.return_value)
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+
+    @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_different_data(self, mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        mock.return_value = [{'project_name': 'project2', 'stuff': 'a lot more stuff'}, {'project_name': 'project2', 'stuff': 'a little bit of stuff'}]
+
+        expected_result = DataFrame(mock.return_value)
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project2'))
+
+    @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_filters_to_project(self, mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        mock.return_value = [{'project_name': 'project1', 'stuff': 'a lot more stuff'}, {'project_name': 'project2', 'stuff': 'a little bit of stuff'}]
+
+        expected_result = DataFrame([{'project_name': 'project1', 'stuff': 'a lot more stuff'}])
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
