@@ -127,7 +127,7 @@ def _is_not_foundations_line(foundations_line_regex):
         return foundations_line_regex.match(path) is None
     return action
 
-def pretty_error(pipeline_name, error_info, verbose=False):
+def pretty_error(pipeline_name, error_info):
     import traceback
 
     if error_info is None:

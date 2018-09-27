@@ -23,15 +23,3 @@ class TestErrorPrinting(unittest.TestCase):
         data.run_same_process()
 
         self.assertEqual(sys.excepthook, sys.__excepthook__)
-
-    def test_restores_excepthook_upon_error_catch(self):
-        import sys
-
-        divide_by_zero = foundations.create_stage(stages.divide_by_zero)
-        data = divide_by_zero()
-        
-        try:
-            data.run_same_process()
-            self.fail("Bad test - this should have thrown an exception.")
-        except:
-            self.assertEqual(sys.excepthook, sys.__excepthook__)
