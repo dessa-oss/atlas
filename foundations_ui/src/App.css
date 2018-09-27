@@ -1,0 +1,45 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 80px;
+  float: left;
+  height: 50px;
+}
+
+.App-header {
+  background-color: #fff;
+  height: 60px;
+  padding: 20px;
+  color: white;
+  border-bottom: 1px solid #999;
+}
+
+.App-title {
+  font-size: 1.5em;
+  text-align: left;
+  padding-left: 20px;
+  color: #000;
+  float: left;
+}
+
+.App-docs {
+  text-align: right;
+  padding-right: 90px;
+  color: #000;
+  font-size: 1.5em;
+}
+
+.App-body {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.project-name, .project-source {
+  text-align: left;
+}

@@ -27,35 +27,35 @@ class ResultReader(object):
             pipeline_context.provenance.job_source_bundle.cleanup()
 
     @staticmethod
-    def _fill_placeholders(params_to_read, params_to_write, parent_ids, column_headers, row_data):
+    def _fill_placeholders(provenance, params_to_read, params_to_write, parent_ids, column_headers, row_data):
         from foundations.utils import dict_like_iter, dict_like_append
 
-        for arg_name, arg_val in dict_like_iter(params_to_read):
-            if isinstance(arg_val, dict):
-                if "stage_id" in arg_val:
-                    arg_val_stage_id = arg_val["stage_id"]
-                    dict_like_append(params_to_write, arg_name, arg_val_stage_id)
+        for arg_name, argument_value in dict_like_iter(params_to_read):
+            argument_name = argument_value['name']
+            argument_value = argument_value['value']
+            if argument_value['type'] == 'stage':
+                argument_value_stage_uuid = argument_value["stage_uuid"]
+                dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
 
-                    parent_ids.append(arg_val_stage_id)
+                parent_ids.append(argument_value_stage_uuid)
+            elif argument_value['type'] == 'dynamic':
+                hyperparameter_name = argument_name
+                hyperparameter_value = provenance.job_run_data.get(
+                    argument_value['name'])
+
+                if hyperparameter_name:
+                    dict_like_append(params_to_write, arg_name, hyperparameter_name)
+
+                    column_headers.append(
+                        hyperparameter_name)
+                    row_data.append(hyperparameter_value)
                 else:
-                    hyperparameter_name = arg_val.get(
-                        "hyperparameter_name", None)
-                    hyperparameter_value = arg_val[
-                        "hyperparameter_value"]
-
-                    if hyperparameter_name:
-                        dict_like_append(params_to_write, arg_name, hyperparameter_name)
-
-                        column_headers.append(
-                            hyperparameter_name)
-                        row_data.append(hyperparameter_value)
-                    else:
-                        dict_like_append(params_to_write, arg_name, hyperparameter_value)
+                    dict_like_append(params_to_write, arg_name, hyperparameter_value)
             else:
-                dict_like_append(params_to_write, arg_name, arg_val)
+                dict_like_append(params_to_write, arg_name, argument_value)
 
     @staticmethod
-    def _create_initial_row_data(args, kwargs, stage_context, stage_info, stage_id, pipeline_name):
+    def _create_initial_row_data(args, kwargs, stage_context, stage_info, stage_id, project_name, pipeline_name):
         from foundations.utils import pretty_time
 
         parent_ids = stage_info.parents
@@ -70,7 +70,7 @@ class ResultReader(object):
         else:
             stage_status = "succeeded"
 
-        return [pipeline_name, stage_status, stage_id, parent_ids, stage_name,
+        return [project_name, pipeline_name, stage_status, stage_id, parent_ids, stage_name,
             args, kwargs, start_time, end_time, delta_time]
 
     @staticmethod
@@ -124,7 +124,7 @@ class ResultReader(object):
                 all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
 
     def get_results(self):
-        main_headers = ["pipeline_name", "stage_id",
+        main_headers = ["job_name", "stage_id",
                         "stage_name", "has_unstructured_result"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_results)
@@ -146,17 +146,29 @@ class ResultReader(object):
                 kwargs = []
 
                 row_data = ResultReader._create_initial_row_data(
-                    args, kwargs, stage_context, stage_info, stage_id, pipeline_name)
+                    args, kwargs, stage_context, stage_info, stage_id, pipeline_context.provenance.project_name, pipeline_name)
 
                 ResultReader._fill_placeholders(
-                    stage_info.stage_args, args, stage_info.parents, column_headers, row_data)
+                    pipeline_context.provenance,
+                    stage_info.stage_args, 
+                    args, 
+                    stage_info.parents, 
+                    column_headers, 
+                    row_data
+                )
                 ResultReader._fill_placeholders(
-                    stage_info.stage_kwargs, kwargs, stage_info.parents, column_headers, row_data)
+                    pipeline_context.provenance,
+                    stage_info.stage_kwargs, 
+                    kwargs, 
+                    stage_info.parents, 
+                    column_headers, 
+                    row_data
+                )
 
                 all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
 
     def get_job_information(self):
-        main_headers = ["pipeline_name", "stage_status", "stage_id", "parent_ids",
+        main_headers = ["project_name", "job_name", "stage_status", "stage_id", "parent_ids",
             "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_job_information)
