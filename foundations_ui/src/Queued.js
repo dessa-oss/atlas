@@ -43,44 +43,36 @@ class Queued extends Component {
     const queued_columns = [{
       Header: 'Start Time',
       accessor: 'submitted_time'
-    }, {
-      Header: 'JobId',
-      accessor: 'job_id'
-    }, {
-      Header: 'Duration in Queue',
-      id: 'duration',
-      accessor: 'findDiff(submitted_time)'
-    }, {
-      Header: 'User',
-      accessor: 'user'
+      }, {
+        Header: 'JobId',
+        accessor: 'job_id'
+      }, {
+        Header: 'Duration in Queue',
+        id: 'duration',
+        accessor: 'duration'
+      }, {
+        Header: 'User',
+        accessor: 'user'
+      }
+    ]
+
+    function getTimeDifference(submitted_time){
+      const currentTime = new Date();
+      const dataTimeFormatted = new Date(submitted_time);
+      const timeDiff = datetimeDifference(currentTime, dataTimeFormatted);
+      return timeDiff
     }
-  ]
 
-  function findDiff(dataTime) {
-    const date1 = new Date("2017-09-21 14:19:54");
-    const date2 = new Date("2/21/2018, 07:12:42 AM");
-    const diff = datetimeDifference(date1, date2);
-    return diff;
-  }
-
-
-    // const date1 = new Date("2017-09-21 14:19:54");
-    // const date2 = new Date("2/21/2018, 07:12:42 AM");
-    // const diff = datetimeDifference(date1, date2);
-    // console.log(diff)
 
     if (queuedJobs && queuedJobs[0]){
-      // console.log('time from server: ', queuedJobs[0].submitted_time)
-      // console.log('time for diff: ', "2/21/2017, 07:12:42 AM")
-      // var currentTime = new Date();
-      // console.log(currentTime)
+      queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).days + ' days, ' + getTimeDifference(x.submitted_time).hours + ' hours, ' + getTimeDifference(x.submitted_time).minutes + ' minutes, ' + getTimeDifference(x.submitted_time).seconds + ' seconds')
     }
 
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <div>Loading...</div>;
-    } else {  
+    } else if (queuedJobs && queuedJobs[0]) {
       return (
         <div>
             <h2>Queued Jobs</h2>
