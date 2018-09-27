@@ -105,4 +105,4 @@ class CompletedJob(PropertyModel):
         from datetime import datetime
 
         date_time = datetime.utcfromtimestamp(time)
-        return str(date_time)
+        return date_time.isoformat()
