@@ -43,6 +43,7 @@ class CompletedJob(PropertyModel):
         properties = CompletedJobData(context, job_id).load_job()
         properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
         properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
+        del properties['project_name']
         return properties
 
     @staticmethod
