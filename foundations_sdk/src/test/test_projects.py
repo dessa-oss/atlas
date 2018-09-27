@@ -74,3 +74,8 @@ class TestProjects(unittest.TestCase):
 
         expected_result = DataFrame([{'project_name': 'project1', 'stuff': 'a lot more stuff'}])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+
+    def test_get_metrics_for_all_jobs_is_defined_globally(self):
+        import foundations
+
+        self.assertEqual(get_metrics_for_all_jobs, foundations.get_metrics_for_all_jobs)
