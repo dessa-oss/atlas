@@ -30,20 +30,19 @@ class ErrorPrinter(object):
             string -- A string representation of the filtered traceback, ready for output to stderr.
         """
 
+        from foundations.utils import concat_strings
+
         traceback_list = self._transformed_traceback_strings(ex_type, ex_value, ex_traceback)
 
         if ErrorPrinter._has_nested_exception(ex_value):
             inner_type, inner_value, inner_traceback, is_explicit = ErrorPrinter._get_inner_info(ex_value)
             inner_traceback_list = self._transformed_traceback_strings(inner_type, inner_value, inner_traceback)
 
-            if is_explicit:
-                separator = "\nThe above exception was the direct cause of the following exception:\n\n"
-            else:
-                separator = "\nDuring handling of the above exception, another exception occurred:\n\n"
+            separator = ErrorPrinter._get_separator(is_explicit)
 
             traceback_list = inner_traceback_list + [separator] + traceback_list
 
-        return ErrorPrinter._concat(traceback_list)
+        return concat_strings(traceback_list)
 
     def get_callback(self):
         """Returns a callback for use in overriding sys.excepthook that filters the traceback in the same manner as traceback_string.
@@ -54,7 +53,6 @@ class ErrorPrinter(object):
 
         def _callback(*args):
             import sys
-
             sys.stderr.write(self.traceback_string(*args))
 
         return _callback
@@ -81,6 +79,13 @@ class ErrorPrinter(object):
 
         transform = self._get_transform()
         return transform(extracted_traceback)
+
+    @staticmethod
+    def _get_separator(is_explicit):
+        if is_explicit:
+            return "\nThe above exception was the direct cause of the following exception:\n\n"
+        else:
+            return "\nDuring handling of the above exception, another exception occurred:\n\n"
 
     def _get_transform(self):
         if self._error_verbosity == "QUIET":
@@ -132,10 +137,6 @@ class ErrorPrinter(object):
             return not _is_disallowed(stack_file_name)
 
         return _filter_to_return
-
-    @staticmethod
-    def _concat(list_of_strings):
-        return "".join(list_of_strings)
 
     @staticmethod
     def _has_nested_exception(ex_value):
