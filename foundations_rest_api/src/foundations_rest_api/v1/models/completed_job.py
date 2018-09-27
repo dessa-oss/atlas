@@ -25,7 +25,7 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _all_internal():
-        from foundations_rest_api.v1.models.completed_job_data import CompletedJobData
+        from foundations.models.completed_job_data import CompletedJobData
 
         result = []
 
