@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_rest_api.utils.api_resource import api_resource
+
 @api_resource('/api/v1/projects')
 class ProjectsController(object):
     
