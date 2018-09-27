@@ -32,7 +32,7 @@ class DeploymentWrapper(object):
 
         return self._deployment.is_job_complete()
 
-    def fetch_job_results(self, wait_seconds=5, verbose_errors=False):
+    def fetch_job_results(self, wait_seconds=5):
         """Waits for the job to complete and then fetches the results for the job
 
             Arguments:
@@ -49,7 +49,7 @@ class DeploymentWrapper(object):
             self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
 
         result = self._deployment.fetch_job_results()
-        return check_result(self.job_name(), result, verbose_errors)
+        return check_result(self.job_name(), result)
 
     def wait_for_deployment_to_complete(self, wait_seconds=5):
         """Waits for the job to complete
