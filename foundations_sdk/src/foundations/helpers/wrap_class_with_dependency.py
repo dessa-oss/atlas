@@ -14,16 +14,17 @@ class Wrapping(object):
 
     def wrap(self):
         for dependency_method in self._dependency_functions:
-            def _inner(method_name):
-                def _call_dependency_method(wrapper_instance, *args, **kwargs):
-                    method = getattr(wrapper_instance._wrapped, method_name)
-                    return method(wrapper_instance._dependency, *args, **kwargs)
-                setattr(self._klass, method_name, _call_dependency_method)
-            _inner(dependency_method)
+            self._access_class_dependency(dependency_method)
 
         setattr(self._klass, '__getattr__', self._getattr())
         setattr(self._klass, '__init__', self._init())
         return self._klass
+
+    def _access_class_dependency(self, method_name):
+        def _call_dependency_method(wrapper_instance, *args, **kwargs):
+            method = getattr(wrapper_instance._wrapped, method_name)
+            return method(wrapper_instance._dependency, *args, **kwargs)
+        setattr(self._klass, method_name, _call_dependency_method)
 
     def _getattr(self):
         def _inner(wrapper_instance, name):

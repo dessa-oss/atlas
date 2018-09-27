@@ -74,3 +74,4 @@ from test.test_utils import TestUtils
 from test.test_projects import TestProjects
 from test.test_deployment_manager import TestDeploymentManager
 from test.helpers import *
+from test.models import *
