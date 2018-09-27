@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_rest_api.v1.models.property_model import PropertyModel
 
+
 class CompletedJob(PropertyModel):
 
     job_id = PropertyModel.define_property()
@@ -25,33 +26,24 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _all_internal():
+        return list(CompletedJob._load_jobs())
+
+    @staticmethod
+    def _load_jobs():
+        from foundations.models.pipeline_context_listing import PipelineContextListing
+
+        for job_id, context in PipelineContextListing.pipeline_contexts():
+            job_properties = CompletedJob._job_properties(context, job_id)
+            yield CompletedJob(**job_properties)
+
+    @staticmethod
+    def _job_properties(context, job_id):
         from foundations.models.completed_job_data import CompletedJobData
 
-        result = []
-
-        for job_id, context in CompletedJob.contexts():
-            job_properties = CompletedJobData(context, job_id).load_job()
-            job_properties['start_time'] = CompletedJob._datetime_string(job_properties['start_time'])
-            job_properties['completed_time'] = CompletedJob._datetime_string(job_properties['completed_time'])
-            job = CompletedJob(**job_properties)
-            result.append(job)
-
-        return result
-
-
-
-    @staticmethod
-    def contexts():
-        from foundations.job_persister import JobPersister
-
-        with JobPersister.load_archiver_fetch() as archiver_fetch:
-            for archiver in archiver_fetch.fetch_archivers():
-                yield archiver.pipeline_name(), CompletedJob.load_context(archiver)
-
-    @staticmethod
-    def load_context(archiver):
-        from foundations.models.pipeline_context_with_archive import PipelineContextWithArchive
-        return PipelineContextWithArchive(archiver)
+        properties = CompletedJobData(context, job_id).load_job()
+        properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
+        properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
+        return properties
 
     @staticmethod
     def _datetime_string(time):
