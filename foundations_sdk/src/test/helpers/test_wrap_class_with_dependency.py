@@ -92,9 +92,6 @@ class TestWrapClassWithDependency(unittest.TestCase):
         with self.assertRaises(TypeError) as context:
             mock.another_load()
 
-        self.assertIn(
-            "another_load() missing 1 required positional argument: 'another_dependency'", context.exception.args)
-
     def test_load_dependency_with_return_value(self):
         dependency = 4
         mock = self.MockClassWrapper(dependency)
