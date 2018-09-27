@@ -52,7 +52,6 @@ class ErrorPrinter(object):
         """
 
         def _callback(*args):
-            import sys
             sys.stderr.write(self.traceback_string(*args))
 
         return _callback
@@ -140,8 +139,6 @@ class ErrorPrinter(object):
 
     @staticmethod
     def _has_nested_exception(ex_value):
-        import sys
-
         if sys.version_info.major < 3:
             return False
 
