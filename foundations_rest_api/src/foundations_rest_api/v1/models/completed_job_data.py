@@ -8,6 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class CompletedJobData(object):
     def __init__(self, context, job_id):
         self._context = context
+        self._context.load_stage_log_from_archive()
+        self._context.load_provenance_from_archive()
         self._job_id = job_id
 
     def load_job(self):

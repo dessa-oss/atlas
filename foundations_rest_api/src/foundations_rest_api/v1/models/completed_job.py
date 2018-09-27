@@ -50,13 +50,8 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def load_context(archiver):
-        from foundations.pipeline_context import PipelineContext
-
-        context = PipelineContext()
-        context.load_stage_log_from_archive(archiver)
-        context.load_provenance_from_archive(archiver)
-
-        return context
+        from foundations.models.pipeline_context_with_archive import PipelineContextWithArchive
+        return PipelineContextWithArchive(archiver)
 
     @staticmethod
     def _datetime_string(time):
