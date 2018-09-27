@@ -12,4 +12,4 @@ class CompletedJobDataListing(object):
         from foundations.models.completed_job_data import CompletedJobData
 
         for job_id, context in PipelineContextListing.pipeline_contexts():
-            yield CompletedJobData(job_id, context).load_job()
+            yield CompletedJobData(context, job_id).load_job()

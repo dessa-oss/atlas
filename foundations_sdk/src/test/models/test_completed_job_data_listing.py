@@ -14,7 +14,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
 
     class MockCompletedJobData(object):
 
-        def __init__(self, job_id, context):
+        def __init__(self, context, job_id):
             self._job_id = job_id
             self._context = context
 
