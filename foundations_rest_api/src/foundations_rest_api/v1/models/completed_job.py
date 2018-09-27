@@ -37,7 +37,7 @@ class CompletedJob(PropertyModel):
 
             for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
                 for argument in entry.stage_args:
-                    parameter = {'name': argument[0], 'value': argument[1], 'stage_uuid': stage_uuid}
+                    parameter = {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
                     input_params.append(parameter)
                     
 
