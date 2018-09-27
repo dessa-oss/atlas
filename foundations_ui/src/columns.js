@@ -8,8 +8,8 @@ const completed_columns = [{
     Header: 'JobId',
     accessor: 'job_id'
   }, {
-    Header: 'Duration',
-    accessor: 'start_time'
+    Header: 'User',
+    accessor: 'user'
   }
 ]
 

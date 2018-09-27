@@ -16,7 +16,7 @@ class Completed extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/")
+    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/completed")
       .then(res => res.json())
       .then(
         (result) => {
@@ -37,7 +37,7 @@ class Completed extends Component {
   render() {
     const { error, isLoaded, result } = this.state;
     var completedJobs;
-    completedJobs = result;
+    completedJobs = result.completed_jobs;
 
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
