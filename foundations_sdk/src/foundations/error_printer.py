@@ -30,11 +30,11 @@ class ErrorPrinter(object):
             string -- A string representation of the filtered traceback, ready for output to stderr.
         """
 
-        traceback_list = self._pretty_print(ex_type, ex_value, ex_traceback)
+        traceback_list = self._transformed_traceback_strings(ex_type, ex_value, ex_traceback)
 
         if ErrorPrinter._has_nested_exception(ex_value):
             inner_type, inner_value, inner_traceback, is_explicit = ErrorPrinter._get_inner_info(ex_value)
-            inner_traceback_list = self._pretty_print(inner_type, inner_value, inner_traceback)
+            inner_traceback_list = self._transformed_traceback_strings(inner_type, inner_value, inner_traceback)
 
             if is_explicit:
                 separator = "\nThe above exception was the direct cause of the following exception:\n\n"
@@ -68,13 +68,25 @@ class ErrorPrinter(object):
 
         return self._excepthook
 
-    def _pretty_print(self, ex_type, ex_value, ex_traceback):
-        if self._error_verbosity == "QUIET":
-            pretty_printer = ErrorPrinter._quiet_traceback_strings
-        else:
-            pretty_printer = ErrorPrinter._verbose_traceback_strings
+    def transform_extracted_traceback(self, extracted_traceback):
+        """Lower-level utility for filtering a pre-extracted traceback.
+            Arguments:
+                extracted_traceback: {TracebackType} -- A pre-extracted traceback.
 
-        return pretty_printer(ex_type, ex_value, ex_traceback)
+        Returns:
+            transformed -- Filtered extracted traceback.
+        """
+
+        import traceback
+
+        transform = self._get_transform()
+        return transform(extracted_traceback)
+
+    def _get_transform(self):
+        if self._error_verbosity == "QUIET":
+            return ErrorPrinter._quiet_traceback
+        else:
+            return ErrorPrinter._verbose_traceback
 
     @staticmethod
     def _get_inner_info(ex_value):
@@ -88,25 +100,18 @@ class ErrorPrinter(object):
         return type(inner_exception), inner_exception, inner_exception.__traceback__, is_explicit
 
     @staticmethod
-    def _quiet_traceback_strings(ex_type, ex_value, ex_traceback):
-        def _transform(traceback):
-            return filter(ErrorPrinter._stack_trace_filter(), traceback)
-        
-        return ErrorPrinter._transformed_traceback_strings(_transform, ex_type, ex_value, ex_traceback)
+    def _quiet_traceback(traceback):
+        return filter(ErrorPrinter._stack_trace_filter(), traceback)
 
     @staticmethod
-    def _verbose_traceback_strings(ex_type, ex_value, ex_traceback):
-        def _transform(traceback):
-            return traceback
-        
-        return ErrorPrinter._transformed_traceback_strings(_transform, ex_type, ex_value, ex_traceback)
+    def _verbose_traceback(traceback):
+        return traceback
 
-    @staticmethod
-    def _transformed_traceback_strings(transform, ex_type, ex_value, ex_traceback):
+    def _transformed_traceback_strings(self, ex_type, ex_value, ex_traceback):
         import traceback
 
         extracted_traceback = traceback.extract_tb(ex_traceback)
-        cleaned_stack_trace = transform(extracted_traceback)
+        cleaned_stack_trace = self.transform_extracted_traceback(extracted_traceback)
 
         header = ["Traceback (most recent call last):\n"]
         traceback_body = traceback.format_list(cleaned_stack_trace)
