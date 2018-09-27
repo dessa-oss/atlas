@@ -115,34 +115,22 @@ def restructure_headers(all_headers, first_headers):
 def concat_strings(iterable):
     return "".join(iterable)
 
-# currently *nix / osx only
-def _path_regex(pipeline_id):
-    import re
-
-    return re.compile('.*/' + pipeline_id + '/foundations/.*')
-
-def _is_not_foundations_line(foundations_line_regex):
-    def action(line):
-        path = line[0]
-        return foundations_line_regex.match(path) is None
-    return action
-
 def pretty_error(pipeline_name, error_info):
     import traceback
+
+    from foundations.error_printer import ErrorPrinter
 
     if error_info is None:
         return None
 
-    error_name = [error_info["type"].__name__ + ": " + str(error_info["exception"]) + "\n"]
+    error_name = ["\n", error_info["type"].__name__, ": ", str(error_info["exception"]), "\n"]
     traceback_items = error_info["traceback"]
 
-    if not verbose:
-        foundations_line_regex = _path_regex(pipeline_name)
-        traceback_items = filter(_is_not_foundations_line(foundations_line_regex), traceback_items)
+    error_printer = ErrorPrinter()
+    filtered_traceback = error_printer.transform_extracted_traceback(traceback_items)
+    filtered_traceback_strings = traceback.format_list(filtered_traceback)
 
-    traceback_strings = traceback.format_list(traceback_items)
-
-    return concat_strings(error_name + traceback_strings)
+    return concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
 
 def split_process_output(output):
     lines = output.decode().strip().split("\n")
