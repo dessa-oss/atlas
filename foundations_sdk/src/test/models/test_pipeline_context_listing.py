@@ -14,7 +14,10 @@ class TestPipelineContextListing(unittest.TestCase):
     class Archiver(object):
         
         def __init__(self, pipeline_name):
-            self.pipeline_name = pipeline_name
+            self._pipeline_name = pipeline_name
+
+        def pipeline_name(self):
+            return self._pipeline_name
 
     class Fetch(object):
         

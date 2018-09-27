@@ -11,7 +11,7 @@ class PipelineContextListing(object):
     @staticmethod
     def pipeline_contexts():
         for archiver in PipelineContextListing._archivers():
-            yield archiver.pipeline_name, PipelineContextListing._wrapped_context(archiver)
+            yield archiver.pipeline_name(), PipelineContextListing._wrapped_context(archiver)
 
     @staticmethod
     def _wrapped_context(archiver):
