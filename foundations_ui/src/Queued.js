@@ -17,7 +17,7 @@ class Queued extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/")
+    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/queued")
       .then(res => res.json())
       .then(
         (result) => {
@@ -72,7 +72,7 @@ class Queued extends Component {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <div>Loading...</div>;
-    } else if (queuedJobs && queuedJobs[0]) {
+    } else {
       return (
         <div>
             <h2>Queued Jobs</h2>
