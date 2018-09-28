@@ -16,7 +16,7 @@ class Completed extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3004/data")
+    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/completed")
       .then(res => res.json())
       .then(
         (result) => {
@@ -58,7 +58,8 @@ class Completed extends Component {
 
     if (result.completed_jobs && result.completed_jobs[0]) {
 
-      result.completed_jobs.forEach(function(x){
+      // completed_jobs is a list of job objects
+      var finalResult = result.completed_jobs.map(function(x){
         var obj = x.input_params;
       
         // group by name value into list to create unique name
@@ -70,41 +71,53 @@ class Completed extends Component {
         
         // loop through all grouped lists and update name
         // return update input params list
-        Object.keys(groupBy).map(function(key, indexTwo) {
+        Object.keys(groupBy).map(function(key) {
               if (groupBy[key].length > 1){
                   groupBy[key].map(function(x, index){
-                      x.name = x.name + (index + 1)
+                      x.name = JSON.stringify(x.name) + (index + 1)
                   })
               }
           });
-        
-        var finalList = [];
+          
+        var finalInputList = [];
         for (var key in groupBy){
-          groupBy[key].map(y => finalList.push(y))
+          groupBy[key].map(y => finalInputList.push(y))
         }
+
+        x.input_params = finalInputList;
+        return x;        
+      })
       
-        // return finalList;
-        
-        // var inputs;
-        // inputs = finalList
-        // inputs.map(function(x) {
-        //   var obj = {}
-        //   obj['Header'] = x.name
-        //   obj['Header'] = 'name'
-        //   completed_columns.push(obj)
-        // })
+      finalResult[0].input_params.map(function(input_param, index){
+        var columnName = input_param.name;
+        var obj = {};
+        obj['Header'] = 'Input: ' + columnName;
+        obj['accessor'] = job => determineValue(index, job);
+        obj['id'] = Math.random(10).toString();
+        completed_columns.push(obj);
       })
 
-      // var inputs;
-      // inputs = finalList[0].input_params
-      // inputs.map(function(x) {
-      //   var obj = {}
-      //   obj['Header'] = x.name
-      //   obj['Header'] = 'name'
-      //   completed_columns.push(obj)
-      // })
+      Object.keys(finalResult[0].output_metrics).map(function(key){
+        var columnName = key;
+        var obj = {};
+        obj['Header'] = 'Output: ' + columnName;
+        obj['accessor'] = job => JSON.stringify(job.output_metrics[key]);
+        obj['id'] = Math.random(10).toString();
+        completed_columns.push(obj);
+      })
+      
 
-
+      function determineValue(index, job){
+        var obj = job.input_params[index].value
+        if (obj.type === 'stage'){
+          return obj.stage_name;
+        } else if (obj.type === 'constant'){
+          return obj.value;
+        } else if (obj.type === 'dynamic') {
+          var jobParams = job.job_parameters;
+          return jobParams[obj.name];
+        }
+      }
     }
 
     if (error && result[0]) {
