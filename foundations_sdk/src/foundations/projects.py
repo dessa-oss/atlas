@@ -15,7 +15,6 @@ def get_metrics_for_all_jobs(project_name):
     from pandas import DataFrame
 
     data_frame = DataFrame(_flattened_job_metrics())
-
     return data_frame[data_frame['project_name'] == project_name]
 
 
@@ -32,8 +31,7 @@ def _flattened_job_metrics():
         output_metrics = job_data['output_metrics']
         del job_data['output_metrics']
 
-        stage_uuids = list(set([param['stage_uuid']
-                                for param in input_params]))
+        stage_uuids = _uuid_list(input_params)
 
         for param in input_params:
             stage_uuid = param['stage_uuid']
@@ -53,3 +51,10 @@ def _flattened_job_metrics():
         job_data.update(output_metrics)
 
         yield job_data
+
+def _uuid_list(input_params):
+    stage_uuids = []
+    for param in input_params:
+        if not param['stage_uuid'] in stage_uuids:
+            stage_uuids.append(param['stage_uuid'])
+    return stage_uuids
