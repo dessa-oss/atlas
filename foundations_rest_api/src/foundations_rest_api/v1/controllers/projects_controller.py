@@ -5,12 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import random
+from foundations_rest_api.utils.api_resource import api_resource
 
-
-def bundle_value(value):
-    return value
-
-def add(a, b):
-    return a + b
+@api_resource('/api/v1/projects')
+class ProjectsController(object):
     
+    def index(self):
+        from foundations_rest_api.v1.models.project import Project
+        return Project.all().only(['name'])

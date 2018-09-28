@@ -5,7 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import sys
+
 from foundations import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager
+from foundations.error_printer import ErrorPrinter
 
 def main():
     log = log_manager.get_logger(__name__)
@@ -40,21 +43,21 @@ def main():
     def execute_job():
         try:
             job.run()
-            return None
+            return None, False
         except Exception as error:
-            return fetch_error_information(pipeline_context)
-    exception_info = global_stage_context.time_callback(execute_job)
+            return fetch_error_information(pipeline_context), True
+    exception_info, was_job_error = global_stage_context.time_callback(execute_job)
 
     def save_context(context):
         with open('results.pkl', 'w+b') as file:
             serialize_to_file(context._context(), file)
 
-    def serialize_job_results(exception_info):
+    def serialize_job_results(exception_info, was_job_error):
         try:
             JobPersister(job).persist()
 
             save_context(pipeline_context)
-            return exception_info
+            return exception_info, was_job_error
         except Exception as error:
             from foundations.pipeline_context import PipelineContext
 
@@ -63,11 +66,14 @@ def main():
             exception_info = fetch_error_information(error_pipeline_context)
             save_context(error_pipeline_context)
 
-            return exception_info
+            return exception_info, False
 
-    exception_info = serialize_job_results(exception_info)
+    exception_info, was_job_error = serialize_job_results(exception_info, was_job_error)
 
     if exception_info is not None:
+        if not was_job_error:
+            sys.excepthook = sys.__excepthook__
+        
         compat_raise(exception_info[0], exception_info[1], exception_info[2])
 
 if __name__ == "__main__":

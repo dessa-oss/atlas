@@ -5,12 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import random
-
-
-def bundle_value(value):
-    return value
-
-def add(a, b):
-    return a + b
-    
+from test.helpers.test_wrap_class_with_dependency import TestWrapClassWithDependency

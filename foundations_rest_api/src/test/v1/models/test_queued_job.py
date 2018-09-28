@@ -84,7 +84,7 @@ class TestQueuedJob(unittest.TestCase):
         job_information = JobInformation('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'QUEUED', 'soju hero')
         self._scheduler_backend_instance = self.MockSchedulerBackend('QUEUED', [job_information])
 
-        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju hero', submitted_time='1973-11-29 21:33:09')
+        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju hero', submitted_time='1973-11-29T21:33:09')
         result = QueuedJob.all().evaluate()[0]
 
         self.assertEqual(expected_job, result)
@@ -96,8 +96,8 @@ class TestQueuedJob(unittest.TestCase):
         job_information_two = JobInformation('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'QUEUED', 'potato hero')
         self._scheduler_backend_instance = self.MockSchedulerBackend('QUEUED', [job_information, job_information_two])
 
-        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju zero', submitted_time='2001-04-19 04:25:21')
-        expected_job_two = QueuedJob(job_id='00000000-0000-0000-0000-000000000001', user='potato hero', submitted_time='1998-03-03 01:34:48')
+        expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju zero', submitted_time='2001-04-19T04:25:21')
+        expected_job_two = QueuedJob(job_id='00000000-0000-0000-0000-000000000001', user='potato hero', submitted_time='1998-03-03T01:34:48')
         expected_jobs = [expected_job, expected_job_two]
         result = QueuedJob.all().evaluate()
 

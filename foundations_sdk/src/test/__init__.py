@@ -71,5 +71,9 @@ from test.test_scheduler_legacy_backend import TestSchedulerLegacyBackend
 from test.test_scheduler_local_backend import TestSchedulerLocalBackend
 from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
 from test.test_utils import TestUtils
+from test.test_error_printer import TestErrorPrinter
 from test.test_projects import TestProjects
 from test.test_deployment_manager import TestDeploymentManager
+from test.helpers import *
+from test.models import *
+from test.test_exception_hook_middleware import TestExceptionHookMiddleware

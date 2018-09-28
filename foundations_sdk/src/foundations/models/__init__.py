@@ -5,12 +5,3 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import random
-
-
-def bundle_value(value):
-    return value
-
-def add(a, b):
-    return a + b
-    
