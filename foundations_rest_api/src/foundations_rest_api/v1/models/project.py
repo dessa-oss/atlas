@@ -54,6 +54,11 @@ class Project(PropertyModel):
         def callback():
             return Project._find_by_internal(name)
 
+            project = Project(name=name)
+            project.completed_jobs = CompletedJob.all()
+            project.running_jobs = RunningJob.all()
+            project.queued_jobs = QueuedJob.all()
+            return project
         return Response(None, callback)
 
     @staticmethod
