@@ -22,16 +22,21 @@ class ArgumentNamer(object):
 
         result = []
         argument_index = 0
+        default_argument_index = 0
 
         argspec = getargspec(self._function)
         filled_arguments = set()
 
+
         for argument_name in argspec.args:
             if argument_name in self._keyword_arguments:
                 result.append((argument_name, self._keyword_arguments[argument_name]))
-            else:
+            elif argument_index < len(self._arguments):
                 result.append((argument_name, self._arguments[argument_index]))
                 argument_index += 1
+            else:
+                result.append((argument_name, argspec.defaults[default_argument_index]))
+                default_argument_index += 1
             filled_arguments.add(argument_name)
 
         while argument_index < len(self._arguments):

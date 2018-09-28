@@ -108,6 +108,27 @@ class TestArgumentNamer(unittest.TestCase):
         namer = ArgumentNamer(function_with_kwargs_and_unnamed_arguments, (89,), {'b': 1})
         self._assert_list_contains_items([('a', 89), ('b', 1)], namer.name_arguments())
 
+    def test_function_with_default_values(self):
+        def function_with_default_values(a=5):
+            pass
+
+        namer = ArgumentNamer(function_with_default_values, (), {})
+        self.assertEqual([('a', 5)], namer.name_arguments())
+
+    def test_function_with_different_default_values(self):
+        def function_with_different_default_values(b=35, c=66):
+            pass
+
+        namer = ArgumentNamer(function_with_different_default_values, (), {})
+        self.assertEqual([('b', 35), ('c', 66)], namer.name_arguments())
+
+    def test_function_with_one_default_value(self):
+        def function_with_one_default_value(b, c=566):
+            pass
+
+        namer = ArgumentNamer(function_with_one_default_value, (135,), {})
+        self.assertEqual([('b', 135), ('c', 566)], namer.name_arguments())
+
     def test_function_with_instance(self):
         namer = ArgumentNamer(self._function_with_instance, (), {})
         self.assertEqual([('self', self)], namer.name_arguments())
