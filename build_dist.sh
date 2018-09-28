@@ -2,7 +2,7 @@
 
 wheel_suffix=`python -c "import sys; print(sys.version_info.major)"`
 
-export build_version=0.0.4
+export build_version=0.0.5
 
 cd foundations_sdk/ && \
     python setup.py sdist bdist_wheel && \
