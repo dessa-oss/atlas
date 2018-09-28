@@ -32,7 +32,7 @@ class QueuedJob(PropertyModel):
                 job = QueuedJob(
                     job_id=info.uuid(),
                     user=info.user_submitted(),
-                    submitted_time=str(info.submission_datetime())
+                    submitted_time=info.submission_datetime().isoformat()
                 )
                 jobs.append(job)
 

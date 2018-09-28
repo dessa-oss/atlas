@@ -34,7 +34,7 @@ class RunningJob(PropertyModel):
                 job = RunningJob(
                     job_id=info.uuid(),
                     user=info.user_submitted(),
-                    start_time=str(info.submission_datetime()),
+                    start_time=info.submission_datetime().isoformat(),
                     job_parameters={},
                     input_params=[], 
                     output_metrics={}
