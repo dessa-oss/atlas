@@ -58,8 +58,10 @@ class Queued extends Component {
 
     function getTimeDifference(submitted_time){
       const currentTime = new Date();
-      const dataTimeFormatted = new Date(submitted_time);
-      const timeDiff = datetimeDifference(currentTime, dataTimeFormatted);
+      const dataTimeFormatted = new Date(submitted_time)
+      dataTimeFormatted.setHours( dataTimeFormatted.getHours() - 4 );
+      const newDate = new Date(dataTimeFormatted)
+      const timeDiff = datetimeDifference(currentTime, newDate);
       return timeDiff
     }
 
