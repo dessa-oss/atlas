@@ -20,21 +20,27 @@ class CompletedJob(PropertyModel):
     completed_time = PropertyModel.define_property()
 
     @staticmethod
-    def all():
+    def all(project_name=None):
         from foundations_rest_api.response import Response
-        return Response('CompletedJob', CompletedJob._all_internal)
+
+        def _all():
+            return CompletedJob._all_internal(project_name)
+
+        return Response('CompletedJob', _all)
 
     @staticmethod
-    def _all_internal():
-        return list(CompletedJob._load_jobs())
+    def _all_internal(project_name):
+        return list(CompletedJob._load_jobs(project_name))
 
     @staticmethod
-    def _load_jobs():
+    def _load_jobs(project_name):
         from foundations.models.pipeline_context_listing import PipelineContextListing
 
         for job_id, context in PipelineContextListing.pipeline_contexts():
             job_properties = CompletedJob._job_properties(context, job_id)
-            yield CompletedJob(**job_properties)
+            if project_name is None or project_name == job_properties['project_name']:
+                del job_properties['project_name']
+                yield CompletedJob(**job_properties)
 
     @staticmethod
     def _job_properties(context, job_id):
@@ -43,7 +49,6 @@ class CompletedJob(PropertyModel):
         properties = CompletedJobData(context, job_id).load_job()
         properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
         properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
-        del properties['project_name']
         return properties
 
     @staticmethod

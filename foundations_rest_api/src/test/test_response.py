@@ -52,6 +52,19 @@ class TestResponse(unittest.TestCase):
         response = Response('mock', mock.value)
         self.assertEqual({'some_other_data': 'world'}, response.only(['some_other_data']).as_json())
 
+    def test_as_json_filter_properties_in_list(self):
+        mock = self.Mock([self.MockModelTwo(some_data='hello', some_other_data='world')])
+        response = Response('mock', mock.value)
+        self.assertEqual([{'some_data': 'hello'}], response.only(['some_data']).as_json())
+
+    def test_as_json_filter_properties_in_list_of_response(self):
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
+        response = Response('mock', mock.value)
+
+        mock_two = self.Mock([response])
+        response = Response('mock', mock_two.value)
+        self.assertEqual([{'some_data': 'hello'}], response.only(['some_data']).as_json())
+
     def test_as_json_filter_properties_multiple_properties(self):
         mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
         response = Response('mock', mock.value)
