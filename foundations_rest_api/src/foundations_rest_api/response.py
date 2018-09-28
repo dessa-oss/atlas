@@ -73,10 +73,10 @@ class Response(object):
 
     def _value_as_json(self, value):
         if self._is_response(value):
-            return value.as_json()
+            return value.only(self._only).as_json()
 
         if self._is_property_model(value):
-            return value.attributes
+            return self._filtered_properties(value)
 
         return value
 
