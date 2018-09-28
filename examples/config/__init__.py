@@ -48,6 +48,13 @@ config_manager['archive_listing_implementation'] = {
     'constructor_arguments': [archive_root],
 }
 
+# tied to tracking the names of projects - we also need to specify how to list and enumerate items within the above storage
+# specify the type of enumeration method / storage as well as where it exists relative to the execution environment
+config_manager['project_listing_implementation'] = {
+    'project_listing_type': LocalFileSystemPipelineListing,
+    'constructor_arguments': ['/tmp/projects'],
+}
+
 # specify that the stage log, persisted data, provenance, job source, artifacts, and misc data are to be stored using archive_implementation
 # (local filesystem storage at /tmp/archives in the execution environment)
 config_manager['stage_log_archive_implementation'] = archive_implementation

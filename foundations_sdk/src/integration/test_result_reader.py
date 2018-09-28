@@ -84,7 +84,7 @@ class TestResultReader(unittest.TestCase):
     def _get_job_information(self, reader, stage):
         job_name = stage.pipeline_context().file_name
         job_information = reader.get_job_information()
-        return job_information[job_information['pipeline_name'] == job_name]
+        return job_information[job_information['job_name'] == job_name]
 
     def _run_and_persist(self, stage):
         stage.run_same_process()

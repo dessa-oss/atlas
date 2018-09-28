@@ -60,5 +60,7 @@ class FoundationsContext(object):
             ChangePipeline -- The class to implement the above functionality
         """
 
-
         return self.ChangePipeline(self, new_pipeline)
+
+    def set_project_name(self, project_name):
+        self.pipeline_context().provenance.project_name = project_name

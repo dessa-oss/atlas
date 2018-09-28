@@ -8,25 +8,45 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import patch
 from foundations_rest_api.v1.controllers.running_jobs_controller import RunningJobsController
+from foundations_rest_api.v1.models.property_model import PropertyModel
+
 
 class TestRunningJobsController(unittest.TestCase):
 
+    class Mock(PropertyModel):
+        name = PropertyModel.define_property()
+        running_jobs = PropertyModel.define_property()
+        garbage = PropertyModel.define_property()
+
     @patch('foundations_rest_api.v1.models.project.Project.find_by')
     def test_index_returns_all_completed_jobs(self, mock):
-        mock.return_value = 'some project'
+        mock.return_value = self._make_response('some project', 'some jobs')
 
         controller = RunningJobsController()
         controller.params = {'project_name': 'the great potato project'}
 
-        self.assertEqual('some project', controller.index())
+        expected_result = {
+            'running_jobs': 'some jobs', 'name': 'some project'}
+        self.assertEqual(expected_result, controller.index().as_json())
         mock.assert_called_with(name='the great potato project')
 
     @patch('foundations_rest_api.v1.models.project.Project.find_by')
     def test_index_returns_all_completed_jobs_different_value(self, mock):
-        mock.return_value = 'some other project'
+        mock.return_value = self._make_response(
+            'some other project', 'some more jobs')
 
         controller = RunningJobsController()
         controller.params = {'project_name': 'the not so great potato project'}
 
-        self.assertEqual('some other project', controller.index())
+        expected_result = {'running_jobs': 'some more jobs',
+                           'name': 'some other project'}
+        self.assertEqual(expected_result, controller.index().as_json())
         mock.assert_called_with(name='the not so great potato project')
+
+    def _make_response(self, name, queued_jobs):
+        from foundations_rest_api.response import Response
+
+        def _callback():
+            return self.Mock(name=name, running_jobs=queued_jobs)
+
+        return Response('Mock', _callback)

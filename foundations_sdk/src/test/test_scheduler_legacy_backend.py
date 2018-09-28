@@ -51,7 +51,7 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         backend = LegacyBackend(MockClock(55), MockBucketStatScanner, 'jobs', 'archives', 'results')
         
         queued_jobs = list(backend.get_paginated(None, None, status="QUEUED"))
-        self.assertEqual(queued_jobs, [JobInformation('this_file.tgz', 22, 33, "QUEUED", "me")])
+        self.assertEqual(queued_jobs, [JobInformation('this_file', 22, 33, "QUEUED", "me")])
 
     def test_get_queued_jobs_returns_non_list_iterable(self):
         self._create_buckets('jobs', 'archives', 'results')
@@ -66,7 +66,7 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         backend = LegacyBackend(MockClock(100), MockBucketStatScanner, 'jobs', 'archives', 'results')
         
         queued_jobs = list(backend.get_paginated(None, None, status="QUEUED"))
-        self.assertEqual(queued_jobs, [JobInformation('that_file.tgz', 23, 77, "QUEUED", "you")])
+        self.assertEqual(queued_jobs, [JobInformation('that_file', 23, 77, "QUEUED", "you")])
 
     def test_get_queued_jobs_two_jobs(self):
         self._create_buckets('jobs', 'archives', 'results')
@@ -76,8 +76,8 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         queued_jobs = list(backend.get_paginated(None, None, status="QUEUED"))
         expected_queued_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "QUEUED", "me"),
-            JobInformation('that_file.tgz', 23, 77, "QUEUED", "you")
+            JobInformation('this_file', 22, 78, "QUEUED", "me"),
+            JobInformation('that_file', 23, 77, "QUEUED", "you")
         ]
 
         self.assertEqual(queued_jobs, expected_queued_jobs)
@@ -90,8 +90,8 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         queued_jobs = list(backend.get_paginated(None, None, status="QUEUED"))
         expected_queued_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "QUEUED", "me"),
-            JobInformation('that_file.tgz', 23, 77, "QUEUED", "you")
+            JobInformation('this_file', 22, 78, "QUEUED", "me"),
+            JobInformation('that_file', 23, 77, "QUEUED", "you")
         ]
 
         self.assertEqual(queued_jobs, expected_queued_jobs)
@@ -117,7 +117,7 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         backend = LegacyBackend(MockClock(100), MockBucketStatScanner, 'jobs', 'archives', 'results')
         
         running_jobs = list(backend.get_paginated(None, None, status="RUNNING"))
-        self.assertEqual(running_jobs, [JobInformation('this_file.tgz', 22, 78, "RUNNING", "me")])
+        self.assertEqual(running_jobs, [JobInformation('this_file', 22, 78, "RUNNING", "me")])
 
     def test_get_running_jobs_one_job_different_job(self):
         self._create_buckets('jobs', 'archives', 'results')
@@ -125,7 +125,7 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         backend = LegacyBackend(MockClock(100), MockBucketStatScanner, 'jobs', 'archives', 'results')
         
         running_jobs = list(backend.get_paginated(None, None, status="RUNNING"))
-        self.assertEqual(running_jobs, [JobInformation('that_file.tgz', 25, 75, "RUNNING", "you")])
+        self.assertEqual(running_jobs, [JobInformation('that_file', 25, 75, "RUNNING", "you")])
 
     def test_get_running_jobs_two_jobs_different_bucket(self):
         self._create_buckets('jobs', 'archives2', 'results')
@@ -135,8 +135,8 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         running_jobs = list(backend.get_paginated(None, None, status="RUNNING"))
         expected_running_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "RUNNING", "me"),
-            JobInformation('that_file.tgz', 23, 77, "RUNNING", "you")
+            JobInformation('this_file', 22, 78, "RUNNING", "me"),
+            JobInformation('that_file', 23, 77, "RUNNING", "you")
         ]
 
         self.assertEqual(running_jobs, expected_running_jobs)
@@ -150,7 +150,7 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         running_jobs = list(backend.get_paginated(None, None, status="RUNNING"))
         expected_running_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "RUNNING", "me")
+            JobInformation('this_file', 22, 78, "RUNNING", "me")
         ]
 
         self.assertEqual(running_jobs, expected_running_jobs)
@@ -168,9 +168,9 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         running_jobs = list(backend.get_paginated(None, None, status="RUNNING"))
         expected_running_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "RUNNING", "me"),
-            JobInformation('that_file.tgz', 23, 77, "RUNNING", "you"),
-            JobInformation('where_file.tgz', 26, 74, "RUNNING", "pippin")
+            JobInformation('this_file', 22, 78, "RUNNING", "me"),
+            JobInformation('that_file', 23, 77, "RUNNING", "you"),
+            JobInformation('where_file', 26, 74, "RUNNING", "pippin")
         ]
 
         self.assertEqual(running_jobs, expected_running_jobs)
@@ -188,8 +188,8 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         completed_jobs = list(backend.get_paginated(None, None, status="COMPLETED"))
         expected_completed_jobs = [
-            JobInformation('it_file.tgz', 22, 8, "COMPLETED", "they"),
-            JobInformation('what_file.tgz', 24, 16, "COMPLETED", "them")
+            JobInformation('it_file', 22, 8, "COMPLETED", "they"),
+            JobInformation('what_file', 24, 16, "COMPLETED", "them")
         ]
 
         self.assertEqual(completed_jobs, expected_completed_jobs)
@@ -207,11 +207,11 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         all_jobs = list(backend.get_paginated(None, None, status=None))
         expected_all_jobs = [
-            JobInformation('this_file.tgz', 22, 78, "QUEUED", "me"),
-            JobInformation('that_file.tgz', 23, 77, "RUNNING", "you"),
-            JobInformation('it_file.tgz', 22, 8, "COMPLETED", "they"),
-            JobInformation('what_file.tgz', 24, 16, "COMPLETED", "them"),
-            JobInformation('where_file.tgz', 26, 74, "RUNNING", "pippin")
+            JobInformation('this_file', 22, 78, "QUEUED", "me"),
+            JobInformation('that_file', 23, 77, "RUNNING", "you"),
+            JobInformation('it_file', 22, 8, "COMPLETED", "they"),
+            JobInformation('what_file', 24, 16, "COMPLETED", "them"),
+            JobInformation('where_file', 26, 74, "RUNNING", "pippin")
         ]
 
         self.assertEqual(all_jobs, expected_all_jobs)
@@ -228,11 +228,11 @@ class TestSchedulerLegacyBackend(unittest.TestCase):
         
         all_jobs = list(backend.get_paginated(None, None, status=None))
         expected_all_jobs = [
-            JobInformation('that_file.tgz', 23, 77, "QUEUED", "you"),
-            JobInformation('this_file.tgz', 22, 78, "RUNNING", "me"),
-            JobInformation('it_file.tgz', 22, 78, "RUNNING", "they"),
-            JobInformation('what_file.tgz', 24, 16, "COMPLETED", "them"),
-            JobInformation('where_file.tgz', 26, 74, "RUNNING", "pippin")
+            JobInformation('that_file', 23, 77, "QUEUED", "you"),
+            JobInformation('this_file', 22, 78, "RUNNING", "me"),
+            JobInformation('it_file', 22, 78, "RUNNING", "they"),
+            JobInformation('what_file', 24, 16, "COMPLETED", "them"),
+            JobInformation('where_file', 26, 74, "RUNNING", "pippin")
         ]
 
         self.assertEqual(all_jobs, expected_all_jobs)
