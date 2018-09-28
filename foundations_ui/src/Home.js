@@ -22,7 +22,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/data")
+    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/queued")
       .then(res => res.json())
       .then(
         (result) => {
