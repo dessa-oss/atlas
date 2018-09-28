@@ -16,7 +16,7 @@ class Completed extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/completed")
+    fetch("http://localhost:3004/data")
       .then(res => res.json())
       .then(
         (result) => {
@@ -54,38 +54,56 @@ class Completed extends Component {
     }
   ]
 
-  data.completed_jobs.forEach(function(x){
-    var obj = x.input_params;
-  
-    var groupBy = obj.reduce((acc, curr) => {
-        if(!acc[curr.name]) acc[curr.name] = [];
-        acc[curr.name].push(curr);
-        return acc;
-      },{});
-    
-    Object.keys(groupBy).map(function(key, indexTwo) {
-          if (groupBy[key].length > 1){
-              groupBy[key].map(function(x, index){
-                  x.name = x.name + (index + 1)
-              })
-          }
-      });
-  
-    return groupBy
-  
-  })
-
 
 
     if (result.completed_jobs && result.completed_jobs[0]) {
-      var inputs;
-      inputs = completedJobs[0].input_params
-      inputs.map(function(x) {
-        var obj = {}
-        obj['Header'] = x.name
-        obj['Header'] = 'name'
-        completed_columns.push(obj)
+
+      result.completed_jobs.forEach(function(x){
+        var obj = x.input_params;
+      
+        // group by name value into list to create unique name
+        var groupBy = obj.reduce((acc, curr) => {
+            if(!acc[curr.name]) acc[curr.name] = [];
+            acc[curr.name].push(curr);
+            return acc;
+          },{});
+        
+        // loop through all grouped lists and update name
+        // return update input params list
+        Object.keys(groupBy).map(function(key, indexTwo) {
+              if (groupBy[key].length > 1){
+                  groupBy[key].map(function(x, index){
+                      x.name = x.name + (index + 1)
+                  })
+              }
+          });
+        
+        var finalList = [];
+        for (var key in groupBy){
+          groupBy[key].map(y => finalList.push(y))
+        }
+      
+        // return finalList;
+        
+        // var inputs;
+        // inputs = finalList
+        // inputs.map(function(x) {
+        //   var obj = {}
+        //   obj['Header'] = x.name
+        //   obj['Header'] = 'name'
+        //   completed_columns.push(obj)
+        // })
       })
+
+      // var inputs;
+      // inputs = finalList[0].input_params
+      // inputs.map(function(x) {
+      //   var obj = {}
+      //   obj['Header'] = x.name
+      //   obj['Header'] = 'name'
+      //   completed_columns.push(obj)
+      // })
+
 
     }
 
@@ -93,7 +111,7 @@ class Completed extends Component {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <div>Loading...</div>;
-    } else {  
+    } else if (result.completed_jobs && result.completed_jobs[0]) {  
       return (
         <div>
             <h2>Completed Jobs</h2>
