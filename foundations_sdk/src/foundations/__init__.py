@@ -46,7 +46,7 @@ from foundations.bucket_job_deployment import BucketJobDeployment
 from foundations.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
 from foundations.staging import create_stage
-from foundations.projects import set_project_name
+from foundations.projects import set_project_name, get_metrics_for_all_jobs
 from foundations.scheduler import Scheduler
 from foundations.versioning import __version__
 

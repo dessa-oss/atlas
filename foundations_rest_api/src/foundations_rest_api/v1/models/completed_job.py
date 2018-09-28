@@ -30,75 +30,26 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _all_internal(project_name):
-        result = []
-
-        for job_id, context in CompletedJob.contexts(project_name):
-            stage_metrics = {}
-            input_params = []
-            for stage_context in context.stage_contexts.values():
-                for item in stage_context.stage_log:
-                    CompletedJob._add_metric(
-                        stage_metrics, item['key'], item['value'])
-
-            for stage_uuid, entry in CompletedJob._stage_hierarchy_entries(context):
-                for argument in entry.stage_args:
-                    parameter = {
-                        'name': argument['name'],
-                        'value': argument['value'],
-                        'stage_uuid': stage_uuid
-                    }
-                    input_params.append(parameter)
-
-            job = CompletedJob(
-                job_id=job_id, user='Unspecified',
-                job_parameters=context.provenance.job_run_data,
-                input_params=input_params,
-                output_metrics=stage_metrics,
-                status='Completed',
-                start_time=CompletedJob._datetime_string(
-                    context.global_stage_context.start_time),
-                completed_time=CompletedJob._datetime_string(
-                    context.global_stage_context.end_time)
-            )
-            result.append(job)
-
-        return result
+        return list(CompletedJob._load_jobs(project_name))
 
     @staticmethod
-    def _stage_hierarchy_entries(context):
-        return context.provenance.stage_hierarchy.entries.items()
+    def _load_jobs(project_name):
+        from foundations.models.pipeline_context_listing import PipelineContextListing
+
+        for job_id, context in PipelineContextListing.pipeline_contexts():
+            job_properties = CompletedJob._job_properties(context, job_id)
+            if project_name is None or project_name == job_properties['project_name']:
+                del job_properties['project_name']
+                yield CompletedJob(**job_properties)
 
     @staticmethod
-    def _add_metric(metrics, key, value):
-        if key in metrics:
-            if isinstance(metrics[key], list):
-                metrics[key].append(value)
-            else:
-                metrics[key] = [metrics[key], value]
-        else:
-            metrics[key] = value
+    def _job_properties(context, job_id):
+        from foundations.models.completed_job_data import CompletedJobData
 
-    @staticmethod
-    def contexts(project_name):
-        from foundations.job_persister import JobPersister
-
-        with JobPersister.load_archiver_fetch() as archiver_fetch:
-            for archiver in archiver_fetch.fetch_archivers():
-                context = CompletedJob.load_context(archiver, project_name)
-                if context is not None:
-                    yield archiver.pipeline_name(), context
-
-    @staticmethod
-    def load_context(archiver, project_name):
-        from foundations.pipeline_context import PipelineContext
-
-        context = PipelineContext()
-        context.load_provenance_from_archive(archiver)
-        if project_name and project_name != context.provenance.project_name:
-            return None
-        context.load_stage_log_from_archive(archiver)
-
-        return context
+        properties = CompletedJobData(context, job_id).load_job()
+        properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
+        properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
+        return properties
 
     @staticmethod
     def _datetime_string(time):
