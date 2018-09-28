@@ -24,13 +24,6 @@
   float: left;
 }
 
-.App-docs {
-  text-align: right;
-  padding-right: 90px;
-  color: #000;
-  font-size: 1.5em;
-}
-
 .App-body {
   padding-left: 5%;
   padding-right: 5%;
@@ -42,4 +35,22 @@
 
 .project-name, .project-source {
   text-align: left;
+}
+
+ul li {
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+}
+
+ul li a {
+  font-weight: bold;
+  text-decoration: none;
+  padding: 20px;
+  display: inline-block;
+}
+
+ul.header {
+  text-align: right;
+  margin-right: 50px;
 }
