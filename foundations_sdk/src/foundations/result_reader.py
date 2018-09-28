@@ -32,11 +32,17 @@ class ResultReader(object):
 
         for arg_name, arg_val in dict_like_iter(params_to_read):
             if isinstance(arg_val, dict):
-                if "stage_id" in arg_val:
-                    arg_val_stage_id = arg_val["stage_id"]
-                    dict_like_append(params_to_write, arg_name, arg_val_stage_id)
+                name = arg_val["name"]
+                value = arg_val["value"]
+                if value["type"] == "stage":
+                    arg_val_stage_id = value["stage_uuid"]
+                    dict_like_append(params_to_write, name, arg_val_stage_id)
 
                     parent_ids.append(arg_val_stage_id)
+                elif value["type"] == "constant":
+                    dict_like_append(params_to_write, name, value["value"])
+                elif value["type"] == "dynamic":
+                    dict_like_append(params_to_write, name, value["name"])
                 else:
                     hyperparameter_name = arg_val.get(
                         "hyperparameter_name", None)
@@ -44,13 +50,13 @@ class ResultReader(object):
                         "hyperparameter_value"]
 
                     if hyperparameter_name:
-                        dict_like_append(params_to_write, arg_name, hyperparameter_name)
+                        dict_like_append(params_to_write, name, hyperparameter_name)
 
                         column_headers.append(
                             hyperparameter_name)
                         row_data.append(hyperparameter_value)
                     else:
-                        dict_like_append(params_to_write, arg_name, hyperparameter_value)
+                        dict_like_append(params_to_write, name, hyperparameter_value)
             else:
                 dict_like_append(params_to_write, arg_name, arg_val)
 

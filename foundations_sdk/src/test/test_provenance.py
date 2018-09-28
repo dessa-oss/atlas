@@ -34,7 +34,7 @@ class TestProvenance(unittest.TestCase):
             self.archive_provenance = archive_provenance
 
         def fetch_provenance(self):
-            return None
+            return self.archive_provenance
 
     class MockArchiveWithJobArchive(object):
 
@@ -152,6 +152,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.pip_freeze, None)
         self.assertEqual(provenance.python_version, None)
         self.assertEqual(provenance.stage_hierarchy.entries, {})
+        self.assertEqual(provenance.job_run_data, {})
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
@@ -165,17 +166,22 @@ class TestProvenance(unittest.TestCase):
         provenance.pip_freeze = 'pandas==0.2'
         provenance.python_version = {'major': 2}
         provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
+        provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
+        provenance.save_to_archive(mock_archive)
 
-        provenance.load_provenance_from_archive(mock_archive)
-        self.assertEqual(provenance.environment, {'python': 2})
-        self.assertEqual(provenance.config, {'log_level': 'DEBUG'})
-        self.assertEqual(provenance.tags, ['run_one'])
-        self.assertEqual(provenance.random_state, 'this is a random state')
-        self.assertEqual(provenance.module_versions, {'pandas': 0.2})
-        self.assertEqual(provenance.pip_freeze, 'pandas==0.2')
-        self.assertEqual(provenance.python_version, {'major': 2})
-        self.assertEqual(provenance.stage_hierarchy.entries,
+        provenance_two = Provenance()
+        provenance_two.load_provenance_from_archive(mock_archive)
+
+        self.assertEqual(provenance_two.environment, {'python': 2})
+        self.assertEqual(provenance_two.config, {'log_level': 'DEBUG'})
+        self.assertEqual(provenance_two.tags, ['run_one'])
+        self.assertEqual(provenance_two.random_state, 'this is a random state')
+        self.assertEqual(provenance_two.module_versions, {'pandas': 0.2})
+        self.assertEqual(provenance_two.pip_freeze, 'pandas==0.2')
+        self.assertEqual(provenance_two.python_version, {'major': 2})
+        self.assertEqual(provenance_two.stage_hierarchy.entries,
                          {'fake_one': 'fake_data'})
+        self.assertEqual(provenance_two.job_run_data, {'layers': 99, 'neurons_per_layer': 9999})
 
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
@@ -188,7 +194,8 @@ class TestProvenance(unittest.TestCase):
                                        'pip_freeze': None,
                                        'python_version': None,
                                        'random_state': None,
-                                       'tags': []
+                                       'tags': [],
+                                       'job_run_data': {}
                                        }, mock_archive.archive_provenance)
         self.assertEqual(
             {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -205,6 +212,7 @@ class TestProvenance(unittest.TestCase):
         provenance.pip_freeze = 'pandas==0.2'
         provenance.python_version = {'major': 2}
         provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
+        provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.save_to_archive(mock_archive)
 
         self.assertDictContainsSubset({'config': {'log_level': 'DEBUG'},
@@ -213,7 +221,8 @@ class TestProvenance(unittest.TestCase):
                                        'pip_freeze': 'pandas==0.2',
                                        'python_version': {'major': 2},
                                        'random_state': 'this is a random state',
-                                       'tags': ['run_one']
+                                       'tags': ['run_one'],
+                                       'job_run_data': {'layers': 99, 'neurons_per_layer': 9999}
                                        }, mock_archive.archive_provenance)
         self.assertEqual({'fake_one': 'fake_data'},
                          mock_archive.archive_provenance['stage_hierarchy'].entries)

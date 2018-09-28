@@ -117,12 +117,12 @@ class TestArgument(unittest.TestCase):
     def test_returns_provenance(self):
         parameter = self.Parameter(None, None, 'okaype')
         argument = Argument('world', parameter)
-        self.assertEqual('okaype', argument.provenance())
+        self.assertEqual({'value': 'okaype', 'name': 'world'}, argument.provenance())
 
     def test_returns_provenance_different_value(self):
         parameter = self.Parameter(None, None, 'fet')
         argument = Argument('world', parameter)
-        self.assertEqual('fet', argument.provenance())
+        self.assertEqual({'value': 'fet', 'name': 'world'}, argument.provenance())
 
     def _make_stage(self, function, *args, **kwargs):
         from foundations.pipeline import Pipeline
