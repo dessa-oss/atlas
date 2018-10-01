@@ -12,6 +12,15 @@ def set_project_name(project_name):
 
 
 def get_metrics_for_all_jobs(project_name):
+    """Returns metrics for all jobs for a given project
+
+    Arguments:
+        project_name {str} -- Name of the project to filter by
+
+    Returns:
+        [pandas.DataFrame] -- Pandas DataFrame containing all of the results
+    """
+
     from pandas import DataFrame
 
     return DataFrame(_flattened_job_metrics(project_name))
@@ -24,6 +33,7 @@ def _flattened_job_metrics(project_name):
         _update_job_data(job_data, stage_uuids)
         yield job_data
 
+
 def _update_job_data(job_data, stage_uuids):
     output_metrics = job_data['output_metrics']
     del job_data['output_metrics']
@@ -31,6 +41,7 @@ def _update_job_data(job_data, stage_uuids):
     _fill_job_parameters(job_data, stage_uuids)
 
     job_data.update(output_metrics)
+
 
 def _fill_job_parameters(job_data, stage_uuids):
     job_parameters = job_data['job_parameters']
@@ -47,9 +58,11 @@ def _fill_job_parameters(job_data, stage_uuids):
 
         job_data[stage_name] = stage_value
 
+
 def _parameter_name(parameter, stage_uuids):
     stage_index = stage_uuids.index(parameter['stage_uuid'])
     return '{}-{}'.format(parameter['name'], stage_index)
+
 
 def _stage_value(parameter, job_parameters):
     if parameter['value']['type'] == 'stage':
@@ -60,6 +73,7 @@ def _stage_value(parameter, job_parameters):
         return job_parameters[stage_value_key]
 
     return parameter['value']['value']
+
 
 def _project_job_data(project_name):
     from foundations.models.completed_job_data_listing import CompletedJobDataListing
