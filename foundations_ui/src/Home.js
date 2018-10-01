@@ -23,7 +23,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/data/")
+    fetch("http://localhost:37722/api/v1/projects")
       .then(res => res.json())
       .then(
         (result) => {
@@ -49,20 +49,27 @@ class Home extends Component {
     const List = props => <ul className="project-list">{props.children}</ul>;
     const ListItem = props  => <a href={"/" + props.text}><li className="project-items">{props.text}</li></a>;
 
-
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
+    } else if (!isLoaded) { 
       return <div>Loading...</div>;
     } else if (result && result[0]) {
       return (
         <BrowserRouter>
           <div>
-            <h3 className="project-source">Projects:</h3>
-            {/* <List items={result} /> */}
-            <List>
-              {result.map(i => <ListItem text={i.name}/>)}
-            </List>
+            <h2>Projects Listing</h2>
+            <h1 className="project-name">Project name: </h1>
+            <h3 className="project-source">Source: not known</h3>
+            <List items={result} />
+          </div>
+        </BrowserRouter>
+      );
+    } else {
+      return (
+        <BrowserRouter>
+          <div>
+            <h2>Project Listing</h2>
+            <p>No project have been created––you should create one!</p>
           </div>
         </BrowserRouter>
       );
