@@ -85,7 +85,7 @@ class TestProjects(unittest.TestCase):
 
         expected_data = [
             {'project_name': 'project2', 'b-0': 'stagely', 'loss': 100, 'd-2': 35, 'c-1': 5},
-            {'e-1': 77, 'project_name': 'project2', 'win': 56, 'd-0': 'another stagel', 'f-2': 97},
+            {'e-4': 77, 'project_name': 'project2', 'win': 56, 'd-3': 'another stagel', 'f-5': 97},
         ]
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project2'))

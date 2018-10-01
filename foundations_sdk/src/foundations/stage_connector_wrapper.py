@@ -36,11 +36,9 @@ class StageConnectorWrapper(object):
         return self._connector.uuid()
 
     def stage(self, function, *args, **kwargs):
-        builder = self._make_builder()
-        builder = self._set_builder_stage(builder, function, args, kwargs)
-        builder = self._set_builder_hierarchy(builder)
+        from foundations import foundations_context
 
-        return builder.build(self._connector.stage)
+        return foundations_context.pipeline().stage(function, self, *args, **kwargs)
 
     def require(self, *required_args):
         def _require(*args):
@@ -119,17 +117,19 @@ class StageConnectorWrapper(object):
         return self.run(*args, **kwargs)
 
     def name(self):
-        function_name_and_uuid = self._connector.function_name() + ' ' + self._connector.name()
+        function_name_and_uuid = self.function_name() + ' ' + self.uuid()
         return function_name_and_uuid
+    
+    def function_name(self):
+        return self._connector.function_name()
 
     def split(self, num_children):
         from foundations.utils import split_at
-        from foundations import foundations_context
 
         children = []
 
         for child_index in range(num_children):
-            child = foundations_context.pipeline().stage(split_at, self, child_index)
+            child = self.stage(split_at, child_index)
             children.append(child)
 
         return children

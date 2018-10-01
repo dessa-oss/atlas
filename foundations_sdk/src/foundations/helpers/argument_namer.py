@@ -18,7 +18,10 @@ class ArgumentNamer(object):
         self._keyword_arguments = keyword_arguments
     
     def name_arguments(self):
-        from inspect import getargspec
+        try:
+            from inspect import getfullargspec as getargspec
+        except ImportError:
+            from inspect import getargspec
 
         result = []
         argument_index = 0
