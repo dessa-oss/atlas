@@ -45,7 +45,7 @@ class Response(object):
         result = self.evaluate()
 
         if isinstance(result, list):
-            return [self._value_as_json(value) for value in result]
+            return [self._value_as_json(value, self._only) for value in result]
 
         if self._is_property_model(result):
             result = self._filtered_properties(result)
@@ -71,9 +71,9 @@ class Response(object):
             attributes[key] = self._value_as_json(value)
         return attributes
 
-    def _value_as_json(self, value):
+    def _value_as_json(self, value, only=None):
         if self._is_response(value):
-            return value.only(self._only).as_json()
+            return value.only(only).as_json()
 
         if self._is_property_model(value):
             return self._filtered_properties(value)
