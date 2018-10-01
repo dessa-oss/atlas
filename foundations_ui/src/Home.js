@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import List from "./List";
+// import List from "./List";
 import {
   Route,
   NavLink,
@@ -22,7 +22,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/queued")
+    fetch("http://localhost:3000/data/")
       .then(res => res.json())
       .then(
         (result) => {
@@ -45,18 +45,23 @@ class Home extends Component {
     var projects;
     projects = result;
 
+    const List = props => <ul className="project-list">{props.children}</ul>;
+    const ListItem = props  => <a href={"/" + props.text}><li className="project-items">{props.text}</li></a>;
+
+
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <div>Loading...</div>;
-    } else {
+    } else if (result && result[0]) {
       return (
         <BrowserRouter>
           <div>
-            <h2>Completed Jobs</h2>
-            <h1 className="project-name">Project name: </h1>
-            <h3 className="project-source">Source: not known</h3>
-            <List items={result} />
+            <h3 className="project-source">Projects:</h3>
+            {/* <List items={result} /> */}
+            <List>
+              {result.map(i => <ListItem text={i.name}/>)}
+            </List>
           </div>
         </BrowserRouter>
       );
