@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-<<<<<<< HEAD
-// import List from "./List";
-=======
 import List from "./List";
->>>>>>> f0d5a868057bd6b770c0d0a47408cdf2a5ec6f1e
 import {
   Route,
   NavLink,
