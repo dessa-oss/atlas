@@ -18,13 +18,16 @@ class ArgumentNamer(object):
         self._keyword_arguments = keyword_arguments
     
     def name_arguments(self):
-        from inspect import getfullargspec
+        try:
+            from inspect import getfullargspec as getargspec
+        except ImportError:
+            from inspect import getargspec
 
         result = []
         argument_index = 0
         default_argument_index = 0
 
-        argspec = getfullargspec(self._function)
+        argspec = getargspec(self._function)
         filled_arguments = set()
 
 
