@@ -54,3 +54,15 @@ ul.header {
   text-align: right;
   margin-right: 50px;
 }
+
+ul.project-list {
+  width: 200px;
+  border: 1px solid #999;
+  padding: 25px;
+  text-align: left;
+}
+
+ul.project-list > li.project-items {
+  display: block;
+  list-style: circle;
+}
