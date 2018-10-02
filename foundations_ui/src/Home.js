@@ -4,7 +4,8 @@ import List from "./List";
 import {
   Route,
   NavLink,
-  BrowserRouter
+  BrowserRouter,
+  Link
   } from "react-router-dom";
 import 'react-table/react-table.css'
 import './App.css';
@@ -47,7 +48,12 @@ class Home extends Component {
     projects = result;
 
     const List = props => <ul className="project-list">{props.children}</ul>;
-    const ListItem = props  => <a href={"/" + props.text}><li className="project-items">{props.text}</li></a>;
+    const ListItem = props  => <NavLink to={urlCreator(props.text)}><li className="project-items">{props.text}</li></NavLink>;
+
+    function urlCreator(name){
+      const completedURL = `/projects/${name}/jobs/completed`;
+      return completedURL;
+    }
 
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
@@ -57,10 +63,10 @@ class Home extends Component {
       return (
         <BrowserRouter>
           <div>
-            <h2>Projects Listing</h2>
-            <h1 className="project-name">Project name: </h1>
-            <h3 className="project-source">Source: not known</h3>
-            <List items={result} />
+            <h3 className="project-source">Projects:</h3>
+            <List>
+              {result.map(i => <ListItem text={i.name}/>)}
+            </List>
           </div>
         </BrowserRouter>
       );

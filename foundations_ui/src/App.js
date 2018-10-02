@@ -12,7 +12,7 @@ import {
 
 class App extends Component {
 
-  render() {
+  render(match) {
     return (
       <BrowserRouter>
         <div className="App">
@@ -27,8 +27,24 @@ class App extends Component {
           </header>
           <div className="content">
             <Route exact path="/" component={Home} />
-            <Route path="/queued" component={Queued} />
-            <Route path="/completed" component={Completed} />
+            <Route path="/projects/:project/jobs/queued" component={Queued}/>
+            {/* <Route path="/projects/:project/jobs/completed" component={Completed}/> */}
+            <Route
+              path="/projects/:project/jobs/completed"
+              render={props => {
+                const {
+                  match: {
+                    params: { project }
+                  }
+                } = props;
+                return (
+                  <Completed
+                    key={`project=${project}`}
+                    {...props}
+                  />
+                );
+              }}
+            />
           </div>
         </div>
       </BrowserRouter>

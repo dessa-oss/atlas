@@ -16,7 +16,10 @@ class Completed extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/completed")
+    console.log(this.props.match.params.project)
+    var projectName = this.props.match.params.project
+    var requestURL = "http://localhost:37722/api/v1/projects/" + projectName + "/jobs/completed" 
+    fetch(requestURL)
       .then(res => res.json())
       .then(
         (result) => {
@@ -34,7 +37,7 @@ class Completed extends Component {
       )
   }
 
-  render() {
+  render(match) {
     const { error, isLoaded, result } = this.state;
     var completedJobs;
     completedJobs = result.completed_jobs;
@@ -124,7 +127,7 @@ class Completed extends Component {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <div>Loading...</div>;
-    } else if (result.completed_jobs && result.completed_jobs[0]) {  
+    } else if (result.completed_jobs && result.completed_jobs[0]) {
       return (
         <div>
             <h2>Completed Jobs</h2>
@@ -133,8 +136,16 @@ class Completed extends Component {
             <ReactTable data={completedJobs} columns={completed_columns} />
         </div>
       );
+    } else {
+      const { match } = this.props;
+      return (
+        <div>
+          <h3>Nothing to return</h3>
+          <h4>Project name: {match.params.project}</h4>
+        </div>
+      )
     }
   }
 }
 
-export default Completed;
+export default Completed

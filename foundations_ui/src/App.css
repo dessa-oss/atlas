@@ -57,12 +57,10 @@ ul.header {
 
 ul.project-list {
   width: 200px;
-  border: 1px solid #999;
   padding: 25px;
   text-align: left;
 }
 
-ul.project-list > li.project-items {
+li.project-items {
   display: block;
-  list-style: circle;
 }
