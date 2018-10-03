@@ -24,6 +24,11 @@
   float: left;
 }
 
+.App-title a {
+  text-decoration: none;
+  color: #000;
+}
+
 .App-body {
   padding-left: 5%;
   padding-right: 5%;

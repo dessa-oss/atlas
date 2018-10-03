@@ -18,9 +18,9 @@ class App extends Component {
         <div className="App">
           <header className="App-header">
           <NavLink exact to="/"><img src={logo} className="App-logo" alt="logo" /></NavLink>
-            <h1 className="App-title">Foundations</h1>
+            <h1 className="App-title"><NavLink exact to="/">Foundations</NavLink></h1>
             <ul className="header">
-              <li><NavLink exact to="/">Home</NavLink> </li>
+              <li><NavLink exact to="/">Home</NavLink></li>
             </ul>
           </header>
           <div className="content">
