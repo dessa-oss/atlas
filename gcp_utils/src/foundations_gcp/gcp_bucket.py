@@ -9,10 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class GCPBucket(object):
 
     def __init__(self, name):
-        from foundations_gcp.global_state import connection_manager
-
-        self._connection = connection_manager.bucket_connection()
-        self._bucket = self._connection.get_bucket(name)
+        self._bucket_name = name
 
     def upload_from_string(self, name, data):
         self._blob(name).upload_from_string(data)
@@ -42,7 +39,7 @@ class GCPBucket(object):
         directory = dirname(pathname)
         path_filter = basename(pathname)
 
-        objects = self._bucket.list_blobs(
+        objects = self._bucket().list_blobs(
             prefix=directory + '/', delimiter='/')
         object_names = [bucket_object.name for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
@@ -56,10 +53,16 @@ class GCPBucket(object):
     
     def move(self, source, destination):
         blob = self._blob(source)
-        self._bucket.rename_blob(blob, destination)
+        self._bucket().rename_blob(blob, destination)
+
+    def _bucket(self):
+        from foundations_gcp.global_state import connection_manager
+
+        connection = connection_manager.bucket_connection()
+        return connection.get_bucket(self._bucket_name)
 
     def _blob(self, name):
-        return self._bucket.blob(name)
+        return self._bucket().blob(name)
 
     def _log(self):
         from foundations.global_state import log_manager

@@ -9,14 +9,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class ConnectionManager(object):
 
     def __init__(self):
-        self._bucket_connection = None
+        pass
 
     def bucket_connection(self):
-        if self._bucket_connection is None:
-            self._load()
-
-        return self._bucket_connection
-
-    def _load(self):
         from google.cloud.storage import Client
-        self._bucket_connection = Client()
+        return Client()       
