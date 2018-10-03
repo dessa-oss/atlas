@@ -24,6 +24,11 @@
   float: left;
 }
 
+.App-title a {
+  text-decoration: none;
+  color: #000;
+}
+
 .App-body {
   padding-left: 5%;
   padding-right: 5%;
@@ -53,4 +58,40 @@ ul li a {
 ul.header {
   text-align: right;
   margin-right: 50px;
+}
+
+ul.project-list {
+  width: 500px;
+  padding: 25px;
+  text-align: left;
+}
+
+li.project-items {
+  display: block;
+  margin-bottom: 50px;
+  color: #000;
+  border-bottom: 1px solid #999;
+}
+
+li.project-items a {
+  color: #000;
+  text-decoration: underline;
+}
+
+li.project-items a:hover {
+  color: #046ff1;
+}
+
+.home {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  width: 500px;
+}
+
+.jobs {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  width: 1200px;
 }

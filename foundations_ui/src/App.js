@@ -12,23 +12,21 @@ import {
 
 class App extends Component {
 
-  render() {
+  render(match) {
     return (
       <BrowserRouter>
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <h1 className="App-title">Foundations</h1>
+          <NavLink exact to="/"><img src={logo} className="App-logo" alt="logo" /></NavLink>
+            <h1 className="App-title"><NavLink exact to="/">Foundations</NavLink></h1>
             <ul className="header">
-              <li><NavLink exact to="/">Home</NavLink> </li>
-              <li><NavLink to="/completed">Completed</NavLink></li>
-              <li><NavLink to="/queued">Queued</NavLink></li>
+              <li><NavLink exact to="/">Home</NavLink></li>
             </ul>
           </header>
           <div className="content">
             <Route exact path="/" component={Home} />
-            <Route path="/queued" component={Queued} />
-            <Route path="/completed" component={Completed} />
+            <Route path="/projects/:project/jobs/queued" component={Queued}/>
+            <Route path="/projects/:project/jobs/completed" component={Completed}/>
           </div>
         </div>
       </BrowserRouter>
