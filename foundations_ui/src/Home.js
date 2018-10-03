@@ -1,17 +1,11 @@
 import React, { Component } from "react";
-import List from "./List";
 
 import {
-  Route,
   NavLink,
-  BrowserRouter,
-  Link,
   Switch
   } from "react-router-dom";
 import 'react-table/react-table.css'
 import './App.css';
-import ReactTable from "react-table";
-let columns = require('./columns');
 
 class Home extends Component {
 
