@@ -17,34 +17,16 @@ class App extends Component {
       <BrowserRouter>
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
+          <NavLink exact to="/"><img src={logo} className="App-logo" alt="logo" /></NavLink>
             <h1 className="App-title">Foundations</h1>
             <ul className="header">
               <li><NavLink exact to="/">Home</NavLink> </li>
-              <li><NavLink to="/completed">Completed</NavLink></li>
-              <li><NavLink to="/queued">Queued</NavLink></li>
             </ul>
           </header>
           <div className="content">
             <Route exact path="/" component={Home} />
             <Route path="/projects/:project/jobs/queued" component={Queued}/>
-            {/* <Route path="/projects/:project/jobs/completed" component={Completed}/> */}
-            <Route
-              path="/projects/:project/jobs/completed"
-              render={props => {
-                const {
-                  match: {
-                    params: { project }
-                  }
-                } = props;
-                return (
-                  <Completed
-                    key={`project=${project}`}
-                    {...props}
-                  />
-                );
-              }}
-            />
+            <Route path="/projects/:project/jobs/completed" component={Completed}/>
           </div>
         </div>
       </BrowserRouter>
