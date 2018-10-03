@@ -126,8 +126,6 @@ class Completed extends Component {
           } else if (obj.type === 'constant'){
             return obj.value;
           } else if (obj.type === 'dynamic') {
-            console.log('dynamic')
-            console.log(obj)
             var jobParams = job.job_parameters;
             return jobParams[obj.name];
           }
