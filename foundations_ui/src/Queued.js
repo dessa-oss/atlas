@@ -75,10 +75,9 @@ class Queued extends Component {
       return <div>Loading...</div>;
     } else {
       return (
-        <div>
+        <div className="jobs">
             <h2>Queued Jobs</h2>
             <h3 className="project-name">Project name: {result.name}</h3>
-            <h3 className="project-source">Source: not known</h3>
             <ReactTable data={queuedJobs} columns={queued_columns} />
         </div>
       );
