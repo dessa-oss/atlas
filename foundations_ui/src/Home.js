@@ -65,7 +65,7 @@ class Home extends Component {
         <div className="home">
           <h3 className="project-source">Projects:</h3>
             <List>
-              {result.map(i => <Switch><ListItem text={i.name}/></Switch>)}
+              {result.map(i => <Switch key={i.name}><ListItem text={i.name}/></Switch>)}
             </List>
         </div>
       );

@@ -3,7 +3,6 @@ import ReactTable from "react-table";
 import datetimeDifference from "datetime-difference";
 import 'react-table/react-table.css'
 import './App.css';
-let columns = require('./columns');
 
 class Queued extends Component {
 

@@ -74,7 +74,7 @@ class Completed extends Component {
           },{});
         
         // loop through all grouped lists and update name
-        // return update input params list
+        // return update input params dict
         Object.keys(groupBy).map(function(key) {
               if (groupBy[key].length > 1){
                   groupBy[key].map(function(x, index){
@@ -82,21 +82,26 @@ class Completed extends Component {
                   })
               }
           });
-          
-        var finalInputList = [];
+
+        var finalInputDict = {};
         for (var key in groupBy){
-          groupBy[key].map(y => finalInputList.push(y))
+          groupBy[key].map(function(y) {
+            finalInputDict[y.name] = y;
+          })
         }
 
-        x.input_params = finalInputList;
+        x.input_params_dict = finalInputDict;
         return x;        
       })
       
-      finalResult[0].input_params.map(function(input_param, index){
-        var columnName = input_param.name;
+      var input_params_dict = finalResult[0].input_params_dict
+      var keys = Object.keys(input_params_dict)
+
+      keys.map(function(key){
+        var columnName = key;
         var obj = {};
         obj['Header'] = 'Input: ' + columnName;
-        obj['accessor'] = job => determineValue(index, job);
+        obj['accessor'] = job => determineValue(key, job);
         obj['id'] = Math.random(10).toString();
         obj['minWidth'] = 200
         completed_columns.push(obj);
@@ -108,19 +113,22 @@ class Completed extends Component {
         obj['Header'] = 'Output: ' + columnName;
         obj['accessor'] = job => JSON.stringify(job.output_metrics[key]);
         obj['id'] = Math.random(10).toString();
+        obj['minWidth'] = 200
         completed_columns.push(obj);
       })
       
 
       function determineValue(index, job){
-        var obj = job.input_params[index].value
-        if (obj.type === 'stage'){
-          return obj.stage_name;
-        } else if (obj.type === 'constant'){
-          return obj.value;
-        } else if (obj.type === 'dynamic') {
-          var jobParams = job.job_parameters;
-          return jobParams[obj.name];
+        if (job.input_params_dict[index]) {
+          var obj = job.input_params_dict[index].value
+          if (obj.type === 'stage'){
+            return obj.stage_name;
+          } else if (obj.type === 'constant'){
+            return obj.value;
+          } else if (obj.type === 'dynamic') {
+            var jobParams = job.job_parameters;
+            return jobParams[obj.name];
+          }
         }
       }
     }
@@ -131,7 +139,7 @@ class Completed extends Component {
       return <div>Loading...</div>;
     } else if (result.completed_jobs && result.completed_jobs[0]) {
       return (
-        <div class="jobs">
+        <div className="jobs">
             <h2>Completed Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
             <h3 className="project-source">Source: not known</h3>
