@@ -89,23 +89,26 @@ li.project-items {
   margin-right: 21px;
   font-weight: 100;
   font-size: 22px;
+  margin-top: 0;
 }
 
 li.project-items a {
   color: #000;
-  height: 40px;
+  height: 30px;
   padding: 0;
   padding-top: 10px;
   font-weight: 500;
   font-size: 12px;
+  width: 125px;
 }
 
 li.project-items button {
   margin-right: 10px;
   height: 40px;
-  width: 126px;
   background-color: #eaeaea52;
   border-color: #eaeaea;
+  width: 125px;
+  padding: 0;
 }
 
 li.project-items button:hover {
