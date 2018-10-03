@@ -29,7 +29,7 @@ class CompletedJobData(object):
         return {'name': argument['name'], 'value': argument['value'], 'stage_uuid': stage_uuid}
 
     def _stage_arguments(self):
-        for stage_uuid, entry in self._stage_hierarchy_entries():           
+        for stage_uuid, entry in self._stage_hierarchy_entries():
             for argument in entry.stage_args:
                 if not ((argument['value']['type'] == 'stage') and (argument['value']['stage_name'] == 'split_at')):
                     yield stage_uuid, argument
@@ -54,7 +54,7 @@ class CompletedJobData(object):
             'job_parameters': self._context.provenance.job_run_data,
             'input_params': input_params,
             'output_metrics': stage_metrics,
-            'status': 'Completed',  
+            'status': 'Completed',
             'start_time': self._context.global_stage_context.start_time,
             'completed_time': self._context.global_stage_context.end_time
         }
