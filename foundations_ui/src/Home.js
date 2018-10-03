@@ -5,7 +5,8 @@ import {
   Route,
   NavLink,
   BrowserRouter,
-  Link
+  Link,
+  Switch
   } from "react-router-dom";
 import 'react-table/react-table.css'
 import './App.css';
@@ -48,10 +49,15 @@ class Home extends Component {
     projects = result;
 
     const List = props => <ul className="project-list">{props.children}</ul>;
-    const ListItem = props  => <NavLink to={urlCreator(props.text)}><li className="project-items">{props.text}</li></NavLink>;
+    const ListItem = function(props) {
+      return <li key={props.text} className="project-items">
+        Completed: <NavLink to={urlCreator(props.text, 'completed')}>{props.text}</NavLink>
+        Queued: <NavLink to={urlCreator(props.text, 'queued')}>{props.text}</NavLink>
+      </li>;
 
-    function urlCreator(name){
-      const completedURL = `/projects/${name}/jobs/completed`;
+    }
+    function urlCreator(name, status){
+      const completedURL = `/projects/${name}/jobs/${status}`;
       return completedURL;
     }
 
@@ -61,23 +67,20 @@ class Home extends Component {
       return <div>Loading...</div>;
     } else if (result && result[0]) {
       return (
-        <BrowserRouter>
-          <div>
-            <h3 className="project-source">Projects:</h3>
+        <div>
+          <h3 className="project-source">Projects:</h3>
             <List>
-              {result.map(i => <ListItem text={i.name}/>)}
+              {result.map(i => <Switch><ListItem text={i.name}/></Switch>)}
             </List>
-          </div>
-        </BrowserRouter>
+        </div>
       );
     } else {
       return (
-        <BrowserRouter>
-          <div>
-            <h2>Project Listing</h2>
-            <p>No project have been created––you should create one!</p>
-          </div>
-        </BrowserRouter>
+        <div>
+          <h2>Project Listing</h2>
+          <p>No project have been created––you should create one!</p>
+          <p>Looking for docs, checking out the <a href="https://github.com/DeepLearnI/foundations/tree/master/examples">/examples directory</a></p>
+        </div>
       );
     }
   }

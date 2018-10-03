@@ -16,7 +16,6 @@ class Completed extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.match.params.project)
     var projectName = this.props.match.params.project
     var requestURL = "http://localhost:37722/api/v1/projects/" + projectName + "/jobs/completed" 
     fetch(requestURL)
@@ -44,13 +43,15 @@ class Completed extends Component {
 
     const completed_columns = [{
       Header: 'Start Time',
-      accessor: 'start_time'
+      accessor: 'start_time',
+      minWidth: 250
     }, {
       Header: 'Status',
       accessor: 'status'
     }, {
       Header: 'JobId',
-      accessor: 'job_id'
+      accessor: 'job_id',
+      minWidth: 250
     }, {
       Header: 'User',
       accessor: 'user'
@@ -77,7 +78,7 @@ class Completed extends Component {
         Object.keys(groupBy).map(function(key) {
               if (groupBy[key].length > 1){
                   groupBy[key].map(function(x, index){
-                      x.name = JSON.stringify(x.name) + (index + 1)
+                      x.name = x.name + '_' + (index + 1)
                   })
               }
           });
@@ -97,6 +98,7 @@ class Completed extends Component {
         obj['Header'] = 'Input: ' + columnName;
         obj['accessor'] = job => determineValue(index, job);
         obj['id'] = Math.random(10).toString();
+        obj['minWidth'] = 200
         completed_columns.push(obj);
       })
 
@@ -131,7 +133,7 @@ class Completed extends Component {
       return (
         <div>
             <h2>Completed Jobs</h2>
-            <h3 className="project-name">Project name: {result.name}</h3>
+            <h3 className="project-name">Project: {result.name}</h3>
             <h3 className="project-source">Source: not known</h3>
             <ReactTable data={completedJobs} columns={completed_columns} />
         </div>
@@ -140,7 +142,7 @@ class Completed extends Component {
       const { match } = this.props;
       return (
         <div>
-          <h3>Nothing to return</h3>
+          <h3>No jobs completed yet.</h3>
           <h4>Project name: {match.params.project}</h4>
         </div>
       )
