@@ -16,17 +16,15 @@ Integration Documentation
 ## Releases
 There is a new release on every second Friday. Old releases can be found by navigating to the *Switch branches/tags* tab, and selecting the tag of the desired release version. Each release has its own set of examples.
 
-Examples for each release version: 
-
-[0.0.4](https://github.com/DeepLearnI/foundations/tree/0.0.4/examples) 
-
-[0.0.3.1](https://github.com/DeepLearnI/foundations/tree/0.0.3.1/examples) 
-
-[0.0.3](https://github.com/DeepLearnI/foundations/tree/0.0.3/examples)
-
-[0.0.2.1](https://github.com/DeepLearnI/foundations/tree/0.0.2.1/examples)
-
-[0.0.2](https://github.com/DeepLearnI/foundations/tree/0.0.2/examples)
+|Release Version|Release|Examples|
+|---|-------|--------|
+|0.0.5|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.5) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.5/examples) |
+|0.0.4|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.4) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.4/examples) |
+|0.0.3.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.3.1) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.3.1/examples) |
+|0.0.3|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.3) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.3/examples) |
+|0.0.2.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.2.1) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.2.1/examples) |
+|0.0.2|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.2) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.2/examples) |
+|0.0.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.1)| |
 
 
 ## License
