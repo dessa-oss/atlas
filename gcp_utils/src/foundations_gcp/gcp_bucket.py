@@ -8,8 +8,20 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class GCPBucket(object):
 
+    MAX_USES = 10
+
     def __init__(self, name):
         self._bucket_name = name
+        self._num_uses = 0
+        self._bucket = None
+
+        self._refresh_bucket()
+
+    def _refresh_bucket(self):
+        from foundations_gcp.global_state import connection_manager
+
+        connection = connection_manager.bucket_connection()
+        self._bucket = connection.get_bucket(self._bucket_name)
 
     def upload_from_string(self, name, data):
         self._blob(name).upload_from_string(data)
@@ -39,7 +51,7 @@ class GCPBucket(object):
         directory = dirname(pathname)
         path_filter = basename(pathname)
 
-        objects = self._bucket().list_blobs(
+        objects = self._safe_bucket().list_blobs(
             prefix=directory + '/', delimiter='/')
         object_names = [bucket_object.name for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
@@ -53,16 +65,19 @@ class GCPBucket(object):
     
     def move(self, source, destination):
         blob = self._blob(source)
-        self._bucket().rename_blob(blob, destination)
+        self._safe_bucket().rename_blob(blob, destination)
 
-    def _bucket(self):
-        from foundations_gcp.global_state import connection_manager
+    def _safe_bucket(self):
+        if self._num_uses >= GCPBucket.MAX_USES:
+            self._refresh_bucket()
+            self._num_uses = 0
 
-        connection = connection_manager.bucket_connection()
-        return connection.get_bucket(self._bucket_name)
+        self._num_uses += 1
+
+        return self._bucket
 
     def _blob(self, name):
-        return self._bucket().blob(name)
+        return self._safe_bucket().blob(name)
 
     def _log(self):
         from foundations.global_state import log_manager
