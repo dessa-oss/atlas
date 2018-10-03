@@ -20,7 +20,6 @@ on any stage, but using it on the final stage is usually what you want.
 """
 
 import foundations
-import config
 from common.data import load_titanic
 from common.prep import fillna
 from common.logging import log_data
