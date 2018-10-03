@@ -88,3 +88,10 @@ li.project-items a:hover {
   text-align: center;
   width: 500px;
 }
+
+.jobs {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  width: 1200px;
+}

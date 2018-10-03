@@ -131,7 +131,7 @@ class Completed extends Component {
       return <div>Loading...</div>;
     } else if (result.completed_jobs && result.completed_jobs[0]) {
       return (
-        <div>
+        <div class="jobs">
             <h2>Completed Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
             <h3 className="project-source">Source: not known</h3>
