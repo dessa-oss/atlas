@@ -31,7 +31,8 @@ class CompletedJobData(object):
     def _stage_arguments(self):
         for stage_uuid, entry in self._stage_hierarchy_entries():
             for argument in entry.stage_args:
-                yield stage_uuid, argument
+                if not ((argument['value']['type'] == 'stage') and (argument['value']['stage_name'] == 'split_at')):
+                    yield stage_uuid, argument
 
     def _load_job_metrics(self):
         stage_metrics = {}
