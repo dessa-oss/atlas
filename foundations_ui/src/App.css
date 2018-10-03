@@ -61,11 +61,30 @@ ul.header {
 }
 
 ul.project-list {
-  width: 200px;
+  width: 500px;
   padding: 25px;
   text-align: left;
 }
 
 li.project-items {
   display: block;
+  margin-bottom: 50px;
+  color: #000;
+  border-bottom: 1px solid #999;
+}
+
+li.project-items a {
+  color: #000;
+  text-decoration: underline;
+}
+
+li.project-items a:hover {
+  color: #046ff1;
+}
+
+.home {
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  width: 500px;
 }
