@@ -117,6 +117,14 @@ class Completed extends Component {
         completed_columns.push(obj);
       })
       
+      // Convert time to local timezone
+      function updateTime(timeString){
+        var timeStamp = new Date(timeString);
+        timeStamp.setHours( timeStamp.getHours() - 4 );
+        return new Date(timeStamp).toLocaleString();
+      }
+
+      completedJobs.map(x => x.start_time = updateTime(x.start_time))
 
       function determineValue(index, job){
         if (job.input_params_dict[index]) {
