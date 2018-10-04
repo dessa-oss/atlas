@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations.thread_manager import ThreadManager
+
 class ResultReader(object):
 
     def __init__(self, pipeline_archiver_fetch):
@@ -114,14 +116,19 @@ class ResultReader(object):
         pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
 
     def _get_results(self, main_headers, all_job_information):
-        for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+        def _loop_body(pipeline_name, pipeline_context):
             self._load_job_provenance(pipeline_context, pipeline_name)
             pipeline_context.load_stage_log_from_archive(self._archivers[pipeline_name])
 
+        with ThreadManager() as manager:
+            for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+                manager.spawn(_loop_body, pipeline_name, pipeline_context)
+
+        for pipeline_name, pipeline_context in self._pipeline_contexts.items():
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             ResultReader._add_stage_results(
-                all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
+            all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
 
     def get_results(self):
         main_headers = ["job_name", "stage_id",
