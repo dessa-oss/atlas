@@ -118,15 +118,22 @@ class PipelineContext(object):
 
             stage_uuids = archiver.fetch_miscellaneous('stage_listing') or []
 
-            self.provenance.load_miscellaneous_from_archive(archiver)
-            self.global_stage_context.load_miscellaneous_from_archive(archiver)
+            def _create_stage_contexts(stage_uuid):
+                stage_context = StageContext()
+                stage_context.uuid = stage_uuid
+                return stage_context
+
+            stage_contexts = list(map(_create_stage_contexts, stage_uuids))
 
             with ThreadManager() as manager:
-                for stage_uuid in stage_uuids:
-                    stage_context = StageContext()
-                    stage_context.uuid = stage_uuid
+                manager.spawn(self.provenance.load_miscellaneous_from_archive, archiver)
+                manager.spawn(self.global_stage_context.load_miscellaneous_from_archive, archiver)
+
+                for stage_context in stage_contexts:
                     manager.spawn(stage_context.load_miscellaneous_from_archive, archiver)
-                    self.add_stage_context(stage_context)
+                    
+            for stage_context in stage_contexts:        
+                self.add_stage_context(stage_context)
 
     def load_from_archive(self, archiver):
         self.load_stage_log_from_archive(archiver)
