@@ -156,7 +156,7 @@ class ResultReader(object):
                 ResultReader._fill_placeholders(
                     pipeline_context.provenance,
                     stage_info.stage_args,  
-                    args, #why does this matter?
+                    args,
                     stage_info.parents, 
                     column_headers, 
                     row_data
