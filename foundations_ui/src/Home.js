@@ -48,6 +48,7 @@ class Home extends Component {
         <h3>{props.text}</h3>
         <button><NavLink to={urlCreator(props.text, 'completed')}>Completed</NavLink></button>
         <button><NavLink to={urlCreator(props.text, 'queued')}>Queued</NavLink></button>
+        <button><NavLink to={urlCreator(props.text, 'running')}>Running</NavLink></button>
       </li>;
 
     }

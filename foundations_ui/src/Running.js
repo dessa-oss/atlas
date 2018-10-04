@@ -4,8 +4,9 @@ import datetimeDifference from "datetime-difference";
 import 'react-table/react-table.css'
 import './App.css';
 import rocket from './rocket.gif';
+let columns = require('./columns');
 
-class Queued extends Component {
+class Running extends Component {
 
   constructor(props) {
     super(props);
@@ -18,7 +19,7 @@ class Queued extends Component {
 
   componentDidMount() {
     var projectName = this.props.match.params.project
-    var requestURL = "http://localhost:37722/api/v1/projects/" + projectName + "/jobs/queued"
+    var requestURL = "http://localhost:37722/api/v1/projects/" + projectName + "/jobs/running" 
     fetch(requestURL)
       .then(res => res.json())
       .then(
@@ -37,38 +38,38 @@ class Queued extends Component {
       )
   }
 
-  render() {
+  render(match) {
     const { error, isLoaded, result } = this.state;
-    var queuedJobs;
-    queuedJobs = result.queued_jobs;
+    var runningJobs;
+    runningJobs = result.running_jobs;
 
-    const queued_columns = [{
-        Header: 'Submitted',
-        accessor: 'submitted_time'
-      }, {
-        Header: 'JobId',
-        accessor: 'job_id'
-      }, {
-        Header: 'Duration in Queue',
-        id: 'duration',
-        accessor: 'duration'
-      }, {
-        Header: 'User',
-        accessor: 'user'
-      }
-    ]
+    const running_columns = [{
+      Header: 'Start Time',
+      accessor: 'start_time',
+      minWidth: 250
+    }, {
+      Header: 'JobId',
+      accessor: 'job_id',
+      minWidth: 250
+    }, {
+      Header: 'Running Time',
+      accessor: 'duration'
+    }, {
+      Header: 'User',
+      accessor: 'user'
+    }]
 
-    function getTimeDifference(submitted_time){
+    function getTimeDifference(start_time){
       const currentTime = new Date();
-      const dataTimeFormatted = new Date(submitted_time)
+      const dataTimeFormatted = new Date(start_time)
       dataTimeFormatted.setHours( dataTimeFormatted.getHours() - 4 );
       const newDate = new Date(dataTimeFormatted)
       const timeDiff = datetimeDifference(currentTime, newDate);
       return timeDiff
     }
 
-    if (queuedJobs && queuedJobs[0]){
-      queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + ' minutes, ' + getTimeDifference(x.submitted_time).seconds + ' seconds')
+    if (runningJobs && runningJobs[0]){
+      runningJobs.map(x => x.duration = getTimeDifference(x.start_time).minutes + ' minutes, ' + getTimeDifference(x.start_time).seconds + ' seconds')
     }
 
     if (error && result[0]) {
@@ -80,16 +81,24 @@ class Queued extends Component {
           <img className="rocket" src={rocket}></img>
         </div>
       )
-    } else {
+    } else if (result.running_jobs && result.running_jobs[0]) {
       return (
         <div className="jobs">
-            <h2>Queued Jobs</h2>
-            <h3 className="project-name">Project name: {result.name}</h3>
-            <ReactTable data={queuedJobs} columns={queued_columns} />
+            <h2>Running Jobs</h2>
+            <h3 className="project-name">Project: {result.name}</h3>
+            <ReactTable className="-highlight" data={runningJobs} columns={running_columns} />
         </div>
       );
+    } else {
+      const { match } = this.props;
+      return (
+        <div>
+          <h3>No jobs running.</h3>
+          <h4>Project name: {match.params.project}</h4>
+        </div>
+      )
     }
   }
 }
 
-export default Queued;
+export default Running
