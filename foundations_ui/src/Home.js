@@ -45,9 +45,9 @@ class Home extends Component {
     const List = props => <ul className="project-list">{props.children}</ul>;
     const ListItem = function(props) {
       return <li key={props.text} className="project-items">
-        <h2>{props.text}</h2>
-        <NavLink to={urlCreator(props.text, 'completed')}>Completed</NavLink>
-        <NavLink to={urlCreator(props.text, 'queued')}>Queued</NavLink>
+        <h3>{props.text}</h3>
+        <button><NavLink to={urlCreator(props.text, 'completed')}>Completed</NavLink></button>
+        <button><NavLink to={urlCreator(props.text, 'queued')}>Queued</NavLink></button>
       </li>;
 
     }
@@ -63,7 +63,7 @@ class Home extends Component {
     } else if (result && result[0]) {
       return (
         <div className="home">
-          <h3 className="project-source">Projects:</h3>
+          <h3 className="project-source">Projects</h3>
             <List>
               {result.map(i => <Switch key={i.name}><ListItem text={i.name}/></Switch>)}
             </List>

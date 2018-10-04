@@ -13,7 +13,11 @@
   height: 60px;
   padding: 20px;
   color: white;
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.App-header li {
+  border: none;
 }
 
 .App-title {
@@ -46,6 +50,9 @@ ul li {
   display: inline;
   list-style-type: none;
   margin: 0;
+  border: 1px solid #eaeaea;
+  padding: 10px;
+  padding-left: 25px;
 }
 
 ul li a {
@@ -64,22 +71,53 @@ ul.project-list {
   width: 500px;
   padding: 25px;
   text-align: left;
+  padding-left: 0;
 }
 
 li.project-items {
   display: block;
   margin-bottom: 50px;
   color: #000;
-  border-bottom: 1px solid #999;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 20px;
+}
+
+.project-items h3 {
+  border-bottom: 2px solid #b3e1ff;
+  color: #433b3b;
+  padding: 10px;
+  margin-right: 21px;
+  font-weight: 100;
+  font-size: 22px;
+  margin-top: 0;
 }
 
 li.project-items a {
   color: #000;
-  text-decoration: underline;
+  height: 30px;
+  padding: 0;
+  padding-top: 10px;
+  font-weight: 500;
+  font-size: 12px;
+  width: 125px;
 }
 
-li.project-items a:hover {
-  color: #046ff1;
+li.project-items button {
+  margin-right: 10px;
+  height: 40px;
+  background-color: #eaeaea52;
+  border-color: #eaeaea;
+  width: 125px;
+  padding: 0;
+}
+
+li.project-items button:hover {
+  background-color: #046ff1;
+  color: #fff;
+}
+
+li.project-items button:hover > a {
+  color: #fff;
 }
 
 .home {
@@ -89,9 +127,29 @@ li.project-items a:hover {
   width: 500px;
 }
 
+.home > h3 {
+  color: #3c3939;
+  font-weight: 500;
+}
+
 .jobs {
   margin: 0 auto;
   padding: 0;
   text-align: center;
   width: 1200px;
+}
+
+.jobs h2, .jobs h3 {
+  font-weight: 500;
+}
+
+.jobs h2 {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  padding-bottom: 5px;
+  text-align: left;
+  margin-top: 20px;
+  width: 200px;
+  width: 100%;
 }

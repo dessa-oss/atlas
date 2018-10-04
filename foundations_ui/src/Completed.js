@@ -142,8 +142,7 @@ class Completed extends Component {
         <div className="jobs">
             <h2>Completed Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
-            <h3 className="project-source">Source: not known</h3>
-            <ReactTable data={completedJobs} columns={completed_columns} />
+            <ReactTable className="-highlight" data={completedJobs} columns={completed_columns} />
         </div>
       );
     } else {

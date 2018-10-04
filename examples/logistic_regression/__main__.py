@@ -19,7 +19,6 @@ other stages.  See lines 36 - 40 in this file for examples of usage.
 """
 
 import foundations
-import config
 from common.prep import union
 from common.models import train_logistic_regression
 from common.logging import log_formatted

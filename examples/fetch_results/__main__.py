@@ -22,8 +22,6 @@ See comments below for a walkthrough.
 # and the result reader itself
 from foundations import JobPersister, ResultReader, log_manager
 
-# configure Foundations to read from the local filesystem - don't worry about this line
-import config
 
 def main():
     # get a logger - like using print, but more configurable
