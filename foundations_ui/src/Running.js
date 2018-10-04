@@ -69,7 +69,7 @@ class Running extends Component {
     }
 
     if (runningJobs && runningJobs[0]){
-      runningJobs.map(x => x.duration = getTimeDifference(x.start_time).minutes + ' minutes, ' + getTimeDifference(x.start_time).seconds + ' seconds')
+      runningJobs.map(x => x.duration = getTimeDifference(x.start_time).minutes + 'm:' + getTimeDifference(x.start_time).seconds + 's')
     }
 
     if (error && result[0]) {

@@ -68,7 +68,7 @@ class Queued extends Component {
     }
 
     if (queuedJobs && queuedJobs[0]){
-      queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + ' minutes, ' + getTimeDifference(x.submitted_time).seconds + ' seconds')
+      queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + 'm:' + getTimeDifference(x.submitted_time).seconds + 's')
     }
 
     if (error && result[0]) {
