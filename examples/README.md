@@ -24,11 +24,11 @@ This module provides an example of how to grab information for a completed job. 
 
 `python -m logistic_regression && python -m fetch_job_information`
 
-### [fetch_job_metrics](./fetch_job_metrics/__main__.py)
+### [get_metrics_for_all_jobs](./get_metrics_for_all_jobs/__main__.py)
 
 This module provides an example of how to grab information for all completed jobs in a named project with the `get_metrics_for_all_jobs` method. Job metadata includes job input parameters, job output results, and additional data including how long a job took to run. There's no point in running this module if you haven't run a job with a project name - run the grid_search module or logistic_regression module first to generate some illustrative output.
 
-`python -m logistic_regression && python -m fetch_job_metrics`
+`python -m logistic_regression && python -m get_metrics_for_all_jobs`
 
 ### [fetch_results](./fetch_results/__main__.py)
 
