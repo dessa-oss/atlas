@@ -31,7 +31,13 @@ def _flattened_job_metrics(project_name):
 
     for job_data in _project_job_data(project_name):
         _update_job_data(job_data, stage_uuids)
+        _update_datetime(job_data)
         yield job_data
+
+def _update_datetime(job_data):
+    from foundations.utils import datetime_string
+    job_data['start_time'] = datetime_string(job_data['start_time'])
+    job_data['completed_time'] = datetime_string(job_data['completed_time'])
 
 
 def _update_job_data(job_data, stage_uuids):
@@ -88,3 +94,11 @@ def _update_uuid_list(input_params, stage_uuids):
         if not param['stage_uuid'] in stage_uuids:
             stage_uuids.append(param['stage_uuid'])
     return stage_uuids
+
+def _datetime_string(time):
+    from datetime import datetime
+
+    if time is None:
+        return 'No time available'
+    date_time = datetime.utcfromtimestamp(time)
+    return date_time.isoformat()
