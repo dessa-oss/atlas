@@ -279,8 +279,6 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self.maxDiff = None
-
         self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
         self._make_and_persist_job('my job two', stage, 77777777, 77777777)
 
