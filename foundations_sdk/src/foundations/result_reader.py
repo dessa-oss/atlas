@@ -30,12 +30,23 @@ class ResultReader(object):
     def _fill_placeholders(provenance, params_to_read, params_to_write, parent_ids, column_headers, row_data):
         from foundations.utils import dict_like_iter, dict_like_append
 
+        args_counter = 0
         for arg_name, argument_value in dict_like_iter(params_to_read):
             argument_name = argument_value['name']
+            if argument_name == '<args>':
+                argument_name = '<args'+str(args_counter)+'>'
+                args_counter+=1
             argument_value = argument_value['value']
+
             if argument_value['type'] == 'stage':
                 argument_value_stage_uuid = argument_value["stage_uuid"]
-                dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
+
+                if '<arg' in argument_name:
+                    column_headers.append(argument_name)
+                    row_data.append(argument_value["stage_uuid"])
+                    dict_like_append(params_to_write, arg_name, argument_name)
+                else:
+                    dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
 
                 parent_ids.append(argument_value_stage_uuid)
             elif argument_value['type'] == 'dynamic':
@@ -150,8 +161,8 @@ class ResultReader(object):
 
                 ResultReader._fill_placeholders(
                     pipeline_context.provenance,
-                    stage_info.stage_args, 
-                    args, 
+                    stage_info.stage_args,  
+                    args, #why does this matter?
                     stage_info.parents, 
                     column_headers, 
                     row_data
