@@ -18,7 +18,7 @@ class ConnectionManager(object):
 
         authorized_session_kwargs = {
             "pool_size": 500,
-            "pool_block": False,
+            "pool_block": True,
             "max_retries": 3
         }
 
