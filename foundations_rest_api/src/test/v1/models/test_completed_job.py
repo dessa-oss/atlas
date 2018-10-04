@@ -303,7 +303,10 @@ class TestCompletedJob(unittest.TestCase):
             start_time='1972-06-19T04:56:17',
             completed_time='1972-06-19T04:56:17'
         )
-        self.assertEqual([expected_job, expected_job_two], jobs)
+
+        sort_key = lambda job: job.job_id
+
+        self.assertEqual(sorted([expected_job, expected_job_two], key=sort_key), sorted(jobs, key=sort_key))
 
     def test_all_returns_project_filtered_jobs(self):
         def method():
