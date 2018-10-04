@@ -35,12 +35,21 @@ class CompletedJob(PropertyModel):
     @staticmethod
     def _load_jobs(project_name):
         from foundations.models.pipeline_context_listing import PipelineContextListing
+        from foundations.thread_manager import ThreadManager
 
-        for job_id, context in PipelineContextListing.pipeline_contexts():
+        completed_jobs = []
+
+        def _loop_body(job_id, context):
             job_properties = CompletedJob._job_properties(context, job_id)
             if project_name is None or project_name == job_properties['project_name']:
                 del job_properties['project_name']
-                yield CompletedJob(**job_properties)
+                completed_jobs.append(CompletedJob(**job_properties))
+
+        with ThreadManager() as manager:
+            for job_id, context in list(PipelineContextListing.pipeline_contexts()):
+                manager.spawn(_loop_body, job_id, context)
+
+        return completed_jobs
 
     @staticmethod
     def _job_properties(context, job_id):
