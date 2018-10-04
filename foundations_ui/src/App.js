@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Home from "./Home";
 import Queued from "./Queued";
 import Completed from "./Completed";
+import Running from "./Running";
 import logo from './dessa_logo.svg';
 import './App.css';
 import {
@@ -27,6 +28,7 @@ class App extends Component {
             <Route exact path="/" component={Home} />
             <Route path="/projects/:project/jobs/queued" component={Queued}/>
             <Route path="/projects/:project/jobs/completed" component={Completed}/>
+            <Route path="/projects/:project/jobs/running" component={Running}/>
           </div>
         </div>
       </BrowserRouter>

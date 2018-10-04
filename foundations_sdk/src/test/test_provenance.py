@@ -153,7 +153,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.python_version, None)
         self.assertEqual(provenance.stage_hierarchy.entries, {})
         self.assertEqual(provenance.job_run_data, {})
-        self.assertEqual(provenance.project_name, '')
+        self.assertEqual(provenance.project_name, 'default')
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
@@ -199,7 +199,7 @@ class TestProvenance(unittest.TestCase):
                                        'random_state': None,
                                        'tags': [],
                                        'job_run_data': {},
-                                       'project_name': ''
+                                       'project_name': 'default'
                                        }, mock_archive.archive_provenance)
         self.assertEqual(
             {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -264,3 +264,7 @@ class TestProvenance(unittest.TestCase):
         mock_archive = self.MockArchive()
 
         provenance.load_persisted_data_from_archive(mock_archive)
+
+    def test_provenance_default_project_name(self):
+        provenance = Provenance()
+        self.assertEqual(provenance.project_name, "default")

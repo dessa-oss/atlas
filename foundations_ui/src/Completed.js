@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import ReactTable from "react-table";
 import 'react-table/react-table.css'
 import './App.css';
+import datetimeDifference from "datetime-difference";
+import rocket from './rocket.gif';
 let columns = require('./columns');
 
 class Completed extends Component {
@@ -53,12 +55,13 @@ class Completed extends Component {
       accessor: 'job_id',
       minWidth: 250
     }, {
+      Header: 'Duration',
+      id: 'duration',
+      accessor: 'duration'
+    }, {
       Header: 'User',
       accessor: 'user'
-    }
-  ]
-
-
+    }]
 
     if (result.completed_jobs && result.completed_jobs[0]) {
 
@@ -116,6 +119,15 @@ class Completed extends Component {
         obj['minWidth'] = 200
         completed_columns.push(obj);
       })
+
+      function getTimeDifference(start, complete){
+        const initial_time = new Date(start);
+        const complete_time = new Date(complete);
+        const timeDiff = datetimeDifference(initial_time, complete_time);
+        return timeDiff;
+      }
+
+      completedJobs.map(x => x.duration = getTimeDifference(x.start_time, x.completed_time).minutes + 'm:' + getTimeDifference(x.start_time, x.completed_time).seconds + 's')
       
       // Convert time to local timezone
       function updateTime(timeString){
@@ -144,7 +156,12 @@ class Completed extends Component {
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return (
+        <div className="loading">
+          Loading...
+          <img className="rocket" src={rocket}></img>
+        </div>
+      )
     } else if (result.completed_jobs && result.completed_jobs[0]) {
       return (
         <div className="jobs">
