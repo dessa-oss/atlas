@@ -40,6 +40,7 @@ class Completed extends Component {
     const { error, isLoaded, result } = this.state;
     var completedJobs;
     completedJobs = result.completed_jobs;
+    console.log(JSON.stringify(result, 0, 2))
 
     const completed_columns = [{
       Header: 'Start Time',
@@ -105,7 +106,7 @@ class Completed extends Component {
         obj['id'] = Math.random(10).toString();
         obj['minWidth'] = 200
         completed_columns.push(obj);
-      })
+      }) 
 
       Object.keys(finalResult[0].output_metrics).map(function(key){
         var columnName = key;
@@ -117,6 +118,14 @@ class Completed extends Component {
         completed_columns.push(obj);
       })
       
+      // Convert time to local timezone
+      function updateTime(timeString){
+        var timeStamp = new Date(timeString);
+        timeStamp.setHours( timeStamp.getHours() - 4 );
+        return new Date(timeStamp).toLocaleString();
+      }
+
+      completedJobs.map(x => x.start_time = updateTime(x.start_time))
 
       function determineValue(index, job){
         if (job.input_params_dict[index]) {
