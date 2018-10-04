@@ -20,22 +20,18 @@ For best coding practices we recommend breaking down model code into different s
 
 The [driver.py file](sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
 
-```from foundations import * ```
-will import all function from Foundations.
-
-```from staged_models.model import incr_by_10, mult```
-
-Notice, we prefix module name with `staged_`. This wraps imported functions (`incr_by_10, mult`) through Foundations package.
+```import foundations```
+```from models.model import incr_by_10, mult```
 
 ```
 # build step1 of model
-incr_value = incr_by_10(x)
+incr_value = foundations.create_stage(incr_by_10(x))
 ```
 `incr_by_10` function is wrapped through Foundations. This step doesn't execute `incr_by_10` function, it creates a pointer to the first step of the model. When this function is executed the return value from the function is wrapped in an object which is assigned to `incr_value` variable, from here on we call it `stage_object`.
 
 ```
 # build step2 of model
-result = mult(x, incr_value)
+result = foundations.create_stage(mult(x, incr_value))
 ```
 This behaves the same as above, `result` is `stage_object`. Notice, we are passing `incr_value` to `mult` function. `incr_value` is a stage_object and has not been executed yet.
 
