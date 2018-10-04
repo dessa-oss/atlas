@@ -49,7 +49,7 @@ class Queued extends Component {
         Header: 'JobId',
         accessor: 'job_id'
       }, {
-        Header: 'Duration in Queue',
+        Header: 'Duration',
         id: 'duration',
         accessor: 'duration'
       }, {
