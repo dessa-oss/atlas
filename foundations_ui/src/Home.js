@@ -52,8 +52,8 @@ class Home extends Component {
 
     }
     function urlCreator(name, status){
-      const completedURL = `/projects/${name}/jobs/${status}`;
-      return completedURL;
+      const finalURL = `/projects/${name}/jobs/${status}`;
+      return finalURL;
     }
 
     if (error && result[0]) {
