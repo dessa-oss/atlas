@@ -25,7 +25,7 @@ class Provenance(object):
         self.stage_hierarchy = StageHierarchy()
         self.python_version = None
         self.job_run_data = {}
-        self.project_name = ''
+        self.project_name = 'default'
 
     def fill_python_version(self):
         import sys

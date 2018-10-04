@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def set_project_name(project_name):
+def set_project_name(project_name="default"):
     from foundations.global_state import foundations_context
     foundations_context.set_project_name(project_name)
 
