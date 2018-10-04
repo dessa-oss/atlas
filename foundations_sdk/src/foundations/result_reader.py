@@ -139,8 +139,11 @@ class ResultReader(object):
     def _get_job_information(self, main_headers, all_job_information):
         import pandas as pd
 
+        with ThreadManager() as manager:
+            for pipeline_name, pipeline_context in self._pipeline_contexts.items():
+                manager.spawn(self._load_job_provenance, pipeline_context, pipeline_name)
+
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
-            self._load_job_provenance(pipeline_context, pipeline_name)
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             for stage_id, stage_info in stage_hierarchy_entries.items():
@@ -209,7 +212,7 @@ class ResultReader(object):
             
         return self._over_pipeline_contexts(_try_get_source_code)
 
-    def get_error_information(self, pipeline_id, stage_id=None, verbose=False):
+    def get_error_information(self, pipeline_id, stage_id=None):
         from foundations.utils import pretty_error
 
         pipeline_context = self._pipeline_contexts[pipeline_id]
@@ -219,7 +222,7 @@ class ResultReader(object):
         else:
             error_info = pipeline_context.stage_contexts[stage_id].error_information
 
-        return pretty_error(pipeline_id, error_info, verbose=verbose)
+        return pretty_error(pipeline_id, error_info)
 
     def create_working_copy(self, pipeline_name, path_to_save):
         pipeline_context = self._pipeline_contexts[pipeline_name]
