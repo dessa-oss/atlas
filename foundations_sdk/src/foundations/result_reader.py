@@ -33,23 +33,17 @@ class ResultReader(object):
         args_counter = 0
         for arg_name, argument_value in dict_like_iter(params_to_read):
             argument_name = argument_value['name']
-            if argument_name == '<args>':
-                argument_name = '<args'+str(args_counter)+'>'
-                args_counter+=1
             argument_value = argument_value['value']
 
             if argument_value['type'] == 'stage':
                 argument_value_stage_uuid = argument_value["stage_uuid"]
-
-                if '<arg' in argument_name:
-                    column_headers.append(argument_name)
-                    row_data.append(argument_value["stage_uuid"])
-                    dict_like_append(params_to_write, arg_name, argument_name)
-                else:
-                    dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
+                dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
 
                 parent_ids.append(argument_value_stage_uuid)
             elif argument_value['type'] == 'dynamic':
+                if argument_name == '<args>':
+                    argument_name = '<args'+str(args_counter)+'>'
+                    args_counter+=1
                 hyperparameter_name = argument_name
                 hyperparameter_value = provenance.job_run_data.get(
                     argument_value['name'])
