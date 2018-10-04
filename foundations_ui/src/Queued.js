@@ -3,6 +3,7 @@ import ReactTable from "react-table";
 import datetimeDifference from "datetime-difference";
 import 'react-table/react-table.css'
 import './App.css';
+import rocket from './rocket.gif';
 
 class Queued extends Component {
 
@@ -16,7 +17,9 @@ class Queued extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:37722/api/v1/projects/asdf/jobs/queued")
+    var projectName = this.props.match.params.project
+    var requestURL = "http://localhost:37722/api/v1/projects/" + projectName + "/jobs/queued"
+    fetch(requestURL)
       .then(res => res.json())
       .then(
         (result) => {
@@ -72,7 +75,12 @@ class Queued extends Component {
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return (
+        <div className="loading">
+          Loading...
+          <img className="rocket" src={rocket}></img>
+        </div>
+      )
     } else {
       return (
         <div className="jobs">

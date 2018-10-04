@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ReactTable from "react-table";
 import 'react-table/react-table.css'
 import './App.css';
+import rocket from './rocket.gif';
 let columns = require('./columns');
 
 class Completed extends Component {
@@ -144,7 +145,12 @@ class Completed extends Component {
     if (error && result[0]) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return (
+        <div className="loading">
+          Loading...
+          <img className="rocket" src={rocket}></img>
+        </div>
+      )
     } else if (result.completed_jobs && result.completed_jobs[0]) {
       return (
         <div className="jobs">
