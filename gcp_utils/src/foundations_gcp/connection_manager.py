@@ -13,4 +13,15 @@ class ConnectionManager(object):
 
     def bucket_connection(self):
         from google.cloud.storage import Client
-        return Client()       
+        
+        from foundations_gcp.authorized_storage_session import AuthorizedStorageSession
+
+        authorized_session_kwargs = {
+            "pool_size": 500,
+            "pool_block": True,
+            "max_retries": 3
+        }
+
+        _http = AuthorizedStorageSession(**authorized_session_kwargs)
+
+        return Client(_http=_http)
