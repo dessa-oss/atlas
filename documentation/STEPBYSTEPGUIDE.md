@@ -82,17 +82,17 @@ Start a python interpreter and run following commands:
 import foundations
 foundations.get_metrics_for_all_jobs("demo_project")
 ```
-This will read logged metrics for jobs ran under project name `demo_project`. It returns a panda data frame.
+This will read logged metrics for jobs ran under project name `demo_project`. It returns a pandas data frame.
 
 ## Step 6: Use Foundations caching feature
 
-Now, that you know how to log and read metrics for each job, you want to train for best model possible. You will be running jobs (model code) with various different data inputs and parameters. In these numerous jobs many of computations will be similar, Foundations have smart way of detecting these same computations across all jobs and re-use already computated step instead of re-computing everytime for every job. We call it caching.
+Now, that you know how to log and read metrics for each job, you want to train best model possible. You will be running jobs (model code) with various different data inputs and parameters. In these numerous jobs many computations will be similar, so Foundations has a smart way of detecting these identical computations across all jobs and re-using the already computated step instead of re-computing everytime for every job. We call it caching.
 You will have to tell Foundations which step might get recomputed. This can be done by using enable_caching() on `stage_object`.
 For example, in `driver.py` file:
 ```
 incr_value.enable_caching()
 ```
-This will enable caching feature on `incr_value` stage_object. For every job ran, return value from `incr_value` will be cached in Foundations. 
+This will enable the caching feature on `incr_value` stage_object. For every job ran, the return value from `incr_value` will be cached in Foundations. 
 Therefore, if first job runs `incr_value(3)` then its return value of `13` will be cached in Foundations. When second job runs `incr_value(3)`, Foundations will directly use pre-computed cached value `13` instead of re-computing this step. You can imagine how powerful this feature can become in model training.
 
 
