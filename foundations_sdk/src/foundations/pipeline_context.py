@@ -73,7 +73,7 @@ class PipelineContext(object):
 
             with ThreadManager() as manager:
                 manager.spawn(self.provenance.load_persisted_data_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_persisted_data_from_archiv, archiver)
+                manager.spawn(self.global_stage_context.load_persisted_data_from_archive, archiver)
 
                 for stage_context in self.stage_contexts.values():
                     manager.spawn(stage_context.load_persisted_data_from_archive, archiver)
