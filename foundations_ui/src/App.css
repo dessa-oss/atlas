@@ -153,3 +153,12 @@ li.project-items button:hover > a {
   width: 200px;
   width: 100%;
 }
+
+.rocket {
+  width: 50px;
+  vertical-align: middle;
+}
+
+.loading {
+  padding-top: 20px;
+}
