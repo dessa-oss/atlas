@@ -105,7 +105,7 @@ class Completed extends Component {
         obj['id'] = Math.random(10).toString();
         obj['minWidth'] = 200
         completed_columns.push(obj);
-      }) 
+      })
 
       Object.keys(finalResult[0].output_metrics).map(function(key){
         var columnName = key;
