@@ -279,6 +279,8 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
+        self.maxDiff = None
+
         self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
         self._make_and_persist_job('my job two', stage, 77777777, 77777777)
 
@@ -303,7 +305,10 @@ class TestCompletedJob(unittest.TestCase):
             start_time='1972-06-19T04:56:17',
             completed_time='1972-06-19T04:56:17'
         )
-        self.assertEqual([expected_job, expected_job_two], jobs)
+
+        sort_key = lambda job: job.job_id
+
+        self.assertEqual(sorted([expected_job, expected_job_two], key=sort_key), sorted(jobs, key=sort_key))
 
     def test_all_returns_project_filtered_jobs(self):
         def method():
