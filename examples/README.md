@@ -24,6 +24,12 @@ This module provides an example of how to grab information for a completed job. 
 
 `python -m logistic_regression && python -m fetch_job_information`
 
+### [get_metrics_for_all_jobs](./get_metrics_for_all_jobs/__main__.py)
+
+This module provides an example of how to grab logged metrics for all completed jobs in a named project with the `get_metrics_for_all_jobs` method.  `get_metrics_for_all_jobs` returns job metadata includes job input parameters, job output results, and additional data including how long a job took to run.
+
+`python -m logistic_regression && python -m get_metrics_for_all_jobs`
+
 ### [fetch_results](./fetch_results/__main__.py)
 
 This module provides an example of how to grab results for a completed job.  Specifically, it demonstrates using a class Foundations provides in order to grab job results for jobs that have already run.  A job result is something explicitly logged by the user in their stage function code.  There's no point in running this module if you haven't run a job - run the grid_search module or logistic_regression module first to generate some illustrative output.
@@ -56,7 +62,7 @@ This module demonstrates how Foundations handles redundant execution.  If you ha
 
 ### [logistic_regression](./logistic_regression/__main__.py)
 
-Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.split()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.split()` method.
+Titanic!  The code in this module applies a logistic regression model to the Titanic dataset - see [this link](https://www.kaggle.com/c/titanic) for more info.  This module mainly serves to demonstrate the use of the `.split()` method, provided as part of the Foundations API.  If you have a stage that returns multiple items e.g. in a list, you may want to use the splat syntax: `x, y = return_two_things()`.  Unfortunately, due to Python's type system (among other things), there's no way for Foundations to know how many elements a stage may want to pass down to downstream stages.  The user has to provide a tiny bit of help via the `.split()` method. The module also shows you how to name jobs in your project through the `.set_project_name('project_name')` method. 
 
 `python -m logistic_regression`
 
