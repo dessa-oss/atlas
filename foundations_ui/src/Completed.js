@@ -40,7 +40,6 @@ class Completed extends Component {
     const { error, isLoaded, result } = this.state;
     var completedJobs;
     completedJobs = result.completed_jobs;
-    console.log(JSON.stringify(result, 0, 2))
 
     const completed_columns = [{
       Header: 'Start Time',
