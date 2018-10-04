@@ -124,7 +124,6 @@ class Completed extends Component {
         const initial_time = new Date(start);
         const complete_time = new Date(complete);
         const timeDiff = datetimeDifference(initial_time, complete_time);
-        console.log(timeDiff)
         return timeDiff;
       }
 
