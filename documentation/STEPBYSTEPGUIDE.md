@@ -16,7 +16,7 @@ In the end, this model outputs a multiplied value.
 
 For best coding practices we recommend breaking down model code into different small functions(steps). Structuring code into functions makes for more maintainable and re-usable code in the long run.
 
-**Note: Entire model code is written in model.py. The foundations deploy specific code is written in deploy.py**
+**Note: Entire model code is written in model.py. The foundations deploy specific code is written in deploy.py. Code in deploy.py is just using all functions defined in model.py**
 
 ## Step 2: Use Foundations to run model code
 
