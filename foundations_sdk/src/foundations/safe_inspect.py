@@ -8,20 +8,36 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations.context_aware import ContextAware
 import inspect
 
-def getsource(func):
-    if isinstance(func, ContextAware):
-        return inspect.getsource(func._function)
-    else:
-        return inspect.getsource(func)
+from foundations import log_manager
 
-def getsourcefile(func):
-    if isinstance(func, ContextAware):
-        return inspect.getsourcefile(func._function)
-    else:
-        return inspect.getsourcefile(func)
+def getsource(function):
+    function = _get_function(function)
+    return _log_if_cannot_get_source_code(inspect.getsource, function)
 
-def getsourcelines(func):
-    if isinstance(func, ContextAware):
-        return inspect.getsourcelines(func._function)
-    else:
-        return inspect.getsourcelines(func)
+def getsourcefile(function):
+    function = _get_function(function)
+    return _log_if_cannot_get_source_code(inspect.getsourcefile, function)
+
+def getsourcelines(function):
+    function = _get_function(function)
+    return _log_if_cannot_get_source_code(inspect.getsourcelines, function)
+
+def _log_if_cannot_get_source_code(action, function):
+    try:
+        if type(function) == type(len):
+            return _fail_gracefully(function)
+
+        return action(function)
+    except OSError as e:
+        return _fail_gracefully(function)
+
+def _get_function(function):
+    if isinstance(function, ContextAware):
+        function = function.function()
+
+    return function
+
+def _fail_gracefully(function):
+    logger = log_manager.get_logger(__name__)
+    logger.warning("could not get source code for {}".format(function.__name__))
+    return "<could not get source code>"

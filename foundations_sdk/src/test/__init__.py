@@ -77,3 +77,4 @@ from test.test_deployment_manager import TestDeploymentManager
 from test.helpers import *
 from test.models import *
 from test.test_exception_hook_middleware import TestExceptionHookMiddleware
+from test.test_safe_inspect import TestSafeInspect
