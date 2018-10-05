@@ -36,8 +36,10 @@ def _flattened_job_metrics(project_name):
 
 def _update_datetime(job_data):
     from foundations.utils import datetime_string
-    job_data['start_time'] = datetime_string(job_data['start_time'])
-    job_data['completed_time'] = datetime_string(job_data['completed_time'])
+    if 'start_time' in job_data:
+        job_data['start_time'] = datetime_string(job_data['start_time'])
+    if 'completed_time' in job_data:
+        job_data['completed_time'] = datetime_string(job_data['completed_time'])
 
 
 def _update_job_data(job_data, stage_uuids):
