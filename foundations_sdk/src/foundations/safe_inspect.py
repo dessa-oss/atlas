@@ -40,6 +40,8 @@ def _get_function(function):
     return function
 
 def _fail_gracefully(function):
+    import uuid
+
     logger = log_manager.get_logger(__name__)
     logger.warning("could not get source code for {}".format(function.__name__))
-    return "<could not get source code>"
+    return "<could not get source code ({})>".format(str(uuid.uuid4()))
