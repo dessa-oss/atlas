@@ -96,11 +96,3 @@ def _update_uuid_list(input_params, stage_uuids):
         if not param['stage_uuid'] in stage_uuids:
             stage_uuids.append(param['stage_uuid'])
     return stage_uuids
-
-def _datetime_string(time):
-    from datetime import datetime
-
-    if time is None:
-        return 'No time available'
-    date_time = datetime.utcfromtimestamp(time)
-    return date_time.isoformat()
