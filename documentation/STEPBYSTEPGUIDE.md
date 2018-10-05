@@ -96,7 +96,55 @@ This will enable the caching feature on `incr_value` stage_object. For every job
 Therefore, if first job runs `incr_value(3)` then its return value of `13` will be cached in Foundations. When second job runs `incr_value(3)`, Foundations will directly use pre-computed cached value `13` instead of re-computing this step. You can imagine how powerful this feature can become in model training.
 
 
+## Step 7: Use Foundations ResultReader to inspect your job
 
+Now that you've run your job, you may want to retrieve specific metrics about the individual stages within your job including how long they took to run, the input parameters, the output results, and maybe even the source code. The ResultReader class provides a way to do this with a set of methods.
+
+First create an instance of ResultReader
+```
+import foundations
+from foundations import ResultReader, JobPersister
+
+with JobPersister.load_archiver_fetch() as fetch:
+    reader = ResultReader(fetch)
+```
+With your ResultReader, you can now use the following methods. 
+
+```
+reader.get_results()
+```
+
+   Similar to `foundations.get_metrics_for_all_jobs()`, `get_results()` will get the results for all jobs run, irrespective of their project name.   
+
+```
+reader.get_job_information()
+```
+
+This gets the stage level information for all stages run, for all jobs. 
+
+```
+reader.get_source_code(stage_id)
+```
+
+This fetches the source code of a given stage. 
+
+```
+reader.get_unstructured_results(job_id, stage_id)
+```
+
+If a stage has outputs that have been persisted with `.persist()`, this function will return the list of these outputs. 
+
+```
+reader.get_error_information(job_id, <option stage_id>)
+```
+
+Returns the stack trace for either the job or the specific stage specified, if it fails. If there is no failure, this will return None.  
+
+```
+reader.create_working_copy(pipeline_name, path_to_save)
+```
+
+Creates a copy of your job source in a different location. 
 
 
 
