@@ -16,6 +16,8 @@ In the end, this model outputs a multiplied value.
 
 For best coding practices we recommend breaking down model code into different small functions(steps). Structuring code into functions makes for more maintainable and re-usable code in the long run.
 
+**Note: Entire model code is written in model.py. The foundations deploy specific code is written in deploy.py**
+
 ## Step 2: Use Foundations to run model code
 
 The [driver.py file](sample_code/driver.py) shows how to use Foundations to run model code. Let's look at it line by line.
