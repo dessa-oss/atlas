@@ -59,7 +59,11 @@ def _fill_job_parameters(job_data, stage_uuids):
     _update_uuid_list(input_params, stage_uuids)
 
     for param in input_params:
-        stage_name = _parameter_name(param, stage_uuids)
+        if param['name'] =='<args>':
+            stage_name = _parameter_name(param, stage_uuids)
+        else:
+            stage_name = param['name']
+            
         stage_value = _stage_value(param, job_parameters)
 
         job_data[stage_name] = stage_value
