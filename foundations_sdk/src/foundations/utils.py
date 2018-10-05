@@ -214,3 +214,12 @@ def check_is_in_dir(parent_directory, child_file):
 
     child_directory = dirname(child_file)
     return child_directory.startswith(parent_directory)
+
+def datetime_string(time):
+    from datetime import datetime
+
+    if time is None:
+        return 'No time available'
+    date_time = datetime.fromtimestamp(time)
+    return date_time.isoformat()
+    
