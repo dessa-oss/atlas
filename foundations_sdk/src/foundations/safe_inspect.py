@@ -30,6 +30,8 @@ def _log_if_cannot_get_source_code(action, function):
         return action(function)
     except OSError as e:
         return _fail_gracefully(function)
+    except IOError as e:
+        return _fail_gracefully(function)
 
 def _get_function(function):
     if isinstance(function, ContextAware):
