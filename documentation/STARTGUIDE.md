@@ -38,13 +38,16 @@ This builds a new `.whl` file of Foundations and installs it within your `conda`
 
 ## Environment and Dependencies
 
-Foundations comes with a few basic dependencies built-in that you'll see in [https://github.com/DeepLearnI/foundations/blob/2018-10-19-rc/requirements.txt](requirements.txt). Which dependencies get used when you run a job depends on your setup and deployment type. If working with a remote execution environment like GCP you'll need to be aware if the environment has the ability to download packages from the Internet. If yes, then specifying new dependencies in `requirements.txt` will allow the execution environment to download the necessary packages.
+Foundations comes with a few dependencies that you'll see in [requirements.txt](https://github.com/DeepLearnI/foundations/blob/2018-10-19-rc/requirements.txt). The dependencies that get used when you run a job depend on your setup and deployment type.
 
-Each time you run a job, the requirement.txt that is defined at that time is packaged and sent along with that job. Any changes to the `requirements.txt` file will only effect jobs run after that point.
+If working with a remote deployment like GCP you'll need to know if the environment has the ability to download packages from the Internet. If yes, then specifying new dependencies in `requirements.txt` will allow the execution environment to download the necessary packages.
 
-**The main takeaway here is that if you expect a job to run with an external python package, you'll need to add it to your `requirements.txt` and the execution environment will need access to Internet to download.**
+*If you run multiple jobs with different requirements, which one is used?*
+Each time you run a job, the requirement.txt that is defined at run time is packaged and sent along with that job. Any changes to the `requirements.txt` file will only effect future jobs.
 
-If you're looking to use a different version of a package that is installed by default on your execution environment (maybe XGBoost is installed on your GCP environment already) then specifying a specific version in your `requirements.txt` will override the execution version.
+**Takeaway: if you expect a job to run with an external python package, you'll need to add it to your `requirements.txt` and the execution environment will need access to Internet to download.**
+
+If you're looking to use a different version of a package than is installed by default on the execution environment (maybe XGBoost is installed on your GCP environment already), then specifying a specific version in your `requirements.txt` will override the execution version.
 
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. 
 
