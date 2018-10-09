@@ -140,7 +140,7 @@ If a stage has outputs that have been persisted with `.persist()`, this function
 reader.get_error_information(job_id, <option stage_id>)
 ```
 
-Returns the stack trace for either the job or the specific stage specified, if it fails. If there is no failure, this will return None.  
+Returns the stack trace for either the job or the specific stage specified, if it fails. If there is no failure, this will return None.
 
 ```
 reader.create_working_copy(pipeline_name, path_to_save)
@@ -151,3 +151,5 @@ Creates a copy of your job source in a different location.
 ## Step 8: Adding additional dependencies (optional)
 
 Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your project model code exists with the dependencies explicitly stated.
+
+Reference the main STARTGUIDE for a more detailed explanation.
