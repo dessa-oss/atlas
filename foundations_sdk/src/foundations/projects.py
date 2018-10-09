@@ -60,17 +60,25 @@ def _fill_job_parameters(job_data, stage_uuids):
 
     _update_uuid_list(input_params, stage_uuids)
 
+    lowest_index_tracker= {}
     for param in input_params:
-        # stage_name = _parameter_name(param, stage_uuids)
-        stage_name = param['name']
+        if  not (param['name'] in lowest_index_tracker) or stage_uuids.index(param['stage_uuid']) < lowest_index_tracker[param['name']]:
+            lowest_index_tracker[param['name']] = stage_uuids.index(param['stage_uuid'])
+
+    for param in input_params:
+        stage_name = _parameter_name(param, stage_uuids, lowest_index_tracker)
+        # stage_name = param['name']
         stage_value = _stage_value(param, job_parameters)
 
         job_data[stage_name] = stage_value
 
 
-def _parameter_name(parameter, stage_uuids):
-    stage_index = stage_uuids.index(parameter['stage_uuid'])
-    return '{}-{}'.format(parameter['name'], stage_index)
+def _parameter_name(parameter, stage_uuids, lowest_index_tracker):
+    # stage_index = stage_uuids.index(parameter['stage_uuid'])
+    argument_index = stage_uuids.index(parameter['stage_uuid']) - lowest_index_tracker[parameter['name']]
+    if argument_index > 0:
+        return '{}-{}'.format(parameter['name'], argument_index)
+    return parameter['name']
 
 
 def _stage_value(parameter, job_parameters):
