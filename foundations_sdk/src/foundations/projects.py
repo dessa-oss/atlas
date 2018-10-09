@@ -62,7 +62,7 @@ def _fill_job_parameters(job_data, stage_uuids):
 
     lowest_index_tracker= {}
     for param in input_params:
-        if  not (param['name'] in lowest_index_tracker) or stage_uuids.index(param['stage_uuid']) < lowest_index_tracker[param['name']]:
+        if not (param['name'] in lowest_index_tracker) or stage_uuids.index(param['stage_uuid']) < lowest_index_tracker[param['name']]:
             lowest_index_tracker[param['name']] = stage_uuids.index(param['stage_uuid'])
 
     for param in input_params:
