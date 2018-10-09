@@ -94,5 +94,5 @@ Contains ETL code specific to our solution of the [Titanic problem](https://www.
 
 ## Configuration Examples
 
-Foundations uses a configuration-driven approach to deployment. [Config Examples](./example_configs) gives examples on how to setup config for different enviornments.
+Foundations uses a configuration-driven approach to deployment. [Config Examples](./example_configs) gives examples on how to setup config for different environments.
  

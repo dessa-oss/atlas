@@ -148,5 +148,6 @@ reader.create_working_copy(pipeline_name, path_to_save)
 
 Creates a copy of your job source in a different location. 
 
+## Step 8: Adding additional dependencies (optional)
 
-
+Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your project model code exists with the dependencies explicitly stated.
