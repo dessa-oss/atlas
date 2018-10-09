@@ -58,7 +58,7 @@ class TestProjects(unittest.TestCase):
         output_metrics = {'loss': 100}
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
-        expected_result = DataFrame([{'d-2': 35, 'project_name': 'project1', 'loss': 100, 'c-1': 5, 'b-0': 'stagely'}])
+        expected_result = DataFrame([{'d': 35, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -84,8 +84,8 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'project_name': 'project2', 'b-0': 'stagely', 'loss': 100, 'd-2': 35, 'c-1': 5},
-            {'e-4': 77, 'project_name': 'project2', 'win': 56, 'd-3': 'another stagel', 'f-5': 97},
+            {'project_name': 'project2', 'b': 'stagely', 'loss': 100, 'd': 35, 'c': 5},
+            {'e': 77, 'project_name': 'project2', 'win': 56, 'd': 'another stagel', 'f': 97},
         ]
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project2'))
@@ -113,7 +113,7 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'b-0': 'stagely', 'd-2': 35, 'c-1': 5, 'project_name': 'project1', 'loss': 100},
+            {'b': 'stagely', 'd': 35, 'c': 5, 'project_name': 'project1', 'loss': 100},
         ]
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
