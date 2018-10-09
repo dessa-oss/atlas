@@ -38,9 +38,9 @@ This builds a new `.whl` file of Foundations and installs it within your `conda`
 
 ## Environment and Dependencies
 
-Foundations comes with a few basic dependencies built-in that you'll see in `requirements.txt`. Which dependencies get used when you run a job depends on your setup and deployment type. If working with a remote execution environment like GCP you'll need to be aware if the environment has the ability to download packages from the Internet. If yes, then specifying new dependencies will allow the execution environment to download the necessary packages.
+Foundations comes with a few basic dependencies built-in that you'll see in [https://github.com/DeepLearnI/foundations/blob/2018-10-19-rc/requirements.txt](requirements.txt). Which dependencies get used when you run a job depends on your setup and deployment type. If working with a remote execution environment like GCP you'll need to be aware if the environment has the ability to download packages from the Internet. If yes, then specifying new dependencies in `requirements.txt` will allow the execution environment to download the necessary packages.
 
-Each time you run a job, the requirement.txt that is defined at that time is packaged and sent along with that job. Any changes to the `requirements.txt` file will only jobs effect job run after that point.
+Each time you run a job, the requirement.txt that is defined at that time is packaged and sent along with that job. Any changes to the `requirements.txt` file will only effect jobs run after that point.
 
 **The main takeaway here is that if you expect a job to run with an external python package, you'll need to add it to your `requirements.txt` and the execution environment will need access to Internet to download.**
 
