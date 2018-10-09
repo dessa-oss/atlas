@@ -65,7 +65,11 @@ def _fill_job_parameters(job_data, stage_uuids):
     for param in input_params:
         index_tracker[param['name']].append(stage_uuids.index(param['stage_uuid']))
 
+    for key in index_tracker:
+        index_tracker[key] = sorted(index_tracker[key], key=int)
+
     for param in input_params:
+
         stage_name = _parameter_name(param, stage_uuids, index_tracker)
         stage_value = _stage_value(param, job_parameters)
 
@@ -76,11 +80,12 @@ def _parameter_name(parameter, stage_uuids, index_tracker):
     stage_index = stage_uuids.index(parameter['stage_uuid'])
     stage_name = parameter['name']
 
-    index_tracker[stage_name] = sorted(index_tracker[stage_name], key=int)
+    # index_tracker[stage_name] = sorted(index_tracker[stage_name], key=int)
     argument_index = index_tracker[stage_name].index(stage_index)
+    index_tracker[stage_name][argument_index] = 'X'
 
     if argument_index > 0:
-        return '{}-{}'.format(parameter['name'], argument_index)
+        return '{}-{}'.format(stage_name, argument_index)
     return parameter['name']
 
 
