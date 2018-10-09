@@ -94,13 +94,27 @@ class Completed extends Component {
         }
 
         x.input_params_dict = finalInputDict;
-        return x;        
+        return x;
       })
-      
+
+      // finalResult is list of objects
+      // each with input_params_dict which is unique key dict
       var input_params_dict = finalResult[0].input_params_dict
       var keys = Object.keys(input_params_dict)
 
-      keys.map(function(key){
+      // loop over all input_params_dict and create union
+      var allParams = []
+      Object.keys(finalResult).map(function(key){
+        finalResult[key].input_params.map(function(param){
+          allParams.push(param.name)
+        })
+      })
+
+      // unique list of all strings input params
+      var uniqueParams = [...new Set(allParams)];
+
+      // Create columns
+      uniqueParams.map(function(key){
         var columnName = key;
         var obj = {};
         obj['Header'] = 'Input: ' + columnName;
