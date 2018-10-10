@@ -46,7 +46,7 @@ class Completed extends Component {
     const completed_columns = [{
       Header: 'Start Time',
       accessor: 'start_time',
-      minWidth: 250
+      minWidth: 250,
     }, {
       Header: 'Status',
       accessor: 'status'
@@ -147,7 +147,10 @@ class Completed extends Component {
       function updateTime(timeString){
         var timeStamp = new Date(timeString);
         timeStamp.setHours( timeStamp.getHours() - 4 );
-        return new Date(timeStamp).toLocaleString();
+        var ISODateFormat = new Date(timeStamp).toLocaleString('en-GB');
+        var yearFormat = ISODateFormat.split(',')[0].split('/').reverse().join('/')
+        var finalISO = yearFormat + ISODateFormat.split(',')[1]
+        return finalISO;
       }
 
       completedJobs.map(x => x.start_time = updateTime(x.start_time))
@@ -181,7 +184,7 @@ class Completed extends Component {
         <div className="jobs">
             <h2>Completed Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
-            <ReactTable className="-highlight" data={completedJobs} columns={completed_columns} />
+            <ReactTable className="-highlight" data={completedJobs} columns={completed_columns} defaultSorted={[{id: "start_time",desc: true}]} />
         </div>
       );
     } else {

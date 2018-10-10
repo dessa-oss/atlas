@@ -69,6 +69,18 @@ class Queued extends Component {
 
     if (queuedJobs && queuedJobs[0]){
       queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + 'm:' + getTimeDifference(x.submitted_time).seconds + 's')
+
+      // Convert time to local timezone
+      function updateTime(timeString){
+        var timeStamp = new Date(timeString);
+        timeStamp.setHours( timeStamp.getHours() - 4 );
+        var ISODateFormat = new Date(timeStamp).toLocaleString('en-GB');
+        var yearFormat = ISODateFormat.split(',')[0].split('/').reverse().join('/')
+        var finalISO = yearFormat + ISODateFormat.split(',')[1]
+        return finalISO;
+      }
+
+      var foo = queuedJobs.map(x => x.submitted_time = updateTime(x.submitted_time))
     }
 
     if (error && result[0]) {
@@ -85,7 +97,7 @@ class Queued extends Component {
         <div className="jobs">
             <h2>Queued Jobs</h2>
             <h3 className="project-name">Project name: {result.name}</h3>
-            <ReactTable data={queuedJobs} columns={queued_columns} />
+            <ReactTable data={queuedJobs} columns={queued_columns} defaultSorted={[{id: "submitted_time",desc: true}]} />
         </div>
       );
     }
