@@ -124,7 +124,7 @@ Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the 
 
 This variable is used to tell the `run.sh` that there is no internet.  This ensures that pip will not waste time trying to download packages when it can't.
 
-Allowed values for `offline_mode` are `OFFLINE`.  Leaving it unset will let pip access the internet as necessary in order to download python packages.  Setting any other value is the same as leaving it unset.
+Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
 
 ### example run_script_environment
 
