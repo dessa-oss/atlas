@@ -126,6 +126,8 @@ This variable is used to tell the `run.sh` that there is no internet.  This ensu
 
 Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
 
+Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
+
 ### example run_script_environment
 
 The below is for the case where you want `DEBUG`-level logging for `run.sh` processes and online mode:
