@@ -59,11 +59,9 @@ def _fill_job_parameters(job_data, stage_uuids):
     del job_data['input_params']
 
     _update_uuid_list(input_params, stage_uuids)
-
     index_tracker = _store_parameter_indices(input_params, stage_uuids)
 
     for param in input_params:
-
         stage_name = _parameter_name(param, stage_uuids, index_tracker)
         stage_value = _stage_value(param, job_parameters)
 
