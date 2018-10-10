@@ -51,7 +51,7 @@ If you have a `requirements.txt` in the same directory (root) as your model code
 
 It's important to note: if you're looking to use a different version of a package than is installed by default on the execution environment (maybe XGBoost is installed on your GCP environment already), specifying a different version in your `requirements.txt` will **NOT** override the execution version. You'll need update the execution environment's version to do so.
 
-Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. The python environment also inherits any packages installed globally on the execution environment.
+Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
 ### Examples guide
 We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
