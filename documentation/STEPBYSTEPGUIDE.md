@@ -146,8 +146,7 @@ Returns the stack trace for either the job or the specific stage specified, if i
 reader.create_working_copy(pipeline_name, path_to_save)
 ```
 
-Creates a copy of your job sourc
-e in a different location. 
+Creates a copy of your job source in a different location. 
 
 ## Step 8: Adding additional dependencies (optional)
 
