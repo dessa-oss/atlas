@@ -79,7 +79,7 @@ class TestProjects(unittest.TestCase):
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_different_position(self, mock):
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_different_position_in_list(self, mock):
         from pandas import DataFrame
         from pandas.util.testing import assert_frame_equal
 
@@ -88,6 +88,23 @@ class TestProjects(unittest.TestCase):
             {'name': 'c', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
             {'name': 'd', 'stage_uuid': '1', 'value': {'type': 'constant', 'value': 35}},
             {'name': 'd', 'stage_uuid': '4', 'value': {'type': 'constant', 'value': 45}},
+        ]
+        output_metrics = {'loss': 100}
+        mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
+
+        expected_result = DataFrame([{'d': 35, 'd-1': 45, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+
+    @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_same_different_position(self, mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        input_params = [
+            {'name': 'b', 'stage_uuid': '2', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
+            {'name': 'c', 'stage_uuid': '1', 'value': {'type': 'dynamic', 'name': 'a'}},
+            {'name': 'd', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
+            {'name': 'd', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 45}},
         ]
         output_metrics = {'loss': 100}
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
