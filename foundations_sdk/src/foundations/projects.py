@@ -27,9 +27,9 @@ def get_metrics_for_all_jobs(project_name):
 
 
 def _flattened_job_metrics(project_name):
-    stage_uuids = []
 
     for job_data in _project_job_data(project_name):
+        stage_uuids = []
         _update_job_data(job_data, stage_uuids)
         _update_datetime(job_data)
         yield job_data
@@ -60,13 +60,7 @@ def _fill_job_parameters(job_data, stage_uuids):
 
     _update_uuid_list(input_params, stage_uuids)
 
-    from collections import defaultdict
-    index_tracker = defaultdict(list)
-    for param in input_params:
-        index_tracker[param['name']].append(stage_uuids.index(param['stage_uuid']))
-
-    for key in index_tracker:
-        index_tracker[key] = sorted(index_tracker[key], key=int)
+    index_tracker = _store_parameter_indices(input_params, stage_uuids)
 
     for param in input_params:
 
@@ -75,12 +69,22 @@ def _fill_job_parameters(job_data, stage_uuids):
 
         job_data[stage_name] = stage_value
 
+def _store_parameter_indices(input_params, stage_uuids):
+    from collections import defaultdict
+    index_tracker = defaultdict(list)
+
+    for param in input_params:
+        index_tracker[param['name']].append(stage_uuids.index(param['stage_uuid']))
+
+    for key in index_tracker:
+        index_tracker[key] = sorted(index_tracker[key], key=int)
+         
+    return index_tracker
 
 def _parameter_name(parameter, stage_uuids, index_tracker):
     stage_index = stage_uuids.index(parameter['stage_uuid'])
     stage_name = parameter['name']
 
-    # index_tracker[stage_name] = sorted(index_tracker[stage_name], key=int)
     argument_index = index_tracker[stage_name].index(stage_index)
     index_tracker[stage_name][argument_index] = 'X'
 
