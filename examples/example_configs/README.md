@@ -100,3 +100,45 @@ Just like with SSH the `remote_user` and `remote_host` value will be the login f
 `key_path`: the private key necessary for using SSH.
 
 `log_level`: for debugging purposes if set to `DEBUG` Foundations will be verbose in its output. Remove this configuration will turn off debug mode and will default to using `INFO`. This is a wrapper on top of Python's logging.
+
+## Run script environment configs
+
+Foundations creates its own virtual environment when running.  To set environment variables in that virtual environment, set the `run_script_environment` option.  This option is set by providing to it key-value pairs (where the key is the environment variable name and the value is the value to set in the variable):
+
+```
+run_script_environment:
+    var0: value0
+    var1: value1
+    ...
+```
+
+The environment variables Foundations exposes are `log_level` and `offline_mode`.
+
+### log_level
+
+The `log_level` used here is for the `run.sh` script, including (for example) the output for `pip` when it installs libraries before running a submitted job.  The difference between this `log_level` and the one in the previous section is that this is for the `run.sh` script (i.e. everything the job requires in order to run) and is set under `run_script_environment`, while the previous `log_level` is for the Foundations job itself and has no parent configuration.
+
+Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the `log_level` option described in the previous section.  Leaving it unset is the same as setting `INFO`.  Setting any other value will disable all logging for all non-job-related processes.
+
+### offline_mode
+
+This variable is used to tell the `run.sh` that there is no internet.  This ensures - among other things - that pip will not waste time trying to download packages when it can't.
+
+Allowed values for `offline_mode` are `OFFLINE`.  Leaving it unset will let pip and other maintenance processes access the internet as necessary.  Setting any other value is the same as leaving it unset.
+
+### example run_script_environment
+
+The below is for the case where you want `DEBUG`-level logging for `run.sh` processes and online mode:
+
+```
+run_script_environment:
+    log_level: DEBUG
+```
+
+The below is for the case where you want `INFO`-level logging for `run.sh` processes and offline mode:
+
+```
+run_script_environment:
+    log_level: INFO # can omit this line entirely - log_level is INFO by default!
+    offline_mode: OFFLINE
+```
