@@ -26,9 +26,11 @@ if [[ -z "${python_path}" ]]; then
   python_path=$(which python || which python3)
 fi
 
+pip_options="--disable-pip-version-check"
+
 cd $BASEDIR && \
   tar -xf job.tgz && \
-  with_output_redirect $python_path -m pip install virtualenv && \
+  with_output_redirect $python_path -m pip ${pip_options} install virtualenv && \
   with_output_redirect $python_path -m virtualenv --system-site-packages venv
 
 with_output_redirect stat $BASEDIR/venv/bin/activate
@@ -38,11 +40,25 @@ else
   activate_path=venv/Scripts/activate
 fi
 
+if [ "${offline_mode}" != "OFFLINE" ]; then
+  with_output_redirect echo "Checking for internet connection..."
+  with_output_redirect ping -c 3 4.2.2.1
+
+  if [ $? -ne 0 ]; then
+    offline_mode=OFFLINE
+  fi
+fi
+
+if [ "${offline_mode}" = "OFFLINE" ]; then
+  echo "No internet connection - using system packages only." >&2
+  pip_options="${pip_options} --no-index"
+fi
+
 cd $BASEDIR && \
   . $activate_path && \
   with_output_redirect echo Running python version `${python_path} --version` located at ${python_path} && \
   touch requirements.txt && \
-  with_output_redirect python -m pip install -r requirements.txt && \
+  with_output_redirect python -m pip install ${pip_options} -r requirements.txt && \
   python main.py
   
 status=$?
