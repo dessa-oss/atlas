@@ -38,12 +38,14 @@ This builds a new `.whl` file of Foundations and installs it within your `conda`
 
 ## Environment and Dependencies
 
-Foundations comes with a few dependencies that you'll see in [requirements.txt](https://github.com/DeepLearnI/foundations/blob/2018-10-19-rc/requirements.txt). The dependencies that get used when you run a job depend on your setup and deployment type.
+Foundations comes with a few dependencies that you'll see in [requirements.txt](https://github.com/DeepLearnI/foundations/blob/master/requirements.txt). The dependencies that get used when you run a job depend on your setup and deployment type. To get to know the different deployment types better see our docs on [configurations](https://github.com/DeepLearnI/foundations/tree/master/examples/example_configs).
 
 If working with a remote deployment like GCP you'll need to know if the environment has the ability to download packages from the Internet. If yes, then specifying new dependencies in `requirements.txt` will allow the execution environment to download the necessary packages.
 
+If the environment doesn't have access to the Internet, expect that it will only use packages already installed by the system integrator. If additional packages need to be installed the job will not run. In the `stderr`, there will be a message notifying the user that the package could not be downloaded.
+
 *If you run multiple jobs with different requirements, which one is used?*
-Each time you run a job, the requirement.txt that is defined at run time is packaged and sent along with that job. Any changes to the `requirements.txt` file will only effect future jobs.
+If you have a `requirements.txt` in the same directory (root) as your model code, that requirements file will be packaged and sent along with the job to tell the execution environment what dependencies are needed. Any additional changes to `requirements.txt` will only effect future jobs.
 
 **Takeaway: if you expect a job to run with an external python package, you'll need to add it to your `requirements.txt` and the execution environment will need access to Internet to download.**
 

@@ -146,10 +146,11 @@ Returns the stack trace for either the job or the specific stage specified, if i
 reader.create_working_copy(pipeline_name, path_to_save)
 ```
 
-Creates a copy of your job source in a different location. 
+Creates a copy of your job sourc
+e in a different location. 
 
 ## Step 8: Adding additional dependencies (optional)
 
-Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your project model code exists with the dependencies explicitly stated.
+Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your model code exists with the dependencies explicitly stated. The requirements file will be in the root of the model code directory. For an example of this, see where the [requirements.txt in /examples](https://github.com/DeepLearnI/foundations/tree/master/examples) sits.
 
-Reference the main STARTGUIDE for a more detailed explanation.
+Reference the main [STARTGUIDE](https://github.com/DeepLearnI/foundations/blob/master/documentation/STARTGUIDE.md) for a more detailed explanation.
