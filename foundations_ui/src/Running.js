@@ -59,9 +59,9 @@ class Running extends Component {
       accessor: 'user'
     }]
 
-    function getTimeDifference(start_time){
+    function getTimeDifference(submitted_time){
       const currentTime = new Date();
-      const dataTimeFormatted = new Date(start_time)
+      const dataTimeFormatted = new Date(submitted_time)
       dataTimeFormatted.setHours( dataTimeFormatted.getHours() - 4 );
       const newDate = new Date(dataTimeFormatted)
       const timeDiff = datetimeDifference(currentTime, newDate);
@@ -70,6 +70,18 @@ class Running extends Component {
 
     if (runningJobs && runningJobs[0]){
       runningJobs.map(x => x.duration = getTimeDifference(x.start_time).minutes + 'm:' + getTimeDifference(x.start_time).seconds + 's')
+
+      // Convert time to local timezone and use 24 hour time
+      function updateTime(timeString){
+        var timeStamp = new Date(timeString);
+        timeStamp.setHours( timeStamp.getHours() - 4 );
+        var useTwentyFourHour = new Date(timeStamp).toLocaleString('en-GB');
+        var yearFormat = useTwentyFourHour.split(',')[0].split('/').reverse().join('/')
+        var ISODateFormat = yearFormat + useTwentyFourHour.split(',')[1]
+        return ISODateFormat;
+      }
+
+      runningJobs.map(x => x.start_time = updateTime(x.start_time))
     }
 
     if (error && result[0]) {
