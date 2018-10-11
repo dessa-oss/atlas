@@ -79,11 +79,9 @@ class Completed extends Component {
         // loop through all grouped lists and update name
         // return update input params dict
         Object.keys(groupBy).map(function(key) {
-              if (groupBy[key].length > 1){
-                  groupBy[key].map(function(x, index){
-                      x.name = x.name + '_' + (index + 1)
-                  })
-              }
+            groupBy[key].map(function(x, index){
+                x.name = x.name + '_' + (index + 1)
+            })
           });
 
         var finalInputDict = {};
@@ -115,6 +113,7 @@ class Completed extends Component {
       Object.keys(finalResult).map(function(key){
         Object.keys(finalResult[key].input_params_dict).map(function(key){
           var rootName;
+          // Allows grouping without taking into accout index value
           if (key.split('_').length > 1) {
             rootName = key.split('_').reverse().splice(1).reverse().join('_');
           } else {
