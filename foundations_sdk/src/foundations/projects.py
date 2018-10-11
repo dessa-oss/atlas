@@ -27,12 +27,14 @@ def get_metrics_for_all_jobs(project_name):
 
 
 def _flattened_job_metrics(project_name):
-
+    from collections import OrderedDict
     for job_data in _project_job_data(project_name):
+        #print job data? 
+        job_data_ordered = OrderedDict(job_data)
         stage_uuids = []
-        _update_job_data(job_data, stage_uuids)
-        _update_datetime(job_data)
-        yield job_data
+        _update_job_data(job_data_ordered, stage_uuids)
+        _update_datetime(job_data_ordered)
+        yield job_data_ordered
 
 def _update_datetime(job_data):
     from foundations.utils import datetime_string
