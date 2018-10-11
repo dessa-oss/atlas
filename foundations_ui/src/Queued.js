@@ -70,14 +70,14 @@ class Queued extends Component {
     if (queuedJobs && queuedJobs[0]){
       queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + 'm:' + getTimeDifference(x.submitted_time).seconds + 's')
 
-      // Convert time to local timezone
+      // Convert time to local timezone and use 24 hour time
       function updateTime(timeString){
         var timeStamp = new Date(timeString);
         timeStamp.setHours( timeStamp.getHours() - 4 );
-        var ISODateFormat = new Date(timeStamp).toLocaleString('en-GB');
-        var yearFormat = ISODateFormat.split(',')[0].split('/').reverse().join('/')
-        var finalISO = yearFormat + ISODateFormat.split(',')[1]
-        return finalISO;
+        var useTwentyFourHour = new Date(timeStamp).toLocaleString('en-GB');
+        var yearFormat = useTwentyFourHour.split(',')[0].split('/').reverse().join('/')
+        var ISODateFormat = yearFormat + useTwentyFourHour.split(',')[1]
+        return ISODateFormat;
       }
 
       queuedJobs.map(x => x.submitted_time = updateTime(x.submitted_time))
