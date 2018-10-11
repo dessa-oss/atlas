@@ -24,6 +24,12 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
+    install_requires=[
+        'dill==0.2.8.2',
+        'redis==2.10.6',
+        'pandas==0.23.3',
+        'PyYAML==3.13',
+    ],
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
