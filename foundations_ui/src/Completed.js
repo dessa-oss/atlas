@@ -46,7 +46,7 @@ class Completed extends Component {
     const completed_columns = [{
       Header: 'Start Time',
       accessor: 'start_time',
-      minWidth: 250,
+      minWidth: 250
     }, {
       Header: 'Status',
       accessor: 'status'
@@ -102,7 +102,7 @@ class Completed extends Component {
       var input_params_dict = finalResult[0].input_params_dict
       var keys = Object.keys(input_params_dict)
 
-      // loop over all input_params_dict and create union
+      // loop over all input_params and create union
       var allParams = []
       Object.keys(finalResult).map(function(key){
         finalResult[key].input_params.map(function(param){
@@ -110,10 +110,33 @@ class Completed extends Component {
         })
       })
 
-      // unique list of all strings input params
-      var uniqueParams = [...new Set(allParams)];
+      // loop over all input_params and create union
+      var allParamsDict = {}
+      Object.keys(finalResult).map(function(key){
+        Object.keys(finalResult[key].input_params_dict).map(function(key){
+          var rootName;
+          if (key.split('_').length > 1) {
+            rootName = key.split('_').reverse().splice(1).reverse().join('_');
+          } else {
+            rootName = key
+          }
+          if (!allParamsDict[rootName]) {
+            allParamsDict[rootName] = []
+          }
+          allParamsDict[rootName].push(key)
+          allParamsDict[rootName] = [...new Set(allParamsDict[rootName])]
+        })
+      })
 
-      // Create columns
+      // unique list of all strings input params
+      let uniqueParams = [];
+      Object.keys(allParamsDict).map(function(key){
+        allParamsDict[key].map(function(param) {
+          uniqueParams.push(param)
+        })
+      })
+
+      // Create columns dynamically
       uniqueParams.map(function(key){
         var columnName = key;
         var obj = {};
