@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import ReactTable from "react-table";
-import datetimeDifference from "datetime-difference";
 import 'react-table/react-table.css'
 import './App.css';
 import rocket from './rocket.gif';
-let columns = require('./columns');
+import { updateTime, getTimeDifference, createTimeStamp } from './utils';
 
 class Running extends Component {
 
@@ -45,12 +44,10 @@ class Running extends Component {
 
     const running_columns = [{
       Header: 'Start Time',
-      accessor: 'start_time',
-      minWidth: 250
+      accessor: 'start_time'
     }, {
       Header: 'JobId',
-      accessor: 'job_id',
-      minWidth: 250
+      accessor: 'job_id'
     }, {
       Header: 'Running Time',
       accessor: 'duration'
@@ -59,29 +56,9 @@ class Running extends Component {
       accessor: 'user'
     }]
 
-    function getTimeDifference(submitted_time){
-      const currentTime = new Date();
-      const dataTimeFormatted = new Date(submitted_time)
-      dataTimeFormatted.setHours( dataTimeFormatted.getHours() - 4 );
-      const newDate = new Date(dataTimeFormatted)
-      const timeDiff = datetimeDifference(currentTime, newDate);
-      return timeDiff
-    }
-
     if (runningJobs && runningJobs[0]){
-      runningJobs.map(x => x.duration = getTimeDifference(x.start_time).minutes + 'm:' + getTimeDifference(x.start_time).seconds + 's')
-
-      // Convert time to local timezone and use 24 hour time
-      function updateTime(timeString){
-        var timeStamp = new Date(timeString);
-        timeStamp.setHours( timeStamp.getHours() - 4 );
-        var useTwentyFourHour = new Date(timeStamp).toLocaleString('en-GB');
-        var yearFormat = useTwentyFourHour.split(',')[0].split('/').reverse().join('/')
-        var ISODateFormat = yearFormat + useTwentyFourHour.split(',')[1]
-        return ISODateFormat;
-      }
-
-      runningJobs.map(x => x.start_time = updateTime(x.start_time))
+      runningJobs.map(job => job.start_time = updateTime(job.start_time))
+      createTimeStamp(runningJobs, 'start_time')
     }
 
     if (error && result[0]) {
@@ -98,7 +75,7 @@ class Running extends Component {
         <div className="jobs">
             <h2>Running Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
-            <ReactTable className="-highlight" data={runningJobs} columns={running_columns} />
+            <ReactTable className="-highlight" data={runningJobs} columns={running_columns} defaultSorted={[{id:"start_time",desc: true}]} />
         </div>
       );
     } else {

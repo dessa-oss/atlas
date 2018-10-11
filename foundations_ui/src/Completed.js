@@ -4,7 +4,7 @@ import 'react-table/react-table.css'
 import './App.css';
 import datetimeDifference from "datetime-difference";
 import rocket from './rocket.gif';
-let columns = require('./columns');
+import { updateTime, determineValue } from './utils';
 
 class Completed extends Component {
 
@@ -164,32 +164,8 @@ class Completed extends Component {
       }
 
       completedJobs.map(x => x.duration = getTimeDifference(x.start_time, x.completed_time).minutes + 'm:' + getTimeDifference(x.start_time, x.completed_time).seconds + 's')
-      
-      // Convert time to local timezone
-      function updateTime(timeString){
-        var timeStamp = new Date(timeString);
-        timeStamp.setHours( timeStamp.getHours() - 4 );
-        var ISODateFormat = new Date(timeStamp).toLocaleString('en-GB');
-        var yearFormat = ISODateFormat.split(',')[0].split('/').reverse().join('/')
-        var finalISO = yearFormat + ISODateFormat.split(',')[1]
-        return finalISO;
-      }
 
       completedJobs.map(x => x.start_time = updateTime(x.start_time))
-
-      function determineValue(index, job){
-        if (job.input_params_dict[index]) {
-          var obj = job.input_params_dict[index].value
-          if (obj.type === 'stage'){
-            return obj.stage_name;
-          } else if (obj.type === 'constant'){
-            return obj.value;
-          } else if (obj.type === 'dynamic') {
-            var jobParams = job.job_parameters;
-            return jobParams[obj.name];
-          }
-        }
-      }
     }
 
     if (error && result[0]) {
