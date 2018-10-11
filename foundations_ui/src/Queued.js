@@ -80,7 +80,7 @@ class Queued extends Component {
         return finalISO;
       }
 
-      var foo = queuedJobs.map(x => x.submitted_time = updateTime(x.submitted_time))
+      queuedJobs.map(x => x.submitted_time = updateTime(x.submitted_time))
     }
 
     if (error && result[0]) {
