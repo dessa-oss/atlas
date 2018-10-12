@@ -4,7 +4,7 @@ import 'react-table/react-table.css'
 import './App.css';
 import datetimeDifference from "datetime-difference";
 import rocket from './rocket.gif';
-let columns = require('./columns');
+import { updateTime, determineValue } from './utils';
 
 class Completed extends Component {
 
@@ -79,11 +79,9 @@ class Completed extends Component {
         // loop through all grouped lists and update name
         // return update input params dict
         Object.keys(groupBy).map(function(key) {
-              if (groupBy[key].length > 1){
-                  groupBy[key].map(function(x, index){
-                      x.name = x.name + '_' + (index + 1)
-                  })
-              }
+            groupBy[key].map(function(x, index){
+                x.name = x.name + '_' + (index + 1)
+            })
           });
 
         var finalInputDict = {};
@@ -94,13 +92,51 @@ class Completed extends Component {
         }
 
         x.input_params_dict = finalInputDict;
-        return x;        
+        return x;
       })
-      
+
+      // finalResult is list of objects
+      // each with input_params_dict which is unique key dict
       var input_params_dict = finalResult[0].input_params_dict
       var keys = Object.keys(input_params_dict)
 
-      keys.map(function(key){
+      // loop over all input_params and create union
+      var allParams = []
+      Object.keys(finalResult).map(function(key){
+        finalResult[key].input_params.map(function(param){
+          allParams.push(param.name)
+        })
+      })
+
+      // loop over all input_params and create union
+      var allParamsDict = {}
+      Object.keys(finalResult).map(function(key){
+        Object.keys(finalResult[key].input_params_dict).map(function(key){
+          var rootName;
+          // Allows grouping without taking into accout index value
+          if (key.split('_').length > 1) {
+            rootName = key.split('_').reverse().splice(1).reverse().join('_');
+          } else {
+            rootName = key
+          }
+          if (!allParamsDict[rootName]) {
+            allParamsDict[rootName] = []
+          }
+          allParamsDict[rootName].push(key)
+          allParamsDict[rootName] = [...new Set(allParamsDict[rootName])]
+        })
+      })
+
+      // unique list of all strings input params
+      let uniqueParams = [];
+      Object.keys(allParamsDict).map(function(key){
+        allParamsDict[key].map(function(param) {
+          uniqueParams.push(param)
+        })
+      })
+
+      // Create columns dynamically
+      uniqueParams.map(function(key){
         var columnName = key;
         var obj = {};
         obj['Header'] = 'Input: ' + columnName;
@@ -128,29 +164,8 @@ class Completed extends Component {
       }
 
       completedJobs.map(x => x.duration = getTimeDifference(x.start_time, x.completed_time).minutes + 'm:' + getTimeDifference(x.start_time, x.completed_time).seconds + 's')
-      
-      // Convert time to local timezone
-      function updateTime(timeString){
-        var timeStamp = new Date(timeString);
-        timeStamp.setHours( timeStamp.getHours() - 4 );
-        return new Date(timeStamp).toLocaleString();
-      }
 
       completedJobs.map(x => x.start_time = updateTime(x.start_time))
-
-      function determineValue(index, job){
-        if (job.input_params_dict[index]) {
-          var obj = job.input_params_dict[index].value
-          if (obj.type === 'stage'){
-            return obj.stage_name;
-          } else if (obj.type === 'constant'){
-            return obj.value;
-          } else if (obj.type === 'dynamic') {
-            var jobParams = job.job_parameters;
-            return jobParams[obj.name];
-          }
-        }
-      }
     }
 
     if (error && result[0]) {
@@ -167,7 +182,7 @@ class Completed extends Component {
         <div className="jobs">
             <h2>Completed Jobs</h2>
             <h3 className="project-name">Project: {result.name}</h3>
-            <ReactTable className="-highlight" data={completedJobs} columns={completed_columns} />
+            <ReactTable className="-highlight" data={completedJobs} columns={completed_columns} defaultSorted={[{id: "start_time",desc: true}]} />
         </div>
       );
     } else {
