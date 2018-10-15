@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import ReactTable from "react-table";
-import datetimeDifference from "datetime-difference";
 import 'react-table/react-table.css'
 import './App.css';
 import rocket from './rocket.gif';
+import { updateTime, createTimeStamp } from './utils';
 
 class Queued extends Component {
 
@@ -49,7 +49,7 @@ class Queued extends Component {
         Header: 'JobId',
         accessor: 'job_id'
       }, {
-        Header: 'Duration',
+        Header: 'Queued Time',
         id: 'duration',
         accessor: 'duration'
       }, {
@@ -58,17 +58,9 @@ class Queued extends Component {
       }
     ]
 
-    function getTimeDifference(submitted_time){
-      const currentTime = new Date();
-      const dataTimeFormatted = new Date(submitted_time)
-      dataTimeFormatted.setHours( dataTimeFormatted.getHours() - 4 );
-      const newDate = new Date(dataTimeFormatted)
-      const timeDiff = datetimeDifference(currentTime, newDate);
-      return timeDiff
-    }
-
     if (queuedJobs && queuedJobs[0]){
-      queuedJobs.map(x => x.duration = getTimeDifference(x.submitted_time).minutes + 'm:' + getTimeDifference(x.submitted_time).seconds + 's')
+      queuedJobs.map(job => job.submitted_time = updateTime(job.submitted_time))
+      createTimeStamp(queuedJobs, 'submitted_time')
     }
 
     if (error && result[0]) {
@@ -85,7 +77,7 @@ class Queued extends Component {
         <div className="jobs">
             <h2>Queued Jobs</h2>
             <h3 className="project-name">Project name: {result.name}</h3>
-            <ReactTable data={queuedJobs} columns={queued_columns} />
+            <ReactTable data={queuedJobs} columns={queued_columns} defaultSorted={[{id: "submitted_time",desc: true}]} />
         </div>
       );
     }
