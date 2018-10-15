@@ -47,7 +47,7 @@ class TestProjects(unittest.TestCase):
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data(self, mock):
-        from pandas import DataFrame
+        from pandas import DataFrame, concat
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
@@ -58,8 +58,8 @@ class TestProjects(unittest.TestCase):
         output_metrics = {'loss': 100}
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
-        expected_result = DataFrame([{'d': 35, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+        expected_result = DataFrame([{'project_name': 'project1', 'b': 'stagely', 'c': 5, 'd': 35, 'loss': 100 }])
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'), check_like = True)
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name(self, mock):
@@ -76,7 +76,7 @@ class TestProjects(unittest.TestCase):
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame([{'d': 35, 'd-1': 45, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'), check_like = True)
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_different_position_in_list(self, mock):
@@ -93,7 +93,7 @@ class TestProjects(unittest.TestCase):
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame([{'d': 35, 'd-1': 45, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'), check_like = True)
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_same_different_position(self, mock):
@@ -110,7 +110,7 @@ class TestProjects(unittest.TestCase):
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame([{'d': 35, 'd-1': 45, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'), check_like=True)
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data_different_data(self, mock):
@@ -139,7 +139,7 @@ class TestProjects(unittest.TestCase):
             {'e': 77, 'project_name': 'project2', 'win': 56, 'd': 'another stagel', 'f': 97},
         ]
         expected_result = DataFrame(expected_data)
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project2'))
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project2'), check_like=True)
 
     @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_filters_to_project(self, mock):
@@ -164,9 +164,31 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'b': 'stagely', 'd': 35, 'c': 5, 'project_name': 'project1', 'loss': 100},
+            {'project_name': 'project1', 'b': 'stagely', 'c': 5, 'd': 35, 'loss': 100},
         ]
         expected_result = DataFrame(expected_data)
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'), check_like = True)
+
+    @patch('foundations.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_correct_order(self, mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        input_params = [
+            {'name': 'b', 'stage_uuid': '1', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
+            {'name': 'c', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
+            {'name': 'd', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
+        ]
+        output_metrics = {'loss': 100}
+
+        mock.return_value = [
+            {'project_name': 'project1', 'job_parameters': {'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}
+        ]
+
+        expected_data = [
+            {'project_name': 'project1', 'b': 'stagely', 'c': 5, 'd': 35, 'loss': 100},
+        ]
+        expected_result = DataFrame(expected_data, columns = ['project_name', 'b', 'c', 'd', 'loss'])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
 
     def test_get_metrics_for_all_jobs_is_defined_globally(self):
