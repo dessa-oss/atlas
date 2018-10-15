@@ -21,13 +21,12 @@ def get_metrics_for_all_jobs(project_name):
         [pandas.DataFrame] -- Pandas DataFrame containing all of the results
     """
 
-    from pandas import DataFrame, concat
-    job_metadata, input_params, output_metrics = _flattened_job_metrics(project_name)
-    return concat([job_metadata, input_params,output_metrics], axis=1, sort=False)
+    return _flattened_job_metrics(project_name)
 
 
 def _flattened_job_metrics(project_name):
-    from pandas import DataFrame
+    from pandas import DataFrame, concat
+
     job_metadata_list = []
     input_params_list = []
     output_metrics_list = []
@@ -38,7 +37,7 @@ def _flattened_job_metrics(project_name):
         _update_datetime(job_data)
         job_metadata_list.append(job_data)
 
-    return DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)
+    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis = 1, sort = False)
 
 def _update_datetime(job_data):
     from foundations.utils import datetime_string
@@ -70,7 +69,6 @@ def _fill_job_parameters(job_data, input_param_list, stage_uuids):
     for param in input_params:
         stage_name = _parameter_name(param, stage_uuids, index_tracker)
         stage_value = _stage_value(param, job_parameters)
-
         input_param_dict[stage_name] = stage_value
 
     input_param_list.append(input_param_dict)
