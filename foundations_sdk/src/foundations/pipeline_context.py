@@ -44,12 +44,48 @@ class PipelineContext(object):
         result_saver.save(self.file_name, self._context())
 
     def save_to_archive(self, archiver):
+        from foundations.unserializable_placeholder import UnserializablePlaceholder
+
         archiver.append_tracker()
         archiver.append_miscellaneous('stage_listing', self._stage_keys())
         self.global_stage_context.save_to_archive(archiver)
+
         for stage_context in self.stage_contexts.values():
-            stage_context.save_to_archive(archiver)
+            stage_context.save_all_but_persisted_data(archiver)
+
+            try:
+                stage_context.save_persisted_data(archiver)
+            except TypeError:
+                import os.path as path
+
+                self._log_failed_data_persist(stage_context)
+
+                stage_uuid = stage_context.uuid
+                stage_name = self._lookup_stage_name_from_uuid(stage_uuid)
+                job_name = self.file_name
+
+                stage_context.stage_output = UnserializablePlaceholder(stage_name, stage_uuid, job_name)
+                stage_context.save_persisted_data(archiver)
+
         self.provenance.save_to_archive(archiver)
+
+    def _log_failed_data_persist(self, stage_context):
+        from foundations import log_manager
+        logger = log_manager.get_logger(__name__)
+
+        format_string = "Cannot persist value of type '{}' from stage '{}': {}"
+
+        stage_type = type(stage_context.stage_output).__name__
+        stage_name = self._lookup_stage_name_from_uuid(stage_context.uuid)
+        stage_value = stage_context.stage_output
+
+        warning_message = format_string.format(stage_type, stage_name, stage_value)
+        logger.warning(warning_message)
+    
+    def _lookup_stage_name_from_uuid(self, uuid):
+        stage_hierarchy = self.provenance.stage_hierarchy
+        stage_hierarchy_entries = stage_hierarchy.entries
+        return stage_hierarchy_entries[uuid].function_name
 
     def _stage_keys(self):
         return list(self.stage_contexts.keys())

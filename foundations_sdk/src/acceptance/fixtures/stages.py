@@ -13,4 +13,12 @@ def bundle_value(value):
 
 def add(a, b):
     return a + b
-    
+
+def _make_generator(value):
+    yield value
+
+def returns_generator(value):
+    return _make_generator(value)
+
+def executes_generator(gen):
+    return next(gen)

@@ -51,8 +51,14 @@ class StageContext(object):
         }
 
     def save_to_archive(self, archiver):
-        archiver.append_stage_log(self.uuid, self.stage_log)
+        self.save_all_but_persisted_data(archiver)
+        self.save_persisted_data(archiver)
+
+    def save_persisted_data(self, archiver):
         archiver.append_stage_persisted_data(self.uuid, self.stage_output)
+
+    def save_all_but_persisted_data(self, archiver):
+        archiver.append_stage_log(self.uuid, self.stage_log)
         archiver.append_stage_model_data(self.uuid, self.model_data)
         archiver.append_stage_miscellaneous(
             self.uuid, 'stage_context', self._archive_stage_context())

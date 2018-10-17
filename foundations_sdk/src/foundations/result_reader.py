@@ -198,16 +198,23 @@ class ResultReader(object):
         return None
 
     def _get_unstructured_result(self, pipeline_name):
+        from foundations.unserializable_placeholder import UnserializablePlaceholder
+
         def _with_pipeline_id(stage_id):
             pipeline_context = self._pipeline_contexts[pipeline_name]
             pipeline_context.load_persisted_data_from_archive(self._archivers[pipeline_name])
             
-            return pipeline_context.stage_contexts[stage_id].stage_output
+            stage_output = pipeline_context.stage_contexts[stage_id].stage_output
+
+            if isinstance(stage_output, UnserializablePlaceholder):
+                raise TypeError(stage_output.error_message)
+
+            return stage_output
             
         return _with_pipeline_id
 
     def get_unstructured_results(self, pipeline_name, stage_ids):
-        return map(self._get_unstructured_result(pipeline_name), stage_ids)
+        return list(map(self._get_unstructured_result(pipeline_name), stage_ids))
 
     def get_source_code(self, stage_id):
         def _try_get_source_code(pipeline_context):
