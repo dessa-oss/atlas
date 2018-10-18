@@ -20,7 +20,7 @@ class TestRunJobWithUnserializableOutputs(unittest.TestCase):
         executes_generator = foundations.create_stage(stages.executes_generator)
 
         gen = returns_generator(55).persist()
-        gen_value = executes_generator(gen)
+        gen_value = executes_generator(gen).persist()
 
         deployment = gen_value.run()
         deployment.wait_for_deployment_to_complete()
