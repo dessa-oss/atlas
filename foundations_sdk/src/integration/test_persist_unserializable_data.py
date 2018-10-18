@@ -97,13 +97,12 @@ class TestPersistUnserializableData(unittest.TestCase):
         return None
 
     def _successfully_try_and_fail_to_get_results(self, result_reader, job_name, stage_name, stage_uuid):
-        try:
+        with self.assertRaises(TypeError) as error_context:
             result_reader.get_unstructured_results(job_name, [stage_uuid])
-            self.fail("should have thrown a type error")
-        except TypeError as e:
-            format_string = "Was not able to serialize output for stage '{}' for job '{}' (stage uuid: {})."
-            expected_error_message = format_string.format(stage_name, job_name, stage_uuid)
-            self.assertEqual(str(e), expected_error_message)
+
+        format_string = "Was not able to serialize output for stage '{}' for job '{}' (stage uuid: {})."
+        expected_error_message = format_string.format(stage_name, job_name, stage_uuid)
+        self.assertEqual(str(error_context.exception), expected_error_message)
 
     @staticmethod
     def _create_result_reader():
