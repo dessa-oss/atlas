@@ -9,15 +9,11 @@ import unittest
 from mock import patch
 
 import integration.fixtures.stages as stages
-from integration.config import integration_config
 
 from foundations import config_manager, create_stage, JobPersister, ResultReader
 from foundations.job import Job
 
 class TestPersistUnserializableData(unittest.TestCase):
-    def tearDown(self):
-        integration_config.cleanup()
-
     def test_try_persist_generator(self):
         returns_generator = create_stage(stages.returns_generator)
         stage_output = returns_generator().persist()
@@ -41,26 +37,20 @@ class TestPersistUnserializableData(unittest.TestCase):
         returns_generator = create_stage(stages.returns_generator)
         stage_output = returns_generator().persist()
 
-        job = Job(stage_output)
-        job.run()
+        job = TestPersistUnserializableData._run_and_persist_job(stage_output)
+        pipeline_context = job.pipeline_context()
+        job_name = pipeline_context.file_name
 
-        JobPersister(job).persist()
+        stage_uuid = TestPersistUnserializableData._lookup_stage_uuid_from_name(pipeline_context, "returns_generator")
 
-        with JobPersister.load_archiver_fetch() as fetch:
-            result_reader = ResultReader(fetch)
+        result_reader = TestPersistUnserializableData._create_result_reader()
 
-        results_row = result_reader.get_results().iloc[0]
-        job_name = results_row["job_name"]
-        stage_id = results_row["stage_id"]
-        stage_name = results_row["stage_name"]
-
-        try:
-            result_reader.get_unstructured_results(job_name, [stage_id])
-            self.fail("should have thrown a type error")
-        except TypeError as e:
-            format_string = "Was not able to serialize output for stage '{}' for job '{}' (stage id: {})."
-            expected_error_message = format_string.format(stage_name, job_name, stage_id)
-            self.assertEqual(str(e), expected_error_message)
+        self._successfully_try_and_fail_to_get_results(
+            result_reader,
+            job_name,
+            "returns_generator",
+            stage_uuid
+        )
 
     def test_try_persist_generator_and_pass_to_next_stage_and_retrieve_results(self):
         returns_fresh_generator = create_stage(stages.returns_fresh_generator)
@@ -69,15 +59,65 @@ class TestPersistUnserializableData(unittest.TestCase):
         gen = returns_fresh_generator().persist()
         value = executes_generator(gen).persist()
 
-        job = Job(value)
+        job = TestPersistUnserializableData._run_and_persist_job(value)
+        pipeline_context = job.pipeline_context()
+        job_name = pipeline_context.file_name
+
+        uuid_for_good_stage = TestPersistUnserializableData._lookup_stage_uuid_from_name(
+            pipeline_context,
+            "executes_generator"
+        )
+
+        uuid_for_bad_stage = TestPersistUnserializableData._lookup_stage_uuid_from_name(
+            pipeline_context,
+            "returns_fresh_generator"
+        )
+
+        result_reader = TestPersistUnserializableData._create_result_reader()
+
+        self._successfully_try_and_fail_to_get_results(
+            result_reader,
+            job_name,
+            "returns_fresh_generator",
+            uuid_for_bad_stage
+        )
+
+        generator_value = result_reader.get_unstructured_results(job_name, [uuid_for_good_stage])[0]
+        self.assertEqual(generator_value, "beep")
+
+    @staticmethod
+    def _lookup_stage_uuid_from_name(pipeline_context, stage_name):
+        provenance = pipeline_context.provenance
+        stage_hierarchy_entries = provenance.stage_hierarchy.entries
+        
+        for stage_uuid, entry in stage_hierarchy_entries.items():
+            if entry.function_name == stage_name:
+                return stage_uuid
+
+        return None
+
+    def _successfully_try_and_fail_to_get_results(self, result_reader, job_name, stage_name, stage_uuid):
+        try:
+            result_reader.get_unstructured_results(job_name, [stage_uuid])
+            self.fail("should have thrown a type error")
+        except TypeError as e:
+            format_string = "Was not able to serialize output for stage '{}' for job '{}' (stage uuid: {})."
+            expected_error_message = format_string.format(stage_name, job_name, stage_uuid)
+            self.assertEqual(str(e), expected_error_message)
+
+    @staticmethod
+    def _create_result_reader():
+        with JobPersister.load_archiver_fetch() as fetch:
+            return ResultReader(fetch)
+
+    @staticmethod
+    def _run_and_persist_job(stage_to_run):
+        job = Job(stage_to_run)
         job.run()
 
         JobPersister(job).persist()
 
-        with JobPersister.load_archiver_fetch() as fetch:
-            result_reader = ResultReader(fetch)
-
-        print(result_reader.get_results())
+        return job
 
 class MockLogManager(object):
     def __init__(self):
