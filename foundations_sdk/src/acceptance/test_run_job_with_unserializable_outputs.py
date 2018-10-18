@@ -22,8 +22,8 @@ class TestRunJobWithUnserializableOutputs(unittest.TestCase):
         return_error_message = foundations.create_stage(stages.return_error_message)
 
         # any failed persist should not cause the job to crash
-        gen = returns_generator(55).persist() # can persist
-        gen_value = executes_generator(gen).persist() # cannot persist
+        gen = returns_generator(55).persist() # cannot persist
+        gen_value = executes_generator(gen).persist() # can persist
         exception = throws_exception(gen_value).persist() # cannot persist
         error_message = return_error_message(exception).persist() # can persist
 
