@@ -56,8 +56,6 @@ class PipelineContext(object):
             try:
                 stage_context.save_persisted_data(archiver)
             except TypeError:
-                import os.path as path
-
                 self._log_failed_data_persist(stage_context)
 
                 stage_uuid = stage_context.uuid
