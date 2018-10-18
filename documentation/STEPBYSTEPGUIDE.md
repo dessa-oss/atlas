@@ -134,7 +134,7 @@ This fetches the source code of a given stage.
 reader.get_unstructured_results(job_id, stage_id)
 ```
 
-If a stage has outputs that have been persisted with `.persist()`, this function will return the list of these outputs. 
+If a stage has outputs that have been persisted with `.persist()`, this function will return the list of these outputs, assuming the outputs are serializable by the `dill` library.  If the output of a stage cannot be serialized by `dill`, the execution of that stage will not be affected (a warning will be logged).  When trying to fetch an unserializable persisted output, however, the result reader will throw an exception.  Both the warning and exception will contain a message which itself contains the name of the stage and the type of the output that you tried to persist.
 
 ```
 reader.get_error_information(job_id, <option stage_id>)
