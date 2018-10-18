@@ -27,8 +27,8 @@ class TestPersistUnserializableData(unittest.TestCase):
             warning_messages = mock_log_manager.logger.warning_logs
 
             generator = stages.returns_generator()
-            format_string = "Cannot persist value of type '{}' from stage '{}': {}"
-            expected_warning_message = format_string.format("generator", "returns_generator", generator)
+            format_string = "Cannot persist value of type 'generator' from stage 'returns_generator': {}"
+            expected_warning_message = format_string.format(generator)
 
             self.assertEqual(len(warning_messages), 1)
             self.assertEqual(warning_messages[0], expected_warning_message)
