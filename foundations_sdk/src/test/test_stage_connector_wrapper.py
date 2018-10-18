@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations.stage_connector_wrapper import StageConnectorWrapper
+from mock import patch, call
 
 
 class TestStageConnectorWrapper(unittest.TestCase):
@@ -93,3 +94,22 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self._stage.enable_caching()
         self.assertTrue(argument.cache_enabled)
         self.assertTrue(argument_two.cache_enabled)
+    
+    class MockDeploymentWrapper(object):
+        def __init__(self, deployment):
+            self._deployment = deployment
+            self._job_name = 'potato'
+        
+        def job_name(self):
+            return self._job_name
+    
+    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch('foundations.deployment_manager.simple_deploy')
+    @patch('logging.Logger.info')
+    def test_run_logging(self, logger_mock, deployment_mock):
+        deployment_mock.return_value = 'something'
+        self._stage.run()
+        message1 = call("Deploying job...")
+        message2 = call("Job 'potato' deployed.")
+
+        logger_mock.assert_has_calls([message1, message2])
