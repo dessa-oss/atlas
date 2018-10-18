@@ -22,3 +22,12 @@ def returns_generator(value):
 
 def executes_generator(gen):
     return next(gen)
+
+def throws_exception(input):
+    try:
+        raise Exception(str(input))
+    except Exception as e:
+        return e
+
+def return_error_message(err):
+    return "error code: " + str(err)
