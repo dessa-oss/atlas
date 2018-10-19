@@ -86,6 +86,10 @@ foundations.get_metrics_for_all_jobs("demo_project")
 ```
 This will read logged metrics for jobs ran under project name `demo_project`. It returns a pandas data frame.
 
+### Web GUI
+
+To use the web GUI to view job information, see the README in `/foundations_ui` directory: [here](https://github.com/DeepLearnI/foundations/blob/master/foundations_ui/README.md).
+
 ## Step 6: Use Foundations caching feature
 
 Now, that you know how to log and read metrics for each job, you want to train best model possible. You will be running jobs (model code) with various different data inputs and parameters. In these numerous jobs many computations will be similar, so Foundations has a smart way of detecting these identical computations across all jobs and re-using the already computated step instead of re-computing everytime for every job. We call it caching.
