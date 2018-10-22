@@ -90,7 +90,6 @@ class StageConnectorWrapper(object):
         logger.info("Deploying job...")
         deployment = deployment_manager.simple_deploy(self, job_name, all_params)
         deployment_wrapper = DeploymentWrapper(deployment)
-        logger.info("Job '{}' deployed.".format(deployment_wrapper.job_name()))
 
         return deployment_wrapper
 

@@ -109,7 +109,4 @@ class TestStageConnectorWrapper(unittest.TestCase):
     def test_run_logging(self, logger_mock, deployment_mock):
         deployment_mock.return_value = 'something'
         self._stage.run()
-        message1 = call("Deploying job...")
-        message2 = call("Job 'potato' deployed.")
-
-        logger_mock.assert_has_calls([message1, message2])
+        logger_mock.assert_called_with("Deploying job...")

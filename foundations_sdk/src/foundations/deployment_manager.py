@@ -27,9 +27,20 @@ class DeploymentManager(object):
         return self.deploy({}, job_name, job)
 
     def deploy(self, deployment_config, job_name, job):
+        from foundations import log_manager
+        from foundations.local_shell_job_deployment import LocalShellJobDeployment
+        logger = log_manager.get_logger(__name__)
+
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
-        deployment.deploy()
+
+        if isinstance(deployment, LocalShellJobDeployment):
+            logger.info("Job '{}' deployed.".format(job_name))
+            deployment.deploy()
+        else:
+            deployment.deploy()
+            logger.info("Job '{}' deployed.".format(job_name))
+
         return deployment
 
     def scheduler(self):
