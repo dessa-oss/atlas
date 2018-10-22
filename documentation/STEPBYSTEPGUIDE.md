@@ -1,4 +1,20 @@
-# Step by step Guide
+# Step by Step Guide
+
+## Step 0: Set your configuration (optional)
+
+If you are:
+
+ - Planning on running your foundations code on a remote environment like Google Cloud Platform (GCP) or SSH
+ - Want to modify where foundations stores data when running locally
+ - Want to setup a cache
+ - Looking to modify the verbosity of foundations logs
+ - Looking to set environment variables in your deployment environment
+ 
+ you can customize your configurations. Instructions and examples on how to do this can be found [here](../examples/example_configs/README.md).
+ 
+ 
+ *You don't need to specify the above! By default, foundations will deploy locally, running your code on your local machine.*
+
 
 ## Step 1: Writing a model code
 
