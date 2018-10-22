@@ -34,6 +34,9 @@ class Argument(object):
     def name(self):
         return self._name
 
+    def set_name(self, name):
+        self._name = name
+
     def value(self, runtime_data):
         return self._parameter.compute_value(runtime_data)
 

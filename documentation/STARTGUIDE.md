@@ -31,7 +31,7 @@ python -m pip install -U <path-to-downloaded-whl-file>
 Download Foundations' source code from Github.
 In the root of the repo specify Python version and run:
 ```
-./build_dist.sh python<2_or_3>
+./build_dist.sh
 ```
 
 This builds a new `.whl` file of Foundations and installs it within your `conda` or `virtualenv` environment.

@@ -9,14 +9,19 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class ConnectionManager(object):
 
     def __init__(self):
-        self._bucket_connection = None
+        pass
 
     def bucket_connection(self):
-        if self._bucket_connection is None:
-            self._load()
-
-        return self._bucket_connection
-
-    def _load(self):
         from google.cloud.storage import Client
-        self._bucket_connection = Client()
+        
+        from foundations_gcp.authorized_storage_session import AuthorizedStorageSession
+
+        authorized_session_kwargs = {
+            "pool_size": 30,
+            "pool_block": True,
+            "max_retries": 3
+        }
+
+        _http = AuthorizedStorageSession(**authorized_session_kwargs)
+
+        return Client(_http=_http)

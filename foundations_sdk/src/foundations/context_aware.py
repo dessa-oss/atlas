@@ -10,6 +10,9 @@ class ContextAware(object):
         self._function = function
         self.__name__ = self._function.__name__
 
+    def function(self):
+        return self._function
+
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
 

@@ -94,6 +94,18 @@ class TestArgument(unittest.TestCase):
         argument = Argument('spinach', parameter)
         self.assertEqual('spinach', argument.name())
 
+    def test_set_namestores_name(self):
+        parameter = self.Parameter('hello', None, None)
+        argument = Argument(None, parameter)
+        argument.set_name('world')
+        self.assertEqual('world', argument.name())
+
+    def test_set_namestores_name_different_name(self):
+        parameter = self.Parameter('potato', None, None)
+        argument = Argument(None, parameter)
+        argument.set_name('spinach')
+        self.assertEqual('spinach', argument.name())
+
     def test_uses_run_parameters(self):
         parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)

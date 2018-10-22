@@ -25,7 +25,6 @@ the result as needed.
 """
 
 import foundations
-import config
 from common.data import load_titanic
 from common.prep import require
 from common.logging import log_data

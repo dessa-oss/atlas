@@ -115,34 +115,24 @@ def restructure_headers(all_headers, first_headers):
 def concat_strings(iterable):
     return "".join(iterable)
 
-# currently *nix / osx only
-def _path_regex(pipeline_id):
-    import re
-
-    return re.compile('.*/' + pipeline_id + '/foundations/.*')
-
-def _is_not_foundations_line(foundations_line_regex):
-    def action(line):
-        path = line[0]
-        return foundations_line_regex.match(path) is None
-    return action
-
-def pretty_error(pipeline_name, error_info, verbose=False):
+def pretty_error(pipeline_name, error_info):
     import traceback
+
+    from foundations.error_printer import ErrorPrinter
 
     if error_info is None:
         return None
 
-    error_name = [error_info["type"].__name__ + ": " + str(error_info["exception"]) + "\n"]
+    error_name = ["\n", error_info["type"].__name__, ": ", str(error_info["exception"]), "\n"]
     traceback_items = error_info["traceback"]
 
-    if not verbose:
-        foundations_line_regex = _path_regex(pipeline_name)
-        traceback_items = filter(_is_not_foundations_line(foundations_line_regex), traceback_items)
+    error_printer = ErrorPrinter()
+    filtered_traceback = error_printer.transform_extracted_traceback(traceback_items)
+    filtered_traceback_strings = traceback.format_list(filtered_traceback)
 
-    traceback_strings = traceback.format_list(traceback_items)
+    error_message = concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
 
-    return concat_strings(error_name + traceback_strings)
+    return error_message, error_printer.get_callback()
 
 def split_process_output(output):
     lines = output.decode().strip().split("\n")
@@ -185,3 +175,51 @@ def _log():
 
 def split_at(list_of_results, slot_index):
     return list_of_results[slot_index]
+
+def whoami():
+    """Get the currently logged-in user.
+
+    Returns:
+        user_name -- The name of the currently logged-in user as a string.
+    """
+
+    import os
+
+    # if LOGNAME is not set but user is, using ".get()" will fail
+    return os.environ["USER"] if "USER" in os.environ else os.environ["LOGNAME"]
+
+def get_foundations_root():
+    """Return the directory containing the foundations module's init py.
+
+    Returns:
+        dir_path -- As above
+    """
+
+    import sys
+    from os.path import dirname
+
+    return dirname(sys.modules["foundations"].__file__)
+
+def check_is_in_dir(parent_directory, child_file):
+    """Check to see whether a filepath could in principle exist in a directory.  Does not check whether the file nor directory exists - just checks to see whether the names are plausible.
+        Arguments:
+            parent_directory: {str} -- The absolute path of a candidate parent directory.
+            child_file: {str} -- The absolute filepath of a candidate child file
+
+    Returns:
+        bool -- Whether child_file could be in parent_directory (in principle).
+    """
+
+    from os.path import dirname
+
+    child_directory = dirname(child_file)
+    return child_directory.startswith(parent_directory)
+
+def datetime_string(time):
+    from datetime import datetime
+
+    if time is None:
+        return 'No time available'
+    date_time = datetime.fromtimestamp(time)
+    return date_time.isoformat()
+    

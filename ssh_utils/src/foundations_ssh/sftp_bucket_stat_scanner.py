@@ -44,7 +44,7 @@ class SFTPBucketStatScanner(object):
 
     def _translate_uid_to_user_name(self, uid):
         # assumes client is connected
-        command_to_exec = "getent passwd " + str(uid) + " | cut -d: -f1"
+        command_to_exec = "id -un " + str(uid)
         return self._paramiko.exec_command(command_to_exec)
 
     def _health_check(self):

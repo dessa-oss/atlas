@@ -14,4 +14,4 @@ class RunningJobsController(object):
     def index(self):
         from foundations_rest_api.v1.models.project import Project
 
-        return Project.find_by(name=self.params['project_name'])
+        return Project.find_by(name=self.params['project_name']).only(['name', 'running_jobs'])
