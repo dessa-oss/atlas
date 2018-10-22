@@ -28,7 +28,7 @@ class TestStageParameter(unittest.TestCase):
         def uuid(self):
             return self._uuid
 
-        def name(self):
+        def function_name(self):
             return self._name
 
     def test_runs_stage(self):

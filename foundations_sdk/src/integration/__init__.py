@@ -14,3 +14,4 @@ from integration.test_placeholder_parameters import TestPlaceHolderParameters
 from integration.test_caching import TestCaching
 from integration.test_result_reader import TestResultReader
 from integration.test_serializable_contexts import TestSerializableContexts
+from integration.test_error_printing import TestErrorPrinting

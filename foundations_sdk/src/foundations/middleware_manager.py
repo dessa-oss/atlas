@@ -44,6 +44,8 @@ class MiddlewareManager(object):
         self._append_middleware(
             'Redundant', MiddlewareManager._create_redundant_middleware)
         self._append_middleware(
+            'ExceptionHook', MiddlewareManager._create_exception_hook_middleware)
+        self._append_middleware(
             'Error', MiddlewareManager._create_error_middleware)
         self._append_middleware(
             'StageOutput', MiddlewareManager._create_stage_output_middleware)
@@ -140,3 +142,8 @@ class MiddlewareManager(object):
     def _create_stage_logging_middleware(pipeline_context, stage_config, stage_context, stage):
         from foundations.stage_logging_middleware import StageLoggingMiddleware
         return StageLoggingMiddleware(stage)
+
+    @staticmethod
+    def _create_exception_hook_middleware(pipeline_context, stage_config, stage_context, stage):
+        from foundations.exception_hook_middleware import ExceptionHookMiddleware
+        return ExceptionHookMiddleware()

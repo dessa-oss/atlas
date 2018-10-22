@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from mock import patch
 
 from foundations_rest_api.app_manager import AppManager
 
@@ -22,6 +23,19 @@ class TestAppManager(unittest.TestCase):
         initial_app = app_manager.app()
         second_app = app_manager.app()
         self.assertEqual(initial_app, second_app)
+    
+    @patch('flask_cors.CORS')
+    def test_uses_cors(self, mock):
+        app_manager = AppManager()
+        app = app_manager.app()
+        mock.assert_called_with(app)
+
+    @patch('flask_cors.CORS')
+    def test_uses_calls_cors_only_once(self, mock):
+        app_manager = AppManager()
+        app_manager.app()
+        app_manager.app()
+        mock.assert_called_once()
 
     def test_api_initialize(self):
         from flask_restful import Api

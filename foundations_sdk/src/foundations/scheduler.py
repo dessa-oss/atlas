@@ -11,16 +11,13 @@ class Scheduler(object):
             scheduler_backend: {*Backend} -- The backend to use with the scheduler.
     """
 
-    def __init__(self, scheduler_backend=None):
+    def __init__(self, scheduler_backend):
         from foundations.scheduler_legacy_backend import LegacyBackend
 
-        if not scheduler_backend:
-            self._backend = LegacyBackend.create_default() # requires foundations_ssh
-        else:
-            if not isinstance(scheduler_backend, LegacyBackend):
-                raise TypeError("Unsupported backend.")
+        if not isinstance(scheduler_backend, LegacyBackend):
+            raise TypeError("Unsupported backend.")
 
-            self._backend = scheduler_backend
+        self._backend = scheduler_backend
 
     def get_job_information(self, status=None):
         """Get a generator for all jobs with a certain status (or all jobs).
