@@ -5,7 +5,6 @@
 # Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
-
 # This file contains the configurations used by Foundations to define, for example,
 # where to deploy a job and store its results for a local job deployment.  Feel free to have a look at this file,
 # but know that a machine learning engineer will never need to create one.  That
@@ -17,14 +16,32 @@
 # the installer / integrator of Foundations in the form of a configuration yaml.
 # Foundations will automatically parse that yaml prior to and during job deployment.
 
+# If you are intending to run your job on a different execution environment like 
+# Google Cloud Platform (GCP) or SSH, look at the README.md and the examples provided
+# in the examples/example_configs. 
 
+
+# define where the cache for the execution environment
+# specify what type of storage as well as where it exists relative to the execution environment
 cache_implementation:
   cache_type: foundations.LocalFileSystemCacheBackend
   constructor_arguments: [/tmp/foundations-cache]
 
+# specifies how to list and enumerate items within the above storage of information generated during the execution of a job
+# specify the type of enumeration method / storage as well as where it exists relative to the execution environment
 archive_listing_implementation:
   archive_listing_type: foundations.LocalFileSystemPipelineListing
   constructor_arguments: [/tmp/archives]
+
+# tied to tracking the names of projects - we also need to specify how to list and enumerate items within the above storage
+# specify the type of enumeration method / storage as well as where it exists relative to the execution environment
+project_listing_implementation:
+  project_listing_type: foundations.LocalFileSystemPipelineListing
+  constructor_arguments: [/tmp/projects]
+
+
+# specify that the stage log, persisted data, provenance, job source, artifacts, and misc data are to be stored using archive_implementation
+# (local filesystem storage at /tmp/archives in the execution environment)
 
 stage_log_archive_implementation:
   archive_type: foundations.LocalFileSystemPipelineArchive
@@ -50,10 +67,14 @@ miscellaneous_archive_implementation:
   archive_type: foundations.LocalFileSystemPipelineArchive
   constructor_arguments: [/tmp/archives]
 
-project_listing_implementation:
-  project_listing_type: foundations.LocalFileSystemPipelineListing
-  constructor_arguments: [/tmp/projects]
-
-
+# specifies that the job where the job will be deployed
+# in this case, it will be deployed in the current working directory
 deployment_implementation:
   deployment_type: foundations.LocalShellJobDeployment
+
+#this is the default log level for the Foundations job. Other acceptable levels include DEBUG, WARN, ERROR
+log_level: INFO 
+
+#this is the default log level for the run script environment (ie. system calls). Other acceptable levels include DEBUG, WARN, ERROR
+run_script_enivironment:
+  log_level: INFO
