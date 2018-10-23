@@ -20,9 +20,7 @@ Queuing system: a way for multiple jobs to be sent to the execution environment,
 
 ## Types of Deployments
 
-You'll find a set of example configurations for different deployment types in `/examples/example_config`. For each type of deployment there's an example `_deploy` and `_results` config. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results.
-
-If no config is specified the application will try use all the configurations which will likely lead to unexpected failures.
+You'll find example configurations for different deployment types in `/examples/example_config`.
 
 Foundations works with three different types of deployments:
 
@@ -30,7 +28,20 @@ Foundations works with three different types of deployments:
 
 **Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
 
-**SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system.
+**SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system. 
+
+The example folder contains seperate `_deploy` and `_results` config for _SSH Deployment_. This is because the SSH deployment initially stores the archives locally before sending it off remotely. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results.
+
+## Usage
+
+You can specify the .config.yaml configuration file for your script using the `add_config_path` method in the `config_manager`. 
+```
+from foundations import config_manager
+
+config_manager.add_config_path('config/local_default.config.yaml')
+```
+It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
+
 
 ## Configuration Options
 
@@ -143,4 +154,32 @@ The below is for the case where you want `INFO`-level logging for `run.sh` proce
 run_script_environment:
     log_level: INFO # can omit this line entirely - log_level is INFO by default!
     offline_mode: OFFLINE
+```
+
+## Using the config_manager
+
+The `config_manager` can be used to override specific settings in default config specified in the `.config.yaml`. 
+
+The general format of use:
+`config_manager['<configuration>'] = <new config settings>`
+
+### example changing log_level
+The below could be used if you want to change the log_level in one of your experiments but don't want to modify your entire configuration.
+
+```
+from foundations import config_manager
+
+config_manager['log_level'] = DEBUG
+```
+
+### example changing archive listing implementation
+The below could be used to change the archive storage locations of one of your experiments. 
+```
+from foundations import config_manager, LocalFileSystemPipelineListing
+
+config_manager['archive_listing_implementation'] = {
+    'archive_listing_type': LocalFileSystemPipelineListing,
+    'constructor_arguments': [/tmp/specialLocation],
+}
+
 ```
