@@ -4,6 +4,24 @@ The goal of this document is to outline how Foundations uses a configuration-dri
 
 Configuration in Foundations is done through `config.yaml` files.
 
+## Table of contents
+[Vocabulary](#vocabulary)
+
+[Types of Deployments](#types-of-deployments)
+
+[Usage](#usage)
+
+[Configuration Options](#configuration-options)
+
+[Archive Configurations](#archive-configurations)
+
+[Additional Configurations](#additional-configurations)
+
+[Run script environment configs](#run-script-environment-configs)
+
+[Using the config_manager](#using-the-config_manager)
+
+
 ## Vocabulary
 
 It's important to understand the language used around deployment so that we can properly understand how models are run, and where.
