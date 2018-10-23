@@ -1,3 +1,6 @@
+#Add this .config.yaml to the folder or link it to the script where you're fetching your results 
+#for a job deployed on ssh
+
 archive_listing_implementation:
   archive_listing_type: foundations_ssh.SFTPListing
 
@@ -18,6 +21,10 @@ artifact_archive_implementation:
 
 miscellaneous_archive_implementation:
   archive_type: foundations_ssh.MultiSFTPBundledPipelineArchive
+
+project_listing_implementation:
+  project_listing_type: foundations.bucket_pipeline_listing.BucketPipelineListing
+  constructor_arguments: [!!python/name:foundations_ssh.sftp_bucket.SFTPBucket, /home/lou/mount/testbed/projects]
 
 remote_user: lou
 remote_host: 422.428.428.42
