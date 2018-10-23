@@ -41,6 +41,9 @@ from common.models import train_logistic_regression
 from common.logging import log_formatted
 from titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
 
+# set configuration for running the job 
+foundations.config_manager.add_config_path('config/local_default.config.yaml')
+
 union = foundations.create_stage(union)
 train_logistic_regression = foundations.create_stage(train_logistic_regression)
 log_formatted = foundations.create_stage(log_formatted)
