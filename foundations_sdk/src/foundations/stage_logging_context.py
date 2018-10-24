@@ -38,12 +38,15 @@ class StageLoggingContext(object):
             value {object} -- value of the metric
         """
 
-        from foundations.utils import is_string
+        from foundations.utils import is_string, is_number
 
         if not is_string(key):
             raise ValueError('Invalid metric name `{}`'.format(key))
 
-        self._logger.log_metric(key, value)
+        if is_string(value) or is_number(value):
+            self._logger.log_metric(key, value)
+        else:
+            raise TypeError('Invalid metric value, should be string or int')
 
     def change_logger(self, new_logger):
         """Changes the current logging backend for the context

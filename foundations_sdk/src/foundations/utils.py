@@ -222,4 +222,6 @@ def datetime_string(time):
         return 'No time available'
     date_time = datetime.fromtimestamp(time)
     return date_time.isoformat()
-    
+
+def is_number(number):
+    return isinstance(number, (int, float))
