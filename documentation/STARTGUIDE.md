@@ -53,6 +53,9 @@ It's important to note: if you're looking to use a different version of a packag
 
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
+### Jupyter Notebook Setup
+The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started. 
+
 ### Examples guide
 We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 

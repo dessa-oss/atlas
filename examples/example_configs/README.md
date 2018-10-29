@@ -44,7 +44,7 @@ Foundations works with three different types of deployments:
 
 **Local Deployment:** this will run directly on the machine where the `.yaml` file is. This deployment doesn't require a queuing system.
 
-**Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
+**Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration. When using this method of deployment, remember to authenticate with your Google Cloud service. Instructions on how to do this can be found [here](https://google-cloud.readthedocs.io/en/latest/core/auth.html).
 
 **SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system. 
 
