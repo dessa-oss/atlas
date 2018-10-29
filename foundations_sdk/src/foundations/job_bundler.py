@@ -90,7 +90,7 @@ class JobBundler(object):
                 if 'run_script_environment' in self._config:
                     with SimpleTempfile('w+') as temp_file:
                         for name, value in self._config['run_script_environment'].items():
-                            temp_file.write('export {}={}'.format(quote(name), quote(value)))
+                            temp_file.write('export {}={}\n'.format(quote(name), quote(value)))
                         temp_file.flush()
                         temp_file.seek(0)
                         tar.add(temp_file.name, arcname=self._job_name + '/run.env')
