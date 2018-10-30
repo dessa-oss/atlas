@@ -11,6 +11,7 @@ For Reviewer:
    * Does the change add compile-time or run-time dependencies (especially between sub-projects)?
 * Does the PR only cover 1 subtask, and no more than that
 * Critique data and distribution of features for acceptance tests
+* Has implementation caused unforeseen backwards compatibility issues?
 
 Checklist for pull request:
 
@@ -22,3 +23,4 @@ Checklist for pull request:
 - [] Have tested both remote and local deployment types
 - [] All necessary documentation and READMEs have been updated
 - [] Pick realistic type of data (not large, but a good distribution of features) for acceptance tests
+- [] No breaking changes to backwards compatibility
