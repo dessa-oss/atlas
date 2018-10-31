@@ -29,6 +29,7 @@ setup(
         'redis==2.10.6',
         'pandas==0.23.3',
         'PyYAML==3.13',
+        'promise==2.2.1',
     ],
     packages=find_packages('src'),
     package_dir={'':'src'},

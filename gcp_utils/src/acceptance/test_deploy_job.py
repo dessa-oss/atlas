@@ -47,7 +47,7 @@ class TestDeployJob(unittest.TestCase):
         with JobPersister.load_archiver_fetch() as archiver:
             reader = ResultReader(archiver)
             job_information = reader.get_job_information()
-            current_job_information = job_information[job_information['pipeline_name'] == deployment.job_name()].iloc[0]
+            current_job_information = job_information[job_information['job_name'] == deployment.job_name()].iloc[0]
             self.assertIsNotNone(current_job_information)
 
     def test_can_fetch_results(self):
@@ -66,7 +66,7 @@ class TestDeployJob(unittest.TestCase):
         with JobPersister.load_archiver_fetch() as archiver:
             reader = ResultReader(archiver)
             results = reader.get_results()
-            current_results = results[results['pipeline_name'] == deployment.job_name()].iloc[0]
+            current_results = results[results['job_name'] == deployment.job_name()].iloc[0]
             self.assertIsNotNone(current_results)
 
     def test_can_fetch_results_multiple_jobs(self):
@@ -88,10 +88,10 @@ class TestDeployJob(unittest.TestCase):
             reader = ResultReader(archiver)
             results = reader.get_results()
 
-            current_results = results[results['pipeline_name'] == deployment.job_name()].iloc[0]
+            current_results = results[results['job_name'] == deployment.job_name()].iloc[0]
             self.assertIsNotNone(current_results)
 
-            current_results2 = results[results['pipeline_name'] == deployment2.job_name()].iloc[0]
+            current_results2 = results[results['job_name'] == deployment2.job_name()].iloc[0]
             self.assertIsNotNone(current_results2)
 
     def _run_worker(self):

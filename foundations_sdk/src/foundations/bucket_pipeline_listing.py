@@ -18,8 +18,12 @@ class BucketPipelineListing(object):
 
     def get_pipeline_names(self):
         from foundations.utils import string_from_bytes
+        from foundations.helpers.future import Future
 
         file_names = self._bucket.list_files('*.tracker')
-        byte_file_names = [self._bucket.download_as_string(
-            name) for name in file_names]
-        return [string_from_bytes(name) for name in byte_file_names]
+        def get_pipeline_name(name):
+            byte_file_names = self._bucket.download_as_string(name)
+            return string_from_bytes(byte_file_names)
+
+        futures = [Future.execute(get_pipeline_name, name) for name in file_names]
+        return Future.all(futures).get()
