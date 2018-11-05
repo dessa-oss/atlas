@@ -18,7 +18,7 @@ class TestProjectsController(unittest.TestCase):
 
         controller = ProjectsController()
 
-        expected_result = [{'name': 'snowbork drones'}]
+        expected_result = [{'name': 'snowbork drones', 'created_at': None, 'owner': None}]
         self.assertEqual(expected_result, controller.index().as_json())
 
     @patch('foundations_rest_api.v1.models.project.Project.all')
@@ -27,7 +27,7 @@ class TestProjectsController(unittest.TestCase):
 
         controller = ProjectsController()
 
-        expected_result = [{'name': 'space2vec'}]
+        expected_result = [{'name': 'space2vec', 'created_at': None, 'owner': None}]
         self.assertEqual(expected_result, controller.index().as_json())
 
     def _make_response(self, name):

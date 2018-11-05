@@ -27,3 +27,4 @@ class BucketPipelineListing(object):
 
         futures = [Future.execute(get_pipeline_name, name) for name in file_names]
         return Future.all(futures).get()
+     
