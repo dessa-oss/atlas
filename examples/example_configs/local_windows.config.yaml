@@ -38,4 +38,4 @@ deployment_implementation:
   deployment_type: foundations.LocalShellJobDeployment
 
 shell_command:
-  C:\\Program Files\\Git\\bin\\bash.exe
+  "C:\\Program Files\\Git\\bin\\bash.exe"
