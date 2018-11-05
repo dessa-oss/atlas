@@ -6,6 +6,24 @@ It integrates easily with different stages(steps) of the machine learning workfl
 To start with, first install the Foundations library and then follow examples guide to see how it can be used.
 
 ## Installation
+
+### Windows
+
+You will need to install [git bash](https://git-scm.com/download/win) and [anaconda](https://conda.io/miniconda.html).
+To run Foundations correctly, you will need to run all comands from an Anaconda prompt.
+
+To install:
+
+- Open an Anaconda prompt
+- create a new conda environment by running `conda create --name foundations python=3.6`
+- activate the environment by running `conda activate foundations`
+- install foundations libraries via pip using the [Wheel installation](STARTGUIDE.md#wheel-installation)
+- install additional dependencies via pip `pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise`
+
+See [running on Windows instructions](WINDOWS.md) for more details
+
+### OSX/Linux
+
 It's recommended that you use either `virtualenv` or `conda` to setup your Foundations environment.
 Note: if using `virtualenv` make sure to create the environment outside the project directory as the directory will be compressed, and any extra dependencies will add to size and time for job running.
 
@@ -36,7 +54,7 @@ In the root of the repo specify Python version and run:
 
 This builds a new `.whl` file of Foundations and installs it within your `conda` or `virtualenv` environment.
 
-## Environment and Dependencies
+### Environment and Dependencies
 
 Foundations comes with a few dependencies that you'll see in [requirements.txt](https://github.com/DeepLearnI/foundations/blob/master/requirements.txt). The dependencies that get used when you run a job depend on your setup and deployment type. To get to know the different deployment types better see our docs on [configurations](https://github.com/DeepLearnI/foundations/tree/master/examples/example_configs).
 
