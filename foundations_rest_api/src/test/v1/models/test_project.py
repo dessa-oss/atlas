@@ -135,10 +135,12 @@ class TestProject(unittest.TestCase):
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_all_returns_all_projects(self, mock_completed, mock_running, mock_queued):
+    @patch('foundations_rest_api.v1.models.job.Job.all')
+    def test_all_returns_all_projects(self, mock_jobs, mock_completed, mock_running, mock_queued):
         mock_completed.return_value = 'completed'
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
+        mock_jobs.return_value = 'listed'
 
         self._listing.list = ['project1']
 
@@ -149,17 +151,20 @@ class TestProject(unittest.TestCase):
             owner = None,
             completed_jobs='completed',
             running_jobs='running',
-            queued_jobs='queued'
+            queued_jobs='queued',
+            jobs = 'listed'
         )
         self.assertEqual(expected_project, project)
 
     @patch('foundations_rest_api.v1.models.queued_job.QueuedJob.all')
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
-    def test_all_returns_all_projects_multiple_projects(self, mock_completed, mock_running, mock_queued):
+    @patch('foundations_rest_api.v1.models.job.Job.all')
+    def test_all_returns_all_projects_multiple_projects(self, mock_jobs, mock_completed, mock_running, mock_queued):
         mock_completed.return_value = 'completed'
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
+        mock_jobs.return_value = 'listed'
 
         self._listing.list = ['project1', 'project2']
 
@@ -170,7 +175,8 @@ class TestProject(unittest.TestCase):
             owner = None,
             completed_jobs='completed',
             running_jobs='running',
-            queued_jobs='queued'
+            queued_jobs='queued',
+            jobs = 'listed'
         )
         expected_project_two = Project(
             name='project2',
@@ -178,6 +184,7 @@ class TestProject(unittest.TestCase):
             owner = None,
             completed_jobs='completed',
             running_jobs='running',
-            queued_jobs='queued'
+            queued_jobs='queued',
+            jobs = 'listed'
         )
         self.assertEqual([expected_project, expected_project_two], project)
