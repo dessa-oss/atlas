@@ -21,6 +21,7 @@ class Project(PropertyModel):
     completed_jobs = PropertyModel.define_property()
     running_jobs = PropertyModel.define_property()
     queued_jobs = PropertyModel.define_property()
+    jobs = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -56,13 +57,6 @@ class Project(PropertyModel):
         def callback():
             return Project._find_by_internal(name)
 
-            project = Project(name=name)
-            project.created_at = None
-            project.owner = None
-            project.completed_jobs = CompletedJob.all()
-            project.running_jobs = RunningJob.all()
-            project.queued_jobs = QueuedJob.all()
-            return project
         return Response(None, callback)
 
     @staticmethod
@@ -89,6 +83,7 @@ class Project(PropertyModel):
         from foundations_rest_api.v1.models.completed_job import CompletedJob
         from foundations_rest_api.v1.models.running_job import RunningJob
         from foundations_rest_api.v1.models.queued_job import QueuedJob
+        from foundations_rest_api.v1.models.job import Job
 
         project = Project(name=name)
         project.created_at = None
@@ -96,4 +91,5 @@ class Project(PropertyModel):
         project.completed_jobs = CompletedJob.all(project_name=name)
         project.running_jobs = RunningJob.all()
         project.queued_jobs = QueuedJob.all()
+        project.jobs = Job.all(project_name=name)
         return project
