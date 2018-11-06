@@ -209,7 +209,7 @@ class TestJob(unittest.TestCase):
             status='Running',
             completed_time=None
         )
-        result = Job.all().evaluate()[0]
+        result = Job.all().evaluate()
         expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)
 
@@ -239,7 +239,7 @@ class TestJob(unittest.TestCase):
         )
 
         expected_job_2 = Job(
-            job_id='00000000-0000-0000-0000-000000000000', 
+            job_id='00000000-0000-0000-0000-000000000001', 
             user='soju hero', 
             start_time='1973-11-29T21:33:09', 
             job_parameters={},
@@ -249,7 +249,7 @@ class TestJob(unittest.TestCase):
             completed_time=None
         )
 
-        result = Job.all(project_name='project 1').evaluate()[0]
+        result = Job.all(project_name='project 1').evaluate()
         expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)
 
