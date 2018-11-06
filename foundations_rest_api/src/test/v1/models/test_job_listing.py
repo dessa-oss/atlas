@@ -67,10 +67,18 @@ class TestJob(unittest.TestCase):
 
             return []
 
+    class MockDeployment(object):
+
+        def __init__(self, scheduler_backend_callback):
+            self._scheduler_backend_callback = scheduler_backend_callback
+
+        def scheduler_backend(self):
+            return self._scheduler_backend_callback
+
     def setUp(self):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
-        from foundations.global_state import config_manager
+        from foundations.global_state import config_manager, deployment_manager
         from foundations.bucket_pipeline_archive import BucketPipelineArchive
 
         self._listing = self.MockArchiveListing()
@@ -82,6 +90,18 @@ class TestJob(unittest.TestCase):
 
         def get_bucket():
             return self._bucket
+
+        self._pipeline_context = PipelineContext()
+        self._pipeline = Pipeline(self._pipeline_context)
+
+        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [])
+        self._mock_deployment = self.MockDeployment(self._scheduler_backend)
+
+        deployment_manager._scheduler = None # ugh...
+        
+        config_manager['deployment_implementation'] = {
+            'deployment_type': self._mock_deployment
+        }
 
         config_manager['archive_listing_implementation'] = {
             'archive_listing_type': get_listing
@@ -97,8 +117,8 @@ class TestJob(unittest.TestCase):
         config_manager['artifact_archive_implementation'] = archive_implementation
         config_manager['miscellaneous_archive_implementation'] = archive_implementation
 
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
+    def _scheduler_backend(self):
+        return self._scheduler_backend_instance
 
     def tearDown(self):
         from foundations.global_state import config_manager
@@ -189,6 +209,17 @@ class TestJob(unittest.TestCase):
         self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
         expected_job_1 = Job(
+            job_id='00000000-0000-0000-0000-000000000000', 
+            user='soju hero', 
+            start_time='1973-11-29T21:33:09', 
+            job_parameters={},
+            input_params=[], 
+            output_metrics={},
+            status='Running',
+            completed_time=None
+        )
+
+        expected_job_2 = Job(
             job_id='my job', 
             user='Unspecified',
             job_parameters={}, 
@@ -199,16 +230,7 @@ class TestJob(unittest.TestCase):
             completed_time='2286-11-20T17:46:39'
         )
 
-        expected_job_2 = Job(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju hero', 
-            start_time='1973-11-29T21:33:09', 
-            job_parameters={},
-            input_params=[], 
-            output_metrics={},
-            status='Running',
-            completed_time=None
-        )
+
         result = Job.all().evaluate()
         expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)
@@ -228,17 +250,6 @@ class TestJob(unittest.TestCase):
         self._make_running_job('00000000-0000-0000-0000-000000000002', 987654321, 8888, 'quin lin')
 
         expected_job_1 = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'loss': 15.33}, 
-            status='Completed',
-            start_time='2286-11-20T17:46:39',
-            completed_time='2286-11-20T17:46:39'
-        )
-
-        expected_job_2 = Job(
             job_id='00000000-0000-0000-0000-000000000001', 
             user='soju hero', 
             start_time='1973-11-29T21:33:09', 
@@ -249,8 +260,20 @@ class TestJob(unittest.TestCase):
             completed_time=None
         )
 
+        expected_job_2 = Job(
+            job_id='my job', 
+            user='Unspecified',
+            job_parameters={}, 
+            input_params=[],
+            output_metrics={'loss': 15.33}, 
+            status='Completed',
+            start_time='2286-11-20T17:46:39',
+            completed_time='2286-11-20T17:46:39'
+        )
+
         result = Job.all(project_name='project 1').evaluate()
         expected_jobs = [expected_job_1, expected_job_2]
+        self.assertEqual(len(result), 2)
         self.assertEqual(expected_jobs, result)
 
     def _make_completed_job(self, job_name, stage, start_time, end_time, **job_parameters):
@@ -270,4 +293,4 @@ class TestJob(unittest.TestCase):
         from foundations.scheduler_job_information import JobInformation
 
         job_information = JobInformation(job_name, start_timestamp, duration_timestamp, 'RUNNING', user)
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information])
+        self._scheduler_backend_instance._job_information.append(job_information)
