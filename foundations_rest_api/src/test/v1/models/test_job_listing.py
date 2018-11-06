@@ -7,7 +7,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 import unittest
 from foundations_rest_api.v1.models.job import Job
-
+from foundations.scheduler_legacy_backend import LegacyBackend
 
 class TestJob(unittest.TestCase):
 
@@ -54,6 +54,18 @@ class TestJob(unittest.TestCase):
             value = self.download_as_string(source)
             self.remove(source)
             self.upload_from_string(destination, value)
+
+    class MockSchedulerBackend(LegacyBackend):
+
+        def __init__(self, expected_status, job_information):
+            self._expected_status = expected_status
+            self._job_information = job_information
+
+        def get_paginated(self, start_index, number_to_get, status):
+            if self._expected_status == status:
+                return self._job_information
+
+            return []
 
     def setUp(self):
         from foundations.pipeline import Pipeline
@@ -167,134 +179,16 @@ class TestJob(unittest.TestCase):
         job = Job(completed_time=884234222323)
         self.assertEqual(884234222323, job.completed_time)
 
-
-#### TODO: adapt these tests to for both running and completed jobs #################
-
-    def test_all_returns_a_job(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('loss', 15.33)
-
-        stage = self._pipeline.stage(method)
-
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
-
-        job = Job.all().evaluate()[0]
-        expected_job = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'loss': 15.33}, 
-            status='Completed',
-            start_time='2286-11-20T17:46:39',
-            completed_time='2286-11-20T17:46:39'
-        )
-        self.assertEqual(expected_job, job)
-
-    def test_all_returns_a_job_different_name(self):
-        def method():
-            pass
-
-        stage = self._pipeline.stage(method)
-
-        self._make_and_persist_job('my other job', stage, 123232233, 312333333)
-
-        job = Job.all().evaluate()[0]
-        expected_job = Job(
-            job_id='my other job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={}, 
-            status='Completed',
-            start_time='1973-11-27T07:10:33',
-            completed_time='1979-11-24T23:15:33'
-        )
-        self.assertEqual(expected_job, job)
-
-    def test_all_returns_a_job_different_metrics(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('win', 99.9)
-            log_metric('accuracy', 0)
-
-        stage = self._pipeline.stage(method)
-
-        self._make_and_persist_job('my job', stage, 444444, 5555555)
-
-        job = Job.all().evaluate()[0]
-        expected_job = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'win': 99.9, 'accuracy': 0}, 
-            status='Completed',
-            start_time='1970-01-06T03:27:24',
-            completed_time='1970-03-06T07:12:35'
-        )
-        self.assertEqual(expected_job, job)
-
-    def test_all_returns_a_job_metric_multiple_instances(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('win', 99.9)
-            log_metric('win', 99.99)
-
-        stage = self._pipeline.stage(method)
-
-        self._make_and_persist_job('my job', stage, 444444, 5555555)
-
-        job = Job.all().evaluate()[0]
-        expected_job = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[], 
-            output_metrics={'win': [99.9, 99.99]}, 
-            status='Completed',
-            start_time='1970-01-06T03:27:24',
-            completed_time='1970-03-06T07:12:35'
-        )
-        self.assertEqual(expected_job, job)
-
-    def test_all_returns_a_job_with_run_data(self):
-        from foundations.hyperparameter import Hyperparameter
-
-        def method(hello):
-            pass
-
-        stage = self._pipeline.stage(method, hello=Hyperparameter('hello'))
-
-        self._make_and_persist_job('my job', stage, 343433, 43444, hello='world')
-
-        job = Job.all().evaluate()[0]
-        input_params = [{'stage_uuid': 'e56573879d1a601ec8845955e194dff00942bf30', 'name': 'hello', 'value': {'type': 'dynamic', 'name': 'hello'}}]
-        expected_job = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={'hello': 'world'}, 
-            input_params=input_params,
-            output_metrics={}, 
-            status='Completed',
-            start_time='1970-01-04T23:23:53',
-            completed_time='1970-01-01T12:04:04',
-        )
-        self.assertEqual(expected_job, job)
-
     def test_all_returns_multiple_jobs(self):
         def method():
             from foundations.stage_logging import log_metric
             log_metric('loss', 15.33)
 
         stage = self._pipeline.stage(method)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
+        self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
-
-        jobs = Job.all().evaluate()
-        expected_job = Job(
+        expected_job_1 = Job(
             job_id='my job', 
             user='Unspecified',
             job_parameters={}, 
@@ -304,22 +198,22 @@ class TestJob(unittest.TestCase):
             start_time='2286-11-20T17:46:39',
             completed_time='2286-11-20T17:46:39'
         )
-        expected_job_two = Job(
-            job_id='my job two', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'loss': 15.33}, 
-            status='Completed',
-            start_time='1972-06-19T04:56:17',
-            completed_time='1972-06-19T04:56:17'
+
+        expected_job_2 = Job(
+            job_id='00000000-0000-0000-0000-000000000000', 
+            user='soju hero', 
+            start_time='1973-11-29T21:33:09', 
+            job_parameters={},
+            input_params=[], 
+            output_metrics={},
+            status='Running',
+            completed_time=None
         )
+        result = Job.all().evaluate()[0]
+        expected_jobs = [expected_job_1, expected_job_2]
+        self.assertEqual(expected_jobs, result)
 
-        sort_key = lambda job: job.job_id
-
-        self.assertEqual(sorted([expected_job, expected_job_two], key=sort_key), sorted(jobs, key=sort_key))
-
-    def test_all_returns_project_filtered_jobs(self):
+    def test_all_returns_jobs_filtered_by_project(self):
         def method():
             from foundations.stage_logging import log_metric
             log_metric('loss', 15.33)
@@ -327,13 +221,13 @@ class TestJob(unittest.TestCase):
         stage = self._pipeline.stage(method)
 
         self._pipeline_context.provenance.project_name = 'project 1'
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
+        self._make_running_job('00000000-0000-0000-0000-000000000001', 123456789, 9999, 'soju hero')
 
         self._pipeline_context.provenance.project_name = 'project 2'
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
+        self._make_running_job('00000000-0000-0000-0000-000000000002', 987654321, 8888, 'quin lin')
 
-        jobs = Job.all(project_name='project 1').evaluate()
-        expected_job = Job(
+        expected_job_1 = Job(
             job_id='my job', 
             user='Unspecified',
             job_parameters={}, 
@@ -343,35 +237,23 @@ class TestJob(unittest.TestCase):
             start_time='2286-11-20T17:46:39',
             completed_time='2286-11-20T17:46:39'
         )
-        self.assertEqual([expected_job], jobs)
 
-    def test_all_returns_project_filtered_jobs_different_project(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('loss', 15.33)
-
-        stage = self._pipeline.stage(method)
-
-        self._pipeline_context.provenance.project_name = 'project 1'
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
-
-        self._pipeline_context.provenance.project_name = 'project 2'
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
-
-        jobs = Job.all(project_name='project 2').evaluate()
-        expected_job = Job(
-            job_id='my job two', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'loss': 15.33}, 
-            status='Completed',
-            start_time='1972-06-19T04:56:17',
-            completed_time='1972-06-19T04:56:17'
+        expected_job_2 = Job(
+            job_id='00000000-0000-0000-0000-000000000000', 
+            user='soju hero', 
+            start_time='1973-11-29T21:33:09', 
+            job_parameters={},
+            input_params=[], 
+            output_metrics={},
+            status='Running',
+            completed_time=None
         )
-        self.assertEqual([expected_job], jobs)
 
-    def _make_and_persist_job(self, job_name, stage, start_time, end_time, **job_parameters):
+        result = Job.all(project_name='project 1').evaluate()[0]
+        expected_jobs = [expected_job_1, expected_job_2]
+        self.assertEqual(expected_jobs, result)
+
+    def _make_completed_job(self, job_name, stage, start_time, end_time, **job_parameters):
         from foundations.job import Job
         from foundations.job_persister import JobPersister
 
@@ -383,3 +265,9 @@ class TestJob(unittest.TestCase):
 
         self._pipeline_context.global_stage_context.end_time = end_time
         JobPersister(job).persist()
+
+    def _make_running_job(self, job_name, start_timestamp, duration_timestamp, user):
+        from foundations.scheduler_job_information import JobInformation
+
+        job_information = JobInformation(job_name, start_timestamp, duration_timestamp, 'RUNNING', user)
+        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information])
