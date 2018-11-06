@@ -35,7 +35,7 @@ class JobBundler(object):
     def unbundle(self):
         import tarfile
 
-        with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
+        with tarfile.open(self.job_archive(), 'r:gz') as tar:
             tar.extractall()
 
     def cleanup(self):
