@@ -36,7 +36,9 @@ class Job(PropertyModel):
     def _load_jobs(project_name):
         running_jobs = Job._get_running_jobs(project_name)
         completed_jobs = Job._get_completed_jobs(project_name)
-        return running_jobs + completed_jobs
+        all_jobs = running_jobs + completed_jobs
+        all_jobs.sort(key=lambda job: job.start_time, reverse=True)
+        return all_jobs
 
     @staticmethod
     def _get_running_jobs(project_name):

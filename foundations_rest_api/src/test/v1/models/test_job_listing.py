@@ -232,7 +232,7 @@ class TestJob(unittest.TestCase):
 
 
         result = Job.all().evaluate()
-        expected_jobs = [expected_job_1, expected_job_2]
+        expected_jobs = [expected_job_2, expected_job_1]
         self.assertEqual(expected_jobs, result)
 
     def test_all_returns_jobs_filtered_by_project(self):
@@ -272,7 +272,7 @@ class TestJob(unittest.TestCase):
         )
 
         result = Job.all(project_name='project 1').evaluate()
-        expected_jobs = [expected_job_1, expected_job_2]
+        expected_jobs = [expected_job_2, expected_job_1]
         self.assertEqual(len(result), 2)
         self.assertEqual(expected_jobs, result)
 
