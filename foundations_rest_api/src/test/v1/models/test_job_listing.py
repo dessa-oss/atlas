@@ -235,6 +235,8 @@ class TestJob(unittest.TestCase):
         expected_jobs = [expected_job_2, expected_job_1]
         self.assertEqual(expected_jobs, result)
 
+    @unittest.skip
+    ### THIS TEST IS GOING TO BE SKIPPED UNTIL THOMAS DISCUSSES HOW TO RELATE PROJECTS WITH RUNNING JOBS WITH ASHWIN ####
     def test_all_returns_jobs_filtered_by_project(self):
         def method():
             from foundations.stage_logging import log_metric
