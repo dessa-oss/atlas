@@ -57,7 +57,6 @@ class Job(PropertyModel):
                 output_metrics={}
             )
             jobs.append(job)
-
         return jobs
 
     @staticmethod
