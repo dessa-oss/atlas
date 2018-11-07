@@ -64,8 +64,6 @@ class Project(PropertyModel):
         from foundations_rest_api.response import Response
 
         def callback():
-            from foundations.global_state import config_manager
-
             listing = Project._construct_project_listing()
             return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
 
