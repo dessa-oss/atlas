@@ -16,6 +16,8 @@ class Project(PropertyModel):
     """
 
     name = PropertyModel.define_property()
+    created_at = PropertyModel.define_property()
+    owner = PropertyModel.define_property()
     completed_jobs = PropertyModel.define_property()
     running_jobs = PropertyModel.define_property()
     queued_jobs = PropertyModel.define_property()
@@ -55,6 +57,8 @@ class Project(PropertyModel):
             return Project._find_by_internal(name)
 
             project = Project(name=name)
+            project.created_at = None
+            project.owner = None
             project.completed_jobs = CompletedJob.all()
             project.running_jobs = RunningJob.all()
             project.queued_jobs = QueuedJob.all()
@@ -87,6 +91,8 @@ class Project(PropertyModel):
         from foundations_rest_api.v1.models.queued_job import QueuedJob
 
         project = Project(name=name)
+        project.created_at = None
+        project.owner = None
         project.completed_jobs = CompletedJob.all(project_name=name)
         project.running_jobs = RunningJob.all()
         project.queued_jobs = QueuedJob.all()
