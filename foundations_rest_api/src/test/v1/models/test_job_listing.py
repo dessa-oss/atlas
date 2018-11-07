@@ -7,66 +7,19 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 import unittest
 from foundations_rest_api.v1.models.job import Job
+from .job_manager_mixin import JobManagerMixin
 
-class TestJobListing(unittest.TestCase):
+
+class TestJobListing(unittest.TestCase, JobManagerMixin):
 
     __name__ = 'TestJobListing' # avoid crazy Python 2 bug: failure of unittest.skip decorator
 
     def setUp(self):
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
-        from foundations.global_state import config_manager, deployment_manager
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
-        from .mocks.archive_listing import MockArchiveListing
-        from .mocks.memory_bucket import MemoryBucket
-        from .mocks.scheduler_backend import MockSchedulerBackend
-        from .mocks.deployment import MockDeployment
-
-        self._listing = MockArchiveListing()
-
-        def get_listing():
-            return self._listing
-
-        self._bucket = MemoryBucket()
-
-        def get_bucket():
-            return self._bucket
-
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
-
-        self._scheduler_backend_instance = MockSchedulerBackend('RUNNING', [])
-        self._mock_deployment = MockDeployment(self._scheduler_backend)
-
-        deployment_manager._scheduler = None # ugh...
-        
-        config_manager['deployment_implementation'] = {
-            'deployment_type': self._mock_deployment
-        }
-
-        config_manager['archive_listing_implementation'] = {
-            'archive_listing_type': get_listing
-        }
-        archive_implementation = {
-            'archive_type': BucketPipelineArchive,
-            'constructor_arguments': [get_bucket],
-        }
-        config_manager['stage_log_archive_implementation'] = archive_implementation
-        config_manager['persisted_data_archive_implementation'] = archive_implementation
-        config_manager['provenance_archive_implementation'] = archive_implementation
-        config_manager['job_source_archive_implementation'] = archive_implementation
-        config_manager['artifact_archive_implementation'] = archive_implementation
-        config_manager['miscellaneous_archive_implementation'] = archive_implementation
-
-    def _scheduler_backend(self):
-        return self._scheduler_backend_instance
+        self._setup_deployment('RUNNING')
+        self._setup_results_archiving()
 
     def tearDown(self):
-        from foundations.global_state import config_manager
-
-        keys = list(config_manager.config().keys())
-        for key in keys:
-            del config_manager.config()[key]
+        self._cleanup()
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -218,22 +171,3 @@ class TestJobListing(unittest.TestCase):
         expected_jobs = [expected_job_2, expected_job_1]
         self.assertEqual(len(result), 2)
         self.assertEqual(expected_jobs, result)
-
-    def _make_completed_job(self, job_name, stage, start_time, end_time, **job_parameters):
-        from foundations.job import Job
-        from foundations.job_persister import JobPersister
-
-        self._pipeline_context.file_name = job_name
-        self._pipeline_context.global_stage_context.start_time = start_time
-
-        job = Job(stage, **job_parameters)
-        job.run()
-
-        self._pipeline_context.global_stage_context.end_time = end_time
-        JobPersister(job).persist()
-
-    def _make_running_job(self, job_name, start_timestamp, duration_timestamp, user):
-        from foundations.scheduler_job_information import JobInformation
-
-        job_information = JobInformation(job_name, start_timestamp, duration_timestamp, 'RUNNING', user)
-        self._scheduler_backend_instance._job_information.append(job_information)

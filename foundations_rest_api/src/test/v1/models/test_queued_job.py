@@ -8,30 +8,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from foundations_rest_api.v1.models.queued_job import QueuedJob
 from foundations.scheduler_legacy_backend import LegacyBackend
+from .job_manager_mixin import JobManagerMixin
 
 
-class TestQueuedJob(unittest.TestCase):
+class TestQueuedJob(unittest.TestCase, JobManagerMixin):
 
     def setUp(self):
-        from foundations.global_state import config_manager
-        from foundations.global_state import deployment_manager
-        from .mocks.scheduler_backend import MockSchedulerBackend
-        from .mocks.deployment import MockDeployment
-
-        deployment_manager._scheduler = None # ugh...
-        self._scheduler_backend_instance = MockSchedulerBackend('QUEUED', [])
-        self._mock_deployment = MockDeployment(self._scheduler_backend)
-
-        config_manager['deployment_implementation'] = {
-            'deployment_type': self._mock_deployment,
-        }
+        self._setup_deployment('QUEUED')
 
     def tearDown(self):
-        from foundations.global_state import config_manager
-
-        keys = list(config_manager.config().keys())
-        for key in keys:
-            del config_manager.config()[key]
+        self._cleanup()
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -61,11 +47,7 @@ class TestQueuedJob(unittest.TestCase):
         self.assertEqual([], QueuedJob.all().evaluate())
 
     def test_all_returns_job_information_from_scheduler(self):
-        from foundations.scheduler_job_information import JobInformation
-        from .mocks.scheduler_backend import MockSchedulerBackend
-
-        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'QUEUED', 'soju hero')
-        self._scheduler_backend_instance = MockSchedulerBackend('QUEUED', [job_information])
+        self._make_queued_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
         expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju hero', submitted_time='1973-11-29T21:33:09')
         result = QueuedJob.all().evaluate()[0]
@@ -73,12 +55,8 @@ class TestQueuedJob(unittest.TestCase):
         self.assertEqual(expected_job, result)
 
     def test_all_returns_job_information_from_scheduler_with_different_jobs(self):
-        from foundations.scheduler_job_information import JobInformation
-        from .mocks.scheduler_backend import MockSchedulerBackend
-
-        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'QUEUED', 'soju zero')
-        job_information_two = JobInformation('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'QUEUED', 'potato hero')
-        self._scheduler_backend_instance = MockSchedulerBackend('QUEUED', [job_information, job_information_two])
+        self._make_queued_job('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'soju zero')
+        self._make_queued_job('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'potato hero')
 
         expected_job = QueuedJob(job_id='00000000-0000-0000-0000-000000000000', user='soju zero', submitted_time='2001-04-19T04:25:21')
         expected_job_two = QueuedJob(job_id='00000000-0000-0000-0000-000000000001', user='potato hero', submitted_time='1998-03-03T01:34:48')
@@ -86,6 +64,3 @@ class TestQueuedJob(unittest.TestCase):
         result = QueuedJob.all().evaluate()
 
         self.assertEqual(expected_jobs, result)
-
-    def _scheduler_backend(self):
-        return self._scheduler_backend_instance
