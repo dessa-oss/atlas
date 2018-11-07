@@ -7,88 +7,27 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 import unittest
 from foundations_rest_api.v1.models.job import Job
-from foundations.scheduler_legacy_backend import LegacyBackend
 
 class TestJob(unittest.TestCase):
 
     __name__ = 'TestJob' # avoid crazy Python 2 bug: failure of unittest.skip decorator
-
-    class MockArchiveListing(object):
-
-        def __init__(self):
-            self._listing = []
-
-        def track_pipeline(self, name):
-            self._listing.append(name)
-
-        def get_pipeline_names(self):
-            return self._listing
-
-    class MemoryBucket(object):
-
-        def __init__(self):
-            self._bucket = {}
-
-        def upload_from_string(self, name, data):
-            self._bucket[name] = data
-
-        def upload_from_file(self, name, input_file):
-            self._bucket[name] = input_file.read()
-
-        def exists(self, name):
-            return name in self._bucket
-
-        def download_as_string(self, name):
-            return self._bucket[name]
-
-        def download_to_file(self, name, output_file):
-            output_file.write(self._bucket[name])
-            output_file.flush()
-            output_file.seek(0)
-
-        def list_files(self, pathname):
-            return self._bucket.keys()
-
-        def remove(self, name):
-            del self._bucket[name]
-
-        def move(self, source, destination):
-            value = self.download_as_string(source)
-            self.remove(source)
-            self.upload_from_string(destination, value)
-
-    class MockSchedulerBackend(LegacyBackend):
-
-        def __init__(self, expected_status, job_information):
-            self._expected_status = expected_status
-            self._job_information = job_information
-
-        def get_paginated(self, start_index, number_to_get, status):
-            if self._expected_status == status:
-                return self._job_information
-
-            return []
-
-    class MockDeployment(object):
-
-        def __init__(self, scheduler_backend_callback):
-            self._scheduler_backend_callback = scheduler_backend_callback
-
-        def scheduler_backend(self):
-            return self._scheduler_backend_callback
 
     def setUp(self):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
         from foundations.global_state import config_manager, deployment_manager
         from foundations.bucket_pipeline_archive import BucketPipelineArchive
+        from .mocks.archive_listing import MockArchiveListing
+        from .mocks.memory_bucket import MemoryBucket
+        from .mocks.scheduler_backend import MockSchedulerBackend
+        from .mocks.deployment import MockDeployment
 
-        self._listing = self.MockArchiveListing()
+        self._listing = MockArchiveListing()
 
         def get_listing():
             return self._listing
 
-        self._bucket = self.MemoryBucket()
+        self._bucket = MemoryBucket()
 
         def get_bucket():
             return self._bucket
@@ -96,8 +35,8 @@ class TestJob(unittest.TestCase):
         self._pipeline_context = PipelineContext()
         self._pipeline = Pipeline(self._pipeline_context)
 
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [])
-        self._mock_deployment = self.MockDeployment(self._scheduler_backend)
+        self._scheduler_backend_instance = MockSchedulerBackend('RUNNING', [])
+        self._mock_deployment = MockDeployment(self._scheduler_backend)
 
         deployment_manager._scheduler = None # ugh...
         

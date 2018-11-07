@@ -11,62 +11,20 @@ from foundations_rest_api.v1.models.completed_job import CompletedJob
 
 class TestCompletedJob(unittest.TestCase):
 
-    class MockArchiveListing(object):
-
-        def __init__(self):
-            self._listing = []
-
-        def track_pipeline(self, name):
-            self._listing.append(name)
-
-        def get_pipeline_names(self):
-            return self._listing
-
-    class MemoryBucket(object):
-
-        def __init__(self):
-            self._bucket = {}
-
-        def upload_from_string(self, name, data):
-            self._bucket[name] = data
-
-        def upload_from_file(self, name, input_file):
-            self._bucket[name] = input_file.read()
-
-        def exists(self, name):
-            return name in self._bucket
-
-        def download_as_string(self, name):
-            return self._bucket[name]
-
-        def download_to_file(self, name, output_file):
-            output_file.write(self._bucket[name])
-            output_file.flush()
-            output_file.seek(0)
-
-        def list_files(self, pathname):
-            return self._bucket.keys()
-
-        def remove(self, name):
-            del self._bucket[name]
-
-        def move(self, source, destination):
-            value = self.download_as_string(source)
-            self.remove(source)
-            self.upload_from_string(destination, value)
-
     def setUp(self):
         from foundations.pipeline import Pipeline
         from foundations.pipeline_context import PipelineContext
         from foundations.global_state import config_manager
         from foundations.bucket_pipeline_archive import BucketPipelineArchive
+        from .mocks.archive_listing import MockArchiveListing
+        from .mocks.memory_bucket import MemoryBucket
 
-        self._listing = self.MockArchiveListing()
+        self._listing = MockArchiveListing()
 
         def get_listing():
             return self._listing
 
-        self._bucket = self.MemoryBucket()
+        self._bucket = MemoryBucket()
 
         def get_bucket():
             return self._bucket

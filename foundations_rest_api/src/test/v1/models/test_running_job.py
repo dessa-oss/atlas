@@ -12,33 +12,15 @@ from foundations.scheduler_legacy_backend import LegacyBackend
 
 class TestRunningJob(unittest.TestCase):
 
-    class MockSchedulerBackend(LegacyBackend):
-
-        def __init__(self, expected_status, job_information):
-            self._expected_status = expected_status
-            self._job_information = job_information
-
-        def get_paginated(self, start_index, number_to_get, status):
-            if self._expected_status == status:
-                return self._job_information
-
-            return []
-
-    class MockDeployment(object):
-
-        def __init__(self, scheduler_backend_callback):
-            self._scheduler_backend_callback = scheduler_backend_callback
-
-        def scheduler_backend(self):
-            return self._scheduler_backend_callback
-
     def setUp(self):
         from foundations.global_state import config_manager
         from foundations.global_state import deployment_manager
+        from .mocks.scheduler_backend import MockSchedulerBackend
+        from .mocks.deployment import MockDeployment
 
         deployment_manager._scheduler = None # ugh...
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [])
-        self._mock_deployment = self.MockDeployment(self._scheduler_backend)
+        self._scheduler_backend_instance = MockSchedulerBackend('RUNNING', [])
+        self._mock_deployment = MockDeployment(self._scheduler_backend)
 
         config_manager['deployment_implementation'] = {
             'deployment_type': self._mock_deployment,
@@ -103,9 +85,10 @@ class TestRunningJob(unittest.TestCase):
 
     def test_all_returns_job_information_from_scheduler(self):
         from foundations.scheduler_job_information import JobInformation
+        from .mocks.scheduler_backend import MockSchedulerBackend
 
         job_information = JobInformation('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'RUNNING', 'soju hero')
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information])
+        self._scheduler_backend_instance = MockSchedulerBackend('RUNNING', [job_information])
 
         expected_job = RunningJob(
             job_id='00000000-0000-0000-0000-000000000000', 
@@ -121,10 +104,11 @@ class TestRunningJob(unittest.TestCase):
 
     def test_all_returns_job_information_from_scheduler_with_different_jobs(self):
         from foundations.scheduler_job_information import JobInformation
+        from .mocks.scheduler_backend import MockSchedulerBackend
 
         job_information = JobInformation('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'RUNNING', 'soju zero')
         job_information_two = JobInformation('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'RUNNING', 'potato hero')
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information, job_information_two])
+        self._scheduler_backend_instance = MockSchedulerBackend('RUNNING', [job_information, job_information_two])
 
         expected_job = RunningJob(
             job_id='00000000-0000-0000-0000-000000000000', 
