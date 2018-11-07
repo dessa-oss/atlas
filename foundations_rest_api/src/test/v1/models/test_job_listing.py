@@ -11,6 +11,8 @@ from foundations.scheduler_legacy_backend import LegacyBackend
 
 class TestJob(unittest.TestCase):
 
+    __name__ = 'TestJob' # avoid crazy Python 2 bug: failure of unittest.skip decorator
+
     class MockArchiveListing(object):
 
         def __init__(self):
