@@ -69,6 +69,7 @@ class JobBundler(object):
         from pipes import quote
         from foundations.simple_tempfile import SimpleTempfile
         from foundations.global_state import module_manager
+        from foundations.job_bundling.script_environment import ScriptEnvironment
 
         with WorkingDirectoryStack():
             with tarfile.open(self.job_archive(), "w:gz") as tar:
@@ -89,10 +90,7 @@ class JobBundler(object):
 
                 if 'run_script_environment' in self._config:
                     with SimpleTempfile('w+') as temp_file:
-                        for name, value in self._config['run_script_environment'].items():
-                            temp_file.write('export {}={}\n'.format(quote(name), quote(value)))
-                        temp_file.flush()
-                        temp_file.seek(0)
+                        ScriptEnvironment(self._config).write_environment(temp_file)
                         tar.add(temp_file.name, arcname=self._job_name + '/run.env')
 
                 os.chdir(self._resource_directory)
