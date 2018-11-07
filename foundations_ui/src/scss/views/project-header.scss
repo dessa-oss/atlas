@@ -1,0 +1,105 @@
+.project-header-container{
+  width: 100%;
+  max-width: 100%;
+  height: 100px;
+  max-height: 100px;
+  background-color: $color-background;
+  border-bottom: 2px solid $color-header-border-bottom;
+}
+
+.project-header-logo-container{
+  width: 17%;
+  max-width: 17%;
+  height: 100%;
+  max-height:100%;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+
+.project-header-logo{
+  height: 50px;
+  width: 50px;
+  min-width: 50px;
+  min-height: 50px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 10px;
+}
+
+.project-header-logo-text{
+  font-size: 16pt;
+  text-align: center;
+  height: 100%;
+  min-height: 100%;
+  margin: auto;
+  text-align: center;
+  display: inline-block;
+  margin-top: 25px;
+  margin-left: 10px;
+  vertical-align: top;
+  color: $color-font-black;
+}
+
+.project-header-info-container{
+  width: 75%;
+  max-width: 83%;
+  height: 100%;
+  max-height: 100%;
+  display: inline-block;
+  margin-left: 8%;
+}
+
+.project-header-total-projects-container, .project-header-sort-filter-container{
+  width: 100%;
+  max-width: 100%;
+  height: 50%;
+  max-height: 50%;
+  margin: auto;
+  padding: 0px;
+}
+
+.project-header-sort-filter-container{
+}
+
+.project-header-projects-container{
+  width: 30%;
+  max-width: 30%;
+  margin: 0px;
+  display: inline-block;
+  text-align: left;
+}
+
+.project-header-projects-text{
+  font-size: 21pt;
+  text-align: center;
+  width: 110px;
+  max-width: 110px;
+  display: inline-block;
+  padding-bottom: 5px;
+  margin-top: 8%;
+}
+
+.project-header-total-projects-container{
+  width: 60%;
+  max-width: 60%;
+  display: inline-block;
+  text-align: right;
+}
+.project-header-total-projects-text{
+  font-size: 13pt;
+  text-align: center;
+  width: 120px;
+  max-width: 115px;
+  display: inline-block;
+  padding-bottom: 5px;
+  padding-right: 3px;
+}
+
+.project-header-total-projects-number-text{
+  display: inline-block;
+  font-size: 13pt;
+  text-align: center;
+  padding-bottom: 5px;
+
+}
