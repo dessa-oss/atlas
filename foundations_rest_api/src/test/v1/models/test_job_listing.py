@@ -8,9 +8,9 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 import unittest
 from foundations_rest_api.v1.models.job import Job
 
-class TestJob(unittest.TestCase):
+class TestJobListing(unittest.TestCase):
 
-    __name__ = 'TestJob' # avoid crazy Python 2 bug: failure of unittest.skip decorator
+    __name__ = 'TestJobListing' # avoid crazy Python 2 bug: failure of unittest.skip decorator
 
     def setUp(self):
         from foundations.pipeline import Pipeline
