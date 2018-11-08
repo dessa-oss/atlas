@@ -15,10 +15,19 @@ To run Foundations correctly, you will need to run all comands from an Anaconda 
 To install:
 
 - Open an Anaconda prompt
-- create a new conda environment by running `conda create --name foundations python=3.6`
-- activate the environment by running `conda activate foundations`
+- create a new conda environment by running 
+```
+conda create --name foundations python=3.6
+```
+- activate the environment by running 
+```
+conda activate foundations
+```
+- install dependencies via pip
+```
+pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
+```
 - install foundations libraries via pip using the [Wheel installation](STARTGUIDE.md#wheel-installation)
-- install additional dependencies via pip `pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise`
 
 See [running on Windows instructions](WINDOWS.md) for more details
 
