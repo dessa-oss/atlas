@@ -29,7 +29,7 @@ pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-a
 ```
 - install foundations libraries via pip using the [Wheel installation](STARTGUIDE.md#wheel-installation)
 
-See [running on Windows instructions](WINDOWS.md) for more details
+There are more steps to consider to make Foundations run successfully on Windows. See these [instructions here](WINDOWS.md) for more details.
 
 ### OSX/Linux
 
