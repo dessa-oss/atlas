@@ -18,8 +18,8 @@ class StageLogMiddleware(object):
         if isinstance(stage_output, tuple) and len(stage_output) == 2:
             logger = StageLogger(None, None, None, self._stage_context)
             return_value, result = stage_output
-            message_router.push_message(result, 'stage_log')
             for key, value in result.items():
+                message_router.push_message({'key': key, 'value': value}, 'stage_log')
                 logger.log_metric(key, value)
                 
         else:
