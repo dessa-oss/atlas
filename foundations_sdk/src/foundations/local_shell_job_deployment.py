@@ -5,13 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.job_bundler import JobBundler
 
 
 class LocalShellJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
         from foundations.global_state import config_manager
+        from foundations.job_bundler import JobBundler
+        
         self._config = {}
         self._config.update(config_manager.config())
 
@@ -69,22 +70,21 @@ class LocalShellJobDeployment(object):
     def _run(self):
         import subprocess
         import glob
-        import tarfile
         from foundations.change_directory import ChangeDirectory
         from foundations.serializer import deserialize_from_file
 
-        with tarfile.open(self._job_bundler.job_archive(), 'r:gz') as tar:
-            tar.extractall()
+        self._job_bundler.unbundle()
 
         with ChangeDirectory(self._job_name):
-            script = "{} ./run.sh".format(self._shell_command())
+            script = './run.sh'
             args = self._command_in_shell_command(script)
             subprocess.call(args)
 
-        file_name = glob.glob(self._job_name + '/*.pkl')[0]
-        with open(file_name, 'rb') as file:
-            self._results = deserialize_from_file(file)
-
+        results = glob.glob(self._job_name + '/*.pkl')
+        if results:
+            file_name = results[0]
+            with open(file_name, 'rb') as file:
+                self._results = deserialize_from_file(file)
 
     def _command_in_shell_command(self, command):
         return [self._shell_command(), '-c', command]

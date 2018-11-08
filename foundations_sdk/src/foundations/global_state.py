@@ -14,6 +14,7 @@ from foundations.module_manager import ModuleManager
 from foundations.log_manager import LogManager
 from foundations.middleware_manager import MiddlewareManager
 from foundations.foundations_context import FoundationsContext
+from foundations.message_router import MessageRouter
 
 import concurrent.futures
 
@@ -28,3 +29,4 @@ module_manager = ModuleManager()
 log_manager = LogManager(config_manager)
 middleware_manager = MiddlewareManager(config_manager)
 default_executor = concurrent.futures.ThreadPoolExecutor()
+message_router = MessageRouter()
