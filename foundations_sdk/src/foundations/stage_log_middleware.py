@@ -19,6 +19,7 @@ class StageLogMiddleware(object):
             return_value, result = stage_output
             for key, value in result.items():
                 logger.log_metric(key, value)
+                #this is probably where whe could create events 
         else:
             return_value = stage_output
         return return_value
