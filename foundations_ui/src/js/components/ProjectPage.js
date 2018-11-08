@@ -46,8 +46,10 @@ class ProjectPage extends Component {
 
     return (
       <div className="project-page-container">
-        <Toolbar />
-        <ProjectHeader />
+        <div className="header">
+          <Toolbar />
+          <ProjectHeader />
+        </div>
         <div className="projects-body-container">
           {projectList}
         </div>

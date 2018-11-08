@@ -3,7 +3,14 @@
 }
 
 .projects-body-container{
-  width: 41%;
-  max-width: 41%;
+  width: 705px;
+  max-width: 705px;
   margin: auto;
+  padding-top: 168px;
+  padding-bottom: 30px;
+}
+
+.header{
+  position: fixed;
+  width: 100%;
 }

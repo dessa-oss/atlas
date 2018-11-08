@@ -14,23 +14,17 @@ class ProjectSummary extends Component {
     return (
       <div className="project-summary-container">
         <div className="project-summary-info-container">
-          <div className="project-summary-name">
-            <p className="project-summary-name-text">{project.name}</p>
-          </div>
-          <div className="project-summary-source">
-            <p className="project-summary-source-text">{project.source}</p>
-          </div>
-          <div className="project-summary-owner">
-            <p className="project-summary-owner-text">Project owner:</p>
-            <p className="project-summary-owner-name-text">{project.owner}</p>
-          </div>
-          <div className="project-summary-created-at">
-            <p className="project-summary-created-at-text">Created at: </p>
-            <p className="project-summary-created-time-text">{project.created_at}</p>
-          </div>
+          <p className="project-summary-name-text">{project.name}</p>
+          <p className="project-summary-source-text">{project.source}</p>
+          <p className="project-summary-owner-text">
+            Project owner: <span>{project.owner}</span>
+          </p>
+          <p className="project-summary-created-at-text">
+            Created at: <span>{project.created_at}</span>
+          </p>
           <div className="project-summary-button-container">
-            <button type="button" className="project-view-queue">VIEW QUEUE</button>
-            <button type="button" className="project-view-job-list">VIEW JOB LIST</button>
+            <button type="button" className="project-view-queue text-upper">view queue</button>
+            <button type="button" className="project-view-job-list text-upper">view job list</button>
           </div>
         </div>
         <div className="project-summary-metrics-container" />

@@ -163,6 +163,11 @@ select {
 
 //helper classes
 //-----------------------------
+.text-right{
+  text-align: right;
+}
+
+
 .faded-out {
   display: none;
   opacity: 0;
@@ -170,6 +175,10 @@ select {
 
 .hidden {
   display: none;
+}
+
+.inline-block {
+  display: inline-block;
 }
 
 .opaque {
@@ -192,6 +201,10 @@ select {
   width:100%;
 }
 
+.half-width {
+  width: 50%;
+}
+
 .position-relative {
   position: relative;
 }
@@ -202,10 +215,6 @@ select {
 
 .no-margin {
   margin: 0;
-}
-
-.full-width{
-  width:100%;
 }
 
 .disabled-background{

@@ -1,6 +1,7 @@
 //https://davidwalsh.name/write-media-queries-sass
 $tablet-width: 768px;
 $desktop-width: 1024px;
+$project-page-width: 1170px;
 
 @mixin mobile {
   @media (max-width: #{$tablet-width - 1px}) {
@@ -22,6 +23,12 @@ $desktop-width: 1024px;
 
 @mixin desktop {
   @media (min-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin project-page {
+  @media (max-width: #{$project-page-width}) {
     @content;
   }
 }
