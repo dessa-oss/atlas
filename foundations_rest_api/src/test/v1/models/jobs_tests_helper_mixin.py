@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class JobManagerMixin(object):
+class JobsTestsHelperMixin(object):
 
     def _setup_deployment(self, expected_status):
         from foundations.global_state import config_manager

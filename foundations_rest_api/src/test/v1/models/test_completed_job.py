@@ -7,10 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.v1.models.completed_job import CompletedJob
-from .job_manager_mixin import JobManagerMixin
+from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestCompletedJob(unittest.TestCase, JobManagerMixin):
+class TestCompletedJob(unittest.TestCase, JobsTestsHelperMixin):
 
     def setUp(self):
         self._setup_results_archiving()

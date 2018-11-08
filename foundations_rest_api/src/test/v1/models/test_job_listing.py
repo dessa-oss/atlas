@@ -7,10 +7,10 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 import unittest
 from foundations_rest_api.v1.models.job import Job
-from .job_manager_mixin import JobManagerMixin
+from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestJobListing(unittest.TestCase, JobManagerMixin):
+class TestJobListing(unittest.TestCase, JobsTestsHelperMixin):
 
     __name__ = 'TestJobListing' # avoid crazy Python 2 bug: failure of unittest.skip decorator
 

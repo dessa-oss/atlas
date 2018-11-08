@@ -8,10 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from foundations_rest_api.v1.models.running_job import RunningJob
 from foundations.scheduler_legacy_backend import LegacyBackend
-from .job_manager_mixin import JobManagerMixin
+from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestRunningJob(unittest.TestCase, JobManagerMixin):
+class TestRunningJob(unittest.TestCase, JobsTestsHelperMixin):
 
     def setUp(self):
         self._setup_deployment('RUNNING')
