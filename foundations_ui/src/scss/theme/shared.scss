@@ -49,29 +49,35 @@ input, textarea {
   }
 }
 
-button, .button {
-  display: block;
-  background-color: $color-button-background;
-  border: none;
+button.b--mat {
+  margin: 15px;
+  margin-left: 15px;
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  width: auto;
+  padding: 10px 15px;
+  height: 30px;
+  line-height: 10px;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  font-family: DINBold;
   text-align: center;
-  font-size: 0.8rem;
-  padding: 10px 25px;
-  cursor: pointer;
-  max-width: 100%;
-  vertical-align: middle;
-  color: $color-button-text;
-  margin: 20px auto;
-  @include transition-with-defaults(opacity);
-  &:focus, &:active {
-    outline: none;
+  font-size: 12px;
+  color: white;
   }
-  &:hover:not(.disabled) {
-    opacity: 0.75;
+
+  button.b--mat.b--affirmative {
+  background-color: #4A9CF8;
   }
-  &.disabled {
-    background-color: #545454;
+  
+  button.b--mat.b--affirmative:hover {
+  background-color: #62AAFB;
   }
-}
+  
+  button.b--mat.b--affirmative:active {
+  background-color: #328FF8;
+  }
 
 a {
   cursor: pointer;

@@ -4,9 +4,38 @@
   border: 1px solid $color-border-bottom;
   border-radius: 8px;
   margin-top: 30px;
+  padding-left: 30px;
 }
 
-.project-summary-name-text{
-  
+.project-summary-info-container{
+  border-right: 1px solid $color-border-bottom;
+  width: 75%;
+  h2{
+    color: $color-dark-blue;
+    margin-bottom: 5px;
+  }
+  p:first-of-type{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    padding-bottom: 15px;
+  }
+  p:not(:first-of-type){
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  span{
+    font-size: 12px;
+  }
 }
 
+.project-summary-metrics-container{
+  width: 25%;
+}
+
+.project-summary-button-container{
+  button{
+    margin-left: 0px;
+  }
+}

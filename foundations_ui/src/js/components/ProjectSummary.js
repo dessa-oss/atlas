@@ -14,17 +14,17 @@ class ProjectSummary extends Component {
     return (
       <div className="project-summary-container">
         <div className="project-summary-info-container">
-          <p className="project-summary-name-text">{project.name}</p>
-          <p className="project-summary-source-text">{project.source}</p>
+          <h2 className="project-summary-name-text">{project.name}</h2>
+          <p className="project-summary-source-text">data source</p>
           <p className="project-summary-owner-text">
-            Project owner: <span>{project.owner}</span>
+            Project owner: <span className="font-regular">{project.owner}</span>
           </p>
           <p className="project-summary-created-at-text">
-            Created at: <span>{project.created_at}</span>
+            Created at: <span className="font-regular">{project.created_at}</span>
           </p>
           <div className="project-summary-button-container">
-            <button type="button" className="project-view-queue text-upper">view queue</button>
-            <button type="button" className="project-view-job-list text-upper">view job list</button>
+            <button type="button" className="b--mat b--affirmative">view queue</button>
+            <button type="button" className="b--mat b--affirmative">view job list</button>
           </div>
         </div>
         <div className="project-summary-metrics-container" />
