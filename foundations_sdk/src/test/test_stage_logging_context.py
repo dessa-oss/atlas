@@ -61,6 +61,22 @@ class TestStageLoggingContext(unittest.TestCase):
         context.log_metric('loss', 0.554)
         self.assertEqual(0.554, logger.value)
 
+    def test_log_metric_value_raises_exception_not_number_or_string(self):
+        logger = self.MockLogger()
+        context = StageLoggingContext(logger)
+
+        with self.assertRaises(TypeError) as metric:
+            context.log_metric('loss', [2])
+        self.assertEqual(metric.expected, TypeError)
+
+    def test_log_metric_value_raises_exception_not_number_or_string_different_value(self):
+        logger = self.MockLogger()
+        context = StageLoggingContext(logger)
+
+        with self.assertRaises(TypeError) as metric:
+            context.log_metric('loss', {"a": 22})
+        self.assertEqual(metric.expected, TypeError)
+
     def test_log_metric_logs_value_different_value(self):
         logger = self.MockLogger()
         context = StageLoggingContext(logger)

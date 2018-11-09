@@ -12,4 +12,5 @@ class ProjectsController(object):
     
     def index(self):
         from foundations_rest_api.v1.models.project import Project
-        return Project.all().only(['name'])
+        return Project.all().only(['name', 'created_at', 'owner'])
+        

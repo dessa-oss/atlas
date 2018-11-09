@@ -24,6 +24,11 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
+    install_requires=[
+        'foundations',
+        'pysftp==0.2.8',
+        'paramiko==2.4.1',
+    ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={

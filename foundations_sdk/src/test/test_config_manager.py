@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations.config_manager import ConfigManager
+from mock import patch
 
 
 class TestConfigManager(unittest.TestCase):
@@ -207,3 +208,19 @@ class TestConfigManager(unittest.TestCase):
         }
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('socks', instance)
+
+
+    def call_reflect_constructor(self, metric):
+        config_manager = ConfigManager()
+        config_manager[metric + '_implementation'] = {metric + '_type':'some_' + metric}
+        config_manager.reflect_constructor(metric, metric, lambda:'socks')
+    
+    @patch('logging.Logger.info')
+    def test_reflect_constructor_info(self, mock):
+        self.call_reflect_constructor('deployment')
+        mock.assert_called_with('Configured with {\'deployment_type\': \'some_deployment\'}')
+
+    @patch('logging.Logger.debug')
+    def test_reflect_constructor_debug(self, mock):
+        self.call_reflect_constructor('archive')
+        mock.assert_called_with('Configured with {\'archive_type\': \'some_archive\'}')

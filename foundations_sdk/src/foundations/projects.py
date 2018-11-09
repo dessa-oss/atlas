@@ -21,18 +21,23 @@ def get_metrics_for_all_jobs(project_name):
         [pandas.DataFrame] -- Pandas DataFrame containing all of the results
     """
 
-    from pandas import DataFrame
-
-    return DataFrame(_flattened_job_metrics(project_name))
+    return _flattened_job_metrics(project_name)
 
 
 def _flattened_job_metrics(project_name):
-    stage_uuids = []
+    from pandas import DataFrame, concat
+
+    job_metadata_list = []
+    input_params_list = []
+    output_metrics_list = []
 
     for job_data in _project_job_data(project_name):
-        _update_job_data(job_data, stage_uuids)
+        stage_uuids = []
+        _update_job_data(job_data, input_params_list, output_metrics_list, stage_uuids)
         _update_datetime(job_data)
-        yield job_data
+        job_metadata_list.append(job_data)
+
+    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis = 1, sort = False)
 
 def _update_datetime(job_data):
     from foundations.utils import datetime_string
@@ -42,16 +47,15 @@ def _update_datetime(job_data):
         job_data['completed_time'] = datetime_string(job_data['completed_time'])
 
 
-def _update_job_data(job_data, stage_uuids):
-    output_metrics = job_data['output_metrics']
+def _update_job_data(job_data, input_param_list, output_metrics_list, stage_uuids):
+    output_metrics_list.append(job_data['output_metrics'])
     del job_data['output_metrics']
 
-    _fill_job_parameters(job_data, stage_uuids)
-
-    job_data.update(output_metrics)
+    _fill_job_parameters(job_data, input_param_list, stage_uuids)
 
 
-def _fill_job_parameters(job_data, stage_uuids):
+
+def _fill_job_parameters(job_data, input_param_list, stage_uuids):
     job_parameters = job_data['job_parameters']
     del job_data['job_parameters']
 
@@ -59,17 +63,38 @@ def _fill_job_parameters(job_data, stage_uuids):
     del job_data['input_params']
 
     _update_uuid_list(input_params, stage_uuids)
+    index_tracker = _store_parameter_indices(input_params, stage_uuids)
+    input_param_dict = {}
 
     for param in input_params:
-        stage_name = _parameter_name(param, stage_uuids)
+        stage_name = _parameter_name(param, stage_uuids, index_tracker)
         stage_value = _stage_value(param, job_parameters)
+        input_param_dict[stage_name] = stage_value
 
-        job_data[stage_name] = stage_value
+    input_param_list.append(input_param_dict)
 
+def _store_parameter_indices(input_params, stage_uuids):
+    from collections import defaultdict
+    index_tracker = defaultdict(list)
 
-def _parameter_name(parameter, stage_uuids):
+    for param in input_params:
+        index_tracker[param['name']].append(stage_uuids.index(param['stage_uuid']))
+
+    for key in index_tracker:
+        index_tracker[key] = sorted(index_tracker[key], key=int)
+         
+    return index_tracker
+
+def _parameter_name(parameter, stage_uuids, index_tracker):
     stage_index = stage_uuids.index(parameter['stage_uuid'])
-    return '{}-{}'.format(parameter['name'], stage_index)
+    stage_name = parameter['name']
+
+    argument_index = index_tracker[stage_name].index(stage_index)
+    index_tracker[stage_name][argument_index] = 'X'
+
+    if argument_index > 0:
+        return '{}-{}'.format(stage_name, argument_index)
+    return parameter['name']
 
 
 def _stage_value(parameter, job_parameters):

@@ -1,3 +1,5 @@
+#Add this .config.yaml to the folder or link it to the script where you're running the job you're deploying on ssh
+
 cache_implementation:
   cache_type: foundations.LocalFileSystemCacheBackend
   constructor_arguments: [/tmp/foundations-cache]
@@ -22,6 +24,10 @@ artifact_archive_implementation:
 
 miscellaneous_archive_implementation:
   archive_type: foundations.LocalFileSystemPipelineArchive
+
+project_listing_implementation:
+  project_listing_type: foundations.bucket_pipeline_listing.BucketPipelineListing
+  constructor_arguments: [!!python/name:foundations_ssh.sftp_bucket.SFTPBucket, /home/lou/mount/testbed/projects]
 
 deployment_implementation:
   deployment_type: foundations_ssh.SFTPJobDeployment

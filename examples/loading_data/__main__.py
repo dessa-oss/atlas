@@ -15,13 +15,17 @@ which perform provenance tracking, caching, prepping your job for deployment to 
 
 The "main" code below is exactly what you'd write without Foundations, save for that
 .run() method.  That method deploys your job to some configured compute - could be GCP,
-your local machine, or even an NVIDIA DGX!  You can in principle use the .run() method
+your local machine, or even an NVIDIA DGX! (Check out the example_configs folder to learn how how to 
+modify your configuration to deploy remotely.) You can in principle use the .run() method
 on any stage, but using it on the final stage is usually what you want.
 """
 
 import foundations
 from common.data import load_titanic
 from common.logging import log_data, log_formatted
+
+# set configuration for running the job 
+foundations.config_manager.add_config_path('config/local_default.config.yaml')
 
 load_titanic = foundations.create_stage(load_titanic)
 log_data = foundations.create_stage(log_data)

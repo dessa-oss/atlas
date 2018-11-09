@@ -11,9 +11,9 @@ class StageLoggingMiddleware(object):
         self._stage = stage
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        self._log().debug('Running stage `%s` (uuid: `%s`), file: %s, line: %s', self._stage.function_name(), self._stage.uuid(), self._stage.source_file(), self._stage.source_line())
+        self._log().info('Running stage `%s` (uuid: `%s`), file: %s, line: %s', self._stage.function_name(), self._stage.uuid(), self._stage.source_file(), self._stage.source_line())
         return_value = callback(args, kwargs)
-        self._log().debug('Finished stage %s (uuid: %s)', self._stage.function_name(), self._stage.uuid())
+        self._log().info('Finished stage %s (uuid: %s)', self._stage.function_name(), self._stage.uuid())
         return return_value
 
     def _log(self):

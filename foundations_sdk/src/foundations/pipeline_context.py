@@ -44,12 +44,46 @@ class PipelineContext(object):
         result_saver.save(self.file_name, self._context())
 
     def save_to_archive(self, archiver):
+        from foundations.unserializable_placeholder import UnserializablePlaceholder
+
         archiver.append_tracker()
         archiver.append_miscellaneous('stage_listing', self._stage_keys())
         self.global_stage_context.save_to_archive(archiver)
+
         for stage_context in self.stage_contexts.values():
-            stage_context.save_to_archive(archiver)
+            stage_context.save_all_but_persisted_data(archiver)
+
+            try:
+                stage_context.save_persisted_data(archiver)
+            except TypeError:
+                self._log_failed_data_persist(stage_context)
+
+                stage_uuid = stage_context.uuid
+                stage_name = self._lookup_stage_name_from_uuid(stage_uuid)
+                job_name = self.file_name
+
+                stage_context.stage_output = UnserializablePlaceholder(stage_name, stage_uuid, job_name)
+                stage_context.save_persisted_data(archiver)
+
         self.provenance.save_to_archive(archiver)
+
+    def _log_failed_data_persist(self, stage_context):
+        from foundations import log_manager
+        logger = log_manager.get_logger(__name__)
+
+        format_string = "Cannot persist value of type '{}' from stage '{}': {}"
+
+        stage_type = type(stage_context.stage_output).__name__
+        stage_name = self._lookup_stage_name_from_uuid(stage_context.uuid)
+        stage_value = stage_context.stage_output
+
+        warning_message = format_string.format(stage_type, stage_name, stage_value)
+        logger.warning(warning_message)
+    
+    def _lookup_stage_name_from_uuid(self, uuid):
+        stage_hierarchy = self.provenance.stage_hierarchy
+        stage_hierarchy_entries = stage_hierarchy.entries
+        return stage_hierarchy_entries[uuid].function_name
 
     def _stage_keys(self):
         return list(self.stage_contexts.keys())
@@ -59,58 +93,53 @@ class PipelineContext(object):
         if not self._stage_log_archive_loaded:
             self._stage_log_archive_loaded = True
 
-            with ThreadManager() as manager:    
-                manager.spawn(self.provenance.load_stage_log_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_stage_log_from_archive, archiver)
+            self.provenance.load_stage_log_from_archive(archiver)
+            self.global_stage_context.load_stage_log_from_archive(archiver)
 
-                for stage_context in self.stage_contexts.values():
-                    manager.spawn(stage_context.load_stage_log_from_archive, archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_stage_log_from_archive(archiver)
 
     def load_persisted_data_from_archive(self, archiver):
         self.load_miscellaneous_from_archive(archiver)
         if not self._persisted_data_archive_loaded:
             self._persisted_data_archive_loaded = True
 
-            with ThreadManager() as manager:
-                manager.spawn(self.provenance.load_persisted_data_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_persisted_data_from_archive, archiver)
+            self.provenance.load_persisted_data_from_archive(archiver)
+            self.global_stage_context.load_persisted_data_from_archive(archiver)
 
-                for stage_context in self.stage_contexts.values():
-                    manager.spawn(stage_context.load_persisted_data_from_archive, archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_persisted_data_from_archive(archiver)
 
     def load_provenance_from_archive(self, archiver):
         if not self._provenance_archive_loaded:
             self.load_miscellaneous_from_archive(archiver)
             self._provenance_archive_loaded = True
 
-            with ThreadManager() as manager:
-                manager.spawn(self.provenance.load_provenance_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_provenance_from_archive, archiver)
+            self.provenance.load_provenance_from_archive(archiver)
+            self.global_stage_context.load_provenance_from_archive(archiver)
 
-                for stage_context in self.stage_contexts.values():
-                    manager.spawn(stage_context.load_provenance_from_archive, archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_provenance_from_archive(archiver)
 
     def load_job_source_from_archive(self, archiver):
         if not self._job_source_archive_loaded:
             self._job_source_archive_loaded = True
 
-            with ThreadManager() as manager:
-                manager.spawn(self.provenance.load_job_source_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_job_source_from_archive, archiver)
+            self.provenance.load_job_source_from_archive(archiver)
+            self.global_stage_context.load_job_source_from_archive(archiver)
 
-                for stage_context in self.stage_contexts.values():
-                    manager.spawn(stage_context.load_job_source_from_archive, archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_job_source_from_archive(archiver)
 
     def load_artifact_from_archive(self, archiver):
         if not self._artifact_archive_loaded:
             self._artifact_archive_loaded = True
 
-            with ThreadManager() as manager:
-                manager.spawn(self.provenance.load_artifact_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_artifact_from_archive, archiver)
+            self.provenance.load_artifact_from_archive(archiver)
+            self.global_stage_context.load_artifact_from_archive(archiver)
 
-                for stage_context in self.stage_contexts.values():
-                    manager.spawn(stage_context.load_artifact_from_archive, archiver)
+            for stage_context in self.stage_contexts.values():
+                stage_context.load_artifact_from_archive(archiver)
 
     def load_miscellaneous_from_archive(self, archiver):
         if not self._miscellaneous_archive_loaded:
@@ -125,12 +154,11 @@ class PipelineContext(object):
 
             stage_contexts = list(map(_create_stage_contexts, stage_uuids))
 
-            with ThreadManager() as manager:
-                manager.spawn(self.provenance.load_miscellaneous_from_archive, archiver)
-                manager.spawn(self.global_stage_context.load_miscellaneous_from_archive, archiver)
+            self.provenance.load_miscellaneous_from_archive(archiver)
+            self.global_stage_context.load_miscellaneous_from_archive(archiver)
 
-                for stage_context in stage_contexts:
-                    manager.spawn(stage_context.load_miscellaneous_from_archive, archiver)
+            for stage_context in stage_contexts:
+                stage_context.load_miscellaneous_from_archive(archiver)
                     
             for stage_context in stage_contexts:        
                 self.add_stage_context(stage_context)

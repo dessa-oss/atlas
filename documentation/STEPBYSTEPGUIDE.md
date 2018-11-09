@@ -1,4 +1,20 @@
-# Step by step Guide
+# Step by Step Guide
+
+## Step 0: Set your configuration (optional)
+
+If you are:
+
+ - Planning on running your foundations code on a remote environment like Google Cloud Platform (GCP) or SSH
+ - Want to modify where foundations stores data when running locally
+ - Want to setup a cache
+ - Looking to modify the verbosity of foundations logs
+ - Looking to set environment variables in your deployment environment
+ 
+ you can customize your configurations. Instructions and examples on how to do this can be found [here](../examples/example_configs/README.md).
+ 
+ 
+ *You don't need to specify the above! By default, foundations will deploy locally, running your code on your local machine.*
+
 
 ## Step 1: Writing a model code
 
@@ -86,6 +102,10 @@ foundations.get_metrics_for_all_jobs("demo_project")
 ```
 This will read logged metrics for jobs ran under project name `demo_project`. It returns a pandas data frame.
 
+### Web GUI
+
+To use the web GUI to view job information, see the README in `/foundations_ui` directory: [here](https://github.com/DeepLearnI/foundations/blob/master/foundations_ui/README.md).
+
 ## Step 6: Use Foundations caching feature
 
 Now, that you know how to log and read metrics for each job, you want to train best model possible. You will be running jobs (model code) with various different data inputs and parameters. In these numerous jobs many computations will be similar, so Foundations has a smart way of detecting these identical computations across all jobs and re-using the already computated step instead of re-computing everytime for every job. We call it caching.
@@ -134,13 +154,13 @@ This fetches the source code of a given stage.
 reader.get_unstructured_results(job_id, stage_id)
 ```
 
-If a stage has outputs that have been persisted with `.persist()`, this function will return the list of these outputs. 
+If a stage has outputs that have been persisted with `.persist()`, this function will return the list of these outputs, assuming the outputs are serializable by the `dill` library.  If the output of a stage cannot be serialized by `dill`, the execution of that stage will not be affected (a warning will be logged).  When trying to fetch an unserializable persisted output, however, the result reader will throw an exception.  Both the warning and exception will contain a message which itself contains the name of the stage and the type of the output that you tried to persist.
 
 ```
 reader.get_error_information(job_id, <option stage_id>)
 ```
 
-Returns the stack trace for either the job or the specific stage specified, if it fails. If there is no failure, this will return None.  
+Returns the stack trace for either the job or the specific stage specified, if it fails. If there is no failure, this will return None.
 
 ```
 reader.create_working_copy(pipeline_name, path_to_save)
@@ -148,5 +168,8 @@ reader.create_working_copy(pipeline_name, path_to_save)
 
 Creates a copy of your job source in a different location. 
 
+## Step 8: Adding additional dependencies (optional)
 
+Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your model code exists with the dependencies explicitly stated. The requirements file will be in the root of the model code directory. For an example of this, see where the [requirements.txt in /examples](https://github.com/DeepLearnI/foundations/tree/master/examples) sits.
 
+Reference the main [STARTGUIDE](https://github.com/DeepLearnI/foundations/blob/master/documentation/STARTGUIDE.md) for a more detailed explanation.
