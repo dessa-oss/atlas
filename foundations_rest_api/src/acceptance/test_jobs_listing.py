@@ -9,15 +9,21 @@ import unittest
 import json
 from foundations_rest_api.global_state import app_manager
 from test.v1.models.jobs_tests_helper_mixin import JobsTestsHelperMixin
+from .api_test_case_helper import APITestCaseHelper
 
 
-class TestJobsListing(unittest.TestCase, JobsTestsHelperMixin):
+class TestJobsListing(APITestCaseHelper, JobsTestsHelperMixin):
 
     def setUp(self):
-        self.client = app_manager.app().test_client(self)
+        self.setup_api_test_env('/api/v1/projects/default/job_listing', 'start_time')
         self._setup_deployment('RUNNING')
         self._setup_results_archiving()
+        self._setup_two_jobs()
 
+    def tearDown(self):
+        self._cleanup()
+
+    def _setup_two_jobs(self):
         def method():
             from foundations.stage_logging import log_metric
             log_metric('loss', 15.33)
@@ -26,29 +32,17 @@ class TestJobsListing(unittest.TestCase, JobsTestsHelperMixin):
         self._make_completed_job('my job', stage, 9999999999, 9999999999)
         self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
-    def tearDown(self):
-        self._cleanup()
-
-    def test_get_jobs_listing(self):        
-        url = '/api/v1/projects/{}/job_listing'
-        resp = self.client.get(url.format('default'))
-        self.assertEqual(resp.status_code, 200)
-        data = json.loads(resp.data)
+    def test_get_route(self):        
+        data = super(TestJobsListing, self).test_get_route()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_jobs_listing_sorted_by_start_date_descendant(self):
-        url = '/api/v1/projects/{}/job_listing?sort=-start_time'
-        resp = self.client.get(url.format('default'))
-        self.assertEqual(resp.status_code, 200)
-        data = json.loads(resp.data)
+    def test_get_route_sorted_descendant(self):
+        data = super(TestJobsListing, self).test_get_route_sorted_descendant()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_jobs_listing_sorted_by_start_date_ascendant(self):
-        url = '/api/v1/projects/{}/job_listing?sort=start_time'
-        resp = self.client.get(url.format('default'))
-        self.assertEqual(resp.status_code, 200)
-        data = json.loads(resp.data)
+    def test_get_route_sorted_ascendant(self):
+        data = super(TestJobsListing, self).test_get_route_sorted_ascendant()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job')
