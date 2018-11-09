@@ -124,6 +124,9 @@ node {
             stage('Run Front End Unit Tests') {
                 sh "yarn run test"
             }
+            stage('Check for linting') {
+                sh "node_modules/.bin/eslint ."
+            }
         }
     }
     stage('Results') {

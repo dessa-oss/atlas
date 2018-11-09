@@ -11,7 +11,7 @@ Install:
 Running:
 - cp env_example.sh env.sh
 - edit env.sh to point to your api
-- . ./env.sh
+- source ./env.sh
 - yarn or npm start
 
 Testing:
