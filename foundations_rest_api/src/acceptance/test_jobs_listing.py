@@ -12,10 +12,11 @@ from test.v1.models.jobs_tests_helper_mixin import JobsTestsHelperMixin
 from .api_test_case_helper import APITestCaseHelper
 
 
-class TestJobsListing(APITestCaseHelper, JobsTestsHelperMixin):
+class TestJobsListing(JobsTestsHelperMixin, APITestCaseHelper):
+    url = '/api/v1/projects/default/job_listing'
+    sorting_columns = ['start_time']
 
     def setUp(self):
-        self.setup_api_test_env('/api/v1/projects/default/job_listing', 'start_time')
         self._setup_deployment('RUNNING')
         self._setup_results_archiving()
         self._setup_two_jobs()
@@ -37,12 +38,12 @@ class TestJobsListing(APITestCaseHelper, JobsTestsHelperMixin):
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_route_sorted_descendant(self):
-        data = super(TestJobsListing, self).test_get_route_sorted_descendant()
+    def test_get_route_with_start_time_sorted_descendant(self):
+        data = super(TestJobsListing, self).test_get_route_with_start_time_sorted_descendant()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_route_sorted_ascendant(self):
-        data = super(TestJobsListing, self).test_get_route_sorted_ascendant()
+    def test_get_route_with_start_time_sorted_ascendant(self):
+        data = super(TestJobsListing, self).test_get_route_with_start_time_sorted_ascendant()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job')
