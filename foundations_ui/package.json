@@ -25,6 +25,7 @@
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
+    "jest-dom": "^2.1.1",
     "jest-pnp-resolver": "1.0.1",
     "jest-resolve": "23.6.0",
     "mini-css-extract-plugin": "0.4.3",
@@ -40,6 +41,8 @@
     "react-dev-utils": "^6.1.1",
     "react-dom": "^16.6.0",
     "react-router-dom": "^4.3.1",
+    "react-test-renderer": "^16.6.1",
+    "react-testing-library": "^5.2.3",
     "resolve": "1.8.1",
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "1.1.0",
@@ -73,6 +76,7 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
+    "snapshotSerializers": ["enzyme-to-json/serializer"],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
       "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,ts,tsx}"
@@ -112,6 +116,9 @@
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.7.0",
+    "enzyme-to-json": "^3.3.4",
     "eslint": "^5.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",

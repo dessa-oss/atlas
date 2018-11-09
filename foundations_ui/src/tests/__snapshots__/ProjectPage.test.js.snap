@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders ProjectPage 1`] = `
+<div
+  className="project-page-container"
+>
+  <div
+    className="header"
+  >
+    <Toolbar />
+    <ProjectHeader
+      numProjects={0}
+    />
+  </div>
+  <div
+    className="projects-body-container"
+  >
+    <p>
+      Loading projects
+    </p>
+  </div>
+</div>
+`;

@@ -10,20 +10,30 @@ class ProjectPage extends Component {
     this.state = {
       isLoaded: false,
       projects: [],
+      isMount: false,
     };
     this.getAllProjects = this.getAllProjects.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    await this.setState({ isMount: true });
     this.getAllProjects();
+  }
+
+  componentWillUnmount() {
+    this.setState({ isMount: false });
   }
 
   async getAllProjects() {
     const apiProjects = await ProjectActions.getProjects();
-    if (apiProjects != null) {
-      this.setState({ projects: apiProjects, isLoaded: true });
-    } else {
-      this.setState({ projects: [], isLoaded: true });
+    // use is mount for async as when it returns may have been unmounted
+    const { isMount } = this.state;
+    if (isMount) {
+      if (apiProjects != null) {
+        this.setState({ projects: apiProjects, isLoaded: true });
+      } else {
+        this.setState({ projects: [], isLoaded: true });
+      }
     }
   }
 
@@ -48,7 +58,7 @@ class ProjectPage extends Component {
       <div className="project-page-container">
         <div className="header">
           <Toolbar />
-          <ProjectHeader />
+          <ProjectHeader numProjects={projects.length} />
         </div>
         <div className="projects-body-container">
           {projectList}

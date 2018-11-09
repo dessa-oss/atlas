@@ -1,7 +1,21 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class ProjectHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      numProjects: this.props.numProjects,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ numProjects: nextProps.numProjects });
+  }
+
   render() {
+    const { numProjects } = this.state;
+
     return (
       <div className="project-header-container">
         <div className="project-header-logo-container">
@@ -15,7 +29,7 @@ class ProjectHeader extends Component {
             </div>
             <div className="half-width inline-block text-right">
               <h2 className="blue-border-bottom">
-                Total Projects: <span className="font-regular">37</span>
+                Total Projects: <span className="font-regular">{numProjects}</span>
               </h2>
             </div>
           </div>
@@ -25,5 +39,13 @@ class ProjectHeader extends Component {
     );
   }
 }
+
+ProjectHeader.propTypes = {
+  numProjects: PropTypes.number,
+};
+
+ProjectHeader.defaultProps = {
+  numProjects: 0,
+};
 
 export default ProjectHeader;

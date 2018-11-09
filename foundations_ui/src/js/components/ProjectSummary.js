@@ -12,7 +12,7 @@ class ProjectSummary extends Component {
   render() {
     const { project } = this.state;
     return (
-      <div className="project-summary-container">
+      <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
           <h2 className="project-summary-name-text">{project.name}</h2>
           <p className="project-summary-source-text">data source</p>

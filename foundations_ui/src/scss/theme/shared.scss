@@ -78,7 +78,20 @@ button.b--mat {
   button.b--mat.b--affirmative:active {
   background-color: #328FF8;
   }
-
+  
+  .no-elevation {
+    background: #F9F9F9;
+    border-radius: 2px;
+    display: inline-block;
+    height: 100px;
+    margin: 30px;
+    position: relative;
+    width: 100px;
+  }
+    
+    .elevation-1 {
+    box-shadow: 2px 4px 7px 0px rgba(0, 0, 0, 0.08), 2px 4px 7px 0px rgba(0, 0, 0, 0.08);
+  }
 a {
   cursor: pointer;
   text-decoration: none;
