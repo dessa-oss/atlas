@@ -20,8 +20,7 @@ class StageLogMiddleware(object):
             return_value, result = stage_output
             for key, value in result.items():
                 message_router.push_message({'key': key, 'value': value}, 'stage_log_middleware')
-                logger.log_metric(key, value)
-                
+                logger.log_metric(key, value)              
         else:
             return_value = stage_output
         return return_value

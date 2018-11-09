@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-
 from mock import patch 
 
 from foundations.stage_log_middleware import StageLogMiddleware
