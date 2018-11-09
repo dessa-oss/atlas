@@ -18,6 +18,7 @@
 .env.test.local
 .env.production.local
 .vscode
+apiary.env.sh
 env.sh
 
 npm-debug.log*
