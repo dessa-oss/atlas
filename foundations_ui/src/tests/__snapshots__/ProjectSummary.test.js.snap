@@ -13,7 +13,7 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     <p
       className="project-summary-source-text"
     >
-      data source
+      Data Source: Unknown
     </p>
     <p
       className="project-summary-owner-text"

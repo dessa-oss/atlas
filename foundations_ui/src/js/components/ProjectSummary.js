@@ -15,7 +15,7 @@ class ProjectSummary extends Component {
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
           <h2 className="project-summary-name-text">{project.name}</h2>
-          <p className="project-summary-source-text">data source</p>
+          <p className="project-summary-source-text">Data Source: Unknown</p>
           <p className="project-summary-owner-text">
             Project owner: <span className="font-regular">{project.owner}</span>
           </p>

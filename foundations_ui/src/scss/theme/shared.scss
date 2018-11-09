@@ -65,21 +65,21 @@ button.b--mat {
   text-align: center;
   font-size: 12px;
   color: white;
-  }
+}
 
-  button.b--mat.b--affirmative {
+button.b--mat.b--affirmative {
   background-color: #4A9CF8;
-  }
+}
   
-  button.b--mat.b--affirmative:hover {
+button.b--mat.b--affirmative:hover {
   background-color: #62AAFB;
-  }
+}
   
-  button.b--mat.b--affirmative:active {
+button.b--mat.b--affirmative:active {
   background-color: #328FF8;
-  }
+}
   
-  .no-elevation {
+.no-elevation {
     background: #F9F9F9;
     border-radius: 2px;
     display: inline-block;
@@ -87,11 +87,16 @@ button.b--mat {
     margin: 30px;
     position: relative;
     width: 100px;
-  }
+}
     
-    .elevation-1 {
+ .elevation-1 {
     box-shadow: 2px 4px 7px 0px rgba(0, 0, 0, 0.08), 2px 4px 7px 0px rgba(0, 0, 0, 0.08);
-  }
+}
+
+.no-bottom-margin {
+  margin-bottom: 0px;
+}
+
 a {
   cursor: pointer;
   text-decoration: none;
