@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import patch 
+from mock import patch, call
 
 from foundations.stage_log_middleware import StageLogMiddleware
 from foundations.global_state import message_router
@@ -37,6 +37,15 @@ class TestStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
         middleware.call(None, None, None, (), {},
                         self._log_callback('hello', {'loss': 56.33}))
         mock.assert_called_with({'key':'loss', 'value': 56.33}, 'stage_log_middleware')
+
+    @patch.object(message_router, 'push_message')
+    def test_call_pushes_message_multiple_different_values(self, mock):
+        middleware = self._make_middleware()
+        middleware.call(None, None, None, (), {},
+                        self._log_callback('hello', {'gain': 66.33, 'metric': 'abc'}))
+        call_1 = call({'key':'gain', 'value': 66.33}, 'stage_log_middleware')
+        call_2 = call({'key':'metric', 'value': 'abc'}, 'stage_log_middleware')
+        mock.assert_has_calls([call_1, call_2], any_order = True)
 
     def test_ignores_bad_stage_log(self):
         def _wide_tuple_callback(args, kwargs):
