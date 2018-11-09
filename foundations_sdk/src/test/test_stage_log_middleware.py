@@ -37,7 +37,7 @@ class TestStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {},
                         self._log_callback('hello', {'loss': 56.33}))
-        mock.assert_called_with({'key':'loss', 'value': 56.33}, 'stage_log')
+        mock.assert_called_with({'key':'loss', 'value': 56.33}, 'stage_log_middleware')
 
     def test_ignores_bad_stage_log(self):
         def _wide_tuple_callback(args, kwargs):
