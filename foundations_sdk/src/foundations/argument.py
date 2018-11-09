@@ -16,6 +16,9 @@ class Argument(object):
         from foundations.dynamic_parameter import DynamicParameter
         from foundations.stage_parameter import StageParameter
 
+        if isinstance(value, Argument):
+            return value
+
         if isinstance(value, Hyperparameter):
             if value.name is None:
                 value.name = name

@@ -84,9 +84,6 @@ Simple code example showing how easy it is to structure code in a Foundations-co
 
 Contains code used across the above modules.  Specifically, csv reading, logging, convenience classes, reusable ETL code, and the model itself.  This code has nothing to do with Foundations itself and exists only to support the main example modules.
 
-### [config](./config/__init__.py)
-
-Loads config used by Foundations to determine where to store job results as well as where to deploy a job.
 
 ### [titanic](./titanic/etl.py)
 
@@ -94,5 +91,5 @@ Contains ETL code specific to our solution of the [Titanic problem](https://www.
 
 ## Configuration Examples
 
-Foundations uses a configuration-driven approach to deployment. [Config Examples](./example_configs) gives examples on how to setup config for different enviornments.
+Foundations uses a configuration-driven approach to deployment. The [config](./config) folder contains the configuration used in the examples. [Config Examples](./example_configs) gives examples on how to setup config for different environments.
  

@@ -13,13 +13,16 @@ class TestDeploymentManager(unittest.TestCase):
     class MockDeployment(object):
 
         def __init__(self, job_name, job, job_source_bundle):
-            pass
+            self._job_name = job_name
 
         def config(self):
             return {}
 
         def deploy(self):
             pass
+        
+        def job_name(self):
+            return self._job_name
 
     class MockListing(object):
 
@@ -76,6 +79,11 @@ class TestDeploymentManager(unittest.TestCase):
         self._deployment_manager.simple_deploy(self._stage, '', {})
 
         self.assertEqual('my project', self._listing.value)
+    
+    @patch('logging.Logger.info')
+    def test_deployment_manager_deploy_info_log(self, mock):
+        deployment = self._deployment_manager.simple_deploy(self._stage, '', {})
+        mock.assert_called_with("Job '{}' deployed.".format(deployment.job_name())) 
 
     def _mock_listing(self):
         return self._listing

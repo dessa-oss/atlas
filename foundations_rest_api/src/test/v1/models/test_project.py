@@ -145,6 +145,8 @@ class TestProject(unittest.TestCase):
         project = Project.all().evaluate()[0].evaluate()
         expected_project = Project(
             name='project1',
+            created_at = None,
+            owner = None,
             completed_jobs='completed',
             running_jobs='running',
             queued_jobs='queued'
@@ -164,12 +166,16 @@ class TestProject(unittest.TestCase):
         project = [project.evaluate() for project in Project.all().evaluate()]
         expected_project = Project(
             name='project1',
+            created_at = None,
+            owner = None,
             completed_jobs='completed',
             running_jobs='running',
             queued_jobs='queued'
         )
         expected_project_two = Project(
             name='project2',
+            created_at = None,
+            owner = None,
             completed_jobs='completed',
             running_jobs='running',
             queued_jobs='queued'

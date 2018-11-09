@@ -27,10 +27,12 @@ exists across jobs and exists on a filesystem-like storage.  It must be called m
 """
 
 import foundations
-import config
 from common.data import load_titanic
 from common.prep import require
 from common.logging import log_data
+
+# set configuration for running the job 
+foundations.config_manager.add_config_path('config/local_default.config.yaml')
 
 load_titanic = foundations.create_stage(load_titanic)
 require = foundations.create_stage(load_titanic)

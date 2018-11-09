@@ -29,6 +29,9 @@ from common.data import load_titanic
 from common.prep import require
 from common.logging import log_data
 
+# set configuration for running the job 
+foundations.config_manager.add_config_path('config/local_default.config.yaml')
+
 load_titanic = foundations.create_stage(load_titanic)
 require = foundations.create_stage(require)
 log_data = foundations.create_stage(log_data)

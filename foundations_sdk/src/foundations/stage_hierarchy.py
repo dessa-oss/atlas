@@ -37,7 +37,7 @@ class StageHierarchyEntry(object):
         from foundations.argument import Argument
 
         for name, arg in stage_args:
-            if isinstance(arg, Argument):
-                provenance = arg.provenance()
-                provenance['name'] = name
-                yield provenance
+            arg = Argument.generate_from(arg, name)
+            provenance = arg.provenance()
+            provenance['name'] = name
+            yield provenance

@@ -5,24 +5,28 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 10 2018
 """
 
-import threading
 
 class ThreadManager(object):
+
     def __init__(self, serial=False):
+        import os
+        
+        is_running_2_7_on_jenkins = os.environ.get('PY_27_JENKINS', 'False') == 'True'
         self._pool = []
-        self._serial = serial
+        self._serial = is_running_2_7_on_jenkins or serial
 
     def __enter__(self):
         return self
 
     def __exit__(self, *args):
-        for thread in self._pool:
-            thread.join()
+        from foundations.helpers.future import Future
+
+        Future.all(self._pool).get()
 
     def spawn(self, target, *args, **kwargs):
-        if self._serial:
-            return target(*args, **kwargs)
+        from foundations.helpers.future import Future
 
-        thread = threading.Thread(target=target, args=args, kwargs=kwargs)
-        self._pool.append(thread)
-        thread.start()
+        if self._serial:
+            target(*args, **kwargs)
+        else:
+            self._pool.append(Future.execute(target, *args, **kwargs))

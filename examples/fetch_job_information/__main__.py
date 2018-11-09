@@ -19,8 +19,10 @@ See comments below for a walkthrough.
 
 # import utilities that aid in deserialization as well as reading from the file system,
 # and the result reader itself
-from foundations import JobPersister, ResultReader, log_manager
+from foundations import JobPersister, ResultReader, log_manager, config_manager
 
+# set configuration for running the job 
+config_manager.add_config_path('config/local_default.config.yaml')
 
 def main():
     # get a logger - like using print, but more configurable

@@ -84,6 +84,11 @@ class TestArgument(unittest.TestCase):
         argument = Argument.generate_from(self._make_stage(method, hyper_parameter), None)
         self.assertEqual(77, argument.value({'hello': 77}))
 
+    def test_generate_argument_returns_argument_when_argument_provided(self):
+        argument = Argument.generate_from(42, None)
+        argument2 = Argument.generate_from(argument, None)
+        self.assertEqual(argument, argument2)
+
     def test_stores_name(self):
         parameter = self.Parameter('hello', None, None)
         argument = Argument('world', parameter)
