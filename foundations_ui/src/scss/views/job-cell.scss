@@ -1,0 +1,39 @@
+.job-cell{
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 5px;
+  border: 1px solid $color-border-bottom;
+  margin: 0px;
+  height: 26px;
+  text-align: center;
+  background-color: $color-white;
+}
+
+.status-cell{
+  width: 25px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-id-cell{
+  width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.duration-cell{
+  width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+.user-cell{
+  width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

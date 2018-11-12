@@ -1,0 +1,17 @@
+.job-column-header {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  padding-left: 10px;
+  padding-bottom: 8px;
+
+  h4{
+    min-width: 80px;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+  }
+
+  .status-header{
+    min-width: 40px;
+  }
+}

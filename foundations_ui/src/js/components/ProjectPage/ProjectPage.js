@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import Toolbar from './Toolbar';
-import ProjectActions from '../actions/ProjectActions';
+import PropTypes from 'prop-types';
+import Toolbar from '../common/Toolbar';
+import ProjectActions from '../../actions/ProjectActions';
 import ProjectHeader from './ProjectHeader';
 import ProjectSummary from './ProjectSummary';
 
@@ -67,5 +68,17 @@ class ProjectPage extends Component {
     );
   }
 }
+
+ProjectPage.propTypes = {
+  isMount: PropTypes.bool,
+  isLoaded: PropTypes.bool,
+  projects: PropTypes.array,
+};
+
+ProjectPage.defaultProps = {
+  isMount: false,
+  isLoaded: false,
+  projects: [],
+};
 
 export default ProjectPage;
