@@ -5,3 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from test.consumers.test_job_metric_consumer import TestJobMetricConsumer
