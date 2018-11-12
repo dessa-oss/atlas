@@ -5,4 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.consumers.jobs import *
+
+class ProjectListing(object):
+
+    def __init__(self, redis):
+        self._redis = redis
+
+    def call(self, message, timestamp, meta_data):
+        self._redis.sadd('project:{}:jobs:queued'.format(message['project_name']), message['job_id'])

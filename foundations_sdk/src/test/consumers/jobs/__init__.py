@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.consumers.jobs import *
+from test.consumers.jobs.queued import *
