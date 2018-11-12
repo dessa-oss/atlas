@@ -9,3 +9,4 @@ from test.consumers.jobs.queued.test_project_listing import TestProjectListing
 from test.consumers.jobs.queued.test_job_state import TestJobState
 from test.consumers.jobs.queued.test_project_name import TestProjectName
 from test.consumers.jobs.queued.test_run_data import TestRunData
+from test.consumers.jobs.queued.test_run_data_keys import TestRunDataKeys
