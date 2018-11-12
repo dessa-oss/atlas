@@ -12,8 +12,6 @@ from foundations.consumers.jobs.queued.run_data import RunData
 
 class TestRunData(unittest.TestCase):
 
-    
-    
     def setUp(self):
         import json
 
