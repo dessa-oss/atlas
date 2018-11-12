@@ -5,5 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.consumers.jobs.queued.test_project_listing import TestProjectListing
-from test.consumers.jobs.queued.test_job_state import TestJobState
+class JobState(object):
+    
+    def __init__(self, redis):
+        self._redis = redis
+
+    def call(self, message, timestamp, meta_data):
+        self._redis.set('jobs:{}:state'.format(message['job_id']), 'qeueud')

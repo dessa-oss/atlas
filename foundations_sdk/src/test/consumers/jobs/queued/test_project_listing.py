@@ -27,3 +27,4 @@ class TestProjectListing(unittest.TestCase):
     def test_adds_job_to_project_queued_listing_different_project(self):
         self._consumer.call({'project_name': 'your sad project', 'job_id': 'my sad job'}, None, None)
         self._redis.sadd.assert_called_with('project:your sad project:jobs:queued', 'my sad job')
+
