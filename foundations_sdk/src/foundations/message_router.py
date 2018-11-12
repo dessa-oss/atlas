@@ -38,11 +38,12 @@ class MessageRouter(object):
             
         def push_message(self, route_name, message, metadata = None):
             """
-            Pushes message to a route
+            Pushes message and metadata (None by default) to a route
 
             Arguments:
-                message {json serializable data} -- message to send to route
                 route_name {string} -- name of route to send message to
+                message {dictionary} -- message to send to route
+                metadata {dictionary} -- default to None
             """
             for route in self.routes:
                 if route_name == route.get_name():
