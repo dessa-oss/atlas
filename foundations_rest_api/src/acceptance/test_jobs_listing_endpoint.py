@@ -14,7 +14,7 @@ from .api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
 class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     url = '/api/v1/projects/{_project_name}/job_listing'
-    sorting_columns = ['start_time']
+    sorting_columns = ['start_time', 'status']
 
     def setUp(self):
         self._setup_deployment('RUNNING')
@@ -40,12 +40,37 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_route_sorted_start_time_descendant(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_descendant()
+    def test_route_sorted_start_time_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_descending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_route_sorted_start_time_ascendant(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_ascendant()
+    def test_route_sorted_start_time_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_ascending()
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job')
+
+    def test_route_sorted_status_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_status_descending()
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job')
+
+    def test_route_sorted_status_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_status_ascending()
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job')
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_get_route_all_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_get_route_all_ascending()
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job')
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_get_route_all_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_get_route_all_descending()
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job')
+
+    def test_get_route_alternation(self):
+        data = super(TestJobsListingEndpoint, self).test_get_route_alternation()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job')
