@@ -36,7 +36,7 @@ class MessageRouter(object):
                 new_route.add_listener(listener)
                 self.routes.append(new_route)
             
-        def push_message(self, message, route_name):
+        def push_message(self, route_name, message, metadata = None):
             """
             Pushes message to a route
 
@@ -46,7 +46,7 @@ class MessageRouter(object):
             """
             for route in self.routes:
                 if route_name == route.get_name():
-                    route.push_message(message)
+                    route.push_message(message, metadata)
         
         def _in_route(self, route_name):
             for route in self.routes:
