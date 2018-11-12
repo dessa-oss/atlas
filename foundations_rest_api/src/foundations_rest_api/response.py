@@ -22,6 +22,7 @@ class Response(object):
         self._action_callback = action_callback
         self._parent = parent
         self._only = None
+        self._params = None
 
     def evaluate(self):
         """Calls the action callback and returns the result. 
@@ -39,10 +40,17 @@ class Response(object):
         self._only = only
         return self
 
+    def filter(self, params):
+        self._params = params
+        return self
+
     def as_json(self):
         from foundations_rest_api.v1.models.property_model import PropertyModel
 
         result = self.evaluate()
+
+        if self._params:
+            resullt = self._filter_result(result)
 
         if isinstance(result, list):
             return [self._value_as_json(value, self._only) for value in result]
@@ -86,3 +94,9 @@ class Response(object):
     def _is_property_model(self, value):
         from foundations_rest_api.v1.models.property_model import PropertyModel
         return isinstance(value, PropertyModel)
+
+    def _filter_result(self, result):
+        from .result_filters import result_filters
+        for result_filter in result_filters:
+            result = result_filter(result, self._params)
+        return result
