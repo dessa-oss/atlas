@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Column Header 1`] = `
+<div
+  className="job-column-header"
+>
+  <div
+    className=""
+  >
+    <h4
+      className="header-4 blue-border-bottom"
+    />
+    <div
+      className="arrow-down float-right"
+    />
+  </div>
+</div>
+`;

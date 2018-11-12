@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Table 1`] = `
+<div
+  className="job-table-container"
+>
+  <JobTableHeader />
+  <div
+    className="job-table-row-container"
+  >
+    <p>
+      Loading projects
+    </p>
+  </div>
+</div>
+`;
