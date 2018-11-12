@@ -10,14 +10,14 @@ import json
 from foundations_rest_api.global_state import app_manager
 
 
-class APITestCaseHelperMeta(type):
+class _APIAcceptanceTestCaseMeta(type):
 
     def __new__(mcls, *args, **kwargs):
         cls = super().__new__(mcls, *args, **kwargs)
-        if cls.__name__ not in ('APITestCaseHelper', 'APITestCaseHelperMeta'):
+        if cls.__name__ not in ('APIAcceptanceTestCaseBase', '_APIAcceptanceTestCaseMeta'):
             if not (getattr(cls, 'url', None) and getattr(cls, 'sorting_columns', None)):
                 raise NotImplementedError('You must define class attributes "url" and "sorting_columns"')
-            test_methods_names = APITestCaseHelper.setup_test_methods(cls.sorting_columns)
+            test_methods_names = APIAcceptanceTestCaseBase.setup_test_methods(cls.sorting_columns)
             cls._force_child_class_implementation(test_methods_names)
             cls.client = app_manager.app().test_client()
         return cls
@@ -30,7 +30,7 @@ class APITestCaseHelperMeta(type):
             raise NotImplementedError(msg)
 
 
-class APITestCaseHelper(unittest.TestCase, metaclass=APITestCaseHelperMeta):
+class APIAcceptanceTestCaseBase(unittest.TestCase, metaclass=_APIAcceptanceTestCaseMeta):
 
     @classmethod
     def setup_test_methods(cls, sorting_columns):
@@ -56,8 +56,8 @@ class APITestCaseHelper(unittest.TestCase, metaclass=APITestCaseHelperMeta):
 
         methods_names = []
         for sorting_column in cls._sorting_columns:
-            method_name_descendant = 'test_get_route_with_{}_sorted_descendant'.format(sorting_column)
-            method_name_ascendant = 'test_get_route_with_{}_sorted_ascendant'.format(sorting_column)
+            method_name_descendant = 'test_route_sorted_descendant_{}'.format(sorting_column)
+            method_name_ascendant = 'test_route_sorted_ascendant_{}'.format(sorting_column)
             setattr(cls, method_name_descendant, get_test_method_sorted_route(sorting_column, method_name_descendant))
             setattr(cls, method_name_ascendant, get_test_method_sorted_route(sorting_column, method_name_ascendant))
             methods_names += [method_name_descendant, method_name_ascendant]
