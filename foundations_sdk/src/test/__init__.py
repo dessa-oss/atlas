@@ -74,11 +74,12 @@ from test.test_utils import TestUtils
 from test.test_error_printer import TestErrorPrinter
 from test.test_projects import TestProjects
 from test.test_deployment_manager import TestDeploymentManager
-from test.helpers import *
-from test.models import *
-from test.job_bundling import *
 from test.test_exception_hook_middleware import TestExceptionHookMiddleware
 from test.test_safe_inspect import TestSafeInspect
 from test.test_message_route import TestMessageRoute
 from test.test_message_router import TestMessageRouter
 from test.test_message_route_listener import TestMessageRouteListener
+from test.helpers import *
+from test.models import *
+from test.job_bundling import *
+from test.consumers import *
