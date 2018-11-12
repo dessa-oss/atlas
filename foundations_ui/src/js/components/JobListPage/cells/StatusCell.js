@@ -14,9 +14,9 @@ class StatusCell extends Component {
 
     let statusCircle = 'status-green';
 
-    if (status === 'running') {
+    if (status.toLowerCase() === 'running') {
       statusCircle = 'status-yellow';
-    } else if (status === 'failed') {
+    } else if (status.toLowerCase() === 'error') {
       statusCircle = 'status-red';
     }
 
