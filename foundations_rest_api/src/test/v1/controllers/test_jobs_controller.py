@@ -33,7 +33,7 @@ class TestJobsController(unittest.TestCase):
             jobs = ['completed job 1', 'running job 2'])
 
         controller = JobsController()
-        controller.params = {'project_uuid': 'the great potato project'}
+        controller.params = {'project_name': 'the great potato project'}
 
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project'}
@@ -47,7 +47,7 @@ class TestJobsController(unittest.TestCase):
             jobs = ['completed job 1', 'running job 2'])
 
         controller = JobsController()
-        controller.params = {'project_uuid': 'the not so great potato project'}
+        controller.params = {'project_name': 'the not so great potato project'}
 
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project'}
