@@ -13,12 +13,13 @@ from .api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
 
 class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
-    url = '/api/v1/projects/default/job_listing'
+    url = '/api/v1/projects/{_project_name}/job_listing'
     sorting_columns = ['start_time']
 
     def setUp(self):
         self._setup_deployment('RUNNING')
         self._setup_results_archiving()
+        self._project_name = 'hana'
         self._setup_two_jobs()
 
     def tearDown(self):
@@ -30,6 +31,7 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
             log_metric('loss', 15.33)
 
         stage = self._pipeline.stage(method)
+        self._pipeline_context.provenance.project_name = self._project_name
         self._make_completed_job('my job', stage, 9999999999, 9999999999)
         self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
@@ -38,12 +40,12 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_route_with_start_time_sorted_descendant(self):
-        data = super(TestJobsListingEndpoint, self).test_get_route_with_start_time_sorted_descendant()
+    def test_route_sorted_start_time_descendant(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_descendant()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_route_with_start_time_sorted_ascendant(self):
-        data = super(TestJobsListingEndpoint, self).test_get_route_with_start_time_sorted_ascendant()
+    def test_route_sorted_start_time_ascendant(self):
+        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_ascendant()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job')

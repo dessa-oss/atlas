@@ -48,7 +48,8 @@ class APIAcceptanceTestCaseBase(unittest.TestCase, metaclass=_APIAcceptanceTestC
                 return '?sort={}{}'.format(sign, column)
 
             def test_get_route_sorted(self):
-                resp = self.client.get(self.url + get_sort_param_for_column(column, parent_method_name))
+                base_url = self._get_base_url()
+                resp = self.client.get(base_url + get_sort_param_for_column(column, parent_method_name))
                 self.assertEqual(resp.status_code, 200)
                 return json.loads(resp.data)
 
@@ -56,8 +57,8 @@ class APIAcceptanceTestCaseBase(unittest.TestCase, metaclass=_APIAcceptanceTestC
 
         methods_names = []
         for sorting_column in cls._sorting_columns:
-            method_name_descendant = 'test_route_sorted_descendant_{}'.format(sorting_column)
-            method_name_ascendant = 'test_route_sorted_ascendant_{}'.format(sorting_column)
+            method_name_descendant = 'test_route_sorted_{}_descendant'.format(sorting_column)
+            method_name_ascendant = 'test_route_sorted_{}_ascendant'.format(sorting_column)
             setattr(cls, method_name_descendant, get_test_method_sorted_route(sorting_column, method_name_descendant))
             setattr(cls, method_name_ascendant, get_test_method_sorted_route(sorting_column, method_name_ascendant))
             methods_names += [method_name_descendant, method_name_ascendant]
@@ -67,9 +68,41 @@ class APIAcceptanceTestCaseBase(unittest.TestCase, metaclass=_APIAcceptanceTestC
     def _set_abstract_method_for_normal_route(cls):
 
         def test_get_route(self):
-            resp = self.client.get(self.url)
+            base_url = self._get_base_url()
+            resp = self.client.get(base_url)
             self.assertEqual(resp.status_code, 200)
             return json.loads(resp.data)
 
         setattr(cls, 'test_get_route', test_get_route)
         return ['test_get_route']
+
+    def _extract_url_params(self):
+        params = []
+        temp_param = ''
+        filling_temp_param = False
+        for char in self.url:
+            if filling_temp_param:
+                if char =='{':
+                    raise Exception('Bad URL formatting')
+                elif char == '}':
+                    filling_temp_param = False
+                    params.append(temp_param)
+                    temp_param = ''
+                else:
+                    temp_param += char
+            else:
+                if char == '{':
+                    filling_temp_param = True
+                elif char == '}':
+                    raise Exception('Bad URL formatting')
+        if filling_temp_param:
+            raise Exception('Bad URL formatting')
+        return params
+
+
+    def _get_base_url(self):
+        url = self.url
+        params = self._extract_url_params()
+        for param in params:
+            url = url.replace('{{{}}}'.format(param), getattr(self, param))
+        return url
