@@ -13,6 +13,7 @@ class InputParameters(SerializedParameter):
     
     Arguments:
         redis {redis.Redis} -- A Redis connection object
+        serializer {object} -- A serializer having a #dumps method to convert the data into a string
     """
     
     def _get_attribute(self, message):

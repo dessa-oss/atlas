@@ -5,12 +5,20 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class RunData(object):
-    
-    def __init__(self, redis, serializer):
-        self._redis = redis
-        self._serializer = serializer
+from foundations.consumers.jobs.queued.mixins.serialized_parameter import SerializedParameter
 
-    def call(self, message, timestamp, meta_data):
-        serialized_run_data = self._serializer.dumps(message['job_parameters'])
-        self._redis.set('jobs:{}:parameters'.format(message['job_id']), serialized_run_data)
+
+class RunData(SerializedParameter):
+    """Save the parameter used when calling #run on a stage
+    to redis
+
+    Arguments:
+        redis {redis.Redis} -- A Redis connection
+        serializer {object} -- A serializer having a #dumps method to convert the data into a string
+    """
+
+    def _get_attribute(self, message):
+        return message['job_parameters']
+
+    def _get_attribute_key(self):
+        return 'parameters'
