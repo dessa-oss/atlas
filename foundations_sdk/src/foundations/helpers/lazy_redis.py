@@ -5,12 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class LazyRedis(object):
     """
     Class that lazily evaluates a callback method. Callback method should make a redis object. 
 
     Arguments:
-        callback {function} - function that returns an object 
+        callback {function} - Function that returns an object 
     """
 
     def __init__(self, callback):
@@ -18,12 +19,18 @@ class LazyRedis(object):
         self._callback = callback
 
     def __getattr__(self, name):
+        """
+        If it exists, get an attribute 'name' from the return object of the callback function
+
+        Arguments:
+            name {string} -- Name of attribute 
+        """
         conn = self._redis()
         inner_attribute = getattr(conn, name)
         if inner_attribute:
             return inner_attribute
 
-        raise AttributeError(self._missing_attribute_message(name))            
+        raise AttributeError(self._missing_attribute_message(name))
 
     def _redis(self):
         if self._redis_connection is None:
