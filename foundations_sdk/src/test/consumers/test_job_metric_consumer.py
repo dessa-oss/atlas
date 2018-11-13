@@ -22,7 +22,7 @@ class TestJobMetricConsumer(unittest.TestCase):
         self._consumer.call(
             {'key': 'key1', 'value': 'value1', 'job_id': 123}, None, None)
         self._redis.set.assert_called_with(
-            'job:123', serialize((None, 'key1', 'value1')))
+            'job:123:metrics', serialize((None, 'key1', 'value1')))
 
     def test_call_method_different_values(self):
         from foundations.fast_serializer import serialize
@@ -33,4 +33,4 @@ class TestJobMetricConsumer(unittest.TestCase):
         self._consumer.call({'key': key, 'value': value,
                              'job_id': job_id}, timestamp, None)
         self._redis.set.assert_called_with(
-            'job:19283', serialize((timestamp, key, value)))
+            'job:19283:metrics', serialize((timestamp, key, value)))

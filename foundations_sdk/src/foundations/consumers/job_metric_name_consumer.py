@@ -26,6 +26,6 @@ class JobMetricNameConsumer(object):
             timestamp {int} -- The time the event was created
             meta_data {dict} -- Additional data about the event
         """
-        key = 'project:{}'.format(message['project_name'])
+        key = 'project:{}:metrics'.format(message['project_name'])
         value = message['key']
         self._redis.sadd(key, value)
