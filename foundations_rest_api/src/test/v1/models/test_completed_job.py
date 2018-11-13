@@ -7,93 +7,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.v1.models.completed_job import CompletedJob
+from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestCompletedJob(unittest.TestCase):
-
-    class MockArchiveListing(object):
-
-        def __init__(self):
-            self._listing = []
-
-        def track_pipeline(self, name):
-            self._listing.append(name)
-
-        def get_pipeline_names(self):
-            return self._listing
-
-    class MemoryBucket(object):
-
-        def __init__(self):
-            self._bucket = {}
-
-        def upload_from_string(self, name, data):
-            self._bucket[name] = data
-
-        def upload_from_file(self, name, input_file):
-            self._bucket[name] = input_file.read()
-
-        def exists(self, name):
-            return name in self._bucket
-
-        def download_as_string(self, name):
-            return self._bucket[name]
-
-        def download_to_file(self, name, output_file):
-            output_file.write(self._bucket[name])
-            output_file.flush()
-            output_file.seek(0)
-
-        def list_files(self, pathname):
-            return self._bucket.keys()
-
-        def remove(self, name):
-            del self._bucket[name]
-
-        def move(self, source, destination):
-            value = self.download_as_string(source)
-            self.remove(source)
-            self.upload_from_string(destination, value)
+class TestCompletedJob(unittest.TestCase, JobsTestsHelperMixin):
 
     def setUp(self):
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
-        from foundations.global_state import config_manager
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
-
-        self._listing = self.MockArchiveListing()
-
-        def get_listing():
-            return self._listing
-
-        self._bucket = self.MemoryBucket()
-
-        def get_bucket():
-            return self._bucket
-
-        config_manager['archive_listing_implementation'] = {
-            'archive_listing_type': get_listing
-        }
-        archive_implementation = {
-            'archive_type': BucketPipelineArchive,
-            'constructor_arguments': [get_bucket],
-        }
-        config_manager['stage_log_archive_implementation'] = archive_implementation
-        config_manager['persisted_data_archive_implementation'] = archive_implementation
-        config_manager['provenance_archive_implementation'] = archive_implementation
-        config_manager['job_source_archive_implementation'] = archive_implementation
-        config_manager['artifact_archive_implementation'] = archive_implementation
-        config_manager['miscellaneous_archive_implementation'] = archive_implementation
-
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
+        self._setup_results_archiving()
 
     def tearDown(self):
-        from foundations.global_state import config_manager
-
-        keys = list(config_manager.config().keys())
-        for key in keys:
-            del config_manager.config()[key]
+        self._cleanup()
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -166,7 +89,7 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
 
         job = CompletedJob.all().evaluate()[0]
         expected_job = CompletedJob(
@@ -187,7 +110,7 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my other job', stage, 123232233, 312333333)
+        self._make_completed_job('my other job', stage, 123232233, 312333333)
 
         job = CompletedJob.all().evaluate()[0]
         expected_job = CompletedJob(
@@ -210,7 +133,7 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage, 444444, 5555555)
+        self._make_completed_job('my job', stage, 444444, 5555555)
 
         job = CompletedJob.all().evaluate()[0]
         expected_job = CompletedJob(
@@ -233,7 +156,7 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage, 444444, 5555555)
+        self._make_completed_job('my job', stage, 444444, 5555555)
 
         job = CompletedJob.all().evaluate()[0]
         expected_job = CompletedJob(
@@ -256,7 +179,7 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method, hello=Hyperparameter('hello'))
 
-        self._make_and_persist_job('my job', stage, 343433, 43444, hello='world')
+        self._make_completed_job('my job', stage, 343433, 43444, hello='world')
 
         job = CompletedJob.all().evaluate()[0]
         input_params = [{'stage_uuid': 'e56573879d1a601ec8845955e194dff00942bf30', 'name': 'hello', 'value': {'type': 'dynamic', 'name': 'hello'}}]
@@ -279,8 +202,8 @@ class TestCompletedJob(unittest.TestCase):
 
         stage = self._pipeline.stage(method)
 
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
+        self._make_completed_job('my job two', stage, 77777777, 77777777)
 
         jobs = CompletedJob.all().evaluate()
         expected_job = CompletedJob(
@@ -316,10 +239,10 @@ class TestCompletedJob(unittest.TestCase):
         stage = self._pipeline.stage(method)
 
         self._pipeline_context.provenance.project_name = 'project 1'
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
 
         self._pipeline_context.provenance.project_name = 'project 2'
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
+        self._make_completed_job('my job two', stage, 77777777, 77777777)
 
         jobs = CompletedJob.all(project_name='project 1').evaluate()
         expected_job = CompletedJob(
@@ -342,10 +265,10 @@ class TestCompletedJob(unittest.TestCase):
         stage = self._pipeline.stage(method)
 
         self._pipeline_context.provenance.project_name = 'project 1'
-        self._make_and_persist_job('my job', stage, 9999999999, 9999999999)
+        self._make_completed_job('my job', stage, 9999999999, 9999999999)
 
         self._pipeline_context.provenance.project_name = 'project 2'
-        self._make_and_persist_job('my job two', stage, 77777777, 77777777)
+        self._make_completed_job('my job two', stage, 77777777, 77777777)
 
         jobs = CompletedJob.all(project_name='project 2').evaluate()
         expected_job = CompletedJob(
@@ -360,15 +283,3 @@ class TestCompletedJob(unittest.TestCase):
         )
         self.assertEqual([expected_job], jobs)
 
-    def _make_and_persist_job(self, job_name, stage, start_time, end_time, **job_parameters):
-        from foundations.job import Job
-        from foundations.job_persister import JobPersister
-
-        self._pipeline_context.file_name = job_name
-        self._pipeline_context.global_stage_context.start_time = start_time
-
-        job = Job(stage, **job_parameters)
-        job.run()
-
-        self._pipeline_context.global_stage_context.end_time = end_time
-        JobPersister(job).persist()
