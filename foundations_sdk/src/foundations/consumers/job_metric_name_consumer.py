@@ -28,4 +28,4 @@ class JobMetricNameConsumer(object):
         """
         key = 'project:{}'.format(message['project_name'])
         value = message['key']
-        self._redis.lpush(key, value)
+        self._redis.sadd(key, value)
