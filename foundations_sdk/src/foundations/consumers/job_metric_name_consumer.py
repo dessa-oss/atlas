@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class JobMetricNameConsumer(object):
     """
     Class to consume the 'stage_log_middleware' channel. 
@@ -12,7 +13,7 @@ class JobMetricNameConsumer(object):
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
-    
+
     def __init__(self, redis):
         self._redis = redis
 
@@ -25,6 +26,6 @@ class JobMetricNameConsumer(object):
             timestamp {int} -- The time the event was created
             meta_data {dict} -- Additional data about the event
         """
-        key = 'project:' + str(message['project_name'])
+        key = 'project:{}'.format(message['project_name'])
         value = message['key']
         self._redis.lpush(key, value)

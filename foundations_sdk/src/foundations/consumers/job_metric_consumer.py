@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class JobMetricConsumer(object):
     """
     Class to consume the 'stage_log_middleware' channel. 
@@ -12,7 +13,7 @@ class JobMetricConsumer(object):
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
-    
+
     def __init__(self, redis):
         self._redis = redis
 
@@ -26,6 +27,6 @@ class JobMetricConsumer(object):
             meta_data {dict} -- Additional data about the event
         """
         from foundations.fast_serializer import serialize
-        key = 'job:'+str(message['job_id'])
+        key = 'job:{}'.format(message['job_id'])
         value = (timestamp, message['key'], message['value'])
         self._redis.set(key, serialize(value))
