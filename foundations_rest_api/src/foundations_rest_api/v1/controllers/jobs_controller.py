@@ -8,10 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_rest_api.utils.api_resource import api_resource
 
 
-@api_resource('/api/v1/projects/<string:project_uuid>/job_listing')
+@api_resource('/api/v1/projects/<string:project_name>/job_listing')
 class JobsController(object):
 
     def index(self):
         from foundations_rest_api.v1.models.project import Project
 
-        return Project.find_by(name=self.params['project_uuid']).only(['name', 'jobs'])
+        return Project.find_by(name=self.params['project_name']).only(['name', 'jobs'])
