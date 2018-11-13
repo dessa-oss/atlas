@@ -1,0 +1,317 @@
+/*
+
+These main styles are the globalized foundation for the theme and are often what need to be overwritten by localized changes
+
+Use helper classes to style elements that otherwise wouldn't need to have a full declaration or that are one-off occurrences
+
+*/
+
+//main styles
+//-----------------------------
+h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
+  @extend .f--din-bold;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+.font-regular {
+  @extend .f--din;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+.font-italic {
+  @extend .f--din-italic;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+img {
+  max-width: 100%;
+}
+
+input, textarea {
+  font-family: FuturaBook, Arial, sans-serif !important;
+  $width:  calc(100% - 1rem - 2px);//100% - padding*2 - border width*2
+  max-width: $width;
+  width: $width;
+  padding: 0.5rem;
+  border: 1px solid $color-border;
+  &[type="checkbox"] {
+    width: auto;
+    max-width: inherit;
+  }
+}
+
+button.b--mat {
+  margin: 15px;
+  margin-left: 15px;
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  width: auto;
+  padding: 10px 15px;
+  height: 30px;
+  line-height: 10px;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  font-family: DINBold;
+  text-align: center;
+  font-size: 12px;
+  color: white;
+}
+
+button.b--mat.b--affirmative {
+  background-color: #4A9CF8;
+}
+  
+button.b--mat.b--affirmative:hover {
+  background-color: #62AAFB;
+}
+  
+button.b--mat.b--affirmative:active {
+  background-color: #328FF8;
+}
+  
+.no-elevation {
+    background: #F9F9F9;
+    border-radius: 2px;
+    display: inline-block;
+    height: 100px;
+    margin: 30px;
+    position: relative;
+    width: 100px;
+}
+    
+ .elevation-1 {
+    box-shadow: 2px 4px 7px 0px rgba(0, 0, 0, 0.08), 2px 4px 7px 0px rgba(0, 0, 0, 0.08);
+}
+
+.no-bottom-margin {
+  margin-bottom: 0px;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  @include transition-with-defaults(opacity);
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+hr {
+  color: $color-border;
+  background-color: $color-border;
+}
+
+select {
+  -webkit-appearance: none !important;
+  border: 1px solid $color-border;
+  font-size: 0.875rem;
+  border-radius: 0;
+  background-image: url('data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  padding: .625rem 1.5rem 0.625rem 1rem;
+}
+
+.standard-table {
+  width: 100%;
+  thead, tfoot {
+    background: #f5f5f5;
+    th, td {
+      padding: 1.5rem 0.625rem;
+      font-size: 0.875rem;
+      font-weight: bold;
+      text-align: left;
+      display: table-cell;
+      line-height: 1.125rem;
+    }
+  }
+  tbody {
+    tr {
+      &:nth-of-type(2n){
+        background: #f9f9f9;
+        &.disabled-background{
+          background: $color-border;
+        }
+      }
+      td {
+        display: table-cell;
+        line-height: 1.125rem;
+        padding: 0.5625rem 0.625rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+.error {
+  color: $color-alert;
+}
+
+.standard-form {
+  label {
+    display: block;
+  }
+  input {
+    display: block;
+    margin-bottom: 20px;
+  }
+  hr {
+    margin-bottom: 15px;
+  }
+}
+
+.standard-form-padding {
+  padding-top: 30px;
+}
+
+.fa-anchor-container {
+  display: inline-block;
+  .fa {
+    padding-right: 5px;
+  }
+}
+
+//helper classes
+//-----------------------------
+.text-right{
+  text-align: right;
+}
+
+
+.faded-out {
+  display: none;
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.opaque {
+  opacity: 0;
+}
+
+.horizontal-center {
+  margin: 0 auto;
+}
+
+.float-left {
+  float:left;
+}
+
+.float-right {
+  float:right;
+}
+
+.full-width {
+  width:100%;
+}
+
+.half-width {
+  width: 50%;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.disabled-background{
+  background: $color-border;
+}
+
+//border classes
+//-----------------------------
+.border-top-dark-gray{
+  border-top: 1px solid $color-border;
+}
+
+.border-bottom-dark-grey{
+  border-bottom: 1px solid $color-border;
+}
+
+.border-left-dark-grey{
+  border-left: 1px solid $color-border;
+}
+
+.border-right-dark-grey{
+  border-right: 1px solid $color-border;
+}
+
+.border-none{
+  border: 0 none;
+}
+
+//typography
+//-----------------------------
+.text-bold {
+  font-weight: bold;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-upper {
+  text-transform: uppercase;
+}
+
+
+//visibility
+//-----------------------------
+@include mobile {
+  .hide-for-small {
+    display: none;
+  }
+}
+@include tablet {
+  .hide-for-medium {
+    display: none;
+  }
+}
+@include tablet-up {
+  .hide-for-medium-up {
+    display: none;
+  }
+  .show-for-small {
+    display: none;
+  }
+}
+@include desktop {
+  .hide-for-large {
+    display: none;
+  }
+}
