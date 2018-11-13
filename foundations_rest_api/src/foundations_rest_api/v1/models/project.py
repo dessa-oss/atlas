@@ -52,12 +52,12 @@ class Project(PropertyModel):
             Project -- The project
         """
 
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             return Project._find_by_internal(name)
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def all():

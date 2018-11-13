@@ -21,12 +21,13 @@ class Job(PropertyModel):
 
     @staticmethod
     def all(project_name=None):
-        from foundations_rest_api.response import Response
+        #from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
             return Job._all_internal(project_name)
 
-        return Response('Job', _all)
+        return LazyResult(_all)
 
     @staticmethod
     def _all_internal(project_name):
@@ -37,7 +38,7 @@ class Job(PropertyModel):
         running_jobs = Job._get_running_jobs(project_name)
         completed_jobs = Job._get_completed_jobs(project_name)
         all_jobs = running_jobs + completed_jobs
-        all_jobs.sort(key=lambda job: job.start_time, reverse=True)
+        all_jobs.sort(key=lambda job: job.start_time, reverse=True)  # Default order 
         return all_jobs
 
     @staticmethod
