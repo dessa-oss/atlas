@@ -1,0 +1,78 @@
+header {
+  margin-top: 20px;
+  .i--icon-logo {
+    height: 60px;
+    width: 220px;
+  }
+}
+
+#header-nav-container {
+  border-top: 1px solid $color-header-border;
+  border-bottom: 1px solid $color-header-border;
+  padding: 15px 0;
+  margin-top: 30px;
+}
+
+//dropdown menu
+//----------------------
+.standard-menu {
+  margin: 0;
+  & > li {
+    display: inline-block;
+    color: $color-menu-text;
+    & > a {
+      padding: 20px 15px;
+    }
+    &:hover {
+      .sub-menu {
+        opacity: 1;
+        height: auto;
+        overflow: visible;
+      }
+    }
+  }
+  a {
+    padding: 5px 15px;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+.sub-menu {
+  position: absolute;
+  opacity: 0;
+  padding: 0;
+  height: 0;
+  overflow: hidden;
+  background-color: white;
+  text-align: left;
+  @include transition-with-defaults(opacity);
+  a {
+    color: $color-menu-text;
+    font-size: 14px;
+    @include transition-with-defaults(background-color);
+    &:hover {
+      background-color: $color-secondary-background;
+      color: $color-secondary-link-text;
+    }
+  }
+}
+
+
+//user options
+//----------------------
+#header-user-options {
+  margin-top: 16px;
+  .button {
+    margin: 0 1px;
+    display: inline-block;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+

@@ -1,0 +1,27 @@
+footer {
+  background-color: $color-footer-background;
+  margin-top: 50px;
+  padding: 20px 10px!important;
+  width: 100%;
+  position: relative;
+  a, p {
+    color: $color-footer-link-text;
+  }
+}
+
+#footer-container {
+  position: absolute;
+  right: 5%;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 110px;
+}
+
+#footer-text {
+  font-weight:bold;
+  font-size:15px;
+  padding-left:40px;
+  color:$color-footer-text;
+}
+

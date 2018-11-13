@@ -1,0 +1,66 @@
+/*
+Try to utilize variables as much as possible.  It's one of the best things about a CSS preprocessor like Sass and it makes updates much easier
+*/
+
+//theme defaults
+
+// base colours
+$color-text:#787878;
+$color-link-text:#FFC7AA;
+$color-background:#FFFFFF;
+$color-highlight: #B1DF95;
+$color-border:#A3A3A3;
+$color-black:#000000;
+
+// buttons
+$color-button-background: #4D9EF4;
+$color-button-text: #FFFFFF;
+
+// modals
+$color-modal-background:#D48E6A;
+$color-modal-text:#FFFFFF;
+
+// greyed out colors
+$color-button-background-greyed: #E7E7E7;
+  
+$color-text-greyed: #787878;
+
+
+// secondary colours, usually for a dark background
+$color-secondary-text:#FFFFFF;
+$color-secondary-link-text:#FFC7AA;
+$color-secondary-background:#551D00;
+
+//footer
+$color-footer-background:#551D00;
+$color-footer-text:#FFFFFF;
+$color-footer-link-text:#FFC7AA;
+
+// header
+$color-header-border: #B1DF95;
+$color-menu-text: #551D00;
+$color-menu-background:#FFFFFF;
+
+//flashtext
+$color-flash-from:#D48E6A;
+$color-flash-to:#4A6B8A;
+
+//success colours
+$color-alert:#FF0000;
+$color-success:#B1DF95;
+
+//color-pagination
+$color-current-page-background:#561457;
+
+//special colors
+$color-menu-active-state: #f8f8f8;
+$color-box-shadow: #888888;
+$color-input-border: #EEEEEE;
+$color-secondary: #92AA64;
+
+// Dessa Colours
+$color-border-bottom:#DCDCDC;
+$medium-blue: #0491F6;
+$color-font-black: #443A25;
+$color-background-grey: #F7F7F7;
+$color-dark-blue: #004A9C;

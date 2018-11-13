@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Toolbar Home 1`] = `
+<div
+  className="toolbar-container"
+>
+  <p
+    className="font-regular"
+  >
+    Home
+  </p>
+  <p
+    className="font-regular"
+  >
+    Support and Contact
+  </p>
+</div>
+`;
