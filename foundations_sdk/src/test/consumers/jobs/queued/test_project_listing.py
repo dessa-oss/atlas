@@ -10,7 +10,7 @@ from mock import Mock
 
 from foundations.consumers.jobs.queued.project_listing import ProjectListing
 
-class TestProjectListing(unittest.TestCase):
+class TestQueuedProjectListing(unittest.TestCase):
     
     def setUp(self):
         self._redis = Mock()

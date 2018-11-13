@@ -10,7 +10,7 @@ from mock import Mock
 
 from foundations.consumers.jobs.queued.job_state import JobState
 
-class TestJobState(unittest.TestCase):
+class TestQueuedJobState(unittest.TestCase):
     
     def setUp(self):
         self._redis = Mock()
