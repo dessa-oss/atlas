@@ -116,6 +116,19 @@ node {
             }
         }
     }
+    container("yarn") {
+        ws("${WORKSPACE}/foundations_ui/") {
+            stage('Install dependencies for Foundation UI') {
+                sh "yarn install"
+            }
+            stage('Run Front End Unit Tests') {
+                sh "yarn run test"
+            }
+            stage('Check for linting') {
+                sh "node_modules/.bin/eslint ."
+            }
+        }
+    }
     stage('Results') {
         archiveArtifacts artifacts: '**/*.whl', fingerprint: true
     }
