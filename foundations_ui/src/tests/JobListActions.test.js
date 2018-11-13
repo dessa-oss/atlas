@@ -69,3 +69,17 @@ it('getDurationSeconds', () => {
   const duration = JobActions.getDurationSeconds(time);
   expect(duration).toBe(17);
 });
+
+it('checks if field hidden, is not hidden', () => {
+  const hidden = ['hidden1', 'hidden2'];
+  const fieldToCheck = 'visibleField';
+  const isHidden = JobActions.isFieldHidden(hidden, fieldToCheck);
+  expect(isHidden).toBe(false);
+});
+
+it('checks if field hidden, is hidden', () => {
+  const hidden = ['hidden1', 'hidden2'];
+  const fieldToCheck = 'hidden1';
+  const isHidden = JobActions.isFieldHidden(hidden, fieldToCheck);
+  expect(isHidden).toBe(true);
+});

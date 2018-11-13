@@ -5,6 +5,8 @@ exports[`Shallow Renders Job List Page 1`] = `
   className="job-list-container"
 >
   <JobTable
+    allInputParams={Array []}
+    hiddenInputParams={Array []}
     isLoaded={false}
     isMount={false}
     jobs={Array []}
