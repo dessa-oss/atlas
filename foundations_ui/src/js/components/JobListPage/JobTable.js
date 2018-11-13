@@ -4,7 +4,6 @@ import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
 import JobActions from '../../actions/JobListActions';
 
-
 class JobTable extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +12,7 @@ class JobTable extends Component {
       jobs: [],
       isLoaded: false,
       projectName: this.props.projectName,
+      hiddenInputParams: [],
     };
   }
 
@@ -40,7 +40,7 @@ class JobTable extends Component {
   }
 
   render() {
-    const { jobs, isLoaded } = this.state;
+    const { jobs, isLoaded, hiddenInputParams } = this.state;
 
     let jobRows = [];
     if (isLoaded) {
@@ -59,7 +59,7 @@ class JobTable extends Component {
 
     return (
       <div className="job-table-container">
-        <JobTableHeader />
+        <JobTableHeader hiddenInputParams={hiddenInputParams} />
         <div className="job-table-row-container">
           {jobRows}
         </div>
@@ -73,6 +73,7 @@ JobTable.propTypes = {
   jobs: PropTypes.array,
   isLoaded: PropTypes.bool,
   projectName: PropTypes.string,
+  hiddenInputParams: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -80,6 +81,7 @@ JobTable.defaultProps = {
   jobs: [],
   isLoaded: false,
   projectName: '',
+  hiddenInputParams: [],
 };
 
 export default JobTable;

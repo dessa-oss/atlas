@@ -65,6 +65,12 @@ class ProjectActions {
     const durationSeconds = durationTime % minute;
     return Math.floor(durationSeconds / second);
   }
+
+  // test ones below
+
+  static isFieldHidden(hiddenArray, field) {
+    return hiddenArray.includes(field);
+  }
 }
 
 export default ProjectActions;
