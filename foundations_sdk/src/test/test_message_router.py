@@ -46,22 +46,28 @@ class TestMessageRouter(unittest.TestCase):
     
     @patch.object(foundations.message_route.MessageRoute, 'push_message')
     def test_message_not_pushed_if_no_listeners(self, mock):
-        self.message_router.push_message('message', 'event1')
+        self.message_router.push_message('event1', 'message')
         mock.assert_not_called()
     
     @patch.object(foundations.message_route.MessageRoute, 'push_message')
     def test_message_sent_to_listener(self, mock):
         self.message_router.add_listener(self.MockListener(), 'event1')
-        self.message_router.push_message('message', 'event1')
-        mock.assert_called_with('message')  
+        self.message_router.push_message('event1', 'message')
+        mock.assert_called_with('message', None)  
+    
+    @patch.object(foundations.message_route.MessageRoute, 'push_message')
+    def test_message_sent_to_listener_with_metadata(self, mock):
+        self.message_router.add_listener(self.MockListener(), 'event1')
+        self.message_router.push_message('event1', 'message', {'meta': 'data'})
+        mock.assert_called_with('message', {'meta': 'data'}) 
         
     @patch.object(foundations.message_route.MessageRoute, 'push_message')
     def test_messages_sent_to_multiple_listeners(self, mock):
         self.message_router.add_listener(self.MockListener(), 'event1')
         self.message_router.add_listener(self.MockListener(), 'event2')
-        self.message_router.push_message('message1', 'event1')
-        self.message_router.push_message('message2', 'event2')
-        mock.assert_has_calls([call('message1'), call('message2')])
+        self.message_router.push_message('event1', 'message1')
+        self.message_router.push_message('event2', 'message2',)
+        mock.assert_has_calls([call('message1', None), call('message2', None)])
 
 
     
