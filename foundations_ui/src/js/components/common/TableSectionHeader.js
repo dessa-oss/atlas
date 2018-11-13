@@ -13,13 +13,15 @@ class TableSectionHeader extends Component {
     const { header } = this.state;
     let divClass = 'table-section-header';
     let arrowClass = '';
+    let textClass = 'blue-header-text font-regular no-margin';
     if (header !== '') {
       divClass = 'table-section-header blue-header';
       arrowClass = 'arrow-down blue-header-arrow';
+      textClass = 'blue-header-text font-regular';
     }
     return (
       <div className={divClass}>
-        <p className="blue-header-text font-regular">{header}</p>
+        <p className={textClass}>{header}</p>
         <div className={arrowClass} />
       </div>
     );

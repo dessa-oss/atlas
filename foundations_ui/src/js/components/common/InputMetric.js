@@ -9,25 +9,28 @@ class InputMetric extends Component {
     this.state = {
       header: this.props.header,
       hiddenInputParams: this.props.hiddenInputParams,
+      allInputParams: this.props.allInputParams,
     };
   }
 
   render() {
-    const { header, hiddenInputParams } = this.state;
+    const { header, hiddenInputParams, allInputParams } = this.state;
 
     let inputParams = null;
-    if (hiddenInputParams.length > 0) {
+    if (allInputParams.length > 0) {
       inputParams = [];
-      hiddenInputParams.forEach((input) => {
-        const key = input.name;
-        inputParams.push(<JobColumnHeader key={key} job={input.name} />);
+      allInputParams.forEach((input) => {
+        const key = input;
+        inputParams.push(<JobColumnHeader key={key} title={input} className="inline-block" containerClass="input-metric-column-header" />);
       });
     }
 
     return (
       <div className="input-metric-container">
         <TableSectionHeader header={header} />
-        {inputParams}
+        <div className="input-metric-column-header-container">
+          {inputParams}
+        </div>
       </div>
     );
   }
@@ -36,11 +39,13 @@ class InputMetric extends Component {
 InputMetric.propTypes = {
   header: PropTypes.string,
   hiddenInputParams: PropTypes.array,
+  allInputParams: PropTypes.array,
 };
 
 InputMetric.defaultProps = {
   header: '',
   hiddenInputParams: [],
+  allInputParams: [],
 };
 
 
