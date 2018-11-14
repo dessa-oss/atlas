@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.stage_logging_middleware import StageLoggingMiddleware
+from foundations.middleware.stage_logging_middleware import StageLoggingMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
@@ -41,10 +41,10 @@ class TestStageLoggingMiddleware(unittest.TestCase, TestMiddlewareCallback):
             self._function_name = function_name
             self._source_file = source_file
             self._source_line = source_line
-        
+
         def uuid(self):
             return self._uuid
-        
+
         def function_name(self):
             return self._function_name
 
@@ -57,13 +57,16 @@ class TestStageLoggingMiddleware(unittest.TestCase, TestMiddlewareCallback):
     @patch('logging.Logger.info')
     def test_stage_logging_middleware_begin_end_info_logs(self, mock):
 
-        def dummy(*args,**kwargs):
+        def dummy(*args, **kwargs):
             return 3
 
-        mock_stage = self.MockStage(uuid = '123', function_name = 'hello', source_file = 'hello.py', source_line = 10)
-        StageLoggingMiddleware(mock_stage).call(None, None, None, None, None, callback = dummy)
+        mock_stage = self.MockStage(
+            uuid='123', function_name='hello', source_file='hello.py', source_line=10)
+        StageLoggingMiddleware(mock_stage).call(
+            None, None, None, None, None, callback=dummy)
 
-        message1 = call('Running stage `%s` (uuid: `%s`), file: %s, line: %s', 'hello', '123', 'hello.py', 10)
+        message1 = call(
+            'Running stage `%s` (uuid: `%s`), file: %s, line: %s', 'hello', '123', 'hello.py', 10)
         message2 = call('Finished stage %s (uuid: %s)', 'hello', '123')
 
         mock.assert_has_calls([message1, message2])
@@ -71,13 +74,16 @@ class TestStageLoggingMiddleware(unittest.TestCase, TestMiddlewareCallback):
     @patch('logging.Logger.info')
     def test_stage_logging_middleware_begin_end_info_logs_different_values(self, mock):
 
-        def dummy(*args,**kwargs):
+        def dummy(*args, **kwargs):
             return 3
 
-        mock_stage = self.MockStage(uuid = '781', function_name = 'goodbye', source_file = 'hello.py', source_line = 109)
-        StageLoggingMiddleware(mock_stage).call(None, None, None, None, None, callback = dummy)
+        mock_stage = self.MockStage(
+            uuid='781', function_name='goodbye', source_file='hello.py', source_line=109)
+        StageLoggingMiddleware(mock_stage).call(
+            None, None, None, None, None, callback=dummy)
 
-        message1 = call('Running stage `%s` (uuid: `%s`), file: %s, line: %s', 'goodbye', '781', 'hello.py', 109)
+        message1 = call('Running stage `%s` (uuid: `%s`), file: %s, line: %s',
+                        'goodbye', '781', 'hello.py', 109)
         message2 = call('Finished stage %s (uuid: %s)', 'goodbye', '781')
 
         mock.assert_has_calls([message1, message2])

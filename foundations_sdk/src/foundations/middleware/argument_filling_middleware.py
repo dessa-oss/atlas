@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class ArgumentFillingMiddleware(BasicStageMiddleware):

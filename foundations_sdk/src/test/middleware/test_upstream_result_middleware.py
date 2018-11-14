@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.upstream_result_middleware import UpstreamResultMiddleware
+from foundations.middleware.upstream_result_middleware import UpstreamResultMiddleware
 
 from test.shared_examples.test_callback import TestCallback
 
@@ -25,7 +25,8 @@ class TestUpstreamResultMiddleware(unittest.TestCase, TestCallback):
 
     def test_calls_callback(self):
         middleware = self._make_middleware()
-        middleware.call(self._upstream_result, None, None, (), {}, self._callback)
+        middleware.call(self._upstream_result, None,
+                        None, (), {}, self._callback)
         self.assertTrue(self._called_callback)
 
     def test_calls_callback_with_args(self):
@@ -42,7 +43,8 @@ class TestUpstreamResultMiddleware(unittest.TestCase, TestCallback):
 
     def test_calls_callback_with_different_args(self):
         middleware = self._make_middleware()
-        middleware.call(self._upstream_result, None, None, ('goodbye',), {}, self._callback)
+        middleware.call(self._upstream_result, None, None,
+                        ('goodbye',), {}, self._callback)
         self.assertEqual((self._result, 'goodbye'), self._callback_args)
 
     def test_calls_callback_with_kwargs(self):
@@ -59,7 +61,8 @@ class TestUpstreamResultMiddleware(unittest.TestCase, TestCallback):
 
     def test_calls_returns_callback_result(self):
         middleware = self._make_middleware()
-        result = middleware.call(self._upstream_result, None, None, (), {}, self._callback)
+        result = middleware.call(
+            self._upstream_result, None, None, (), {}, self._callback)
         self.assertEqual(self._callback_result, result)
 
     def _upstream_result(self):

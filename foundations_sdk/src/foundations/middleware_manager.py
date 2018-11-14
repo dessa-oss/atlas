@@ -36,9 +36,10 @@ class MiddlewareManager(object):
         self.stage_middleware().insert(previous_index, middleware)
 
     def _set_initial_middleware(self):
-        from foundations.argument_middleware import ArgumentMiddleware
-        from foundations.argument_filling_middleware import ArgumentFillingMiddleware
-        from foundations.new_stage_log_middleware import NewStageLogMiddleware
+        from foundations.middleware.argument_middleware import ArgumentMiddleware
+        from foundations.middleware.argument_filling_middleware import ArgumentFillingMiddleware
+        from foundations.middleware.new_stage_log_middleware import NewStageLogMiddleware
+        from foundations.middleware.metric_log_middleware import MetricLogMiddleware
 
         self._stage_middleware = []
         self._append_middleware(
@@ -61,6 +62,7 @@ class MiddlewareManager(object):
             'TimeStage', MiddlewareManager._create_time_stage_middleware)
         self._append_middleware(
             'StageLogging', MiddlewareManager._create_stage_logging_middleware)
+        self._append_middleware('MetricLog', MetricLogMiddleware)
         self._append_middleware(
             'NewStageLog', NewStageLogMiddleware)
 
@@ -98,52 +100,47 @@ class MiddlewareManager(object):
 
     @staticmethod
     def _create_redundant_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.redundant_execution_middleware import RedundantExecutionMiddleware
+        from foundations.middleware.redundant_execution_middleware import RedundantExecutionMiddleware
         return RedundantExecutionMiddleware(stage)
 
     @staticmethod
     def _create_error_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.error_middleware import ErrorMiddleware
+        from foundations.middleware.error_middleware import ErrorMiddleware
         return ErrorMiddleware(stage_context)
 
     @staticmethod
     def _create_stage_output_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.stage_output_middleware import StageOutputMiddleware
+        from foundations.middleware.stage_output_middleware import StageOutputMiddleware
         return StageOutputMiddleware(stage_config, stage_context)
 
     @staticmethod
-    def _create_argument_filler_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.argument_filler_middleware import ArgumentFillerMiddleware
-        return ArgumentFillerMiddleware(stage)
-
-    @staticmethod
     def _create_new_cache_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.new_cache_middleware import NewCacheMiddleware
+        from foundations.middleware.new_cache_middleware import NewCacheMiddleware
         from foundations.stage_cache import StageCache
 
         return NewCacheMiddleware(StageCache, pipeline_context, stage_config, stage_context, stage)
 
     @staticmethod
     def _create_upstream_result_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.upstream_result_middleware import UpstreamResultMiddleware
+        from foundations.middleware.upstream_result_middleware import UpstreamResultMiddleware
         return UpstreamResultMiddleware()
 
     @staticmethod
     def _create_context_aware_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.context_aware_middleware import ContextAwareMiddleware
+        from foundations.middleware.context_aware_middleware import ContextAwareMiddleware
         return ContextAwareMiddleware(stage_context, stage)
 
     @staticmethod
     def _create_time_stage_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.time_stage_middleware import TimeStageMiddleware
+        from foundations.middleware.time_stage_middleware import TimeStageMiddleware
         return TimeStageMiddleware(stage_context, stage)
 
     @staticmethod
     def _create_stage_logging_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.stage_logging_middleware import StageLoggingMiddleware
+        from foundations.middleware.stage_logging_middleware import StageLoggingMiddleware
         return StageLoggingMiddleware(stage)
 
     @staticmethod
     def _create_exception_hook_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.exception_hook_middleware import ExceptionHookMiddleware
+        from foundations.middleware.exception_hook_middleware import ExceptionHookMiddleware
         return ExceptionHookMiddleware()

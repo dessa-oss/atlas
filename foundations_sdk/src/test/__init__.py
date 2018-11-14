@@ -24,18 +24,7 @@ from test.test_local_file_system_bucket import TestLocalFileSystemBucket
 from test.test_config_manager import TestConfigManager
 from test.test_log_manager import TestLogManager
 from test.test_module_manager import TestModuleManager
-from test.test_basic_stage_middleware import TestBasicStageMiddleware
-from test.test_context_aware_middleware import TestContextAwareMiddleware
-from test.test_error_middleware import TestErrorMiddleware
-from test.test_time_stage_middleware import TestTimeStageMiddleware
-from test.test_upstream_result_middleware import TestUpstreamResultMiddleware
-from test.test_redundant_execution_middleware import TestRedundantExecutionMiddleware
-from test.test_stage_log_middleware import TestStageLogMiddleware
-from test.test_stage_logging_middleware import TestStageLoggingMiddleware
-from test.test_stage_output_middleware import TestStageOutputMiddleware
-from test.test_argument_filler_middleware import TestArgumentFillerMiddleware
 from test.test_middleware_chain import TestMiddlewareChain
-from test.test_cache_middleware import TestCacheMiddleware
 from test.test_middleware_manager import TestMiddlewareManager
 from test.test_argument_hasher import TestArgumentHasher
 from test.test_argument import TestArgument
@@ -43,13 +32,10 @@ from test.test_live_argument import TestLiveArgument
 from test.test_constant_parameter import TestConstantParameter
 from test.test_dynamic_parameter import TestDynamicParameter
 from test.test_stage_parameter import TestStageParameter
-from test.test_argument_middleware import TestArgumentMiddleware
-from test.test_argument_filling_middleware import TestArgumentFillingMiddleware
 from test.test_provenance import TestProvenance
 from test.test_cache_name_generator import TestCacheNameGenerator
 from test.test_stage_connector_wrapper import TestStageConnectorWrapper
 from test.test_stage_cache import TestStageCache
-from test.test_new_cache_middleware import TestNewCacheMiddleware
 from test.test_pipeline_context import TestPipelineContext
 from test.test_cache import TestCache
 from test.test_null_cache_backend import TestNullCacheBackend
@@ -63,7 +49,6 @@ from test.test_null_stage_logger import TestNullStageLogger
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
 from test.test_staging import TestStaging
-from test.test_new_stage_log_middleware import TestNewStageLogMiddleware
 from test.test_scheduler import TestScheduler
 from test.test_scheduler_job_information import TestSchedulerJobInformation
 from test.test_job import TestJob
@@ -74,7 +59,6 @@ from test.test_utils import TestUtils
 from test.test_error_printer import TestErrorPrinter
 from test.test_projects import TestProjects
 from test.test_deployment_manager import TestDeploymentManager
-from test.test_exception_hook_middleware import TestExceptionHookMiddleware
 from test.test_safe_inspect import TestSafeInspect
 from test.test_message_route import TestMessageRoute
 from test.test_message_router import TestMessageRouter
@@ -83,3 +67,4 @@ from test.helpers import *
 from test.models import *
 from test.job_bundling import *
 from test.consumers import *
+from test.middleware import *

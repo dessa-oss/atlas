@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.stage_parameter import StageParameter
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestStageParameter(unittest.TestCase):
@@ -101,13 +101,15 @@ class TestStageParameter(unittest.TestCase):
         stage = self.MockStage('potato')
         parameter = StageParameter(stage)
 
-        self.assertEqual({'type': 'stage', 'stage_name': 'potato', 'stage_uuid': stage.uuid()}, parameter.provenance())
+        self.assertEqual({'type': 'stage', 'stage_name': 'potato',
+                          'stage_uuid': stage.uuid()}, parameter.provenance())
 
     def test_provenance_returns_name_different_value(self):
         stage = self.MockStage('tomako')
         parameter = StageParameter(stage)
 
-        self.assertEqual({'type': 'stage', 'stage_name': 'tomako', 'stage_uuid': stage.uuid()}, parameter.provenance())
+        self.assertEqual({'type': 'stage', 'stage_name': 'tomako',
+                          'stage_uuid': stage.uuid()}, parameter.provenance())
 
     def test_str_returns_stage_and_name(self):
         stage = self.MockStage()
@@ -122,4 +124,3 @@ class TestStageParameter(unittest.TestCase):
 
         stage = Pipeline(PipelineContext()).stage(method, *args)
         return StageParameter(stage)
-

@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.error_middleware import ErrorMiddleware
+from foundations.middleware.error_middleware import ErrorMiddleware
 from foundations.stage_context import StageContext
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback

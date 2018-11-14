@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.argument_filling_middleware import ArgumentFillingMiddleware
+from foundations.middleware.argument_filling_middleware import ArgumentFillingMiddleware
 from foundations.argument import Argument
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
@@ -62,7 +62,8 @@ class TestArgumentFillingMiddleware(unittest.TestCase, TestMiddlewareCallback):
         argument_two = self.MockArgument(None, 5)
         argument_two = LiveArgument(argument_two, {})
         middleware = self._make_middleware()
-        middleware.call(None, None, {}, (argument, argument_two), {}, self._callback)
+        middleware.call(None, None, {}, (argument,
+                                         argument_two), {}, self._callback)
         self.assertEqual(self._callback_args, (7, 5))
 
     def test_resolves_named_arguments(self):

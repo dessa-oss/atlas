@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.argument_middleware import ArgumentMiddleware
+from foundations.middleware.argument_middleware import ArgumentMiddleware
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
 
@@ -46,7 +46,8 @@ class TestArgumentMiddleware(unittest.TestCase, TestMiddlewareCallback):
         argument = Argument.generate_from(7, 'hello')
         argument_two = Argument.generate_from(5, 'world')
         middleware = self._make_middleware()
-        middleware.call(None, None, {}, (argument, argument_two), {}, self._callback)
+        middleware.call(None, None, {}, (argument,
+                                         argument_two), {}, self._callback)
         self.assertEqual(self._callback_args, (7, 5))
 
     def test_resolves_dynamic_arguments(self):
@@ -55,7 +56,8 @@ class TestArgumentMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
         argument = Argument.generate_from(Hyperparameter('hello'), 'world')
         middleware = self._make_middleware()
-        middleware.call(None, None, {'hello': 137}, (argument,), {}, self._callback)
+        middleware.call(None, None, {'hello': 137},
+                        (argument,), {}, self._callback)
         self.assertEqual(self._callback_args, (137,))
 
     def _function(self):

@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.constant_parameter import ConstantParameter
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestConstantParameter(unittest.TestCase):
@@ -23,11 +23,13 @@ class TestConstantParameter(unittest.TestCase):
 
     def test_provenance(self):
         parameter = ConstantParameter('world')
-        self.assertEqual({'value': 'world', 'type': 'constant'}, parameter.provenance())
+        self.assertEqual({'value': 'world', 'type': 'constant'},
+                         parameter.provenance())
 
     def test_provenance_different_value(self):
         parameter = ConstantParameter('potato')
-        self.assertEqual({'value': 'potato', 'type': 'constant'}, parameter.provenance())
+        self.assertEqual(
+            {'value': 'potato', 'type': 'constant'}, parameter.provenance())
 
     def test_value_hash(self):
         parameter = ConstantParameter('potato')

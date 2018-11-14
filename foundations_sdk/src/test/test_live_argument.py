@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.live_argument import LiveArgument
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestLiveArgument(unittest.TestCase):
@@ -106,7 +106,8 @@ class TestLiveArgument(unittest.TestCase):
 
         argument = Argument.generate_from(Hyperparameter('mako'), 'tomato')
         live_argument = LiveArgument(argument, {'mako': 'mush'})
-        self.assertEqual('931a75bc4f56074653580a195ccb623a6e99a9eb', live_argument.hash())
+        self.assertEqual(
+            '931a75bc4f56074653580a195ccb623a6e99a9eb', live_argument.hash())
 
     def test_forwards_hash_dynamic_hash_different_hash(self):
         from foundations.hyperparameter import Hyperparameter
@@ -114,4 +115,5 @@ class TestLiveArgument(unittest.TestCase):
 
         argument = Argument.generate_from(Hyperparameter('mako'), 'tomato')
         live_argument = LiveArgument(argument, {'mako': 'mash potato'})
-        self.assertEqual('178fc9b765f0e81eae83af16b273edc5d078357c', live_argument.hash())
+        self.assertEqual(
+            '178fc9b765f0e81eae83af16b273edc5d078357c', live_argument.hash())

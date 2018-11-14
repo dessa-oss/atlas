@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.middleware_manager import MiddlewareManager
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestMiddlewareManager(unittest.TestCase):
@@ -39,74 +39,78 @@ class TestMiddlewareManager(unittest.TestCase):
         self._config_manager = ConfigManager()
 
     def test_has_redundant_middleware(self):
-        from foundations.redundant_execution_middleware import RedundantExecutionMiddleware
+        from foundations.middleware.redundant_execution_middleware import RedundantExecutionMiddleware
         self._test_has_middleware('Redundant', RedundantExecutionMiddleware)
 
     def test_has_redundant_middleware_configured(self):
         self._test_constructor_attributes('Redundant')
 
     def test_has_error_middleware(self):
-        from foundations.error_middleware import ErrorMiddleware
+        from foundations.middleware.error_middleware import ErrorMiddleware
         self._test_has_middleware('Error', ErrorMiddleware)
 
     def test_has_error_middleware_configured(self):
         self._test_constructor_attributes('Error')
 
     def test_has_stage_output_middleware(self):
-        from foundations.stage_output_middleware import StageOutputMiddleware
+        from foundations.middleware.stage_output_middleware import StageOutputMiddleware
         self._test_has_middleware('StageOutput', StageOutputMiddleware)
 
     def test_has_stage_output_middleware_configured(self):
         self._test_constructor_attributes('StageOutput')
 
     def test_has_argument_middleware(self):
-        from foundations.argument_middleware import ArgumentMiddleware
+        from foundations.middleware.argument_middleware import ArgumentMiddleware
         self._test_has_middleware('Argument', ArgumentMiddleware)
 
     def test_has_argument_middleware_configured(self):
         self._test_constructor_attributes('Argument')
 
     def test_has_new_cache_middleware(self):
-        from foundations.new_cache_middleware import NewCacheMiddleware
+        from foundations.middleware.new_cache_middleware import NewCacheMiddleware
         self._test_has_middleware('NewCache', NewCacheMiddleware)
 
     def test_has_new_cache_middleware_configured(self):
         self._test_constructor_attributes('NewCache')
 
     def test_has_argument_filling_middleware(self):
-        from foundations.argument_filling_middleware import ArgumentFillingMiddleware
+        from foundations.middleware.argument_filling_middleware import ArgumentFillingMiddleware
         self._test_has_middleware('ArgumentFilling', ArgumentFillingMiddleware)
+
+    def test_has_metric_log_middleware(self):
+        from foundations.middleware.metric_log_middleware import MetricLogMiddleware
+        self._test_has_middleware('MetricLog', MetricLogMiddleware)
 
     def test_has_argument_filling_middleware_configured(self):
         self._test_constructor_attributes('ArgumentFilling')
 
     def test_has_upstream_result_middleware(self):
-        from foundations.upstream_result_middleware import UpstreamResultMiddleware
+        from foundations.middleware.upstream_result_middleware import UpstreamResultMiddleware
         self._test_has_middleware('UpstreamResult', UpstreamResultMiddleware)
 
     def test_has_context_aware_middleware(self):
-        from foundations.context_aware_middleware import ContextAwareMiddleware
+        from foundations.middleware.context_aware_middleware import ContextAwareMiddleware
         self._test_has_middleware('ContextAware', ContextAwareMiddleware)
 
     def test_has_context_aware_middleware_configured(self):
         self._test_constructor_attributes('ContextAware')
 
     def test_has_time_stage_middleware(self):
-        from foundations.time_stage_middleware import TimeStageMiddleware
+        from foundations.middleware.time_stage_middleware import TimeStageMiddleware
         self._test_has_middleware('TimeStage', TimeStageMiddleware)
 
     def test_has_time_stage_middleware_configured(self):
         self._test_constructor_attributes('TimeStage')
 
     def test_has_stage_logging_middleware(self):
-        from foundations.stage_logging_middleware import StageLoggingMiddleware
+        from foundations.middleware.stage_logging_middleware import StageLoggingMiddleware
         self._test_has_middleware('StageLogging', StageLoggingMiddleware)
 
     def test_has_stage_logging_middleware_configured(self):
         self._test_constructor_attributes('StageLogging')
 
     def test_has_new_stage_log_middleware(self):
-        from foundations.new_stage_log_middleware import NewStageLogMiddleware
+        from foundations.middleware.new_stage_log_middleware import NewStageLogMiddleware
         self._test_has_middleware('NewStageLog', NewStageLogMiddleware)
 
     def test_has_new_stage_log_middleware_configured(self):
