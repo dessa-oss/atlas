@@ -14,7 +14,7 @@ class JobsController(object):
     def index(self):
         from foundations_rest_api.v1.models.project import Project
         from foundations_rest_api.response import Response
-        from foundations_rest_api.result_filters import result_filters
 
-        jobs_data = Project.find_by(name=self.params['project_name']).only(['name', 'jobs']).filter(result_filters, self.params, fields=['jobs'])
-        return Response('Jobs', jobs_data)
+        jobs_data_future = Project.find_by(name=self.params['project_name']).only(['name', 'jobs'])
+        jobs_data_future = jobs_data_future.apply_filters(self.params, fields=['jobs'])
+        return Response('Jobs', jobs_data_future)

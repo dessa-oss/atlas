@@ -39,15 +39,17 @@ class LazyResult(object):
 
         return LazyResult(lazy_only)
 
-    def filter(self, result_filters, params, fields=[]):
+    def apply_filters(self, params, fields=[]):
 
         def filter_field(result):
-            from .result_filters import result_filters
+            from foundations_rest_api.result_filters import result_filters
             for field in fields:
                 data = result[field]
-                for result_filter in result_filters:
-                    data = result_filter(data, params)
-                result[field] = data
+                for param_key in params.keys():
+                    result_filter = result_filters.get(param_key, None)
+                    if result_filter:
+                        data = result_filter(data, params)
+                        result[field] = data
             return result
 
         def filter_result():
