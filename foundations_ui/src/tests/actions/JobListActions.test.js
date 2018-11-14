@@ -143,3 +143,7 @@ it('getDurationClass seconds', () => {
   timeUI = JSON.stringify(timeUI);
   expect(timeUI).toBe(JSON.stringify(<span className="duration-second-number header-4 font-bold">30<span className="font-regular">s</span></span>));
 });
+
+it('getAllInputParams', () =>{
+  
+});

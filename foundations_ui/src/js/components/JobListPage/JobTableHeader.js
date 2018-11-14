@@ -13,6 +13,10 @@ class JobTableHeader extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ allInputParams: nextProps.allInputParams });
+  }
+
   render() {
     const { hiddenInputParams, allInputParams } = this.state;
 

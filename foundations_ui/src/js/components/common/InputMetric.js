@@ -152,6 +152,10 @@ class InputMetric extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ allInputParams: nextProps.allInputParams });
+  }
+
   resizeCells(colIndex, newWidth) {
     const { cellWidths } = this.state;
     if (cellWidths[colIndex] !== newWidth) {

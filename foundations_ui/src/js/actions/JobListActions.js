@@ -131,6 +131,18 @@ class ProjectActions {
         return null;
     }
   }
+
+  static getAllInputParams(allJobs) {
+    const allInputParams = [];
+    allJobs.forEach((job) => {
+      job.input_params.forEach((input) => {
+        if (!allInputParams.includes(input.name)) {
+          allInputParams.push(input.name);
+        }
+      });
+    });
+    return allInputParams;
+  }
 }
 
 export default ProjectActions;
