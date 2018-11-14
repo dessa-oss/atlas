@@ -46,8 +46,8 @@ class Response(object):
         if isinstance(value, list):
             return [self._value_as_json(value) for value in value]
 
-        if self._is_lazy_result(value):
-            return self._value_as_json(value.evaluate())
+        #if self._is_lazy_result(value):
+        #    return self._value_as_json(value.evaluate())
 
         if self._is_property_model(value):
             return self._dictionary_attributes(value.attributes)

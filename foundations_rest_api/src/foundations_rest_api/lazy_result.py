@@ -26,15 +26,21 @@ class LazyResult(object):
 
         def lazy_only():
             from foundations_rest_api.v1.models.property_model import PropertyModel
+
             result = self.evaluate()
+
             if isinstance(result, list):
-                result = [filter_properties(item, only_fields) for item in result]
-            elif isinstance(result, PropertyModel):
-                result = filter_properties(result.attributes, only_fields)
-            elif isinstance(result, LazyResult):
-                result = filter_properties(result.evaluate(), only_fields)
-            else:
-                result = filter_properties(result, only_fields)
+                return [filter_properties(item, only_fields) for item in result]
+    
+            if isinstance(result, PropertyModel):
+                return filter_properties(result.attributes, only_fields)
+
+            if isinstance(result, LazyResult):
+                return filter_properties(result.evaluate(), only_fields)
+
+            if isinstance(result, dict):
+                return filter_properties(result, only_fields)
+
             return result
 
         return LazyResult(lazy_only)
@@ -63,12 +69,18 @@ class LazyResult(object):
         return LazyResult(filter_result)
 
     def evaluate(self):
+        from foundations_rest_api.v1.models.property_model import PropertyModel
+
         result = self._callback()
+
         if isinstance(result, list):
             return [(item.evaluate() if self._is_lazy_result(item) else item) for item in result ]
 
         if self._is_lazy_result(result):
             return result.evaluate()
+
+        if isinstance(result, PropertyModel):
+            return self._evaluate_dict(result.attributes)
 
         if isinstance(result, dict):
             return self._evaluate_dict(result)
@@ -77,10 +89,6 @@ class LazyResult(object):
 
     def _is_lazy_result(self, value):
         return isinstance(value, LazyResult)
-
-    def _is_property_model(self, value):
-        from foundations_rest_api.v1.models.property_model import PropertyModel
-        return isinstance(value, PropertyModel)
 
     def _evaluate_dict(self, value):
         attributes = {}
