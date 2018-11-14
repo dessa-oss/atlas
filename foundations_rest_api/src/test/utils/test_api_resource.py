@@ -16,24 +16,27 @@ class TestAPIResource(unittest.TestCase):
 
     class MockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return 'some data'
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
 
     class ParamsMockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return self.params
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
 
     class DifferentMockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return 'some different data'
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
 
     def test_returns_class(self):
         klass = api_resource('path/to/resource')(self.Mock)
