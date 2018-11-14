@@ -16,6 +16,41 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   }
 }
 
+.margin-auto {
+  margin: auto;
+}
+
+.arrow-down {
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid $color-dark-blue;
+}
+
+.header-2 {
+  @extend .f--din;
+  font-size: 18px;
+}
+
+.header-3 {
+  @extend .f--din-bold;
+  font-size: 16px;
+}
+
+.header-4 {
+  @extend .f--din;
+  font-size: 14px;
+}
+
+.font-bold {
+  @extend .f--din-bold;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
 .font-regular {
   @extend .f--din;
   color: $color-font-black;
