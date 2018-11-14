@@ -5,14 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_gcp.global_state import connection_manager
 
 class GCPBucket(object):
+    _connection = connection_manager.bucket_connection()
 
     def __init__(self, name):
-        from foundations_gcp.global_state import connection_manager
-
-        self._connection = connection_manager.bucket_connection()
-        self._bucket = self._connection.get_bucket(name)
+        self._bucket_name = name
+        self._bucket = GCPBucket._connection.get_bucket(self._bucket_name)
 
     def upload_from_string(self, name, data):
         self._blob(name).upload_from_string(data)

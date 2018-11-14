@@ -31,6 +31,7 @@ ui_utils/build
 ui_utils/dist
 ui_utils/foundations_ui.egg-info
 ui_utils/src/foundations_ui.egg-info
+**/node_modules
 tmp
 **/*.csv
 foundations.zip

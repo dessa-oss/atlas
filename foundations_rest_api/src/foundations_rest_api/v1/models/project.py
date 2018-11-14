@@ -16,6 +16,8 @@ class Project(PropertyModel):
     """
 
     name = PropertyModel.define_property()
+    created_at = PropertyModel.define_property()
+    owner = PropertyModel.define_property()
     completed_jobs = PropertyModel.define_property()
     running_jobs = PropertyModel.define_property()
     queued_jobs = PropertyModel.define_property()
@@ -40,17 +42,58 @@ class Project(PropertyModel):
 
     @staticmethod
     def find_by(name):
+        """Finds a project by name
+
+        Arguments:
+            name {str} -- Name of the project to find
+
+        Returns:
+            Project -- The project
+        """
+
         from foundations_rest_api.response import Response
 
         def callback():
-            from foundations_rest_api.v1.models.completed_job import CompletedJob
-            from foundations_rest_api.v1.models.running_job import RunningJob
-            from foundations_rest_api.v1.models.queued_job import QueuedJob
+            return Project._find_by_internal(name)
 
             project = Project(name=name)
+            project.created_at = None
+            project.owner = None
             project.completed_jobs = CompletedJob.all()
             project.running_jobs = RunningJob.all()
             project.queued_jobs = QueuedJob.all()
             return project
+        return Response(None, callback)
+
+    @staticmethod
+    def all():
+        from foundations_rest_api.response import Response
+
+        def callback():
+            from foundations.global_state import config_manager
+
+            listing = Project._construct_project_listing()
+            return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
 
         return Response(None, callback)
+
+    @staticmethod
+    def _construct_project_listing():
+        from foundations.global_state import deployment_manager
+
+        constructor, args, kwargs = deployment_manager.project_listing_constructor_and_args_and_kwargs()
+        return constructor(*args, **kwargs)
+
+    @staticmethod
+    def _find_by_internal(name):
+        from foundations_rest_api.v1.models.completed_job import CompletedJob
+        from foundations_rest_api.v1.models.running_job import RunningJob
+        from foundations_rest_api.v1.models.queued_job import QueuedJob
+
+        project = Project(name=name)
+        project.created_at = None
+        project.owner = None
+        project.completed_jobs = CompletedJob.all(project_name=name)
+        project.running_jobs = RunningJob.all()
+        project.queued_jobs = QueuedJob.all()
+        return project

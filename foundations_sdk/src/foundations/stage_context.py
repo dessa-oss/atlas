@@ -31,7 +31,9 @@ class StageContext(object):
 
     def add_error_information(self, exception_info):
         import traceback
+
         from foundations.serializer import serialize
+        from foundations.error_printer import ErrorPrinter
 
         try:
             serialize(exception_info[1])
@@ -39,15 +41,24 @@ class StageContext(object):
         except:
             exception_value = repr(exception_info[1])
 
+        error_printer = ErrorPrinter()
+        traceback_to_send = traceback.extract_tb(exception_info[2])
+
         self.error_information = {
             "type": exception_info[0],
             "exception": exception_value,
-            "traceback": traceback.extract_tb(exception_info[2])
+            "traceback": error_printer.transform_extracted_traceback(traceback_to_send)
         }
 
     def save_to_archive(self, archiver):
-        archiver.append_stage_log(self.uuid, self.stage_log)
+        self.save_all_but_persisted_data(archiver)
+        self.save_persisted_data(archiver)
+
+    def save_persisted_data(self, archiver):
         archiver.append_stage_persisted_data(self.uuid, self.stage_output)
+
+    def save_all_but_persisted_data(self, archiver):
+        archiver.append_stage_log(self.uuid, self.stage_log)
         archiver.append_stage_model_data(self.uuid, self.model_data)
         archiver.append_stage_miscellaneous(
             self.uuid, 'stage_context', self._archive_stage_context())

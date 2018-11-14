@@ -6,6 +6,10 @@ archive_listing_implementation:
   archive_listing_type: foundations_gcp.GCPPipelineArchiveListing
   constructor_arguments: [result-test]
 
+project_listing_implementation:
+  project_listing_type: foundations_gcp.GCPPipelineArchiveListing
+  constructor_arguments: [result-projects-names]
+
 stage_log_archive_implementation:
   archive_type: foundations_gcp.GCPPipelineArchive
   constructor_arguments: [result-test]
@@ -33,3 +37,4 @@ miscellaneous_archive_implementation:
 deployment_implementation:
   deployment_type: foundations_gcp.GCPJobDeployment
   constructor_arguments: [code-test, result-test]
+

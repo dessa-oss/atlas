@@ -11,6 +11,23 @@ import random
 def bundle_value(value):
     return value
 
-
 def add(a, b):
     return a + b
+
+def _make_generator(value):
+    yield value
+
+def returns_generator(value):
+    return _make_generator(value)
+
+def executes_generator(gen):
+    return next(gen)
+
+def throws_exception(input):
+    try:
+        raise Exception(str(input))
+    except Exception as e:
+        return e
+
+def return_error_message(err):
+    return "error code: " + str(err)

@@ -11,3 +11,5 @@ mock==2.0.0
 freezegun==0.3.8
 boto3==1.9.4
 flask-restful==0.3.6
+flask-restful==0.3.6
+Flask-Cors==3.0.6

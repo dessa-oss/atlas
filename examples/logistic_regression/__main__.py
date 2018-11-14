@@ -19,11 +19,13 @@ other stages.  See lines 36 - 40 in this file for examples of usage.
 """
 
 import foundations
-import config
 from common.prep import union
 from common.models import train_logistic_regression
 from common.logging import log_formatted
 from titanic.etl import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+
+# set configuration for running the job 
+foundations.config_manager.add_config_path('config/local_default.config.yaml')
 
 union = foundations.create_stage(union)
 train_logistic_regression = foundations.create_stage(train_logistic_regression)
@@ -39,23 +41,26 @@ get_metrics = foundations.create_stage(get_metrics)
 
 
 def main():
+    # set the project name
+    foundations.set_project_name('Titanic Survival')
+
     # data prep
     data = load_data()
-    data = fill_categorical_nulls(data)
-    inputs, targets = split_inputs_and_targets(data).split(2)
+    data = fill_categorical_nulls(data=data)
+    inputs, targets = split_inputs_and_targets(data=data).split(2)
 
     # feature engineering
     x_train, x_valid, y_train, y_valid = split_training_and_validation(
-        inputs, targets).split(4)
-    x_train, x_valid = impute(x_train, x_valid).split(2)
-    x_train, x_valid = one_hot_encode(x_train, x_valid).split(2)
-    x_train, x_valid = drop_non_numeric_columns(x_train, x_valid).split(2)
+        inputs=inputs, targets=targets).split(4)
+    x_train, x_valid = impute(x_train=x_train, x_valid=x_valid).split(2)
+    x_train, x_valid = one_hot_encode(x_train=x_train, x_valid=x_valid).split(2)
+    x_train, x_valid = drop_non_numeric_columns(x_train=x_train, x_valid=x_valid).split(2)
 
     # model training and scoring
-    model = train_logistic_regression(x_train, y_train)
-    y_train, train_score = get_metrics(model, x_train, y_train, 'Training').split(2)
-    y_valid, valid_score = get_metrics(model, x_valid, y_valid, 'Validation').split(2)
-    results = union(y_train, y_valid)
+    model = train_logistic_regression(x_train=x_train, y_train=y_train)
+    y_train, train_score = get_metrics(model=model, inputs=x_train, targets=y_train, data_set_name='Training').split(2)
+    y_valid, valid_score = get_metrics(model=model, inputs=x_valid, targets=y_valid, data_set_name='Validation').split(2)
+    results = union(first=y_train, second=y_valid)
 
     # print out the results
     log_formatted('\nData: {}\nTraining score was {}\nValidation score was {}',

@@ -36,11 +36,9 @@ class StageConnectorWrapper(object):
         return self._connector.uuid()
 
     def stage(self, function, *args, **kwargs):
-        builder = self._make_builder()
-        builder = self._set_builder_stage(builder, function, args, kwargs)
-        builder = self._set_builder_hierarchy(builder)
+        from foundations import foundations_context
 
-        return builder.build(self._connector.stage)
+        return foundations_context.pipeline().stage(function, self, *args, **kwargs)
 
     def require(self, *required_args):
         def _require(*args):
@@ -79,6 +77,7 @@ class StageConnectorWrapper(object):
     def run(self, params_dict=None, job_name=None, **kw_params):
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations import log_manager
 
         if params_dict is None:
             params_dict = {}
@@ -86,9 +85,13 @@ class StageConnectorWrapper(object):
         all_params = params_dict.copy()
         all_params.update(kw_params)
 
-        deployment = deployment_manager.simple_deploy(self, job_name, all_params)
+        logger = log_manager.get_logger(__name__)
 
-        return DeploymentWrapper(deployment)
+        logger.info("Deploying job...")
+        deployment = deployment_manager.simple_deploy(self, job_name, all_params)
+        deployment_wrapper = DeploymentWrapper(deployment)
+
+        return deployment_wrapper
 
     def run_same_process(self, **filler_kwargs):
         return self._connector.run(self._filler_builder, **filler_kwargs)
@@ -119,17 +122,19 @@ class StageConnectorWrapper(object):
         return self.run(*args, **kwargs)
 
     def name(self):
-        function_name_and_uuid = self._connector.function_name() + ' ' + self._connector.name()
+        function_name_and_uuid = self.function_name() + ' ' + self.uuid()
         return function_name_and_uuid
+    
+    def function_name(self):
+        return self._connector.function_name()
 
     def split(self, num_children):
         from foundations.utils import split_at
-        from foundations import foundations_context
 
         children = []
 
         for child_index in range(num_children):
-            child = foundations_context.pipeline().stage(split_at, self, child_index)
+            child = self.stage(split_at, child_index)
             children.append(child)
 
         return children

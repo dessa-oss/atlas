@@ -12,8 +12,15 @@ class PropertyModel(object):
     """
 
     def __init__(self, **kwargs):
-        for property_name, model_property in self._properties():
+        properties = dict(self._properties())
+        for property_name, model_property in properties.items():
             model_property.fset(self, kwargs.get(property_name))
+        
+        if kwargs:
+            # NOTE: no test for the loop since python dictionaries cannot guarantee order
+            for property_name in kwargs: 
+                if not property_name in properties:
+                    raise ValueError('Invalid property `{}` given'.format(property_name))
 
     @staticmethod
     def define_property():

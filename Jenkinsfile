@@ -5,7 +5,7 @@ node {
     container("python2") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python2 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun"
+                sh "python -m pip install PyYaml dill pandas mock freezegun futures promise"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations Unit Tests') {
@@ -47,7 +47,7 @@ node {
         }
         ws("${WORKSPACE}/foundations_rest_api/") {
             stage('Python2 REST API Install Requirements') {
-                sh "python -m pip install flask flask-restful"
+                sh "python -m pip install flask flask-restful Flask-Cors"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations REST API Unit Tests') {
@@ -62,7 +62,7 @@ node {
     container("python3") {
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python3 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun"
+                sh "python -m pip install PyYaml dill pandas mock freezegun futures promise"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Unit Tests') {
@@ -104,7 +104,7 @@ node {
         }
         ws("${WORKSPACE}/foundations_rest_api/") {
             stage('Python3 REST API Install Requirements') {
-                sh "python -m pip install flask flask-restful"
+                sh "python -m pip install flask flask-restful Flask-Cors"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations REST API Unit Tests') {

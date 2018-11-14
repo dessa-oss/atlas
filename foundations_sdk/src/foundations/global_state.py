@@ -15,13 +15,16 @@ from foundations.log_manager import LogManager
 from foundations.middleware_manager import MiddlewareManager
 from foundations.foundations_context import FoundationsContext
 
+import concurrent.futures
+
 
 _pipeline_context = PipelineContext()
 _pipeline = Pipeline(_pipeline_context)
 foundations_context = FoundationsContext(_pipeline)
 config_manager = ConfigManager()
 cache_manager = CacheManager()
-deployment_manager = DeploymentManager()
+deployment_manager = DeploymentManager(config_manager)
 module_manager = ModuleManager()
 log_manager = LogManager(config_manager)
 middleware_manager = MiddlewareManager(config_manager)
+default_executor = concurrent.futures.ThreadPoolExecutor()

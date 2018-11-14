@@ -16,6 +16,9 @@ class Argument(object):
         from foundations.dynamic_parameter import DynamicParameter
         from foundations.stage_parameter import StageParameter
 
+        if isinstance(value, Argument):
+            return value
+
         if isinstance(value, Hyperparameter):
             if value.name is None:
                 value.name = name
@@ -33,6 +36,9 @@ class Argument(object):
 
     def name(self):
         return self._name
+
+    def set_name(self, name):
+        self._name = name
 
     def value(self, runtime_data):
         return self._parameter.compute_value(runtime_data)

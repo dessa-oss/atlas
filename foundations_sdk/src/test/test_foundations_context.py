@@ -39,3 +39,11 @@ class TestFoundationsContext(unittest.TestCase):
         with self._context.change_pipeline(new_pipeline):
             pass
         self.assertEqual(self._pipeline, self._context.pipeline())
+
+    def test_set_project_name_sets_provenance_project_name(self):
+        self._context.set_project_name('my project')
+        self.assertEqual('my project', self._pipeline_context.provenance.project_name)
+
+    def test_set_project_name_sets_provenance_project_name_different_name(self):
+        self._context.set_project_name('my other project')
+        self.assertEqual('my other project', self._pipeline_context.provenance.project_name)

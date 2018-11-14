@@ -24,6 +24,11 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
+    install_requires=[
+        'foundations',
+        'flask-restful==0.3.6',
+        'Flask-Cors==3.0.6',
+    ],
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={

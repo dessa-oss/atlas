@@ -4,6 +4,24 @@ The goal of this document is to outline how Foundations uses a configuration-dri
 
 Configuration in Foundations is done through `config.yaml` files.
 
+## Table of contents
+[Vocabulary](#vocabulary)
+
+[Types of Deployments](#types-of-deployments)
+
+[Usage](#usage)
+
+[Configuration Options](#configuration-options)
+
+[Archive Configurations](#archive-configurations)
+
+[Additional Configurations](#additional-configurations)
+
+[Run script environment configs](#run-script-environment-configs)
+
+[Using the config_manager](#using-the-config_manager)
+
+
 ## Vocabulary
 
 It's important to understand the language used around deployment so that we can properly understand how models are run, and where.
@@ -20,15 +38,27 @@ Queuing system: a way for multiple jobs to be sent to the execution environment,
 
 ## Types of Deployments
 
-You'll find a set of example configurations for different deployment types in `/examples/example_config`. For each type of deployment there's an example `_deploy` and `_results` config. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results.
-
-If no config is specified the application will try use all the configurations which will likely lead to unexpected failures.
+You'll find example configurations for different deployment types in `/examples/example_config`.
 
 Foundations works with three different types of deployments:
 
 **Local Deployment:** this will run directly on the machine where the `.yaml` file is. This deployment doesn't require a queuing system.
 
-**Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration.
+**Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration. When using this method of deployment, remember to authenticate with your Google Cloud service. Instructions on how to do this can be found [here](https://google-cloud.readthedocs.io/en/latest/core/auth.html).
+
+**SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system. 
+
+The example folder contains seperate `_deploy` and `_results` config for _SSH Deployment_. This is because the SSH deployment initially stores the archives locally before sending it off remotely. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results.
+
+## Usage
+
+You can specify the .config.yaml configuration file for your script using the `add_config_path` method in the `config_manager`. 
+```
+from foundations import config_manager
+
+config_manager.add_config_path('config/local_default.config.yaml')
+```
+It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
 
 **Amazon Web Services (AWS) Deployment:** for use with Amazon's cloud service. A queuing system is required for use of this deployment configuration.  This has been tested using AWS Lambda + AWS Batch as the queuing + scheduling system.
 
@@ -102,3 +132,75 @@ Just like with SSH the `remote_user` and `remote_host` value will be the login f
 `key_path`: the private key necessary for using SSH.
 
 `log_level`: for debugging purposes if set to `DEBUG` Foundations will be verbose in its output. Remove this configuration will turn off debug mode and will default to using `INFO`. This is a wrapper on top of Python's logging.
+
+## Run script environment configs
+
+Foundations creates its own virtual environment when running.  To set environment variables in that virtual environment, set the `run_script_environment` option.  This option is set by providing to it key-value pairs (where the key is the environment variable name and the value is the value to set in the variable):
+
+```
+run_script_environment:
+    var0: value0
+    var1: value1
+    ...
+```
+
+The environment variables Foundations exposes are `log_level` and `offline_mode`.
+
+### log_level
+
+The `log_level` used here is for the `run.sh` script, including (for example) the output for `pip` when it installs libraries before running a submitted job.  The difference between this `log_level` and the one in the previous section is that this is for the `run.sh` script (i.e. everything the job requires in order to run) and is set under `run_script_environment`, while the previous `log_level` is for the Foundations job itself and has no parent configuration.
+
+Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the `log_level` option described in the previous section.  Leaving it unset is the same as setting `INFO`.  Setting any other value will disable all logging for all non-job-related processes.
+
+### offline_mode
+
+This variable is used to tell the `run.sh` that there is no internet.  This ensures that pip will not waste time trying to download packages when it can't.
+
+Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
+
+Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
+
+### example run_script_environment
+
+The below is for the case where you want `DEBUG`-level logging for `run.sh` processes and online mode:
+
+```
+run_script_environment:
+    log_level: DEBUG
+```
+
+The below is for the case where you want `INFO`-level logging for `run.sh` processes and offline mode:
+
+```
+run_script_environment:
+    log_level: INFO # can omit this line entirely - log_level is INFO by default!
+    offline_mode: OFFLINE
+```
+
+## Using the config_manager
+
+The `config_manager` can be used to override specific settings in default config specified in the `.config.yaml`. 
+
+The general format of use:
+`config_manager['<configuration>'] = <new config settings>`
+
+### example changing log_level
+The below could be used if you want to change the log_level in one of your experiments but don't want to modify your entire configuration.
+
+```
+from foundations import config_manager
+
+config_manager['log_level'] = DEBUG
+```
+
+### example changing archive listing implementation
+The below could be used to change the archive storage locations of one of your experiments. 
+```
+from foundations import config_manager, LocalFileSystemPipelineListing
+
+config_manager['archive_listing_implementation'] = {
+    'archive_listing_type': LocalFileSystemPipelineListing,
+    'constructor_arguments': [/tmp/specialLocation],
+}
+
+```

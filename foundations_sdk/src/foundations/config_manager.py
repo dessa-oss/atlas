@@ -95,7 +95,10 @@ class ConfigManager(object):
             name, type_name, implementation_key, implementation_type))
         if implementation_key in config:
             reflected_implementation = config[implementation_key]
-            self._log().debug('Configured with {}'.format(reflected_implementation))
+            if implementation_key == 'deployment_implementation':
+                self._log().info('Configured with {}'.format(reflected_implementation))
+            else:
+                self._log().debug('Configured with {}'.format(reflected_implementation)) 
 
             reflected_klass_string = reflected_implementation[implementation_type]
             reflected_klass = ConfigManager._string_to_type(
