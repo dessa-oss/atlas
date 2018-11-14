@@ -45,7 +45,9 @@ class TestLazyResult(unittest.TestCase):
         mock = self.Mock(self.MockModelTwo(some_data=parent_lazy_result, some_other_data='world'))
         lazy_result = LazyResult(mock.value)
 
-        self.assertEqual({'some_data': {'data': 'hello'}}, lazy_result.only(['some_data']).evaluate())
+        result = lazy_result.only(['some_data']).evaluate()
+        self.assertEqual(['some_data'], list(result.keys()))
+        self.assertEqual({'data': 'hello'}, result['some_data'].attributes)
 
     def test_lazy_result_only_filter_properties_different_property(self):
         mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
@@ -86,7 +88,9 @@ class TestLazyResult(unittest.TestCase):
         mock2 = self.Mock(self.MockModel(data=lazy_result))
         lazy_result2 = LazyResult(mock2.value)
 
-        self.assertEqual({'data': [{'data': 'hello world'}]}, lazy_result2.evaluate())
+        result_attributes = lazy_result2.evaluate().attributes
+        self.assertEqual(['data'], list(result_attributes.keys()))
+        self.assertEqual({'data': 'hello world'}, result_attributes['data'][0].attributes)
 
     def test_recursive_lazy_result_via_dictionary(self):
         mock = self.Mock('hello world')
