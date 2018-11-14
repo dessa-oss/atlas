@@ -8,12 +8,13 @@ import ProjectSummary from './ProjectSummary';
 class ProjectPage extends Component {
   constructor(props) {
     super(props);
+    this.getAllProjects = this.getAllProjects.bind(this);
     this.state = {
       isLoaded: false,
       projects: [],
       isMount: false,
+      selectProject: this.props.selectProject,
     };
-    this.getAllProjects = this.getAllProjects.bind(this);
   }
 
   async componentDidMount() {
@@ -39,7 +40,7 @@ class ProjectPage extends Component {
   }
 
   render() {
-    const { isLoaded, projects } = this.state;
+    const { isLoaded, projects, selectProject } = this.state;
     let projectList;
     if (isLoaded) {
       if (projects.length === 0) {
@@ -48,7 +49,11 @@ class ProjectPage extends Component {
         projectList = [];
         projects.forEach((project) => {
           const key = project.name.concat('-').concat(project.created_at);
-          projectList.push(<ProjectSummary key={key} project={project} />);
+          projectList.push(<ProjectSummary
+            key={key}
+            project={project}
+            selectProject={selectProject}
+          />);
         });
       }
     } else {
@@ -73,12 +78,14 @@ ProjectPage.propTypes = {
   isMount: PropTypes.bool,
   isLoaded: PropTypes.bool,
   projects: PropTypes.array,
+  selectProject: PropTypes.func,
 };
 
 ProjectPage.defaultProps = {
   isMount: false,
   isLoaded: false,
   projects: [],
+  selectProject: () => null,
 };
 
 export default ProjectPage;

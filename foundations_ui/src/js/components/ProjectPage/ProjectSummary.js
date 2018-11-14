@@ -4,9 +4,16 @@ import PropTypes from 'prop-types';
 class ProjectSummary extends Component {
   constructor(props) {
     super(props);
+    this.viewClick = this.viewClick.bind(this);
     this.state = {
       project: this.props.project,
+      selectProject: this.props.selectProject,
     };
+  }
+
+  viewClick() {
+    const { project, selectProject } = this.state;
+    selectProject(project.name);
   }
 
   render() {
@@ -24,7 +31,7 @@ class ProjectSummary extends Component {
           </p>
           <div className="project-summary-button-container">
             <button type="button" className="b--mat b--affirmative">view queue</button>
-            <button type="button" className="b--mat b--affirmative">view job list</button>
+            <button type="button" onClick={this.viewClick} className="b--mat b--affirmative">view job list</button>
           </div>
         </div>
         <div className="project-summary-metrics-container" />
@@ -35,10 +42,12 @@ class ProjectSummary extends Component {
 
 ProjectSummary.propTypes = {
   project: PropTypes.object,
+  selectProject: PropTypes.func,
 };
 
 ProjectSummary.defaultProps = {
   project: {},
+  selectProject: () => null,
 };
 
 export default ProjectSummary;
