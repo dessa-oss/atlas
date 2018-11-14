@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import JobTable from '../js/components/JobListPage/JobTable';
+import JobTable from '../../js/components/JobListPage/JobTable';
 import { shallow, mount } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

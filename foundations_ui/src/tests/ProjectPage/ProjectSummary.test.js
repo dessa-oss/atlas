@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ProjectSummary from '../js/components/ProjectPage/ProjectSummary';
+import ProjectSummary from '../../js/components/ProjectPage/ProjectSummary';
 import { shallow, mount } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

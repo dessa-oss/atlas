@@ -9,6 +9,8 @@ import Adapter from 'enzyme-adapter-react-16';
 
 function configureTests(){
   configure({ adapter: new Adapter() });
+  // API Call timer
+  jest.setTimeout(30000);
 }
 
 export default configureTests;

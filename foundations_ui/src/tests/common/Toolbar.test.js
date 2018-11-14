@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Toolbar from '../js/components/common/Toolbar';
+import Toolbar from '../../js/components/common/Toolbar';
 import { shallow } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

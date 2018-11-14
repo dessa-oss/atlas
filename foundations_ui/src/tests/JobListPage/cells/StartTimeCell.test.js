@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import StartTimeCell from '../js/components/JobListPage/cells/StartTimeCell';
+import StartTimeCell from '../../../js/components/JobListPage/cells/StartTimeCell';
 import { shallow } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../../setupTests';
 
 configureTests();
 
