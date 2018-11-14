@@ -21,7 +21,7 @@ class InputMetricCell extends Component {
 
     return (
       <div style={divStyle} className="input-metric-cell-container">
-        <p>value</p>
+        <p className="header-4 font-bold">value</p>
       </div>
     );
   }

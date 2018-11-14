@@ -1,10 +1,14 @@
 .input-metric-cell-container{
     display: inline-block;
     vertical-align: middle;
-    border: 1px solid #DCDCDC;
-    min-width: 131px;
+    border: 1px solid $color-border-bottom;
+    min-width: 115px;
     text-align: center;
   p{
     margin: auto;
+    background-color: $color-white;
+    vertical-align: middle;
+    padding-top: 7px;
+    height: 26px;
   }
 }
