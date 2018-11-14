@@ -1,0 +1,29 @@
+.status{
+  height: 19px;
+  width: 19px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-green {
+  background-color: $color-status-green;
+}
+
+.status-yellow {
+  background-color: $color-status-yellow;
+}
+
+.status-red {
+  background-color: $color-status-red;
+}
+
+.status-container{
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 5px;
+  padding-bottom: 3px;
+  background-color: $color-white;
+  border: 1px solid $color-border-bottom;
+}

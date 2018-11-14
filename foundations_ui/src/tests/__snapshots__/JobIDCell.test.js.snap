@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job ID Cell 1`] = `
+<p
+  className="job-cell job-id-cell header-4 font-bold"
+/>
+`;

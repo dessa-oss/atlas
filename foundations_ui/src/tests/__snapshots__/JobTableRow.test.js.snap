@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Table Row 1`] = `
+<div
+  className="job-table-row"
+>
+  <StartTimeCell
+    startTime=""
+  />
+  <StatusCell
+    status=""
+  />
+  <JobIDCell
+    jobID=""
+  />
+  <DurationCell
+    duration={NaN}
+  />
+  <UserCell
+    user=""
+  />
+</div>
+`;
