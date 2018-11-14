@@ -8,13 +8,14 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 import unittest
 import json
 import itertools
+from six import with_metaclass
 from foundations_rest_api.global_state import app_manager
 
 
 class _APIAcceptanceTestCaseMeta(type):
 
     def __new__(mcls, *args, **kwargs):
-        cls = super().__new__(mcls, *args, **kwargs)
+        cls = type.__new__(mcls, *args, **kwargs)
         if cls.__name__ not in ('APIAcceptanceTestCaseBase', '_APIAcceptanceTestCaseMeta'):
             if not (getattr(cls, 'url', None) and getattr(cls, 'sorting_columns', None)):
                 raise NotImplementedError('You must define class attributes "url" and "sorting_columns"')
@@ -30,8 +31,7 @@ class _APIAcceptanceTestCaseMeta(type):
             msg = 'The following methods must be added to the test case: {}'.format(not_implemented)
             raise NotImplementedError(msg)
 
-
-class APIAcceptanceTestCaseBase(unittest.TestCase, metaclass=_APIAcceptanceTestCaseMeta):
+class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unittest.TestCase)):
 
     @classmethod
     def setup_test_methods(cls, sorting_columns):
