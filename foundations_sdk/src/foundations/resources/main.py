@@ -17,6 +17,13 @@ def main():
     config_manager.freeze()
     config = config_manager.config()
 
+    def set_recursion_limit_if_necessary():
+        if 'recursion_limit' in config:
+            new_limit = config['recursion_limit']
+            log.debug('Overriding recursion limit to {}'.format(new_limit))
+            sys.setrecursionlimit(new_limit)
+    set_recursion_limit_if_necessary()
+
     job_name = config.get('job_name', 'job')
     job_binary_path = job_name + '.bin'
 

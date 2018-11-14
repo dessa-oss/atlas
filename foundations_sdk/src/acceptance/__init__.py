@@ -12,3 +12,4 @@ from acceptance.test_pipeline_interface import TestPipelineInterface
 from acceptance.test_run_job import TestRunJob
 from acceptance.test_duplicate_job_source import TestDuplicateJobSource
 from acceptance.test_run_job_with_unserializable_outputs import TestRunJobWithUnserializableOutputs
+from acceptance.test_recursion_limit import TestRecursionLimit

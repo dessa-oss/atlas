@@ -5,8 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from sys import version_info
-
 def file_archive_name(prefix, name):
     if prefix is not None:
         return prefix + '/' + name
@@ -17,7 +15,11 @@ def file_archive_name(prefix, name):
 def file_archive_name_with_additional_prefix(prefix, additional_prefix, name):
     return file_archive_name(prefix, additional_prefix + '/' + name)
 
-if version_info[0] < 3:
+def using_python_2():
+    from sys import version_info
+    return version_info[0] < 3
+
+if using_python_2():
     def force_encoding(string):
         return string.decode('utf-8').encode('utf-8', 'ignore')
 
