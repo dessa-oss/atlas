@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations.new_cache_middleware import NewCacheMiddleware
+from foundations.middleware.new_cache_middleware import NewCacheMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
@@ -57,7 +57,8 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_up_stage_cache_with_pipeline_context(self):
         middleware = self._make_middleware()
         middleware.call(None, self.MockFiller, {}, (), {}, self._callback)
-        self.assertEqual(self._pipeline_context, self._mock_stage_cache.pipeline_context)
+        self.assertEqual(self._pipeline_context,
+                         self._mock_stage_cache.pipeline_context)
 
     def test_sets_up_stage_cache_with_stage(self):
         middleware = self._make_middleware()
@@ -67,17 +68,21 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_up_stage_cache_with_stage_config(self):
         middleware = self._make_middleware()
         middleware.call(None, self.MockFiller, {}, (), {}, self._callback)
-        self.assertEqual(self._stage_config, self._mock_stage_cache.stage_config)
+        self.assertEqual(self._stage_config,
+                         self._mock_stage_cache.stage_config)
 
     def test_sets_up_stage_cache_with_arguments(self):
         middleware = self._make_middleware()
-        middleware.call(None, self.MockFiller, {}, ('hello',), {}, self._callback)
+        middleware.call(None, self.MockFiller, {},
+                        ('hello',), {}, self._callback)
         self.assertEqual(('hello',), self._mock_stage_cache.live_arguments)
 
     def test_sets_up_stage_cache_with_arguments_multiple_arguments(self):
         middleware = self._make_middleware()
-        middleware.call(None, self.MockFiller, {}, ('i', 'am', 'a', 'potato'), {}, self._callback)
-        self.assertEqual(('i', 'am', 'a', 'potato'), self._mock_stage_cache.live_arguments)
+        middleware.call(None, self.MockFiller, {},
+                        ('i', 'am', 'a', 'potato'), {}, self._callback)
+        self.assertEqual(('i', 'am', 'a', 'potato'),
+                         self._mock_stage_cache.live_arguments)
 
     def test_submits_cache(self):
         middleware = self._make_middleware()
@@ -87,17 +92,20 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_returns_cached_result(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.cached_value = Something('some value')
 
         middleware = self._make_middleware()
-        result = middleware.call(None, self.MockFiller, {}, (), {}, self._callback)
+        result = middleware.call(
+            None, self.MockFiller, {}, (), {}, self._callback)
         self.assertEqual('some value', result)
 
     def test_indicates_cache_used_when_present(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.cached_value = Something('some value')
 
         middleware = self._make_middleware()
@@ -112,7 +120,8 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_indicates_cache_name_when_present(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.name_of_cache = 'some stuff'
 
         middleware = self._make_middleware()
@@ -123,13 +132,15 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_indicates_cache_name_when_present_different_name(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.name_of_cache = 'some different stuff'
 
         middleware = self._make_middleware()
         middleware.call(None, self.MockFiller, {}, (), {}, self._callback)
 
-        self.assertEqual('some different stuff', self._stage_context.cache_uuid)
+        self.assertEqual('some different stuff',
+                         self._stage_context.cache_uuid)
 
     def test_does_not_indicate_cache_name_when_not_present(self):
         middleware = self._make_middleware()
@@ -139,7 +150,8 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_does_not_submit_cache_when_already_cached(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.cached_value = Something('some value')
 
         middleware = self._make_middleware()
@@ -149,7 +161,8 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_does_not_run_callback_when_already_cached(self):
         from foundations.something import Something
 
-        cache = self._mock_stage_cache_method(self._pipeline_context, self._stage, self._stage_config, ())
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
         cache.cached_value = Something('some value')
 
         middleware = self._make_middleware()
@@ -164,5 +177,6 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
     def _mock_stage_cache_method(self, pipeline_context, stage, stage_config, live_arugments):
         if self._mock_stage_cache is None:
-            self._mock_stage_cache = self.MockStageCache(pipeline_context, stage, stage_config, live_arugments)
+            self._mock_stage_cache = self.MockStageCache(
+                pipeline_context, stage, stage_config, live_arugments)
         return self._mock_stage_cache

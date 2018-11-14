@@ -16,9 +16,9 @@ def _create_redis_instance_and_add_consumers():
     _redis = LazyRedis(redis.Redis)
 
     message_router.add_listener(
-        JobMetricConsumer(_redis), 'stage_log_middleware')
+        JobMetricConsumer(_redis), 'job_metrics')
     message_router.add_listener(
-        JobMetricNameConsumer(_redis), 'stage_log_middleware')
+        JobMetricNameConsumer(_redis), 'job_metrics')
 
 
 _create_redis_instance_and_add_consumers()

@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.context_aware_middleware import ContextAwareMiddleware
+from foundations.middleware.context_aware_middleware import ContextAwareMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 

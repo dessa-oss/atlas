@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from mock import patch
-from foundations.new_stage_log_middleware import NewStageLogMiddleware
+from foundations.middleware.new_stage_log_middleware import NewStageLogMiddleware
 from foundations.stage_logging_context import StageLoggingContext
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
@@ -47,7 +47,8 @@ class TestNewStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_stage_log_sets_stage(self):
         def method(args, kwargs):
             from foundations.stage_logging import stage_logging_context
-            self.assertEqual(self._stage, stage_logging_context.logger().stage())
+            self.assertEqual(
+                self._stage, stage_logging_context.logger().stage())
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)
@@ -56,7 +57,8 @@ class TestNewStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_stage_log_sets_stage_config(self):
         def method(args, kwargs):
             from foundations.stage_logging import stage_logging_context
-            self.assertEqual(self._stage_config, stage_logging_context.logger().stage_config())
+            self.assertEqual(self._stage_config,
+                             stage_logging_context.logger().stage_config())
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)
@@ -65,7 +67,8 @@ class TestNewStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_stage_log_sets_stage_context(self):
         def method(args, kwargs):
             from foundations.stage_logging import stage_logging_context
-            self.assertEqual(self._stage_context, stage_logging_context.logger().stage_context())
+            self.assertEqual(self._stage_context,
+                             stage_logging_context.logger().stage_context())
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)
@@ -74,7 +77,8 @@ class TestNewStageLogMiddleware(unittest.TestCase, TestMiddlewareCallback):
     def test_sets_stage_log_sets_pipeline_context(self):
         def method(args, kwargs):
             from foundations.stage_logging import stage_logging_context
-            self.assertEqual(self._pipeline_context, stage_logging_context.logger().pipeline_context())
+            self.assertEqual(self._pipeline_context,
+                             stage_logging_context.logger().pipeline_context())
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)

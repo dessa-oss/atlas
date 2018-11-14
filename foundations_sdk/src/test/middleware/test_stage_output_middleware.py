@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.stage_output_middleware import StageOutputMiddleware
+from foundations.middleware.stage_output_middleware import StageOutputMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
@@ -30,7 +30,8 @@ class TestStageOutputMiddleware(unittest.TestCase, TestMiddlewareCallback):
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, self._callback)
-        self.assertEqual(self._callback_result, self._stage_context.stage_output)
+        self.assertEqual(self._callback_result,
+                         self._stage_context.stage_output)
 
     def test_does_not_store_stage_output_if_not_persisted(self):
         middleware = self._make_middleware()

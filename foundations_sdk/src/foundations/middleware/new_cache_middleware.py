@@ -5,17 +5,19 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class NewCacheMiddleware(BasicStageMiddleware):
 
     def __init__(self, cache_implementation, pipeline_context, stage_config, stage_context, stage):
         self._cache_implementation = cache_implementation
-        super(NewCacheMiddleware, self).__init__(pipeline_context, stage_config, stage_context, stage)
+        super(NewCacheMiddleware, self).__init__(
+            pipeline_context, stage_config, stage_context, stage)
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        stage_cache = self._cache_implementation(self._pipeline_context, self._stage, self._stage_config, args)
+        stage_cache = self._cache_implementation(
+            self._pipeline_context, self._stage, self._stage_config, args)
         self._stage_context.cache_uuid = stage_cache.cache_name()
 
         cached_value = stage_cache.fetch_option()
