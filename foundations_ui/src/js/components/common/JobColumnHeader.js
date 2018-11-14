@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ReactResizeDetector from 'react-resize-detector';
 
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
+    this.onResize = this.onResize.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
@@ -14,7 +16,7 @@ class JobColumnHeader extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  onResize(width, height) {
     const { sizeCallback, colIndex } = this.state;
     const { clientWidth } = this.headerContainer;
     sizeCallback(colIndex, clientWidth);
@@ -32,11 +34,15 @@ class JobColumnHeader extends Component {
     }
 
     return (
-      <div className={containerDivClass} ref={(c) => { this.headerContainer = c; }}>
+      <div
+        className={containerDivClass}
+        ref={(c) => { this.headerContainer = c; }}
+      >
         <div className={offsetDivClass}>
           <h4 className={headerClassName}>{title}</h4>
           <div className={arrowClassName} />
         </div>
+        <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
       </div>
     );
   }
