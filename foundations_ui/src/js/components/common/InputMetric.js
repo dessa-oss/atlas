@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TableSectionHeader from './TableSectionHeader';
 import JobColumnHeader from './JobColumnHeader';
 import InputMetricCell from './InputMetricCell';
+import InputMetricRow from './InputMetricRow';
 
 class InputMetric extends Component {
   constructor(props) {
@@ -12,7 +13,8 @@ class InputMetric extends Component {
       header: this.props.header,
       hiddenInputParams: this.props.hiddenInputParams,
       allInputParams: this.props.allInputParams,
-      jobs: {
+      jobs: [{
+        job_id: '123',
         input_params: [
           {
             name: 'a_value',
@@ -56,6 +58,96 @@ class InputMetric extends Component {
           },
         ],
       },
+      {
+        job_id: '124',
+        input_params: [
+          {
+            name: 'a_value',
+            value: {
+              type: 'hyperparameter',
+              name: 'value_for_a_value',
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000003',
+          },
+          {
+            name: 'b_value',
+            value: {
+              type: 'constant',
+              value: 65,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000004',
+          },
+          {
+            name: 'd_value',
+            value: {
+              type: 'hyperparameter',
+              name: 'value_for_e_value',
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000003',
+          },
+          {
+            name: 'e_value',
+            value: {
+              type: 'constant',
+              value: 165,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000004',
+          },
+          {
+            name: 'expiry_time',
+            value: {
+              type: 'constant',
+              value: 3600,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000005',
+          },
+        ],
+      },
+      {
+        job_id: '125',
+        input_params: [
+          {
+            name: 'a_value',
+            value: {
+              type: 'hyperparameter',
+              name: 'value_for_a_value',
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000003',
+          },
+          {
+            name: 'b_value',
+            value: {
+              type: 'constant',
+              value: 65,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000004',
+          },
+          {
+            name: 'd_value',
+            value: {
+              type: 'hyperparameter',
+              name: 'value_for_e_value',
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000003',
+          },
+          {
+            name: 'e_value',
+            value: {
+              type: 'constant',
+              value: 165,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000004',
+          },
+          {
+            name: 'expiry_time',
+            value: {
+              type: 'constant',
+              value: 3600,
+            },
+            stage_uuid: '00000000-0000-0000-0000-000000000005',
+          },
+        ],
+      }],
       cellWidths: new Array(5),
     };
   }
@@ -84,14 +176,12 @@ class InputMetric extends Component {
       });
     }
 
-    let cells = null;
-    if (jobs.input_params && jobs.input_params.length > 0) {
-      cells = [];
-      let colIndex = 0;
-      jobs.input_params.forEach((input) => {
-        const cellWidth = cellWidths[colIndex];
-        cells.push(<InputMetricCell key={input.name} cellWidth={cellWidth} />);
-        colIndex += 1;
+    let rows = null;
+    if (jobs.length > 0) {
+      rows = [];
+      jobs.forEach((job) => {
+        const key = job.job_id.concat('-input-metric-row');
+        rows.push(<InputMetricRow key={key} job={job} cellWidths={cellWidths} />);
       });
     }
 
@@ -100,9 +190,7 @@ class InputMetric extends Component {
         <TableSectionHeader header={header} />
         <div className="input-metric-column-header-container">
           {inputParams}
-          <div className="input-metric-rows-container">
-            {cells}
-          </div>
+          {rows}
         </div>
       </div>
     );
