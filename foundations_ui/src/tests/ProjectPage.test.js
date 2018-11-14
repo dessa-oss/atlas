@@ -21,7 +21,7 @@ it('Calls Get All Projects', async () => {
 });
 
 // Assumes your API has projects
-it('Has Projects', async () => {
+it('Has Atleast One Project', async () => {
   const wrapper = mount(<ProjectPage/>); 
   const preState = wrapper.state();
   await wrapper.instance().getAllProjects();
