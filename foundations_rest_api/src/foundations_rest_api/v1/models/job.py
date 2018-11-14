@@ -21,7 +21,6 @@ class Job(PropertyModel):
 
     @staticmethod
     def all(project_name=None):
-        #from foundations_rest_api.response import Response
         from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
