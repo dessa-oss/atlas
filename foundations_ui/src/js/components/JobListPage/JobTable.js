@@ -63,7 +63,11 @@ class JobTable extends Component {
 
     return (
       <div className="job-table-container">
-        <JobTableHeader hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} />
+        <JobTableHeader
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
         <div className="job-table-row-container">
           {jobRows}
         </div>

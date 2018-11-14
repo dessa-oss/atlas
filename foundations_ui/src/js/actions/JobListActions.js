@@ -136,12 +136,31 @@ class ProjectActions {
     const allInputParams = [];
     allJobs.forEach((job) => {
       job.input_params.forEach((input) => {
-        if (!allInputParams.includes(input.name)) {
-          allInputParams.push(input.name);
+        if (input.value.type === 'constant') {
+          if (!allInputParams.includes(input.name)) {
+            allInputParams.push(input.name);
+          }
         }
       });
     });
     return allInputParams;
+  }
+
+  static getConstantInputParams(allInputParams) {
+    const constantParams = [];
+    allInputParams.forEach((input) => {
+      if (input.value.type === 'constant') {
+        constantParams.push(input);
+      }
+    });
+    return constantParams;
+  }
+
+  static getInputParamValue(inputParam) {
+    if (inputParam.value && inputParam.value.value && inputParam.value.type === 'constant') {
+      return inputParam.value.value;
+    }
+    return 'Does not exist';
   }
 }
 

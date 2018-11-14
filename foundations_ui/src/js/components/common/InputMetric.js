@@ -13,147 +13,13 @@ class InputMetric extends Component {
       header: this.props.header,
       hiddenInputParams: this.props.hiddenInputParams,
       allInputParams: this.props.allInputParams,
-      jobs: [{
-        job_id: '123',
-        input_params: [
-          {
-            name: 'a_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_a_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'b_value',
-            value: {
-              type: 'constant',
-              value: 65,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'd_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_e_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'e_value',
-            value: {
-              type: 'constant',
-              value: 165,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'expiry_time',
-            value: {
-              type: 'constant',
-              value: 3600,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000005',
-          },
-        ],
-      },
-      {
-        job_id: '124',
-        input_params: [
-          {
-            name: 'a_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_a_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'b_value',
-            value: {
-              type: 'constant',
-              value: 65,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'd_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_e_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'e_value',
-            value: {
-              type: 'constant',
-              value: 165,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'expiry_time',
-            value: {
-              type: 'constant',
-              value: 3600,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000005',
-          },
-        ],
-      },
-      {
-        job_id: '125',
-        input_params: [
-          {
-            name: 'a_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_a_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'b_value',
-            value: {
-              type: 'constant',
-              value: 65,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'd_value',
-            value: {
-              type: 'hyperparameter',
-              name: 'value_for_e_value',
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000003',
-          },
-          {
-            name: 'e_value',
-            value: {
-              type: 'constant',
-              value: 165,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000004',
-          },
-          {
-            name: 'expiry_time',
-            value: {
-              type: 'constant',
-              value: 3600,
-            },
-            stage_uuid: '00000000-0000-0000-0000-000000000005',
-          },
-        ],
-      }],
+      jobs: [],
       cellWidths: new Array(5),
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ allInputParams: nextProps.allInputParams });
+    this.setState({ allInputParams: nextProps.allInputParams, jobs: nextProps.jobs });
   }
 
   resizeCells(colIndex, newWidth) {
@@ -205,7 +71,7 @@ InputMetric.propTypes = {
   header: PropTypes.string,
   hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
-  jobs: PropTypes.object,
+  jobs: PropTypes.array,
   cellWidths: PropTypes.array,
 };
 
@@ -213,7 +79,7 @@ InputMetric.defaultProps = {
   header: '',
   hiddenInputParams: [],
   allInputParams: [],
-  jobs: {},
+  jobs: [],
   cellWidths: [],
 };
 

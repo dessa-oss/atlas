@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import InputMetricCell from './InputMetricCell';
+import JobActions from '../../actions/JobListActions';
 
 class InputMetricRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      job: this.props.job,
+      inputParams: JobActions.getConstantInputParams(this.props.job.input_params),
       cellWidths: this.props.cellWidths,
     };
   }
 
   render() {
-    const { job, cellWidths } = this.state;
+    const { inputParams, cellWidths } = this.state;
 
     let cells = null;
-    if (job.input_params && job.input_params.length > 0) {
+    if (inputParams && inputParams.length > 0) {
       cells = [];
       let colIndex = 0;
-      job.input_params.forEach((input) => {
+      inputParams.forEach((input) => {
         const cellWidth = cellWidths[colIndex];
-        cells.push(<InputMetricCell key={input.name} cellWidth={cellWidth} />);
+        const inputValue = JobActions.getInputParamValue(input);
+        cells.push(<InputMetricCell key={input.name} cellWidth={cellWidth} value={inputValue} />);
         colIndex += 1;
       });
     }
