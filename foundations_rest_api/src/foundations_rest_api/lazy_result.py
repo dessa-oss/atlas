@@ -80,7 +80,7 @@ class LazyResult(object):
             return result.evaluate()
 
         if isinstance(result, PropertyModel):
-            return self._evaluate_dict(result.attributes)
+            return self._evaluate_property_model(result)
 
         if isinstance(result, dict):
             return self._evaluate_dict(result)
@@ -95,3 +95,9 @@ class LazyResult(object):
         for key, value in value.items():
             attributes[key] = value.evaluate() if self._is_lazy_result(value) else value
         return attributes
+
+    def _evaluate_property_model(self, value):
+        for property_name, property_value in value.attributes.items():
+            if self._is_lazy_result(property_value):
+                setattr(value, property_name, property_value.evaluate())
+        return value

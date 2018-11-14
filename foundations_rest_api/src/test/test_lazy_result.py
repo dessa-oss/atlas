@@ -86,9 +86,7 @@ class TestLazyResult(unittest.TestCase):
         mock2 = self.Mock(self.MockModel(data=lazy_result))
         lazy_result2 = LazyResult(mock2.value)
 
-        nested_dict = lazy_result2.evaluate()
-        self.assertEqual(['data'], list(nested_dict.keys()))
-        self.assertDictEqual({'data': 'hello world'}, nested_dict['data'][0].attributes)
+        self.assertEqual({'data': [{'data': 'hello world'}]}, lazy_result2.evaluate())
 
     def test_recursive_lazy_result_via_dictionary(self):
         mock = self.Mock('hello world')
