@@ -14,5 +14,13 @@ exports[`Shallow Renders Job Column Header 1`] = `
       className="arrow-down float-right"
     />
   </div>
+  <ResizeDetector
+    handleHeight={true}
+    handleWidth={true}
+    onResize={[Function]}
+    refreshRate={1000}
+    resizableElementId=""
+    skipOnMount={false}
+  />
 </div>
 `;

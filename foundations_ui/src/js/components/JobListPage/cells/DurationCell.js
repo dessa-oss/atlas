@@ -23,34 +23,10 @@ class DurationCell extends Component {
     let minutesUI = null;
     let secondsUI = null;
 
-    let showingDays = false;
-    let showingHours = false;
-    let showingMinutes = false;
-
-    if (days !== 0) {
-      showingDays = true;
-      daysUI = <span className="duration-day-number header-4 font-bold">{days}<span className="font-regular">d </span></span>;
-    }
-
-    if (hours !== 0) {
-      showingHours = true;
-      hoursUI = <span className="duration-hour-number header-4 font-bold">{hours}<span className="font-regular">h </span></span>;
-    } else if (showingDays) {
-      hoursUI = <span className="duration-hour-number header-4 font-bold">0<span className="font-regular">h </span></span>;
-    }
-
-    if (minutes !== 0) {
-      showingMinutes = true;
-      minutesUI = <span className="duration-minute-number header-4 font-bold">{minutes}<span className="font-regular">m </span></span>;
-    } else if (showingDays || showingHours) {
-      minutesUI = <span className="duration-minute-number header-4 font-bold">0<span className="font-regular">m </span></span>;
-    }
-
-    if (seconds !== 0) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">{seconds}<span className="font-regular">s</span></span>;
-    } else if (showingDays || showingHours || showingMinutes) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">0<span className="font-regular">s </span></span>;
-    }
+    daysUI = JobActions.getDurationClass('days', days, hours, minutes, seconds);
+    hoursUI = JobActions.getDurationClass('hours', days, hours, minutes, seconds);
+    minutesUI = JobActions.getDurationClass('minutes', days, hours, minutes, seconds);
+    secondsUI = JobActions.getDurationClass('seconds', days, hours, minutes, seconds);
 
     return (
       <p className="job-cell duration-cell">{daysUI}{hoursUI}{minutesUI}{secondsUI}</p>

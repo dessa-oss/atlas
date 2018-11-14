@@ -18,8 +18,8 @@ class JobTable extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ isMount: true });
-    await this.getJobs();
+    await this.setState({ isMount: true });
+    this.getJobs();
   }
 
   componentWillUnmount() {

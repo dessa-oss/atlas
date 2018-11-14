@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import JobActions from '../../../actions/JobListActions';
 
 class StatusCell extends Component {
   constructor(props) {
@@ -12,15 +13,7 @@ class StatusCell extends Component {
   render() {
     const { status } = this.state;
 
-    let statusCircle = 'status-green';
-
-    if (status.toLowerCase() === 'running') {
-      statusCircle = 'status-yellow';
-    } else if (status.toLowerCase() === 'error') {
-      statusCircle = 'status-red';
-    }
-
-    const statusClass = 'status '.concat(statusCircle);
+    const statusClass = JobActions.getStatusCircle(status);
 
     return (
       <div className="status-container">

@@ -83,3 +83,63 @@ it('checks if field hidden, is hidden', () => {
   const isHidden = JobActions.isFieldHidden(hidden, fieldToCheck);
   expect(isHidden).toBe(true);
 });
+
+it('getStatusCircle green', () => {
+  const status = 'completed';
+  const circleClass = JobActions.getStatusCircle(status);
+  expect(circleClass).toBe('status status-green');
+});
+
+it('getStatusCircle red', () => {
+  const status = 'error';
+  const circleClass = JobActions.getStatusCircle(status);
+  expect(circleClass).toBe('status status-red');
+});
+
+it('getDurationClass days', () => {
+  const desiredTime = 'days';
+  const days = '3';
+  const hours = '6';
+  const minutes = '12';
+  const seconds = '30';
+  let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
+  // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
+  timeUI = JSON.stringify(timeUI);
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-day-number header-4 font-bold">3<span className="font-regular">d </span></span>));
+});
+
+it('getDurationClass hours', () => {
+  const desiredTime = 'hours';
+  const days = '3';
+  const hours = '6';
+  const minutes = '12';
+  const seconds = '30';
+  let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
+  // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
+  timeUI = JSON.stringify(timeUI);
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-hour-number header-4 font-bold">6<span className="font-regular">h </span></span>));
+});
+
+it('getDurationClass minutes', () => {
+  const desiredTime = 'minutes';
+  const days = '3';
+  const hours = '6';
+  const minutes = '12';
+  const seconds = '30';
+  let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
+  // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
+  timeUI = JSON.stringify(timeUI);
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-minute-number header-4 font-bold">12<span className="font-regular">m </span></span>));
+});
+
+it('getDurationClass seconds', () => {
+  const desiredTime = 'seconds';
+  const days = '3';
+  const hours = '6';
+  const minutes = '12';
+  const seconds = '30';
+  let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
+  // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
+  timeUI = JSON.stringify(timeUI);
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-second-number header-4 font-bold">30<span className="font-regular">s</span></span>));
+});

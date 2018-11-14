@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Start Time Cell 1`] = `
+<p
+  className="job-cell header-4 font-bold"
+>
+   
+  <span
+    className="font-regular"
+  />
+</p>
+`;
