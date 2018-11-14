@@ -80,6 +80,6 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         
     def test_get_route_alternation(self):
         data = super(TestJobsListingEndpoint, self).test_get_route_alternation()
-        self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
-        self.assertEqual(data['jobs'][1]['job_id'], 'my job 2')
-        self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+        self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')

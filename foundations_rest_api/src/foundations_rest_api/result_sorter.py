@@ -8,8 +8,6 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 class ResultSorter(object):
 
     def __call__(self, result, params):
-        print('1.-', result)
-        print('2.-', params)
         if result and 'sort' in params and isinstance(result, list):
             sort_param_value = params.get('sort')
             columns_spec_list = sort_param_value.split(',')
@@ -18,7 +16,6 @@ class ResultSorter(object):
 
     def _sort(self, result, columns_spec_list):
         columns = self._validate_columns(result, columns_spec_list)
-        print('===>', columns)
         if columns:
             columns.reverse()
             for column in columns:
@@ -28,7 +25,8 @@ class ResultSorter(object):
         columns = []
         for column_spec in columns_spec_list:
             column_spec = column_spec.strip()
-            column_data = (column_spec.startswith('-'), column_spec[1:])
+            descending = column_spec.startswith('-')
+            column_data = (descending, column_spec[1:] if descending else column_spec)
             if hasattr(result[0], column_data[1]):
                 columns.append(column_data)
         return columns
