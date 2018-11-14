@@ -9,7 +9,15 @@ class JobColumnHeader extends Component {
       isStatus: this.props.isStatus,
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
+      sizeCallback: this.props.sizeCallback,
+      colIndex: this.props.colIndex,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { sizeCallback, colIndex } = this.state;
+    const { clientWidth } = this.headerContainer;
+    sizeCallback(colIndex, clientWidth);
   }
 
   render() {
@@ -24,7 +32,7 @@ class JobColumnHeader extends Component {
     }
 
     return (
-      <div className={containerDivClass}>
+      <div className={containerDivClass} ref={(c) => { this.headerContainer = c; }}>
         <div className={offsetDivClass}>
           <h4 className={headerClassName}>{title}</h4>
           <div className={arrowClassName} />
@@ -39,6 +47,8 @@ JobColumnHeader.propTypes = {
   isStatus: PropTypes.number,
   className: PropTypes.string,
   containerClass: PropTypes.string,
+  sizeCallback: PropTypes.func,
+  colIndex: PropTypes.number,
 };
 
 JobColumnHeader.defaultProps = {
@@ -46,6 +56,8 @@ JobColumnHeader.defaultProps = {
   isStatus: 0,
   className: '',
   containerClass: 'job-column-header',
+  sizeCallback: () => null,
+  colIndex: 0,
 };
 
 export default JobColumnHeader;
