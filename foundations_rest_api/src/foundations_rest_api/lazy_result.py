@@ -31,7 +31,7 @@ class LazyResult(object):
 
             if isinstance(result, list):
                 return [filter_properties(item, only_fields) for item in result]
-    
+
             if isinstance(result, PropertyModel):
                 return filter_properties(result.attributes, only_fields)
 
