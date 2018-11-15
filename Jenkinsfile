@@ -3,9 +3,12 @@ node {
         checkout scm
     }    
     container("python2") {
+        stage('Python2 Foundations Install Test Requirements') {
+            sh "python -m pip install -r test_requirements.txt"
+        }
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python2 Foundations Install Requirements') {
-                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 mock freezegun futures promise==2.2.1 redis==2.10.6"
+                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 futures promise==2.2.1 redis==2.10.6"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations Unit Tests') {
@@ -60,9 +63,12 @@ node {
         }
     }
     container("python3") {
+        stage('Python3 Foundations Install Test Requirements') {
+            sh "python -m pip install -r test_requirements.txt"
+        }
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python3 Foundations Install Requirements') {
-                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 mock freezegun futures promise==2.2.1 redis==2.10.6"
+                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 futures promise==2.2.1 redis==2.10.6"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Unit Tests') {

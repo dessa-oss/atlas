@@ -51,6 +51,7 @@ from foundations.scheduler import Scheduler
 from foundations.versioning import __version__
 
 import foundations.import_installer
+import foundations.consumers
 
 
 def _append_module():

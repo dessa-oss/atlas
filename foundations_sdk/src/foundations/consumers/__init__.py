@@ -27,6 +27,7 @@ def _add_consumers_for_queue_job(redis):
     from foundations.consumers.jobs.queued.project_name import ProjectName
     from foundations.consumers.jobs.queued.run_data_keys import RunDataKeys
     from foundations.consumers.jobs.queued.run_data import RunData
+    from foundations.consumers.jobs.queued.set_user import SetUser
 
     import json
 
@@ -38,6 +39,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(ProjectName(redis), 'queue_job')
     _add_listener(RunDataKeys(redis), 'queue_job')
     _add_listener(RunData(redis, json), 'queue_job')
+    _add_listener(SetUser(redis), 'queue_job')
 
 
 def _add_consumers_for_run_job(redis):
@@ -64,22 +66,21 @@ def _add_consumers_for_fail_job(redis):
     from foundations.consumers.jobs.completed.completed_time import CompletedTime
     from foundations.consumers.jobs.failed.error_data import ErrorData
     from foundations.consumers.jobs.failed.job_state import JobState
+    import json
 
     _add_listener(CompletedTime(redis), 'fail_job')
-    _add_listener(CompletedTime(redis), 'fail_job')
+    _add_listener(ErrorData(redis, json), 'fail_job')
     _add_listener(JobState(redis), 'fail_job')
 
 
 def _create_redis_instance_and_add_consumers():
-    import redis
-    from foundations.helpers.lazy_redis import LazyRedis
+    from foundations.global_state import redis_connection
 
-    redis = LazyRedis(redis.Redis)
-    _add_consumers_for_stage_log_middleware(redis)
-    _add_consumers_for_queue_job(redis)
-    _add_consumers_for_run_job(redis)
-    _add_consumers_for_complete_job(redis)
-    _add_consumers_for_fail_job(redis)
+    _add_consumers_for_stage_log_middleware(redis_connection)
+    _add_consumers_for_queue_job(redis_connection)
+    _add_consumers_for_run_job(redis_connection)
+    _add_consumers_for_complete_job(redis_connection)
+    _add_consumers_for_fail_job(redis_connection)
 
 
 _create_redis_instance_and_add_consumers()
