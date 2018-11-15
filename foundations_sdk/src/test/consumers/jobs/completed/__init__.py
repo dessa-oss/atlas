@@ -5,7 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.consumers.jobs.queued import *
-from test.consumers.jobs.running import *
-from test.consumers.jobs.completed import *
-from test.consumers.jobs.failed import *
+from test.consumers.jobs.completed.test_completed_time import TestCompletedTime
+from test.consumers.jobs.completed.test_job_state import TestCompletedJobState
