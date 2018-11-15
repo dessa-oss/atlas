@@ -7,6 +7,7 @@ class InputMetricCell extends Component {
     this.state = {
       cellWidth: this.props.cellWidth,
       value: this.props.value,
+      isError: this.props.isError,
     };
   }
 
@@ -15,14 +16,22 @@ class InputMetricCell extends Component {
   }
 
   render() {
-    const { cellWidth, value } = this.state;
+    const { cellWidth, value, isError } = this.state;
     const divStyle = {
       width: cellWidth,
     };
 
+    const pClass = isError
+      ? 'header-4 font-bold error'
+      : 'header-4 font-bold';
+
+    const divClass = isError
+      ? 'input-metric-cell-container error'
+      : 'input-metric-cell-container';
+
     return (
-      <div style={divStyle} className="input-metric-cell-container">
-        <p className="header-4 font-bold">{value}</p>
+      <div style={divStyle} className={divClass}>
+        <p className={pClass}>{value}</p>
       </div>
     );
   }
@@ -31,11 +40,13 @@ class InputMetricCell extends Component {
 InputMetricCell.propTypes = {
   cellWidth: PropTypes.number,
   value: PropTypes.any,
+  isError: PropTypes.bool,
 };
 
 InputMetricCell.defaultProps = {
   cellWidth: 115,
   value: '',
+  isError: false,
 };
 
 export default InputMetricCell;

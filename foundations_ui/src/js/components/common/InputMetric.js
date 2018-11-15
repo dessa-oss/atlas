@@ -60,7 +60,8 @@ class InputMetric extends Component {
       rows = [];
       jobs.forEach((job) => {
         const key = job.job_id.concat('-input-metric-row');
-        rows.push(<InputMetricRow key={key} job={job} cellWidths={cellWidths} />);
+        const isError = job.status.toLowerCase() === 'error';
+        rows.push(<InputMetricRow key={key} job={job} cellWidths={cellWidths} isError={isError} />);
       });
     }
 

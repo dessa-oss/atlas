@@ -276,6 +276,11 @@ select {
   background: $color-border;
 }
 
+.error, p.error {
+  color: $color-status-red;
+  background-color: $color-error-background;
+}
+
 //border classes
 //-----------------------------
 .border-top-dark-gray{
