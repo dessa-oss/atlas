@@ -5,7 +5,7 @@ exports[`Shallow Renders TableSectionHeader 1`] = `
   className="table-section-header"
 >
   <p
-    className="blue-header-text font-regular no-margin"
+    className="blue-header-text font-regular white-text no-margin"
   />
   <div
     className=""
