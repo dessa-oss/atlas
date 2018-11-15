@@ -12,15 +12,17 @@ class LazyResult(object):
 
     def only(self, only_fields):
 
+        def set_attributes_fields(attributes, key, container):
+            if isinstance(container, dict):
+                attributes[key] = container[key]
+            else:
+                attributes[key] = getattr(container, key, None)
+
         def filter_properties(value, only_fields):
-            is_dict = isinstance(value, dict)
             if only_fields:
                 attributes = {}
                 for key in only_fields:
-                    if is_dict:
-                        attributes[key] = value[key]
-                    else:
-                        attributes[key] = getattr(value, key, None)
+                    set_attributes_fields(attributes, key, value)
                 return attributes
             return value
 
@@ -47,23 +49,29 @@ class LazyResult(object):
 
     def apply_filters(self, params, fields=[]):
 
-        def filter_field(result):
+        def filter_by_param(field, result, param_key):
             from foundations_rest_api.result_filters import result_filters
-            for field in fields:
+            result_filter = result_filters.get(param_key, None)
+            if result_filter:
                 data = result[field]
-                for param_key in params.keys():
-                    result_filter = result_filters.get(param_key, None)
-                    if result_filter:
-                        data = result_filter(data, params)
-                        result[field] = data
+                data = result_filter(data, params)
+                result[field] = data
+
+        def filter_field(field, result):
+            for param_key in params.keys():
+                filter_by_param(field, result, param_key)
+
+        def filter_all_fields(result):
+            for field in fields:
+                filter_field(field, result)
             return result
 
         def filter_result():
             result = self.evaluate()
             if isinstance(result, list):
-                result = [filter_field(item) for item in result]
+                result = [filter_all_fields(item) for item in result]
             else:
-                result = filter_field(result)
+                result = filter_all_fields(result)
             return result
 
         return LazyResult(filter_result)
