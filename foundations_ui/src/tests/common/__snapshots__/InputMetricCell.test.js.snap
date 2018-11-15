@@ -11,8 +11,6 @@ exports[`Shallow Renders InputMetricCell 1`] = `
 >
   <p
     className="header-4 font-bold"
-  >
-    value
-  </p>
+  />
 </div>
 `;

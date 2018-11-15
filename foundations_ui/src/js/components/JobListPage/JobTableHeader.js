@@ -24,8 +24,18 @@ class JobTableHeader extends Component {
     return (
       <div className="job-list-container">
         <TableSectionHeader />
-        <InputMetric header="input parameter" hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} jobs={jobs} />
-        <InputMetric header="metrics" hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} jobs={jobs} />
+        <InputMetric
+          header="input parameter"
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
+        <InputMetric
+          header="metrics"
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
         <div className="job-column-header-container">
           <JobColumnHeader title="Start Time" className="start-time-offset" />
           <JobColumnHeader title="Status" isStatus={1} className="status-offset" />

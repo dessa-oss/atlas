@@ -10,12 +10,13 @@ class DurationCell extends Component {
       hours: JobActions.getDurationHours(this.props.duration),
       minutes: JobActions.getDurationMinutes(this.props.duration),
       seconds: JobActions.getDurationSeconds(this.props.duration),
+      isError: this.props.isError,
     };
   }
 
   render() {
     const {
-      days, hours, minutes, seconds,
+      days, hours, minutes, seconds, isError,
     } = this.state;
 
     let daysUI = null;
@@ -23,23 +24,27 @@ class DurationCell extends Component {
     let minutesUI = null;
     let secondsUI = null;
 
-    daysUI = JobActions.getDurationClass('days', days, hours, minutes, seconds);
-    hoursUI = JobActions.getDurationClass('hours', days, hours, minutes, seconds);
-    minutesUI = JobActions.getDurationClass('minutes', days, hours, minutes, seconds);
-    secondsUI = JobActions.getDurationClass('seconds', days, hours, minutes, seconds);
+    daysUI = JobActions.getDurationClass('days', days, hours, minutes, seconds, isError);
+    hoursUI = JobActions.getDurationClass('hours', days, hours, minutes, seconds, isError);
+    minutesUI = JobActions.getDurationClass('minutes', days, hours, minutes, seconds, isError);
+    secondsUI = JobActions.getDurationClass('seconds', days, hours, minutes, seconds, isError);
+
+    const pClass = isError ? 'job-cell duration-cell error' : 'job-cell duration-cell';
 
     return (
-      <p className="job-cell duration-cell">{daysUI}{hoursUI}{minutesUI}{secondsUI}</p>
+      <p className={pClass}>{daysUI}{hoursUI}{minutesUI}{secondsUI}</p>
     );
   }
 }
 
 DurationCell.propTypes = {
   duration: PropTypes.number,
+  isError: PropTypes.bool,
 };
 
 DurationCell.defaultProps = {
   duration: null,
+  isError: false,
 };
 
 export default DurationCell;

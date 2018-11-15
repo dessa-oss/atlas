@@ -83,7 +83,7 @@ class ProjectActions {
     return 'status '.concat(statusCircle);
   }
 
-  static getDurationClass(desiredTime, days, hours, minutes, seconds) {
+  static getDurationClass(desiredTime, days, hours, minutes, seconds, isError) {
     let daysUI = null;
     let hoursUI = null;
     let minutesUI = null;
@@ -93,29 +93,43 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
+    const letterClass = isError ? 'font-regular error' : 'font-regular';
+
     if (days !== 0) {
       showingDays = true;
-      daysUI = <span className="duration-day-number header-4 font-bold">{days}<span className="font-regular">d </span></span>;
+      const numberClass = isError
+        ? 'duration-day-number header-4 font-bold error'
+        : 'duration-day-number header-4 font-bold';
+      daysUI = <span className={numberClass}>{days}<span className={letterClass}>d </span></span>;
     }
 
+    const hourClass = isError
+      ? 'duration-hour-number header-4 font-bold error'
+      : 'duration-hour-number header-4 font-bold';
     if (hours !== 0) {
       showingHours = true;
-      hoursUI = <span className="duration-hour-number header-4 font-bold">{hours}<span className="font-regular">h </span></span>;
+      hoursUI = <span className={hourClass}>{hours}<span className={letterClass}>h </span></span>;
     } else if (showingDays) {
-      hoursUI = <span className="duration-hour-number header-4 font-bold">0<span className="font-regular">h </span></span>;
+      hoursUI = <span className={hourClass}>0<span className={letterClass}>h </span></span>;
     }
 
+    const minuteClass = isError
+      ? 'duration-minute-number header-4 font-bold error'
+      : 'duration-minute-number header-4 font-bold';
     if (minutes !== 0) {
       showingMinutes = true;
-      minutesUI = <span className="duration-minute-number header-4 font-bold">{minutes}<span className="font-regular">m </span></span>;
+      minutesUI = <span className={minuteClass}>{minutes}<span className={letterClass}>m </span></span>;
     } else if (showingDays || showingHours) {
-      minutesUI = <span className="duration-minute-number header-4 font-bold">0<span className="font-regular">m </span></span>;
+      minutesUI = <span className={minuteClass}>0<span className={letterClass}>m </span></span>;
     }
 
+    const secondClass = isError
+      ? 'duration-second-number header-4 font-bold error'
+      : 'duration-second-number header-4 font-bold';
     if (seconds !== 0) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">{seconds}<span className="font-regular">s</span></span>;
+      secondsUI = <span className={secondClass}>{seconds}<span className={letterClass}>s</span></span>;
     } else if (showingDays || showingHours || showingMinutes) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">0<span className="font-regular">s</span></span>;
+      secondsUI = <span className={secondClass}>0<span className={letterClass}>s</span></span>;
     }
 
     switch (desiredTime) {

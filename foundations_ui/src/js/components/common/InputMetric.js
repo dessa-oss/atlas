@@ -41,7 +41,16 @@ class InputMetric extends Component {
       inputParams = [];
       allInputParams.forEach((input) => {
         const key = input;
-        inputParams.push(<JobColumnHeader key={key} title={input} className="inline-block" containerClass="input-metric-column-header" sizeCallback={this.resizeCells} colIndex={colIndex} />);
+        inputParams.push(
+          <JobColumnHeader
+            key={key}
+            title={input}
+            className="inline-block"
+            containerClass="input-metric-column-header"
+            sizeCallback={this.resizeCells}
+            colIndex={colIndex}
+          />,
+        );
         colIndex += 1;
       });
     }

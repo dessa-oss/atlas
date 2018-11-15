@@ -12,14 +12,14 @@ exports[`Shallow Renders Job Table Header 1`] = `
     cellWidths={Array []}
     header="input parameter"
     hiddenInputParams={Array []}
-    jobs={Object {}}
+    jobs={Array []}
   />
   <InputMetric
     allInputParams={Array []}
     cellWidths={Array []}
     header="metrics"
     hiddenInputParams={Array []}
-    jobs={Object {}}
+    jobs={Array []}
   />
   <div
     className="job-column-header-container"

@@ -42,6 +42,7 @@ exports[`Shallow Renders ProjectSummary 1`] = `
       </button>
       <button
         className="b--mat b--affirmative"
+        onClick={[Function]}
         type="button"
       >
         view job list
