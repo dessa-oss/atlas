@@ -14,18 +14,18 @@ from foundations_rest_api.global_state import app_manager
 
 class _APIAcceptanceTestCaseMeta(type):
 
-    def __new__(mcls, *args, **kwargs):
-        cls = type.__new__(mcls, *args, **kwargs)
-        if cls.__name__ not in ('APIAcceptanceTestCaseBase', '_APIAcceptanceTestCaseMeta'):
-            if not (getattr(cls, 'url', None) and getattr(cls, 'sorting_columns', None)):
+    def __new__(metaclass, *args, **kwargs):
+        klass = type.__new__(metaclass, *args, **kwargs)
+        if klass.__name__ not in ('APIAcceptanceTestCaseBase', '_APIAcceptanceTestCaseMeta'):
+            if not (getattr(klass, 'url', None) and getattr(klass, 'sorting_columns', None)):
                 raise NotImplementedError('You must define class attributes "url" and "sorting_columns"')
-            test_methods_names = APIAcceptanceTestCaseBase.setup_test_methods(cls.sorting_columns)
-            cls._force_child_class_implementation(test_methods_names)
-            cls.client = app_manager.app().test_client()
-        return cls
+            test_methods_names = APIAcceptanceTestCaseBase.setup_test_methods(klass.sorting_columns)
+            klass._force_child_class_implementation(test_methods_names)
+            klass.client = app_manager.app().test_client()
+        return klass
 
-    def _force_child_class_implementation(cls, test_method_names):
-        not_implemented = [method_name for method_name in test_method_names if method_name not in cls.__dict__]
+    def _force_child_class_implementation(klass, test_method_names):
+        not_implemented = [method_name for method_name in test_method_names if method_name not in klass.__dict__]
         if not_implemented:
             not_implemented = ', '.join(not_implemented)
             msg = 'The following methods must be added to the test case: {}'.format(not_implemented)
@@ -34,17 +34,17 @@ class _APIAcceptanceTestCaseMeta(type):
 class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unittest.TestCase)):
 
     @classmethod
-    def setup_test_methods(cls, sorting_columns):
-        cls._sorting_columns = sorting_columns
+    def setup_test_methods(klass, sorting_columns):
+        klass._sorting_columns = sorting_columns
         return itertools.chain(
-            cls._set_method_for_normal_route(),
-            cls._set_methods_for_sorted_route(),
-            cls._set_methods_for_sorted_route_all_columns(),
-            cls._set_methods_for_sorted_route_alternation()
+            klass._set_method_for_normal_route(),
+            klass._set_methods_for_sorted_route(),
+            klass._set_methods_for_sorted_route_all_columns(),
+            klass._set_methods_for_sorted_route_alternation()
         )
 
     @classmethod
-    def _get_test_route_method(cls, get_param_method=None):
+    def _get_test_route_method(klass, get_param_method=None):
 
         def test_method(self):
             base_url = self._get_base_url()
@@ -56,7 +56,7 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
         return test_method
 
     @classmethod
-    def _set_methods_for_sorted_route(cls):
+    def _set_methods_for_sorted_route(klass):
 
         def get_sort_param_for_column(column, descending=True):
 
@@ -66,79 +66,72 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
 
             return get_param_method
 
-        methods_names = []
-        for sorting_column in cls._sorting_columns:
+        def add_route_sorted_methods(column):
             method_name_descendant = 'test_route_sorted_{}_descending'.format(sorting_column)
             method_name_ascendant = 'test_route_sorted_{}_ascending'.format(sorting_column)
-            setattr(cls, method_name_descendant, cls._get_test_route_method(get_sort_param_for_column(sorting_column, descending=True)))
-            setattr(cls, method_name_ascendant,  cls._get_test_route_method(get_sort_param_for_column(sorting_column, descending=False)))
-            methods_names += [method_name_descendant, method_name_ascendant]
+            setattr(klass, method_name_descendant, klass._get_test_route_method(get_sort_param_for_column(sorting_column, descending=True)))
+            setattr(klass, method_name_ascendant,  klass._get_test_route_method(get_sort_param_for_column(sorting_column, descending=False)))
+            return [method_name_descendant, method_name_ascendant]
+
+        methods_names = []
+        for sorting_column in klass._sorting_columns:
+            methods_names += add_route_sorted_methods(sorting_column)
         return methods_names
 
     @classmethod
-    def _set_methods_for_sorted_route_all_columns(cls):
+    def _set_methods_for_sorted_route_all_columns(klass):
 
         def get_sort_param_all_columns(descending=True):
 
             def get_param_method():
-                param_value = ','.join([('-' if descending else '') + column for column in cls._sorting_columns])
+                param_value = ','.join([('-' if descending else '') + column for column in klass._sorting_columns])
                 return '?sort=' + param_value
 
             return get_param_method
 
-        if len(cls._sorting_columns) > 1:
-            setattr(cls, 'test_get_route_all_ascending', cls._get_test_route_method(get_sort_param_all_columns(descending=False)))
-            setattr(cls, 'test_get_route_all_descending', cls._get_test_route_method(get_sort_param_all_columns(descending=True)))
+        if len(klass._sorting_columns) > 1:
+            setattr(klass, 'test_get_route_all_ascending', klass._get_test_route_method(get_sort_param_all_columns(descending=False)))
+            setattr(klass, 'test_get_route_all_descending', klass._get_test_route_method(get_sort_param_all_columns(descending=True)))
             return ['test_get_route_all_ascending', 'test_get_route_all_descending']
         return []
 
     @classmethod
-    def _set_methods_for_sorted_route_alternation(cls):
+    def _set_methods_for_sorted_route_alternation(klass):
 
         def test_get_route_alternation():
 
+            def prefix_column(index, column):
+                return column if index % 2 == 0 else '-{}'.format(column)
+
+            def get_prefixed_columns_list():
+                return [prefix_column(*item) for item in enumerate(klass._sorting_columns)]
+
             def get_param_method():
-                param_value = ','.join([('' if item[0] % 2 == 0 else '-') + item[1] for item in enumerate(cls._sorting_columns)])
+                param_value = ','.join(get_prefixed_columns_list())
                 return '?sort=' + param_value
 
             return get_param_method
 
-        if len(cls._sorting_columns) > 1:
-            setattr(cls, 'test_get_route_alternation', cls._get_test_route_method(test_get_route_alternation()))
+        if len(klass._sorting_columns) > 1:
+            setattr(klass, 'test_get_route_alternation', klass._get_test_route_method(test_get_route_alternation()))
             return ['test_get_route_alternation']
         return []
 
     @classmethod
-    def _set_method_for_normal_route(cls):
-        setattr(cls, 'test_get_route', cls._get_test_route_method())
+    def _set_method_for_normal_route(klass):
+        setattr(klass, 'test_get_route', klass._get_test_route_method())
         return ['test_get_route']
 
     def _extract_url_params(self):
-        params = []
-        temp_param = ''
-        filling_temp_param = False
-        for char in self.url:
-            if filling_temp_param:
-                if char =='{':
-                    raise Exception('Bad URL formatting')
-                elif char == '}':
-                    filling_temp_param = False
-                    params.append(temp_param)
-                    temp_param = ''
-                else:
-                    temp_param += char
-            else:
-                if char == '{':
-                    filling_temp_param = True
-                elif char == '}':
-                    raise Exception('Bad URL formatting')
-        if filling_temp_param:
-            raise Exception('Bad URL formatting')
+        from string import Formatter
+        formatter  = Formatter()
+        params = [format_tuple[1] for format_tuple in formatter.parse(self.url)]
         return params
 
     def _get_base_url(self):
         url = self.url
         params = self._extract_url_params()
         for param in params:
-            url = url.replace('{{{}}}'.format(param), getattr(self, param))
+            if param:
+                url = url.replace('{{{}}}'.format(param), getattr(self, param))
         return url
