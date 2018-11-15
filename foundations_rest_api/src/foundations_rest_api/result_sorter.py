@@ -9,24 +9,40 @@ class ResultSorter(object):
 
     def __call__(self, result, params):
         if result and 'sort' in params and isinstance(result, list):
-            sort_param_value = params.get('sort')
-            columns_spec_list = sort_param_value.split(',')
-            self._sort(result, columns_spec_list)
+            self._sort(result, params)
         return result
 
-    def _sort(self, result, columns_spec_list):
-        columns = self._validate_columns(result, columns_spec_list)
-        if columns:
-            columns.reverse()
-            for column in columns:
-                result.sort(reverse=column[0], key=lambda x: getattr(x, column[1]))
+    def _sort(self, result, params):
+        sort_param_value = params.get('sort')
+        columns_specs_list = sort_param_value.split(',')
+        self._sort_by_columns_specs_list(result, columns_specs_list)
 
-    def _validate_columns(self, result, columns_spec_list):
-        columns = []
-        for column_spec in columns_spec_list:
-            column_spec = column_spec.strip()
-            descending = column_spec.startswith('-')
-            column_data = (descending, column_spec[1:] if descending else column_spec)
-            if hasattr(result[0], column_data[1]):
-                columns.append(column_data)
-        return columns
+    def _sort_by_columns_specs_list(self, result, columns_specs_list):
+        columns_data_list = self._validate_columns(result, columns_specs_list)
+        if columns_data_list:
+            columns_data_list.reverse()
+            for column_data in columns_data_list:
+                self._sort_by_column_data(result, column_data)
+
+    def _validate_columns(self, result, columns_specs_list):
+        columns_data = []
+        for column_spec in columns_specs_list:
+            self._extract_valid_columns_data(columns_data, column_spec, result)
+        return columns_data
+
+    def _extract_valid_columns_data(self, columns_data, column_spec, result):
+        column_spec = column_spec.strip()
+        descending = column_spec.startswith('-')
+        column_name = column_spec[1:] if descending else column_spec
+        column_data = (descending, column_name)
+        if hasattr(result[0], column_name):
+            columns_data.append(column_data)
+
+    def _sort_by_column_data(self, result, column_data):
+        descending = column_data[0]
+        column_name = column_data[1]
+
+        def get_sort_key(item):
+            return getattr(item, column_name)
+
+        result.sort(reverse=descending, key=get_sort_key)
