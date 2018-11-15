@@ -5,23 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class ProjectListing(object):
+from foundations.consumers.jobs.mixins.listing import Listing
+
+class ProjectListing(Listing):
     """Saves the job to a list of queued jobs for a project in redis
     
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
     
-    def __init__(self, redis):
-        self._redis = redis
+    def _scope(self):
+        return 'project'
 
-    def call(self, message, timestamp, meta_data):
-        """See above
-        
-        Arguments:
-            message {dict} -- Event attributes
-            timestamp {int} -- The time the event was created
-            meta_data {dict} -- Additional data about the event
-        """
+    def _listing_name(self):
+        return 'jobs:queued'
 
-        self._redis.sadd('project:{}:jobs:queued'.format(message['project_name']), message['job_id'])
+    def _scope_value(self, message):
+        return message['project_name']
+
+    def _listing_value(self, message):
+        return message['job_id']

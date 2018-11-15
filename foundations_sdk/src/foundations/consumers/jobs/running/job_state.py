@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations.consumers.jobs.mixins.property_setter import PropertySetter
 
+
 class JobState(PropertySetter):
     """Sets the state of a job to queued in redis
     
@@ -24,4 +25,4 @@ class JobState(PropertySetter):
         return 'state'
 
     def _property_value(self, message, timestamp, meta_data):
-        return 'queued'
+        return 'running'

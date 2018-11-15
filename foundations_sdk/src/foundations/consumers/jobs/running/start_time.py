@@ -5,10 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.consumers.jobs.mixins.property_setter import PropertySetter
+from foundations.consumers.jobs.mixins.time_setter import TimeSetter
 
-class JobState(PropertySetter):
-    """Sets the state of a job to queued in redis
+class StartTime(TimeSetter):
+    """Saves the start time of a job to redis
     
     Arguments:
         redis {redis.Redis} -- A Redis connection object
@@ -20,8 +20,5 @@ class JobState(PropertySetter):
     def _listing_value(self, message):
         return message['job_id']
 
-    def _property_name(self):
-        return 'state'
-
-    def _property_value(self, message, timestamp, meta_data):
-        return 'queued'
+    def _timestamp_name(self):
+        return 'start_time'
