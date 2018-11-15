@@ -10,7 +10,7 @@ exports[`Shallow Renders InputMetricCell 1`] = `
   }
 >
   <p
-    className="header-4 font-bold"
+    className="job-list-text font-bold"
   />
 </div>
 `;
