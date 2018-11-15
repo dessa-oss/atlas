@@ -88,7 +88,7 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
 
         setattr(cls, 'test_get_route_all_ascending', cls._get_test_route_method(get_sort_param_all_columns(descending=False)))
         setattr(cls, 'test_get_route_all_descending', cls._get_test_route_method(get_sort_param_all_columns(descending=True)))
-        return ['test_get_route_all_ascending', 'test_get_route_all_descending'] 
+        return ['test_get_route_all_ascending', 'test_get_route_all_descending']
 
     @classmethod
     def _set_methods_for_sorted_route_alternation(cls):
@@ -101,8 +101,10 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
 
             return get_param_method
 
-        setattr(cls, 'test_get_route_alternation', cls._get_test_route_method(test_get_route_alternation()))
-        return ['test_get_route_alternation']
+        if len(cls._sorting_columns) > 1:
+            setattr(cls, 'test_get_route_alternation', cls._get_test_route_method(test_get_route_alternation()))
+            return ['test_get_route_alternation']
+        return []
 
     @classmethod
     def _set_method_for_normal_route(cls):

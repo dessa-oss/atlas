@@ -36,7 +36,7 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self._make_completed_job('my job 1', stage, 123456789, 9999999999)
         self._make_completed_job('my job 2', stage, 9999999999, 9999999999)
 
-    def test_get_route(self):        
+    def test_get_route(self):
         data = super(TestJobsListingEndpoint, self).test_get_route()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
@@ -77,7 +77,7 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 1')
-        
+
     def test_get_route_alternation(self):
         data = super(TestJobsListingEndpoint, self).test_get_route_alternation()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
