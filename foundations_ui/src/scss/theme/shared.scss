@@ -216,6 +216,11 @@ select {
   }
 }
 
+.error, p.error {
+  color: $color-status-red;
+  background-color: $color-error-background;
+}
+
 //helper classes
 //-----------------------------
 .text-right{
@@ -276,9 +281,8 @@ select {
   background: $color-border;
 }
 
-.error, p.error {
-  color: $color-status-red;
-  background-color: $color-error-background;
+.white-text{
+  color: $color-white;
 }
 
 //border classes
@@ -301,6 +305,10 @@ select {
 
 .border-none{
   border: 0 none;
+}
+
+.border-top-white{
+  border-top: 5px solid $color-white;
 }
 
 //typography
