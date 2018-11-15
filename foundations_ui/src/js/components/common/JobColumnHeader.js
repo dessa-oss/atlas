@@ -26,10 +26,10 @@ class JobColumnHeader extends Component {
     const {
       title, isStatus, offsetDivClass, containerDivClass,
     } = this.state;
-    let headerClassName = 'job-list-text blue-border-bottom';
+    let headerClassName = ' blue-border-bottom';
     let arrowClassName = 'arrow-down float-right';
     if (isStatus === 1) {
-      headerClassName = 'job-list-text blue-border-bottom status-header';
+      headerClassName = ' blue-border-bottom status-header';
       arrowClassName = 'arrow-down margin-auto';
     }
 

@@ -105,7 +105,7 @@ it('getDurationClass days', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-day-number job-list-text font-bold">3<span className="font-regular">d </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-day-number  font-bold">3<span className="font-regular">d </span></span>));
 });
 
 it('getDurationClass hours', () => {
@@ -117,7 +117,7 @@ it('getDurationClass hours', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-hour-number job-list-text font-bold">6<span className="font-regular">h </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-hour-number  font-bold">6<span className="font-regular">h </span></span>));
 });
 
 it('getDurationClass minutes', () => {
@@ -129,7 +129,7 @@ it('getDurationClass minutes', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-minute-number job-list-text font-bold">12<span className="font-regular">m </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-minute-number  font-bold">12<span className="font-regular">m </span></span>));
 });
 
 it('getDurationClass seconds', () => {
@@ -141,7 +141,7 @@ it('getDurationClass seconds', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-second-number job-list-text font-bold">30<span className="font-regular">s</span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="duration-second-number  font-bold">30<span className="font-regular">s</span></span>));
 });
 
 it('getAllInputParams', () => {

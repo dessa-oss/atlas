@@ -22,8 +22,8 @@ class InputMetricCell extends Component {
     };
 
     const pClass = isError
-      ? 'job-list-text font-bold error'
-      : 'job-list-text font-bold';
+      ? ' font-bold error'
+      : ' font-bold';
 
     const divClass = isError
       ? 'input-metric-cell-container error'
