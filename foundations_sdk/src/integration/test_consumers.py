@@ -27,11 +27,12 @@ class TestConsumers(unittest.TestCase):
         project_name = self._str_random_uuid()
         job_id = self._str_random_uuid()
         expected_job_parameters = {'random_job_data': self._str_random_uuid()}
-        expected_input_parameters = {'random_input_data': self._str_random_uuid()}
+        expected_input_parameters = {
+            'random_input_data': self._str_random_uuid()}
         user = self._random_name()
 
         message = {
-            'project_name': project_name, 
+            'project_name': project_name,
             'job_id': job_id,
             'job_parameters': expected_job_parameters,
             'input_parameters': expected_input_parameters,
@@ -40,16 +41,20 @@ class TestConsumers(unittest.TestCase):
         message_router.push_message('queue_job', message)
         current_time = time()
 
-        job_parameter_names = self._redis.smembers('projects:{}:job_parameter_names'.format(project_name))
+        job_parameter_names = self._redis.smembers(
+            'projects:{}:job_parameter_names'.format(project_name))
         self.assertEqual(set([b'random_job_data']), job_parameter_names)
 
-        input_parameter_names = self._redis.smembers('projects:{}:input_parameter_names'.format(project_name))
+        input_parameter_names = self._redis.smembers(
+            'projects:{}:input_parameter_names'.format(project_name))
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
 
-        queued_jobs = self._redis.smembers('project:{}:jobs:queued'.format(project_name))
+        queued_jobs = self._redis.smembers(
+            'project:{}:jobs:queued'.format(project_name))
         self.assertEqual(set([byte_string(job_id)]), queued_jobs)
 
-        job_parameters = self._get_and_deserialize('jobs:{}:parameters'.format(job_id))
+        job_parameters = self._get_and_deserialize(
+            'jobs:{}:parameters'.format(job_id))
         self.assertEqual(expected_job_parameters, job_parameters)
 
         state = self._redis.get('jobs:{}:state'.format(job_id))
@@ -61,11 +66,13 @@ class TestConsumers(unittest.TestCase):
         job_user = self._redis.get('jobs:{}:user'.format(job_id))
         self.assertEqual(byte_string(user), job_user)
 
-        string_creation_time = self._redis.get('jobs:{}:creation_time'.format(job_id))
+        string_creation_time = self._redis.get(
+            'jobs:{}:creation_time'.format(job_id))
         creation_time = float(string_creation_time.decode())
         self.assertTrue(current_time - creation_time < 0.1)
-        
-        input_parameters = self._get_and_deserialize('jobs:{}:input_parameters'.format(job_id))
+
+        input_parameters = self._get_and_deserialize(
+            'jobs:{}:input_parameters'.format(job_id))
         self.assertEqual(expected_input_parameters, input_parameters)
 
     def test_running_job_consumers(self):
@@ -77,19 +84,22 @@ class TestConsumers(unittest.TestCase):
         job_id = self._str_random_uuid()
 
         message = {
-            'project_name': project_name, 
+            'project_name': project_name,
             'job_id': job_id
         }
         message_router.push_message('run_job', message)
         current_time = time()
 
-        running_and_completed_jobs = self._redis.smembers('project:{}:jobs:running'.format(project_name))
-        self.assertEqual(set([byte_string(job_id)]), running_and_completed_jobs)
+        running_and_completed_jobs = self._redis.smembers(
+            'project:{}:jobs:running'.format(project_name))
+        self.assertEqual(set([byte_string(job_id)]),
+                         running_and_completed_jobs)
 
         state = self._redis.get('jobs:{}:state'.format(job_id))
         self.assertEqual(b'running', state)
 
-        string_start_time = self._redis.get('jobs:{}:start_time'.format(job_id))
+        string_start_time = self._redis.get(
+            'jobs:{}:start_time'.format(job_id))
         start_time = float(string_start_time.decode())
         self.assertTrue(current_time - start_time < 0.1)
 
@@ -101,7 +111,7 @@ class TestConsumers(unittest.TestCase):
         job_id = self._str_random_uuid()
 
         message = {
-            'project_name': project_name, 
+            'project_name': project_name,
             'job_id': job_id
         }
         message_router.push_message('complete_job', message)
@@ -110,7 +120,8 @@ class TestConsumers(unittest.TestCase):
         state = self._redis.get('jobs:{}:state'.format(job_id))
         self.assertEqual(b'completed', state)
 
-        string_completed_time = self._redis.get('jobs:{}:completed_time'.format(job_id))
+        string_completed_time = self._redis.get(
+            'jobs:{}:completed_time'.format(job_id))
         completed_time = float(string_completed_time.decode())
         self.assertTrue(current_time - completed_time < 0.1)
 
@@ -123,7 +134,7 @@ class TestConsumers(unittest.TestCase):
         expected_input_parameters = {'broken_data': self._random_name()}
 
         message = {
-            'project_name': project_name, 
+            'project_name': project_name,
             'job_id': job_id,
             'error_information': expected_input_parameters
         }
@@ -133,19 +144,53 @@ class TestConsumers(unittest.TestCase):
         state = self._redis.get('jobs:{}:state'.format(job_id))
         self.assertEqual(b'Error', state)
 
-        state = self._get_and_deserialize('jobs:{}:error_information'.format(job_id))
+        state = self._get_and_deserialize(
+            'jobs:{}:error_information'.format(job_id))
         self.assertEqual(expected_input_parameters, state)
 
-        string_completed_time = self._redis.get('jobs:{}:completed_time'.format(job_id))
+        string_completed_time = self._redis.get(
+            'jobs:{}:completed_time'.format(job_id))
         completed_time = float(string_completed_time.decode())
         self.assertTrue(current_time - completed_time < 0.1)
 
+    def test_job_metric_consumers(self):
+        from foundations.global_state import message_router
+        from foundations.fast_serializer import deserialize
+        from foundations.utils import byte_string
+        from time import time
+
+        project_name = self._str_random_uuid()
+        job_id = self._str_random_uuid()
+        key = 'best_metric_ever'
+        value = 42
+
+        message = {
+            'project_name': project_name,
+            'job_id': job_id,
+            'key': key,
+            'value': value
+        }
+
+        message_router.push_message('job_metrics', message)
+        current_time = time()
+
+        job_metrics = self._redis.get('job:{}:metrics'.format(job_id))
+        job_metrics = deserialize(job_metrics)
+
+        self.assertTrue(current_time - job_metrics[0] < 0.1)
+        self.assertEqual(key, job_metrics[1])
+        self.assertEqual(value, job_metrics[2])
+
+        project_metric_name = self._redis.smembers(
+            'project:{}:metrics'.format(project_name))
+        self.assertEqual(project_metric_name, set([byte_string(key)]))
+
     def _get_and_deserialize(self, key):
         import json
-        
+
         serialized_data = self._redis.get(key)
         return json.loads(serialized_data)
-    
+
     def _random_name(self):
         return self._faker.name()
 
