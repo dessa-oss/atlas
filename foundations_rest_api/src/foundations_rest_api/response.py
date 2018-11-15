@@ -22,7 +22,7 @@ class Response(object):
         self._parent = parent
 
     def evaluate(self):
-        """Calls the action callback and returns the result. 
+        """Calls the action callback and returns the result.
         Also ensures that parent responses are evaluated.
 
         Returns:
@@ -45,9 +45,6 @@ class Response(object):
     def _value_as_json(self, value):
         if isinstance(value, list):
             return [self._value_as_json(value) for value in value]
-
-        #if self._is_lazy_result(value):
-        #    return self._value_as_json(value.evaluate())
 
         if self._is_property_model(value):
             return self._dictionary_attributes(value.attributes)
