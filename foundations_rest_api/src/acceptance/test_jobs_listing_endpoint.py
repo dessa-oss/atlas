@@ -20,12 +20,12 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self._setup_deployment('RUNNING')
         self._setup_results_archiving()
         self._project_name = 'hana'
-        self._setup_two_jobs()
+        self._setup_three_jobs()
 
     def tearDown(self):
         self._cleanup()
 
-    def _setup_two_jobs(self):
+    def _setup_three_jobs(self):
         def method():
             from foundations.stage_logging import log_metric
             log_metric('loss', 15.33)
