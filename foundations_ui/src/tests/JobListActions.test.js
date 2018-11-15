@@ -6,6 +6,11 @@ import JobActions from '../js/actions/JobListActions';
 
 configureTests();
 
+const isStatus = true;
+const isNotStatus = false;
+const emptyHeader = '';
+const header = 'abc';
+
 it('getDateDiff', () => {
   const now = Date.now();
   const day1 = now;
@@ -74,6 +79,56 @@ it('getStatusCircle green', () => {
   const status = 'completed';
   const circleClass = JobActions.getStatusCircle(status);
   expect(circleClass).toBe('status status-green');
+});
+
+it('gets JobColumnHeaderH4Class', () => {
+  const header = JobActions.getJobColumnHeaderH4Class(isNotStatus);
+  expect(header).toBe('header-4 blue-border-bottom');
+});
+
+it('gets JobColumnHeaderH4Class isStatus', () => {
+  const header = JobActions.getJobColumnHeaderH4Class(isStatus);
+  expect(header).toBe('header-4 blue-border-bottom status-header');
+});
+
+it('gets JobColumnHeaderArrowClass', () => {
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isNotStatus);
+  expect(arrow).toBe('arrow-down float-right');
+});
+
+it('gets JobColumnHeaderArrowClass isStatus', () => {
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus);
+  expect(arrow).toBe('arrow-down margin-auto');
+});
+
+it('gets TableSectionHeaderDivClass', () => {
+  const div = JobActions.getTableSectionHeaderDivClass(header);
+  expect(div).toBe('table-section-header blue-header');
+});
+
+it('gets TableSectionHeaderDivClass emptyHeader', () => {
+  const div = JobActions.getTableSectionHeaderDivClass(emptyHeader);
+  expect(div).toBe('table-section-header');
+});
+
+it('gets TableSectionHeaderArrowClass', () => {
+  const arrow = JobActions.getTableSectionHeaderArrowClass(header);
+  expect(arrow).toBe('arrow-down blue-header-arrow');
+});
+
+it('gets TableSectionHeaderArrowClass emptyHeader', () => {
+  const arrow = JobActions.getTableSectionHeaderArrowClass(emptyHeader);
+  expect(arrow).toBe('');
+});
+
+it('gets TableSectionHeaderTextClass', () => {
+  const text = JobActions.getTableSectionHeaderTextClass(header);
+  expect(text).toBe('blue-header-text font-regular');
+});
+
+it('gets TableSectionHeaderTextClass emptyHeader', () => {
+  const text = JobActions.getTableSectionHeaderTextClass(emptyHeader);
+  expect(text).toBe('blue-header-text font-regular no-margin');
 });
 
 it('getStatusCircle red', () => {

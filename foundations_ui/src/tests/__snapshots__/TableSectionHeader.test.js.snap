@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders TableSectionHeader 1`] = `
+<div
+  className="table-section-header"
+>
+  <p
+    className="blue-header-text font-regular no-margin"
+  />
+  <div
+    className=""
+  />
+</div>
+`;

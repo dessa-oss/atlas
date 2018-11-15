@@ -4,30 +4,52 @@ exports[`Shallow Renders Job Table Header 1`] = `
 <div
   className="job-list-container"
 >
-  <JobColumnHeader
-    className="start-time-offset"
-    isStatus={0}
-    title="Start Time"
+  <TableSectionHeader
+    header=""
   />
-  <JobColumnHeader
-    className="status-offset"
-    isStatus={1}
-    title="Status"
+  <InputMetric
+    allInputParams={Array []}
+    header="input parameter"
+    hiddenInputParams={Array []}
   />
-  <JobColumnHeader
-    className="job-id-offset"
-    isStatus={0}
-    title="Job ID"
+  <InputMetric
+    allInputParams={Array []}
+    header="metrics"
+    hiddenInputParams={Array []}
   />
-  <JobColumnHeader
-    className="duration-offset"
-    isStatus={0}
-    title="Duration"
-  />
-  <JobColumnHeader
-    className="user-offset"
-    isStatus={0}
-    title="User"
-  />
+  <div
+    className="job-column-header-container"
+  >
+    <JobColumnHeader
+      className="start-time-offset"
+      containerClass="job-column-header"
+      isStatus={false}
+      title="Start Time"
+    />
+    <JobColumnHeader
+      className="status-offset"
+      containerClass="job-column-header"
+      isStatus={true}
+      title="Status"
+    />
+    <JobColumnHeader
+      className="job-id-offset"
+      containerClass="job-column-header"
+      isStatus={false}
+      title="Job ID"
+    />
+    <JobColumnHeader
+      className="duration-offset"
+      containerClass="job-column-header"
+      isStatus={false}
+      title="Duration"
+    />
+    <JobColumnHeader
+      className="user-offset"
+      containerClass="job-column-header"
+      isStatus={false}
+      title="User"
+    />
+  </div>
 </div>
 `;
