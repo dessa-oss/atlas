@@ -24,4 +24,4 @@ class JobState(object):
             meta_data {dict} -- Additional data about the event
         """
 
-        self._redis.set('jobs:{}:state'.format(message['job_id']), 'qeueud')
+        self._redis.set('jobs:{}:state'.format(message['job_id']), 'queued')
