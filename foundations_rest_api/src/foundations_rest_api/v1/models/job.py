@@ -37,8 +37,17 @@ class Job(PropertyModel):
         running_jobs = Job._get_running_jobs(project_name)
         completed_jobs = Job._get_completed_jobs(project_name)
         all_jobs = running_jobs + completed_jobs
-        all_jobs.sort(key=lambda job: job.start_time, reverse=True)  # Default order 
+        Job._default_order(all_jobs)
         return all_jobs
+
+    @staticmethod
+    def _default_order(jobs):
+
+        def get_sort_key(job):
+            return job.start_time
+
+        jobs.sort(key=get_sort_key, reverse=True)
+
 
     @staticmethod
     def _get_running_jobs(project_name):
@@ -53,7 +62,7 @@ class Job(PropertyModel):
                 completed_time=None,
                 status='Running',
                 job_parameters={},
-                input_params=[], 
+                input_params=[],
                 output_metrics={}
             )
             jobs.append(job)
@@ -76,4 +85,3 @@ class Job(PropertyModel):
             _loop_body(job_id, context)
 
         return jobs
-
