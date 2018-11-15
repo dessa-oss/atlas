@@ -5,18 +5,23 @@ exports[`Shallow Renders Job Table Row 1`] = `
   className="job-table-row"
 >
   <StartTimeCell
+    isError={false}
     startTime=""
   />
   <StatusCell
-    status=""
+    isError={false}
+    status="completed"
   />
   <JobIDCell
+    isError={false}
     jobID=""
   />
   <DurationCell
     duration={NaN}
+    isError={false}
   />
   <UserCell
+    isError={false}
     user=""
   />
 </div>
