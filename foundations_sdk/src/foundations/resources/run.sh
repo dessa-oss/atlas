@@ -40,7 +40,9 @@ else
   activate_path=venv/Scripts/activate
 fi
 
-if [ "${offline_mode}" != "OFFLINE" ]; then
+if [ "${offline_mode}" = "FORCE_ONLINE" ]; then
+  echo "Forcing online mode, skipping internet check." >&2
+elif [ "${offline_mode}" != "OFFLINE" ]; then
   with_output_redirect echo "Checking for internet connection..."
   with_output_redirect ping -c 3 4.2.2.1
 
