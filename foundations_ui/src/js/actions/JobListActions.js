@@ -99,14 +99,14 @@ class ProjectActions {
     if (days !== 0) {
       showingDays = true;
       const numberClass = isError
-        ? 'duration-day-number  font-bold error'
-        : 'duration-day-number  font-bold';
+        ? 'duration-day-number font-bold error'
+        : 'duration-day-number font-bold';
       daysUI = <span className={numberClass}>{days}<span className={letterClass}>d </span></span>;
     }
 
     const hourClass = isError
-      ? 'duration-hour-number  font-bold error'
-      : 'duration-hour-number  font-bold';
+      ? 'duration-hour-number font-bold error'
+      : 'duration-hour-number font-bold';
     if (hours !== 0) {
       showingHours = true;
       hoursUI = <span className={hourClass}>{hours}<span className={letterClass}>h </span></span>;
@@ -115,8 +115,8 @@ class ProjectActions {
     }
 
     const minuteClass = isError
-      ? 'duration-minute-number  font-bold error'
-      : 'duration-minute-number  font-bold';
+      ? 'duration-minute-number font-bold error'
+      : 'duration-minute-number font-bold';
     if (minutes !== 0) {
       showingMinutes = true;
       minutesUI = <span className={minuteClass}>{minutes}<span className={letterClass}>m </span></span>;
@@ -125,8 +125,8 @@ class ProjectActions {
     }
 
     const secondClass = isError
-      ? 'duration-second-number  font-bold error'
-      : 'duration-second-number  font-bold';
+      ? 'duration-second-number font-bold error'
+      : 'duration-second-number font-bold';
     if (seconds !== 0) {
       secondsUI = <span className={secondClass}>{seconds}<span className={letterClass}>s</span></span>;
     } else if (showingDays || showingHours || showingMinutes) {

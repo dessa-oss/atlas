@@ -16,9 +16,17 @@ const job = {
   input_params: [
     {
       name: 'param1',
+      value: {
+        type: 'constant',
+        value: '1',
+      }
     },
     {
       name: 'param2',
+      value: {
+        type: 'constant',
+        value: '3',
+      }
     }
   ]
 };
@@ -26,6 +34,7 @@ const cellWidths = [ 100, 200 ];
 const jobs = [
   {
     job_id: 'job1',
+    status: 'completed',
     input_params: [
       {
         name: 'param1',
@@ -37,6 +46,7 @@ const jobs = [
   },
   {
     job_id: 'job2',
+    status: 'running',
     input_params: [
       {
         name: 'param1',
@@ -64,7 +74,7 @@ it('getTableSectionHeaderArrow empty header', () => {
 it('getTableSectionHeaderText empty header', () => {
   const header = '';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text font-regular no-margin');
+  expect(className).toBe('blue-header-text font-regular white-text no-margin');
 });
 
 it('getTableSectionHeaderDiv with header', () => {
@@ -76,13 +86,13 @@ it('getTableSectionHeaderDiv with header', () => {
 it('getTableSectionHeaderArrow with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('arrow-down blue-header-arrow');
+  expect(className).toBe('arrow-down blue-header-arrow border-top-white border-left-clear border-right-clear');
 });
 
 it('getTableSectionHeaderText with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text font-regular');
+  expect(className).toBe('blue-header-text font-regular white-text');
 });
 
 it('get InputMetricColumnHeaders', () => {
