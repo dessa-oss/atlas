@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import JobColumnHeader from '../js/components/common/JobColumnHeader';
+import JobColumnHeader from '../../js/components/common/JobColumnHeader';
 import { shallow, mount } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

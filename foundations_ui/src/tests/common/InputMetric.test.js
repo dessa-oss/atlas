@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import InputMetric from '../js/components/common/InputMetric';
+import InputMetric from '../../js/components/common/InputMetric';
 import { shallow, mount } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

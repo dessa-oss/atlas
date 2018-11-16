@@ -24,6 +24,7 @@ module.exports = {
     "react/forbid-prop-types": 0,
     "react/jsx-one-expression-per-line": 0,
     "react/no-unused-prop-types": [1],
+    "import/no-cycle": 1,
   }
 };
 

@@ -19,7 +19,7 @@
   display: inline-block;
   vertical-align: top;
   text-align: center;
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   border: 1px solid $color-border-bottom;
   min-width: 115px;
   padding-left: 8px;
@@ -34,4 +34,10 @@
     min-width: 40px;
   }
 
+}
+
+.input-metric-rows-container{
+  display: block;
+  position: relative;
+  top: -1px;
 }

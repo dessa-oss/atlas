@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import UserCell from '../js/components/JobListPage/cells/UserCell';
+import UserCell from '../../../js/components/JobListPage/cells/UserCell';
 import { shallow } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../../setupTests';
 
 configureTests();
 

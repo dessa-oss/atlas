@@ -9,45 +9,59 @@ exports[`Shallow Renders Job Table Header 1`] = `
   />
   <InputMetric
     allInputParams={Array []}
+    cellWidths={Array []}
     header="input parameter"
     hiddenInputParams={Array []}
+    jobs={Object {}}
   />
   <InputMetric
     allInputParams={Array []}
+    cellWidths={Array []}
     header="metrics"
     hiddenInputParams={Array []}
+    jobs={Object {}}
   />
   <div
     className="job-column-header-container"
   >
     <JobColumnHeader
       className="start-time-offset"
+      colIndex={0}
       containerClass="job-column-header"
       isStatus={false}
+      sizeCallback={[Function]}
       title="Start Time"
     />
     <JobColumnHeader
       className="status-offset"
+      colIndex={0}
       containerClass="job-column-header"
       isStatus={true}
+      sizeCallback={[Function]}
       title="Status"
     />
     <JobColumnHeader
       className="job-id-offset"
+      colIndex={0}
       containerClass="job-column-header"
       isStatus={false}
+      sizeCallback={[Function]}
       title="Job ID"
     />
     <JobColumnHeader
       className="duration-offset"
+      colIndex={0}
       containerClass="job-column-header"
       isStatus={false}
+      sizeCallback={[Function]}
       title="Duration"
     />
     <JobColumnHeader
       className="user-offset"
+      colIndex={0}
       containerClass="job-column-header"
       isStatus={false}
+      sizeCallback={[Function]}
       title="User"
     />
   </div>

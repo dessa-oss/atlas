@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TableSectionHeader from '../js/components/common/TableSectionHeader';
+import TableSectionHeader from '../../js/components/common/TableSectionHeader';
 import { shallow, mount } from 'enzyme';
-import configureTests from './setupTests';
+import configureTests from '../setupTests';
 
 configureTests();
 

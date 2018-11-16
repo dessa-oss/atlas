@@ -68,6 +68,10 @@ class ProjectActions {
     return Math.floor(durationSeconds / second);
   }
 
+  static isFieldHidden(hiddenArray, field) {
+    return hiddenArray.includes(field);
+  }
+
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
