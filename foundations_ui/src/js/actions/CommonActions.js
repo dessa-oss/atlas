@@ -84,6 +84,14 @@ class CommonActions {
     }
     return rows;
   }
+
+  static getInputMetricCellPClass(isError) {
+    return isError ? 'font-bold error' : 'font-bold';
+  }
+
+  static getInputMetricCellDivClass(isError) {
+    return isError ? 'input-metric-cell-container error' : 'input-metric-cell-container';
+  }
 }
 
 export default CommonActions;

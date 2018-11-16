@@ -58,6 +58,8 @@ const jobs = [
   }
 ];
 const functionStub = () => null;
+const noError = false;
+const error = true;
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -118,4 +120,24 @@ it('get InputMetricCells', () => {
 it('get InputMetricRows', () => {
   const rows = CommonActions.getInputMetricRows(jobs, cellWidths);
   expect(rows.length).toBe(2);
+});
+
+it('get InputMetricCellPClass', () => {
+  const metricClass = CommonActions.getInputMetricCellPClass(noError);
+  expect(metricClass).toBe('font-bold');
+});
+
+it('get InputMetricCellPClass error', () => {
+  const metricClass = CommonActions.getInputMetricCellPClass(error);
+  expect(metricClass).toBe('font-bold error');
+});
+
+it('get InputMetricCellDivClass', () => {
+  const metricClass = CommonActions.getInputMetricCellDivClass(noError);
+  expect(metricClass).toBe('input-metric-cell-container');
+});
+
+it('get InputMetricCellPDivlass error', () => {
+  const metricClass = CommonActions.getInputMetricCellDivClass(error);
+  expect(metricClass).toBe('input-metric-cell-container error');
 });

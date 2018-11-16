@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CommonActions from '../../actions/CommonActions';
 
 class InputMetricCell extends Component {
   constructor(props) {
@@ -21,14 +22,8 @@ class InputMetricCell extends Component {
       width: cellWidth,
     };
 
-    // refactor this and test
-    const pClass = isError
-      ? ' font-bold error'
-      : ' font-bold';
-
-    const divClass = isError
-      ? 'input-metric-cell-container error'
-      : 'input-metric-cell-container';
+    const pClass = CommonActions.getInputMetricCellPClass(isError);
+    const divClass = CommonActions.getInputMetricCellDivClass(isError);
 
     return (
       <div style={divStyle} className={divClass}>

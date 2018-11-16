@@ -10,6 +10,54 @@ const isStatus = true;
 const isNotStatus = false;
 const emptyHeader = '';
 const header = 'abc';
+const allJobs = [
+  {
+    input_params: [
+      {
+        name: 'param1',
+        value: {
+          type: 'constant'
+        }
+      },
+      {
+        name: 'param2',
+        value: {
+          type: 'constant'
+        }
+      }
+    ]
+  },
+  {
+    input_params: [
+      {
+        name: 'param1',
+        value: {
+          type: 'constant'
+        }
+      },
+      {
+        name: 'param3',
+        value: {
+          type: 'non-constant'
+        }
+      }
+    ]
+  }
+];
+
+const constParam = {
+  value: {
+    type: 'constant',
+    value: 'abc'
+  }
+};
+
+const nonConstParam = {
+  value: {
+    type: 'non-constant',
+    value: '123'
+  }
+};
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -200,13 +248,27 @@ it('getDurationClass seconds', () => {
 });
 
 it('getAllInputParams', () => {
-  
+  const allParams = JobActions.getAllInputParams(allJobs);
+  expect(allParams.length).toBe(2);
 });
 
-it('getConstantInputParams', () => {
-
+it('getConstantInputParams all const', () => {
+  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
+  expect(constInputParams.length).toBe(2);
 });
 
-it('getInputParamValue', () => {
-
+it('getConstantInputParams with non const', () => {
+  const constInputParams = JobActions.getConstantInputParams(allJobs[1].input_params);
+  expect(constInputParams.length).toBe(1);
 });
+
+it('getInputParamValue const', () => {
+  const value = JobActions.getInputParamValue(constParam);
+  expect(value).toBe('abc');
+});
+
+it('getInputParamValue non const', () => {
+  const value = JobActions.getInputParamValue(nonConstParam);
+  expect(value).toBe('not available');
+});
+
