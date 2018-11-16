@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import sys
 
-from foundations import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager
+from foundations import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager, message_router
 from foundations.error_printer import ErrorPrinter
 
 def main():
@@ -53,8 +53,15 @@ def main():
 
         CompleteJob(message_router, job.pipeline_context()).push_message()
 
+    def mark_job_as_running():
+        from foundations.producers.jobs.run_job import RunJob
+        from foundations.global_state import message_router
+
+        RunJob(message_router, job.pipeline_context()).push_message()
+
     def execute_job():
         try:
+            mark_job_as_running()
             job.run()
             mark_job_complete()
             return None, False

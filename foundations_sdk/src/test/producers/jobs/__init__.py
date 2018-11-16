@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.producers.jobs.test_complete_job import TestProducerCompleteJob
+from test.producers.jobs.test_run_job import TestProducerRunJob

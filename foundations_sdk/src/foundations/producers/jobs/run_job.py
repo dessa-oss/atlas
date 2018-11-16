@@ -2,11 +2,11 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 11 2018
 """
 
-class CompleteJob(object):
-    """Create and posts a message indicating that a job has been completed
+class RunJob(object):
+    """Create and posts a message indicating that a job is running
     
     Arguments:
         message_router {MessageRouter} -- The message router with which to push the message with
@@ -21,4 +21,10 @@ class CompleteJob(object):
         """See above
         """
 
-        self._message_router.push_message('complete_job', {'job_id': self._pipeline_context.file_name})
+        provenance = self._pipeline_context.provenance
+        message = {
+            'job_id': self._pipeline_context.file_name,
+            'project_name': provenance.project_name
+        }
+
+        self._message_router.push_message('run_job', message)

@@ -124,7 +124,7 @@ node {
     }
     container("yarn") {
         ws("${WORKSPACE}/foundations_ui/") {
-            stage('Install dependencies for Foundation UI') {
+            stage('Install dependencies for Foundations UI') {
                 sh "yarn install"
             }
             stage('Run Front End Unit Tests') {
