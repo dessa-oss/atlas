@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class MiddlewareChain(object):
 
     def __init__(self):
@@ -21,7 +22,8 @@ class MiddlewareChain(object):
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         self._log().debug('Start middleware')
-        result = self._call_internal(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, 0)
+        result = self._call_internal(
+            upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback, 0)
         self._log().debug('Complete middleware')
         return result
 
@@ -44,8 +46,10 @@ class MiddlewareChain(object):
 
     def _execute_middleware(self, current_middleware, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback):
         self._log().debug('Calling middleware %s', repr(current_middleware))
-        result = current_middleware.call(upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
-        self._log().debug('Middleware %s returned %s', repr(current_middleware), repr(result))
+        result = current_middleware.call(
+            upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
+        self._log().debug('Middleware %s returned %s',
+                          repr(current_middleware), repr(result))
         return result
 
     def _log(self):

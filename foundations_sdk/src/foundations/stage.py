@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class Stage(object):
 
     def __init__(self, middleware, uuid, function, metadata_function, *args, **kwargs):
@@ -36,11 +37,11 @@ class Stage(object):
 
     def function_name(self):
         return self._metadata_function.__name__
-    
+
     def function_source_code(self):
         import foundations.safe_inspect as inspect
         return inspect.getsource(self._metadata_function)
-    
+
     def source_file(self):
         import foundations.safe_inspect as inspect
         return inspect.getsourcefile(self._metadata_function)
@@ -58,4 +59,3 @@ class Stage(object):
     def _log(self):
         from foundations.global_state import log_manager
         return log_manager.get_logger(__name__)
-        
