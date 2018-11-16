@@ -41,10 +41,19 @@ def main():
 
     pipeline_context.provenance.job_source_bundle = job_source_bundle
 
+    def mark_job_failed():
+        from foundations.producers.jobs.failed_job import FailedJob
+        from foundations.global_state import message_router
+
+        job_pipeline_context = job.pipeline_context()
+        job_error_information = job_pipeline_context.global_stage_context.error_information
+        FailedJob(message_router, job_pipeline_context, job_error_information).push_message()
+
     def fetch_error_information(context):
         import sys
         exception_info = sys.exc_info()
         context.global_stage_context.add_error_information(exception_info)
+        mark_job_failed()
         return exception_info
 
     def mark_job_complete():

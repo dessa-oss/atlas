@@ -44,11 +44,16 @@ class StageContext(object):
         error_printer = ErrorPrinter()
         traceback_to_send = traceback.extract_tb(exception_info[2])
 
+        transformed_traceback = self._trasnformed_traceback(error_printer, traceback_to_send)
         self.error_information = {
             "type": exception_info[0],
             "exception": exception_value,
-            "traceback": error_printer.transform_extracted_traceback(traceback_to_send)
+            "traceback": transformed_traceback
         }
+
+    def _trasnformed_traceback(self, error_printer, traceback_to_send):
+        traceback_generator = error_printer.transform_extracted_traceback(traceback_to_send)
+        return list(traceback_generator)
 
     def save_to_archive(self, archiver):
         self.save_all_but_persisted_data(archiver)
