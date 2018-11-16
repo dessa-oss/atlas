@@ -6,11 +6,7 @@ import configureTests from '../setupTests';
 
 configureTests();
 
-const job = {
-  status: 'completed',
-};
-
 it('Shallow Renders Job Table Row', () => {
-  const wrapper = shallow(<JobTableRow job={job} />);
+  const wrapper = shallow(<JobTableRow/>);
   expect(wrapper).toMatchSnapshot();
 });

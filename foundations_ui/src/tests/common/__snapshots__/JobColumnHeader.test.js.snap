@@ -8,7 +8,7 @@ exports[`Shallow Renders Job Column Header 1`] = `
     className=""
   >
     <h4
-      className=" blue-border-bottom"
+      className="blue-border-bottom"
     />
     <div
       className="arrow-down float-right"

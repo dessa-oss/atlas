@@ -312,7 +312,15 @@ select {
 }
 
 .border-top-white{
-  border-top: 5px solid $color-white;
+  border-top: 8px solid $color-white;
+}
+
+.border-left-clear{
+  border-left: 8px solid transparent;
+}
+
+.border-right-clear{
+  border-right: 8px solid transparent;
 }
 
 //typography

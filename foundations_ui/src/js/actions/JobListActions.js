@@ -5,6 +5,7 @@ const second = 1000;
 const minute = second * 60;
 const hour = minute * 60;
 const day = hour * 24;
+const isStatusField = true;
 
 class ProjectActions {
   // API Calls
@@ -174,7 +175,42 @@ class ProjectActions {
     if (inputParam.value && inputParam.value.value && inputParam.value.type === 'constant') {
       return inputParam.value.value;
     }
-    return 'Does not exist';
+    return 'not available';
+  }
+
+  static getJobColumnHeaderH4Class(isStatus) {
+    if (isStatus === isStatusField) {
+      return 'blue-border-bottom status-header';
+    }
+    return 'blue-border-bottom';
+  }
+
+  static getJobColumnHeaderArrowClass(isStatus) {
+    if (isStatus === isStatusField) {
+      return 'arrow-down margin-auto';
+    }
+    return 'arrow-down float-right';
+  }
+
+  static getTableSectionHeaderDivClass(header) {
+    if (header !== '') {
+      return 'table-section-header blue-header';
+    }
+    return 'table-section-header';
+  }
+
+  static getTableSectionHeaderArrowClass(header) {
+    if (header !== '') {
+      return 'arrow-down blue-header-arrow';
+    }
+    return '';
+  }
+
+  static getTableSectionHeaderTextClass(header) {
+    if (header !== '') {
+      return 'blue-header-text font-regular';
+    }
+    return 'blue-header-text font-regular no-margin';
   }
 }
 

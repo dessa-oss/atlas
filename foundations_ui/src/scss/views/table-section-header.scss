@@ -14,12 +14,13 @@
 .blue-header-text {
   color: $color-white;
   text-transform: uppercase;
+  margin-top: 16px;
 }
 
 .blue-header-arrow {
   float: right;
   position: relative;
-  top: -32px;
+  top: -25px;
   right: 20px;
   border-top: 10px solid $color-white;
   border-left: 8px solid transparent;

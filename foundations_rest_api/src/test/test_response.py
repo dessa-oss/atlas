@@ -14,128 +14,101 @@ class TestResponse(unittest.TestCase):
     class MockModel(PropertyModel):
         data = PropertyModel.define_property()
 
-    class MockModelTwo(PropertyModel):
-        some_data = PropertyModel.define_property()
-        some_other_data = PropertyModel.define_property()
-
-    class Mock(object):
+    class MockLazyResult(object):
         def __init__(self, value):
             self._value = value
             self.called = False
 
-        def value(self):
+        def evaluate(self):
             self.called = True
+
+            if isinstance(self._value, list):
+                return [(item.evaluate() if isinstance(item, TestResponse.MockLazyResult) else item) for item in self._value ]
+
+            if isinstance(self._value, TestResponse.MockLazyResult):
+                return self._value.evaluate()
+
+            if isinstance(self._value, PropertyModel):
+                return self._evaluate_dict(self._value.attributes)
+
+            if isinstance(self._value, dict):
+                return self._evaluate_dict(self._value)
+
             return self._value
 
+        def _evaluate_dict(self, value):
+            attributes = {}
+            for key, value in value.items():
+                attributes[key] = value.evaluate() if isinstance(value, TestResponse.MockLazyResult) else value
+            return attributes
+
     def test_evaluate(self):
-        mock = self.Mock('hello')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello')
+        response = Response('mock', mock)
         self.assertEqual('hello', response.evaluate())
 
     def test_evaluate_different_action(self):
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock)
         self.assertEqual('hello world', response.evaluate())
 
     def test_as_json(self):
-        mock = self.Mock(self.MockModel(data='hello'))
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult(self.MockModel(data='hello'))
+        response = Response('mock', mock)
         self.assertEqual({'data': 'hello'}, response.as_json())
 
-    def test_as_json_filter_properties(self):
-        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
-        response = Response('mock', mock.value)
-        self.assertEqual({'some_data': 'hello'}, response.only(['some_data']).as_json())
-
-    def test_as_json_filter_properties_does_not_filter_too_much(self):
-        parent_mock = self.Mock(self.MockModel(data='hello'))
-        parent_response = Response('mock', parent_mock.value)
-
-        mock = self.Mock(self.MockModelTwo(some_data=parent_response, some_other_data='world'))
-        response = Response('mock', mock.value)
-
-        self.assertEqual({'some_data': {'data': 'hello'}}, response.only(['some_data']).as_json())
-
-    def test_as_json_filter_properties_different_property(self):
-        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
-        response = Response('mock', mock.value)
-        self.assertEqual({'some_other_data': 'world'}, response.only(['some_other_data']).as_json())
-
-    def test_as_json_filter_properties_in_list(self):
-        mock = self.Mock([self.MockModelTwo(some_data='hello', some_other_data='world')])
-        response = Response('mock', mock.value)
-        self.assertEqual([{'some_data': 'hello'}], response.only(['some_data']).as_json())
-
-    def test_as_json_filter_properties_in_list_of_response(self):
-        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
-        response = Response('mock', mock.value)
-
-        mock_two = self.Mock([response])
-        response = Response('mock', mock_two.value)
-        self.assertEqual([{'some_data': 'hello'}], response.only(['some_data']).as_json())
-
-    def test_as_json_filter_properties_multiple_properties(self):
-        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
-        response = Response('mock', mock.value)
-        self.assertEqual({'some_data': 'hello', 'some_other_data': 'world'}, response.only(['some_data', 'some_other_data']).as_json())
-
     def test_as_json_different_action(self):
-        mock = self.Mock(self.MockModel(data='hello world'))
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult(self.MockModel(data='hello world'))
+        response = Response('mock', mock)
         self.assertEqual({'data': 'hello world'}, response.as_json())
 
     def test_as_json_recursive_response(self):
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello world')
 
-        mock2 = self.Mock(self.MockModel(data=response))
-        response2 = Response('mock', mock2.value)
+        mock2 = self.MockLazyResult(self.MockModel(data=mock))
+        response2 = Response('mock', mock2)
 
         self.assertEqual({'data': 'hello world'}, response2.as_json())
 
     def test_as_json_recursive_response_via_dictionary(self):
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello world')
 
-        mock2 = self.Mock({'data': response})
-        response2 = Response('mock', mock2.value)
-
+        mock2 = self.MockLazyResult({'data': mock})
+        response2 = Response('mock', mock2)
         self.assertEqual({'data': 'hello world'}, response2.as_json())
 
     def test_as_json_recursive_response_via_list(self):
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello world')
 
-        mock2 = self.Mock([response])
-        response2 = Response('mock', mock2.value)
+        mock2 = self.MockLazyResult([mock])
+        response2 = Response('mock', mock2)
 
         self.assertEqual(['hello world'], response2.as_json())
 
     def test_as_json_recursive_response_via_response_in_property_containing_model(self):
-        mock = self.Mock([self.MockModel(data='hello world')])
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult([self.MockModel(data='hello world')])
 
-        mock2 = self.Mock(self.MockModel(data=response))
-        response2 = Response('mock', mock2.value)
+        mock2 = self.MockLazyResult(self.MockModel(data=mock))
+        response2 = Response('mock', mock2)
 
         self.assertEqual({'data': [{'data': 'hello world'}]}, response2.as_json())
 
     def test_as_json_non_property(self):
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock)
         self.assertEqual('hello world', response.as_json())
 
     def test_as_json_list(self):
-        mock = self.Mock(['hello', 'world'])
-        response = Response('mock', mock.value)
+        mock = self.MockLazyResult(['hello', 'world'])
+        response = Response('mock', mock)
         self.assertEqual(['hello', 'world'], response.as_json())
 
     def test_as_json_with_parent(self):
-        mock_parent = self.Mock('hello world')
-        response_parent = Response('mock', mock_parent.value)
+        mock_parent = self.MockLazyResult('hello world')
+        response_parent = Response('mock', mock_parent)
         
-        mock = self.Mock('hello world')
-        response = Response('mock', mock.value, response_parent)
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, response_parent)
 
         response.evaluate()
         self.assertTrue(mock_parent.called)

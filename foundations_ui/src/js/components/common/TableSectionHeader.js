@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CommonActions from '../../actions/CommonActions';
 
 class TableSectionHeader extends Component {
   constructor(props) {
@@ -11,14 +12,10 @@ class TableSectionHeader extends Component {
 
   render() {
     const { header } = this.state;
-    let divClass = 'table-section-header';
-    let arrowClass = '';
-    let textClass = 'blue-header-text font-regular white-text no-margin';
-    if (header !== '') {
-      divClass = 'table-section-header blue-header';
-      arrowClass = 'arrow-down blue-header-arrow border-top-white';
-      textClass = 'blue-header-text font-regular white-text';
-    }
+    const divClass = CommonActions.getTableSectionHeaderDiv(header);
+    const arrowClass = CommonActions.getTableSectionHeaderArrow(header);
+    const textClass = CommonActions.getTableSectionHeaderText(header);
+
     return (
       <div className={divClass}>
         <p className={textClass}>{header}</p>

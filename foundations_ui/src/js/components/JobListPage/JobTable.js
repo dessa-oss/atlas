@@ -26,6 +26,10 @@ class JobTable extends Component {
     this.setState({ isMount: false });
   }
 
+  async getInputParams() {
+    this.setState({ allInputParams: ['input1', 'input2', 'input3', 'input4', 'input5'] });
+  }
+
   async getJobs() {
     const { projectName } = this.state;
     const apiJobs = await JobActions.getJobs(projectName);

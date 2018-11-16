@@ -4,6 +4,7 @@ import TableSectionHeader from './TableSectionHeader';
 import JobColumnHeader from './JobColumnHeader';
 import InputMetricCell from './InputMetricCell';
 import InputMetricRow from './InputMetricRow';
+import CommonActions from '../../actions/CommonActions';
 
 class InputMetric extends Component {
   constructor(props) {
@@ -35,35 +36,8 @@ class InputMetric extends Component {
       header, hiddenInputParams, allInputParams, jobs, cellWidths,
     } = this.state;
 
-    let inputParams = null;
-    if (allInputParams.length > 0) {
-      let colIndex = 0;
-      inputParams = [];
-      allInputParams.forEach((input) => {
-        const key = input;
-        inputParams.push(
-          <JobColumnHeader
-            key={key}
-            title={input}
-            className="inline-block"
-            containerClass="input-metric-column-header"
-            sizeCallback={this.resizeCells}
-            colIndex={colIndex}
-          />,
-        );
-        colIndex += 1;
-      });
-    }
-
-    let rows = null;
-    if (jobs.length > 0) {
-      rows = [];
-      jobs.forEach((job) => {
-        const key = job.job_id.concat('-input-metric-row');
-        const isError = job.status.toLowerCase() === 'error';
-        rows.push(<InputMetricRow key={key} job={job} cellWidths={cellWidths} isError={isError} />);
-      });
-    }
+    const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells);
+    const rows = CommonActions.getInputMetricRows(jobs, cellWidths);
 
     return (
       <div className="input-metric-container">

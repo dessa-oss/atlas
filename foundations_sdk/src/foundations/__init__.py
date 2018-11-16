@@ -40,7 +40,7 @@ from foundations.serializer import *
 from foundations.discrete_hyperparameter import DiscreteHyperparameter
 from foundations.integer_hyperparameter import IntegerHyperparameter
 from foundations.floating_hyperparameter import FloatingHyperparameter
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 from foundations.change_directory import ChangeDirectory
 from foundations.bucket_job_deployment import BucketJobDeployment
 from foundations.deployment_wrapper import DeploymentWrapper
@@ -51,9 +51,12 @@ from foundations.scheduler import Scheduler
 from foundations.versioning import __version__
 
 import foundations.import_installer
+import foundations.consumers
+
 
 def _append_module():
     import sys
     module_manager.append_module(sys.modules[__name__])
+
 
 _append_module()

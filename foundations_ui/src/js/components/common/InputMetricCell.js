@@ -21,6 +21,7 @@ class InputMetricCell extends Component {
       width: cellWidth,
     };
 
+    // refactor this and test
     const pClass = isError
       ? ' font-bold error'
       : ' font-bold';

@@ -28,7 +28,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       className="start-time-offset"
       colIndex={0}
       containerClass="job-column-header"
-      isStatus={0}
+      isStatus={false}
       sizeCallback={[Function]}
       title="Start Time"
     />
@@ -36,7 +36,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       className="status-offset"
       colIndex={0}
       containerClass="job-column-header"
-      isStatus={1}
+      isStatus={true}
       sizeCallback={[Function]}
       title="Status"
     />
@@ -44,7 +44,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       className="job-id-offset"
       colIndex={0}
       containerClass="job-column-header"
-      isStatus={0}
+      isStatus={false}
       sizeCallback={[Function]}
       title="Job ID"
     />
@@ -52,7 +52,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       className="duration-offset"
       colIndex={0}
       containerClass="job-column-header"
-      isStatus={0}
+      isStatus={false}
       sizeCallback={[Function]}
       title="Duration"
     />
@@ -60,7 +60,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       className="user-offset"
       colIndex={0}
       containerClass="job-column-header"
-      isStatus={0}
+      isStatus={false}
       sizeCallback={[Function]}
       title="User"
     />

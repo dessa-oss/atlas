@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactResizeDetector from 'react-resize-detector';
+import JobActions from '../../actions/JobListActions';
 
 class JobColumnHeader extends Component {
   constructor(props) {
@@ -26,12 +27,8 @@ class JobColumnHeader extends Component {
     const {
       title, isStatus, offsetDivClass, containerDivClass,
     } = this.state;
-    let headerClassName = ' blue-border-bottom';
-    let arrowClassName = 'arrow-down float-right';
-    if (isStatus === 1) {
-      headerClassName = ' blue-border-bottom status-header';
-      arrowClassName = 'arrow-down margin-auto';
-    }
+    const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
+    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
 
     return (
       <div
@@ -50,7 +47,7 @@ class JobColumnHeader extends Component {
 
 JobColumnHeader.propTypes = {
   title: PropTypes.string,
-  isStatus: PropTypes.number,
+  isStatus: PropTypes.bool,
   className: PropTypes.string,
   containerClass: PropTypes.string,
   sizeCallback: PropTypes.func,
@@ -59,7 +56,7 @@ JobColumnHeader.propTypes = {
 
 JobColumnHeader.defaultProps = {
   title: '',
-  isStatus: 0,
+  isStatus: false,
   className: '',
   containerClass: 'job-column-header',
   sizeCallback: () => null,
