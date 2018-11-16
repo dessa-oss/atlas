@@ -14,6 +14,7 @@ class JobTable extends Component {
       projectName: this.props.projectName,
       hiddenInputParams: [],
       allInputParams: [],
+      allMetrics: [],
     };
   }
 
@@ -38,16 +39,21 @@ class JobTable extends Component {
     if (isMount) {
       if (apiJobs != null) {
         const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-        this.setState({ jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams });
+        const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
+        this.setState({
+          jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
+        });
       } else {
-        this.setState({ jobs: [], isLoaded: true, allInputParams: [] });
+        this.setState({
+          jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
+        });
       }
     }
   }
 
   render() {
     const {
-      jobs, isLoaded, hiddenInputParams, allInputParams,
+      jobs, isLoaded, hiddenInputParams, allInputParams, allMetrics,
     } = this.state;
 
     let jobRows = [];
@@ -70,6 +76,7 @@ class JobTable extends Component {
         <JobTableHeader
           hiddenInputParams={hiddenInputParams}
           allInputParams={allInputParams}
+          allMetrics={allMetrics}
           jobs={jobs}
         />
         <div className="job-table-row-container">
@@ -87,6 +94,7 @@ JobTable.propTypes = {
   projectName: PropTypes.string,
   hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
+  allMetrics: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -96,6 +104,7 @@ JobTable.defaultProps = {
   projectName: '',
   hiddenInputParams: [],
   allInputParams: [],
+  allMetrics: [],
 };
 
 export default JobTable;

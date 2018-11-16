@@ -6,7 +6,7 @@ import JobActions from './JobListActions';
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, resizeCells) {
+  static getInputMetricColumnHeaders(allInputParams, resizeCells, isMetric) {
     let inputParams = null;
     if (allInputParams.length > 0) {
       let colIndex = 0;
@@ -55,16 +55,57 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, cellWidths, isError) {
+  static getInputMetricCells(job, cellWidths, isError, isMetric, columns) {
     let cells = null;
-    if (job.input_params && job.input_params.length > 0) {
+    if (isMetric && job.output_metrics && job.output_metrics.data_set_name) {
       cells = [];
       let colIndex = 0;
-      job.input_params.forEach((input) => {
+      columns.forEach((col) => {
+        let input = {
+          value: {
+            type: 'constant',
+          },
+        };
+        job.output_metrics.data_set_name.forEach((metric) => {
+          if (metric === col) {
+            input = metric;
+          }
+        });
+        const cellWidth = cellWidths[colIndex];
+        const inputValue = JobActions.getInputParamValue(input, isMetric, columns);
+        cells.push(<InputMetricCell
+          key={input.name}
+          cellWidth={cellWidth}
+          value={inputValue}
+          isError={isError}
+        />);
+        colIndex += 1;
+      });
+    }
+
+    if (!isMetric && job.input_params && job.input_params.length > 0) {
+      cells = [];
+      let colIndex = 0;
+      columns.forEach((col) => {
+        let input = {
+          value: {
+            type: 'constant',
+          },
+        };
+        job.input_params.forEach((param) => {
+          if (param.name === col) {
+            input = param;
+          }
+        });
         if (input.value.type === 'constant') {
           const cellWidth = cellWidths[colIndex];
-          const inputValue = JobActions.getInputParamValue(input);
-          cells.push(<InputMetricCell key={input.name} cellWidth={cellWidth} value={inputValue} isError={isError} />);
+          const inputValue = JobActions.getInputParamValue(input, isMetric, columns);
+          cells.push(<InputMetricCell
+            key={input.name}
+            cellWidth={cellWidth}
+            value={inputValue}
+            isError={isError}
+          />);
           colIndex += 1;
         }
       });
@@ -72,14 +113,21 @@ class CommonActions {
     return cells;
   }
 
-  static getInputMetricRows(jobs, cellWidths) {
+  static getInputMetricRows(jobs, cellWidths, isMetric, allInputMetricColumn) {
     let rows = null;
     if (jobs.length > 0) {
       rows = [];
       jobs.forEach((job) => {
         const key = job.job_id.concat('-input-metric-row');
         const isError = job.status.toLowerCase() === 'error';
-        rows.push(<InputMetricRow key={key} job={job} cellWidths={cellWidths} isError={isError} />);
+        rows.push(<InputMetricRow
+          key={key}
+          job={job}
+          cellWidths={cellWidths}
+          isError={isError}
+          isMetric={isMetric}
+          allInputMetricColumn={allInputMetricColumn}
+        />);
       });
     }
     return rows;

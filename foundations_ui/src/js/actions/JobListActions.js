@@ -171,8 +171,16 @@ class ProjectActions {
     return constantParams;
   }
 
-  static getInputParamValue(inputParam) {
-    if (inputParam.value && inputParam.value.value && inputParam.value.type === 'constant') {
+  static getInputParamValue(inputParam, isMetric, columns) {
+    if (isMetric) {
+      return 'metric value';
+    }
+
+    // else input param
+    if (inputParam && columns.includes(inputParam.name)
+    && inputParam.value
+    && inputParam.value.value
+    && inputParam.value.type === 'constant') {
       return inputParam.value.value;
     }
     return 'not available';
@@ -211,6 +219,18 @@ class ProjectActions {
       return 'blue-header-text font-regular';
     }
     return 'blue-header-text font-regular no-margin';
+  }
+
+  static getAllMetrics(allJobs) {
+    const allMetrics = [];
+    allJobs.forEach((job) => {
+      if (job.output_metrics && job.output_metrics.data_set_name) {
+        job.output_metrics.data_set_name.forEach((metric) => {
+          allMetrics.push(metric);
+        });
+      }
+    });
+    return allMetrics;
   }
 }
 

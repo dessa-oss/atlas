@@ -272,3 +272,6 @@ it('getInputParamValue non const', () => {
   expect(value).toBe('not available');
 });
 
+it('get AllMetrics', () => {
+
+});

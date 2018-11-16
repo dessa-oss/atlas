@@ -16,6 +16,7 @@ class InputMetric extends Component {
       allInputParams: this.props.allInputParams,
       jobs: [],
       cellWidths: new Array(5),
+      isMetric: this.props.isMetric,
     };
   }
 
@@ -33,11 +34,11 @@ class InputMetric extends Component {
 
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, cellWidths,
+      header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric,
     } = this.state;
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells);
-    const rows = CommonActions.getInputMetricRows(jobs, cellWidths);
+    const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams);
 
     return (
       <div className="input-metric-container">
@@ -57,6 +58,7 @@ InputMetric.propTypes = {
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   cellWidths: PropTypes.array,
+  isMetric: PropTypes.bool,
 };
 
 InputMetric.defaultProps = {
@@ -65,6 +67,7 @@ InputMetric.defaultProps = {
   allInputParams: [],
   jobs: [],
   cellWidths: [],
+  isMetric: false,
 };
 
 
