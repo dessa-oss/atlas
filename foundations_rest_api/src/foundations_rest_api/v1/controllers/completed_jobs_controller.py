@@ -13,5 +13,7 @@ class CompletedJobsController(object):
 
     def index(self):
         from foundations_rest_api.v1.models.project import Project
+        from foundations_rest_api.response import Response
 
-        return Project.find_by(name=self.params['project_name']).only(['name', 'completed_jobs'])
+        completed_jobs_future = Project.find_by(name=self.params['project_name']).only(['name', 'completed_jobs'])
+        return Response('CompletedJobs', completed_jobs_future)

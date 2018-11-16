@@ -34,12 +34,12 @@ class Project(PropertyModel):
             Project -- The new instance of the project
         """
 
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             return Project(name=name)
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def find_by(name):
@@ -52,22 +52,22 @@ class Project(PropertyModel):
             Project -- The project
         """
 
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             return Project._find_by_internal(name)
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def all():
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             listing = Project._construct_project_listing()
             return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def _construct_project_listing():
