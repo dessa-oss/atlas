@@ -47,9 +47,16 @@ def main():
         context.global_stage_context.add_error_information(exception_info)
         return exception_info
 
+    def mark_job_complete():
+        from foundations.producers.jobs.complete_job import CompleteJob
+        from foundations.global_state import message_router
+
+        CompleteJob(message_router, job.pipeline_context()).push_message()
+
     def execute_job():
         try:
             job.run()
+            mark_job_complete()
             return None, False
         except Exception as error:
             return fetch_error_information(pipeline_context), True

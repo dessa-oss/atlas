@@ -66,5 +66,6 @@ from test.test_message_route_listener import TestMessageRouteListener
 from test.helpers import *
 from test.models import *
 from test.job_bundling import *
+from test.producers import *
 from test.consumers import *
 from test.middleware import *
