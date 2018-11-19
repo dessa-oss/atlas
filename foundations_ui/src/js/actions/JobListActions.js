@@ -195,7 +195,7 @@ class ProjectActions {
 
   static getJobColumnHeaderArrowClass(isStatus) {
     if (isStatus === isStatusField) {
-      return 'arrow-down margin-auto';
+      return 'arrow-down';
     }
     return 'arrow-down float-right';
   }

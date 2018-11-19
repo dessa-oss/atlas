@@ -37,7 +37,10 @@ class JobColumnHeader extends Component {
       >
         <div className={offsetDivClass}>
           <h4 className={headerClassName}>{title}</h4>
-          <div className={arrowClassName} />
+          <div className="icon-container" />
+          <div role="presentation" onClick={this.onClick} onKeyPress={this.onClick} className="arrow-container">
+            <div className={arrowClassName} />
+          </div>
         </div>
         <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
       </div>

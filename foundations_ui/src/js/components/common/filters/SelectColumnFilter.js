@@ -11,11 +11,13 @@ class SelectColumnFilter extends Component {
 
   render() {
     return (
-      <div className="column-filter-container">
+      <div className="filter-container column-filter-container">
         <div className="column-filter-header">
           <input />
-          <div className="i--search" />
-          <button type="button" className="text-upper">Clear Filters</button>
+          <div className="mg-bg">
+            <div className="magnifying-glass" />
+          </div>
+          <button type="button" className="b--mat b--affirmative text-upper">Clear Filters</button>
         </div>
         <div className="column-filter-list">
           <Checkbox />
@@ -25,8 +27,8 @@ class SelectColumnFilter extends Component {
           <Checkbox />
         </div>
         <div className="column-filter-buttons">
-          <button type="button" className="text-upper">Cancel</button>
-          <button type="button" className="text-upper">Apply</button>
+          <button type="button" className="b--mat b--negation text-upper">Cancel</button>
+          <button type="button" className="b--mat b--affirmative text-upper">Apply</button>
         </div>
       </div>
     );

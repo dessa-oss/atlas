@@ -12,8 +12,8 @@ class Checkbox extends Component {
     return (
       <div className="checkbox-container">
         <div className="custom-checkbox">
-          <label className="control control--checkbox">
-            <input type="checkbox" />
+          <label htmlFor="abc" className="control control--checkbox">
+            <input id="abc" type="checkbox" />
             <div className="control__indicator" />
           </label>
         </div>

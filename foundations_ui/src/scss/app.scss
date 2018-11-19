@@ -7,6 +7,11 @@
 @import "base/icons";
 @import "base/mixins";
 @import "base/base";
+@import "base/custom-shapes";
+
+//theme
+@import "theme/shared";
+@import "theme/forms";
 
 //views
 @import "views/login-register";
@@ -24,6 +29,5 @@
 @import "views/input-metric";
 @import "views/input-metric-cell";
 @import "views/checkbox";
-
-//theme
-@import "theme/shared";
+@import "views/filter-base";
+@import "views/select-column-filter";

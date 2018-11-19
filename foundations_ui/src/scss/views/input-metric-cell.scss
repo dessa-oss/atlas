@@ -10,5 +10,10 @@
     vertical-align: middle;
     padding-top: 7px;
     height: 26px;
+
+    &.error {
+      color: $color-status-red;
+      background-color: $color-error-background;
+    }
   }
 }

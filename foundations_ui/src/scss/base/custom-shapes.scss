@@ -1,0 +1,48 @@
+.status-green {
+  background-color: $color-status-green;
+}
+
+.status-yellow {
+  background-color: $color-status-yellow;
+}
+
+.status-red {
+  background-color: $color-status-red;
+}
+
+.mg-bg {
+  background: $color-light-blue;
+  margin: 0px;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.magnifying-glass
+{
+  font-size: 1.2em;
+  width: 0.4em;
+  height: 0.4em;
+  border: 0.1em solid $color-white;
+  position: relative;
+  border-radius: 0.35em;
+  left: 8px;
+  top: 8px;
+}
+.magnifying-glass::before
+{
+ content: "";
+ display: inline-block;
+ position: absolute;
+ right: -0.25em;
+ bottom: -0.1em;
+ border-width: 0;
+ background: $color-white;
+ width: 0.35em;
+ height: 0.08em;
+ -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+     -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+}

@@ -9,6 +9,12 @@
   height: 26px;
   text-align: center;
   background-color: $color-white;
+
+  &.error {
+    color: $color-status-red;
+    background-color: $color-error-background;
+  }
+
 }
 
 .status-cell{

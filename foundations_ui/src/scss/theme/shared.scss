@@ -28,6 +28,12 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   border-top: 5px solid $color-dark-blue;
 }
 
+.arrow-container, .icon-container {
+  width: 50%;
+  display: inline-block;
+  height: 15px;
+}
+
 span, p {
   @extend .f--din;
   font-size: 13px;
@@ -71,19 +77,6 @@ img {
   max-width: 100%;
 }
 
-input, textarea {
-  font-family: FuturaBook, Arial, sans-serif !important;
-  $width:  calc(100% - 1rem - 2px);//100% - padding*2 - border width*2
-  max-width: $width;
-  width: $width;
-  padding: 0.5rem;
-  border: 1px solid $color-border;
-  &[type="checkbox"] {
-    width: auto;
-    max-width: inherit;
-  }
-}
-
 button.b--mat {
   margin: 15px;
   margin-left: 15px;
@@ -102,18 +95,6 @@ button.b--mat {
   color: white;
 }
 
-button.b--mat.b--affirmative {
-  background-color: $color-light-blue;
-}
-  
-button.b--mat.b--affirmative:hover {
-  background-color: $color-hover-blue;
-}
-  
-button.b--mat.b--affirmative:active {
-  background-color: $color-active-blue;
-}
-  
 .no-elevation {
     background: $color-no-elevation;
     border-radius: 2px;
@@ -150,17 +131,6 @@ hr {
   background-color: $color-border;
 }
 
-select {
-  -webkit-appearance: none !important;
-  border: 1px solid $color-border;
-  font-size: 0.875rem;
-  border-radius: 0;
-  background-image: url('data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==');
-  background-repeat: no-repeat;
-  background-position: 95% center;
-  padding: .625rem 1.5rem 0.625rem 1rem;
-}
-
 .standard-table {
   width: 100%;
   thead, tfoot {
@@ -192,23 +162,6 @@ select {
   }
 }
 
-.standard-form {
-  label {
-    display: block;
-  }
-  input {
-    display: block;
-    margin-bottom: 20px;
-  }
-  hr {
-    margin-bottom: 15px;
-  }
-}
-
-.standard-form-padding {
-  padding-top: 30px;
-}
-
 .fa-anchor-container {
   display: inline-block;
   .fa {
@@ -216,7 +169,7 @@ select {
   }
 }
 
-.error, p.error {
+.error {
   color: $color-status-red;
   background-color: $color-error-background;
 }
