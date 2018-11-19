@@ -5,4 +5,5 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-from .test_jobs_listing_endpoint import TestJobsListingEndpoint
+from acceptance.test_jobs_listing_endpoint import TestJobsListingEndpoint
+from acceptance.test_queued_jobs_endpoint import TestQueuedJobsEndpoint
