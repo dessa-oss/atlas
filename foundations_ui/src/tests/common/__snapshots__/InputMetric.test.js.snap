@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders InputMetric 1`] = `
+<div
+  className="input-metric-container"
+>
+  <TableSectionHeader
+    header=""
+  />
+  <div
+    className="input-metric-column-header-container"
+  >
+    <InputMetricRow
+      cellWidths={
+        Array [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ]
+      }
+      job={
+        Object {
+          "input_params": Array [
+            Object {
+              "name": "a_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_a_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "b_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 65,
+              },
+            },
+            Object {
+              "name": "d_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_e_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "e_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 165,
+              },
+            },
+            Object {
+              "name": "expiry_time",
+              "stage_uuid": "00000000-0000-0000-0000-000000000005",
+              "value": Object {
+                "type": "constant",
+                "value": 3600,
+              },
+            },
+          ],
+          "job_id": "123",
+        }
+      }
+      key="123-input-metric-row"
+    />
+    <InputMetricRow
+      cellWidths={
+        Array [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ]
+      }
+      job={
+        Object {
+          "input_params": Array [
+            Object {
+              "name": "a_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_a_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "b_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 65,
+              },
+            },
+            Object {
+              "name": "d_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_e_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "e_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 165,
+              },
+            },
+            Object {
+              "name": "expiry_time",
+              "stage_uuid": "00000000-0000-0000-0000-000000000005",
+              "value": Object {
+                "type": "constant",
+                "value": 3600,
+              },
+            },
+          ],
+          "job_id": "124",
+        }
+      }
+      key="124-input-metric-row"
+    />
+    <InputMetricRow
+      cellWidths={
+        Array [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ]
+      }
+      job={
+        Object {
+          "input_params": Array [
+            Object {
+              "name": "a_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_a_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "b_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 65,
+              },
+            },
+            Object {
+              "name": "d_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000003",
+              "value": Object {
+                "name": "value_for_e_value",
+                "type": "hyperparameter",
+              },
+            },
+            Object {
+              "name": "e_value",
+              "stage_uuid": "00000000-0000-0000-0000-000000000004",
+              "value": Object {
+                "type": "constant",
+                "value": 165,
+              },
+            },
+            Object {
+              "name": "expiry_time",
+              "stage_uuid": "00000000-0000-0000-0000-000000000005",
+              "value": Object {
+                "type": "constant",
+                "value": 3600,
+              },
+            },
+          ],
+          "job_id": "125",
+        }
+      }
+      key="125-input-metric-row"
+    />
+  </div>
+</div>
+`;

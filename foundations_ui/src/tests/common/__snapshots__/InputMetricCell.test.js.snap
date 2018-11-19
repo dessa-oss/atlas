@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders InputMetricCell 1`] = `
+<div
+  className="input-metric-cell-container"
+  style={
+    Object {
+      "width": 115,
+    }
+  }
+>
+  <p
+    className="header-4 font-bold"
+  >
+    value
+  </p>
+</div>
+`;

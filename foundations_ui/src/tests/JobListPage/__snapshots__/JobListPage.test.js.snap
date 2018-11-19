@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job List Page 1`] = `
+<div
+  className="job-list-container"
+>
+  <JobTable
+    allInputParams={Array []}
+    hiddenInputParams={Array []}
+    isLoaded={false}
+    isMount={false}
+    jobs={Array []}
+    projectName=""
+  />
+</div>
+`;

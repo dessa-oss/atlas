@@ -5,23 +5,20 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class CreationTime(object):
-    """
+from foundations.consumers.jobs.mixins.time_setter import TimeSetter
+
+class CreationTime(TimeSetter):
+    """Stores the creation time for a queued job
     
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
     
-    def __init__(self, redis):
-        self._redis = redis
+    def _listing_name(self):
+        return 'jobs'
 
-    def call(self, message, timestamp, meta_data):
-        """See above
-        
-        Arguments:
-            message {dict} -- Event attributes
-            timestamp {int} -- The time the event was created
-            meta_data {dict} -- Additional data about the event
-        """
+    def _listing_value(self, message):
+        return message['job_id']
 
-        self._redis.set('jobs:{}:creation_time'.format(message['job_id']), str(timestamp))
+    def _timestamp_name(self):
+        return 'creation_time'

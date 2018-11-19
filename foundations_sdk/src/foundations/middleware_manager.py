@@ -50,8 +50,6 @@ class MiddlewareManager(object):
             'Error', MiddlewareManager._create_error_middleware)
         self._append_middleware(
             'StageOutput', MiddlewareManager._create_stage_output_middleware)
-        self._append_middleware(
-            'UpstreamResult', MiddlewareManager._create_upstream_result_middleware)
         self._append_middleware('Argument', ArgumentMiddleware)
         self._append_middleware(
             'NewCache', MiddlewareManager._create_new_cache_middleware)
@@ -119,11 +117,6 @@ class MiddlewareManager(object):
         from foundations.stage_cache import StageCache
 
         return NewCacheMiddleware(StageCache, pipeline_context, stage_config, stage_context, stage)
-
-    @staticmethod
-    def _create_upstream_result_middleware(pipeline_context, stage_config, stage_context, stage):
-        from foundations.middleware.upstream_result_middleware import UpstreamResultMiddleware
-        return UpstreamResultMiddleware()
 
     @staticmethod
     def _create_context_aware_middleware(pipeline_context, stage_config, stage_context, stage):

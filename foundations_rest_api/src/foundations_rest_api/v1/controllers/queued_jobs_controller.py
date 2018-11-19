@@ -13,5 +13,7 @@ class QueuedJobsController(object):
 
     def index(self):
         from foundations_rest_api.v1.models.project import Project
+        from foundations_rest_api.response import Response
 
-        return Project.find_by(name=self.params['project_name']).only(['name', 'queued_jobs'])
+        queued_jobs_future = Project.find_by(name=self.params['project_name']).only(['name', 'queued_jobs'])
+        return Response('QueuedJobs', queued_jobs_future)

@@ -5,23 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class JobState(object):
+from foundations.consumers.jobs.mixins.property_setter import PropertySetter
+
+class JobState(PropertySetter):
     """Sets the state of a job to queued in redis
     
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
     
-    def __init__(self, redis):
-        self._redis = redis
+    def _listing_name(self):
+        return 'jobs'
 
-    def call(self, message, timestamp, meta_data):
-        """See above
-        
-        Arguments:
-            message {dict} -- Event attributes
-            timestamp {int} -- The time the event was created
-            meta_data {dict} -- Additional data about the event
-        """
+    def _listing_value(self, message):
+        return message['job_id']
 
-        self._redis.set('jobs:{}:state'.format(message['job_id']), 'qeueud')
+    def _property_name(self):
+        return 'state'
+
+    def _property_value(self, message, timestamp, meta_data):
+        return 'queued'

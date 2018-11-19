@@ -4,7 +4,6 @@ import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
 import JobActions from '../../actions/JobListActions';
 
-
 class JobTable extends Component {
   constructor(props) {
     super(props);
@@ -13,16 +12,22 @@ class JobTable extends Component {
       jobs: [],
       isLoaded: false,
       projectName: this.props.projectName,
+      hiddenInputParams: [],
+      allInputParams: ['input1', 'input2', 'input3', 'input4', 'longlonglonglonglonginput5'],
     };
   }
 
   async componentDidMount() {
-    await this.setState({ isMount: true });
-    this.getJobs();
+    this.setState({ isMount: true });
+    await this.getJobs();
   }
 
   componentWillUnmount() {
     this.setState({ isMount: false });
+  }
+
+  async getInputParams() {
+    this.setState({ allInputParams: ['input1', 'input2', 'input3', 'input4', 'input5'] });
   }
 
   async getJobs() {
@@ -40,7 +45,9 @@ class JobTable extends Component {
   }
 
   render() {
-    const { jobs, isLoaded } = this.state;
+    const {
+      jobs, isLoaded, hiddenInputParams, allInputParams,
+    } = this.state;
 
     let jobRows = [];
     if (isLoaded) {
@@ -59,7 +66,7 @@ class JobTable extends Component {
 
     return (
       <div className="job-table-container">
-        <JobTableHeader />
+        <JobTableHeader hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} />
         <div className="job-table-row-container">
           {jobRows}
         </div>
@@ -73,6 +80,8 @@ JobTable.propTypes = {
   jobs: PropTypes.array,
   isLoaded: PropTypes.bool,
   projectName: PropTypes.string,
+  hiddenInputParams: PropTypes.array,
+  allInputParams: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -80,6 +89,8 @@ JobTable.defaultProps = {
   jobs: [],
   isLoaded: false,
   projectName: '',
+  hiddenInputParams: [],
+  allInputParams: [],
 };
 
 export default JobTable;

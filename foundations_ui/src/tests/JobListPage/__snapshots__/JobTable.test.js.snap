@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Table 1`] = `
+<div
+  className="job-table-container"
+>
+  <JobTableHeader
+    allInputParams={
+      Array [
+        "input1",
+        "input2",
+        "input3",
+        "input4",
+        "longlonglonglonglonginput5",
+      ]
+    }
+    hiddenInputParams={Array []}
+  />
+  <div
+    className="job-table-row-container"
+  >
+    <p>
+      Loading projects
+    </p>
+  </div>
+</div>
+`;

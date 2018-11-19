@@ -5,7 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class ArgumentHasher(object):
+    # TODO: Deprecate. Functionality should be in the Argument class
 
     def __init__(self, args, kwargs):
         self._args = args

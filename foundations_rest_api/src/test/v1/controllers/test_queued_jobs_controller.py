@@ -20,7 +20,7 @@ class TestQueuedJobsController(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.project.Project.find_by')
     def test_index_returns_all_queued_jobs(self, mock):
-        mock.return_value = self._make_response('some project', 'some jobs')
+        mock.return_value = self._make_lazy_result('some project', 'some jobs')
 
         controller = QueuedJobsController()
         controller.params = {'project_name': 'the great potato project'}
@@ -32,7 +32,7 @@ class TestQueuedJobsController(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.project.Project.find_by')
     def test_index_returns_all_queued_jobs_different_value(self, mock):
-        mock.return_value = self._make_response(
+        mock.return_value = self._make_lazy_result(
             'some other project', 'some more jobs')
 
         controller = QueuedJobsController()
@@ -43,10 +43,10 @@ class TestQueuedJobsController(unittest.TestCase):
         self.assertEqual(expected_result, controller.index().as_json())
         mock.assert_called_with(name='the not so great potato project')
 
-    def _make_response(self, name, queued_jobs):
-        from foundations_rest_api.response import Response
+    def _make_lazy_result(self, name, queued_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
 
         def _callback():
             return self.Mock(name=name, queued_jobs=queued_jobs)
 
-        return Response('Mock', _callback)
+        return LazyResult(_callback)

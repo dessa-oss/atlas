@@ -1,0 +1,43 @@
+.input-metric-container{
+  display: inline-block;
+  vertical-align: middle;
+  width: 532px;
+  height: 50px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.input-metric-column-header-container{
+  width: 530px;
+  overflow: hidden;
+  overflow-x: scroll;
+  white-space: nowrap;
+  border-left: 4px solid $color-border-bottom;
+}
+
+.input-metric-column-header {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  padding-bottom: 5px;
+  border: 1px solid $color-border-bottom;
+  min-width: 115px;
+  padding-left: 8px;
+  padding-right: 8px; 
+
+  h4{
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+  }
+
+  .status-header{
+    min-width: 40px;
+  }
+
+}
+
+.input-metric-rows-container{
+  display: block;
+  position: relative;
+  top: -1px;
+}
