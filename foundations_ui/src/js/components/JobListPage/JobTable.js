@@ -13,7 +13,7 @@ class JobTable extends Component {
       isLoaded: false,
       projectName: this.props.projectName,
       hiddenInputParams: [],
-      allInputParams: ['input1', 'input2', 'input3', 'input4', 'longlonglonglonglonginput5'],
+      allInputParams: [],
     };
   }
 
@@ -37,9 +37,10 @@ class JobTable extends Component {
     const { isMount } = this.state;
     if (isMount) {
       if (apiJobs != null) {
-        this.setState({ jobs: apiJobs.jobs, isLoaded: true });
+        const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
+        this.setState({ jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams });
       } else {
-        this.setState({ jobs: [], isLoaded: true });
+        this.setState({ jobs: [], isLoaded: true, allInputParams: [] });
       }
     }
   }
@@ -66,7 +67,11 @@ class JobTable extends Component {
 
     return (
       <div className="job-table-container">
-        <JobTableHeader hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} />
+        <JobTableHeader
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
         <div className="job-table-row-container">
           {jobRows}
         </div>

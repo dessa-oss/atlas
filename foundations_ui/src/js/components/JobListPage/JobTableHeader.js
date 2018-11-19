@@ -12,17 +12,32 @@ class JobTableHeader extends Component {
     this.state = {
       hiddenInputParams: this.props.hiddenInputParams,
       allInputParams: this.props.allInputParams,
+      jobs: this.props.jobs,
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ allInputParams: nextProps.allInputParams, jobs: nextProps.jobs });
+  }
+
   render() {
-    const { hiddenInputParams, allInputParams } = this.state;
+    const { hiddenInputParams, allInputParams, jobs } = this.state;
 
     return (
       <div className="job-list-container">
         <TableSectionHeader />
-        <InputMetric header="input parameter" hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} />
-        <InputMetric header="metrics" hiddenInputParams={hiddenInputParams} allInputParams={allInputParams} />
+        <InputMetric
+          header="input parameter"
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
+        <InputMetric
+          header="metrics"
+          hiddenInputParams={hiddenInputParams}
+          allInputParams={allInputParams}
+          jobs={jobs}
+        />
         <div className="job-column-header-container">
           <JobColumnHeader title="Start Time" className="start-time-offset" />
           <JobColumnHeader title="Status" isStatus={isStatus} className="status-offset" />
@@ -38,11 +53,13 @@ class JobTableHeader extends Component {
 JobTableHeader.propTypes = {
   hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
+  jobs: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
   hiddenInputParams: [],
   allInputParams: [],
+  jobs: [],
 };
 
 export default JobTableHeader;

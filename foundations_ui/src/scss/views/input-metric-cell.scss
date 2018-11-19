@@ -1,9 +1,15 @@
 .input-metric-cell-container{
     display: inline-block;
     vertical-align: middle;
-    border: 1px solid $color-border-bottom;
     min-width: 115px;
     text-align: center;
+    border-right: 1px solid $color-border-bottom;
+    border-top: 1px solid $color-border-bottom;
+
+    &:last-child {
+      border-bottom: 0px;
+    }
+    
   p{
     margin: auto;
     background-color: $color-white;

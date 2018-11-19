@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import JobCell from './cells/JobCell';
 import StartCell from './cells/StartTimeCell';
 import StatusCell from './cells/StatusCell';
 import JobIDCell from './cells/JobIDCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
 import JobActions from '../../actions/JobListActions';
+import CommonActions from '../../actions/CommonActions';
 
 class JobTableRow extends Component {
   constructor(props) {
@@ -19,13 +19,18 @@ class JobTableRow extends Component {
   render() {
     const { job } = this.state;
 
+    const isError = CommonActions.isError(job.status);
+
     return (
       <div className="job-table-row">
-        <StartCell startTime={job.start_time} />
-        <StatusCell status={job.status} />
-        <JobIDCell jobID={job.job_id} />
-        <DurationCell duration={JobActions.getDateDiff(job.start_time, job.completed_time)} />
-        <UserCell user={job.user} />
+        <StartCell startTime={job.start_time} isError={isError} />
+        <StatusCell status={job.status} isError={isError} />
+        <JobIDCell jobID={job.job_id} isError={isError} />
+        <DurationCell
+          duration={JobActions.getDateDiff(job.start_time, job.completed_time)}
+          isError={isError}
+        />
+        <UserCell user={job.user} isError={isError} />
       </div>
     );
   }

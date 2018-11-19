@@ -2,24 +2,24 @@
   display: inline-block;
   vertical-align: middle;
   width: 530px;
-  height: 50px;
+  height: 36px;
 }
 
 .blue-header {
   text-align: center;
   background-color: $color-medium-blue;
-  border: 1px solid $color-border-bottom;
 }
 
 .blue-header-text {
   color: $color-white;
   text-transform: uppercase;
+  margin-top: 9px;
 }
 
 .blue-header-arrow {
   float: right;
   position: relative;
-  top: -32px;
+  top: -25px;
   right: 20px;
   border-top: 10px solid $color-white;
   border-left: 8px solid transparent;

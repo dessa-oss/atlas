@@ -20,16 +20,16 @@ class ProjectHeader extends Component {
       <div className="project-header-container">
         <div className="project-header-logo-container">
           <div className="i--icon-logo" />
-          <h2>Foundations</h2>
+          <h2 className="font-bold">Foundations</h2>
         </div>
         <div className="project-header-info-container">
           <div className="project-header-total-projects-container">
             <div className="half-width inline-block">
-              <h1 className="blue-border-bottom">Projects</h1>
+              <h1 className="blue-border-bottom font-bold">Projects</h1>
             </div>
             <div className="half-width inline-block text-right">
-              <h2 className="blue-border-bottom">
-                Total Projects: <span className="font-regular">{numProjects}</span>
+              <h2 className="blue-border-bottom font-bold">
+                Total Projects: <span>{numProjects}</span>
               </h2>
             </div>
           </div>

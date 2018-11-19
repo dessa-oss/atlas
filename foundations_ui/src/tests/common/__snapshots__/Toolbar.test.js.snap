@@ -4,14 +4,10 @@ exports[`Shallow Renders Toolbar Home 1`] = `
 <div
   className="toolbar-container"
 >
-  <p
-    className="font-regular"
-  >
+  <p>
     Home
   </p>
-  <p
-    className="font-regular"
-  >
+  <p>
     Support and Contact
   </p>
 </div>

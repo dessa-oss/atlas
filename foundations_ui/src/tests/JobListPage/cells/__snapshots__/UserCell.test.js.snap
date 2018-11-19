@@ -2,6 +2,6 @@
 
 exports[`Shallow Renders User Cell 1`] = `
 <p
-  className="job-cell user-cell font-regular"
+  className="job-cell user-cell"
 />
 `;

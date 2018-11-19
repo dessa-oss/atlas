@@ -6,24 +6,32 @@ class JobIDCell extends Component {
     super(props);
     this.state = {
       jobID: this.props.jobID,
+      isError: this.props.isError,
     };
   }
 
   render() {
-    const { jobID } = this.state;
+    const { jobID, isError } = this.state;
 
+    const pClass = isError
+      ? 'job-cell job-id-cell error'
+      : 'job-cell job-id-cell';
+
+    const href = '/'.concat(jobID);
     return (
-      <p className="job-cell job-id-cell header-4 font-bold">{jobID}</p>
+      <a href={href} className={pClass}>{jobID}</a>
     );
   }
 }
 
 JobIDCell.propTypes = {
   jobID: PropTypes.string,
+  isError: PropTypes.bool,
 };
 
 JobIDCell.defaultProps = {
   jobID: '',
+  isError: false,
 };
 
 export default JobIDCell;

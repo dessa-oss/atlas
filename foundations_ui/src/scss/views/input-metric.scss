@@ -2,7 +2,7 @@
   display: inline-block;
   vertical-align: middle;
   width: 532px;
-  height: 50px;
+  height: 36px;
   margin: 0px;
   padding: 0px;
 }
@@ -13,31 +13,43 @@
   overflow-x: scroll;
   white-space: nowrap;
   border-left: 4px solid $color-border-bottom;
-}
 
-.input-metric-column-header {
-  display: inline-block;
-  vertical-align: top;
-  text-align: center;
-  padding-bottom: 5px;
-  border: 1px solid $color-border-bottom;
-  min-width: 115px;
-  padding-left: 8px;
-  padding-right: 8px; 
-
-  h4{
-    margin-bottom: 5px;
-    padding-bottom: 3px;
+  &:last-child {
+    border-bottom: 1px solid $color-border-bottom;
   }
 
-  .status-header{
-    min-width: 40px;
+  .job-column-header {
+    border-right: 1px solid $color-border-bottom;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    min-width: 115px;
+    padding-left: 8px;
+    padding-right: 8px; 
+
+    &:last-child {
+      border-right: 0px;
+    }
+
+    .status-header{
+      min-width: 40px;
+    }
   }
 
-}
+  .job-cell {
+    min-width: 115px;
+    text-align: center;
+    padding-left: 0px;
+    padding-right: 0px;
 
-.input-metric-rows-container{
-  display: block;
-  position: relative;
-  top: -1px;
+    &:last-child {
+      border-right: 0px;
+    }
+    
+    p{
+      margin: auto;
+      vertical-align: middle;
+      height: 26px;
+    }
+  }
 }

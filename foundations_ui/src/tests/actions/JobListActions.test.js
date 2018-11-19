@@ -10,6 +10,54 @@ const isStatus = true;
 const isNotStatus = false;
 const emptyHeader = '';
 const header = 'abc';
+const allJobs = [
+  {
+    input_params: [
+      {
+        name: 'param1',
+        value: {
+          type: 'constant'
+        }
+      },
+      {
+        name: 'param2',
+        value: {
+          type: 'constant'
+        }
+      }
+    ]
+  },
+  {
+    input_params: [
+      {
+        name: 'param1',
+        value: {
+          type: 'constant'
+        }
+      },
+      {
+        name: 'param3',
+        value: {
+          type: 'non-constant'
+        }
+      }
+    ]
+  }
+];
+
+const constParam = {
+  value: {
+    type: 'constant',
+    value: 'abc'
+  }
+};
+
+const nonConstParam = {
+  value: {
+    type: 'non-constant',
+    value: '123'
+  }
+};
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -97,12 +145,12 @@ it('getStatusCircle green', () => {
 
 it('gets JobColumnHeaderH4Class', () => {
   const header = JobActions.getJobColumnHeaderH4Class(isNotStatus);
-  expect(header).toBe('header-4 blue-border-bottom');
+  expect(header).toBe('blue-border-bottom');
 });
 
 it('gets JobColumnHeaderH4Class isStatus', () => {
   const header = JobActions.getJobColumnHeaderH4Class(isStatus);
-  expect(header).toBe('header-4 blue-border-bottom status-header');
+  expect(header).toBe('blue-border-bottom status-header');
 });
 
 it('gets JobColumnHeaderArrowClass', () => {
@@ -137,12 +185,12 @@ it('gets TableSectionHeaderArrowClass emptyHeader', () => {
 
 it('gets TableSectionHeaderTextClass', () => {
   const text = JobActions.getTableSectionHeaderTextClass(header);
-  expect(text).toBe('blue-header-text font-regular');
+  expect(text).toBe('blue-header-text');
 });
 
 it('gets TableSectionHeaderTextClass emptyHeader', () => {
   const text = JobActions.getTableSectionHeaderTextClass(emptyHeader);
-  expect(text).toBe('blue-header-text font-regular no-margin');
+  expect(text).toBe('blue-header-text no-margin');
 });
 
 it('getStatusCircle red', () => {
@@ -160,7 +208,7 @@ it('getDurationClass days', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-day-number header-4 font-bold">3<span className="font-regular">d </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="font-bold">3<span className="">d </span></span>));
 });
 
 it('getDurationClass hours', () => {
@@ -172,7 +220,7 @@ it('getDurationClass hours', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-hour-number header-4 font-bold">6<span className="font-regular">h </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="font-bold">6<span className="">h </span></span>));
 });
 
 it('getDurationClass minutes', () => {
@@ -184,7 +232,7 @@ it('getDurationClass minutes', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-minute-number header-4 font-bold">12<span className="font-regular">m </span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="font-bold">12<span className="">m </span></span>));
 });
 
 it('getDurationClass seconds', () => {
@@ -196,5 +244,31 @@ it('getDurationClass seconds', () => {
   let timeUI = JobActions.getDurationClass(desiredTime, days, hours, minutes, seconds);
   // Note JSON Stringify is needed for test to pass, known jest issue: https://github.com/facebook/jest/issues/5998
   timeUI = JSON.stringify(timeUI);
-  expect(timeUI).toBe(JSON.stringify(<span className="duration-second-number header-4 font-bold">30<span className="font-regular">s</span></span>));
+  expect(timeUI).toBe(JSON.stringify(<span className="font-bold">30<span className="">s</span></span>));
 });
+
+it('getAllInputParams', () => {
+  const allParams = JobActions.getAllInputParams(allJobs);
+  expect(allParams.length).toBe(2);
+});
+
+it('getConstantInputParams all const', () => {
+  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
+  expect(constInputParams.length).toBe(2);
+});
+
+it('getConstantInputParams with non const', () => {
+  const constInputParams = JobActions.getConstantInputParams(allJobs[1].input_params);
+  expect(constInputParams.length).toBe(1);
+});
+
+it('getInputParamValue const', () => {
+  const value = JobActions.getInputParamValue(constParam);
+  expect(value).toBe('abc');
+});
+
+it('getInputParamValue non const', () => {
+  const value = JobActions.getInputParamValue(nonConstParam);
+  expect(value).toBe('not available');
+});
+

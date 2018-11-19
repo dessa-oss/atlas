@@ -84,7 +84,7 @@ class ProjectActions {
     return 'status '.concat(statusCircle);
   }
 
-  static getDurationClass(desiredTime, days, hours, minutes, seconds) {
+  static getDurationClass(desiredTime, days, hours, minutes, seconds, isError) {
     let daysUI = null;
     let hoursUI = null;
     let minutesUI = null;
@@ -94,29 +94,33 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
+    const letterClass = isError ? 'error' : '';
+    const numberClass = isError
+      ? 'font-bold error'
+      : 'font-bold';
     if (days !== 0) {
       showingDays = true;
-      daysUI = <span className="duration-day-number header-4 font-bold">{days}<span className="font-regular">d </span></span>;
+      daysUI = <span className={numberClass}>{days}<span className={letterClass}>d </span></span>;
     }
 
     if (hours !== 0) {
       showingHours = true;
-      hoursUI = <span className="duration-hour-number header-4 font-bold">{hours}<span className="font-regular">h </span></span>;
+      hoursUI = <span className={numberClass}>{hours}<span className={letterClass}>h </span></span>;
     } else if (showingDays) {
-      hoursUI = <span className="duration-hour-number header-4 font-bold">0<span className="font-regular">h </span></span>;
+      hoursUI = <span className={numberClass}>0<span className={letterClass}>h </span></span>;
     }
 
     if (minutes !== 0) {
       showingMinutes = true;
-      minutesUI = <span className="duration-minute-number header-4 font-bold">{minutes}<span className="font-regular">m </span></span>;
+      minutesUI = <span className={numberClass}>{minutes}<span className={letterClass}>m </span></span>;
     } else if (showingDays || showingHours) {
-      minutesUI = <span className="duration-minute-number header-4 font-bold">0<span className="font-regular">m </span></span>;
+      minutesUI = <span className={numberClass}>0<span className={letterClass}>m </span></span>;
     }
 
     if (seconds !== 0) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">{seconds}<span className="font-regular">s</span></span>;
+      secondsUI = <span className={numberClass}>{seconds}<span className={letterClass}>s</span></span>;
     } else if (showingDays || showingHours || showingMinutes) {
-      secondsUI = <span className="duration-second-number header-4 font-bold">0<span className="font-regular">s</span></span>;
+      secondsUI = <span className={numberClass}>0<span className={letterClass}>s</span></span>;
     }
 
     switch (desiredTime) {
@@ -133,11 +137,40 @@ class ProjectActions {
     }
   }
 
+  static getAllInputParams(allJobs) {
+    const allInputParams = [];
+    allJobs.forEach((job) => {
+      job.input_params.forEach((input) => {
+        if (input.value.type === 'constant' && !allInputParams.includes(input.name)) {
+          allInputParams.push(input.name);
+        }
+      });
+    });
+    return allInputParams;
+  }
+
+  static getConstantInputParams(allInputParams) {
+    const constantParams = [];
+    allInputParams.forEach((input) => {
+      if (input.value.type === 'constant') {
+        constantParams.push(input);
+      }
+    });
+    return constantParams;
+  }
+
+  static getInputParamValue(inputParam) {
+    if (inputParam.value && inputParam.value.value && inputParam.value.type === 'constant') {
+      return inputParam.value.value;
+    }
+    return 'not available';
+  }
+
   static getJobColumnHeaderH4Class(isStatus) {
     if (isStatus === isStatusField) {
-      return 'header-4 blue-border-bottom status-header';
+      return 'blue-border-bottom status-header';
     }
-    return 'header-4 blue-border-bottom';
+    return 'blue-border-bottom';
   }
 
   static getJobColumnHeaderArrowClass(isStatus) {
@@ -163,9 +196,9 @@ class ProjectActions {
 
   static getTableSectionHeaderTextClass(header) {
     if (header !== '') {
-      return 'blue-header-text font-regular';
+      return 'blue-header-text';
     }
-    return 'blue-header-text font-regular no-margin';
+    return 'blue-header-text no-margin';
   }
 }
 

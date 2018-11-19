@@ -6,24 +6,30 @@ class UserCell extends Component {
     super(props);
     this.state = {
       user: this.props.user,
+      isError: this.props.isError,
     };
   }
 
   render() {
-    const { user } = this.state;
+    const { user, isError } = this.state;
 
+    const pClass = isError
+      ? 'job-cell user-cell error'
+      : 'job-cell user-cell';
     return (
-      <p className="job-cell user-cell font-regular">{user}</p>
+      <p className={pClass}>{user}</p>
     );
   }
 }
 
 UserCell.propTypes = {
   user: PropTypes.string,
+  isError: PropTypes.bool,
 };
 
 UserCell.defaultProps = {
   user: '',
+  isError: false,
 };
 
 export default UserCell;

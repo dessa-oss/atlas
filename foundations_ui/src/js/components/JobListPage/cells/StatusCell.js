@@ -7,16 +7,19 @@ class StatusCell extends Component {
     super(props);
     this.state = {
       status: this.props.status,
+      isError: this.props.isError,
     };
   }
 
   render() {
-    const { status } = this.state;
+    const { status, isError } = this.state;
 
     const statusClass = JobActions.getStatusCircle(status);
 
+    const divClass = isError ? 'status-container error' : 'status-container';
+
     return (
-      <div className="status-container">
+      <div className={divClass}>
         <span className={statusClass} />
       </div>
     );
@@ -25,10 +28,12 @@ class StatusCell extends Component {
 
 StatusCell.propTypes = {
   status: PropTypes.string,
+  isError: PropTypes.bool,
 };
 
 StatusCell.defaultProps = {
   status: '',
+  isError: false,
 };
 
 export default StatusCell;

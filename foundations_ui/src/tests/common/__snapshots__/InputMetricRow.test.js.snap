@@ -2,6 +2,6 @@
 
 exports[`Shallow Renders InputMetricRow 1`] = `
 <div
-  className="input-metric-rows-container"
+  className="job-table-row"
 />
 `;

@@ -5,16 +5,9 @@ exports[`Shallow Renders Job Table 1`] = `
   className="job-table-container"
 >
   <JobTableHeader
-    allInputParams={
-      Array [
-        "input1",
-        "input2",
-        "input3",
-        "input4",
-        "longlonglonglonglonginput5",
-      ]
-    }
+    allInputParams={Array []}
     hiddenInputParams={Array []}
+    jobs={Array []}
   />
   <div
     className="job-table-row-container"
