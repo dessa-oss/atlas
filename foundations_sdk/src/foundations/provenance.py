@@ -26,6 +26,7 @@ class Provenance(object):
         self.python_version = None
         self.job_run_data = {}
         self.project_name = 'default'
+        self.user_name = 'default'
 
     def fill_python_version(self):
         import sys
@@ -88,7 +89,8 @@ class Provenance(object):
         subprocess.call(['python', '-m', 'pip', 'freeze'], stdout=writer)
         pip_freeze_string = string_from_bytes(os.read(reader, 65536))
         self.pip_freeze = pip_freeze_string.strip()
-        split_lines = [line.split('==') for line in self.pip_freeze.split("\n")]
+        split_lines = [line.split('==')
+                       for line in self.pip_freeze.split("\n")]
         versioned_lines = filter(lambda line: len(line) == 2, split_lines)
         self.module_versions = dict(versioned_lines)
 
@@ -104,6 +106,7 @@ class Provenance(object):
             "python_version": self.python_version,
             "job_run_data": self.job_run_data,
             "project_name": self.project_name,
+            "user_name": self.user_name,
         }
 
     def _load_archive_provenance(self, archive_provenance):
@@ -120,5 +123,8 @@ class Provenance(object):
             "stage_hierarchy", self.stage_hierarchy)
         self.python_version = archive_provenance.get(
             "python_version", self.python_version)
-        self.job_run_data = archive_provenance.get('job_run_data', self.job_run_data)
-        self.project_name = archive_provenance.get('project_name', self.project_name)
+        self.job_run_data = archive_provenance.get(
+            'job_run_data', self.job_run_data)
+        self.project_name = archive_provenance.get(
+            'project_name', self.project_name)
+        self.user_name = archive_provenance.get('user_name', self.user_name)
