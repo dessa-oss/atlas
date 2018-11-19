@@ -25,7 +25,13 @@ const allJobs = [
           type: 'constant'
         }
       }
-    ]
+    ],
+    output_metrics: {
+      data_set_name: [
+        'm1',
+        'm2'
+      ]
+    }
   },
   {
     input_params: [
@@ -41,7 +47,13 @@ const allJobs = [
           type: 'non-constant'
         }
       }
-    ]
+    ],
+    output_metrics: {
+      data_set_name: [
+        'm2',
+        'm3'
+      ]
+    }
   }
 ];
 
@@ -273,5 +285,6 @@ it('getInputMetricValue non const', () => {
 });
 
 it('get AllMetrics', () => {
-
+  const metrics = JobActions.getAllMetrics(allJobs);
+  expect(metrics.length).toBe(3);
 });

@@ -6,6 +6,7 @@ exports[`Shallow Renders Job List Page 1`] = `
 >
   <JobTable
     allInputParams={Array []}
+    allMetrics={Array []}
     hiddenInputParams={Array []}
     isLoaded={false}
     isMount={false}

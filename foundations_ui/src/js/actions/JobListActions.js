@@ -226,7 +226,9 @@ class ProjectActions {
     allJobs.forEach((job) => {
       if (job.output_metrics && job.output_metrics.data_set_name) {
         job.output_metrics.data_set_name.forEach((metric) => {
-          allMetrics.push(metric);
+          if (!allMetrics.includes(metric)) {
+            allMetrics.push(metric);
+          }
         });
       }
     });
