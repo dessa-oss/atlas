@@ -57,24 +57,26 @@ class CommonActions {
 
   static getInputMetricCells(job, cellWidths, isError, isMetric, columns) {
     let cells = null;
-    if (isMetric && job.output_metrics && job.output_metrics.data_set_name) {
+    if (isMetric && job.output_metrics) {
       cells = [];
       let colIndex = 0;
       columns.forEach((col) => {
-        let input = {
-          value: {
-            type: 'constant',
-          },
-        };
-        job.output_metrics.data_set_name.forEach((metric) => {
-          if (metric === col) {
-            input = metric;
-          }
-        });
+        let input = null;
+        if (job.output_metrics.data_set_name) {
+          job.output_metrics.data_set_name.forEach((metric) => {
+            if (metric === col) {
+              input = metric;
+            }
+          });
+        }
         const cellWidth = cellWidths[colIndex];
-        const inputValue = JobActions.getInputParamValue(input, isMetric, columns);
+        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let key = 'metric-'.concat(colIndex);
+        if (input && input.name) {
+          key = input.name;
+        }
         cells.push(<InputMetricCell
-          key={input.name}
+          key={key}
           cellWidth={cellWidth}
           value={inputValue}
           isError={isError}
@@ -97,11 +99,15 @@ class CommonActions {
             input = param;
           }
         });
+        let key = 'input-param-'.concat(colIndex);
+        if (input && input.name) {
+          key = input.name;
+        }
         if (input.value.type === 'constant') {
           const cellWidth = cellWidths[colIndex];
-          const inputValue = JobActions.getInputParamValue(input, isMetric, columns);
+          const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
           cells.push(<InputMetricCell
-            key={input.name}
+            key={key}
             cellWidth={cellWidth}
             value={inputValue}
             isError={isError}

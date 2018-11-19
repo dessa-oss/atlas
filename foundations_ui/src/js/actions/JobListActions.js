@@ -171,8 +171,8 @@ class ProjectActions {
     return constantParams;
   }
 
-  static getInputParamValue(inputParam, isMetric, columns) {
-    if (isMetric) {
+  static getInputMetricValue(inputParam, isMetric, columns) {
+    if (isMetric && inputParam !== null) {
       return 'metric value';
     }
 

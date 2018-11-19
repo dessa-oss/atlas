@@ -262,13 +262,13 @@ it('getConstantInputParams with non const', () => {
   expect(constInputParams.length).toBe(1);
 });
 
-it('getInputParamValue const', () => {
-  const value = JobActions.getInputParamValue(constParam);
+it('getInputMetricValue const', () => {
+  const value = JobActions.getInputMetricValue(constParam);
   expect(value).toBe('abc');
 });
 
-it('getInputParamValue non const', () => {
-  const value = JobActions.getInputParamValue(nonConstParam);
+it('getInputMetricValue non const', () => {
+  const value = JobActions.getInputMetricValue(nonConstParam);
   expect(value).toBe('not available');
 });
 
