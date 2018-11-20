@@ -69,6 +69,7 @@ class InputMetric extends Component {
           header={header}
           hiddenInputParams={hiddenInputParams}
           changeHiddenParams={this.changeHiddenParams}
+          columns={allInputParams}
         />
         <div className="input-metric-column-header-container">
           {inputParams}

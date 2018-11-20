@@ -14,7 +14,6 @@ class Checkbox extends Component {
 
   onChange() {
     const { hidden, changeHiddenParams, name } = this.state;
-    console.log('onchange');
     this.setState({ hidden: !hidden });
     changeHiddenParams(name);
   }

@@ -7,7 +7,6 @@ class SelectColumnFilter extends Component {
     super(props);
     this.state = {
       columns: this.props.columns,
-      changeHiddenParams: this.props.changeHiddenParams,
     };
   }
 
@@ -17,16 +16,16 @@ class SelectColumnFilter extends Component {
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];
+      columns.forEach((col) => {
+        const key = col.name.concat('-checkbox');
+        checkboxes.push(<Checkbox
+          key={key}
+          name={col.name}
+          hidden={col.hidden}
+          changeHiddenParams={changeHiddenParams}
+        />);
+      });
     }
-    columns.forEach((col) => {
-      const key = col.name.concat('-checkbox');
-      checkboxes.push(<Checkbox
-        key={key}
-        name={col.name}
-        hidden={col.hidden}
-        changeHiddenParams={changeHiddenParams}
-      />);
-    });
 
     return (
       <div className="filter-container column-filter-container">
@@ -55,7 +54,7 @@ SelectColumnFilter.propTypes = {
 };
 
 SelectColumnFilter.defaultProps = {
-  columns: [{ name: 'abc', hidden: false }, { name: '123', hidden: false }, { name: 'abc123', hidden: false }],
+  columns: [],
   changeHiddenParams: () => {},
 };
 

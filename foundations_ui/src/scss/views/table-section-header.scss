@@ -3,11 +3,15 @@
   vertical-align: middle;
   width: 530px;
   height: 36px;
+  position: relative;
 
   .arrow-container {
-    width: 30px;
+    width: 36px;
     height: 36px;
     float: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
   }
 }
 
@@ -24,11 +28,10 @@
 }
 
 .blue-header-arrow {
-  float: right;
-  position: relative;
-  top: -25px;
-  right: 20px;
   border-top: 10px solid $color-white;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }

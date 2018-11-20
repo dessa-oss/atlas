@@ -7,12 +7,18 @@ class TableSectionHeader extends Component {
   constructor(props) {
     super(props);
     this.onClick = this.onClick.bind(this);
+    this.formatColumns = this.formatColumns.bind(this);
     this.state = {
       header: this.props.header,
       isShowingFilter: false,
-      hiddenInputParams: this.props.hiddenInputParams,
       changeHiddenParams: this.props.changeHiddenParams,
+      columns: this.props.columns,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const formatedColumns = this.formatColumns(nextProps.columns);
+    this.setState({ columns: formatedColumns });
   }
 
   onClick() {
@@ -20,17 +26,31 @@ class TableSectionHeader extends Component {
     this.setState({ isShowingFilter: !isShowingFilter });
   }
 
+  formatColumns(columns) {
+    const formatedColumns = [];
+
+    if (columns !== null) {
+      columns.forEach((col) => {
+        formatedColumns.push({ name: col, hidden: false });
+      });
+    }
+    return formatedColumns;
+  }
+
   render() {
     const {
-      header, isShowingFilter, changeHiddenParams, hiddenInputParams,
+      header, isShowingFilter, changeHiddenParams, columns,
     } = this.state;
+
+    console.log(columns);
+
     const divClass = CommonActions.getTableSectionHeaderDiv(header);
     const arrowClass = CommonActions.getTableSectionHeaderArrow(header);
     const textClass = CommonActions.getTableSectionHeaderText(header);
 
     let filter = null;
     if (isShowingFilter) {
-      filter = <SelectColumnFilter changeHiddenParams={changeHiddenParams} />;
+      filter = <SelectColumnFilter changeHiddenParams={changeHiddenParams} columns={columns} />;
     }
 
     return (
@@ -48,15 +68,15 @@ class TableSectionHeader extends Component {
 TableSectionHeader.propTypes = {
   header: PropTypes.string,
   isShowingFilter: PropTypes.bool,
-  hiddenInputParams: PropTypes.array,
   changeHiddenParams: PropTypes.func,
+  columns: PropTypes.array,
 };
 
 TableSectionHeader.defaultProps = {
   header: '',
   isShowingFilter: false,
-  hiddenInputParams: [],
   changeHiddenParams: () => {},
+  columns: [],
 };
 
 export default TableSectionHeader;
