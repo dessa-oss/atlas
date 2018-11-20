@@ -26,6 +26,12 @@
   text-align: right;
   height: 70px;
   white-space: nowrap;
+  border-bottom: 1px solid $color-border-bottom;
+  margin-bottom: 5px;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+  padding-right: 15px;
 
   input {
     display: inline-block;
@@ -36,4 +42,12 @@
     margin-right: 15px;
     box-sizing: border-box;
   }
+}
+
+.column-filter-list {
+  border-bottom: 1px solid $color-border-bottom;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+  padding-right: 15px;
 }

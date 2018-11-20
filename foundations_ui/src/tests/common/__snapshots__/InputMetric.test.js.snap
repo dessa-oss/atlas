@@ -6,6 +6,7 @@ exports[`Shallow Renders InputMetric 1`] = `
 >
   <TableSectionHeader
     header=""
+    isShowingFilter={false}
   />
   <div
     className="input-metric-column-header-container"

@@ -17,7 +17,7 @@ class SelectColumnFilter extends Component {
           <div className="mg-bg">
             <div className="magnifying-glass" />
           </div>
-          <button type="button" className="b--mat b--affirmative text-upper">Clear Filters</button>
+          <button type="button" className="b--mat b--affirmative text-upper float-right">Clear Filters</button>
         </div>
         <div className="column-filter-list">
           <Checkbox />

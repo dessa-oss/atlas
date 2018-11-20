@@ -6,12 +6,14 @@ exports[`Shallow Renders Job Table Header 1`] = `
 >
   <TableSectionHeader
     header=""
+    isShowingFilter={false}
   />
   <InputMetric
     allInputParams={Array []}
     cellWidths={Array []}
     header="input parameter"
     hiddenInputParams={Array []}
+    isMetric={false}
     jobs={Array []}
   />
   <InputMetric
@@ -19,6 +21,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     cellWidths={Array []}
     header="metrics"
     hiddenInputParams={Array []}
+    isMetric={true}
     jobs={Array []}
   />
   <div
