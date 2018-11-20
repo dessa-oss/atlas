@@ -13,7 +13,7 @@ class InputMetricCell extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ cellWidth: nextProps.cellWidth });
+    this.setState({ cellWidth: nextProps.cellWidth, value: nextProps.value });
   }
 
   render() {

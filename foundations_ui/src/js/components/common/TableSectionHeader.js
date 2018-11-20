@@ -6,7 +6,7 @@ import SelectColumnFilter from './filters/SelectColumnFilter';
 class TableSectionHeader extends Component {
   constructor(props) {
     super(props);
-    this.onClick = this.onClick.bind(this);
+    this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
     this.formatColumns = this.formatColumns.bind(this);
     this.state = {
       header: this.props.header,
@@ -21,7 +21,7 @@ class TableSectionHeader extends Component {
     this.setState({ columns: formatedColumns });
   }
 
-  onClick() {
+  toggleShowingFilter() {
     const { isShowingFilter } = this.state;
     this.setState({ isShowingFilter: !isShowingFilter });
   }
@@ -42,21 +42,30 @@ class TableSectionHeader extends Component {
       header, isShowingFilter, changeHiddenParams, columns,
     } = this.state;
 
-    console.log(columns);
-
     const divClass = CommonActions.getTableSectionHeaderDiv(header);
     const arrowClass = CommonActions.getTableSectionHeaderArrow(header);
     const textClass = CommonActions.getTableSectionHeaderText(header);
 
     let filter = null;
     if (isShowingFilter) {
-      filter = <SelectColumnFilter changeHiddenParams={changeHiddenParams} columns={columns} />;
+      filter = (
+        <SelectColumnFilter
+          changeHiddenParams={changeHiddenParams}
+          columns={columns}
+          toggleShowingFilter={this.toggleShowingFilter}
+        />
+      );
     }
 
     return (
       <div className={divClass}>
         <p className={textClass}>{header}</p>
-        <div role="presentation" onClick={this.onClick} onKeyPress={this.onClick} className="arrow-container">
+        <div
+          role="presentation"
+          onClick={this.toggleShowingFilter}
+          onKeyPress={this.toggleShowingFilter}
+          className="arrow-container"
+        >
           <div className={arrowClass} />
         </div>
         {filter}

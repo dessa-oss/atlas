@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 import TableSectionHeader from './TableSectionHeader';
 import CommonActions from '../../actions/CommonActions';
 
-const notFound = -1;
-const oneElement = 1;
-
 class InputMetric extends Component {
   constructor(props) {
     super(props);
     this.resizeCells = this.resizeCells.bind(this);
     this.isCellWidthSame = this.isCellWidthSame.bind(this);
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
+    this.updateSearchText = this.updateSearchText.bind(this);
     this.state = {
       header: this.props.header,
       hiddenInputParams: [],
@@ -19,6 +17,7 @@ class InputMetric extends Component {
       jobs: [],
       cellWidths: new Array(this.props.allInputParams.length),
       isMetric: this.props.isMetric,
+      searchText: '',
     };
   }
 
@@ -42,32 +41,28 @@ class InputMetric extends Component {
     return (oldWidth !== newWidth);
   }
 
-  changeHiddenParams(colName) {
-    const { hiddenInputParams } = this.state;
-    const index = hiddenInputParams.indexOf(colName);
-    let newArray = [];
-    if (index !== notFound) {
-      hiddenInputParams.splice(index, oneElement);
-    } else {
-      hiddenInputParams.push(colName);
-    }
-    newArray = hiddenInputParams;
-    this.setState({ hiddenInputParams: newArray });
+  changeHiddenParams(hiddenParams) {
+    this.setState({ hiddenInputParams: hiddenParams });
+    this.forceUpdate();
+  }
+
+  updateSearchText(text) {
+    this.setState({ searchText: text });
   }
 
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric,
+      header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric, searchText,
     } = this.state;
 
-    const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells);
-    const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams);
+    console.log('here', hiddenInputParams);
+    const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells, hiddenInputParams);
+    const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams, hiddenInputParams);
 
     return (
       <div className="input-metric-container">
         <TableSectionHeader
           header={header}
-          hiddenInputParams={hiddenInputParams}
           changeHiddenParams={this.changeHiddenParams}
           columns={allInputParams}
         />
@@ -87,6 +82,7 @@ InputMetric.propTypes = {
   jobs: PropTypes.array,
   cellWidths: PropTypes.array,
   isMetric: PropTypes.bool,
+  searchText: PropTypes.string,
 };
 
 InputMetric.defaultProps = {
@@ -96,6 +92,7 @@ InputMetric.defaultProps = {
   jobs: [],
   cellWidths: [],
   isMetric: false,
+  searchText: '',
 };
 
 

@@ -2,16 +2,49 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../Checkbox';
 
+const notFound = -1;
+const oneElement = 1;
+
 class SelectColumnFilter extends Component {
   constructor(props) {
     super(props);
+    this.changeLocalParams = this.changeLocalParams.bind(this);
+    this.onApply = this.onApply.bind(this);
+    this.onCancel = this.onCancel.bind(this);
     this.state = {
       columns: this.props.columns,
+      changeHiddenParams: this.props.changeHiddenParams,
+      changedParams: [],
+      toggleShowingFilter: this.props.toggleShowingFilter,
     };
   }
 
+  onApply() {
+    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
+    changeHiddenParams(changedParams);
+    toggleShowingFilter();
+  }
+
+  onCancel() {
+    const { toggleShowingFilter } = this.state;
+    toggleShowingFilter();
+  }
+
+  changeLocalParams(colName) {
+    const { changedParams } = this.state;
+    const index = changedParams.indexOf(colName);
+    let newArray = [];
+    if (index !== notFound) {
+      changedParams.splice(index, oneElement);
+    } else {
+      changedParams.push(colName);
+    }
+    newArray = changedParams;
+    this.setState({ changedParams: newArray });
+  }
+
   render() {
-    const { columns, changeHiddenParams } = this.state;
+    const { columns } = this.state;
 
     let checkboxes = null;
     if (columns.length > 0) {
@@ -22,7 +55,7 @@ class SelectColumnFilter extends Component {
           key={key}
           name={col.name}
           hidden={col.hidden}
-          changeHiddenParams={changeHiddenParams}
+          changeHiddenParams={this.changeLocalParams}
         />);
       });
     }
@@ -40,8 +73,8 @@ class SelectColumnFilter extends Component {
           {checkboxes}
         </div>
         <div className="column-filter-buttons">
-          <button type="button" className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
+          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
         </div>
       </div>
     );
@@ -51,11 +84,15 @@ class SelectColumnFilter extends Component {
 SelectColumnFilter.propTypes = {
   columns: PropTypes.array,
   changeHiddenParams: PropTypes.func,
+  changedParams: PropTypes.array,
+  toggleShowingFilter: PropTypes.func,
 };
 
 SelectColumnFilter.defaultProps = {
   columns: [],
   changeHiddenParams: () => {},
+  changedParams: [],
+  toggleShowingFilter: () => {},
 };
 
 export default SelectColumnFilter;
