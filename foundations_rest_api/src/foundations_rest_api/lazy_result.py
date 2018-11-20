@@ -59,6 +59,7 @@ class LazyResult(object):
 
         def filter_field(field, result):
             for param_key in params.keys():
+                param_key = param_key.split('_', 1)[0]
                 filter_by_param(field, result, param_key)
 
         def filter_all_fields(result):
