@@ -6,6 +6,7 @@ import JobIDCell from './cells/JobIDCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
 import JobActions from '../../actions/JobListActions';
+import CommonActions from '../../actions/CommonActions';
 
 class JobTableRow extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class JobTableRow extends Component {
   render() {
     const { job } = this.state;
 
-    const isError = job.status.toLowerCase() === 'error';
+    const isError = CommonActions.isError(job.status);
 
     return (
       <div className="job-table-row">

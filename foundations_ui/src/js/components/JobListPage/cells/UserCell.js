@@ -14,8 +14,8 @@ class UserCell extends Component {
     const { user, isError } = this.state;
 
     const pClass = isError
-      ? 'job-cell user-cell font-regular error'
-      : 'job-cell user-cell font-regular';
+      ? 'job-cell user-cell error'
+      : 'job-cell user-cell';
     return (
       <p className={pClass}>{user}</p>
     );

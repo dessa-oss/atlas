@@ -83,6 +83,7 @@ class TestArgument(unittest.TestCase):
         hyper_parameter = Hyperparameter('hello')
         argument = Argument.generate_from(
             self._make_stage(method, hyper_parameter), None)
+
         self.assertEqual(77, argument.value({'hello': 77}))
 
     def test_generate_argument_returns_argument_when_argument_provided(self):

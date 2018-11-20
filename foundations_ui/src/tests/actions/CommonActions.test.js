@@ -76,7 +76,7 @@ it('getTableSectionHeaderArrow empty header', () => {
 it('getTableSectionHeaderText empty header', () => {
   const header = '';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text font-regular white-text no-margin');
+  expect(className).toBe('blue-header-text text-white no-margin');
 });
 
 it('getTableSectionHeaderDiv with header', () => {
@@ -88,13 +88,13 @@ it('getTableSectionHeaderDiv with header', () => {
 it('getTableSectionHeaderArrow with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('arrow-down blue-header-arrow border-top-white border-left-clear border-right-clear');
+  expect(className).toBe('blue-header-arrow border-input-metric-arrow');
 });
 
 it('getTableSectionHeaderText with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text font-regular white-text');
+  expect(className).toBe('blue-header-text text-white');
 });
 
 it('get InputMetricColumnHeaders', () => {
@@ -134,10 +134,20 @@ it('get InputMetricCellPClass error', () => {
 
 it('get InputMetricCellDivClass', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(noError);
-  expect(metricClass).toBe('input-metric-cell-container');
+  expect(metricClass).toBe('job-cell');
 });
 
 it('get InputMetricCellPDivlass error', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(error);
-  expect(metricClass).toBe('input-metric-cell-container error');
+  expect(metricClass).toBe('job-cell error');
+});
+
+it('get InputParamHeaders', () => {
+  const headers = CommonActions.getInputParamHeaders(inputParams, functionStub);
+  expect(headers.length).toBe(2);
+});
+
+it('isError', () => {
+  const isError = CommonActions.isError(jobs[0].status);
+  expect(isError).toBe(false);
 });

@@ -119,7 +119,6 @@ class TestConsumers(unittest.TestCase):
         job_id = self._str_random_uuid()
 
         message = {
-            'project_name': project_name,
             'job_id': job_id
         }
         message_router.push_message('complete_job', message)
@@ -142,7 +141,6 @@ class TestConsumers(unittest.TestCase):
         expected_input_parameters = {'broken_data': self._random_name()}
 
         message = {
-            'project_name': project_name,
             'job_id': job_id,
             'error_information': expected_input_parameters
         }

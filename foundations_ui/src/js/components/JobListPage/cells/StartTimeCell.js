@@ -16,8 +16,8 @@ class StartTimeCell extends Component {
     const { date, time, isError } = this.state;
 
     const errorClass = isError ? 'error' : '';
-    const pClass = 'job-cell  font-bold '.concat(errorClass);
-    const spanClass = 'font-regular '.concat(errorClass);
+    const pClass = 'job-cell font-bold '.concat(errorClass);
+    const spanClass = ''.concat(errorClass);
 
     return (
       <p className={pClass}>{date} <span className={spanClass}>{time}</span></p>

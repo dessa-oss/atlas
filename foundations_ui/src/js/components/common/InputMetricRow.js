@@ -22,7 +22,7 @@ class InputMetricRow extends Component {
     const cells = CommonActions.getInputMetricCells(job, cellWidths, isError, isMetric, allInputMetricColumn);
 
     return (
-      <div className="input-metric-rows-container">
+      <div className="job-table-row">
         {cells}
       </div>
     );

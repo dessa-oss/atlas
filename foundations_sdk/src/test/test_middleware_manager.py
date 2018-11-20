@@ -84,10 +84,6 @@ class TestMiddlewareManager(unittest.TestCase):
     def test_has_argument_filling_middleware_configured(self):
         self._test_constructor_attributes('ArgumentFilling')
 
-    def test_has_upstream_result_middleware(self):
-        from foundations.middleware.upstream_result_middleware import UpstreamResultMiddleware
-        self._test_has_middleware('UpstreamResult', UpstreamResultMiddleware)
-
     def test_has_context_aware_middleware(self):
         from foundations.middleware.context_aware_middleware import ContextAwareMiddleware
         self._test_has_middleware('ContextAware', ContextAwareMiddleware)

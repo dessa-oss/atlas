@@ -94,43 +94,33 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
-    const letterClass = isError ? 'font-regular error' : 'font-regular';
-
+    const letterClass = isError ? 'error' : '';
+    const numberClass = isError
+      ? 'font-bold error'
+      : 'font-bold';
     if (days !== 0) {
       showingDays = true;
-      const numberClass = isError
-        ? 'duration-day-number font-bold error'
-        : 'duration-day-number font-bold';
       daysUI = <span className={numberClass}>{days}<span className={letterClass}>d </span></span>;
     }
 
-    const hourClass = isError
-      ? 'duration-hour-number font-bold error'
-      : 'duration-hour-number font-bold';
     if (hours !== 0) {
       showingHours = true;
-      hoursUI = <span className={hourClass}>{hours}<span className={letterClass}>h </span></span>;
+      hoursUI = <span className={numberClass}>{hours}<span className={letterClass}>h </span></span>;
     } else if (showingDays) {
-      hoursUI = <span className={hourClass}>0<span className={letterClass}>h </span></span>;
+      hoursUI = <span className={numberClass}>0<span className={letterClass}>h </span></span>;
     }
 
-    const minuteClass = isError
-      ? 'duration-minute-number font-bold error'
-      : 'duration-minute-number font-bold';
     if (minutes !== 0) {
       showingMinutes = true;
-      minutesUI = <span className={minuteClass}>{minutes}<span className={letterClass}>m </span></span>;
+      minutesUI = <span className={numberClass}>{minutes}<span className={letterClass}>m </span></span>;
     } else if (showingDays || showingHours) {
-      minutesUI = <span className={minuteClass}>0<span className={letterClass}>m </span></span>;
+      minutesUI = <span className={numberClass}>0<span className={letterClass}>m </span></span>;
     }
 
-    const secondClass = isError
-      ? 'duration-second-number font-bold error'
-      : 'duration-second-number font-bold';
     if (seconds !== 0) {
-      secondsUI = <span className={secondClass}>{seconds}<span className={letterClass}>s</span></span>;
+      secondsUI = <span className={numberClass}>{seconds}<span className={letterClass}>s</span></span>;
     } else if (showingDays || showingHours || showingMinutes) {
-      secondsUI = <span className={secondClass}>0<span className={letterClass}>s</span></span>;
+      secondsUI = <span className={numberClass}>0<span className={letterClass}>s</span></span>;
     }
 
     switch (desiredTime) {
@@ -151,10 +141,8 @@ class ProjectActions {
     const allInputParams = [];
     allJobs.forEach((job) => {
       job.input_params.forEach((input) => {
-        if (input.value.type === 'constant') {
-          if (!allInputParams.includes(input.name)) {
-            allInputParams.push(input.name);
-          }
+        if (input.value.type === 'constant' && !allInputParams.includes(input.name)) {
+          allInputParams.push(input.name);
         }
       });
     });
@@ -216,9 +204,9 @@ class ProjectActions {
 
   static getTableSectionHeaderTextClass(header) {
     if (header !== '') {
-      return 'blue-header-text font-regular';
+      return 'blue-header-text';
     }
-    return 'blue-header-text font-regular no-margin';
+    return 'blue-header-text no-margin';
   }
 
   static getAllMetrics(allJobs) {

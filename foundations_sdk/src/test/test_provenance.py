@@ -154,6 +154,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.stage_hierarchy.entries, {})
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
+        self.assertEqual(provenance.user_name, 'default')
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
@@ -169,6 +170,7 @@ class TestProvenance(unittest.TestCase):
         provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'my wonderful project'
+        provenance.user_name = 'Alan Turing'
         provenance.save_to_archive(mock_archive)
 
         provenance_two = Provenance()
@@ -183,8 +185,10 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance_two.python_version, {'major': 2})
         self.assertEqual(provenance_two.stage_hierarchy.entries,
                          {'fake_one': 'fake_data'})
-        self.assertEqual(provenance_two.job_run_data, {'layers': 99, 'neurons_per_layer': 9999})
+        self.assertEqual(provenance_two.job_run_data, {
+                         'layers': 99, 'neurons_per_layer': 9999})
         self.assertEqual(provenance_two.project_name, 'my wonderful project')
+        self.assertEqual(provenance_two.user_name, 'Alan Turing')
 
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
@@ -199,7 +203,8 @@ class TestProvenance(unittest.TestCase):
                                        'random_state': None,
                                        'tags': [],
                                        'job_run_data': {},
-                                       'project_name': 'default'
+                                       'project_name': 'default',
+                                       'user_name': 'default',
                                        }, mock_archive.archive_provenance)
         self.assertEqual(
             {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -218,6 +223,7 @@ class TestProvenance(unittest.TestCase):
         provenance.stage_hierarchy.entries = {'fake_one': 'fake_data'}
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'a different project'
+        provenance.user_name = 'Richard Hamming'
         provenance.save_to_archive(mock_archive)
 
         self.assertDictContainsSubset({'config': {'log_level': 'DEBUG'},
@@ -228,7 +234,8 @@ class TestProvenance(unittest.TestCase):
                                        'random_state': 'this is a random state',
                                        'tags': ['run_one'],
                                        'job_run_data': {'layers': 99, 'neurons_per_layer': 9999},
-                                       'project_name': 'a different project'
+                                       'project_name': 'a different project',
+                                       'user_name': 'Richard Hamming'
                                        }, mock_archive.archive_provenance)
         self.assertEqual({'fake_one': 'fake_data'},
                          mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -268,3 +275,7 @@ class TestProvenance(unittest.TestCase):
     def test_provenance_default_project_name(self):
         provenance = Provenance()
         self.assertEqual(provenance.project_name, "default")
+
+    def test_provenance_default_user_name(self):
+        provenance = Provenance()
+        self.assertEqual(provenance.user_name, "default")

@@ -5,12 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.stage_connector import StageConnector
-
-
-class StageGraph(object):
-    def stage(self, stage):
-        return StageConnector(stage, [])
-
-    def join(self, stage, upstream_connectors):
-        return StageConnector(stage, upstream_connectors)
+from test.producers.jobs.test_complete_job import TestProducerCompleteJob
+from test.producers.jobs.test_failed_job import TestProducerFailedJob
+from test.producers.jobs.test_run_job import TestProducerRunJob
+from test.producers.jobs.test_queue_job import TestProducerQueueJob

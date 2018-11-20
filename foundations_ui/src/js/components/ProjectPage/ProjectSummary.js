@@ -21,13 +21,13 @@ class ProjectSummary extends Component {
     return (
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
-          <h2 className="project-summary-name-text">{project.name}</h2>
+          <h2 className="project-summary-name-text font-bold">{project.name}</h2>
           <p className="project-summary-source-text">Data Source: Unknown</p>
-          <p className="project-summary-owner-text">
-            Project owner: <span className="font-regular">{project.owner}</span>
+          <p className="project-summary-owner-text font-bold">
+            Project owner: <span>{project.owner}</span>
           </p>
-          <p className="project-summary-created-at-text">
-            Created at: <span className="font-regular">{project.created_at}</span>
+          <p className="project-summary-created-at-text font-bold">
+            Created at: <span>{project.created_at}</span>
           </p>
           <div className="project-summary-button-container">
             <button type="button" className="b--mat b--affirmative">view queue</button>

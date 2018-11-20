@@ -6,24 +6,28 @@ import JobActions from './JobListActions';
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, resizeCells, isMetric) {
-    let inputParams = null;
+  static getInputMetricColumnHeaders(allInputParams, resizeCells) {
     if (allInputParams.length > 0) {
-      let colIndex = 0;
-      inputParams = [];
-      allInputParams.forEach((input) => {
-        const key = input;
-        inputParams.push(<JobColumnHeader
-          key={key}
-          title={input}
-          className="inline-block"
-          containerClass="input-metric-column-header"
-          sizeCallback={resizeCells}
-          colIndex={colIndex}
-        />);
-        colIndex += 1;
-      });
+      return this.getInputParamHeaders(allInputParams, resizeCells);
     }
+    return null;
+  }
+
+  static getInputParamHeaders(allInputParams, resizeCells) {
+    const inputParams = [];
+    let colIndex = 0;
+    allInputParams.forEach((input) => {
+      const key = input;
+      inputParams.push(<JobColumnHeader
+        key={key}
+        title={input}
+        className="inline-block"
+        containerClass="job-column-header"
+        sizeCallback={resizeCells}
+        colIndex={colIndex}
+      />);
+      colIndex += 1;
+    });
     return inputParams;
   }
 
@@ -38,15 +42,15 @@ class CommonActions {
   static getTableSectionHeaderArrow(header) {
     let arrowClass = '';
     if (this.isHeaderNotEmpty(header)) {
-      arrowClass = 'arrow-down blue-header-arrow border-top-white border-left-clear border-right-clear';
+      arrowClass = 'blue-header-arrow border-input-metric-arrow';
     }
     return arrowClass;
   }
 
   static getTableSectionHeaderText(header) {
-    let textClass = 'blue-header-text font-regular white-text no-margin';
+    let textClass = 'blue-header-text text-white no-margin';
     if (this.isHeaderNotEmpty(header)) {
-      textClass = 'blue-header-text font-regular white-text';
+      textClass = 'blue-header-text text-white';
     }
     return textClass;
   }
@@ -56,25 +60,38 @@ class CommonActions {
   }
 
   static getInputMetricCells(job, cellWidths, isError, isMetric, columns) {
-    let cells = null;
     if (isMetric && job.output_metrics) {
-      cells = [];
-      let colIndex = 0;
-      columns.forEach((col) => {
-        let input = null;
-        if (job.output_metrics.data_set_name) {
-          job.output_metrics.data_set_name.forEach((metric) => {
-            if (metric === col) {
-              input = metric;
-            }
-          });
+      return this.getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric);
+    }
+
+    if (!isMetric && job.input_params && job.input_params.length > 0) {
+      return this.getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric);
+    }
+    return null;
+  }
+
+  static getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric) {
+    let cells = [];
+    cells = [];
+    let colIndex = 0;
+    columns.forEach((col) => {
+      let input = {
+        value: {
+          type: 'constant',
+        },
+      };
+      job.input_params.forEach((param) => {
+        if (param.name === col) {
+          input = param;
         }
+      });
+      let key = 'input-param-'.concat(colIndex);
+      if (input && input.name) {
+        key = input.name;
+      }
+      if (input.value.type === 'constant') {
         const cellWidth = cellWidths[colIndex];
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
-        let key = 'metric-'.concat(colIndex);
-        if (input && input.name) {
-          key = input.name;
-        }
         cells.push(<InputMetricCell
           key={key}
           cellWidth={cellWidth}
@@ -82,40 +99,37 @@ class CommonActions {
           isError={isError}
         />);
         colIndex += 1;
-      });
-    }
+      }
+    });
+    return cells;
+  }
 
-    if (!isMetric && job.input_params && job.input_params.length > 0) {
-      cells = [];
-      let colIndex = 0;
-      columns.forEach((col) => {
-        let input = {
-          value: {
-            type: 'constant',
-          },
-        };
-        job.input_params.forEach((param) => {
-          if (param.name === col) {
-            input = param;
+  static getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric) {
+    const cells = [];
+    let colIndex = 0;
+    columns.forEach((col) => {
+      let input = null;
+      if (job.output_metrics.data_set_name) {
+        job.output_metrics.data_set_name.forEach((metric) => {
+          if (metric === col) {
+            input = metric;
           }
         });
-        let key = 'input-param-'.concat(colIndex);
-        if (input && input.name) {
-          key = input.name;
-        }
-        if (input.value.type === 'constant') {
-          const cellWidth = cellWidths[colIndex];
-          const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
-          cells.push(<InputMetricCell
-            key={key}
-            cellWidth={cellWidth}
-            value={inputValue}
-            isError={isError}
-          />);
-          colIndex += 1;
-        }
-      });
-    }
+      }
+      const cellWidth = cellWidths[colIndex];
+      const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+      let key = 'metric-'.concat(colIndex);
+      if (input && input.name) {
+        key = input.name;
+      }
+      cells.push(<InputMetricCell
+        key={key}
+        cellWidth={cellWidth}
+        value={inputValue}
+        isError={isError}
+      />);
+      colIndex += 1;
+    });
     return cells;
   }
 
@@ -125,7 +139,7 @@ class CommonActions {
       rows = [];
       jobs.forEach((job) => {
         const key = job.job_id.concat('-input-metric-row');
-        const isError = job.status.toLowerCase() === 'error';
+        const isError = this.isError(job.status);
         rows.push(<InputMetricRow
           key={key}
           job={job}
@@ -144,7 +158,11 @@ class CommonActions {
   }
 
   static getInputMetricCellDivClass(isError) {
-    return isError ? 'input-metric-cell-container error' : 'input-metric-cell-container';
+    return isError ? 'job-cell error' : 'job-cell';
+  }
+
+  static isError(status) {
+    return status.toLowerCase() === 'error';
   }
 }
 

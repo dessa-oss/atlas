@@ -10,7 +10,9 @@ exports[`Shallow Renders ProjectHeader 1`] = `
     <div
       className="i--icon-logo"
     />
-    <h2>
+    <h2
+      className="font-bold"
+    >
       Foundations
     </h2>
   </div>
@@ -24,7 +26,7 @@ exports[`Shallow Renders ProjectHeader 1`] = `
         className="half-width inline-block"
       >
         <h1
-          className="blue-border-bottom"
+          className="blue-border-bottom font-bold"
         >
           Projects
         </h1>
@@ -33,12 +35,10 @@ exports[`Shallow Renders ProjectHeader 1`] = `
         className="half-width inline-block text-right"
       >
         <h2
-          className="blue-border-bottom"
+          className="blue-border-bottom font-bold"
         >
           Total Projects: 
-          <span
-            className="font-regular"
-          >
+          <span>
             0
           </span>
         </h2>

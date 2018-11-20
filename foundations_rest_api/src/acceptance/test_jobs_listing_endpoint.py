@@ -6,8 +6,6 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
-import json
-from foundations_rest_api.global_state import app_manager
 from test.v1.models.jobs_tests_helper_mixin import JobsTestsHelperMixin
 from .api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 

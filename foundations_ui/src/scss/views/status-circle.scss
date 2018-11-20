@@ -13,5 +13,6 @@
   padding-top: 7px;
   padding-bottom: 3px;
   background-color: $color-white;
-  border: 1px solid $color-border-bottom;
+  border-top: 1px solid $color-border-bottom;
+  border-right: 1px solid $color-border-bottom;
 }

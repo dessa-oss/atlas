@@ -9,7 +9,7 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 //main styles
 //-----------------------------
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
-  @extend .f--din-bold;
+  @extend .f--din;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -34,7 +34,7 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   height: 15px;
 }
 
-span, p {
+span, p, a {
   @extend .f--din;
   font-size: 13px;
 }
@@ -78,8 +78,8 @@ img {
 }
 
 button.b--mat {
-  margin: 15px;
-  margin-left: 15px;
+  @extend .f--din;
+  margin-right: 15px;
   overflow: hidden;
   border-width: 0;
   outline: none;
@@ -89,7 +89,6 @@ button.b--mat {
   line-height: 10px;
   letter-spacing: normal;
   text-transform: uppercase;
-  font-family: DINBold;
   text-align: center;
   font-size: 12px;
   color: white;
@@ -234,7 +233,7 @@ hr {
   background: $color-border;
 }
 
-.white-text{
+.text-white{
   color: $color-white;
 }
 
@@ -264,16 +263,12 @@ hr {
   border: 0 none;
 }
 
-.border-top-white{
+.border-input-metric-arrow{
   border-top: 8px solid $color-white;
-}
-
-.border-left-clear{
   border-left: 8px solid transparent;
-}
-
-.border-right-clear{
   border-right: 8px solid transparent;
+  width: 0; 
+  height: 0;
 }
 
 //typography

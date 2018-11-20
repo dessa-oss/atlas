@@ -10,26 +10,35 @@ class InputMetric extends Component {
   constructor(props) {
     super(props);
     this.resizeCells = this.resizeCells.bind(this);
+    this.isCellWidthSame = this.isCellWidthSame.bind(this);
     this.state = {
       header: this.props.header,
       hiddenInputParams: this.props.hiddenInputParams,
       allInputParams: this.props.allInputParams,
       jobs: [],
-      cellWidths: new Array(5),
+      cellWidths: new Array(this.props.allInputParams.length),
       isMetric: this.props.isMetric,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ allInputParams: nextProps.allInputParams, jobs: nextProps.jobs });
+    this.setState({
+      allInputParams: nextProps.allInputParams,
+      jobs: nextProps.jobs,
+      cellWidths: new Array(nextProps.allInputParams.length),
+    });
   }
 
   resizeCells(colIndex, newWidth) {
     const { cellWidths } = this.state;
-    if (cellWidths[colIndex] !== newWidth) {
+    if (this.isCellWidthSame(cellWidths[colIndex], newWidth)) {
       cellWidths[colIndex] = newWidth;
       this.forceUpdate();
     }
+  }
+
+  isCellWidthSame(oldWidth, newWidth) {
+    return (oldWidth !== newWidth);
   }
 
   render() {

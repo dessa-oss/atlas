@@ -35,7 +35,6 @@ from foundations.bucket_pipeline_archive import BucketPipelineArchive
 from foundations.bucket_pipeline_listing import BucketPipelineListing
 from foundations.simple_tempfile import SimpleTempfile
 from foundations.prefixed_bucket import PrefixedBucket
-from foundations.cached_pipeline_archive import CachedPipelineArchive
 from foundations.serializer import *
 from foundations.discrete_hyperparameter import DiscreteHyperparameter
 from foundations.integer_hyperparameter import IntegerHyperparameter
