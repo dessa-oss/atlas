@@ -11,7 +11,6 @@ class JobTableHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hiddenInputParams: this.props.hiddenInputParams,
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
       jobs: this.props.jobs,
@@ -24,7 +23,6 @@ class JobTableHeader extends Component {
 
   render() {
     const {
-      hiddenInputParams,
       allInputParams,
       jobs,
       allMetrics,
@@ -35,13 +33,11 @@ class JobTableHeader extends Component {
         <TableSectionHeader />
         <InputMetric
           header="input parameter"
-          hiddenInputParams={hiddenInputParams}
           allInputParams={allInputParams}
           jobs={jobs}
         />
         <InputMetric
           header="metrics"
-          hiddenInputParams={hiddenInputParams}
           allInputParams={allMetrics}
           jobs={jobs}
           isMetric={isMetric}
@@ -59,14 +55,12 @@ class JobTableHeader extends Component {
 }
 
 JobTableHeader.propTypes = {
-  hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
-  hiddenInputParams: [],
   allInputParams: [],
   jobs: [],
   allMetrics: [],

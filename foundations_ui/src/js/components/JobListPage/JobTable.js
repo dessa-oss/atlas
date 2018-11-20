@@ -12,7 +12,6 @@ class JobTable extends Component {
       jobs: [],
       isLoaded: false,
       projectName: this.props.projectName,
-      hiddenInputParams: [],
       allInputParams: [],
       allMetrics: [],
     };
@@ -74,7 +73,6 @@ class JobTable extends Component {
     return (
       <div className="job-table-container">
         <JobTableHeader
-          hiddenInputParams={hiddenInputParams}
           allInputParams={allInputParams}
           allMetrics={allMetrics}
           jobs={jobs}
@@ -92,7 +90,6 @@ JobTable.propTypes = {
   jobs: PropTypes.array,
   isLoaded: PropTypes.bool,
   projectName: PropTypes.string,
-  hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
   allMetrics: PropTypes.array,
 };
@@ -102,7 +99,6 @@ JobTable.defaultProps = {
   jobs: [],
   isLoaded: false,
   projectName: '',
-  hiddenInputParams: [],
   allInputParams: [],
   allMetrics: [],
 };

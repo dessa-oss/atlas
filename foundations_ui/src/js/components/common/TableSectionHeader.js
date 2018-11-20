@@ -10,6 +10,8 @@ class TableSectionHeader extends Component {
     this.state = {
       header: this.props.header,
       isShowingFilter: false,
+      hiddenInputParams: this.props.hiddenInputParams,
+      changeHiddenParams: this.props.changeHiddenParams,
     };
   }
 
@@ -19,14 +21,16 @@ class TableSectionHeader extends Component {
   }
 
   render() {
-    const { header, isShowingFilter } = this.state;
+    const {
+      header, isShowingFilter, changeHiddenParams, hiddenInputParams,
+    } = this.state;
     const divClass = CommonActions.getTableSectionHeaderDiv(header);
     const arrowClass = CommonActions.getTableSectionHeaderArrow(header);
     const textClass = CommonActions.getTableSectionHeaderText(header);
 
     let filter = null;
     if (isShowingFilter) {
-      filter = <SelectColumnFilter />;
+      filter = <SelectColumnFilter changeHiddenParams={changeHiddenParams} />;
     }
 
     return (
@@ -44,11 +48,15 @@ class TableSectionHeader extends Component {
 TableSectionHeader.propTypes = {
   header: PropTypes.string,
   isShowingFilter: PropTypes.bool,
+  hiddenInputParams: PropTypes.array,
+  changeHiddenParams: PropTypes.func,
 };
 
 TableSectionHeader.defaultProps = {
   header: '',
   isShowingFilter: false,
+  hiddenInputParams: [],
+  changeHiddenParams: () => {},
 };
 
 export default TableSectionHeader;

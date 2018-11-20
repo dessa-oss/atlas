@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TableSectionHeader from './TableSectionHeader';
-import JobColumnHeader from './JobColumnHeader';
-import InputMetricCell from './InputMetricCell';
-import InputMetricRow from './InputMetricRow';
 import CommonActions from '../../actions/CommonActions';
+
+const notFound = -1;
+const oneElement = 1;
 
 class InputMetric extends Component {
   constructor(props) {
     super(props);
     this.resizeCells = this.resizeCells.bind(this);
     this.isCellWidthSame = this.isCellWidthSame.bind(this);
+    this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.state = {
       header: this.props.header,
-      hiddenInputParams: this.props.hiddenInputParams,
+      hiddenInputParams: [],
       allInputParams: this.props.allInputParams,
       jobs: [],
       cellWidths: new Array(this.props.allInputParams.length),
@@ -41,6 +42,19 @@ class InputMetric extends Component {
     return (oldWidth !== newWidth);
   }
 
+  changeHiddenParams(colName) {
+    const { hiddenInputParams } = this.state;
+    const index = hiddenInputParams.indexOf(colName);
+    let newArray = [];
+    if (index !== notFound) {
+      hiddenInputParams.splice(index, oneElement);
+    } else {
+      hiddenInputParams.push(colName);
+    }
+    newArray = hiddenInputParams;
+    this.setState({ hiddenInputParams: newArray });
+  }
+
   render() {
     const {
       header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric,
@@ -51,7 +65,11 @@ class InputMetric extends Component {
 
     return (
       <div className="input-metric-container">
-        <TableSectionHeader header={header} />
+        <TableSectionHeader
+          header={header}
+          hiddenInputParams={hiddenInputParams}
+          changeHiddenParams={this.changeHiddenParams}
+        />
         <div className="input-metric-column-header-container">
           {inputParams}
           {rows}
