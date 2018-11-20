@@ -27,6 +27,7 @@ class SelectColumnFilter extends Component {
 
   onCancel() {
     const { toggleShowingFilter } = this.state;
+    this.setState({ changedParams: [] });
     toggleShowingFilter();
   }
 
@@ -45,7 +46,6 @@ class SelectColumnFilter extends Component {
 
   render() {
     const { columns } = this.state;
-
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];

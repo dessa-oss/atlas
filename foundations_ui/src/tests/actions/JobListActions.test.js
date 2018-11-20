@@ -70,6 +70,8 @@ const nonConstParam = {
     value: '123'
   }
 };
+const isMetric = true;
+const columns = ['m1', 'm2', 'm3'];
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -172,7 +174,7 @@ it('gets JobColumnHeaderArrowClass', () => {
 
 it('gets JobColumnHeaderArrowClass isStatus', () => {
   const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus);
-  expect(arrow).toBe('arrow-down margin-auto');
+  expect(arrow).toBe('arrow-down');
 });
 
 it('gets TableSectionHeaderDivClass', () => {
@@ -275,13 +277,13 @@ it('getConstantInputParams with non const', () => {
 });
 
 it('getInputMetricValue const', () => {
-  const value = JobActions.getInputMetricValue(constParam);
-  expect(value).toBe('abc');
+  const value = JobActions.getInputMetricValue(constParam, isMetric, columns);
+  expect(value).toBe('metric value');
 });
 
 it('getInputMetricValue non const', () => {
-  const value = JobActions.getInputMetricValue(nonConstParam);
-  expect(value).toBe('not available');
+  const value = JobActions.getInputMetricValue(nonConstParam, isMetric, columns);
+  expect(value).toBe('metric value');
 });
 
 it('get AllMetrics', () => {
@@ -299,13 +301,13 @@ it('getConstantInputParams with non const', () => {
   expect(constInputParams.length).toBe(1);
 });
 
-it('getInputParamValue const', () => {
-  const value = JobActions.getInputParamValue(constParam);
-  expect(value).toBe('abc');
+it('getInputMetricValue const', () => {
+  const value = JobActions.getInputMetricValue(constParam, isMetric, columns);
+  expect(value).toBe('metric value');
 });
 
-it('getInputParamValue non const', () => {
-  const value = JobActions.getInputParamValue(nonConstParam);
-  expect(value).toBe('not available');
+it('getInputMetricValue non const', () => {
+  const value = JobActions.getInputMetricValue(nonConstParam, isMetric, columns);
+  expect(value).toBe('metric value');
 });
 

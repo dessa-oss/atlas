@@ -7,7 +7,6 @@ exports[`Shallow Renders Job Table 1`] = `
   <JobTableHeader
     allInputParams={Array []}
     allMetrics={Array []}
-    hiddenInputParams={Array []}
     jobs={Array []}
   />
   <div

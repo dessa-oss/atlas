@@ -60,6 +60,10 @@ const jobs = [
 const functionStub = () => null;
 const noError = false;
 const error = true;
+const hiddenParams = ['param2'];
+const isMetric = false;
+const columns = ['param1', 'param2'];
+const hidden = ['param2'];
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -98,7 +102,7 @@ it('getTableSectionHeaderText with header', () => {
 });
 
 it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, functionStub);
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, functionStub, hiddenParams);
   expect(headers.length).toBe(2);
 });
 
@@ -113,7 +117,7 @@ it('isHeaderNotEmpty isEmpty', () => {
 })
 
 it('get InputMetricCells', () => {
-  const cells = CommonActions.getInputMetricCells(job, cellWidths);
+  const cells = CommonActions.getInputMetricCells(job, cellWidths, error, isMetric, columns, hidden);
   expect(cells.length).toBe(2);
 });
 
@@ -143,7 +147,7 @@ it('get InputMetricCellPDivlass error', () => {
 });
 
 it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, functionStub);
+  const headers = CommonActions.getInputParamHeaders(inputParams, functionStub, hidden);
   expect(headers.length).toBe(2);
 });
 

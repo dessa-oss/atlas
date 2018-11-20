@@ -5,7 +5,10 @@ exports[`Shallow Renders Job Table Header 1`] = `
   className="job-list-container"
 >
   <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
     header=""
+    hiddenInputParams={Array []}
     isShowingFilter={false}
   />
   <InputMetric
@@ -15,6 +18,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     hiddenInputParams={Array []}
     isMetric={false}
     jobs={Array []}
+    searchText=""
   />
   <InputMetric
     allInputParams={Array []}
@@ -23,6 +27,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     hiddenInputParams={Array []}
     isMetric={true}
     jobs={Array []}
+    searchText=""
   />
   <div
     className="job-column-header-container"

@@ -5,7 +5,10 @@ exports[`Shallow Renders InputMetric 1`] = `
   className="input-metric-container"
 >
   <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
     header=""
+    hiddenInputParams={Array []}
     isShowingFilter={false}
   />
   <div
