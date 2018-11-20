@@ -55,7 +55,7 @@ class InputMetric extends Component {
       header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric, searchText,
     } = this.state;
 
-    console.log('here', hiddenInputParams);
+
     const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells, hiddenInputParams);
     const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams, hiddenInputParams);
 
@@ -65,6 +65,7 @@ class InputMetric extends Component {
           header={header}
           changeHiddenParams={this.changeHiddenParams}
           columns={allInputParams}
+          hiddenInputParams={hiddenInputParams}
         />
         <div className="input-metric-column-header-container">
           {inputParams}

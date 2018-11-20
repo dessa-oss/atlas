@@ -115,8 +115,6 @@ class CommonActions {
     let colIndex = 0;
     columns.forEach((col) => {
       if (!hiddenInputParams.includes(col)) {
-        console.log(hiddenInputParams);
-        console.log(col);
         let input = null;
         if (job.output_metrics.data_set_name) {
           job.output_metrics.data_set_name.forEach((metric) => {

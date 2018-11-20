@@ -17,7 +17,7 @@ class TableSectionHeader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const formatedColumns = this.formatColumns(nextProps.columns);
+    const formatedColumns = this.formatColumns(nextProps.columns, nextProps.hiddenInputParams);
     this.setState({ columns: formatedColumns });
   }
 
@@ -26,12 +26,16 @@ class TableSectionHeader extends Component {
     this.setState({ isShowingFilter: !isShowingFilter });
   }
 
-  formatColumns(columns) {
+  formatColumns(columns, hiddenInputParams) {
     const formatedColumns = [];
 
     if (columns !== null) {
       columns.forEach((col) => {
-        formatedColumns.push({ name: col, hidden: false });
+        let isHidden = false;
+        if (hiddenInputParams.includes(col)) {
+          isHidden = true;
+        }
+        formatedColumns.push({ name: col, hidden: isHidden });
       });
     }
     return formatedColumns;
@@ -39,7 +43,7 @@ class TableSectionHeader extends Component {
 
   render() {
     const {
-      header, isShowingFilter, changeHiddenParams, columns,
+      header, isShowingFilter, changeHiddenParams, columns, hiddenInputParams,
     } = this.state;
 
     const divClass = CommonActions.getTableSectionHeaderDiv(header);
@@ -53,6 +57,7 @@ class TableSectionHeader extends Component {
           changeHiddenParams={changeHiddenParams}
           columns={columns}
           toggleShowingFilter={this.toggleShowingFilter}
+          hiddenInputParams={hiddenInputParams}
         />
       );
     }
@@ -79,6 +84,7 @@ TableSectionHeader.propTypes = {
   isShowingFilter: PropTypes.bool,
   changeHiddenParams: PropTypes.func,
   columns: PropTypes.array,
+  hiddenInputParams: PropTypes.array,
 };
 
 TableSectionHeader.defaultProps = {
@@ -86,6 +92,7 @@ TableSectionHeader.defaultProps = {
   isShowingFilter: false,
   changeHiddenParams: () => {},
   columns: [],
+  hiddenInputParams: [],
 };
 
 export default TableSectionHeader;

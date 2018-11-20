@@ -14,7 +14,7 @@ class SelectColumnFilter extends Component {
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
-      changedParams: [],
+      changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
     };
   }
@@ -86,6 +86,7 @@ SelectColumnFilter.propTypes = {
   changeHiddenParams: PropTypes.func,
   changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
+  hiddenInputParams: PropTypes.array,
 };
 
 SelectColumnFilter.defaultProps = {
@@ -93,6 +94,7 @@ SelectColumnFilter.defaultProps = {
   changeHiddenParams: () => {},
   changedParams: [],
   toggleShowingFilter: () => {},
+  hiddenInputParams: [],
 };
 
 export default SelectColumnFilter;
