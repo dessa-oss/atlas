@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import patch
 
+
 class TestDeploymentManager(unittest.TestCase):
 
     class MockDeployment(object):
@@ -20,7 +21,7 @@ class TestDeploymentManager(unittest.TestCase):
 
         def deploy(self):
             pass
-        
+
         def job_name(self):
             return self._job_name
 
@@ -51,7 +52,7 @@ class TestDeploymentManager(unittest.TestCase):
         }
 
         self._deployment_manager = DeploymentManager(self._config)
-        
+
         self._pipeline_context = PipelineContext()
         self._pipeline = Pipeline(self._pipeline_context)
         self._foundations_context = FoundationsContext(self._pipeline)
@@ -79,11 +80,13 @@ class TestDeploymentManager(unittest.TestCase):
         self._deployment_manager.simple_deploy(self._stage, '', {})
 
         self.assertEqual('my project', self._listing.value)
-    
+
     @patch('logging.Logger.info')
     def test_deployment_manager_deploy_info_log(self, mock):
-        deployment = self._deployment_manager.simple_deploy(self._stage, '', {})
-        mock.assert_called_with("Job '{}' deployed.".format(deployment.job_name())) 
+        deployment = self._deployment_manager.simple_deploy(
+            self._stage, '', {})
+        mock.assert_called_with(
+            "Job '{}' deployed.".format(deployment.job_name()))
 
     def _mock_listing(self):
         return self._listing

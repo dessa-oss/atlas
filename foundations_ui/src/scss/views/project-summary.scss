@@ -3,16 +3,18 @@
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
   border-radius: 8px;
-  margin-top: 30px;
+  margin-top: 15px;
   padding-left: 30px;
 }
 
 .project-summary-info-container{
   border-right: 1px solid $color-border-bottom;
   width: 75%;
+  margin: 15px 0px;
   h2{
     color: $color-dark-blue;
     margin-bottom: 5px;
+    margin-top: 0px;
   }
   p:first-of-type{
     margin-top: 5px;
@@ -35,7 +37,6 @@
 }
 
 .project-summary-button-container{
-  margin-bottom: 15px;
   button{
     margin-left: 0px;
     margin-bottom: 0px;

@@ -6,18 +6,19 @@ class InputMetricRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      job: this.props.job,
       cellWidths: this.props.cellWidths,
+      isError: this.props.isError,
+      job: this.props.job,
     };
   }
 
   render() {
-    const { job, cellWidths } = this.state;
+    const { job, cellWidths, isError } = this.state;
 
-    const cells = CommonActions.getInputMetricCells(job, cellWidths);
+    const cells = CommonActions.getInputMetricCells(job, cellWidths, isError);
 
     return (
-      <div className="input-metric-rows-container">
+      <div className="job-table-row">
         {cells}
       </div>
     );
@@ -27,11 +28,13 @@ class InputMetricRow extends Component {
 InputMetricRow.propTypes = {
   job: PropTypes.object,
   cellWidths: PropTypes.array,
+  isError: PropTypes.bool,
 };
 
 InputMetricRow.defaultProps = {
   job: {},
   cellWidths: [],
+  isError: false,
 };
 
 export default InputMetricRow;

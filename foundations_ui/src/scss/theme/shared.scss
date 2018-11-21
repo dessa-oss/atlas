@@ -9,7 +9,7 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 //main styles
 //-----------------------------
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
-  @extend .f--din-bold;
+  @extend .f--din;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -26,21 +26,6 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid $color-dark-blue;
-}
-
-.header-2 {
-  @extend .f--din;
-  font-size: 18px;
-}
-
-.header-3 {
-  @extend .f--din-bold;
-  font-size: 16px;
-}
-
-.header-4 {
-  @extend .f--din;
-  font-size: 13px;
 }
 
 .font-bold {
@@ -67,6 +52,21 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   }
 }
 
+span, p, a {
+  @extend .f--din;
+  font-size: 13px;
+}
+
+h3 {
+  @extend .f--din-bold;
+  font-size: 16px;
+}
+
+h4 {
+  @extend .f--din;
+  font-size: 13px;
+}
+
 img {
   max-width: 100%;
 }
@@ -85,8 +85,8 @@ input, textarea {
 }
 
 button.b--mat {
-  margin: 15px;
-  margin-left: 15px;
+  @extend .f--din;
+  margin-right: 15px;
   overflow: hidden;
   border-width: 0;
   outline: none;
@@ -96,26 +96,25 @@ button.b--mat {
   line-height: 10px;
   letter-spacing: normal;
   text-transform: uppercase;
-  font-family: DINBold;
   text-align: center;
   font-size: 12px;
   color: white;
 }
 
 button.b--mat.b--affirmative {
-  background-color: #4A9CF8;
+  background-color: $color-light-blue;
 }
   
 button.b--mat.b--affirmative:hover {
-  background-color: #62AAFB;
+  background-color: $color-hover-blue;
 }
   
 button.b--mat.b--affirmative:active {
-  background-color: #328FF8;
+  background-color: $color-active-blue;
 }
   
 .no-elevation {
-    background: #F9F9F9;
+    background: $color-no-elevation;
     border-radius: 2px;
     display: inline-block;
     height: 100px;
@@ -164,7 +163,7 @@ select {
 .standard-table {
   width: 100%;
   thead, tfoot {
-    background: #f5f5f5;
+    background: $color-table;
     th, td {
       padding: 1.5rem 0.625rem;
       font-size: 0.875rem;
@@ -177,7 +176,7 @@ select {
   tbody {
     tr {
       &:nth-of-type(2n){
-        background: #f9f9f9;
+        background: $color-no-elevation;
         &.disabled-background{
           background: $color-border;
         }
@@ -190,10 +189,6 @@ select {
       }
     }
   }
-}
-
-.error {
-  color: $color-alert;
 }
 
 .standard-form {
@@ -218,6 +213,11 @@ select {
   .fa {
     padding-right: 5px;
   }
+}
+
+.error, p.error {
+  color: $color-status-red;
+  background-color: $color-error-background;
 }
 
 //helper classes
@@ -280,6 +280,14 @@ select {
   background: $color-border;
 }
 
+.text-white{
+  color: $color-white;
+}
+
+.vertical-align-bottom{
+  vertical-align: bottom;
+}
+
 //border classes
 //-----------------------------
 .border-top-dark-gray{
@@ -300,6 +308,14 @@ select {
 
 .border-none{
   border: 0 none;
+}
+
+.border-input-metric-arrow{
+  border-top: 8px solid $color-white;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  width: 0; 
+  height: 0;
 }
 
 //typography

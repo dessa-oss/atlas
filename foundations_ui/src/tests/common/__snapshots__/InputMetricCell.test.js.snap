@@ -2,7 +2,7 @@
 
 exports[`Shallow Renders InputMetricCell 1`] = `
 <div
-  className="input-metric-cell-container"
+  className="job-cell"
   style={
     Object {
       "width": 115,
@@ -10,9 +10,7 @@ exports[`Shallow Renders InputMetricCell 1`] = `
   }
 >
   <p
-    className="header-4 font-bold"
-  >
-    value
-  </p>
+    className="font-bold"
+  />
 </div>
 `;

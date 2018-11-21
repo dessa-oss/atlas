@@ -13,7 +13,7 @@ class JobsTestsHelperMixin(object):
         from .mocks.scheduler_backend import MockSchedulerBackend
         from .mocks.deployment import MockDeployment
 
-        deployment_manager._scheduler = None # ugh...
+        deployment_manager._scheduler = None
         self._scheduler_backend_instance = MockSchedulerBackend(expected_status, [])
         self._mock_deployment = MockDeployment(self._scheduler_backend)
 
@@ -90,4 +90,3 @@ class JobsTestsHelperMixin(object):
 
     def _make_queued_job(self, job_name, start_timestamp, duration_timestamp, user):
         return self._make_scheduled_job(job_name, start_timestamp, duration_timestamp, user, 'QUEUED')
-
