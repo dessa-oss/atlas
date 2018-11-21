@@ -42,4 +42,4 @@ class MetricLogMiddleware(BasicStageMiddleware):
     def _push_message_to_channel(self, project_name, job_id, key, value, channel_name):
         from foundations.global_state import message_router
         message_router.push_message(
-            {'project_name': project_name, 'job_id': job_id, 'key': key, 'value': value}, channel_name)
+            channel_name, {'project_name': project_name, 'job_id': job_id, 'key': key, 'value': value})

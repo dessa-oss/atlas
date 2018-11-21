@@ -50,7 +50,7 @@ class TestMetricLogMiddleware(unittest.TestCase):
 
         self.assertEqual(middleware.call(None, None, None, (), {}, method), 1)
         mock.assert_called_with(
-            {'project_name': 'default', 'job_id': job_id, 'key': 'key1', 'value': 'value1'}, 'job_metrics')
+            'job_metrics', {'project_name': 'default', 'job_id': job_id, 'key': 'key1', 'value': 'value1'})
 
     @patch.object(message_router, 'push_message')
     def test_call_pushes_multiple_metrics(self, mock):
@@ -66,10 +66,10 @@ class TestMetricLogMiddleware(unittest.TestCase):
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)
 
-        call_1 = call({'project_name': 'default', 'job_id': job_id,
-                       'key': 'carrot', 'value': 'stick'}, 'job_metrics')
-        call_2 = call({'project_name': 'default', 'job_id': job_id,
-                       'key': 'hot', 'value': 'cold'}, 'job_metrics')
+        call_1 = call('job_metrics', {'project_name': 'default', 'job_id': job_id,
+                                      'key': 'carrot', 'value': 'stick'})
+        call_2 = call('job_metrics', {'project_name': 'default', 'job_id': job_id,
+                                      'key': 'hot', 'value': 'cold'})
 
         mock.assert_has_calls([call_1, call_2])
 
