@@ -41,4 +41,3 @@ redis_url: redis://localhost:6379
 
 shell_command:
   "C:\\Program Files\\Git\\bin\\bash.exe"
-  
