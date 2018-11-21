@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class RedisConnector(object):
     """Acts as a callback for the LazyRedis class,
     allowing it to be called directly without knowledge of
@@ -14,7 +15,7 @@ class RedisConnector(object):
         config_manager {ConfigManager} -- A provider for the Redis connection string
         connection_callback {callable} -- Callback to provide the connection string to
     """
-    
+
     def __init__(self, config_manager, connection_callback):
         self._config_manager = config_manager
         self._connection_callback = connection_callback
