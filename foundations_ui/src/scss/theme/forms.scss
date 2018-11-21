@@ -7,9 +7,9 @@ label {
 }
   
 input[type="text"] {
+  @extend .f--din;
   box-sizing: border-box;
   position: relative;
-  font-family: DINRegular;
   background-color: white;
   width: 350px;
   padding: 10px 10px 10px 10px;
