@@ -8,4 +8,5 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 class StringParser(object):
 
     def parse(self, value):
-        pass
+        # TODO: actually process the string
+        return 'parsed string'
