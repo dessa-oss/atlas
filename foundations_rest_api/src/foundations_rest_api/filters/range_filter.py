@@ -41,10 +41,22 @@ class RangeFilter(APIFilterMixin):
             columns_filtering_data.append((column_name, start_param_value, end_param_value))
 
     def _do_filtering(self, result, column_name, start_param_value, end_param_value):
-        range_parser = self._get_range_parser(column_name)
-        if range_parser.is_valid_range(start_param_value, end_param_value):
-            start_value, end_value = range_parser.parse_range(start_param_value, end_param_value)
+        start_value, end_value = self._parse_range_param_values(column_name, start_param_value, end_param_value)
+        if self._is_valid_range(start_value, end_value):
             self._filter_by_range(result, column_name, start_value, end_value)
+
+    def _parse_range_param_values(self, column_name, start_param_value, end_param_value):
+        parser = self._get_parser(column_name)
+        try:
+            start_value = parser.parse(start_param_value)
+            end_value = parser.parse(end_param_value)
+        except ValueError:
+            start_value = None
+            end_value = None
+        return start_value, end_value
+
+    def _is_valid_range(self, start_value, end_value):
+        return start_value is not None and end_value is not None and end_value >= start_value
 
     def _filter_by_range(self, result, column_name, start_value, end_value):
 
@@ -54,7 +66,7 @@ class RangeFilter(APIFilterMixin):
 
         return filter(is_in_range, result)
 
-    def _get_range_parser(self, column_name):
-        from foundations_rest_api.filters.parsers import get_range_parser
+    def _get_parser(self, column_name):
+        from foundations_rest_api.filters.parsers import get_parser
 
-        return get_range_parser(column_name)
+        return get_parser(column_name)

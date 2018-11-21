@@ -31,5 +31,5 @@ _column_type = {
 }
 
 
-def get_range_parser(column_name):
+def get_parser(column_name):
     return _column_type_parser[_column_type[column_name]]()
