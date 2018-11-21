@@ -16,7 +16,11 @@ class InputParameterKeys(AttributeKeyList):
     """
 
     def _get_attribute(self, message):
-        return message['input_parameters']
+        parameter_list = message['input_parameters']
+        parameters = {}
+        for parameter in parameter_list:
+            parameters[parameter['argument']['name']] = parameter['argument']['value']
+        return parameters
 
     def _get_attribute_key(self):
         return 'input_parameter_names'
