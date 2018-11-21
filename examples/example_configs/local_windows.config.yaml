@@ -1,0 +1,42 @@
+cache_implementation:
+  cache_type: foundations.LocalFileSystemCacheBackend
+  constructor_arguments: ["C:\\foundations\\foundations-cache"]
+
+archive_listing_implementation:
+  archive_listing_type: foundations.LocalFileSystemPipelineListing
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+stage_log_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+persisted_data_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+provenance_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+job_source_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+artifact_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+miscellaneous_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+project_listing_implementation:
+  project_listing_type: foundations.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
+  constructor_arguments: ["C:\\foundations\\projects"]
+
+deployment_implementation:
+  deployment_type: foundations.LocalShellJobDeployment
+
+shell_command:
+  "C:\\Program Files\\Git\\bin\\bash.exe"
+  
