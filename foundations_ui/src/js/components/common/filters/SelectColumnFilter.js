@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Checkbox from '../Checkbox';
-
-const notFound = -1;
-const oneElement = 1;
+import CommonActions from '../../../actions/CommonActions';
 
 class SelectColumnFilter extends Component {
   constructor(props) {
@@ -33,32 +30,13 @@ class SelectColumnFilter extends Component {
 
   changeLocalParams(colName) {
     const { changedParams } = this.state;
-    const index = changedParams.indexOf(colName);
-    let newArray = [];
-    if (index !== notFound) {
-      changedParams.splice(index, oneElement);
-    } else {
-      changedParams.push(colName);
-    }
-    newArray = changedParams;
+    const newArray = CommonActions.getChangedCheckboxes(changedParams, colName);
     this.setState({ changedParams: newArray });
   }
 
   render() {
     const { columns } = this.state;
-    let checkboxes = null;
-    if (columns.length > 0) {
-      checkboxes = [];
-      columns.forEach((col) => {
-        const key = col.name.concat('-checkbox');
-        checkboxes.push(<Checkbox
-          key={key}
-          name={col.name}
-          hidden={col.hidden}
-          changeHiddenParams={this.changeLocalParams}
-        />);
-      });
-    }
+    const checkboxes = CommonActions.getCheckboxes(columns, this.changeLocalParams);
 
     return (
       <div className="filter-container column-filter-container">

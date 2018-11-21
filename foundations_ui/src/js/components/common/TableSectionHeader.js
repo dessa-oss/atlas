@@ -7,7 +7,6 @@ class TableSectionHeader extends Component {
   constructor(props) {
     super(props);
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
-    this.formatColumns = this.formatColumns.bind(this);
     this.state = {
       header: this.props.header,
       isShowingFilter: false,
@@ -17,28 +16,13 @@ class TableSectionHeader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const formatedColumns = this.formatColumns(nextProps.columns, nextProps.hiddenInputParams);
+    const formatedColumns = CommonActions.formatColumns(nextProps.columns, nextProps.hiddenInputParams);
     this.setState({ columns: formatedColumns });
   }
 
   toggleShowingFilter() {
     const { isShowingFilter } = this.state;
     this.setState({ isShowingFilter: !isShowingFilter });
-  }
-
-  formatColumns(columns, hiddenInputParams) {
-    const formatedColumns = [];
-
-    if (columns !== null) {
-      columns.forEach((col) => {
-        let isHidden = false;
-        if (hiddenInputParams.includes(col)) {
-          isHidden = true;
-        }
-        formatedColumns.push({ name: col, hidden: isHidden });
-      });
-    }
-    return formatedColumns;
   }
 
   render() {

@@ -2,7 +2,11 @@ import React from 'react';
 import JobColumnHeader from '../components/common/JobColumnHeader';
 import InputMetricCell from '../components/common/InputMetricCell';
 import InputMetricRow from '../components/common/InputMetricRow';
+import Checkbox from '../components/common/Checkbox';
 import JobActions from './JobListActions';
+
+const notFound = -1;
+const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
@@ -17,7 +21,7 @@ class CommonActions {
     const inputParams = [];
     let colIndex = 0;
     allInputParams.forEach((input) => {
-      if (!hiddenInputParams.includes(input)) {
+      if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
         const key = input;
         inputParams.push(<JobColumnHeader
           key={key}
@@ -77,22 +81,10 @@ class CommonActions {
     cells = [];
     let colIndex = 0;
     columns.forEach((col) => {
-      if (!hiddenInputParams.includes(col)) {
-        let input = {
-          value: {
-            type: 'constant',
-          },
-        };
-        job.input_params.forEach((param) => {
-          if (param.name === col) {
-            input = param;
-          }
-        });
-        let key = 'input-param-'.concat(colIndex);
-        if (input && input.name) {
-          key = input.name;
-        }
-        if (input.value.type === 'constant') {
+      if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
+        const input = this.getInputMetricInput(job.input_params, col, isMetric);
+        const key = this.getInputMetricKey(input, col, isMetric);
+        if (this.isConstant(input)) {
           const cellWidth = cellWidths[colIndex];
           const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
           cells.push(<InputMetricCell
@@ -114,21 +106,11 @@ class CommonActions {
     const cells = [];
     let colIndex = 0;
     columns.forEach((col) => {
-      if (!hiddenInputParams.includes(col)) {
-        let input = null;
-        if (job.output_metrics.data_set_name) {
-          job.output_metrics.data_set_name.forEach((metric) => {
-            if (metric === col) {
-              input = metric;
-            }
-          });
-        }
+      if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
+        const input = this.getInputMetricInput(job.output_metrics.data_set_name, col, isMetric);
         const cellWidth = cellWidths[colIndex];
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
-        let key = 'metric-'.concat(colIndex);
-        if (input && input.name) {
-          key = input.name;
-        }
+        const key = this.getInputMetricKey(input, col, isMetric);
         cells.push(<InputMetricCell
           key={key}
           cellWidth={cellWidth}
@@ -174,6 +156,97 @@ class CommonActions {
 
   static isError(status) {
     return status.toLowerCase() === 'error';
+  }
+
+  static formatColumns(columns, hiddenInputParams) {
+    const formatedColumns = [];
+
+    if (columns !== null) {
+      columns.forEach((col) => {
+        let isHidden = false;
+        if (hiddenInputParams.includes(col)) {
+          isHidden = true;
+        }
+        formatedColumns.push({ name: col, hidden: isHidden });
+      });
+    }
+    return formatedColumns;
+  }
+
+  static getChangedCheckboxes(changedParams, colName) {
+    const index = changedParams.indexOf(colName);
+    let newArray = [];
+    if (index !== notFound) {
+      changedParams.splice(index, oneElement);
+    } else {
+      changedParams.push(colName);
+    }
+    newArray = changedParams;
+    return newArray;
+  }
+
+  // private functions, not cannot declare a private and static
+  // function in JS https://stackoverflow.com/a/3218950
+  static arrayDoesNotInclude(array, value) {
+    return !array.includes(value);
+  }
+
+  static getInputMetricInput(jobArray, col, isMetric) {
+    let input = null;
+    if (!isMetric) {
+      input = {
+        value: {
+          type: 'constant',
+        },
+      };
+    }
+    if (jobArray) {
+      jobArray.forEach((param) => {
+        if (!isMetric && param.name === col) {
+          input = param;
+        }
+        if (isMetric && param === col) {
+          input = param;
+        }
+      });
+    }
+    return input;
+  }
+
+  static getInputMetricKey(input, colIndex, isMetric) {
+    if (isMetric) {
+      let key = 'metric-'.concat(colIndex);
+      if (input && input.name) {
+        key = input.name;
+      }
+      return key;
+    }
+    let key = 'input-param-'.concat(colIndex);
+    if (input && input.name) {
+      key = input.name;
+    }
+    return key;
+  }
+
+  static isConstant(input) {
+    return input.value.type === 'constant';
+  }
+
+  static getCheckboxes(columns, changeLocalParams) {
+    let checkboxes = null;
+    if (columns.length > 0) {
+      checkboxes = [];
+      columns.forEach((col) => {
+        const key = col.name.concat('-checkbox');
+        checkboxes.push(<Checkbox
+          key={key}
+          name={col.name}
+          hidden={col.hidden}
+          changeHiddenParams={changeLocalParams}
+        />);
+      });
+    }
+    return checkboxes;
   }
 }
 

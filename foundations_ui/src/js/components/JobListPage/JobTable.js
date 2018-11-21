@@ -7,6 +7,9 @@ import JobActions from '../../actions/JobListActions';
 class JobTable extends Component {
   constructor(props) {
     super(props);
+    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
+    this.saveAPIJobs = this.saveAPIJobs.bind(this);
+    this.clearState = this.clearState.bind(this);
     this.state = {
       isMount: false,
       jobs: [],
@@ -33,21 +36,33 @@ class JobTable extends Component {
   async getJobs() {
     const { projectName } = this.state;
     const apiJobs = await JobActions.getJobs(projectName);
+    this.formatAndSaveParams(apiJobs);
+  }
+
+  formatAndSaveParams(apiJobs) {
     // use is mount for async as when it returns may have been unmounted
     const { isMount } = this.state;
     if (isMount) {
       if (apiJobs != null) {
-        const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-        const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
-        this.setState({
-          jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
-        });
+        this.saveAPIJobs(apiJobs);
       } else {
-        this.setState({
-          jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
-        });
+        this.clearState();
       }
     }
+  }
+
+  saveAPIJobs(apiJobs) {
+    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
+    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
+    this.setState({
+      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
+    });
+  }
+
+  clearState() {
+    this.setState({
+      jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
+    });
   }
 
   render() {

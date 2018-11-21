@@ -210,6 +210,12 @@ class ProjectActions {
   }
 
   static getAllMetrics(allJobs) {
+    return (this.getAllMetricsFromJobs(allJobs));
+  }
+
+  // private fun
+
+  static getAllMetricsFromJobs(allJobs) {
     const allMetrics = [];
     allJobs.forEach((job) => {
       if (job.output_metrics && job.output_metrics.data_set_name) {
