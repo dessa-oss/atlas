@@ -24,4 +24,4 @@ class SetUser(PropertySetter):
         return 'user'
 
     def _property_value(self, message, timestamp, meta_data):
-        return message['user']
+        return message['user_name']
