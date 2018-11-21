@@ -100,28 +100,22 @@ class TestConsumers(unittest.TestCase):
     def test_running_job_consumers(self):
         from foundations.global_state import message_router
         from foundations.utils import byte_string
+        from foundations.producers.jobs.run_job import RunJob
         from time import time
 
-        project_name = self._str_random_uuid()
-        job_id = self._str_random_uuid()
-
-        message = {
-            'project_name': project_name,
-            'job_id': job_id
-        }
-        message_router.push_message('run_job', message)
         current_time = time()
+        RunJob(self._message_router, self._pipeline_context).push_message()
 
-        running_jobs_key = 'project:{}:jobs:running'.format(project_name)
+        running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
         running_and_completed_jobs = self._redis.smembers(running_jobs_key)
-        expected_jobs = set([byte_string(job_id)])
+        expected_jobs = set([byte_string(self._job_id)])
         self.assertEqual(expected_jobs, running_and_completed_jobs)
 
-        job_state_key = 'jobs:{}:state'.format(job_id)
+        job_state_key = 'jobs:{}:state'.format(self._job_id)
         state = self._redis.get(job_state_key)
         self.assertEqual(b'running', state)
 
-        start_time_key = 'jobs:{}:start_time'.format(job_id)
+        start_time_key = 'jobs:{}:start_time'.format(self._job_id)
         string_start_time = self._redis.get(start_time_key)
         start_time = float(string_start_time.decode())
         self.assertTrue(current_time - start_time < 0.1)
