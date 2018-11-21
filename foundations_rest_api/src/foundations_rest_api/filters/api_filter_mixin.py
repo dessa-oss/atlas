@@ -5,13 +5,7 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-class ElapsedTimeRangeParser(object):
+class APIFilterMixin(object):
 
-    def parse(self, starts_param_value, ends_param_value):
-        pass
-
-    def is_valid_range(self, starts_param_value, ends_param_value):
-        pass
-
-    def _parse_value(self, value):
-        pass
+    def _is_valid_column(self, result, column_name):
+        return hasattr(result[0], column_name)

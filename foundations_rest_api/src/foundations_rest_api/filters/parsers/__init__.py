@@ -4,20 +4,20 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
-from foundations_rest_api.range_parsers.datetime_range_parser import DateTimeRangeParser
-from foundations_rest_api.range_parsers.elapsedtime_range_parser import ElapsedTimeRangeParser
-from foundations_rest_api.range_parsers.status_range_parser import StatusRangeParser
-from foundations_rest_api.range_parsers.string_range_parser import StringRangeParser
+from foundations_rest_api.filters.parsers.datetime_parser import DateTimeParser
+from foundations_rest_api.filters.parsers.elapsedtime_parser import ElapsedTimeParser
+from foundations_rest_api.filters.parsers.status_parser import StatusParser
+from foundations_rest_api.filters.parsers.string_parser import StringParser
 
 
 DATE_TIME, ELAPSED_TIME, STATUS, STRING = range(1, 4)
 
 
 _column_type_parser = {
-    DATE_TIME: DateTimeRangeParser,
-    ELAPSED_TIME: ElapsedTimeRangeParser,
-    STATUS: StatusRangeParser,
-    STRING: StringRangeParser,
+    DATE_TIME: DateTimeParser,
+    ELAPSED_TIME: ElapsedTimeParser,
+    STATUS: StatusParser,
+    STRING: StringParser,
 }
 
 

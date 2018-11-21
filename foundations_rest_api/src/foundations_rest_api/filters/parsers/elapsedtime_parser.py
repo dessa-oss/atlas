@@ -5,13 +5,13 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-class StringRangeParser(object):
+class ElapsedTimeParser(object):
 
-    def parse(self, starts_param_value, ends_param_value):
+    def parse_range(self, starts_param_value, ends_param_value):
         pass
 
     def is_valid_range(self, starts_param_value, ends_param_value):
         pass
 
-    def _parse_value(self, value):
+    def parse_value(self, value):
         pass
