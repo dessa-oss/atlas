@@ -8,3 +8,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from test.helpers.test_wrap_class_with_dependency import TestWrapClassWithDependency
 from test.helpers.test_argument_namer import TestArgumentNamer
 from test.helpers.test_lazy_redis import TestLazyRedis
+from test.helpers.test_redis_connector import TestRedisConnector
