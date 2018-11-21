@@ -37,6 +37,8 @@ project_listing_implementation:
 deployment_implementation:
   deployment_type: foundations.LocalShellJobDeployment
 
+redis_url: redis://localhost:6379
+
 shell_command:
   "C:\\Program Files\\Git\\bin\\bash.exe"
   
