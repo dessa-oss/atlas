@@ -1,8 +1,8 @@
 label {
+  @extend .f--din;
   display: block;
   font-size: 14px;
-  color: #3E3A3D;
-  font-family: DINRegular;
+  color: $color-label-text;
   margin-bottom: 4px;
 }
   
@@ -15,20 +15,20 @@ input[type="text"] {
   padding: 10px 10px 10px 10px;
   font-size: 14px;
   border-radius: 0;
-  border: 1px solid #DCDCDC;
+  border: 1px solid $color-border-bottom;
   outline: none;
   cursor: pointer;
   height: 38px;
 }
   
 input[type="text"]:placeholder {
-  color: #949494;
+  color: $color-label-placeholder;
 }
 
 .helper-text {
+  @extend .f--din;
   font-size: 14px;
-  color: #949494;
-  font-family: DINRegular;
+  color: $color-label-placeholder;
   margin-top: 4px;
   white-space: normal;
 }
