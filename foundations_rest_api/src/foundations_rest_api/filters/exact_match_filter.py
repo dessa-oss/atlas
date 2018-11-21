@@ -21,13 +21,9 @@ class ExactMatchFilter(APIFilterMixin):
 
     def _filter_column(self, result, column_name, value):
         options = value.split(',')
-        parsed_options = self._parse_options(options)
-        self._filter_exact_match(result, column_name, parsed_options)
-
-    def _parse_options(self, options):
-        parsed_options = []
-        # TODO: invoke parser
-        return parsed_options
+        parsed_options = self._parse_options(column_name, options)
+        if parsed_options:
+            self._filter_exact_match(result, column_name, parsed_options)
 
     def _filter_exact_match(self, result, column_name, options):
 
@@ -36,3 +32,11 @@ class ExactMatchFilter(APIFilterMixin):
             return value in options
 
         return filter(column_value_in_options, result)
+
+    def _parse_options(self, column_name, options):
+        parser = self._get_parser(column_name)
+        try:
+            parsed_options = [parser.parse(option) for option in options]
+        except ValueError:
+            parsed_options = []
+        return parsed_options
