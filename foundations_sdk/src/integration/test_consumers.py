@@ -124,7 +124,6 @@ class TestConsumers(unittest.TestCase):
         from foundations.global_state import message_router
         from time import time
 
-        project_name = self._str_random_uuid()
         job_id = self._str_random_uuid()
 
         message = {
@@ -145,7 +144,6 @@ class TestConsumers(unittest.TestCase):
         from foundations.global_state import message_router
         from time import time
 
-        project_name = self._str_random_uuid()
         job_id = self._str_random_uuid()
         expected_input_parameters = {'broken_data': self._random_name()}
 
