@@ -14,6 +14,7 @@ const emptyHeader = '';
 const header = 'abc';
 const emptyJob = {};
 const job = {
+  job_id: 'myid',
   input_params: [
     {
       name: 'param1',
@@ -230,4 +231,9 @@ it('get ChangedCheckboxes, newParam', () => {
   const changedArray = CommonActions.getChangedCheckboxes(toAddParams, newParam);
   expect(changedArray.length).toBe(2);
   expect(changedArray[1]).toBe(newParam);
+});
+
+it('get RowKey', () => {
+  const key = CommonActions.getRowKey(job);
+  expect(key).toBe('myid-input-metric-row');
 });

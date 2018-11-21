@@ -130,7 +130,7 @@ class CommonActions {
     if (jobs.length > 0) {
       rows = [];
       jobs.forEach((job) => {
-        const key = job.job_id.concat('-input-metric-row');
+        const key = this.getRowKey(job);
         const isError = this.isError(job.status);
         rows.push(<InputMetricRow
           key={key}
@@ -183,6 +183,10 @@ class CommonActions {
     }
     newArray = changedParams;
     return newArray;
+  }
+
+  static getRowKey(job) {
+    return job.job_id.concat('-input-metric-row');
   }
 
   // private functions, not cannot declare a private and static
