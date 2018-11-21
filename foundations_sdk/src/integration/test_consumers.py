@@ -13,69 +13,84 @@ class TestConsumers(unittest.TestCase):
 
     def setUp(self):
         from foundations.global_state import redis_connection
+        from foundations.global_state import message_router
+        from foundations.pipeline_context import PipelineContext
+        from foundations.pipeline import Pipeline
         import faker
 
         self._redis = redis_connection
         self._redis.flushall()
         self._faker = faker.Faker()
 
+        self._pipeline_context = PipelineContext()
+
+        self._project_name = self._str_random_uuid()
+        self._pipeline_context.provenance.project_name = self._project_name
+
+        self._job_id = self._str_random_uuid()
+        self._pipeline_context.file_name = self._job_id
+
+        self._user = self._random_name()
+        self._pipeline_context.provenance.user_name = self._user
+
+        self._pipeline = Pipeline(self._pipeline_context)
+
+        self._message_router = message_router
+
     def test_queue_job_consumers(self):
-        from foundations.global_state import message_router
         from foundations.utils import byte_string
+        from foundations.producers.jobs.queue_job import QueueJob
         from time import time
 
-        project_name = self._str_random_uuid()
-        job_id = self._str_random_uuid()
-        expected_job_parameters = {'random_job_data': self._str_random_uuid()}
-        expected_input_parameters = {
-            'random_input_data': self._str_random_uuid()
-        }
-        user = self._random_name()
+        def callback(random_input_data):
+            pass
 
-        message = {
-            'project_name': project_name,
-            'job_id': job_id,
-            'job_parameters': expected_job_parameters,
-            'input_parameters': expected_input_parameters,
-            'user': user,
-        }
-        message_router.push_message('queue_job', message)
+        stage = self._pipeline.stage(callback, 37)
+
+        expected_job_parameters = {'random_job_data': self._str_random_uuid()}
+        expected_argument = {'name': 'random_input_data', 'value': {'type': 'constant', 'value': 37}}
+        expected_input_parameters = [
+            {'argument': expected_argument, 'stage_uuid': stage.uuid()}
+        ]
+        self._pipeline_context.provenance.job_run_data = expected_job_parameters
+
+        QueueJob(self._message_router, self._pipeline_context).push_message()
         current_time = time()
 
-        parameter_key = 'projects:{}:job_parameter_names'.format(project_name)
+        parameter_key = 'projects:{}:job_parameter_names'.format(self._project_name)
         job_parameter_names = self._redis.smembers(parameter_key)
         self.assertEqual(set([b'random_job_data']), job_parameter_names)
 
-        input_parameter_key = self._input_parameter_key(project_name)
+        input_parameter_key = self._input_parameter_key(self._project_name)
         input_parameter_names = self._redis.smembers(input_parameter_key)
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
 
-        queued_job_key = 'project:{}:jobs:queued'.format(project_name)
+        queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
         queued_jobs = self._redis.smembers(queued_job_key)
-        self.assertEqual(set([byte_string(job_id)]), queued_jobs)
+        self.assertEqual(set([byte_string(self._job_id)]), queued_jobs)
 
-        job_parameters_key = 'jobs:{}:parameters'.format(job_id)
+        job_parameters_key = 'jobs:{}:parameters'.format(self._job_id)
         job_parameters = self._get_and_deserialize(job_parameters_key)
         self.assertEqual(expected_job_parameters, job_parameters)
 
-        job_state_key = 'jobs:{}:state'.format(job_id)
+        job_state_key = 'jobs:{}:state'.format(self._job_id)
         state = self._redis.get(job_state_key)
         self.assertEqual(b'queued', state)
 
-        job_project_key = 'jobs:{}:project'.format(job_id)
+        job_project_key = 'jobs:{}:project'.format(self._job_id)
         job_project_name = self._redis.get(job_project_key)
-        self.assertEqual(byte_string(project_name), job_project_name)
+        self.assertEqual(byte_string(self._project_name), job_project_name)
 
-        job_user_key = 'jobs:{}:user'.format(job_id)
+        job_user_key = 'jobs:{}:user'.format(self._job_id)
         job_user = self._redis.get(job_user_key)
-        self.assertEqual(byte_string(user), job_user)
+        self.assertEqual(byte_string(self._user), job_user)
 
-        creation_time_key = 'jobs:{}:creation_time'.format(job_id)
+        creation_time_key = 'jobs:{}:creation_time'.format(self._job_id)
         string_creation_time = self._redis.get(creation_time_key)
         creation_time = float(string_creation_time.decode())
         self.assertTrue(current_time - creation_time < 0.1)
 
-        input_parameters_key = 'jobs:{}:input_parameters'.format(job_id)
+        input_parameters_key = 'jobs:{}:input_parameters'.format(self._job_id)
         input_parameters = self._get_and_deserialize(input_parameters_key)
         self.assertEqual(expected_input_parameters, input_parameters)
 
