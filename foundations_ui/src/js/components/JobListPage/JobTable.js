@@ -7,13 +7,16 @@ import JobActions from '../../actions/JobListActions';
 class JobTable extends Component {
   constructor(props) {
     super(props);
+    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
+    this.saveAPIJobs = this.saveAPIJobs.bind(this);
+    this.clearState = this.clearState.bind(this);
     this.state = {
       isMount: false,
       jobs: [],
       isLoaded: false,
       projectName: this.props.projectName,
-      hiddenInputParams: [],
       allInputParams: [],
+      allMetrics: [],
     };
   }
 
@@ -33,21 +36,38 @@ class JobTable extends Component {
   async getJobs() {
     const { projectName } = this.state;
     const apiJobs = await JobActions.getJobs(projectName);
+    this.formatAndSaveParams(apiJobs);
+  }
+
+  formatAndSaveParams(apiJobs) {
     // use is mount for async as when it returns may have been unmounted
     const { isMount } = this.state;
     if (isMount) {
       if (apiJobs != null) {
-        const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-        this.setState({ jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams });
+        this.saveAPIJobs(apiJobs);
       } else {
-        this.setState({ jobs: [], isLoaded: true, allInputParams: [] });
+        this.clearState();
       }
     }
   }
 
+  saveAPIJobs(apiJobs) {
+    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
+    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
+    this.setState({
+      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
+    });
+  }
+
+  clearState() {
+    this.setState({
+      jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
+    });
+  }
+
   render() {
     const {
-      jobs, isLoaded, hiddenInputParams, allInputParams,
+      jobs, isLoaded, hiddenInputParams, allInputParams, allMetrics,
     } = this.state;
 
     let jobRows = [];
@@ -68,8 +88,8 @@ class JobTable extends Component {
     return (
       <div className="job-table-container">
         <JobTableHeader
-          hiddenInputParams={hiddenInputParams}
           allInputParams={allInputParams}
+          allMetrics={allMetrics}
           jobs={jobs}
         />
         <div className="job-table-row-container">
@@ -85,8 +105,8 @@ JobTable.propTypes = {
   jobs: PropTypes.array,
   isLoaded: PropTypes.bool,
   projectName: PropTypes.string,
-  hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
+  allMetrics: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -94,8 +114,8 @@ JobTable.defaultProps = {
   jobs: [],
   isLoaded: false,
   projectName: '',
-  hiddenInputParams: [],
   allInputParams: [],
+  allMetrics: [],
 };
 
 export default JobTable;

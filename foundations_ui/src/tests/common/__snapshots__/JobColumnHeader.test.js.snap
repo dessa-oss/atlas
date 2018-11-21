@@ -11,8 +11,16 @@ exports[`Shallow Renders Job Column Header 1`] = `
       className="blue-border-bottom"
     />
     <div
-      className="arrow-down float-right"
+      className="icon-container"
     />
+    <div
+      className="arrow-container"
+      role="presentation"
+    >
+      <div
+        className="arrow-down float-right"
+      />
+    </div>
   </div>
   <ResizeDetector
     handleHeight={true}

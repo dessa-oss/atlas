@@ -13,13 +13,13 @@ class JobIDCell extends Component {
   render() {
     const { jobID, isError } = this.state;
 
-    const pClass = isError
+    const aClass = isError
       ? 'job-cell job-id-cell error'
       : 'job-cell job-id-cell';
 
     const href = '/'.concat(jobID);
     return (
-      <a href={href} className={pClass}>{jobID}</a>
+      <a href={href} className={aClass}>{jobID}</a>
     );
   }
 }

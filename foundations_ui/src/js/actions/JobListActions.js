@@ -159,8 +159,16 @@ class ProjectActions {
     return constantParams;
   }
 
-  static getInputParamValue(inputParam) {
-    if (inputParam.value && inputParam.value.value && inputParam.value.type === 'constant') {
+  static getInputMetricValue(inputParam, isMetric, columns) {
+    if (isMetric && inputParam !== null) {
+      return 'metric value';
+    }
+
+    // else input param
+    if (inputParam && columns.includes(inputParam.name)
+    && inputParam.value
+    && inputParam.value.value
+    && inputParam.value.type === 'constant') {
       return inputParam.value.value;
     }
     return 'not available';
@@ -175,7 +183,7 @@ class ProjectActions {
 
   static getJobColumnHeaderArrowClass(isStatus) {
     if (isStatus === isStatusField) {
-      return 'arrow-down margin-auto';
+      return 'arrow-down';
     }
     return 'arrow-down float-right';
   }
@@ -199,6 +207,26 @@ class ProjectActions {
       return 'blue-header-text';
     }
     return 'blue-header-text no-margin';
+  }
+
+  static getAllMetrics(allJobs) {
+    return (this.getAllMetricsFromJobs(allJobs));
+  }
+
+  // private fun
+
+  static getAllMetricsFromJobs(allJobs) {
+    const allMetrics = [];
+    allJobs.forEach((job) => {
+      if (job.output_metrics && job.output_metrics.data_set_name) {
+        job.output_metrics.data_set_name.forEach((metric) => {
+          if (!allMetrics.includes(metric)) {
+            allMetrics.push(metric);
+          }
+        });
+      }
+    });
+    return allMetrics;
   }
 }
 

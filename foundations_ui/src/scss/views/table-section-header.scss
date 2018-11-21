@@ -3,6 +3,17 @@
   vertical-align: middle;
   width: 530px;
   height: 36px;
+  position: relative;
+
+  .arrow-container {
+    width: 36px;
+    height: 36px;
+    float: right;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+  }
 }
 
 .blue-header {
@@ -13,15 +24,15 @@
 .blue-header-text {
   color: $color-white;
   text-transform: uppercase;
-  margin-top: 9px;
+  margin: 0px;
+  line-height: 36px;
 }
 
 .blue-header-arrow {
-  float: right;
-  position: relative;
-  top: -25px;
-  right: 20px;
   border-top: 10px solid $color-white;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
+  position: absolute;
+  top: 12px;
+  right: 12px;
 }

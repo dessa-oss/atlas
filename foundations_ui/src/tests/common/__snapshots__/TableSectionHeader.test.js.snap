@@ -8,7 +8,14 @@ exports[`Shallow Renders TableSectionHeader 1`] = `
     className="blue-header-text text-white no-margin"
   />
   <div
-    className=""
-  />
+    className="arrow-container"
+    onClick={[Function]}
+    onKeyPress={[Function]}
+    role="presentation"
+  >
+    <div
+      className=""
+    />
+  </div>
 </div>
 `;

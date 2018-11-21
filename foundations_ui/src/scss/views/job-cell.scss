@@ -12,6 +12,11 @@
   background-color: $color-white;
   overflow: hidden;
   text-overflow: ellipsis;
+  
+  &.error {
+    color: $color-status-red;
+    background-color: $color-error-background;
+  }
 }
 
 .status-cell{

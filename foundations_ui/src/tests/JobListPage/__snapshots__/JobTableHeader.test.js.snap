@@ -5,21 +5,29 @@ exports[`Shallow Renders Job Table Header 1`] = `
   className="job-list-container"
 >
   <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
     header=""
+    hiddenInputParams={Array []}
+    isShowingFilter={false}
   />
   <InputMetric
     allInputParams={Array []}
     cellWidths={Array []}
     header="input parameter"
     hiddenInputParams={Array []}
+    isMetric={false}
     jobs={Array []}
+    searchText=""
   />
   <InputMetric
     allInputParams={Array []}
     cellWidths={Array []}
     header="metrics"
     hiddenInputParams={Array []}
+    isMetric={true}
     jobs={Array []}
+    searchText=""
   />
   <div
     className="job-column-header-container"

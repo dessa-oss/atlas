@@ -3,6 +3,7 @@
   vertical-align: top;
   text-align: center;
   padding-bottom: 8px;
+  height: 50px;
 
   h4{
     min-width: 80px;
@@ -20,9 +21,17 @@
     padding-right: 3px;
   }
 
-  .status-offset{
-    padding-left: 19px;
+.status-offset{
+  padding-left: 19px;
+
+  .icon-container {
+    width: 25%;
   }
+
+  .arrow-continer {
+    width: 75%;
+  }
+}
 
   .job-id-offset{
     padding-left: 20px;

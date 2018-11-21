@@ -9,13 +9,29 @@ class InputMetricRow extends Component {
       cellWidths: this.props.cellWidths,
       isError: this.props.isError,
       job: this.props.job,
+      isMetric: this.props.isMetric,
+      allInputMetricColumn: this.props.allInputMetricColumn,
+      hiddenInputParams: this.props.hiddenInputParams,
     };
   }
 
-  render() {
-    const { job, cellWidths, isError } = this.state;
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      hiddenInputParams: nextProps.hiddenInputParams,
+    });
+  }
 
-    const cells = CommonActions.getInputMetricCells(job, cellWidths, isError);
+  render() {
+    const {
+      job, cellWidths, isError, isMetric, allInputMetricColumn, hiddenInputParams,
+    } = this.state;
+
+    const cells = CommonActions.getInputMetricCells(job,
+      cellWidths,
+      isError,
+      isMetric,
+      allInputMetricColumn,
+      hiddenInputParams);
 
     return (
       <div className="job-table-row">
@@ -29,12 +45,18 @@ InputMetricRow.propTypes = {
   job: PropTypes.object,
   cellWidths: PropTypes.array,
   isError: PropTypes.bool,
+  isMetric: PropTypes.bool,
+  allInputMetricColumn: PropTypes.array,
+  hiddenInputParams: PropTypes.array,
 };
 
 InputMetricRow.defaultProps = {
   job: {},
   cellWidths: [],
   isError: false,
+  isMetric: false,
+  allInputMetricColumn: [],
+  hiddenInputParams: [],
 };
 
 export default InputMetricRow;
