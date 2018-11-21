@@ -26,7 +26,7 @@ class QueueJob(object):
         self._message_router.push_message('queue_job', message)
 
     def _message(self):
-        job_params = self._load_input_params()
+        input_params = self._load_input_params()
         provenance = self._pipeline_context.provenance
 
         message = {
@@ -34,7 +34,7 @@ class QueueJob(object):
             'project_name': provenance.project_name,
             'job_parameters': provenance.job_run_data,
             'user_name': provenance.user_name,
-            'input_parameters': job_params
+            'input_parameters': input_params
         }
 
         return message
