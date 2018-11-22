@@ -13,6 +13,10 @@ from foundations.utils import using_python_2
 
 class TestRecursionLimit(unittest.TestCase):
 
+    def setUp(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
+
     @unittest.skipIf(using_python_2(), 'skipping due to running python 2')
     def test_recursion_limit_can_be_overridden(self):
         import foundations
