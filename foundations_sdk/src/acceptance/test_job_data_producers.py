@@ -12,10 +12,11 @@ from mock import Mock
 class TestJobDataProducers(unittest.TestCase):
 
     def setUp(self):
+        from acceptance.cleanup import cleanup
         from foundations.global_state import redis_connection
-
+    
+        cleanup()
         self._redis = redis_connection
-        self._redis.flushall()
 
     def test_produces_completed_job_data(self):
         from foundations import create_stage
@@ -23,6 +24,7 @@ class TestJobDataProducers(unittest.TestCase):
         from foundations import log_metric
         from foundations.global_state import foundations_context
         from foundations.fast_serializer import deserialize
+        import json
         from time import time
 
         @create_stage
@@ -38,11 +40,13 @@ class TestJobDataProducers(unittest.TestCase):
 
         provenance = foundations_context.pipeline_context().provenance
         provenance.project_name = 'project_with_successful_jobs'
+        provenance.user_name = 'a_very_successful_user'
 
+        stage_parameter = dummy_data()
         stage = function(
             999,
             some_placeholder=Hyperparameter('some_run_data'),
-            some_stage=dummy_data()
+            some_stage=stage_parameter
         )
         deployment = stage.run(some_run_data=777, job_name='successful_job')
         deployment.wait_for_deployment_to_complete()
@@ -73,18 +77,73 @@ class TestJobDataProducers(unittest.TestCase):
         state = self._redis.get('jobs:successful_job:state').decode()
         self.assertEqual('completed', state)
 
+        project_name = self._redis.get('jobs:successful_job:project').decode()
+        self.assertEqual('project_with_successful_jobs', project_name)
+
+        input_parameter_names = self._redis.smembers('projects:project_with_successful_jobs:input_parameter_names')
+        input_parameter_names = set([data.decode() for data in input_parameter_names]) - set(['value']) # some hack for now, until I figure out why this is
+        self.assertEqual(set(['some_argument', 'some_placeholder', 'some_stage']), input_parameter_names)
+
+        user_name = self._redis.get('jobs:successful_job:user').decode()
+        self.assertEqual('a_very_successful_user', user_name)
+
         completed_time = self._redis.get('jobs:successful_job:completed_time').decode()
         completed_time = float(completed_time)
         self.assertTrue(current_time - completed_time < 1)
 
         start_time = self._redis.get('jobs:successful_job:start_time').decode()
         start_time = float(start_time)
-        self.assertTrue(current_time - start_time > 0.15)
+        self.assertTrue(current_time - start_time > 0.01)
         self.assertTrue(current_time - start_time < 10)
+
+        creation_time = self._redis.get('jobs:successful_job:creation_time').decode()
+        creation_time = float(creation_time)
+        self.assertTrue(current_time - creation_time > 0.01)
+        self.assertTrue(current_time - creation_time < 25)
 
         running_jobs = self._redis.smembers('project:project_with_successful_jobs:jobs:running')
         running_jobs = set([data.decode() for data in running_jobs])
         self.assertEqual(set(['successful_job']), running_jobs)
+
+        serialized_run_parameters = self._redis.get('jobs:successful_job:parameters')
+        run_parameters = json.loads(serialized_run_parameters)
+        self.assertEqual({'some_run_data': 777}, run_parameters)
+
+        serialized_input_parameters = self._redis.get('jobs:successful_job:input_parameters')
+        input_parameters = json.loads(serialized_input_parameters)
+        print(input_parameters)
+        expected_input_parameters = [
+            {
+                'argument': {
+                    'name': 'some_argument', 'value': {
+                        'type': 'constant', 'value': 999
+                    }
+                }, 
+                'stage_uuid': stage.uuid()
+            }, 
+            {
+                'argument': {
+                    'name': 'some_placeholder', 
+                    'value': {
+                        'type': 'dynamic', 
+                        'name': 'some_run_data'
+                    }
+                }, 
+                'stage_uuid': stage.uuid()
+            }, 
+            {
+                'argument': {
+                    'name': 'some_stage', 
+                    'value': {
+                        'type': 'stage', 
+                        'stage_name': 'dummy_data', 
+                        'stage_uuid': stage_parameter.uuid()
+                    }
+                }, 
+                'stage_uuid': stage.uuid()
+            }
+        ]
+        self.assertEqual(expected_input_parameters, input_parameters)
 
     def test_produces_failed_job_data(self):
         from foundations import create_stage
