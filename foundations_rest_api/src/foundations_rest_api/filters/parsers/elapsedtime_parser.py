@@ -8,4 +8,5 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 class ElapsedTimeParser(object):
 
     def parse(self, value):
+        # TODO: This must be implemented when the duration column is added to Job model
         pass
