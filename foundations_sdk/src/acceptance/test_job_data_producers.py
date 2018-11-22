@@ -79,7 +79,7 @@ class TestJobDataProducers(unittest.TestCase):
 
         start_time = self._redis.get('jobs:successful_job:start_time').decode()
         start_time = float(start_time)
-        self.assertTrue(current_time - start_time > 0.25)
+        self.assertTrue(current_time - start_time > 0.15)
         self.assertTrue(current_time - start_time < 10)
 
         running_jobs = self._redis.smembers('project:project_with_successful_jobs:jobs:running')
@@ -88,6 +88,7 @@ class TestJobDataProducers(unittest.TestCase):
 
     def test_produces_failed_job_data(self):
         from foundations import create_stage
+        from foundations.utils import using_python_2
         import json
 
         @create_stage
@@ -104,6 +105,10 @@ class TestJobDataProducers(unittest.TestCase):
         serialized_error_information = self._redis.get('jobs:failed_job:error_information')
         error_information = json.loads(serialized_error_information)
 
-        self.assertEqual("<class 'Exception'>", error_information['type']) 
+        if using_python_2():
+            self.assertEqual("<type 'exceptions.Exception'>", error_information['type']) 
+        else:
+            self.assertEqual("<class 'Exception'>", error_information['type']) 
+
         self.assertEqual('I died!', error_information['exception'])
         self.assertIsNotNone(error_information['traceback'])
