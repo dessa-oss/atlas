@@ -14,6 +14,7 @@ else:
     from test.test_staged_module_py2_loader import TestStagedModulePy2Loader
     from test.test_staged_meta_py2_finder import TestStagedMetaPy2Finder
 
+
 from test.test_staged_module_internal_loader import TestStagedModuleInternalLoader
 from test.test_staged_meta_helper import TestStagedMetaHelper
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
@@ -63,6 +64,9 @@ from test.test_safe_inspect import TestSafeInspect
 from test.test_message_route import TestMessageRoute
 from test.test_message_router import TestMessageRouter
 from test.test_message_route_listener import TestMessageRouteListener
+from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper
+from test.test_job_data_redis import TestJobDataRedis
+from test.test_job_data_shaper import TestJobDataShaper
 from test.helpers import *
 from test.models import *
 from test.job_bundling import *
