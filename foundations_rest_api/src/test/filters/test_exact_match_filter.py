@@ -16,7 +16,7 @@ class TestExactMatchFilter(unittest.TestCase):
             for key, value in kwargs.items():
                 setattr(self, key, value)
 
-    def test_start_time_range(self):
+    def test_start_time_exact_match(self):
         from datetime import datetime
 
         start_time_options = [datetime(2018, 10, 10, 15, 30, 0, 0, None).isoformat(),
@@ -44,3 +44,43 @@ class TestExactMatchFilter(unittest.TestCase):
         new_result_start_times = [job.start_time for job in new_result]
         expected_new_result_start_times = [start_time for start_time in start_time_options[:2]]
         self.assertEqual(expected_new_result_start_times, new_result_start_times)
+
+    def test_user_exact_match(self):
+        user_options = ['mozart', 'beethoven', 'verdi']
+
+        params = {
+            'user': ','.join(user_options)
+        }
+
+        job_users = ['bach', 'mozart', 'beethoven', 'tchaikovsky']
+
+        result = [self.MockJobInfo(user=job_user) for job_user in job_users]
+
+        exact_filter = ExactMatchFilter()
+        new_result = exact_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_users = [job.user for job in new_result]
+        expected_new_result_user = ['mozart', 'beethoven']
+        self.assertEqual(expected_new_result_user, new_result_users)
+
+    def test_status_exact_match(self):
+        status_options = ['running', 'queued']
+
+        params = {
+            'status': ','.join(status_options)
+        }
+
+        job_statuses = ['RUNNING', 'COMPLETED', 'FAILED', 'COMPLETED', 'RUNNING']
+
+        result = [self.MockJobInfo(job_id=index+1, status=status) for index, status in enumerate(job_statuses)]
+
+        exact_filter = ExactMatchFilter()
+        new_result = exact_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1, 5]
+        self.assertEqual(expected_new_result_ids, new_result_ids)
