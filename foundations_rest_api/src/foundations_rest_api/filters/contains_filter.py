@@ -22,15 +22,21 @@ class ContainsFilter(APIFilterMixin):
                 self._filter_column(result, column_name, value)
 
     def _filter_column(self, result, column_name, value):
-        sanitized_value = self._parse_value(column_name, value)
-        if sanitized_value:
-            self._filter_contains(result, column_name, sanitized_value)
+        searched_value = self._enforce_save_string(value)
+        if searched_value:
+            self._filter_contains(result, column_name, searched_value)
 
     def _filter_contains(self, result, column_name, searched_value):
 
         def column_value_in_options(item):
             column_value = getattr(item, column_name)
-            value = self._parse_value(column_name, column_value)
-            return searched_value in value if isinstance(value, str) else False
+            value = self._enforce_save_string(column_value)
+            return searched_value in value
 
         return self._in_place_filter(column_value_in_options, result)
+
+    def _enforce_save_string(self, value):
+        # TODO: Add some extra checking or sanitization
+        if not isinstance(value, str):
+            return str(value)
+        return value
