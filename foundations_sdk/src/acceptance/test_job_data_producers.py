@@ -81,7 +81,7 @@ class TestJobDataProducers(unittest.TestCase):
         self.assertEqual('project_with_successful_jobs', project_name)
 
         input_parameter_names = self._redis.smembers('projects:project_with_successful_jobs:input_parameter_names')
-        input_parameter_names = set([data.decode() for data in input_parameter_names]) - set(['value']) # some hack for now, until I figure out why this is
+        input_parameter_names = set([data.decode() for data in input_parameter_names])
         self.assertEqual(set(['some_argument', 'some_placeholder', 'some_stage']), input_parameter_names)
 
         user_name = self._redis.get('jobs:successful_job:user').decode()
