@@ -22,7 +22,7 @@ class ContainsFilter(APIFilterMixin):
                 self._filter_column(result, column_name, value)
 
     def _filter_column(self, result, column_name, value):
-        sanitized_value = self._parse_value(value)
+        sanitized_value = self._parse_value(column_name, value)
         if sanitized_value:
             self._filter_contains(result, column_name, sanitized_value)
 
@@ -33,13 +33,3 @@ class ContainsFilter(APIFilterMixin):
             return searched_value in value if isinstance(value, str) else False
 
         return self._in_place_filter(column_value_in_options, result)
-
-    def _parse_value(self, value):
-        from foundations_rest_api.filters.parsers import StringParser
-
-        parser = StringParser()
-        try:
-            sanitized_value = parser.parse(value)
-        except ValueError:
-            sanitized_value = None
-        return sanitized_value

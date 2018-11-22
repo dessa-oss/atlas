@@ -8,5 +8,5 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 class StringParser(object):
 
     def parse(self, value):
-        # TODO: actually process the string
-        return 'parsed string'
+        # TODO: probably some string sanitation is required
+        return value
