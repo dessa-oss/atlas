@@ -32,7 +32,7 @@ class ContainsFilter(APIFilterMixin):
             value = getattr(item, column_name)
             return searched_value in value if isinstance(value, str) else False
 
-        return filter(column_value_in_options, result)
+        return self._in_place_filter(column_value_in_options, result)
 
     def _parse_value(self, value):
         from foundations_rest_api.filters.parsers import StringParser

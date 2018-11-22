@@ -31,7 +31,7 @@ class ExactMatchFilter(APIFilterMixin):
             value = getattr(item, column_name)
             return value in options
 
-        return filter(column_value_in_options, result)
+        return self._in_place_filter(column_value_in_options, result)
 
     def _parse_options(self, column_name, options):
         parser = self._get_parser(column_name)

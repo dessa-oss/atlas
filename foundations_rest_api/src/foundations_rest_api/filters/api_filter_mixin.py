@@ -14,3 +14,9 @@ class APIFilterMixin(object):
         from foundations_rest_api.filters.parsers import get_parser
 
         return get_parser(column_name)
+
+    def _in_place_filter(self, selection_function, result_list):
+        for _ in range(len(result_list)):
+            item = result_list.pop(0)
+            if selection_function(item):
+                result_list.append(item)

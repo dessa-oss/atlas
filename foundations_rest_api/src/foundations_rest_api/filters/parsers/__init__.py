@@ -10,7 +10,7 @@ from foundations_rest_api.filters.parsers.status_parser import StatusParser
 from foundations_rest_api.filters.parsers.string_parser import StringParser
 
 
-DATE_TIME, ELAPSED_TIME, STATUS, STRING = range(1, 4)
+DATE_TIME, ELAPSED_TIME, STATUS, STRING = range(1, 5)
 
 
 _column_type_parser = {
