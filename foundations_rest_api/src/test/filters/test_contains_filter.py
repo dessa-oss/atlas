@@ -51,3 +51,29 @@ class TestContainsFilter(unittest.TestCase):
         new_result_ids = [job.job_id for job in new_result]
         expected_new_result_ids = [1, 5]
         self.assertEqual(expected_new_result_ids, new_result_ids)
+
+    def test_start_time_contains(self):
+        from datetime import datetime
+
+        params = {
+            'start_time_contains': '15'
+        }
+
+        jobs_start_times = [
+            datetime(2018, 8, 1, 10, 30, 0, 0, None),
+            datetime(2018, 9, 30, 1, 0, 0, 0, None),
+            datetime(2018, 10, 10, 15, 30, 0, 0, None),
+            datetime(2018, 11, 1, 21, 15, 0, 0, None),
+            datetime(2018, 12, 1, 10, 30, 0, 0, None),
+        ]
+
+        result = [self.MockJobInfo(start_time=start_time.isoformat()) for start_time in jobs_start_times]
+
+        contain_filter = ContainsFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_start_times = [job.start_time for job in new_result]
+        expected_new_result_start_times = [start_time.isoformat() for start_time in jobs_start_times[2:4]]
+        self.assertEqual(expected_new_result_start_times, new_result_start_times)
