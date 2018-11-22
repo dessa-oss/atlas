@@ -52,7 +52,8 @@ class ErrorPrinter(object):
         """
 
         def _callback(*args):
-            sys.stderr.write(self.traceback_string(*args))
+            from foundations.global_state import log_manager
+            log_manager.get_logger(__name__).error(self.traceback_string(*args))
 
         return _callback
 
