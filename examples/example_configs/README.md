@@ -157,6 +157,16 @@ Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the
 
 Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
 
+### Using Redis for remote deployment
+
+If you're running jobs using either SSH or GCP deployment, you'll need to set your Redis connection configuration. This can be done like so:
+
+```
+redis_url: redis://422.428.428.42:33333
+```
+
+If no `redis_url` value is set, it will default to `localhost:6379`.
+
 ### example run_script_environment
 
 The below is for the case where you want `DEBUG`-level logging for `run.sh` processes and online mode:
