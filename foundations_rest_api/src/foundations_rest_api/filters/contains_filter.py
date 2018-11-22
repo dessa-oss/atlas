@@ -29,7 +29,8 @@ class ContainsFilter(APIFilterMixin):
     def _filter_contains(self, result, column_name, searched_value):
 
         def column_value_in_options(item):
-            value = getattr(item, column_name)
+            column_value = getattr(item, column_name)
+            value = self._parse_value(column_name, column_value)
             return searched_value in value if isinstance(value, str) else False
 
         return self._in_place_filter(column_value_in_options, result)
