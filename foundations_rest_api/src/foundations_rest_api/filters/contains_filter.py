@@ -31,7 +31,7 @@ class ContainsFilter(APIFilterMixin):
         def column_value_in_options(item):
             column_value = getattr(item, column_name)
             value = self._enforce_save_string(column_value)
-            return searched_value in value
+            return searched_value.upper() in value.upper()
 
         return self._in_place_filter(column_value_in_options, result)
 

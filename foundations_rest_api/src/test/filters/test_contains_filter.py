@@ -33,3 +33,21 @@ class TestContainsFilter(unittest.TestCase):
         new_result_users = [job.user for job in new_result]
         expected_new_result_user = ['beethoven']
         self.assertEqual(expected_new_result_user, new_result_users)
+
+    def test_status_contains(self):
+        params = {
+            'status_contains': 'u'
+        }
+
+        job_statuses = ['RUNNING', 'COMPLETED', 'FAILED', 'COMPLETED', 'RUNNING']
+
+        result = [self.MockJobInfo(job_id=index+1, status=status) for index, status in enumerate(job_statuses)]
+
+        contain_filter = ContainsFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1, 5]
+        self.assertEqual(expected_new_result_ids, new_result_ids)
