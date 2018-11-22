@@ -48,8 +48,10 @@ class _APIAcceptanceTestCaseMeta(type):
         return ''.join(['APIAcceptanceTestCaseCustomBase', uuid])
 
     def _check_mandatory_attributes(klass):
-        if not getattr(klass, 'url', None) or getattr(klass, 'sorting_columns', None) is None:
-            raise NotImplementedError('You must define class attributes "url" and "sorting_columns"')
+        if (not getattr(klass, 'url', None) or
+            getattr(klass, 'sorting_columns', None) is None or
+            getattr(klass, 'filtering_columns', None) is None):
+            raise NotImplementedError('You must define class attributes "url", "sorting_columns" and "filtering_columns"')
 
     def _force_child_class_implementation(klass, test_method_names):
         not_implemented = [method_name for method_name in test_method_names if method_name not in klass.__dict__]

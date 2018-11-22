@@ -6,6 +6,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
+from datetime import datetime
 from test.v1.models.jobs_tests_helper_mixin import JobsTestsHelperMixin
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
@@ -13,6 +14,16 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     url = '/api/v1/projects/{_project_name}/job_listing'
     sorting_columns = ['start_time', 'status']
+    filtering_columns = [{'name': 'job_id',
+                          'test_values': ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005')},
+                         {'name': 'start_time',
+                          'test_values': (datetime(2018, 9, 1, 10, 30, 0, 0, None).isoformat(),
+                                          datetime(2018, 11, 21, 16, 52, 0, 0, None).isoformat())},
+                         {'name': 'status',
+                          'test_values': ('failed', 'queued')},
+                         {'name': 'user',
+                          'test_values': ('beethoven', 'tchaikovsky')}
+                        ]
 
     def setUp(self):
         self._setup_deployment('RUNNING')
