@@ -42,3 +42,22 @@ class TestRangeFilter(unittest.TestCase):
         new_result_start_times = [job.start_time for job in new_result]
         expected_new_result_start_times = [start_time.isoformat() for start_time in jobs_start_times[1:4]]
         self.assertEqual(expected_new_result_start_times, new_result_start_times)
+
+    def test_user_range(self):
+        params = {
+            'user_starts': 'beethoven',
+            'user_ends': 'tchaikovsky'
+        }
+
+        job_users = ['bach', 'mozart', 'beethoven', 'tchaikovsky', 'verdi']
+
+        result = [self.MockJobInfo(user=job_user) for job_user in job_users]
+
+        range_filter = RangeFilter()
+        new_result = range_filter(result, params)
+
+        self.assertEqual(len(new_result), 3)
+
+        new_result_users = [job.user for job in new_result]
+        expected_new_result_user = ['mozart', 'beethoven', 'tchaikovsky']
+        self.assertEqual(expected_new_result_user, new_result_users)
