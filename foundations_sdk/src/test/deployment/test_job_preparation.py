@@ -8,10 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock, patch
 
+from foundations.deployment.job_preparation import prepare_job
+
 class TestJobPreparation(unittest.TestCase):
-    
+
     def setUp(self):
-        from foundations.deployment.job_preparation import JobPreparation
         from foundations.pipeline_context import PipelineContext
 
         self._message_router = Mock()
@@ -21,14 +22,13 @@ class TestJobPreparation(unittest.TestCase):
         self._run_data = {'some random data': self._random_uuid()}
         self._job.kwargs = self._run_data
         self._job_id = self._random_uuid()
-        self._job_preparation = JobPreparation(self._message_router, self._job, self._job_id)
 
     def test_prepare_sets_job_id(self):
-        self._job_preparation.prepare()
+        prepare_job(self._message_router, self._job, self._job_id)
         self.assertEqual(self._job_id, self._pipeline_context.file_name)
 
     def test_prepare_sets_run_data(self):
-        self._job_preparation.prepare()
+        prepare_job(self._message_router, self._job, self._job_id)
         self.assertEqual(self._job.kwargs, self._pipeline_context.provenance.job_run_data)
 
     @patch('foundations.producers.jobs.queue_job.QueueJob')
@@ -36,7 +36,7 @@ class TestJobPreparation(unittest.TestCase):
         queue_job_instance = Mock()
         queue_job.return_value = queue_job_instance
 
-        self._job_preparation.prepare()
+        prepare_job(self._message_router, self._job, self._job_id)
         queue_job.assert_called_with(self._message_router, self._pipeline_context)
         queue_job_instance.push_message.assert_called_once()
 
