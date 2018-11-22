@@ -61,3 +61,22 @@ class TestRangeFilter(unittest.TestCase):
         new_result_users = [job.user for job in new_result]
         expected_new_result_user = ['mozart', 'beethoven', 'tchaikovsky']
         self.assertEqual(expected_new_result_user, new_result_users)
+
+    def test_status_range(self):
+        params = {
+            'status_starts': 'failed',
+            'status_ends': 'queued',
+        }
+
+        job_statuses = ['RUNNING', 'COMPLETED', 'FAILED', 'COMPLETED', 'RUNNING', 'FAILED', 'QUEUED']
+
+        result = [self.MockJobInfo(job_id=index+1, status=status) for index, status in enumerate(job_statuses)]
+
+        range_filter = RangeFilter()
+        new_result = range_filter(result, params)
+
+        self.assertEqual(len(new_result), 3)
+
+        new_result_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [3, 6, 7]
+        self.assertEqual(expected_new_result_ids, new_result_ids)
