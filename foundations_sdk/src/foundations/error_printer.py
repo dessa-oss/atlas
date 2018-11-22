@@ -52,10 +52,15 @@ class ErrorPrinter(object):
         """
 
         def _callback(*args):
-            from foundations.global_state import log_manager
-            log_manager.get_logger(__name__).error(self.traceback_string(*args))
+            traceback_string = self.traceback_string(*args)
+            self._log().error(traceback_string)
 
         return _callback
+
+    def _log(self):
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__)    
+
 
     def get_old_excepthook(self):
         """Returns the old exception hook that was passed in.
