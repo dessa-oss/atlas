@@ -28,7 +28,8 @@ class ExactMatchFilter(APIFilterMixin):
     def _filter_exact_match(self, result, column_name, options):
 
         def column_value_in_options(item):
-            value = getattr(item, column_name)
+            column_value = getattr(item, column_name)
+            value = self._parse_value(column_name, column_value)
             return value in options
 
         return self._in_place_filter(column_value_in_options, result)

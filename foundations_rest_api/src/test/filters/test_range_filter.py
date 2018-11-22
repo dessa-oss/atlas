@@ -16,7 +16,7 @@ class TestRangeFilter(unittest.TestCase):
             for key, value in kwargs.items():
                 setattr(self, key, value)
 
-    def test_filter_basic_range(self):
+    def test_start_time_range(self):
         from datetime import datetime
 
         params = {

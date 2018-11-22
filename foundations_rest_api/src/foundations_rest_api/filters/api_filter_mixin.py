@@ -20,3 +20,11 @@ class APIFilterMixin(object):
             item = result_list.pop(0)
             if selection_function(item):
                 result_list.append(item)
+
+    def _parse_value(self, column_name, input_value):
+        parser = self._get_parser(column_name)
+        try:
+            output_value = parser.parse(input_value)
+        except ValueError:
+            output_value = None
+        return output_value

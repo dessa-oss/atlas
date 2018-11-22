@@ -35,14 +35,6 @@ class RangeFilter(APIFilterMixin):
 
         self._in_place_filter(is_in_range, result)
 
-    def _parse_value(self, column_name, input_value):
-        parser = self._get_parser(column_name)
-        try:
-            output_value = parser.parse(input_value)
-        except ValueError:
-            output_value = None
-        return output_value
-
     def _is_valid_range(self, start_value, end_value):
         return start_value is not None and end_value is not None and end_value >= start_value
 
