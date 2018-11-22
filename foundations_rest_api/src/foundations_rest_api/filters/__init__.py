@@ -8,10 +8,12 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 from foundations_rest_api.filters.result_sorter import ResultSorter
 from foundations_rest_api.filters.range_filter import RangeFilter
 from foundations_rest_api.filters.exact_match_filter import ExactMatchFilter
+from foundations_rest_api.filters.contains_filter import ContainsFilter
 
 
 _result_filters = {'sort': ResultSorter(),
-                   'starts': RangeFilter()}
+                   'starts': RangeFilter(),
+                   'contains': ContainsFilter()}
 
 def get_api_filters(filter_detection_key):
     if filter_detection_key == 'ends':
