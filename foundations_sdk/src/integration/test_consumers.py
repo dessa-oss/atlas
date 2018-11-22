@@ -188,12 +188,13 @@ class TestConsumers(unittest.TestCase):
         current_time = time()
 
         job_metrics_key = 'job:{}:metrics'.format(job_id)
-        job_metrics = self._redis.get(job_metrics_key)
-        job_metrics = deserialize(job_metrics)
+        job_metrics = self._redis.lrange(job_metrics_key, 0, -1)
+        job_metrics = [deserialize(data) for data in job_metrics]
+        first_job_metric = list(job_metrics)[0]
 
-        self.assertTrue(current_time - job_metrics[0] < 0.1)
-        self.assertEqual(key, job_metrics[1])
-        self.assertEqual(value, job_metrics[2])
+        self.assertTrue(current_time - first_job_metric[0] < 0.1)
+        self.assertEqual(key, first_job_metric[1])
+        self.assertEqual(value, first_job_metric[2])
 
         project_metrics_key = 'project:{}:metrics'.format(project_name)
         project_metric_name = self._redis.smembers(project_metrics_key)
