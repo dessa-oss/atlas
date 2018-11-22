@@ -15,6 +15,7 @@ _result_filters = {'sort': ResultSorter(),
                    'starts': RangeFilter(),
                    'contains': ContainsFilter()}
 
+
 def get_api_filters(filter_detection_key):
     if filter_detection_key == 'ends':
         filter_detection_key = 'starts'

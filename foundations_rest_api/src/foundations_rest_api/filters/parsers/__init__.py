@@ -22,6 +22,7 @@ _column_type_parser = {
 
 
 _column_type = {
+    'job_id': STRING,
     'duration': ELAPSED_TIME,
     'submitted_time': DATE_TIME,
     'start_time': DATE_TIME,
