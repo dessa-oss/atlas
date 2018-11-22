@@ -73,3 +73,4 @@ from test.job_bundling import *
 from test.producers import *
 from test.consumers import *
 from test.middleware import *
+from test.deployment import *

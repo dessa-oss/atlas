@@ -32,11 +32,6 @@ class TestMetricLogMiddleware(unittest.TestCase):
         self._callback_args = None
         self._callback_kwargs = None
 
-    def test_remove_json_suffix(self):
-        middleware = self._make_middleware()
-        name = 'file.json'
-        self.assertEqual(middleware._remove_json_suffix(name), 'file')
-
     @patch.object(message_router, 'push_message')
     def test_call_pushes_message_one_metric_and_returns_callback_value(self, mock):
         def method(*args, **kwargs):
@@ -44,7 +39,9 @@ class TestMetricLogMiddleware(unittest.TestCase):
 
         metric_1 = {'key': 'key1', 'value': 'value1', 'timestamp': 123}
         self._stage_context.stage_log.append(metric_1)
-        job_id = self._pipeline_context.file_name[:-5]
+
+        job_id = self._make_uuid()
+        self._pipeline_context.file_name = job_id
 
         middleware = self._make_middleware()
 
@@ -61,7 +58,9 @@ class TestMetricLogMiddleware(unittest.TestCase):
         metric_2 = {'key': 'hot', 'value': 'cold', 'timestamp': 1238129}
         self._stage_context.stage_log.append(metric_1)
         self._stage_context.stage_log.append(metric_2)
-        job_id = self._pipeline_context.file_name[:-5]
+
+        job_id = self._make_uuid()
+        self._pipeline_context.file_name = job_id
 
         middleware = self._make_middleware()
         middleware.call(None, None, None, (), {}, method)
@@ -72,6 +71,10 @@ class TestMetricLogMiddleware(unittest.TestCase):
                                       'key': 'hot', 'value': 'cold'})
 
         mock.assert_has_calls([call_1, call_2])
+
+    def _make_uuid(self):
+        from uuid import uuid4
+        return str(uuid4())
 
     def _function(self):
         pass

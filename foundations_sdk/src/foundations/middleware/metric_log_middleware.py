@@ -27,19 +27,18 @@ class MetricLogMiddleware(BasicStageMiddleware):
         """
         return_value = callback(args, kwargs)
 
-        project_name = self._pipeline_context.provenance.project_name
-        job_id = self._remove_json_suffix(self._pipeline_context.file_name)
-
         for metric in self._stage_context.stage_log:
-            self._push_message_to_channel(project_name, job_id,
-                                          metric['key'], metric['value'], 'job_metrics')
+            self._push_message_to_channel(metric['key'], metric['value'], 'job_metrics')
 
         return return_value
 
-    def _remove_json_suffix(self, name):
-        return name[:-5]
-
-    def _push_message_to_channel(self, project_name, job_id, key, value, channel_name):
+    def _push_message_to_channel(self, key, value, channel_name):
         from foundations.global_state import message_router
         message_router.push_message(
-            channel_name, {'project_name': project_name, 'job_id': job_id, 'key': key, 'value': value})
+            channel_name, {'project_name': self._project_name(), 'job_id': self._job_id(), 'key': key, 'value': value})
+
+    def _project_name(self):
+        return self._pipeline_context.provenance.project_name
+
+    def _job_id(self):
+        return self._pipeline_context.file_name

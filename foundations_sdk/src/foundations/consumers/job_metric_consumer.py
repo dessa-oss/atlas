@@ -27,6 +27,10 @@ class JobMetricConsumer(object):
             meta_data {dict} -- Additional data about the event
         """
         from foundations.fast_serializer import serialize
-        key = 'job:{}:metrics'.format(message['job_id'])
-        value = (timestamp, message['key'], message['value'])
-        self._redis.set(key, serialize(value))
+
+        job_id = message['job_id']
+        key = 'job:{}:metrics'.format(job_id)
+        metric_key = message['key']
+        metric_value = message['value']
+        value = (timestamp, metric_key, metric_value)
+        self._redis.rpush(key, serialize(value))
