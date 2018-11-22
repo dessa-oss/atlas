@@ -85,3 +85,25 @@ class TestJobDataProducers(unittest.TestCase):
         running_jobs = self._redis.smembers('project:project_with_successful_jobs:jobs:running')
         running_jobs = set([data.decode() for data in running_jobs])
         self.assertEqual(set(['successful_job']), running_jobs)
+
+    def test_produces_failed_job_data(self):
+        from foundations import create_stage
+        import json
+
+        @create_stage
+        def function():
+            raise Exception('I died!')
+
+        stage = function()
+        deployment = stage.run(job_name='failed_job')
+        deployment.wait_for_deployment_to_complete()
+
+        state = self._redis.get('jobs:failed_job:state').decode()
+        self.assertEqual('Error', state)
+
+        serialized_error_information = self._redis.get('jobs:failed_job:error_information')
+        error_information = json.loads(serialized_error_information)
+
+        self.assertEqual("<class 'Exception'>", error_information['type']) 
+        self.assertEqual('I died!', error_information['exception'])
+        self.assertIsNotNone(error_information['traceback'])
