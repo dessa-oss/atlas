@@ -66,20 +66,19 @@ class JobDataRedis(object):
             results {dict} -- Dictionary with project_name, job_id, user, job_parameters, input_params, output_metrics, status, start_time, completed_time.
         """
         from promise import Promise
+        import json
 
         project_name = self._add_get_to_pipe('project')
         user = self._add_get_to_pipe('user')
-        job_parameters = self._pipe.get(
-            'jobs:{}:parameters'.format(self._job_id)).then(self._decode_and_load)
-        input_parameters = self._pipe.get(
-            'jobs:{}:input_parameters'.format(self._job_id)).then(self._decode_and_load)
-        output_metrics = self._add_lrange_to_pipe_and_deserialize(
-            'metrics')
+        job_parameters = self._add_get_to_pipe(
+            'parameters').then(self._json_loads)
+        input_parameters = self._add_get_to_pipe(
+            'input_parameters').then(self._json_loads)
+        output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
         status = self._add_get_to_pipe('state')
-        start_time = self._add_get_to_pipe(
-            'start_time')
+        start_time = self._add_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_get_to_pipe(
-            'completed_time')
+            'completed_time').then(self._make_float)
 
         list_of_properties = Promise.all(
             [
@@ -113,8 +112,8 @@ class JobDataRedis(object):
                 'input_params': input_parameters,
                 'output_metrics': output_metrics,
                 'status': status,
-                'start_time': self._make_float(start_time),
-                'completed_time': self._make_float(completed_time)
+                'start_time': start_time,
+                'completed_time': completed_time
             }
         return seperate_args_inner(*args)
 
@@ -143,11 +142,13 @@ class JobDataRedis(object):
             return data
         return data.decode()
 
-    def _decode_and_load(self, data):
+    def _json_loads(self, data):
         if data is None:
             return []
         import json
-        return json.loads(data.decode())
+        return json.loads(data)
 
-    def _make_float(self, time):
-        return float(time)
+    def _make_float(self, time_string):
+        if time_string is None:
+            return time_string
+        return float(time_string)
