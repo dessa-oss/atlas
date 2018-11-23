@@ -21,34 +21,38 @@ class TestJobDataRedis(unittest.TestCase):
     def setUp(self):
         self._redis = fakeredis.FakeStrictRedis()
 
+    def tearDown(self):
+        self._redis.flushdb()
+
     def _set_redis(self, job_id, parameter, data):
         self._redis.set('jobs:{}:{}'.format(job_id, parameter), data)
 
-    def _sadd_redis(self, job_id, parameter, data):
-        self._redis.sadd('jobs:{}:{}'.format(job_id, parameter), data)
+    def _rpush_redis(self, job_id, parameter, data):
+        self._redis.rpush('jobs:{}:{}'.format(job_id, parameter), data)
 
     def _load_data_new_job(self, job_id, data):
         set_parameter_name = ['project', 'start_time',
-                              'completed_time', 'user', 'state']
-        sadd_parameter_name = ['parameters', 'input_parameters', 'metrics']
+                              'completed_time', 'user', 'state', 'parameters', 'input_parameters']
+        rpush_parameter_name = ['metrics']
 
         for key, value in data.items():
             if key in set_parameter_name:
                 self._set_redis(job_id, key, value)
-            if key in sadd_parameter_name:
-                self._sadd_redis(job_id, key, value)
+            if key in rpush_parameter_name:
+                self._rpush_redis(job_id, key, value)
 
     def _sadd_redis_project_name(self, project_name, job_id):
         self._redis.sadd(
             'project:{}:jobs:running'.format(project_name), job_id)
 
     def test_get_job_data_gets_data(self):
+        from foundations.fast_serializer import serialize
         data = {
             'project': 'banana',
             'user': 'potter',
             'parameters': json.dumps({'harry': 'potter'}),
-            'input_parameters': json.dumps({'ron': 'weasley'}),
-            'metrics': json.dumps(('123', 'hermione', 'granger')),
+            'input_parameters': json.dumps([{'ron': 'weasley'}]),
+            'metrics': serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
             'completed_time': '123'
@@ -65,9 +69,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': 'banana',
             'job_id': job_id,
             'user': 'potter',
-            'job_parameters': [{'harry': 'potter'}],
+            'job_parameters': {'harry': 'potter'},
             'input_params': [{'ron': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
             'start_time': '456',
             'completed_time': '123'
@@ -75,12 +79,13 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(expected_result, result.get())
 
     def test_get_job_data_gets_data_different_data(self):
+        from foundations.fast_serializer import serialize
         data = {
             'project': 'apple',
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps({'harry': 'weasley'}),
-            'metrics': json.dumps(('123', 'hermione', 'granger')),
+            'input_parameters': json.dumps([{'harry': 'weasley'}]),
+            'metrics': serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -98,9 +103,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': 'apple',
             'job_id': job_id,
             'user': 'potter',
-            'job_parameters': [{'ron': 'potter'}],
+            'job_parameters': {'ron': 'potter'},
             'input_params': [{'harry': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -109,13 +114,14 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(expected_result, result.get())
 
     def test_get_job_data_all_jobs_single_job(self):
+        from foundations.fast_serializer import serialize
         project_name = 'apple'
         data = {
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps({'harry': 'weasley'}),
-            'metrics': json.dumps(('123', 'hermione', 'granger')),
+            'input_parameters': json.dumps([{'harry': 'weasley'}]),
+            'metrics': serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -129,9 +135,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': project_name,
             'job_id': job_id_1,
             'user': 'potter',
-            'job_parameters': [{'ron': 'potter'}],
+            'job_parameters': {'ron': 'potter'},
             'input_params': [{'harry': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -143,13 +149,14 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(results[0], expected_result_1)
 
     def test_get_job_data_all_jobs_single_job_different_data(self):
+        from foundations.fast_serializer import serialize
         project_name = 'pomme'
         data = {
             'project': project_name,
             'user': 'baker',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps({'harry': 'weasley'}),
-            'metrics': json.dumps(('123', 'hermione', 'granger')),
+            'input_parameters': json.dumps([{'harry': 'weasley'}]),
+            'metrics': serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -163,9 +170,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': project_name,
             'job_id': job_id_1,
             'user': 'baker',
-            'job_parameters': [{'ron': 'potter'}],
+            'job_parameters': {'ron': 'potter'},
             'input_params': [{'harry': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -177,13 +184,14 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(results[0], expected_result_1)
 
     def test_get_job_data_all_jobs_two_jobs(self):
+        from foundations.fast_serializer import serialize
         project_name = 'apple'
         data = {
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps({'harry': 'weasley'}),
-            'metrics': json.dumps(('123', 'hermione', 'granger')),
+            'input_parameters': json.dumps([{'harry': 'weasley'}]),
+            'metrics': serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -200,9 +208,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': project_name,
             'job_id': job_id_1,
             'user': 'potter',
-            'job_parameters': [{'ron': 'potter'}],
+            'job_parameters': {'ron': 'potter'},
             'input_params': [{'harry': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -212,9 +220,9 @@ class TestJobDataRedis(unittest.TestCase):
             'project_name': project_name,
             'job_id': job_id_2,
             'user': 'potter',
-            'job_parameters': [{'ron': 'potter'}],
+            'job_parameters': {'ron': 'potter'},
             'input_params': [{'harry': 'weasley'}],
-            'output_metrics': [['123', 'hermione', 'granger']],
+            'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'

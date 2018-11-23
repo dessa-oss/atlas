@@ -69,11 +69,11 @@ class JobDataRedis(object):
 
         project_name = self._add_get_to_pipe('project')
         user = self._add_get_to_pipe('user')
-        job_parameters = self._add_smembers_to_pipe_and_deserialize(
-            'parameters')
-        input_parameters = self._add_smembers_to_pipe_and_deserialize(
-            'input_parameters')
-        output_metrics = self._add_smembers_to_pipe_and_deserialize(
+        job_parameters = self._pipe.get(
+            'jobs:{}:parameters'.format(self._job_id)).then(self._decode_and_load)
+        input_parameters = self._pipe.get(
+            'jobs:{}:input_parameters'.format(self._job_id)).then(self._decode_and_load)
+        output_metrics = self._add_lrange_to_pipe_and_deserialize(
             'metrics')
         status = self._add_get_to_pipe('state')
         start_time = self._add_get_to_pipe(
@@ -118,16 +118,16 @@ class JobDataRedis(object):
             }
         return seperate_args_inner(*args)
 
-    def _add_smembers_to_pipe_and_deserialize(self, parameter):
-        return self._pipe.smembers('jobs:{}:{}'.format(self._job_id, parameter)).then(self._deserialize_set_members)
+    def _add_lrange_to_pipe_and_deserialize(self, parameter):
+        return self._pipe.lrange('jobs:{}:{}'.format(self._job_id, parameter), 0, -1).then(self._deserialize_set_members)
 
     def _deserialize_set_members(self, param_set):
-        import json
+        from foundations.fast_serializer import deserialize
 
         decoded_param_list = []
 
         for param in param_set:
-            param = json.loads(param.decode())
+            param = deserialize(param)
             decoded_param_list.append(param)
 
         return decoded_param_list
@@ -137,3 +137,7 @@ class JobDataRedis(object):
 
     def _decode_bytes(self, data):
         return data.decode()
+
+    def _decode_and_load(self, data):
+        import json
+        return json.loads(data.decode())
