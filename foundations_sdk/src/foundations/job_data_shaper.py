@@ -29,6 +29,9 @@ class JobDataShaper(object):
         for job in jobs_data:
             job['output_metrics'] = JobDataShaper._change_list_to_dict(
                 job['output_metrics'])
+            for param in job['input_params']:
+                param.update(param['argument'])
+                del param['argument']
         return jobs_data
 
     @staticmethod

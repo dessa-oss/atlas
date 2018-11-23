@@ -113,8 +113,8 @@ class JobDataRedis(object):
                 'input_params': input_parameters,
                 'output_metrics': output_metrics,
                 'status': status,
-                'start_time': start_time,
-                'completed_time': completed_time
+                'start_time': self._make_float(start_time),
+                'completed_time': self._make_float(completed_time)
             }
         return seperate_args_inner(*args)
 
@@ -141,3 +141,6 @@ class JobDataRedis(object):
     def _decode_and_load(self, data):
         import json
         return json.loads(data.decode())
+
+    def _make_float(self, time):
+        return float(time)

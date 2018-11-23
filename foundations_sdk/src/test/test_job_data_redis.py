@@ -73,8 +73,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'ron': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
-            'start_time': '456',
-            'completed_time': '123'
+            'start_time': float('456'),
+            'completed_time': float('123')
         }
         self.assertDictEqual(expected_result, result.get())
 
@@ -107,8 +107,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
-            'start_time': '1231003123',
-            'completed_time': '123'
+            'start_time': float('1231003123'),
+            'completed_time': float('123')
         }
 
         self.assertDictEqual(expected_result, result.get())
@@ -139,8 +139,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
-            'start_time': '1231003123',
-            'completed_time': '123'
+            'start_time': float('1231003123'),
+            'completed_time': float('123')
         }
 
         results = JobDataRedis.get_all_jobs_data(
@@ -174,8 +174,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
-            'start_time': '1231003123',
-            'completed_time': '123'
+            'start_time': float('1231003123'),
+            'completed_time': float('123')
         }
 
         results = JobDataRedis.get_all_jobs_data(
@@ -212,8 +212,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
-            'start_time': '1231003123',
-            'completed_time': '123'
+            'start_time': float('1231003123'),
+            'completed_time': float('123')
         }
 
         expected_result_2 = {
@@ -224,8 +224,8 @@ class TestJobDataRedis(unittest.TestCase):
             'input_params': [{'harry': 'weasley'}],
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
-            'start_time': '1231003123',
-            'completed_time': '123'
+            'start_time': float('1231003123'),
+            'completed_time': float('123')
         }
 
         results = JobDataRedis.get_all_jobs_data(
