@@ -6,9 +6,26 @@
   &:last-child {
     border-bottom: 1px solid $color-border-bottom;
   }
+
+  .job-cell:first-child() {
+    border-left: 1px solid $color-border-bottom;
+  }
 }
 
 .job-table-container{
    margin-left: 40px;
    min-height: calc(100vh);
+}
+
+.table-row-number {
+  display: inline-block;
+  vertical-align: top;
+  width: 30px;
+  margin-left: -25px;
+  text-align: center;
+  p {
+    height: $row-height;
+    margin: 0px;
+    line-height: $row-height;
+  }
 }
