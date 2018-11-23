@@ -42,13 +42,6 @@ class JobDataShaper(object):
         return output_dict
 
     @staticmethod
-    def _collapse_to_one_dictionary(params):
-        param_dict = {}
-        for param in params:
-            param_dict.update(param)
-        return param_dict
-
-    @staticmethod
     def _flatten_argument(params):
         for param in params:
             param.update(param['argument'])
