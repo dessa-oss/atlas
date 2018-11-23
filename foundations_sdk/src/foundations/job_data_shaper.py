@@ -29,8 +29,6 @@ class JobDataShaper(object):
         for job in jobs_data:
             job['output_metrics'] = JobDataShaper._change_list_to_dict(
                 job['output_metrics'])
-            job['job_parameters'] = JobDataShaper._collapse_to_one_dictionary(
-                job['job_parameters'])
         return jobs_data
 
     @staticmethod

@@ -17,7 +17,7 @@ class TestJobDataShaper(unittest.TestCase):
             'project_name': 'banana',
             'job_id': '132',
             'user': 'potter',
-            'job_parameters': [{'harry': 'potter'}],
+            'job_parameters': {'harry': 'potter'},
             'input_params': [{'ron': 'weasley'}],
             'output_metrics': [['123', 'hermione', 'granger']],
             'status': 'dead',
@@ -39,7 +39,7 @@ class TestJobDataShaper(unittest.TestCase):
 
     def test_data_reshaped_one_job_different_data(self):
         sample_data = [{
-            'job_parameters': [{'harry': 'potter'}, {'tom': 'riddle'}],
+            'job_parameters': {'harry': 'potter', 'tom': 'riddle'},
             'input_params': [{'ron': 'weasley'}, {'dudley': 'dursley'}],
             'output_metrics': [['123', 'hermione', 'granger'], ['1245', 'luna', 'lovegood']],
         }]
@@ -53,24 +53,16 @@ class TestJobDataShaper(unittest.TestCase):
 
     def test_data_reshaped_two_jobs_different_data(self):
         sample_data = [{
-            'job_parameters': [{'harry': 'potter'}, {'tom': 'riddle'}],
-            'input_params': [{'ron': 'weasley'}],
             'output_metrics': [['123', 'hermione', 'granger'], ['1245', 'luna', 'lovegood']],
         },
             {
-            'job_parameters': [{'plant': 'potter'}, {'tom': 'riddle'}],
-            'input_params': [{'ron': 'weasley'}],
             'output_metrics': [['123', 'hermione', 'granger'], ['1245', 'moon', 'lovegood']],
         }]
         expected_data = [{
-            'job_parameters': {'harry': 'potter', 'tom': 'riddle'},
-            'input_params': [{'ron': 'weasley'}],
             'output_metrics': {'hermione': 'granger', 'luna': 'lovegood'},
 
         },
             {
-            'job_parameters': {'plant': 'potter', 'tom': 'riddle'},
-            'input_params': [{'ron': 'weasley'}],
             'output_metrics': {'hermione': 'granger', 'moon': 'lovegood'},
 
         }]
