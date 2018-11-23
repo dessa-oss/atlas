@@ -12,22 +12,32 @@ class TableSectionHeader extends Component {
       isShowingFilter: false,
       changeHiddenParams: this.props.changeHiddenParams,
       columns: this.props.columns,
+      hiddenInputParams: this.props.hiddenInputParams,
+      updateSearchText: this.props.updateSearchText,
+      isMetric: this.props.isMetric,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const formatedColumns = CommonActions.formatColumns(nextProps.columns, nextProps.hiddenInputParams);
-    this.setState({ columns: formatedColumns });
+    const formatedColumns = this.formatColumns(nextProps.columns, nextProps.hiddenInputParams, nextProps.searchText);
+    this.setState(
+      { columns: formatedColumns, hiddenInputParams: nextProps.hiddenInputParams },
+    );
   }
 
   toggleShowingFilter() {
-    const { isShowingFilter } = this.state;
+    const { isShowingFilter, updateSearchText } = this.state;
+    updateSearchText('');
     this.setState({ isShowingFilter: !isShowingFilter });
+  }
+
+  formatColumns(columns, hiddenInputParams, searchText) {
+    return CommonActions.formatColumns(columns, hiddenInputParams, searchText);
   }
 
   render() {
     const {
-      header, isShowingFilter, changeHiddenParams, columns, hiddenInputParams,
+      header, isShowingFilter, changeHiddenParams, columns, hiddenInputParams, updateSearchText, isMetric,
     } = this.state;
 
     const divClass = CommonActions.getTableSectionHeaderDiv(header);
@@ -42,6 +52,7 @@ class TableSectionHeader extends Component {
           columns={columns}
           toggleShowingFilter={this.toggleShowingFilter}
           hiddenInputParams={hiddenInputParams}
+          updateSearchText={updateSearchText}
         />
       );
     }
@@ -69,6 +80,9 @@ TableSectionHeader.propTypes = {
   changeHiddenParams: PropTypes.func,
   columns: PropTypes.array,
   hiddenInputParams: PropTypes.array,
+  updateSearchText: PropTypes.func,
+  searchText: PropTypes.string,
+  isMetric: PropTypes.bool,
 };
 
 TableSectionHeader.defaultProps = {
@@ -77,6 +91,9 @@ TableSectionHeader.defaultProps = {
   changeHiddenParams: () => {},
   columns: [],
   hiddenInputParams: [],
+  updateSearchText: () => {},
+  searchText: '',
+  isMetric: false,
 };
 
 export default TableSectionHeader;

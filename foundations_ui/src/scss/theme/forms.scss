@@ -16,9 +16,9 @@ input[type="text"] {
   font-size: 14px;
   border-radius: 0;
   border: 1px solid $color-border-bottom;
-  outline: none;
   cursor: pointer;
   height: 38px;
+  outline-width: 2px;
 }
   
 input[type="text"]:placeholder {
@@ -31,6 +31,23 @@ input[type="text"]:placeholder {
   color: $color-label-placeholder;
   margin-top: 4px;
   white-space: normal;
+}
+
+button.b--mat {
+  @extend .f--din;
+  margin-right: 15px;
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  width: auto;
+  padding: 10px 15px;
+  height: 30px;
+  line-height: 10px;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 12px;
+  color: white;
 }
 
 button.b--mat.b--affirmative {

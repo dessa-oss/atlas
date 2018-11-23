@@ -79,8 +79,12 @@ const columnsToFormat = ['col1', 'col2', 'metric3'];
 const emptyArray = [];
 const changedParams = ['alreadyHere'];
 const toAddParams = ['alreadyHere'];
+const multipleParams = ['notHere', 'alsonothere', 'alreadyHere'];
+const noParams = [];
 const newParam = 'newParam';
 const oldParam = 'alreadyHere';
+const noSearch = '';
+const search = '1';
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -211,15 +215,20 @@ it('get MetricCellsFromOutputMetrics', () => {
 });
 
 it('formatColumns, no cols', () => {
-  const formatedCols = CommonActions.formatColumns(emptyArray, hidden);
+  const formatedCols = CommonActions.formatColumns(emptyArray, hidden, noSearch);
   expect(formatedCols).toEqual([]);
 });
 
 it('formatColumns, has cols', () => {
-  const formatedCols = CommonActions.formatColumns(columnsToFormat, hidden);
+  const formatedCols = CommonActions.formatColumns(columnsToFormat, hidden, noSearch);
   expect(formatedCols.length).toEqual(3);
   expect(formatedCols[1].hidden).toEqual(false);
   expect(formatedCols[2].hidden).toEqual(true);
+});
+
+it('formatColumns, search', () => {
+  const formatedCols = CommonActions.formatColumns(columnsToFormat, hidden, search);
+  expect(formatedCols.length).toEqual(1);
 });
 
 it('get ChangedCheckboxes, old', () => {
@@ -231,6 +240,23 @@ it('get ChangedCheckboxes, newParam', () => {
   const changedArray = CommonActions.getChangedCheckboxes(toAddParams, newParam);
   expect(changedArray.length).toBe(2);
   expect(changedArray[1]).toBe(newParam);
+});
+
+it('get ChangedCheckboxes, more than 1 element, none are colName', () => {
+  const changedArray = CommonActions.getChangedCheckboxes(multipleParams, newParam);
+  expect(changedArray.length).toBe(4);
+  expect(changedArray[3]).toBe(newParam);
+});
+
+it('get ChangedCheckboxes, more than 1 element, one is colName', () => {
+  const changedArray = CommonActions.getChangedCheckboxes(multipleParams, oldParam);
+  expect(changedArray.length).toBe(2);
+});
+
+it('get ChangedCheckboxes, 0 elements', () => {
+  const changedArray = CommonActions.getChangedCheckboxes(noParams, newParam);
+  expect(changedArray.length).toBe(1);
+  expect(changedArray[0]).toBe(newParam);
 });
 
 it('get RowKey', () => {

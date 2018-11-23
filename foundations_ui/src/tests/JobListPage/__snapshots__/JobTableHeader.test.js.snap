@@ -9,7 +9,10 @@ exports[`Shallow Renders Job Table Header 1`] = `
     columns={Array []}
     header=""
     hiddenInputParams={Array []}
+    isMetric={false}
     isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
   />
   <InputMetric
     allInputParams={Array []}

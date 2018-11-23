@@ -9,7 +9,10 @@ exports[`Shallow Renders InputMetric 1`] = `
     columns={Array []}
     header=""
     hiddenInputParams={Array []}
+    isMetric={false}
     isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
   />
   <div
     className="input-metric-column-header-container"

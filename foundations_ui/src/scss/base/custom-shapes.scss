@@ -10,13 +10,23 @@
   background-color: $color-status-red;
 }
 
-.mg-bg {
+.button-icon {
   background: $color-light-blue;
   margin: 0px;
   width: 30px;
   height: 30px;
   display: inline-block;
   vertical-align: top;
+  border-width: 0;
+  outline: none;
+}
+
+.button-icon:hover {
+  background-color: $color-hover-blue;
+}
+  
+.button-icon:active {
+  background-color: $color-active-blue;
 }
 
 .magnifying-glass
@@ -27,8 +37,6 @@
   border: 0.1em solid $color-white;
   position: relative;
   border-radius: 0.35em;
-  left: 8px;
-  top: 8px;
 }
 .magnifying-glass::before
 {

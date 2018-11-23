@@ -77,23 +77,6 @@ img {
   max-width: 100%;
 }
 
-button.b--mat {
-  @extend .f--din;
-  margin-right: 15px;
-  overflow: hidden;
-  border-width: 0;
-  outline: none;
-  width: auto;
-  padding: 10px 15px;
-  height: 30px;
-  line-height: 10px;
-  letter-spacing: normal;
-  text-transform: uppercase;
-  text-align: center;
-  font-size: 12px;
-  color: white;
-}
-
 .no-elevation {
     background: $color-no-elevation;
     border-radius: 2px;
@@ -264,9 +247,6 @@ hr {
 }
 
 .border-input-metric-arrow{
-  border-top: 8px solid $color-white;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
   width: 0; 
   height: 0;
 }

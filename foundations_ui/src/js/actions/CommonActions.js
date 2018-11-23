@@ -158,16 +158,17 @@ class CommonActions {
     return status.toLowerCase() === 'error';
   }
 
-  static formatColumns(columns, hiddenInputParams) {
+  static formatColumns(columns, hiddenInputParams, searchText) {
     const formatedColumns = [];
-
     if (columns !== null) {
       columns.forEach((col) => {
-        let isHidden = false;
-        if (hiddenInputParams.includes(col)) {
-          isHidden = true;
+        if (col.toLowerCase().includes(searchText.toLowerCase())) {
+          let isHidden = false;
+          if (hiddenInputParams.includes(col)) {
+            isHidden = true;
+          }
+          formatedColumns.push({ name: col, hidden: isHidden });
         }
-        formatedColumns.push({ name: col, hidden: isHidden });
       });
     }
     return formatedColumns;
@@ -175,14 +176,13 @@ class CommonActions {
 
   static getChangedCheckboxes(changedParams, colName) {
     const index = changedParams.indexOf(colName);
-    let newArray = [];
+    const copyArray = this.deepCopyArray(changedParams);
     if (index !== notFound) {
-      changedParams.splice(index, oneElement);
+      copyArray.splice(index, oneElement);
     } else {
-      changedParams.push(colName);
+      copyArray.push(colName);
     }
-    newArray = changedParams;
-    return newArray;
+    return copyArray;
   }
 
   static getRowKey(job) {
@@ -236,7 +236,7 @@ class CommonActions {
     return input.value.type === 'constant';
   }
 
-  static getCheckboxes(columns, changeLocalParams) {
+  static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters) {
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];
@@ -247,10 +247,16 @@ class CommonActions {
           name={col.name}
           hidden={col.hidden}
           changeHiddenParams={changeLocalParams}
+          showAllFilters={showAllFilters}
+          unsetClearFilters={unsetClearFilters}
         />);
       });
     }
     return checkboxes;
+  }
+
+  static deepCopyArray(originalArry) {
+    return JSON.parse(JSON.stringify(originalArry));
   }
 }
 

@@ -1,7 +1,7 @@
 .input-metric-container{
   display: inline-block;
   vertical-align: middle;
-  width: 532px;
+  width: 530px;
   height: 36px;
   margin: 0px;
   padding: 0px;
@@ -11,6 +11,7 @@
   width: 530px;
   overflow: hidden;
   overflow-x: scroll;
+  overflow-y: scroll;
   white-space: nowrap;
   border-left: 4px solid $color-border-bottom;
 

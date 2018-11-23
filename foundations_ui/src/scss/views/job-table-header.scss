@@ -3,6 +3,13 @@
   vertical-align: top;
   width: 100%;
   background-color: $color-background-grey;
+
+  > div:nth-child(3) {
+    > div:first-child() {
+      margin-left: 4px;
+    }
+  }
+
 }
 
 .job-column-header-container{

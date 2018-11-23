@@ -48,6 +48,7 @@ class InputMetric extends Component {
 
   updateSearchText(text) {
     this.setState({ searchText: text });
+    this.forceUpdate();
   }
 
   render() {
@@ -56,7 +57,9 @@ class InputMetric extends Component {
     } = this.state;
 
 
-    const inputParams = CommonActions.getInputMetricColumnHeaders(allInputParams, this.resizeCells, hiddenInputParams);
+    const inputParams = CommonActions.getInputMetricColumnHeaders(
+      allInputParams, this.resizeCells, hiddenInputParams,
+    );
     const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams, hiddenInputParams);
 
     return (
@@ -66,6 +69,9 @@ class InputMetric extends Component {
           changeHiddenParams={this.changeHiddenParams}
           columns={allInputParams}
           hiddenInputParams={hiddenInputParams}
+          updateSearchText={this.updateSearchText}
+          searchText={searchText}
+          isMetric={isMetric}
         />
         <div className="input-metric-column-header-container">
           {inputParams}
