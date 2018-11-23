@@ -16,13 +16,13 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     sorting_columns = ['start_time', 'status']
     filtering_columns = [{'name': 'job_id',
                           'test_values': ('00000000-0000-0000-0000-000000000000', 'my job 1')},
+                         {'name': 'status',
+                          'test_values': ('queued', 'running')},
+                         {'name': 'user',
+                          'test_values': ('beethoven', 'soju hero')},
                          #{'name': 'start_time',
                          # 'test_values': (datetime(2018, 9, 1, 10, 30, 0, 0, None).isoformat(),
-                         #                 datetime(2018, 11, 21, 16, 52, 0, 0, None).isoformat())},
-                         #{'name': 'status',
-                         # 'test_values': ('failed', 'queued')},
-                         #{'name': 'user',
-                         # 'test_values': ('beethoven', 'tchaikovsky')}
+                         #                 datetime(2018, 11, 21, 16, 52, 0, 0, None).isoformat())}
                         ]
 
     def setUp(self):
@@ -109,3 +109,51 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(len(data['jobs']), 2)
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+
+    def test_filter_status_range(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_range()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_status_exact_match_one_option(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 0)
+
+    def test_filter_status_exact_match_two_options(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_user_range(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_range()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_user_exact_match_one_option(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 0)
+
+    def test_filter_user_exact_match_two_options(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_job_id_contains(self):
+
+        def get_param_method():
+            return '?job_id_contains=1'
+
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method(get_param_method)
+        data = custom_test_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
+
+    def test_filter_user_contains(self):
+
+        def get_param_method():
+            return '?user_contains=hero'
+
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method(get_param_method)
+        data = custom_test_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
