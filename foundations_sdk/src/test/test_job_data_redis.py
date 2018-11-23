@@ -233,3 +233,34 @@ class TestJobDataRedis(unittest.TestCase):
 
         six.assertCountEqual(self,
                              results, [expected_result_1, expected_result_2])
+
+    def test_get_job_data_handles_missing_keys(self):
+        from foundations.fast_serializer import serialize
+        data = {
+            'project': 'banana',
+            'user': 'hi',
+            'parameters': json.dumps({'harry': 'potter'}),
+            'state': 'dead',
+            'start_time': '456',
+            'completed_time': '123'
+        }
+        job_id = 'the boy who lived'
+        redis_pipe = RedisPipelineWrapper(
+            self._redis.pipeline())
+        job_data = JobDataRedis(redis_pipe, job_id)
+        self._load_data_new_job(job_id, data)
+
+        result = job_data.get_job_data()
+        redis_pipe.execute()
+        expected_result = {
+            'project_name': 'banana',
+            'job_id': job_id,
+            'user': 'hi',
+            'job_parameters': {'harry': 'potter'},
+            'input_params': [],
+            'output_metrics': [],
+            'status': 'dead',
+            'start_time': float('456'),
+            'completed_time': float('123')
+        }
+        self.assertDictEqual(expected_result, result.get())

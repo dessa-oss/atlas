@@ -124,6 +124,9 @@ class JobDataRedis(object):
     def _deserialize_set_members(self, param_set):
         from foundations.fast_serializer import deserialize
 
+        if param_set is None:
+            return []
+
         decoded_param_list = []
 
         for param in param_set:
@@ -136,9 +139,13 @@ class JobDataRedis(object):
         return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter)).then(self._decode_bytes)
 
     def _decode_bytes(self, data):
+        if data is None:
+            return data
         return data.decode()
 
     def _decode_and_load(self, data):
+        if data is None:
+            return []
         import json
         return json.loads(data.decode())
 
