@@ -4,6 +4,10 @@ exports[`Shallow Renders Job List Page 1`] = `
 <div
   className="job-list-container"
 >
+  <Toolbar />
+  <JobHeader
+    numProjects={0}
+  />
   <JobTable
     allInputParams={Array []}
     allMetrics={Array []}

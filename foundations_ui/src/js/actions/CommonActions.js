@@ -250,8 +250,8 @@ class CommonActions {
     return checkboxes;
   }
 
-  static deepCopyArray(originalArry) {
-    return JSON.parse(JSON.stringify(originalArry));
+  static deepCopyArray(originalArray) {
+    return JSON.parse(JSON.stringify(originalArray));
   }
 }
 
