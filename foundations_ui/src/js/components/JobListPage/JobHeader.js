@@ -6,11 +6,57 @@ class JobHeader extends Component {
     super(props);
     this.state = {
       project: this.props.project,
+      filters: this.props.filters,
+      bubbleWidth: 0,
+      bubbleRefs: [],
+      bubblesHidden: 0,
     };
   }
 
+  componentDidMount() {
+    const { bubbleWidth, bubbleRefs } = this.state;
+    const { clientWidth } = this.bubbleContainer;
+
+    let curWidth = 0;
+    let numHidden = 0;
+    bubbleRefs.forEach((bubble) => {
+      curWidth += bubble.clientWidth + 2; // 2 is for border
+      if (curWidth > clientWidth) {
+        bubble.className += ' hidden';
+        numHidden += 1;
+      }
+    });
+
+    this.setState({ bubblesHidden: numHidden });
+  }
+
   render() {
-    const { project } = this.state;
+    const {
+      project, filters, bubbleRefs, bubblesHidden,
+    } = this.state;
+
+    const filterBubbles = [];
+    filters.forEach((filter) => {
+      filterBubbles.push(
+        <div ref={(e) => { bubbleRefs.push(e); }} key={filter.column} className="bubble sort-bubble">
+          <p className="font-bold">
+            {filter.column}:<span> {filter.value}</span>
+          </p>
+          <button type="button" className="close-button" />
+        </div>,
+      );
+    });
+
+    let moreBubbles = null;
+    if (bubblesHidden > 0) {
+      moreBubbles = (
+        <div className="bubble more-bubble">
+          <p className="font-bold text-blue text-upper">
+          + {bubblesHidden} More
+          </p>
+        </div>
+      );
+    }
 
     return (
       <div className="job-header-container">
@@ -36,6 +82,21 @@ class JobHeader extends Component {
             Created at: <span>{project.created_at}</span>
           </p>
         </div>
+        <div className="job-header-sorting-container">
+          <button
+            type="button"
+            onClick={this.onClearFilters}
+            className="b--mat b--affirmative text-upper"
+          >
+            Clear Filters
+          </button>
+          <div>
+            <div ref={(e) => { this.bubbleContainer = e; }}>
+              {filterBubbles}
+            </div>
+            {moreBubbles}
+          </div>
+        </div>
       </div>
     );
   }
@@ -44,11 +105,19 @@ class JobHeader extends Component {
 JobHeader.propTypes = {
   numProjects: PropTypes.number,
   project: PropTypes.object,
+  filters: PropTypes.array,
+  bubbleWidth: PropTypes.number,
+  bubbleRefs: PropTypes.array,
+  bubblesHidden: PropTypes.number,
 };
 
 JobHeader.defaultProps = {
   numProjects: 0,
   project: { owner: 'null', created_at: 'null', name: 'null' },
+  filters: [],
+  bubbleWidth: 0,
+  bubbleRefs: [],
+  bubblesHidden: 0,
 };
 
 export default JobHeader;

@@ -6,6 +6,37 @@ exports[`Shallow Renders Job List Page 1`] = `
 >
   <Toolbar />
   <JobHeader
+    bubbleRefs={Array []}
+    bubbleWidth={0}
+    bubblesHidden={0}
+    filters={
+      Array [
+        Object {
+          "column": "User",
+          "value": "Buck",
+        },
+        Object {
+          "column": "Status",
+          "value": "Error",
+        },
+        Object {
+          "column": "Start Time",
+          "value": "Today",
+        },
+        Object {
+          "column": "Metric 1",
+          "value": "abc",
+        },
+        Object {
+          "column": "Metric 2",
+          "value": "123",
+        },
+        Object {
+          "column": "Metric 3",
+          "value": "more words",
+        },
+      ]
+    }
     numProjects={0}
     project={Object {}}
   />
