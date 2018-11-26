@@ -20,8 +20,6 @@ class TestJobDataRedis(unittest.TestCase):
 
     def setUp(self):
         self._redis = fakeredis.FakeStrictRedis()
-
-    def tearDown(self):
         self._redis.flushdb()
 
     def _set_redis(self, job_id, parameter, data):
