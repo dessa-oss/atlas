@@ -11,3 +11,4 @@ mock==2.0.0
 freezegun==0.3.8
 flask-restful==0.3.6
 Flask-Cors==3.0.6
+mkdocs==1.0.4
