@@ -22,7 +22,7 @@ class ContainsFilter(APIFilterMixin):
                 self._filter_column(result, column_name, value)
 
     def _filter_column(self, result, column_name, value):
-        searched_value = self._enforce_save_string(value)
+        searched_value = self._enforce_safe_string(value)
         if searched_value:
             self._filter_contains(result, column_name, searched_value)
 
@@ -30,12 +30,12 @@ class ContainsFilter(APIFilterMixin):
 
         def column_value_in_options(item):
             column_value = getattr(item, column_name)
-            value = self._enforce_save_string(column_value)
+            value = self._enforce_safe_string(column_value)
             return searched_value.upper() in value.upper()
 
         return self._in_place_filter(column_value_in_options, result)
 
-    def _enforce_save_string(self, value):
+    def _enforce_safe_string(self, value):
         # TODO: Add some extra checking or sanitization
         if not isinstance(value, str):
             return str(value)
