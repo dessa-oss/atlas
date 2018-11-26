@@ -11,7 +11,7 @@ class ProjectActions {
   // API Calls
   static getJobs(projectName) {
     const url = 'projects/'.concat(projectName).concat('/job_listing');
-    return BaseActions.getFromAPI(url)
+    return BaseActions.getJobsFromAPI(url)
       .then((res) => {
         return res;
       });
