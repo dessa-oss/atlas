@@ -54,3 +54,48 @@
      -ms-transform: rotate(45deg);
       -o-transform: rotate(45deg);
 }
+
+.close-button {
+  $size: 16px;
+  height: $size;
+  width: $size;
+  position: relative;
+  box-sizing: border-box;
+  line-height: $size;
+  display: inline-block;
+  vertical-align: middle;
+  background: $color-light-blue;
+  border-radius: 50%;
+  outline: none;
+  border: none;
+  margin-right: 5px;
+
+  &:before, &:after {
+      $width: 10px;
+      $height: 2px;
+      transform: rotate(-45deg);
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -$height/2;
+      margin-left: -$width/2;
+      display: block;
+      height: $height;
+      width: $width;
+      background-color: $color-white;
+      transition: all 0.25s ease-out;
+  }
+
+  &:after {
+      transform: rotate(-135deg);
+  }
+
+  &:hover {
+      background: $color-hover-blue;
+  }
+
+  &:active {
+    background: $color-active-blue;
+  }
+}
