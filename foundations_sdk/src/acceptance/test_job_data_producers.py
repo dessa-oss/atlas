@@ -53,7 +53,7 @@ class TestJobDataProducers(unittest.TestCase):
         current_time = time()
 
         serialized_metrics = self._redis.lrange(
-            'job:successful_job:metrics', 0, -1)
+            'jobs:successful_job:metrics', 0, -1)
         metrics = [deserialize(data) for data in serialized_metrics]
         metric_1, metric_2, metric_3 = metrics
 
