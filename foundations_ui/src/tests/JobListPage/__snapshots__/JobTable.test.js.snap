@@ -10,6 +10,9 @@ exports[`Shallow Renders Job Table 1`] = `
     jobs={Array []}
   />
   <div
+    className="table-row-number"
+  />
+  <div
     className="job-table-row-container"
   >
     <p>
