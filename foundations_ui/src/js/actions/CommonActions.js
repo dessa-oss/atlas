@@ -195,7 +195,7 @@ class CommonActions {
     return !array.includes(value);
   }
 
-  static getInputMetricInput(jobArray, col, isMetric) {
+  static getInputMetricInput(jobArray, column, isMetric) {
     let input = null;
     if (!isMetric) {
       input = {
@@ -204,7 +204,7 @@ class CommonActions {
     }
     if (jobArray) {
       jobArray.forEach((param) => {
-        if (param.name === col) {
+        if (param.name === column) {
           input = param;
         }
       });
