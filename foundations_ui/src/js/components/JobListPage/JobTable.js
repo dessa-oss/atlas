@@ -81,7 +81,7 @@ class JobTable extends Component {
         jobs.forEach((job) => {
           const key = job.job_id;
           jobRows.push(<JobTableRow key={key} job={job} />);
-          rowNumbers.push(<p>{rowNum}</p>);
+          rowNumbers.push(<p key={key}>{rowNum}</p>);
           rowNum += 1;
         });
       }

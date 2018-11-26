@@ -13,7 +13,7 @@ class ProjectSummary extends Component {
 
   viewClick() {
     const { project, selectProject } = this.state;
-    selectProject(project.name);
+    selectProject(project);
   }
 
   render() {
