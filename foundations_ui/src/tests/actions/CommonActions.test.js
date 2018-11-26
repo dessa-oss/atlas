@@ -18,26 +18,29 @@ const job = {
   input_params: [
     {
       name: 'param1',
-      value: {
-        type: 'constant',
-        value: '1',
-      }
+      source: 'constant',
+      value: '1',
     },
     {
       name: 'param2',
-      value: {
-        type: 'constant',
-        value: '3',
-      }
+      source: 'constant',
+      value: '3',
     }
   ],
-  output_metrics: {
-    data_set_name: [
-      'metric1',
-      'metric2',
-      'metric3',
+  output_metrics:[
+      {
+        name:'metric1',
+        value: 'm'
+      },
+      {
+        name:'metric2',
+        value: 'm'
+      },
+      {
+        name:'metric3',
+        value: 'm'
+      },
     ],
-  }
 };
 const cellWidths = [ 100, 200 ];
 const jobs = [
@@ -139,7 +142,7 @@ it('isHeaderNotEmpty isEmpty', () => {
 
 it('get InputMetricCells no metric, has jobs', () => {
   const cells = CommonActions.getInputMetricCells(job, cellWidths, error, noMetric, columns, hidden);
-  expect(cells.length).toBe(2);
+  expect(cells.length).toBe(1);
 });
 
 it('get InputMetricCells no metric, no job', () => {
@@ -201,8 +204,7 @@ it('isError', () => {
 
 it('get InputCellsFromInputParams', () => {
   const cells = CommonActions.getInputCellsFromInputParams(job, cellWidths, noError, columns, noMetric, hidden);
-  expect(cells.length).toBe(2);
-  expect(cells[1]).toBe(null);
+  expect(cells.length).toBe(1);
   expect(cells[0]).not.toBe(null);
 });
 
