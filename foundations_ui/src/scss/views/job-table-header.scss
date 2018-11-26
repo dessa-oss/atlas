@@ -8,8 +8,11 @@
     > div:first-child() {
       margin-left: 4px;
     }
-  }
 
+    > div:last-child() {
+     border-right: 1px solid $color-border-bottom;
+    }
+  }
 }
 
 .job-column-header-container{

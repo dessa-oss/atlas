@@ -8,7 +8,7 @@
 }
 
 .input-metric-column-header-container{
-  width: 530px;
+  width: calc(530px - 1px); // To accomodate border
   overflow: hidden;
   overflow-x: scroll;
   overflow-y: scroll;
@@ -42,15 +42,14 @@
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
-
-    &:last-child {
-      border-right: 0px;
-    }
     
     p{
-      margin: auto;
+      margin: 0px 15px;
       vertical-align: middle;
       height: 26px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 }

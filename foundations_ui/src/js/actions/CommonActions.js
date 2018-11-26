@@ -84,8 +84,8 @@ class CommonActions {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
+        const cellWidth = cellWidths[colIndex];
         if (this.isConstant(input)) {
-          const cellWidth = cellWidths[colIndex];
           const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
           cells.push(<InputMetricCell
             key={key}
@@ -93,9 +93,9 @@ class CommonActions {
             value={inputValue}
             isError={isError}
           />);
+        } else {
+          cells.push(null);
         }
-      } else {
-        cells.push(null);
       }
       colIndex += 1;
     });
@@ -107,7 +107,7 @@ class CommonActions {
     let colIndex = 0;
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
-        const input = this.getInputMetricInput(job.output_metrics.data_set_name, col, isMetric);
+        const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
         const cellWidth = cellWidths[colIndex];
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
@@ -195,21 +195,16 @@ class CommonActions {
     return !array.includes(value);
   }
 
-  static getInputMetricInput(jobArray, col, isMetric) {
+  static getInputMetricInput(jobArray, column, isMetric) {
     let input = null;
     if (!isMetric) {
       input = {
-        value: {
-          type: 'constant',
-        },
+        source: 'constant',
       };
     }
     if (jobArray) {
       jobArray.forEach((param) => {
-        if (!isMetric && param.name === col) {
-          input = param;
-        }
-        if (isMetric && param === col) {
+        if (param.name === column) {
           input = param;
         }
       });
@@ -233,7 +228,7 @@ class CommonActions {
   }
 
   static isConstant(input) {
-    return input.value.type === 'constant';
+    return input.source === 'constant';
   }
 
   static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters) {
