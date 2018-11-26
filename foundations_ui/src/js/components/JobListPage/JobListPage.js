@@ -9,15 +9,16 @@ class JobListPage extends Component {
     super(props);
     this.state = {
       projectName: this.props.projectName,
+      project: this.props.project,
     };
   }
 
   render() {
-    const { projectName } = this.state;
+    const { projectName, project } = this.state;
     return (
       <div className="job-list-container">
         <Toolbar />
-        <JobHeader />
+        <JobHeader project={project} />
         <JobTable projectName={projectName} />
       </div>
     );
@@ -26,10 +27,12 @@ class JobListPage extends Component {
 
 JobListPage.propTypes = {
   projectName: PropTypes.string,
+  project: PropTypes.object,
 };
 
 JobListPage.defaultProps = {
   projectName: '',
+  project: {},
 };
 
 export default JobListPage;

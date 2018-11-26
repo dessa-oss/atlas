@@ -10,7 +10,7 @@ class ProjectPage extends Component {
     this.getAllProjects = this.getAllProjects.bind(this);
     this.state = {
       isLoaded: false,
-      projects: [],
+      projects: this.props.projects,
       isMount: false,
       selectProject: this.props.selectProject,
     };

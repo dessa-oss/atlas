@@ -5,16 +5,12 @@ class JobHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numProjects: this.props.numProjects,
+      project: this.props.project,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ numProjects: nextProps.numProjects });
-  }
-
   render() {
-    const { numProjects } = this.state;
+    const { project } = this.state;
 
     return (
       <div className="job-header-container">
@@ -31,13 +27,13 @@ class JobHeader extends Component {
         </div>
 
         <div className="job-summary-info-container">
-          <h2 className="project-summary-name-text font-bold">Name</h2>
+          <h2 className="project-summary-name-text font-bold">{ project.name }</h2>
           <p className="project-summary-source-text">Data Source: Unknown</p>
           <p className="project-summary-owner-text font-bold">
-            Project owner: <span>Owner</span>
+            Project owner: <span>{project.owner}</span>
           </p>
           <p className="project-summary-created-at-text font-bold">
-            Created at: <span>12:00</span>
+            Created at: <span>{project.created_at}</span>
           </p>
         </div>
       </div>
@@ -47,10 +43,12 @@ class JobHeader extends Component {
 
 JobHeader.propTypes = {
   numProjects: PropTypes.number,
+  project: PropTypes.object,
 };
 
 JobHeader.defaultProps = {
   numProjects: 0,
+  project: { owner: 'null', created_at: 'null', name: 'null' },
 };
 
 export default JobHeader;
