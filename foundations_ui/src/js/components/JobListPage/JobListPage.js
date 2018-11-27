@@ -41,7 +41,7 @@ JobListPage.propTypes = {
 JobListPage.defaultProps = {
   projectName: '',
   project: {},
-  filters: [{ column: 'user', value: 'Buck' }],
+  filters: [],
 };
 
 export default JobListPage;

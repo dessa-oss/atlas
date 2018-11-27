@@ -1,0 +1,36 @@
+.show-more-filters-container {
+  width: 655px;
+  height: 300px;
+  background: $color-white;
+  position: relative;
+  left: 180px;
+  z-index: 2;
+  padding: 0px 15px 15px 15px;
+  overflow-y: scroll;
+
+  > div:not(:last-child()) {
+    margin-right: 10px;
+  }
+
+  > div {
+    margin-top: 15px;
+  }
+
+  .bubble {
+    vertical-align: top;
+    border: 1px solid $color-medium-blue;
+    padding: 3px;
+    border-radius: 8px;
+    line-height: 20px;
+    height: 23px;
+
+    p {
+      margin: 0px;
+      display: inline-block;
+      vertical-align: middle;
+      padding-right: 10px;
+      padding-left: 5px; 
+    }
+  }
+
+}
