@@ -96,6 +96,15 @@ class JobHeader extends Component {
             </div>
             {moreBubbles}
           </div>
+          <div>
+            <button
+              type="button"
+              onClick={this.toggleFilters}
+              className="b--mat b--affirmative text-upper"
+            >
+              View Filters
+            </button>
+          </div>
         </div>
       </div>
     );
