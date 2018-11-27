@@ -162,8 +162,6 @@ class ProjectActions {
       return inputParam.value;
     }
 
-    // else input param
-    // TODO JUST source constant?????
     if (inputParam && columns.includes(inputParam.name)
     && inputParam.value) {
       return inputParam.value;
