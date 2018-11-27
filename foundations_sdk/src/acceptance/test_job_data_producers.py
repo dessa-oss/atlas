@@ -18,6 +18,45 @@ class TestJobDataProducers(unittest.TestCase):
         cleanup()
         self._redis = redis_connection
 
+    def test_produces_proper_data(self):
+        from foundations import create_stage
+        from foundations import Hyperparameter
+        from foundations import log_metric
+        from foundations.job_data_redis import JobDataRedis
+
+        @create_stage
+        def dummy_data():
+            return 999
+
+        @create_stage
+        def function(some_argument, some_placeholder, some_stage):
+            log_metric('hello', 1)
+            log_metric('hello', 2)
+            log_metric('world', 3)
+            return 5
+
+        stage_parameter = dummy_data()
+        stage = function(
+            999,
+            some_placeholder=Hyperparameter('some_run_data'),
+            some_stage=stage_parameter
+        )
+        deployment = stage.run(some_run_data=777, job_name='successful_job')
+        deployment.wait_for_deployment_to_complete()
+
+        all_job_data = JobDataRedis.get_all_jobs_data('default', self._redis)
+
+        job_data = all_job_data[0]
+        self.assertEqual('default', job_data['project_name'])
+        self.assertEqual('successful_job', job_data['job_id'])
+        self.assertEqual('default', job_data['user'])
+        self.assertEqual('completed', job_data['status'])
+        self.assertTrue(isinstance(job_data['start_time'], float))
+        self.assertTrue(isinstance(job_data['completed_time'], float))
+        self.assertTrue(len(job_data['job_parameters']))
+        self.assertTrue(len(job_data['input_params']))
+        self.assertTrue(len(job_data['output_metrics']))
+
     def test_produces_completed_job_data(self):
         from foundations import create_stage
         from foundations import Hyperparameter
