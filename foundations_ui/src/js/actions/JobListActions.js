@@ -11,7 +11,8 @@ class ProjectActions {
   // API Calls
   static getJobs(projectName) {
     const url = 'projects/'.concat(projectName).concat('/job_listing');
-    return BaseActions.getJobsFromAPI(url)
+    // TODO get Jobs is currently in Beta
+    return BaseActions.getBetaFromAPI(url)
       .then((res) => {
         return res;
       });

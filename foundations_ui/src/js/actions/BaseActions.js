@@ -1,6 +1,6 @@
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v1/',
-  baseJobURL: process.env.REACT_APP_API_JOB_URL || 'http://private-83924-dessa.apiary-mock.com/api/v2beta/',
+  baseBetaURL: process.env.REACT_APP_BETA_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v2beta/',
   getFromAPI(url) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL)
@@ -17,9 +17,9 @@ const BaseActions = {
         },
       );
   },
-  // NOTE this is temp solely to work with API having Job list on a seperate route
-  getJobsFromAPI(url) {
-    const fullURL = this.baseJobURL.concat(url);
+  // NOTE this is the method for Beta backend only
+  getBetaFromAPI(url) {
+    const fullURL = this.baseBetaURL.concat(url);
     return fetch(fullURL)
       .then(
         res => res.json(),
