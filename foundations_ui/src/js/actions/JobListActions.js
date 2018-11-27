@@ -140,9 +140,8 @@ class ProjectActions {
   static getAllInputParams(allJobs) {
     const allInputParams = [];
     allJobs.forEach((job) => {
-      // TODO just constant????
       job.input_params.forEach((input) => {
-        if (input.source === 'constant' && !allInputParams.includes(input.name)) {
+        if (!allInputParams.includes(input.name)) {
           allInputParams.push(input.name);
         }
       });
@@ -153,9 +152,7 @@ class ProjectActions {
   static getConstantInputParams(allInputParams) {
     const constantParams = [];
     allInputParams.forEach((input) => {
-      if (input.source === 'constant') {
-        constantParams.push(input);
-      }
+      constantParams.push(input);
     });
     return constantParams;
   }
@@ -168,8 +165,7 @@ class ProjectActions {
     // else input param
     // TODO JUST source constant?????
     if (inputParam && columns.includes(inputParam.name)
-    && inputParam.value
-    && inputParam.source === 'constant') {
+    && inputParam.value) {
       return inputParam.value;
     }
     return 'not available';
