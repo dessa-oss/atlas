@@ -14,7 +14,7 @@ class ShowMoreFilters extends Component {
     const { filters, bubblesHidden } = this.state;
 
     const filterBubbles = [];
-    for (let i = 1; i <= bubblesHidden; i += 1) {
+    for (let i = bubblesHidden; i >= 1; i -= 1) {
       const index = filters.length - i;
       filterBubbles.push(
         <div key={filters[index].column} className="bubble inline-block">
