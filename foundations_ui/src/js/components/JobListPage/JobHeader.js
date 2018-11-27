@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ShowMoreFilters from '../common/filters/ShowMoreFilters';
 
 class JobHeader extends Component {
   constructor(props) {
     super(props);
+    this.toggleFilters = this.toggleFilters.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
-      bubbleWidth: 0,
       bubbleRefs: [],
       bubblesHidden: 0,
+      isShowingMoreFilters: false,
     };
   }
 
   componentDidMount() {
-    const { bubbleWidth, bubbleRefs } = this.state;
+    const { bubbleRefs } = this.state;
     const { clientWidth } = this.bubbleContainer;
 
     let curWidth = 0;
@@ -30,9 +32,14 @@ class JobHeader extends Component {
     this.setState({ bubblesHidden: numHidden });
   }
 
+  toggleFilters() {
+    const { isShowingMoreFilters } = this.state;
+    this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+  }
+
   render() {
     const {
-      project, filters, bubbleRefs, bubblesHidden,
+      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters,
     } = this.state;
 
     const filterBubbles = [];
@@ -57,6 +64,14 @@ class JobHeader extends Component {
         </div>
       );
     }
+
+    let moreFilters = null;
+    let filterButtonText = 'View Filters';
+    if (isShowingMoreFilters) {
+      moreFilters = <ShowMoreFilters filters={filters} bubblesHidden={bubblesHidden} />;
+      filterButtonText = 'Hide Filters';
+    }
+
 
     return (
       <div className="job-header-container">
@@ -102,10 +117,11 @@ class JobHeader extends Component {
               onClick={this.toggleFilters}
               className="b--mat b--affirmative text-upper"
             >
-              View Filters
+              {filterButtonText}
             </button>
           </div>
         </div>
+        {moreFilters}
       </div>
     );
   }
@@ -115,18 +131,18 @@ JobHeader.propTypes = {
   numProjects: PropTypes.number,
   project: PropTypes.object,
   filters: PropTypes.array,
-  bubbleWidth: PropTypes.number,
   bubbleRefs: PropTypes.array,
   bubblesHidden: PropTypes.number,
+  isShowingMoreFilters: PropTypes.bool,
 };
 
 JobHeader.defaultProps = {
   numProjects: 0,
   project: { owner: 'null', created_at: 'null', name: 'null' },
   filters: [],
-  bubbleWidth: 0,
   bubbleRefs: [],
   bubblesHidden: 0,
+  isShowingMoreFilters: false,
 };
 
 export default JobHeader;
