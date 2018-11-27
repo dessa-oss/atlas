@@ -96,63 +96,6 @@
     margin: auto;
     padding: 0px;
   }
-  
-  .project-header-sort-filter-container{
-    width: 100%;
-    max-width: 100%;
-    height: 50%;
-    max-height: 50%;
-    margin: auto;
-    padding: 0px;
-  }
-  
-  .project-header-sort-filter-container{
-  }
-  
-  .project-header-projects-container{
-    margin: 0px;
-    display: inline-block;
-    text-align: left;
-  }
-  
-  .project-header-total-projects-container{
-    display: inline-block;
-    vertical-align: middle;
-  
-    h1{
-      font-size: 21pt;
-      text-align: center;
-      display: inline-block;
-      vertical-align: baseline;
-      padding-bottom: 5px; 
-      text-align: left;
-    }
-  
-    h2{
-      font-size: 13pt;
-      text-align: center;
-      display: inline-block;
-      padding-bottom: 8px;
-      text-align: right;
-    }
-  }
-  
-  @include project-page(){
-    .project-header-logo-container{
-      position: inherit;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-  
-    .project-header-info-container{
-      width: 400px;
-      display: inline-block;
-      vertical-align: top;
-      margin-left: 120px;
-    }
-  
-  }
 
   .job-header-sorting-container {
     display: inline-block;
@@ -188,6 +131,22 @@
       line-height: 20px;
       height: 23px;
 
+      &.more-bubble {
+        margin: 0px;
+        margin-left: 10px;
+        position: relative;
+        width: 65px;
+        min-height: 23px;
+        p {
+          padding: 0px;
+          padding-left: 5px;
+        }
+      }
+
+      &.hidden {
+        display: none;
+      }
+
       p {
         margin: 0px;
         display: inline-block;
@@ -197,24 +156,4 @@
       }
     }
 
-    .sort-bubble {
-      display: inline-block;
-
-      &.hidden {
-        display: none;
-      }
-
-    }
-
-    .more-bubble {
-      margin: 0px;
-      margin-left: 10px;
-      position: relative;
-      width: 65px;
-      min-height: 23px;
-      p {
-        padding: 0px;
-        padding-left: 5px;
-      }
-    }
   }
