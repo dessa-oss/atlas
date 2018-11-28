@@ -33,11 +33,13 @@ class SFTPBucket(object):
 
     def upload_from_string(self, name, data):
         from foundations.simple_tempfile import SimpleTempfile
+        from foundations.utils import byte_string
 
         self._log().debug('Uploading %s', self._full_path(name))
 
         with SimpleTempfile('w+b') as temp_file:
-            temp_file.write_and_flush(data)
+            byte_data = byte_string(data)
+            temp_file.write_and_flush(byte_data)
             self.upload_from_file(name, temp_file)
 
     def upload_from_file(self, name, input_file):
