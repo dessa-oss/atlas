@@ -20,6 +20,7 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
                           'test_values': ('queued', 'running')},
                          {'name': 'user',
                           'test_values': ('beethoven', 'soju hero')},
+                         # TODO: we need to define how datetime values will be treated
                          #{'name': 'start_time',
                          # 'test_values': (datetime(2018, 9, 1, 10, 30, 0, 0, None).isoformat(),
                          #                 datetime(2018, 11, 21, 16, 52, 0, 0, None).isoformat())}

@@ -10,6 +10,7 @@ class StatusParser(object):
     _valid_statuses = ['QUEUED', 'RUNNING', 'COMPLETED', 'FAILED']
 
     def parse(self, value):
-        if not (isinstance(value, str) and value.upper() in self._valid_statuses):
+        value = str(value).upper()
+        if value not in self._valid_statuses:
             return None
-        return value.upper()
+        return value
