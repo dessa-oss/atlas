@@ -1,6 +1,7 @@
 .job-header-container{
     width: 100%;
     max-width: 100%;
+    min-width: $minimum-site-width;
     height: $header-control-height;
     background-color: $color-background;
     border-bottom: 2px solid $color-border-bottom;
@@ -225,4 +226,19 @@
         padding: 0px;
       }
     }
+  }
+
+  @media only screen and (max-width: $minimum-screen-width) {
+    .job-summary-info-container {
+        width: calc(40% - 100px);
+    }
+
+    .job-header-sorting-container {
+        > div {
+          width: 495px;
+            > div {
+            width: 395px;
+          }
+        }
+      }
   }
