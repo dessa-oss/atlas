@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
-const statuses = [{ name: 'Completed' }, { name: 'Processing' }, { name: 'Error' }];
 const isStatusCheckbox = true;
 
 class StatusFilter extends Component {
@@ -14,7 +13,7 @@ class StatusFilter extends Component {
     this.onClearFilters = this.onClearFilters.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
     this.state = {
-      columns: statuses,
+      columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
       changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
@@ -93,7 +92,7 @@ StatusFilter.propTypes = {
 };
 
 StatusFilter.defaultProps = {
-  columns: statuses,
+  columns: [],
   changeHiddenParams: () => {},
   changedParams: [],
   toggleShowingFilter: () => {},

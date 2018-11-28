@@ -158,7 +158,7 @@ class CommonActions {
     return status.toLowerCase() === 'error';
   }
 
-  static formatColumns(columns, hiddenInputParams, searchText) {
+  static formatColumns(columns, hiddenInputParams, searchText = '') {
     const formatedColumns = [];
     if (columns !== null) {
       columns.forEach((col) => {
