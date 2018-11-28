@@ -33,18 +33,21 @@ def _flattened_job_metrics(project_name):
 
     for job_data in _project_job_data(project_name):
         stage_uuids = []
-        _update_job_data(job_data, input_params_list, output_metrics_list, stage_uuids)
+        _update_job_data(job_data, input_params_list,
+                         output_metrics_list, stage_uuids)
         _update_datetime(job_data)
         job_metadata_list.append(job_data)
 
-    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis = 1, sort = False)
+    return concat([DataFrame(job_metadata_list), DataFrame(input_params_list), DataFrame(output_metrics_list)], axis=1, sort=False)
+
 
 def _update_datetime(job_data):
     from foundations.utils import datetime_string
     if 'start_time' in job_data:
         job_data['start_time'] = datetime_string(job_data['start_time'])
     if 'completed_time' in job_data:
-        job_data['completed_time'] = datetime_string(job_data['completed_time'])
+        job_data['completed_time'] = datetime_string(
+            job_data['completed_time'])
 
 
 def _update_job_data(job_data, input_param_list, output_metrics_list, stage_uuids):
@@ -52,7 +55,6 @@ def _update_job_data(job_data, input_param_list, output_metrics_list, stage_uuid
     del job_data['output_metrics']
 
     _fill_job_parameters(job_data, input_param_list, stage_uuids)
-
 
 
 def _fill_job_parameters(job_data, input_param_list, stage_uuids):
@@ -73,17 +75,20 @@ def _fill_job_parameters(job_data, input_param_list, stage_uuids):
 
     input_param_list.append(input_param_dict)
 
+
 def _store_parameter_indices(input_params, stage_uuids):
     from collections import defaultdict
     index_tracker = defaultdict(list)
 
     for param in input_params:
-        index_tracker[param['name']].append(stage_uuids.index(param['stage_uuid']))
+        index_tracker[param['name']].append(
+            stage_uuids.index(param['stage_uuid']))
 
     for key in index_tracker:
         index_tracker[key] = sorted(index_tracker[key], key=int)
-         
+
     return index_tracker
+
 
 def _parameter_name(parameter, stage_uuids, index_tracker):
     stage_index = stage_uuids.index(parameter['stage_uuid'])
@@ -110,10 +115,7 @@ def _stage_value(parameter, job_parameters):
 
 def _project_job_data(project_name):
     from foundations.models.completed_job_data_listing import CompletedJobDataListing
-
-    for job_data in CompletedJobDataListing.completed_job_data():
-        if project_name == job_data['project_name']:
-            yield job_data
+    return CompletedJobDataListing.completed_job_data(project_name)
 
 
 def _update_uuid_list(input_params, stage_uuids):

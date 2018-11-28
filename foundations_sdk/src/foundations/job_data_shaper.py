@@ -29,8 +29,9 @@ class JobDataShaper(object):
         for job in jobs_data:
             job['output_metrics'] = JobDataShaper._change_list_to_dict(
                 job['output_metrics'])
-            job['job_parameters'] = JobDataShaper._collapse_to_one_dictionary(
-                job['job_parameters'])
+            job['input_params'] = JobDataShaper._flatten_argument(
+                job['input_params'])
+
         return jobs_data
 
     @staticmethod
@@ -41,8 +42,8 @@ class JobDataShaper(object):
         return output_dict
 
     @staticmethod
-    def _collapse_to_one_dictionary(params):
-        param_dict = {}
+    def _flatten_argument(params):
         for param in params:
-            param_dict.update(param)
-        return param_dict
+            param.update(param['argument'])
+            del param['argument']
+        return params
