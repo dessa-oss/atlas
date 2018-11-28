@@ -9,12 +9,10 @@ const app = document.getElementById('root');
 
 ReactDOM.render(
   <Router>
-    <div>
-      <Switch>
-        <Route path="/" component={App} />
-        <Route component={App} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/" component={App} />
+      <Route component={App} />
+    </Switch>
   </Router>, app,
 );
 

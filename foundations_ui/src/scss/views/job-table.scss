@@ -14,7 +14,7 @@
 
 .job-table-container{
    margin-left: 40px;
-   min-height: calc(100vh);
+   min-height: calc(100% - 45px - 165px - 3px);
 }
 
 .table-row-number {
@@ -24,6 +24,7 @@
   margin-left: -25px;
   text-align: center;
   p {
+    color: $color-9c-grey;
     height: $row-height;
     margin: 0px;
     line-height: $row-height;
