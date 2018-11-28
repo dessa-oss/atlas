@@ -11,7 +11,12 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 html, body, .App {
   width: 100%;
   height: 100%;
+  min-width: $minimum-site-width;
   background: $color-background-grey;
+
+  > div {
+    height: 100%;
+  }
 }
 
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
@@ -26,18 +31,11 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   margin: auto;
 }
 
-.arrow-down {
-  width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid $color-dark-blue;
-}
-
 .arrow-container, .icon-container {
   width: 50%;
   display: inline-block;
   height: 15px;
+  padding-top: 5px;
 }
 
 span, p, a {

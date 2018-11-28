@@ -2,7 +2,7 @@
 
 exports[`Shallow Renders Start Time Cell 1`] = `
 <p
-  className="job-cell font-bold "
+  className="job-cell font-bold start-cell"
 >
    
   <span

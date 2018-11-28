@@ -1,7 +1,7 @@
 .column-filter-container {
   text-align: left;
   padding: 15px 15px 5px 15px;
-  width: calc(100% - 30px);
+  width: calc(100% - 30px - 2px);
 
   button:not(.button-icon) {
     margin-top: 5px;
@@ -11,7 +11,7 @@
   &.user-filter-container {
     width: 270px;
     position: absolute;
-    left: 480px;
+    left: 27%;
   }
 
   &.status-filter-container {

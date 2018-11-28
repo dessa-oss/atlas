@@ -90,17 +90,25 @@ class JobTable extends Component {
     }
 
     return (
-      <div className="job-table-container">
-        <JobTableHeader
-          allInputParams={allInputParams}
-          allMetrics={allMetrics}
-          jobs={jobs}
-        />
-        <div className="table-row-number">
-          {rowNumbers}
-        </div>
-        <div className="job-table-row-container">
-          {jobRows}
+      <div className="job-table-content">
+        <div className="job-table-container">
+          <JobTableHeader
+            allInputParams={allInputParams}
+            allMetrics={allMetrics}
+            jobs={jobs}
+          />
+          <div className="table-row-number">
+            {rowNumbers}
+          </div>
+          <div className="job-table-row-container">
+            {jobRows}
+          </div>
+          <div className="pagination-controls">
+            <p><span className="font-bold">Viewing:</span> 1-100/600</p>
+            <div className="arrow-right" />
+            <p>Page 1</p>
+            <div className="arrow-left" />
+          </div>
         </div>
       </div>
     );

@@ -24,16 +24,20 @@
 }
 
 .job-id-cell{
-  width: 110px;
+  width: $standard-cell-width;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .duration-cell{
-  width: 140px;
+  width: $standard-cell-width;
   text-align: right;
 }
 
 .user-cell{
-  width: 85px;
+  width: $standard-cell-width;
+}
+
+.start-cell {
+  width: $standard-cell-width;
 }
