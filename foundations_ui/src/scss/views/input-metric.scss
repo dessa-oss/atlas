@@ -15,10 +15,6 @@
   white-space: nowrap;
   border-left: 4px solid $color-border-bottom;
 
-  &:last-child {
-    border-bottom: 1px solid $color-border-bottom;
-  }
-
   .job-column-header {
     border-right: 1px solid $color-border-bottom;
     display: inline-block;
