@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CommonActions from '../../actions/CommonActions';
 import JobColumnHeader from '../common/JobColumnHeader';
 import TableSectionHeader from '../common/TableSectionHeader';
 import InputMetric from '../common/InputMetric';
@@ -14,13 +15,18 @@ class JobTableHeader extends Component {
     super(props);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
+    this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
       jobs: this.props.jobs,
       isShowingUserFilter: false,
       isShowingStatusFilter: false,
-      hiddenStatus: [],
+      statuses: [
+        { name: 'Completed', hidden: false },
+        { name: 'Processing', hidden: false },
+        { name: 'Error', hidden: false },
+      ],
     };
   }
 
@@ -38,6 +44,14 @@ class JobTableHeader extends Component {
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
   }
 
+  updateHiddenStatus(hiddenFields) {
+    const { statuses } = this.state;
+    const statusNamesArray = statuses.map(status => status.name);
+    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
+    this.setState({ statuses: formattedColumns });
+    this.forceUpdate();
+  }
+
   render() {
     const {
       allInputParams,
@@ -45,7 +59,7 @@ class JobTableHeader extends Component {
       allMetrics,
       isShowingUserFilter,
       isShowingStatusFilter,
-      hiddenStatus,
+      statuses,
     } = this.state;
 
     let userFilter = null;
@@ -54,8 +68,23 @@ class JobTableHeader extends Component {
     }
 
     let statusFilter = null;
+    let hiddenInputParams = [];
     if (isShowingStatusFilter) {
-      statusFilter = <StatusFilter />;
+      hiddenInputParams = statuses.map(
+        (status) => {
+          if (status.hidden === true) {
+            return status.name;
+          }
+        },
+      );
+      statusFilter = (
+        <StatusFilter
+          columns={statuses}
+          toggleShowingFilter={this.toggleStatusFilter}
+          changeHiddenParams={this.updateHiddenStatus}
+          hiddenInputParams={hiddenInputParams}
+        />
+      );
     }
 
     return (
@@ -97,7 +126,7 @@ JobTableHeader.propTypes = {
   allMetrics: PropTypes.array,
   isShowingUserFilter: PropTypes.bool,
   isShowingStatusFilter: PropTypes.bool,
-  hiddenStatus: PropTypes.array,
+  statuses: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -106,7 +135,7 @@ JobTableHeader.defaultProps = {
   allMetrics: [],
   isShowingUserFilter: false,
   isShowingStatusFilter: false,
-  hiddenStatus: [],
+  statuses: [],
 };
 
 export default JobTableHeader;

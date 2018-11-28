@@ -30,6 +30,8 @@ module.exports = {
     "jsx-a11y/label-has-for": 0,
     "no-param-reassign": 1,
     "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "array-callback-return": 0,
+    "consistent-return": 0,
   }
 };
 

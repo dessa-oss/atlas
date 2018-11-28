@@ -35,7 +35,6 @@ class Checkbox extends Component {
     const id = name.concat('-checkbox');
 
     let circle = '';
-    console.log(statusCircle);
     if (statusCircle !== null) {
       circle = <span className={statusCircle} />;
     }
