@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
 import ProjectActions from '../../actions/ProjectActions';
 import ProjectHeader from './ProjectHeader';
+import Loading from '../common/Loading';
 
 class ProjectPage extends Component {
   constructor(props) {
@@ -48,7 +49,7 @@ class ProjectPage extends Component {
         projectList = ProjectActions.getAllProjects(projects, selectProject);
       }
     } else {
-      projectList = <p>Loading projects</p>;
+      projectList = <Loading loadingMessage="We are currently loading your projects" />;
     }
 
     return (
