@@ -13,10 +13,10 @@
   text-align: center;
 
   div {
-    height: 45px;
-    width: 45px;
-    min-width: 45px;
-    min-height: 45px;
+    height: $header-nav-height;
+    width: $header-nav-height;
+    min-width: $header-nav-height;
+    min-height: $header-nav-height;
     display: inline-block;
     vertical-align: top;
     margin-top: 15px;
