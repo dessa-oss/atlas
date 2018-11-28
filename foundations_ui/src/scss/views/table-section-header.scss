@@ -1,7 +1,7 @@
 .table-section-header{
   display: inline-block;
   vertical-align: middle;
-  width: 530px;
+  width: $table-section-width;
   height: 36px;
   position: relative;
 
@@ -19,6 +19,9 @@
 .blue-header {
   text-align: center;
   background-color: $color-medium-blue;
+  height: 36px;
+  position: relative;
+  width: 100%;
 }
 
 .blue-header-text {

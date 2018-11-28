@@ -12,6 +12,10 @@ html, body, .App {
   width: 100%;
   height: 100%;
   background: $color-background-grey;
+
+  > div {
+    height: 100%;
+  }
 }
 
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
@@ -24,14 +28,6 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
 
 .margin-auto {
   margin: auto;
-}
-
-.arrow-down {
-  width: 0; 
-  height: 0; 
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid $color-dark-blue;
 }
 
 .arrow-container, .icon-container {

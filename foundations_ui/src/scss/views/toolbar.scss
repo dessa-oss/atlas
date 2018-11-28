@@ -3,10 +3,8 @@
   max-height: 25px;
   background-color: $color-white;
   border-bottom: 1px solid $color-border-bottom;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding: 10px $overview-content-margin-horizontal;
+
   p:first-child {
     height: 100%;
     max-height: 100%;

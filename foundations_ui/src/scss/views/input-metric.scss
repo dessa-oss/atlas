@@ -1,14 +1,14 @@
 .input-metric-container{
   display: inline-block;
   vertical-align: middle;
-  width: 530px;
+  width: $table-metric-section-width;
   height: 36px;
   margin: 0px;
   padding: 0px;
 }
 
 .input-metric-column-header-container{
-  width: calc(530px - 1px); // To accomodate border
+  width: calc(100% - 1px); // To accomodate border
   overflow: hidden;
   overflow-x: scroll;
   overflow-y: scroll;
@@ -24,7 +24,7 @@
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    min-width: 115px;
+    min-width: $standard-cell-width;
     padding-left: 8px;
     padding-right: 8px; 
 
@@ -38,7 +38,6 @@
   }
 
   .job-cell {
-    min-width: 115px;
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
