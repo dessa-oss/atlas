@@ -28,6 +28,7 @@ module.exports = {
     "import/no-cycle": 1,
     "jsx-a11y/label-has-associated-control": 0,
     "jsx-a11y/label-has-for": 0,
+    "no-param-reassign": 1,
   }
 };
 

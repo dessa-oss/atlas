@@ -13,7 +13,7 @@ class ProjectSummary extends Component {
 
   viewClick() {
     const { project, selectProject } = this.state;
-    selectProject(project.name);
+    selectProject(project);
   }
 
   render() {
@@ -21,12 +21,12 @@ class ProjectSummary extends Component {
     return (
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
-          <h2 className="project-summary-name-text font-bold">{project.name}</h2>
-          <p className="project-summary-source-text">Data Source: Unknown</p>
-          <p className="project-summary-owner-text font-bold">
+          <h2 className="font-bold">{project.name}</h2>
+          <p>Data Source: Unknown</p>
+          <p className="font-bold">
             Project owner: <span>{project.owner}</span>
           </p>
-          <p className="project-summary-created-at-text font-bold">
+          <p className="font-bold">
             Created at: <span>{project.created_at}</span>
           </p>
           <div className="project-summary-button-container">
