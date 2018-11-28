@@ -7,7 +7,6 @@ exports[`Shallow Renders Job List Page 1`] = `
   <Toolbar />
   <JobHeader
     bubbleRefs={Array []}
-    bubbleWidth={0}
     bubblesHidden={0}
     filters={
       Array [

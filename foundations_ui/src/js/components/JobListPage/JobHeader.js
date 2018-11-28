@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CommonActions from '../../actions/CommonActions';
+
+const borderSize = 2; // 1px per side
 
 class JobHeader extends Component {
   constructor(props) {
@@ -7,21 +10,20 @@ class JobHeader extends Component {
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
-      bubbleWidth: 0,
       bubbleRefs: [],
       bubblesHidden: 0,
     };
   }
 
   componentDidMount() {
-    const { bubbleWidth, bubbleRefs } = this.state;
+    const { bubbleRefs } = this.state;
     const { clientWidth } = this.bubbleContainer;
 
     let curWidth = 0;
     let numHidden = 0;
     bubbleRefs.forEach((bubble) => {
-      curWidth += bubble.clientWidth + 2; // 2 is for border
-      if (curWidth > clientWidth) {
+      curWidth += CommonActions.addBorderToElementWidth(bubble, borderSize);
+      if (CommonActions.elementsWidthLargerThanParent(curWidth, clientWidth)) {
         bubble.className += ' hidden';
         numHidden += 1;
       }
@@ -73,7 +75,7 @@ class JobHeader extends Component {
         </div>
 
         <div className="job-summary-info-container">
-          <h2 className="font-bold">{ project.name }</h2>
+          <h2 className="font-bold">{project.name}</h2>
           <p>Data Source: Unknown</p>
           <p className="font-bold">
             Project owner: <span>{project.owner}</span>
@@ -106,7 +108,6 @@ JobHeader.propTypes = {
   numProjects: PropTypes.number,
   project: PropTypes.object,
   filters: PropTypes.array,
-  bubbleWidth: PropTypes.number,
   bubbleRefs: PropTypes.array,
   bubblesHidden: PropTypes.number,
 };
@@ -115,7 +116,6 @@ JobHeader.defaultProps = {
   numProjects: 0,
   project: { owner: 'null', created_at: 'null', name: 'null' },
   filters: [],
-  bubbleWidth: 0,
   bubbleRefs: [],
   bubblesHidden: 0,
 };
