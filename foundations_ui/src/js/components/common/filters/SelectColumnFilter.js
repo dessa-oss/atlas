@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
+import CheckboxFilter from './CheckboxFilter';
 
 class SelectColumnFilter extends Component {
   constructor(props) {
@@ -73,35 +74,17 @@ class SelectColumnFilter extends Component {
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
     );
 
+    const input = <input ref={(e) => { this.input = e; }} type="text" onChange={this.updateSearchText} />;
+
     return (
-      <div className="filter-container column-filter-container elevation-1">
-        <div className="column-filter-header">
-          <input ref={(e) => { this.input = e; }} type="text" onChange={this.updateSearchText} />
-          <button
-            className="button-icon"
-            type="button"
-            onClick={this.submitSearchText}
-            onKeyPress={this.submitSearchText}
-          >
-            <div className="magnifying-glass" />
-          </button>
-          <button
-            type="button"
-            onClick={this.onClearFilters}
-            className="b--mat b--affirmative text-upper float-right"
-          >
-          Clear Filters
-          </button>
-        </div>
-        <div className="column-filter-list">
-          {checkboxes}
-        </div>
-        <div className="column-filter-buttons">
-          <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
-        </div>
-      </div>
-    );
+      <CheckboxFilter
+        checkboxes={checkboxes}
+        onCancel={this.onCancel}
+        onApply={this.onApply}
+        submitSearchText={this.submitSearchText}
+        onClearFilters={this.onClearFilters}
+        input={input}
+      />);
   }
 }
 
