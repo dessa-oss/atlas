@@ -76,7 +76,7 @@ class ProjectActions {
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
-    if (status.toLowerCase() === 'running') {
+    if (status.toLowerCase() === 'running' || status.toLowerCase() === 'processing') {
       statusCircle = 'status-yellow';
     } else if (status.toLowerCase() === 'error') {
       statusCircle = 'status-red';

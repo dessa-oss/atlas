@@ -7,6 +7,8 @@ exports[`Shallow Renders Job Table 1`] = `
   <JobTableHeader
     allInputParams={Array []}
     allMetrics={Array []}
+    hiddenStatus={Array []}
+    isShowingStatusFilter={false}
     isShowingUserFilter={false}
     jobs={Array []}
   />

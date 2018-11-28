@@ -10,6 +10,7 @@ class Checkbox extends Component {
       hidden: this.props.hidden,
       changeHiddenParams: this.props.changeHiddenParams,
       unsetClearFilters: this.props.unsetClearFilters,
+      statusCircle: this.props.statusCircle,
     };
   }
 
@@ -29,9 +30,15 @@ class Checkbox extends Component {
   }
 
   render() {
-    const { name, hidden } = this.state;
+    const { name, hidden, statusCircle } = this.state;
 
     const id = name.concat('-checkbox');
+
+    let circle = '';
+    console.log(statusCircle);
+    if (statusCircle !== null) {
+      circle = <span className={statusCircle} />;
+    }
 
     return (
       <div className="checkbox-container">
@@ -42,6 +49,7 @@ class Checkbox extends Component {
           </label>
         </div>
         <div className="checkbox-value">
+          {circle}
           <h5>{name}</h5>
         </div>
       </div>
@@ -55,6 +63,7 @@ Checkbox.propTypes = {
   changeHiddenParams: PropTypes.func,
   showAllFilters: PropTypes.bool,
   unsetClearFilters: PropTypes.func,
+  statusCircle: PropTypes.string,
 };
 
 Checkbox.defaultProps = {
@@ -63,6 +72,7 @@ Checkbox.defaultProps = {
   changeHiddenParams: () => {},
   showAllFilters: false,
   unsetClearFilters: () => {},
+  statusCircle: null,
 };
 
 export default Checkbox;
