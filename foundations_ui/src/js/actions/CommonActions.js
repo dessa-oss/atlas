@@ -231,11 +231,15 @@ class CommonActions {
     return input.source === 'constant';
   }
 
-  static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters) {
+  static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters, statusCheckbox = false) {
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];
       columns.forEach((col) => {
+        let statusCircle = null;
+        if (statusCheckbox) {
+          statusCircle = JobActions.getStatusCircle(col.name);
+        }
         const key = col.name.concat('-checkbox');
         checkboxes.push(<Checkbox
           key={key}
@@ -244,6 +248,7 @@ class CommonActions {
           changeHiddenParams={changeLocalParams}
           showAllFilters={showAllFilters}
           unsetClearFilters={unsetClearFilters}
+          statusCircle={statusCircle}
         />);
       });
     }
