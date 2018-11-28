@@ -14,6 +14,7 @@ class JobColumnHeader extends Component {
       containerDivClass: this.props.containerClass,
       sizeCallback: this.props.sizeCallback,
       colIndex: this.props.colIndex,
+      toggleFilter: this.props.toggleFilter,
     };
   }
 
@@ -25,7 +26,7 @@ class JobColumnHeader extends Component {
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
@@ -38,7 +39,7 @@ class JobColumnHeader extends Component {
         <div className={offsetDivClass}>
           <h4 className={headerClassName}>{title}</h4>
           <div className="icon-container" />
-          <div role="presentation" onClick={this.onClick} onKeyPress={this.onClick} className="arrow-container">
+          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
             <div className={arrowClassName} />
           </div>
         </div>
@@ -55,6 +56,7 @@ JobColumnHeader.propTypes = {
   containerClass: PropTypes.string,
   sizeCallback: PropTypes.func,
   colIndex: PropTypes.number,
+  toggleFilter: PropTypes.func,
 };
 
 JobColumnHeader.defaultProps = {
@@ -64,6 +66,7 @@ JobColumnHeader.defaultProps = {
   containerClass: 'job-column-header',
   sizeCallback: () => null,
   colIndex: 0,
+  toggleFilter: () => {},
 };
 
 export default JobColumnHeader;

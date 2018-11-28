@@ -8,6 +8,12 @@ Use helper classes to style elements that otherwise wouldn't need to have a full
 
 //main styles
 //-----------------------------
+html, body, .App {
+  width: 100%;
+  height: 100%;
+  background: $color-background-grey;
+}
+
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   @extend .f--din;
   color: $color-font-black;
@@ -301,5 +307,11 @@ hr {
 @include desktop {
   .hide-for-large {
     display: none;
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+  html {
+    zoom: 0.75;
   }
 }

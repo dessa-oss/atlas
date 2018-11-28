@@ -11,6 +11,7 @@ class CheckboxFilter extends Component {
       submitSearchText: this.props.submitSearchText,
       onClearFilters: this.props.onClearFilters,
       input: this.props.input,
+      addedClass: this.props.addedClass,
     };
   }
 
@@ -20,10 +21,13 @@ class CheckboxFilter extends Component {
 
   render() {
     const {
-      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input,
+      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input, addedClass,
     } = this.state;
+
+    const divClass = 'filter-container column-filter-container elevation-1 '.concat(addedClass);
+
     return (
-      <div className="filter-container column-filter-container elevation-1">
+      <div className={divClass}>
         <div className="column-filter-header">
           {input}
           <button
@@ -61,6 +65,7 @@ CheckboxFilter.propTypes = {
   submitSearchText: PropTypes.func,
   onClearFilters: PropTypes.func,
   input: PropTypes.object,
+  addedClass: PropTypes.string,
 };
 
 CheckboxFilter.defaultProps = {
@@ -70,6 +75,7 @@ CheckboxFilter.defaultProps = {
   submitSearchText: () => {},
   onClearFilters: () => {},
   input: null,
+  addedClass: '',
 };
 
 export default CheckboxFilter;
