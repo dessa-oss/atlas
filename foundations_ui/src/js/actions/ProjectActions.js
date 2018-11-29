@@ -8,11 +8,6 @@ class ProjectActions {
     return BaseActions.getFromAPI(url);
   }
 
-  static getJobsForProject(projectName) {
-    const url = 'projects/'.concat(projectName).concat('/job_listing');
-    return BaseActions.getFromAPI(url);
-  }
-
   static getAllProjects(projects, selectProject) {
     const projectList = [];
     projects.forEach((project) => {

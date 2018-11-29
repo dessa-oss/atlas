@@ -85,17 +85,13 @@ class CommonActions {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
         const cellWidth = cellWidths[colIndex];
-        if (this.isConstant(input)) {
-          const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
-          cells.push(<InputMetricCell
-            key={key}
-            cellWidth={cellWidth}
-            value={inputValue}
-            isError={isError}
-          />);
-        } else {
-          cells.push(null);
-        }
+        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        cells.push(<InputMetricCell
+          key={key}
+          cellWidth={cellWidth}
+          value={inputValue}
+          isError={isError}
+        />);
       }
       colIndex += 1;
     });
@@ -198,9 +194,7 @@ class CommonActions {
   static getInputMetricInput(jobArray, column, isMetric) {
     let input = null;
     if (!isMetric) {
-      input = {
-        source: 'constant',
-      };
+      input = {};
     }
     if (jobArray) {
       jobArray.forEach((param) => {
