@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.dynamic_parameter import DynamicParameter
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestDynamicParameter(unittest.TestCase):
@@ -36,7 +36,8 @@ class TestDynamicParameter(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             parameter.compute_value({})
 
-        self.assertIn('No value provided for dynamic parameter `hello`', context.exception.args)
+        self.assertIn(
+            'No value provided for dynamic parameter `hello`', context.exception.args)
 
     def test_raises_value_error_on_missing_value_different_name(self):
         from foundations.hyperparameter import Hyperparameter
@@ -47,35 +48,40 @@ class TestDynamicParameter(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             parameter.compute_value({})
 
-        self.assertIn('No value provided for dynamic parameter `why am I here`', context.exception.args)
+        self.assertIn(
+            'No value provided for dynamic parameter `why am I here`', context.exception.args)
 
     def test_provenance(self):
         from foundations.hyperparameter import Hyperparameter
 
         hyper_parameter = Hyperparameter('why am I here')
         parameter = DynamicParameter(hyper_parameter)
-        self.assertEqual({'type': 'dynamic', 'name': 'why am I here'}, parameter.provenance())
+        self.assertEqual(
+            {'type': 'dynamic', 'name': 'why am I here'}, parameter.provenance())
 
     def test_provenance_different_value(self):
         from foundations.hyperparameter import Hyperparameter
 
         hyper_parameter = Hyperparameter('haro')
         parameter = DynamicParameter(hyper_parameter)
-        self.assertEqual({'type': 'dynamic', 'name': 'haro'}, parameter.provenance())
+        self.assertEqual({'type': 'dynamic', 'name': 'haro'},
+                         parameter.provenance())
 
     def test_value_hash(self):
         from foundations.hyperparameter import Hyperparameter
 
         hyper_parameter = Hyperparameter('hello')
         parameter = DynamicParameter(hyper_parameter)
-        self.assertEqual('3e2e95f5ad970eadfa7e17eaf73da97024aa5359', parameter.hash({'hello': 'potato'}))
+        self.assertEqual('3e2e95f5ad970eadfa7e17eaf73da97024aa5359',
+                         parameter.hash({'hello': 'potato'}))
 
     def test_value_hash_different_value(self):
         from foundations.hyperparameter import Hyperparameter
 
         hyper_parameter = Hyperparameter('goodbye')
         parameter = DynamicParameter(hyper_parameter)
-        self.assertEqual('321e42b16eff1d6695a97ed82dc8b24f455db67d', parameter.hash({'goodbye': 'mashed potato'}))
+        self.assertEqual('321e42b16eff1d6695a97ed82dc8b24f455db67d',
+                         parameter.hash({'goodbye': 'mashed potato'}))
 
     def test_has_enable_caching_method(self):
         from foundations.hyperparameter import Hyperparameter
@@ -92,7 +98,6 @@ class TestDynamicParameter(unittest.TestCase):
         parameter = DynamicParameter(hyper_parameter)
         expected_string = 'parameter::goodbye'
         self.assertEqual(expected_string, str(parameter))
-        
 
     def test_str_returns_parameter_and_name_different_name(self):
         from foundations.hyperparameter import Hyperparameter
@@ -102,4 +107,3 @@ class TestDynamicParameter(unittest.TestCase):
         parameter = DynamicParameter(hyper_parameter)
         expected_string = 'parameter::fire burns'
         self.assertEqual(expected_string, str(parameter))
-        

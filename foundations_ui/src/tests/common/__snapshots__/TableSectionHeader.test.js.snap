@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders TableSectionHeader 1`] = `
+<div
+  className="table-section-header"
+>
+  <p
+    className="blue-header-text text-white no-margin"
+  />
+  <div
+    className="arrow-container"
+    onClick={[Function]}
+    onKeyPress={[Function]}
+    role="presentation"
+  >
+    <div
+      className=""
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,111 @@
+.column-filter-container {
+  text-align: left;
+  padding: 15px 15px 5px 15px;
+  width: calc(100% - 30px - 2px);
+
+  button:not(.button-icon) {
+    margin-top: 5px;
+    margin-right: 0px;
+  }
+
+  &.user-filter-container {
+    width: 270px;
+    position: absolute;
+    left: 26.3%;
+  }
+
+  &.status-filter-container {
+    width: 225px;
+    position: absolute;
+    left: 8%;
+    padding-top: 5px;
+
+    .column-filter-header {
+      height: 50px;
+      border-bottom: none;
+      margin-bottom: 0px;
+    }
+
+    .column-filter-list {
+      height: 105px;
+      border-bottom: none;
+    }
+    
+    button {
+      display: inline-block;
+      margin-left: 0px;
+      margin-bottom: 5px;
+      &:not(:first-child) {
+        margin-left: 20px;
+      }
+    }
+
+    h5 {
+      display: inline-block;
+    }
+
+    span {
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  }
+}
+
+.column-filter-buttons {
+  text-align: right;
+  button {
+    min-width: 100px;
+    margin-left: 15px;
+  }
+}
+
+.checkbox-container {
+  padding: 0px;
+  height: 35px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.column-filter-header {
+  text-align: right;
+  height: 70px;
+  white-space: nowrap;
+  border-bottom: 1px solid $color-border-bottom;
+  margin-bottom: 5px;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  input {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 30px - 15px);
+    height: 30px;
+    max-height: 30px;
+    margin-right: 15px;
+    box-sizing: border-box;
+    padding-left: 5px;
+  }
+
+  div {
+    &:hover {
+      background-color: $color-hover-blue;
+    }
+
+    &:active {
+      background-color: $color-active-blue;
+    }
+  }
+}
+
+.column-filter-list {
+  border-bottom: 1px solid $color-border-bottom;
+  margin-left: -15px;
+  margin-right: -15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  height: 250px;
+  overflow: hidden;
+  overflow-y: scroll;
+}

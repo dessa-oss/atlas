@@ -3,9 +3,12 @@ node {
         checkout scm
     }    
     container("python2") {
+        stage('Python2 Foundations Install Test Requirements') {
+            sh "python -m pip install -r test_requirements.txt"
+        }
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python2 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun futures promise"
+                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 futures promise==2.2.1 redis==2.10.6"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations Unit Tests') {
@@ -60,9 +63,12 @@ node {
         }
     }
     container("python3") {
+        stage('Python3 Foundations Install Test Requirements') {
+            sh "python -m pip install -r test_requirements.txt"
+        }
         ws("${WORKSPACE}/foundations_sdk/") {
             stage('Python3 Foundations Install Requirements') {
-                sh "python -m pip install PyYaml dill pandas mock freezegun futures promise"
+                sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 futures promise==2.2.1 redis==2.10.6"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Unit Tests') {
@@ -113,6 +119,19 @@ node {
             }
             stage('Python3 Foundations REST API Create Artifact') {
                 sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_rest_api-0.0.0-py3-none-any.whl"
+            }
+        }
+    }
+    container("yarn") {
+        ws("${WORKSPACE}/foundations_ui/") {
+            stage('Install dependencies for Foundations UI') {
+                sh "yarn install"
+            }
+            stage('Run Front End Unit Tests') {
+                sh "yarn run test"
+            }
+            stage('Check for linting') {
+                sh "node_modules/.bin/eslint ."
             }
         }
     }

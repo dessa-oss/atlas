@@ -1,0 +1,104 @@
+label {
+  @extend .f--din;
+  display: block;
+  font-size: 14px;
+  color: $color-label-text;
+  margin-bottom: 4px;
+}
+  
+input[type="text"] {
+  @extend .f--din;
+  box-sizing: border-box;
+  position: relative;
+  background-color: white;
+  width: 350px;
+  padding: 10px 10px 10px 10px;
+  font-size: 14px;
+  border-radius: 0;
+  border: 1px solid $color-border-bottom;
+  cursor: pointer;
+  height: 38px;
+  outline-width: 2px;
+}
+  
+input[type="text"]:placeholder {
+  color: $color-label-placeholder;
+}
+
+.helper-text {
+  @extend .f--din;
+  font-size: 14px;
+  color: $color-label-placeholder;
+  margin-top: 4px;
+  white-space: normal;
+}
+
+button.b--mat {
+  @extend .f--din;
+  margin-right: 15px;
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  width: auto;
+  padding: 10px 15px;
+  height: 30px;
+  line-height: 10px;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 12px;
+  color: white;
+}
+
+button.b--mat.b--affirmative {
+  background-color: $color-light-blue;
+}
+  
+button.b--mat.b--affirmative:hover {
+  background-color: $color-hover-blue;
+}
+  
+button.b--mat.b--affirmative:active {
+  background-color: $color-active-blue;
+}
+  
+button.b--mat.b--negation {
+  background-color: $color-negation-blue;
+}
+  
+button.b--mat.b--negation:hover {
+  background-color: $color-negation-blue-hover;
+}
+  
+button.b--mat.b--negation:active {
+  background-color: $color-negation-blue-active;
+}
+
+select {
+  -webkit-appearance: none !important;
+  border: 1px solid $color-border;
+  font-size: 0.875rem;
+  border-radius: 0;
+  background-image: url('data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  padding: .625rem 1.5rem 0.625rem 1rem;
+}
+
+.standard-form {
+  label {
+    display: block;
+  }
+  input {
+    display: block;
+    margin-bottom: 20px;
+  }
+  hr {
+    margin-bottom: 15px;
+  }
+}
+
+.standard-form-padding {
+  padding-top: 30px;
+}
+

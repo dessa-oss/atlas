@@ -1,0 +1,49 @@
+.job-column-header {
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  height: 50px;
+
+  h4{
+    min-width: 80px;
+    margin-bottom: 0px;
+    padding-bottom: 3px;
+    margin-top: 6px;
+  }
+
+  .status-header{
+    min-width: 40px;
+  }
+
+  .start-time-offset{
+    padding-left: 25px;
+    padding-right: 6px;
+  }
+
+.status-offset{
+  padding-left: 18px;
+
+  .icon-container {
+    width: 25%;
+  }
+
+  .arrow-continer {
+    width: 75%;
+  }
+}
+
+  .job-id-offset{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .duration-offset{
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  .user-offset{
+    padding-left: 15px;
+    padding-right: 5px;
+  }
+}

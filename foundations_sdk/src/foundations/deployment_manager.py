@@ -29,10 +29,15 @@ class DeploymentManager(object):
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
         from foundations.local_shell_job_deployment import LocalShellJobDeployment
+        from foundations.global_state import message_router
+        from foundations.deployment.job_preparation import prepare_job
+
         logger = log_manager.get_logger(__name__)
 
         deployment = self._create_deployment(job_name, job)
         deployment.config().update(deployment_config)
+
+        prepare_job(message_router, job, job_name)
 
         if isinstance(deployment, LocalShellJobDeployment):
             logger.info("Job '{}' deployed.".format(job_name))

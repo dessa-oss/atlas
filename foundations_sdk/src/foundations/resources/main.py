@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import sys
 
-from foundations import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager
+from foundations import Job, JobSourceBundle, JobPersister, config_manager, compat_raise, serialize_to_file, log_manager, message_router
 from foundations.error_printer import ErrorPrinter
 
 def main():
@@ -16,6 +16,13 @@ def main():
 
     config_manager.freeze()
     config = config_manager.config()
+
+    def set_recursion_limit_if_necessary():
+        if 'recursion_limit' in config:
+            new_limit = config['recursion_limit']
+            log.debug('Overriding recursion limit to {}'.format(new_limit))
+            sys.setrecursionlimit(new_limit)
+    set_recursion_limit_if_necessary()
 
     job_name = config.get('job_name', 'job')
     job_binary_path = job_name + '.bin'
@@ -34,15 +41,38 @@ def main():
 
     pipeline_context.provenance.job_source_bundle = job_source_bundle
 
+    def mark_job_failed():
+        from foundations.producers.jobs.failed_job import FailedJob
+        from foundations.global_state import message_router
+
+        job_pipeline_context = job.pipeline_context()
+        job_error_information = job_pipeline_context.global_stage_context.error_information
+        FailedJob(message_router, job_pipeline_context, job_error_information).push_message()
+
     def fetch_error_information(context):
         import sys
         exception_info = sys.exc_info()
         context.global_stage_context.add_error_information(exception_info)
+        mark_job_failed()
         return exception_info
+
+    def mark_job_complete():
+        from foundations.producers.jobs.complete_job import CompleteJob
+        from foundations.global_state import message_router
+
+        CompleteJob(message_router, job.pipeline_context()).push_message()
+
+    def mark_job_as_running():
+        from foundations.producers.jobs.run_job import RunJob
+        from foundations.global_state import message_router
+
+        RunJob(message_router, job.pipeline_context()).push_message()
 
     def execute_job():
         try:
+            mark_job_as_running()
             job.run()
+            mark_job_complete()
             return None, False
         except Exception as error:
             return fetch_error_information(pipeline_context), True

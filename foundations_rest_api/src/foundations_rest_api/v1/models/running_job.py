@@ -24,7 +24,7 @@ class RunningJob(PropertyModel):
         Returns:
             list<RunningJob> -- All queued jobs
         """
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
             from foundations.global_state import deployment_manager
@@ -43,7 +43,7 @@ class RunningJob(PropertyModel):
 
             return jobs
 
-        return Response('QueueJob', _all)
+        return LazyResult(_all)
 
     @staticmethod
     def contexts():

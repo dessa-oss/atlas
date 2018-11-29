@@ -21,6 +21,7 @@ class Project(PropertyModel):
     completed_jobs = PropertyModel.define_property()
     running_jobs = PropertyModel.define_property()
     queued_jobs = PropertyModel.define_property()
+    jobs = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -33,12 +34,12 @@ class Project(PropertyModel):
             Project -- The new instance of the project
         """
 
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             return Project(name=name)
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def find_by(name):
@@ -51,31 +52,22 @@ class Project(PropertyModel):
             Project -- The project
         """
 
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
             return Project._find_by_internal(name)
 
-            project = Project(name=name)
-            project.created_at = None
-            project.owner = None
-            project.completed_jobs = CompletedJob.all()
-            project.running_jobs = RunningJob.all()
-            project.queued_jobs = QueuedJob.all()
-            return project
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def all():
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
-            from foundations.global_state import config_manager
-
             listing = Project._construct_project_listing()
             return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
 
-        return Response(None, callback)
+        return LazyResult(callback)
 
     @staticmethod
     def _construct_project_listing():
@@ -89,6 +81,7 @@ class Project(PropertyModel):
         from foundations_rest_api.v1.models.completed_job import CompletedJob
         from foundations_rest_api.v1.models.running_job import RunningJob
         from foundations_rest_api.v1.models.queued_job import QueuedJob
+        from foundations_rest_api.v1.models.job import Job
 
         project = Project(name=name)
         project.created_at = None
@@ -96,4 +89,5 @@ class Project(PropertyModel):
         project.completed_jobs = CompletedJob.all(project_name=name)
         project.running_jobs = RunningJob.all()
         project.queued_jobs = QueuedJob.all()
+        project.jobs = Job.all(project_name=name)
         return project

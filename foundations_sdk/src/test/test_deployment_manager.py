@@ -6,7 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import patch
+from mock import Mock, patch
+
 
 class TestDeploymentManager(unittest.TestCase):
 
@@ -20,7 +21,7 @@ class TestDeploymentManager(unittest.TestCase):
 
         def deploy(self):
             pass
-        
+
         def job_name(self):
             return self._job_name
 
@@ -51,26 +52,29 @@ class TestDeploymentManager(unittest.TestCase):
         }
 
         self._deployment_manager = DeploymentManager(self._config)
-        
+
         self._pipeline_context = PipelineContext()
         self._pipeline = Pipeline(self._pipeline_context)
         self._foundations_context = FoundationsContext(self._pipeline)
         self._stage = self._pipeline.stage(self._method)
 
-    def test_deploy_persisted_project_name(self):
+    @patch('foundations.deployment.job_preparation.prepare_job')
+    def test_deploy_persisted_project_name(self, _):
         self._foundations_context.set_project_name('my project')
         self._deployment_manager.simple_deploy(self._stage, '', {})
 
         self.assertEqual('my project', self._listing.value)
 
-    def test_deploy_persisted_project_name_different_name(self):
+    @patch('foundations.deployment.job_preparation.prepare_job')
+    def test_deploy_persisted_project_name_different_name(self, _):
         self._foundations_context.set_project_name('project potato launcher')
         self._deployment_manager.simple_deploy(self._stage, '', {})
 
         self.assertEqual('project potato launcher', self._listing.value)
 
+    @patch('foundations.deployment.job_preparation.prepare_job')
     @patch('foundations.null_pipeline_archive_listing.NullPipelineArchiveListing')
-    def test_deploy_persisted_project_name_supports_default_listing(self, mock):
+    def test_deploy_persisted_project_name_supports_default_listing(self, mock, _):
         mock.side_effect = self._mock_listing
 
         del self._config.config()['project_listing_implementation']
@@ -79,11 +83,25 @@ class TestDeploymentManager(unittest.TestCase):
         self._deployment_manager.simple_deploy(self._stage, '', {})
 
         self.assertEqual('my project', self._listing.value)
-    
+
+    @patch('foundations.deployment.job_preparation.prepare_job')
     @patch('logging.Logger.info')
-    def test_deployment_manager_deploy_info_log(self, mock):
-        deployment = self._deployment_manager.simple_deploy(self._stage, '', {})
-        mock.assert_called_with("Job '{}' deployed.".format(deployment.job_name())) 
+    def test_deployment_manager_deploy_info_log(self, mock, _):
+        deployment = self._deployment_manager.simple_deploy(
+            self._stage, '', {})
+        mock.assert_called_with(
+            "Job '{}' deployed.".format(deployment.job_name()))
+
+    @patch('foundations.deployment.job_preparation.prepare_job')
+    @patch('foundations.job.Job')
+    def test_deployment_manager_prepares_job(self, job, job_preparation):
+        from foundations.global_state import message_router
+
+        job_instance = Mock()
+        job.return_value = job_instance
+        deployment = self._deployment_manager.simple_deploy(
+            self._stage, '', {})
+        job_preparation.assert_called_with(message_router, job_instance, deployment.job_name())
 
     def _mock_listing(self):
         return self._listing

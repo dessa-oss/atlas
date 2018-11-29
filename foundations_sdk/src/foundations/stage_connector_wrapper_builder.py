@@ -23,11 +23,10 @@ class StageConnectorWrapperBuilder(object):
         self._stage = None
         self._connector = None
 
-    def build(self, stage_function, *additional_args):
+    def build(self, *additional_args):
         from foundations.stage_connector_wrapper import StageConnectorWrapper
 
-        connector = stage_function(self._stage, *additional_args)
-        return StageConnectorWrapper(connector, self._pipeline_context, self._stage_context, self._stage_config)
+        return StageConnectorWrapper(self._stage, self._pipeline_context, self._stage_context, self._stage_config)
 
     def hierarchy(self, parent_uuids):
         stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
@@ -52,7 +51,7 @@ class StageConnectorWrapperBuilder(object):
         from foundations.argument import Argument
 
         return tuple(Argument.generate_from(argument, None)
-                         for argument in args)
+                     for argument in args)
 
     def _new_keyword_arguments(self, kwargs):
         from foundations.argument import Argument
@@ -62,7 +61,7 @@ class StageConnectorWrapperBuilder(object):
 
         new_kwargs = [(key, kwargs[key]) for key in kwarg_keys]
         return tuple(Argument.generate_from(argument, keyword)
-                          for keyword, argument in new_kwargs)
+                     for keyword, argument in new_kwargs)
 
     def _append_stage_middleware(self):
         from foundations.global_state import middleware_manager

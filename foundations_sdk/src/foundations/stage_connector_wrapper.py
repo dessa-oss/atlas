@@ -5,18 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.stage_piping import StagePiping
 from foundations.job import Job
-from foundations.successive_argument_filler import SuccessiveArgumentFiller
-from foundations.stage_connector import StageConnector
 from foundations.stage_context import StageContext
 from foundations.context_aware import ContextAware
 
 
 class StageConnectorWrapper(object):
 
-    def __init__(self, connector, pipeline_context, stage_context, stage_config):
-        self._connector = connector
+    def __init__(self, stage, pipeline_context, stage_context, stage_config):
+        self._stage = stage
         self._pipeline_context = pipeline_context
         self._stage_context = stage_context
         self._stage_config = stage_config
@@ -24,16 +21,11 @@ class StageConnectorWrapper(object):
         self._stage_context.uuid = self.uuid()
         self._pipeline_context.add_stage_context(self._stage_context)
 
-        self._stage_piping = StagePiping(self)
-
-    def _reset_state(self):
-        self._connector._reset_state()
-
     def pipeline_context(self):
         return self._pipeline_context
 
     def uuid(self):
-        return self._connector.uuid()
+        return self._stage.uuid()
 
     def stage(self, function, *args, **kwargs):
         from foundations import foundations_context
@@ -49,7 +41,7 @@ class StageConnectorWrapper(object):
             builder, _require, required_args + (self,), {})
         builder = self._set_builder_hierarchy(builder)
 
-        return builder.build(self._connector.stage)
+        return builder.build(self._stage)
 
     def persist(self):
         self._stage_config.persist()
@@ -61,18 +53,15 @@ class StageConnectorWrapper(object):
 
     def enable_caching(self):
         self._stage_config.enable_caching()
-        for argument in self._connector.args():
+        for argument in self._stage.stage_args():
             argument.enable_caching()
-        for argument in self._connector.kwargs().values():
+        for argument in self._stage.stage_kwargs().values():
             argument.enable_caching()
         return self
 
     def disable_caching(self):
         self._stage_config.disable_caching()
         return self
-
-    def __or__(self, stage_args):
-        return self._stage_piping.pipe(stage_args)
 
     def run(self, params_dict=None, job_name=None, **kw_params):
         from foundations.global_state import deployment_manager
@@ -88,13 +77,14 @@ class StageConnectorWrapper(object):
         logger = log_manager.get_logger(__name__)
 
         logger.info("Deploying job...")
-        deployment = deployment_manager.simple_deploy(self, job_name, all_params)
+        deployment = deployment_manager.simple_deploy(
+            self, job_name, all_params)
         deployment_wrapper = DeploymentWrapper(deployment)
 
         return deployment_wrapper
 
     def run_same_process(self, **filler_kwargs):
-        return self._connector.run(self._filler_builder, **filler_kwargs)
+        return self._stage.run(None, None, **filler_kwargs)
 
     def _make_builder(self):
         from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
@@ -106,27 +96,15 @@ class StageConnectorWrapper(object):
     def _set_builder_hierarchy(self, builder):
         return builder.hierarchy([self.uuid()])
 
-    def _filler_builder(self, *args, **kwargs):
-        from foundations.hyperparameter_argument_fill import HyperparameterArgumentFill
-        from foundations.stage_connector_wrapper_fill import StageConnectorWrapperFill
-
-        return SuccessiveArgumentFiller([HyperparameterArgumentFill, StageConnectorWrapperFill], *args, **kwargs)
-
-    def _provenance_filler_builder(self, *args, **kwargs):
-        from foundations.hyperparameter_argument_name_fill import HyperparameterArgumentNameFill
-        from foundations.stage_connector_wrapper_name_fill import StageConnectorWrapperNameFill
-
-        return SuccessiveArgumentFiller([HyperparameterArgumentNameFill, StageConnectorWrapperNameFill], *args, **kwargs)
-
     def __call__(self, *args, **kwargs):
         return self.run(*args, **kwargs)
 
     def name(self):
         function_name_and_uuid = self.function_name() + ' ' + self.uuid()
         return function_name_and_uuid
-    
+
     def function_name(self):
-        return self._connector.function_name()
+        return self._stage.function_name()
 
     def split(self, num_children):
         from foundations.utils import split_at

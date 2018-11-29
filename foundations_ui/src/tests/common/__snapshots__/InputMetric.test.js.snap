@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders InputMetric 1`] = `
+<div
+  className="input-metric-container"
+>
+  <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
+    header=""
+    hiddenInputParams={Array []}
+    isMetric={false}
+    isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
+  />
+  <div
+    className="input-metric-column-header-container"
+  />
+</div>
+`;
