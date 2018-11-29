@@ -22,7 +22,7 @@ class APIAcceptanceTestCaseMeta(type):
         custom_base_class = metaclass._get_custom_base_class(bases, attributes)
         klass = metaclass._get_child_class(name, custom_base_class, attributes)
         klass._check_mandatory_attributes()
-        test_methods_names = custom_base_class._setup_test_methods()
+        test_methods_names = custom_base_class._setup()
         klass._force_child_class_implementation(test_methods_names)
         return klass
 
