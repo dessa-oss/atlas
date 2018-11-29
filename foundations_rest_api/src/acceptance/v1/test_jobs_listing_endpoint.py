@@ -6,6 +6,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
+from datetime import datetime
 from test.v1.models.jobs_tests_helper_mixin import JobsTestsHelperMixin
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
@@ -13,6 +14,13 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     url = '/api/v1/projects/{_project_name}/job_listing'
     sorting_columns = ['start_time', 'status']
+    filtering_columns = [{'name': 'job_id',
+                          'test_values': ('00000000-0000-0000-0000-000000000000', 'my job 1')},
+                         {'name': 'status',
+                          'test_values': ('queued', 'running')},
+                         {'name': 'user',
+                          'test_values': ('beethoven', 'soju hero')}
+                        ]
 
     def setUp(self):
         self._setup_deployment('RUNNING')
@@ -40,44 +48,101 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 1')
 
-    def test_route_sorted_start_time_descending(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_descending()
+    def test_sorted_start_time_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_sorted_start_time_descending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 1')
 
-    def test_route_sorted_start_time_ascending(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_start_time_ascending()
+    def test_sorted_start_time_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_sorted_start_time_ascending()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
 
-    def test_route_sorted_status_descending(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_status_descending()
+    def test_sorted_status_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_sorted_status_descending()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 1')
 
-    def test_route_sorted_status_ascending(self):
-        data = super(TestJobsListingEndpoint, self).test_route_sorted_status_ascending()
+    def test_sorted_status_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_sorted_status_ascending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
 
-    def test_get_route_all_ascending(self):
-        data = super(TestJobsListingEndpoint, self).test_get_route_all_ascending()
+    def test_all_ascending(self):
+        data = super(TestJobsListingEndpoint, self).test_all_ascending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
 
-    def test_get_route_all_descending(self):
-        data = super(TestJobsListingEndpoint, self).test_get_route_all_descending()
+    def test_all_descending(self):
+        data = super(TestJobsListingEndpoint, self).test_all_descending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][1]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 1')
 
-    def test_get_route_alternation(self):
-        data = super(TestJobsListingEndpoint, self).test_get_route_alternation()
+    def test_alternation(self):
+        data = super(TestJobsListingEndpoint, self).test_alternation()
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
+
+    def test_filter_job_id_range(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_job_id_range()
+        self.assertEqual(len(data['jobs']), 2)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+
+    def test_filter_job_id_exact_match_one_option(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_job_id_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_job_id_exact_match_two_options(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_job_id_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 2)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+
+    def test_filter_status_range(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_range()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_status_exact_match_one_option(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 0)
+
+    def test_filter_status_exact_match_two_options(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_status_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_user_range(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_range()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_user_exact_match_one_option(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 0)
+
+    def test_filter_user_exact_match_two_options(self):
+        data = super(TestJobsListingEndpoint, self).test_filter_user_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_job_id_contains(self):
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method('?job_id_contains=1')
+        data = custom_test_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
+
+    def test_filter_user_contains(self):
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method('?user_contains=hero')
+        data = custom_test_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')

@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 import unittest
-from foundations_rest_api.result_sorter import ResultSorter
+from foundations_rest_api.filters.result_sorter import ResultSorter
 
 
 class TestResultSorter(unittest.TestCase):

@@ -12,6 +12,7 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 class TestQueuedJobsEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     url = '/api/v1/projects/<project_name>/jobs/queued'
     sorting_columns = []
+    filtering_columns = []
 
     def setUp(self):
         self._setup_deployment('QUEUED')

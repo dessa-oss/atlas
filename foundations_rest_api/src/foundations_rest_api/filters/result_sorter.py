@@ -4,8 +4,9 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
+from foundations_rest_api.filters.api_filter_mixin import APIFilterMixin
 
-class ResultSorter(object):
+class ResultSorter(APIFilterMixin):
 
     def __call__(self, result, params):
         if result and 'sort' in params and isinstance(result, list):
@@ -35,7 +36,7 @@ class ResultSorter(object):
         descending = column_spec.startswith('-')
         column_name = column_spec[1:] if descending else column_spec
         column_data = (descending, column_name)
-        if hasattr(result[0], column_name):
+        if self._is_valid_column(result, column_name):
             columns_data.append(column_data)
 
     def _sort_by_column_data(self, result, column_data):

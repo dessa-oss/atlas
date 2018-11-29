@@ -13,6 +13,7 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
+    filtering_columns = []
 
     @classmethod
     def setUpClass(klass):
