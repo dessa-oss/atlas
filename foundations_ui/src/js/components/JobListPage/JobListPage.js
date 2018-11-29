@@ -68,11 +68,12 @@ class JobListPage extends Component {
     });
   }
 
-  updateHiddenStatus(hiddenFields) {
-    const { statuses } = this.state;
+  async updateHiddenStatus(hiddenFields) {
+    const { statuses, projectName } = this.state;
     const statusNamesArray = statuses.map(status => status.name);
     const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
     this.setState({ statuses: formattedColumns });
+    const apiFilteredJobs = await JobActions.filterJobs(projectName, formattedColumns);
     this.forceUpdate();
   }
 

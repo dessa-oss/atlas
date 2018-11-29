@@ -27,11 +27,9 @@ class ProjectActions {
     const filterURL = this.getFilterURL(statusFilter);
     url = url.concat('?').concat(filterURL);
 
-    console.log('filter jobs url', url);
     // TODO get Jobs is currently in Beta
     return BaseActions.getBetaFromAPI(url)
       .then((res) => {
-        console.log('filter res', res);
         return res;
       });
   }
@@ -237,7 +235,7 @@ class ProjectActions {
     let url = '';
     let isFirstStatus = true;
     statusFilter.forEach((status) => {
-      if (status.hidden === true) {
+      if (status.hidden === false) {
         if (isFirstStatus) {
           url += 'status='.concat(status.name.toLowerCase());
           isFirstStatus = false;
