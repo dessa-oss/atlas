@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders Job List Page 1`] = `
-<div>
+<div
+  className="job-list-container"
+>
   <Toolbar />
   <JobHeader
     bubbleRefs={Array []}

@@ -23,7 +23,7 @@ class JobListPage extends Component {
   render() {
     const { projectName, project, filters } = this.state;
     return (
-      <div>
+      <div className="job-list-container">
         <Toolbar />
         <JobHeader project={project} filters={filters} />
         <JobTable projectName={projectName} />

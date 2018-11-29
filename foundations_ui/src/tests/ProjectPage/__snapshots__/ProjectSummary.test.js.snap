@@ -8,21 +8,19 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     className="project-summary-info-container"
   >
     <h2
-      className="project-summary-name-text font-bold"
+      className="font-bold"
     />
-    <p
-      className="project-summary-source-text"
-    >
+    <p>
       Data Source: Unknown
     </p>
     <p
-      className="project-summary-owner-text font-bold"
+      className="font-bold"
     >
       Project owner: 
       <span />
     </p>
     <p
-      className="project-summary-created-at-text font-bold"
+      className="font-bold"
     >
       Created at: 
       <span />

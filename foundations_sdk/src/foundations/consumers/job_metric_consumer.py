@@ -29,7 +29,7 @@ class JobMetricConsumer(object):
         from foundations.fast_serializer import serialize
 
         job_id = message['job_id']
-        key = 'job:{}:metrics'.format(job_id)
+        key = 'jobs:{}:metrics'.format(job_id)
         metric_key = message['key']
         metric_value = message['value']
         value = (timestamp, metric_key, metric_value)
