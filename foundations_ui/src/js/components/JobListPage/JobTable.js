@@ -17,6 +17,8 @@ class JobTable extends Component {
       projectName: this.props.projectName,
       allInputParams: [],
       allMetrics: [],
+      statuses: this.props.statuses,
+      updateHiddenStatus: this.props.updateHiddenStatus,
     };
   }
 
@@ -25,12 +27,16 @@ class JobTable extends Component {
     await this.getJobs();
   }
 
-  componentWillUnmount() {
-    this.setState({ isMount: false });
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        statuses: nextProps.statuses,
+      },
+    );
   }
 
-  async getInputParams() {
-    this.setState({ allInputParams: ['input1', 'input2', 'input3', 'input4', 'input5'] });
+  componentWillUnmount() {
+    this.setState({ isMount: false });
   }
 
   async getJobs() {
@@ -67,7 +73,7 @@ class JobTable extends Component {
 
   render() {
     const {
-      jobs, isLoaded, hiddenInputParams, allInputParams, allMetrics,
+      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus,
     } = this.state;
 
     let jobRows = [];
@@ -86,7 +92,7 @@ class JobTable extends Component {
         });
       }
     } else {
-      jobRows = <p>Loading projects</p>;
+      jobRows = <p>Loading Jobs</p>;
     }
 
     return (
@@ -96,6 +102,8 @@ class JobTable extends Component {
             allInputParams={allInputParams}
             allMetrics={allMetrics}
             jobs={jobs}
+            statuses={statuses}
+            updateHiddenStatus={updateHiddenStatus}
           />
           <div className="table-row-number">
             {rowNumbers}
@@ -122,6 +130,8 @@ JobTable.propTypes = {
   projectName: PropTypes.string,
   allInputParams: PropTypes.array,
   allMetrics: PropTypes.array,
+  updateHiddenStatus: PropTypes.func,
+  statuses: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -131,6 +141,8 @@ JobTable.defaultProps = {
   projectName: '',
   allInputParams: [],
   allMetrics: [],
+  updateHiddenStatus: () => {},
+  statuses: [],
 };
 
 export default JobTable;
