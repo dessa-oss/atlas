@@ -266,17 +266,17 @@ it('getDurationClass seconds', () => {
 
 it('getAllInputParams', () => {
   const allParams = JobActions.getAllInputParams(allJobs);
-  expect(allParams.length).toBe(2);
+  expect(allParams.length).toBe(3);
 });
 
 it('getConstantInputParams all const', () => {
   const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(2);
+  expect(constInputParams.length).toBe(3);
 });
 
 it('getConstantInputParams with non const', () => {
   const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(2);
+  expect(constInputParams.length).toBe(3);
 });
 
 it('getInputMetricValue metric const', () => {
@@ -291,13 +291,12 @@ it('getInputMetricValue metric non const', () => {
 
 it('getInputMetricValue no metric const', () => {
   const value = JobActions.getInputMetricValue(constParam, noMetric, columns);
-
   expect(value).toBe('abc');
 });
 
 it('getInputMetricValue no metric non const', () => {
   const value = JobActions.getInputMetricValue(nonConstParam, noMetric, columns);
-  expect(value).toBe('not available');
+  expect(value).toBe('123');
 });
 
 it('get AllMetrics', () => {

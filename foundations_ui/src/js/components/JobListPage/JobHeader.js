@@ -75,7 +75,6 @@ class JobHeader extends Component {
       filterButtonText = 'Hide Filters';
     }
 
-
     return (
       <div className="job-header-container">
         <div className="job-header-logo-container">

@@ -90,7 +90,7 @@ class JobListPage extends Component {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics,
     } = this.state;
     return (
-      <div>
+      <div className="job-list-container">
         <Toolbar />
         <JobHeader project={project} filters={filters} />
         <JobTable

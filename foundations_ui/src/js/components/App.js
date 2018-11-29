@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
 import JobListPage from './JobListPage/JobListPage';
-import ProjectActions from '../actions/ProjectActions';
 
 class App extends Component {
   constructor(props) {
