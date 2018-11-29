@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
 import JobListPage from './JobListPage/JobListPage';
-import ProjectActions from '../actions/ProjectActions';
 
 class App extends Component {
   constructor(props) {
@@ -28,7 +27,7 @@ class App extends Component {
       page, selectedProject, projects,
     } = this.state;
 
-    let curPage = <ProjectPage selectProject={this.selectProject} />;
+    let curPage = <ProjectPage selectProject={this.selectProject} projects={projects} />;
 
     if (page === 'jobList') {
       curPage = <JobListPage project={selectedProject} projectName={selectedProject.name} />;

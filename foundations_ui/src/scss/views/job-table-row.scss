@@ -3,4 +3,9 @@
   padding: 0px;
   height: $row-height;
   white-space: nowrap;
+  background: $color-white;
+
+  &:last-child() {
+    border-bottom: 1px solid $color-border-bottom;
+  }
 }

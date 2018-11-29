@@ -1,25 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
-import CheckboxFilter from './CheckboxFilter';
 
-class SelectColumnFilter extends Component {
+const isStatusCheckbox = true;
+
+class StatusFilter extends Component {
   constructor(props) {
     super(props);
     this.changeLocalParams = this.changeLocalParams.bind(this);
     this.onApply = this.onApply.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
-    this.updateSearchText = this.updateSearchText.bind(this);
-    this.submitSearchText = this.submitSearchText.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
       changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      updateSearchText: this.props.updateSearchText,
-      searchText: '',
       showAllFilters: false,
     };
   }
@@ -42,11 +39,8 @@ class SelectColumnFilter extends Component {
   }
 
   onClearFilters() {
-    const { updateSearchText } = this.state;
     const emptyArray = [];
     this.setState({ changedParams: emptyArray, showAllFilters: true });
-    updateSearchText('');
-    this.input.value = '';
   }
 
   unsetClearFilters() {
@@ -59,53 +53,51 @@ class SelectColumnFilter extends Component {
     this.setState({ changedParams: copyArray });
   }
 
-  updateSearchText(e) {
-    this.setState({ searchText: e.target.value });
-  }
-
-  submitSearchText() {
-    const { searchText, updateSearchText } = this.state;
-    updateSearchText(searchText);
-  }
-
   render() {
     const { columns, showAllFilters } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
+      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
     );
 
-    const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
-
     return (
-      <CheckboxFilter
-        checkboxes={checkboxes}
-        onCancel={this.onCancel}
-        onApply={this.onApply}
-        submitSearchText={this.submitSearchText}
-        onClearFilters={this.onClearFilters}
-        input={input}
-      />);
+      <div className="filter-container column-filter-container elevation-1 status-filter-container">
+        <div className="column-filter-header">
+          <button
+            type="button"
+            onClick={this.onClearFilters}
+            className="b--mat b--affirmative text-upper float-right"
+          >
+          Clear Filters
+          </button>
+        </div>
+        <div className="column-filter-list">
+          {checkboxes}
+        </div>
+        <div className="column-filter-buttons">
+          <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
+          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+        </div>
+      </div>
+    );
   }
 }
 
-SelectColumnFilter.propTypes = {
+StatusFilter.propTypes = {
   columns: PropTypes.array,
   changeHiddenParams: PropTypes.func,
   changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
-  updateSearchText: PropTypes.func,
   showAllFilters: PropTypes.bool,
 };
 
-SelectColumnFilter.defaultProps = {
+StatusFilter.defaultProps = {
   columns: [],
   changeHiddenParams: () => {},
   changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
-  updateSearchText: () => {},
   showAllFilters: false,
 };
 
-export default SelectColumnFilter;
+export default StatusFilter;

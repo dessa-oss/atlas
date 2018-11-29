@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders ShowMoreFilters 1`] = `
+<div
+  className="show-more-filters-container elevation-1"
+/>
+`;

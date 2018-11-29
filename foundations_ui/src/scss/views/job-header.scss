@@ -1,21 +1,22 @@
 .job-header-container{
     width: 100%;
     max-width: 100%;
-    height: 165px;
+    min-width: $minimum-site-width;
+    height: $header-control-height;
     background-color: $color-background;
     border-bottom: 2px solid $color-border-bottom;
   }
   
   .job-header-logo-container{
-    margin-left: 50px;
+    margin-left: $overview-content-margin-horizontal;
     display: inline-block;
     vertical-align: top;
 
     div {
-      height: 45px;
-      width: 45px;
-      min-width: 45px;
-      min-height: 45px;
+      height: $header-nav-height;
+      width: $header-nav-height;
+      min-width: $header-nav-height;
+      min-height: $header-nav-height;
       display: inline-block;
       vertical-align: top;
       margin-top: 15px;
@@ -100,7 +101,16 @@
   .job-header-sorting-container {
     display: inline-block;
     vertical-align: top;
-    margin-left: 50px;
+    margin-left: $overview-content-margin-horizontal;
+
+    > div {
+      &:nth-of-type(2){
+        margin-left: 15px;
+        width: 121px;
+        border-right: 1px solid $color-border-bottom;
+        border-bottom: none;
+      }
+    }
 
     > div {
       display: inline-block;
@@ -110,10 +120,10 @@
         > div {
         display: inline-block;
         vertical-align: top;
-        width: 600px;
+        width: 595px;
         height: 35px;
         min-height: 35px;
-        padding-bottom: 3px;
+        margin-top: 3px;
         white-space: nowrap;
         overflow: hidden;
 
@@ -128,20 +138,8 @@
       border: 1px solid $color-medium-blue;
       padding: 3px;
       border-radius: 8px;
-      line-height: 20px;
-      height: 23px;
-
-      &.more-bubble {
-        margin: 0px;
-        margin-left: 10px;
-        position: relative;
-        width: 65px;
-        min-height: 23px;
-        p {
-          padding: 0px;
-          padding-left: 5px;
-        }
-      }
+      line-height: 16px;
+      height: 20px;
 
       &.hidden {
         display: none;
@@ -156,4 +154,51 @@
       }
     }
 
+    .sort-bubble {
+      display: inline-block;
+      &.more-bubble {
+        margin: 0px;
+        margin-left: 10px;
+        position: relative;
+        width: 65px;
+        min-height: 23px;
+        p {
+          padding: 0px;
+          padding-left: 5px;
+        }
+      }
+    }
+
+    .more-bubble {
+      margin: 3px 0px 0px 10px;
+      position: relative;
+      width: 72px;
+      min-height: 20px;
+      text-align: center;
+      p {
+        padding: 0px;
+      }
+    }
   }
+
+  @media only screen and (max-width: $minimum-screen-width) {
+    .job-summary-info-container {
+        width: calc(40% - 100px);
+    }
+
+    .job-header-sorting-container {
+        > div {
+          width: 495px;
+            > div {
+            width: 395px;
+          }
+        }
+      }
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+        padding-left: 5px; 
+      }
+    }

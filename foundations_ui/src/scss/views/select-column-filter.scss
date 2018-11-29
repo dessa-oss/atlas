@@ -1,11 +1,53 @@
 .column-filter-container {
   text-align: left;
   padding: 15px 15px 5px 15px;
-  width: calc(100% - 30px);
+  width: calc(100% - 30px - 2px);
 
   button:not(.button-icon) {
     margin-top: 5px;
     margin-right: 0px;
+  }
+
+  &.user-filter-container {
+    width: 270px;
+    position: absolute;
+    left: 26.3%;
+  }
+
+  &.status-filter-container {
+    width: 225px;
+    position: absolute;
+    left: 8%;
+    padding-top: 5px;
+
+    .column-filter-header {
+      height: 50px;
+      border-bottom: none;
+      margin-bottom: 0px;
+    }
+
+    .column-filter-list {
+      height: 105px;
+      border-bottom: none;
+    }
+    
+    button {
+      display: inline-block;
+      margin-left: 0px;
+      margin-bottom: 5px;
+      &:not(:first-child) {
+        margin-left: 20px;
+      }
+    }
+
+    h5 {
+      display: inline-block;
+    }
+
+    span {
+      vertical-align: middle;
+      margin-right: 5px;
+    }
   }
 }
 
@@ -21,7 +63,7 @@
   padding: 0px;
   height: 35px;
   margin-top: 0px;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 }
 
 .column-filter-header {

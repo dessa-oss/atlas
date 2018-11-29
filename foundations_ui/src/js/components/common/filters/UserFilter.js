@@ -84,6 +84,7 @@ class SelectColumnFilter extends Component {
         submitSearchText={this.submitSearchText}
         onClearFilters={this.onClearFilters}
         input={input}
+        addedClass="user-filter-container"
       />);
   }
 }

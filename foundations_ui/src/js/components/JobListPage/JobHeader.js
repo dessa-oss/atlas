@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ShowMoreFilters from '../common/filters/ShowMoreFilters';
 import CommonActions from '../../actions/CommonActions';
 
 const borderSize = 2; // 1px per side
@@ -7,11 +8,13 @@ const borderSize = 2; // 1px per side
 class JobHeader extends Component {
   constructor(props) {
     super(props);
+    this.toggleFilters = this.toggleFilters.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
       bubbleRefs: [],
       bubblesHidden: 0,
+      isShowingMoreFilters: false,
     };
   }
 
@@ -32,9 +35,14 @@ class JobHeader extends Component {
     this.setState({ bubblesHidden: numHidden });
   }
 
+  toggleFilters() {
+    const { isShowingMoreFilters } = this.state;
+    this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+  }
+
   render() {
     const {
-      project, filters, bubbleRefs, bubblesHidden,
+      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters,
     } = this.state;
 
     const filterBubbles = [];
@@ -58,6 +66,13 @@ class JobHeader extends Component {
           </p>
         </div>
       );
+    }
+
+    let moreFilters = null;
+    let filterButtonText = 'View Filters';
+    if (isShowingMoreFilters) {
+      moreFilters = <ShowMoreFilters filters={filters} bubblesHidden={bubblesHidden} />;
+      filterButtonText = 'Hide Filters';
     }
 
     return (
@@ -98,7 +113,17 @@ class JobHeader extends Component {
             </div>
             {moreBubbles}
           </div>
+          <div>
+            <button
+              type="button"
+              onClick={this.toggleFilters}
+              className="b--mat b--affirmative text-upper"
+            >
+              {filterButtonText}
+            </button>
+          </div>
         </div>
+        {moreFilters}
       </div>
     );
   }
@@ -110,6 +135,7 @@ JobHeader.propTypes = {
   filters: PropTypes.array,
   bubbleRefs: PropTypes.array,
   bubblesHidden: PropTypes.number,
+  isShowingMoreFilters: PropTypes.bool,
 };
 
 JobHeader.defaultProps = {
@@ -118,6 +144,7 @@ JobHeader.defaultProps = {
   filters: [],
   bubbleRefs: [],
   bubblesHidden: 0,
+  isShowingMoreFilters: false,
 };
 
 export default JobHeader;

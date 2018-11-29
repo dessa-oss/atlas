@@ -36,6 +36,7 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
       ]
     }
+    isShowingMoreFilters={false}
     numProjects={0}
     project={Object {}}
   />

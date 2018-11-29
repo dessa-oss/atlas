@@ -2,22 +2,50 @@
 
 exports[`Shallow Renders Job Table 1`] = `
 <div
-  className="job-table-container"
+  className="job-table-content"
 >
-  <JobTableHeader
-    allInputParams={Array []}
-    allMetrics={Array []}
-    jobs={Array []}
-  />
   <div
-    className="table-row-number"
-  />
-  <div
-    className="job-table-row-container"
+    className="job-table-container"
   >
-    <p>
-      Loading projects
-    </p>
+    <JobTableHeader
+      allInputParams={Array []}
+      allMetrics={Array []}
+      isShowingStatusFilter={false}
+      isShowingUserFilter={false}
+      jobs={Array []}
+      statuses={Array []}
+    />
+    <div
+      className="table-row-number"
+    />
+    <div
+      className="job-table-row-container"
+    >
+      <p>
+        Loading projects
+      </p>
+    </div>
+    <div
+      className="pagination-controls"
+    >
+      <p>
+        <span
+          className="font-bold"
+        >
+          Viewing:
+        </span>
+         1-100/600
+      </p>
+      <div
+        className="arrow-right"
+      />
+      <p>
+        Page 1
+      </p>
+      <div
+        className="arrow-left"
+      />
+    </div>
   </div>
 </div>
 `;
