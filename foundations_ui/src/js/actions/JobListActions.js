@@ -10,10 +10,28 @@ const isStatusField = true;
 class ProjectActions {
   // API Calls
   static getJobs(projectName) {
-    const url = 'projects/'.concat(projectName).concat('/job_listing');
+    const url = this.getBaseJobListingURL(projectName);
     // TODO get Jobs is currently in Beta
     return BaseActions.getBetaFromAPI(url)
       .then((res) => {
+        return res;
+      });
+  }
+
+  static filterJobs(projectName, statusFilter) {
+    if (statusFilter.length === 0) {
+      return this.getJobs(projectName);
+    }
+
+    let url = this.getBaseJobListingURL(projectName);
+    const filterURL = this.getFilterURL(statusFilter);
+    url = url.concat('?').concat(filterURL);
+
+    console.log('filter jobs url', url);
+    // TODO get Jobs is currently in Beta
+    return BaseActions.getBetaFromAPI(url)
+      .then((res) => {
+        console.log('filter res', res);
         return res;
       });
   }
@@ -213,6 +231,27 @@ class ProjectActions {
 
   static getAllMetrics(allJobs) {
     return (this.getAllMetricsFromJobs(allJobs));
+  }
+
+  static getFilterURL(statusFilter) {
+    let url = '';
+    let isFirstStatus = true;
+    statusFilter.forEach((status) => {
+      if (status.hidden === true) {
+        if (isFirstStatus) {
+          url += 'status='.concat(status.name.toLowerCase());
+          isFirstStatus = false;
+        } else {
+          url += ','.concat(status.name.toLowerCase());
+        }
+      }
+    });
+
+    return url;
+  }
+
+  static getBaseJobListingURL(projectName) {
+    return 'projects/'.concat(projectName).concat('/job_listing');
   }
 
   // private fun

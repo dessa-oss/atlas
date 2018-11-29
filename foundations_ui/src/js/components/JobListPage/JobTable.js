@@ -7,68 +7,26 @@ import JobActions from '../../actions/JobListActions';
 class JobTable extends Component {
   constructor(props) {
     super(props);
-    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
-    this.saveAPIJobs = this.saveAPIJobs.bind(this);
-    this.clearState = this.clearState.bind(this);
     this.state = {
-      isMount: false,
-      jobs: [],
-      isLoaded: false,
-      projectName: this.props.projectName,
-      allInputParams: [],
-      allMetrics: [],
+      jobs: this.props.jobs,
+      isLoaded: this.props.isLoaded,
+      allInputParams: this.props.allInputParams,
+      allMetrics: this.props.allMetrics,
       statuses: this.props.statuses,
       updateHiddenStatus: this.props.updateHiddenStatus,
     };
-  }
-
-  async componentDidMount() {
-    this.setState({ isMount: true });
-    await this.getJobs();
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState(
       {
         statuses: nextProps.statuses,
+        jobs: nextProps.jobs,
+        isLoaded: nextProps.isLoaded,
+        allInputParams: nextProps.allInputParams,
+        allMetrics: nextProps.allMetrics,
       },
     );
-  }
-
-  componentWillUnmount() {
-    this.setState({ isMount: false });
-  }
-
-  async getJobs() {
-    const { projectName } = this.state;
-    const apiJobs = await JobActions.getJobs(projectName);
-    this.formatAndSaveParams(apiJobs);
-  }
-
-  formatAndSaveParams(apiJobs) {
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      if (apiJobs != null) {
-        this.saveAPIJobs(apiJobs);
-      } else {
-        this.clearState();
-      }
-    }
-  }
-
-  saveAPIJobs(apiJobs) {
-    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
-    this.setState({
-      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
-    });
-  }
-
-  clearState() {
-    this.setState({
-      jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
-    });
   }
 
   render() {

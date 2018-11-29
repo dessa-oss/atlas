@@ -315,3 +315,14 @@ it('getConstantInputParams with non const', () => {
   expect(constInputParams.length).toBe(2);
 });
 
+it('filterJobs', () => {
+
+});
+
+it('getBaseJobListingURL', () => {
+
+});
+
+it('getFilterURL', () => {
+
+});
