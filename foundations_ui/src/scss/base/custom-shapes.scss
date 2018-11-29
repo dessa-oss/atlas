@@ -131,3 +131,100 @@
     background: $color-active-blue;
   }
 }
+
+#circle-orbit-container {
+  position: relative;
+  top: 25px;
+  left: 25px;
+  height: 300px;
+  width: 300px;
+}
+
+#sun {
+  position: absolute;
+  top: 110px;
+  left: 97px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background: $color-light-blue;
+}
+
+#first-orbit {
+  position: absolute;
+  top: 85px;
+  left: 70px;
+  width: 80px;
+  height: 80px;
+  border: 1.5px dashed $color-hover-blue;
+  opacity: 0.3;
+  border-radius: 100%;
+  -webkit-animation: spin-right 4s linear infinite;
+  animation: spin-right 4s linear infinite;
+}
+
+.first-orbit-circle {
+  position: absolute;
+  top: 62px;
+  left: 6px;
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  background-color: $color-negation-blue-hover;
+}
+
+#second-orbit {
+  position: absolute;
+  top: 35px;
+  left: 35px;
+  width: 160px;
+  height: 160px;
+  border: 1.5px dashed $color-hover-blue;
+  opacity: 0.5;
+  border-radius: 100%;
+  -webkit-animation: spin-right 6s linear infinite;
+  animation: spin-right 6s linear infinite;
+}
+
+.second-orbit-circles {
+  position: absolute;
+  top: 25px;
+  left: 5px;
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+  background-color: $color-negation-blue;
+}
+
+#third-orbit {
+  position: absolute;
+  top: 13px;
+  left: 0;
+  width: 210px;
+  height: 210px;
+  border: 1.5px dashed $color-hover-blue;
+  opacity: 0.3;
+  border-radius: 100%;
+  -webkit-animation: spin-right 8s linear infinite;
+  animation: spin-right 8s linear infinite;
+}
+
+.third-orbit-circles {
+  position: absolute;
+  top: -17px;
+  left: 121px;
+  height: 30px;
+  width: 30px;
+  border-radius: 100%;
+  background-color: $color-negation-blue-active;
+}
+
+@-webkit-keyframes spin-right {
+  100% {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

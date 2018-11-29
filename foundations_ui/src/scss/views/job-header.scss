@@ -141,6 +141,10 @@
       line-height: 16px;
       height: 20px;
 
+      &.hidden {
+        display: none;
+      }
+
       p {
         margin: 0px;
         display: inline-block;
@@ -152,11 +156,17 @@
 
     .sort-bubble {
       display: inline-block;
-
-      &.hidden {
-        display: none;
+      &.more-bubble {
+        margin: 0px;
+        margin-left: 10px;
+        position: relative;
+        width: 65px;
+        min-height: 23px;
+        p {
+          padding: 0px;
+          padding-left: 5px;
+        }
       }
-
     }
 
     .more-bubble {
@@ -184,4 +194,11 @@
           }
         }
       }
-  }
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+        padding-left: 5px; 
+      }
+    }
