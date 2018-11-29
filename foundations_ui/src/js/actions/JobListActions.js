@@ -11,7 +11,8 @@ class ProjectActions {
   // API Calls
   static getJobs(projectName) {
     const url = 'projects/'.concat(projectName).concat('/job_listing');
-    return BaseActions.getFromAPI(url)
+    // TODO get Jobs is currently in Beta
+    return BaseActions.getBetaFromAPI(url)
       .then((res) => {
         return res;
       });
@@ -140,8 +141,9 @@ class ProjectActions {
   static getAllInputParams(allJobs) {
     const allInputParams = [];
     allJobs.forEach((job) => {
+      // TODO just constant????
       job.input_params.forEach((input) => {
-        if (input.value.type === 'constant' && !allInputParams.includes(input.name)) {
+        if (input.source === 'constant' && !allInputParams.includes(input.name)) {
           allInputParams.push(input.name);
         }
       });
@@ -152,7 +154,7 @@ class ProjectActions {
   static getConstantInputParams(allInputParams) {
     const constantParams = [];
     allInputParams.forEach((input) => {
-      if (input.value.type === 'constant') {
+      if (input.source === 'constant') {
         constantParams.push(input);
       }
     });
@@ -160,16 +162,16 @@ class ProjectActions {
   }
 
   static getInputMetricValue(inputParam, isMetric, columns) {
-    if (isMetric && inputParam !== null) {
-      return 'metric value';
+    if (isMetric && inputParam !== null && inputParam.value) {
+      return inputParam.value;
     }
 
     // else input param
+    // TODO JUST source constant?????
     if (inputParam && columns.includes(inputParam.name)
     && inputParam.value
-    && inputParam.value.value
-    && inputParam.value.type === 'constant') {
-      return inputParam.value.value;
+    && inputParam.source === 'constant') {
+      return inputParam.value;
     }
     return 'not available';
   }
@@ -218,10 +220,10 @@ class ProjectActions {
   static getAllMetricsFromJobs(allJobs) {
     const allMetrics = [];
     allJobs.forEach((job) => {
-      if (job.output_metrics && job.output_metrics.data_set_name) {
-        job.output_metrics.data_set_name.forEach((metric) => {
-          if (!allMetrics.includes(metric)) {
-            allMetrics.push(metric);
+      if (job.output_metrics) {
+        job.output_metrics.forEach((metric) => {
+          if (!allMetrics.includes(metric.name)) {
+            allMetrics.push(metric.name);
           }
         });
       }

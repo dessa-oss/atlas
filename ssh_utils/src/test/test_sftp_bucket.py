@@ -28,6 +28,11 @@ class TestSFTPBucket(unittest.TestCase):
         self.MockConnection.port = None
         self.config_manager.config().pop("port", None)
 
+    @patch('pysftp.Connection')
+    def test_upload_from_string_supports_strings(self, mock):
+        bucket = SFTPBucket('path')
+        bucket.upload_from_string('/path/to/some/file', 'some string')
+
     @patch('pysftp.Connection', MockConnection)
     def test_set_port_24(self):
         self.config_manager["port"] = 24

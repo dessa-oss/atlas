@@ -187,7 +187,7 @@ class TestConsumers(unittest.TestCase):
         message_router.push_message('job_metrics', message)
         current_time = time()
 
-        job_metrics_key = 'job:{}:metrics'.format(job_id)
+        job_metrics_key = 'jobs:{}:metrics'.format(job_id)
         job_metrics = self._redis.lrange(job_metrics_key, 0, -1)
         job_metrics = [deserialize(data) for data in job_metrics]
         first_job_metric = list(job_metrics)[0]

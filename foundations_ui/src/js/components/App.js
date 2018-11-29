@@ -11,8 +11,7 @@ class App extends Component {
     this.selectProject = this.selectProject.bind(this);
     this.state = {
       page: '',
-      selectedProject: 'local_deployment',
-      jobs: [],
+      selectedProject: {},
     };
   }
 
@@ -21,19 +20,18 @@ class App extends Component {
   }
 
   selectProject(project) {
-    const projectJobs = ProjectActions.getJobsForProject(project);
-    this.setState({ selectedProject: project, jobs: projectJobs, page: 'jobList' });
+    this.setState({ selectedProject: project, page: 'jobList' });
   }
 
   render() {
     const {
-      page, selectedProject, jobs,
+      page, selectedProject, projects,
     } = this.state;
 
     let curPage = <ProjectPage selectProject={this.selectProject} />;
 
     if (page === 'jobList') {
-      curPage = <JobListPage projectName={selectedProject} jobs={jobs} />;
+      curPage = <JobListPage project={selectedProject} projectName={selectedProject.name} />;
     }
 
     return (
@@ -45,15 +43,13 @@ class App extends Component {
 }
 
 App.propTypes = {
-  selectedProject: PropTypes.string,
+  selectedProject: PropTypes.object,
   page: PropTypes.string,
-  jobs: PropTypes.array,
 };
 
 App.defaultProps = {
   page: '',
-  selectedProject: '',
-  jobs: [],
+  selectedProject: { name: 'local_deployment' },
 };
 
 export default App;

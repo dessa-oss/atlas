@@ -11,3 +11,4 @@ from test.test_response import TestResponse
 from test.test_result_sorter import TestResultSorter
 from test.utils import *
 from test.v1 import *
+from test.v2beta import *

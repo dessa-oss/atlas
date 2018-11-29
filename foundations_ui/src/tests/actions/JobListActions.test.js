@@ -15,62 +15,62 @@ const allJobs = [
     input_params: [
       {
         name: 'param1',
-        value: {
-          type: 'constant'
-        }
+        source: 'constant'
       },
       {
         name: 'param2',
-        value: {
-          type: 'constant'
-        }
+        source: 'constant'
+      },
+      {
+        name: 'param3',
+        source: 'non-constant'
       }
     ],
-    output_metrics: {
-      data_set_name: [
-        'm1',
-        'm2'
-      ]
-    }
+    output_metrics: [
+      {
+        name: 'm1',
+        value: 'met'
+      },
+      {
+        name: 'm2',
+        value: 'ric'
+      }
+    ]
   },
   {
     input_params: [
       {
         name: 'param1',
-        value: {
-          type: 'constant'
-        }
+        type: 'constant'
       },
       {
         name: 'param3',
-        value: {
-          type: 'non-constant'
-        }
-      }
+        type: 'non-constant'
+      },
     ],
-    output_metrics: {
-      data_set_name: [
-        'm2',
-        'm3'
-      ]
-    }
+    output_metrics: [
+      {
+        name: 'm2',
+        value: 'met'
+      },
+      {
+        name: 'm3',
+        value: 'ric'
+      }
+    ]
   }
 ];
 
 const constParam = {
   name: 'abc',
-  value: {
-    type: 'constant',
-    value: 'abc'
-  }
+  source: 'constant',
+  value: 'abc'
 };
 
 const nonConstParam = {
   name: 'abc',
-  value: {
-    type: 'non-constant',
-    value: '123'
-  }
+  source: 'non-constant',
+  value: '123'
 };
 const isMetric = true;
 const noMetric = false;
@@ -275,22 +275,23 @@ it('getConstantInputParams all const', () => {
 });
 
 it('getConstantInputParams with non const', () => {
-  const constInputParams = JobActions.getConstantInputParams(allJobs[1].input_params);
-  expect(constInputParams.length).toBe(1);
+  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
+  expect(constInputParams.length).toBe(2);
 });
 
 it('getInputMetricValue metric const', () => {
   const value = JobActions.getInputMetricValue(constParam, isMetric, columns);
-  expect(value).toBe('metric value');
+  expect(value).toBe('abc');
 });
 
 it('getInputMetricValue metric non const', () => {
   const value = JobActions.getInputMetricValue(nonConstParam, isMetric, columns);
-  expect(value).toBe('metric value');
+  expect(value).toBe('123');
 });
 
 it('getInputMetricValue no metric const', () => {
   const value = JobActions.getInputMetricValue(constParam, noMetric, columns);
+
   expect(value).toBe('abc');
 });
 
@@ -310,7 +311,7 @@ it('getConstantInputParams all const', () => {
 });
 
 it('getConstantInputParams with non const', () => {
-  const constInputParams = JobActions.getConstantInputParams(allJobs[1].input_params);
-  expect(constInputParams.length).toBe(1);
+  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
+  expect(constInputParams.length).toBe(2);
 });
 

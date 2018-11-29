@@ -71,6 +71,8 @@ class JobTable extends Component {
     } = this.state;
 
     let jobRows = [];
+    let rowNum = 1;
+    const rowNumbers = [];
     if (isLoaded) {
       if (jobs.length === 0) {
         jobRows = <p>No Jobs available</p>;
@@ -79,6 +81,8 @@ class JobTable extends Component {
         jobs.forEach((job) => {
           const key = job.job_id;
           jobRows.push(<JobTableRow key={key} job={job} />);
+          rowNumbers.push(<p key={key}>{rowNum}</p>);
+          rowNum += 1;
         });
       }
     } else {
@@ -92,6 +96,9 @@ class JobTable extends Component {
           allMetrics={allMetrics}
           jobs={jobs}
         />
+        <div className="table-row-number">
+          {rowNumbers}
+        </div>
         <div className="job-table-row-container">
           {jobRows}
         </div>

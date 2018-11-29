@@ -18,26 +18,29 @@ const job = {
   input_params: [
     {
       name: 'param1',
-      value: {
-        type: 'constant',
-        value: '1',
-      }
+      source: 'constant',
+      value: '1',
     },
     {
       name: 'param2',
-      value: {
-        type: 'constant',
-        value: '3',
-      }
+      source: 'constant',
+      value: '3',
     }
   ],
-  output_metrics: {
-    data_set_name: [
-      'metric1',
-      'metric2',
-      'metric3',
+  output_metrics:[
+      {
+        name:'metric1',
+        value: 'm'
+      },
+      {
+        name:'metric2',
+        value: 'm'
+      },
+      {
+        name:'metric3',
+        value: 'm'
+      },
     ],
-  }
 };
 const cellWidths = [ 100, 200 ];
 const jobs = [
@@ -85,6 +88,13 @@ const newParam = 'newParam';
 const oldParam = 'alreadyHere';
 const noSearch = '';
 const search = '1';
+const element = { 
+  clientWidth: 100,
+};
+const border = 2;
+const smallElementWidth = 10;
+const parentWidth = 100;
+const largeElementWidth = 200;
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -139,7 +149,7 @@ it('isHeaderNotEmpty isEmpty', () => {
 
 it('get InputMetricCells no metric, has jobs', () => {
   const cells = CommonActions.getInputMetricCells(job, cellWidths, error, noMetric, columns, hidden);
-  expect(cells.length).toBe(2);
+  expect(cells.length).toBe(1);
 });
 
 it('get InputMetricCells no metric, no job', () => {
@@ -201,8 +211,7 @@ it('isError', () => {
 
 it('get InputCellsFromInputParams', () => {
   const cells = CommonActions.getInputCellsFromInputParams(job, cellWidths, noError, columns, noMetric, hidden);
-  expect(cells.length).toBe(2);
-  expect(cells[1]).toBe(null);
+  expect(cells.length).toBe(1);
   expect(cells[0]).not.toBe(null);
 });
 
@@ -262,4 +271,19 @@ it('get ChangedCheckboxes, 0 elements', () => {
 it('get RowKey', () => {
   const key = CommonActions.getRowKey(job);
   expect(key).toBe('myid-input-metric-row');
+});
+
+it('addBorderToElementWidth', () => {
+  const size = CommonActions.addBorderToElementWidth(element, border);
+  expect(size).toBe(102);
+});
+
+it('elementsWidthLargerThanParent smaller', () => {
+  const isLarger = CommonActions.elementsWidthLargerThanParent(smallElementWidth, parentWidth);
+  expect(isLarger).toBe(false);
+});
+
+it('elementsWidthLargerThanParent larger', () => {
+  const isLarger = CommonActions.elementsWidthLargerThanParent(largeElementWidth, parentWidth);
+  expect(isLarger).toBe(true);
 });
