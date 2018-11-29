@@ -325,3 +325,7 @@ it('getBaseJobListingURL', () => {
 it('getFilterURL', () => {
 
 });
+
+it('areStatusesHidden', () => {
+
+});

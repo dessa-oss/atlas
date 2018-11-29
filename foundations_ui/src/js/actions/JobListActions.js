@@ -19,7 +19,7 @@ class ProjectActions {
   }
 
   static filterJobs(projectName, statusFilter) {
-    if (statusFilter.length === 0) {
+    if (!this.areStatusesHidden(statusFilter)) {
       return this.getJobs(projectName);
     }
 
@@ -244,6 +244,16 @@ class ProjectActions {
 
   static getBaseJobListingURL(projectName) {
     return 'projects/'.concat(projectName).concat('/job_listing');
+  }
+
+  static areStatusesHidden(statuses) {
+    let areHidden = false;
+    statuses.forEach((status) => {
+      if (status.hidden === true) {
+        areHidden = true;
+      }
+    });
+    return areHidden;
   }
 
   // private fun

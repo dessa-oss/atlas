@@ -72,8 +72,10 @@ class JobListPage extends Component {
     const { statuses, projectName } = this.state;
     const statusNamesArray = statuses.map(status => status.name);
     const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
-    this.setState({ statuses: formattedColumns });
     const apiFilteredJobs = await JobActions.filterJobs(projectName, formattedColumns);
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs);
+    this.setState({ statuses: formattedColumns });
     this.forceUpdate();
   }
 
