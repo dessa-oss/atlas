@@ -102,54 +102,60 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
         return test_method
 
     @classmethod
+    def _get_sort_param_for_column(klass, column, descending=True):
+        sign = '-' if descending else ''
+        return '?sort={}{}'.format(sign, column)
+
+    @classmethod
+    def _add_route_sorted_methods(klass, column):
+        method_name_descendant = 'test_sorted_{}_descending'.format(column)
+        method_name_ascendant = 'test_sorted_{}_ascending'.format(column)
+        descending_query_string = klass._get_sort_param_for_column(column, descending=True)
+        ascending_query_string = klass._get_sort_param_for_column(column, descending=False)
+        setattr(klass, method_name_descendant, klass._get_test_route_method(descending_query_string))
+        setattr(klass, method_name_ascendant,  klass._get_test_route_method(ascending_query_string))
+        return [method_name_descendant, method_name_ascendant]
+
+    @classmethod
     def _set_methods_for_sorted_route(klass):
-
-        def get_sort_param_for_column(column, descending=True):
-            sign = '-' if descending else ''
-            return '?sort={}{}'.format(sign, column)
-
-        def add_route_sorted_methods(column):
-            method_name_descendant = 'test_sorted_{}_descending'.format(column)
-            method_name_ascendant = 'test_sorted_{}_ascending'.format(column)
-            setattr(klass, method_name_descendant, klass._get_test_route_method(get_sort_param_for_column(column, descending=True)))
-            setattr(klass, method_name_ascendant,  klass._get_test_route_method(get_sort_param_for_column(column, descending=False)))
-            return [method_name_descendant, method_name_ascendant]
-
         methods_names = []
         for sorting_column in klass.sorting_columns:
-            methods_names += add_route_sorted_methods(sorting_column)
+            methods_names += klass._add_route_sorted_methods(sorting_column)
         return methods_names
 
     @classmethod
+    def _get_sort_param_all_columns(klass, descending=True):
+        param_value = ','.join([('-' if descending else '') + column for column in klass.sorting_columns])
+        return '?sort=' + param_value
+
+    @classmethod
     def _set_methods_for_sorted_route_all_columns(klass):
-
-        def get_sort_param_all_columns(descending=True):
-            param_value = ','.join([('-' if descending else '') + column for column in klass.sorting_columns])
-            return '?sort=' + param_value
-
         if len(klass.sorting_columns) > 1:
             method_name_ascending = 'test_all_ascending'
             method_name_descending = 'test_all_descending'
-            setattr(klass, method_name_ascending, klass._get_test_route_method(get_sort_param_all_columns(descending=False)))
-            setattr(klass, method_name_descending, klass._get_test_route_method(get_sort_param_all_columns(descending=True)))
+            descending_query_string = klass._get_sort_param_all_columns(descending=False)
+            ascending_query_string = klass._get_sort_param_all_columns(descending=True)
+            setattr(klass, method_name_ascending, klass._get_test_route_method(descending_query_string))
+            setattr(klass, method_name_descending, klass._get_test_route_method(ascending_query_string))
             return [method_name_ascending, method_name_descending]
         return []
 
     @classmethod
+    def _get_sort_params_alternation(klass):
+
+        def prefix_column(index, column):
+            return column if index % 2 == 0 else '-{}'.format(column)
+
+        prefixed_columns = [prefix_column(*item) for item in enumerate(klass.sorting_columns)]
+        param_value = ','.join(prefixed_columns)
+        return '?sort=' + param_value
+
+    @classmethod
     def _set_methods_for_sorted_route_alternation(klass):
-
-        def get_sort_params_alternation():
-
-            def prefix_column(index, column):
-                return column if index % 2 == 0 else '-{}'.format(column)
-
-            prefixed_columns = [prefix_column(*item) for item in enumerate(klass.sorting_columns)]
-            param_value = ','.join(prefixed_columns)
-            return '?sort=' + param_value
-
         if len(klass.sorting_columns) > 1:
             method_name_alternation = 'test_alternation'
-            setattr(klass, method_name_alternation, klass._get_test_route_method(get_sort_params_alternation()))
+            alternation_query_string = klass._get_sort_params_alternation()
+            setattr(klass, method_name_alternation, klass._get_test_route_method(alternation_query_string))
             return [method_name_alternation]
         return []
 
@@ -159,44 +165,50 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
         return ['test_get_route']
 
     @classmethod
+    def _get_params_filter_range(klass, column_data):
+        column_name = column_data['name']
+        start_param, end_param =  column_data['test_values']
+        return '?{}_starts={}&{}_ends={}'.format(column_name, start_param, column_name, end_param)
+
+    @classmethod
+    def _add_filter_range_method(klass, column_data):
+        method_name = 'test_filter_{}_range'.format(column_data['name'])
+        range_query_string = klass._get_params_filter_range(column_data)
+        setattr(klass, method_name, klass._get_test_route_method(range_query_string))
+        return [method_name]
+
+    @classmethod
     def _set_methods_for_filtering_by_range(klass):
-
-        def get_params_filter_range(column_data):
-            column_name = column_data['name']
-            start_param, end_param =  column_data['test_values']
-            return '?{}_starts={}&{}_ends={}'.format(column_name, start_param, column_name, end_param)
-
-        def add_filter_range_method(column_data):
-            method_name = 'test_filter_{}_range'.format(column_data['name'])
-            setattr(klass, method_name, klass._get_test_route_method(get_params_filter_range(column_data)))
-            return [method_name]
-
         methods_names = []
         for column_data in klass.filtering_columns:
-            methods_names += add_filter_range_method(column_data)
+            methods_names += klass._add_filter_range_method(column_data)
         return methods_names
 
     @classmethod
+    def _get_params_exact_match_one_option(klass, column_data):
+        column_name = column_data['name']
+        param_value = column_data['test_values'][0]
+        return '?{}={}'.format(column_name, param_value)
+
+    @classmethod
+    def _get_params_exact_match_two_options(klass, column_data):
+        column_name = column_data['name']
+        start_param, end_param =  column_data['test_values']
+        return '?{}={},{}'.format(column_name, start_param, end_param)
+
+    @classmethod
+    def _add_filter_exact_match_methods(klass, column_data):
+        method_name_one_option = 'test_filter_{}_exact_match_one_option'.format(column_data['name'])
+        method_name_two_options = 'test_filter_{}_exact_match_two_options'.format(column_data['name'])
+        one_option_match_query_string = klass._get_params_exact_match_one_option(column_data)
+        two_option_match_query_string = klass._get_params_exact_match_two_options(column_data)
+        setattr(klass, method_name_one_option, klass._get_test_route_method(one_option_match_query_string))
+        setattr(klass, method_name_two_options, klass._get_test_route_method(two_option_match_query_string))
+        return [method_name_one_option, method_name_two_options]
+
+    @classmethod
     def _set_methods_for_filtering_by_exact_match(klass):
-
-        def get_params_exact_match_one_option(column_data):
-            column_name = column_data['name']
-            param_value = column_data['test_values'][0]
-            return '?{}={}'.format(column_name, param_value)
-
-        def get_params_exact_match_two_options(column_data):
-            column_name = column_data['name']
-            start_param, end_param =  column_data['test_values']
-            return '?{}={},{}'.format(column_name, start_param, end_param)
-
-        def add_filter_exact_match_methods(column_data):
-            method_name_one_option = 'test_filter_{}_exact_match_one_option'.format(column_data['name'])
-            method_name_two_options = 'test_filter_{}_exact_match_two_options'.format(column_data['name'])
-            setattr(klass, method_name_one_option, klass._get_test_route_method(get_params_exact_match_one_option(column_data)))
-            setattr(klass, method_name_two_options, klass._get_test_route_method(get_params_exact_match_two_options(column_data)))
-            return [method_name_one_option, method_name_two_options]
-
         methods_names = []
         for column_data in klass.filtering_columns:
-            methods_names += add_filter_exact_match_methods(column_data)
+            methods_names += klass._add_filter_exact_match_methods(column_data)
         return methods_names
