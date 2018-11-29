@@ -88,6 +88,13 @@ const newParam = 'newParam';
 const oldParam = 'alreadyHere';
 const noSearch = '';
 const search = '1';
+const element = { 
+  clientWidth: 100,
+};
+const border = 2;
+const smallElementWidth = 10;
+const parentWidth = 100;
+const largeElementWidth = 200;
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -264,4 +271,19 @@ it('get ChangedCheckboxes, 0 elements', () => {
 it('get RowKey', () => {
   const key = CommonActions.getRowKey(job);
   expect(key).toBe('myid-input-metric-row');
+});
+
+it('addBorderToElementWidth', () => {
+  const size = CommonActions.addBorderToElementWidth(element, border);
+  expect(size).toBe(102);
+});
+
+it('elementsWidthLargerThanParent smaller', () => {
+  const isLarger = CommonActions.elementsWidthLargerThanParent(smallElementWidth, parentWidth);
+  expect(isLarger).toBe(false);
+});
+
+it('elementsWidthLargerThanParent larger', () => {
+  const isLarger = CommonActions.elementsWidthLargerThanParent(largeElementWidth, parentWidth);
+  expect(isLarger).toBe(true);
 });

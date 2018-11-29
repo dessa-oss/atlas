@@ -2,9 +2,8 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-from foundations_rest_api.v1 import *
-from foundations_rest_api.v2beta import *
-from foundations_rest_api.versioning import __version__
+from acceptance.v1.test_jobs_listing_endpoint import TestJobsListingEndpoint
+from acceptance.v1.test_queued_jobs_endpoint import TestQueuedJobsEndpoint
