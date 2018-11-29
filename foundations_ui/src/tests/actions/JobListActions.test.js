@@ -329,3 +329,11 @@ it('getFilterURL', () => {
 it('areStatusesHidden', () => {
 
 });
+
+it('getAllFilters', () => {
+
+});
+
+it('getStatusFilters', () => {
+
+});

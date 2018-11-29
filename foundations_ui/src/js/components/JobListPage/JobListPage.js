@@ -13,16 +13,11 @@ class JobListPage extends Component {
     this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
     this.saveAPIJobs = this.saveAPIJobs.bind(this);
     this.clearState = this.clearState.bind(this);
+    this.saveFilters = this.saveFilters.bind(this);
     this.state = {
       projectName: this.props.projectName,
       project: this.props.project,
-      filters: [{ column: 'User', value: 'Buck' },
-        { column: 'Status', value: 'Error' },
-        { column: 'Start Time', value: 'Today' },
-        { column: 'Metric 1', value: 'abc' },
-        { column: 'Metric 2', value: '123' },
-        { column: 'Metric 3', value: 'more words' },
-      ],
+      filters: [],
       statuses: [
         { name: 'Completed', hidden: false },
         { name: 'Processing', hidden: false },
@@ -76,6 +71,7 @@ class JobListPage extends Component {
     this.clearState();
     this.formatAndSaveParams(apiFilteredJobs);
     this.setState({ statuses: formattedColumns });
+    this.saveFilters();
     this.forceUpdate();
   }
 
@@ -85,6 +81,12 @@ class JobListPage extends Component {
     this.setState({
       jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
     });
+  }
+
+  saveFilters() {
+    const { filters, statuses } = this.state;
+    const newFilters = JobActions.getAllFilters(filters, statuses);
+    this.setState({ filters: newFilters });
   }
 
   render() {

@@ -35,6 +35,10 @@ class JobHeader extends Component {
     this.setState({ bubblesHidden: numHidden });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ filters: nextProps.filters });
+  }
+
   toggleFilters() {
     const { isShowingMoreFilters } = this.state;
     this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
@@ -47,8 +51,9 @@ class JobHeader extends Component {
 
     const filterBubbles = [];
     filters.forEach((filter) => {
+      const key = filter.column.concat('-').concat(filter.value);
       filterBubbles.push(
-        <div ref={(e) => { bubbleRefs.push(e); }} key={filter.column} className="bubble inline-block">
+        <div ref={(e) => { bubbleRefs.push(e); }} key={key} className="bubble inline-block">
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>

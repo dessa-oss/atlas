@@ -256,6 +256,29 @@ class ProjectActions {
     return areHidden;
   }
 
+  static getAllFilters(oldFilters, statuses) {
+    return this.getStatusFilters(oldFilters, statuses);
+  }
+
+  static getStatusFilters(oldFilters, statuses) {
+    const newFilters = oldFilters.filter(
+      (filter) => {
+        if (filter.column.toLowerCase() !== 'status') {
+          return filter;
+        }
+      },
+    );
+    if (this.areStatusesHidden(statuses)) {
+      statuses.forEach((status) => {
+        if (status.hidden === false) {
+          const newFilter = { column: 'Status', value: status.name };
+          newFilters.push(newFilter);
+        }
+      });
+    }
+    return newFilters;
+  }
+
   // private fun
 
   static getAllMetricsFromJobs(allJobs) {
