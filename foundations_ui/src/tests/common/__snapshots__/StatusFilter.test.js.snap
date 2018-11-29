@@ -17,35 +17,7 @@ exports[`Shallow Renders StatusFilter 1`] = `
   </div>
   <div
     className="column-filter-list"
-  >
-    <Checkbox
-      changeHiddenParams={[Function]}
-      hidden={false}
-      key="Completed-checkbox"
-      name="Completed"
-      showAllFilters={false}
-      statusCircle="status status-green"
-      unsetClearFilters={[Function]}
-    />
-    <Checkbox
-      changeHiddenParams={[Function]}
-      hidden={false}
-      key="Processing-checkbox"
-      name="Processing"
-      showAllFilters={false}
-      statusCircle="status status-yellow"
-      unsetClearFilters={[Function]}
-    />
-    <Checkbox
-      changeHiddenParams={[Function]}
-      hidden={false}
-      key="Error-checkbox"
-      name="Error"
-      showAllFilters={false}
-      statusCircle="status status-red"
-      unsetClearFilters={[Function]}
-    />
-  </div>
+  />
   <div
     className="column-filter-buttons"
   >

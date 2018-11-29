@@ -15,9 +15,9 @@ exports[`Shallow Renders ProjectPage 1`] = `
   <div
     className="projects-body-container"
   >
-    <p>
-      Loading projects
-    </p>
+    <Loading
+      loadingMessage="We are currently loading your projects"
+    />
   </div>
 </div>
 `;
