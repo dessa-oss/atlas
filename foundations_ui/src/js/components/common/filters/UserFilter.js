@@ -74,7 +74,7 @@ class SelectColumnFilter extends Component {
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
     );
 
-    const input = <input ref={(e) => { this.input = e; }} type="text" onChange={this.updateSearchText} />;
+    const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
 
     return (
       <CheckboxFilter

@@ -42,7 +42,6 @@ class InputMetric extends Component {
   }
 
   changeHiddenParams(hiddenParams) {
-    console.log(hiddenParams);
     this.setState({ hiddenInputParams: hiddenParams });
     this.forceUpdate();
   }
