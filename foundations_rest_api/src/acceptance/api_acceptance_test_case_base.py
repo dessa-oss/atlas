@@ -77,6 +77,7 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
 
     def _extract_url_params(self):
         from string import Formatter
+
         formatter  = Formatter()
         params = [format_tuple[1] for format_tuple in formatter.parse(self.url)]
         return params
@@ -90,12 +91,11 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
         return url
 
     @classmethod
-    def _get_test_route_method(klass, get_param_method=None):
+    def _get_test_route_method(klass, query_string=''):
 
         def test_method(self):
             base_url = self._get_base_url()
-            params = get_param_method() if get_param_method else ''
-            resp = self.client.get(base_url + params)
+            resp = self.client.get(base_url + query_string)
             self.assertEqual(resp.status_code, 200)
             return json.loads(resp.data)
 
@@ -105,12 +105,8 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
     def _set_methods_for_sorted_route(klass):
 
         def get_sort_param_for_column(column, descending=True):
-
-            def get_param_method():
-                sign = '-' if descending else ''
-                return '?sort={}{}'.format(sign, column)
-
-            return get_param_method
+            sign = '-' if descending else ''
+            return '?sort={}{}'.format(sign, column)
 
         def add_route_sorted_methods(column):
             method_name_descendant = 'test_sorted_{}_descending'.format(column)
@@ -128,12 +124,8 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
     def _set_methods_for_sorted_route_all_columns(klass):
 
         def get_sort_param_all_columns(descending=True):
-
-            def get_param_method():
-                param_value = ','.join([('-' if descending else '') + column for column in klass.sorting_columns])
-                return '?sort=' + param_value
-
-            return get_param_method
+            param_value = ','.join([('-' if descending else '') + column for column in klass.sorting_columns])
+            return '?sort=' + param_value
 
         if len(klass.sorting_columns) > 1:
             method_name_ascending = 'test_all_ascending'
@@ -151,14 +143,9 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
             def prefix_column(index, column):
                 return column if index % 2 == 0 else '-{}'.format(column)
 
-            def get_prefixed_columns_list():
-                return [prefix_column(*item) for item in enumerate(klass.sorting_columns)]
-
-            def get_param_method():
-                param_value = ','.join(get_prefixed_columns_list())
-                return '?sort=' + param_value
-
-            return get_param_method
+            prefixed_columns = [prefix_column(*item) for item in enumerate(klass.sorting_columns)]
+            param_value = ','.join(prefixed_columns)
+            return '?sort=' + param_value
 
         if len(klass.sorting_columns) > 1:
             method_name_alternation = 'test_alternation'
@@ -175,13 +162,9 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
     def _set_methods_for_filtering_by_range(klass):
 
         def get_params_filter_range(column_data):
-
-            def get_param_method():
-                column_name = column_data['name']
-                start_param, end_param =  column_data['test_values']
-                return '?{}_starts={}&{}_ends={}'.format(column_name, start_param, column_name, end_param)
-
-            return get_param_method
+            column_name = column_data['name']
+            start_param, end_param =  column_data['test_values']
+            return '?{}_starts={}&{}_ends={}'.format(column_name, start_param, column_name, end_param)
 
         def add_filter_range_method(column_data):
             method_name = 'test_filter_{}_range'.format(column_data['name'])
@@ -197,22 +180,14 @@ class APIAcceptanceTestCaseBase(with_metaclass(_APIAcceptanceTestCaseMeta, unitt
     def _set_methods_for_filtering_by_exact_match(klass):
 
         def get_params_exact_match_one_option(column_data):
-
-            def get_param_method():
-                column_name = column_data['name']
-                param_value = column_data['test_values'][0]
-                return '?{}={}'.format(column_name, param_value)
-
-            return get_param_method
+            column_name = column_data['name']
+            param_value = column_data['test_values'][0]
+            return '?{}={}'.format(column_name, param_value)
 
         def get_params_exact_match_two_options(column_data):
-
-            def get_param_method():
-                column_name = column_data['name']
-                start_param, end_param =  column_data['test_values']
-                return '?{}={},{}'.format(column_name, start_param, end_param)
-
-            return get_param_method
+            column_name = column_data['name']
+            start_param, end_param =  column_data['test_values']
+            return '?{}={},{}'.format(column_name, start_param, end_param)
 
         def add_filter_exact_match_methods(column_data):
             method_name_one_option = 'test_filter_{}_exact_match_one_option'.format(column_data['name'])

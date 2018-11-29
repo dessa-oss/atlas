@@ -19,11 +19,7 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
                          {'name': 'status',
                           'test_values': ('queued', 'running')},
                          {'name': 'user',
-                          'test_values': ('beethoven', 'soju hero')},
-                         # TODO: we need to define how datetime values will be treated
-                         #{'name': 'start_time',
-                         # 'test_values': (datetime(2018, 9, 1, 10, 30, 0, 0, None).isoformat(),
-                         #                 datetime(2018, 11, 21, 16, 52, 0, 0, None).isoformat())}
+                          'test_values': ('beethoven', 'soju hero')}
                         ]
 
     def setUp(self):
@@ -140,21 +136,13 @@ class TestJobsListingEndpoint(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
 
     def test_filter_job_id_contains(self):
-
-        def get_param_method():
-            return '?job_id_contains=1'
-
-        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method(get_param_method)
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method('?job_id_contains=1')
         data = custom_test_method(self)
         self.assertEqual(len(data['jobs']), 1)
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
 
     def test_filter_user_contains(self):
-
-        def get_param_method():
-            return '?user_contains=hero'
-
-        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method(get_param_method)
+        custom_test_method = super(TestJobsListingEndpoint, self)._get_test_route_method('?user_contains=hero')
         data = custom_test_method(self)
         self.assertEqual(len(data['jobs']), 1)
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
