@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ShowMoreFilters from '../common/filters/ShowMoreFilters';
+import CommonActions from '../../actions/CommonActions';
+
+const borderSize = 2; // 1px per side
 
 class JobHeader extends Component {
   constructor(props) {
@@ -22,8 +25,8 @@ class JobHeader extends Component {
     let curWidth = 0;
     let numHidden = 0;
     bubbleRefs.forEach((bubble) => {
-      curWidth += bubble.clientWidth + 2; // 2 is for border
-      if (curWidth > clientWidth) {
+      curWidth += CommonActions.addBorderToElementWidth(bubble, borderSize);
+      if (CommonActions.elementsWidthLargerThanParent(curWidth, clientWidth)) {
         bubble.className += ' hidden';
         numHidden += 1;
       }
@@ -45,7 +48,7 @@ class JobHeader extends Component {
     const filterBubbles = [];
     filters.forEach((filter) => {
       filterBubbles.push(
-        <div ref={(e) => { bubbleRefs.push(e); }} key={filter.column} className="bubble sort-bubble">
+        <div ref={(e) => { bubbleRefs.push(e); }} key={filter.column} className="bubble inline-block">
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>
@@ -88,12 +91,12 @@ class JobHeader extends Component {
         </div>
 
         <div className="job-summary-info-container">
-          <h2 className="project-summary-name-text font-bold">{ project.name }</h2>
-          <p className="project-summary-source-text">Data Source: Unknown</p>
-          <p className="project-summary-owner-text font-bold">
+          <h2 className="font-bold">{project.name}</h2>
+          <p>Data Source: Unknown</p>
+          <p className="font-bold">
             Project owner: <span>{project.owner}</span>
           </p>
-          <p className="project-summary-created-at-text font-bold">
+          <p className="font-bold">
             Created at: <span>{project.created_at}</span>
           </p>
         </div>

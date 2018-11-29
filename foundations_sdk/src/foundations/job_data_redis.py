@@ -66,20 +66,19 @@ class JobDataRedis(object):
             results {dict} -- Dictionary with project_name, job_id, user, job_parameters, input_params, output_metrics, status, start_time, completed_time.
         """
         from promise import Promise
+        import json
 
         project_name = self._add_get_to_pipe('project')
         user = self._add_get_to_pipe('user')
-        job_parameters = self._add_smembers_to_pipe_and_deserialize(
-            'parameters')
-        input_parameters = self._add_smembers_to_pipe_and_deserialize(
-            'input_parameters')
-        output_metrics = self._add_smembers_to_pipe_and_deserialize(
-            'metrics')
+        job_parameters = self._add_get_to_pipe(
+            'parameters').then(self._json_loads)
+        input_parameters = self._add_get_to_pipe(
+            'input_parameters').then(self._json_loads)
+        output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
         status = self._add_get_to_pipe('state')
-        start_time = self._add_get_to_pipe(
-            'start_time')
+        start_time = self._add_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_get_to_pipe(
-            'completed_time')
+            'completed_time').then(self._make_float)
 
         list_of_properties = Promise.all(
             [
@@ -118,16 +117,19 @@ class JobDataRedis(object):
             }
         return seperate_args_inner(*args)
 
-    def _add_smembers_to_pipe_and_deserialize(self, parameter):
-        return self._pipe.smembers('jobs:{}:{}'.format(self._job_id, parameter)).then(self._deserialize_set_members)
+    def _add_lrange_to_pipe_and_deserialize(self, parameter):
+        return self._pipe.lrange('jobs:{}:{}'.format(self._job_id, parameter), 0, -1).then(self._deserialize_set_members)
 
     def _deserialize_set_members(self, param_set):
-        import json
+        from foundations.fast_serializer import deserialize
+
+        if param_set is None:
+            return []
 
         decoded_param_list = []
 
         for param in param_set:
-            param = json.loads(param.decode())
+            param = deserialize(param)
             decoded_param_list.append(param)
 
         return decoded_param_list
@@ -136,4 +138,17 @@ class JobDataRedis(object):
         return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter)).then(self._decode_bytes)
 
     def _decode_bytes(self, data):
+        if data is None:
+            return data
         return data.decode()
+
+    def _json_loads(self, data):
+        if data is None:
+            return []
+        import json
+        return json.loads(data)
+
+    def _make_float(self, time_string):
+        if time_string is None:
+            return time_string
+        return float(time_string)

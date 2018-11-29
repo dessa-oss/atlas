@@ -189,6 +189,14 @@ class CommonActions {
     return job.job_id.concat('-input-metric-row');
   }
 
+  static addBorderToElementWidth(element, borderWidth) {
+    return element.clientWidth + borderWidth;
+  }
+
+  static elementsWidthLargerThanParent(elementWidth, parentWidth) {
+    return elementWidth > parentWidth;
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {
