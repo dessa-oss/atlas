@@ -77,10 +77,10 @@ class APIAcceptanceTestCaseBase(with_metaclass(APIAcceptanceTestCaseMeta, unitte
         if len(klass.sorting_columns) > 1:
             method_name_ascending = 'test_all_ascending'
             method_name_descending = 'test_all_descending'
-            descending_query_string = klass._query_string_generator.sort_all_columns(klass.sorting_columns, descending=False)
-            ascending_query_string = klass._query_string_generator.sort_all_columns(klass.sorting_columns, descending=True)
-            setattr(klass, method_name_ascending, klass._get_test_route_method(descending_query_string))
-            setattr(klass, method_name_descending, klass._get_test_route_method(ascending_query_string))
+            ascending_query_string = klass._query_string_generator.sort_all_columns(klass.sorting_columns, descending=False)
+            descending_query_string = klass._query_string_generator.sort_all_columns(klass.sorting_columns, descending=True)
+            setattr(klass, method_name_ascending, klass._get_test_route_method(ascending_query_string))
+            setattr(klass, method_name_descending, klass._get_test_route_method(descending_query_string))
             return [method_name_ascending, method_name_descending]
         return []
 
