@@ -11,8 +11,8 @@
     display: inline-block;
     vertical-align: top;
     font-size: 15px;
-    width: 50%;
-    max-width: 50%;
+    width: calc(50% - 20px);
+    max-width: calc(50% - 20px);
     text-align: left;
     margin: auto;
     
@@ -24,8 +24,8 @@
     vertical-align: top;
     font-size: 15px;
     text-align: right;
-    width: 50%;
-    max-width: 50%;
+    width: calc(50% - 20px);
+    max-width: calc(50% - 20px);
     margin: auto;
   }
 }
