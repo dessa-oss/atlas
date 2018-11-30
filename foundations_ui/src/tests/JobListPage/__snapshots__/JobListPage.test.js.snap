@@ -8,37 +8,12 @@ exports[`Shallow Renders Job List Page 1`] = `
   <JobHeader
     bubbleRefs={Array []}
     bubblesHidden={0}
-    filters={
-      Array [
-        Object {
-          "column": "User",
-          "value": "Buck",
-        },
-        Object {
-          "column": "Status",
-          "value": "Error",
-        },
-        Object {
-          "column": "Start Time",
-          "value": "Today",
-        },
-        Object {
-          "column": "Metric 1",
-          "value": "abc",
-        },
-        Object {
-          "column": "Metric 2",
-          "value": "123",
-        },
-        Object {
-          "column": "Metric 3",
-          "value": "more words",
-        },
-      ]
-    }
+    clearFilters={[Function]}
+    filters={Array []}
     isShowingMoreFilters={false}
     numProjects={0}
     project={Object {}}
+    removeFilter={[Function]}
   />
   <JobTable
     allInputParams={Array []}
@@ -47,6 +22,23 @@ exports[`Shallow Renders Job List Page 1`] = `
     isMount={false}
     jobs={Array []}
     projectName=""
+    statuses={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "Completed",
+        },
+        Object {
+          "hidden": false,
+          "name": "Processing",
+        },
+        Object {
+          "hidden": false,
+          "name": "Error",
+        },
+      ]
+    }
+    updateHiddenStatus={[Function]}
   />
 </div>
 `;

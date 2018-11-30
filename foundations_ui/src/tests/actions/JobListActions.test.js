@@ -75,6 +75,23 @@ const nonConstParam = {
 const isMetric = true;
 const noMetric = false;
 const columns = ['abc', 'm1', 'm2', 'm3'];
+const projectName = 'project name';
+const noHiddenStatusFilter = [
+  { name: 'Completed', hidden: false },
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+];
+const hiddenStatusFilter = [
+  { name: 'Completed', hidden: true },
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+];
+const filters = [
+  { column: 'Status', value: 'Error' },
+  { column: 'User', value: 'Buck' },
+];
+const emptyFilters = [];
+const filterToRemove = { column: 'Status', value: 'Error' };
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -304,40 +321,39 @@ it('get AllMetrics', () => {
   expect(metrics.length).toBe(3);
 });
 
-it('getConstantInputParams all const', () => {
-  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(2);
-});
-
-it('getConstantInputParams with non const', () => {
-  const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
-  expect(constInputParams.length).toBe(2);
-});
-
-it('filterJobs', () => {
-
-});
-
 it('getBaseJobListingURL', () => {
-
+  const URL = JobActions.getBaseJobListingURL(projectName);
+  expect(URL).toBe('projects/project name/job_listing');
 });
 
 it('getFilterURL', () => {
-
+  const URL = JobActions.getFilterURL(hiddenStatusFilter);
+  expect(URL).toBe('status=processing,error');
 });
 
-it('areStatusesHidden', () => {
+it('areStatusesHidden hidden', () => {
+  const areHidden = JobActions.areStatusesHidden(hiddenStatusFilter);
+  expect(areHidden).toBe(true)
+});
 
+it('areStatusesHidden not hidden', () => {
+  const areHidden = JobActions.areStatusesHidden(noHiddenStatusFilter);
+  expect(areHidden).toBe(false)
 });
 
 it('getAllFilters', () => {
+  const updatedFilters = JobActions.getAllFilters(filters, hiddenStatusFilter);
+  expect(updatedFilters.length).toBe(3);
 
 });
 
 it('getStatusFilters', () => {
-
+  const updatedFilters = JobActions.getStatusFilters(filters, hiddenStatusFilter);
+  expect(updatedFilters.length).toBe(3);
 });
 
 it('removeFilter', () => {
-
+  const updatedFilters = JobActions.removeFilter(filters, filterToRemove);
+  expect(updatedFilters.length).toBe(1);
+  expect(updatedFilters[0].value).toBe('Buck');
 });
