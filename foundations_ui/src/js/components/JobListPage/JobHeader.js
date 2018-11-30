@@ -15,6 +15,7 @@ class JobHeader extends Component {
       bubbleRefs: [],
       bubblesHidden: 0,
       isShowingMoreFilters: false,
+      clearFilters: this.props.clearFilters,
     };
   }
 
@@ -46,7 +47,7 @@ class JobHeader extends Component {
 
   render() {
     const {
-      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters,
+      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters, clearFilters,
     } = this.state;
 
     const filterBubbles = [];
@@ -107,7 +108,7 @@ class JobHeader extends Component {
         <div className="job-header-sorting-container">
           <button
             type="button"
-            onClick={this.onClearFilters}
+            onClick={clearFilters}
             className="b--mat b--affirmative text-upper"
           >
             Clear Filters
@@ -141,6 +142,7 @@ JobHeader.propTypes = {
   bubbleRefs: PropTypes.array,
   bubblesHidden: PropTypes.number,
   isShowingMoreFilters: PropTypes.bool,
+  clearFilters: PropTypes.func,
 };
 
 JobHeader.defaultProps = {
@@ -150,6 +152,7 @@ JobHeader.defaultProps = {
   bubbleRefs: [],
   bubblesHidden: 0,
   isShowingMoreFilters: false,
+  clearFilters: () => {},
 };
 
 export default JobHeader;

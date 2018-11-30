@@ -6,6 +6,12 @@ import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 
+const baseStatus = [
+  { name: 'Completed', hidden: false },
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+];
+
 class JobListPage extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +20,7 @@ class JobListPage extends Component {
     this.saveAPIJobs = this.saveAPIJobs.bind(this);
     this.clearState = this.clearState.bind(this);
     this.saveFilters = this.saveFilters.bind(this);
+    this.clearFilters = this.clearFilters.bind(this);
     this.state = {
       projectName: this.props.projectName,
       project: this.props.project,
@@ -89,6 +96,11 @@ class JobListPage extends Component {
     this.setState({ filters: newFilters });
   }
 
+  clearFilters() {
+    this.setState({ filters: [], statuses: baseStatus });
+    this.getJobs();
+  }
+
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics,
@@ -96,7 +108,7 @@ class JobListPage extends Component {
     return (
       <div className="job-list-container">
         <Toolbar />
-        <JobHeader project={project} filters={filters} />
+        <JobHeader project={project} filters={filters} clearFilters={this.clearFilters} />
         <JobTable
           projectName={projectName}
           statuses={statuses}
