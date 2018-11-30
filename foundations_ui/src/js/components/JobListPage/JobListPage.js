@@ -21,6 +21,7 @@ class JobListPage extends Component {
     this.clearState = this.clearState.bind(this);
     this.saveFilters = this.saveFilters.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
+    this.removeFilter = this.removeFilter.bind(this);
     this.state = {
       projectName: this.props.projectName,
       project: this.props.project,
@@ -101,6 +102,18 @@ class JobListPage extends Component {
     this.getJobs();
   }
 
+  async removeFilter(removeFilter) {
+    const { filters, statuses, projectName } = this.state;
+    const newFilters = JobActions.removeFilter(filters, removeFilter);
+    const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
+    this.setState({ filters: newFilters, statuses: newStatuses });
+
+    const apiFilteredJobs = await JobActions.filterJobs(projectName, newStatuses);
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs);
+    this.forceUpdate();
+  }
+
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics,
@@ -108,7 +121,12 @@ class JobListPage extends Component {
     return (
       <div className="job-list-container">
         <Toolbar />
-        <JobHeader project={project} filters={filters} clearFilters={this.clearFilters} />
+        <JobHeader
+          project={project}
+          filters={filters}
+          clearFilters={this.clearFilters}
+          removeFilter={this.removeFilter}
+        />
         <JobTable
           projectName={projectName}
           statuses={statuses}

@@ -9,6 +9,7 @@ class JobHeader extends Component {
   constructor(props) {
     super(props);
     this.toggleFilters = this.toggleFilters.bind(this);
+    this.clickRemoveFilter = this.clickRemoveFilter.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
@@ -16,6 +17,7 @@ class JobHeader extends Component {
       bubblesHidden: 0,
       isShowingMoreFilters: false,
       clearFilters: this.props.clearFilters,
+      removeFilter: this.props.removeFilter,
     };
   }
 
@@ -45,6 +47,11 @@ class JobHeader extends Component {
     this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
   }
 
+  clickRemoveFilter(filter) {
+    const { removeFilter } = this.state;
+    removeFilter(filter);
+  }
+
   render() {
     const {
       project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters, clearFilters,
@@ -58,7 +65,7 @@ class JobHeader extends Component {
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>
-          <button type="button" className="close-button" />
+          <button onClick={() => { this.clickRemoveFilter(filter); }} type="button" className="close-button" />
         </div>,
       );
     });
@@ -143,6 +150,7 @@ JobHeader.propTypes = {
   bubblesHidden: PropTypes.number,
   isShowingMoreFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
+  removeFilter: PropTypes.func,
 };
 
 JobHeader.defaultProps = {
@@ -153,6 +161,7 @@ JobHeader.defaultProps = {
   bubblesHidden: 0,
   isShowingMoreFilters: false,
   clearFilters: () => {},
+  removeFilter: () => {},
 };
 
 export default JobHeader;

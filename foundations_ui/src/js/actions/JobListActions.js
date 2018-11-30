@@ -279,6 +279,40 @@ class ProjectActions {
     return newFilters;
   }
 
+  static removeFilter(oldFilters, removeFilter) {
+    const newFilters = [];
+    oldFilters.forEach((filter) => {
+      if (filter.column !== removeFilter.column || filter.value !== removeFilter.value) {
+        newFilters.push(filter);
+      }
+    });
+    return newFilters;
+  }
+
+  static getUpdatedStatuses(oldStatuses, filters) {
+    const newStatuses = [];
+    let noStatusFilters = true;
+    oldStatuses.forEach((status) => {
+      const statusInFilter = { column: 'Status', value: status.name };
+      let isHidden = true;
+      filters.forEach((filter) => {
+        if (filter.column === statusInFilter.column && filter.value === statusInFilter.value) {
+          isHidden = false;
+          noStatusFilters = false;
+        }
+      });
+      newStatuses.push({ name: status.name, hidden: isHidden });
+    });
+
+    if (noStatusFilters) {
+      newStatuses.forEach((status) => {
+        status.hidden = false;
+      });
+    }
+
+    return newStatuses;
+  }
+
   // private fun
 
   static getAllMetricsFromJobs(allJobs) {

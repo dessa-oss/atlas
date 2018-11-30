@@ -337,3 +337,7 @@ it('getAllFilters', () => {
 it('getStatusFilters', () => {
 
 });
+
+it('removeFilter', () => {
+
+});
