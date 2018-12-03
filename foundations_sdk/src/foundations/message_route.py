@@ -32,16 +32,15 @@ class MessageRoute(object):
         """
         self._listener.append(listener)
 
-    def push_message(self, message, metadata):
+    def push_message(self, message, timestamp, metadata):
         """
-        Adds a timestamp {int} and pushes a message and metadata to all the listeners in the route
+        Adds a timestamp {float} and pushes a message and metadata to all the listeners in the route
 
         Arguments:
             message {dictionary of json seriablizable data} -- message to send to listeners
+            timestamp {float} -- time the message was submitted
             metadata {dictionary of json seriablizable data}
         """
-        from time import time
-
         for listener in self._listener:
-            listener.call(message, time(), metadata)
+            listener.call(message, timestamp, metadata)
         

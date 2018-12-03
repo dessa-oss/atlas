@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
+
 class MessageRouter(object):
     """
     This singleton class and manages the MessageRoutes by creating MessageRoute objects and assigning them MessageRouteListeners
@@ -35,8 +36,8 @@ class MessageRouter(object):
                 new_route = MessageRoute(route_name)
                 new_route.add_listener(listener)
                 self.routes.append(new_route)
-            
-        def push_message(self, route_name, message, metadata = None):
+
+        def push_message(self, route_name, message, metadata=None, timestamp=None):
             """
             Pushes message and metadata (None by default) to a route
 
@@ -44,25 +45,31 @@ class MessageRouter(object):
                 route_name {string} -- name of route to send message to
                 message {dictionary} -- message to send to route
                 metadata {dictionary} -- default to None
+                timestamp {}
             """
+            from time import time
+
+            if not timestamp:
+                timestamp = time()
+
             for route in self.routes:
                 if route_name == route.get_name():
-                    route.push_message(message, metadata)
-        
+                    route.push_message(message, timestamp, metadata)
+
         def _in_route(self, route_name):
             for route in self.routes:
                 if route_name == route.get_name():
                     return True
             return False
-        
+
         def reset_routes(self):
             """
             Empties the list of MessageRoute objects
             """
             self.routes = []
-        
 
     instance = None
+
     def __init__(self):
         if not MessageRouter.instance:
             MessageRouter.instance = MessageRouter.__MessageRouter()
