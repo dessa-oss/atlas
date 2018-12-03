@@ -4,8 +4,10 @@
   text-align: center;
   height: 50px;
 
-  h4{
+  h4 {
     min-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-bottom: 0px;
     padding-bottom: 3px;
     margin-top: 6px;

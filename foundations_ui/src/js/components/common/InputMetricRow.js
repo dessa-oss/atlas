@@ -6,7 +6,6 @@ class InputMetricRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cellWidths: this.props.cellWidths,
       isError: this.props.isError,
       job: this.props.job,
       isMetric: this.props.isMetric,
@@ -23,11 +22,10 @@ class InputMetricRow extends Component {
 
   render() {
     const {
-      job, cellWidths, isError, isMetric, allInputMetricColumn, hiddenInputParams,
+      job, isError, isMetric, allInputMetricColumn, hiddenInputParams,
     } = this.state;
 
     const cells = CommonActions.getInputMetricCells(job,
-      cellWidths,
       isError,
       isMetric,
       allInputMetricColumn,
@@ -43,7 +41,6 @@ class InputMetricRow extends Component {
 
 InputMetricRow.propTypes = {
   job: PropTypes.object,
-  cellWidths: PropTypes.array,
   isError: PropTypes.bool,
   isMetric: PropTypes.bool,
   allInputMetricColumn: PropTypes.array,
@@ -52,7 +49,6 @@ InputMetricRow.propTypes = {
 
 InputMetricRow.defaultProps = {
   job: {},
-  cellWidths: [],
   isError: false,
   isMetric: false,
   allInputMetricColumn: [],

@@ -1,35 +1,42 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactResizeDetector from 'react-resize-detector';
 import JobActions from '../../actions/JobListActions';
+import Tooltip from './Tooltip';
 
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
-    this.onResize = this.onResize.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
-      sizeCallback: this.props.sizeCallback,
-      colIndex: this.props.colIndex,
       toggleFilter: this.props.toggleFilter,
+      isShowingTooltip: true,
     };
   }
 
-  onResize(width, height) {
-    const { sizeCallback, colIndex } = this.state;
-    const { clientWidth } = this.headerContainer;
-    sizeCallback(colIndex, clientWidth);
+  onMouseEnter() {
+    this.setState({ isShowingTooltip: true });
+  }
+
+  onMouseLeave() {
+    this.setState({ isShowingTooltip: true });
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, isShowingTooltip,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
+
+    let tooltip = null;
+    if (isShowingTooltip) {
+      tooltip = <Tooltip message={title} />;
+    }
 
     return (
       <div
@@ -37,13 +44,18 @@ class JobColumnHeader extends Component {
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
-          <h4 className={headerClassName}>{title}</h4>
+          <h4
+            onMouseEnter={this.onMouseEnter}
+            onMouseLeave={this.onMouseLeave}
+            className={headerClassName}
+          >
+            {title}{tooltip}
+          </h4>
           <div className="icon-container" />
           <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
             <div className={arrowClassName} />
           </div>
         </div>
-        <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
       </div>
     );
   }
@@ -54,9 +66,8 @@ JobColumnHeader.propTypes = {
   isStatus: PropTypes.bool,
   className: PropTypes.string,
   containerClass: PropTypes.string,
-  sizeCallback: PropTypes.func,
-  colIndex: PropTypes.number,
   toggleFilter: PropTypes.func,
+  isShowingTooltip: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -64,9 +75,8 @@ JobColumnHeader.defaultProps = {
   isStatus: false,
   className: '',
   containerClass: 'job-column-header',
-  sizeCallback: () => null,
-  colIndex: 0,
   toggleFilter: () => {},
+  isShowingTooltip: false,
 };
 
 export default JobColumnHeader;

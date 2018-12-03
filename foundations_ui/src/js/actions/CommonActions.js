@@ -10,28 +10,24 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, resizeCells, hiddenInputParams) {
+  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, resizeCells, hiddenInputParams);
+      return this.getInputParamHeaders(allInputParams, hiddenInputParams);
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, resizeCells, hiddenInputParams) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams) {
     const inputParams = [];
-    let colIndex = 0;
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
         const key = input;
         inputParams.push(<JobColumnHeader
           key={key}
           title={input}
-          className="inline-block"
+          className="inline-block full-width"
           containerClass="job-column-header"
-          sizeCallback={resizeCells}
-          colIndex={colIndex}
         />);
-        colIndex += 1;
       }
     });
     return inputParams;
@@ -65,63 +61,55 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, cellWidths, isError, isMetric, columns, hiddenInputParams) {
+  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams) {
     if (isMetric && job.output_metrics) {
-      return this.getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric, hiddenInputParams);
+      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams);
     }
 
     if (!isMetric && job.input_params && job.input_params.length > 0) {
-      return this.getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric, hiddenInputParams);
+      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams);
     }
     return null;
   }
 
-  static getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric, hiddenInputParams) {
+  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams) {
     let cells = [];
     cells = [];
-    let colIndex = 0;
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
-        const cellWidth = cellWidths[colIndex];
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         cells.push(<InputMetricCell
           key={key}
-          cellWidth={cellWidth}
           value={inputValue}
           isError={isError}
         />);
       }
-      colIndex += 1;
     });
     return cells;
   }
 
-  static getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric, hiddenInputParams) {
+  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams) {
     const cells = [];
-    let colIndex = 0;
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
-        const cellWidth = cellWidths[colIndex];
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
         cells.push(<InputMetricCell
           key={key}
-          cellWidth={cellWidth}
           value={inputValue}
           isError={isError}
         />);
       } else {
         cells.push(null);
       }
-      colIndex += 1;
     });
     return cells;
   }
 
-  static getInputMetricRows(jobs, cellWidths, isMetric, allInputMetricColumn, hiddenInputParams) {
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
     let rows = null;
     if (jobs.length > 0) {
       rows = [];
@@ -131,7 +119,6 @@ class CommonActions {
         rows.push(<InputMetricRow
           key={key}
           job={job}
-          cellWidths={cellWidths}
           isError={isError}
           isMetric={isMetric}
           allInputMetricColumn={allInputMetricColumn}

@@ -21,8 +21,9 @@
     vertical-align: top;
     text-align: center;
     min-width: $standard-cell-width;
-    padding-left: 8px;
-    padding-right: 8px; 
+    max-width: $standard-cell-width;
+    padding-left: $standard-cell-padding;
+    padding-right: $standard-cell-padding;
 
     &:last-child {
       border-right: 0px;
@@ -37,6 +38,7 @@
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
+    width: calc(#{$standard-cell-width} + 2 * #{$standard-cell-padding});
     
     p{
       margin: 0px 15px;

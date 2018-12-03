@@ -133,7 +133,7 @@ it('getTableSectionHeaderText with header', () => {
 });
 
 it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, functionStub, hiddenParams);
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams);
   expect(headers.length).toBe(2);
 });
 
