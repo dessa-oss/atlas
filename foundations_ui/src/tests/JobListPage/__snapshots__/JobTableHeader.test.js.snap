@@ -37,46 +37,41 @@ exports[`Shallow Renders Job Table Header 1`] = `
   >
     <JobColumnHeader
       className="start-time-offset"
-      colIndex={0}
       containerClass="job-column-header"
+      isShowingTooltip={false}
       isStatus={false}
-      sizeCallback={[Function]}
       title="Start Time"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
       className="status-offset"
-      colIndex={0}
       containerClass="job-column-header"
+      isShowingTooltip={false}
       isStatus={true}
-      sizeCallback={[Function]}
       title="Status"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
       className="job-id-offset"
-      colIndex={0}
       containerClass="job-column-header"
+      isShowingTooltip={false}
       isStatus={false}
-      sizeCallback={[Function]}
       title="Job ID"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
       className="duration-offset"
-      colIndex={0}
       containerClass="job-column-header"
+      isShowingTooltip={false}
       isStatus={false}
-      sizeCallback={[Function]}
       title="Duration"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
       className="user-offset"
-      colIndex={0}
       containerClass="job-column-header"
+      isShowingTooltip={false}
       isStatus={false}
-      sizeCallback={[Function]}
       title="User"
       toggleFilter={[Function]}
     />

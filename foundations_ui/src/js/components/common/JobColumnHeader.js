@@ -14,7 +14,7 @@ class JobColumnHeader extends Component {
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
       toggleFilter: this.props.toggleFilter,
-      isShowingTooltip: true,
+      isShowingTooltip: false,
     };
   }
 
@@ -23,7 +23,7 @@ class JobColumnHeader extends Component {
   }
 
   onMouseLeave() {
-    this.setState({ isShowingTooltip: true });
+    this.setState({ isShowingTooltip: false });
   }
 
   render() {

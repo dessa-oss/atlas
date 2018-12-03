@@ -1,8 +1,8 @@
 .job-cell{
   display: inline-block;
   vertical-align: middle;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: $standard-cell-padding;
+  padding-right: $standard-cell-padding;
   padding-top: 7px;
   border-top: 1px solid $color-border-bottom;
   border-right: 1px solid $color-border-bottom;
@@ -19,8 +19,8 @@
   }
 }
 
-.status-cell{
-  width: 25px;
+.status-cell {
+  width: $status-cell-width;
 }
 
 .job-id-cell{

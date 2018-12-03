@@ -57,9 +57,13 @@ class InputMetric extends Component {
           searchText={searchText}
           isMetric={isMetric}
         />
-        <div className="input-metric-column-header-container">
-          {inputParams}
-          {rows}
+        <div className="input-metric-header-row-container">
+          <div className="input-metric-column-container column-header">
+            {inputParams}
+          </div>
+          <div className="input-metric-column-container">
+            {rows}
+          </div>
         </div>
       </div>
     );

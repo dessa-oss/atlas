@@ -9,7 +9,13 @@ exports[`Shallow Renders Job Column Header 1`] = `
   >
     <h4
       className="blue-border-bottom"
-    />
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+    >
+      <Tooltip
+        message=""
+      />
+    </h4>
     <div
       className="icon-container"
     />
@@ -24,13 +30,5 @@ exports[`Shallow Renders Job Column Header 1`] = `
       />
     </div>
   </div>
-  <ResizeDetector
-    handleHeight={true}
-    handleWidth={true}
-    onResize={[Function]}
-    refreshRate={1000}
-    resizableElementId=""
-    skipOnMount={false}
-  />
 </div>
 `;

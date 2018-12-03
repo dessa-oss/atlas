@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Shallow Renders Tooltip 1`] = `
+exports[`Shallow Renders TableStaticColumns 1`] = `
 <span
   className="tooltip"
 />

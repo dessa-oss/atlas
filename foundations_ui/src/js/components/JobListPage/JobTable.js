@@ -50,7 +50,7 @@ class JobTable extends Component {
         });
       }
     } else {
-      jobRows = <p>Loading Jobs</p>;
+      jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
     }
 
     return (
@@ -62,13 +62,9 @@ class JobTable extends Component {
             jobs={jobs}
             statuses={statuses}
             updateHiddenStatus={updateHiddenStatus}
+            rowNumbers={rowNumbers}
+            jobRows={jobRows}
           />
-          <div className="table-row-number">
-            {rowNumbers}
-          </div>
-          <div className="job-table-row-container">
-            {jobRows}
-          </div>
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />

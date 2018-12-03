@@ -6,6 +6,10 @@
     border-right: 1px solid $color-border-bottom;
     border-top: 1px solid $color-border-bottom;
 
+  .job-cell{
+    width: $standard-input-metric-cell-width;
+  }
+
     &:last-child {
       border-bottom: 0px;
     }

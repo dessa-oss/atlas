@@ -16,7 +16,7 @@ class StatusCell extends Component {
 
     const statusClass = JobActions.getStatusCircle(status);
 
-    const divClass = isError ? 'status-container error' : 'status-container';
+    const divClass = isError ? 'status-cell status-container error' : 'status-cell status-container';
 
     return (
       <div className={divClass}>

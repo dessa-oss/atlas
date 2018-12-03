@@ -1,29 +1,40 @@
-.input-metric-container{
+.input-metric-container, .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: $table-metric-section-width;
-  height: 36px;
+  width: $table-section-width;
+  height: 100%;
+  white-space: nowrap;
   margin: 0px;
   padding: 0px;
 }
 
-.input-metric-column-header-container{
-  width: calc(100% - 1px); // To accomodate border
-  overflow: hidden;
-  overflow-x: scroll;
+.input-metric-header-row-container {
+  height: 100%;
+  width: 100%;
   overflow-y: scroll;
-  white-space: nowrap;
+  overflow-x: scroll;
   border-left: 4px solid $color-border-bottom;
+  position: relative;
+}
+
+.input-metric-column-container {
+  height: calc(100% - 30px - 50px);
+  overflow-y: scroll;
+  width: fit-content;
+
+  &.column-header {
+    height: 50px;
+  }
 
   .job-column-header {
     border-right: 1px solid $color-border-bottom;
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    min-width: $standard-cell-width;
-    max-width: $standard-cell-width;
-    padding-left: $standard-cell-padding;
-    padding-right: $standard-cell-padding;
+    min-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
+    max-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
+    padding-left: $standard-header-padding;
+    padding-right: $standard-header-padding;
 
     &:last-child {
       border-right: 0px;
@@ -38,7 +49,7 @@
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
-    width: calc(#{$standard-cell-width} + 2 * #{$standard-cell-padding});
+    width: $standard-input-metric-cell-width;
     
     p{
       margin: 0px 15px;
