@@ -4,7 +4,7 @@
   vertical-align: middle;
   border-bottom: 1px solid $color-border-bottom;
   width: $table-section-width;
-  height: 100%;
+  height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
   overflow: scroll;
   
   .job-cell:first-child() {
@@ -46,8 +46,8 @@
   bottom: 0;
   background: $color-background-grey;
   width: calc(100% - 30px );
-  height: 30px;
-  line-height: 30px;
+  height: $pagination-height;
+  line-height: $pagination-height;
   border: 1px solid $color-border-bottom;
   text-align: right;
   padding: 0px 15px;

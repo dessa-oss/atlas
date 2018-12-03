@@ -80,7 +80,6 @@
     }
     p {
         margin: 0px;
-        display: block;
     }
     p:nth-of-type(2) {
         margin-top: 5px;
@@ -100,7 +99,6 @@
   }
 
   .job-header-sorting-container {
-    display: inline-block;
     vertical-align: top;
     margin-left: $overview-content-margin-horizontal;
 
