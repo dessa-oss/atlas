@@ -5,6 +5,7 @@ import TableSectionHeader from '../common/TableSectionHeader';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
+import JobActions from '../../actions/JobListActions';
 
 const isStatus = true;
 const isMetric = true;
@@ -59,7 +60,14 @@ class JobTableHeader extends Component {
 
     let userFilter = null;
     if (isShowingUserFilter) {
-      userFilter = <UserFilter />;
+      const allUsers = JobActions.getAllJobUsers(jobs);
+      userFilter = (
+        <UserFilter
+          columns={allUsers}
+          toggleShowingFilter={this.toggleUserFilter}
+          changeHiddenParams={updateHiddenStatus}
+        />
+      );
     }
 
     let statusFilter = null;

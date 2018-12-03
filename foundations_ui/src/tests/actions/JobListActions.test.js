@@ -357,3 +357,7 @@ it('removeFilter', () => {
   expect(updatedFilters.length).toBe(1);
   expect(updatedFilters[0].value).toBe('Buck');
 });
+
+it('getAllJobUsers', () => {
+
+});

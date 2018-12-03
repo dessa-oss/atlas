@@ -313,6 +313,16 @@ class ProjectActions {
     return newStatuses;
   }
 
+  static getAllJobUsers(jobs) {
+    const users = [];
+    jobs.forEach((job) => {
+      if (!users.includes(job.user)) {
+        users.push({ name: job.user, hidden: false });
+      }
+    });
+    return users;
+  }
+
   // private fun
 
   static getAllMetricsFromJobs(allJobs) {
