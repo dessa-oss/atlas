@@ -36,6 +36,12 @@
     padding-left: $standard-header-padding;
     padding-right: $standard-header-padding;
 
+    &.status-column-header {
+      min-width: 40px;
+      max-width: 40px;
+      margin: 0px;
+    }
+
     &:last-child {
       border-right: 0px;
     }

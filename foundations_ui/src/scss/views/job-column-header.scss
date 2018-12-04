@@ -3,6 +3,7 @@
   vertical-align: top;
   text-align: center;
   height: 50px;
+  margin: auto;
 
   h4 {
     min-width: 80px;
@@ -14,38 +15,32 @@
   }
 
   .status-header{
-    min-width: 40px;
+    min-width: 34px;
+    max-width: 34px;
+    overflow: visible;
   }
 
-  .start-time-offset{
-    padding-left: 25px;
-    padding-right: 6px;
-  }
-
-.status-offset{
-  padding-left: 18px;
-
-  .icon-container {
-    width: 25%;
-  }
-
-  .arrow-continer {
-    width: 75%;
-  }
+  &:not(.status-header) {
+    min-width: $standard-header-width;
+    max-width: $standard-header-width;
 }
 
-  .job-id-offset{
-    padding-left: 20px;
-    padding-right: 20px;
+  .start-time-offset, .job-id-offset, .duration-offset, .user-offset{
+    width: 80px;
+    margin: auto;
   }
 
-  .duration-offset{
-    padding-left: 35px;
-    padding-right: 35px;
-  }
+  .status-offset{
+    max-width: 34px;
+    min-width: 34px;
+    margin: auto;
 
-  .user-offset{
-    padding-left: 15px;
-    padding-right: 5px;
+    .icon-container {
+      width: 25%;
+    }
+
+    .arrow-continer {
+      width: 75%;
+    }
   }
 }

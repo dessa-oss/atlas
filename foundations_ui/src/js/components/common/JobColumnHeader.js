@@ -38,9 +38,14 @@ class JobColumnHeader extends Component {
       tooltip = <Tooltip message={title} />;
     }
 
+    let divClass = containerDivClass;
+    if (isStatus) {
+      divClass += ' status-header';
+    }
+
     return (
       <div
-        className={containerDivClass}
+        className={divClass}
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>

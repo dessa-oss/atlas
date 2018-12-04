@@ -15,6 +15,7 @@ $standard-cell-padding: 5px;
 $static-columns-border: 2px;
 $static-standard-columns: 4;
 $standard-cell-width: calc(25% + (#{$static-columns-border} / #{$static-standard-columns}) - (#{$standard-cell-padding} * #{$static-standard-columns}));
+$standard-header-width: 125px;
 $standard-input-metric-cell-width: 118px;
 $minimum-table-width: 1600px;
 $header-nav-height: 45px;
