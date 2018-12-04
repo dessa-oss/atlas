@@ -62,6 +62,9 @@ class JobTableHeader extends Component {
       jobRows,
     } = this.state;
 
+    console.log('user', isShowingUserFilter);
+    console.log('status', isShowingStatusFilter);
+
     let userFilter = null;
     if (isShowingUserFilter) {
       const allUsers = JobActions.getAllJobUsers(jobs);
@@ -96,7 +99,12 @@ class JobTableHeader extends Component {
 
     return (
       <div className="job-list-container">
-        <TableStaticColumns jobRows={jobRows} rowNumbers={rowNumbers} toggleUserFilter={this.toggleUserFilter} />
+        <TableStaticColumns
+          jobRows={jobRows}
+          rowNumbers={rowNumbers}
+          toggleUserFilter={this.toggleUserFilter}
+          toggleStatusFilter={this.toggleStatusFilter}
+        />
         <InputMetric
           header="input parameter"
           allInputParams={allInputParams}

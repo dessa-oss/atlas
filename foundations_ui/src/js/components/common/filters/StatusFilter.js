@@ -59,6 +59,7 @@ class StatusFilter extends Component {
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
     );
 
+    console.log('showing status');
     return (
       <div className="filter-container column-filter-container elevation-1 status-filter-container">
         <div className="column-filter-header">

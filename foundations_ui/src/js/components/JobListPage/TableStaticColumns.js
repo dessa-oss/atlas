@@ -12,6 +12,7 @@ class TableStaticColumns extends Component {
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
       toggleUserFilter: this.props.toggleUserFilter,
+      toggleStatusFilter: this.props.toggleStatusFilter,
     };
   }
 
@@ -25,7 +26,9 @@ class TableStaticColumns extends Component {
   }
 
   render() {
-    const { rowNumbers, jobRows, toggleUserFilter } = this.state;
+    const {
+      rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter,
+    } = this.state;
 
     return (
       <div className="job-static-columns-container">
@@ -37,7 +40,7 @@ class TableStaticColumns extends Component {
               title="Status"
               isStatus={isStatus}
               className="status-offset"
-              toggleFilter={this.toggleStatusFilter}
+              toggleFilter={toggleStatusFilter}
             />
             <JobColumnHeader title="Job ID" className="job-id-offset" />
             <JobColumnHeader title="Duration" className="duration-offset" />
@@ -59,12 +62,14 @@ TableStaticColumns.propTypes = {
   rowNumbers: PropTypes.array,
   jobRows: PropTypes.array,
   toggleUserFilter: PropTypes.func,
+  toggleStatusFilter: PropTypes.func,
 };
 
 TableStaticColumns.defaultProps = {
   rowNumbers: [],
   jobRows: [],
   toggleUserFilter: () => {},
+  toggleStatusFilter: () => {},
 };
 
 export default TableStaticColumns;

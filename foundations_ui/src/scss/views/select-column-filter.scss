@@ -11,14 +11,16 @@
   &.user-filter-container {
     width: 270px;
     position: absolute;
-    left: 26.3%;
+    left: 25.4%;
+    top: calc(#{$metric-header-height} + #{$column-header-height});
   }
 
   &.status-filter-container {
     width: 225px;
     position: absolute;
-    left: 8%;
+    left: 7.8%;
     padding-top: 5px;
+    top: calc(#{$metric-header-height} + #{$column-header-height});
 
     .column-filter-header {
       height: 50px;

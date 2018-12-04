@@ -9,7 +9,7 @@
 }
 
 .input-metric-header-row-container {
-  height: 100%;
+  height: calc(100% - #{$metric-header-height});
   width: 100%;
   overflow-y: scroll;
   overflow-x: scroll;
