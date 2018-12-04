@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job ID Cell 1`] = `
+<a
+  className="job-cell job-id-cell"
+  href="/"
+/>
+`;

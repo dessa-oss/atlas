@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 
 from foundations.argument import Argument
-from foundations.basic_stage_middleware import BasicStageMiddleware
+from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 
 class TestArgument(unittest.TestCase):
@@ -81,7 +81,9 @@ class TestArgument(unittest.TestCase):
             return hello
 
         hyper_parameter = Hyperparameter('hello')
-        argument = Argument.generate_from(self._make_stage(method, hyper_parameter), None)
+        argument = Argument.generate_from(
+            self._make_stage(method, hyper_parameter), None)
+
         self.assertEqual(77, argument.value({'hello': 77}))
 
     def test_generate_argument_returns_argument_when_argument_provided(self):
@@ -134,12 +136,14 @@ class TestArgument(unittest.TestCase):
     def test_returns_provenance(self):
         parameter = self.Parameter(None, None, 'okaype')
         argument = Argument('world', parameter)
-        self.assertEqual({'value': 'okaype', 'name': 'world'}, argument.provenance())
+        self.assertEqual({'value': 'okaype', 'name': 'world'},
+                         argument.provenance())
 
     def test_returns_provenance_different_value(self):
         parameter = self.Parameter(None, None, 'fet')
         argument = Argument('world', parameter)
-        self.assertEqual({'value': 'fet', 'name': 'world'}, argument.provenance())
+        self.assertEqual({'value': 'fet', 'name': 'world'},
+                         argument.provenance())
 
     def _make_stage(self, function, *args, **kwargs):
         from foundations.pipeline import Pipeline
@@ -180,4 +184,3 @@ class TestArgument(unittest.TestCase):
 
         argument = Argument('world', parameter)
         self.assertEqual(string_parameter, str(argument))
-

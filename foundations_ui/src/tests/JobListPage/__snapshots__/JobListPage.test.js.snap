@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job List Page 1`] = `
+<div
+  className="job-list-container"
+>
+  <Toolbar />
+  <JobHeader
+    bubbleRefs={Array []}
+    bubblesHidden={0}
+    clearFilters={[Function]}
+    filters={Array []}
+    isShowingMoreFilters={false}
+    numProjects={0}
+    project={Object {}}
+    removeFilter={[Function]}
+  />
+  <JobTable
+    allInputParams={Array []}
+    allMetrics={Array []}
+    isLoaded={false}
+    isMount={false}
+    jobs={Array []}
+    projectName=""
+    statuses={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "Completed",
+        },
+        Object {
+          "hidden": false,
+          "name": "Processing",
+        },
+        Object {
+          "hidden": false,
+          "name": "Error",
+        },
+      ]
+    }
+    updateHiddenStatus={[Function]}
+  />
+</div>
+`;

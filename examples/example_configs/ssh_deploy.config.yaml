@@ -27,10 +27,12 @@ miscellaneous_archive_implementation:
 
 project_listing_implementation:
   project_listing_type: foundations.bucket_pipeline_listing.BucketPipelineListing
-  constructor_arguments: [!!python/name:foundations_ssh.sftp_bucket.SFTPBucket, /home/lou/mount/testbed/projects]
+  constructor_arguments: [!!python/name:foundations_ssh.sftp_bucket.SFTPBucket , /home/lou/mount/testbed/projects]
 
 deployment_implementation:
   deployment_type: foundations_ssh.SFTPJobDeployment
+
+redis_url: redis://422.428.428.42:33333
 
 remote_user: lou
 remote_host: 422.428.428.42

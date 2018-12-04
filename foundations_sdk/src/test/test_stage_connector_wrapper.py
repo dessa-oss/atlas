@@ -19,20 +19,20 @@ class TestStageConnectorWrapper(unittest.TestCase):
         def enable_caching(self):
             self.cache_enabled = True
 
-    class MockConnector(object):
+    class MockStage(object):
 
         def __init__(self, uuid):
             self._uuid = uuid
             self._args = ()
             self._kwargs = {}
 
-        def args(self):
+        def stage_args(self):
             return self._args
 
         def set_args(self, value):
             self._args = value
 
-        def kwargs(self):
+        def stage_kwargs(self):
             return self._kwargs
 
         def set_kwargs(self, value):
@@ -49,11 +49,12 @@ class TestStageConnectorWrapper(unittest.TestCase):
         from uuid import uuid4
 
         self._uuid = str(uuid4())
-        self._connector = self.MockConnector(self._uuid)
+        self._connector = self.MockStage(self._uuid)
         self._pipeline_context = PipelineContext()
         self._stage_context = StageContext()
         self._stage_config = StageConfig()
-        self._stage = StageConnectorWrapper(self._connector, self._pipeline_context, self._stage_context, self._stage_config)
+        self._stage = StageConnectorWrapper(
+            self._connector, self._pipeline_context, self._stage_context, self._stage_config)
 
     def test_enable_caching_returns_self(self):
         self._stage.enable_caching()
@@ -94,15 +95,15 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self._stage.enable_caching()
         self.assertTrue(argument.cache_enabled)
         self.assertTrue(argument_two.cache_enabled)
-    
+
     class MockDeploymentWrapper(object):
         def __init__(self, deployment):
             self._deployment = deployment
             self._job_name = 'potato'
-        
+
         def job_name(self):
             return self._job_name
-    
+
     @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
     @patch('foundations.deployment_manager.simple_deploy')
     @patch('logging.Logger.info')

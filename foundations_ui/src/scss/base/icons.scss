@@ -1,0 +1,25 @@
+/*
+Whenever possible, use SVGs instead of regular images because of the image quality is maintained and scaled properly across different displays.
+
+The background-image implementation we use provides a fallback method to simple images for older browsers <IE9 which is targeted by including the transparent linear gradient in the SVG Base64 declaration.  It also allows us to very easily change the width or height of the icon in question and retain the image's aspect ratio.
+
+See assets/svgs/README.md for further information on SVG conversion process
+*/
+
+
+//shared
+//-----------------------------
+@mixin icon-helper(){
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  max-width: 100%;
+}
+
+
+//icons
+//-----------------------------
+.i--icon-logo {
+  background-image: url('../assets/images/icons/icon-logo.png');
+  @include icon-helper;
+}

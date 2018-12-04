@@ -1,0 +1,315 @@
+/*
+
+These main styles are the globalized foundation for the theme and are often what need to be overwritten by localized changes
+
+Use helper classes to style elements that otherwise wouldn't need to have a full declaration or that are one-off occurrences
+
+*/
+
+//main styles
+//-----------------------------
+html, body, .App {
+  width: 100%;
+  height: 100%;
+  min-width: $minimum-site-width;
+  background: $color-background-grey;
+
+  > div {
+    height: 100%;
+  }
+}
+
+h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
+  @extend .f--din;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+.margin-auto {
+  margin: auto;
+}
+
+.arrow-container, .icon-container {
+  width: 50%;
+  display: inline-block;
+  height: 15px;
+  padding-top: 5px;
+}
+
+span, p, a {
+  @extend .f--din;
+  font-size: 13px;
+}
+
+h3 {
+  @extend .f--din-bold;
+  font-size: 16px;
+}
+
+h4 {
+  @extend .f--din;
+  font-size: 13px;
+}
+
+.font-bold {
+  @extend .f--din-bold;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+.font-regular {
+  @extend .f--din;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+.font-italic {
+  @extend .f--din-italic;
+  color: $color-font-black;
+  .font-alert{
+    color: $color-alert;
+  }
+}
+
+img {
+  max-width: 100%;
+}
+
+.no-elevation {
+    background: $color-no-elevation;
+    border-radius: 2px;
+    display: inline-block;
+    height: 100px;
+    margin: 30px;
+    position: relative;
+    width: 100px;
+}
+    
+ .elevation-1 {
+    box-shadow: 2px 4px 7px 0px rgba(0, 0, 0, 0.08), 2px 4px 7px 0px rgba(0, 0, 0, 0.08);
+}
+
+.no-bottom-margin {
+  margin-bottom: 0px;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  @include transition-with-defaults(opacity);
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+ul {
+  list-style: none;
+}
+
+hr {
+  color: $color-border;
+  background-color: $color-border;
+}
+
+.standard-table {
+  width: 100%;
+  thead, tfoot {
+    background: $color-table;
+    th, td {
+      padding: 1.5rem 0.625rem;
+      font-size: 0.875rem;
+      font-weight: bold;
+      text-align: left;
+      display: table-cell;
+      line-height: 1.125rem;
+    }
+  }
+  tbody {
+    tr {
+      &:nth-of-type(2n){
+        background: $color-no-elevation;
+        &.disabled-background{
+          background: $color-border;
+        }
+      }
+      td {
+        display: table-cell;
+        line-height: 1.125rem;
+        padding: 0.5625rem 0.625rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+.fa-anchor-container {
+  display: inline-block;
+  .fa {
+    padding-right: 5px;
+  }
+}
+
+.error {
+  color: $color-status-red;
+  background-color: $color-error-background;
+}
+
+.text-blue {
+  color: $color-light-blue;
+}
+
+//helper classes
+//-----------------------------
+.text-right{
+  text-align: right;
+}
+
+
+.faded-out {
+  display: none;
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.opaque {
+  opacity: 0;
+}
+
+.horizontal-center {
+  margin: 0 auto;
+}
+
+.float-left {
+  float:left;
+}
+
+.float-right {
+  float:right;
+}
+
+.full-width {
+  width:100%;
+}
+
+.half-width {
+  width: 50%;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.disabled-background{
+  background: $color-border;
+}
+
+.text-white{
+  color: $color-white;
+}
+
+.vertical-align-bottom{
+  vertical-align: bottom;
+}
+
+//border classes
+//-----------------------------
+.border-top-dark-gray{
+  border-top: 1px solid $color-border;
+}
+
+.border-bottom-dark-grey{
+  border-bottom: 1px solid $color-border;
+}
+
+.border-left-dark-grey{
+  border-left: 1px solid $color-border;
+}
+
+.border-right-dark-grey{
+  border-right: 1px solid $color-border;
+}
+
+.border-none{
+  border: 0 none;
+}
+
+.border-input-metric-arrow{
+  width: 0; 
+  height: 0;
+}
+
+//typography
+//-----------------------------
+.text-bold {
+  font-weight: bold;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-upper {
+  text-transform: uppercase;
+}
+
+
+//visibility
+//-----------------------------
+@include mobile {
+  .hide-for-small {
+    display: none;
+  }
+}
+@include tablet {
+  .hide-for-medium {
+    display: none;
+  }
+}
+@include tablet-up {
+  .hide-for-medium-up {
+    display: none;
+  }
+  .show-for-small {
+    display: none;
+  }
+}
+@include desktop {
+  .hide-for-large {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+  html {
+    zoom: 0.75;
+  }
+}

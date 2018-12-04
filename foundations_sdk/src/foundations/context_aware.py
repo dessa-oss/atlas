@@ -5,16 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class ContextAware(object):
     def __init__(self, function):
         self._function = function
         self.__name__ = self._function.__name__
 
-    def function(self):
-        return self._function
-
     def __call__(self, *args, **kwargs):
         return self._function(*args, **kwargs)
+
 
 def context_aware(function, *args):
     if len(args) == 0:

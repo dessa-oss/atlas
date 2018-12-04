@@ -1,0 +1,20 @@
+.job-list-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  background-color: $color-background-grey;
+
+  > div:nth-child(3) {
+    > div:first-child() {
+      margin-left: 4px;
+    }
+
+    > div:last-child() {
+     border-right: 1px solid $color-border-bottom;
+    }
+  }
+}
+
+.job-column-header-container{
+  width: $table-section-width;
+}

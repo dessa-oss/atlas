@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders ProjectSummary 1`] = `
+<div
+  className="project-summary-container elevation-1"
+>
+  <div
+    className="project-summary-info-container"
+  >
+    <h2
+      className="font-bold"
+    />
+    <p>
+      Data Source: Unknown
+    </p>
+    <p
+      className="font-bold"
+    >
+      Project owner: 
+      <span />
+    </p>
+    <p
+      className="font-bold"
+    >
+      Created at: 
+      <span />
+    </p>
+    <div
+      className="project-summary-button-container"
+    >
+      <button
+        className="b--mat b--affirmative"
+        type="button"
+      >
+        view queue
+      </button>
+      <button
+        className="b--mat b--affirmative"
+        onClick={[Function]}
+        type="button"
+      >
+        view job list
+      </button>
+    </div>
+  </div>
+  <div
+    className="project-summary-metrics-container"
+  />
+</div>
+`;

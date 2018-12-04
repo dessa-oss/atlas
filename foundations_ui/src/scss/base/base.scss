@@ -1,0 +1,18 @@
+.hide {
+  display: none;
+}
+
+.greyed-out {
+  color:$color-text-greyed !important;
+}
+
+.trash-container-inline {
+  float:right;
+  display:inline-block;
+  text-transform: uppercase;
+
+}
+
+.blue-border-bottom{
+  border-bottom: 4px solid $color-medium-blue;
+}

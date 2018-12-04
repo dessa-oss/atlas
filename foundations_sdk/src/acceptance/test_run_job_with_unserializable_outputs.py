@@ -11,6 +11,7 @@ import foundations
 import acceptance.fixtures.stages as stages
 
 class TestRunJobWithUnserializableOutputs(unittest.TestCase):
+
     def setUp(self):
         from acceptance.cleanup import cleanup
         cleanup()

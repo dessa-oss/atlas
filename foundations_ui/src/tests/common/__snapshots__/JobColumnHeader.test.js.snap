@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Column Header 1`] = `
+<div
+  className="job-column-header"
+>
+  <div
+    className=""
+  >
+    <h4
+      className="blue-border-bottom"
+    />
+    <div
+      className="icon-container"
+    />
+    <div
+      className="arrow-container"
+      onClick={[Function]}
+      onKeyPress={[Function]}
+      role="presentation"
+    >
+      <div
+        className="arrow-down float-right"
+      />
+    </div>
+  </div>
+  <ResizeDetector
+    handleHeight={true}
+    handleWidth={true}
+    onResize={[Function]}
+    refreshRate={1000}
+    resizableElementId=""
+    skipOnMount={false}
+  />
+</div>
+`;

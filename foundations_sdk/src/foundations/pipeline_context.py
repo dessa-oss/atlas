@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations.provenance import Provenance
 from foundations.stage_context import StageContext
-from foundations.thread_manager import ThreadManager
 
 class PipelineContext(object):
 

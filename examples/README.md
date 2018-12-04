@@ -92,4 +92,3 @@ Contains ETL code specific to our solution of the [Titanic problem](https://www.
 ## Configuration Examples
 
 Foundations uses a configuration-driven approach to deployment. The [config](./config) folder contains the configuration used in the examples. [Config Examples](./example_configs) gives examples on how to setup config for different environments.
- 

@@ -8,50 +8,34 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import patch
 from foundations.models.completed_job_data_listing import CompletedJobDataListing
+from foundations.job_data_redis import JobDataRedis
+from foundations.job_data_shaper import JobDataShaper
 
 
 class TestCompletedJobDataListing(unittest.TestCase):
 
-    class MockCompletedJobData(object):
+    @patch.object(JobDataRedis, 'get_all_jobs_data')
+    @patch.object(JobDataShaper, 'shape_data')
+    def test_gets_completed_job_data(self, mock_shaper, mock):
+        some_data = [{'data': 'here'}]
+        mock.return_value = some_data
+        some_shaped_data = [{'data': 'there'}]
+        mock_shaper.return_value = some_shaped_data
 
-        def __init__(self, context, job_id):
-            self._job_id = job_id
-            self._context = context
+        self.assertEqual(CompletedJobDataListing.completed_job_data(
+            'project_name'), some_shaped_data)
+        mock.assert_called_once()
+        mock_shaper.assert_called_once()
 
-        def load_job(self):
-            return {'job_id': self._job_id, 'context': self._context}
+    @patch.object(JobDataRedis, 'get_all_jobs_data')
+    @patch.object(JobDataShaper, 'shape_data')
+    def test_gets_completed_job_data_different_values(self,  mock_shaper, mock):
+        some_data = [{'new': 'data'}]
+        mock.return_value = some_data
+        some_shaped_data = [{'new': 'data', 'newer': 'data'}]
+        mock_shaper.return_value = some_shaped_data
 
-    @patch('foundations.models.pipeline_context_listing.PipelineContextListing.pipeline_contexts')
-    @patch('foundations.models.completed_job_data.CompletedJobData', MockCompletedJobData)
-    def test_generate_completed_job_data_returns_empty_list(self, mock):
-        mock.return_value = []
-        self.assertEqual([], self._completed_job_list())
-
-    @patch('foundations.models.pipeline_context_listing.PipelineContextListing.pipeline_contexts')
-    @patch('foundations.models.completed_job_data.CompletedJobData', MockCompletedJobData)
-    def test_generate_completed_job_data_returns_single_job_listing(self, mock):
-        mock.return_value = [('job_name', 'context...')]
-
-        expected_result = [{'job_id': 'job_name', 'context': 'context...'}]
-        self.assertEqual(expected_result, self._completed_job_list())
-
-    @patch('foundations.models.pipeline_context_listing.PipelineContextListing.pipeline_contexts')
-    @patch('foundations.models.completed_job_data.CompletedJobData', MockCompletedJobData)
-    def test_generate_completed_job_data_returns_different_single_job_listing(self, mock):
-        mock.return_value = [('space2vec', 'space stuff')]
-
-        expected_result = [{'job_id': 'space2vec', 'context': 'space stuff'}]
-        self.assertEqual(expected_result, self._completed_job_list())
-
-    @patch('foundations.models.pipeline_context_listing.PipelineContextListing.pipeline_contexts')
-    @patch('foundations.models.completed_job_data.CompletedJobData', MockCompletedJobData)
-    def test_generate_completed_job_data_returns_multiple_jobs(self, mock):
-        mock.return_value = [('space2vec', 'space stuff'),
-                             ('snowbork', 'snowbork stuff')]
-
-        expected_result = [{'job_id': 'space2vec', 'context': 'space stuff'}, {
-            'job_id': 'snowbork', 'context': 'snowbork stuff'}]
-        self.assertEqual(expected_result, self._completed_job_list())
-
-    def _completed_job_list(self):
-        return list(CompletedJobDataListing.completed_job_data())
+        self.assertEqual(CompletedJobDataListing.completed_job_data(
+            'another_project'), some_shaped_data)
+        mock.assert_called_once()
+        mock_shaper.assert_called_once()

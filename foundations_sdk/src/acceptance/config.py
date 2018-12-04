@@ -37,7 +37,7 @@ def _config():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
-    config_manager['log_level'] = 'ERROR'
+    config_manager['log_level'] = 'CRITICAL'
 
 
 _config()

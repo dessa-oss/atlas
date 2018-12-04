@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Table 1`] = `
+<div
+  className="job-table-content"
+>
+  <div
+    className="job-table-container"
+  >
+    <JobTableHeader
+      allInputParams={Array []}
+      allMetrics={Array []}
+      isShowingStatusFilter={false}
+      isShowingUserFilter={false}
+      jobs={Array []}
+      statuses={Array []}
+      updateHiddenStatus={[Function]}
+    />
+    <div
+      className="table-row-number"
+    />
+    <div
+      className="job-table-row-container"
+    >
+      <p>
+        Loading Jobs
+      </p>
+    </div>
+    <div
+      className="pagination-controls"
+    >
+      <p>
+        <span
+          className="font-bold"
+        >
+          Viewing:
+        </span>
+         1-100/600
+      </p>
+      <div
+        className="arrow-right"
+      />
+      <p>
+        Page 1
+      </p>
+      <div
+        className="arrow-left"
+      />
+    </div>
+  </div>
+</div>
+`;

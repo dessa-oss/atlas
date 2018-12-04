@@ -1,0 +1,63 @@
+.job-table-row-container{
+  margin: 0px;
+  display: inline-block;
+  vertical-align: middle;
+  border-bottom: 1px solid $color-border-bottom;
+  width: $table-section-width;
+  height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+  overflow: scroll;
+  
+  .job-cell:first-child() {
+    border-left: 1px solid $color-border-bottom;
+  }
+  
+}
+
+.job-table-content {
+  height: calc(100% - #{$header-nav-height} - #{$header-control-height} - 10px - 3px);
+  margin-bottom: 10px;
+  padding: 0px $overview-content-margin-horizontal;
+  width: calc(100% - $overview-content-margin-horizontal);
+  overflow-y: hidden;
+}
+
+.job-table-container{
+  height: 100%;
+  min-width: $minimum-table-width;
+  position: relative;
+}
+
+.table-row-number {
+  display: inline-block;
+  vertical-align: top;
+  width: 30px;
+  margin-left: -29px;
+  text-align: center;
+  p {
+    color: $color-9c-grey;
+    height: $row-height;
+    margin: 0px;
+    line-height: $row-height;
+  }
+}
+
+.pagination-controls {
+  position: absolute;
+  bottom: 0;
+  background: $color-background-grey;
+  width: calc(100% - 30px );
+  height: $pagination-height;
+  line-height: $pagination-height;
+  border: 1px solid $color-border-bottom;
+  text-align: right;
+  padding: 0px 15px;
+
+  p {
+    display: inline-block;
+    margin: 0px 15px;
+  }
+
+  div {
+    display: inline-block;
+  }
+}

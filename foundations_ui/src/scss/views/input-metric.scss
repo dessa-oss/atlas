@@ -1,0 +1,50 @@
+.input-metric-container{
+  display: inline-block;
+  vertical-align: middle;
+  width: $table-metric-section-width;
+  height: 36px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.input-metric-column-header-container{
+  width: calc(100% - 1px); // To accomodate border
+  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  white-space: nowrap;
+  border-left: 4px solid $color-border-bottom;
+
+  .job-column-header {
+    border-right: 1px solid $color-border-bottom;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    min-width: $standard-cell-width;
+    padding-left: 8px;
+    padding-right: 8px; 
+
+    &:last-child {
+      border-right: 0px;
+    }
+
+    .status-header{
+      min-width: 40px;
+    }
+  }
+
+  .job-cell {
+    text-align: center;
+    padding-left: 0px;
+    padding-right: 0px;
+    
+    p{
+      margin: 0px 15px;
+      vertical-align: middle;
+      height: 26px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
