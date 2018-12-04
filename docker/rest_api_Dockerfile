@@ -1,0 +1,19 @@
+FROM python:3.5.2
+
+RUN mkdir -p /var/foundations ~/.ssh
+COPY ./ /var/foundations/
+WORKDIR /var/foundations
+
+RUN python -m pip install --upgrade pip==18.1 && \
+    python -m pip install \
+        setuptools \
+        wheel \
+        && \
+    bash build_dist.sh && \
+    rm -rf ./*
+
+COPY ./docker/run_api_server.py ./
+
+EXPOSE 37722
+ENTRYPOINT ["python"]
+CMD ["run_api_server.py"]

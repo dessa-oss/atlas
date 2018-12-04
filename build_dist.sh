@@ -5,19 +5,19 @@ wheel_suffix=`python -c "import sys; print(sys.version_info.major)"`
 python -m pip install setuptools_scm
 export build_version=`python get_version.py`
 
-cd foundations_sdk/ && \
+wheel_name_tail="${build_version}-py${wheel_suffix}-none-any.whl"
+
+build_module () {
+    directory=$1
+    module_name=$2
+
+    cd ${directory} && \
     python setup.py sdist bdist_wheel && \
-    cd ../ && \
-    python -m pip install -U foundations_sdk/dist/foundations-${build_version}-py${wheel_suffix}-none-any.whl && \
-    cd gcp_utils/ && \
-    python setup.py sdist bdist_wheel && \
-    cd ../ && \
-    python -m pip install -U gcp_utils/dist/foundations_gcp-${build_version}-py${wheel_suffix}-none-any.whl && \
-    cd ssh_utils/ && \
-    python setup.py sdist bdist_wheel &&\
-    cd ../ && \
-    python -m pip install -U ssh_utils/dist/foundations_ssh-${build_version}-py${wheel_suffix}-none-any.whl
-    cd foundations_rest_api/ && \
-    python setup.py sdist bdist_wheel &&\
-    cd ../ && \
-    python -m pip install -U foundations_rest_api/dist/foundations_rest_api-${build_version}-py${wheel_suffix}-none-any.whl
+    cd .. && \
+    python -m pip install -U ${directory}/dist/${module_name}-${wheel_name_tail}
+}
+
+build_module foundations_sdk foundations && \
+build_module gcp_utils foundations_gcp && \
+build_module ssh_utils foundations_ssh && \
+build_module foundations_rest_api foundations_rest_api
