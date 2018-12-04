@@ -92,6 +92,14 @@ const filters = [
 ];
 const emptyFilters = [];
 const filterToRemove = { column: 'Status', value: 'Error' };
+const url = 'localhost/';
+const isFirst = true;
+const isNotFirst = false;
+const status = { name: 'Error', hidden: false };
+const colName = 'myCol';
+const colValue = 'myVal';
+const hasFilter = false;
+const noFilter = true;
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -328,7 +336,7 @@ it('getBaseJobListingURL', () => {
 
 it('getFilterURL', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter);
-  expect(URL).toBe('status=processing,error');
+  expect(URL).toBe('status=Processing,Error');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -356,4 +364,58 @@ it('removeFilter', () => {
   const updatedFilters = JobActions.removeFilter(filters, filterToRemove);
   expect(updatedFilters.length).toBe(1);
   expect(updatedFilters[0].value).toBe('Buck');
+});
+
+it('addtoURL, first status', () => {
+  const updatedUrl = JobActions.addToURL(url, isFirst, status);
+  expect(updatedUrl).toBe('localhost/status=Error');
+});
+
+it('addtoURL, not first status', () => {
+  const updatedUrl = JobActions.addToURL(url, isNotFirst, status);
+  expect(updatedUrl).toBe('localhost/,Error');
+});
+
+it('getFilterObject', () => {
+  const filteredObject = JobActions.getFilterObject(colName, colValue);
+  expect(filteredObject).toEqual({ column: 'myCol', value: 'myVal' });
+});
+
+it('addToURLNotHidden, not hidden', () => {
+  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  expect(updatedUrl).toBe('localhost/status=Error');
+});
+
+it('addToURLNotHidden, hidden', () => {
+  status.hidden = true;
+  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  expect(updatedUrl).toBe('');
+});
+
+it('getOldStatusFilters', () => {
+  const oldFilters = JobActions.getOldStatusFilters(filters);
+  expect(oldFilters.length).toBe(1);
+  expect(oldFilters[0].column).toBe('User');
+});
+
+it('addNewStatusFilters', () => {
+  const newFilters = [];
+  JobActions.addNewStatusFilters(hiddenStatusFilter, newFilters);
+  expect(newFilters.length).toBe(2);
+});
+
+it('getUpdatedStatusesFromOldStatuses', () => {
+  const newStatuses = [];
+  JobActions.getUpdatedStatusesFromOldStatuses(filters, status, isNotFirst, newStatuses);
+  expect(newStatuses.length).toBe(1);
+});
+
+it('updateStatusesIfNoFilters, has filters', () => {
+  JobActions.updateStatusesIfNoFilters(hasFilter, hiddenStatusFilter);
+  expect(hiddenStatusFilter[0].hidden).toBe(true);
+});
+
+it('updateStatusesIfNoFilters, no filters', () => {
+  JobActions.updateStatusesIfNoFilters(noFilter, hiddenStatusFilter);
+  expect(hiddenStatusFilter[0].hidden).toBe(false);
 });

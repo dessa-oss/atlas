@@ -15,13 +15,7 @@ const baseStatus = [
 class JobListPage extends Component {
   constructor(props) {
     super(props);
-    this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
-    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
-    this.saveAPIJobs = this.saveAPIJobs.bind(this);
-    this.clearState = this.clearState.bind(this);
-    this.saveFilters = this.saveFilters.bind(this);
-    this.clearFilters = this.clearFilters.bind(this);
-    this.removeFilter = this.removeFilter.bind(this);
+    this.bindAllJobs();
     this.state = {
       projectName: this.props.projectName,
       project: this.props.project,
@@ -76,6 +70,7 @@ class JobListPage extends Component {
     const statusNamesArray = statuses.map(status => status.name);
     const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
     const apiFilteredJobs = await JobActions.filterJobs(projectName, formattedColumns);
+
     this.clearState();
     this.formatAndSaveParams(apiFilteredJobs);
     this.setState({ statuses: formattedColumns });
@@ -112,6 +107,16 @@ class JobListPage extends Component {
     this.clearState();
     this.formatAndSaveParams(apiFilteredJobs);
     this.forceUpdate();
+  }
+
+  bindAllJobs() {
+    this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
+    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
+    this.saveAPIJobs = this.saveAPIJobs.bind(this);
+    this.clearState = this.clearState.bind(this);
+    this.saveFilters = this.saveFilters.bind(this);
+    this.clearFilters = this.clearFilters.bind(this);
+    this.removeFilter = this.removeFilter.bind(this);
   }
 
   render() {
