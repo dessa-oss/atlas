@@ -11,11 +11,7 @@ exports[`Shallow Renders Job Column Header 1`] = `
       className="blue-border-bottom"
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
-    >
-      <Tooltip
-        message=""
-      />
-    </h4>
+    />
     <div
       className="icon-container"
     />

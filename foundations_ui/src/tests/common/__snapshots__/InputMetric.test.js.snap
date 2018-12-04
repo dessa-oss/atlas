@@ -15,7 +15,14 @@ exports[`Shallow Renders InputMetric 1`] = `
     updateSearchText={[Function]}
   />
   <div
-    className="input-metric-column-header-container"
-  />
+    className="input-metric-header-row-container"
+  >
+    <div
+      className="input-metric-column-container column-header"
+    />
+    <div
+      className="input-metric-column-container"
+    />
+  </div>
 </div>
 `;

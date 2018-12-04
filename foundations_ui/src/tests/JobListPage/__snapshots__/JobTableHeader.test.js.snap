@@ -4,15 +4,11 @@ exports[`Shallow Renders Job Table Header 1`] = `
 <div
   className="job-list-container"
 >
-  <TableSectionHeader
-    changeHiddenParams={[Function]}
-    columns={Array []}
-    header=""
-    hiddenInputParams={Array []}
-    isMetric={false}
-    isShowingFilter={false}
-    searchText=""
-    updateSearchText={[Function]}
+  <TableStaticColumns
+    jobRows={Array []}
+    rowNumbers={Array []}
+    toggleStatusFilter={[Function]}
+    toggleUserFilter={[Function]}
   />
   <InputMetric
     allInputParams={Array []}
@@ -32,49 +28,5 @@ exports[`Shallow Renders Job Table Header 1`] = `
     jobs={Array []}
     searchText=""
   />
-  <div
-    className="job-column-header-container"
-  >
-    <JobColumnHeader
-      className="start-time-offset"
-      containerClass="job-column-header"
-      isShowingTooltip={false}
-      isStatus={false}
-      title="Start Time"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="status-offset"
-      containerClass="job-column-header"
-      isShowingTooltip={false}
-      isStatus={true}
-      title="Status"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="job-id-offset"
-      containerClass="job-column-header"
-      isShowingTooltip={false}
-      isStatus={false}
-      title="Job ID"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="duration-offset"
-      containerClass="job-column-header"
-      isShowingTooltip={false}
-      isStatus={false}
-      title="Duration"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="user-offset"
-      containerClass="job-column-header"
-      isShowingTooltip={false}
-      isStatus={false}
-      title="User"
-      toggleFilter={[Function]}
-    />
-  </div>
 </div>
 `;

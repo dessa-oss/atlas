@@ -62,9 +62,6 @@ class JobTableHeader extends Component {
       jobRows,
     } = this.state;
 
-    console.log('user', isShowingUserFilter);
-    console.log('status', isShowingStatusFilter);
-
     let userFilter = null;
     if (isShowingUserFilter) {
       const allUsers = JobActions.getAllJobUsers(jobs);

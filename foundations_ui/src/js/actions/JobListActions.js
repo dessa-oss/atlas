@@ -316,7 +316,13 @@ class ProjectActions {
   static getAllJobUsers(jobs) {
     const users = [];
     jobs.forEach((job) => {
-      if (!users.includes(job.user)) {
+      let alreadyExists = false;
+      users.forEach((user) => {
+        if (user.name === job.user) {
+          alreadyExists = true;
+        }
+      });
+      if (!alreadyExists) {
         users.push({ name: job.user, hidden: false });
       }
     });

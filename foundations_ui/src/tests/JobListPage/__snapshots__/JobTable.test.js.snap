@@ -12,20 +12,18 @@ exports[`Shallow Renders Job Table 1`] = `
       allMetrics={Array []}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
+      jobRows={
+        Array [
+          <p>
+            Loading Jobs
+          </p>,
+        ]
+      }
       jobs={Array []}
+      rowNumbers={Array []}
       statuses={Array []}
       updateHiddenStatus={[Function]}
     />
-    <div
-      className="table-row-number"
-    />
-    <div
-      className="job-table-row-container"
-    >
-      <p>
-        Loading Jobs
-      </p>
-    </div>
     <div
       className="pagination-controls"
     >

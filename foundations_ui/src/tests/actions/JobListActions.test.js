@@ -92,6 +92,17 @@ const filters = [
 ];
 const emptyFilters = [];
 const filterToRemove = { column: 'Status', value: 'Error' };
+const jobs = [
+  {
+    user: 'user1'
+  },
+  {
+    user: 'duplicateUser'
+  },
+  {
+    user: 'duplicateUser'
+  },
+];
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -359,5 +370,6 @@ it('removeFilter', () => {
 });
 
 it('getAllJobUsers', () => {
-
+  const allUsers = JobActions.getAllJobUsers(jobs);
+  expect(allUsers.length).toBe(2);
 });

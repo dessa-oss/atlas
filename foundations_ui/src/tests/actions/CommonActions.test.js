@@ -42,7 +42,6 @@ const job = {
       },
     ],
 };
-const cellWidths = [ 100, 200 ];
 const jobs = [
   {
     job_id: 'job1',
@@ -69,7 +68,6 @@ const jobs = [
     ]
   }
 ];
-const functionStub = () => null;
 const noError = false;
 const error = true;
 const hiddenParams = ['param2'];
@@ -148,32 +146,32 @@ it('isHeaderNotEmpty isEmpty', () => {
 })
 
 it('get InputMetricCells no metric, has jobs', () => {
-  const cells = CommonActions.getInputMetricCells(job, cellWidths, error, noMetric, columns, hidden);
+  const cells = CommonActions.getInputMetricCells(job, error, noMetric, columns, hidden);
   expect(cells.length).toBe(1);
 });
 
 it('get InputMetricCells no metric, no job', () => {
-  const cells = CommonActions.getInputMetricCells(emptyJob, cellWidths, error, noMetric, columns, hidden);
+  const cells = CommonActions.getInputMetricCells(emptyJob, error, noMetric, columns, hidden);
   expect(cells).toBe(null);
 });
 
 it('get InputMetricCells metric, has jobs', () => {
-  const cells = CommonActions.getInputMetricCells(job, cellWidths, error, metric, metricCols, hidden);
+  const cells = CommonActions.getInputMetricCells(job, error, metric, metricCols, hidden);
   expect(cells.length).toBe(3);
 });
 
 it('get InputMetricCells metric, no job', () => {
-  const cells = CommonActions.getInputMetricCells(emptyJob, cellWidths, error, metric, metricCols, hidden);
+  const cells = CommonActions.getInputMetricCells(emptyJob, error, metric, metricCols, hidden);
   expect(cells).toBe(null);
 });
 
 it('get InputMetricRows no jobs, ', () => {
-  const rows = CommonActions.getInputMetricRows(emptyJob, cellWidths, noMetric, columns, hidden);
+  const rows = CommonActions.getInputMetricRows(emptyJob, noMetric, columns, hidden);
   expect(rows).toBe(null);
 });
 
 it('get InputMetricRows jobs', () => {
-  const rows = CommonActions.getInputMetricRows(jobs, cellWidths, noMetric, columns, hidden);
+  const rows = CommonActions.getInputMetricRows(jobs, noMetric, columns, hidden);
   expect(rows.length).toBe(2);
   expect(rows[0]).not.toBe(null);
   expect(rows[1]).not.toBe(null);
@@ -200,7 +198,7 @@ it('get InputMetricCellPDivlass error', () => {
 });
 
 it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, functionStub, hidden);
+  const headers = CommonActions.getInputParamHeaders(inputParams, hidden);
   expect(headers.length).toBe(2);
 });
 
@@ -210,13 +208,13 @@ it('isError', () => {
 });
 
 it('get InputCellsFromInputParams', () => {
-  const cells = CommonActions.getInputCellsFromInputParams(job, cellWidths, noError, columns, noMetric, hidden);
+  const cells = CommonActions.getInputCellsFromInputParams(job, noError, columns, noMetric, hidden);
   expect(cells.length).toBe(1);
   expect(cells[0]).not.toBe(null);
 });
 
 it('get MetricCellsFromOutputMetrics', () => {
-  const cells = CommonActions.getMetricCellsFromOutputMetrics(job, cellWidths, noError, metricCols, metric, hidden);
+  const cells = CommonActions.getMetricCellsFromOutputMetrics(job, noError, metricCols, metric, hidden);
   expect(cells.length).toBe(3);
   expect(cells[0]).not.toBe(null);
   expect(cells[1]).not.toBe(null);

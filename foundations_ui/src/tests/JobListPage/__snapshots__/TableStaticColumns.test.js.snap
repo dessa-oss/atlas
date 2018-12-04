@@ -1,7 +1,72 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders TableStaticColumns 1`] = `
-<span
-  className="tooltip"
-/>
+<div
+  className="job-static-columns-container"
+>
+  <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
+    header=""
+    hiddenInputParams={Array []}
+    isMetric={false}
+    isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
+  />
+  <div
+    className="static-header-row-container"
+  >
+    <div
+      className="job-column-header-container"
+    >
+      <JobColumnHeader
+        className="start-time-offset"
+        containerClass="job-column-header"
+        isShowingTooltip={false}
+        isStatus={false}
+        title="Start Time"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="status-offset"
+        containerClass="job-column-header"
+        isShowingTooltip={false}
+        isStatus={true}
+        title="Status"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="job-id-offset"
+        containerClass="job-column-header"
+        isShowingTooltip={false}
+        isStatus={false}
+        title="Job ID"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="duration-offset"
+        containerClass="job-column-header"
+        isShowingTooltip={false}
+        isStatus={false}
+        title="Duration"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="user-offset"
+        containerClass="job-column-header"
+        isShowingTooltip={false}
+        isStatus={false}
+        title="User"
+        toggleFilter={[Function]}
+      />
+    </div>
+    <div
+      className="table-row-number"
+    />
+    <div
+      className="job-table-row-container"
+    />
+  </div>
+</div>
 `;
