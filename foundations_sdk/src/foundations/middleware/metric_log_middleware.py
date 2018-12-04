@@ -10,6 +10,27 @@ from foundations.middleware.basic_stage_middleware import BasicStageMiddleware
 
 class MetricLogMiddleware(BasicStageMiddleware):
 
+    class Producer(object):
+        
+        def __init__(self, message_router, pipeline_context, stage_context):
+            self._message_router = message_router
+            self._pipeline_context = pipeline_context
+            self._stage_context = stage_context
+
+        def push_message(self):
+            for metric in self._stage_context.stage_log:
+                self._push_message_to_channel(metric['key'], metric['value'])
+
+        def _push_message_to_channel(self, key, value):
+            message = {'project_name': self._project_name(), 'job_id': self._job_id(), 'key': key, 'value': value}
+            self._message_router.push_message('job_metrics', message)
+
+        def _project_name(self):
+            return self._pipeline_context.provenance.project_name
+
+        def _job_id(self):
+            return self._pipeline_context.file_name
+
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
         """
         This middleware logs events to a message route named 'job_metrics'
@@ -25,20 +46,10 @@ class MetricLogMiddleware(BasicStageMiddleware):
         Return:
             return_value - result from callback execution
         """
+        from foundations.global_state import message_router
+
         return_value = callback(args, kwargs)
 
-        for metric in self._stage_context.stage_log:
-            self._push_message_to_channel(metric['key'], metric['value'], 'job_metrics')
+        self.Producer(message_router, self._pipeline_context, self._stage_context).push_message()
 
         return return_value
-
-    def _push_message_to_channel(self, key, value, channel_name):
-        from foundations.global_state import message_router
-        message_router.push_message(
-            channel_name, {'project_name': self._project_name(), 'job_id': self._job_id(), 'key': key, 'value': value})
-
-    def _project_name(self):
-        return self._pipeline_context.provenance.project_name
-
-    def _job_id(self):
-        return self._pipeline_context.file_name
