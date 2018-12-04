@@ -3,30 +3,144 @@ import PropTypes from 'prop-types';
 import JobTable from './JobTable';
 import Toolbar from '../common/Toolbar';
 import JobHeader from './JobHeader';
+import CommonActions from '../../actions/CommonActions';
+import JobActions from '../../actions/JobListActions';
+
+const baseStatus = [
+  { name: 'Completed', hidden: false },
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+];
 
 class JobListPage extends Component {
   constructor(props) {
     super(props);
+    this.bindAllJobs();
     this.state = {
       projectName: this.props.projectName,
       project: this.props.project,
-      filters: [{ column: 'User', value: 'Buck' },
-        { column: 'Status', value: 'Error' },
-        { column: 'Start Time', value: 'Today' },
-        { column: 'Metric 1', value: 'abc' },
-        { column: 'Metric 2', value: '123' },
-        { column: 'Metric 3', value: 'more words' },
+      filters: [],
+      statuses: [
+        { name: 'Completed', hidden: false },
+        { name: 'Processing', hidden: false },
+        { name: 'Error', hidden: false },
       ],
+      jobs: [],
+      allInputParams: [],
+      isMount: false,
+      allMetrics: [],
     };
   }
 
+  async componentDidMount() {
+    this.setState({ isMount: true });
+    await this.getJobs();
+  }
+
+  componentWillUnmount() {
+    this.setState({ isMount: false });
+  }
+
+  async getJobs() {
+    const { projectName } = this.state;
+    const apiJobs = await JobActions.getJobs(projectName);
+    this.formatAndSaveParams(apiJobs);
+  }
+
+  formatAndSaveParams(apiJobs) {
+    // use is mount for async as when it returns may have been unmounted
+    const { isMount } = this.state;
+    if (isMount) {
+      if (apiJobs != null) {
+        this.saveAPIJobs(apiJobs);
+      } else {
+        this.clearState();
+      }
+    }
+  }
+
+  clearState() {
+    this.setState({
+      jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
+    });
+  }
+
+  async updateHiddenStatus(hiddenFields) {
+    const { statuses, projectName } = this.state;
+    const statusNamesArray = statuses.map(status => status.name);
+    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
+    const apiFilteredJobs = await JobActions.filterJobs(projectName, formattedColumns);
+
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs);
+    this.setState({ statuses: formattedColumns });
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
+  saveAPIJobs(apiJobs) {
+    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
+    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
+    this.setState({
+      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
+    });
+  }
+
+  saveFilters() {
+    const { filters, statuses } = this.state;
+    const newFilters = JobActions.getAllFilters(filters, statuses);
+    this.setState({ filters: newFilters });
+  }
+
+  clearFilters() {
+    this.setState({ filters: [], statuses: baseStatus });
+    this.getJobs();
+  }
+
+  async removeFilter(removeFilter) {
+    const { filters, statuses, projectName } = this.state;
+    const newFilters = JobActions.removeFilter(filters, removeFilter);
+    const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
+    this.setState({ filters: newFilters, statuses: newStatuses });
+
+    const apiFilteredJobs = await JobActions.filterJobs(projectName, newStatuses);
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs);
+    this.forceUpdate();
+  }
+
+  bindAllJobs() {
+    this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
+    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
+    this.saveAPIJobs = this.saveAPIJobs.bind(this);
+    this.clearState = this.clearState.bind(this);
+    this.saveFilters = this.saveFilters.bind(this);
+    this.clearFilters = this.clearFilters.bind(this);
+    this.removeFilter = this.removeFilter.bind(this);
+  }
+
   render() {
-    const { projectName, project, filters } = this.state;
+    const {
+      projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics,
+    } = this.state;
     return (
       <div className="job-list-container">
         <Toolbar />
-        <JobHeader project={project} filters={filters} />
-        <JobTable projectName={projectName} />
+        <JobHeader
+          project={project}
+          filters={filters}
+          clearFilters={this.clearFilters}
+          removeFilter={this.removeFilter}
+        />
+        <JobTable
+          projectName={projectName}
+          statuses={statuses}
+          updateHiddenStatus={this.updateHiddenStatus}
+          jobs={jobs}
+          isLoaded={isLoaded}
+          allInputParams={allInputParams}
+          allMetrics={allMetrics}
+        />
       </div>
     );
   }
@@ -36,12 +150,20 @@ JobListPage.propTypes = {
   projectName: PropTypes.string,
   project: PropTypes.object,
   filters: PropTypes.array,
+  statuses: PropTypes.array,
+  jobs: PropTypes.array,
+  allInputParams: PropTypes.array,
+  allMetrics: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
   projectName: '',
   project: {},
   filters: [],
+  statuses: [],
+  jobs: [],
+  allInputParams: [],
+  allMetrics: [],
 };
 
 export default JobListPage;

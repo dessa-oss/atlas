@@ -14,6 +14,7 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingUserFilter={false}
       jobs={Array []}
       statuses={Array []}
+      updateHiddenStatus={[Function]}
     />
     <div
       className="table-row-number"
@@ -22,7 +23,7 @@ exports[`Shallow Renders Job Table 1`] = `
       className="job-table-row-container"
     >
       <p>
-        Loading projects
+        Loading Jobs
       </p>
     </div>
     <div

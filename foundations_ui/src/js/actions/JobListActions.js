@@ -6,11 +6,28 @@ const minute = second * 60;
 const hour = minute * 60;
 const day = hour * 24;
 const isStatusField = true;
+const statusText = 'Status';
 
 class ProjectActions {
   // API Calls
   static getJobs(projectName) {
-    const url = 'projects/'.concat(projectName).concat('/job_listing');
+    const url = this.getBaseJobListingURL(projectName);
+    // TODO get Jobs is currently in Beta
+    return BaseActions.getBetaFromAPI(url)
+      .then((res) => {
+        return res;
+      });
+  }
+
+  static filterJobs(projectName, statusFilter) {
+    if (!this.areStatusesHidden(statusFilter)) {
+      return this.getJobs(projectName);
+    }
+
+    let url = this.getBaseJobListingURL(projectName);
+    const filterURL = this.getFilterURL(statusFilter);
+    url = url.concat('?').concat(filterURL);
+
     // TODO get Jobs is currently in Beta
     return BaseActions.getBetaFromAPI(url)
       .then((res) => {
@@ -207,6 +224,135 @@ class ProjectActions {
 
   static getAllMetrics(allJobs) {
     return (this.getAllMetricsFromJobs(allJobs));
+  }
+
+  static getFilterURL(statusFilter) {
+    let url = '';
+    let isFirstStatus = true;
+    statusFilter.forEach((status) => {
+      url = this.addToURLNotHidden(url, isFirstStatus, status);
+      isFirstStatus = this.setIsFirst(status, isFirstStatus);
+    });
+
+    return url;
+  }
+
+  static getBaseJobListingURL(projectName) {
+    return 'projects/'.concat(projectName).concat('/job_listing');
+  }
+
+  static areStatusesHidden(statuses) {
+    const areHidden = statuses.some((status) => {
+      return (status.hidden === true);
+    });
+    return areHidden;
+  }
+
+  static getAllFilters(oldFilters, statuses) {
+    return this.getStatusFilters(oldFilters, statuses);
+  }
+
+  static getStatusFilters(oldFilters, statuses) {
+    const newFilters = this.getOldStatusFilters(oldFilters);
+    this.addNewStatusFilters(statuses, newFilters);
+    return newFilters;
+  }
+
+  static removeFilter(oldFilters, removeFilter) {
+    const newFilters = [];
+    oldFilters.forEach((filter) => {
+      if (!this.doesFilterExist(filter, removeFilter)) {
+        newFilters.push(filter);
+      }
+    });
+    return newFilters;
+  }
+
+  static getUpdatedStatuses(oldStatuses, filters) {
+    const newStatuses = [];
+    let noStatusFilters = true;
+    oldStatuses.forEach((status) => {
+      this.getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses);
+    });
+
+    this.updateStatusesIfNoFilters(noStatusFilters, newStatuses);
+
+    return newStatuses;
+  }
+
+  static updateStatusesIfNoFilters(noStatusFilters, newStatuses) {
+    if (noStatusFilters) {
+      newStatuses.forEach((status) => {
+        status.hidden = false;
+      });
+    }
+  }
+
+  static addToURLNotHidden(url, isFirstStatus, status) {
+    let newUrl = '';
+    if (status.hidden === false) {
+      newUrl = this.addToURL(url, isFirstStatus, status);
+    }
+    return newUrl;
+  }
+
+  static addToURL(url, isFirstStatus, status) {
+    let newURL = url;
+    if (isFirstStatus) {
+      newURL += 'status='.concat(status.name);
+    } else {
+      newURL += ','.concat(status.name);
+    }
+    return newURL;
+  }
+
+  static getFilterObject(columnName, value) {
+    return { column: columnName, value };
+  }
+
+  static doesFilterExist(oldFilter, newFilter) {
+    return oldFilter.column === newFilter.column && oldFilter.value === newFilter.value;
+  }
+
+  static setIsFirst(status, isFirstStatus) {
+    let returnStatus = isFirstStatus;
+    if (status.hidden === false) {
+      returnStatus = false;
+    }
+    return returnStatus;
+  }
+
+  static getOldStatusFilters(oldFilters) {
+    return oldFilters.filter(
+      (filter) => {
+        if (filter.column !== statusText) {
+          return filter;
+        }
+      },
+    );
+  }
+
+  static addNewStatusFilters(statuses, newFilters) {
+    if (this.areStatusesHidden(statuses)) {
+      statuses.forEach((status) => {
+        if (status.hidden === false) {
+          const newFilter = this.getFilterObject(statusText, status.name);
+          newFilters.push(newFilter);
+        }
+      });
+    }
+  }
+
+  static getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses) {
+    const statusInFilter = this.getFilterObject(statusText, status.name);
+    let isHidden = true;
+    filters.forEach((filter) => {
+      if (this.doesFilterExist(filter, statusInFilter)) {
+        isHidden = false;
+        noStatusFilters = false;
+      }
+    });
+    newStatuses.push({ name: status.name, hidden: isHidden });
   }
 
   // private fun

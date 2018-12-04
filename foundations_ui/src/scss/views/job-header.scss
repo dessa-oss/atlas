@@ -99,7 +99,6 @@
   }
 
   .job-header-sorting-container {
-    display: inline-block;
     vertical-align: top;
     margin-left: $overview-content-margin-horizontal;
 
@@ -141,21 +140,6 @@
       line-height: 16px;
       height: 20px;
 
-      &.hidden {
-        display: none;
-      }
-
-      p {
-        margin: 0px;
-        display: inline-block;
-        vertical-align: middle;
-        padding-right: 10px;
-        padding-left: 5px; 
-      }
-    }
-
-    .sort-bubble {
-      display: inline-block;
       &.more-bubble {
         margin: 0px;
         margin-left: 10px;
@@ -166,6 +150,18 @@
           padding: 0px;
           padding-left: 5px;
         }
+      }
+
+      &.hidden {
+        display: none;
+      }
+
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+        padding-left: 5px; 
       }
     }
 

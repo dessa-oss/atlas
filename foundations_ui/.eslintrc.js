@@ -32,6 +32,7 @@ module.exports = {
     "jsx-a11y/no-noninteractive-element-interactions": 0,
     "array-callback-return": 0,
     "consistent-return": 0,
+    "prefer-const": 1,
   }
 };
 

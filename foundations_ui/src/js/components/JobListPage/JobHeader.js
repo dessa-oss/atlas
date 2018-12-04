@@ -9,12 +9,15 @@ class JobHeader extends Component {
   constructor(props) {
     super(props);
     this.toggleFilters = this.toggleFilters.bind(this);
+    this.clickRemoveFilter = this.clickRemoveFilter.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
       bubbleRefs: [],
       bubblesHidden: 0,
       isShowingMoreFilters: false,
+      clearFilters: this.props.clearFilters,
+      removeFilter: this.props.removeFilter,
     };
   }
 
@@ -35,24 +38,34 @@ class JobHeader extends Component {
     this.setState({ bubblesHidden: numHidden });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ filters: nextProps.filters });
+  }
+
   toggleFilters() {
     const { isShowingMoreFilters } = this.state;
     this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
   }
 
+  clickRemoveFilter(filter) {
+    const { removeFilter } = this.state;
+    removeFilter(filter);
+  }
+
   render() {
     const {
-      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters,
+      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters, clearFilters,
     } = this.state;
 
     const filterBubbles = [];
     filters.forEach((filter) => {
+      const key = filter.column.concat('-').concat(filter.value);
       filterBubbles.push(
-        <div ref={(e) => { bubbleRefs.push(e); }} key={filter.column} className="bubble inline-block">
+        <div ref={(e) => { bubbleRefs.push(e); }} key={key} className="bubble inline-block">
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>
-          <button type="button" className="close-button" />
+          <button onClick={() => { this.clickRemoveFilter(filter); }} type="button" className="close-button" />
         </div>,
       );
     });
@@ -102,7 +115,7 @@ class JobHeader extends Component {
         <div className="job-header-sorting-container">
           <button
             type="button"
-            onClick={this.onClearFilters}
+            onClick={clearFilters}
             className="b--mat b--affirmative text-upper"
           >
             Clear Filters
@@ -136,6 +149,8 @@ JobHeader.propTypes = {
   bubbleRefs: PropTypes.array,
   bubblesHidden: PropTypes.number,
   isShowingMoreFilters: PropTypes.bool,
+  clearFilters: PropTypes.func,
+  removeFilter: PropTypes.func,
 };
 
 JobHeader.defaultProps = {
@@ -145,6 +160,8 @@ JobHeader.defaultProps = {
   bubbleRefs: [],
   bubblesHidden: 0,
   isShowingMoreFilters: false,
+  clearFilters: () => {},
+  removeFilter: () => {},
 };
 
 export default JobHeader;

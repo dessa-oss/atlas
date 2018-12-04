@@ -27,7 +27,7 @@ class App extends Component {
       page, selectedProject, projects,
     } = this.state;
 
-    let curPage = <ProjectPage selectProject={this.selectProject} projects={projects} />;
+    let curPage = <ProjectPage selectProject={this.selectProject} />;
 
     if (page === 'jobList') {
       curPage = <JobListPage project={selectedProject} projectName={selectedProject.name} />;
