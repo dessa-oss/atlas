@@ -84,10 +84,10 @@ class LazyResult(object):
         result = self._callback()
 
         if isinstance(result, list):
-            return [(item.evaluate() if self._is_lazy_result(item) else item) for item in result ]
+            return [(item.evaluate(only_fields) if self._is_lazy_result(item) else item) for item in result ]
 
         if self._is_lazy_result(result):
-            return result.evaluate()
+            return result.evaluate(only_fields)
 
         if isinstance(result, PropertyModel):
             return self._evaluate_property_model(result, only_fields)
