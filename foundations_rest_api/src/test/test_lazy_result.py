@@ -85,6 +85,30 @@ class TestLazyResult(unittest.TestCase):
         lazy_result = LazyResult(mock.value)
 
         lazy_result.only(['some_data']).evaluate()
+    
+    def test_lazy_result_only_does_not_evaluate_other_properties_in_list(self):
+        should_not_call_mock = self.ErrorMock()
+        should_not_call_result = LazyResult(should_not_call_mock.value)
+
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data=should_not_call_result))
+        lazy_result = LazyResult(mock.value)
+
+        mock2 = self.Mock([lazy_result])
+        lazy_result = LazyResult(mock2.value)
+
+        lazy_result.only(['some_data']).evaluate()
+    
+    def test_lazy_result_only_does_not_evaluate_other_properties_recursively(self):
+        should_not_call_mock = self.ErrorMock()
+        should_not_call_result = LazyResult(should_not_call_mock.value)
+
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data=should_not_call_result))
+        lazy_result = LazyResult(mock.value)
+
+        mock2 = self.Mock(lazy_result)
+        lazy_result = LazyResult(mock2.value)
+
+        lazy_result.only(['some_data']).evaluate()
 
     def test_recursive_lazy_result(self):
         mock = self.Mock('hello world')
