@@ -11,7 +11,7 @@ from foundations_rest_api.v2beta.models.job import Job
 
 
 class TestJobListingV2(unittest.TestCase):
-    
+
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
@@ -124,7 +124,7 @@ class TestJobListingV2(unittest.TestCase):
             input_params=[],
             output_metrics=[],
             status='running',
-            start_time=datetime.utcfromtimestamp(999999999).isoformat(),
+            start_time='2001-09-09T01:46:39',
             completed_time='No time available',
             duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
         )
@@ -137,8 +137,8 @@ class TestJobListingV2(unittest.TestCase):
             input_params=[],
             output_metrics=[],
             status='completed',
-            start_time=datetime.utcfromtimestamp(123456789).isoformat(),
-            completed_time=datetime.utcfromtimestamp(2222222222).isoformat(),
+            start_time='1973-11-29T21:33:09',
+            completed_time='2040-06-02T03:57:02',
             duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
         )
 
