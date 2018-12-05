@@ -89,7 +89,16 @@ class TestJobListingV2(unittest.TestCase):
 
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
-        from datetime import datetime
+        import datetime
+
+        fake_now_return_value = datetime.datetime.utcfromtimestamp(1005000000)
+
+        class FakeDateTime(datetime.datetime):
+            @staticmethod
+            def now():
+                return fake_now_return_value
+
+        datetime.datetime = FakeDateTime
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -116,7 +125,6 @@ class TestJobListingV2(unittest.TestCase):
             }
         ]
 
-        duration_delta = datetime.now() - datetime.utcfromtimestamp(999999999)
         expected_job_1 = Job(
             job_id='00000000-0000-0000-0000-000000000007',
             project='random test project',
@@ -126,10 +134,9 @@ class TestJobListingV2(unittest.TestCase):
             status='running',
             start_time='2001-09-09T01:46:39',
             completed_time='No time available',
-            duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
+            duration='57d20h53m21s'
         )
 
-        duration_delta = datetime.utcfromtimestamp(2222222222)-datetime.utcfromtimestamp(123456789)
         expected_job_2 = Job(
             job_id='my job x',
             project='random test project',
@@ -139,7 +146,7 @@ class TestJobListingV2(unittest.TestCase):
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
-            duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
+            duration='24291d6h23m53s'
         )
 
         result = Job.all(project_name='random test project').evaluate()
