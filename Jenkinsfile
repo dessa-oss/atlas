@@ -1,7 +1,7 @@
 node {
     stage('Preparation') { // for display purposes
         checkout scm
-    }    
+    }
     container("python2") {
         stage('Python2 Foundations Install Test Requirements') {
             sh "python -m pip install -r test_requirements.txt"
@@ -91,6 +91,9 @@ node {
             ws("${WORKSPACE}/src") {
                 stage('Python2 Foundations REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
+                }
+                stage('Python2 Foundations REST API Acceptance Tests') {
+                    sh "python -Wi -m unittest acceptance"
                 }
             }
             stage('Python2 Foundations REST API Create Artifact') {
@@ -186,6 +189,9 @@ node {
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations REST API Unit Tests') {
                     sh "python -Wi -m unittest test"
+                }
+                stage('Python3 Foundations REST API Acceptance Tests') {
+                    sh "python -Wi -m unittest acceptance"
                 }
             }
             stage('Python3 Foundations REST API Create Artifact') {
