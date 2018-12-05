@@ -7,11 +7,11 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
-from acceptance.v2beta.jobs_tests_helper_mixin import JobsTestsHelperMixin
+from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
 
-class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
+class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
@@ -19,7 +19,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
     @classmethod
     def setUpClass(klass):
         klass._project_name = 'lou'
-        JobsTestsHelperMixin.setUpClass()
+        JobsTestsHelperMixinV2.setUpClass()
         klass._make_completed_job_with_metrics('my job 3', 'bach')
 
     @classmethod

@@ -9,7 +9,7 @@ from foundations_contrib.producers.jobs.run_job import RunJob
 from foundations_contrib.producers.jobs.complete_job import CompleteJob
 
 
-class JobsTestsHelperMixin(object):
+class JobsTestsHelperMixinV2(object):
 
     def setUp(self):
         from foundations.global_state import message_router

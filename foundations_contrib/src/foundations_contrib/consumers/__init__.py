@@ -28,6 +28,7 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.run_data_keys import RunDataKeys
     from foundations_contrib.consumers.jobs.queued.run_data import RunData
     from foundations_contrib.consumers.jobs.queued.set_user import SetUser
+    from foundations_contrib.consumers.jobs.queued.project_tracker import ProjectTracker
 
     import json
 
@@ -40,6 +41,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(RunDataKeys(redis), 'queue_job')
     _add_listener(RunData(redis, json), 'queue_job')
     _add_listener(SetUser(redis), 'queue_job')
+    _add_listener(ProjectTracker(redis), 'queue_job')
 
 
 def _add_consumers_for_run_job(redis):

@@ -39,6 +39,7 @@ class TestConsumers(unittest.TestCase):
 
     def test_queue_job_consumers(self):
         from foundations.utils import byte_string
+        from foundations_contrib.models.project_listing import ProjectListing
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
 
@@ -82,6 +83,11 @@ class TestConsumers(unittest.TestCase):
         job_project_key = 'jobs:{}:project'.format(self._job_id)
         job_project_name = self._redis.get(job_project_key)
         self.assertEqual(byte_string(self._project_name), job_project_name)
+
+        tracked_projects = ProjectListing.list_projects(self._redis)
+        project_listing = tracked_projects[0]
+        self.assertEqual(self._project_name, project_listing['name'])
+        self.assertTrue(current_time - project_listing['created_at'] < 0.1)
 
         job_user_key = 'jobs:{}:user'.format(self._job_id)
         job_user = self._redis.get(job_user_key)

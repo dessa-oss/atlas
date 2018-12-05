@@ -6,11 +6,11 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
-from acceptance.v2beta.jobs_tests_helper_mixin import JobsTestsHelperMixin
+from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
 
-class TestJobsListingEndpointV2(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
+class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = ['start_time', 'status']
     filtering_columns = [{'name': 'job_id',
@@ -24,7 +24,7 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
     @classmethod
     def setUpClass(klass):
         klass._project_name = 'hana'
-        JobsTestsHelperMixin.setUpClass()
+        JobsTestsHelperMixinV2.setUpClass()
         klass._setup_three_jobs()
 
     @classmethod
