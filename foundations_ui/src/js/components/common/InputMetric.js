@@ -47,7 +47,7 @@ class InputMetric extends Component {
     const rows = CommonActions.getInputMetricRows(jobs, isMetric, allInputParams, hiddenInputParams);
 
     return (
-      <div className="input-metric-container">
+      <div className="job-static-columns-container">
         <TableSectionHeader
           header={header}
           changeHiddenParams={this.changeHiddenParams}

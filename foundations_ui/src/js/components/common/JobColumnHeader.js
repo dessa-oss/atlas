@@ -6,37 +6,23 @@ import Tooltip from './Tooltip';
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
       toggleFilter: this.props.toggleFilter,
-      isShowingTooltip: false,
     };
-  }
-
-  onMouseEnter() {
-    this.setState({ isShowingTooltip: true });
-  }
-
-  onMouseLeave() {
-    this.setState({ isShowingTooltip: false });
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, isShowingTooltip,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
 
-    let tooltip = null;
-    if (isShowingTooltip) {
-      tooltip = <Tooltip message={title} />;
-    }
+    const tooltip = <Tooltip message={title} />;
 
     let divClass = containerDivClass;
     if (isStatus) {
@@ -50,12 +36,11 @@ class JobColumnHeader extends Component {
       >
         <div className={offsetDivClass}>
           <h4
-            onMouseEnter={this.onMouseEnter}
-            onMouseLeave={this.onMouseLeave}
             className={headerClassName}
           >
-            {title}{tooltip}
+            {title}
           </h4>
+          {tooltip}
           <div className="icon-container" />
           <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
             <div className={arrowClassName} />
@@ -72,7 +57,6 @@ JobColumnHeader.propTypes = {
   className: PropTypes.string,
   containerClass: PropTypes.string,
   toggleFilter: PropTypes.func,
-  isShowingTooltip: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -81,7 +65,6 @@ JobColumnHeader.defaultProps = {
   className: '',
   containerClass: 'job-column-header',
   toggleFilter: () => {},
-  isShowingTooltip: false,
 };
 
 export default JobColumnHeader;

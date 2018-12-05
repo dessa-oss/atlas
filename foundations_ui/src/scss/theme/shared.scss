@@ -43,6 +43,12 @@ span, p, a {
   font-size: 13px;
 }
 
+h2 {
+  span {
+    font-size: inherit;
+  }
+}
+
 h3 {
   @extend .f--din-bold;
   font-size: 16px;
@@ -198,6 +204,10 @@ hr {
 
 .float-right {
   float:right;
+}
+
+.full-height {
+  height:100%;
 }
 
 .full-width {

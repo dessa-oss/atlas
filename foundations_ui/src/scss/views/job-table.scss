@@ -4,7 +4,7 @@
   vertical-align: middle;
   border-bottom: 1px solid $color-border-bottom;
   width: 100%;
-  height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+  height: $table-row-width;
   overflow: scroll;
   
   .job-cell:first-child() {
@@ -27,17 +27,13 @@
   position: relative;
 }
 
-.static-header-row-container {
-  height: 100%
-}
-
 .table-row-number {
   display: inline-block;
   vertical-align: top;
   width: 30px;
   margin-left: -29px;
   text-align: center;
-  height: calc(100% - 36px - 50px - 30px);
+  height: $row-number-height;
   overflow-y: scroll;
   p {
     color: $color-9c-grey;

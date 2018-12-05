@@ -4,36 +4,73 @@
   text-align: center;
   height: 50px;
   margin: auto;
+  padding-left: $standard-cell-padding;
+  padding-right: $standard-cell-padding;
 
   h4 {
-    min-width: 80px;
+    min-width: $static-column-header-text-width;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 0px;
-    padding-bottom: 3px;
-    margin-top: 6px;
+    margin-top: $standard-cell-padding;
   }
 
   .status-header{
-    min-width: 34px;
-    max-width: 34px;
+    min-width: $static-status-width;
+    max-width: $static-status-width;
+    padding-left: 0px;
+    padding-right: 0px;
     overflow: visible;
   }
 
   &:not(.status-header) {
-    min-width: $standard-header-width;
-    max-width: $standard-header-width;
+    width: $standard-cell-width;
 }
 
-  .start-time-offset, .job-id-offset, .duration-offset, .user-offset{
-    width: 80px;
+  .static-header {
+    width: $static-column-header-text-width;
     margin: auto;
+    position: relative;
+    
+    &:hover {
+      .tooltip {
+        display: block;
+      }
+    }
+
+    .tooltip {
+      top: -2px;
+      left: -25px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+
   }
 
-  .status-offset{
-    max-width: 34px;
-    min-width: 34px;
+  .static-status-header {
+    max-width: $static-status-width;
+    min-width: $static-status-width;
     margin: auto;
+    position: relative;
+    
+    &:hover {
+      .tooltip {
+        display: block;
+      }
+    }
+
+    .tooltip {
+      min-width: fit-content;
+      width: fit-content;
+      top: -2px;
+      left: -5px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
 
     .icon-container {
       width: 25%;

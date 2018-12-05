@@ -1,14 +1,13 @@
 .tooltip {
-  background-color: #6CAAFB;
-  color: #fff;
+  background-color: $color-hover-blue;
+  color: $color-white;
   text-align: center;
-  padding: 5px;
-  border-radius: 6px;
+  padding: $standard-cell-padding;
+  border-radius: 4px;
   position: absolute;
   z-index: 999;
-  left: -50%;
-  right: 0;
-  margin: auto;
+  left: $standard-cell-padding;
+  top: 2px;
+  min-width: 100px;
   width: fit-content;
-  //min-width: 100%;
 }

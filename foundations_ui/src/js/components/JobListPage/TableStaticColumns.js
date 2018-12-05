@@ -33,18 +33,18 @@ class TableStaticColumns extends Component {
     return (
       <div className="job-static-columns-container">
         <TableSectionHeader />
-        <div className="static-header-row-container">
+        <div className="full-height">
           <div className="job-column-header-container">
-            <JobColumnHeader title="Start Time" className="start-time-offset" />
+            <JobColumnHeader title="Start Time" className="static-header" />
             <JobColumnHeader
               title="Status"
               isStatus={isStatus}
-              className="status-offset"
+              className="static-status-header"
               toggleFilter={toggleStatusFilter}
             />
-            <JobColumnHeader title="Job ID" className="job-id-offset" />
-            <JobColumnHeader title="Duration" className="duration-offset" />
-            <JobColumnHeader title="User" className="user-offset" toggleFilter={toggleUserFilter} />
+            <JobColumnHeader title="Job ID" className="static-header" />
+            <JobColumnHeader title="Duration" className="static-header" />
+            <JobColumnHeader title="User" className="static-header" toggleFilter={toggleUserFilter} />
           </div>
           <div className="table-row-number">
             {rowNumbers}

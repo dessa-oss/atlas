@@ -51,19 +51,17 @@
         display: inline-block;
         vertical-align: middle;
       
-        h1{
+        h1 {
           text-align: center;
           display: inline-block;
           vertical-align: baseline;
-          padding-bottom: 5px; 
           text-align: left;
           margin: 15px 0px;
         }
       
-        h2{
+        h2 {
           text-align: center;
           display: inline-block;
-          padding-bottom: 8px;
           text-align: right;
         }
     }
@@ -160,8 +158,8 @@
         margin: 0px;
         display: inline-block;
         vertical-align: middle;
-        padding-right: 10px;
-        padding-left: 5px; 
+        padding-right: $standard-cell-padding;
+        padding-left: $standard-cell-padding;
       }
     }
 

@@ -8,14 +8,14 @@ $border-thin: 1px;
 // Job Table Vars
 $row-height: 35px;
 $table-section-width: 33.3%;
-$status-cell-width: 18px;
+$status-cell-width: 25px;
 $overview-content-margin-horizontal: 40px;
 $standard-header-padding: 8px;
 $standard-cell-padding: 5px;
 $static-columns-border: 2px;
 $static-standard-columns: 4;
-$standard-cell-width: calc(25% + (#{$static-columns-border} / #{$static-standard-columns}) - (#{$standard-cell-padding} * #{$static-standard-columns}));
-$standard-header-width: 125px;
+$standard-cell-width: calc( 25% - (#{$standard-cell-padding} * #{$static-standard-columns} + 0.25px));
+$standard-header-width: $standard-cell-width;
 $standard-input-metric-cell-width: 118px;
 $minimum-table-width: 1600px;
 $header-nav-height: 45px;
@@ -23,7 +23,18 @@ $header-control-height: 165px;
 $pagination-height: 30px;
 $column-header-height: 50px;
 $metric-header-height: 36px;
+$static-status-width: 34px;
+$static-column-header-text-width: 80px;
+$table-row-width: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+$row-number-height: calc(100% - #{$header-nav-height} - #{$header-control-height} - #{$pagination-height});
+$number-sections: 3;
 
 // Toolbar Vars
 $toolbar-height: 25px;
 $toolbar-padding: 10px;
+
+// Filter Vars
+$user-filter-left: calc((#{$standard-cell-width} * 3 ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin} * 7));
+$user-filter-top: calc(#{$metric-header-height} + #{$column-header-height});
+$status-filter-left: calc(#{$standard-cell-width} / #{$number-sections} - (#{$border-thin} * 2));
+$status-filter-top: calc(#{$metric-header-height} + #{$column-header-height});

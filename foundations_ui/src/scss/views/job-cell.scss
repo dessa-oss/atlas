@@ -3,15 +3,15 @@
   vertical-align: middle;
   padding-left: $standard-cell-padding;
   padding-right: $standard-cell-padding;
-  padding-top: 7px;
   border-top: 1px solid $color-border-bottom;
   border-right: 1px solid $color-border-bottom;
   margin: 0px;
-  height: 26px;
+  line-height: $row-height;
+  height: $row-height;
   text-align: center;
-  background-color: $color-white;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: $standard-cell-width;
   
   &.error {
     color: $color-status-red;
@@ -24,20 +24,10 @@
 }
 
 .job-id-cell{
-  width: $standard-cell-width;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .duration-cell{
-  width: $standard-cell-width;
   text-align: right;
-}
-
-.user-cell{
-  width: $standard-cell-width;
-}
-
-.start-cell {
-  width: $standard-cell-width;
 }

@@ -11,16 +11,16 @@
   &.user-filter-container {
     width: 270px;
     position: absolute;
-    left: 25.4%;
-    top: calc(#{$metric-header-height} + #{$column-header-height});
+    left: $user-filter-left;
+    top: $user-filter-top;
   }
 
   &.status-filter-container {
     width: 225px;
     position: absolute;
-    left: 7.8%;
+    left: $status-filter-left;
     padding-top: 5px;
-    top: calc(#{$metric-header-height} + #{$column-header-height});
+    top: $status-filter-top;
 
     .column-filter-header {
       height: 50px;
@@ -37,7 +37,7 @@
       display: inline-block;
       margin-left: 0px;
       margin-bottom: 5px;
-      &:not(:first-child()) {
+      &:not(:first-child) {
         margin-left: 20px;
       }
     }

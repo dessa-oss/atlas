@@ -1,4 +1,4 @@
-.input-metric-container, .job-static-columns-container{
+.job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
   width: $table-section-width;
@@ -18,7 +18,8 @@
 }
 
 .input-metric-column-container {
-  height: calc(100% - 30px - 50px);
+  height: calc(100% - #{$pagination-height} - #{$column-header-height});
+  min-width: 100%;
   overflow-y: scroll;
   width: fit-content;
 
@@ -35,19 +36,23 @@
     max-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
     padding-left: $standard-header-padding;
     padding-right: $standard-header-padding;
-
-    &.status-column-header {
-      min-width: 40px;
-      max-width: 40px;
-      margin: 0px;
-    }
+    position: relative;
 
     &:last-child {
       border-right: 0px;
     }
 
-    .status-header{
-      min-width: 40px;
+    &:hover {
+      .tooltip {
+        display: block;
+      }
+    }
+
+    .tooltip {
+      display: none;
+      &:hover {
+        display: block;
+      }
     }
   }
 
