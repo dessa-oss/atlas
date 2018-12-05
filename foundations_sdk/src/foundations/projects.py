@@ -114,7 +114,7 @@ def _stage_value(parameter, job_parameters):
 
 
 def _project_job_data(project_name):
-    from foundations.models.completed_job_data_listing import CompletedJobDataListing
+    from foundations_contrib.models.completed_job_data_listing import CompletedJobDataListing
     return CompletedJobDataListing.completed_job_data(project_name)
 
 

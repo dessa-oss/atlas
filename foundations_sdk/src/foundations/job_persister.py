@@ -14,7 +14,7 @@ class JobPersister(object):
         self._pipeline_context = job.pipeline_context()
 
     def persist(self):
-        from foundations.pipeline_archiver import PipelineArchiver
+        from foundations_internal.pipeline_archiver import PipelineArchiver
 
         archive_listing = JobPersister._load_archive_listing('archive_listing')
         with JobPersister._load_archive('stage_log_archive') as stage_log_archive, \
@@ -49,13 +49,13 @@ class JobPersister(object):
     @staticmethod
     def _load_archive(name):
         from foundations.global_state import config_manager
-        from foundations.null_archive import NullArchive
+        from foundations_contrib.null_archive import NullArchive
 
         return config_manager.reflect_instance(name, 'archive', lambda: NullArchive())
 
     @staticmethod
     def _load_archive_listing(name):
         from foundations.global_state import config_manager
-        from foundations.null_pipeline_archive_listing import NullArchiveListing
+        from foundations_contrib.null_pipeline_archive_listing import NullArchiveListing
 
         return config_manager.reflect_instance(name, 'archive_listing', lambda: NullArchiveListing())

@@ -27,7 +27,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertEqual({'foo': 'bar'}, config_manager.config())
 
     def test_load_config_from_yaml(self):
-        from foundations.change_directory import ChangeDirectory
+        from foundations_contrib.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/single_config'):
             config = ConfigManager().config()
@@ -35,7 +35,7 @@ class TestConfigManager(unittest.TestCase):
                 {'title': 'test config', 'value': 'this exists as a test'}, config)
 
     def test_load_multiple_config_from_yaml(self):
-        from foundations.change_directory import ChangeDirectory
+        from foundations_contrib.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/multiple_configs'):
             config = ConfigManager().config()
@@ -139,7 +139,8 @@ class TestConfigManager(unittest.TestCase):
         config_manager['cup_implementation'] = {
             'mouse_type': MyClass
         }
-        instance = config_manager.reflect_instance('cup', 'mouse', lambda: None)
+        instance = config_manager.reflect_instance(
+            'cup', 'mouse', lambda: None)
         self.assertEqual('shorts', instance)
 
     def test_reflect_instance_creates_configured_callback_with_different_type(self):
@@ -183,7 +184,7 @@ class TestConfigManager(unittest.TestCase):
         config_manager = ConfigManager()
         config_manager['box_implementation'] = {
             'cat_type': MyClass,
-            'constructor_keyword_arguments': {'first': 'i am', 'second': 'a potato' }
+            'constructor_keyword_arguments': {'first': 'i am', 'second': 'a potato'}
         }
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('i am a potato', instance)
@@ -195,7 +196,7 @@ class TestConfigManager(unittest.TestCase):
         config_manager = ConfigManager()
         config_manager['box_implementation'] = {
             'cat_type': MyClass,
-            'constructor_keyword_arguments': {'first': 'i am not', 'second': 'a good potato' }
+            'constructor_keyword_arguments': {'first': 'i am not', 'second': 'a good potato'}
         }
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('i am not a good potato', instance)
@@ -209,18 +210,20 @@ class TestConfigManager(unittest.TestCase):
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('socks', instance)
 
-
     def call_reflect_constructor(self, metric):
         config_manager = ConfigManager()
-        config_manager[metric + '_implementation'] = {metric + '_type':'some_' + metric}
-        config_manager.reflect_constructor(metric, metric, lambda:'socks')
-    
+        config_manager[metric +
+                       '_implementation'] = {metric + '_type': 'some_' + metric}
+        config_manager.reflect_constructor(metric, metric, lambda: 'socks')
+
     @patch('logging.Logger.info')
     def test_reflect_constructor_info(self, mock):
         self.call_reflect_constructor('deployment')
-        mock.assert_called_with('Configured with {\'deployment_type\': \'some_deployment\'}')
+        mock.assert_called_with(
+            'Configured with {\'deployment_type\': \'some_deployment\'}')
 
     @patch('logging.Logger.debug')
     def test_reflect_constructor_debug(self, mock):
         self.call_reflect_constructor('archive')
-        mock.assert_called_with('Configured with {\'archive_type\': \'some_archive\'}')
+        mock.assert_called_with(
+            'Configured with {\'archive_type\': \'some_archive\'}')

@@ -5,11 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class ResultReader(object):
 
     def __init__(self, pipeline_archiver_fetch):
-        from foundations.pipeline_context import PipelineContext
-        from foundations.job_source_bundle import JobSourceBundle
+        from foundations_internal.pipeline_context import PipelineContext
+        from foundations_contrib.job_source_bundle import JobSourceBundle
 
         self._pipeline_contexts = {}
         self._archivers = {}
@@ -17,10 +18,12 @@ class ResultReader(object):
         for pipeline_archiver in pipeline_archiver_fetch.fetch_archivers():
             pipeline_context = PipelineContext()
             pipeline_context.file_name = pipeline_archiver.pipeline_name()
-            pipeline_context.provenance.job_source_bundle = JobSourceBundle(pipeline_context.file_name, "./")
+            pipeline_context.provenance.job_source_bundle = JobSourceBundle(
+                pipeline_context.file_name, "./")
             self._archivers[pipeline_context.file_name] = pipeline_archiver
 
-            self._pipeline_contexts[pipeline_archiver.pipeline_name()] = pipeline_context
+            self._pipeline_contexts[pipeline_archiver.pipeline_name(
+            )] = pipeline_context
 
     def cleanup(self):
         for pipeline_context in self._pipeline_contexts.values():
@@ -37,25 +40,28 @@ class ResultReader(object):
 
             if argument_value['type'] == 'stage':
                 argument_value_stage_uuid = argument_value["stage_uuid"]
-                dict_like_append(params_to_write, arg_name, argument_value_stage_uuid)
+                dict_like_append(params_to_write, arg_name,
+                                 argument_value_stage_uuid)
 
                 parent_ids.append(argument_value_stage_uuid)
             elif argument_value['type'] == 'dynamic':
                 if argument_name == '<args>':
                     argument_name = '<args'+str(args_counter)+'>'
-                    args_counter+=1
+                    args_counter += 1
                 hyperparameter_name = argument_name
                 hyperparameter_value = provenance.job_run_data.get(
                     argument_value['name'])
 
                 if hyperparameter_name:
-                    dict_like_append(params_to_write, arg_name, hyperparameter_name)
+                    dict_like_append(params_to_write, arg_name,
+                                     hyperparameter_name)
 
                     column_headers.append(
                         hyperparameter_name)
                     row_data.append(hyperparameter_value)
                 else:
-                    dict_like_append(params_to_write, arg_name, hyperparameter_value)
+                    dict_like_append(params_to_write, arg_name,
+                                     hyperparameter_value)
             else:
                 dict_like_append(params_to_write, arg_name, argument_value)
 
@@ -76,7 +82,7 @@ class ResultReader(object):
             stage_status = "succeeded"
 
         return [project_name, pipeline_name, stage_status, stage_id, parent_ids, stage_name,
-            args, kwargs, start_time, end_time, delta_time]
+                args, kwargs, start_time, end_time, delta_time]
 
     @staticmethod
     def _add_stage_results(all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers):
@@ -90,7 +96,8 @@ class ResultReader(object):
 
             has_unstructured_result = stage_context.has_stage_output
 
-            row_data = [pipeline_name, stage_id, stage_name, has_unstructured_result]
+            row_data = [pipeline_name, stage_id,
+                        stage_name, has_unstructured_result]
 
             if stage_context.has_stage_output or len(stage_context.stage_log) > 0:
                 for log_item in stage_context.stage_log:
@@ -99,7 +106,8 @@ class ResultReader(object):
                     column_headers.append(structured_result_name)
                     row_data.append(structured_result_val)
 
-                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+                all_job_information.append(pd.DataFrame(
+                    data=[row_data], columns=column_headers))
 
     @staticmethod
     def _create_frame_with_ordered_headers(main_headers, callback):
@@ -112,16 +120,19 @@ class ResultReader(object):
         callback(main_headers, all_job_information)
 
         output_dataframe = pd.concat(all_job_information, ignore_index=True)
-        fixed_headers = restructure_headers(list(output_dataframe), main_headers)
+        fixed_headers = restructure_headers(
+            list(output_dataframe), main_headers)
         return output_dataframe[fixed_headers]
 
     def _load_job_provenance(self, pipeline_context, pipeline_name):
-        pipeline_context.load_provenance_from_archive(self._archivers[pipeline_name])
+        pipeline_context.load_provenance_from_archive(
+            self._archivers[pipeline_name])
 
     def _get_results(self, main_headers, all_job_information):
         def _loop_body(pipeline_name, pipeline_context):
             self._load_job_provenance(pipeline_context, pipeline_name)
-            pipeline_context.load_stage_log_from_archive(self._archivers[pipeline_name])
+            pipeline_context.load_stage_log_from_archive(
+                self._archivers[pipeline_name])
 
         for pipeline_name, pipeline_context in self._pipeline_contexts.items():
             _loop_body(pipeline_name, pipeline_context)
@@ -130,7 +141,7 @@ class ResultReader(object):
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             ResultReader._add_stage_results(
-            all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
+                all_job_information, stage_hierarchy_entries, pipeline_name, pipeline_context, main_headers)
 
     def get_results(self):
         main_headers = ["job_name", "stage_id",
@@ -148,7 +159,8 @@ class ResultReader(object):
             stage_hierarchy_entries = pipeline_context.provenance.stage_hierarchy.entries
 
             for stage_id, stage_info in stage_hierarchy_entries.items():
-                self._log().debug('Loading job information for %s at stage %s', repr(pipeline_name), repr(stage_id))
+                self._log().debug('Loading job information for %s at stage %s',
+                                  repr(pipeline_name), repr(stage_id))
 
                 column_headers = list(main_headers)
                 stage_context = pipeline_context.stage_contexts[stage_id]
@@ -163,24 +175,25 @@ class ResultReader(object):
                     pipeline_context.provenance,
                     stage_info.stage_args,
                     args,
-                    stage_info.parents, 
-                    column_headers, 
+                    stage_info.parents,
+                    column_headers,
                     row_data
                 )
                 ResultReader._fill_placeholders(
                     pipeline_context.provenance,
-                    stage_info.stage_kwargs, 
-                    kwargs, 
-                    stage_info.parents, 
-                    column_headers, 
+                    stage_info.stage_kwargs,
+                    kwargs,
+                    stage_info.parents,
+                    column_headers,
                     row_data
                 )
 
-                all_job_information.append(pd.DataFrame(data=[row_data], columns=column_headers))
+                all_job_information.append(pd.DataFrame(
+                    data=[row_data], columns=column_headers))
 
     def get_job_information(self):
         main_headers = ["project_name", "job_name", "stage_status", "stage_id", "parent_ids",
-            "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
+                        "stage_name", "args", "kwargs", "start_time", "end_time", "delta_time"]
 
         return ResultReader._create_frame_with_ordered_headers(main_headers, self._get_job_information)
 
@@ -190,23 +203,24 @@ class ResultReader(object):
                 return callback(pipeline_context)
             except:
                 continue
-        
+
         return None
 
     def _get_unstructured_result(self, pipeline_name):
-        from foundations.unserializable_placeholder import UnserializablePlaceholder
+        from foundations_internal.unserializable_placeholder import UnserializablePlaceholder
 
         def _with_pipeline_id(stage_id):
             pipeline_context = self._pipeline_contexts[pipeline_name]
-            pipeline_context.load_persisted_data_from_archive(self._archivers[pipeline_name])
-            
+            pipeline_context.load_persisted_data_from_archive(
+                self._archivers[pipeline_name])
+
             stage_output = pipeline_context.stage_contexts[stage_id].stage_output
 
             if isinstance(stage_output, UnserializablePlaceholder):
                 raise TypeError(stage_output.error_message)
 
             return stage_output
-            
+
         return _with_pipeline_id
 
     def get_unstructured_results(self, pipeline_name, stage_ids):
@@ -217,7 +231,7 @@ class ResultReader(object):
             pipeline_name = pipeline_context.file_name
             self._load_job_provenance(pipeline_context, pipeline_name)
             return pipeline_context.provenance.stage_hierarchy.entries[stage_id].function_source_code
-            
+
         return self._over_pipeline_contexts(_try_get_source_code)
 
     def get_error_information(self, pipeline_id, stage_id=None):
@@ -234,7 +248,8 @@ class ResultReader(object):
 
     def create_working_copy(self, pipeline_name, path_to_save):
         pipeline_context = self._pipeline_contexts[pipeline_name]
-        pipeline_context.load_job_source_from_archive(self._archivers[pipeline_name])
+        pipeline_context.load_job_source_from_archive(
+            self._archivers[pipeline_name])
         job_source_bundle = self._pipeline_contexts[pipeline_name].provenance.job_source_bundle
         job_source_bundle.unbundle(path_to_save)
 

@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
+
 def default_legacy_backend():
     """Returns a LegacyBackend configured using predefined configs from a yaml file.
 
@@ -12,7 +13,7 @@ def default_legacy_backend():
         LegacyBackend -- as above
     """
 
-    from foundations.scheduler_legacy_backend import LegacyBackend
+    from foundations_contrib.scheduler_legacy_backend import LegacyBackend
     from foundations_ssh.remote_clock import RemoteClock
     from foundations_ssh.sftp_bucket_stat_scanner import SFTPBucketStatScanner
 

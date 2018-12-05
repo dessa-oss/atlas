@@ -7,7 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.something import Something
+from foundations_contrib.something import Something
+
 
 class TestSomething(unittest.TestCase):
     def test_map(self):
@@ -33,25 +34,28 @@ class TestSomething(unittest.TestCase):
         self.assertNotEqual(Something(432), Something(431))
 
     def test_eq_something_and_anything_else(self):
-        from foundations.nothing import Nothing
+        from foundations_contrib.nothing import Nothing
 
         self.assertNotEqual(Something(252343), Nothing())
         self.assertNotEqual(Something("asdf"), "asdf")
         self.assertNotEqual(Something(22), {"dict": 22})
 
     def test_fallback_returns_nothing(self):
-        from foundations.nothing import Nothing
+        from foundations_contrib.nothing import Nothing
 
         something = Something("asdf")
-        self.assertEqual(Something("asdf"), something.fallback(lambda: Nothing()))
+        self.assertEqual(Something("asdf"),
+                         something.fallback(lambda: Nothing()))
 
     def test_fallback_returns_something(self):
         something = Something(5)
-        self.assertEqual(Something(5), something.fallback(lambda: Something(5)))
+        self.assertEqual(
+            Something(5), something.fallback(lambda: Something(5)))
 
     def test_fallback_returns_none(self):
         something = Something({"dict": 44})
-        self.assertEqual(Something({"dict": 44}), something.fallback(lambda: None))
+        self.assertEqual(Something({"dict": 44}),
+                         something.fallback(lambda: None))
 
     def test_fallback_returns_something_else(self):
         something = Something(77)

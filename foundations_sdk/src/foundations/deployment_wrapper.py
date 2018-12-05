@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class DeploymentWrapper(object):
     """Provides user-facing functionality to deployment classes created through integrations (e.g. LocalShellJobDeployment, GCPJobDeployment)
         Arguments:
@@ -38,13 +39,13 @@ class DeploymentWrapper(object):
             Arguments:
                 wait_seconds: {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
                 verbose_errors: {bool} -- Whether to output stack trace entries relating to Foundations in the event of an exception (defaults to False)
-        
+
         Returns:
             results_dict -- Dict representing a more-or-less "serialized" PipelineContext for the job.  Will raise a RemoteException in the event of an exception thrown in the execution environment
         """
 
-        from foundations.remote_exception import check_result
-        
+        from foundations_internal.remote_exception import check_result
+
         if not self.is_job_complete():
             self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
 

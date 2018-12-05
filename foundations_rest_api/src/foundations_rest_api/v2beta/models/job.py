@@ -34,7 +34,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _load_jobs(project_name):
-        from foundations.job_data_redis import JobDataRedis
+        from foundations_contrib.job_data_redis import JobDataRedis
         from foundations.global_state import redis_connection
 
         jobs = []
@@ -77,8 +77,10 @@ class Job(PropertyModel):
     @staticmethod
     def _extract_source_and_value(argument_value, run_data, stage_indices):
         if argument_value['type'] == 'stage':
-            input_stage_index = stage_indices.get_index(argument_value['stage_uuid'])
-            value = '{}-{}'.format(argument_value['stage_name'], input_stage_index)
+            input_stage_index = stage_indices.get_index(
+                argument_value['stage_uuid'])
+            value = '{}-{}'.format(argument_value['stage_name'],
+                                   input_stage_index)
             source = 'stage'
         elif argument_value['type'] == 'dynamic':
             value = run_data[argument_value['name']]
@@ -95,7 +97,8 @@ class Job(PropertyModel):
         stage_index = stage_indices.get_index(param['stage_uuid'])
         name = '{}-{}'.format(param['argument']['name'], stage_index)
         argument_value = param['argument']['value']
-        value, source = Job._extract_source_and_value(argument_value, run_data, stage_indices)
+        value, source = Job._extract_source_and_value(
+            argument_value, run_data, stage_indices)
         job_data['input_params'].append(
             {
                 'name': name,
@@ -110,14 +113,14 @@ class Job(PropertyModel):
         for param in input_params:
             Job._flatten_input_params(job_data, param, run_data, stage_indices)
 
-
     @staticmethod
     def _reshape_input_params(job_data):
         from foundations_rest_api.v2beta.models.index_allocator import IndexAllocator
         run_data = Job._extract_job_parameters(job_data)
         input_params = Job._extract_input_params(job_data)
         stage_indices = IndexAllocator()
-        Job._repopulate_input_params(job_data, input_params, run_data, stage_indices)
+        Job._repopulate_input_params(
+            job_data, input_params, run_data, stage_indices)
 
     @staticmethod
     def _extract_output_metrics(job_data):
@@ -160,8 +163,10 @@ class Job(PropertyModel):
 
     @staticmethod
     def _update_job_properties(properties):
-        properties['start_time'] = Job._datetime_string(properties['start_time'])
-        properties['completed_time'] = Job._datetime_string(properties['completed_time'])
+        properties['start_time'] = Job._datetime_string(
+            properties['start_time'])
+        properties['completed_time'] = Job._datetime_string(
+            properties['completed_time'])
 
     @staticmethod
     def _datetime_string(time):
