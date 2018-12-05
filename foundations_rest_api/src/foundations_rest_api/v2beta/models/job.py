@@ -179,13 +179,14 @@ class Job(PropertyModel):
         completed_time = properties['completed_time']
         properties['start_time'] = Job._datetime_string(start_time)
         properties['completed_time'] = Job._datetime_string(completed_time)
-        end_time = completed_time if completed_time else datetime.now()
-        time_delta = end_time - start_time
+        end_time = datetime.utcfromtimestamp(completed_time) if completed_time else datetime.now()
+        time_delta = end_time - datetime.utcfromtimestamp(start_time)
         total_seconds = time_delta.total_seconds()
         properties['duration'] = Job._total_seconds_to_duration(total_seconds)
 
     @staticmethod
     def _total_seconds_to_duration(total_seconds):
+        total_seconds = int(total_seconds)
         days = total_seconds // 86400
         remaing_seconds = total_seconds % 86400
         hours = remaing_seconds // 3600

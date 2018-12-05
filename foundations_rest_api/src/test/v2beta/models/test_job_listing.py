@@ -100,7 +100,7 @@ class TestJobListingV2(unittest.TestCase):
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'completed',
-                'start_time': 123456789,
+                'start_time':  123456789,
                 'completed_time': 2222222222
             },
             {
@@ -116,6 +116,7 @@ class TestJobListingV2(unittest.TestCase):
             }
         ]
 
+        duration_delta = datetime.now() - datetime.utcfromtimestamp(999999999)
         expected_job_1 = Job(
             job_id='00000000-0000-0000-0000-000000000007',
             project='random test project',
@@ -124,9 +125,11 @@ class TestJobListingV2(unittest.TestCase):
             output_metrics=[],
             status='running',
             start_time=datetime.utcfromtimestamp(999999999).isoformat(),
-            completed_time='No time available'
+            completed_time='No time available',
+            duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
         )
 
+        duration_delta = datetime.utcfromtimestamp(2222222222)-datetime.utcfromtimestamp(123456789)
         expected_job_2 = Job(
             job_id='my job x',
             project='random test project',
@@ -135,7 +138,8 @@ class TestJobListingV2(unittest.TestCase):
             output_metrics=[],
             status='completed',
             start_time=datetime.utcfromtimestamp(123456789).isoformat(),
-            completed_time=datetime.utcfromtimestamp(2222222222).isoformat()
+            completed_time=datetime.utcfromtimestamp(2222222222).isoformat(),
+            duration=Job._total_seconds_to_duration(duration_delta.total_seconds())
         )
 
         result = Job.all(project_name='random test project').evaluate()
