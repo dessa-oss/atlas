@@ -11,6 +11,16 @@ from foundations_rest_api.v2beta.models.job import Job
 
 
 class TestJobListingV2(unittest.TestCase):
+    
+    def setUp(self):
+        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.pipeline_context import PipelineContext
+        from foundations.global_state import redis_connection
+
+        redis_connection.flushall()
+
+        self._pipeline_context = PipelineContext()
+        self._pipeline = Pipeline(self._pipeline_context)
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -139,7 +149,7 @@ class TestJobListingV2(unittest.TestCase):
 
         self._pipeline_context.provenance.project_name = 'random test project'
         self._pipeline.stage(_callback, 'some data')
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_input = {
@@ -155,7 +165,7 @@ class TestJobListingV2(unittest.TestCase):
             pass
 
         self._pipeline.stage(_callback, {'hello': 'world'})
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='default').evaluate()[0]
         expected_input = {
@@ -171,7 +181,7 @@ class TestJobListingV2(unittest.TestCase):
             pass
 
         self._pipeline.stage(_callback, [{}])
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='default').evaluate()[0]
         expected_input = {
@@ -187,7 +197,7 @@ class TestJobListingV2(unittest.TestCase):
             pass
 
         self._pipeline.stage(_callback, ['some data'])
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='default').evaluate()[0]
         expected_input = {
@@ -203,7 +213,7 @@ class TestJobListingV2(unittest.TestCase):
             pass
 
         self._pipeline.stage(_callback, [5])
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='default').evaluate()[0]
         expected_input = {
@@ -219,7 +229,7 @@ class TestJobListingV2(unittest.TestCase):
             pass
 
         self._pipeline.stage(_callback, True)
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='default').evaluate()[0]
         expected_input = {
@@ -236,7 +246,7 @@ class TestJobListingV2(unittest.TestCase):
 
         self._pipeline_context.provenance.project_name = 'random test project'
         self._pipeline.stage(_callback, 'some other data', 'some more data')
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_inputs = [
@@ -266,7 +276,7 @@ class TestJobListingV2(unittest.TestCase):
         self._pipeline.stage(_callback, Hyperparameter('some_data'))
         self._pipeline_context.provenance.job_run_data = {
             'some_data': 'some other data'}
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_input = {
@@ -287,7 +297,7 @@ class TestJobListingV2(unittest.TestCase):
         self._pipeline.stage(_callback, Hyperparameter('some_other_data'))
         self._pipeline_context.provenance.job_run_data = {
             'some_other_data': 'some data'}
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_input = {
@@ -310,7 +320,7 @@ class TestJobListingV2(unittest.TestCase):
         self._pipeline_context.provenance.project_name = 'random test project'
         data = self._pipeline.stage(_data)
         self._pipeline.stage(_callback, data)
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_input = {
@@ -337,7 +347,7 @@ class TestJobListingV2(unittest.TestCase):
         data = self._make_stage('stage-1', _data)
         different_data = self._make_stage('stage-2', _different_data, data)
         self._make_stage('stage-3', _callback, different_data)
-        self._make_completed_job('my job x', 'some user')
+        self._make_job()
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
         expected_inputs = [
@@ -364,3 +374,16 @@ class TestJobListingV2(unittest.TestCase):
         builder = builder.stage(self._pipeline.uuid(), function, args, kwargs)
         builder = builder.hierarchy([self._pipeline.uuid()])
         return builder.build()
+
+    def _make_job(self):
+        from foundations.global_state import message_router
+        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_contrib.producers.jobs.run_job import RunJob
+
+        QueueJob(message_router, self._pipeline_context).push_message()
+        RunJob(message_router, self._pipeline_context).push_message()
+
+    def _assert_list_contains_items(self, expected, result):
+        for item in expected:
+            if not item in result:
+                self.fail('Element {} not found in {}'.format(item, result))
