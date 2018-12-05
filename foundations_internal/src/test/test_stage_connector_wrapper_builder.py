@@ -43,6 +43,12 @@ class TestStageConnectorWrapperBuilder(unittest.TestCase):
         stage = builder.build(self._make_stage)
         self.assertEqual(override_uuid, stage.uuid())
 
+    def test_uuid_returns_builder(self):
+        from uuid import uuid4
+
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
+        self.assertEqual(builder, builder.uuid('anything'))
+
     def test_stage_generates_uuid_different_code(self):
         def method():
             return 5

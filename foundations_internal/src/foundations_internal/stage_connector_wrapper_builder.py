@@ -31,6 +31,7 @@ class StageConnectorWrapperBuilder(object):
 
     def uuid(self, uuid):
         self._override_uuid = uuid
+        return self
 
     def hierarchy(self, parent_uuids):
         stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
