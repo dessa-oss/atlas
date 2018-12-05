@@ -33,7 +33,7 @@ class ArgumentHasher(object):
     def _make_argument_hash(self, key, item):
         from foundations.utils import make_uuid
         from foundations.utils import generate_uuid
-        from foundations.pipeline import Pipeline
+        from foundations_internal.pipeline import Pipeline
         from foundations.stage_connector_wrapper import StageConnectorWrapper
         from foundations.hyperparameter import Hyperparameter
 

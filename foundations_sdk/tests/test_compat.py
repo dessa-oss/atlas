@@ -7,11 +7,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.compat import compat_raise
+from foundations_internal.compat import compat_raise
+
 
 class DummyException(Exception):
     def __init__(self, test_val):
         super(DummyException, self).__init__(test_val)
+
 
 class TestCompat(unittest.TestCase):
     def test_compat_raise(self):

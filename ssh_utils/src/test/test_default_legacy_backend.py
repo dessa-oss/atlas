@@ -24,7 +24,7 @@ class MockLegacyBackend(object):
         self.archive_path = archive_path
         self.result_path = result_path
 
-@patch("foundations.scheduler_legacy_backend.LegacyBackend", MockLegacyBackend)
+@patch("foundations_contrib.scheduler_legacy_backend.LegacyBackend", MockLegacyBackend)
 @patch("foundations_ssh.remote_clock.RemoteClock", MockClock)
 class TestDefaultLegacyBackend(unittest.TestCase):
     def test_uses_legacy_backend_properly(self):

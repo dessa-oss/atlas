@@ -44,7 +44,7 @@ class ConfigManager(object):
             self._load_config(config, path)
 
         self._config = config
-    
+
     def _load_config(self, config, path):
         import yaml
 
@@ -98,7 +98,7 @@ class ConfigManager(object):
             if implementation_key == 'deployment_implementation':
                 self._log().info('Configured with {}'.format(reflected_implementation))
             else:
-                self._log().debug('Configured with {}'.format(reflected_implementation)) 
+                self._log().debug('Configured with {}'.format(reflected_implementation))
 
             reflected_klass_string = reflected_implementation[implementation_type]
             reflected_klass = ConfigManager._string_to_type(

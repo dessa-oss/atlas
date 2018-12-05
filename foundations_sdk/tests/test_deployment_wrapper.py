@@ -9,6 +9,7 @@ import unittest
 from foundations.deployment_wrapper import DeploymentWrapper
 import foundations_sdk_fixtures.deployment_wrapper_fixtures as dwf
 
+
 class TestDeploymentWrapper(unittest.TestCase):
     def test_get_job_name(self):
         job_name = "job_name"
@@ -45,21 +46,22 @@ class TestDeploymentWrapper(unittest.TestCase):
         self.assertTrue(deployment.is_job_complete())
 
     def test_wait_for_deployment_to_complete(self):
-        deployment = DeploymentWrapper(dwf.SuccessfulTakesRandomTime("job_name"))
+        deployment = DeploymentWrapper(
+            dwf.SuccessfulTakesRandomTime("job_name"))
 
         self.assertIsNone(deployment._deployment.fetch_job_results())
 
         deployment.wait_for_deployment_to_complete(wait_seconds=0.1)
-        
+
         result = deployment._deployment.fetch_job_results()
         self.assertIsNone(result["global_stage_context"]["error_information"])
         self.assertEqual(result["dummy_result"], "dummy_result")
 
     def test_fetch_job_results_failed_job(self):
-        from foundations.remote_exception import RemoteException
+        from foundations_internal.remote_exception import RemoteException
         from foundations.utils import pretty_error
         import sys
-        
+
         deployment = DeploymentWrapper(dwf.FailedMockDeployment("job_name"))
 
         try:
@@ -67,10 +69,12 @@ class TestDeploymentWrapper(unittest.TestCase):
             self.fail("RemoteException not thrown")
         except RemoteException as e:
             inner_result = deployment._deployment.fetch_job_results()
-            self.assertEqual(str(e), pretty_error("job_name", inner_result["global_stage_context"]["error_information"]))
+            self.assertEqual(str(e), pretty_error(
+                "job_name", inner_result["global_stage_context"]["error_information"]))
 
     def test_fetch_job_results_successful_job(self):
-        deployment = DeploymentWrapper(dwf.SuccessfulMockDeployment("job_name"))
+        deployment = DeploymentWrapper(
+            dwf.SuccessfulMockDeployment("job_name"))
 
         result = deployment.fetch_job_results(wait_seconds=0.1)
         self.assertIsNone(result["global_stage_context"]["error_information"])
@@ -84,17 +88,18 @@ class TestDeploymentWrapper(unittest.TestCase):
         self.assertEqual(result["dummy_result"], "dummy_result")
 
     def test_fetch_job_results_successful_takes_random_time(self):
-        deployment = DeploymentWrapper(dwf.SuccessfulTakesRandomTime("job_name"))
+        deployment = DeploymentWrapper(
+            dwf.SuccessfulTakesRandomTime("job_name"))
 
         result = deployment.fetch_job_results(wait_seconds=0.1)
         self.assertIsNone(result["global_stage_context"]["error_information"])
         self.assertEqual(result["dummy_result"], "dummy_result")
 
     def test_fetch_job_results_failed_takes_random_time(self):
-        from foundations.remote_exception import RemoteException
+        from foundations_internal.remote_exception import RemoteException
         from foundations.utils import pretty_error
         import sys
-        
+
         deployment = DeploymentWrapper(dwf.FailedTakesRandomTime("job_name"))
 
         try:
@@ -102,13 +107,16 @@ class TestDeploymentWrapper(unittest.TestCase):
             self.fail("RemoteException not thrown")
         except RemoteException as e:
             inner_result = deployment._deployment.fetch_job_results()
-            self.assertEqual(str(e), pretty_error("job_name", inner_result["global_stage_context"]["error_information"]))
+            self.assertEqual(str(e), pretty_error(
+                "job_name", inner_result["global_stage_context"]["error_information"]))
 
     def test_get_job_status_forwards_call(self):
-        neverending_deployment = DeploymentWrapper(dwf.NeverFinishDeployment("job_name"))
+        neverending_deployment = DeploymentWrapper(
+            dwf.NeverFinishDeployment("job_name"))
 
         for _ in range(0, 5):
-            self.assertEqual(neverending_deployment.get_job_status(), neverending_deployment._deployment.get_job_status())
+            self.assertEqual(neverending_deployment.get_job_status(
+            ), neverending_deployment._deployment.get_job_status())
 
         mock_deployment_classes = [
             dwf.FailedMockDeployment,
@@ -125,5 +133,7 @@ class TestDeploymentWrapper(unittest.TestCase):
             while mock_deployment.get_job_status() == "Running":
                 pass
 
-            self.assertEqual(mock_deployment.get_job_status(), mock_deployment._deployment.get_job_status())
-            self.assertEqual(mock_deployment.get_job_status(), mock_deployment._deployment.get_job_status())
+            self.assertEqual(mock_deployment.get_job_status(),
+                             mock_deployment._deployment.get_job_status())
+            self.assertEqual(mock_deployment.get_job_status(),
+                             mock_deployment._deployment.get_job_status())

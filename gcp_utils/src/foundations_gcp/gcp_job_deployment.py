@@ -5,13 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.job_bundler import JobBundler
+from foundations_contrib.job_bundler import JobBundler
 
 
 class GCPJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle, code_bucket_name, result_bucket_name):
-        from foundations.bucket_job_deployment import BucketJobDeployment
+        from foundations_contrib.bucket_job_deployment import BucketJobDeployment
         from foundations_gcp.gcp_bucket import GCPBucket
 
         self._deployment = BucketJobDeployment(job_name, job, job_source_bundle, GCPBucket(
@@ -25,7 +25,7 @@ class GCPJobDeployment(object):
             LegacyScheduler -- As above
         """
 
-        from foundations.null_scheduler_backend import NullSchedulerBackend
+        from foundations_contrib.null_scheduler_backend import NullSchedulerBackend
         return NullSchedulerBackend
 
     def config(self):

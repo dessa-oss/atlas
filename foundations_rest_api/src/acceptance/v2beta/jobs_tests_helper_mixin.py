@@ -4,17 +4,18 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-from foundations.producers.jobs.queue_job import QueueJob
-from foundations.producers.jobs.run_job import RunJob
-from foundations.producers.jobs.complete_job import CompleteJob
+from foundations_contrib.producers.jobs.queue_job import QueueJob
+from foundations_contrib.producers.jobs.run_job import RunJob
+from foundations_contrib.producers.jobs.complete_job import CompleteJob
+
 
 class JobsTestsHelperMixin(object):
 
     @classmethod
     def setUpClass(klass):
         from foundations.global_state import message_router
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
+        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.pipeline_context import PipelineContext
 
         klass._message_router = message_router
         klass._pipeline_context = PipelineContext()
@@ -31,7 +32,8 @@ class JobsTestsHelperMixin(object):
         klass._pipeline_context.provenance.user_name = user
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
         RunJob(klass._message_router, klass._pipeline_context).push_message()
-        CompleteJob(klass._message_router, klass._pipeline_context).push_message()
+        CompleteJob(klass._message_router,
+                    klass._pipeline_context).push_message()
 
     @classmethod
     def _make_running_job(klass, job_name, user):

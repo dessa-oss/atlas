@@ -14,12 +14,9 @@ import fakeredis
 # to avoid having to install an actual redis
 redis_connection._redis_connection = fakeredis.FakeStrictRedis()
 
-from integration.test_pipeline_interface import TestPipelineInterface
-from integration.test_run_stages import TestRunStages
-from integration.test_placeholder_parameters import TestPlaceHolderParameters
-from integration.test_caching import TestCaching
-from integration.test_result_reader import TestResultReader
-from integration.test_serializable_contexts import TestSerializableContexts
-from integration.test_error_printing import TestErrorPrinting
 from integration.test_persist_unserializable_data import TestPersistUnserializableData
-from integration.test_consumers import TestConsumers
+from integration.test_result_reader import TestResultReader
+from integration.test_caching import TestCaching
+from integration.test_placeholder_parameters import TestPlaceHolderParameters
+from integration.test_pipeline_interface import TestPipelineInterface
+from integration.test_error_printing import TestErrorPrinting

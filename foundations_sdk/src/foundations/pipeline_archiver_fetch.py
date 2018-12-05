@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.pipeline_archiver import PipelineArchiver
+from foundations_internal.pipeline_archiver import PipelineArchiver
 
 
 class PipelineArchiverFetch(object):

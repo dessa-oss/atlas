@@ -32,7 +32,7 @@ class SFTPBucket(object):
         )
 
     def upload_from_string(self, name, data):
-        from foundations.simple_tempfile import SimpleTempfile
+        from foundations_contrib.simple_tempfile import SimpleTempfile
         from foundations.utils import byte_string
 
         self._log().debug('Uploading %s', self._full_path(name))
@@ -59,7 +59,7 @@ class SFTPBucket(object):
             return self._connection.exists(basename(name))
 
     def download_as_string(self, name):
-        from foundations.simple_tempfile import SimpleTempfile
+        from foundations_contrib.simple_tempfile import SimpleTempfile
         from foundations.utils import byte_string
 
         self._log().debug('Downloading %s', self._full_path(name))
@@ -87,10 +87,10 @@ class SFTPBucket(object):
             for path in paths:
                 self._log().debug('Got file %s', path)
             return filter(lambda path: fnmatch(path, pathname), paths)
-    
+
     def remove(self, name):
         raise NotImplementedError
-    
+
     def move(self, source, destination):
         raise NotImplementedError
 
