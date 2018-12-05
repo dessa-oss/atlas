@@ -9,7 +9,7 @@ from foundations_contrib.producers.jobs.run_job import RunJob
 from foundations_contrib.producers.jobs.complete_job import CompleteJob
 
 
-class JobsTestsHelperMixin(object):
+class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def setUpClass(klass):
