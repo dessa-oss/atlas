@@ -18,6 +18,7 @@ from test.test_pipeline_context import TestPipelineContext
 from test.test_safe_inspect import TestSafeInspect
 from test.test_scheduler import TestScheduler
 from test.test_stage_cache import TestStageCache
+from test.test_stage_connector_wrapper_builder import TestStageConnectorWrapperBuilder
 
 from test.test_stage_context import TestStageContext
 from test.test_staged_module_internal_loader import TestStagedModuleInternalLoader
