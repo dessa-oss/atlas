@@ -9,10 +9,6 @@ from uuid import uuid4
 import foundations
 from foundations.global_state import redis_connection
 import integration.config
-import fakeredis
-
-# to avoid having to install an actual redis
-redis_connection._redis_connection = fakeredis.FakeStrictRedis()
 
 from integration.test_persist_unserializable_data import TestPersistUnserializableData
 from integration.test_result_reader import TestResultReader

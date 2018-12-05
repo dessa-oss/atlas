@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import patch
+from mock import patch, Mock
 from foundations_rest_api.v1.models.project import Project
 
 
@@ -19,18 +19,6 @@ class TestProject(unittest.TestCase):
 
         def get_pipeline_names(self):
             return self.list
-
-    def setUp(self):
-        from foundations.global_state import config_manager
-
-        self._listing = self.MockListing()
-
-        def get_listing():
-            return self._listing
-
-        config_manager['project_listing_implementation'] = {
-            'project_listing_type': get_listing
-        }
 
     def tearDown(self):
         from foundations.global_state import config_manager
@@ -136,13 +124,14 @@ class TestProject(unittest.TestCase):
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
     @patch('foundations_rest_api.v1.models.job.Job.all')
-    def test_all_returns_all_projects(self, mock_jobs, mock_completed, mock_running, mock_queued):
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
         mock_completed.return_value = 'completed'
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
         mock_jobs.return_value = 'listed'
 
-        self._listing.list = ['project1']
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
 
         project = Project.all().evaluate()[0]
         expected_project = Project(
@@ -160,13 +149,14 @@ class TestProject(unittest.TestCase):
     @patch('foundations_rest_api.v1.models.running_job.RunningJob.all')
     @patch('foundations_rest_api.v1.models.completed_job.CompletedJob.all')
     @patch('foundations_rest_api.v1.models.job.Job.all')
-    def test_all_returns_all_projects_multiple_projects(self, mock_jobs, mock_completed, mock_running, mock_queued):
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs, mock_completed, mock_running, mock_queued):
         mock_completed.return_value = 'completed'
         mock_running.return_value = 'running'
         mock_queued.return_value = 'queued'
         mock_jobs.return_value = 'listed'
 
-        self._listing.list = ['project1', 'project2']
+        mock_projects.list_projects.return_value = [{'name': 'project1'}, {'name': 'project2'}]
 
         project = [project for project in Project.all().evaluate()]
         expected_project = Project(
@@ -188,3 +178,9 @@ class TestProject(unittest.TestCase):
             jobs = 'listed'
         )
         self.assertEqual([expected_project, expected_project_two], project)
+
+    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
+        Project.all().evaluate()
+        mock_projects.list_projects.assert_called_with(mock_redis)
