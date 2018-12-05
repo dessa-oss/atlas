@@ -34,7 +34,8 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
 
     def test_has_input_params_different_params(self):
         job = Job(input_params=['some different list of parameters'])
-        self.assertEqual(['some different list of parameters'], job.input_params)
+        self.assertEqual(
+            ['some different list of parameters'], job.input_params)
 
     def test_has_output_metrics(self):
         job = Job(output_metrics={'a': 5})
@@ -82,7 +83,8 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
         self._pipeline_context.provenance.project_name = 'random test project'
         self._make_completed_job('my job x', 'some user')
         sleep(0.01)
-        self._make_running_job('00000000-0000-0000-0000-000000000007', 'soju hero')
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000007', 'soju hero')
 
         expected_job_1 = Job(
             job_id='00000000-0000-0000-0000-000000000007',
@@ -108,10 +110,233 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
 
         result = Job.all(project_name='random test project').evaluate()
 
-        #Hacked times to make them match since current implementation gets the current time. Not a good solution, should be mocked.
+        # Hacked times to make them match since current implementation gets the current time. Not a good solution, should be mocked.
         expected_job_1.start_time = result[0].start_time
         expected_job_2.start_time = result[1].start_time
         expected_job_2.completed_time = result[1].completed_time
         expected_jobs = [expected_job_1, expected_job_2]
 
         self.assertEqual(expected_jobs, result)
+
+    def test_all_transforms_input_params(self):
+        def _callback(data):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        self._pipeline.stage(_callback, 'some data')
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': 'some data',
+            'type': 'string',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_unknown_type(self):
+        def _callback(data):
+            pass
+
+        self._pipeline.stage(_callback, {'hello': 'world'})
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='default').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': 'dict',
+            'type': 'string',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_unknown_type_different_type(self):
+        def _callback(data):
+            pass
+
+        self._pipeline.stage(_callback, [{}])
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='default').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': 'list',
+            'type': 'string',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_array(self):
+        def _callback(data):
+            pass
+
+        self._pipeline.stage(_callback, ['some data'])
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='default').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': ['some data'],
+            'type': 'array string',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_array_number(self):
+        def _callback(data):
+            pass
+
+        self._pipeline.stage(_callback, [5])
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='default').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': [5],
+            'type': 'array number',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_bool(self):
+        def _callback(data):
+            pass
+
+        self._pipeline.stage(_callback, True)
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='default').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': True,
+            'type': 'bool',
+            'source': 'constant'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_multiple_params(self):
+        def _callback(a, b):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        self._pipeline.stage(_callback, 'some other data', 'some more data')
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_inputs = [
+            {
+                'name': 'a-0',
+                'source': 'constant',
+                'type': 'string',
+                'value': 'some other data'
+            },
+            {
+                'name': 'b-0',
+                'source': 'constant',
+                'type': 'string',
+                'value': 'some more data'
+            }
+        ]
+        self._assert_list_contains_items(
+            expected_inputs, result_job.input_params)
+
+    def test_all_transforms_input_params_dynamic_parameter(self):
+        from foundations import Hyperparameter
+
+        def _callback(data):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        self._pipeline.stage(_callback, Hyperparameter('some_data'))
+        self._pipeline_context.provenance.job_run_data = {
+            'some_data': 'some other data'}
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': 'some other data',
+            'type': 'string',
+            'source': 'placeholder'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_dynamic_parameter_different_run_data(self):
+        from foundations import Hyperparameter
+
+        def _callback(data):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        self._pipeline.stage(_callback, Hyperparameter('some_other_data'))
+        self._pipeline_context.provenance.job_run_data = {
+            'some_other_data': 'some data'}
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': 'some data',
+            'type': 'string',
+            'source': 'placeholder'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_stage_parameter(self):
+        from foundations import Hyperparameter
+
+        def _data():
+            return 'some data'
+
+        def _callback(data):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        data = self._pipeline.stage(_data)
+        self._pipeline.stage(_callback, data)
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_input = {
+            'name': 'data-0',
+            'value': '_data-1',
+            'type': 'string',
+            'source': 'stage'
+        }
+        self.assertEqual([expected_input], result_job.input_params)
+
+    def test_all_transforms_input_params_stage_parameter_different_stage(self):
+        from foundations import Hyperparameter
+
+        def _data():
+            return 'some data'
+
+        def _different_data(data):
+            return data
+
+        def _callback(data):
+            pass
+
+        self._pipeline_context.provenance.project_name = 'random test project'
+        data = self._pipeline.stage(_data)
+        different_data = self._pipeline.stage(_different_data, data)
+        self._pipeline.stage(_callback, different_data)
+        self._make_completed_job('my job x', 'some user')
+
+        result_job = Job.all(project_name='random test project').evaluate()[0]
+        expected_inputs = [
+            {
+                'name': 'data-0',
+                'source': 'stage',
+                'type': 'string',
+                'value': '_data-1'
+            },
+            {
+                'name': 'data-2',
+                'source': 'stage',
+                'type': 'string',
+                'value': '_different_data-0'
+            }
+        ]
+        self._assert_list_contains_items(expected_inputs, result_job.input_params)
