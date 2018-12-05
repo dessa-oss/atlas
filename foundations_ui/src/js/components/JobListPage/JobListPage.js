@@ -89,6 +89,7 @@ class JobListPage extends Component {
   saveFilters() {
     const { filters, statuses } = this.state;
     const newFilters = JobActions.getAllFilters(filters, statuses);
+
     this.setState({ filters: newFilters });
   }
 
@@ -102,8 +103,8 @@ class JobListPage extends Component {
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
     this.setState({ filters: newFilters, statuses: newStatuses });
-
     const apiFilteredJobs = await JobActions.filterJobs(projectName, newStatuses);
+
     this.clearState();
     this.formatAndSaveParams(apiFilteredJobs);
     this.forceUpdate();

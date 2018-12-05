@@ -82,9 +82,9 @@ const noHiddenStatusFilter = [
   { name: 'Error', hidden: false },
 ];
 const hiddenStatusFilter = [
-  { name: 'Completed', hidden: true },
   { name: 'Processing', hidden: false },
   { name: 'Error', hidden: false },
+  { name: 'Completed', hidden: true },
 ];
 const filters = [
   { column: 'Status', value: 'Error' },
@@ -405,7 +405,7 @@ it('addToURLNotHidden, not hidden', () => {
 it('addToURLNotHidden, hidden', () => {
   status.hidden = true;
   const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
-  expect(updatedUrl).toBe('');
+  expect(updatedUrl).toBe('localhost/');
 });
 
 it('getOldStatusFilters', () => {
@@ -428,7 +428,7 @@ it('getUpdatedStatusesFromOldStatuses', () => {
 
 it('updateStatusesIfNoFilters, has filters', () => {
   JobActions.updateStatusesIfNoFilters(hasFilter, hiddenStatusFilter);
-  expect(hiddenStatusFilter[0].hidden).toBe(true);
+  expect(hiddenStatusFilter[2].hidden).toBe(true);
 });
 
 it('updateStatusesIfNoFilters, no filters', () => {

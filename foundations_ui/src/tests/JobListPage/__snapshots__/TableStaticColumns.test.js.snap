@@ -15,47 +15,42 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
     updateSearchText={[Function]}
   />
   <div
-    className="static-header-row-container"
+    className="full-height"
   >
     <div
       className="job-column-header-container"
     >
       <JobColumnHeader
-        className="start-time-offset"
+        className="static-header"
         containerClass="job-column-header"
-        isShowingTooltip={false}
         isStatus={false}
         title="Start Time"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
-        className="status-offset"
+        className="static-status-header"
         containerClass="job-column-header"
-        isShowingTooltip={false}
         isStatus={true}
         title="Status"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
-        className="job-id-offset"
+        className="static-header"
         containerClass="job-column-header"
-        isShowingTooltip={false}
         isStatus={false}
         title="Job ID"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
-        className="duration-offset"
+        className="static-header"
         containerClass="job-column-header"
-        isShowingTooltip={false}
         isStatus={false}
         title="Duration"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
-        className="user-offset"
+        className="static-header"
         containerClass="job-column-header"
-        isShowingTooltip={false}
         isStatus={false}
         title="User"
         toggleFilter={[Function]}

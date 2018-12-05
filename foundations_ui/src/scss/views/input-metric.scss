@@ -42,9 +42,13 @@
       border-right: 0px;
     }
 
-    &:hover {
-      .tooltip {
-        display: block;
+    div {
+      h4 {
+        &:hover {
+          + .tooltip {
+            display: block;
+          }
+        }
       }
     }
 
@@ -54,6 +58,7 @@
         display: block;
       }
     }
+    
   }
 
   .job-cell {

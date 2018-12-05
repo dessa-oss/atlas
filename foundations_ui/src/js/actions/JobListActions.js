@@ -272,9 +272,8 @@ class ProjectActions {
     const newStatuses = [];
     let noStatusFilters = true;
     oldStatuses.forEach((status) => {
-      this.getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses);
+      noStatusFilters = this.getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses);
     });
-
     this.updateStatusesIfNoFilters(noStatusFilters, newStatuses);
 
     return newStatuses;
@@ -289,7 +288,7 @@ class ProjectActions {
   }
 
   static addToURLNotHidden(url, isFirstStatus, status) {
-    let newUrl = '';
+    let newUrl = url;
     if (status.hidden === false) {
       newUrl = this.addToURL(url, isFirstStatus, status);
     }
@@ -346,25 +345,24 @@ class ProjectActions {
   static getUpdatedStatusesFromOldStatuses(filters, status, noStatusFilters, newStatuses) {
     const statusInFilter = this.getFilterObject(statusText, status.name);
     let isHidden = true;
+    let newNoStatusFilters = noStatusFilters;
     filters.forEach((filter) => {
       if (this.doesFilterExist(filter, statusInFilter)) {
         isHidden = false;
-        noStatusFilters = false;
+        newNoStatusFilters = false;
       }
     });
     newStatuses.push({ name: status.name, hidden: isHidden });
+    return newNoStatusFilters;
   }
 
   static getAllJobUsers(jobs) {
     const users = [];
     jobs.forEach((job) => {
-      let alreadyExists = false;
-      users.forEach((user) => {
-        if (user.name === job.user) {
-          alreadyExists = true;
-        }
+      const userExists = users.some((user) => {
+        return (user.name === job.user);
       });
-      if (!alreadyExists) {
+      if (!userExists) {
         users.push({ name: job.user, hidden: false });
       }
     });

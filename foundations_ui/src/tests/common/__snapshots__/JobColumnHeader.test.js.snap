@@ -9,8 +9,9 @@ exports[`Shallow Renders Job Column Header 1`] = `
   >
     <h4
       className="blue-border-bottom"
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
+    />
+    <Tooltip
+      message=""
     />
     <div
       className="icon-container"
