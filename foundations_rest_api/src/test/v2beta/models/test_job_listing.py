@@ -319,9 +319,9 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
             pass
 
         self._pipeline_context.provenance.project_name = 'random test project'
-        data = self._pipeline.stage(_data)
-        different_data = self._pipeline.stage(_different_data, data)
-        self._pipeline.stage(_callback, different_data)
+        data = self._make_stage('stage-1', _data)
+        different_data = self._make_stage('stage-2', _different_data, data)
+        self._make_stage('stage-3', _callback, different_data)
         self._make_completed_job('my job x', 'some user')
 
         result_job = Job.all(project_name='random test project').evaluate()[0]
@@ -340,3 +340,12 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
             }
         ]
         self._assert_list_contains_items(expected_inputs, result_job.input_params)
+
+    def _make_stage(self, uuid, function, *args, **kwargs):
+        from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
+        builder = builder.uuid(uuid)
+        builder = builder.stage(self._pipeline.uuid(), function, args, kwargs)
+        builder = builder.hierarchy([self._pipeline.uuid()])
+        return builder.build()
