@@ -11,44 +11,39 @@ from foundations_contrib.producers.jobs.complete_job import CompleteJob
 
 class JobsTestsHelperMixinV2(object):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(klass):
         from foundations.global_state import message_router
-        from foundations.global_state import redis_connection
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
 
-        redis_connection.flushall()
-
-        self._message_router = message_router
-        self._pipeline_context = PipelineContext()
-        self._pipeline = Pipeline(self._pipeline_context)
+        klass._message_router = message_router
+        klass._pipeline_context = PipelineContext()
+        klass._pipeline = Pipeline(klass._pipeline_context)
 
     @staticmethod
     def _str_random_uuid():
         import uuid
         return str(uuid.uuid4())
 
-    def _make_completed_job(self, job_name, user):
-        self._pipeline_context.file_name = job_name
-        self._pipeline_context.provenance.user_name = user
-        QueueJob(self._message_router, self._pipeline_context).push_message()
-        RunJob(self._message_router, self._pipeline_context).push_message()
-        CompleteJob(self._message_router,
-                    self._pipeline_context).push_message()
+    @classmethod
+    def _make_completed_job(klass, job_name, user):
+        klass._pipeline_context.file_name = job_name
+        klass._pipeline_context.provenance.user_name = user
+        QueueJob(klass._message_router, klass._pipeline_context).push_message()
+        RunJob(klass._message_router, klass._pipeline_context).push_message()
+        CompleteJob(klass._message_router,
+                    klass._pipeline_context).push_message()
 
-    def _make_running_job(self, job_name, user):
-        self._pipeline_context.file_name = job_name
-        self._pipeline_context.provenance.user_name = user
-        QueueJob(self._message_router, self._pipeline_context).push_message()
-        RunJob(self._message_router, self._pipeline_context).push_message()
+    @classmethod
+    def _make_running_job(klass, job_name, user):
+        klass._pipeline_context.file_name = job_name
+        klass._pipeline_context.provenance.user_name = user
+        QueueJob(klass._message_router, klass._pipeline_context).push_message()
+        RunJob(klass._message_router, klass._pipeline_context).push_message()
 
-    def _make_queued_job(self, job_name, user):
-        self._pipeline_context.file_name = job_name
-        self._pipeline_context.provenance.user_name = user
-        QueueJob(self._message_router, self._pipeline_context).push_message()
-
-    def _assert_list_contains_items(self, expected, result):
-        for item in expected:
-            if not item in result:
-                self.fail('Element {} not found in {}'.format(item, result))
-
+    @classmethod
+    def _make_queued_job(klass, job_name, user):
+        klass._pipeline_context.file_name = job_name
+        klass._pipeline_context.provenance.user_name = user
+        QueueJob(klass._message_router, klass._pipeline_context).push_message()
