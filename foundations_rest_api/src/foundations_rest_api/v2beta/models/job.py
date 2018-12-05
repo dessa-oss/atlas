@@ -98,12 +98,21 @@ class Job(PropertyModel):
         name = '{}-{}'.format(param['argument']['name'], stage_index)
         argument_value = param['argument']['value']
         value, source = Job._extract_source_and_value(
-            argument_value, run_data, stage_indices)
+            argument_value,
+            run_data,
+            stage_indices
+        )
+
+        value_type = extract_type(value)
+        if 'unknown' in value_type:
+            value_type = 'string'
+            value = type(value).__name__
+
         job_data['input_params'].append(
             {
                 'name': name,
                 'value': value,
-                'type': extract_type(value),
+                'type': value_type,
                 'source': source,
             }
         )

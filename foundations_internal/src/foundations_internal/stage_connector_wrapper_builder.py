@@ -21,12 +21,17 @@ class StageConnectorWrapperBuilder(object):
         self._middleware = MiddlewareChain()
 
         self._stage = None
+        self._override_uuid = None
         self._connector = None
 
     def build(self, *additional_args):
         from foundations.stage_connector_wrapper import StageConnectorWrapper
 
         return StageConnectorWrapper(self._stage, self._pipeline_context, self._stage_context, self._stage_config)
+
+    def uuid(self, uuid):
+        self._override_uuid = uuid
+        return self
 
     def hierarchy(self, parent_uuids):
         stage_hierarchy = self._pipeline_context.provenance.stage_hierarchy
@@ -40,7 +45,7 @@ class StageConnectorWrapperBuilder(object):
         new_args = self._new_arguments(args)
         new_args += self._new_keyword_arguments(kwargs)
 
-        stage_uuid = self._make_uuid(current_uuid, function, new_args, {})
+        stage_uuid = self._override_uuid or self._make_uuid(current_uuid, function, new_args, {})
         self._stage_context.uuid = stage_uuid
         self._stage = Stage(self._middleware, stage_uuid,
                             function, function, *new_args)
