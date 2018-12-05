@@ -1,6 +1,7 @@
 #!/bin/bash
 
-redis_url="redis://localhost:6379"
+node_ip="192.168.0.21"
+redis_url="redis://192.168.0.21:6379"
 
 action="$1"
 
@@ -17,14 +18,15 @@ start_ui () {
     docker run -d --rm \
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
+        -p 37722:37722 \
         foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
 
     docker run -d --rm \
         --name foundations-gui \
-        --link foundations-rest-api:foundations-rest-api \
-        -e REACT_APP_API_URL="http://foundations-rest-api:37722" \
+        -e REACT_APP_API_URL="http://${node_ip}:37722/api/v1/" \
+        -e REACT_APP_BETA_API_URL="http://${node_ip}:37722/api/v2beta/" \
         -p 3000:3000 \
         foundations-gui:${image_tag} \
         > /dev/null \
