@@ -13,10 +13,8 @@ from foundations_internal.stage_connector_wrapper_builder import StageConnectorW
 class TestStageConnectorWrapperBuilder(unittest.TestCase):
 
     def setUp(self):
-        from foundations.stage_graph import StageGraph
         from foundations_internal.pipeline_context import PipelineContext
 
-        self._graph = StageGraph()
         self._pipeline_context = PipelineContext()
 
     def test_stage_generates_uuid(self):
