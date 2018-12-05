@@ -18,6 +18,7 @@ class Job(PropertyModel):
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
     completed_time = PropertyModel.define_property()
+    duration = PropertyModel.define_property()
 
     @staticmethod
     def all(project_name=None):
@@ -48,7 +49,7 @@ class Job(PropertyModel):
     def _build_job_model(job_data):
         Job._reshape_input_params(job_data)
         Job._reshape_output_metrics(job_data)
-        Job._update_job_properties(job_data)
+        Job._update_job_time_properties(job_data)
         job_data['project'] = job_data['project_name']
         del job_data['project_name']
         return Job(**job_data)
@@ -171,11 +172,27 @@ class Job(PropertyModel):
         Job._repopulate_metrics(job_data, new_metrics)
 
     @staticmethod
-    def _update_job_properties(properties):
-        properties['start_time'] = Job._datetime_string(
-            properties['start_time'])
-        properties['completed_time'] = Job._datetime_string(
-            properties['completed_time'])
+    def _update_job_time_properties(properties):
+        from datetime import datetime
+
+        start_time = properties['start_time']
+        completed_time = properties['completed_time']
+        properties['start_time'] = Job._datetime_string(start_time)
+        properties['completed_time'] = Job._datetime_string(completed_time)
+        end_time = completed_time if completed_time else datetime.now()
+        time_delta = end_time - start_time
+        total_seconds = time_delta.total_seconds()
+        properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+
+    @staticmethod
+    def _total_seconds_to_duration(total_seconds):
+        days = total_seconds // 86400
+        remaing_seconds = total_seconds % 86400
+        hours = remaing_seconds // 3600
+        remaing_seconds %= 3600
+        minutes = remaing_seconds // 60
+        remaing_seconds %= 60
+        return '{}d{}h{}m{}s'.format(days, hours, minutes, remaing_seconds)
 
     @staticmethod
     def _datetime_string(time):
