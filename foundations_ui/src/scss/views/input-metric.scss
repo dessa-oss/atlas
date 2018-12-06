@@ -79,7 +79,7 @@
         font-style: italic;
         color: $color-9c-grey;
         &.error {
-          color: $color-status-red;
+          color: $color-status-rgba-red-half-opacity;
         }
       }
 
