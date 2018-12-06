@@ -11,7 +11,7 @@ from foundations_rest_api.v2beta.models.job import Job
 
 
 class TestJobListingV2(unittest.TestCase):
-    
+
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
@@ -89,7 +89,16 @@ class TestJobListingV2(unittest.TestCase):
 
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
-        from datetime import datetime
+        import datetime
+
+        fake_now_return_value = datetime.datetime.utcfromtimestamp(1005000000)
+
+        class FakeDateTime(datetime.datetime):
+            @staticmethod
+            def now():
+                return fake_now_return_value
+
+        datetime.datetime = FakeDateTime
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -100,7 +109,7 @@ class TestJobListingV2(unittest.TestCase):
                 'input_params': [],
                 'output_metrics': [],
                 'status': 'completed',
-                'start_time': 123456789,
+                'start_time':  123456789,
                 'completed_time': 2222222222
             },
             {
@@ -123,8 +132,9 @@ class TestJobListingV2(unittest.TestCase):
             input_params=[],
             output_metrics=[],
             status='running',
-            start_time=datetime.utcfromtimestamp(999999999).isoformat(),
-            completed_time='No time available'
+            start_time='2001-09-09T01:46:39',
+            completed_time='No time available',
+            duration='57d20h53m21s'
         )
 
         expected_job_2 = Job(
@@ -134,8 +144,9 @@ class TestJobListingV2(unittest.TestCase):
             input_params=[],
             output_metrics=[],
             status='completed',
-            start_time=datetime.utcfromtimestamp(123456789).isoformat(),
-            completed_time=datetime.utcfromtimestamp(2222222222).isoformat()
+            start_time='1973-11-29T21:33:09',
+            completed_time='2040-06-02T03:57:02',
+            duration='24291d6h23m53s'
         )
 
         result = Job.all(project_name='random test project').evaluate()

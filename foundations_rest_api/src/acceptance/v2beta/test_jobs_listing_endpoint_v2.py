@@ -51,6 +51,14 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
 
+    def test_duration(self):
+        import re
+
+        regex = re.compile(r'\d+d\d+h\d+m\d+s')
+        data = super(TestJobsListingEndpointV2, self).test_get_route()
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
+        self.assertIsNotNone(regex.match(data['jobs'][0]['duration']))
+
     def test_sorted_start_time_descending(self):
         data = super(TestJobsListingEndpointV2, self).test_sorted_start_time_descending()
         self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
