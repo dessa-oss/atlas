@@ -18,7 +18,7 @@ class SelectColumnFilter extends Component {
       changeHiddenParams: this.props.changeHiddenParams,
       changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      updateSearchText: this.props.updateSearchText,
+      searchUserFilter: this.props.searchUserFilter,
       searchText: '',
       showAllFilters: false,
     };
@@ -42,10 +42,10 @@ class SelectColumnFilter extends Component {
   }
 
   onClearFilters() {
-    const { updateSearchText } = this.state;
+    const { searchUserFilter } = this.state;
     const emptyArray = [];
     this.setState({ changedParams: emptyArray, showAllFilters: true });
-    updateSearchText('');
+    searchUserFilter('');
     this.input.value = '';
   }
 
@@ -64,8 +64,8 @@ class SelectColumnFilter extends Component {
   }
 
   submitSearchText() {
-    const { searchText, updateSearchText } = this.state;
-    updateSearchText(searchText);
+    const { searchText, searchUserFilter } = this.state;
+    searchUserFilter(searchText);
   }
 
   render() {
@@ -95,7 +95,7 @@ SelectColumnFilter.propTypes = {
   changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
-  updateSearchText: PropTypes.func,
+  searchUserFilter: PropTypes.func,
   showAllFilters: PropTypes.bool,
 };
 
@@ -105,7 +105,7 @@ SelectColumnFilter.defaultProps = {
   changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
-  updateSearchText: () => {},
+  searchUserFilter: () => {},
   showAllFilters: false,
 };
 

@@ -6,13 +6,16 @@ import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
 import JobActions from '../../actions/JobListActions';
+import CommonActions from '../../actions/CommonActions';
 
 const isMetric = true;
+const noneHidden = [];
 
 class JobTableHeader extends Component {
   constructor(props) {
     super(props);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
+    this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
@@ -24,6 +27,7 @@ class JobTableHeader extends Component {
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
+      searchText: '',
     };
   }
 
@@ -45,6 +49,10 @@ class JobTableHeader extends Component {
     this.setState({ isShowingUserFilter: !isShowingUserFilter });
   }
 
+  searchUserFilter(searchText) {
+    this.setState({ searchText });
+  }
+
   toggleStatusFilter() {
     const { isShowingStatusFilter } = this.state;
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
@@ -61,16 +69,20 @@ class JobTableHeader extends Component {
       updateHiddenStatus,
       rowNumbers,
       jobRows,
+      searchText,
     } = this.state;
 
     let userFilter = null;
     if (isShowingUserFilter) {
       const allUsers = JobActions.getAllJobUsers(jobs);
+      const nameArray = CommonActions.getFlatArray(allUsers);
+      const filteredUsers = CommonActions.formatColumns(nameArray, noneHidden, searchText);
       userFilter = (
         <UserFilter
-          columns={allUsers}
+          columns={filteredUsers}
           toggleShowingFilter={this.toggleUserFilter}
           changeHiddenParams={updateHiddenStatus}
+          searchUserFilter={this.searchUserFilter}
         />
       );
     }
