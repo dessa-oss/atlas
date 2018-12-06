@@ -76,7 +76,7 @@ class JobDataRedis(object):
         status = self._add_get_to_pipe('state')
         start_time = self._add_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_get_to_pipe('completed_time').then(self._make_float)
-        input_parameter_keys = self._pipe.smembers('projects:{}:input_parameter_keys'.format(self._project_name)).then(self._deserialize_dictionary)
+        input_parameter_names = self._pipe.smembers('projects:{}:input_parameter_names'.format(self._project_name)).then(self._deserialize_dictionary)
 
         list_of_properties = Promise.all(
             [
@@ -87,7 +87,7 @@ class JobDataRedis(object):
                 status,
                 start_time,
                 completed_time,
-                input_parameter_keys
+                input_parameter_names
             ]
         )
 
@@ -102,13 +102,13 @@ class JobDataRedis(object):
                                 status,
                                 start_time,
                                 completed_time,
-                                input_parameter_keys):
+                                input_parameter_names):
             return {
                 'project_name': self._project_name,
                 'job_id': self._job_id,
                 'user': user,
                 'job_parameters': job_parameters,
-                'input_params': self._index_input_param(input_parameters, input_parameter_keys),
+                'input_params': self._index_input_param(input_parameters, input_parameter_names),
                 'output_metrics': output_metrics,
                 'status': status,
                 'start_time': start_time,
@@ -159,8 +159,8 @@ class JobDataRedis(object):
             return time_string
         return float(time_string)
 
-    def _index_input_param(self, input_params, input_parameter_keys):
-        stage_ranks = self._get_stage_ranks(input_parameter_keys)
+    def _index_input_param(self, input_params, input_parameter_names):
+        stage_ranks = self._get_stage_ranks(input_parameter_names)
         for param in input_params:
             stage_rank = stage_ranks[param['stage_uuid']]
             param['argument']['name'] += '_' + str(stage_rank)

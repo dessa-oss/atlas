@@ -29,7 +29,7 @@ class TestJobDataRedis(unittest.TestCase):
         self._redis.rpush('jobs:{}:{}'.format(job_id, parameter), data)
 
     def _sadd_redis_input_param(self, project_name, data):
-        self._redis.sadd('projects:{}:input_parameter_keys'.format(project_name), data)
+        self._redis.sadd('projects:{}:input_parameter_names'.format(project_name), data)
 
     def _load_data_new_job(self, job_id, data, project_name):
         set_parameter_name = ['project', 'start_time',
@@ -41,7 +41,7 @@ class TestJobDataRedis(unittest.TestCase):
                 self._set_redis(job_id, key, value)
             if key in rpush_parameter_name:
                 self._rpush_redis(job_id, key, value)
-            if key == 'input_parameter_keys':
+            if key == 'input_parameter_names':
                 self._sadd_redis_input_param(project_name, value)
 
     def _sadd_redis_project_name(self, project_name, job_id):
@@ -60,7 +60,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'dead',
             'start_time': '456',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'idk','stage_uuid': '978','time': 12314})
+            'input_parameter_names': json.dumps({'parameter_name': 'idk','stage_uuid': '978','time': 12314})
         }
         job_id = 'the boy who lived'
         redis_pipe = RedisPipelineWrapper(self._redis.pipeline())
@@ -96,7 +96,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})
         }
         redis_pipe = RedisPipelineWrapper(self._redis.pipeline())
         job_data = JobDataRedis(redis_pipe, job_id, project_name)
@@ -133,7 +133,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})  
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})  
         }
         
 
@@ -170,7 +170,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})          
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})          
         }
 
         self._sadd_redis_project_name(project_name, job_id_1)
@@ -209,7 +209,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})                
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid,'time': 12314})                
         }
 
         self._sadd_redis_project_name(project_name, job_id_1)
@@ -299,7 +299,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid_1,'time': 12314})  
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid_1,'time': 12314})  
         }
         
 
@@ -349,7 +349,7 @@ class TestJobDataRedis(unittest.TestCase):
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123',
-            'input_parameter_keys': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid_1,'time': 12314})  
+            'input_parameter_names': json.dumps({'parameter_name': 'dun','stage_uuid': stage_uuid_1,'time': 12314})  
         }
 
         self._sadd_redis_project_name(project_name, job_id_1)
