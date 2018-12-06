@@ -16,12 +16,17 @@ class InputParameterKeys(AttributeKeyList):
     """
 
     def _get_attribute(self, message):
+        import time, json
         parameter_list = message['input_parameters']
         parameters = {}
         for parameter in parameter_list:
+            stage_uuid = parameter['stage_uuid']
             parameter_name = parameter['argument']['name']
             parameter_value = parameter['argument']['value']
-            parameters[parameter_name] = parameter_value
+            key = json.dumps({'parameter_name': parameter_name,
+                              'stage_uuid': stage_uuid,
+                              'time': time.time()})
+            parameters[key] = parameter_value
         return parameters
 
     def _get_attribute_key(self):

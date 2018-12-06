@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock
+import unittest, json
+from mock import Mock, patch
 
 from foundations_contrib.consumers.jobs.queued.input_parameter_keys import InputParameterKeys
 
@@ -17,23 +17,33 @@ class TestInputParameterKeys(unittest.TestCase):
         self._redis = Mock()
         self._consumer = InputParameterKeys(self._redis)
 
-    def test_call_saved_run_data_keys(self):
-        input_parameters = [{'argument': {
-            'name': 'number_of_neurons', 'value': 3434}, 'stage_uuid': 'stage1'}]
+    @patch('time.time')
+    def test_call_saved_run_data_keys(self, mock_time):
+        mock_time.return_value = 123
+        input_parameters = [{'argument': {'name': 'number_of_neurons', 'value': 3434}, 'stage_uuid': 'stage1'}]
         self._consumer.call({'project_name': 'here be dragons',
                              'input_parameters': input_parameters}, None, None)
-        self._redis.sadd.assert_called_with(
-            'projects:here be dragons:input_parameter_names', 'number_of_neurons')
+        expected_value = {'parameter_name': 'number_of_neurons',
+                          'stage_uuid': 'stage1',
+                          'time': 123}
+        self._redis.sadd.assert_called_with('projects:here be dragons:input_parameter_names', json.dumps(expected_value))
 
-    def test_call_saved_run_data_keys_different_keys(self):
+    @patch('time.time')
+    def test_call_saved_run_data_keys_different_keys(self, mock_time):
+        mock_time.return_value = 123
         input_parameters = [
             {'argument': {'name': 'hidden_layers', 'value': 7777}, 'stage_uuid': 'stage1'}]
         self._consumer.call({'project_name': 'here be dragons',
                              'input_parameters': input_parameters}, None, None)
+        expected_value = {'parameter_name': 'hidden_layers',
+                    'stage_uuid': 'stage1',
+                    'time': 123}
         self._redis.sadd.assert_called_with(
-            'projects:here be dragons:input_parameter_names', 'hidden_layers')
+            'projects:here be dragons:input_parameter_names', json.dumps(expected_value))
 
-    def test_call_saved_run_data_keys_multiple_keys(self):
+    @patch('time.time')
+    def test_call_saved_run_data_keys_multiple_keys(self, mock_time):
+        mock_time.return_value = 123
         input_parameters = [
             {'argument': {'name': 'shown_layers', 'value': 7777},
                 'stage_uuid': 'stage1'},
@@ -41,15 +51,25 @@ class TestInputParameterKeys(unittest.TestCase):
         ]
         self._consumer.call({'project_name': 'here be dragons',
                              'input_parameters': input_parameters}, None, None)
+        expected_value_1 = {'parameter_name': 'shown_layers',
+            'stage_uuid': 'stage1',
+            'time': 123}
+        expected_value_2 = {'parameter_name': 'neurons',
+            'stage_uuid': 'stage1',
+            'time': 123}
         self._redis.sadd.assert_any_call(
-            'projects:here be dragons:input_parameter_names', 'shown_layers')
+            'projects:here be dragons:input_parameter_names', json.dumps(expected_value_1))
         self._redis.sadd.assert_any_call(
-            'projects:here be dragons:input_parameter_names', 'neurons')
+            'projects:here be dragons:input_parameter_names', json.dumps(expected_value_2))
 
-    def test_call_saved_run_data_keys_different_project_name(self):
-        input_parameters = [
-            {'argument': {'name': 'hidden_layers', 'value': 7777}, 'stage_uuid': 'stage1'}]
+    @patch('time.time')
+    def test_call_saved_run_data_keys_different_project_name(self, mock_time):
+        mock_time.return_value = 123
+        input_parameters = [{'argument': {'name': 'hidden_layers', 'value': 7777}, 'stage_uuid': 'stage1'}]
         self._consumer.call({'project_name': 'here be sheep',
                              'input_parameters': input_parameters}, None, None)
+        expected_value_1 = {'parameter_name': 'hidden_layers',
+            'stage_uuid': 'stage1',
+            'time': 123}
         self._redis.sadd.assert_called_with(
-            'projects:here be sheep:input_parameter_names', 'hidden_layers')
+            'projects:here be sheep:input_parameter_names', json.dumps(expected_value_1))
