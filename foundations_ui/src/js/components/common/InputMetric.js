@@ -6,8 +6,6 @@ import CommonActions from '../../actions/CommonActions';
 class InputMetric extends Component {
   constructor(props) {
     super(props);
-    this.resizeCells = this.resizeCells.bind(this);
-    this.isCellWidthSame = this.isCellWidthSame.bind(this);
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.updateSearchText = this.updateSearchText.bind(this);
     this.state = {
@@ -15,7 +13,6 @@ class InputMetric extends Component {
       hiddenInputParams: [],
       allInputParams: this.props.allInputParams,
       jobs: [],
-      cellWidths: new Array(this.props.allInputParams.length),
       isMetric: this.props.isMetric,
       searchText: '',
     };
@@ -25,20 +22,7 @@ class InputMetric extends Component {
     this.setState({
       allInputParams: nextProps.allInputParams,
       jobs: nextProps.jobs,
-      cellWidths: new Array(nextProps.allInputParams.length),
     });
-  }
-
-  resizeCells(colIndex, newWidth) {
-    const { cellWidths } = this.state;
-    if (this.isCellWidthSame(cellWidths[colIndex], newWidth)) {
-      cellWidths[colIndex] = newWidth;
-      this.forceUpdate();
-    }
-  }
-
-  isCellWidthSame(oldWidth, newWidth) {
-    return (oldWidth !== newWidth);
   }
 
   changeHiddenParams(hiddenParams) {
@@ -53,17 +37,17 @@ class InputMetric extends Component {
 
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric, searchText,
+      header, hiddenInputParams, allInputParams, jobs, isMetric, searchText,
     } = this.state;
 
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, this.resizeCells, hiddenInputParams,
+      allInputParams, hiddenInputParams,
     );
-    const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams, hiddenInputParams);
+    const rows = CommonActions.getInputMetricRows(jobs, isMetric, allInputParams, hiddenInputParams);
 
     return (
-      <div className="input-metric-container">
+      <div className="job-static-columns-container">
         <TableSectionHeader
           header={header}
           changeHiddenParams={this.changeHiddenParams}
@@ -73,9 +57,13 @@ class InputMetric extends Component {
           searchText={searchText}
           isMetric={isMetric}
         />
-        <div className="input-metric-column-header-container">
-          {inputParams}
-          {rows}
+        <div className="input-metric-header-row-container">
+          <div className="input-metric-column-container column-header">
+            {inputParams}
+          </div>
+          <div className="input-metric-column-container">
+            {rows}
+          </div>
         </div>
       </div>
     );

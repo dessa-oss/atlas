@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import JobTable from '../../js/components/JobListPage/JobTable';
+import TableStaticColumns from '../../js/components/JobListPage/TableStaticColumns';
 import { shallow, mount } from 'enzyme';
 import configureTests from '../setupTests';
 
 configureTests();
 
-it('Shallow Renders Job Table', () => {
-  const wrapper = shallow(<JobTable/>);
+it('Shallow Renders TableStaticColumns', () => {
+  const wrapper = shallow(<TableStaticColumns/>);
   expect(wrapper).toMatchSnapshot();
 });

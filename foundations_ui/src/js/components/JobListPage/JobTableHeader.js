@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import CommonActions from '../../actions/CommonActions';
-import JobColumnHeader from '../common/JobColumnHeader';
-import TableSectionHeader from '../common/TableSectionHeader';
+import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
+import JobActions from '../../actions/JobListActions';
 
-const isStatus = true;
 const isMetric = true;
 
 class JobTableHeader extends Component {
@@ -15,23 +13,30 @@ class JobTableHeader extends Component {
     super(props);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
-    this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
       jobs: this.props.jobs,
       isShowingUserFilter: false,
       isShowingStatusFilter: false,
-      statuses: [
-        { name: 'Completed', hidden: false },
-        { name: 'Processing', hidden: false },
-        { name: 'Error', hidden: false },
-      ],
+      updateHiddenStatus: this.props.updateHiddenStatus,
+      statuses: this.props.statuses,
+      rowNumbers: this.props.rowNumbers,
+      jobRows: this.props.jobRows,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ allInputParams: nextProps.allInputParams, jobs: nextProps.jobs, allMetrics: nextProps.allMetrics });
+    this.setState(
+      {
+        allInputParams: nextProps.allInputParams,
+        jobs: nextProps.jobs,
+        allMetrics: nextProps.allMetrics,
+        statuses: nextProps.statuses,
+        jobRows: nextProps.jobRows,
+        rowNumbers: nextProps.rowNumbers,
+      },
+    );
   }
 
   toggleUserFilter() {
@@ -44,14 +49,6 @@ class JobTableHeader extends Component {
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
   }
 
-  updateHiddenStatus(hiddenFields) {
-    const { statuses } = this.state;
-    const statusNamesArray = statuses.map(status => status.name);
-    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
-    this.setState({ statuses: formattedColumns });
-    this.forceUpdate();
-  }
-
   render() {
     const {
       allInputParams,
@@ -60,11 +57,21 @@ class JobTableHeader extends Component {
       isShowingUserFilter,
       isShowingStatusFilter,
       statuses,
+      updateHiddenStatus,
+      rowNumbers,
+      jobRows,
     } = this.state;
 
     let userFilter = null;
     if (isShowingUserFilter) {
-      userFilter = <UserFilter />;
+      const allUsers = JobActions.getAllJobUsers(jobs);
+      userFilter = (
+        <UserFilter
+          columns={allUsers}
+          toggleShowingFilter={this.toggleUserFilter}
+          changeHiddenParams={updateHiddenStatus}
+        />
+      );
     }
 
     let statusFilter = null;
@@ -81,7 +88,7 @@ class JobTableHeader extends Component {
         <StatusFilter
           columns={statuses}
           toggleShowingFilter={this.toggleStatusFilter}
-          changeHiddenParams={this.updateHiddenStatus}
+          changeHiddenParams={updateHiddenStatus}
           hiddenInputParams={hiddenInputParams}
         />
       );
@@ -89,7 +96,12 @@ class JobTableHeader extends Component {
 
     return (
       <div className="job-list-container">
-        <TableSectionHeader />
+        <TableStaticColumns
+          jobRows={jobRows}
+          rowNumbers={rowNumbers}
+          toggleUserFilter={this.toggleUserFilter}
+          toggleStatusFilter={this.toggleStatusFilter}
+        />
         <InputMetric
           header="input parameter"
           allInputParams={allInputParams}
@@ -101,18 +113,6 @@ class JobTableHeader extends Component {
           jobs={jobs}
           isMetric={isMetric}
         />
-        <div className="job-column-header-container">
-          <JobColumnHeader title="Start Time" className="start-time-offset" />
-          <JobColumnHeader
-            title="Status"
-            isStatus={isStatus}
-            className="status-offset"
-            toggleFilter={this.toggleStatusFilter}
-          />
-          <JobColumnHeader title="Job ID" className="job-id-offset" />
-          <JobColumnHeader title="Duration" className="duration-offset" />
-          <JobColumnHeader title="User" className="user-offset" toggleFilter={this.toggleUserFilter} />
-        </div>
         {userFilter}
         {statusFilter}
       </div>
@@ -126,7 +126,10 @@ JobTableHeader.propTypes = {
   allMetrics: PropTypes.array,
   isShowingUserFilter: PropTypes.bool,
   isShowingStatusFilter: PropTypes.bool,
+  updateHiddenStatus: PropTypes.func,
   statuses: PropTypes.array,
+  rowNumbers: PropTypes.array,
+  jobRows: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -135,7 +138,10 @@ JobTableHeader.defaultProps = {
   allMetrics: [],
   isShowingUserFilter: false,
   isShowingStatusFilter: false,
+  updateHiddenStatus: () => {},
   statuses: [],
+  rowNumbers: [],
+  jobRows: [],
 };
 
 export default JobTableHeader;

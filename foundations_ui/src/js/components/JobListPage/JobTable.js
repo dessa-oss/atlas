@@ -7,67 +7,31 @@ import JobActions from '../../actions/JobListActions';
 class JobTable extends Component {
   constructor(props) {
     super(props);
-    this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
-    this.saveAPIJobs = this.saveAPIJobs.bind(this);
-    this.clearState = this.clearState.bind(this);
     this.state = {
-      isMount: false,
-      jobs: [],
-      isLoaded: false,
-      projectName: this.props.projectName,
-      allInputParams: [],
-      allMetrics: [],
+      jobs: this.props.jobs,
+      isLoaded: this.props.isLoaded,
+      allInputParams: this.props.allInputParams,
+      allMetrics: this.props.allMetrics,
+      statuses: this.props.statuses,
+      updateHiddenStatus: this.props.updateHiddenStatus,
     };
   }
 
-  async componentDidMount() {
-    this.setState({ isMount: true });
-    await this.getJobs();
-  }
-
-  componentWillUnmount() {
-    this.setState({ isMount: false });
-  }
-
-  async getInputParams() {
-    this.setState({ allInputParams: ['input1', 'input2', 'input3', 'input4', 'input5'] });
-  }
-
-  async getJobs() {
-    const { projectName } = this.state;
-    const apiJobs = await JobActions.getJobs(projectName);
-    this.formatAndSaveParams(apiJobs);
-  }
-
-  formatAndSaveParams(apiJobs) {
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      if (apiJobs != null) {
-        this.saveAPIJobs(apiJobs);
-      } else {
-        this.clearState();
-      }
-    }
-  }
-
-  saveAPIJobs(apiJobs) {
-    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
-    this.setState({
-      jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
-    });
-  }
-
-  clearState() {
-    this.setState({
-      jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
-    });
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        statuses: nextProps.statuses,
+        jobs: nextProps.jobs,
+        isLoaded: nextProps.isLoaded,
+        allInputParams: nextProps.allInputParams,
+        allMetrics: nextProps.allMetrics,
+      },
+    );
   }
 
   render() {
     const {
-      jobs, isLoaded, hiddenInputParams, allInputParams, allMetrics,
+      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus,
     } = this.state;
 
     let jobRows = [];
@@ -86,7 +50,7 @@ class JobTable extends Component {
         });
       }
     } else {
-      jobRows = <p>Loading projects</p>;
+      jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
     }
 
     return (
@@ -96,13 +60,11 @@ class JobTable extends Component {
             allInputParams={allInputParams}
             allMetrics={allMetrics}
             jobs={jobs}
+            statuses={statuses}
+            updateHiddenStatus={updateHiddenStatus}
+            rowNumbers={rowNumbers}
+            jobRows={jobRows}
           />
-          <div className="table-row-number">
-            {rowNumbers}
-          </div>
-          <div className="job-table-row-container">
-            {jobRows}
-          </div>
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />
@@ -122,6 +84,8 @@ JobTable.propTypes = {
   projectName: PropTypes.string,
   allInputParams: PropTypes.array,
   allMetrics: PropTypes.array,
+  updateHiddenStatus: PropTypes.func,
+  statuses: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -131,6 +95,8 @@ JobTable.defaultProps = {
   projectName: '',
   allInputParams: [],
   allMetrics: [],
+  updateHiddenStatus: () => {},
+  statuses: [],
 };
 
 export default JobTable;

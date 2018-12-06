@@ -11,14 +11,16 @@
   &.user-filter-container {
     width: 270px;
     position: absolute;
-    left: 26.3%;
+    left: $user-filter-left;
+    top: $user-filter-top;
   }
 
   &.status-filter-container {
     width: 225px;
     position: absolute;
-    left: 8%;
+    left: $status-filter-left;
     padding-top: 5px;
+    top: $status-filter-top;
 
     .column-filter-header {
       height: 50px;

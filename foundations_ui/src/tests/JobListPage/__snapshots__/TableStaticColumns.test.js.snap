@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders TableStaticColumns 1`] = `
+<div
+  className="job-static-columns-container"
+>
+  <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
+    header=""
+    hiddenInputParams={Array []}
+    isMetric={false}
+    isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
+  />
+  <div
+    className="full-height"
+  >
+    <div
+      className="job-column-header-container"
+    >
+      <JobColumnHeader
+        className="static-header"
+        containerClass="job-column-header"
+        isStatus={false}
+        title="Start Time"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-status-header"
+        containerClass="job-column-header"
+        isStatus={true}
+        title="Status"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        containerClass="job-column-header"
+        isStatus={false}
+        title="Job ID"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        containerClass="job-column-header"
+        isStatus={false}
+        title="Duration"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        containerClass="job-column-header"
+        isStatus={false}
+        title="User"
+        toggleFilter={[Function]}
+      />
+    </div>
+    <div
+      className="table-row-number"
+    />
+    <div
+      className="job-table-row-container"
+    />
+  </div>
+</div>
+`;

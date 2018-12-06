@@ -75,6 +75,42 @@ const nonConstParam = {
 const isMetric = true;
 const noMetric = false;
 const columns = ['abc', 'm1', 'm2', 'm3'];
+const projectName = 'project name';
+const noHiddenStatusFilter = [
+  { name: 'Completed', hidden: false },
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+];
+const hiddenStatusFilter = [
+  { name: 'Processing', hidden: false },
+  { name: 'Error', hidden: false },
+  { name: 'Completed', hidden: true },
+];
+const filters = [
+  { column: 'Status', value: 'Error' },
+  { column: 'User', value: 'Buck' },
+];
+const emptyFilters = [];
+const filterToRemove = { column: 'Status', value: 'Error' };
+const jobs = [
+  {
+    user: 'user1'
+  },
+  {
+    user: 'duplicateUser'
+  },
+  {
+    user: 'duplicateUser'
+  },
+];
+const url = 'localhost/';
+const isFirst = true;
+const isNotFirst = false;
+const status = { name: 'Error', hidden: false };
+const colName = 'myCol';
+const colValue = 'myVal';
+const hasFilter = false;
+const noFilter = true;
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -302,4 +338,100 @@ it('getInputMetricValue no metric non const', () => {
 it('get AllMetrics', () => {
   const metrics = JobActions.getAllMetrics(allJobs);
   expect(metrics.length).toBe(3);
+});
+
+it('getBaseJobListingURL', () => {
+  const URL = JobActions.getBaseJobListingURL(projectName);
+  expect(URL).toBe('projects/project name/job_listing');
+});
+
+it('getFilterURL', () => {
+  const URL = JobActions.getFilterURL(hiddenStatusFilter);
+  expect(URL).toBe('status=Processing,Error');
+});
+
+it('areStatusesHidden hidden', () => {
+  const areHidden = JobActions.areStatusesHidden(hiddenStatusFilter);
+  expect(areHidden).toBe(true)
+});
+
+it('areStatusesHidden not hidden', () => {
+  const areHidden = JobActions.areStatusesHidden(noHiddenStatusFilter);
+  expect(areHidden).toBe(false)
+});
+
+it('getAllFilters', () => {
+  const updatedFilters = JobActions.getAllFilters(filters, hiddenStatusFilter);
+  expect(updatedFilters.length).toBe(3);
+
+});
+
+it('getStatusFilters', () => {
+  const updatedFilters = JobActions.getStatusFilters(filters, hiddenStatusFilter);
+  expect(updatedFilters.length).toBe(3);
+});
+
+it('removeFilter', () => {
+  const updatedFilters = JobActions.removeFilter(filters, filterToRemove);
+  expect(updatedFilters.length).toBe(1);
+  expect(updatedFilters[0].value).toBe('Buck');
+});
+
+it('getAllJobUsers', () => {
+  const allUsers = JobActions.getAllJobUsers(jobs);
+  expect(allUsers.length).toBe(2);
+});
+
+it('addtoURL, first status', () => {
+  const updatedUrl = JobActions.addToURL(url, isFirst, status);
+  expect(updatedUrl).toBe('localhost/status=Error');
+});
+
+it('addtoURL, not first status', () => {
+  const updatedUrl = JobActions.addToURL(url, isNotFirst, status);
+  expect(updatedUrl).toBe('localhost/,Error');
+});
+
+it('getFilterObject', () => {
+  const filteredObject = JobActions.getFilterObject(colName, colValue);
+  expect(filteredObject).toEqual({ column: 'myCol', value: 'myVal' });
+});
+
+it('addToURLNotHidden, not hidden', () => {
+  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  expect(updatedUrl).toBe('localhost/status=Error');
+});
+
+it('addToURLNotHidden, hidden', () => {
+  status.hidden = true;
+  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  expect(updatedUrl).toBe('localhost/');
+});
+
+it('getOldStatusFilters', () => {
+  const oldFilters = JobActions.getOldStatusFilters(filters);
+  expect(oldFilters.length).toBe(1);
+  expect(oldFilters[0].column).toBe('User');
+});
+
+it('addNewStatusFilters', () => {
+  const newFilters = [];
+  JobActions.addNewStatusFilters(hiddenStatusFilter, newFilters);
+  expect(newFilters.length).toBe(2);
+});
+
+it('getUpdatedStatusesFromOldStatuses', () => {
+  const newStatuses = [];
+  JobActions.getUpdatedStatusesFromOldStatuses(filters, status, isNotFirst, newStatuses);
+  expect(newStatuses.length).toBe(1);
+});
+
+it('updateStatusesIfNoFilters, has filters', () => {
+  JobActions.updateStatusesIfNoFilters(hasFilter, hiddenStatusFilter);
+  expect(hiddenStatusFilter[2].hidden).toBe(true);
+});
+
+it('updateStatusesIfNoFilters, no filters', () => {
+  JobActions.updateStatusesIfNoFilters(noFilter, hiddenStatusFilter);
+  expect(hiddenStatusFilter[0].hidden).toBe(false);
 });

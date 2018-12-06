@@ -3,8 +3,8 @@
   display: inline-block;
   vertical-align: middle;
   border-bottom: 1px solid $color-border-bottom;
-  width: $table-section-width;
-  height: 100%;
+  width: 100%;
+  height: $table-row-width;
   overflow: scroll;
   
   .job-cell:first-child() {
@@ -33,6 +33,8 @@
   width: 30px;
   margin-left: -29px;
   text-align: center;
+  height: $row-number-height;
+  overflow-y: scroll;
   p {
     color: $color-9c-grey;
     height: $row-height;
@@ -46,8 +48,8 @@
   bottom: 0;
   background: $color-background-grey;
   width: calc(100% - 30px );
-  height: 30px;
-  line-height: 30px;
+  height: $pagination-height;
+  line-height: $pagination-height;
   border: 1px solid $color-border-bottom;
   text-align: right;
   padding: 0px 15px;
