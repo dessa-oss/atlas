@@ -99,10 +99,12 @@ class CommonActions {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
+        const cellType = this.getInputMetricCellType(input);
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
           isError={isError}
+          cellType={cellType}
         />);
       } else {
         cells.push(null);
