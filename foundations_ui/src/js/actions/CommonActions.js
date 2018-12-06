@@ -131,8 +131,8 @@ class CommonActions {
     return rows;
   }
 
-  static getInputMetricCellPClass(isError) {
-    return isError ? 'font-bold error' : 'font-bold';
+  static getInputMetricCellPClass(isError, cellType) {
+    return isError ? `error type-${cellType}` : `type-${cellType}`;
   }
 
   static getInputMetricCellDivClass(isError) {
