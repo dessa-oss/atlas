@@ -89,16 +89,9 @@ class TestJobListingV2(unittest.TestCase):
 
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
-        import datetime
+        from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
 
-        fake_now_return_value = datetime.datetime.utcfromtimestamp(1005000000)
-
-        class FakeDateTime(datetime.datetime):
-            @staticmethod
-            def now():
-                return fake_now_return_value
-
-        datetime.datetime = FakeDateTime
+        fake_current_datetime(1005000000)
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -150,6 +143,8 @@ class TestJobListingV2(unittest.TestCase):
         )
 
         result = Job.all(project_name='random test project').evaluate()
+
+        restore_real_current_datetime()
 
         expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)

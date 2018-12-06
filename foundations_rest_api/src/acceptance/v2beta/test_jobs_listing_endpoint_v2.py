@@ -13,13 +13,24 @@ from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = ['start_time', 'status']
-    filtering_columns = [{'name': 'job_id',
-                          'test_values': ('00000000-0000-0000-0000-000000000000', 'my job 1')},
-                         {'name': 'status',
-                          'test_values': ('queued', 'running')},
-                         {'name': 'user',
-                          'test_values': ('beethoven', 'soju hero')}
-                        ]
+    filtering_columns = [
+        {
+            'name': 'job_id',
+            'test_values': ('00000000-0000-0000-0000-000000000000', 'my job 1')
+        },
+        {
+            'name': 'status',
+            'test_values': ('queued', 'running')
+        },
+        {
+            'name': 'user',
+            'test_values': ('beethoven', 'soju hero')
+        },
+        {
+            'name': 'duration',
+            'test_values': ('1_0_0_0', '2_0_0_0')
+        }
+    ]
 
     @classmethod
     def setUpClass(klass):
@@ -37,13 +48,10 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def _setup_three_jobs(klass):
-        from time import sleep
         klass._pipeline_context.provenance.project_name = klass._project_name
-        klass._make_running_job('00000000-0000-0000-0000-000000000000', 'soju hero')
-        sleep(0.01)
-        klass._make_completed_job('my job 1', 'beethoven')
-        sleep(0.01)
-        klass._make_completed_job('my job 2', 'mozart')
+        klass._make_running_job('00000000-0000-0000-0000-000000000000', 'soju hero', 99999999)
+        klass._make_completed_job('my job 1', 'beethoven', 100000000, 100172800)
+        klass._make_completed_job('my job 2', 'mozart', 123456789, 123555555)
 
     def test_get_route(self):
         data = super(TestJobsListingEndpointV2, self).test_get_route()
@@ -161,3 +169,18 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         data = custom_test_method(self)
         self.assertEqual(len(data['jobs']), 1)
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_filter_duration_range(self):
+        data = super(TestJobsListingEndpointV2, self).test_filter_duration_range()
+        self.assertEqual(len(data['jobs']), 2)
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+
+    def test_filter_duration_exact_match_one_option(self):
+        data = super(TestJobsListingEndpointV2, self).test_filter_duration_exact_match_one_option()
+        self.assertEqual(len(data['jobs']), 0)
+
+    def test_filter_duration_exact_match_two_options(self):
+        data = super(TestJobsListingEndpointV2, self).test_filter_duration_exact_match_two_options()
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
