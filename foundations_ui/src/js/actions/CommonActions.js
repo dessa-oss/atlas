@@ -80,10 +80,12 @@ class CommonActions {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
         const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        const cellType = this.getInputMetricCellType(input);
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
           isError={isError}
+          cellType={cellType}
         />);
       }
     });
@@ -179,6 +181,14 @@ class CommonActions {
   static elementsWidthLargerThanParent(elementWidth, parentWidth) {
     return elementWidth > parentWidth;
   }
+
+  static getInputMetricCellType(inputMetric) {
+    if (inputMetric && inputMetric.type) {
+      return inputMetric.type;
+    }
+    return 'not-available';
+  }
+
 
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950

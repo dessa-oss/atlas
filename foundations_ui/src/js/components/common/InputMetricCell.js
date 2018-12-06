@@ -8,6 +8,7 @@ class InputMetricCell extends Component {
     this.state = {
       value: this.props.value,
       isError: this.props.isError,
+      cellType: this.props.cellType,
     };
   }
 
@@ -16,7 +17,7 @@ class InputMetricCell extends Component {
   }
 
   render() {
-    const { value, isError } = this.state;
+    const { value, isError, cellType } = this.state;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError);
     const divClass = CommonActions.getInputMetricCellDivClass(isError);
@@ -32,11 +33,13 @@ class InputMetricCell extends Component {
 InputMetricCell.propTypes = {
   value: PropTypes.any,
   isError: PropTypes.bool,
+  cellType: PropTypes.string,
 };
 
 InputMetricCell.defaultProps = {
   value: '',
   isError: false,
+  cellType: '',
 };
 
 export default InputMetricCell;

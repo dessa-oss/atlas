@@ -285,3 +285,11 @@ it('elementsWidthLargerThanParent larger', () => {
   const isLarger = CommonActions.elementsWidthLargerThanParent(largeElementWidth, parentWidth);
   expect(isLarger).toBe(true);
 });
+
+it('getInputMetricCellType, has type', () => {
+
+});
+
+it('getInputMetricCellType, not available', () => {
+
+});
