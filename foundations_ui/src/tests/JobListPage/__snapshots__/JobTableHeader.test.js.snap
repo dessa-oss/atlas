@@ -1,32 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders Job Table Header 1`] = `
-<div
-  className="job-list-container"
+<ScrollSync
+  enabled={true}
+  horizontal={true}
+  proportional={true}
+  vertical={true}
 >
-  <TableStaticColumns
-    jobRows={Array []}
-    rowNumbers={Array []}
-    toggleStatusFilter={[Function]}
-    toggleUserFilter={[Function]}
-  />
-  <InputMetric
-    allInputParams={Array []}
-    cellWidths={Array []}
-    header="input parameter"
-    hiddenInputParams={Array []}
-    isMetric={false}
-    jobs={Array []}
-    searchText=""
-  />
-  <InputMetric
-    allInputParams={Array []}
-    cellWidths={Array []}
-    header="metrics"
-    hiddenInputParams={Array []}
-    isMetric={true}
-    jobs={Array []}
-    searchText=""
-  />
-</div>
+  <div
+    className="job-list-container"
+  >
+    <TableStaticColumns
+      jobRows={Array []}
+      rowNumbers={Array []}
+      toggleStatusFilter={[Function]}
+      toggleUserFilter={[Function]}
+    />
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      header="input parameter"
+      hiddenInputParams={Array []}
+      isMetric={false}
+      jobs={Array []}
+      searchText=""
+    />
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      header="metrics"
+      hiddenInputParams={Array []}
+      isMetric={true}
+      jobs={Array []}
+      searchText=""
+    />
+  </div>
+</ScrollSync>
 `;

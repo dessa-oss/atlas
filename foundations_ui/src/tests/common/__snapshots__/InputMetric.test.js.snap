@@ -20,9 +20,14 @@ exports[`Shallow Renders InputMetric 1`] = `
     <div
       className="input-metric-column-container column-header"
     />
-    <div
-      className="input-metric-column-container"
-    />
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="input-metric-column-container"
+      />
+    </ScrollSyncPane>
   </div>
 </div>
 `;

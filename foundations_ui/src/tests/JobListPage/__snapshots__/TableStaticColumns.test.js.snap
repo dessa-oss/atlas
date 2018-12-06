@@ -56,12 +56,22 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
         toggleFilter={[Function]}
       />
     </div>
-    <div
-      className="table-row-number"
-    />
-    <div
-      className="job-table-row-container"
-    />
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="table-row-number"
+      />
+    </ScrollSyncPane>
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="job-table-row-container"
+      />
+    </ScrollSyncPane>
   </div>
 </div>
 `;
