@@ -74,6 +74,23 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      &.type-not-available {
+        font-style: italic;
+        color: $color-9c-grey;
+        &.error {
+          color: $color-status-red;
+          opacity: 0.5;
+        }
+      }
+
+      &.type-number, &.type-array {
+        text-align: right;
+
+        &.string {
+          text-align: center;
+        }
+      }
     }
   }
 }

@@ -19,7 +19,7 @@ class InputMetricCell extends Component {
   render() {
     const { value, isError, cellType } = this.state;
 
-    const pClass = CommonActions.getInputMetricCellPClass(isError);
+    const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
     const divClass = CommonActions.getInputMetricCellDivClass(isError);
 
     return (
