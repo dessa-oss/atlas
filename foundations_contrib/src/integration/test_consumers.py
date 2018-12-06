@@ -42,6 +42,7 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.models.project_listing import ProjectListing
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
+        import json
 
         def callback(random_input_data):
             pass
@@ -66,7 +67,12 @@ class TestConsumers(unittest.TestCase):
 
         input_parameter_key = self._input_parameter_key(self._project_name)
         input_parameter_names = self._redis.smembers(input_parameter_key)
-        self.assertEqual(set([b'random_input_data']), input_parameter_names)
+        for param in input_parameter_names:
+            param = json.loads(param.decode())
+            self.assertEqual('random_input_data', param['parameter_name'])
+            self.assertEqual('21aad1de62dcd003b4d28909bd2add8431fceec7', param['stage_uuid'])
+            self.assertTrue(time() - param['time'] < 0.1)
+        
 
         queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
         queued_jobs = self._redis.smembers(queued_job_key)
