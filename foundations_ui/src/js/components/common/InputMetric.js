@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ScrollSyncPane } from 'react-scroll-sync';
 import TableSectionHeader from './TableSectionHeader';
 import CommonActions from '../../actions/CommonActions';
 
@@ -61,9 +62,11 @@ class InputMetric extends Component {
           <div className="input-metric-column-container column-header">
             {inputParams}
           </div>
-          <div className="input-metric-column-container">
-            {rows}
-          </div>
+          <ScrollSyncPane group="vertical">
+            <div className="input-metric-column-container">
+              {rows}
+            </div>
+          </ScrollSyncPane>
         </div>
       </div>
     );
