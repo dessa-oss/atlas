@@ -121,10 +121,38 @@ class TestJobDataProducers(unittest.TestCase):
 
         input_parameter_names = self._redis.smembers(
             'projects:project_with_successful_jobs:input_parameter_names')
-        input_parameter_names = set([data.decode()
-                                     for data in input_parameter_names])
-        self.assertEqual(
-            set(['some_argument', 'some_placeholder', 'some_stage']), input_parameter_names)
+
+        new_input_parameter_names = []
+        for parameter in input_parameter_names:
+            parameter = json.loads(parameter.decode())
+            new_input_parameter_names.append(parameter)
+
+        input_parameter_1, input_parameter_2, input_parameter_3, input_parameter_4 = new_input_parameter_names
+
+        self.assertTrue(current_time - input_parameter_1['time'] < 10)
+        self.assertTrue(current_time - input_parameter_2['time'] < 10)
+        self.assertTrue(current_time - input_parameter_3['time'] < 10)
+        self.assertTrue(current_time - input_parameter_4['time'] < 10)
+
+        param_name_set = set([input_parameter_1['parameter_name'],
+                              input_parameter_2['parameter_name'],
+                              input_parameter_3['parameter_name'],
+                              input_parameter_4['parameter_name']])
+        expected_set = set(
+            ['some_placeholder', 'no_param_stage', 'some_stage', 'some_argument'])
+        self.assertEqual(param_name_set, expected_set)
+
+        stage_uuid_set = set([input_parameter_1['stage_uuid'],
+                              input_parameter_2['stage_uuid'],
+                              input_parameter_3['stage_uuid'],
+                              input_parameter_4['stage_uuid']])
+
+        expected_set = set(['94fc8f23ef6dced1090999229ff6f378260a640d',
+                            '94fc8f23ef6dced1090999229ff6f378260a640d',
+                            '94fc8f23ef6dced1090999229ff6f378260a640d',
+                            'efae5c309a72efdc06171132798547e1142bcb84'])
+
+        self.assertEqual(stage_uuid_set, expected_set)
 
         user_name = self._redis.get('jobs:successful_job:user').decode()
         self.assertEqual('a_very_successful_user', user_name)
@@ -158,7 +186,7 @@ class TestJobDataProducers(unittest.TestCase):
         serialized_input_parameters = self._redis.get(
             'jobs:successful_job:input_parameters').decode()
         input_parameters = json.loads(serialized_input_parameters)
-        print(input_parameters)
+        
         expected_input_parameters = [
             {
                 'argument': {
