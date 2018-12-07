@@ -129,10 +129,10 @@ class TestJobDataProducers(unittest.TestCase):
 
         input_parameter_1, input_parameter_2, input_parameter_3, input_parameter_4 = new_input_parameter_names
 
-        self.assertTrue(current_time - input_parameter_1['time'] < 10)
-        self.assertTrue(current_time - input_parameter_2['time'] < 10)
-        self.assertTrue(current_time - input_parameter_3['time'] < 10)
-        self.assertTrue(current_time - input_parameter_4['time'] < 10)
+        self.assertTrue(current_time - input_parameter_1['time'] < 60)
+        self.assertTrue(current_time - input_parameter_2['time'] < 60)
+        self.assertTrue(current_time - input_parameter_3['time'] < 60)
+        self.assertTrue(current_time - input_parameter_4['time'] < 60)
 
         param_name_set = set([input_parameter_1['parameter_name'],
                               input_parameter_2['parameter_name'],
