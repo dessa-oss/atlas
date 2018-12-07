@@ -69,7 +69,8 @@ class FormatInputParameters(object):
 
         times = sorted(stage_uuid_rank.values())
 
-        for key, value in stage_uuid_rank.items():
+        for key in sorted(stage_uuid_rank.keys()):
+            value = stage_uuid_rank[key]
             stage_uuid_rank[key] = times.index(value)
             times[times.index(value)] = 'x'
         return stage_uuid_rank
