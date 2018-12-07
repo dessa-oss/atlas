@@ -35,3 +35,4 @@ from test.test_stage_parameter import TestStageParameter
 from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper
 from test.test_job_data_redis import TestJobDataRedis
 from test.test_job_data_shaper import TestJobDataShaper
+from test.test_format_input_parameters import TestFormatInputParameters

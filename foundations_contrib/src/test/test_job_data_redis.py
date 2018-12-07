@@ -261,4 +261,4 @@ class TestJobDataRedis(unittest.TestCase):
             'start_time': float('456'),
             'completed_time': float('123')
         }
-self.assertDictEqual(expected_result, result.get())
+        self.assertDictEqual(expected_result, result.get())

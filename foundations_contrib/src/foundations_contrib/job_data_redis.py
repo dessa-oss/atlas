@@ -147,4 +147,4 @@ class JobDataRedis(object):
     def _make_float(self, time_string):
         if time_string is None:
             return time_string
-return float(time_string)
+        return float(time_string)
