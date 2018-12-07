@@ -19,12 +19,12 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data(self, mock_shaper, mock, mock_input_param_formatter):
-        some_data = [{'input_parameters': 'here', 'job_parameters': 'something', 'output_metrics': 'idk'}]
+        some_data = [{'input_params': 'here', 'job_parameters': 'something', 'output_metrics': 'idk'}]
         mock.return_value = some_data
         mock_shaper.return_value = 'idk'
         mock_input_param_formatter.return_value = 'here'
 
-        some_shaped_data = [{'input_parameters': 'here', 'job_parameters': 'something', 'output_metrics': 'idk'}]
+        some_shaped_data = [{'input_params': 'here', 'job_parameters': 'something', 'output_metrics': 'idk'}]
 
         self.assertEqual(CompletedJobDataListing.completed_job_data(
             'project_name'), some_shaped_data)
@@ -37,12 +37,12 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_different_values(self,  mock_shaper, mock, mock_input_param_formatter):
-        some_data = [{'input_parameters': 'why', 'job_parameters': 'where', 'output_metrics': 'how'}]
+        some_data = [{'input_params': 'why', 'job_parameters': 'where', 'output_metrics': 'how'}]
         mock.return_value = some_data
         mock_shaper.return_value = 'how'
         mock_input_param_formatter.return_value = 'why'
 
-        some_shaped_data = [{'input_parameters': 'why', 'job_parameters': 'where', 'output_metrics': 'how'}]
+        some_shaped_data = [{'input_params': 'why', 'job_parameters': 'where', 'output_metrics': 'how'}]
 
         self.assertEqual(CompletedJobDataListing.completed_job_data(
             'project_name'), some_shaped_data)

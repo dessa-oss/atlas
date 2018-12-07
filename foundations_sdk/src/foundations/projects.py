@@ -52,8 +52,21 @@ def _update_datetime(job_data):
 def _update_job_data(job_data, input_param_list, output_metrics_list):
     output_metrics_list.append(job_data['output_metrics'])
     del job_data['output_metrics']
+    _shape_input_parameters(job_data, input_param_list)
+    # _fill_job_parameters(job_data, input_param_list)
 
-    _fill_job_parameters(job_data, input_param_list)
+def _shape_input_parameters(job_data, input_param_list):
+    input_param = job_data['input_params']
+    del job_data['input_params']
+    del job_data['job_parameters']
+
+    input_param_dict = {}
+
+    for param in input_param:
+        input_param_dict[param['name']] = param['value']
+
+    input_param_list.append(input_param_dict)
+
 
 
 def _fill_job_parameters(job_data, input_param_list):

@@ -50,36 +50,16 @@ class TestProjects(unittest.TestCase):
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
-            {'name': 'b', 'stage_uuid': '1', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
-            {'name': 'c', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
-            {'name': 'd', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
+            {'name': 'b', 'value': '1', 'type': 'string', 'source': 'constant'},
+            {'name': 'c', 'value': '2', 'type': 'string', 'source': 'constant'},
+            {'name': 'd', 'value': '3', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
-            [{'project_name': 'project1', 'b': 'stagely', 'c': 5, 'd': 35, 'loss': 100}])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1'), check_like=True)
-
-    @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name(self, mock):
-        from pandas import DataFrame
-        from pandas.util.testing import assert_frame_equal
-
-        input_params = [
-            {'name': 'b_0', 'stage_uuid': '1', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
-            {'name': 'c_1', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
-            {'name': 'd_2', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
-            {'name': 'd_3', 'stage_uuid': '4', 'value': {'type': 'constant', 'value': 45}},
-        ]
-        output_metrics = {'loss': 100}
-        mock.return_value = [{'project_name': 'project1', 'job_parameters': {
-            'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
-
-        expected_result = DataFrame(
-            [{'d_2': 35, 'd_3': 45, 'project_name': 'project1', 'loss': 100, 'c_1': 5, 'b_0': 'stagely'}])
+            [{'project_name': 'project1', 'b': '1', 'c': '2', 'd': '3', 'loss': 100}])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
             'project1'), check_like=True)
 
@@ -89,17 +69,17 @@ class TestProjects(unittest.TestCase):
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
-            {'name': 'b', 'stage_uuid': '3', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
-            {'name': 'c', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
-            {'name': 'd_0', 'stage_uuid': '1', 'value': {'type': 'constant', 'value': 35}},
-            {'name': 'd_1', 'stage_uuid': '4', 'value': {'type': 'constant', 'value': 45}},
+            {'name': 'b', 'value': '3', 'type': 'string', 'source': 'constant'},
+            {'name': 'c', 'value': '2', 'type': 'string', 'source': 'constant'},
+            {'name': 'd-0', 'value': '1', 'type': 'string', 'source': 'constant'},
+            {'name': 'd-1', 'value': '4', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
         mock.return_value = [{'project_name': 'project1', 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
-            [{'d_0': 35, 'd_1': 45, 'project_name': 'project1', 'loss': 100, 'c': 5, 'b': 'stagely'}])
+            [{'d-0': '1', 'd-1': '4', 'project_name': 'project1', 'loss': 100, 'c': '2', 'b': '3'}])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
             'project1'), check_like=True)
 
@@ -110,15 +90,15 @@ class TestProjects(unittest.TestCase):
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
-            {'name': 'b_0', 'stage_uuid': '1', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
-            {'name': 'c_1', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
-            {'name': 'd_2', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
+            {'name': 'b-0', 'value': '1', 'type': 'string', 'source': 'constant'},
+            {'name': 'c-1', 'value': '2', 'type': 'string', 'source': 'constant'},
+            {'name': 'd-2', 'value': '3', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
         input_params_2 = [
-            {'name': 'd_3', 'stage_uuid': '4', 'value': {'type': 'stage', 'stage_name': 'another stagel'}},
-            {'name': 'e_4', 'stage_uuid': '5', 'value': {'type': 'dynamic', 'name': 'bad'}},
-            {'name': 'f_5', 'stage_uuid': '6', 'value': {'type': 'constant', 'value': 97}},
+            {'name': 'd-3', 'value': '4', 'type': 'string', 'source': 'constant'},
+            {'name': 'e-4', 'value': '5', 'type': 'string', 'source': 'constant'},
+            {'name': 'f-5', 'value': '6', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics_2 = {'win': 56}
         mock.return_value = [
@@ -129,8 +109,8 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'project_name': 'project2', 'b_0': 'stagely','loss': 100, 'd_2': 35, 'c_1': 5},
-            {'e_4': 77, 'project_name': 'project2','win': 56, 'd_3': 'another stagel', 'f_5': 97},
+            {'project_name': 'project2', 'b-0': '1','loss': 100, 'd-2': '3', 'c-1': '2'},
+            {'e-4': '5', 'project_name': 'project2','win': 56, 'd-3': '4', 'f-5': '6'},
         ]
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
@@ -142,9 +122,9 @@ class TestProjects(unittest.TestCase):
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
-            {'name': 'b_0', 'stage_uuid': '1', 'value': {'type': 'stage', 'stage_name': 'stagely'}},
-            {'name': 'c_1', 'stage_uuid': '2', 'value': {'type': 'dynamic', 'name': 'a'}},
-            {'name': 'd_2', 'stage_uuid': '3', 'value': {'type': 'constant', 'value': 35}},
+            {'name': 'b-0', 'value': '1', 'type': 'string', 'source': 'constant'},
+            {'name': 'c-1', 'value': '2', 'type': 'string', 'source': 'constant'},
+            {'name': 'd-2', 'value': '3', 'type': 'string', 'source': 'constant'}
         ]
         output_metrics = {'loss': 100}
 
@@ -154,10 +134,10 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'project_name': 'project1', 'b_0': 'stagely',
-                'c_1': 5, 'd_2': 35, 'loss': 100},
+            {'project_name': 'project1', 'b-0': '1',
+                'c-1': '2', 'd-2': '3', 'loss': 100},
         ]
-        expected_result = DataFrame(expected_data, columns=['project_name', 'b_0', 'c_1', 'd_2', 'loss'])
+        expected_result = DataFrame(expected_data, columns=['project_name', 'b-0', 'c-1', 'd-2', 'loss'])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
 
     def test_get_metrics_for_all_jobs_is_defined_globally(self):
