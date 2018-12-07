@@ -49,7 +49,6 @@ class Job(PropertyModel):
 
     @staticmethod
     def _build_job_model(job_data):
-        # Job._reshape_input_params(job_data)
         Job._extract_job_parameters(job_data)
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)

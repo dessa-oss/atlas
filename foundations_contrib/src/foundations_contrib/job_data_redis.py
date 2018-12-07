@@ -9,6 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobDataRedis(object):
     """
     As below
+    
     Arguments:
         pipeline {redis.Redis().pipeline()} -- Redis pipeline instance
         job_id {str} -- Job id for job to fetch
@@ -22,9 +23,11 @@ class JobDataRedis(object):
     def get_all_jobs_data(project_name, redis_connection):
         """
         Gets all data related to jobs in a given project from Redis.
+
         Arguments:
             project_name {str} -- Name of project to fetch data for
             redis_connection {redis.Redis()} -- Redis connection to pipe to
+
         Returns:
             job_data {list} -- List with job data. Each element of the list contains a dictionary
              with project_name, job_id, user, job_parameters, input_params, output_metrics, status, start_time, completed_time.
@@ -58,6 +61,7 @@ class JobDataRedis(object):
     def get_job_data(self):
         """
         Gets all data related to a given job from Redis.
+
         Returns:
             results {dict} -- Dictionary with project_name, job_id, user, job_parameters, input_params, output_metrics, status, start_time, completed_time.
         """
