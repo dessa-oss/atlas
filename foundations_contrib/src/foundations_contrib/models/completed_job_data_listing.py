@@ -31,7 +31,6 @@ class CompletedJobDataListing(object):
         jobs_data = JobDataRedis.get_all_jobs_data(project_name, redis_connection)
         
         for job in jobs_data:
-            print('job', job)
             job['input_params'] = FormatInputParameters(project_name, job['input_params'], job['job_parameters'], redis_connection).format_input_parameters()
             job['output_metrics'] = JobDataShaper.shape_output_metrics(job['output_metrics'])
 
