@@ -7,10 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class FormatInputParameters(object):
     
-    def __init__(self, project_name, input_parameters, redis):
+    def __init__(self, project_name, input_parameters, job_parameters, redis):
         self._project_name = project_name
         self._redis = redis
         self._input_parameters = input_parameters
+        self._job_parameters = job_parameters
     
     def format_input_parameters(self):
         from foundations_rest_api.v2beta.models.extract_type import extract_type
@@ -75,14 +76,13 @@ class FormatInputParameters(object):
     
             
     def _evaluate_input_param_value(self, param, stage_rank):
-        print(param)
         argument_value = param['argument']['value']
         if argument_value['type'] == 'stage':
             input_stage_rank = stage_rank[argument_value['stage_uuid']]
             value = '{}-{}'.format(argument_value['stage_name'], input_stage_rank)
             source = 'stage'
         elif argument_value['type'] == 'dynamic':
-            value = run_data[argument_value['name']]
+            value = self._job_parameters[argument_value['name']]
             source = 'placeholder'
         else:
             value = argument_value['value']

@@ -32,7 +32,7 @@ class TestFormatInputParameters(unittest.TestCase):
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': 'hi'}, 'stage_uuid': 'asdf'}]
         expected = {'asdf': 0}
-        result = FormatInputParameters(project_name, input_param, self._redis)._get_stage_rank()
+        result = FormatInputParameters(project_name, input_param, {}, self._redis)._get_stage_rank()
         self.assertEqual(expected, result)
     
     def test_format_input_parameters_one_constant_parameter(self):
@@ -41,10 +41,38 @@ class TestFormatInputParameters(unittest.TestCase):
         data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': {'value':'hi', 'type': 'constant'}}, 'stage_uuid': stage_uuid}]
+        job_param = {}
         expected = [{'name': 'ab-0',
                     'value': 'hi',
                     'type': 'string',
                     'source': 'constant'}]
-        result = FormatInputParameters(project_name, input_param, self._redis).format_input_parameters()
+        result = FormatInputParameters(project_name, input_param, job_param,  self._redis).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+    
+    def test_format_input_parameters_one_dynamic_parameter(self):
+        project_name = 'banana'
+        stage_uuid = 'gorilla'
+        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        self._load_input_parameter_name_data(project_name, data)
+        input_param = [{'argument':{'name': 'ab', 'value': {'name':'hi', 'type': 'dynamic'}}, 'stage_uuid': stage_uuid}]
+        job_param = {'hi': 'bye'}
+        expected = [{'name': 'ab-0',
+                    'value': 'bye',
+                    'type': 'string',
+                    'source': 'placeholder'}]
+        result = FormatInputParameters(project_name, input_param, job_param, self._redis).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+
+    def test_format_input_parameters_one_stage_parameter(self):
+        project_name = 'banana'
+        stage_uuid = 'gorilla'
+        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        self._load_input_parameter_name_data(project_name, data)
+        input_param = [{'argument':{'name': 'ab', 'value': {'stage_name':'hi', 'type': 'stage', 'stage_uuid': stage_uuid}}, 'stage_uuid': stage_uuid}]
+        expected = [{'name': 'ab-0',
+                    'value': 'hi-0',
+                    'type': 'string',
+                    'source': 'stage'}]
+        result = FormatInputParameters(project_name, input_param,{},  self._redis).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
 
