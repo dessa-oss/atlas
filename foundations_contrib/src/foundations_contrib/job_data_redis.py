@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobDataRedis(object):
     """
     As below
-    
+
     Arguments:
         pipeline {redis.Redis().pipeline()} -- Redis pipeline instance
         job_id {str} -- Job id for job to fetch
