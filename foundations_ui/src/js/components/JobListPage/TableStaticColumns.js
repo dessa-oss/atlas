@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ScrollSyncPane } from 'react-scroll-sync';
 import TableSectionHeader from '../common/TableSectionHeader';
 import JobColumnHeader from '../common/JobColumnHeader';
 
@@ -46,12 +47,16 @@ class TableStaticColumns extends Component {
             <JobColumnHeader title="Duration" className="static-header" />
             <JobColumnHeader title="User" className="static-header" toggleFilter={toggleUserFilter} />
           </div>
-          <div className="table-row-number">
-            {rowNumbers}
-          </div>
-          <div className="job-table-row-container">
-            {jobRows}
-          </div>
+          <ScrollSyncPane group="vertical">
+            <div className="table-row-number">
+              {rowNumbers}
+            </div>
+          </ScrollSyncPane>
+          <ScrollSyncPane group="vertical">
+            <div className="job-table-row-container">
+              {jobRows}
+            </div>
+          </ScrollSyncPane>
         </div>
       </div>
     );

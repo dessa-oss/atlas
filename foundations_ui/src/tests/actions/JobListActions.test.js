@@ -300,11 +300,6 @@ it('getDurationClass seconds', () => {
   expect(timeUI).toBe(JSON.stringify(<span className="font-bold">30<span className="">s</span></span>));
 });
 
-it('getAllInputParams', () => {
-  const allParams = JobActions.getAllInputParams(allJobs);
-  expect(allParams.length).toBe(3);
-});
-
 it('getConstantInputParams all const', () => {
   const constInputParams = JobActions.getConstantInputParams(allJobs[0].input_params);
   expect(constInputParams.length).toBe(3);
@@ -333,11 +328,6 @@ it('getInputMetricValue no metric const', () => {
 it('getInputMetricValue no metric non const', () => {
   const value = JobActions.getInputMetricValue(nonConstParam, noMetric, columns);
   expect(value).toBe('123');
-});
-
-it('get AllMetrics', () => {
-  const metrics = JobActions.getAllMetrics(allJobs);
-  expect(metrics.length).toBe(3);
 });
 
 it('getBaseJobListingURL', () => {

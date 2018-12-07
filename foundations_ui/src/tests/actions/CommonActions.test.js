@@ -61,6 +61,7 @@ const jobs = [
     input_params: [
       {
         name: 'param1',
+        type: 'number',
       },
       {
         name: 'param2',
@@ -93,6 +94,7 @@ const border = 2;
 const smallElementWidth = 10;
 const parentWidth = 100;
 const largeElementWidth = 200;
+const cellType = 'number';
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -178,13 +180,13 @@ it('get InputMetricRows jobs', () => {
 });
 
 it('get InputMetricCellPClass', () => {
-  const metricClass = CommonActions.getInputMetricCellPClass(noError);
-  expect(metricClass).toBe('font-bold');
+  const metricClass = CommonActions.getInputMetricCellPClass(noError, cellType);
+  expect(metricClass).toBe('type-number');
 });
 
 it('get InputMetricCellPClass error', () => {
-  const metricClass = CommonActions.getInputMetricCellPClass(error);
-  expect(metricClass).toBe('font-bold error');
+  const metricClass = CommonActions.getInputMetricCellPClass(error, cellType);
+  expect(metricClass).toBe('error type-number');
 });
 
 it('get InputMetricCellDivClass', () => {
@@ -284,4 +286,14 @@ it('elementsWidthLargerThanParent smaller', () => {
 it('elementsWidthLargerThanParent larger', () => {
   const isLarger = CommonActions.elementsWidthLargerThanParent(largeElementWidth, parentWidth);
   expect(isLarger).toBe(true);
+});
+
+it('getInputMetricCellType, has type', () => {
+  const type = CommonActions.getInputMetricCellType(jobs[1].input_params[0]);
+  expect(type).toBe('number');
+});
+
+it('getInputMetricCellType, not available', () => {
+  const type = CommonActions.getInputMetricCellType(jobs[1].input_params[1]);
+  expect(type).toBe('not-available');
 });

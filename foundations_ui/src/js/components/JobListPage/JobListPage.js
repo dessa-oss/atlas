@@ -79,8 +79,8 @@ class JobListPage extends Component {
   }
 
   saveAPIJobs(apiJobs) {
-    const getAllInputParams = JobActions.getAllInputParams(apiJobs.jobs);
-    const getAllMetrics = JobActions.getAllMetrics(apiJobs.jobs);
+    const getAllInputParams = apiJobs.input_parameter_names;
+    const getAllMetrics = apiJobs.output_metric_names;
     this.setState({
       jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
     });
