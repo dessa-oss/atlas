@@ -53,7 +53,6 @@ def _update_job_data(job_data, input_param_list, output_metrics_list):
     output_metrics_list.append(job_data['output_metrics'])
     del job_data['output_metrics']
     _shape_input_parameters(job_data, input_param_list)
-    # _fill_job_parameters(job_data, input_param_list)
 
 def _shape_input_parameters(job_data, input_param_list):
     input_param = job_data['input_params']
@@ -66,34 +65,6 @@ def _shape_input_parameters(job_data, input_param_list):
         input_param_dict[param['name']] = param['value']
 
     input_param_list.append(input_param_dict)
-
-
-
-def _fill_job_parameters(job_data, input_param_list):
-    job_parameters = job_data['job_parameters']
-    del job_data['job_parameters']
-
-    input_params = job_data['input_params']
-    del job_data['input_params']
-
-    input_param_dict = {}
-
-    for param in input_params:
-        stage_name = param['name']
-        stage_value = _stage_value(param, job_parameters)
-        input_param_dict[stage_name] = stage_value
-        
-    input_param_list.append(input_param_dict)
-
-def _stage_value(parameter, job_parameters):
-    if parameter['value']['type'] == 'stage':
-        return parameter['value']['stage_name']
-
-    if parameter['value']['type'] == 'dynamic':
-        stage_value_key = parameter['value']['name']
-        return job_parameters[stage_value_key]
-
-    return parameter['value']['value']
 
 
 def _project_job_data(project_name):
