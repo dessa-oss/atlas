@@ -4,4 +4,5 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 12 2018
 """
+from test.filters.parsers.test_datetime_parser import TestDateTimeParser
 from test.filters.parsers.test_elapsed_time_parser import TestElapsedTimeParser
