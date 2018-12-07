@@ -10,10 +10,6 @@ class JobDataShaper(object):
     """
     As below
     """
-
-    def __init__(self, jobs_data):
-        self._jobs_data = jobs_data
-
     @staticmethod
     def shape_data(jobs_data):
         """
@@ -33,6 +29,19 @@ class JobDataShaper(object):
                 job['input_params'])
 
         return jobs_data
+    
+    @staticmethod
+    def shape_output_metrics(output_metrics):
+        """
+        Changes a list to a dict
+
+        Arguments:
+            output_metrics {list} -- List of a job's output_metrics
+        
+        Return:
+            output_metrics {dict} -- Dictionary of a job's output metrics
+        """
+        return JobDataShaper._change_list_to_dict(output_metrics)
 
     @staticmethod
     def _change_list_to_dict(output_metrics):
