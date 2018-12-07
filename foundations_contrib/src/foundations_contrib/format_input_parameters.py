@@ -13,6 +13,7 @@ class FormatInputParameters(object):
         self._input_parameters = input_parameters
     
     def format_input_parameters(self):
+        from foundations_rest_api.v2beta.models.extract_type import extract_type
         stage_rank = self._get_stage_rank()
 
         formatted_input_parameters = []
@@ -49,7 +50,7 @@ class FormatInputParameters(object):
         return deserialized_set
 
         
-    def _index_input_param(self, param, stage_rank):
+    def _index_input_param(self, param, stage_ranks):
         stage_rank = stage_ranks[param['stage_uuid']]
         name = '{}-{}'.format(param['argument']['name'], str(stage_rank))
         return name
@@ -74,6 +75,7 @@ class FormatInputParameters(object):
     
             
     def _evaluate_input_param_value(self, param, stage_rank):
+        print(param)
         argument_value = param['argument']['value']
         if argument_value['type'] == 'stage':
             input_stage_rank = stage_rank[argument_value['stage_uuid']]
@@ -86,11 +88,3 @@ class FormatInputParameters(object):
             value = argument_value['value']
             source = 'constant'
         return value, source
-
-#desired end state
-        #    {
-        #         'name': name,
-        #         'value': value,
-        #         'type': value_type,
-        #         'source': source,
-        #     }
