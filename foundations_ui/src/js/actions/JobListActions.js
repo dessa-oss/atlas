@@ -19,13 +19,13 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter) {
-    if (!this.areStatusesHidden(statusFilter)) {
+  static filterJobs(projectName, statusFilter, userFilter) {
+    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter);
+    const filterURL = this.getFilterURL(statusFilter, userFilter);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -210,12 +210,23 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter) {
+  static getFilterURL(statusFilter, userFilter) {
     let url = '';
-    let isFirstStatus = true;
-    statusFilter.forEach((status) => {
-      url = this.addToURLNotHidden(url, isFirstStatus, status);
-      isFirstStatus = this.setIsFirst(status, isFirstStatus);
+    let isFirstFilter = true;
+    if (this.areStatusesHidden(statusFilter)) {
+      let isFirstStatus = true;
+      statusFilter.forEach((status) => {
+        url = this.addStatusToURLNotHidden(url, isFirstStatus, status);
+        isFirstStatus = this.setIsFirst(status, isFirstStatus);
+      });
+      isFirstFilter = false;
+    }
+    let isFirstUser = true;
+    url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+    userFilter.forEach((user) => {
+      url = this.addToURLNotHidden(url, isFirstUser, user, 'user');
+      isFirstUser = false;
+      isFirstFilter = false;
     });
 
     return url;
@@ -271,20 +282,20 @@ class ProjectActions {
     }
   }
 
-  static addToURLNotHidden(url, isFirstStatus, status) {
+  static addStatusToURLNotHidden(url, isFirstStatus, status) {
     let newUrl = url;
     if (status.hidden === false) {
-      newUrl = this.addToURL(url, isFirstStatus, status);
+      newUrl = this.addToURL(url, isFirstStatus, status.name, 'status');
     }
     return newUrl;
   }
 
-  static addToURL(url, isFirstStatus, status) {
+  static addToURL(url, isFirst, value, colName) {
     let newURL = url;
-    if (isFirstStatus) {
-      newURL += 'status='.concat(status.name);
+    if (isFirst) {
+      newURL += colName.concat('=').concat(value);
     } else {
-      newURL += ','.concat(status.name);
+      newURL += ','.concat(value);
     }
     return newURL;
   }
@@ -351,6 +362,20 @@ class ProjectActions {
       }
     });
     return users;
+  }
+
+  static addToURLNotHidden(url, isFirst, value, columnName) {
+    let newUrl = url;
+    newUrl = this.addToURL(url, isFirst, value, columnName);
+    return newUrl;
+  }
+
+  static addAndIfNotFirstFilter(url, isFirst) {
+    let newUrl = url;
+    if (!isFirst) {
+      newUrl += '&';
+    }
+    return newUrl;
   }
 }
 

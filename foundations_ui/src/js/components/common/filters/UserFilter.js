@@ -26,18 +26,23 @@ class SelectColumnFilter extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ columns: nextProps.columns });
+    this.setState({ columns: nextProps.columns, changedParams: nextProps.hiddenInputParams });
   }
 
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
+    const {
+      changeHiddenParams, changedParams, toggleShowingFilter, searchUserFilter,
+    } = this.state;
+    this.setState({ searchText: '' });
     changeHiddenParams(changedParams);
+    searchUserFilter('');
     toggleShowingFilter();
   }
 
   onCancel() {
-    const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
+    const { toggleShowingFilter, searchUserFilter } = this.state;
+    this.setState({ changedParams: [], searchText: '' });
+    searchUserFilter('');
     toggleShowingFilter();
   }
 
@@ -69,7 +74,7 @@ class SelectColumnFilter extends Component {
   }
 
   render() {
-    const { columns, showAllFilters } = this.state;
+    const { columns, showAllFilters, changedParams } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
     );

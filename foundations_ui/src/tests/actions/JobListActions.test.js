@@ -387,14 +387,14 @@ it('getFilterObject', () => {
   expect(filteredObject).toEqual({ column: 'myCol', value: 'myVal' });
 });
 
-it('addToURLNotHidden, not hidden', () => {
-  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+it('addStatusToURLNotHidden, not hidden', () => {
+  const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
   expect(updatedUrl).toBe('localhost/status=Error');
 });
 
-it('addToURLNotHidden, hidden', () => {
+it('addStatusToURLNotHidden, hidden', () => {
   status.hidden = true;
-  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
   expect(updatedUrl).toBe('localhost/');
 });
 
@@ -424,4 +424,12 @@ it('updateStatusesIfNoFilters, has filters', () => {
 it('updateStatusesIfNoFilters, no filters', () => {
   JobActions.updateStatusesIfNoFilters(noFilter, hiddenStatusFilter);
   expect(hiddenStatusFilter[0].hidden).toBe(false);
+});
+
+it('addToURLNotHidden', () => {
+
+});
+
+it('addAndIfNotFirstFilter', () => {
+
 });
