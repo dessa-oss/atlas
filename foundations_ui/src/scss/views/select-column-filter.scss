@@ -3,6 +3,12 @@
   padding: 15px 15px 5px 15px;
   width: calc(100% - 30px - 2px);
 
+  .column-filter-header {
+    text-align: left;
+    border: none;
+    height: inherit;
+  }
+
   button:not(.button-icon) {
     margin-top: 5px;
     margin-right: 0px;
@@ -24,7 +30,7 @@
         input {
           padding-left: $margin-width;
           width: calc(100% - #{$margin-width} - #{$margin-width} - (4 * #{$border-thin}));
-          height: 30px;
+          height: $general-form-input-height;
           outline: none;
         }
 
@@ -53,12 +59,6 @@
     padding-top: 5px;
     top: $status-filter-top;
 
-    .column-filter-header {
-      text-align: left;
-      border: none;
-      height: inherit;
-    }
-
     p {
       display: inline-block;
     }
@@ -80,6 +80,31 @@
         text-align: right;
         font-style: italic;
       }
+    }
+  }
+
+  &.job-id-filter-container {
+    width: 415px;
+    position: absolute;
+    left: $status-filter-left;
+    padding-top: 5px;
+    top: $status-filter-top;
+
+    input {
+      width: calc(100% - 18px);
+      outline: none;
+      border: solid 1px $color-border-bottom;
+      height: $general-form-input-height;
+      padding-left: 15px;
+    }
+
+    p {
+      display: inline-block;
+    }
+
+    .subtitle {
+      color: $color-9c-grey;
+      font-style: italic;
     }
   }
 

@@ -5,6 +5,7 @@ $minimum-screen-width: 1280px;
 // Common Vars
 $border-thin: 1px;
 $margin-width: 15px;
+$general-form-input-height: 30px;
 
 // Job Table Vars
 $row-height: 35px;
@@ -29,6 +30,7 @@ $static-column-header-text-width: 80px;
 $table-row-width: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
 $number-sections: 3;
+
 
 // Toolbar Vars
 $toolbar-height: 25px;
