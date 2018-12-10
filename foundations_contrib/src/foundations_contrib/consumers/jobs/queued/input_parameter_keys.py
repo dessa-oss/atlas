@@ -6,42 +6,23 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_contrib.consumers.jobs.queued.mixins.attribute_key_list import AttributeKeyList
-import time, json
 
 
 class InputParameterKeys(AttributeKeyList):
     """Stores a list of all common stage input parameter keys for a project in redis
-
+    
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
 
-    def _get_attribute(self, message):   
+    def _get_attribute(self, message):
         parameter_list = message['input_parameters']
         parameters = {}
         for parameter in parameter_list:
-            self._add_stage_uuid_from_stage(parameter, parameters)
-
-            if parameter['argument']['value']['type'] == 'stage':
-                self._add_stage_uuid_from_stage_with_no_input_params(parameter, parameters)
+            parameter_name = parameter['argument']['name']
+            parameter_value = parameter['argument']['value']
+            parameters[parameter_name] = parameter_value
         return parameters
 
     def _get_attribute_key(self):
         return 'input_parameter_names'
-
-    def _add_stage_uuid_from_stage_with_no_input_params(self, parameter, parameters):
-        parameter_name = 'no_param_stage'
-        stage_uuid = parameter['argument']['value']['stage_uuid']
-        key = json.dumps({'parameter_name': parameter_name,
-            'stage_uuid': stage_uuid,
-            'time': time.time()})
-        parameters[key] = 'no_param_stage'
-    
-    def _add_stage_uuid_from_stage(self, parameter, parameters):
-        stage_uuid = parameter['stage_uuid']
-        parameter_name = parameter['argument']['name']
-        parameter_value = parameter['argument']['value']
-        key = json.dumps({'parameter_name': parameter_name,
-                            'stage_uuid': stage_uuid,
-                            'time': time.time()})
-        parameters[key] = parameter_value

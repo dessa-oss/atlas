@@ -121,31 +121,30 @@ class TestJobDataProducers(unittest.TestCase):
 
         input_parameter_names = self._redis.smembers(
             'projects:project_with_successful_jobs:input_parameter_names')
+        input_parameter_names = set([data.decode()
+                                     for data in input_parameter_names])
+        self.assertEqual(
+            set(['some_argument', 'some_placeholder', 'some_stage']), input_parameter_names)
 
-        new_input_parameter_names = []
-        for parameter in input_parameter_names:
-            parameter = json.loads(parameter.decode())
-            new_input_parameter_names.append(parameter)
+        stage_times = self._redis.smembers(
+            'projects:project_with_successful_jobs:stage_time')
 
-        input_parameter_1, input_parameter_2, input_parameter_3, input_parameter_4 = new_input_parameter_names
+        new_stage_times = []
+        for stage_time in stage_times:
+            stage_time = json.loads(stage_time.decode())
+            new_stage_times.append(stage_time)
 
-        self.assertTrue(current_time - input_parameter_1['time'] < 60)
-        self.assertTrue(current_time - input_parameter_2['time'] < 60)
-        self.assertTrue(current_time - input_parameter_3['time'] < 60)
-        self.assertTrue(current_time - input_parameter_4['time'] < 60)
+        stage_time_1, stage_time_2, stage_time_3, stage_time_4 = new_stage_times
 
-        param_name_set = set([input_parameter_1['parameter_name'],
-                              input_parameter_2['parameter_name'],
-                              input_parameter_3['parameter_name'],
-                              input_parameter_4['parameter_name']])
-        expected_set = set(
-            ['some_placeholder', 'no_param_stage', 'some_stage', 'some_argument'])
-        self.assertEqual(param_name_set, expected_set)
+        self.assertTrue(current_time - stage_time_1['time'] < 60)
+        self.assertTrue(current_time - stage_time_2['time'] < 60)
+        self.assertTrue(current_time - stage_time_3['time'] < 60)
+        self.assertTrue(current_time - stage_time_4['time'] < 60)
 
-        stage_uuid_set = set([input_parameter_1['stage_uuid'],
-                              input_parameter_2['stage_uuid'],
-                              input_parameter_3['stage_uuid'],
-                              input_parameter_4['stage_uuid']])
+        stage_uuid_set = set([stage_time_1['stage_uuid'],
+                              stage_time_2['stage_uuid'],
+                              stage_time_3['stage_uuid'],
+                              stage_time_4['stage_uuid']])
 
         expected_set = set(['94fc8f23ef6dced1090999229ff6f378260a640d',
                             '94fc8f23ef6dced1090999229ff6f378260a640d',
