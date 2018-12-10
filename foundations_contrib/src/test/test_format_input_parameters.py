@@ -17,11 +17,11 @@ class TestFormatInputParameters(unittest.TestCase):
         self._redis.flushdb()
     
     def _load_input_parameter_name_data(self, project_name, data):
-        self._redis.sadd('projects:{}:input_parameter_names'.format(project_name), data)
+        self._redis.sadd('projects:{}:stage_time'.format(project_name), data)
 
     def test_get_stage_rank(self):
         project_name = 'apple'
-        data = json.dumps({'parameter_name': 'something', 'stage_uuid': 'asdf', 'time': 1234})
+        data = json.dumps({'stage_uuid': 'asdf', 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': 'hi'}, 'stage_uuid': 'asdf'}]
         expected = {'asdf': 0}
@@ -31,7 +31,7 @@ class TestFormatInputParameters(unittest.TestCase):
     def test_format_input_parameters_one_constant_parameter(self):
         project_name = 'banana'
         stage_uuid = 'gorilla'
-        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        data = json.dumps({'stage_uuid': stage_uuid, 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'owl', 'value': {'value':'red', 'type': 'constant'}}, 'stage_uuid': stage_uuid}]
         job_param = {}
@@ -45,7 +45,7 @@ class TestFormatInputParameters(unittest.TestCase):
     def test_format_input_parameters_one_constant_parameter_different_type(self):
         project_name = 'banana'
         stage_uuid = 'gorilla'
-        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        data = json.dumps({'stage_uuid': stage_uuid, 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': {'value': 123, 'type': 'constant'}}, 'stage_uuid': stage_uuid}]
         job_param = {}
@@ -59,7 +59,7 @@ class TestFormatInputParameters(unittest.TestCase):
     def test_format_input_parameters_one_dynamic_parameter(self):
         project_name = 'banana'
         stage_uuid = 'gorilla'
-        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        data = json.dumps({'stage_uuid': stage_uuid, 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': {'name':'hi', 'type': 'dynamic'}}, 'stage_uuid': stage_uuid}]
         job_param = {'hi': 'bye'}
@@ -73,7 +73,7 @@ class TestFormatInputParameters(unittest.TestCase):
     def test_format_input_parameters_one_stage_parameter(self):
         project_name = 'banana'
         stage_uuid = 'gorilla'
-        data = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid, 'time': 1234})
+        data = json.dumps({'stage_uuid': stage_uuid, 'time': 1234})
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': {'stage_name':'hi', 'type': 'stage', 'stage_uuid': stage_uuid}}, 'stage_uuid': stage_uuid}]
         expected = [{'name': 'ab-0',
@@ -87,8 +87,8 @@ class TestFormatInputParameters(unittest.TestCase):
         project_name = 'banana'
         stage_uuid_1 = 'gorilla'
         stage_uuid_2 = 'ape'
-        data_1 = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid_1, 'time': 1234})
-        data_2 = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid_2, 'time': 1300})
+        data_1 = json.dumps({'stage_uuid': stage_uuid_1, 'time': 1234})
+        data_2 = json.dumps({'stage_uuid': stage_uuid_2, 'time': 1300})
         data_2_5 = json.dumps({'parameter_name': 'blah', 'stage_uuid': stage_uuid_2, 'time': 1200})
         self._load_input_parameter_name_data(project_name, data_1)
         self._load_input_parameter_name_data(project_name, data_2)
@@ -111,8 +111,8 @@ class TestFormatInputParameters(unittest.TestCase):
         project_name = 'banana'
         stage_uuid_1 = 'gorilla'
         stage_uuid_2 = 'ape'
-        data_1 = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid_1, 'time': 1200})
-        data_2 = json.dumps({'parameter_name': 'something', 'stage_uuid': stage_uuid_2, 'time': 1300})
+        data_1 = json.dumps({'stage_uuid': stage_uuid_1, 'time': 1200})
+        data_2 = json.dumps({'stage_uuid': stage_uuid_2, 'time': 1300})
         data_2_5 = json.dumps({'parameter_name': 'blah', 'stage_uuid': stage_uuid_2, 'time': 1200})
         self._load_input_parameter_name_data(project_name, data_1)
         self._load_input_parameter_name_data(project_name, data_2)

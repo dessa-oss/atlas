@@ -43,9 +43,9 @@ class FormatInputParameters(object):
         )
 
     
-    def _get_input_parameter_names(self):
-        input_parameter_names = self._redis.smembers('projects:{}:input_parameter_names'.format(self._project_name))
-        return self._deserialize_set(input_parameter_names)
+    def _get_stage_times(self):
+        stage_times = self._redis.smembers('projects:{}:stage_time'.format(self._project_name))
+        return self._deserialize_set(stage_times)
     
     def _deserialize_set(self, params):
         import json
@@ -62,11 +62,11 @@ class FormatInputParameters(object):
         return name
 
     def _get_stage_rank(self):
-        input_param_names = self._get_input_parameter_names()
+        stage_times = self._get_stage_times()
         stage_uuid_rank = {}
 
-        for param in input_param_names:           
-            self._record_earliest_stage_time(param, stage_uuid_rank)
+        for stage_time in stage_times:           
+            self._record_earliest_stage_time(stage_time, stage_uuid_rank)
 
         times = sorted(stage_uuid_rank.values())
 
@@ -77,12 +77,12 @@ class FormatInputParameters(object):
 
         return stage_uuid_rank
     
-    def _record_earliest_stage_time(self, param, stage_uuid_rank):
-        if param['stage_uuid'] in stage_uuid_rank.keys():
-            if param['time'] < stage_uuid_rank[param['stage_uuid']]:
-                stage_uuid_rank[param['stage_uuid']] = param['time']
+    def _record_earliest_stage_time(self, stage_time, stage_uuid_rank):
+        if stage_time['stage_uuid'] in stage_uuid_rank.keys():
+            if stage_time['time'] < stage_uuid_rank[stage_time['stage_uuid']]:
+                stage_uuid_rank[stage_time['stage_uuid']] = stage_time['time']
         else:
-            stage_uuid_rank.update({param['stage_uuid']: param['time']})
+            stage_uuid_rank.update({stage_time['stage_uuid']: stage_time['time']})
             
     def _evaluate_input_param_value(self, param, stage_rank):
         argument_value = param['argument']['value']
