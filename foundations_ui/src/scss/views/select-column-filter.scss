@@ -8,6 +8,44 @@
     margin-right: 0px;
   }
 
+  &.number-filter-container {
+    width: 380px;
+    position: absolute;
+    left: $status-filter-left;
+    padding-top: 5px;
+    top: $status-filter-top;
+
+    .number-input-container {
+      white-space: nowrap;
+      margin-bottom: $margin-width;
+      div {
+        width: 50%;
+        display: inline-block;
+        input {
+          padding-left: $margin-width;
+          width: calc(100% - #{$margin-width} - #{$margin-width} - (4 * #{$border-thin}));
+          height: 30px;
+          outline: none;
+        }
+
+        &:nth-child(2) {
+          width: 18px;
+          margin-left: -4px;
+        }
+      }
+    }
+
+    .column-filter-header {
+      text-align: left;
+      border: none;
+      height: 45px;
+    }
+
+    p {
+      display: inline-block;
+    }
+  }
+
   &.duration-filter-container {
     width: 380px;
     position: absolute;
