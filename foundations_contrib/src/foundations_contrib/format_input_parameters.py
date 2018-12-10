@@ -14,29 +14,34 @@ class FormatInputParameters(object):
         self._job_parameters = job_parameters
     
     def format_input_parameters(self):
-        from foundations_rest_api.v2beta.models.extract_type import extract_type
         stage_rank = self._get_stage_rank()
 
         formatted_input_parameters = []
 
         for param in self._input_parameters:
-            param_name = self._index_input_param(param, stage_rank)
-            param_value, param_source = self._evaluate_input_param_value(param, stage_rank)
+            self._append_parameter_info(param, formatted_input_parameters, stage_rank)
 
-            value_type = extract_type(param_value)
-            if 'unknown' in value_type:
-                value_type = 'string'
-                param_value = type(param_value).__name__
-            
-            formatted_input_parameters.append(
-                {
-                    'name': param_name,
-                    'value': param_value,
-                    'type': value_type,
-                    'source': param_source
-                }
-            )
         return formatted_input_parameters
+    
+    def _append_parameter_info(self, param, formatted_input_parameters, stage_rank):
+        from foundations_rest_api.v2beta.models.extract_type import extract_type
+        param_name = self._index_input_param(param, stage_rank)
+        param_value, param_source = self._evaluate_input_param_value(param, stage_rank)
+
+        value_type = extract_type(param_value)
+        if 'unknown' in value_type:
+            value_type = 'string'
+            param_value = type(param_value).__name__
+        
+        formatted_input_parameters.append(
+            {
+                'name': param_name,
+                'value': param_value,
+                'type': value_type,
+                'source': param_source
+            }
+        )
+
     
     def _get_input_parameter_names(self):
         input_parameter_names = self._redis.smembers('projects:{}:input_parameter_names'.format(self._project_name))
@@ -61,11 +66,7 @@ class FormatInputParameters(object):
         stage_uuid_rank = {}
 
         for param in input_param_names:           
-            if param['stage_uuid'] in stage_uuid_rank.keys():
-                if param['time'] < stage_uuid_rank[param['stage_uuid']]:
-                    stage_uuid_rank[param['stage_uuid']] = param['time']
-            else:
-                stage_uuid_rank.update({param['stage_uuid']: param['time']})
+            self._record_earliest_stage_time(param, stage_uuid_rank)
 
         times = sorted(stage_uuid_rank.values())
 
@@ -73,8 +74,15 @@ class FormatInputParameters(object):
             value = stage_uuid_rank[key]
             stage_uuid_rank[key] = times.index(value)
             times[times.index(value)] = 'x'
+
         return stage_uuid_rank
     
+    def _record_earliest_stage_time(self, param, stage_uuid_rank):
+        if param['stage_uuid'] in stage_uuid_rank.keys():
+            if param['time'] < stage_uuid_rank[param['stage_uuid']]:
+                stage_uuid_rank[param['stage_uuid']] = param['time']
+        else:
+            stage_uuid_rank.update({param['stage_uuid']: param['time']})
             
     def _evaluate_input_param_value(self, param, stage_rank):
         argument_value = param['argument']['value']
