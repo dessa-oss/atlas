@@ -10,12 +10,12 @@ from mock import patch
 from foundations_contrib.models.completed_job_data_listing import CompletedJobDataListing
 from foundations_contrib.job_data_redis import JobDataRedis
 from foundations_contrib.job_data_shaper import JobDataShaper
-from foundations_contrib.format_input_parameters import FormatInputParameters
+from foundations_contrib.input_parameter_formatter import InputParameterFormatter
 
 
 class TestCompletedJobDataListing(unittest.TestCase):
 
-    @patch.object(FormatInputParameters, 'format_input_parameters')
+    @patch.object(InputParameterFormatter, 'format_input_parameters')
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data(self, mock_shaper, mock, mock_input_param_formatter):
@@ -33,7 +33,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
         mock_shaper.assert_called_once()
         mock_input_param_formatter.assert_called_once()
 
-    @patch.object(FormatInputParameters, 'format_input_parameters')
+    @patch.object(InputParameterFormatter, 'format_input_parameters')
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_different_values(self,  mock_shaper, mock, mock_input_param_formatter):

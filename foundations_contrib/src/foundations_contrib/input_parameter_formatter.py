@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class FormatInputParameters(object):
+class InputParameterFormatter(object):
     
     def __init__(self, project_name, input_parameters, job_parameters, redis):
         self._project_name = project_name

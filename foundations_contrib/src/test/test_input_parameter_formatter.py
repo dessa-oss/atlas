@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest, fakeredis, json
 from mock import MagicMock
 
-from foundations_contrib.format_input_parameters import FormatInputParameters
+from foundations_contrib.input_parameter_formatter import InputParameterFormatter
 
-class TestFormatInputParameters(unittest.TestCase):
+class TestInputParameterFormatter(unittest.TestCase):
     
     def setUp(self):
         self._redis = fakeredis.FakeStrictRedis()
@@ -25,7 +25,7 @@ class TestFormatInputParameters(unittest.TestCase):
         self._load_input_parameter_name_data(project_name, data)
         input_param = [{'argument':{'name': 'ab', 'value': 'hi'}, 'stage_uuid': 'asdf'}]
         expected = {'asdf': 0}
-        result = FormatInputParameters(project_name, input_param, {}, self._redis)._get_stage_rank()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis)._get_stage_rank()
         self.assertEqual(expected, result)
     
     def test_format_input_parameters_one_constant_parameter(self):
@@ -39,7 +39,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'value': 'red',
                     'type': 'string',
                     'source': 'constant'}]
-        result = FormatInputParameters(project_name, input_param, job_param,  self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, job_param,  self._redis).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
     
     def test_format_input_parameters_one_constant_parameter_different_type(self):
@@ -53,7 +53,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'value': 123,
                     'type': 'number',
                     'source': 'constant'}]
-        result = FormatInputParameters(project_name, input_param, job_param,  self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, job_param,  self._redis).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
     
     def test_format_input_parameters_one_dynamic_parameter(self):
@@ -67,7 +67,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'value': 'bye',
                     'type': 'string',
                     'source': 'placeholder'}]
-        result = FormatInputParameters(project_name, input_param, job_param, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, job_param, self._redis).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
 
     def test_format_input_parameters_one_stage_parameter(self):
@@ -80,7 +80,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'value': 'hi-0',
                     'type': 'string',
                     'source': 'stage'}]
-        result = FormatInputParameters(project_name, input_param,{},  self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param,{},  self._redis).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
     
     def test_format_input_parameters_two_stages(self):
@@ -104,7 +104,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'type': 'string',
                     'source': 'constant'},
                     ]
-        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
     
     def test_format_input_parameters_two_stages_same_time(self):
@@ -128,7 +128,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'type': 'string',
                     'source': 'constant'},
                     ]
-        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
     
     def test_format_input_parameter_adds_stages_when_stage_time_empty(self):
@@ -142,7 +142,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'type': 'string',
                     'source': 'constant'}
                     ]
-        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
     
     def test_format_input_parameter_adds_stages_when_stage_time_empty_but_stage_time(self):
@@ -159,7 +159,7 @@ class TestFormatInputParameters(unittest.TestCase):
                     'type': 'string',
                     'source': 'constant'}
                     ]
-        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
     
     def test_format_input_parameter_adds_stages_when_one_empty_argument_one_stage_time_argument(self):
@@ -181,6 +181,6 @@ class TestFormatInputParameters(unittest.TestCase):
                     'type': 'string',
                     'source': 'constant'},
                     ]
-        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        result = InputParameterFormatter(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
 
