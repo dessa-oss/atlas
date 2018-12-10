@@ -3,6 +3,12 @@
   padding: 15px 15px 5px 15px;
   width: calc(100% - 30px - 2px);
 
+  .column-filter-header {
+    text-align: left;
+    border: none;
+    height: inherit;
+  }
+
   button:not(.button-icon) {
     margin-top: 5px;
     margin-right: 0px;
@@ -14,12 +20,6 @@
     left: $status-filter-left;
     padding-top: 5px;
     top: $status-filter-top;
-
-    .column-filter-header {
-      text-align: left;
-      border: none;
-      height: inherit;
-    }
 
     p {
       display: inline-block;
@@ -51,12 +51,6 @@
     left: $status-filter-left;
     padding-top: 5px;
     top: $status-filter-top;
-
-    .column-filter-header {
-      text-align: left;
-      border: none;
-      height: inherit;
-    }
 
     input {
       width: calc(100% - 18px);
