@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ScrollSync } from 'react-scroll-sync';
 import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
@@ -95,27 +96,29 @@ class JobTableHeader extends Component {
     }
 
     return (
-      <div className="job-list-container">
-        <TableStaticColumns
-          jobRows={jobRows}
-          rowNumbers={rowNumbers}
-          toggleUserFilter={this.toggleUserFilter}
-          toggleStatusFilter={this.toggleStatusFilter}
-        />
-        <InputMetric
-          header="input parameter"
-          allInputParams={allInputParams}
-          jobs={jobs}
-        />
-        <InputMetric
-          header="metrics"
-          allInputParams={allMetrics}
-          jobs={jobs}
-          isMetric={isMetric}
-        />
-        {userFilter}
-        {statusFilter}
-      </div>
+      <ScrollSync>
+        <div className="job-list-container">
+          <TableStaticColumns
+            jobRows={jobRows}
+            rowNumbers={rowNumbers}
+            toggleUserFilter={this.toggleUserFilter}
+            toggleStatusFilter={this.toggleStatusFilter}
+          />
+          <InputMetric
+            header="input parameter"
+            allInputParams={allInputParams}
+            jobs={jobs}
+          />
+          <InputMetric
+            header="metrics"
+            allInputParams={allMetrics}
+            jobs={jobs}
+            isMetric={isMetric}
+          />
+          {userFilter}
+          {statusFilter}
+        </div>
+      </ScrollSync>
     );
   }
 }

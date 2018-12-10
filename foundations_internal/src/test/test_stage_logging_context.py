@@ -22,85 +22,85 @@ class TestStageLoggingContext(unittest.TestCase):
             self.key = key
             self.value = value
 
-    def test_log_metric_logs_key(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
+    def setUp(self):
+        self._logger = self.MockLogger()
+        self._context = StageLoggingContext(self._logger)
 
-        context.log_metric('loss', 0.554)
-        self.assertEqual('loss', logger.key)
+    def test_log_metric_logs_key(self):
+        self._context.log_metric('loss', 0.554)
+        self.assertEqual('loss', self._logger.key)
 
     def test_log_metric_logs_key_different_key(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
-
-        context.log_metric('accuracy', 0.554)
-        self.assertEqual('accuracy', logger.key)
+        self._context.log_metric('accuracy', 0.554)
+        self.assertEqual('accuracy', self._logger.key)
 
     def test_log_metric_logs_key_invalid_key_type(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
-
         with self.assertRaises(ValueError) as error_context:
-            context.log_metric(5, 0.554)
+            self._context.log_metric(5, 0.554)
 
         self.assertIn('Invalid metric name `5`', error_context.exception.args)
 
     def test_log_metric_logs_key_invalid_key_type_different_key(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
-
         with self.assertRaises(ValueError) as error_context:
-            context.log_metric(5.44, 0.554)
+            self._context.log_metric(5.44, 0.554)
 
         self.assertIn('Invalid metric name `5.44`',
                       error_context.exception.args)
 
     def test_log_metric_logs_value(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
-
-        context.log_metric('loss', 0.554)
-        self.assertEqual(0.554, logger.value)
+        self._context.log_metric('loss', 0.554)
+        self.assertEqual(0.554, self._logger.value)
 
     def test_log_metric_value_raises_exception_not_number_or_string(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
+        expected_error_message = 'Invalid metric with key="loss" of value=[2] with type <class \'list\'>. Value should be of type string or number'
 
         with self.assertRaises(TypeError) as metric:
-            context.log_metric('loss', [2])
-        self.assertEqual(metric.expected, TypeError)
+            self._context.log_metric('loss', [2])
+        self.assertEqual(str(metric.exception), expected_error_message)
+
+    def test_log_metric_value_raises_exception_not_number_or_string_with_different_key(self):
+        expected_error_message = 'Invalid metric with key="gain" of value=[2] with type <class \'list\'>. Value should be of type string or number'
+
+        with self.assertRaises(TypeError) as metric:
+            self._context.log_metric('gain', [2])
+        self.assertEqual(str(metric.exception), expected_error_message)
 
     def test_log_metric_value_raises_exception_not_number_or_string_different_value(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
+        expected_error_message = 'Invalid metric with key="loss" of value={\'a\': 22} with type <class \'dict\'>. Value should be of type string or number'
 
         with self.assertRaises(TypeError) as metric:
-            context.log_metric('loss', {"a": 22})
-        self.assertEqual(metric.expected, TypeError)
+            self._context.log_metric('loss', {"a": 22})
+        self.assertEqual(str(metric.exception), expected_error_message)
+
+    def test_log_metric_value_raises_exception_not_number_or_string_custom_class_using_default_repr(self):
+        class MyCoolClass(object):
+            def __init__(self):
+                pass
+
+        metric_value = MyCoolClass()
+        expected_error_message_format = 'Invalid metric with key="loss" of value={} with type {}. Value should be of type string or number'
+        expected_error_message = expected_error_message_format.format(metric_value, type(metric_value))
+
+        with self.assertRaises(TypeError) as metric:
+            self._context.log_metric('loss', metric_value)
+        self.assertEqual(str(metric.exception), expected_error_message)
 
     def test_log_metric_logs_value_different_value(self):
-        logger = self.MockLogger()
-        context = StageLoggingContext(logger)
-
-        context.log_metric('loss', 0.1554)
-        self.assertEqual(0.1554, logger.value)
+        self._context.log_metric('loss', 0.1554)
+        self.assertEqual(0.1554, self._logger.value)
 
     def test_change_logger_changes_logger(self):
-        logger = self.MockLogger()
         logger_two = self.MockLogger()
-        context = StageLoggingContext(logger)
 
-        with context.change_logger(logger_two):
-            context.log_metric('loss', 0.1554)
+        with self._context.change_logger(logger_two):
+            self._context.log_metric('loss', 0.1554)
             self.assertEqual(0.1554, logger_two.value)
 
     def test_change_logger_resets_logger(self):
-        logger = self.MockLogger()
         logger_two = self.MockLogger()
-        context = StageLoggingContext(logger)
 
-        with context.change_logger(logger_two):
+        with self._context.change_logger(logger_two):
             pass
 
-        context.log_metric('loss', 0.1554)
-        self.assertEqual(0.1554, logger.value)
+        self._context.log_metric('loss', 0.1554)
+        self.assertEqual(0.1554, self._logger.value)

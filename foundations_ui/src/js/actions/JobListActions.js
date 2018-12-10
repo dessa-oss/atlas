@@ -155,18 +155,6 @@ class ProjectActions {
     }
   }
 
-  static getAllInputParams(allJobs) {
-    const allInputParams = [];
-    allJobs.forEach((job) => {
-      job.input_params.forEach((input) => {
-        if (!allInputParams.includes(input.name)) {
-          allInputParams.push(input.name);
-        }
-      });
-    });
-    return allInputParams;
-  }
-
   static getConstantInputParams(allInputParams) {
     const constantParams = [];
     allInputParams.forEach((input) => {
@@ -220,10 +208,6 @@ class ProjectActions {
       return 'blue-header-text';
     }
     return 'blue-header-text no-margin';
-  }
-
-  static getAllMetrics(allJobs) {
-    return (this.getAllMetricsFromJobs(allJobs));
   }
 
   static getFilterURL(statusFilter) {
@@ -367,22 +351,6 @@ class ProjectActions {
       }
     });
     return users;
-  }
-
-  // private fun
-
-  static getAllMetricsFromJobs(allJobs) {
-    const allMetrics = [];
-    allJobs.forEach((job) => {
-      if (job.output_metrics) {
-        job.output_metrics.forEach((metric) => {
-          if (!allMetrics.includes(metric.name)) {
-            allMetrics.push(metric.name);
-          }
-        });
-      }
-    });
-    return allMetrics;
   }
 }
 
