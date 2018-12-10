@@ -26,7 +26,10 @@ class SelectColumnFilter extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ columns: nextProps.columns, changedParams: nextProps.hiddenInputParams });
+    const { unsetClearFilters } = this.state;
+    if (unsetClearFilters) {
+      this.setState({ columns: nextProps.columns, changedParams: nextProps.hiddenInputParams });
+    }
   }
 
   onApply() {

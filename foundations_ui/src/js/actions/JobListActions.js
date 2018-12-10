@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseActions from './BaseActions';
+import CommonActions from './CommonActions';
 
 const second = 1000;
 const minute = second * 60;
@@ -243,8 +244,22 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(oldFilters, statuses) {
-    return this.getStatusFilters(oldFilters, statuses);
+  static getAllFilters(statuses, allUsers, hiddenUsers) {
+    let updatedFilters = [];
+    if (hiddenUsers.length > 0) {
+      const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
+      updatedFilters = this.getFilters(visibleUsers, 'User');
+    }
+    return this.getStatusFilters(updatedFilters, statuses);
+  }
+
+  static getFilters(filters, colName) {
+    const updatedFilters = [];
+    filters.forEach((value) => {
+      const newFilter = this.getFilterObject(colName, value);
+      updatedFilters.push(newFilter);
+    });
+    return updatedFilters;
   }
 
   static getStatusFilters(oldFilters, statuses) {
@@ -376,6 +391,34 @@ class ProjectActions {
       newUrl += '&';
     }
     return newUrl;
+  }
+
+  static getVisibleFromFilter(allValues, hiddenValues) {
+    const visibleValues = allValues.filter(
+      (value) => {
+        if (!hiddenValues.includes(value)) {
+          return value;
+        }
+      },
+    );
+    return visibleValues;
+  }
+
+  static updateHiddenParams(allParams, newHiddenParam, allHiddenParams) {
+    // Check is this param related to this hidden set
+    if (!allParams.includes(newHiddenParam)) {
+      return allHiddenParams;
+    }
+    if (this.willHideAllParams(allParams, allHiddenParams)) {
+      return [];
+    }
+    const newHiddenParams = CommonActions.deepCopyArray(allHiddenParams);
+    newHiddenParams.push(newHiddenParam);
+    return newHiddenParams;
+  }
+
+  static willHideAllParams(allParams, allHiddenParams) {
+    return allHiddenParams.length + 1 === allParams.length;
   }
 }
 

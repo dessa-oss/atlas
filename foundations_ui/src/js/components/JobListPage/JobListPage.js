@@ -58,7 +58,6 @@ class JobListPage extends Component {
 
   async updateHiddenUser(hiddenFields) {
     const { allUsers } = this.state;
-    const usersNamesArray = CommonActions.getFlatArray(allUsers);
     await this.setState({ hiddenUsers: hiddenFields });
 
     const apiFilteredJobs = await this.getFilteredJobs();
@@ -109,26 +108,32 @@ class JobListPage extends Component {
   }
 
   saveFilters() {
-    const { filters, statuses } = this.state;
-    const newFilters = JobActions.getAllFilters(filters, statuses);
-
+    const {
+      statuses, hiddenUsers, allUsers,
+    } = this.state;
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers);
     this.setState({ filters: newFilters });
   }
 
   clearFilters() {
-    this.setState({ filters: [], statuses: baseStatus });
+    this.setState({ filters: [], statuses: baseStatus, hiddenUsers: [] });
     this.getJobs();
   }
 
   async removeFilter(removeFilter) {
-    const { filters, statuses } = this.state;
+    const {
+      filters, statuses, allUsers, hiddenUsers,
+    } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
-    this.setState({ filters: newFilters, statuses: newStatuses });
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
+    await this.setState({ filters: newFilters, statuses: newStatuses, hiddenUsers: newHiddenUsers });
     const apiFilteredJobs = await this.getFilteredJobs();
 
     this.clearState();
-    this.formatAndSaveParams(apiFilteredJobs);
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
     this.forceUpdate();
   }
 

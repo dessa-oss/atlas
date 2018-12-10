@@ -433,3 +433,11 @@ it('addToURLNotHidden', () => {
 it('addAndIfNotFirstFilter', () => {
 
 });
+
+it('updateHiddenParams', () => {
+
+});
+
+it('willHideAllParams', () => {
+  
+});
