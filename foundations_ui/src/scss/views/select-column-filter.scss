@@ -45,6 +45,37 @@
     }
   }
 
+  &.job-id-filter-container {
+    width: 415px;
+    position: absolute;
+    left: $status-filter-left;
+    padding-top: 5px;
+    top: $status-filter-top;
+
+    .column-filter-header {
+      text-align: left;
+      border: none;
+      height: inherit;
+    }
+
+    input {
+      width: calc(100% - 18px);
+      outline: none;
+      border: solid 1px $color-border-bottom;
+      height: $general-form-input-height;
+      padding-left: 15px;
+    }
+
+    p {
+      display: inline-block;
+    }
+
+    .subtitle {
+      color: $color-9c-grey;
+      font-style: italic;
+    }
+  }
+
   &.user-filter-container {
     width: 270px;
     position: absolute;
