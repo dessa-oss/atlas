@@ -24,7 +24,7 @@
   width: fit-content;
 
   &.column-header {
-    height: 50px;
+    height: $column-header-height;
   }
 
   .job-column-header {
@@ -93,3 +93,22 @@
     }
   }
 }
+
+@media only screen and (max-width: $minimum-screen-width) {
+  .job-summary-info-container {
+      width: calc(40% - 100px);
+  }
+
+  .input-metric-column-container {
+    .job-cell {
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+        padding-left: 5px; 
+      }
+    }
+  }
+
+  }
