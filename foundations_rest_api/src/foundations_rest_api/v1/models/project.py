@@ -65,16 +65,17 @@ class Project(PropertyModel):
 
         def callback():
             listing = Project._construct_project_listing()
-            return [Project.find_by(project_name) for project_name in listing.get_pipeline_names()]
+            project_names = [project['name'] for project in listing]
+            return [Project.find_by(project_name) for project_name in project_names]
 
         return LazyResult(callback)
 
     @staticmethod
     def _construct_project_listing():
-        from foundations.global_state import deployment_manager
+        from foundations_contrib.models.project_listing import ProjectListing
+        from foundations.global_state import redis_connection
 
-        constructor, args, kwargs = deployment_manager.project_listing_constructor_and_args_and_kwargs()
-        return constructor(*args, **kwargs)
+        return ProjectListing.list_projects(redis_connection)
 
     @staticmethod
     def _find_by_internal(name):

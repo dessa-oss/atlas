@@ -20,10 +20,10 @@ class Job(object):
         return self._pipeline_connector.pipeline_context()
 
     def serialize(self):
-        from foundations.serializer import serialize
+        from foundations_internal.serializer import serialize
         return serialize(self)
 
     @staticmethod
     def deserialize(serialized_self):
-        from foundations.serializer import deserialize
+        from foundations_internal.serializer import deserialize
         return deserialize(serialized_self)

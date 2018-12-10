@@ -5,9 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class AdaptiveSearcher(object):
     def __init__(self, set_of_initial_params, params_generator_function, error_handler):
-        from foundations.compat import make_queue
+        from foundations_internal.compat import make_queue
         from foundations.global_state import log_manager
 
         self._params_queue = make_queue()
@@ -46,7 +47,7 @@ class AdaptiveSearcher(object):
             new_params_sets = self._params_generator_function(logged_results)
             self._populate_queue(new_params_sets)
 
-        return all_logged_results            
+        return all_logged_results
 
     def _is_search_done(self):
         return self._deployments_map == {} and self._params_queue.empty()
@@ -72,5 +73,5 @@ class AdaptiveSearcher(object):
                     time.sleep(5)
             else:
                 raise ValueError("unknown state: " + current_state)
-        
+
         self._log.info('Adaptive search completed.')

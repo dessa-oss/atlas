@@ -7,10 +7,11 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
-from acceptance.v2beta.jobs_tests_helper_mixin import JobsTestsHelperMixin
+from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
-class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase):
+
+class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
@@ -18,7 +19,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
     @classmethod
     def setUpClass(klass):
         klass._project_name = 'lou'
-        JobsTestsHelperMixin.setUpClass()
+        JobsTestsHelperMixinV2.setUpClass()
         klass._make_completed_job_with_metrics('my job 3', 'bach')
 
     @classmethod
@@ -41,9 +42,9 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
 
     @classmethod
     def _make_completed_job_with_metrics(klass, job_name, user):
-        from foundations.producers.jobs.queue_job import QueueJob
-        from foundations.producers.jobs.run_job import RunJob
-        from foundations.producers.jobs.complete_job import CompleteJob
+        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_contrib.producers.jobs.run_job import RunJob
+        from foundations_contrib.producers.jobs.complete_job import CompleteJob
 
         klass._pipeline_context.provenance.project_name = klass._project_name
         klass._pipeline_context.file_name = job_name
@@ -51,7 +52,8 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
         klass._prepare_job_input_data()
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
         RunJob(klass._message_router, klass._pipeline_context).push_message()
-        CompleteJob(klass._message_router, klass._pipeline_context).push_message()
+        CompleteJob(klass._message_router,
+                    klass._pipeline_context).push_message()
 
     def test_get_route(self):
         data = super(TestJobsListingUIFriendly, self).test_get_route()
@@ -60,10 +62,13 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixin, APIAcceptanceTestCaseBase)
         for obj in job_data['input_params']:
             self.assertEqual(len(obj), 4)
         for index, var_name in enumerate(['arg1', 'arg2', 'kwarg1', 'kwarg2']):
-            self.assertEqual(job_data['input_params'][index]['name'], var_name + '-0')
+            self.assertEqual(job_data['input_params']
+                             [index]['name'], var_name + '-0')
         for index, var_type in enumerate(['string', 'number', 'string', 'number']):
             self.assertEqual(job_data['input_params'][index]['type'], var_type)
         for index, var_value in enumerate(['life', 42, 'pi', 3.14]):
-            self.assertEqual(job_data['input_params'][index]['value'], var_value)
+            self.assertEqual(job_data['input_params']
+                             [index]['value'], var_value)
         for index in range(4):
-            self.assertEqual(job_data['input_params'][index]['source'], 'constant')
+            self.assertEqual(job_data['input_params']
+                             [index]['source'], 'constant')

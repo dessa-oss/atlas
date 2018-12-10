@@ -7,25 +7,26 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.option import Option
+from foundations_contrib.option import Option
+
 
 class TestOption(unittest.TestCase):
     def test_option_with_none(self):
-        from foundations.nothing import Nothing
+        from foundations_contrib.nothing import Nothing
 
         self.assertEqual(Nothing(), Option(None))
 
     def test_option_with_nothing(self):
-        from foundations.nothing import Nothing
+        from foundations_contrib.nothing import Nothing
 
         self.assertEqual(Nothing(), Option(Nothing()))
 
     def test_option_with_something(self):
-        from foundations.something import Something
+        from foundations_contrib.something import Something
 
         self.assertEqual(Something(55), Option(Something(55)))
 
     def test_option_with_anything_else(self):
-        from foundations.something import Something
+        from foundations_contrib.something import Something
 
         self.assertEqual(Something("asdfasdfasdf"), Option("asdfasdfasdf"))

@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.simple_tempfile import SimpleTempfile
+from foundations_contrib.simple_tempfile import SimpleTempfile
 
 
 class SSHFileSystemBucket(object):
@@ -50,10 +50,10 @@ class SSHFileSystemBucket(object):
 
         file_paths = self._list_remote_files(pathname)
         return [basename(path) for path in file_paths]
-    
+
     def remove(self, name):
         raise NotImplementedError
-    
+
     def move(self, source, destination):
         raise NotImplementedError
 

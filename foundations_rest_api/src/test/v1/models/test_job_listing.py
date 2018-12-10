@@ -6,20 +6,19 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
+from mock import patch
 from foundations_rest_api.v1.models.job import Job
-from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestJobListing(unittest.TestCase, JobsTestsHelperMixin):
+class TestJobListing(unittest.TestCase):
 
     __name__ = 'TestJobListing' # avoid crazy Python 2 bug: failure of unittest.skip decorator
 
-    def setUp(self):
-        self._setup_deployment('RUNNING')
-        self._setup_results_archiving()
+    class MockJob(object):
 
-    def tearDown(self):
-        self._cleanup()
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -93,81 +92,62 @@ class TestJobListing(unittest.TestCase, JobsTestsHelperMixin):
         job = Job(completed_time=884234222323)
         self.assertEqual(884234222323, job.completed_time)
 
-    def test_all_returns_multiple_jobs(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('loss', 15.33)
 
-        stage = self._pipeline.stage(method)
-        self._make_completed_job('my job', stage, 9999999999, 9999999999)
-        self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
+    @patch('foundations_contrib.models.pipeline_context_listing.PipelineContextListing.pipeline_contexts')
+    @patch('foundations_rest_api.v1.models.completed_job.CompletedJob._job_properties')
+    @patch('foundations_internal.scheduler.Scheduler.get_job_information')
+    def test_all_returns_multiple_jobs(self, mock_get_job_information, mock_job_properties, mock_pipeline_contexts):
+        from datetime import datetime
+
+        mock_pipeline_contexts.return_value = [('who', 'cares')]
+
+        mock_job_properties.return_value = {
+            'project_name': 'random test project',
+            'job_id': 'my job',
+            'user': 'Unspecified',
+            'job_parameters': {},
+            'input_params': [],
+            'output_metrics': {'loss': 15.33},
+            'status': 'Completed',
+            'start_time': datetime.utcfromtimestamp(123456789).isoformat(),
+            'completed_time': datetime.utcfromtimestamp(2222222222).isoformat()
+        }
+
+        mock_get_job_information.return_value = iter([
+            self.MockJob(
+            uuid=lambda: '00000000-0000-0000-0000-000000000000',
+            user_submitted=lambda: 'soju hero',
+            job_parameters=[],
+            input_params=[],
+            output_metrics=[],
+            status='Running',
+            submission_datetime=lambda: datetime.utcfromtimestamp(999999999),
+            completed_time=None
+        )])
 
         expected_job_1 = Job(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju hero', 
-            start_time='1973-11-29T21:33:09', 
+            job_id='00000000-0000-0000-0000-000000000000',
+            user='soju hero',
+            start_time=datetime.utcfromtimestamp(999999999).isoformat(),
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={},
             status='Running',
             completed_time=None
         )
 
         expected_job_2 = Job(
-            job_id='my job', 
+            job_id='my job',
             user='Unspecified',
-            job_parameters={}, 
+            job_parameters={},
             input_params=[],
-            output_metrics={'loss': 15.33}, 
+            output_metrics={'loss': 15.33},
             status='Completed',
-            start_time='2286-11-20T17:46:39',
-            completed_time='2286-11-20T17:46:39'
+            start_time=datetime.utcfromtimestamp(123456789).isoformat(),
+            completed_time=datetime.utcfromtimestamp(2222222222).isoformat()
         )
 
 
         result = Job.all().evaluate()
-        expected_jobs = [expected_job_2, expected_job_1]
-        self.assertEqual(expected_jobs, result)
-
-    @unittest.skip
-    ### THIS TEST IS GOING TO BE SKIPPED UNTIL THOMAS DISCUSSES HOW TO RELATE PROJECTS WITH RUNNING JOBS WITH ASHWIN ####
-    def test_all_returns_jobs_filtered_by_project(self):
-        def method():
-            from foundations.stage_logging import log_metric
-            log_metric('loss', 15.33)
-
-        stage = self._pipeline.stage(method)
-
-        self._pipeline_context.provenance.project_name = 'project 1'
-        self._make_completed_job('my job', stage, 9999999999, 9999999999)
-        self._make_running_job('00000000-0000-0000-0000-000000000001', 123456789, 9999, 'soju hero')
-
-        self._pipeline_context.provenance.project_name = 'project 2'
-        self._make_running_job('00000000-0000-0000-0000-000000000002', 987654321, 8888, 'quin lin')
-
-        expected_job_1 = Job(
-            job_id='00000000-0000-0000-0000-000000000001', 
-            user='soju hero', 
-            start_time='1973-11-29T21:33:09', 
-            job_parameters={},
-            input_params=[], 
-            output_metrics={},
-            status='Running',
-            completed_time=None
-        )
-
-        expected_job_2 = Job(
-            job_id='my job', 
-            user='Unspecified',
-            job_parameters={}, 
-            input_params=[],
-            output_metrics={'loss': 15.33}, 
-            status='Completed',
-            start_time='2286-11-20T17:46:39',
-            completed_time='2286-11-20T17:46:39'
-        )
-
-        result = Job.all(project_name='project 1').evaluate()
-        expected_jobs = [expected_job_2, expected_job_1]
-        self.assertEqual(len(result), 2)
+        expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)

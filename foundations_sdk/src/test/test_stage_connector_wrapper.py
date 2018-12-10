@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations.stage_connector_wrapper import StageConnectorWrapper
+from foundations_internal.deployment_manager import DeploymentManager
 from mock import patch, call
 
 
@@ -42,9 +43,9 @@ class TestStageConnectorWrapper(unittest.TestCase):
             return self._uuid
 
     def setUp(self):
-        from foundations.pipeline_context import PipelineContext
-        from foundations.stage_context import StageContext
-        from foundations.stage_config import StageConfig
+        from foundations_internal.pipeline_context import PipelineContext
+        from foundations_internal.stage_context import StageContext
+        from foundations_internal.stage_config import StageConfig
 
         from uuid import uuid4
 
@@ -105,7 +106,7 @@ class TestStageConnectorWrapper(unittest.TestCase):
             return self._job_name
 
     @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
-    @patch('foundations.deployment_manager.simple_deploy')
+    @patch.object(DeploymentManager, 'simple_deploy')
     @patch('logging.Logger.info')
     def test_run_logging(self, logger_mock, deployment_mock):
         deployment_mock.return_value = 'something'

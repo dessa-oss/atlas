@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.v1.models.running_job import RunningJob
-from foundations.scheduler_legacy_backend import LegacyBackend
+from foundations_contrib.scheduler_legacy_backend import LegacyBackend
 from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
@@ -71,14 +71,15 @@ class TestRunningJob(unittest.TestCase, JobsTestsHelperMixin):
         self.assertEqual([], RunningJob.all().evaluate())
 
     def test_all_returns_job_information_from_scheduler(self):
-        self._make_running_job('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
         expected_job = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju hero', 
-            start_time='1973-11-29T21:33:09', 
+            job_id='00000000-0000-0000-0000-000000000000',
+            user='soju hero',
+            start_time='1973-11-29T21:33:09',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         result = RunningJob.all().evaluate()[0]
@@ -86,23 +87,25 @@ class TestRunningJob(unittest.TestCase, JobsTestsHelperMixin):
         self.assertEqual(expected_job, result)
 
     def test_all_returns_job_information_from_scheduler_with_different_jobs(self):
-        self._make_running_job('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'soju zero')
-        self._make_running_job('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'potato hero')
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000000', 987654321, 4444, 'soju zero')
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000001', 888888888, 3214, 'potato hero')
 
         expected_job = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju zero', 
-            start_time='2001-04-19T04:25:21', 
+            job_id='00000000-0000-0000-0000-000000000000',
+            user='soju zero',
+            start_time='2001-04-19T04:25:21',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         expected_job_two = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000001', 
-            user='potato hero', 
-            start_time='1998-03-03T01:34:48', 
+            job_id='00000000-0000-0000-0000-000000000001',
+            user='potato hero',
+            start_time='1998-03-03T01:34:48',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         expected_jobs = [expected_job, expected_job_two]

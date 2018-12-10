@@ -27,6 +27,11 @@ class TestLazyResult(unittest.TestCase):
             self.called = True
             return self._value
 
+    class ErrorMock(object):
+        
+        def value(self):
+            raise Exception('Should not be called')
+
     def test_lazy_result(self):
         mock = self.Mock('hello world')
         lazy_result = LazyResult(mock.value)
@@ -71,6 +76,39 @@ class TestLazyResult(unittest.TestCase):
         mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data='world'))
         lazy_result = LazyResult(mock.value)
         self.assertEqual({'some_data': 'hello', 'some_other_data': 'world'}, lazy_result.only(['some_data', 'some_other_data']).evaluate())
+    
+    def test_lazy_result_only_does_not_evaluate_other_properties(self):
+        should_not_call_mock = self.ErrorMock()
+        should_not_call_result = LazyResult(should_not_call_mock.value)
+
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data=should_not_call_result))
+        lazy_result = LazyResult(mock.value)
+
+        lazy_result.only(['some_data']).evaluate()
+    
+    def test_lazy_result_only_does_not_evaluate_other_properties_in_list(self):
+        should_not_call_mock = self.ErrorMock()
+        should_not_call_result = LazyResult(should_not_call_mock.value)
+
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data=should_not_call_result))
+        lazy_result = LazyResult(mock.value)
+
+        mock2 = self.Mock([lazy_result])
+        lazy_result = LazyResult(mock2.value)
+
+        lazy_result.only(['some_data']).evaluate()
+    
+    def test_lazy_result_only_does_not_evaluate_other_properties_recursively(self):
+        should_not_call_mock = self.ErrorMock()
+        should_not_call_result = LazyResult(should_not_call_mock.value)
+
+        mock = self.Mock(self.MockModelTwo(some_data='hello', some_other_data=should_not_call_result))
+        lazy_result = LazyResult(mock.value)
+
+        mock2 = self.Mock(lazy_result)
+        lazy_result = LazyResult(mock2.value)
+
+        lazy_result.only(['some_data']).evaluate()
 
     def test_recursive_lazy_result(self):
         mock = self.Mock('hello world')
