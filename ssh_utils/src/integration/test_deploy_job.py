@@ -31,7 +31,8 @@ class TestDeployJob(unittest.TestCase):
 
     def _make_deployment(self, stage, **kwargs):
         from foundations_ssh import SFTPJobDeployment
-        from foundations import Job, JobSourceBundle
+        from foundations_contrib.job_source_bundle import JobSourceBundle
+        from foundations import Job
         from integration.config import DEPLOYMENT_CONFIG
         from uuid import uuid4
 

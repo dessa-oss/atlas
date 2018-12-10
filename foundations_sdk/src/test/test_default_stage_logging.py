@@ -23,18 +23,18 @@ class TestDefaultStageLogging(unittest.TestCase):
 
     def test_context_is_stage_logging_context(self):
         from foundations.stage_logging import stage_logging_context
-        from foundations.stage_logging_context import StageLoggingContext
+        from foundations_internal.stage_logging_context import StageLoggingContext
 
         self.assertTrue(isinstance(stage_logging_context, StageLoggingContext))
 
-    @patch('foundations.null_stage_logger.NullStageLogger.log_metric')
+    @patch('foundations_contrib.null_stage_logger.NullStageLogger.log_metric')
     def test_context_log_metric_uses_null_implementation(self, mock):
         from foundations.stage_logging import stage_logging_context
 
         stage_logging_context.log_metric('loss', 9.55)
         mock.assert_called_with('loss', 9.55)
 
-    @patch('foundations.null_stage_logger.NullStageLogger.log_metric')
+    @patch('foundations_contrib.null_stage_logger.NullStageLogger.log_metric')
     def test_context_log_metric_uses_null_implementation_different_metric(self, mock):
         from foundations.stage_logging import stage_logging_context
 

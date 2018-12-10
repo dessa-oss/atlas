@@ -13,6 +13,8 @@ User Documentation
 
 Integration Documentation
 
+[Test Documentation](documentation/TESTGUIDE.md)
+
 ## Releases
 There is a new release on every second Friday. Old releases can be found by navigating to the *Switch branches/tags* tab, and selecting the tag of the desired release version. Each release has its own set of examples.
 

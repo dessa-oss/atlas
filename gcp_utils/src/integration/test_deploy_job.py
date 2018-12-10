@@ -32,7 +32,9 @@ class TestDeployJob(unittest.TestCase):
         self.assertTrue(bucket.exists(code_path))
 
     def _make_deployment(self, stage, **kwargs):
-        from foundations import Job, JobSourceBundle, BucketJobDeployment
+        from foundations import Job
+        from foundations_contrib.job_source_bundle import JobSourceBundle
+        from foundations_contrib.bucket_job_deployment import BucketJobDeployment
         from uuid import uuid4
         from integration.config import make_code_bucket, make_result_bucket
 

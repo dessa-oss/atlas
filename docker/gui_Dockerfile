@@ -1,0 +1,11 @@
+FROM node:8.14.0-jessie
+
+RUN mkdir -p /var/foundations_ui
+WORKDIR /var/foundations_ui
+COPY ./ /var/foundations_ui/
+
+RUN npm install
+
+EXPOSE 3000
+ENTRYPOINT ["npm"]
+CMD ["start"]

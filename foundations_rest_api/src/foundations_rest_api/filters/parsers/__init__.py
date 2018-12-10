@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 from foundations_rest_api.filters.parsers.datetime_parser import DateTimeParser
+from foundations_rest_api.filters.parsers.elapsed_time_parser import ElapsedTimeParser
 from foundations_rest_api.filters.parsers.status_parser import StatusParser
 from foundations_rest_api.filters.parsers.string_parser import StringParser
 
@@ -16,6 +17,7 @@ _column_type_parser = {
     DATE_TIME: DateTimeParser,
     STATUS: StatusParser,
     STRING: StringParser,
+    ELAPSED_TIME: ElapsedTimeParser
 }
 
 
@@ -26,6 +28,7 @@ _column_type = {
     'completed_time': DATE_TIME,
     'user': STRING,
     'status': STATUS,
+    'duration': ELAPSED_TIME
 }
 
 

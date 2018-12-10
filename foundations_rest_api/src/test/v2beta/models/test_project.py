@@ -20,18 +20,6 @@ class TestProjectV2(unittest.TestCase):
         def get_pipeline_names(self):
             return self.list
 
-    def setUp(self):
-        from foundations.global_state import config_manager
-
-        self._listing = self.MockListing()
-
-        def get_listing():
-            return self._listing
-
-        config_manager['project_listing_implementation'] = {
-            'project_listing_type': get_listing
-        }
-
     def tearDown(self):
         from foundations.global_state import config_manager
 
@@ -76,10 +64,11 @@ class TestProjectV2(unittest.TestCase):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
-    def test_all_returns_all_projects(self, mock_jobs):
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects(self, mock_projects, mock_jobs):
         mock_jobs.return_value = 'listed'
 
-        self._listing.list = ['project1']
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
 
         project = Project.all().evaluate()[0]
         expected_project = Project(
@@ -91,10 +80,11 @@ class TestProjectV2(unittest.TestCase):
         self.assertEqual(expected_project, project)
 
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
-    def test_all_returns_all_projects_multiple_projects(self, mock_jobs):
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs):
         mock_jobs.return_value = 'listed'
 
-        self._listing.list = ['project1', 'project2']
+        mock_projects.list_projects.return_value = [{'name': 'project1'}, {'name': 'project2'}]
 
         project = [project for project in Project.all().evaluate()]
         expected_project = Project(
@@ -110,3 +100,9 @@ class TestProjectV2(unittest.TestCase):
             jobs = 'listed'
         )
         self.assertEqual([expected_project, expected_project_two], project)
+
+    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
+        Project.all().evaluate()
+        mock_projects.list_projects.assert_called_with(mock_redis)

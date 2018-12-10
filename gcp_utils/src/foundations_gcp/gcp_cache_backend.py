@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.bucket_cache_backend import BucketCacheBackend
+from foundations_contrib.bucket_cache_backend import BucketCacheBackend
+
 
 class GCPCacheBackend(BucketCacheBackend):
 
