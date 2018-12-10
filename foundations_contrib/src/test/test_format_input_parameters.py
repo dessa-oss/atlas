@@ -130,4 +130,18 @@ class TestFormatInputParameters(unittest.TestCase):
                     ]
         result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
+    
+    def test_format_input_parameter_adds_stages_when_stage_time_empty(self):
+        project_name = 'banana'
+        stage_uuid_1 = 'gorilla'
+        stage_uuid_2 = 'ape'
+
+        input_param = [{'argument':{'name': 'ab', 'value': {'value':'hi', 'type': 'constant'}}, 'stage_uuid': stage_uuid_1}]
+        expected = [{'name': 'ab-0',
+                    'value': 'hi',
+                    'type': 'string',
+                    'source': 'constant'}
+                    ]
+        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        self.assertListEqual(expected, result)
 
