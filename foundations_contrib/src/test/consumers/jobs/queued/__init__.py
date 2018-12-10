@@ -15,3 +15,4 @@ from test.consumers.jobs.queued.test_input_parameter_keys import TestInputParame
 from test.consumers.jobs.queued.test_creation_time import TestCreationTime
 from test.consumers.jobs.queued.test_set_user import TestSetUser
 from test.consumers.jobs.queued.test_project_tracker import TestProjectTracker
+from test.consumers.jobs.queued.test_stage_time import TestStageTime
