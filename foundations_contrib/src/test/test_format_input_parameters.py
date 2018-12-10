@@ -144,4 +144,43 @@ class TestFormatInputParameters(unittest.TestCase):
                     ]
         result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
         self.assertListEqual(expected, result)
+    
+    def test_format_input_parameter_adds_stages_when_stage_time_empty_but_stage_time(self):
+        project_name = 'banana'
+        stage_uuid_1 = 'gorilla'
+        stage_uuid_2 = 'ape'
+
+        data_1 = json.dumps({'stage_uuid': stage_uuid_1, 'time': 1200})
+        self._load_input_parameter_name_data(project_name, data_1)
+
+        input_param = [{'argument':{'name': 'ab', 'value': {'value':'hi', 'type': 'constant'}}, 'stage_uuid': stage_uuid_2}]
+        expected = [{'name': 'ab-1',
+                    'value': 'hi',
+                    'type': 'string',
+                    'source': 'constant'}
+                    ]
+        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        self.assertListEqual(expected, result)
+    
+    def test_format_input_parameter_adds_stages_when_one_empty_argument_one_stage_time_argument(self):
+        project_name = 'banana'
+        stage_uuid_1 = 'gorilla'
+        stage_uuid_2 = 'ape'
+
+        data_1 = json.dumps({'stage_uuid': stage_uuid_1, 'time': 1200})
+        self._load_input_parameter_name_data(project_name, data_1)
+
+        input_param = [{'argument':{'name': 'ab', 'value': {'value':'hi', 'type': 'constant'}}, 'stage_uuid': stage_uuid_1},
+                        {'argument':{'name': 'ab', 'value': {'value':'bye', 'type': 'constant'}}, 'stage_uuid': stage_uuid_2}]
+        expected = [{'name': 'ab-0',
+                    'value': 'hi',
+                    'type': 'string',
+                    'source': 'constant'},
+                    {'name': 'ab-1',
+                    'value': 'bye',
+                    'type': 'string',
+                    'source': 'constant'},
+                    ]
+        result = FormatInputParameters(project_name, input_param, {}, self._redis).format_input_parameters()
+        self.assertListEqual(expected, result)
 
