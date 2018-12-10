@@ -14,6 +14,7 @@ class TableStaticColumns extends Component {
       jobRows: this.props.jobRows,
       toggleUserFilter: this.props.toggleUserFilter,
       toggleStatusFilter: this.props.toggleStatusFilter,
+      toggleDurationFilter: this.props.toggleDurationFilter,
     };
   }
 
@@ -28,7 +29,7 @@ class TableStaticColumns extends Component {
 
   render() {
     const {
-      rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter,
+      rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter, toggleDurationFilter,
     } = this.state;
 
     return (
@@ -44,7 +45,7 @@ class TableStaticColumns extends Component {
               toggleFilter={toggleStatusFilter}
             />
             <JobColumnHeader title="Job ID" className="static-header" />
-            <JobColumnHeader title="Duration" className="static-header" />
+            <JobColumnHeader title="Duration" className="static-header" toggleFilter={toggleDurationFilter} />
             <JobColumnHeader title="User" className="static-header" toggleFilter={toggleUserFilter} />
           </div>
           <ScrollSyncPane group="vertical">
@@ -68,6 +69,7 @@ TableStaticColumns.propTypes = {
   jobRows: PropTypes.array,
   toggleUserFilter: PropTypes.func,
   toggleStatusFilter: PropTypes.func,
+  toggleDurationFilter: PropTypes.func,
 };
 
 TableStaticColumns.defaultProps = {
@@ -75,6 +77,7 @@ TableStaticColumns.defaultProps = {
   jobRows: [],
   toggleUserFilter: () => {},
   toggleStatusFilter: () => {},
+  toggleDurationFilter: () => {},
 };
 
 export default TableStaticColumns;

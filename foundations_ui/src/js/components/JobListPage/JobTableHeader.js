@@ -5,7 +5,7 @@ import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
-import JobActions from '../../actions/JobListActions';
+import DurationFilter from '../common/filters/DurationFilter';
 import CommonActions from '../../actions/CommonActions';
 
 const isMetric = true;
@@ -16,6 +16,7 @@ class JobTableHeader extends Component {
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
+    this.toggleDurationFilter = this.toggleDurationFilter.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -24,6 +25,7 @@ class JobTableHeader extends Component {
       updateHiddenUser: this.props.updateHiddenUser,
       isShowingStatusFilter: false,
       updateHiddenStatus: this.props.updateHiddenStatus,
+      isShowingDurationFilter: false,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
@@ -62,6 +64,11 @@ class JobTableHeader extends Component {
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
   }
 
+  toggleDurationFilter() {
+    const { isShowingDurationFilter } = this.state;
+    this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
+  }
+
   render() {
     const {
       allInputParams,
@@ -77,6 +84,7 @@ class JobTableHeader extends Component {
       updateHiddenUser,
       allUsers,
       hiddenUsers,
+      isShowingDurationFilter,
     } = this.state;
 
     let userFilter = null;
@@ -114,6 +122,15 @@ class JobTableHeader extends Component {
       );
     }
 
+    let durationFilter = null;
+    if (isShowingDurationFilter) {
+      durationFilter = (
+        <DurationFilter
+          toggleShowingFilter={this.toggleDurationFilter}
+        />
+      );
+    }
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -122,6 +139,7 @@ class JobTableHeader extends Component {
             rowNumbers={rowNumbers}
             toggleUserFilter={this.toggleUserFilter}
             toggleStatusFilter={this.toggleStatusFilter}
+            toggleDurationFilter={this.toggleDurationFilter}
           />
           <InputMetric
             header="input parameter"
@@ -136,6 +154,7 @@ class JobTableHeader extends Component {
           />
           {userFilter}
           {statusFilter}
+          {durationFilter}
         </div>
       </ScrollSync>
     );
@@ -155,6 +174,7 @@ JobTableHeader.propTypes = {
   jobRows: PropTypes.array,
   allUsers: PropTypes.array,
   hiddenUsers: PropTypes.array,
+  isShowingDurationFilter: PropTypes.bool,
 };
 
 JobTableHeader.defaultProps = {
@@ -170,6 +190,7 @@ JobTableHeader.defaultProps = {
   jobRows: [],
   allUsers: [],
   hiddenUsers: [],
+  isShowingDurationFilter: false,
 };
 
 export default JobTableHeader;
