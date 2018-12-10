@@ -36,12 +36,12 @@ class Job(PropertyModel):
     @staticmethod
     def _load_jobs(project_name):
         from foundations_contrib.job_data_redis import JobDataRedis
-        from foundations_contrib.format_input_parameters import FormatInputParameters
+        from foundations_contrib.input_parameter_formatter import InputParameterFormatter
         from foundations.global_state import redis_connection
 
         jobs = []
         for job_properties in list(JobDataRedis.get_all_jobs_data(project_name, redis_connection)):
-            job_properties['input_params'] = FormatInputParameters(project_name, job_properties['input_params'], job_properties['job_parameters'], redis_connection).format_input_parameters()
+            job_properties['input_params'] = InputParameterFormatter(project_name, job_properties['input_params'], job_properties['job_parameters'], redis_connection).format_input_parameters()
             job = Job._build_job_model(job_properties)
             jobs.append(job)
         Job._default_order(jobs)
