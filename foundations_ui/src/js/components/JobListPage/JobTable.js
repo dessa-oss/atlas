@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
-import JobActions from '../../actions/JobListActions';
 
 class JobTable extends Component {
   constructor(props) {
@@ -14,6 +13,9 @@ class JobTable extends Component {
       allMetrics: this.props.allMetrics,
       statuses: this.props.statuses,
       updateHiddenStatus: this.props.updateHiddenStatus,
+      updateHiddenUser: this.props.updateHiddenUser,
+      allUsers: this.props.allUsers,
+      hiddenUsers: this.props.hiddenUsers,
     };
   }
 
@@ -25,13 +27,15 @@ class JobTable extends Component {
         isLoaded: nextProps.isLoaded,
         allInputParams: nextProps.allInputParams,
         allMetrics: nextProps.allMetrics,
+        allUsers: nextProps.allUsers,
+        hiddenUsers: nextProps.hiddenUsers,
       },
     );
   }
 
   render() {
     const {
-      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus,
+      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
     } = this.state;
 
     let jobRows = [];
@@ -64,6 +68,9 @@ class JobTable extends Component {
             updateHiddenStatus={updateHiddenStatus}
             rowNumbers={rowNumbers}
             jobRows={jobRows}
+            updateHiddenUser={updateHiddenUser}
+            allUsers={allUsers}
+            hiddenUsers={hiddenUsers}
           />
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -86,6 +93,9 @@ JobTable.propTypes = {
   allMetrics: PropTypes.array,
   updateHiddenStatus: PropTypes.func,
   statuses: PropTypes.array,
+  updateHiddenUser: PropTypes.func,
+  allUsers: PropTypes.array,
+  hiddenUsers: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -97,6 +107,9 @@ JobTable.defaultProps = {
   allMetrics: [],
   updateHiddenStatus: () => {},
   statuses: [],
+  updateHiddenUser: () => {},
+  allUsers: [],
+  hiddenUsers: [],
 };
 
 export default JobTable;
