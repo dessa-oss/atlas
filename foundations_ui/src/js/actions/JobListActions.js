@@ -223,7 +223,9 @@ class ProjectActions {
       isFirstFilter = false;
     }
     let isFirstUser = true;
-    url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+    if (userFilter.length > 0) {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+    }
     userFilter.forEach((user) => {
       url = this.addToURLNotHidden(url, isFirstUser, user, 'user');
       isFirstUser = false;
