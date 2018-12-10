@@ -72,14 +72,24 @@ class TestStageLoggingContext(unittest.TestCase):
             self._context.log_metric('loss', {"a": 22})
         self.assertEqual(str(metric.exception), expected_error_message)
 
+    def test_log_metric_value_raises_exception_cut_down_to_thirty_chars(self):
+        metric_value = [[1] * 50]
+
+        expected_error_message = 'Invalid metric with key="loss" of value=[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ... with type <class \'list\'>. Value should be of type string or number'
+
+        with self.assertRaises(TypeError) as metric:
+            self._context.log_metric('loss', metric_value)
+        self.assertEqual(str(metric.exception), expected_error_message)
+
     def test_log_metric_value_raises_exception_not_number_or_string_custom_class_using_default_repr(self):
         class MyCoolClass(object):
             def __init__(self):
                 pass
 
         metric_value = MyCoolClass()
+        representation = str(metric_value)[:30] + " ..."
         expected_error_message_format = 'Invalid metric with key="loss" of value={} with type {}. Value should be of type string or number'
-        expected_error_message = expected_error_message_format.format(metric_value, type(metric_value))
+        expected_error_message = expected_error_message_format.format(representation, type(metric_value))
 
         with self.assertRaises(TypeError) as metric:
             self._context.log_metric('loss', metric_value)

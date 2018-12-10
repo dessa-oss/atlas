@@ -47,7 +47,8 @@ class StageLoggingContext(object):
             self._logger.log_metric(key, value)
         else:
             error_message = 'Invalid metric with key="{}" of value={} with type {}. Value should be of type string or number'
-            raise TypeError(error_message.format(key, value, type(value)))
+            string_representation = StageLoggingContext._get_string_representation(value)
+            raise TypeError(error_message.format(key, string_representation, type(value)))
 
     def change_logger(self, new_logger):
         """Changes the current logging backend for the context
@@ -61,3 +62,12 @@ class StageLoggingContext(object):
         """
 
         return self.ChangeLogger(self, new_logger)
+
+    @staticmethod
+    def _get_string_representation(value):
+        representation = str(value)
+
+        if len(representation) > 30:
+            representation = representation[:30] + " ..."
+        
+        return representation
