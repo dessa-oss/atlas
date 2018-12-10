@@ -71,3 +71,13 @@ class TestJobDataShaper(unittest.TestCase):
 
         }]
         self.assertEqual(expected_data, JobDataShaper.shape_data(sample_data))
+    
+    def test_shape_output_metrics(self):
+        sample_data = [['123', 'hermione', 'granger'], ['1245', 'moon', 'lovegood']]
+        expected_data = {'hermione': 'granger', 'moon': 'lovegood'}
+        self.assertEqual(expected_data, JobDataShaper.shape_output_metrics(sample_data))
+    
+    def test_shape_output_metrics_different_data(self):
+        sample_data = [['123', 'bob', 'granger'], ['1245', 'moon', 'lovegood'], ['972', 'k', 'bye']]
+        expected_data = {'bob': 'granger', 'moon': 'lovegood', 'k': 'bye'}
+        self.assertEqual(expected_data, JobDataShaper.shape_output_metrics(sample_data))

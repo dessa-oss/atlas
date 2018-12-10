@@ -36,10 +36,12 @@ class Job(PropertyModel):
     @staticmethod
     def _load_jobs(project_name):
         from foundations_contrib.job_data_redis import JobDataRedis
+        from foundations_contrib.input_parameter_formatter import InputParameterFormatter
         from foundations.global_state import redis_connection
 
         jobs = []
         for job_properties in list(JobDataRedis.get_all_jobs_data(project_name, redis_connection)):
+            job_properties['input_params'] = InputParameterFormatter(project_name, job_properties['input_params'], job_properties['job_parameters'], redis_connection).format_input_parameters()
             job = Job._build_job_model(job_properties)
             jobs.append(job)
         Job._default_order(jobs)
@@ -47,7 +49,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _build_job_model(job_data):
-        Job._reshape_input_params(job_data)
+        Job._extract_job_parameters(job_data)
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)
         job_data['project'] = job_data['project_name']
@@ -67,70 +69,6 @@ class Job(PropertyModel):
         run_data = job_data['job_parameters']
         del job_data['job_parameters']
         return run_data
-
-    @staticmethod
-    def _extract_input_params(job_data):
-        input_params = job_data['input_params']
-        del job_data['input_params']
-        job_data['input_params'] = []
-        return input_params
-
-    @staticmethod
-    def _extract_source_and_value(argument_value, run_data, stage_indices):
-        if argument_value['type'] == 'stage':
-            input_stage_index = stage_indices.get_index(
-                argument_value['stage_uuid'])
-            value = '{}-{}'.format(argument_value['stage_name'],
-                                   input_stage_index)
-            source = 'stage'
-        elif argument_value['type'] == 'dynamic':
-            value = run_data[argument_value['name']]
-            source = 'placeholder'
-        else:
-            value = argument_value['value']
-            source = 'constant'
-        return value, source
-
-    @staticmethod
-    def _flatten_input_params(job_data, param, run_data, stage_indices):
-        from foundations_rest_api.v2beta.models.extract_type import extract_type
-
-        stage_index = stage_indices.get_index(param['stage_uuid'])
-        name = '{}-{}'.format(param['argument']['name'], stage_index)
-        argument_value = param['argument']['value']
-        value, source = Job._extract_source_and_value(
-            argument_value,
-            run_data,
-            stage_indices
-        )
-
-        value_type = extract_type(value)
-        if 'unknown' in value_type:
-            value_type = 'string'
-            value = type(value).__name__
-
-        job_data['input_params'].append(
-            {
-                'name': name,
-                'value': value,
-                'type': value_type,
-                'source': source,
-            }
-        )
-
-    @staticmethod
-    def _repopulate_input_params(job_data, input_params, run_data, stage_indices):
-        for param in input_params:
-            Job._flatten_input_params(job_data, param, run_data, stage_indices)
-
-    @staticmethod
-    def _reshape_input_params(job_data):
-        from foundations_rest_api.v2beta.models.index_allocator import IndexAllocator
-        run_data = Job._extract_job_parameters(job_data)
-        input_params = Job._extract_input_params(job_data)
-        stage_indices = IndexAllocator()
-        Job._repopulate_input_params(
-            job_data, input_params, run_data, stage_indices)
 
     @staticmethod
     def _extract_output_metrics(job_data):

@@ -42,6 +42,7 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.models.project_listing import ProjectListing
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
+        import json
 
         def callback(random_input_data):
             pass
@@ -55,7 +56,7 @@ class TestConsumers(unittest.TestCase):
             {'argument': expected_argument, 'stage_uuid': stage.uuid()}
         ]
         self._pipeline_context.provenance.job_run_data = expected_job_parameters
-
+    
         QueueJob(self._message_router, self._pipeline_context).push_message()
         current_time = time()
 
@@ -63,10 +64,18 @@ class TestConsumers(unittest.TestCase):
             self._project_name)
         job_parameter_names = self._redis.smembers(parameter_key)
         self.assertEqual(set([b'random_job_data']), job_parameter_names)
-
+        
         input_parameter_key = self._input_parameter_key(self._project_name)
         input_parameter_names = self._redis.smembers(input_parameter_key)
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
+        
+        stage_time_key = self._stage_time(self._project_name)
+        stage_time = self._redis.smembers(stage_time_key)
+        for stage in stage_time:
+            stage = json.loads(stage.decode())
+            self.assertEqual('21aad1de62dcd003b4d28909bd2add8431fceec7', stage['stage_uuid'])
+            self.assertTrue(time() - stage['time'] < 0.1)
+        
 
         queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
         queued_jobs = self._redis.smembers(queued_job_key)
@@ -104,6 +113,9 @@ class TestConsumers(unittest.TestCase):
 
     def _input_parameter_key(self, project_name):
         return 'projects:{}:input_parameter_names'.format(project_name)
+    
+    def _stage_time(self, project_name):
+        return 'projects:{}:stage_time'.format(project_name)
 
     def test_running_job_consumers(self):
         from foundations.global_state import message_router

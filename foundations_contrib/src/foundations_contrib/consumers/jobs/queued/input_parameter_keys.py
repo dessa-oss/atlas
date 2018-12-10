@@ -10,7 +10,7 @@ from foundations_contrib.consumers.jobs.queued.mixins.attribute_key_list import 
 
 class InputParameterKeys(AttributeKeyList):
     """Stores a list of all common stage input parameter keys for a project in redis
-
+    
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """

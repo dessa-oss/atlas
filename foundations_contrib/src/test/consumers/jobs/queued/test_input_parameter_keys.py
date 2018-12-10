@@ -51,5 +51,4 @@ class TestInputParameterKeys(unittest.TestCase):
             {'argument': {'name': 'hidden_layers', 'value': 7777}, 'stage_uuid': 'stage1'}]
         self._consumer.call({'project_name': 'here be sheep',
                              'input_parameters': input_parameters}, None, None)
-        self._redis.sadd.assert_called_with(
-            'projects:here be sheep:input_parameter_names', 'hidden_layers')
+        self._redis.sadd.assert_called_with('projects:here be sheep:input_parameter_names', 'hidden_layers')
