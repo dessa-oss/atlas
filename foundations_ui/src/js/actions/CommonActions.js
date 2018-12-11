@@ -10,14 +10,14 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams, toggleNumberFilter) {
+  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter);
+      return this.getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric);
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
@@ -30,6 +30,7 @@ class CommonActions {
           containerClass="job-column-header"
           toggleFilter={toggleNumberFilter}
           colType={colType}
+          isMetric={isMetric}
         />);
       }
     });

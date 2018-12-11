@@ -21,6 +21,10 @@
     padding-top: $standard-cell-padding;
     top: $status-filter-top;
 
+    &.is-metric {
+      left: calc((2 * #{$one-third-width}) + (14 * #{$border-thin}));
+    }
+
     .number-input-container {
       white-space: nowrap;
       margin-bottom: $margin-width;

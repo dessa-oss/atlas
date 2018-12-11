@@ -13,15 +13,16 @@ class JobColumnHeader extends Component {
       containerDivClass: this.props.containerClass,
       toggleFilter: this.props.toggleFilter,
       colType: this.props.colType,
+      isMetric: this.props.isMetric,
     };
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
-    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
+    let arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
 
     const tooltip = <Tooltip message={title} />;
 
@@ -30,7 +31,13 @@ class JobColumnHeader extends Component {
       divClass += ' status-header';
     }
 
-    const id = title.concat('&type=').concat(colType);
+    let metricClass = 'not-metric';
+    if (isMetric) {
+      metricClass = 'is-metric';
+    }
+
+    arrowClassName = arrowClassName.concat(' ').concat(colType).concat(' ').concat(metricClass);
+    const className = 'arrow-container '.concat(colType).concat(' ').concat(metricClass);
 
     return (
       <div
@@ -45,8 +52,8 @@ class JobColumnHeader extends Component {
           </h4>
           {tooltip}
           <div className="icon-container" />
-          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
-            <div id={id} className={arrowClassName} />
+          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className={className}>
+            <div id={title} className={arrowClassName} />
           </div>
         </div>
       </div>
@@ -61,6 +68,7 @@ JobColumnHeader.propTypes = {
   containerClass: PropTypes.string,
   toggleFilter: PropTypes.func,
   colType: PropTypes.string,
+  isMetric: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -70,6 +78,7 @@ JobColumnHeader.defaultProps = {
   containerClass: 'job-column-header',
   toggleFilter: () => {},
   colType: 'string',
+  isMetric: false,
 };
 
 export default JobColumnHeader;

@@ -29,6 +29,7 @@ class JobTableHeader extends Component {
       isShowingStatusFilter: false,
       updateHiddenStatus: this.props.updateHiddenStatus,
       isShowingDurationFilter: false,
+      metricClass: '',
       isShowingNumberFilter: false,
       numberFilterColumn: '',
       statuses: this.props.statuses,
@@ -81,21 +82,27 @@ class JobTableHeader extends Component {
     const { isShowingNumberFilter } = this.state;
     let columnName = '';
     let columnType = '';
+    let metricClass = 'not-metric';
     // Need to check cause toggle can be to close the filter
     if (e) {
-      let splitId;
-      if (e.target.id) {
-        splitId = e.target.id.split('&type=');
-      } else {
-        splitId = e.target.childNodes[0].id.split('&type=');
+      if (e.target.className.includes('number')) {
+        columnType = 'number';
       }
-      columnName = splitId[0];
-      columnType = splitId[1];
+      if (e.target.id) {
+        columnName = e.target.id;
+      } else {
+        columnName = e.target.childNodes[0].id;
+      }
+      if (e.target.className.includes('is-metric')) {
+        metricClass = 'is-metric';
+      }
     }
-    if (columnType.includes('number')) {
+
+    if (columnType === 'number') {
       this.setState({
         isShowingNumberFilter: !isShowingNumberFilter,
         numberFilterColumn: columnName,
+        metricClass,
       });
     } else if (e === undefined) {
       // This means it's an apply/cancel button rather than a header arrow
@@ -126,12 +133,12 @@ class JobTableHeader extends Component {
       numberFilterColumn,
       updateNumberFilter,
       numberFilters,
+      metricClass,
     } = this.state;
 
     let userFilter = null;
     if (isShowingUserFilter) {
-      const nameArray = CommonActions.getFlatArray(allUsers);
-      const filteredUsers = CommonActions.formatColumns(nameArray, hiddenUsers, searchText);
+      const filteredUsers = CommonActions.formatColumns(allUsers, hiddenUsers, searchText);
       userFilter = (
         <UserFilter
           columns={filteredUsers}
@@ -189,6 +196,7 @@ class JobTableHeader extends Component {
           changeHiddenParams={updateNumberFilter}
           minValue={curMin}
           maxValue={curMax}
+          metricClass={metricClass}
         />
       );
     }
@@ -244,6 +252,7 @@ JobTableHeader.propTypes = {
   numberFilterColumn: PropTypes.string,
   updateNumberFilter: PropTypes.func,
   numberFilters: PropTypes.array,
+  metricClass: PropTypes.string,
 };
 
 JobTableHeader.defaultProps = {
@@ -264,6 +273,7 @@ JobTableHeader.defaultProps = {
   numberFilterColumn: '',
   updateNumberFilter: () => {},
   numberFilters: [],
+  metricClass: 'not-metric',
 };
 
 export default JobTableHeader;

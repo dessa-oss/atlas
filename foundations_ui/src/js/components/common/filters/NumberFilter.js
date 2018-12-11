@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import CommonActions from '../../../actions/CommonActions';
 import Checkbox from '../Checkbox';
 
 class NumberFilter extends Component {
@@ -20,6 +19,7 @@ class NumberFilter extends Component {
       hideNotAvailable: false,
       columnName: this.props.columnName,
       showAllFilters: false,
+      metricClass: this.props.metricClass,
     };
   }
 
@@ -55,11 +55,14 @@ class NumberFilter extends Component {
 
   render() {
     const {
-      minValue, maxValue, hideNotAvailable, showAllFilters,
+      minValue, maxValue, hideNotAvailable, showAllFilters, metricClass,
     } = this.state;
 
+    const divClass = 'filter-container column-filter-container elevation-1 number-filter-container '
+      .concat(metricClass);
+
     return (
-      <div className="filter-container column-filter-container elevation-1 number-filter-container">
+      <div className={divClass}>
         <div className="column-filter-header">
           <button
             type="button"
@@ -118,6 +121,7 @@ NumberFilter.propTypes = {
   hideNotAvailable: PropTypes.bool,
   columnName: PropTypes.string,
   showAllFilters: PropTypes.bool,
+  metricClass: PropTypes.string,
 };
 
 NumberFilter.defaultProps = {
@@ -129,6 +133,7 @@ NumberFilter.defaultProps = {
   hideNotAvailable: false,
   columnName: '',
   showAllFilters: false,
+  metricClass: 'not-metric',
 };
 
 export default NumberFilter;

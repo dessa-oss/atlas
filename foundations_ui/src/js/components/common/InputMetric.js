@@ -45,7 +45,7 @@ class InputMetric extends Component {
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, hiddenInputParams, toggleNumberFilter,
+      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
     );
     const rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
 
