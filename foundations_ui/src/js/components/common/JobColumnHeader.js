@@ -30,7 +30,7 @@ class JobColumnHeader extends Component {
       divClass += ' status-header';
     }
 
-    const id = title.concat(colType).concat('&type=').concat(colType);
+    const id = title.concat('&type=').concat(colType);
 
     return (
       <div

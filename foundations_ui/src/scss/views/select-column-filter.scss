@@ -10,15 +10,15 @@
   }
 
   button:not(.button-icon) {
-    margin-top: 5px;
+    margin-top: $standard-cell-padding;
     margin-right: 0px;
   }
 
   &.number-filter-container {
-    width: 380px;
+    width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
     position: absolute;
-    left: $status-filter-left;
-    padding-top: 5px;
+    left: calc(#{$one-third-width} + (8 * #{$border-thin}));
+    padding-top: $standard-cell-padding;
     top: $status-filter-top;
 
     .number-input-container {
