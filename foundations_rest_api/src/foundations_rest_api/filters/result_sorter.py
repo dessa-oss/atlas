@@ -6,6 +6,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 from foundations_rest_api.filters.api_filter_mixin import APIFilterMixin
 
+
 class ResultSorter(APIFilterMixin):
 
     def __call__(self, result, params):
@@ -40,10 +41,5 @@ class ResultSorter(APIFilterMixin):
             columns_data.append(column_data)
 
     def _sort_by_column_data(self, result, column_data):
-        descending = column_data[0]
-        column_name = column_data[1]
-
-        def get_sort_key(item):
-            return getattr(item, column_name)
-
-        result.sort(reverse=descending, key=get_sort_key)
+        descending, column_name = column_data
+        result.sort(reverse=descending, key=lambda item: getattr(item, column_name))

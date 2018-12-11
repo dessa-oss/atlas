@@ -6,13 +6,15 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 from foundations_rest_api.filters.api_filter_mixin import APIFilterMixin
 
+
 class ExactMatchFilter(APIFilterMixin):
+
+    def __init__(self):
+        self._parsing_state = {}
 
     def __call__(self, result, params):
         if result and isinstance(result, list):
-            new_params = {key: value for key, value in params.items() if self._is_valid_column(result, key)}
-            if new_params:
-                self._filter(result, new_params)
+            self._filter(result, params)
         return result
 
     def _filter(self, result, params):
@@ -21,21 +23,30 @@ class ExactMatchFilter(APIFilterMixin):
 
     def _filter_column(self, result, column_name, value):
         options = value.split(',')
-        parsed_options = self._parse_options(column_name, options)
-        if parsed_options:
-            self._filter_exact_match(result, column_name, parsed_options)
+        self._parsing_state[column_name] = {'parser': None, 'options': options}
+        if options:
+            self._filter_exact_match(result, column_name, options)
 
     def _filter_exact_match(self, result, column_name, options):
 
         def column_value_in_options(item):
-            column_value = getattr(item, column_name)
-            value = self._parse_value(column_name, column_value)
-            return value in options
+            value, item_parser = self._get_item_property_value_and_parser(item, column_name)
+            if item_parser is None:
+                return False
+            parsed_options = self._get_parsed_options(column_name, options, item_parser)
+            return value in parsed_options
 
         return self._in_place_filter(column_value_in_options, result)
 
-    def _parse_options(self, column_name, options):
-        parser = self._get_parser(column_name)
+    def _get_parsed_options(self, column_name, options, new_parser):
+        # If the parser hasn't changed, use the already parsed option, avoid re-parsing
+        if not isinstance(new_parser, type(self._parsing_state[column_name]['parser'])):
+            parsed_options = self._parse_options(options, new_parser)
+            self._parsing_state[column_name]['parser'] = new_parser
+            self._parsing_state[column_name]['options'] = parsed_options
+        return self._parsing_state[column_name]['options']
+
+    def _parse_options(self, options, parser):
         try:
             parsed_options = [parser.parse(option) for option in options]
         except ValueError:

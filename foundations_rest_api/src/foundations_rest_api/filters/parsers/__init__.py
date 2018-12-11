@@ -8,29 +8,30 @@ from foundations_rest_api.filters.parsers.datetime_parser import DateTimeParser
 from foundations_rest_api.filters.parsers.elapsed_time_parser import ElapsedTimeParser
 from foundations_rest_api.filters.parsers.status_parser import StatusParser
 from foundations_rest_api.filters.parsers.string_parser import StringParser
+from foundations_rest_api.filters.parsers.number_parser import NumberParser
+from foundations_rest_api.filters.parsers.bool_parser import BoolParser
 
 
-DATE_TIME, ELAPSED_TIME, STATUS, STRING = range(1, 5)
-
-
-_column_type_parser = {
-    DATE_TIME: DateTimeParser,
-    STATUS: StatusParser,
-    STRING: StringParser,
-    ELAPSED_TIME: ElapsedTimeParser
+column_parser_types = {
+    'job_id': StringParser,
+    'submitted_time': DateTimeParser,
+    'start_time': DateTimeParser,
+    'completed_time': DateTimeParser,
+    'user': StringParser,
+    'status': StatusParser,
+    'duration': ElapsedTimeParser
 }
 
 
-_column_type = {
-    'job_id': STRING,
-    'submitted_time': DATE_TIME,
-    'start_time': DATE_TIME,
-    'completed_time': DATE_TIME,
-    'user': STRING,
-    'status': STATUS,
-    'duration': ELAPSED_TIME
+nested_parser_types = {
+    'number': NumberParser,
+    'bool': BoolParser
 }
 
 
-def get_parser(column_name):
-    return _column_type_parser[_column_type[column_name]]()
+def get_column_parser(column_name):
+    return column_parser_types.get(column_name, StringParser)()
+
+
+def get_nested_element_parser(nested_element_type):
+    return nested_parser_types.get(nested_element_type, StringParser)()
