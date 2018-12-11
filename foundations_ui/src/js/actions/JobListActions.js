@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseActions from './BaseActions';
+import CommonActions from './CommonActions';
 
 const second = 1000;
 const minute = second * 60;
@@ -19,13 +20,13 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter) {
-    if (!this.areStatusesHidden(statusFilter)) {
+  static filterJobs(projectName, statusFilter, userFilter) {
+    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter);
+    const filterURL = this.getFilterURL(statusFilter, userFilter);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -210,12 +211,25 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter) {
+  static getFilterURL(statusFilter, userFilter) {
     let url = '';
-    let isFirstStatus = true;
-    statusFilter.forEach((status) => {
-      url = this.addToURLNotHidden(url, isFirstStatus, status);
-      isFirstStatus = this.setIsFirst(status, isFirstStatus);
+    let isFirstFilter = true;
+    if (this.areStatusesHidden(statusFilter)) {
+      let isFirstStatus = true;
+      statusFilter.forEach((status) => {
+        url = this.addStatusToURLNotHidden(url, isFirstStatus, status);
+        isFirstStatus = this.setIsFirst(status, isFirstStatus);
+      });
+      isFirstFilter = false;
+    }
+    let isFirstUser = true;
+    if (userFilter.length > 0) {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+    }
+    userFilter.forEach((user) => {
+      url = this.addToURLNotHidden(url, isFirstUser, user, 'user');
+      isFirstUser = false;
+      isFirstFilter = false;
     });
 
     return url;
@@ -232,8 +246,22 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(oldFilters, statuses) {
-    return this.getStatusFilters(oldFilters, statuses);
+  static getAllFilters(statuses, allUsers, hiddenUsers) {
+    let updatedFilters = [];
+    if (hiddenUsers.length > 0) {
+      const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
+      updatedFilters = this.getFilters(visibleUsers, 'User');
+    }
+    return this.getStatusFilters(updatedFilters, statuses);
+  }
+
+  static getFilters(filters, colName) {
+    const updatedFilters = [];
+    filters.forEach((value) => {
+      const newFilter = this.getFilterObject(colName, value);
+      updatedFilters.push(newFilter);
+    });
+    return updatedFilters;
   }
 
   static getStatusFilters(oldFilters, statuses) {
@@ -271,20 +299,20 @@ class ProjectActions {
     }
   }
 
-  static addToURLNotHidden(url, isFirstStatus, status) {
+  static addStatusToURLNotHidden(url, isFirstStatus, status) {
     let newUrl = url;
     if (status.hidden === false) {
-      newUrl = this.addToURL(url, isFirstStatus, status);
+      newUrl = this.addToURL(url, isFirstStatus, status.name, 'status');
     }
     return newUrl;
   }
 
-  static addToURL(url, isFirstStatus, status) {
+  static addToURL(url, isFirst, value, colName) {
     let newURL = url;
-    if (isFirstStatus) {
-      newURL += 'status='.concat(status.name);
+    if (isFirst) {
+      newURL += colName.concat('=').concat(value);
     } else {
-      newURL += ','.concat(status.name);
+      newURL += ','.concat(value);
     }
     return newURL;
   }
@@ -351,6 +379,48 @@ class ProjectActions {
       }
     });
     return users;
+  }
+
+  static addToURLNotHidden(url, isFirst, value, columnName) {
+    let newUrl = url;
+    newUrl = this.addToURL(url, isFirst, value, columnName);
+    return newUrl;
+  }
+
+  static addAndIfNotFirstFilter(url, isFirst) {
+    let newUrl = url;
+    if (!isFirst) {
+      newUrl += '&';
+    }
+    return newUrl;
+  }
+
+  static getVisibleFromFilter(allValues, hiddenValues) {
+    const visibleValues = allValues.filter(
+      (value) => {
+        if (!hiddenValues.includes(value)) {
+          return value;
+        }
+      },
+    );
+    return visibleValues;
+  }
+
+  static updateHiddenParams(allParams, newHiddenParam, allHiddenParams) {
+    // Check is this param related to this hidden set
+    if (!allParams.includes(newHiddenParam)) {
+      return allHiddenParams;
+    }
+    if (this.willHideAllParams(allParams, allHiddenParams)) {
+      return [];
+    }
+    const newHiddenParams = CommonActions.deepCopyArray(allHiddenParams);
+    newHiddenParams.push(newHiddenParam);
+    return newHiddenParams;
+  }
+
+  static willHideAllParams(allParams, allHiddenParams) {
+    return allHiddenParams.length + 1 === allParams.length;
   }
 }
 

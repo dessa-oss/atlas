@@ -10,6 +10,8 @@ exports[`Shallow Renders Job Table 1`] = `
     <JobTableHeader
       allInputParams={Array []}
       allMetrics={Array []}
+      allUsers={Array []}
+      hiddenUsers={Array []}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
       jobRows={
@@ -23,6 +25,7 @@ exports[`Shallow Renders Job Table 1`] = `
       rowNumbers={Array []}
       statuses={Array []}
       updateHiddenStatus={[Function]}
+      updateHiddenUser={[Function]}
     />
     <div
       className="pagination-controls"

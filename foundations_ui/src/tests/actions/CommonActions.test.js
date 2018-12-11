@@ -297,3 +297,7 @@ it('getInputMetricCellType, not available', () => {
   const type = CommonActions.getInputMetricCellType(jobs[1].input_params[1]);
   expect(type).toBe('not-available');
 });
+
+it('getFlatArray', () => {
+  
+});

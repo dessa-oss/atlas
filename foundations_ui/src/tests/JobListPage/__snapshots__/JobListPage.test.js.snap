@@ -18,6 +18,8 @@ exports[`Shallow Renders Job List Page 1`] = `
   <JobTable
     allInputParams={Array []}
     allMetrics={Array []}
+    allUsers={Array []}
+    hiddenUsers={Array []}
     isLoaded={false}
     isMount={false}
     jobs={Array []}
@@ -39,6 +41,7 @@ exports[`Shallow Renders Job List Page 1`] = `
       ]
     }
     updateHiddenStatus={[Function]}
+    updateHiddenUser={[Function]}
   />
 </div>
 `;

@@ -18,7 +18,7 @@ class SelectColumnFilter extends Component {
       changeHiddenParams: this.props.changeHiddenParams,
       changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      updateSearchText: this.props.updateSearchText,
+      searchUserFilter: this.props.searchUserFilter,
       searchText: '',
       showAllFilters: false,
     };
@@ -26,26 +26,34 @@ class SelectColumnFilter extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ columns: nextProps.columns });
+    const { unsetClearFilters } = this.state;
+    if (unsetClearFilters) {
+      this.setState({ columns: nextProps.columns, changedParams: nextProps.hiddenInputParams });
+    }
   }
 
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
+    const {
+      changeHiddenParams, changedParams, toggleShowingFilter, searchUserFilter,
+    } = this.state;
+    this.setState({ searchText: '' });
     changeHiddenParams(changedParams);
+    searchUserFilter('');
     toggleShowingFilter();
   }
 
   onCancel() {
-    const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
+    const { toggleShowingFilter, searchUserFilter } = this.state;
+    this.setState({ changedParams: [], searchText: '' });
+    searchUserFilter('');
     toggleShowingFilter();
   }
 
   onClearFilters() {
-    const { updateSearchText } = this.state;
+    const { searchUserFilter } = this.state;
     const emptyArray = [];
     this.setState({ changedParams: emptyArray, showAllFilters: true });
-    updateSearchText('');
+    searchUserFilter('');
     this.input.value = '';
   }
 
@@ -64,12 +72,12 @@ class SelectColumnFilter extends Component {
   }
 
   submitSearchText() {
-    const { searchText, updateSearchText } = this.state;
-    updateSearchText(searchText);
+    const { searchText, searchUserFilter } = this.state;
+    searchUserFilter(searchText);
   }
 
   render() {
-    const { columns, showAllFilters } = this.state;
+    const { columns, showAllFilters, changedParams } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
     );
@@ -95,7 +103,7 @@ SelectColumnFilter.propTypes = {
   changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
-  updateSearchText: PropTypes.func,
+  searchUserFilter: PropTypes.func,
   showAllFilters: PropTypes.bool,
 };
 
@@ -105,7 +113,7 @@ SelectColumnFilter.defaultProps = {
   changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
-  updateSearchText: () => {},
+  searchUserFilter: () => {},
   showAllFilters: false,
 };
 

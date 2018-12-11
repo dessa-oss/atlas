@@ -6,6 +6,7 @@ import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
 import JobActions from '../../actions/JobListActions';
+import CommonActions from '../../actions/CommonActions';
 
 const isMetric = true;
 
@@ -13,17 +14,22 @@ class JobTableHeader extends Component {
   constructor(props) {
     super(props);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
+    this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
       jobs: this.props.jobs,
       isShowingUserFilter: false,
+      updateHiddenUser: this.props.updateHiddenUser,
       isShowingStatusFilter: false,
       updateHiddenStatus: this.props.updateHiddenStatus,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
+      searchText: '',
+      allUsers: this.props.allUsers,
+      hiddenUsers: this.props.hiddenUsers,
     };
   }
 
@@ -36,6 +42,8 @@ class JobTableHeader extends Component {
         statuses: nextProps.statuses,
         jobRows: nextProps.jobRows,
         rowNumbers: nextProps.rowNumbers,
+        allUsers: nextProps.allUsers,
+        hiddenUsers: nextProps.hiddenUsers,
       },
     );
   }
@@ -43,6 +51,10 @@ class JobTableHeader extends Component {
   toggleUserFilter() {
     const { isShowingUserFilter } = this.state;
     this.setState({ isShowingUserFilter: !isShowingUserFilter });
+  }
+
+  searchUserFilter(searchText) {
+    this.setState({ searchText });
   }
 
   toggleStatusFilter() {
@@ -61,16 +73,23 @@ class JobTableHeader extends Component {
       updateHiddenStatus,
       rowNumbers,
       jobRows,
+      searchText,
+      updateHiddenUser,
+      allUsers,
+      hiddenUsers,
     } = this.state;
 
     let userFilter = null;
     if (isShowingUserFilter) {
-      const allUsers = JobActions.getAllJobUsers(jobs);
+      const nameArray = CommonActions.getFlatArray(allUsers);
+      const filteredUsers = CommonActions.formatColumns(nameArray, hiddenUsers, searchText);
       userFilter = (
         <UserFilter
-          columns={allUsers}
+          columns={filteredUsers}
           toggleShowingFilter={this.toggleUserFilter}
-          changeHiddenParams={updateHiddenStatus}
+          changeHiddenParams={updateHiddenUser}
+          searchUserFilter={this.searchUserFilter}
+          hiddenInputParams={hiddenUsers}
         />
       );
     }
@@ -128,11 +147,14 @@ JobTableHeader.propTypes = {
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
   isShowingUserFilter: PropTypes.bool,
+  updateHiddenUser: PropTypes.func,
   isShowingStatusFilter: PropTypes.bool,
   updateHiddenStatus: PropTypes.func,
   statuses: PropTypes.array,
   rowNumbers: PropTypes.array,
   jobRows: PropTypes.array,
+  allUsers: PropTypes.array,
+  hiddenUsers: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -140,11 +162,14 @@ JobTableHeader.defaultProps = {
   jobs: [],
   allMetrics: [],
   isShowingUserFilter: false,
+  updateHiddenUser: () => {},
   isShowingStatusFilter: false,
   updateHiddenStatus: () => {},
   statuses: [],
   rowNumbers: [],
   jobRows: [],
+  allUsers: [],
+  hiddenUsers: [],
 };
 
 export default JobTableHeader;

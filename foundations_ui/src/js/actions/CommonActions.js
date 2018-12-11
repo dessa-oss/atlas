@@ -191,6 +191,11 @@ class CommonActions {
     return 'not-available';
   }
 
+  static getFlatArray(array) {
+    return array.map((element) => {
+      return element.name;
+    });
+  }
 
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950

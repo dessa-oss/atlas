@@ -8,6 +8,43 @@
     margin-right: 0px;
   }
 
+  &.duration-filter-container {
+    width: 380px;
+    position: absolute;
+    left: $status-filter-left;
+    padding-top: 5px;
+    top: $status-filter-top;
+
+    .column-filter-header {
+      text-align: left;
+      border: none;
+      height: inherit;
+    }
+
+    p {
+      display: inline-block;
+    }
+
+    .guided-input-container {
+      border: solid 1px $color-border-bottom;
+      div {
+        display: inline-block;
+      }
+      input {
+        border: none;
+        outline: none;
+        width: 50px;
+        text-align: right;
+      }
+      label {
+        display: inline-block;
+        width: 40px;
+        text-align: right;
+        font-style: italic;
+      }
+    }
+  }
+
   &.user-filter-container {
     width: 270px;
     position: absolute;
@@ -55,6 +92,9 @@
 
 .column-filter-buttons {
   text-align: right;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  
   button {
     min-width: 100px;
     margin-left: 15px;

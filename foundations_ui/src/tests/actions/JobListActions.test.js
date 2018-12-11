@@ -111,6 +111,17 @@ const colName = 'myCol';
 const colValue = 'myVal';
 const hasFilter = false;
 const noFilter = true;
+const hiddenUserFilter = [
+  'hidden1',
+  'hidden2'
+];
+const allUsers = [
+  'user1',
+  'user2',
+  'user3',
+  'user4'
+];
+const newHiddenUser = 'user2';
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -335,9 +346,14 @@ it('getBaseJobListingURL', () => {
   expect(URL).toBe('projects/project name/job_listing');
 });
 
-it('getFilterURL', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter);
+it('getFilterURL only 1 type', () => {
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
+});
+
+it('getFilterURL 2 types', () => {
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter);
+  expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -351,8 +367,8 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(filters, hiddenStatusFilter);
-  expect(updatedFilters.length).toBe(3);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter);
+  expect(updatedFilters.length).toBe(6);
 
 });
 
@@ -373,13 +389,13 @@ it('getAllJobUsers', () => {
 });
 
 it('addtoURL, first status', () => {
-  const updatedUrl = JobActions.addToURL(url, isFirst, status);
-  expect(updatedUrl).toBe('localhost/status=Error');
+  const updatedUrl = JobActions.addToURL(url, isFirst, colValue, colName);
+  expect(updatedUrl).toBe('localhost/myCol=myVal');
 });
 
 it('addtoURL, not first status', () => {
-  const updatedUrl = JobActions.addToURL(url, isNotFirst, status);
-  expect(updatedUrl).toBe('localhost/,Error');
+  const updatedUrl = JobActions.addToURL(url, isNotFirst, colValue, colName);
+  expect(updatedUrl).toBe('localhost/,myVal');
 });
 
 it('getFilterObject', () => {
@@ -387,14 +403,14 @@ it('getFilterObject', () => {
   expect(filteredObject).toEqual({ column: 'myCol', value: 'myVal' });
 });
 
-it('addToURLNotHidden, not hidden', () => {
-  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+it('addStatusToURLNotHidden, not hidden', () => {
+  const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
   expect(updatedUrl).toBe('localhost/status=Error');
 });
 
-it('addToURLNotHidden, hidden', () => {
+it('addStatusToURLNotHidden, hidden', () => {
   status.hidden = true;
-  const updatedUrl = JobActions.addToURLNotHidden(url, isFirst, status);
+  const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
   expect(updatedUrl).toBe('localhost/');
 });
 
@@ -424,4 +440,36 @@ it('updateStatusesIfNoFilters, has filters', () => {
 it('updateStatusesIfNoFilters, no filters', () => {
   JobActions.updateStatusesIfNoFilters(noFilter, hiddenStatusFilter);
   expect(hiddenStatusFilter[0].hidden).toBe(false);
+});
+
+it('addToURLNotHidden first', () => {
+  const newURL = JobActions.addToURLNotHidden(url, isFirst, colValue, colName);
+  expect(newURL).toBe('localhost/myCol=myVal');
+});
+
+it('addToURLNotHidden not first', () => {
+  const newURL = JobActions.addToURLNotHidden(url, isNotFirst, colValue, colName);
+  expect(newURL).toBe('localhost/,myVal');
+});
+
+it('addAndIfNotFirstFilter, first', () => {
+  const newURL = JobActions.addAndIfNotFirstFilter(url, isFirst);
+  expect(newURL).toBe('localhost/');
+});
+
+it('addAndIfNotFirstFilter, not first', () => {
+  const newURL = JobActions.addAndIfNotFirstFilter(url, isNotFirst);
+  expect(newURL).toBe('localhost/&');
+});
+
+it('updateHiddenParams', () => {
+  const newHiddenParams = JobActions.updateHiddenParams(allUsers, newHiddenUser, hiddenUserFilter);
+  expect(newHiddenParams.length === 3);
+  expect(newHiddenParams[2]).toBe('user2');
+
+});
+
+it('willHideAllParams', () => {
+  const willHide = JobActions.willHideAllParams(allUsers, hiddenUserFilter);
+  expect(willHide).toBe(false);
 });

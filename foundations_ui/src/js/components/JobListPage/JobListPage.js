@@ -26,6 +26,8 @@ class JobListPage extends Component {
         { name: 'Error', hidden: false },
       ],
       jobs: [],
+      allUsers: [],
+      hiddenUsers: [],
       allInputParams: [],
       isMount: false,
       allMetrics: [],
@@ -44,19 +46,38 @@ class JobListPage extends Component {
   async getJobs() {
     const { projectName } = this.state;
     const apiJobs = await JobActions.getJobs(projectName);
-    this.formatAndSaveParams(apiJobs);
+    const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
+    this.formatAndSaveParams(apiJobs, allUsers);
   }
 
-  formatAndSaveParams(apiJobs) {
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      if (apiJobs != null) {
-        this.saveAPIJobs(apiJobs);
-      } else {
-        this.clearState();
-      }
-    }
+  async getFilteredJobs() {
+    const { projectName, hiddenUsers, statuses } = this.state;
+    const filterJobs = await JobActions.filterJobs(projectName, statuses, hiddenUsers);
+    return filterJobs;
+  }
+
+  async updateHiddenUser(hiddenFields) {
+    const { allUsers } = this.state;
+    await this.setState({ hiddenUsers: hiddenFields });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
+  async updateHiddenStatus(hiddenFields) {
+    const { statuses, allUsers } = this.state;
+    const statusNamesArray = statuses.map(status => status.name);
+    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
+    await this.setState({ statuses: formattedColumns });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
   }
 
   clearState() {
@@ -65,17 +86,17 @@ class JobListPage extends Component {
     });
   }
 
-  async updateHiddenStatus(hiddenFields) {
-    const { statuses, projectName } = this.state;
-    const statusNamesArray = statuses.map(status => status.name);
-    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
-    const apiFilteredJobs = await JobActions.filterJobs(projectName, formattedColumns);
-
-    this.clearState();
-    this.formatAndSaveParams(apiFilteredJobs);
-    this.setState({ statuses: formattedColumns });
-    this.saveFilters();
-    this.forceUpdate();
+  formatAndSaveParams(apiJobs, allUsers) {
+    // use is mount for async as when it returns may have been unmounted
+    const { isMount } = this.state;
+    if (isMount) {
+      if (apiJobs != null) {
+        this.saveAPIJobs(apiJobs);
+        this.setState({ allUsers });
+      } else {
+        this.clearState();
+      }
+    }
   }
 
   saveAPIJobs(apiJobs) {
@@ -87,42 +108,50 @@ class JobListPage extends Component {
   }
 
   saveFilters() {
-    const { filters, statuses } = this.state;
-    const newFilters = JobActions.getAllFilters(filters, statuses);
-
+    const {
+      statuses, hiddenUsers, allUsers,
+    } = this.state;
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers);
     this.setState({ filters: newFilters });
   }
 
   clearFilters() {
-    this.setState({ filters: [], statuses: baseStatus });
+    this.setState({ filters: [], statuses: baseStatus, hiddenUsers: [] });
     this.getJobs();
   }
 
   async removeFilter(removeFilter) {
-    const { filters, statuses, projectName } = this.state;
+    const {
+      filters, statuses, allUsers, hiddenUsers,
+    } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
-    this.setState({ filters: newFilters, statuses: newStatuses });
-    const apiFilteredJobs = await JobActions.filterJobs(projectName, newStatuses);
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
+    await this.setState({ filters: newFilters, statuses: newStatuses, hiddenUsers: newHiddenUsers });
+    const apiFilteredJobs = await this.getFilteredJobs();
 
     this.clearState();
-    this.formatAndSaveParams(apiFilteredJobs);
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
     this.forceUpdate();
   }
 
   bindAllJobs() {
     this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
     this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
+    this.updateHiddenUser = this.updateHiddenUser.bind(this);
     this.saveAPIJobs = this.saveAPIJobs.bind(this);
     this.clearState = this.clearState.bind(this);
     this.saveFilters = this.saveFilters.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
+    this.getFilteredJobs = this.getFilteredJobs.bind(this);
   }
 
   render() {
     const {
-      projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics,
+      projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -137,10 +166,13 @@ class JobListPage extends Component {
           projectName={projectName}
           statuses={statuses}
           updateHiddenStatus={this.updateHiddenStatus}
+          updateHiddenUser={this.updateHiddenUser}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
           allMetrics={allMetrics}
+          allUsers={allUsers}
+          hiddenUsers={hiddenUsers}
         />
       </div>
     );
@@ -155,6 +187,8 @@ JobListPage.propTypes = {
   jobs: PropTypes.array,
   allInputParams: PropTypes.array,
   allMetrics: PropTypes.array,
+  allUsers: PropTypes.array,
+  hiddenUsers: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
@@ -165,6 +199,8 @@ JobListPage.defaultProps = {
   jobs: [],
   allInputParams: [],
   allMetrics: [],
+  allUsers: [],
+  hiddenUsers: [],
 };
 
 export default JobListPage;
