@@ -8,6 +8,7 @@ import StatusFilter from '../common/filters/StatusFilter';
 import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import CommonActions from '../../actions/CommonActions';
+import JobActions from '../../actions/JobListActions';
 
 const isMetric = true;
 
@@ -28,13 +29,16 @@ class JobTableHeader extends Component {
       isShowingStatusFilter: false,
       updateHiddenStatus: this.props.updateHiddenStatus,
       isShowingDurationFilter: false,
-      isShowingNumberFilter: true,
+      isShowingNumberFilter: false,
+      numberFilterColumn: '',
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
       searchText: '',
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
+      updateNumberFilter: this.props.updateNumberFilter,
+      numberFilters: this.props.numberFilters,
     };
   }
 
@@ -49,6 +53,7 @@ class JobTableHeader extends Component {
         rowNumbers: nextProps.rowNumbers,
         allUsers: nextProps.allUsers,
         hiddenUsers: nextProps.hiddenUsers,
+        numberFilters: nextProps.numberFilters,
       },
     );
   }
@@ -72,9 +77,18 @@ class JobTableHeader extends Component {
     this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
   }
 
-  toggleNumberFilter() {
+  toggleNumberFilter(e) {
     const { isShowingNumberFilter } = this.state;
-    this.setState({ isShowingNumberFilter: !isShowingNumberFilter });
+    let columnName = '';
+    // Need to check cause toggle can be to close the filter
+    if (e) {
+      if (e.target.id) {
+        columnName = e.target.id;
+      } else {
+        columnName = e.target.childNodes[0].id;
+      }
+    }
+    this.setState({ isShowingNumberFilter: !isShowingNumberFilter, numberFilterColumn: columnName });
   }
 
   render() {
@@ -94,6 +108,9 @@ class JobTableHeader extends Component {
       hiddenUsers,
       isShowingDurationFilter,
       isShowingNumberFilter,
+      numberFilterColumn,
+      updateNumberFilter,
+      numberFilters,
     } = this.state;
 
     let userFilter = null;
@@ -142,9 +159,21 @@ class JobTableHeader extends Component {
 
     let numberFilter = null;
     if (isShowingNumberFilter) {
+      const existingFilter = JobActions.getExistingValuesForRangeFilter(numberFilters, numberFilterColumn);
+      let curMin = 0;
+      let curMax = 0;
+      if (existingFilter) {
+        curMin = existingFilter.min;
+        curMax = existingFilter.max;
+      }
       numberFilter = (
         <NumberFilter
-          toggleShowingFilter={this.toggleDurationFilter}
+          toggleShowingFilter={this.toggleNumberFilter}
+          numberFilterColumn={numberFilterColumn}
+          columnName={numberFilterColumn}
+          changeHiddenParams={updateNumberFilter}
+          minValue={curMin}
+          maxValue={curMax}
         />
       );
     }
@@ -197,6 +226,9 @@ JobTableHeader.propTypes = {
   hiddenUsers: PropTypes.array,
   isShowingDurationFilter: PropTypes.bool,
   isShowingNumberFilter: PropTypes.bool,
+  numberFilterColumn: PropTypes.string,
+  updateNumberFilter: PropTypes.func,
+  numberFilters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -214,6 +246,9 @@ JobTableHeader.defaultProps = {
   hiddenUsers: [],
   isShowingDurationFilter: false,
   isShowingNumberFilter: false,
+  numberFilterColumn: '',
+  updateNumberFilter: () => {},
+  numberFilters: [],
 };
 
 export default JobTableHeader;

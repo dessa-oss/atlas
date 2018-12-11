@@ -10,14 +10,14 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams) {
+  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams, toggleNumberFilter) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, hiddenInputParams);
+      return this.getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter);
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter) {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
@@ -27,6 +27,7 @@ class CommonActions {
           title={input}
           className="inline-block full-width"
           containerClass="job-column-header"
+          toggleFilter={toggleNumberFilter}
         />);
       }
     });
@@ -195,6 +196,23 @@ class CommonActions {
     return array.map((element) => {
       return element.name;
     });
+  }
+
+  static getNumberFilters(oldFilters, newMin, newMax, newShowingNotAvailable, newColumnName) {
+    const newFilters = oldFilters.filter(
+      (filter) => {
+        if (filter.columnName !== newColumnName) {
+          return filter;
+        }
+      },
+    );
+    newFilters.push({
+      columnName: newColumnName,
+      min: newMin,
+      max: newMax,
+      showingNotAvailable: newShowingNotAvailable,
+    });
+    return newFilters;
   }
 
   // private functions, not cannot declare a private and static

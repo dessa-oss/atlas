@@ -20,13 +20,14 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter) {
-    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0) {
+  static filterJobs(projectName, statusFilter, userFilter, numberFilters) {
+    // if no filters just get regular jobs
+    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter);
+    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -211,7 +212,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter) {
+  static getFilterURL(statusFilter, userFilter, numberFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -222,6 +223,7 @@ class ProjectActions {
       });
       isFirstFilter = false;
     }
+
     let isFirstUser = true;
     if (userFilter.length > 0) {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
@@ -229,6 +231,12 @@ class ProjectActions {
     userFilter.forEach((user) => {
       url = this.addToURLNotHidden(url, isFirstUser, user, 'user');
       isFirstUser = false;
+      isFirstFilter = false;
+    });
+
+    numberFilters.forEach((numberFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      url = this.addToURLRangeNotHidden(url, numberFilter.min, numberFilter.max, numberFilter.columnName);
       isFirstFilter = false;
     });
 
@@ -246,11 +254,17 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
       updatedFilters = this.getFilters(visibleUsers, 'User');
+    }
+    if (numberFilters.length > 0) {
+      numberFilters.forEach((numberFilter) => {
+        const newRangeFilter = this.getRangeFilter(numberFilter.columnName, numberFilter.min, numberFilter.max);
+        updatedFilters.push(newRangeFilter);
+      });
     }
     return this.getStatusFilters(updatedFilters, statuses);
   }
@@ -421,6 +435,44 @@ class ProjectActions {
 
   static willHideAllParams(allParams, allHiddenParams) {
     return allHiddenParams.length + 1 === allParams.length;
+  }
+
+  static addToURLRangeNotHidden(url, startValue, endValue, columnName) {
+    let newUrl = url;
+    const addToURLValue = columnName.concat('_starts=')
+      .concat(startValue)
+      .concat('&')
+      .concat(columnName)
+      .concat('_ends=')
+      .concat(endValue);
+    newUrl += addToURLValue;
+    return newUrl;
+  }
+
+  static getRangeFilter(colName, startRange, endRange) {
+    const rangeValue = startRange.toString().concat(' - ').concat(endRange.toString());
+    return this.getFilterObject(colName, rangeValue);
+  }
+
+  static getExistingValuesForRangeFilter(allFilters, colName) {
+    const existingFilters = allFilters.filter((filter) => {
+      if (filter.columnName === colName) {
+        return filter;
+      }
+    });
+
+    if (existingFilters.length > 0) {
+      return existingFilters[0];
+    }
+    return null;
+  }
+
+  static removeRangeFilter(rangeFilters, removeFilter) {
+    return rangeFilters.filter((filter) => {
+      if (filter.columnName !== removeFilter.column) {
+        return filter;
+      }
+    });
   }
 }
 

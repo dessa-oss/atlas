@@ -473,3 +473,19 @@ it('willHideAllParams', () => {
   const willHide = JobActions.willHideAllParams(allUsers, hiddenUserFilter);
   expect(willHide).toBe(false);
 });
+
+it('addToURLRangeNotHidden', () => {
+
+});
+
+it('getRangeFilter', () => {
+
+});
+
+it('getExistingValuesForRangeFilter', () => {
+  
+});
+
+it('removeRangeFilter', () => {
+
+});

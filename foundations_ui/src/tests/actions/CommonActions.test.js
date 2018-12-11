@@ -301,3 +301,11 @@ it('getInputMetricCellType, not available', () => {
 it('getFlatArray', () => {
   
 });
+
+it('getNumberFilters', () => {
+
+});
+
+it('getNumberFilters', () => {
+
+});

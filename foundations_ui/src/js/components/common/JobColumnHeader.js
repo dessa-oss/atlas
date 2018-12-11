@@ -43,7 +43,7 @@ class JobColumnHeader extends Component {
           {tooltip}
           <div className="icon-container" />
           <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
-            <div className={arrowClassName} />
+            <div id={title} className={arrowClassName} />
           </div>
         </div>
       </div>

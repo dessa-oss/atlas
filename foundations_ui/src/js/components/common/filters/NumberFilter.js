@@ -3,62 +3,60 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 import Checkbox from '../Checkbox';
 
-const isStatusCheckbox = true;
-
 class NumberFilter extends Component {
   constructor(props) {
     super(props);
-    this.changeLocalParams = this.changeLocalParams.bind(this);
     this.onApply = this.onApply.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
-    this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.onChangeMin = this.onChangeMin.bind(this);
+    this.onChangeMax = this.onChangeMax.bind(this);
+    this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
     this.state = {
-      columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
-      changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
+      minValue: this.props.minValue,
+      maxValue: this.props.maxValue,
+      hideNotAvailable: false,
+      columnName: this.props.columnName,
       showAllFilters: false,
     };
   }
 
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ columns: nextProps.columns });
-  }
-
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
-    changeHiddenParams(changedParams);
+    const {
+      changeHiddenParams, toggleShowingFilter, columnName, minValue, maxValue, hideNotAvailable,
+    } = this.state;
+    changeHiddenParams(minValue, maxValue, hideNotAvailable, columnName);
     toggleShowingFilter();
   }
 
   onCancel() {
     const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
     toggleShowingFilter();
   }
 
   onClearFilters() {
-    const emptyArray = [];
-    this.setState({ changedParams: emptyArray, showAllFilters: true });
+    this.setState({ minValue: 0, maxValue: 0, showAllFilters: true });
   }
 
-  unsetClearFilters() {
-    this.setState({ showAllFilters: false });
+  onChangeMin(e) {
+    this.setState({ minValue: e.target.value });
   }
 
-  changeLocalParams(colName) {
-    const { changedParams } = this.state;
-    const copyArray = CommonActions.getChangedCheckboxes(changedParams, colName);
-    this.setState({ changedParams: copyArray });
+  onChangeMax(e) {
+    this.setState({ maxValue: e.target.value });
+  }
+
+  onChangeCheckbox() {
+    const { hideNotAvailable } = this.state;
+    this.setState({ hideNotAvailable: !hideNotAvailable, showAllFilters: false });
   }
 
   render() {
-    const { columns, showAllFilters } = this.state;
-    const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
-    );
+    const {
+      minValue, maxValue, hideNotAvailable, showAllFilters,
+    } = this.state;
 
     return (
       <div className="filter-container column-filter-container elevation-1 number-filter-container">
@@ -78,7 +76,8 @@ class NumberFilter extends Component {
               type="number"
               id="filter-input-sec"
               placeholder="Min"
-              onChange={(e) => { this.onChangeStartDateSecond(e); }}
+              value={minValue}
+              onChange={(e) => { this.onChangeMin(e); }}
             />
           </div>
           <div> - </div>
@@ -88,12 +87,18 @@ class NumberFilter extends Component {
               type="number"
               id="filter-input-sec"
               placeholder="Max"
-              onChange={(e) => { this.onChangeStartDateSecond(e); }}
+              value={maxValue}
+              onChange={(e) => { this.onChangeMax(e); }}
             />
           </div>
         </div>
 
-        <Checkbox name="Show 'not available' values" hidden={false} />
+        <Checkbox
+          name="Show 'not available' values"
+          hidden={hideNotAvailable}
+          changeHiddenParams={this.onChangeCheckbox}
+          showAllFilters={showAllFilters}
+        />
 
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
@@ -105,20 +110,24 @@ class NumberFilter extends Component {
 }
 
 NumberFilter.propTypes = {
-  columns: PropTypes.array,
   changeHiddenParams: PropTypes.func,
-  changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
+  minValue: PropTypes.number,
+  maxValue: PropTypes.number,
+  hideNotAvailable: PropTypes.bool,
+  columnName: PropTypes.string,
   showAllFilters: PropTypes.bool,
 };
 
 NumberFilter.defaultProps = {
-  columns: [],
   changeHiddenParams: () => {},
-  changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
+  minValue: 0,
+  maxValue: 0,
+  hideNotAvailable: false,
+  columnName: '',
   showAllFilters: false,
 };
 
