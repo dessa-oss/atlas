@@ -72,3 +72,9 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         for index in range(4):
             self.assertEqual(job_data['input_params']
                              [index]['source'], 'constant')
+        input_parameter_names = data['input_parameter_names']
+        expected_input_parameter_names = [{'name': 'kwarg2-0', 'type': 'number'},
+                                          {'name': 'kwarg1-0', 'type': 'string'},
+                                          {'name': 'arg2-0', 'type': 'number'},
+                                          {'name': 'arg1-0', 'type': 'string'}]
+        self.assertCountEqual(input_parameter_names, expected_input_parameter_names)
