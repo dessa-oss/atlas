@@ -12,6 +12,7 @@ exports[`Shallow Renders InputMetric 1`] = `
     isMetric={false}
     isShowingFilter={false}
     searchText=""
+    toggleNumberFilter={[Function]}
     updateSearchText={[Function]}
   />
   <div

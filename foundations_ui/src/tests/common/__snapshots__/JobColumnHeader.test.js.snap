@@ -17,13 +17,14 @@ exports[`Shallow Renders Job Column Header 1`] = `
       className="icon-container"
     />
     <div
-      className="arrow-container"
+      className="arrow-container string not-metric"
       onClick={[Function]}
       onKeyPress={[Function]}
       role="presentation"
     >
       <div
-        className="arrow-down float-right"
+        className="arrow-down float-right string not-metric"
+        id=""
       />
     </div>
   </div>

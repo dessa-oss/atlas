@@ -77,7 +77,9 @@ const metric = true;
 const columns = ['param1', 'param2'];
 const metricCols = ['metric1', 'metric2', 'metric3'];
 const hidden = ['param2', 'metric3'];
-const columnsToFormat = ['col1', 'col2', 'metric3'];
+const columnsToFormat = [
+  {name:'col1'}, {name:'col2'}, {name:'metric3'}
+];
 const emptyArray = [];
 const changedParams = ['alreadyHere'];
 const toAddParams = ['alreadyHere'];
@@ -95,6 +97,12 @@ const smallElementWidth = 10;
 const parentWidth = 100;
 const largeElementWidth = 200;
 const cellType = 'number';
+const allFilters = [
+  {columnName: 'myCol'}
+];
+const min = 1;
+const max = 5;
+const colName = 'newCol';
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -299,13 +307,12 @@ it('getInputMetricCellType, not available', () => {
 });
 
 it('getFlatArray', () => {
-  
+  const flatArray = CommonActions.getFlatArray(columnsToFormat);
+  expect(flatArray.length).toBe(3);
+  expect(flatArray[0]).toBe('col1');
 });
 
 it('getNumberFilters', () => {
-
-});
-
-it('getNumberFilters', () => {
-
+  const numberFilters = CommonActions.getNumberFilters(allFilters, min, max, colName);
+  expect(numberFilters.length).toBe(2);
 });
