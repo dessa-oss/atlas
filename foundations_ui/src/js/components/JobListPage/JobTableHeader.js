@@ -19,7 +19,7 @@ class JobTableHeader extends Component {
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
     this.toggleDurationFilter = this.toggleDurationFilter.bind(this);
-    this.toggleNumberFilter = this.toggleNumberFilter.bind(this);
+    this.toggleInputMetricFilter = this.toggleInputMetricFilter.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -77,18 +77,33 @@ class JobTableHeader extends Component {
     this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
   }
 
-  toggleNumberFilter(e) {
+  toggleInputMetricFilter(e) {
     const { isShowingNumberFilter } = this.state;
     let columnName = '';
+    let columnType = '';
     // Need to check cause toggle can be to close the filter
     if (e) {
+      let splitId;
       if (e.target.id) {
-        columnName = e.target.id;
+        splitId = e.target.id.split('&type=');
       } else {
-        columnName = e.target.childNodes[0].id;
+        splitId = e.target.childNodes[0].id.split('&type=');
       }
+      columnName = splitId[0];
+      columnType = splitId[1];
     }
-    this.setState({ isShowingNumberFilter: !isShowingNumberFilter, numberFilterColumn: columnName });
+    if (columnType.includes('number')) {
+      this.setState({
+        isShowingNumberFilter: !isShowingNumberFilter,
+        numberFilterColumn: columnName,
+      });
+    } else if (e === undefined) {
+      // This means it's an apply/cancel button rather than a header arrow
+      // so close everything
+      this.setState({
+        isShowingNumberFilter: false,
+      });
+    }
   }
 
   render() {
@@ -168,7 +183,7 @@ class JobTableHeader extends Component {
       }
       numberFilter = (
         <NumberFilter
-          toggleShowingFilter={this.toggleNumberFilter}
+          toggleShowingFilter={this.toggleInputMetricFilter}
           numberFilterColumn={numberFilterColumn}
           columnName={numberFilterColumn}
           changeHiddenParams={updateNumberFilter}
@@ -192,14 +207,14 @@ class JobTableHeader extends Component {
             header="input parameter"
             allInputParams={allInputParams}
             jobs={jobs}
-            toggleNumberFilter={this.toggleNumberFilter}
+            toggleNumberFilter={this.toggleInputMetricFilter}
           />
           <InputMetric
             header="metrics"
             allInputParams={allMetrics}
             jobs={jobs}
             isMetric={isMetric}
-            toggleNumberFilter={this.toggleNumberFilter}
+            toggleNumberFilter={this.toggleInputMetricFilter}
           />
           {userFilter}
           {statusFilter}

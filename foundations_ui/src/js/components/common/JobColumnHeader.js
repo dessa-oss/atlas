@@ -12,12 +12,13 @@ class JobColumnHeader extends Component {
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
       toggleFilter: this.props.toggleFilter,
+      colType: this.props.colType,
     };
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
@@ -28,6 +29,8 @@ class JobColumnHeader extends Component {
     if (isStatus) {
       divClass += ' status-header';
     }
+
+    const id = title.concat(colType).concat('&type=').concat(colType);
 
     return (
       <div
@@ -43,7 +46,7 @@ class JobColumnHeader extends Component {
           {tooltip}
           <div className="icon-container" />
           <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
-            <div id={title} className={arrowClassName} />
+            <div id={id} className={arrowClassName} />
           </div>
         </div>
       </div>
@@ -57,6 +60,7 @@ JobColumnHeader.propTypes = {
   className: PropTypes.string,
   containerClass: PropTypes.string,
   toggleFilter: PropTypes.func,
+  colType: PropTypes.string,
 };
 
 JobColumnHeader.defaultProps = {
@@ -65,6 +69,7 @@ JobColumnHeader.defaultProps = {
   className: '',
   containerClass: 'job-column-header',
   toggleFilter: () => {},
+  colType: 'string',
 };
 
 export default JobColumnHeader;

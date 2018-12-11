@@ -42,11 +42,12 @@ class InputMetric extends Component {
       header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter,
     } = this.state;
 
+    const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter,
     );
-    const rows = CommonActions.getInputMetricRows(jobs, isMetric, allInputParams, hiddenInputParams);
+    const rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
 
     return (
       <div className="job-static-columns-container">

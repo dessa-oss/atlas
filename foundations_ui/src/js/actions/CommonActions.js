@@ -21,13 +21,15 @@ class CommonActions {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
-        const key = input;
+        const key = input.name;
+        const colType = input.type;
         inputParams.push(<JobColumnHeader
           key={key}
-          title={input}
+          title={key}
           className="inline-block full-width"
           containerClass="job-column-header"
           toggleFilter={toggleNumberFilter}
+          colType={colType}
         />);
       }
     });
@@ -150,12 +152,12 @@ class CommonActions {
     const formatedColumns = [];
     if (columns !== null) {
       columns.forEach((col) => {
-        if (col.toLowerCase().includes(searchText.toLowerCase())) {
+        if (col.name.toLowerCase().includes(searchText.toLowerCase())) {
           let isHidden = false;
-          if (hiddenInputParams.includes(col)) {
+          if (hiddenInputParams.includes(col.name)) {
             isHidden = true;
           }
-          formatedColumns.push({ name: col, hidden: isHidden });
+          formatedColumns.push({ name: col.name, hidden: isHidden });
         }
       });
     }

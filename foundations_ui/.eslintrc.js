@@ -33,6 +33,7 @@ module.exports = {
     "array-callback-return": 0,
     "consistent-return": 0,
     "prefer-const": 1,
+    "prefer-destructuring": 1,
   }
 };
 
