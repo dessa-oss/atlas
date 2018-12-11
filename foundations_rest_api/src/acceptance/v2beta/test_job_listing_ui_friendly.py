@@ -5,8 +5,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
-
-import unittest
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
