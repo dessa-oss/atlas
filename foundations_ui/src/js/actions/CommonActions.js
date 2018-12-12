@@ -10,23 +10,27 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams) {
+  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, hiddenInputParams);
+      return this.getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric);
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
     const inputParams = [];
     allInputParams.forEach((input) => {
-      if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
-        const key = input;
+      if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
+        const key = input.name;
+        const colType = input.type;
         inputParams.push(<JobColumnHeader
           key={key}
-          title={input}
+          title={key}
           className="inline-block full-width"
           containerClass="job-column-header"
+          toggleFilter={toggleNumberFilter}
+          colType={colType}
+          isMetric={isMetric}
         />);
       }
     });
@@ -149,12 +153,12 @@ class CommonActions {
     const formatedColumns = [];
     if (columns !== null) {
       columns.forEach((col) => {
-        if (col.toLowerCase().includes(searchText.toLowerCase())) {
+        if (col.name.toLowerCase().includes(searchText.toLowerCase())) {
           let isHidden = false;
-          if (hiddenInputParams.includes(col)) {
+          if (hiddenInputParams.includes(col.name)) {
             isHidden = true;
           }
-          formatedColumns.push({ name: col, hidden: isHidden });
+          formatedColumns.push({ name: col.name, hidden: isHidden });
         }
       });
     }
@@ -195,6 +199,23 @@ class CommonActions {
     return array.map((element) => {
       return element.name;
     });
+  }
+
+  static getNumberFilters(oldFilters, newMin, newMax, newShowingNotAvailable, newColumnName) {
+    const newFilters = oldFilters.filter(
+      (filter) => {
+        if (filter.columnName !== newColumnName) {
+          return true;
+        }
+      },
+    );
+    newFilters.push({
+      columnName: newColumnName,
+      min: newMin,
+      max: newMax,
+      showingNotAvailable: newShowingNotAvailable,
+    });
+    return newFilters;
   }
 
   // private functions, not cannot declare a private and static

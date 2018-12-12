@@ -12,26 +12,25 @@ class JobColumnHeader extends Component {
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
       toggleFilter: this.props.toggleFilter,
+      colType: this.props.colType,
+      isMetric: this.props.isMetric,
     };
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
-    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
+    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
+    const divClassName = JobActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
+    const presentationClassName = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
 
     const tooltip = <Tooltip message={title} />;
 
-    let divClass = containerDivClass;
-    if (isStatus) {
-      divClass += ' status-header';
-    }
-
     return (
       <div
-        className={divClass}
+        className={divClassName}
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
@@ -42,8 +41,8 @@ class JobColumnHeader extends Component {
           </h4>
           {tooltip}
           <div className="icon-container" />
-          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
-            <div className={arrowClassName} />
+          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className={presentationClassName}>
+            <div id={title} className={arrowClassName} />
           </div>
         </div>
       </div>
@@ -57,6 +56,8 @@ JobColumnHeader.propTypes = {
   className: PropTypes.string,
   containerClass: PropTypes.string,
   toggleFilter: PropTypes.func,
+  colType: PropTypes.string,
+  isMetric: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -65,6 +66,8 @@ JobColumnHeader.defaultProps = {
   className: '',
   containerClass: 'job-column-header',
   toggleFilter: () => {},
+  colType: 'string',
+  isMetric: false,
 };
 
 export default JobColumnHeader;

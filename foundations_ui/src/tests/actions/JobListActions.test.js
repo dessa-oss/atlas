@@ -122,6 +122,15 @@ const allUsers = [
   'user4'
 ];
 const newHiddenUser = 'user2';
+const startValue = '1';
+const endValue = '2';
+const allFilters = [
+  {columnName: 'myCol'}
+];
+const nonExistingFilter = 'nonExist';
+const removeFilter = { column: 'myCol' };
+const colType = 'number';
+
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -218,13 +227,23 @@ it('gets JobColumnHeaderH4Class isStatus', () => {
 });
 
 it('gets JobColumnHeaderArrowClass', () => {
-  const arrow = JobActions.getJobColumnHeaderArrowClass(isNotStatus);
-  expect(arrow).toBe('arrow-down float-right');
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isNotStatus, colType, isMetric);
+  expect(arrow).toBe('arrow-down float-right number is-metric');
 });
 
 it('gets JobColumnHeaderArrowClass isStatus', () => {
-  const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus);
-  expect(arrow).toBe('arrow-down');
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
+  expect(arrow).toBe('arrow-down number is-metric');
+});
+
+it('getJobColumnHeaderDivClass', () => {
+  const div = JobActions.getJobColumnHeaderDivClass(colType, isMetric);
+  expect(div).toBe('number status-header');
+});
+
+it('getJobColumnHeaderPresentationClass', () => {
+  const div = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
+  expect(div).toBe('arrow-container number is-metric');
 });
 
 it('gets TableSectionHeaderDivClass', () => {
@@ -347,12 +366,12 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
 });
 
-it('getFilterURL 2 types', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter);
+it('getFilterURL more than 1 type', () => {
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters);
   expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
@@ -367,7 +386,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
@@ -472,4 +491,34 @@ it('updateHiddenParams', () => {
 it('willHideAllParams', () => {
   const willHide = JobActions.willHideAllParams(allUsers, hiddenUserFilter);
   expect(willHide).toBe(false);
+});
+
+it('addToURLRangeNotHidden', () => {
+  const newURL = JobActions.addToURLRangeNotHidden(url, startValue, endValue, colName);
+  expect(newURL).toBe('localhost/myCol_starts=1&myCol_ends=2');
+});
+
+it('getRangeFilter', () => {
+  const rangeFilter = JobActions.getRangeFilter(colName, startValue, endValue);
+  expect(rangeFilter).toEqual({"column": "myCol", "value": "1 - 2"});
+});
+
+it('getExistingValuesForRangeFilter, not existing', () => {
+  const existingValues = JobActions.getExistingValuesForRangeFilter(allFilters, colName);
+  expect(existingValues).not.toEqual(null);
+});
+
+it('getExistingValuesForRangeFilter, existing', () => {
+  const existingValues = JobActions.getExistingValuesForRangeFilter(allFilters, nonExistingFilter);
+  expect(existingValues).toBe(null);
+});
+
+it('removeRangeFilter, not exists', () => {
+  const updatedFilters = JobActions.removeRangeFilter(allFilters, nonExistingFilter);
+  expect(updatedFilters.length).toBe(1);
+});
+
+it('removeRangeFilter, exists', () => {
+  const updatedFilters = JobActions.removeRangeFilter(allFilters, removeFilter);
+  expect(updatedFilters.length).toBe(0);
 });

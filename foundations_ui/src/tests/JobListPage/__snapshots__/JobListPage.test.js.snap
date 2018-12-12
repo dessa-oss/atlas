@@ -23,6 +23,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     isLoaded={false}
     isMount={false}
     jobs={Array []}
+    numberFilters={Array []}
     projectName=""
     statuses={
       Array [
@@ -42,6 +43,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     }
     updateHiddenStatus={[Function]}
     updateHiddenUser={[Function]}
+    updateNumberFilter={[Function]}
   />
 </div>
 `;

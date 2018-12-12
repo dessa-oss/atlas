@@ -35,7 +35,7 @@ input[type="text"]:placeholder {
 
 button.b--mat {
   @extend .f--din;
-  margin-right: 15px;
+  margin-right: $margin-width;
   overflow: hidden;
   border-width: 0;
   outline: none;
