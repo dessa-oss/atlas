@@ -129,6 +129,7 @@ const allFilters = [
 ];
 const nonExistingFilter = 'nonExist';
 const removeFilter = {column: 'myCol'};
+const containValue = 'testPhrase';
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -512,9 +513,11 @@ it('removeFilterByName, exists', () => {
 });
 
 it('addToURLContainFilter', () => {
-
+  const newURL = JobActions.addToURLContainFilter(url, containValue, colName)
+  expect(newURL).toBe('localhost/myCol_contains=testPhrase');
 });
 
 it('getContainFilter', () => {
-
+  const containFilter = JobActions.getContainFilter(colName, containValue);
+  expect(containFilter).toEqual({"column": "myCol", "value": "\"testPhrase\""});
 });

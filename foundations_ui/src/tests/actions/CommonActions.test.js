@@ -103,6 +103,9 @@ const allFilters = [
 const min = 1;
 const max = 5;
 const colName = 'newCol';
+const existingColName = 'myCol';
+const missingColName = 'dontexist';
+const containsText = 'testPhrase';
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -317,6 +320,23 @@ it('getNumberFilters', () => {
   expect(numberFilters.length).toBe(2);
 });
 
-it('getOldFiltersWithoutColumn', () => {
-  
+it('getOldFiltersWithoutColumn, has column to remove', () => {
+  const newFilters = CommonActions.getOldFiltersWithoutColumn(allFilters, existingColName);
+  expect(newFilters.length).toBe(0);
 });
+
+it('getOldFiltersWithoutColumn, missing column to remove', () => {
+  const newFilters = CommonActions.getOldFiltersWithoutColumn(allFilters, missingColName);
+  expect(newFilters.length).toBe(1); 
+});
+
+it('getContainFilters, existing column', () => {
+  const newFilters = CommonActions.getContainFilters(allFilters, containsText, existingColName);
+  expect(newFilters.length).toBe(1);
+});
+
+it('getContainFilters, non existing column', () => {
+  const newFilters = CommonActions.getContainFilters(allFilters, containsText, missingColName);
+  expect(newFilters.length).toBe(2);
+});
+
