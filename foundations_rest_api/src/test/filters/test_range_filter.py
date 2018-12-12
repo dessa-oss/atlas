@@ -80,3 +80,55 @@ class TestRangeFilter(unittest.TestCase):
         new_result_ids = [job.job_id for job in new_result]
         expected_new_result_ids = [3, 6, 7]
         self.assertEqual(expected_new_result_ids, new_result_ids)
+
+    def test_input_parameters_range(self):
+        params = {
+            'argument1_starts': '2',
+            'argument1_ends': '6',
+        }
+
+        input_parameters_list = [
+            [{'name': 'argument0', 'type': 'string', 'value': 'red leave'},
+             {'name': 'argument1', 'type': 'number', 'value': '3.14'}],
+            [{'name': 'argument0', 'type': 'string', 'value': 'green grass'},
+             {'name': 'argument1', 'type': 'number', 'value': '9.8'}],
+            [{'name': 'argument0', 'type': 'string', 'value': 'more stuff'},
+             {'name': 'argument1', 'type': 'number', 'value': '5'}]
+        ]
+        result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
+                  for index, input_parameters in enumerate(input_parameters_list)]
+
+        contain_filter = RangeFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_job_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1, 3]
+        self.assertEqual(expected_new_result_ids, new_result_job_ids)
+
+    def test_output_metrics_range(self):
+        params = {
+            'metric1_starts': 'ad',
+            'metric1_ends': 'tao',
+        }
+
+        output_metrics_list = [
+            [{'name': 'metric0', 'type': 'string', 'value': 'more stuff'},
+             {'name': 'metric1', 'type': 'string', 'value': 'bohemian'}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'red leave'},
+             {'name': 'metric1', 'type': 'string', 'value': 'vague'}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'green grass'},
+             {'name': 'metric1', 'type': 'string', 'value': 'rapsody'}]
+        ]
+        result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
+                  for index, output_metrics in enumerate(output_metrics_list)]
+
+        contain_filter = RangeFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_job_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1, 3]
+        self.assertEqual(expected_new_result_ids, new_result_job_ids)

@@ -74,7 +74,8 @@ class TestExactMatchFilter(unittest.TestCase):
 
         job_statuses = ['RUNNING', 'COMPLETED', 'FAILED', 'COMPLETED', 'RUNNING']
 
-        result = [self.MockJobInfo(job_id=index+1, status=status) for index, status in enumerate(job_statuses)]
+        result = [self.MockJobInfo(job_id=index+1, status=status)
+                  for index, status in enumerate(job_statuses)]
 
         exact_filter = ExactMatchFilter()
         new_result = exact_filter(result, params)
@@ -84,3 +85,51 @@ class TestExactMatchFilter(unittest.TestCase):
         new_result_ids = [job.job_id for job in new_result]
         expected_new_result_ids = [1, 5]
         self.assertEqual(expected_new_result_ids, new_result_ids)
+
+    def test_input_parameters_exact_match(self):
+        params = {
+            'argument1': ','.join(['3.14', '9.8'])
+        }
+
+        input_parameters_list = [
+            [{'name': 'argument0', 'type': 'string', 'value': 'red leave'},
+             {'name': 'argument1', 'type': 'number', 'value': '3.14'}],
+            [{'name': 'argument0', 'type': 'string', 'value': 'green grass'},
+             {'name': 'argument1', 'type': 'number', 'value': '9.8'}],
+            [{'name': 'argument0', 'type': 'string', 'value': 'more stuff'}]
+        ]
+        result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
+                  for index, input_parameters in enumerate(input_parameters_list)]
+
+        contain_filter = ExactMatchFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_job_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1, 2]
+        self.assertEqual(expected_new_result_ids, new_result_job_ids)
+
+    def test_output_metrics_exact_match(self):
+        params = {
+            'metric1': 'true,false'
+        }
+
+        output_metrics_list = [
+            [{'name': 'metric0', 'type': 'string', 'value': 'more stuff'}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'red leave'},
+             {'name': 'metric1', 'type': 'bool', 'value': 'true'}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'green grass'},
+             {'name': 'metric1', 'type': 'bool', 'value': 'false'}]
+        ]
+        result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
+                  for index, output_metrics in enumerate(output_metrics_list)]
+
+        contain_filter = ExactMatchFilter()
+        new_result = contain_filter(result, params)
+
+        self.assertEqual(len(new_result), 2)
+
+        new_result_job_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [2, 3]
+        self.assertEqual(expected_new_result_ids, new_result_job_ids)
