@@ -34,6 +34,7 @@ module.exports = {
     "consistent-return": 0,
     "prefer-const": 1,
     "prefer-destructuring": 1,
+    "react/sort-comp": 1,
   }
 };
 

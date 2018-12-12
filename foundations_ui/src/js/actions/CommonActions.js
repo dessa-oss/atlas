@@ -209,7 +209,7 @@ class CommonActions {
     return oldFilters.filter(
       (filter) => {
         if (filter.columnName !== newColumnName) {
-          return filter;
+          return true;
         }
       },
     );
