@@ -151,7 +151,7 @@ class JobListPage extends Component {
 
   clearFilters() {
     this.setState({
-      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [],
+      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [], containFilters: [],
     });
     this.getJobs();
   }
