@@ -242,6 +242,12 @@ class ProjectActions {
       isFirstFilter = false;
     });
 
+    containFilters.forEach((containFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      url = this.getContainFilter(url, containFilter.searchText, containFilter.columnName);
+      isFirstFilter = false;
+    });
+
     return url;
   }
 
@@ -475,6 +481,13 @@ class ProjectActions {
         return filter;
       }
     });
+  }
+
+  static getContainFilter(url, value, columnName) {
+    let newUrl = url;
+    const containColName = columnName.concat('_contains');
+    newUrl = this.addToURL(url, true, value, containColName);
+    return newUrl;
   }
 }
 

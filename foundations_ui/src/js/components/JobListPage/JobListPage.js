@@ -54,9 +54,12 @@ class JobListPage extends Component {
 
   async getFilteredJobs() {
     const {
-      projectName, hiddenUsers, statuses, numberFilters, containFilters,
+      projectName, hiddenUsers, statuses, numberFilters, containFilters, allUsers,
     } = this.state;
-    const filterJobs = await JobActions.filterJobs(projectName, statuses, hiddenUsers, numberFilters, containFilters);
+
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters, containFilters);
     return filterJobs;
   }
 
@@ -73,8 +76,7 @@ class JobListPage extends Component {
 
   async updateHiddenStatus(hiddenFields) {
     const { statuses, allUsers } = this.state;
-    const statusNamesArray = statuses.map(status => status.name);
-    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
+    const formattedColumns = CommonActions.formatColumns(statuses, hiddenFields);
     await this.setState({ statuses: formattedColumns });
 
     const apiFilteredJobs = await this.getFilteredJobs();
