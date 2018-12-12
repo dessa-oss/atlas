@@ -43,6 +43,7 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
         import json
+        import pickle
 
         def callback(random_input_data):
             pass
@@ -221,10 +222,10 @@ class TestConsumers(unittest.TestCase):
         self.assertEqual(project_metric_name, set([byte_string(key)]))
 
     def _get_and_deserialize(self, key):
-        import json
+        from foundations_internal.foundations_serializer import deserialize
 
-        serialized_data = self._redis.get(key).decode()
-        return json.loads(serialized_data)
+        serialized_data = self._redis.get(key)
+        return deserialize(serialized_data)
 
     def _random_name(self):
         return self._faker.name()
