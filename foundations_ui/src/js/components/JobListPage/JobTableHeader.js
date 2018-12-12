@@ -8,6 +8,7 @@ import StatusFilter from '../common/filters/StatusFilter';
 import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import ContainsFilter from '../common/filters/ContainsFilter';
+import BooleanFilter from '../common/filters/BooleanFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 
@@ -39,6 +40,7 @@ class JobTableHeader extends Component {
       metricClass: '',
       isShowingNumberFilter: false,
       numberFilterColumn: '',
+      isShowingBooleanFilter: false,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
@@ -89,6 +91,8 @@ class JobTableHeader extends Component {
         columnType = 'number';
       } else if (e.target.className.includes('string')) {
         columnType = 'string';
+      } else if (e.target.className.includes('bool')) {
+        columnType = 'bool';
       }
     }
     return columnType;
@@ -122,7 +126,7 @@ class JobTableHeader extends Component {
   }
 
   toggleInputMetricFilter(e) {
-    const { isShowingNumberFilter, isShowingContainsFilter } = this.state;
+    const { isShowingNumberFilter, isShowingContainsFilter, isShowingBooleanFilter } = this.state;
     let columnName = this.getColumnName(e);
     let columnType = this.getColumnType(e);
     let metricClass = this.getMetricClass(e);
@@ -136,6 +140,12 @@ class JobTableHeader extends Component {
     } else if (columnType === 'string') {
       this.setState({
         isShowingContainsFilter: !isShowingContainsFilter,
+        numberFilterColumn: columnName,
+        metricClass,
+      });
+    } else if (columnType === 'bool') {
+      this.setState({
+        isShowingBooleanFilter: !isShowingBooleanFilter,
         numberFilterColumn: columnName,
         metricClass,
       });
@@ -179,9 +189,9 @@ class JobTableHeader extends Component {
       isShowingDurationFilter,
       isShowingNumberFilter,
       isShowingContainsFilter,
+      isShowingBooleanFilter,
       numberFilterColumn,
       updateNumberFilter,
-      numberFilters,
       metricClass,
       updateContainsFilter,
       containFilters,
@@ -263,6 +273,18 @@ class JobTableHeader extends Component {
       );
     }
 
+    let booleanFilter = null;
+    if (isShowingBooleanFilter) {
+      booleanFilter = (
+        <BooleanFilter
+          toggleShowingFilter={this.toggleInputMetricFilter}
+          columnName={numberFilterColumn}
+          changeHiddenParams={updateContainsFilter}
+          metricClass={metricClass}
+        />
+      );
+    }
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -291,6 +313,7 @@ class JobTableHeader extends Component {
           {durationFilter}
           {numberFilter}
           {containsFilter}
+          {booleanFilter}
         </div>
       </ScrollSync>
     );
@@ -319,6 +342,7 @@ JobTableHeader.propTypes = {
   isShowingContainsFilter: PropTypes.bool,
   updateContainsFilter: PropTypes.func,
   containFilters: PropTypes.array,
+  isShowingBooleanFilter: PropTypes.bool,
 };
 
 JobTableHeader.defaultProps = {
@@ -343,6 +367,7 @@ JobTableHeader.defaultProps = {
   isShowingContainsFilter: false,
   updateContainsFilter: () => {},
   containFilters: [],
+  isShowingBooleanFilter: false,
 };
 
 export default JobTableHeader;
