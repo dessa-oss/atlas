@@ -43,6 +43,7 @@ class JobTableHeader extends Component {
       hiddenUsers: this.props.hiddenUsers,
       updateNumberFilter: this.props.updateNumberFilter,
       numberFilters: this.props.numberFilters,
+      containFilters: this.props.containFilters,
     };
   }
 
@@ -58,6 +59,7 @@ class JobTableHeader extends Component {
         allUsers: nextProps.allUsers,
         hiddenUsers: nextProps.hiddenUsers,
         numberFilters: nextProps.numberFilters,
+        containFilters: nextProps.containFilters,
       },
     );
   }
@@ -148,6 +150,7 @@ class JobTableHeader extends Component {
       numberFilters,
       metricClass,
       updateContainsFilter,
+      containFilters,
     } = this.state;
 
     let userFilter = null;
@@ -195,7 +198,7 @@ class JobTableHeader extends Component {
 
     let numberFilter = null;
     if (isShowingNumberFilter) {
-      const existingFilter = JobActions.getExistingValuesForRangeFilter(numberFilters, numberFilterColumn);
+      const existingFilter = JobActions.getExistingValuesForFilter(numberFilters, numberFilterColumn);
       let curMin = 0;
       let curMax = 0;
       if (existingFilter) {
@@ -216,12 +219,18 @@ class JobTableHeader extends Component {
 
     let containsFilter = null;
     if (isShowingContainsFilter) {
+      const existingFilter = JobActions.getExistingValuesForFilter(containFilters, numberFilterColumn);
+      let containString = '';
+      if (existingFilter) {
+        containString = existingFilter.searchText;
+      }
       containsFilter = (
         <ContainsFilter
           toggleShowingFilter={this.toggleInputMetricFilter}
           columnName={numberFilterColumn}
           changeHiddenParams={updateContainsFilter}
           metricClass={metricClass}
+          filterString={containString}
         />
       );
     }
@@ -281,6 +290,7 @@ JobTableHeader.propTypes = {
   metricClass: PropTypes.string,
   isShowingContainsFilter: PropTypes.bool,
   updateContainsFilter: PropTypes.func,
+  containFilters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -304,6 +314,7 @@ JobTableHeader.defaultProps = {
   metricClass: 'not-metric',
   isShowingContainsFilter: false,
   updateContainsFilter: () => {},
+  containFilters: [],
 };
 
 export default JobTableHeader;

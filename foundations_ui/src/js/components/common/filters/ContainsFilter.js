@@ -11,12 +11,11 @@ class ContainsFilter extends Component {
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      filterString: '',
+      filterString: this.props.filterString,
       columnName: this.props.columnName,
       metricClass: this.props.metricClass,
     };
   }
-
 
   onApply() {
     const {
@@ -40,7 +39,7 @@ class ContainsFilter extends Component {
   }
 
   render() {
-    const { filterString, metricClass, columnName } = this.state;
+    const { filterString, metricClass } = this.state;
 
     const divClass = 'filter-container column-filter-container elevation-1 job-id-filter-container '
       .concat(metricClass);

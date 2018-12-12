@@ -19,6 +19,7 @@ class JobTable extends Component {
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
       numberFilters: this.props.numberFilters,
+      containFilters: this.props.containFilters,
     };
   }
 
@@ -33,6 +34,7 @@ class JobTable extends Component {
         allUsers: nextProps.allUsers,
         hiddenUsers: nextProps.hiddenUsers,
         numberFilters: nextProps.numberFilters,
+        containFilters: nextProps.containFilters,
       },
     );
   }
@@ -40,7 +42,7 @@ class JobTable extends Component {
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
-      updateNumberFilter, numberFilters, updateContainsFilter,
+      updateNumberFilter, numberFilters, updateContainsFilter, containFilters,
     } = this.state;
 
     let jobRows = [];
@@ -79,6 +81,7 @@ class JobTable extends Component {
             updateNumberFilter={updateNumberFilter}
             numberFilters={numberFilters}
             updateContainsFilter={updateContainsFilter}
+            containFilters={containFilters}
           />
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -107,6 +110,7 @@ JobTable.propTypes = {
   updateNumberFilter: PropTypes.func,
   numberFilters: PropTypes.array,
   updateContainsFilter: PropTypes.func,
+  containFilters: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -124,6 +128,7 @@ JobTable.defaultProps = {
   updateNumberFilter: () => {},
   numberFilters: [],
   updateContainsFilter: () => {},
+  containFilters: [],
 };
 
 export default JobTable;

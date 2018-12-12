@@ -243,7 +243,7 @@ class ProjectActions {
 
     containFilters.forEach((containFilter) => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
-      url = this.getContainFilter(url, containFilter.searchText, containFilter.columnName);
+      url = this.addToURLContainFilter(url, containFilter.searchText, containFilter.columnName);
       isFirstFilter = false;
     });
 
@@ -261,18 +261,27 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
       updatedFilters = this.getFilters(visibleUsers, 'User');
     }
+
     if (numberFilters.length > 0) {
       numberFilters.forEach((numberFilter) => {
         const newRangeFilter = this.getRangeFilter(numberFilter.columnName, numberFilter.min, numberFilter.max);
         updatedFilters.push(newRangeFilter);
       });
     }
+
+    if (containFilters.length > 0) {
+      containFilters.forEach((containFilter) => {
+        const newContainFilter = this.getContainFilter(containFilter.columnName, containFilter.searchText);
+        updatedFilters.push(newContainFilter);
+      });
+    }
+
     return this.getStatusFilters(updatedFilters, statuses);
   }
 
@@ -461,7 +470,7 @@ class ProjectActions {
     return this.getFilterObject(colName, rangeValue);
   }
 
-  static getExistingValuesForRangeFilter(allFilters, colName) {
+  static getExistingValuesForFilter(allFilters, colName) {
     const existingFilters = allFilters.filter((filter) => {
       if (filter.columnName === colName) {
         return filter;
@@ -474,7 +483,7 @@ class ProjectActions {
     return null;
   }
 
-  static removeRangeFilter(rangeFilters, removeFilter) {
+  static removeFilterByName(rangeFilters, removeFilter) {
     return rangeFilters.filter((filter) => {
       if (filter.columnName !== removeFilter.column) {
         return filter;
@@ -482,11 +491,16 @@ class ProjectActions {
     });
   }
 
-  static getContainFilter(url, value, columnName) {
+  static addToURLContainFilter(url, value, columnName) {
     let newUrl = url;
     const containColName = columnName.concat('_contains');
     newUrl = this.addToURL(url, true, value, containColName);
     return newUrl;
+  }
+
+  static getContainFilter(colName, value) {
+    const containValue = '"'.concat(value).concat('"');
+    return this.getFilterObject(colName, containValue);
   }
 }
 

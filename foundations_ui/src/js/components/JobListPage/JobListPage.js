@@ -142,10 +142,10 @@ class JobListPage extends Component {
 
   saveFilters() {
     const {
-      statuses, hiddenUsers, allUsers, numberFilters,
+      statuses, hiddenUsers, allUsers, numberFilters, containFilters,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers, numberFilters);
+    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers, numberFilters, containFilters);
     this.setState({ filters: newFilters });
   }
 
@@ -158,18 +158,20 @@ class JobListPage extends Component {
 
   async removeFilter(removeFilter) {
     const {
-      filters, statuses, allUsers, hiddenUsers, numberFilters,
+      filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters,
     } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
     const flatUsers = CommonActions.getFlatArray(allUsers);
     const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
-    const newNumberFilters = JobActions.removeRangeFilter(numberFilters, removeFilter);
+    const newNumberFilters = JobActions.removeFilterByName(numberFilters, removeFilter);
+    const newContainFilters = JobActions.removeFilterByName(containFilters, removeFilter);
     await this.setState({
       filters: newFilters,
       statuses: newStatuses,
       hiddenUsers: newHiddenUsers,
       numberFilters: newNumberFilters,
+      containFilters: newContainFilters,
     });
     const apiFilteredJobs = await this.getFilteredJobs();
 
@@ -195,7 +197,7 @@ class JobListPage extends Component {
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
-      numberFilters,
+      numberFilters, containFilters,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -220,6 +222,7 @@ class JobListPage extends Component {
           allUsers={allUsers}
           hiddenUsers={hiddenUsers}
           numberFilters={numberFilters}
+          containFilters={containFilters}
         />
       </div>
     );
