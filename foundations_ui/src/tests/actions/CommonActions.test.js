@@ -316,3 +316,7 @@ it('getNumberFilters', () => {
   const numberFilters = CommonActions.getNumberFilters(allFilters, min, max, colName);
   expect(numberFilters.length).toBe(2);
 });
+
+it('getOldFiltersWithoutColumn', () => {
+  
+});

@@ -20,14 +20,16 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter, numberFilters) {
+  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters) {
     // if no filters just get regular jobs
-    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0) {
+    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
+      && containFilters.length === 0
+    ) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters);
+    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -212,7 +214,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters) {
+  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {

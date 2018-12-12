@@ -59,7 +59,6 @@ class InputMetric extends Component {
           updateSearchText={this.updateSearchText}
           searchText={searchText}
           isMetric={isMetric}
-          toggleNumberFilter={toggleNumberFilter}
         />
         <div className="input-metric-header-row-container">
           <div className="input-metric-column-container column-header">

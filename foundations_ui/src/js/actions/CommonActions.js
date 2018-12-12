@@ -10,9 +10,13 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
+  static getInputMetricColumnHeaders(
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
+  ) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric);
+      return this.getInputParamHeaders(
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
+      );
     }
     return null;
   }
@@ -201,19 +205,32 @@ class CommonActions {
     });
   }
 
-  static getNumberFilters(oldFilters, newMin, newMax, newShowingNotAvailable, newColumnName) {
-    const newFilters = oldFilters.filter(
+  static getOldFiltersWithoutColumn(oldFilters, newColumnName) {
+    return oldFilters.filter(
       (filter) => {
         if (filter.columnName !== newColumnName) {
           return filter;
         }
       },
     );
+  }
+
+  static getNumberFilters(oldFilters, newMin, newMax, newShowingNotAvailable, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
     newFilters.push({
       columnName: newColumnName,
       min: newMin,
       max: newMax,
       showingNotAvailable: newShowingNotAvailable,
+    });
+    return newFilters;
+  }
+
+  static getContainFilters(oldFilters, newSearchText, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
+    newFilters.push({
+      columnName: newColumnName,
+      searchText: newSearchText,
     });
     return newFilters;
   }

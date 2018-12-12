@@ -30,6 +30,7 @@ class JobListPage extends Component {
       hiddenUsers: [],
       allInputParams: [],
       numberFilters: [],
+      containFilters: [],
       isMount: false,
       allMetrics: [],
     };
@@ -53,9 +54,9 @@ class JobListPage extends Component {
 
   async getFilteredJobs() {
     const {
-      projectName, hiddenUsers, statuses, numberFilters,
+      projectName, hiddenUsers, statuses, numberFilters, containFilters,
     } = this.state;
-    const filterJobs = await JobActions.filterJobs(projectName, statuses, hiddenUsers, numberFilters);
+    const filterJobs = await JobActions.filterJobs(projectName, statuses, hiddenUsers, numberFilters, containFilters);
     return filterJobs;
   }
 
@@ -87,6 +88,18 @@ class JobListPage extends Component {
     const { numberFilters, allUsers } = this.state;
     const newNumberFilters = CommonActions.getNumberFilters(numberFilters, min, max, isShowingNotAvailable, columnName);
     await this.setState({ numberFilters: newNumberFilters });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
+  async updateContainsFilter(searchText, columnName) {
+    const { containFilters, allUsers } = this.state;
+    const newContainFilters = CommonActions.getContainFilters(containFilters, searchText, columnName);
+    await this.setState({ containFilters: newContainFilters });
 
     const apiFilteredJobs = await this.getFilteredJobs();
     this.clearState();
@@ -171,6 +184,7 @@ class JobListPage extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.getFilteredJobs = this.getFilteredJobs.bind(this);
     this.updateNumberFilter = this.updateNumberFilter.bind(this);
+    this.updateContainsFilter = this.updateContainsFilter.bind(this);
   }
 
   render() {
@@ -193,6 +207,7 @@ class JobListPage extends Component {
           updateHiddenStatus={this.updateHiddenStatus}
           updateHiddenUser={this.updateHiddenUser}
           updateNumberFilter={this.updateNumberFilter}
+          updateContainsFilter={this.updateContainsFilter}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
@@ -216,6 +231,7 @@ JobListPage.propTypes = {
   allMetrics: PropTypes.array,
   allUsers: PropTypes.array,
   hiddenUsers: PropTypes.array,
+  containFilters: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
@@ -228,6 +244,7 @@ JobListPage.defaultProps = {
   allMetrics: [],
   allUsers: [],
   hiddenUsers: [],
+  containFilters: [],
 };
 
 export default JobListPage;

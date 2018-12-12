@@ -14,7 +14,7 @@
     margin-right: 0px;
   }
 
-  &.number-filter-container {
+  &.number-filter-container, &.job-id-filter-container {
     width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
     position: absolute;
     left: calc(#{$one-third-width} + (8 * #{$border-thin}));
@@ -88,12 +88,6 @@
   }
 
   &.job-id-filter-container {
-    width: 415px;
-    position: absolute;
-    left: $status-filter-left;
-    padding-top: 5px;
-    top: $status-filter-top;
-
     input {
       width: calc(100% - 18px);
       outline: none;
