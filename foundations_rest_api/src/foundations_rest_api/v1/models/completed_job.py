@@ -34,7 +34,7 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _load_jobs(project_name):
-        from foundations.models.pipeline_context_listing import PipelineContextListing
+        from foundations_contrib.models.pipeline_context_listing import PipelineContextListing
 
         completed_jobs = []
 
@@ -51,11 +51,13 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _job_properties(context, job_id):
-        from foundations.models.completed_job_data import CompletedJobData
+        from foundations_contrib.models.completed_job_data import CompletedJobData
 
         properties = CompletedJobData(context, job_id).load_job()
-        properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
-        properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
+        properties['start_time'] = CompletedJob._datetime_string(
+            properties['start_time'])
+        properties['completed_time'] = CompletedJob._datetime_string(
+            properties['completed_time'])
         return properties
 
     @staticmethod

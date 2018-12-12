@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class JobsTestsHelperMixin(object):
 
     def _setup_deployment(self, expected_status):
@@ -14,7 +15,8 @@ class JobsTestsHelperMixin(object):
         from .mocks.deployment import MockDeployment
 
         deployment_manager._scheduler = None
-        self._scheduler_backend_instance = MockSchedulerBackend(expected_status, [])
+        self._scheduler_backend_instance = MockSchedulerBackend(
+            expected_status, [])
         self._mock_deployment = MockDeployment(self._scheduler_backend)
 
         config_manager['deployment_implementation'] = {
@@ -22,10 +24,10 @@ class JobsTestsHelperMixin(object):
         }
 
     def _setup_results_archiving(self):
-        from foundations.pipeline import Pipeline
-        from foundations.pipeline_context import PipelineContext
+        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.pipeline_context import PipelineContext
         from foundations.global_state import config_manager
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
+        from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
         from .mocks.archive_listing import MockArchiveListing
         from .mocks.memory_bucket import MemoryBucket
 
@@ -82,8 +84,10 @@ class JobsTestsHelperMixin(object):
     def _make_scheduled_job(self, job_name, start_timestamp, duration_timestamp, user, state):
         from foundations.scheduler_job_information import JobInformation
 
-        job_information = JobInformation(job_name, start_timestamp, duration_timestamp, state, user)
-        self._scheduler_backend_instance._job_information.append(job_information)
+        job_information = JobInformation(
+            job_name, start_timestamp, duration_timestamp, state, user)
+        self._scheduler_backend_instance._job_information.append(
+            job_information)
 
     def _make_running_job(self, job_name, start_timestamp, duration_timestamp, user):
         return self._make_scheduled_job(job_name, start_timestamp, duration_timestamp, user, 'RUNNING')

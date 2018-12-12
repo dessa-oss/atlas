@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class SFTPJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
-        from foundations.bucket_job_deployment import BucketJobDeployment
+        from foundations_contrib.bucket_job_deployment import BucketJobDeployment
         from foundations_ssh.sftp_bucket import SFTPBucket
 
         self._deployment = BucketJobDeployment(
@@ -23,7 +23,7 @@ class SFTPJobDeployment(object):
     @staticmethod
     def scheduler_backend():
         """Returns the default legacy scheduler backend implementation
-        
+
         Returns:
             LegacyScheduler -- As above
         """

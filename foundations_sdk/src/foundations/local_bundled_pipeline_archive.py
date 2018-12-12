@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations.utils import file_archive_name
 from foundations.utils import file_archive_name_with_additional_prefix
-from foundations.simple_tempfile import SimpleTempfile
+from foundations_contrib.simple_tempfile import SimpleTempfile
 
 
 class LocalBundledPipelineArchive(object):
@@ -31,7 +31,7 @@ class LocalBundledPipelineArchive(object):
         remove(self._archive_path)
 
     def append(self, name, item, prefix=None):
-        from foundations.serializer import serialize_to_file
+        from foundations_internal.serializer import serialize_to_file
 
         with SimpleTempfile('w+b') as tempfile:
             serialize_to_file(item, tempfile.file)
@@ -50,7 +50,7 @@ class LocalBundledPipelineArchive(object):
         self._tar.add(file_path, arcname=arcname)
 
     def fetch(self, name, prefix=None):
-        from foundations.serializer import deserialize_from_file
+        from foundations_internal.serializer import deserialize_from_file
 
         arcname = file_archive_name(prefix, name)
 

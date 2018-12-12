@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.scheduler_legacy_backend import LegacyBackend
+from foundations_contrib.scheduler_legacy_backend import LegacyBackend
+
 
 class MockSchedulerBackend(LegacyBackend):
 

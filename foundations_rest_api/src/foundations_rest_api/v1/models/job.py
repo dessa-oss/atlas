@@ -48,7 +48,6 @@ class Job(PropertyModel):
 
         jobs.sort(key=get_sort_key, reverse=True)
 
-
     @staticmethod
     def _get_running_jobs(project_name):
         from foundations.global_state import deployment_manager
@@ -70,7 +69,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _get_completed_jobs(project_name):
-        from foundations.models.pipeline_context_listing import PipelineContextListing
+        from foundations_contrib.models.pipeline_context_listing import PipelineContextListing
         from foundations_rest_api.v1.models.completed_job import CompletedJob
 
         jobs = []

@@ -36,7 +36,7 @@ class RunningJob(PropertyModel):
                     user=info.user_submitted(),
                     start_time=info.submission_datetime().isoformat(),
                     job_parameters={},
-                    input_params=[], 
+                    input_params=[],
                     output_metrics={}
                 )
                 jobs.append(job)
@@ -55,7 +55,7 @@ class RunningJob(PropertyModel):
 
     @staticmethod
     def load_context(archiver):
-        from foundations.pipeline_context import PipelineContext
+        from foundations_internal.pipeline_context import PipelineContext
 
         context = PipelineContext()
         context.load_stage_log_from_archive(archiver)
