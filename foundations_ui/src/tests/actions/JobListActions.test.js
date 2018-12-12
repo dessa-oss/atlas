@@ -354,12 +354,12 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
 });
 
 it('getFilterURL more than 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
@@ -374,7 +374,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
