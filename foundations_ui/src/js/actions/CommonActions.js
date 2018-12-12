@@ -24,7 +24,7 @@ class CommonActions {
   static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
     const inputParams = [];
     allInputParams.forEach((input) => {
-      if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
+      if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
         inputParams.push(<JobColumnHeader

@@ -225,7 +225,6 @@ class ProjectActions {
       });
       isFirstFilter = false;
     }
-
     let isFirstUser = true;
     if (userFilter.length > 0) {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);

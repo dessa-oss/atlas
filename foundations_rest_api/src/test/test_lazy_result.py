@@ -147,3 +147,12 @@ class TestLazyResult(unittest.TestCase):
         lazy_result2 = LazyResult(mock2.value)
 
         self.assertEqual(['hello world'], lazy_result2.evaluate())
+    
+    def test_map_evaluates_lazy_result_and_callback(self):
+        mock = self.Mock('hello world')
+        lazy_result = LazyResult(mock.value)
+
+        def _callback(result):
+            return result +' result'
+        
+        self.assertEqual(lazy_result.map(_callback).evaluate(), 'hello world result')

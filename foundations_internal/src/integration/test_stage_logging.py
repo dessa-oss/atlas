@@ -34,7 +34,8 @@ class TestStageLogging(unittest.TestCase):
             job_to_run.run_same_process()
         
         metric_value = MyCoolClass.instance
-        expected_error_message_format = 'Invalid metric with key="invalid" of value={} with type {}. Value should be of type string or number'
-        expected_error_message = expected_error_message_format.format(metric_value, type(metric_value))
+        representation = str(metric_value)[:30] + " ..."
+        expected_error_message_format = 'Invalid metric with key="invalid" of value={} with type {}. Value should be of type string or number, or a list of strings / numbers'
+        expected_error_message = expected_error_message_format.format(representation, type(metric_value))
 
         self.assertEqual(str(error_context.exception), expected_error_message)

@@ -58,7 +58,10 @@ class JobListPage extends Component {
     } = this.state;
 
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    let visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    if (visibleUsers.length === allUsers.length) {
+      visibleUsers = [];
+    }
     const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters, containFilters);
     return filterJobs;
   }
