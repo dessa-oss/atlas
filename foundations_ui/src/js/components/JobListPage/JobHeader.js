@@ -22,24 +22,34 @@ class JobHeader extends Component {
   }
 
   componentDidMount() {
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ filters: nextProps.filters });
+
     const { bubbleRefs } = this.state;
     const { clientWidth } = this.bubbleContainer;
 
     let curWidth = 0;
     let numHidden = 0;
-    bubbleRefs.forEach((bubble) => {
-      curWidth += CommonActions.addBorderToElementWidth(bubble, borderSize);
-      if (CommonActions.elementsWidthLargerThanParent(curWidth, clientWidth)) {
-        bubble.className += ' hidden';
-        numHidden += 1;
+    bubbleRefs.forEach((id) => {
+      if (id !== null) {
+        const bubble = document.getElementById(id);
+        curWidth += CommonActions.addBorderToElementWidth(bubble, borderSize);
+        if (CommonActions.elementsWidthLargerThanParent(curWidth, clientWidth)) {
+          if (!bubble.className.includes(' hidden')) {
+            bubble.className += ' hidden';
+            numHidden += 1;
+          }
+        } else if (bubble.className.includes(' hidden')) {
+          bubble.className = bubble.className.replace(' hidden', '');
+          numHidden -= 1;
+        }
       }
     });
 
-    this.setState({ bubblesHidden: numHidden });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ filters: nextProps.filters });
+    this.setState({ bubblesHidden: numHidden, bubbleRefs: [] });
   }
 
   toggleFilters() {
@@ -61,7 +71,7 @@ class JobHeader extends Component {
     filters.forEach((filter) => {
       const key = filter.column.concat('-').concat(filter.value);
       filterBubbles.push(
-        <div ref={(e) => { bubbleRefs.push(e); }} key={key} className="bubble inline-block">
+        <div ref={() => { bubbleRefs.push(key); }} id={key} key={key} className="bubble inline-block">
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>
