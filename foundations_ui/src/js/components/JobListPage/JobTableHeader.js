@@ -20,6 +20,10 @@ class JobTableHeader extends Component {
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
     this.toggleDurationFilter = this.toggleDurationFilter.bind(this);
     this.toggleInputMetricFilter = this.toggleInputMetricFilter.bind(this);
+    this.getColumnType = this.getColumnType.bind(this);
+    this.getColumnName = this.getColumnName.bind(this);
+    this.getMetricClass = this.getMetricClass.bind(this);
+    this.getRangeFilterValues = this.getRangeFilterValues.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -59,11 +63,6 @@ class JobTableHeader extends Component {
     );
   }
 
-  toggleUserFilter() {
-    const { isShowingUserFilter } = this.state;
-    this.setState({ isShowingUserFilter: !isShowingUserFilter });
-  }
-
   searchUserFilter(searchText) {
     this.setState({ searchText });
   }
@@ -78,25 +77,48 @@ class JobTableHeader extends Component {
     this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
   }
 
-  toggleInputMetricFilter(e) {
-    const { isShowingNumberFilter } = this.state;
-    let columnName = '';
+  getColumnType(e) {
     let columnType = '';
-    let metricClass = 'not-metric';
-    // Need to check cause toggle can be to close the filter
     if (e) {
       if (e.target.className.includes('number')) {
         columnType = 'number';
       }
+    }
+    return columnType;
+  }
+
+  getColumnName(e) {
+    let columnName = '';
+    if (e) {
       if (e.target.id) {
         columnName = e.target.id;
       } else {
         columnName = e.target.childNodes[0].id;
       }
+    }
+    return columnName;
+  }
+
+  getMetricClass(e) {
+    let metricClass = 'not-metric';
+    if (e) {
       if (e.target.className.includes('is-metric')) {
         metricClass = 'is-metric';
       }
     }
+    return metricClass;
+  }
+
+  toggleUserFilter() {
+    const { isShowingUserFilter } = this.state;
+    this.setState({ isShowingUserFilter: !isShowingUserFilter });
+  }
+
+  toggleInputMetricFilter(e) {
+    const { isShowingNumberFilter } = this.state;
+    let columnName = this.getColumnName(e);
+    let columnType = this.getColumnType(e);
+    let metricClass = this.getMetricClass(e);
 
     if (columnType === 'number') {
       this.setState({
@@ -111,6 +133,18 @@ class JobTableHeader extends Component {
         isShowingNumberFilter: false,
       });
     }
+  }
+
+  getRangeFilterValues() {
+    const { numberFilters, numberFilterColumn } = this.state;
+    const existingFilter = JobActions.getExistingValuesForRangeFilter(numberFilters, numberFilterColumn);
+    let curMin = 0;
+    let curMax = 0;
+    if (existingFilter) {
+      curMin = existingFilter.min;
+      curMax = existingFilter.max;
+    }
+    return { min: curMin, max: curMax };
   }
 
   render() {
@@ -181,21 +215,15 @@ class JobTableHeader extends Component {
 
     let numberFilter = null;
     if (isShowingNumberFilter) {
-      const existingFilter = JobActions.getExistingValuesForRangeFilter(numberFilters, numberFilterColumn);
-      let curMin = 0;
-      let curMax = 0;
-      if (existingFilter) {
-        curMin = existingFilter.min;
-        curMax = existingFilter.max;
-      }
+      const filterValues = this.getRangeFilterValues();
       numberFilter = (
         <NumberFilter
           toggleShowingFilter={this.toggleInputMetricFilter}
           numberFilterColumn={numberFilterColumn}
           columnName={numberFilterColumn}
           changeHiddenParams={updateNumberFilter}
-          minValue={curMin}
-          maxValue={curMax}
+          minValue={filterValues.min}
+          maxValue={filterValues.max}
           metricClass={metricClass}
         />
       );

@@ -205,7 +205,7 @@ class CommonActions {
     const newFilters = oldFilters.filter(
       (filter) => {
         if (filter.columnName !== newColumnName) {
-          return filter;
+          return true;
         }
       },
     );

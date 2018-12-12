@@ -128,7 +128,9 @@ const allFilters = [
   {columnName: 'myCol'}
 ];
 const nonExistingFilter = 'nonExist';
-const removeFilter = {column: 'myCol'};
+const removeFilter = { column: 'myCol' };
+const colType = 'number';
+
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -225,13 +227,23 @@ it('gets JobColumnHeaderH4Class isStatus', () => {
 });
 
 it('gets JobColumnHeaderArrowClass', () => {
-  const arrow = JobActions.getJobColumnHeaderArrowClass(isNotStatus);
-  expect(arrow).toBe('arrow-down float-right');
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isNotStatus, colType, isMetric);
+  expect(arrow).toBe('arrow-down float-right number is-metric');
 });
 
 it('gets JobColumnHeaderArrowClass isStatus', () => {
-  const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus);
-  expect(arrow).toBe('arrow-down');
+  const arrow = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
+  expect(arrow).toBe('arrow-down number is-metric');
+});
+
+it('getJobColumnHeaderDivClass', () => {
+  const div = JobActions.getJobColumnHeaderDivClass(colType, isMetric);
+  expect(div).toBe('number status-header');
+});
+
+it('getJobColumnHeaderPresentationClass', () => {
+  const div = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
+  expect(div).toBe('arrow-container number is-metric');
 });
 
 it('gets TableSectionHeaderDivClass', () => {

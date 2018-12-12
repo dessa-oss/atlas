@@ -10,14 +10,8 @@ class DurationFilter extends Component {
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
-    this.onChangeStartDateDay = this.onChangeStartDateDay.bind(this);
-    this.onChangeStartDateHour = this.onChangeStartDateHour.bind(this);
-    this.onChangeStartDateMinute = this.onChangeStartDateMinute.bind(this);
-    this.onChangeStartDateSecond = this.onChangeStartDateSecond.bind(this);
-    this.onChangeEndDateDay = this.onChangeEndDateDay.bind(this);
-    this.onChangeEndDateHour = this.onChangeEndDateHour.bind(this);
-    this.onChangeEndDateMinute = this.onChangeEndDateMinute.bind(this);
-    this.onChangeEndDateSecond = this.onChangeEndDateSecond.bind(this);
+    this.onChangeTime = this.onChangeTime.bind(this);
+    this.updateInterval = this.updateInterval.bind(this);
     this.state = {
       startTime: this.props.startTime,
       endTime: this.props.endTime,
@@ -44,71 +38,35 @@ class DurationFilter extends Component {
     this.setState({ changedParams: emptyArray, showAllFilters: true });
   }
 
-  onChangeStartDateDay(e) {
-    const { startTime } = this.state;
-    let newStartTime = startTime;
-    newStartTime.days = e.target.value;
-    this.setState({ startTime: newStartTime });
-  }
-
-  onChangeStartDateHour(e) {
-    const { startTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 23) {
-      let newStartTime = startTime;
-      newStartTime.hours = e.target.value;
-      this.setState({ startTime: newStartTime });
+  onChangeTime(e, isStart, minValue, maxValue, interval) {
+    if (minValue !== null && maxValue !== null) {
+      if (e.target.value >= minValue && e.target.value <= maxValue) {
+        this.updateInterval(e, isStart, interval);
+      }
+    } else {
+      this.updateInterval(e, isStart, interval);
     }
   }
 
-  onChangeStartDateMinute(e) {
-    const { startTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 59) {
-      let newStartTime = startTime;
-      newStartTime.minutes = e.target.value;
-      this.setState({ startTime: newStartTime });
+  updateInterval(e, isStart, interval) {
+    const { startTime, endTime } = this.state;
+    let newTime = endTime;
+    if (isStart) {
+      newTime = startTime;
     }
-  }
-
-  onChangeStartDateSecond(e) {
-    const { startTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 59) {
-      let newStartTime = startTime;
-      newStartTime.seconds = e.target.value;
-      this.setState({ startTime: newStartTime });
+    if (interval === 'days') {
+      newTime.days = e.target.value;
+    } else if (interval === 'hours') {
+      newTime.hours = e.target.value;
+    } else if (interval === 'minutes') {
+      newTime.minutes = e.target.value;
+    } else if (interval === 'seconds') {
+      newTime.seconds = e.target.value;
     }
-  }
-
-  onChangeEndDateDay(e) {
-    const { endTime } = this.state;
-    let newEndTime = endTime;
-    newEndTime.days = e.target.value;
-    this.setState({ endTime: newEndTime });
-  }
-
-  onChangeEndDateHour(e) {
-    const { endTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 23) {
-      let newEndTime = endTime;
-      newEndTime.hours = e.target.value;
-      this.setState({ endTime: newEndTime });
-    }
-  }
-
-  onChangeEndDateMinute(e) {
-    const { endTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 59) {
-      let newEndTime = endTime;
-      newEndTime.minutes = e.target.value;
-      this.setState({ endTime: newEndTime });
-    }
-  }
-
-  onChangeEndDateSecond(e) {
-    const { endTime } = this.state;
-    if (e.target.value >= 0 && e.target.value <= 59) {
-      let newEndTime = endTime;
-      newEndTime.seconds = e.target.value;
-      this.setState({ endTime: newEndTime });
+    if (isStart) {
+      this.setState({ startTime: newTime });
+    } else {
+      this.setState({ endTime: newTime });
     }
   }
 
@@ -145,7 +103,7 @@ class DurationFilter extends Component {
               id="filter-input-days"
               placeholder="days"
               value={startTime.days}
-              onChange={(e) => { this.onChangeStartDateDay(e); }}
+              onChange={(e) => { this.onChangeTime(e, true, null, null, 'days'); }}
             />
             <label htmlFor="filter-input-days">days</label>
           </div>
@@ -157,7 +115,7 @@ class DurationFilter extends Component {
               id="filter-input-hours"
               placeholder="hrs"
               value={startTime.hours}
-              onChange={(e) => { this.onChangeStartDateHour(e); }}
+              onChange={(e) => { this.onChangeTime(e, true, 0, 23, 'hours'); }}
             />
             <label htmlFor="filter-input-hours">hrs</label>
           </div>
@@ -169,7 +127,7 @@ class DurationFilter extends Component {
               id="filter-input-min"
               placeholder="min"
               value={startTime.minutes}
-              onChange={(e) => { this.onChangeStartDateMinute(e); }}
+              onChange={(e) => { this.onChangeTime(e, true, 0, 59, 'minutes'); }}
             />
             <label htmlFor="filter-input-min">min</label>
           </div>
@@ -181,7 +139,7 @@ class DurationFilter extends Component {
               id="filter-input-sec"
               placeholder="sec"
               value={startTime.seconds}
-              onChange={(e) => { this.onChangeStartDateSecond(e); }}
+              onChange={(e) => { this.onChangeTime(e, true, 0, 59, 'seconds'); }}
             />
             <label htmlFor="filter-input-sec">sec</label>
           </div>
@@ -195,7 +153,7 @@ class DurationFilter extends Component {
               id="filter-input-days"
               placeholder="days"
               value={endTime.days}
-              onChange={(e) => { this.onChangeEndDateDay(e); }}
+              onChange={(e) => { this.onChangeTime(e, false, null, null, 'days'); }}
             />
             <label htmlFor="filter-input-days">days</label>
           </div>
@@ -207,7 +165,7 @@ class DurationFilter extends Component {
               id="filter-input-hours"
               placeholder="hrs"
               value={endTime.hours}
-              onChange={(e) => { this.onChangeEndDateHour(e); }}
+              onChange={(e) => { this.onChangeTime(e, false, 0, 23, 'hours'); }}
             />
             <label htmlFor="filter-input-hours">hrs</label>
           </div>
@@ -219,7 +177,7 @@ class DurationFilter extends Component {
               id="filter-input-min"
               placeholder="min"
               value={endTime.minutes}
-              onChange={(e) => { this.onChangeEndDateMinute(e); }}
+              onChange={(e) => { this.onChangeTime(e, false, 0, 59, 'minutes'); }}
             />
             <label htmlFor="filter-input-min">min</label>
           </div>
@@ -231,7 +189,7 @@ class DurationFilter extends Component {
               id="filter-input-sec"
               placeholder="sec"
               value={endTime.seconds}
-              onChange={(e) => { this.onChangeEndDateSecond(e); }}
+              onChange={(e) => { this.onChangeTime(e, false, 0, 59, 'seconds'); }}
             />
             <label htmlFor="filter-input-sec">sec</label>
           </div>

@@ -184,11 +184,33 @@ class ProjectActions {
     return 'blue-border-bottom';
   }
 
-  static getJobColumnHeaderArrowClass(isStatus) {
-    if (isStatus === isStatusField) {
-      return 'arrow-down';
+  static getJobColumnHeaderArrowClass(isStatus, colType, isMetric) {
+    let metricClass = 'not-metric';
+    if (isMetric) {
+      metricClass = 'is-metric';
     }
-    return 'arrow-down float-right';
+
+    if (isStatus === isStatusField) {
+      return 'arrow-down'.concat(' ').concat(colType).concat(' ').concat(metricClass);
+    }
+    return 'arrow-down float-right'.concat(' ').concat(colType).concat(' ').concat(metricClass);
+  }
+
+  static getJobColumnHeaderDivClass(containerDivClass, isStatus) {
+    let divClass = containerDivClass;
+    if (isStatus) {
+      divClass += ' status-header';
+    }
+    return divClass;
+  }
+
+  static getJobColumnHeaderPresentationClass(colType, isMetric) {
+    let metricClass = 'not-metric';
+    if (isMetric) {
+      metricClass = 'is-metric';
+    }
+
+    return 'arrow-container '.concat(colType).concat(' ').concat(metricClass);
   }
 
   static getTableSectionHeaderDivClass(header) {
@@ -412,7 +434,7 @@ class ProjectActions {
     const visibleValues = allValues.filter(
       (value) => {
         if (!hiddenValues.includes(value)) {
-          return value;
+          return true;
         }
       },
     );
@@ -456,7 +478,7 @@ class ProjectActions {
   static getExistingValuesForRangeFilter(allFilters, colName) {
     const existingFilters = allFilters.filter((filter) => {
       if (filter.columnName === colName) {
-        return filter;
+        return true;
       }
     });
 
@@ -469,7 +491,7 @@ class ProjectActions {
   static removeRangeFilter(rangeFilters, removeFilter) {
     return rangeFilters.filter((filter) => {
       if (filter.columnName !== removeFilter.column) {
-        return filter;
+        return true;
       }
     });
   }
