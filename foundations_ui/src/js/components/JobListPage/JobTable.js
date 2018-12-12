@@ -47,7 +47,7 @@ class JobTable extends Component {
     const rowNumbers = [];
     if (isLoaded) {
       if (jobs.length === 0) {
-        jobRows = <p>No Jobs available</p>;
+        jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
       } else {
         jobRows = [];
         jobs.forEach((job) => {
