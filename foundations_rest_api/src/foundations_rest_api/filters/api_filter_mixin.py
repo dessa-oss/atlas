@@ -19,7 +19,7 @@ class APIFilterMixin(object):
     def _get_nested_element_parser(self, nested_element):
         from foundations_rest_api.filters.parsers import get_nested_element_parser
 
-        element_type = getattr(nested_element, 'type')
+        element_type = nested_element.get('type', None)
         return get_nested_element_parser(element_type)
 
     def _in_place_filter(self, selection_function, result_list):
@@ -40,7 +40,7 @@ class APIFilterMixin(object):
 
         if nested_element:
             # column_name is an input parameter or an output metric name
-            column_value = getattr(nested_element, 'value')
+            column_value = nested_element.get('value', None)
             parser = self._get_nested_element_parser(nested_element)
             return parser.parse(column_value), parser
 
@@ -64,6 +64,6 @@ class APIFilterMixin(object):
 
     def _search_property(self, column_name, parametric_property):
         for element in parametric_property:
-            if getattr(element, 'name', None) == column_name:
+            if element.get('name', None) == column_name:
                 return element
         return None
