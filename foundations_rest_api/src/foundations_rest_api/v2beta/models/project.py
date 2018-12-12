@@ -19,6 +19,8 @@ class Project(PropertyModel):
     created_at = PropertyModel.define_property()
     owner = PropertyModel.define_property()
     jobs = PropertyModel.define_property()
+    input_parameter_names = PropertyModel.define_property()
+    output_metric_names = PropertyModel.define_property()
 
     @staticmethod
     def new(name):
@@ -82,4 +84,19 @@ class Project(PropertyModel):
         project.created_at = None
         project.owner = None
         project.jobs = Job.all(project_name=name)
+
+        def _get_names_and_types(key):
+            def _metric_filler_callback(jobs):
+                jobs_metrics = [job.attributes[key] for job in jobs]
+                names_and_types = {}
+                for job_metrics in jobs_metrics:
+                    for metric in job_metrics:
+                        names_and_types[metric['name']] = metric['type']
+                names_and_types = [{'name': name, 'type': key_type} for name, key_type in names_and_types.items()]
+                return names_and_types
+            return _metric_filler_callback
+
+        project.input_parameter_names = project.jobs.map(_get_names_and_types('input_params'))
+        project.output_metric_names = project.jobs.map(_get_names_and_types('output_metrics'))
+
         return project

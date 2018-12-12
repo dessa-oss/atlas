@@ -51,7 +51,7 @@ class APIAcceptanceTestCaseBase(with_metaclass(APIAcceptanceTestCaseMeta, unitte
             base_url = self._get_base_url()
             resp = self.client.get(base_url + query_string)
             self.assertEqual(resp.status_code, 200)
-            return json.loads(resp.data)
+            return json.loads(resp.data.decode())
 
         return test_method
 

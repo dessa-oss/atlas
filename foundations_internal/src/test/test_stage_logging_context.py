@@ -20,7 +20,13 @@ class TestStageLoggingContext(unittest.TestCase):
 
         def log_metric(self, key, value):
             self.key = key
-            self.value = value
+
+            if self.value is None:
+                self.value = value
+            elif isinstance(self.value, list):
+                self.value.append(value)
+            else:
+                self.value = [self.value, value]
 
     def setUp(self):
         self._logger = self.MockLogger()
@@ -51,25 +57,46 @@ class TestStageLoggingContext(unittest.TestCase):
         self._context.log_metric('loss', 0.554)
         self.assertEqual(0.554, self._logger.value)
 
-    def test_log_metric_value_raises_exception_not_number_or_string(self):
-        expected_error_message = 'Invalid metric with key="loss" of value=[2] with type <class \'list\'>. Value should be of type string or number'
+    def test_log_metric_with_singleton_list(self):
+        self._context.log_metric('loss', [2])
+        self.assertEqual(2, self._logger.value)
+
+    def test_log_metric_with_different_singleton_list(self):
+        self._context.log_metric('loss', ["2"])
+        self.assertEqual("2", self._logger.value)
+
+    def test_log_metric_with_another_list(self):
+        self._context.log_metric('loss', ["this", "that", "the other"])
+        self.assertEqual(["this", "that", "the other"], self._logger.value)
+
+    def test_log_metric_with_invalid_list(self):
+        expected_error_message = 'Invalid metric with key="bloop" of value=[<class \'Exception\'>] with type <class \'list\'>. Value should be of type string or number, or a list of strings / numbers'
 
         with self.assertRaises(TypeError) as metric:
-            self._context.log_metric('loss', [2])
+            self._context.log_metric('bloop', [Exception])
         self.assertEqual(str(metric.exception), expected_error_message)
 
     def test_log_metric_value_raises_exception_not_number_or_string_with_different_key(self):
-        expected_error_message = 'Invalid metric with key="gain" of value=[2] with type <class \'list\'>. Value should be of type string or number'
+        expected_error_message = 'Invalid metric with key="gain" of value=[[2]] with type <class \'list\'>. Value should be of type string or number, or a list of strings / numbers'
 
         with self.assertRaises(TypeError) as metric:
-            self._context.log_metric('gain', [2])
+            self._context.log_metric('gain', [[2]])
         self.assertEqual(str(metric.exception), expected_error_message)
 
     def test_log_metric_value_raises_exception_not_number_or_string_different_value(self):
-        expected_error_message = 'Invalid metric with key="loss" of value={\'a\': 22} with type <class \'dict\'>. Value should be of type string or number'
+        expected_error_message = 'Invalid metric with key="loss" of value={\'a\': 22} with type <class \'dict\'>. Value should be of type string or number, or a list of strings / numbers'
 
         with self.assertRaises(TypeError) as metric:
             self._context.log_metric('loss', {"a": 22})
+        self.assertEqual(str(metric.exception), expected_error_message)
+
+    def test_log_metric_value_raises_exception_cut_down_to_thirty_chars(self):
+        metric_value = [[1] * 50]
+
+        expected_error_message = 'Invalid metric with key="loss" of value=[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ... with type <class \'list\'>. Value should be of type string or number, or a list of strings / numbers'
+
+        with self.assertRaises(TypeError) as metric:
+            self._context.log_metric('loss', metric_value)
         self.assertEqual(str(metric.exception), expected_error_message)
 
     def test_log_metric_value_raises_exception_not_number_or_string_custom_class_using_default_repr(self):
@@ -78,8 +105,9 @@ class TestStageLoggingContext(unittest.TestCase):
                 pass
 
         metric_value = MyCoolClass()
-        expected_error_message_format = 'Invalid metric with key="loss" of value={} with type {}. Value should be of type string or number'
-        expected_error_message = expected_error_message_format.format(metric_value, type(metric_value))
+        representation = str(metric_value)[:30] + " ..."
+        expected_error_message_format = 'Invalid metric with key="loss" of value={} with type {}. Value should be of type string or number, or a list of strings / numbers'
+        expected_error_message = expected_error_message_format.format(representation, type(metric_value))
 
         with self.assertRaises(TypeError) as metric:
             self._context.log_metric('loss', metric_value)

@@ -38,16 +38,20 @@ class StageLoggingContext(object):
             value {object} -- value of the metric
         """
 
-        from foundations.utils import is_string, is_number
+        from foundations.utils import is_string
 
         if not is_string(key):
             raise ValueError('Invalid metric name `{}`'.format(key))
 
-        if is_string(value) or is_number(value):
+        if StageLoggingContext._is_scalar_loggable(value):
             self._logger.log_metric(key, value)
+        elif StageLoggingContext._is_list_loggable(value):
+            for metric in value:
+                self._logger.log_metric(key, metric)
         else:
-            error_message = 'Invalid metric with key="{}" of value={} with type {}. Value should be of type string or number'
-            raise TypeError(error_message.format(key, value, type(value)))
+            error_message = 'Invalid metric with key="{}" of value={} with type {}. Value should be of type string or number, or a list of strings / numbers'
+            string_representation = StageLoggingContext._get_string_representation(value)
+            raise TypeError(error_message.format(key, string_representation, type(value)))
 
     def change_logger(self, new_logger):
         """Changes the current logging backend for the context
@@ -61,3 +65,24 @@ class StageLoggingContext(object):
         """
 
         return self.ChangeLogger(self, new_logger)
+
+    @staticmethod
+    def _is_scalar_loggable(value):
+        from foundations.utils import is_string, is_number
+        return is_string(value) or is_number(value)
+
+    @staticmethod
+    def _is_list_loggable(value):
+        if isinstance(value, list):
+            check_for_loggable_elements = map(StageLoggingContext._is_scalar_loggable, value)
+            return all(check_for_loggable_elements)
+
+        return False
+
+    def _get_string_representation(value):
+        representation = str(value)
+
+        if len(representation) > 30:
+            representation = representation[:30] + " ..."
+        
+        return representation
