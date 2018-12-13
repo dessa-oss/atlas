@@ -18,7 +18,17 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
     @classmethod
     def setUpClass(klass):
         klass._project_name = 'hanna'
+        klass._job_name = 'test job'
         klass._run_stages()
+
+    @classmethod
+    def tearDownClass(klass):
+        from foundations.global_state import redis_connection as redis
+
+        keys = []
+        for name in (klass._project_name, klass._job_name):
+            keys += redis.keys('*{}*'.format(name))
+        redis.delete(*keys)
 
     @classmethod
     def _run_stages(klass):
@@ -40,10 +50,13 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
         set_project_name(klass._project_name)
         value1 = stage0()
         value2 = stage1()
-        stage2(value1, value2, 5).run()
+        stage2(value1, value2, 5).run(job_name=klass._job_name)
 
     def test_get_route(self):
         data = super(TestJobListingParametrics, self).test_get_route()
+        self.assertEqual(data['jobs'][0]['input_params'][0]['value'], 'stage0-1')
+        self.assertEqual(data['jobs'][0]['input_params'][1]['value'], 'stage1-2')
+        self.assertEqual(data['jobs'][0]['input_params'][2]['value'], 5)
         self.assertIsNone(data['jobs'][0]['output_metrics'][0]['value'])
         self.assertIsNone(data['jobs'][0]['output_metrics'][1]['value'])
         self.assertEqual(data['jobs'][0]['output_metrics'][2]['value'], 5)
