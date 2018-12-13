@@ -35,8 +35,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, start_time=start_time.isoformat() if start_time else None)
                   for index, start_time in enumerate(jobs_start_times)]
 
-        range_filter = NullFilter()
-        new_result = range_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -62,8 +62,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, start_time=start_time.isoformat() if start_time else None)
                   for index, start_time in enumerate(jobs_start_times)]
 
-        range_filter = NullFilter()
-        new_result = range_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 3)
 
@@ -89,8 +89,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, start_time=start_time.isoformat() if start_time else None)
                   for index, start_time in enumerate(jobs_start_times)]
 
-        range_filter = NullFilter()
-        new_result = range_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 5)
 
@@ -114,8 +114,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
 
-        contain_filter = NullFilter()
-        new_result = contain_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 1)
 
@@ -139,8 +139,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
 
-        contain_filter = NullFilter()
-        new_result = contain_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -164,8 +164,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
                   for index, output_metrics in enumerate(output_metrics_list)]
 
-        contain_filter = NullFilter()
-        new_result = contain_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 1)
 
@@ -189,8 +189,8 @@ class TestNullFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
                   for index, output_metrics in enumerate(output_metrics_list)]
 
-        contain_filter = NullFilter()
-        new_result = contain_filter(result, params)
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 

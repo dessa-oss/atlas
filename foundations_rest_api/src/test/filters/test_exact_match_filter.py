@@ -8,6 +8,7 @@ import unittest
 from mock import patch
 from foundations_rest_api.filters.exact_match_filter import ExactMatchFilter
 
+
 class TestExactMatchFilter(unittest.TestCase):
 
     class MockJobInfo(object):
@@ -36,8 +37,8 @@ class TestExactMatchFilter(unittest.TestCase):
 
         result = [self.MockJobInfo(start_time=start_time.isoformat()) for start_time in jobs_start_times]
 
-        exact_filter = ExactMatchFilter()
-        new_result = exact_filter(result, params)
+        exact_match_filter = ExactMatchFilter()
+        new_result = exact_match_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -56,8 +57,8 @@ class TestExactMatchFilter(unittest.TestCase):
 
         result = [self.MockJobInfo(user=job_user) for job_user in job_users]
 
-        exact_filter = ExactMatchFilter()
-        new_result = exact_filter(result, params)
+        exact_match_filter = ExactMatchFilter()
+        new_result = exact_match_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -77,8 +78,8 @@ class TestExactMatchFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, status=status)
                   for index, status in enumerate(job_statuses)]
 
-        exact_filter = ExactMatchFilter()
-        new_result = exact_filter(result, params)
+        exact_match_filter = ExactMatchFilter()
+        new_result = exact_match_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -101,8 +102,8 @@ class TestExactMatchFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
 
-        contain_filter = ExactMatchFilter()
-        new_result = contain_filter(result, params)
+        exact_match_filter = ExactMatchFilter()
+        new_result = exact_match_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -125,8 +126,8 @@ class TestExactMatchFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
                   for index, output_metrics in enumerate(output_metrics_list)]
 
-        contain_filter = ExactMatchFilter()
-        new_result = contain_filter(result, params)
+        exact_match_filter = ExactMatchFilter()
+        new_result = exact_match_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 

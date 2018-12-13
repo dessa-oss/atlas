@@ -8,6 +8,7 @@ import unittest
 from mock import patch
 from foundations_rest_api.filters.contains_filter import ContainsFilter
 
+
 class TestContainsFilter(unittest.TestCase):
 
     class MockJobInfo(object):
@@ -25,8 +26,8 @@ class TestContainsFilter(unittest.TestCase):
 
         result = [self.MockJobInfo(user=job_user) for job_user in job_users]
 
-        contain_filter = ContainsFilter()
-        new_result = contain_filter(result, params)
+        contains_filter = ContainsFilter()
+        new_result = contains_filter(result, params)
 
         self.assertEqual(len(new_result), 1)
 
@@ -43,8 +44,8 @@ class TestContainsFilter(unittest.TestCase):
 
         result = [self.MockJobInfo(job_id=index+1, status=status) for index, status in enumerate(job_statuses)]
 
-        contain_filter = ContainsFilter()
-        new_result = contain_filter(result, params)
+        contains_filter = ContainsFilter()
+        new_result = contains_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -69,8 +70,8 @@ class TestContainsFilter(unittest.TestCase):
 
         result = [self.MockJobInfo(start_time=start_time.isoformat()) for start_time in jobs_start_times]
 
-        contain_filter = ContainsFilter()
-        new_result = contain_filter(result, params)
+        contains_filter = ContainsFilter()
+        new_result = contains_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -93,8 +94,8 @@ class TestContainsFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
 
-        contain_filter = ContainsFilter()
-        new_result = contain_filter(result, params)
+        contains_filter = ContainsFilter()
+        new_result = contains_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -117,8 +118,8 @@ class TestContainsFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
                   for index, output_metrics in enumerate(output_metrics_list)]
 
-        contain_filter = ContainsFilter()
-        new_result = contain_filter(result, params)
+        contains_filter = ContainsFilter()
+        new_result = contains_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 

@@ -8,6 +8,7 @@ import unittest
 from mock import patch
 from foundations_rest_api.filters.range_filter import RangeFilter
 
+
 class TestRangeFilter(unittest.TestCase):
 
     class MockJobInfo(object):
@@ -98,8 +99,8 @@ class TestRangeFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
 
-        contain_filter = RangeFilter()
-        new_result = contain_filter(result, params)
+        range_filter = RangeFilter()
+        new_result = range_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
@@ -124,8 +125,8 @@ class TestRangeFilter(unittest.TestCase):
         result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
                   for index, output_metrics in enumerate(output_metrics_list)]
 
-        contain_filter = RangeFilter()
-        new_result = contain_filter(result, params)
+        range_filter = RangeFilter()
+        new_result = range_filter(result, params)
 
         self.assertEqual(len(new_result), 2)
 
