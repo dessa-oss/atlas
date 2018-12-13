@@ -176,7 +176,7 @@ class JobListPage extends Component {
     const apiFilteredJobs = await this.getFilteredJobs();
 
     this.clearState();
-    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    await this.formatAndSaveParams(apiFilteredJobs, allUsers);
     this.forceUpdate();
   }
 
