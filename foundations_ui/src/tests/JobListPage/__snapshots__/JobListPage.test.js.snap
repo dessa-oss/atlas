@@ -10,6 +10,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     bubblesHidden={0}
     clearFilters={[Function]}
     filters={Array []}
+    hiddenBubbles={Array []}
     isShowingMoreFilters={false}
     numProjects={0}
     project={Object {}}
