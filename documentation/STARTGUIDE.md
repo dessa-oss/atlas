@@ -3,6 +3,8 @@
 *Foundations* library can be used in any Python machine learning development workflow.
 It integrates easily with different stages(steps) of the machine learning workflow irrespective of which machine learning library it's used with (Eg: Keras, Tensorflow).
 
+*Foundations* only support Python 3 and above versions.
+
 To start with, first install the Foundations library and then follow examples guide to see how it can be used.
 
 ## Installation
@@ -42,10 +44,10 @@ There are two ways to install Foundations library:
 [Wheel installation](STARTGUIDE.md#wheel-installation) or [Install from source](STARTGUIDE.md#install-from-source)
 
 ### Wheel Installation
-The `.whl` files for Python versions 2 and 3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
+The `.whl` files for Python3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
 There are different assets based on different job deployment strategies.
 
-You only need `foundations-<version>-<python-version>-none-any.whl` file for initial Foundations deployment.
+You only need `foundations-<version>-py3-none-any.whl` file for initial Foundations deployment.
 Choose the appropriate `whl` file to match the Python version installed on your machine.
 
 Run the following command to install Foundations:

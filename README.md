@@ -1,5 +1,6 @@
 # Foundations
 *Foundations* is a Python library to manage and improve machine learning workflow. It easily integrates with machine learning workflow written in Python.
+*Foundations* only support Python 3 and above versions.
 
 It provides functionality of log experimental outputs, cache re-usable data, record data provenance information, and track experimental performance metadata. It provides a programmatic approach to launch experiments, which helps modularize model selection and hyperparameter tuning logic from model definition and data wrangling. Last, it provides a programmatic approach to retrieve logged results such that common post-experimentation analysis can be performed quickly.
 
