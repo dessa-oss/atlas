@@ -15,11 +15,12 @@ class ShowMoreFilters extends Component {
     const filterBubbles = [];
     hiddenBubbles.forEach((bubble) => {
       const key = bubble.id;
-      const splitId = bubble.id.split('-');
+      const name = bubble.id.split(/-(.+)/)[0];
+      const value = bubble.id.split(/-(.+)/)[1];
       filterBubbles.push(
         <div key={key} className="bubble inline-block">
           <p className="font-bold">
-            {splitId[0]}:<span> {splitId[1]}</span>
+            {name}:<span> {value}</span>
           </p>
           <button type="button" className="close-button" />
         </div>,

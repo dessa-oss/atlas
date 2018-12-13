@@ -16,11 +16,11 @@ class JobHeader extends Component {
     this.getHiddenWidth = this.getHiddenWidth.bind(this);
     this.addToBubbleRefs = this.addToBubbleRefs.bind(this);
     this.removeBubbleFromRef = this.removeBubbleFromRef.bind(this);
+    this.modifyBubble = this.modifyBubble.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
       bubbleRefs: [],
-      bubblesHidden: 0,
       isShowingMoreFilters: false,
       clearFilters: this.props.clearFilters,
       removeFilter: this.props.removeFilter,
@@ -35,40 +35,47 @@ class JobHeader extends Component {
     const { clientWidth } = this.bubbleContainer;
 
     let curWidth = 0;
-    let numHidden = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     bubbleRefs.forEach((id) => {
-      const showHideResults = this.showHideBubbles(id, curWidth, numHidden, clientWidth, curHiddenBubbles);
+      const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
       curWidth = showHideResults.width;
-      numHidden = showHideResults.hidden;
       curHiddenBubbles = showHideResults.hiddenBubbles;
     });
-    await this.setState({ bubblesHidden: numHidden, bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
+    await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
   }
 
-  showHideBubbles(id, curWidth, numHidden, clientWidth, hiddenBubbles) {
+  showHideBubbles(id, curWidth, clientWidth, hiddenBubbles) {
     let bubbleWidth = curWidth;
-    let totalHidden = numHidden;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     if (id !== null) {
       const bubble = document.getElementById(id);
       if (bubble !== null) {
-        const hiddenWidth = this.getHiddenWidth(hiddenBubbles, id);
-        bubbleWidth += CommonActions.addBorderToElementWidth(bubble, borderSize, hiddenWidth);
-        if (CommonActions.elementsWidthLargerThanParent(bubbleWidth, clientWidth)) {
-          if (bubble && bubble.className && !bubble.className.includes(' hidden')) {
-            bubble.className += ' hidden';
-            totalHidden += 1;
-            curHiddenBubbles = this.addIfNotHidden(curHiddenBubbles, id, hiddenWidth);
-          }
-        } else if (bubble && bubble.className && bubble.className.includes(' hidden')) {
-          bubble.className = bubble.className.replace(' hidden', '');
-          totalHidden -= 1;
-          curHiddenBubbles = this.removeFromHidden(curHiddenBubbles, id);
-        }
+        const modifyBubbleResults = this.modifyBubble(
+          curHiddenBubbles, id, bubble, bubbleWidth, clientWidth,
+        );
+        bubbleWidth = modifyBubbleResults.width;
+        curHiddenBubbles = modifyBubbleResults.hiddenBubbles;
       }
     }
-    return { width: bubbleWidth, hidden: totalHidden, hiddenBubbles: curHiddenBubbles };
+    return { width: bubbleWidth, hiddenBubbles: curHiddenBubbles };
+  }
+
+  modifyBubble(hiddenBubbles, id, bubble, curWidth, clientWidth) {
+    let bubbleWidth = curWidth;
+    let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
+    const hiddenWidth = this.getHiddenWidth(hiddenBubbles, id);
+    const curBubbleWidth = CommonActions.addBorderToElementWidth(bubble, borderSize, hiddenWidth);
+    bubbleWidth += curBubbleWidth;
+    if (CommonActions.elementsWidthLargerThanParent(bubbleWidth, clientWidth)) {
+      if (bubble && bubble.className && !bubble.className.includes(' hidden')) {
+        bubble.className += ' hidden';
+        curHiddenBubbles = this.addIfNotHidden(curHiddenBubbles, id, curBubbleWidth);
+      }
+    } else if (bubble && bubble.className && bubble.className.includes(' hidden')) {
+      bubble.className = bubble.className.replace(' hidden', '');
+      curHiddenBubbles = this.removeFromHidden(curHiddenBubbles, id);
+    }
+    return { width: bubbleWidth, hiddenBubbles: curHiddenBubbles };
   }
 
   addIfNotHidden(array, id, width) {
@@ -81,12 +88,7 @@ class JobHeader extends Component {
     let newHidden = CommonActions.deepCopyArray(array);
     newHidden = newHidden.filter(
       (filter) => {
-        if (filter.id && filter.id !== id) {
-          return true;
-        }
-        if (!filter.id && filter !== id) {
-          return true;
-        }
+        return (filter.id && filter.id !== id) || (!filter.id && filter !== id);
       },
     );
     return newHidden;
@@ -96,9 +98,7 @@ class JobHeader extends Component {
     let newHidden = CommonActions.deepCopyArray(array);
     newHidden = newHidden.filter(
       (filter) => {
-        if (filter.id === id) {
-          return true;
-        }
+        return (filter.id === id);
       },
     );
     if (newHidden[0]) {
@@ -113,7 +113,7 @@ class JobHeader extends Component {
   }
 
   async clickRemoveFilter(filter) {
-    const { removeFilter, bubbleRefs, hiddenBubbles } = this.state;
+    const { removeFilter, bubbleRefs } = this.state;
     const id = filter.column.concat('-').concat(filter.value);
     const currentBubbleRefs = this.removeBubbleFromRef(bubbleRefs, id);
     await removeFilter(filter);
@@ -137,7 +137,7 @@ class JobHeader extends Component {
 
   render() {
     const {
-      project, filters, bubblesHidden, isShowingMoreFilters, clearFilters, hiddenBubbles,
+      project, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
     } = this.state;
 
     const filterBubbles = [];
@@ -154,11 +154,11 @@ class JobHeader extends Component {
     });
 
     let moreBubbles = null;
-    if (bubblesHidden > 0) {
+    if (hiddenBubbles.length > 0) {
       moreBubbles = (
         <div className="bubble more-bubble">
           <p className="font-bold text-blue text-upper">
-          + {bubblesHidden} More
+          + {hiddenBubbles.length} More
           </p>
         </div>
       );
@@ -230,7 +230,6 @@ JobHeader.propTypes = {
   project: PropTypes.object,
   filters: PropTypes.array,
   bubbleRefs: PropTypes.array,
-  bubblesHidden: PropTypes.number,
   isShowingMoreFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
   removeFilter: PropTypes.func,
@@ -243,7 +242,6 @@ JobHeader.defaultProps = {
   project: { owner: 'null', created_at: 'null', name: 'null' },
   filters: [],
   bubbleRefs: [],
-  bubblesHidden: 0,
   isShowingMoreFilters: false,
   clearFilters: () => {},
   removeFilter: () => {},
