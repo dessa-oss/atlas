@@ -5,8 +5,9 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
+
 class StringParser(object):
 
     def parse(self, value):
         # TODO: probably some string sanitation is required
-        return value
+        return str(value)
