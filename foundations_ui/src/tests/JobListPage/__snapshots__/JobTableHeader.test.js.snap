@@ -13,6 +13,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     <TableStaticColumns
       jobRows={Array []}
       rowNumbers={Array []}
+      toggleDurationFilter={[Function]}
       toggleStatusFilter={[Function]}
       toggleUserFilter={[Function]}
     />
@@ -24,6 +25,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       isMetric={false}
       jobs={Array []}
       searchText=""
+      toggleNumberFilter={[Function]}
     />
     <InputMetric
       allInputParams={Array []}
@@ -33,6 +35,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       isMetric={true}
       jobs={Array []}
       searchText=""
+      toggleNumberFilter={[Function]}
     />
   </div>
 </ScrollSync>

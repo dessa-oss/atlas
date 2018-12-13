@@ -29,6 +29,7 @@ class JobListPage extends Component {
       allUsers: [],
       hiddenUsers: [],
       allInputParams: [],
+      numberFilters: [],
       isMount: false,
       allMetrics: [],
     };
@@ -51,8 +52,13 @@ class JobListPage extends Component {
   }
 
   async getFilteredJobs() {
-    const { projectName, hiddenUsers, statuses } = this.state;
-    const filterJobs = await JobActions.filterJobs(projectName, statuses, hiddenUsers);
+    const {
+      projectName, hiddenUsers, statuses, numberFilters, allUsers,
+    } = this.state;
+
+    const flatUsers = CommonActions.getFlatArray(allUsers);
+    const visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters);
     return filterJobs;
   }
 
@@ -69,9 +75,20 @@ class JobListPage extends Component {
 
   async updateHiddenStatus(hiddenFields) {
     const { statuses, allUsers } = this.state;
-    const statusNamesArray = statuses.map(status => status.name);
-    const formattedColumns = CommonActions.formatColumns(statusNamesArray, hiddenFields);
+    const formattedColumns = CommonActions.formatColumns(statuses, hiddenFields);
     await this.setState({ statuses: formattedColumns });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
+  async updateNumberFilter(min, max, isShowingNotAvailable, columnName) {
+    const { numberFilters, allUsers } = this.state;
+    const newNumberFilters = CommonActions.getNumberFilters(numberFilters, min, max, isShowingNotAvailable, columnName);
+    await this.setState({ numberFilters: newNumberFilters });
 
     const apiFilteredJobs = await this.getFilteredJobs();
     this.clearState();
@@ -109,27 +126,35 @@ class JobListPage extends Component {
 
   saveFilters() {
     const {
-      statuses, hiddenUsers, allUsers,
+      statuses, hiddenUsers, allUsers, numberFilters,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers);
+    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers, numberFilters);
     this.setState({ filters: newFilters });
   }
 
   clearFilters() {
-    this.setState({ filters: [], statuses: baseStatus, hiddenUsers: [] });
+    this.setState({
+      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [],
+    });
     this.getJobs();
   }
 
   async removeFilter(removeFilter) {
     const {
-      filters, statuses, allUsers, hiddenUsers,
+      filters, statuses, allUsers, hiddenUsers, numberFilters,
     } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
     const flatUsers = CommonActions.getFlatArray(allUsers);
     const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
-    await this.setState({ filters: newFilters, statuses: newStatuses, hiddenUsers: newHiddenUsers });
+    const newNumberFilters = JobActions.removeRangeFilter(numberFilters, removeFilter);
+    await this.setState({
+      filters: newFilters,
+      statuses: newStatuses,
+      hiddenUsers: newHiddenUsers,
+      numberFilters: newNumberFilters,
+    });
     const apiFilteredJobs = await this.getFilteredJobs();
 
     this.clearState();
@@ -147,11 +172,13 @@ class JobListPage extends Component {
     this.clearFilters = this.clearFilters.bind(this);
     this.removeFilter = this.removeFilter.bind(this);
     this.getFilteredJobs = this.getFilteredJobs.bind(this);
+    this.updateNumberFilter = this.updateNumberFilter.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
+      numberFilters,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -167,12 +194,14 @@ class JobListPage extends Component {
           statuses={statuses}
           updateHiddenStatus={this.updateHiddenStatus}
           updateHiddenUser={this.updateHiddenUser}
+          updateNumberFilter={this.updateNumberFilter}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
           allMetrics={allMetrics}
           allUsers={allUsers}
           hiddenUsers={hiddenUsers}
+          numberFilters={numberFilters}
         />
       </div>
     );

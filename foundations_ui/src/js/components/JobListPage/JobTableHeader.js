@@ -5,8 +5,10 @@ import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
-import JobActions from '../../actions/JobListActions';
+import DurationFilter from '../common/filters/DurationFilter';
+import NumberFilter from '../common/filters/NumberFilter';
 import CommonActions from '../../actions/CommonActions';
+import JobActions from '../../actions/JobListActions';
 
 const isMetric = true;
 
@@ -16,6 +18,12 @@ class JobTableHeader extends Component {
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
+    this.toggleDurationFilter = this.toggleDurationFilter.bind(this);
+    this.toggleInputMetricFilter = this.toggleInputMetricFilter.bind(this);
+    this.getColumnType = this.getColumnType.bind(this);
+    this.getColumnName = this.getColumnName.bind(this);
+    this.getMetricClass = this.getMetricClass.bind(this);
+    this.getRangeFilterValues = this.getRangeFilterValues.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -24,12 +32,18 @@ class JobTableHeader extends Component {
       updateHiddenUser: this.props.updateHiddenUser,
       isShowingStatusFilter: false,
       updateHiddenStatus: this.props.updateHiddenStatus,
+      isShowingDurationFilter: false,
+      metricClass: '',
+      isShowingNumberFilter: false,
+      numberFilterColumn: '',
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
       searchText: '',
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
+      updateNumberFilter: this.props.updateNumberFilter,
+      numberFilters: this.props.numberFilters,
     };
   }
 
@@ -44,13 +58,9 @@ class JobTableHeader extends Component {
         rowNumbers: nextProps.rowNumbers,
         allUsers: nextProps.allUsers,
         hiddenUsers: nextProps.hiddenUsers,
+        numberFilters: nextProps.numberFilters,
       },
     );
-  }
-
-  toggleUserFilter() {
-    const { isShowingUserFilter } = this.state;
-    this.setState({ isShowingUserFilter: !isShowingUserFilter });
   }
 
   searchUserFilter(searchText) {
@@ -60,6 +70,81 @@ class JobTableHeader extends Component {
   toggleStatusFilter() {
     const { isShowingStatusFilter } = this.state;
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
+  }
+
+  toggleDurationFilter() {
+    const { isShowingDurationFilter } = this.state;
+    this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
+  }
+
+  getColumnType(e) {
+    let columnType = '';
+    if (e) {
+      if (e.target.className.includes('number')) {
+        columnType = 'number';
+      }
+    }
+    return columnType;
+  }
+
+  getColumnName(e) {
+    let columnName = '';
+    if (e) {
+      if (e.target.id) {
+        columnName = e.target.id;
+      } else {
+        columnName = e.target.childNodes[0].id;
+      }
+    }
+    return columnName;
+  }
+
+  getMetricClass(e) {
+    let metricClass = 'not-metric';
+    if (e) {
+      if (e.target.className.includes('is-metric')) {
+        metricClass = 'is-metric';
+      }
+    }
+    return metricClass;
+  }
+
+  toggleUserFilter() {
+    const { isShowingUserFilter } = this.state;
+    this.setState({ isShowingUserFilter: !isShowingUserFilter });
+  }
+
+  toggleInputMetricFilter(e) {
+    const { isShowingNumberFilter } = this.state;
+    let columnName = this.getColumnName(e);
+    let columnType = this.getColumnType(e);
+    let metricClass = this.getMetricClass(e);
+
+    if (columnType === 'number') {
+      this.setState({
+        isShowingNumberFilter: !isShowingNumberFilter,
+        numberFilterColumn: columnName,
+        metricClass,
+      });
+    } else if (e === undefined) {
+      // This means it's an apply/cancel button rather than a header arrow
+      // so close everything
+      this.setState({
+        isShowingNumberFilter: false,
+      });
+    }
+  }
+
+  getRangeFilterValues() {
+    const { numberFilters, numberFilterColumn } = this.state;
+    const existingFilter = JobActions.getExistingValuesForRangeFilter(numberFilters, numberFilterColumn);
+    let curMin = 0;
+    let curMax = 0;
+    if (existingFilter) {
+      curMin = existingFilter.min;
+      curMax = existingFilter.max;
+    }
+    return { min: curMin, max: curMax };
   }
 
   render() {
@@ -77,12 +162,17 @@ class JobTableHeader extends Component {
       updateHiddenUser,
       allUsers,
       hiddenUsers,
+      isShowingDurationFilter,
+      isShowingNumberFilter,
+      numberFilterColumn,
+      updateNumberFilter,
+      numberFilters,
+      metricClass,
     } = this.state;
 
     let userFilter = null;
     if (isShowingUserFilter) {
-      const nameArray = CommonActions.getFlatArray(allUsers);
-      const filteredUsers = CommonActions.formatColumns(nameArray, hiddenUsers, searchText);
+      const filteredUsers = CommonActions.formatColumns(allUsers, hiddenUsers, searchText);
       userFilter = (
         <UserFilter
           columns={filteredUsers}
@@ -114,6 +204,31 @@ class JobTableHeader extends Component {
       );
     }
 
+    let durationFilter = null;
+    if (isShowingDurationFilter) {
+      durationFilter = (
+        <DurationFilter
+          toggleShowingFilter={this.toggleDurationFilter}
+        />
+      );
+    }
+
+    let numberFilter = null;
+    if (isShowingNumberFilter) {
+      const filterValues = this.getRangeFilterValues();
+      numberFilter = (
+        <NumberFilter
+          toggleShowingFilter={this.toggleInputMetricFilter}
+          numberFilterColumn={numberFilterColumn}
+          columnName={numberFilterColumn}
+          changeHiddenParams={updateNumberFilter}
+          minValue={filterValues.min}
+          maxValue={filterValues.max}
+          metricClass={metricClass}
+        />
+      );
+    }
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -122,20 +237,25 @@ class JobTableHeader extends Component {
             rowNumbers={rowNumbers}
             toggleUserFilter={this.toggleUserFilter}
             toggleStatusFilter={this.toggleStatusFilter}
+            toggleDurationFilter={this.toggleDurationFilter}
           />
           <InputMetric
             header="input parameter"
             allInputParams={allInputParams}
             jobs={jobs}
+            toggleNumberFilter={this.toggleInputMetricFilter}
           />
           <InputMetric
             header="metrics"
             allInputParams={allMetrics}
             jobs={jobs}
             isMetric={isMetric}
+            toggleNumberFilter={this.toggleInputMetricFilter}
           />
           {userFilter}
           {statusFilter}
+          {durationFilter}
+          {numberFilter}
         </div>
       </ScrollSync>
     );
@@ -155,6 +275,12 @@ JobTableHeader.propTypes = {
   jobRows: PropTypes.array,
   allUsers: PropTypes.array,
   hiddenUsers: PropTypes.array,
+  isShowingDurationFilter: PropTypes.bool,
+  isShowingNumberFilter: PropTypes.bool,
+  numberFilterColumn: PropTypes.string,
+  updateNumberFilter: PropTypes.func,
+  numberFilters: PropTypes.array,
+  metricClass: PropTypes.string,
 };
 
 JobTableHeader.defaultProps = {
@@ -170,6 +296,12 @@ JobTableHeader.defaultProps = {
   jobRows: [],
   allUsers: [],
   hiddenUsers: [],
+  isShowingDurationFilter: false,
+  isShowingNumberFilter: false,
+  numberFilterColumn: '',
+  updateNumberFilter: () => {},
+  numberFilters: [],
+  metricClass: 'not-metric',
 };
 
 export default JobTableHeader;

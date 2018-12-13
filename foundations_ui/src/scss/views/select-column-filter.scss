@@ -3,9 +3,57 @@
   padding: 15px 15px 5px 15px;
   width: calc(100% - 30px - 2px);
 
+  .column-filter-header {
+    text-align: left;
+    border: none;
+    height: inherit;
+  }
+
   button:not(.button-icon) {
-    margin-top: 5px;
+    margin-top: $standard-cell-padding;
     margin-right: 0px;
+  }
+
+  &.number-filter-container {
+    width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
+    position: absolute;
+    left: calc(#{$one-third-width} + (8 * #{$border-thin}));
+    padding-top: $standard-cell-padding;
+    top: $status-filter-top;
+
+    &.is-metric {
+      left: calc((2 * #{$one-third-width}) + (14 * #{$border-thin}));
+    }
+
+    .number-input-container {
+      white-space: nowrap;
+      margin-bottom: $margin-width;
+      div {
+        width: 50%;
+        display: inline-block;
+        input {
+          padding-left: $margin-width;
+          width: calc(100% - #{$margin-width} - #{$margin-width} - (4 * #{$border-thin}));
+          height: $general-form-input-height;
+          outline: none;
+        }
+
+        &:nth-child(2) {
+          width: 18px;
+          margin-left: -4px;
+        }
+      }
+    }
+
+    .column-filter-header {
+      text-align: left;
+      border: none;
+      height: 45px;
+    }
+
+    p {
+      display: inline-block;
+    }
   }
 
   &.duration-filter-container {
@@ -14,12 +62,6 @@
     left: $status-filter-left;
     padding-top: 5px;
     top: $status-filter-top;
-
-    .column-filter-header {
-      text-align: left;
-      border: none;
-      height: inherit;
-    }
 
     p {
       display: inline-block;
@@ -42,6 +84,31 @@
         text-align: right;
         font-style: italic;
       }
+    }
+  }
+
+  &.job-id-filter-container {
+    width: 415px;
+    position: absolute;
+    left: $status-filter-left;
+    padding-top: 5px;
+    top: $status-filter-top;
+
+    input {
+      width: calc(100% - 18px);
+      outline: none;
+      border: solid 1px $color-border-bottom;
+      height: $general-form-input-height;
+      padding-left: 15px;
+    }
+
+    p {
+      display: inline-block;
+    }
+
+    .subtitle {
+      color: $color-9c-grey;
+      font-style: italic;
     }
   }
 
@@ -143,11 +210,11 @@
 
 .column-filter-list {
   border-bottom: 1px solid $color-border-bottom;
-  margin-left: -15px;
-  margin-right: -15px;
-  padding-left: 15px;
-  padding-right: 15px;
+  border-top: 1px solid $color-border-bottom;
+  margin: 40px -15px 0px;
+  padding: 15px;
   height: 250px;
+  width: 100%;
   overflow: hidden;
   overflow-y: scroll;
 }
