@@ -28,13 +28,13 @@ class APIFilterMixin(object):
             if selection_function(item):
                 result_list.append(item)
 
-    def _get_item_property_value_and_parser(self, item, column_name):
+    def _get_item_property_value_and_parser(self, item, column_name, parse=True):
 
         if hasattr(item, column_name):
             # It's an valid column of the object at the top level
             column_value = getattr(item, column_name)
             parser = self._get_column_parser(column_name)
-            return parser.parse(column_value), parser
+            return parser.parse(column_value) if parse else column_value, parser
 
         nested_element = self._find_element_in_parametric_properties(item, column_name)
 
@@ -42,7 +42,7 @@ class APIFilterMixin(object):
             # column_name is an input parameter or an output metric name
             column_value = nested_element.get('value', None)
             parser = self._get_nested_element_parser(nested_element)
-            return parser.parse(column_value), parser
+            return parser.parse(column_value) if parse else column_value, parser
 
         # column_name not found, not at the top level, not nested
         return None, None
