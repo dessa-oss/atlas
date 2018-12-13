@@ -47,6 +47,6 @@ class TestNumberParser(unittest.TestCase):
             self._parser.parse(value)
         self.assertEqual(str(cm.exception), 'Not able to convert "None" to a number')
 
-    def test_bad_null_good_value(self):
+    def test_bad_null_value(self):
         value = 'null'
         self.assertRaises(ValueError, self._parser.parse, value)
