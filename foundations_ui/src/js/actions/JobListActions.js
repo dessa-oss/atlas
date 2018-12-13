@@ -389,7 +389,7 @@ class ProjectActions {
     return oldFilters.filter(
       (filter) => {
         if (filter.column !== statusText) {
-          return filter;
+          return true;
         }
       },
     );

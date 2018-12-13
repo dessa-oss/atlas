@@ -184,7 +184,10 @@ class CommonActions {
     return job.job_id.concat('-input-metric-row');
   }
 
-  static addBorderToElementWidth(element, borderWidth) {
+  static addBorderToElementWidth(element, borderWidth, hiddenWidth) {
+    if (hiddenWidth !== null) {
+      return hiddenWidth + borderWidth;
+    }
     return element.clientWidth + borderWidth;
   }
 

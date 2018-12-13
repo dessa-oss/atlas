@@ -106,6 +106,7 @@ const colName = 'newCol';
 const existingColName = 'myCol';
 const missingColName = 'dontexist';
 const containsText = 'testPhrase';
+const hiddenSize = null;
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -285,7 +286,7 @@ it('get RowKey', () => {
 });
 
 it('addBorderToElementWidth', () => {
-  const size = CommonActions.addBorderToElementWidth(element, border);
+  const size = CommonActions.addBorderToElementWidth(element, border, hiddenSize);
   expect(size).toBe(102);
 });
 
