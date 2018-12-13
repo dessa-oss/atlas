@@ -10,7 +10,7 @@ from foundations import create_stage, set_project_name
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 
 
-class TestJobListingNaNs(APIAcceptanceTestCaseBase):
+class TestJobListingParametrics(APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
@@ -43,8 +43,7 @@ class TestJobListingNaNs(APIAcceptanceTestCaseBase):
         stage2(value1, value2, 5).run()
 
     def test_get_route(self):
-        data = super(TestJobListingNaNs, self).test_get_route()
-        output_metric_data = data['jobs'][0]['output_metrics']
-        result_list = [output_metric_data[0]['value'], output_metric_data[1]['value'], output_metric_data[2]['value']]
-        expected_list = [None, None, 5]
-        self.assertCountEqual(result_list, expected_list)
+        data = super(TestJobListingParametrics, self).test_get_route()
+        self.assertIsNone(data['jobs'][0]['output_metrics'][0]['value'])
+        self.assertIsNone(data['jobs'][0]['output_metrics'][1]['value'])
+        self.assertEqual(data['jobs'][0]['output_metrics'][2]['value'], 5)
