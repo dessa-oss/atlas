@@ -2,6 +2,8 @@
 
 rm -rf foundations_ui/node_modules
 
+python -m pip install setuptools_scm
+
 build_version=`python get_version.py | sed 's/+/_/g'`
 
 if [ $? -eq 0 ]

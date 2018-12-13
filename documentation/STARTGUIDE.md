@@ -80,7 +80,7 @@ It's important to note: if you're looking to use a different version of a packag
 
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
-## Redis Setup (local deployment only)
+### Redis Setup (local deployment only)
 
 Foundations' Result Reader uses Redis as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis.
 
@@ -99,9 +99,12 @@ Now that redis is running, when you run a job locally it'll get picked and and h
 If you want to stop the Redis container, run `docker ps`, get the container's ID, and then run `docker stop <container_id>`.
 
 ### Jupyter Notebook Setup
-The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started. 
+The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started.
 
-### Examples guide
+### Installing and Running the GUI
+Foundations provides a user interface with which one can view all information about jobs, including status (e.g. queued, running, completed) as well as logged metrics and start time.  As for how to to install and use it, have a look at the [GUI Guide](GUIGUIDE.md).
+
+## Examples guide
 We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 
 We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](/examples).
