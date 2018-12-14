@@ -36,11 +36,16 @@ class NullFilter(APIFilterMixin):
         elif value is False:
             self._filter_by_not_null_values(result, column_name)
 
+    def _is_none(self, value):
+        import math
+
+        return value is None or (isinstance(value, float) and math.isnan(value))
+
     def _filter_by_null_values(self, result, column_name):
 
         def column_value_is_null(item):
             value, item_parser = self._get_item_property_value_and_parser(item, column_name, parse=False)
-            return item_parser is not None and value is None
+            return item_parser is not None and self._is_none(value)
 
         return self._in_place_filter(column_value_is_null, result)
 
@@ -48,6 +53,6 @@ class NullFilter(APIFilterMixin):
 
         def column_value_is_not_null(item):
             value, item_parser = self._get_item_property_value_and_parser(item, column_name, parse=False)
-            return item_parser is not None and value is not None
+            return item_parser is not None and not self._is_none(value)
 
         return self._in_place_filter(column_value_is_not_null, result)

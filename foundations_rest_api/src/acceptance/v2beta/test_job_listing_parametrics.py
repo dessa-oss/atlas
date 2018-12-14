@@ -45,9 +45,9 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
 
         @create_stage
         def stage2(value1, value2, value3):
-            foundations.log_metric('nan_metric_1', value1)
-            foundations.log_metric('nan_metric_2', value2)
-            foundations.log_metric('int_metric', value3)
+            foundations.log_metric('metric_1', value1)
+            foundations.log_metric('metric_2', value2)
+            foundations.log_metric('metric_3', True if value3 == 8.3 else value3)
 
         def run_first_job():
             set_project_name(klass._project_name)
@@ -120,7 +120,7 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
 
         self.assertEqual(data['jobs'][1]['output_metrics'][0]['value'], 'None')
         self.assertEqual(data['jobs'][1]['output_metrics'][1]['value'], 'nan nan')
-        self.assertEqual(data['jobs'][1]['output_metrics'][2]['value'], 8.3)
+        self.assertTrue(data['jobs'][1]['output_metrics'][2]['value'])
 
         self.assertEqual(data['jobs'][2]['job_id'], self._first_job_name)
 
@@ -130,7 +130,7 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
         self.assertEqual(data['jobs'][2]['input_params'][3]['name'], 'value1-2')
         self.assertEqual(data['jobs'][2]['input_params'][4]['name'], 'value2-2')
         self.assertEqual(data['jobs'][2]['input_params'][5]['name'], 'value3-2')
-        self.assertEqual(data['jobs'][2]['input_params'][0]['value'], False)
+        self.assertFalse(data['jobs'][2]['input_params'][0]['value'])
         self.assertEqual(data['jobs'][2]['input_params'][1]['value'], 10)
         self.assertEqual(data['jobs'][2]['input_params'][2]['value'], 4.5)
         self.assertEqual(data['jobs'][2]['input_params'][3]['value'], 'stage0-0')
@@ -140,3 +140,46 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
         self.assertIsNone(data['jobs'][2]['output_metrics'][0]['value'])
         self.assertEqual(data['jobs'][2]['output_metrics'][1]['value'], '10 4.5')
         self.assertEqual(data['jobs'][2]['output_metrics'][2]['value'], 5)
+
+    def test_filter_bool_true(self):
+        query_string = '?metric_3=true'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], self._second_job_name)
+
+    def test_filter_bool_false(self):
+        query_string = '?value0-0=false'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], self._first_job_name)
+
+    def test_filter_input_parameter_is_null(self):
+        query_string = '?value1-4_isnull=true'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], self._second_job_name)
+
+    def test_filter_input_parameter_is_not_null(self):
+        query_string = '?value1-7_isnull=false'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
+
+    def test_filter_metric_is_null(self):
+        query_string = '?metric_1_isnull=true'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 1)
+        self.assertEqual(data['jobs'][0]['job_id'], self._first_job_name)
+
+    def test_filter_metric_is_not_null(self):
+        query_string = '?metric_1_isnull=false'
+        custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
+        data = custom_method(self)
+        self.assertEqual(len(data['jobs']), 2)
+        self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
+        self.assertEqual(data['jobs'][1]['job_id'], self._second_job_name)
