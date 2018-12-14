@@ -571,6 +571,14 @@ class ProjectActions {
     });
     return filtersWithoutHidden;
   }
+
+  static boolFilterGetHidden(boolFilter) {
+    const filtersOnlyHidden = boolFilter.filter((checkbox) => {
+      return checkbox.hidden !== false;
+    });
+
+    return CommonActions.getFlatArray(filtersOnlyHidden);
+  }
 }
 
 export default ProjectActions;

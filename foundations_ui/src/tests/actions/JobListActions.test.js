@@ -541,3 +541,7 @@ it('boolFilterHasHidden', () => {
 it('boolFilterArrayHasHidden', () => {
   
 });
+
+it('boolFilterGetHidden', () => {
+
+});

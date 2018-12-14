@@ -69,6 +69,7 @@ class JobTableHeader extends Component {
         hiddenUsers: nextProps.hiddenUsers,
         numberFilters: nextProps.numberFilters,
         containFilters: nextProps.containFilters,
+        boolFilters: nextProps.boolFilters,
       },
     );
   }
@@ -281,19 +282,22 @@ class JobTableHeader extends Component {
     }
 
     let booleanFilter = null;
+    let changedBoolParams = [];
+    let boolColumns = CommonActions.deepCopyArray(boolCheckboxes);
     if (isShowingBooleanFilter) {
-      // const existingFilter = JobActions.getExistingValuesForFilter(containFilters, numberFilterColumn);
-      // let containString = '';
-      // if (existingFilter) {
-      //   containString = existingFilter.searchText;
-      // }
+      const existingFilter = JobActions.getExistingValuesForFilter(boolFilters, numberFilterColumn);
+      if (existingFilter) {
+        boolColumns = existingFilter.boolCheckboxes;
+        changedBoolParams = JobActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
+      }
       booleanFilter = (
         <BooleanFilter
           toggleShowingFilter={this.toggleInputMetricFilter}
           columnName={numberFilterColumn}
           changeHiddenParams={updateBoolFilter}
           metricClass={metricClass}
-          columns={boolCheckboxes}
+          columns={boolColumns}
+          changedParams={changedBoolParams}
         />
       );
     }

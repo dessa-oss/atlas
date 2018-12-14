@@ -103,7 +103,7 @@ BooleanFilter.defaultProps = {
   metricClass: 'not-metric',
   isStatusCheckbox: false,
   showAllFilters: false,
-  columns: [{ name: 'True', hidden: false }, { name: 'False', hidden: false }],
+  columns: [],
   changedParams: [],
 };
 
