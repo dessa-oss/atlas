@@ -101,9 +101,12 @@ class CommonActions {
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
-        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
         const cellType = this.getInputMetricCellType(input);
+        if (cellType.match(/array*/)) {
+          inputValue = this.transformArraysToString(inputValue);
+        }
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
@@ -115,6 +118,17 @@ class CommonActions {
       }
     });
     return cells;
+  }
+
+  static transformArraysToString(arrayValue) {
+    let newValue = '[';
+    arrayValue.forEach((element) => {
+      newValue = newValue.concat(String(element));
+      newValue += ', ';
+    });
+    newValue = newValue.slice(0, newValue.length - 2);
+    newValue += ']';
+    return newValue;
   }
 
   static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
