@@ -39,12 +39,14 @@ class ExactMatchFilter(APIFilterMixin):
         return self._in_place_filter(column_value_in_options, result)
 
     def _get_parsed_options(self, column_name, options, new_parser):
-        # If the parser hasn't changed, use the already parsed option, avoid re-parsing
+        self._update_parsing_state(column_name, options, new_parser)
+        return self._parsing_state[column_name]['options']
+
+    def _update_parsing_state(self, column_name, options, new_parser):
         if not isinstance(new_parser, type(self._parsing_state[column_name]['parser'])):
             parsed_options = self._parse_options(options, new_parser)
             self._parsing_state[column_name]['parser'] = new_parser
             self._parsing_state[column_name]['options'] = parsed_options
-        return self._parsing_state[column_name]['options']
 
     def _parse_options(self, options, parser):
         try:
