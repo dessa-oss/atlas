@@ -2,40 +2,51 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
+const defaultTime = {
+  days: 0, hours: 0, minutes: 0, seconds: 0,
+};
+
 class DurationFilter extends Component {
   constructor(props) {
     super(props);
-    this.changeLocalParams = this.changeLocalParams.bind(this);
     this.onApply = this.onApply.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
-    this.unsetClearFilters = this.unsetClearFilters.bind(this);
     this.onChangeTime = this.onChangeTime.bind(this);
     this.updateInterval = this.updateInterval.bind(this);
     this.state = {
       startTime: this.props.startTime,
       endTime: this.props.endTime,
       changeHiddenParams: this.props.changeHiddenParams,
-      changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('np', nextProps);
+    this.setState({ startTime: nextProps.startTime, endTime: nextProps.endTime });
+  }
+
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
-    changeHiddenParams(changedParams);
+    const {
+      changeHiddenParams, toggleShowingFilter, startTime, endTime,
+    } = this.state;
+    changeHiddenParams(startTime, endTime);
     toggleShowingFilter();
   }
 
-  onCancel() {
+  async onCancel() {
     const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
+    console.log('clear shit');
+    await this.onClearFilters();
     toggleShowingFilter();
   }
 
-  onClearFilters() {
-    const emptyArray = [];
-    this.setState({ changedParams: emptyArray, showAllFilters: true });
+  async onClearFilters() {
+    console.log('i am');
+    await this.setState({
+      startTime: CommonActions.deepCopyArray(defaultTime), endTime: CommonActions.deepCopyArray(defaultTime),
+    });
   }
 
   onChangeTime(e, isStart, minValue, maxValue, interval) {
@@ -48,11 +59,11 @@ class DurationFilter extends Component {
     }
   }
 
-  updateInterval(e, isStart, interval) {
+  async updateInterval(e, isStart, interval) {
     const { startTime, endTime } = this.state;
-    let newTime = endTime;
+    let newTime = CommonActions.deepCopyArray(endTime);
     if (isStart) {
-      newTime = startTime;
+      newTime = CommonActions.deepCopyArray(startTime);
     }
     if (interval === 'days') {
       newTime.days = e.target.value;
@@ -64,24 +75,19 @@ class DurationFilter extends Component {
       newTime.seconds = e.target.value;
     }
     if (isStart) {
-      this.setState({ startTime: newTime });
+      console.log('updating');
+      await this.setState({ startTime: newTime });
     } else {
-      this.setState({ endTime: newTime });
+      console.log('updating');
+      await this.setState({ endTime: newTime });
     }
   }
 
-  unsetClearFilters() {
-    this.setState({ showAllFilters: false });
-  }
-
-  changeLocalParams(colName) {
-    const { changedParams } = this.state;
-    const copyArray = CommonActions.getChangedCheckboxes(changedParams, colName);
-    this.setState({ changedParams: copyArray });
-  }
-
   render() {
-    const { startTime, endTime, showAllFilters } = this.state;
+    const { startTime, endTime } = this.state;
+
+    console.log('st', startTime);
+    console.log('et', endTime);
 
     return (
       <div className="filter-container column-filter-container elevation-1 duration-filter-container">
@@ -206,10 +212,8 @@ class DurationFilter extends Component {
 DurationFilter.propTypes = {
   columns: PropTypes.array,
   changeHiddenParams: PropTypes.func,
-  changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
-  showAllFilters: PropTypes.bool,
   startTime: PropTypes.object,
   endTime: PropTypes.object,
 };
@@ -217,10 +221,8 @@ DurationFilter.propTypes = {
 DurationFilter.defaultProps = {
   columns: [],
   changeHiddenParams: () => {},
-  changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
-  showAllFilters: false,
   startTime: {
     days: 0, hours: 0, minutes: 0, seconds: 0,
   },
