@@ -261,6 +261,10 @@ class CommonActions {
     return newFilters;
   }
 
+  static getDurationFilters(startTime, endTime) {
+    return [{ startTime, endTime }];
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {

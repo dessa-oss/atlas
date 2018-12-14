@@ -582,3 +582,7 @@ it('boolFilterGetHidden, none hidden', () => {
   const hidden = JobActions.boolFilterGetHidden(noneHiddenBoolFilter[0].boolCheckboxes);
   expect(hidden.length).toBe(0);
 });
+
+it('getTimeForDurationURL', () => {
+
+});

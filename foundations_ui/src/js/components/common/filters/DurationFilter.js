@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
 const defaultTime = {
-  days: 0, hours: 0, minutes: 0, seconds: 0,
+  days: '0', hours: '0', minutes: '0', seconds: '0',
 };
 
 class DurationFilter extends Component {
@@ -212,10 +212,10 @@ DurationFilter.defaultProps = {
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
   startTime: {
-    days: 0, hours: 0, minutes: 0, seconds: 0,
+    days: '0', hours: '0', minutes: '0', seconds: '0',
   },
   endTime: {
-    days: 0, hours: 0, minutes: 0, seconds: 0,
+    days: '0', hours: '0', minutes: '0', seconds: '0',
   },
 };
 

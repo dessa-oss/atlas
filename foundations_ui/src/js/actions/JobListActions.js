@@ -20,16 +20,20 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
+  static filterJobs(
+    projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+  ) {
     // if no filters just get regular jobs
     if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters)
+      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
     ) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters);
+    const filterURL = this.getFilterURL(
+      statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+    );
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -236,7 +240,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
+  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -281,6 +285,14 @@ class ProjectActions {
         }
       });
     }
+
+    durationFilters.forEach((durationFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      const startTime = this.getTimeForDurationURL(durationFilter.startTime);
+      const endTime = this.getTimeForDurationURL(durationFilter.endTime);
+      url = this.addToURLRangeNotHidden(url, startTime, endTime, 'duration');
+      isFirstFilter = false;
+    });
 
     return url;
   }
@@ -578,6 +590,16 @@ class ProjectActions {
     });
 
     return CommonActions.getFlatArray(filtersOnlyHidden);
+  }
+
+  static getTimeForDurationURL(time) {
+    return time.days
+      .concat('_')
+      .concat(time.hours)
+      .concat('_')
+      .concat(time.minutes)
+      .concat('_')
+      .concat(time.seconds);
   }
 }
 

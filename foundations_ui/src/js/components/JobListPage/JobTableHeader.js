@@ -53,6 +53,7 @@ class JobTableHeader extends Component {
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
       boolFilters: this.props.boolFilters,
+      updateDurationFilter: this.props.updateDurationFilter,
     };
   }
 
@@ -203,6 +204,7 @@ class JobTableHeader extends Component {
       containFilters,
       boolFilters,
       updateBoolFilter,
+      updateDurationFilter,
     } = this.state;
 
     let userFilter = null;
@@ -244,6 +246,7 @@ class JobTableHeader extends Component {
       durationFilter = (
         <DurationFilter
           toggleShowingFilter={this.toggleDurationFilter}
+          changeHiddenParams={updateDurationFilter}
         />
       );
     }
@@ -363,6 +366,7 @@ JobTableHeader.propTypes = {
   boolCheckboxes: PropTypes.array,
   boolFilters: PropTypes.array,
   updateBoolFilter: PropTypes.func,
+  updateDurationFilter: PropTypes.func,
 };
 
 JobTableHeader.defaultProps = {
@@ -391,6 +395,7 @@ JobTableHeader.defaultProps = {
   boolCheckboxes: [],
   boolFilters: [],
   updateBoolFilter: () => {},
+  updateDurationFilter: () => {},
 };
 
 export default JobTableHeader;
