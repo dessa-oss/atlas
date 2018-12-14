@@ -31,6 +31,7 @@ class NullFilter(APIFilterMixin):
 
     def _filter_column(self, result, column_name, value):
         # Explicit is better than implicit [Zen of Python, 1]
+        # This is because "value" can also be None and in that case filtering is discarded
         if value is True:
             self._filter_by_null_values(result, column_name)
         elif value is False:
