@@ -42,15 +42,17 @@ class RangeFilter(APIFilterMixin):
         self._in_place_filter(is_in_range, result)
 
     def _get_parsed_range(self, column_name, start_param_value, end_param_value, new_parser):
-        # If the parser hasn't changed, use the already parsed range, avoid re-parsing
+        self._update_parsing_state(column_name, start_param_value, end_param_value, new_parser)
+        return (self._parsing_state[column_name]['start_value'],
+                self._parsing_state[column_name]['end_value'])
+
+    def _update_parsing_state(self, column_name, start_param_value, end_param_value, new_parser):
         if not isinstance(new_parser, type(self._parsing_state[column_name]['parser'])):
             start_value = new_parser.parse(start_param_value)
             end_value = new_parser.parse(end_param_value)
             self._parsing_state[column_name]['parser'] = new_parser
             self._parsing_state[column_name]['start_value'] = start_value
             self._parsing_state[column_name]['end_value'] = end_value
-        return (self._parsing_state[column_name]['start_value'],
-                self._parsing_state[column_name]['end_value'])
 
     def _is_valid_range(self, start_value, end_value):
         return start_value is not None and end_value is not None and end_value >= start_value
