@@ -20,14 +20,16 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter, numberFilters) {
+  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters) {
     // if no filters just get regular jobs
-    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0) {
+    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
+      && containFilters.length === 0
+    ) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters);
+    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -234,7 +236,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters) {
+  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -261,6 +263,12 @@ class ProjectActions {
       isFirstFilter = false;
     });
 
+    containFilters.forEach((containFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      url = this.addToURLContainFilter(url, containFilter.searchText, containFilter.columnName);
+      isFirstFilter = false;
+    });
+
     return url;
   }
 
@@ -275,18 +283,27 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
       updatedFilters = this.getFilters(visibleUsers, 'User');
     }
+
     if (numberFilters.length > 0) {
       numberFilters.forEach((numberFilter) => {
         const newRangeFilter = this.getRangeFilter(numberFilter.columnName, numberFilter.min, numberFilter.max);
         updatedFilters.push(newRangeFilter);
       });
     }
+
+    if (containFilters.length > 0) {
+      containFilters.forEach((containFilter) => {
+        const newContainFilter = this.getContainFilter(containFilter.columnName, containFilter.searchText);
+        updatedFilters.push(newContainFilter);
+      });
+    }
+
     return this.getStatusFilters(updatedFilters, statuses);
   }
 
@@ -372,7 +389,7 @@ class ProjectActions {
     return oldFilters.filter(
       (filter) => {
         if (filter.column !== statusText) {
-          return filter;
+          return true;
         }
       },
     );
@@ -475,7 +492,7 @@ class ProjectActions {
     return this.getFilterObject(colName, rangeValue);
   }
 
-  static getExistingValuesForRangeFilter(allFilters, colName) {
+  static getExistingValuesForFilter(allFilters, colName) {
     const existingFilters = allFilters.filter((filter) => {
       if (filter.columnName === colName) {
         return true;
@@ -488,12 +505,24 @@ class ProjectActions {
     return null;
   }
 
-  static removeRangeFilter(rangeFilters, removeFilter) {
+  static removeFilterByName(rangeFilters, removeFilter) {
     return rangeFilters.filter((filter) => {
       if (filter.columnName !== removeFilter.column) {
         return true;
       }
     });
+  }
+
+  static addToURLContainFilter(url, value, columnName) {
+    let newUrl = url;
+    const containColName = columnName.concat('_contains');
+    newUrl = this.addToURL(url, true, value, containColName);
+    return newUrl;
+  }
+
+  static getContainFilter(colName, value) {
+    const containValue = '"'.concat(value).concat('"');
+    return this.getFilterObject(colName, containValue);
   }
 }
 

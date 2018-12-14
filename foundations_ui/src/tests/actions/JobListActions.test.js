@@ -128,6 +128,7 @@ const allFilters = [
   {columnName: 'myCol'}
 ];
 const nonExistingFilter = 'nonExist';
+const containValue = 'testPhrase';
 const removeFilter = { column: 'myCol' };
 const colType = 'number';
 
@@ -366,12 +367,12 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
 });
 
 it('getFilterURL more than 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
@@ -386,7 +387,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
@@ -503,22 +504,32 @@ it('getRangeFilter', () => {
   expect(rangeFilter).toEqual({"column": "myCol", "value": "1 - 2"});
 });
 
-it('getExistingValuesForRangeFilter, not existing', () => {
-  const existingValues = JobActions.getExistingValuesForRangeFilter(allFilters, colName);
+it('getExistingValuesForFilter, not existing', () => {
+  const existingValues = JobActions.getExistingValuesForFilter(allFilters, colName);
   expect(existingValues).not.toEqual(null);
 });
 
-it('getExistingValuesForRangeFilter, existing', () => {
-  const existingValues = JobActions.getExistingValuesForRangeFilter(allFilters, nonExistingFilter);
+it('getExistingValuesForFilter, existing', () => {
+  const existingValues = JobActions.getExistingValuesForFilter(allFilters, nonExistingFilter);
   expect(existingValues).toBe(null);
 });
 
-it('removeRangeFilter, not exists', () => {
-  const updatedFilters = JobActions.removeRangeFilter(allFilters, nonExistingFilter);
+it('removeFilterByName, not exists', () => {
+  const updatedFilters = JobActions.removeFilterByName(allFilters, nonExistingFilter);
   expect(updatedFilters.length).toBe(1);
 });
 
-it('removeRangeFilter, exists', () => {
-  const updatedFilters = JobActions.removeRangeFilter(allFilters, removeFilter);
+it('removeFilterByName, exists', () => {
+  const updatedFilters = JobActions.removeFilterByName(allFilters, removeFilter);
   expect(updatedFilters.length).toBe(0);
+});
+
+it('addToURLContainFilter', () => {
+  const newURL = JobActions.addToURLContainFilter(url, containValue, colName)
+  expect(newURL).toBe('localhost/myCol_contains=testPhrase');
+});
+
+it('getContainFilter', () => {
+  const containFilter = JobActions.getContainFilter(colName, containValue);
+  expect(containFilter).toEqual({"column": "myCol", "value": "\"testPhrase\""});
 });

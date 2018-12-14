@@ -30,6 +30,7 @@ class JobListPage extends Component {
       hiddenUsers: [],
       allInputParams: [],
       numberFilters: [],
+      containFilters: [],
       isMount: false,
       allMetrics: [],
     };
@@ -53,12 +54,15 @@ class JobListPage extends Component {
 
   async getFilteredJobs() {
     const {
-      projectName, hiddenUsers, statuses, numberFilters, allUsers,
+      projectName, hiddenUsers, statuses, numberFilters, containFilters, allUsers,
     } = this.state;
 
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
-    const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters);
+    let visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    if (visibleUsers.length === allUsers.length) {
+      visibleUsers = [];
+    }
+    const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters, containFilters);
     return filterJobs;
   }
 
@@ -97,6 +101,18 @@ class JobListPage extends Component {
     this.forceUpdate();
   }
 
+  async updateContainsFilter(searchText, columnName) {
+    const { containFilters, allUsers } = this.state;
+    const newContainFilters = CommonActions.getContainFilters(containFilters, searchText, columnName);
+    await this.setState({ containFilters: newContainFilters });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
   clearState() {
     this.setState({
       jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
@@ -126,39 +142,41 @@ class JobListPage extends Component {
 
   saveFilters() {
     const {
-      statuses, hiddenUsers, allUsers, numberFilters,
+      statuses, hiddenUsers, allUsers, numberFilters, containFilters,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers, numberFilters);
+    const newFilters = JobActions.getAllFilters(statuses, flatUsers, hiddenUsers, numberFilters, containFilters);
     this.setState({ filters: newFilters });
   }
 
   clearFilters() {
     this.setState({
-      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [],
+      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [], containFilters: [],
     });
     this.getJobs();
   }
 
   async removeFilter(removeFilter) {
     const {
-      filters, statuses, allUsers, hiddenUsers, numberFilters,
+      filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters,
     } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
     const flatUsers = CommonActions.getFlatArray(allUsers);
     const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
-    const newNumberFilters = JobActions.removeRangeFilter(numberFilters, removeFilter);
+    const newNumberFilters = JobActions.removeFilterByName(numberFilters, removeFilter);
+    const newContainFilters = JobActions.removeFilterByName(containFilters, removeFilter);
     await this.setState({
       filters: newFilters,
       statuses: newStatuses,
       hiddenUsers: newHiddenUsers,
       numberFilters: newNumberFilters,
+      containFilters: newContainFilters,
     });
     const apiFilteredJobs = await this.getFilteredJobs();
 
     this.clearState();
-    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    await this.formatAndSaveParams(apiFilteredJobs, allUsers);
     this.forceUpdate();
   }
 
@@ -173,12 +191,13 @@ class JobListPage extends Component {
     this.removeFilter = this.removeFilter.bind(this);
     this.getFilteredJobs = this.getFilteredJobs.bind(this);
     this.updateNumberFilter = this.updateNumberFilter.bind(this);
+    this.updateContainsFilter = this.updateContainsFilter.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
-      numberFilters,
+      numberFilters, containFilters,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -195,6 +214,7 @@ class JobListPage extends Component {
           updateHiddenStatus={this.updateHiddenStatus}
           updateHiddenUser={this.updateHiddenUser}
           updateNumberFilter={this.updateNumberFilter}
+          updateContainsFilter={this.updateContainsFilter}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
@@ -202,6 +222,7 @@ class JobListPage extends Component {
           allUsers={allUsers}
           hiddenUsers={hiddenUsers}
           numberFilters={numberFilters}
+          containFilters={containFilters}
         />
       </div>
     );
@@ -218,6 +239,7 @@ JobListPage.propTypes = {
   allMetrics: PropTypes.array,
   allUsers: PropTypes.array,
   hiddenUsers: PropTypes.array,
+  containFilters: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
@@ -230,6 +252,7 @@ JobListPage.defaultProps = {
   allMetrics: [],
   allUsers: [],
   hiddenUsers: [],
+  containFilters: [],
 };
 
 export default JobListPage;

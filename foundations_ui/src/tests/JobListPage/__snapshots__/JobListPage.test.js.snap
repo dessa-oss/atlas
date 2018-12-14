@@ -7,9 +7,9 @@ exports[`Shallow Renders Job List Page 1`] = `
   <Toolbar />
   <JobHeader
     bubbleRefs={Array []}
-    bubblesHidden={0}
     clearFilters={[Function]}
     filters={Array []}
+    hiddenBubbles={Array []}
     isShowingMoreFilters={false}
     numProjects={0}
     project={Object {}}
@@ -19,6 +19,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     allInputParams={Array []}
     allMetrics={Array []}
     allUsers={Array []}
+    containFilters={Array []}
     hiddenUsers={Array []}
     isLoaded={false}
     isMount={false}
@@ -41,6 +42,7 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
       ]
     }
+    updateContainsFilter={[Function]}
     updateHiddenStatus={[Function]}
     updateHiddenUser={[Function]}
     updateNumberFilter={[Function]}

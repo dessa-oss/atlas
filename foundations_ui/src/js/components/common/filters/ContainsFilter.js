@@ -1,53 +1,51 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import CommonActions from '../../../actions/CommonActions';
 
-const isStatusCheckbox = true;
-
-class JobIdFilter extends Component {
+class ContainsFilter extends Component {
   constructor(props) {
     super(props);
     this.changeLocalParams = this.changeLocalParams.bind(this);
     this.onApply = this.onApply.bind(this);
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
-    this.unsetClearFilters = this.unsetClearFilters.bind(this);
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
-      changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
+      filterString: this.props.filterString,
+      columnName: this.props.columnName,
+      metricClass: this.props.metricClass,
     };
   }
 
-
-  componentWillReceiveProps(nextProps) {
-  }
-
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
-    changeHiddenParams(changedParams);
+    const {
+      changeHiddenParams, toggleShowingFilter, filterString, columnName,
+    } = this.state;
+    changeHiddenParams(filterString, columnName);
     toggleShowingFilter();
   }
 
   onCancel() {
     const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
     toggleShowingFilter();
   }
 
   onClearFilters() {
-    const emptyArray = [];
+    this.setState({ filterString: '' });
   }
 
-  unsetClearFilters() {
-  }
-
-  changeLocalParams(colName) {
+  changeLocalParams(e) {
+    this.setState({ filterString: e.target.value });
   }
 
   render() {
+    const { filterString, metricClass } = this.state;
+
+    const divClass = 'filter-container column-filter-container elevation-1 job-id-filter-container '
+      .concat(metricClass);
+
     return (
-      <div className="filter-container column-filter-container elevation-1 job-id-filter-container">
+      <div className={divClass}>
         <div className="column-filter-header">
           <p>contains</p>
           <button
@@ -58,7 +56,7 @@ class JobIdFilter extends Component {
           Clear Filters
           </button>
         </div>
-        <input placeholder="'demo', 'job', 'test'" />
+        <input onChange={(e) => { this.changeLocalParams(e); }} value={filterString} />
         <p className="subtitle">Separate each keyword with a comma (i.e. “demo”, “job”)</p>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
@@ -69,18 +67,20 @@ class JobIdFilter extends Component {
   }
 }
 
-JobIdFilter.propTypes = {
+ContainsFilter.propTypes = {
   changeHiddenParams: PropTypes.func,
-  changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
-  hiddenInputParams: PropTypes.array,
+  filterString: PropTypes.string,
+  columnName: PropTypes.string,
+  metricClass: PropTypes.string,
 };
 
-JobIdFilter.defaultProps = {
+ContainsFilter.defaultProps = {
   changeHiddenParams: () => {},
-  changedParams: [],
   toggleShowingFilter: () => {},
-  hiddenInputParams: [],
+  filterString: '',
+  columnName: '',
+  metricClass: 'not-metric',
 };
 
-export default JobIdFilter;
+export default ContainsFilter;
