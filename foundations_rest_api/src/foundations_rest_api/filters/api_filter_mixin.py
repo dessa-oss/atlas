@@ -31,21 +31,21 @@ class APIFilterMixin(object):
     def _get_item_property_value_and_parser(self, item, column_name, parse=True):
 
         if hasattr(item, column_name):
-            # It's a valid column of the object at the top level
-            column_value = getattr(item, column_name)
-            parser = self._get_column_parser(column_name)
-            return parser.parse(column_value) if parse else column_value, parser
-
+            return self._get_column_value_and_parser(item, column_name, parse)
         nested_element = self._find_element_in_parametric_properties(item, column_name)
-
         if nested_element:
-            # column_name is an input parameter or an output metric name
-            column_value = nested_element.get('value', None)
-            parser = self._get_nested_element_parser(nested_element)
-            return parser.parse(column_value) if parse else column_value, parser
+            return self._get_nested_element_value_and_parser(nested_element, column_name, parse)
+        return None, None  # column_name not found
 
-        # column_name not found, not at the top level, not nested
-        return None, None
+    def _get_column_value_and_parser(self, item, column_name, parse=True):
+        column_value = getattr(item, column_name)
+        parser = self._get_column_parser(column_name)
+        return parser.parse(column_value) if parse else column_value, parser
+
+    def _get_nested_element_value_and_parser(self, nested_element, column_name, parse=True):
+        column_value = nested_element.get('value', None)
+        parser = self._get_nested_element_parser(nested_element)
+        return parser.parse(column_value) if parse else column_value, parser
 
     def _find_element_in_parametric_properties(self, item, column_name):
         for parametric_property_name in ('input_params', 'output_metrics'):
