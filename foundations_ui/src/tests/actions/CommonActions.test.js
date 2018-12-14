@@ -87,6 +87,8 @@ const multipleParams = ['notHere', 'alsonothere', 'alreadyHere'];
 const noParams = [];
 const newParam = 'newParam';
 const oldParam = 'alreadyHere';
+const listParam = [1, 2, 3]
+const stringListParam = ['1', '2', '3']
 const noSearch = '';
 const search = '1';
 const element = { 
@@ -193,6 +195,16 @@ it('get InputMetricRows jobs', () => {
   expect(rows.length).toBe(2);
   expect(rows[0]).not.toBe(null);
   expect(rows[1]).not.toBe(null);
+});
+
+it('get transformArraysToString jobs', () => {
+  const transformedList = CommonActions.transformArraysToString(listParam);
+  expect(transformedList).toBe('[1, 2, 3]')
+});
+
+it('get transformArraysToString jobs, array of strings', () => {
+  const transformedList = CommonActions.transformArraysToString(stringListParam);
+  expect(transformedList).toBe('[1, 2, 3]') 
 });
 
 it('get InputMetricCellPClass', () => {

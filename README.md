@@ -1,5 +1,6 @@
 # Foundations
 *Foundations* is a Python library to manage and improve machine learning workflow. It easily integrates with machine learning workflow written in Python.
+*Foundations* only support Python 3 and above versions.
 
 It provides functionality of log experimental outputs, cache re-usable data, record data provenance information, and track experimental performance metadata. It provides a programmatic approach to launch experiments, which helps modularize model selection and hyperparameter tuning logic from model definition and data wrangling. Last, it provides a programmatic approach to retrieve logged results such that common post-experimentation analysis can be performed quickly.
 
@@ -20,6 +21,8 @@ There is a new release on every second Friday. Old releases can be found by navi
 
 |Release Version|Release|Examples|
 |---|-------|--------|
+|0.0.8.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.8.1) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.8.1/examples) |
+|0.0.8|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.8) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.8/examples) |
 |0.0.7|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.7) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.7/examples) |
 |0.0.6|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.6) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.6/examples) |
 |0.0.5|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.5) | [examples](https://github.com/DeepLearnI/foundations/tree/0.0.5/examples) |
