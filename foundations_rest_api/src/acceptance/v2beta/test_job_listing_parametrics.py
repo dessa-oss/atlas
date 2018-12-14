@@ -34,51 +34,61 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
 
     @classmethod
     def _run_stages(klass):
+        from foundations_internal.pipeline import Pipeline
 
-        @create_stage
+        pipeline = Pipeline(None)
+
+        def make_job(job_name, pipeline_context):
+            from foundations.global_state import message_router
+            from foundations_contrib.producers.jobs.queue_job import QueueJob
+            from foundations_contrib.producers.jobs.run_job import RunJob
+
+            pipeline_context.file_name = job_name
+            QueueJob(message_router, pipeline_context).push_message()
+            RunJob(message_router, pipeline_context).push_message()
+
+        def make_pipeline_context():
+            from foundations_internal.pipeline_context import PipelineContext
+            pipeline_context = PipelineContext()
+            pipeline_context.provenance.project_name = klass._project_name
+            pipeline._pipeline_context = pipeline_context
+            return pipeline_context
+
         def stage0(value0):
             return float('nan') if value0 is False else str(value0)
 
-        @create_stage
         def stage1(value1, value2):
             return '{} {}'.format(str(value1), str(value2))
 
-        @create_stage
         def stage2(value1, value2, value3):
             foundations.log_metric('metric_1', value1)
             foundations.log_metric('metric_2', value2)
             foundations.log_metric('metric_3', True if value3 == 8.3 else value3)
 
         def run_first_job():
-            set_project_name(klass._project_name)
-            value1 = stage0(False)
-            value2 = stage1(10, 4.5)
-            stage2(value1, value2, 5).run(job_name=klass._first_job_name)
+            pipeline_context = make_pipeline_context()
+            value1 = pipeline.stage(stage0, False)
+            value2 = pipeline.stage(stage1, 10, 4.5)
+            pipeline.stage(stage2, value1, value2, 5)
+            make_job(klass._first_job_name, pipeline_context)
 
         def run_second_job():
-            set_project_name(klass._project_name)
-            value3 = stage0(None)
-            value4 = stage1(np.nan, float('nan'))
-            stage2(value3, value4, 8.3).run(job_name=klass._second_job_name)
+            pipeline_context = make_pipeline_context()
+            value3 = pipeline.stage(stage0, None)
+            value4 = pipeline.stage(stage1, np.nan, float('nan'))
+            pipeline.stage(stage2, value3, value4, 8.3)
+            make_job(klass._second_job_name, pipeline_context)
 
         def run_third_job():
-            set_project_name(klass._project_name)
-            value3 = stage0(1)
-            value4 = stage1(30, 'some string')
-            stage2(value3, value4, 3.14).run(job_name=klass._third_job_name)
+            pipeline_context = make_pipeline_context()
+            value3 = pipeline.stage(stage0, 1)
+            value4 = pipeline.stage(stage1, 30, 'some string')
+            pipeline.stage(stage2, value3, value4, 3.14)
+            make_job(klass._third_job_name, pipeline_context)
 
-        from multiprocessing import Process
-
-        # Fork job run due to bug not allowing Foundation to create more than one job in the same process
-        p1 = Process(target=run_first_job)
-        p2 = Process(target=run_second_job)
-        p3 = Process(target=run_third_job)
-        p1.start()
-        p1.join()
-        p2.start()
-        p2.join()
-        p3.start()
-        p3.join()
+        run_first_job()
+        run_second_job()
+        run_third_job()
 
     def test_get_route(self):
         data = super(TestJobListingParametrics, self).test_get_route()
