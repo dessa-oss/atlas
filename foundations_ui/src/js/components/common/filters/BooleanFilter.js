@@ -59,7 +59,7 @@ class BooleanFilter extends Component {
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
     );
 
-    const divClass = 'filter-container column-filter-container elevation-1 job-id-filter-container '
+    const divClass = 'filter-container column-filter-container elevation-1 boolean-filter-container '
       .concat(metricClass);
 
     return (
