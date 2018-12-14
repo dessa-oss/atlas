@@ -48,11 +48,17 @@
     .column-filter-header {
       text-align: left;
       border: none;
-      height: 45px;
+      height: $header-filter-height;
     }
 
     p {
       display: inline-block;
+    }
+
+    .column-filter-list {
+      border: none;
+      height: $filter-body-height;
+      margin: 0px -#{$margin-width} 0px;
     }
   }
 

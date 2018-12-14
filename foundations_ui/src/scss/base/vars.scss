@@ -43,3 +43,5 @@ $user-filter-left: calc((#{$standard-cell-width} * 3 ) / #{$number-sections} + #
 $user-filter-top: calc(#{$metric-header-height} + #{$column-header-height});
 $status-filter-left: calc(#{$standard-cell-width} / #{$number-sections} - (#{$border-thin} * 2));
 $status-filter-top: calc(#{$metric-header-height} + #{$column-header-height});
+$header-filter-height: 45px;
+$filter-body-height: 45px;
