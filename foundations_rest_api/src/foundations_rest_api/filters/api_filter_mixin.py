@@ -31,7 +31,7 @@ class APIFilterMixin(object):
     def _get_item_property_value_and_parser(self, item, column_name, parse=True):
 
         if hasattr(item, column_name):
-            # It's an valid column of the object at the top level
+            # It's a valid column of the object at the top level
             column_value = getattr(item, column_name)
             parser = self._get_column_parser(column_name)
             return parser.parse(column_value) if parse else column_value, parser
