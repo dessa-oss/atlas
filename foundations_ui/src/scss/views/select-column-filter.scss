@@ -14,7 +14,7 @@
     margin-right: 0px;
   }
 
-  &.number-filter-container, &.job-id-filter-container {
+  &.number-filter-container, &.job-id-filter-container, &.boolean-filter-container {
     width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
     position: absolute;
     left: calc(#{$one-third-width} + (8 * #{$border-thin}));
@@ -62,6 +62,23 @@
     }
   }
 
+  &.job-id-filter-container {
+    input {
+      width: calc(100% - 18px);
+      outline: none;
+      border: solid 1px $color-border-bottom;
+      height: $general-form-input-height;
+      padding-left: 15px;
+    }
+      p {
+      display: inline-block;
+    }
+      .subtitle {
+      color: $color-9c-grey;
+      font-style: italic;
+    }
+  }
+  
   &.duration-filter-container {
     width: 380px;
     position: absolute;
