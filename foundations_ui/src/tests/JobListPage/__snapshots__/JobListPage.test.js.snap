@@ -19,6 +19,19 @@ exports[`Shallow Renders Job List Page 1`] = `
     allInputParams={Array []}
     allMetrics={Array []}
     allUsers={Array []}
+    boolCheckboxes={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "True",
+        },
+        Object {
+          "hidden": false,
+          "name": "False",
+        },
+      ]
+    }
+    boolFilters={Array []}
     containFilters={Array []}
     hiddenUsers={Array []}
     isLoaded={false}
@@ -42,6 +55,7 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
       ]
     }
+    updateBoolFilter={[Function]}
     updateContainsFilter={[Function]}
     updateHiddenStatus={[Function]}
     updateHiddenUser={[Function]}
