@@ -37,9 +37,12 @@ class NullFilter(APIFilterMixin):
             self._filter_by_not_null_values(result, column_name)
 
     def _is_none(self, value):
+        return value is None or self._is_nan(value)
+
+    def _is_nan(self, value):
         import math
 
-        return value is None or (isinstance(value, float) and math.isnan(value))
+        return isinstance(value, float) and math.isnan(value)
 
     def _filter_by_null_values(self, result, column_name):
 
