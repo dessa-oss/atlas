@@ -296,7 +296,7 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
@@ -314,6 +314,18 @@ class ProjectActions {
       containFilters.forEach((containFilter) => {
         const newContainFilter = this.getContainFilter(containFilter.columnName, containFilter.searchText);
         updatedFilters.push(newContainFilter);
+      });
+    }
+
+    if (this.boolFilterArrayHasHidden(boolFilters)) {
+      boolFilters.forEach((boolFilter) => {
+        if (this.boolFilterHasHidden(boolFilter)) {
+          const nonHiddenBoolCheckboxes = this.boolFilterGetNonHidden(boolFilter);
+          nonHiddenBoolCheckboxes.forEach((checkbox) => {
+            const newboolFilter = this.getFilterObject(boolFilter.columnName, checkbox.name);
+            updatedFilters.push(newboolFilter);
+          });
+        }
       });
     }
 
