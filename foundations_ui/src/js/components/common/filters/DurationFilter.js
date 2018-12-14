@@ -22,11 +22,6 @@ class DurationFilter extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('np', nextProps);
-    this.setState({ startTime: nextProps.startTime, endTime: nextProps.endTime });
-  }
-
   onApply() {
     const {
       changeHiddenParams, toggleShowingFilter, startTime, endTime,
@@ -37,13 +32,11 @@ class DurationFilter extends Component {
 
   async onCancel() {
     const { toggleShowingFilter } = this.state;
-    console.log('clear shit');
     await this.onClearFilters();
     toggleShowingFilter();
   }
 
   async onClearFilters() {
-    console.log('i am');
     await this.setState({
       startTime: CommonActions.deepCopyArray(defaultTime), endTime: CommonActions.deepCopyArray(defaultTime),
     });
@@ -75,19 +68,14 @@ class DurationFilter extends Component {
       newTime.seconds = e.target.value;
     }
     if (isStart) {
-      console.log('updating');
       await this.setState({ startTime: newTime });
     } else {
-      console.log('updating');
       await this.setState({ endTime: newTime });
     }
   }
 
   render() {
     const { startTime, endTime } = this.state;
-
-    console.log('st', startTime);
-    console.log('et', endTime);
 
     return (
       <div className="filter-container column-filter-container elevation-1 duration-filter-container">
