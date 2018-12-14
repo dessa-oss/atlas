@@ -109,7 +109,7 @@ class TestNullFilter(unittest.TestCase):
             [{'name': 'argument0', 'type': 'string', 'value': 'green grass'},
              {'name': 'argument1', 'type': 'number', 'value': None}],
             [{'name': 'argument0', 'type': 'string', 'value': 'more stuff'},
-             {'name': 'argument1', 'type': 'number', 'value': '5'}]
+             {'name': 'argument1', 'type': 'number', 'value': float('nan')}]
         ]
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
@@ -117,10 +117,10 @@ class TestNullFilter(unittest.TestCase):
         null_filter = NullFilter()
         new_result = null_filter(result, params)
 
-        self.assertEqual(len(new_result), 1)
+        self.assertEqual(len(new_result), 2)
 
         new_result_job_ids = [job.job_id for job in new_result]
-        expected_new_result_ids = [2]
+        expected_new_result_ids = [2, 3]
         self.assertEqual(expected_new_result_ids, new_result_job_ids)
 
     def test_input_parameters_argument_is_not_null(self):
@@ -134,10 +134,35 @@ class TestNullFilter(unittest.TestCase):
             [{'name': 'argument0', 'type': 'string', 'value': 'green grass'},
              {'name': 'argument1', 'type': 'number', 'value': None}],
             [{'name': 'argument0', 'type': 'string', 'value': 'more stuff'},
-             {'name': 'argument1', 'type': 'number', 'value': '5'}]
+             {'name': 'argument1', 'type': 'number', 'value': float('nan')}]
         ]
         result = [self.MockJobInfo(job_id=index+1, input_params=input_parameters)
                   for index, input_parameters in enumerate(input_parameters_list)]
+
+        null_filter = NullFilter()
+        new_result = null_filter(result, params)
+
+        self.assertEqual(len(new_result), 1)
+
+        new_result_job_ids = [job.job_id for job in new_result]
+        expected_new_result_ids = [1]
+        self.assertEqual(expected_new_result_ids, new_result_job_ids)
+
+    def test_output_metrics_is_null(self):
+        params = {
+            'metric1_isnull': 'true',
+        }
+
+        output_metrics_list = [
+            [{'name': 'metric0', 'type': 'string', 'value': 'more stuff'},
+             {'name': 'metric1', 'type': 'string', 'value': float('nan')}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'red leave'},
+             {'name': 'metric1', 'type': 'string', 'value': 'vague'}],
+            [{'name': 'metric0', 'type': 'string', 'value': 'green grass'},
+             {'name': 'metric1', 'type': 'string', 'value': None}]
+        ]
+        result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
+                  for index, output_metrics in enumerate(output_metrics_list)]
 
         null_filter = NullFilter()
         new_result = null_filter(result, params)
@@ -148,14 +173,14 @@ class TestNullFilter(unittest.TestCase):
         expected_new_result_ids = [1, 3]
         self.assertEqual(expected_new_result_ids, new_result_job_ids)
 
-    def test_output_metrics_is_null(self):
+    def test_output_metrics_is_not_null(self):
         params = {
-            'metric1_isnull': 'true',
+            'metric1_isnull': 'false',
         }
 
         output_metrics_list = [
             [{'name': 'metric0', 'type': 'string', 'value': 'more stuff'},
-             {'name': 'metric1', 'type': 'string', 'value': 'bohemian'}],
+             {'name': 'metric1', 'type': 'string', 'value': float('nan')}],
             [{'name': 'metric0', 'type': 'string', 'value': 'red leave'},
              {'name': 'metric1', 'type': 'string', 'value': 'vague'}],
             [{'name': 'metric0', 'type': 'string', 'value': 'green grass'},
@@ -170,30 +195,5 @@ class TestNullFilter(unittest.TestCase):
         self.assertEqual(len(new_result), 1)
 
         new_result_job_ids = [job.job_id for job in new_result]
-        expected_new_result_ids = [3]
-        self.assertEqual(expected_new_result_ids, new_result_job_ids)
-
-    def test_output_metrics_is_not_null(self):
-        params = {
-            'metric1_isnull': 'false',
-        }
-
-        output_metrics_list = [
-            [{'name': 'metric0', 'type': 'string', 'value': 'more stuff'},
-             {'name': 'metric1', 'type': 'string', 'value': 'bohemian'}],
-            [{'name': 'metric0', 'type': 'string', 'value': 'red leave'},
-             {'name': 'metric1', 'type': 'string', 'value': 'vague'}],
-            [{'name': 'metric0', 'type': 'string', 'value': 'green grass'},
-             {'name': 'metric1', 'type': 'string', 'value': None}]
-        ]
-        result = [self.MockJobInfo(job_id=index+1, output_metrics=output_metrics)
-                  for index, output_metrics in enumerate(output_metrics_list)]
-
-        null_filter = NullFilter()
-        new_result = null_filter(result, params)
-
-        self.assertEqual(len(new_result), 2)
-
-        new_result_job_ids = [job.job_id for job in new_result]
-        expected_new_result_ids = [1, 2]
+        expected_new_result_ids = [2]
         self.assertEqual(expected_new_result_ids, new_result_job_ids)
