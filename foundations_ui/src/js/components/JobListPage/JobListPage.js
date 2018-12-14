@@ -12,6 +12,11 @@ const baseStatus = [
   { name: 'Error', hidden: false },
 ];
 
+const baseBoolCheckboxes = [
+  { name: 'True', hidden: false },
+  { name: 'False', hidden: false },
+];
+
 class JobListPage extends Component {
   constructor(props) {
     super(props);
@@ -31,8 +36,13 @@ class JobListPage extends Component {
       allInputParams: [],
       numberFilters: [],
       containFilters: [],
+      boolFilters: [],
       isMount: false,
       allMetrics: [],
+      boolCheckboxes: [
+        { name: 'True', hidden: false },
+        { name: 'False', hidden: false },
+      ],
     };
   }
 
@@ -54,7 +64,7 @@ class JobListPage extends Component {
 
   async getFilteredJobs() {
     const {
-      projectName, hiddenUsers, statuses, numberFilters, containFilters, allUsers,
+      projectName, hiddenUsers, statuses, numberFilters, containFilters, allUsers, boolFilters,
     } = this.state;
 
     const flatUsers = CommonActions.getFlatArray(allUsers);
@@ -62,7 +72,9 @@ class JobListPage extends Component {
     if (visibleUsers.length === allUsers.length) {
       visibleUsers = [];
     }
-    const filterJobs = await JobActions.filterJobs(projectName, statuses, visibleUsers, numberFilters, containFilters);
+    const filterJobs = await JobActions.filterJobs(
+      projectName, statuses, visibleUsers, numberFilters, containFilters, boolFilters,
+    );
     return filterJobs;
   }
 
@@ -113,6 +125,21 @@ class JobListPage extends Component {
     this.forceUpdate();
   }
 
+  async updateBoolFilter(hiddenFields, columnName) {
+    const { boolFilters, boolCheckboxes, allUsers } = this.state;
+    const formattedBoolFilter = CommonActions.formatColumns(boolCheckboxes, hiddenFields);
+
+    const newBoolFilters = CommonActions.getBoolFilters(boolFilters, formattedBoolFilter, columnName);
+
+    await this.setState({ boolFilters: newBoolFilters });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
   clearState() {
     this.setState({
       jobs: [], isLoaded: true, allInputParams: [], allMetrics: [],
@@ -151,7 +178,12 @@ class JobListPage extends Component {
 
   clearFilters() {
     this.setState({
-      filters: [], statuses: baseStatus, hiddenUsers: [], numberFilters: [], containFilters: [],
+      filters: [],
+      statuses: baseStatus,
+      hiddenUsers: [],
+      numberFilters: [],
+      containFilters: [],
+      boolCheckboxes: baseBoolCheckboxes,
     });
     this.getJobs();
   }
@@ -192,12 +224,13 @@ class JobListPage extends Component {
     this.getFilteredJobs = this.getFilteredJobs.bind(this);
     this.updateNumberFilter = this.updateNumberFilter.bind(this);
     this.updateContainsFilter = this.updateContainsFilter.bind(this);
+    this.updateBoolFilter = this.updateBoolFilter.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
-      numberFilters, containFilters,
+      numberFilters, containFilters, boolCheckboxes, boolFilters,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -215,14 +248,17 @@ class JobListPage extends Component {
           updateHiddenUser={this.updateHiddenUser}
           updateNumberFilter={this.updateNumberFilter}
           updateContainsFilter={this.updateContainsFilter}
+          updateBoolFilter={this.updateBoolFilter}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
           allMetrics={allMetrics}
           allUsers={allUsers}
           hiddenUsers={hiddenUsers}
+          boolCheckboxes={boolCheckboxes}
           numberFilters={numberFilters}
           containFilters={containFilters}
+          boolFilters={boolFilters}
         />
       </div>
     );
@@ -240,6 +276,8 @@ JobListPage.propTypes = {
   allUsers: PropTypes.array,
   hiddenUsers: PropTypes.array,
   containFilters: PropTypes.array,
+  boolCheckboxes: PropTypes.array,
+  boolFilters: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
@@ -253,6 +291,8 @@ JobListPage.defaultProps = {
   allUsers: [],
   hiddenUsers: [],
   containFilters: [],
+  boolCheckboxes: [],
+  boolFilters: [],
 };
 
 export default JobListPage;

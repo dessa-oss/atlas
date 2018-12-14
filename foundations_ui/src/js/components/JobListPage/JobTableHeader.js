@@ -39,17 +39,20 @@ class JobTableHeader extends Component {
       updateContainsFilter: this.props.updateContainsFilter,
       metricClass: '',
       isShowingNumberFilter: false,
+      updateNumberFilter: this.props.updateNumberFilter,
       numberFilterColumn: '',
       isShowingBooleanFilter: false,
+      updateBoolFilter: this.props.updateBoolFilter,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
       searchText: '',
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
-      updateNumberFilter: this.props.updateNumberFilter,
+      boolCheckboxes: this.props.boolCheckboxes,
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
+      boolFilters: this.props.boolFilters,
     };
   }
 
@@ -155,6 +158,7 @@ class JobTableHeader extends Component {
       this.setState({
         isShowingNumberFilter: false,
         isShowingContainsFilter: false,
+        isShowingBooleanFilter: false,
       });
     }
   }
@@ -186,6 +190,7 @@ class JobTableHeader extends Component {
       updateHiddenUser,
       allUsers,
       hiddenUsers,
+      boolCheckboxes,
       isShowingDurationFilter,
       isShowingNumberFilter,
       isShowingContainsFilter,
@@ -195,6 +200,8 @@ class JobTableHeader extends Component {
       metricClass,
       updateContainsFilter,
       containFilters,
+      boolFilters,
+      updateBoolFilter,
     } = this.state;
 
     let userFilter = null;
@@ -275,12 +282,18 @@ class JobTableHeader extends Component {
 
     let booleanFilter = null;
     if (isShowingBooleanFilter) {
+      // const existingFilter = JobActions.getExistingValuesForFilter(containFilters, numberFilterColumn);
+      // let containString = '';
+      // if (existingFilter) {
+      //   containString = existingFilter.searchText;
+      // }
       booleanFilter = (
         <BooleanFilter
           toggleShowingFilter={this.toggleInputMetricFilter}
           columnName={numberFilterColumn}
-          changeHiddenParams={updateContainsFilter}
+          changeHiddenParams={updateBoolFilter}
           metricClass={metricClass}
+          columns={boolCheckboxes}
         />
       );
     }
@@ -343,6 +356,9 @@ JobTableHeader.propTypes = {
   updateContainsFilter: PropTypes.func,
   containFilters: PropTypes.array,
   isShowingBooleanFilter: PropTypes.bool,
+  boolCheckboxes: PropTypes.array,
+  boolFilters: PropTypes.array,
+  updateBoolFilter: PropTypes.func,
 };
 
 JobTableHeader.defaultProps = {
@@ -368,6 +384,9 @@ JobTableHeader.defaultProps = {
   updateContainsFilter: () => {},
   containFilters: [],
   isShowingBooleanFilter: false,
+  boolCheckboxes: [],
+  boolFilters: [],
+  updateBoolFilter: () => {},
 };
 
 export default JobTableHeader;

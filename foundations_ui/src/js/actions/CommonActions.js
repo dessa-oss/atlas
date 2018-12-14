@@ -238,6 +238,15 @@ class CommonActions {
     return newFilters;
   }
 
+  static getBoolFilters(oldFilters, newFormattedBool, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
+    newFilters.push({
+      columnName: newColumnName,
+      boolCheckboxes: newFormattedBool,
+    });
+    return newFilters;
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {

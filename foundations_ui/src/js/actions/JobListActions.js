@@ -20,16 +20,16 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters) {
+  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
     // if no filters just get regular jobs
     if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0
+      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters)
     ) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters);
+    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters);
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -236,7 +236,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters) {
+  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -268,6 +268,19 @@ class ProjectActions {
       url = this.addToURLContainFilter(url, containFilter.searchText, containFilter.columnName);
       isFirstFilter = false;
     });
+
+    if (this.boolFilterArrayHasHidden(boolFilters)) {
+      boolFilters.forEach((boolFilter) => {
+        if (this.boolFilterHasHidden(boolFilter)) {
+          const nonHiddenBoolCheckboxes = this.boolFilterGetNonHidden(boolFilter);
+          nonHiddenBoolCheckboxes.forEach((checkbox) => {
+            url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+            url = this.addToURLNotHidden(url, true, checkbox.name, boolFilter.columnName);
+            isFirstFilter = false;
+          });
+        }
+      });
+    }
 
     return url;
   }
@@ -523,6 +536,28 @@ class ProjectActions {
   static getContainFilter(colName, value) {
     const containValue = '"'.concat(value).concat('"');
     return this.getFilterObject(colName, containValue);
+  }
+
+  static boolFilterHasHidden(boolFilter) {
+    const hasHidden = boolFilter.boolCheckboxes.filter((checkbox) => {
+      return checkbox.hidden === true;
+    });
+    return hasHidden.length > 0;
+  }
+
+  static boolFilterArrayHasHidden(boolFilters) {
+    let hasHidden = false;
+    boolFilters.forEach((filter) => {
+      hasHidden = hasHidden || this.boolFilterHasHidden(filter);
+    });
+    return hasHidden;
+  }
+
+  static boolFilterGetNonHidden(boolFilter) {
+    const filtersWithoutHidden = boolFilter.boolCheckboxes.filter((checkbox) => {
+      return checkbox.hidden === false;
+    });
+    return filtersWithoutHidden;
   }
 }
 

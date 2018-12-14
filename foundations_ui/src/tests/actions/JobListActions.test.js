@@ -533,3 +533,11 @@ it('getContainFilter', () => {
   const containFilter = JobActions.getContainFilter(colName, containValue);
   expect(containFilter).toEqual({"column": "myCol", "value": "\"testPhrase\""});
 });
+
+it('boolFilterHasHidden', () => {
+
+});
+
+it('boolFilterArrayHasHidden', () => {
+  
+});

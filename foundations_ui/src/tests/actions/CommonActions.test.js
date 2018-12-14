@@ -341,3 +341,6 @@ it('getContainFilters, non existing column', () => {
   expect(newFilters.length).toBe(2);
 });
 
+it('getBoolFilters'), () => {
+  
+};
