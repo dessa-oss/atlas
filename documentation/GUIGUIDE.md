@@ -39,3 +39,6 @@ Make sure you have edited the `foundations_gui.sh` script as described in step 3
 ### Stopping the GUI
 
 `./foundations_gui.sh stop ui`
+
+## Known Issues Running On OSX
+There are some known issues related to networking with Docker on OSX, which could appear as we use Docker as the backend to run the GUI. Please see [the networking features documentation](https://docs.docker.com/docker-for-mac/networking/) for details and limitations.
