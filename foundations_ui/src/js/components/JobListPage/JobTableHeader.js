@@ -53,6 +53,8 @@ class JobTableHeader extends Component {
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
       boolFilters: this.props.boolFilters,
+      updateDurationFilter: this.props.updateDurationFilter,
+      durationFilters: this.props.durationFilters,
     };
   }
 
@@ -70,6 +72,7 @@ class JobTableHeader extends Component {
         numberFilters: nextProps.numberFilters,
         containFilters: nextProps.containFilters,
         boolFilters: nextProps.boolFilters,
+        durationFilters: nextProps.durationFilters,
       },
     );
   }
@@ -203,6 +206,8 @@ class JobTableHeader extends Component {
       containFilters,
       boolFilters,
       updateBoolFilter,
+      updateDurationFilter,
+      durationFilters,
     } = this.state;
 
     let userFilter = null;
@@ -241,9 +246,23 @@ class JobTableHeader extends Component {
 
     let durationFilter = null;
     if (isShowingDurationFilter) {
+      const existingFilter = JobActions.getExistingValuesForFilter(durationFilters, 'Duration');
+      let startValue = {
+        days: '0', hours: '0', minutes: '0', seconds: '0',
+      };
+      let endValue = {
+        days: '0', hours: '0', minutes: '0', seconds: '0',
+      };
+      if (existingFilter) {
+        startValue = existingFilter.startTime;
+        endValue = existingFilter.endTime;
+      }
       durationFilter = (
         <DurationFilter
           toggleShowingFilter={this.toggleDurationFilter}
+          changeHiddenParams={updateDurationFilter}
+          startTime={startValue}
+          endTime={endValue}
         />
       );
     }
@@ -363,6 +382,8 @@ JobTableHeader.propTypes = {
   boolCheckboxes: PropTypes.array,
   boolFilters: PropTypes.array,
   updateBoolFilter: PropTypes.func,
+  updateDurationFilter: PropTypes.func,
+  durationFilters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -391,6 +412,8 @@ JobTableHeader.defaultProps = {
   boolCheckboxes: [],
   boolFilters: [],
   updateBoolFilter: () => {},
+  updateDurationFilter: () => {},
+  durationFilters: [],
 };
 
 export default JobTableHeader;

@@ -141,6 +141,12 @@ const hiddenBoolFilter = [{
     {name: 'hidden', hidden: true}
   ]
 }];
+const time = {
+  'days': '1',
+  'hours': '2',
+  'minutes': '3',
+  'seconds': '4'
+}
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -376,12 +382,12 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
 });
 
 it('getFilterURL more than 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
@@ -396,7 +402,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
@@ -583,12 +589,22 @@ it('boolFilterGetHidden, none hidden', () => {
   expect(hidden.length).toBe(0);
 });
 
+it('getTimeForDurationURL', () => {
+  const urlTime = JobActions.getTimeForDurationURL(time);
+  expect(urlTime).toBe('1_2_3_4');
+});
+
+it('getTimeForDurationBubble', () => {
+  const bubbleTime = JobActions.getTimeForDurationBubble(time);
+  expect(bubbleTime).toBe('1d2h3m4s');
+});
+
 it('areNoFilters, no filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(noFilters).toBe(true);
 });
 
 it('areNoFilters, has filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters);
   expect(noFilters).toBe(false);
 });

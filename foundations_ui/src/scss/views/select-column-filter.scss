@@ -82,7 +82,7 @@
   &.duration-filter-container {
     width: 380px;
     position: absolute;
-    left: $status-filter-left;
+    left: $duration-filter-left;
     padding-top: 5px;
     top: $status-filter-top;
 
@@ -209,10 +209,16 @@
 .column-filter-list {
   border-bottom: 1px solid $color-border-bottom;
   border-top: 1px solid $color-border-bottom;
-  margin: 40px -15px 0px;
+  margin: 0px -15px 0px;
   padding: 15px;
   height: 250px;
   width: 100%;
   overflow: hidden;
   overflow-y: scroll;
+}
+
+.user-filter-container {
+  .column-filter-list {
+    margin: 40px -15px 0px;
+  }
 }

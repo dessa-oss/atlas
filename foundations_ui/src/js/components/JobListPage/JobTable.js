@@ -17,12 +17,14 @@ class JobTable extends Component {
       updateNumberFilter: this.props.updateNumberFilter,
       updateContainsFilter: this.props.updateContainsFilter,
       updateBoolFilter: this.props.updateBoolFilter,
+      updateDurationFilter: this.props.updateDurationFilter,
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
       boolFilters: this.props.boolFilters,
       boolCheckboxes: this.props.boolCheckboxes,
+      durationFilters: this.props.durationFilters,
     };
   }
 
@@ -40,6 +42,7 @@ class JobTable extends Component {
         numberFilters: nextProps.numberFilters,
         containFilters: nextProps.containFilters,
         boolFilters: nextProps.boolFilters,
+        durationFilters: nextProps.durationFilters,
       },
     );
   }
@@ -48,7 +51,7 @@ class JobTable extends Component {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
-      boolCheckboxes,
+      boolCheckboxes, updateDurationFilter, durationFilters,
     } = this.state;
 
     let jobRows = [];
@@ -91,6 +94,8 @@ class JobTable extends Component {
             containFilters={containFilters}
             updateBoolFilter={updateBoolFilter}
             boolFilters={boolFilters}
+            updateDurationFilter={updateDurationFilter}
+            durationFilters={durationFilters}
           />
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -123,6 +128,8 @@ JobTable.propTypes = {
   updateBoolFilter: PropTypes.func,
   boolFilters: PropTypes.array,
   boolCheckboxes: PropTypes.array,
+  updateDurationFilter: PropTypes.func,
+  durationFilters: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -144,6 +151,8 @@ JobTable.defaultProps = {
   updateBoolFilter: () => {},
   boolFilters: [],
   boolCheckboxes: [],
+  updateDurationFilter: () => {},
+  durationFilters: [],
 };
 
 export default JobTable;

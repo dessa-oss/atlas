@@ -20,14 +20,18 @@ class ProjectActions {
       });
   }
 
-  static filterJobs(projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
+  static filterJobs(
+    projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+  ) {
     // if no filters just get regular jobs
-    if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters)) {
+    if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters)) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
-    const filterURL = this.getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters);
+    const filterURL = this.getFilterURL(
+      statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+    );
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
@@ -234,7 +238,7 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
+  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -280,6 +284,14 @@ class ProjectActions {
       });
     }
 
+    durationFilters.forEach((durationFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      const startTime = this.getTimeForDurationURL(durationFilter.startTime);
+      const endTime = this.getTimeForDurationURL(durationFilter.endTime);
+      url = this.addToURLRangeNotHidden(url, startTime, endTime, 'duration');
+      isFirstFilter = false;
+    });
+
     return url;
   }
 
@@ -294,7 +306,7 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
@@ -324,6 +336,15 @@ class ProjectActions {
             updatedFilters.push(newboolFilter);
           });
         }
+      });
+    }
+
+    if (durationFilters.length > 0) {
+      durationFilters.forEach((durationFilter) => {
+        const startTime = this.getTimeForDurationBubble(durationFilter.startTime);
+        const endTime = this.getTimeForDurationBubble(durationFilter.endTime);
+        const newRangeFilter = this.getRangeFilter('Duration', startTime, endTime);
+        updatedFilters.push(newRangeFilter);
       });
     }
 
@@ -578,9 +599,17 @@ class ProjectActions {
     return CommonActions.getFlatArray(filtersOnlyHidden);
   }
 
-  static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters) {
+  static getTimeForDurationURL(time) {
+    return `${time.days}_${time.hours}_${time.minutes}_${time.seconds}`;
+  }
+
+  static getTimeForDurationBubble(time) {
+    return `${time.days}d${time.hours}h${time.minutes}m${time.seconds}s`;
+  }
+
+  static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
     return !this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters);
+      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0;
   }
 }
 
