@@ -208,7 +208,7 @@ class JobListPage extends Component {
 
   async removeFilter(removeFilter) {
     const {
-      filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters,
+      filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter,
     } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
@@ -217,6 +217,7 @@ class JobListPage extends Component {
     const newNumberFilters = JobActions.removeFilterByName(numberFilters, removeFilter);
     const newContainFilters = JobActions.removeFilterByName(containFilters, removeFilter);
     const newBoolFilters = JobActions.removeFilterByName(boolFilters, removeFilter);
+    const newDurationFilter = JobActions.removeFilterByName(durationFilter, removeFilter);
     await this.setState({
       filters: newFilters,
       statuses: newStatuses,
@@ -224,6 +225,7 @@ class JobListPage extends Component {
       numberFilters: newNumberFilters,
       containFilters: newContainFilters,
       boolFilters: newBoolFilters,
+      durationFilter: newDurationFilter,
     });
     const apiFilteredJobs = await this.getFilteredJobs();
 
@@ -251,7 +253,7 @@ class JobListPage extends Component {
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
-      numberFilters, containFilters, boolCheckboxes, boolFilters,
+      numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -281,6 +283,7 @@ class JobListPage extends Component {
           numberFilters={numberFilters}
           containFilters={containFilters}
           boolFilters={boolFilters}
+          durationFilters={durationFilter}
         />
       </div>
     );

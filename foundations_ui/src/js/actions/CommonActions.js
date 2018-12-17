@@ -262,7 +262,7 @@ class CommonActions {
   }
 
   static getDurationFilters(startTime, endTime) {
-    return [{ startTime, endTime }];
+    return [{ columnName: 'Duration', startTime, endTime }];
   }
 
   // private functions, not cannot declare a private and static
