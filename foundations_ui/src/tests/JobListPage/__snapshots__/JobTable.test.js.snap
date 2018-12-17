@@ -19,9 +19,11 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingBooleanFilter={false}
       isShowingContainsFilter={false}
       isShowingDurationFilter={false}
+      isShowingJobIdFilter={false}
       isShowingNumberFilter={false}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
+      jobIdFilters={Array []}
       jobRows={
         Array [
           <p>
@@ -40,6 +42,7 @@ exports[`Shallow Renders Job Table 1`] = `
       updateDurationFilter={[Function]}
       updateHiddenStatus={[Function]}
       updateHiddenUser={[Function]}
+      updateJobIdFilter={[Function]}
       updateNumberFilter={[Function]}
     />
     <div
