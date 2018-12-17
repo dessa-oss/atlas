@@ -598,3 +598,13 @@ it('getTimeForDurationBubble', () => {
   const bubbleTime = JobActions.getTimeForDurationBubble(time);
   expect(bubbleTime).toBe('1d2h3m4s');
 });
+
+it('areNoFilters, no filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  expect(noFilters).toBe(true);
+});
+
+it('areNoFilters, has filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters);
+  expect(noFilters).toBe(false);
+});

@@ -24,9 +24,7 @@ class ProjectActions {
     projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
   ) {
     // if no filters just get regular jobs
-    if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
-    ) {
+    if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters)) {
       return this.getJobs(projectName);
     }
 
@@ -620,6 +618,11 @@ class ProjectActions {
       .concat('m')
       .concat(time.seconds)
       .concat('s');
+  }
+
+  static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
+    return !this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
+      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0;
   }
 }
 
