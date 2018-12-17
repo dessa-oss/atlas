@@ -20,6 +20,7 @@ from test.test_scheduler import TestScheduler
 from test.test_stage_cache import TestStageCache
 from test.test_stage_connector_wrapper_builder import TestStageConnectorWrapperBuilder
 from test.test_module_manager import TestModuleManager
+from test.test_foundations_serializer import TestFoundationsSerializer
 
 from test.test_stage_context import TestStageContext
 from test.test_staged_module_internal_loader import TestStagedModuleInternalLoader
