@@ -317,7 +317,9 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters) {
+  static getAllFilters(
+    statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+  ) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
@@ -356,6 +358,13 @@ class ProjectActions {
         const endTime = this.getTimeForDurationBubble(durationFilter.endTime);
         const newRangeFilter = this.getRangeFilter('Duration', startTime, endTime);
         updatedFilters.push(newRangeFilter);
+      });
+    }
+
+    if (jobIdFilters.length > 0) {
+      jobIdFilters.forEach((jobIdFilter) => {
+        const newJobIdFilter = this.getContainFilter(jobIdFilter.columnName, jobIdFilter.searchText);
+        updatedFilters.push(newJobIdFilter);
       });
     }
 

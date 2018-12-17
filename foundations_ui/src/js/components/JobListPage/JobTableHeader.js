@@ -121,7 +121,6 @@ class JobTableHeader extends Component {
   }
 
   getMetricClass(e) {
-    console.log(e.target.className);
     let metricClass = 'not-metric';
     if (e) {
       if (e.target.className.includes('is-metric')) {
