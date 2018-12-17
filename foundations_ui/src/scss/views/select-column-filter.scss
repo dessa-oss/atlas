@@ -25,6 +25,10 @@
       left: calc((2 * #{$one-third-width}) + (14 * #{$border-thin}));
     }
 
+    &.job-id-filter {
+      left: $job-id-filter-left;
+    }
+
     .number-input-container {
       white-space: nowrap;
       margin-bottom: $margin-width;

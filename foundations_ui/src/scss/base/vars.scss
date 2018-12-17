@@ -46,3 +46,4 @@ $status-filter-top: calc(#{$metric-header-height} + #{$column-header-height});
 $header-filter-height: 45px;
 $filter-body-height: 45px;
 $duration-filter-left: calc((#{$standard-cell-width} * 2 ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin} * 4));
+$job-id-filter-left: calc((#{$standard-cell-width} ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin}));
