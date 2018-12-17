@@ -18,7 +18,8 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def setUpClass(klass):
-        klass._project_name = 'hanna'
+        JobsTestsHelperMixinV2.setUpClass()
+        klass._set_project_name('hanna')
         klass._first_job_name = 'test job 1'
         klass._second_job_name = 'test job 2'
         klass._third_job_name = 'test job 3'
@@ -35,9 +36,6 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         from foundations import MessageRouter
         from foundations_internal.pipeline import Pipeline
 
-        klass._pipeline = Pipeline(None)
-        klass._message_router = MessageRouter()
-
         def make_job(job_name, stage):
             klass._pipeline_context.file_name = job_name
             stage.run_same_process()
@@ -45,6 +43,7 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
         def make_pipeline_context():
             from foundations_internal.pipeline_context import PipelineContext
+
             klass._pipeline_context = PipelineContext()
             klass._pipeline_context.provenance.project_name = klass._project_name
             klass._pipeline._pipeline_context = klass._pipeline_context

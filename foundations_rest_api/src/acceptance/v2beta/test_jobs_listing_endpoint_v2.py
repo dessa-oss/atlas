@@ -36,8 +36,8 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def setUpClass(klass):
-        klass._project_name = 'hana'
         JobsTestsHelperMixinV2.setUpClass()
+        klass._set_project_name('hanna')
         klass._setup_three_jobs()
 
     @classmethod
@@ -48,7 +48,6 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def _setup_three_jobs(klass):
-        klass._pipeline_context.provenance.project_name = klass._project_name
         klass._make_running_job('00000000-0000-0000-0000-000000000000', 'soju hero', 99999999)
         klass._make_completed_job('my job 1', 'beethoven', 100000000, 100086400)
         klass._make_completed_job('my job 2', 'mozart', 123456780, 123555555)
