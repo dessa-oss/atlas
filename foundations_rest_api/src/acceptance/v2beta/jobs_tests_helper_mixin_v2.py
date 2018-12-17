@@ -22,6 +22,11 @@ class JobsTestsHelperMixinV2(object):
         klass._pipeline_context = PipelineContext()
         klass._pipeline = Pipeline(klass._pipeline_context)
 
+    @classmethod
+    def _set_project_name(klass, project_name):
+        klass._project_name = project_name
+        klass._pipeline_context.provenance.project_name = klass._project_name
+
     @staticmethod
     def _str_random_uuid():
         import uuid

@@ -8,27 +8,37 @@ import numpy as np
 import foundations
 from foundations import create_stage, set_project_name
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
+from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 
 
-class TestJobListingTrimCharacters(APIAcceptanceTestCaseBase):
+class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
 
     @classmethod
     def setUpClass(klass):
-        klass._project_name = 'hanna'
+        JobsTestsHelperMixinV2.setUpClass()
+        klass._set_project_name('hanna')
         klass._run_stages()
+
+    @classmethod
+    def tearDownClass(klass):
+        from foundations.global_state import redis_connection as redis
+
+        redis.flushall()
 
     @classmethod
     def _run_stages(klass):
 
-        @create_stage
         def stage0(value1):
             foundations.log_metric('int_metric', value1)
 
-        set_project_name(klass._project_name)
-        stage0('5' * 5000).run()
+        job_name = 'test job'
+        klass._pipeline_context.file_name = job_name
+        stage = klass._pipeline.stage(stage0, '5' * 5000)
+        stage.run_same_process()
+        klass._make_completed_job(job_name, 'default user')
 
     def test_get_route(self):
         data = super(TestJobListingTrimCharacters, self).test_get_route()

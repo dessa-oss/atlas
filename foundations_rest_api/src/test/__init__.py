@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from test.test_app_manager import TestAppManager
 from test.test_lazy_result import TestLazyResult
 from test.test_response import TestResponse
-from test.test_result_sorter import TestResultSorter
 from test.utils import *
 from test.v1 import *
 from test.v2beta import *

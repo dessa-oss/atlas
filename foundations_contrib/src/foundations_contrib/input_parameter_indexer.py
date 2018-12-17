@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class InputParameterIndexer(object):
     """
     This class fetches the index rank of each stage_uuid and passes that info to the InputParameterFormatter
-    for formatting. 
+    for formatting.
     """
 
     @staticmethod
@@ -25,7 +25,7 @@ class InputParameterIndexer(object):
 
     @staticmethod
     def _get_stage_rank(stage_times):
-        stage_uuid_rank = [(key, index) for index, (key, value) in enumerate(stage_times)]
+        stage_uuid_rank = [(key.decode(), index) for index, (key, value) in enumerate(stage_times)]
         stage_uuid_rank = dict(stage_uuid_rank)
 
         return stage_uuid_rank
