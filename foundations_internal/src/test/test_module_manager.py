@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_contrib.module_manager import ModuleManager
+from foundations_internal.module_manager import ModuleManager
 
 
 class TestModuleManager(unittest.TestCase):

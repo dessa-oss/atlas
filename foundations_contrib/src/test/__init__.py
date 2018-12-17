@@ -23,7 +23,6 @@ from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
 from test.test_message_route_listener import TestMessageRouteListener
 from test.test_message_router import TestMessageRouter
 from test.test_middleware_manager import TestMiddlewareManager
-from test.test_module_manager import TestModuleManager
 from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
 from test.test_null_stage_logger import TestNullStageLogger

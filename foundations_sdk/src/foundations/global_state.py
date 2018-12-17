@@ -13,11 +13,11 @@ from foundations_contrib.message_router import MessageRouter
 from foundations_internal.foundations_context import FoundationsContext
 from foundations_contrib.middleware_manager import MiddlewareManager
 from foundations.log_manager import LogManager
-from foundations_contrib.module_manager import ModuleManager
 from foundations_internal.deployment_manager import DeploymentManager
 from foundations_internal.cache_manager import CacheManager
 from foundations.config_manager import ConfigManager
 
+from foundations_internal.global_state import module_manager
 
 import concurrent.futures
 import redis
@@ -29,7 +29,6 @@ foundations_context = FoundationsContext(_pipeline)
 config_manager = ConfigManager()
 cache_manager = CacheManager()
 deployment_manager = DeploymentManager(config_manager)
-module_manager = ModuleManager()
 log_manager = LogManager(config_manager)
 middleware_manager = MiddlewareManager(config_manager)
 default_executor = concurrent.futures.ThreadPoolExecutor()
