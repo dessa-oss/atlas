@@ -33,8 +33,6 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def _run_stages(klass):
-        from foundations import MessageRouter
-        from foundations_internal.pipeline import Pipeline
 
         def make_job(job_name, stage):
             klass._pipeline_context.file_name = job_name
