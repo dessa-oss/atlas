@@ -113,6 +113,8 @@ const checkboxes = [
   {name: 'True', hidden: false},
   {name: 'False', hidden: true}
 ];
+const startTime = { 'days': '1', 'hours': '2', 'minutes': '3', 'seconds': '4' };
+const endTime = { 'days': '11', 'hours': '12', 'minutes': '13', 'seconds': '14' };
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -365,4 +367,12 @@ it('getBoolFilters, existing column', () => {
 it('getBoolFilters, non existing column', () => {
   const newFilters = CommonActions.getBoolFilters(allFilters, checkboxes, missingColName);
   expect(newFilters.length).toBe(2);
+});
+
+it('getDurationFilters', () => {
+  const newFilters = CommonActions.getDurationFilters(startTime, endTime);
+  expect(newFilters.length).toBe(1);
+  expect(newFilters[0].startTime).not.toBe(null);
+  expect(newFilters[0].endTime).not.toBe(null);
+  expect(newFilters[0].columnName).toBe('Duration');
 });

@@ -33,6 +33,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     }
     boolFilters={Array []}
     containFilters={Array []}
+    durationFilters={Array []}
     hiddenUsers={Array []}
     isLoaded={false}
     isMount={false}
@@ -57,6 +58,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     }
     updateBoolFilter={[Function]}
     updateContainsFilter={[Function]}
+    updateDurationFilter={[Function]}
     updateHiddenStatus={[Function]}
     updateHiddenUser={[Function]}
     updateNumberFilter={[Function]}
