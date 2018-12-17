@@ -15,8 +15,9 @@ class TestInputParameterIndexer(unittest.TestCase):
 
     def setUp(self):
         from foundations.global_state import redis_connection
-        self._redis = redis_connection
 
+        self._redis = redis_connection
+        self._redis.flushall()
 
     def _zadd_to_redis(self, project_name, timestamp, key):
         self._redis.execute_command('ZADD', 'projects:{}:{}'.format(project_name, 'stage_time'), 'NX', timestamp, key)
