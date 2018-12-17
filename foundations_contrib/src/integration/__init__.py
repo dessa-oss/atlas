@@ -6,3 +6,4 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
 from integration.test_consumers import TestConsumers
+from integration.test_consumer_compatibility import TestConsumerCompatibility

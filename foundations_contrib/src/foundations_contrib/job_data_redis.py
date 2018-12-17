@@ -66,18 +66,17 @@ class JobDataRedis(object):
             results {dict} -- Dictionary with project_name, job_id, user, job_parameters, input_params, output_metrics, status, start_time, completed_time.
         """
         from promise import Promise
-        import json
 
-        project_name = self._add_get_to_pipe('project')
-        user = self._add_get_to_pipe('user')
-        job_parameters = self._add_get_to_pipe(
-            'parameters').then(self._json_loads)
+        project_name = self._add_decoded_get_to_pipe('project')
+        user = self._add_decoded_get_to_pipe('user')
+        job_parameters = self._add_decoded_get_to_pipe(
+            'parameters').then(self._deserialize_list)
         input_parameters = self._add_get_to_pipe(
-            'input_parameters').then(self._json_loads)
+            'input_parameters').then(self._deserialize_list)
         output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
-        status = self._add_get_to_pipe('state')
-        start_time = self._add_get_to_pipe('start_time').then(self._make_float)
-        completed_time = self._add_get_to_pipe(
+        status = self._add_decoded_get_to_pipe('state')
+        start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
+        completed_time = self._add_decoded_get_to_pipe(
             'completed_time').then(self._make_float)
 
         list_of_properties = Promise.all(
@@ -134,19 +133,20 @@ class JobDataRedis(object):
 
         return decoded_param_list
 
+    def _add_decoded_get_to_pipe(self, parameter):
+        return self._add_get_to_pipe(parameter).then(self._decode_bytes)
+
     def _add_get_to_pipe(self, parameter):
-        return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter)).then(self._decode_bytes)
+        return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter))
 
     def _decode_bytes(self, data):
         if data is None:
             return data
         return data.decode()
 
-    def _json_loads(self, data):
-        if data is None:
-            return []
-        import json
-        return json.loads(data)
+    def _deserialize_list(self, data):
+        from foundations_internal.foundations_serializer import deserialize
+        return deserialize(data) or []
 
     def _make_float(self, time_string):
         if time_string is None:
