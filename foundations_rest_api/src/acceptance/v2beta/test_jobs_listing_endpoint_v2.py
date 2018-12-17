@@ -43,10 +43,8 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def tearDownClass(klass):
         from foundations.global_state import redis_connection as redis
-        keys = []
-        for name in klass._project_name, '00000000-0000-0000-0000-000000000000', 'my job 1', 'my job 2':
-            keys += redis.keys('*{}*'.format(name))
-        redis.delete(*keys)
+
+        redis.flushall()
 
     @classmethod
     def _setup_three_jobs(klass):

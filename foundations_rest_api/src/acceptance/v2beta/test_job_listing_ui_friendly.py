@@ -22,12 +22,9 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     @classmethod
     def tearDownClass(klass):
-        from foundations.global_state import redis_connection as redis\
+        from foundations.global_state import redis_connection as redis
 
-        keys = []
-        for name in klass._project_name, 'my job 3':
-            keys += redis.keys('*{}*'.format(name))
-        redis.delete(*keys)
+        redis.flushall()
 
     @classmethod
     def _prepare_job_input_data(klass):
