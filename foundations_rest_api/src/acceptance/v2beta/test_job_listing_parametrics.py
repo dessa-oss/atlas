@@ -8,9 +8,10 @@ import numpy as np
 import foundations
 from foundations import create_stage, set_project_name
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
+from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 
 
-class TestJobListingParametrics(APIAcceptanceTestCaseBase):
+class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
@@ -27,32 +28,26 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
     def tearDownClass(klass):
         from foundations.global_state import redis_connection as redis
 
-        keys = []
-        for name in (klass._project_name, klass._first_job_name, klass._second_job_name, klass._third_job_name):
-            keys += redis.keys('*{}*'.format(name))
-        redis.delete(*keys)
+        redis.flushall()
 
     @classmethod
     def _run_stages(klass):
+        from foundations import MessageRouter
         from foundations_internal.pipeline import Pipeline
 
-        pipeline = Pipeline(None)
+        klass._pipeline = Pipeline(None)
+        klass._message_router = MessageRouter()
 
-        def make_job(job_name, pipeline_context):
-            from foundations.global_state import message_router
-            from foundations_contrib.producers.jobs.queue_job import QueueJob
-            from foundations_contrib.producers.jobs.run_job import RunJob
-
-            pipeline_context.file_name = job_name
-            QueueJob(message_router, pipeline_context).push_message()
-            RunJob(message_router, pipeline_context).push_message()
+        def make_job(job_name, stage):
+            klass._pipeline_context.file_name = job_name
+            stage.run_same_process()
+            klass._make_completed_job(job_name,  'default user')
 
         def make_pipeline_context():
             from foundations_internal.pipeline_context import PipelineContext
-            pipeline_context = PipelineContext()
-            pipeline_context.provenance.project_name = klass._project_name
-            pipeline._pipeline_context = pipeline_context
-            return pipeline_context
+            klass._pipeline_context = PipelineContext()
+            klass._pipeline_context.provenance.project_name = klass._project_name
+            klass._pipeline._pipeline_context = klass._pipeline_context
 
         def stage0(value0):
             return float('nan') if value0 is False else str(value0)
@@ -66,25 +61,25 @@ class TestJobListingParametrics(APIAcceptanceTestCaseBase):
             foundations.log_metric('metric_3', True if value3 == 8.3 else value3)
 
         def run_first_job():
-            pipeline_context = make_pipeline_context()
-            value1 = pipeline.stage(stage0, False)
-            value2 = pipeline.stage(stage1, 10, 4.5)
-            pipeline.stage(stage2, value1, value2, 5)
-            make_job(klass._first_job_name, pipeline_context)
+            make_pipeline_context()
+            value1 = klass._pipeline.stage(stage0, False)
+            value2 = klass._pipeline.stage(stage1, 10, 4.5)
+            final_stage = klass._pipeline.stage(stage2, value1, value2, 5)
+            make_job(klass._first_job_name, final_stage)
 
         def run_second_job():
-            pipeline_context = make_pipeline_context()
-            value3 = pipeline.stage(stage0, None)
-            value4 = pipeline.stage(stage1, np.nan, float('nan'))
-            pipeline.stage(stage2, value3, value4, 8.3)
-            make_job(klass._second_job_name, pipeline_context)
+            make_pipeline_context()
+            value3 = klass._pipeline.stage(stage0, None)
+            value4 = klass._pipeline.stage(stage1, np.nan, float('nan'))
+            final_stage = klass._pipeline.stage(stage2, value3, value4, 8.3)
+            make_job(klass._second_job_name, final_stage)
 
         def run_third_job():
-            pipeline_context = make_pipeline_context()
-            value3 = pipeline.stage(stage0, 1)
-            value4 = pipeline.stage(stage1, 30, 'some string')
-            pipeline.stage(stage2, value3, value4, 3.14)
-            make_job(klass._third_job_name, pipeline_context)
+            make_pipeline_context()
+            value3 = klass._pipeline.stage(stage0, 1)
+            value4 = klass._pipeline.stage(stage1, 30, 'some string')
+            final_stage = klass._pipeline.stage(stage2, value3, value4, 3.14)
+            make_job(klass._third_job_name, final_stage)
 
         run_first_job()
         run_second_job()
