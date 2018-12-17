@@ -25,7 +25,7 @@ class InputParameterIndexer(object):
 
     @staticmethod
     def _get_stage_rank(stage_times):
-        stage_uuid_rank = [(key.decode('utf-8'), index) for index, (key, value) in enumerate(stage_times)]
+        stage_uuid_rank = [(key.decode(), index) for index, (key, value) in enumerate(stage_times)]
         stage_uuid_rank = dict(stage_uuid_rank)
 
         return stage_uuid_rank
