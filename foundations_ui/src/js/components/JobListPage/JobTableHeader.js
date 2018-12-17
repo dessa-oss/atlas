@@ -58,6 +58,7 @@ class JobTableHeader extends Component {
       updateDurationFilter: this.props.updateDurationFilter,
       durationFilters: this.props.durationFilters,
       updateJobIdFilter: this.props.updateJobIdFilter,
+      jobIdFilters: this.props.jobIdFilters,
     };
   }
 
@@ -76,6 +77,7 @@ class JobTableHeader extends Component {
         containFilters: nextProps.containFilters,
         boolFilters: nextProps.boolFilters,
         durationFilters: nextProps.durationFilters,
+        jobIdFilters: nextProps.jobIdFilters,
       },
     );
   }
@@ -218,6 +220,7 @@ class JobTableHeader extends Component {
       updateDurationFilter,
       durationFilters,
       updateJobIdFilter,
+      jobIdFilters,
     } = this.state;
 
     let userFilter = null;
@@ -333,12 +336,18 @@ class JobTableHeader extends Component {
 
     let jobIDFilter = null;
     if (isShowingJobIdFilter) {
+      const existingFilter = JobActions.getExistingValuesForFilter(jobIdFilters, 'Job Id');
+      let containString = '';
+      if (existingFilter) {
+        containString = existingFilter.searchText;
+      }
       jobIDFilter = (
         <ContainsFilter
           toggleShowingFilter={this.toggleJobIdFilter}
           columnName={numberFilterColumn}
           changeHiddenParams={updateJobIdFilter}
           metricClass="job-id-filter"
+          filterString={containString}
         />
       );
     }
@@ -410,6 +419,7 @@ JobTableHeader.propTypes = {
   durationFilters: PropTypes.array,
   isShowingJobIdFilter: PropTypes.bool,
   updateJobIdFilter: PropTypes.func,
+  jobIdFilters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -442,6 +452,7 @@ JobTableHeader.defaultProps = {
   durationFilters: [],
   isShowingJobIdFilter: false,
   updateJobIdFilter: () => {},
+  jobIdFilters: [],
 };
 
 export default JobTableHeader;

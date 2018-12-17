@@ -303,6 +303,7 @@ class JobListPage extends Component {
           containFilters={containFilters}
           boolFilters={boolFilters}
           durationFilters={durationFilter}
+          jobIdFilters={jobIdFilter}
         />
       </div>
     );
