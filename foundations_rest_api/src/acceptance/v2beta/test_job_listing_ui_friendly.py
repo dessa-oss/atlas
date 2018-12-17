@@ -61,7 +61,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
             self.assertEqual(len(obj), 4)
         for index, var_name in enumerate(['arg1', 'arg2', 'kwarg1', 'kwarg2']):
             self.assertEqual(job_data['input_params']
-                             [index]['name'], var_name + '-0')
+                             [index]['name'], var_name + '-1')
         for index, var_type in enumerate(['string', 'number', 'string', 'number']):
             self.assertEqual(job_data['input_params'][index]['type'], var_type)
         for index, var_value in enumerate(['life', 42, 'pi', 3.14]):
@@ -71,8 +71,8 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
             self.assertEqual(job_data['input_params']
                              [index]['source'], 'constant')
         input_parameter_names = data['input_parameter_names']
-        expected_input_parameter_names = [{'name': 'kwarg2-0', 'type': 'number'},
-                                          {'name': 'kwarg1-0', 'type': 'string'},
-                                          {'name': 'arg2-0', 'type': 'number'},
-                                          {'name': 'arg1-0', 'type': 'string'}]
+        expected_input_parameter_names = [{'name': 'kwarg2-1', 'type': 'number'},
+                                          {'name': 'kwarg1-1', 'type': 'string'},
+                                          {'name': 'arg2-1', 'type': 'number'},
+                                          {'name': 'arg1-1', 'type': 'string'}]
         self.assertCountEqual(input_parameter_names, expected_input_parameter_names)

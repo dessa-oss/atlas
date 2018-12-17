@@ -44,6 +44,7 @@ class TestJobListingNaNs(APIAcceptanceTestCaseBase):
 
     def test_get_route(self):
         data = super(TestJobListingNaNs, self).test_get_route()
-        self.assertIsNone(data['jobs'][0]['output_metrics'][0]['value'])
-        self.assertIsNone(data['jobs'][0]['output_metrics'][1]['value'])
-        self.assertEqual(data['jobs'][0]['output_metrics'][2]['value'], 5)
+        output_metric_data = data['jobs'][0]['output_metrics']
+        result_list = [output_metric_data[0]['value'], output_metric_data[1]['value'], output_metric_data[2]['value']]
+        expected_list = [None, None, 5]
+        self.assertCountEqual(result_list, expected_list)
