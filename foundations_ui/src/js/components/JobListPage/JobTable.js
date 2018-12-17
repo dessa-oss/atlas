@@ -16,10 +16,13 @@ class JobTable extends Component {
       updateHiddenUser: this.props.updateHiddenUser,
       updateNumberFilter: this.props.updateNumberFilter,
       updateContainsFilter: this.props.updateContainsFilter,
+      updateBoolFilter: this.props.updateBoolFilter,
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
+      boolFilters: this.props.boolFilters,
+      boolCheckboxes: this.props.boolCheckboxes,
     };
   }
 
@@ -33,8 +36,10 @@ class JobTable extends Component {
         allMetrics: nextProps.allMetrics,
         allUsers: nextProps.allUsers,
         hiddenUsers: nextProps.hiddenUsers,
+        boolCheckboxes: nextProps.boolCheckboxes,
         numberFilters: nextProps.numberFilters,
         containFilters: nextProps.containFilters,
+        boolFilters: nextProps.boolFilters,
       },
     );
   }
@@ -42,7 +47,8 @@ class JobTable extends Component {
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
-      updateNumberFilter, numberFilters, updateContainsFilter, containFilters,
+      updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
+      boolCheckboxes,
     } = this.state;
 
     let jobRows = [];
@@ -78,10 +84,13 @@ class JobTable extends Component {
             updateHiddenUser={updateHiddenUser}
             allUsers={allUsers}
             hiddenUsers={hiddenUsers}
+            boolCheckboxes={boolCheckboxes}
             updateNumberFilter={updateNumberFilter}
             numberFilters={numberFilters}
             updateContainsFilter={updateContainsFilter}
             containFilters={containFilters}
+            updateBoolFilter={updateBoolFilter}
+            boolFilters={boolFilters}
           />
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -111,6 +120,9 @@ JobTable.propTypes = {
   numberFilters: PropTypes.array,
   updateContainsFilter: PropTypes.func,
   containFilters: PropTypes.array,
+  updateBoolFilter: PropTypes.func,
+  boolFilters: PropTypes.array,
+  boolCheckboxes: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -129,6 +141,9 @@ JobTable.defaultProps = {
   numberFilters: [],
   updateContainsFilter: () => {},
   containFilters: [],
+  updateBoolFilter: () => {},
+  boolFilters: [],
+  boolCheckboxes: [],
 };
 
 export default JobTable;

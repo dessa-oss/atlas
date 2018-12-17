@@ -8,6 +8,7 @@ import StatusFilter from '../common/filters/StatusFilter';
 import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import ContainsFilter from '../common/filters/ContainsFilter';
+import BooleanFilter from '../common/filters/BooleanFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 
@@ -38,16 +39,20 @@ class JobTableHeader extends Component {
       updateContainsFilter: this.props.updateContainsFilter,
       metricClass: '',
       isShowingNumberFilter: false,
+      updateNumberFilter: this.props.updateNumberFilter,
       numberFilterColumn: '',
+      isShowingBooleanFilter: false,
+      updateBoolFilter: this.props.updateBoolFilter,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
       searchText: '',
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
-      updateNumberFilter: this.props.updateNumberFilter,
+      boolCheckboxes: this.props.boolCheckboxes,
       numberFilters: this.props.numberFilters,
       containFilters: this.props.containFilters,
+      boolFilters: this.props.boolFilters,
     };
   }
 
@@ -64,6 +69,7 @@ class JobTableHeader extends Component {
         hiddenUsers: nextProps.hiddenUsers,
         numberFilters: nextProps.numberFilters,
         containFilters: nextProps.containFilters,
+        boolFilters: nextProps.boolFilters,
       },
     );
   }
@@ -89,6 +95,8 @@ class JobTableHeader extends Component {
         columnType = 'number';
       } else if (e.target.className.includes('string')) {
         columnType = 'string';
+      } else if (e.target.className.includes('bool')) {
+        columnType = 'bool';
       }
     }
     return columnType;
@@ -122,7 +130,7 @@ class JobTableHeader extends Component {
   }
 
   toggleInputMetricFilter(e) {
-    const { isShowingNumberFilter, isShowingContainsFilter } = this.state;
+    const { isShowingNumberFilter, isShowingContainsFilter, isShowingBooleanFilter } = this.state;
     let columnName = this.getColumnName(e);
     let columnType = this.getColumnType(e);
     let metricClass = this.getMetricClass(e);
@@ -139,12 +147,19 @@ class JobTableHeader extends Component {
         numberFilterColumn: columnName,
         metricClass,
       });
+    } else if (columnType === 'bool') {
+      this.setState({
+        isShowingBooleanFilter: !isShowingBooleanFilter,
+        numberFilterColumn: columnName,
+        metricClass,
+      });
     } else if (e === undefined) {
       // This means it's an apply/cancel button rather than a header arrow
       // so close everything
       this.setState({
         isShowingNumberFilter: false,
         isShowingContainsFilter: false,
+        isShowingBooleanFilter: false,
       });
     }
   }
@@ -176,15 +191,18 @@ class JobTableHeader extends Component {
       updateHiddenUser,
       allUsers,
       hiddenUsers,
+      boolCheckboxes,
       isShowingDurationFilter,
       isShowingNumberFilter,
       isShowingContainsFilter,
+      isShowingBooleanFilter,
       numberFilterColumn,
       updateNumberFilter,
-      numberFilters,
       metricClass,
       updateContainsFilter,
       containFilters,
+      boolFilters,
+      updateBoolFilter,
     } = this.state;
 
     let userFilter = null;
@@ -263,6 +281,27 @@ class JobTableHeader extends Component {
       );
     }
 
+    let booleanFilter = null;
+    let changedBoolParams = [];
+    let boolColumns = CommonActions.deepCopyArray(boolCheckboxes);
+    if (isShowingBooleanFilter) {
+      const existingFilter = JobActions.getExistingValuesForFilter(boolFilters, numberFilterColumn);
+      if (existingFilter) {
+        boolColumns = existingFilter.boolCheckboxes;
+        changedBoolParams = JobActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
+      }
+      booleanFilter = (
+        <BooleanFilter
+          toggleShowingFilter={this.toggleInputMetricFilter}
+          columnName={numberFilterColumn}
+          changeHiddenParams={updateBoolFilter}
+          metricClass={metricClass}
+          columns={boolColumns}
+          changedParams={changedBoolParams}
+        />
+      );
+    }
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -291,6 +330,7 @@ class JobTableHeader extends Component {
           {durationFilter}
           {numberFilter}
           {containsFilter}
+          {booleanFilter}
         </div>
       </ScrollSync>
     );
@@ -319,6 +359,10 @@ JobTableHeader.propTypes = {
   isShowingContainsFilter: PropTypes.bool,
   updateContainsFilter: PropTypes.func,
   containFilters: PropTypes.array,
+  isShowingBooleanFilter: PropTypes.bool,
+  boolCheckboxes: PropTypes.array,
+  boolFilters: PropTypes.array,
+  updateBoolFilter: PropTypes.func,
 };
 
 JobTableHeader.defaultProps = {
@@ -343,6 +387,10 @@ JobTableHeader.defaultProps = {
   isShowingContainsFilter: false,
   updateContainsFilter: () => {},
   containFilters: [],
+  isShowingBooleanFilter: false,
+  boolCheckboxes: [],
+  boolFilters: [],
+  updateBoolFilter: () => {},
 };
 
 export default JobTableHeader;

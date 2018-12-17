@@ -109,6 +109,10 @@ const existingColName = 'myCol';
 const missingColName = 'dontexist';
 const containsText = 'testPhrase';
 const hiddenSize = null;
+const checkboxes = [
+  {name: 'True', hidden: false},
+  {name: 'False', hidden: true}
+];
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -353,3 +357,12 @@ it('getContainFilters, non existing column', () => {
   expect(newFilters.length).toBe(2);
 });
 
+it('getBoolFilters, existing column', () => {
+  const newFilters = CommonActions.getBoolFilters(allFilters, checkboxes, existingColName);
+  expect(newFilters.length).toBe(1);
+});
+
+it('getBoolFilters, non existing column', () => {
+  const newFilters = CommonActions.getBoolFilters(allFilters, checkboxes, missingColName);
+  expect(newFilters.length).toBe(2);
+});

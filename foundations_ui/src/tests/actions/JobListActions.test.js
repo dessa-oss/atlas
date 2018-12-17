@@ -131,7 +131,16 @@ const nonExistingFilter = 'nonExist';
 const containValue = 'testPhrase';
 const removeFilter = { column: 'myCol' };
 const colType = 'number';
-
+const noneHiddenBoolFilter = [{
+  boolCheckboxes: [
+    {name: 'not-hidden', hidden: false}
+  ]
+}];
+const hiddenBoolFilter = [{
+  boolCheckboxes: [
+    {name: 'hidden', hidden: true}
+  ]
+}];
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -367,12 +376,12 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error');
 });
 
 it('getFilterURL more than 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters);
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters);
   expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
@@ -387,7 +396,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
@@ -532,4 +541,54 @@ it('addToURLContainFilter', () => {
 it('getContainFilter', () => {
   const containFilter = JobActions.getContainFilter(colName, containValue);
   expect(containFilter).toEqual({"column": "myCol", "value": "\"testPhrase\""});
+});
+
+it('boolFilterArrayHasHidden, has hidden', () => {
+  const hasHidden = JobActions.boolFilterArrayHasHidden(hiddenBoolFilter);
+  expect(hasHidden).toBe(true);
+});
+
+it('boolFilterArrayHasHidden, none hidden', () => {
+  const hasHidden = JobActions.boolFilterArrayHasHidden(noneHiddenBoolFilter);
+  expect(hasHidden).toBe(false);
+});
+
+it('boolFilterHasHidden, had hidden', () => {
+  const hasHidden = JobActions.boolFilterHasHidden(hiddenBoolFilter[0]);
+  expect(hasHidden).toBe(true);
+});
+
+it('boolFilterHasHidden, none hidden', () => {
+  const hasHidden = JobActions.boolFilterHasHidden(noneHiddenBoolFilter[0]);
+  expect(hasHidden).toBe(false);
+});
+
+it('boolFilterGetNonHidden, has hidden', () => {
+  const hidden = JobActions.boolFilterGetNonHidden(hiddenBoolFilter[0]);
+  expect(hidden.length).toBe(0);
+});
+
+it('boolFilterGetNonHidden, none hidden', () => {
+  const hidden = JobActions.boolFilterGetNonHidden(noneHiddenBoolFilter[0]);
+  expect(hidden.length).toBe(1);
+});
+
+it('boolFilterGetHidden, has hidden', () => {
+  const hidden = JobActions.boolFilterGetHidden(hiddenBoolFilter[0].boolCheckboxes);
+  expect(hidden.length).toBe(1);
+});
+
+it('boolFilterGetHidden, none hidden', () => {
+  const hidden = JobActions.boolFilterGetHidden(noneHiddenBoolFilter[0].boolCheckboxes);
+  expect(hidden.length).toBe(0);
+});
+
+it('areNoFilters, no filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  expect(noFilters).toBe(true);
+});
+
+it('areNoFilters, has filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter);
+  expect(noFilters).toBe(false);
 });
