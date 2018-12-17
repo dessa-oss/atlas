@@ -582,3 +582,13 @@ it('boolFilterGetHidden, none hidden', () => {
   const hidden = JobActions.boolFilterGetHidden(noneHiddenBoolFilter[0].boolCheckboxes);
   expect(hidden.length).toBe(0);
 });
+
+it('areNoFilters, no filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  expect(noFilters).toBe(true);
+});
+
+it('areNoFilters, has filters', () => {
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter);
+  expect(noFilters).toBe(false);
+});
