@@ -600,24 +600,11 @@ class ProjectActions {
   }
 
   static getTimeForDurationURL(time) {
-    return time.days
-      .concat('_')
-      .concat(time.hours)
-      .concat('_')
-      .concat(time.minutes)
-      .concat('_')
-      .concat(time.seconds);
+    return `${time.days}_${time.hours}_${time.minutes}_${time.seconds}`;
   }
 
   static getTimeForDurationBubble(time) {
-    return time.days
-      .concat('d')
-      .concat(time.hours)
-      .concat('h')
-      .concat(time.minutes)
-      .concat('m')
-      .concat(time.seconds)
-      .concat('s');
+    return `${time.days}d${time.hours}h${time.minutes}m${time.seconds}s`;
   }
 
   static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
