@@ -184,11 +184,11 @@ class JobListPage extends Component {
 
   saveFilters() {
     const {
-      statuses, hiddenUsers, allUsers, numberFilters, containFilters, boolFilters,
+      statuses, hiddenUsers, allUsers, numberFilters, containFilters, boolFilters, durationFilter,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
     const newFilters = JobActions.getAllFilters(
-      statuses, flatUsers, hiddenUsers, numberFilters, containFilters, boolFilters,
+      statuses, flatUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter,
     );
     this.setState({ filters: newFilters });
   }

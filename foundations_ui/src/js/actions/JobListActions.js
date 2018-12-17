@@ -308,7 +308,7 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters) {
+  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
@@ -338,6 +338,15 @@ class ProjectActions {
             updatedFilters.push(newboolFilter);
           });
         }
+      });
+    }
+
+    if (durationFilters.length > 0) {
+      durationFilters.forEach((durationFilter) => {
+        const startTime = this.getTimeForDurationBubble(durationFilter.startTime);
+        const endTime = this.getTimeForDurationBubble(durationFilter.endTime);
+        const newRangeFilter = this.getRangeFilter('Duration', startTime, endTime);
+        updatedFilters.push(newRangeFilter);
       });
     }
 
@@ -600,6 +609,17 @@ class ProjectActions {
       .concat(time.minutes)
       .concat('_')
       .concat(time.seconds);
+  }
+
+  static getTimeForDurationBubble(time) {
+    return time.days
+      .concat('d')
+      .concat(time.hours)
+      .concat('h')
+      .concat(time.minutes)
+      .concat('m')
+      .concat(time.seconds)
+      .concat('s');
   }
 }
 

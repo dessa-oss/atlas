@@ -586,3 +586,7 @@ it('boolFilterGetHidden, none hidden', () => {
 it('getTimeForDurationURL', () => {
 
 });
+
+it('getTimeForDurationBubble', () => {
+
+});
