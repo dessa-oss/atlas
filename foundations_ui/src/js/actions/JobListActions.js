@@ -657,15 +657,8 @@ class ProjectActions {
   static getTimeForStartTimeURL(time) {
     // time format for api is MM_DD_YY_HH_mm
     const date = new Date(time);
-    return this.prependZero(date.getMonth() + 1)
-      .concat('_')
-      .concat(this.prependZero(date.getDate()))
-      .concat('_')
-      .concat(date.getFullYear())
-      .concat('_')
-      .concat(this.prependZero(date.getHours()))
-      .concat('_')
-      .concat(this.prependZero(date.getMinutes()));
+    return `${this.prependZero(date.getMonth() + 1)}_${this.prependZero(date.getDate())}_${date.getFullYear()}`
+    + `_${this.prependZero(date.getHours())}_${this.prependZero(date.getMinutes())}`;
   }
 
   static prependZero(time) {
@@ -676,15 +669,8 @@ class ProjectActions {
     const date = new Date(time);
     const year = date.getFullYear().toString().substr(-2);
 
-    return this.prependZero(date.getMonth() + 1)
-      .concat('/')
-      .concat(this.prependZero(date.getDate()))
-      .concat('/')
-      .concat(year)
-      .concat(' ')
-      .concat(this.prependZero(date.getHours()))
-      .concat(':')
-      .concat(this.prependZero(date.getMinutes()));
+    return `${this.prependZero(date.getMonth() + 1)}/${this.prependZero(date.getDate())}/`
+    + `${year} ${this.prependZero(date.getHours())}:${this.prependZero(date.getMinutes())}`;
   }
 }
 
