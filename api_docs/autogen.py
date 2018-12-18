@@ -18,10 +18,34 @@ import foundations
 
 
 EXCLUDE = {
-    
+
 }
 
 PAGES = [
+    {
+        'page': 'ready_code.md',
+        'all_module_classes': [foundations.stage_logging,
+                               foundations.utils],
+        'functions': [
+            foundations.stage_logging.log_metric,
+            foundations.utils.split_at,
+        ]
+    },
+    {
+        'page': 'stage_creation.md',
+        'all_module_classes': [foundations.staging],
+        'functions': [
+            foundations.staging.create_stage,
+        ]
+    },
+    {
+        'page': 'stages_running.md',
+        'all_module_classes': [foundations.stage_connector_wrapper],
+        'functions': [
+            foundations.stage_connector_wrapper.StageConnectorWrapper.run,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.enable_caching
+        ]
+    },
     {
         'page': 'deployment.md',
         'all_module_classes': [foundations.deployment_wrapper],
@@ -32,7 +56,14 @@ PAGES = [
             foundations.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
             foundations.deployment_wrapper.DeploymentWrapper.get_job_status,
         ]
-    }
+    },
+    {
+        'page': 'job_metrics.md',
+        'all_module_classes': [foundations.projects],
+        'functions': [
+            foundations.projects.get_metrics_for_all_jobs,
+        ]
+    },
 ]
 
 

@@ -8,4 +8,8 @@ dev_addr: '0.0.0.0:8000'
 
 pages:
 - Home: index.md
-- DeploymentWrapper: deployment.md
+- Making Your Code Ready: ready_code.md
+- Create Your Stages: stage_creation.md
+- Running Stages: stages_running.md
+- Managing Deployment: deployment.md
+- Getting Job Metrics: job_metrics.md
