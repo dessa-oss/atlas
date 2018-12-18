@@ -5,6 +5,11 @@
   height: $table-row-height-with-headers;
   position: absolute;
 
+  button:not(.button-icon) {
+    min-width: 100px;
+    margin-left: 15px;
+  }
+
   .column-filter-header {
     text-align: left;
     border: none;
@@ -31,13 +36,31 @@
     margin-right: 0px;
   }
 
-  &.number-filter-container, &.job-id-filter-container, &.boolean-filter-container, &.datetime-filter-container {
+  &.duration-filter-container, 
+  &.status-filter-container, 
+  &.datetime-filter-container,
+  &.job-id-filter-container,
+  &.boolean-filter-container,
+  &.number-filter-container {
     width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
     position: absolute;
     left: calc(#{$one-third-width} + (8 * #{$border-thin}));
     padding-top: $standard-cell-padding;
     top: $status-filter-top;
     height: 205px;
+
+    .column-filter-header {
+      height: 50px;
+      border-bottom: none;
+      margin-bottom: 0px;
+    }
+
+    .column-filter-list {
+      border-bottom: none;
+      margin: 0px;
+      padding: 0px;
+      border: none;
+    }
 
     &.is-metric {
       left: calc((2 * #{$one-third-width}) + (14 * #{$border-thin}));
@@ -67,44 +90,11 @@
       }
     }
 
-    .column-filter-header {
-      text-align: left;
-      border: none;
-      height: $header-filter-height;
-    }
-
     p {
       display: inline-block;
     }
 
-    .column-filter-list {
-      border: none;
-      height: $filter-body-height;
-      margin: 0px -#{$margin-width} 0px;
-    }
-  }
-
-  &.boolean-filter-container {
-    .column-filter-list {
-      border-bottom: none;
-      margin: 0px;
-      padding: 0px;
-      border: none;
-    }
-  }
-
-  &.job-id-filter-container {
-    input {
-      width: calc(100% - 18px);
-      outline: none;
-      border: solid 1px $color-border-bottom;
-      height: $general-form-input-height;
-      padding-left: 15px;
-    }
-      p {
-      display: inline-block;
-    }
-      .subtitle {
+    .subtitle {
       color: $color-9c-grey;
       font-style: italic;
     }
@@ -112,21 +102,8 @@
   
   &.duration-filter-container {
     width: 380px;
-    height: 205px;
-    position: absolute;
     left: $duration-filter-left;
-    padding-top: 5px;
     top: $status-filter-top;
-
-    p {
-      display: inline-block;
-    }
-
-    .column-filter-header {
-      height: 50px;
-      border-bottom: none;
-      margin-bottom: 0px;
-    }
 
     .guided-input-container {
       border: solid 1px $color-border-bottom;
@@ -150,48 +127,15 @@
 
   &.user-filter-container {
     width: 270px;
-    position: absolute;
     left: $user-filter-left;
     top: $user-filter-top;
     height: $table-row-height;
-
-    .column-filter-list {
-      height: calc(100% - 145px);
-      max-height: calc(100% - 145px);
-      border-top: 1px solid #DCDCDC;
-      padding-top: 15px;
-      margin-top: 15px;
-    }
   }
 
   &.status-filter-container {
     width: 225px;
-    height: 205px;
-    position: absolute;
     left: $status-filter-left;
-    padding-top: 5px;
     top: $status-filter-top;
-
-    .column-filter-header {
-      height: 50px;
-      border-bottom: none;
-      margin-bottom: 0px;
-    }
-
-    .column-filter-list {
-      border-bottom: none;
-      margin: 0px;
-      padding: 0px;
-      border: none;
-    }
-    
-    button {
-      display: inline-block;
-      margin-left: 0px;
-      &:not(:first-child) {
-        margin-left: 20px;
-      }
-    }
 
     h5 {
       display: inline-block;
@@ -216,11 +160,6 @@
   left: 0;
   right: 15px;
   bottom: 15px;
-  
-  button {
-    min-width: 100px;
-    margin-left: 15px;
-  }
 }
 
 .checkbox-container {
