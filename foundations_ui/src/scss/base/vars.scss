@@ -29,7 +29,8 @@ $column-header-height: 53px;
 $metric-header-height: 36px;
 $static-status-width: 34px;
 $static-column-header-text-width: 80px;
-$table-row-width: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+$table-row-height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+$table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$pagination-height});
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
 $number-sections: 3;
 
