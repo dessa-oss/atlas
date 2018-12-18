@@ -37,6 +37,7 @@ exports[`Shallow Renders Job Table 1`] = `
       numberFilterColumn=""
       numberFilters={Array []}
       rowNumbers={Array []}
+      startTimeFilters={Array []}
       statuses={Array []}
       updateBoolFilter={[Function]}
       updateContainsFilter={[Function]}

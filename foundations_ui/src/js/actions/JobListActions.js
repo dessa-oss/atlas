@@ -657,18 +657,18 @@ class ProjectActions {
   static getTimeForStartTimeURL(time) {
     // time format for api is MM_DD_YY_HH_mm
     const date = new Date(time);
-    return this.oneIndexAndPrependZero(date.getMonth() + 1)
+    return this.prependZero(date.getMonth() + 1)
       .concat('_')
-      .concat(this.oneIndexAndPrependZero(date.getDate()))
+      .concat(this.prependZero(date.getDate()))
       .concat('_')
       .concat(date.getFullYear())
       .concat('_')
-      .concat(this.oneIndexAndPrependZero(date.getHours()))
+      .concat(this.prependZero(date.getHours()))
       .concat('_')
-      .concat(this.oneIndexAndPrependZero(date.getMinutes()));
+      .concat(this.prependZero(date.getMinutes()));
   }
 
-  static oneIndexAndPrependZero(time) {
+  static prependZero(time) {
     return ('0'.concat(time)).slice(-2);
   }
 
@@ -676,15 +676,15 @@ class ProjectActions {
     const date = new Date(time);
     const year = date.getFullYear().toString().substr(-2);
 
-    return this.oneIndexAndPrependZero(date.getMonth() + 1)
+    return this.prependZero(date.getMonth() + 1)
       .concat('/')
-      .concat(this.oneIndexAndPrependZero(date.getDate()))
+      .concat(this.prependZero(date.getDate()))
       .concat('/')
       .concat(year)
       .concat(' ')
-      .concat(this.oneIndexAndPrependZero(date.getHours()))
+      .concat(this.prependZero(date.getHours()))
       .concat(':')
-      .concat(this.oneIndexAndPrependZero(date.getMinutes()));
+      .concat(this.prependZero(date.getMinutes()));
   }
 }
 
