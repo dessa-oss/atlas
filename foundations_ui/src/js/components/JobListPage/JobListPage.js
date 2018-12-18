@@ -213,10 +213,12 @@ class JobListPage extends Component {
   saveFilters() {
     const {
       statuses, hiddenUsers, allUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
+      startTimeFilter,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
     const newFilters = JobActions.getAllFilters(
       statuses, flatUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
+      startTimeFilter,
     );
     this.setState({ filters: newFilters });
   }
@@ -239,6 +241,7 @@ class JobListPage extends Component {
   async removeFilter(removeFilter) {
     const {
       filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
+      startTimeFilter,
     } = this.state;
     const newFilters = JobActions.removeFilter(filters, removeFilter);
     const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
@@ -249,6 +252,7 @@ class JobListPage extends Component {
     const newBoolFilters = JobActions.removeFilterByName(boolFilters, removeFilter);
     const newDurationFilter = JobActions.removeFilterByName(durationFilter, removeFilter);
     const newJobIdFilter = JobActions.removeFilterByName(jobIdFilter, removeFilter);
+    const newStartTimeFilter = JobActions.removeFilterByName(startTimeFilter, removeFilter);
     await this.setState({
       filters: newFilters,
       statuses: newStatuses,
@@ -258,6 +262,7 @@ class JobListPage extends Component {
       boolFilters: newBoolFilters,
       durationFilter: newDurationFilter,
       jobIdFilter: newJobIdFilter,
+      startTimeFilter: newStartTimeFilter,
     });
     const apiFilteredJobs = await this.getFilteredJobs();
 

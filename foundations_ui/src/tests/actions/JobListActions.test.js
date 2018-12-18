@@ -614,3 +614,5 @@ it('getTimeForStartTimeURL');
 it('oneIndexAndPrependZero, single digit');
 
 it('oneIndexAndPrependZero, 2 digit');
+
+it('getTimeForStartTimeBubble');

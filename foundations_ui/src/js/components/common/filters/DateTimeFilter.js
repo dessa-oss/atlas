@@ -12,8 +12,8 @@ class DateTimeFilter extends Component {
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      startDate: null,
-      endDate: null,
+      startDate: this.props.startDate,
+      endDate: this.props.endDate,
     };
   }
 

@@ -28,6 +28,7 @@ class JobTable extends Component {
       boolCheckboxes: this.props.boolCheckboxes,
       durationFilters: this.props.durationFilters,
       jobIdFilters: this.props.jobIdFilters,
+      startTimeFilters: this.props.startTimeFilters,
     };
   }
 
@@ -47,6 +48,7 @@ class JobTable extends Component {
         boolFilters: nextProps.boolFilters,
         durationFilters: nextProps.durationFilters,
         jobIdFilters: nextProps.jobIdFilters,
+        startTimeFilters: nextProps.startTimeFilters,
       },
     );
   }
@@ -56,6 +58,7 @@ class JobTable extends Component {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
+      startTimeFilters,
     } = this.state;
 
     let jobRows = [];
@@ -103,6 +106,7 @@ class JobTable extends Component {
             updateJobIdFilter={updateJobIdFilter}
             jobIdFilters={jobIdFilters}
             updateStartTimeFilter={updateStartTimeFilter}
+            startTimeFilters={startTimeFilters}
           />
           <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -140,6 +144,7 @@ JobTable.propTypes = {
   updateJobIdFilter: PropTypes.func,
   jobIdFilters: PropTypes.array,
   updateStartTimeFilter: PropTypes.func,
+  startTimeFilters: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -166,6 +171,7 @@ JobTable.defaultProps = {
   updateJobIdFilter: () => {},
   jobIdFilters: [],
   updateStartTimeFilter: () => {},
+  startTimeFilters: [],
 };
 
 export default JobTable;

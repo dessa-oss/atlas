@@ -329,6 +329,7 @@ class ProjectActions {
 
   static getAllFilters(
     statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
   ) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
@@ -375,6 +376,15 @@ class ProjectActions {
       jobIdFilters.forEach((jobIdFilter) => {
         const newJobIdFilter = this.getContainFilter(jobIdFilter.columnName, jobIdFilter.searchText);
         updatedFilters.push(newJobIdFilter);
+      });
+    }
+
+    if (startTimeFilters.length > 0) {
+      startTimeFilters.forEach((startTimeFilter) => {
+        const startTime = this.getTimeForStartTimeBubble(startTimeFilter.startTime);
+        const endTime = this.getTimeForStartTimeBubble(startTimeFilter.endTime);
+        const newRangeFilter = this.getRangeFilter('Start Time', startTime, endTime);
+        updatedFilters.push(newRangeFilter);
       });
     }
 
@@ -660,6 +670,21 @@ class ProjectActions {
 
   static oneIndexAndPrependZero(time) {
     return ('0'.concat(time)).slice(-2);
+  }
+
+  static getTimeForStartTimeBubble(time) {
+    const date = new Date(time);
+    const year = date.getFullYear().toString().substr(-2);
+
+    return this.oneIndexAndPrependZero(date.getMonth() + 1)
+      .concat('/')
+      .concat(this.oneIndexAndPrependZero(date.getDate()))
+      .concat('/')
+      .concat(year)
+      .concat(' ')
+      .concat(this.oneIndexAndPrependZero(date.getHours()))
+      .concat(':')
+      .concat(this.oneIndexAndPrependZero(date.getMinutes()));
   }
 }
 

@@ -63,6 +63,7 @@ class JobTableHeader extends Component {
       updateJobIdFilter: this.props.updateJobIdFilter,
       jobIdFilters: this.props.jobIdFilters,
       updateStartTimeFilter: this.props.updateStartTimeFilter,
+      startTimeFilters: this.props.startTimeFilters,
     };
   }
 
@@ -82,6 +83,7 @@ class JobTableHeader extends Component {
         boolFilters: nextProps.boolFilters,
         durationFilters: nextProps.durationFilters,
         jobIdFilters: nextProps.jobIdFilters,
+        startTimeFilters: nextProps.startTimeFilters,
       },
     );
   }
@@ -232,6 +234,7 @@ class JobTableHeader extends Component {
       updateJobIdFilter,
       jobIdFilters,
       updateStartTimeFilter,
+      startTimeFilters,
     } = this.state;
 
     let userFilter = null;
@@ -365,10 +368,19 @@ class JobTableHeader extends Component {
 
     let startFilter = null;
     if (isShowingStartTimeFilter) {
+      const existingFilter = JobActions.getExistingValuesForFilter(startTimeFilters, 'Start Time');
+      let startDate = null;
+      let endDate = null;
+      if (existingFilter) {
+        startDate = new Date(existingFilter.startTime);
+        endDate = new Date(existingFilter.endTime);
+      }
       startFilter = (
         <DateTimeFilter
           toggleShowingFilter={this.toggleStartTimeFilter}
           changeHiddenParams={updateStartTimeFilter}
+          startDate={startDate}
+          endDate={endDate}
         />
       );
     }
@@ -445,6 +457,7 @@ JobTableHeader.propTypes = {
   jobIdFilters: PropTypes.array,
   isShowingStartTimeFilter: PropTypes.bool,
   updateStartTimeFilter: PropTypes.func,
+  startTimeFilters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -480,6 +493,7 @@ JobTableHeader.defaultProps = {
   jobIdFilters: [],
   isShowingStartTimeFilter: false,
   updateStartTimeFilter: () => {},
+  startTimeFilters: [],
 };
 
 export default JobTableHeader;
