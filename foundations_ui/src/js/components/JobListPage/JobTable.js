@@ -105,10 +105,10 @@ class JobTable extends Component {
             updateStartTimeFilter={updateStartTimeFilter}
           />
           <div className="pagination-controls">
-            <p><span className="font-bold">Viewing:</span> 1-100/600</p>
+            {/* <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />
             <p>Page 1</p>
-            <div className="arrow-left" />
+            <div className="arrow-left" /> */}
           </div>
         </div>
       </div>
