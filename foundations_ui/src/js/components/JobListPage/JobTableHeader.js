@@ -64,6 +64,7 @@ class JobTableHeader extends Component {
       jobIdFilters: this.props.jobIdFilters,
       updateStartTimeFilter: this.props.updateStartTimeFilter,
       startTimeFilters: this.props.startTimeFilters,
+      filters: this.props.filters,
     };
   }
 
@@ -84,6 +85,7 @@ class JobTableHeader extends Component {
         durationFilters: nextProps.durationFilters,
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
+        filters: nextProps.filters,
       },
     );
   }
@@ -235,6 +237,7 @@ class JobTableHeader extends Component {
       jobIdFilters,
       updateStartTimeFilter,
       startTimeFilters,
+      filters,
     } = this.state;
 
     let userFilter = null;
@@ -411,6 +414,7 @@ class JobTableHeader extends Component {
             allInputParams={allInputParams}
             jobs={jobs}
             toggleNumberFilter={this.toggleInputMetricFilter}
+            filters={filters}
           />
           <InputMetric
             header="metrics"
@@ -418,6 +422,7 @@ class JobTableHeader extends Component {
             jobs={jobs}
             isMetric={isMetric}
             toggleNumberFilter={this.toggleInputMetricFilter}
+            filters={filters}
           />
           {userFilter}
           {statusFilter}
@@ -467,6 +472,7 @@ JobTableHeader.propTypes = {
   isShowingStartTimeFilter: PropTypes.bool,
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
+  filters: PropTypes.array,
 };
 
 JobTableHeader.defaultProps = {
@@ -503,6 +509,7 @@ JobTableHeader.defaultProps = {
   isShowingStartTimeFilter: false,
   updateStartTimeFilter: () => {},
   startTimeFilters: [],
+  filters: [],
 };
 
 export default JobTableHeader;

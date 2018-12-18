@@ -631,3 +631,5 @@ it('getTimeForStartTimeBubble', () => {
   const bubble = JobActions.getTimeForStartTimeBubble(dateTime);
   expect(bubble).toBe('03/24/15 20:00');
 });
+
+it('isColumnFiltered');

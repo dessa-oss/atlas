@@ -327,6 +327,7 @@ class JobListPage extends Component {
           durationFilters={durationFilter}
           jobIdFilters={jobIdFilter}
           startTimeFilters={startTimeFilter}
+          filters={filters}
         />
       </div>
     );

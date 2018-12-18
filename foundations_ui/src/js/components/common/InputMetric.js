@@ -17,6 +17,7 @@ class InputMetric extends Component {
       isMetric: this.props.isMetric,
       searchText: '',
       toggleNumberFilter: this.props.toggleNumberFilter,
+      filteredArray: this.props.filters,
     };
   }
 
@@ -24,6 +25,7 @@ class InputMetric extends Component {
     this.setState({
       allInputParams: nextProps.allInputParams,
       jobs: nextProps.jobs,
+      filteredArray: nextProps.filters,
     });
   }
 
@@ -39,13 +41,13 @@ class InputMetric extends Component {
 
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter,
+      header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
     } = this.state;
 
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
+      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
     const rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
 
@@ -84,6 +86,7 @@ InputMetric.propTypes = {
   isMetric: PropTypes.bool,
   searchText: PropTypes.string,
   toggleNumberFilter: PropTypes.func,
+  filters: PropTypes.array,
 };
 
 InputMetric.defaultProps = {
@@ -95,6 +98,7 @@ InputMetric.defaultProps = {
   isMetric: false,
   searchText: '',
   toggleNumberFilter: () => {},
+  filters: [],
 };
 
 

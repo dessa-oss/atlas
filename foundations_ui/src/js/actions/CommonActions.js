@@ -11,22 +11,23 @@ const oneElement = 1;
 class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
-    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
-        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric,
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
       );
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray) {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
+        const isFiltered = JobActions.isColumnFiltered(filteredArray, key);
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
@@ -35,6 +36,7 @@ class CommonActions {
           toggleFilter={toggleNumberFilter}
           colType={colType}
           isMetric={isMetric}
+          isFiltered={isFiltered}
         />);
       }
     });
