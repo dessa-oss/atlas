@@ -57,7 +57,6 @@ class ContainsFilter extends Component {
           </button>
         </div>
         <input onChange={(e) => { this.changeLocalParams(e); }} value={filterString} />
-        <p className="subtitle">Separate each keyword with a comma (i.e. “demo”, “job”)</p>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
           <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
