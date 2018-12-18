@@ -619,12 +619,12 @@ it('getTimeForStartTimeURL', () => {
 
 it('prependZero, single digit', () =>{
   const newDigit = JobActions.prependZero(singleDigit);
-  expect(newDigit).toBe('0'.concat(singleDigit));
+  expect(newDigit).toBe('01');
 });
 
 it('prependZero, 2 digit', () => {
   const newDigit = JobActions.prependZero(doubleDigit);
-  expect(newDigit).toBe(doubleDigit);
+  expect(newDigit).toBe('11');
 });
 
 it('getTimeForStartTimeBubble', () => {
