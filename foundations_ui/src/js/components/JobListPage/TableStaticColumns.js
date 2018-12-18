@@ -16,6 +16,7 @@ class TableStaticColumns extends Component {
       toggleStatusFilter: this.props.toggleStatusFilter,
       toggleDurationFilter: this.props.toggleDurationFilter,
       toggleJobIdFilter: this.props.toggleJobIdFilter,
+      toggleStartTimeFilter: this.props.toggleStartTimeFilter,
     };
   }
 
@@ -31,6 +32,7 @@ class TableStaticColumns extends Component {
   render() {
     const {
       rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter, toggleDurationFilter, toggleJobIdFilter,
+      toggleStartTimeFilter,
     } = this.state;
 
     return (
@@ -38,7 +40,7 @@ class TableStaticColumns extends Component {
         <TableSectionHeader />
         <div className="full-height">
           <div className="job-column-header-container">
-            <JobColumnHeader title="Start Time" className="static-header" />
+            <JobColumnHeader title="Start Time" className="static-header" toggleFilter={toggleStartTimeFilter} />
             <JobColumnHeader
               title="Status"
               isStatus={isStatus}
@@ -72,6 +74,7 @@ TableStaticColumns.propTypes = {
   toggleStatusFilter: PropTypes.func,
   toggleDurationFilter: PropTypes.func,
   toggleJobIdFilter: PropTypes.func,
+  toggleStartTimeFilter: PropTypes.func,
 };
 
 TableStaticColumns.defaultProps = {
@@ -81,6 +84,7 @@ TableStaticColumns.defaultProps = {
   toggleStatusFilter: () => {},
   toggleDurationFilter: () => {},
   toggleJobIdFilter: () => {},
+  toggleStartTimeFilter: () => {},
 };
 
 export default TableStaticColumns;

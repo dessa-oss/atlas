@@ -14,7 +14,7 @@
     margin-right: 0px;
   }
 
-  &.number-filter-container, &.job-id-filter-container, &.boolean-filter-container {
+  &.number-filter-container, &.job-id-filter-container, &.boolean-filter-container, &.datetime-filter-container {
     width: calc(#{$table-section-width} - (2 * #{$margin-width}) - (4 * #{$border-thin}));
     position: absolute;
     left: calc(#{$one-third-width} + (8 * #{$border-thin}));
@@ -156,6 +156,11 @@
       vertical-align: middle;
       margin-right: 5px;
     }
+  }
+
+  &.datetime-filter-container {
+    left: 0px;
+    width: 400px;
   }
 }
 

@@ -9,6 +9,7 @@ import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import ContainsFilter from '../common/filters/ContainsFilter';
 import BooleanFilter from '../common/filters/BooleanFilter';
+import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 
@@ -27,6 +28,7 @@ class JobTableHeader extends Component {
     this.getMetricClass = this.getMetricClass.bind(this);
     this.getRangeFilterValues = this.getRangeFilterValues.bind(this);
     this.toggleJobIdFilter = this.toggleJobIdFilter.bind(this);
+    this.toggleStartTimeFilter = this.toggleStartTimeFilter.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -45,6 +47,7 @@ class JobTableHeader extends Component {
       isShowingBooleanFilter: false,
       updateBoolFilter: this.props.updateBoolFilter,
       isShowingJobIdFilter: false,
+      isShowingStartTimeFilter: false,
       statuses: this.props.statuses,
       rowNumbers: this.props.rowNumbers,
       jobRows: this.props.jobRows,
@@ -59,6 +62,7 @@ class JobTableHeader extends Component {
       durationFilters: this.props.durationFilters,
       updateJobIdFilter: this.props.updateJobIdFilter,
       jobIdFilters: this.props.jobIdFilters,
+      updateStartTimeFilter: this.props.updateStartTimeFilter,
     };
   }
 
@@ -142,6 +146,11 @@ class JobTableHeader extends Component {
     this.setState({ isShowingJobIdFilter: !isShowingJobIdFilter });
   }
 
+  toggleStartTimeFilter() {
+    const { isShowingStartTimeFilter } = this.state;
+    this.setState({ isShowingStartTimeFilter: !isShowingStartTimeFilter });
+  }
+
   toggleInputMetricFilter(e) {
     const { isShowingNumberFilter, isShowingContainsFilter, isShowingBooleanFilter } = this.state;
     let columnName = this.getColumnName(e);
@@ -210,6 +219,7 @@ class JobTableHeader extends Component {
       isShowingContainsFilter,
       isShowingBooleanFilter,
       isShowingJobIdFilter,
+      isShowingStartTimeFilter,
       numberFilterColumn,
       updateNumberFilter,
       metricClass,
@@ -221,6 +231,7 @@ class JobTableHeader extends Component {
       durationFilters,
       updateJobIdFilter,
       jobIdFilters,
+      updateStartTimeFilter,
     } = this.state;
 
     let userFilter = null;
@@ -352,6 +363,16 @@ class JobTableHeader extends Component {
       );
     }
 
+    let startFilter = null;
+    if (isShowingStartTimeFilter) {
+      startFilter = (
+        <DateTimeFilter
+          toggleShowingFilter={this.toggleStartTimeFilter}
+          changeHiddenParams={updateStartTimeFilter}
+        />
+      );
+    }
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -362,6 +383,7 @@ class JobTableHeader extends Component {
             toggleStatusFilter={this.toggleStatusFilter}
             toggleDurationFilter={this.toggleDurationFilter}
             toggleJobIdFilter={this.toggleJobIdFilter}
+            toggleStartTimeFilter={this.toggleStartTimeFilter}
           />
           <InputMetric
             header="input parameter"
@@ -383,6 +405,7 @@ class JobTableHeader extends Component {
           {containsFilter}
           {booleanFilter}
           {jobIDFilter}
+          {startFilter}
         </div>
       </ScrollSync>
     );
@@ -420,6 +443,8 @@ JobTableHeader.propTypes = {
   isShowingJobIdFilter: PropTypes.bool,
   updateJobIdFilter: PropTypes.func,
   jobIdFilters: PropTypes.array,
+  isShowingStartTimeFilter: PropTypes.bool,
+  updateStartTimeFilter: PropTypes.func,
 };
 
 JobTableHeader.defaultProps = {
@@ -453,6 +478,8 @@ JobTableHeader.defaultProps = {
   isShowingJobIdFilter: false,
   updateJobIdFilter: () => {},
   jobIdFilters: [],
+  isShowingStartTimeFilter: false,
+  updateStartTimeFilter: () => {},
 };
 
 export default JobTableHeader;

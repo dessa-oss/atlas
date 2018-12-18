@@ -370,7 +370,7 @@ it('getBoolFilters, non existing column', () => {
 });
 
 it('getDurationFilters', () => {
-  const newFilters = CommonActions.getDurationFilters(startTime, endTime);
+  const newFilters = CommonActions.getDurationFilters(startTime, endTime, 'Duration');
   expect(newFilters.length).toBe(1);
   expect(newFilters[0].startTime).not.toBe(null);
   expect(newFilters[0].endTime).not.toBe(null);

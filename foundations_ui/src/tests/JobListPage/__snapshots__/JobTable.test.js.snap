@@ -21,6 +21,7 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingDurationFilter={false}
       isShowingJobIdFilter={false}
       isShowingNumberFilter={false}
+      isShowingStartTimeFilter={false}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
       jobIdFilters={Array []}
@@ -44,6 +45,7 @@ exports[`Shallow Renders Job Table 1`] = `
       updateHiddenUser={[Function]}
       updateJobIdFilter={[Function]}
       updateNumberFilter={[Function]}
+      updateStartTimeFilter={[Function]}
     />
     <div
       className="pagination-controls"

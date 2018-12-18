@@ -5,20 +5,22 @@ label {
   color: $color-label-text;
   margin-bottom: 4px;
 }
-  
-input[type="text"] {
-  @extend .f--din;
-  box-sizing: border-box;
-  position: relative;
-  background-color: white;
-  width: 350px;
-  padding: 10px 10px 10px 10px;
-  font-size: 14px;
-  border-radius: 0;
-  border: 1px solid $color-border-bottom;
-  cursor: pointer;
-  height: 38px;
-  outline-width: 2px;
+
+:not(.date-time-picker) {
+  &input[type="text"] {
+    @extend .f--din;
+    box-sizing: border-box;
+    position: relative;
+    background-color: white;
+    width: 350px;
+    padding: 10px 10px 10px 10px;
+    font-size: 14px;
+    border-radius: 0;
+    border: 1px solid $color-border-bottom;
+    cursor: pointer;
+    height: 38px;
+    outline-width: 2px;
+  }
 }
   
 input[type="text"]:placeholder {

@@ -45,6 +45,7 @@ class JobListPage extends Component {
         { name: 'True', hidden: false },
         { name: 'False', hidden: false },
       ],
+      startTimeFilter: [],
     };
   }
 
@@ -67,7 +68,7 @@ class JobListPage extends Component {
   async getFilteredJobs() {
     const {
       projectName, hiddenUsers, statuses, numberFilters, containFilters, allUsers, boolFilters, durationFilter,
-      jobIdFilter,
+      jobIdFilter, startTimeFilter,
     } = this.state;
 
     const flatUsers = CommonActions.getFlatArray(allUsers);
@@ -77,6 +78,7 @@ class JobListPage extends Component {
     }
     const filterJobs = await JobActions.filterJobs(
       projectName, statuses, visibleUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
+      startTimeFilter,
     );
     return filterJobs;
   }
@@ -146,7 +148,7 @@ class JobListPage extends Component {
   async updateDurationFilter(startTime, endTime) {
     const { allUsers } = this.state;
 
-    const newDurationFilter = CommonActions.getDurationFilters(startTime, endTime);
+    const newDurationFilter = CommonActions.getDurationFilters(startTime, endTime, 'Duration');
 
     await this.setState({ durationFilter: newDurationFilter });
 
@@ -161,6 +163,18 @@ class JobListPage extends Component {
     const { jobIdFilter, allUsers } = this.state;
     const newJobIdFilters = CommonActions.getContainFilters(jobIdFilter, searchText, 'Job Id');
     await this.setState({ jobIdFilter: newJobIdFilters });
+
+    const apiFilteredJobs = await this.getFilteredJobs();
+    this.clearState();
+    this.formatAndSaveParams(apiFilteredJobs, allUsers);
+    this.saveFilters();
+    this.forceUpdate();
+  }
+
+  async updateStartTimeFilter(startTime, endTime) {
+    const { allUsers } = this.state;
+    const newStartTimeFilter = CommonActions.getDurationFilters(startTime, endTime, 'Start Time');
+    await this.setState({ startTimeFilter: newStartTimeFilter });
 
     const apiFilteredJobs = await this.getFilteredJobs();
     this.clearState();
@@ -217,6 +231,7 @@ class JobListPage extends Component {
       boolCheckboxes: baseBoolCheckboxes,
       durationFilter: [],
       jobIdFilter: [],
+      startTimeFilter: [],
     });
     this.getJobs();
   }
@@ -266,12 +281,13 @@ class JobListPage extends Component {
     this.updateBoolFilter = this.updateBoolFilter.bind(this);
     this.updateDurationFilter = this.updateDurationFilter.bind(this);
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
+    this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
-      numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter,
+      numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
     } = this.state;
     return (
       <div className="job-list-container">
@@ -292,6 +308,7 @@ class JobListPage extends Component {
           updateBoolFilter={this.updateBoolFilter}
           updateDurationFilter={this.updateDurationFilter}
           updateJobIdFilter={this.updateJobIdFilter}
+          updateStartTimeFilter={this.updateStartTimeFilter}
           jobs={jobs}
           isLoaded={isLoaded}
           allInputParams={allInputParams}
@@ -304,6 +321,7 @@ class JobListPage extends Component {
           boolFilters={boolFilters}
           durationFilters={durationFilter}
           jobIdFilters={jobIdFilter}
+          startTimeFilters={startTimeFilter}
         />
       </div>
     );
@@ -325,6 +343,7 @@ JobListPage.propTypes = {
   boolFilters: PropTypes.array,
   durationFilter: PropTypes.array,
   jobIdFilter: PropTypes.array,
+  startTimeFilter: PropTypes.array,
 };
 
 JobListPage.defaultProps = {
@@ -342,6 +361,7 @@ JobListPage.defaultProps = {
   boolFilters: [],
   durationFilter: [],
   jobIdFilter: [],
+  startTimeFilter: [],
 };
 
 export default JobListPage;

@@ -15,6 +15,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       rowNumbers={Array []}
       toggleDurationFilter={[Function]}
       toggleJobIdFilter={[Function]}
+      toggleStartTimeFilter={[Function]}
       toggleStatusFilter={[Function]}
       toggleUserFilter={[Function]}
     />

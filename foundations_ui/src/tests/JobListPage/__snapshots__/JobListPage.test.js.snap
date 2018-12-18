@@ -41,6 +41,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     jobs={Array []}
     numberFilters={Array []}
     projectName=""
+    startTimeFilters={Array []}
     statuses={
       Array [
         Object {
@@ -64,6 +65,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     updateHiddenUser={[Function]}
     updateJobIdFilter={[Function]}
     updateNumberFilter={[Function]}
+    updateStartTimeFilter={[Function]}
   />
 </div>
 `;

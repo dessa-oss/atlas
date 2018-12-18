@@ -598,3 +598,9 @@ it('getTimeForDurationBubble', () => {
   const bubbleTime = JobActions.getTimeForDurationBubble(time);
   expect(bubbleTime).toBe('1d2h3m4s');
 });
+
+it('getTimeForStartTimeURL');
+
+it('oneIndexAndPrependZero, single digit');
+
+it('oneIndexAndPrependZero, 2 digit');

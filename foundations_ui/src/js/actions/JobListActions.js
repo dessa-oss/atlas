@@ -22,11 +22,12 @@ class ProjectActions {
 
   static filterJobs(
     projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
   ) {
     // if no filters just get regular jobs
     if (!this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
       && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
-      && jobIdFilters.length === 0
+      && jobIdFilters.length === 0 && startTimeFilters.length === 0
     ) {
       return this.getJobs(projectName);
     }
@@ -34,6 +35,7 @@ class ProjectActions {
     let url = this.getBaseJobListingURL(projectName);
     const filterURL = this.getFilterURL(
       statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+      startTimeFilters,
     );
     url = url.concat('?').concat(filterURL);
 
@@ -243,6 +245,7 @@ class ProjectActions {
 
   static getFilterURL(
     statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
   ) {
     let url = '';
     let isFirstFilter = true;
@@ -300,6 +303,15 @@ class ProjectActions {
     jobIdFilters.forEach((jobIdFilter) => {
       url = this.addAndIfNotFirstFilter(url, isFirstFilter);
       url = this.addToURLContainFilter(url, jobIdFilter.searchText, 'job_id');
+      isFirstFilter = false;
+    });
+
+    startTimeFilters.forEach((startTimeFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      // time format for api is MM_DD_YY_HH_mm
+      const startTime = this.getTimeForStartTimeURL(startTimeFilter.startTime);
+      const endTime = this.getTimeForStartTimeURL(startTimeFilter.endTime);
+      url = this.addToURLRangeNotHidden(url, startTime, endTime, 'start_time');
       isFirstFilter = false;
     });
 
@@ -638,6 +650,24 @@ class ProjectActions {
       .concat('m')
       .concat(time.seconds)
       .concat('s');
+  }
+
+  static getTimeForStartTimeURL(time) {
+    // time format for api is MM_DD_YY_HH_mm
+    const date = new Date(time);
+    return this.oneIndexAndPrependZero(date.getMonth() + 1)
+      .concat('_')
+      .concat(this.oneIndexAndPrependZero(date.getDate()))
+      .concat('_')
+      .concat(date.getFullYear())
+      .concat('_')
+      .concat(this.oneIndexAndPrependZero(date.getHours()))
+      .concat('_')
+      .concat(this.oneIndexAndPrependZero(date.getMinutes()));
+  }
+
+  static oneIndexAndPrependZero(time) {
+    return ('0'.concat(time)).slice(-2);
   }
 }
 
