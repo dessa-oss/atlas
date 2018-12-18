@@ -36,12 +36,13 @@ class Job(PropertyModel):
     @staticmethod
     def _load_jobs(project_name):
         from foundations_contrib.job_data_redis import JobDataRedis
-        from foundations_contrib.input_parameter_formatter import InputParameterFormatter
+        from foundations_contrib.input_parameter_indexer import InputParameterIndexer
         from foundations.global_state import redis_connection
 
         jobs = []
-        for job_properties in list(JobDataRedis.get_all_jobs_data(project_name, redis_connection)):
-            job_properties['input_params'] = InputParameterFormatter(project_name, job_properties['input_params'], job_properties['job_parameters'], redis_connection).format_input_parameters()
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
+
+        for job_properties in list(jobs_data):
             job = Job._build_job_model(job_properties)
             jobs.append(job)
         Job._default_order(jobs)
@@ -52,6 +53,7 @@ class Job(PropertyModel):
         Job._extract_job_parameters(job_data)
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)
+        Job._trim_metric_values(job_data)
         job_data['project'] = job_data['project_name']
         del job_data['project_name']
         return Job(**job_data)
@@ -117,21 +119,33 @@ class Job(PropertyModel):
         completed_time = properties['completed_time']
         properties['start_time'] = Job._datetime_string(start_time)
         properties['completed_time'] = Job._datetime_string(completed_time)
-        end_time = datetime.utcfromtimestamp(completed_time) if completed_time else datetime.now()
+
+        if completed_time:
+            end_time = datetime.utcfromtimestamp(completed_time)
+        else:
+            end_time = datetime.now()
+
         time_delta = end_time - datetime.utcfromtimestamp(start_time)
         total_seconds = time_delta.total_seconds()
         properties['duration'] = Job._total_seconds_to_duration(total_seconds)
 
     @staticmethod
+    def _trim_metric_values(job_data):
+        from foundations.utils import is_string
+        for metric in job_data['output_metrics']:
+            if is_string(metric['value']):
+                metric['value'] = metric['value'][:100]
+
+    @staticmethod
     def _total_seconds_to_duration(total_seconds):
         total_seconds = int(total_seconds)
         days = total_seconds // 86400
-        remaing_seconds = total_seconds % 86400
-        hours = remaing_seconds // 3600
-        remaing_seconds %= 3600
-        minutes = remaing_seconds // 60
-        remaing_seconds %= 60
-        return '{}d{}h{}m{}s'.format(days, hours, minutes, remaing_seconds)
+        remaining_seconds = total_seconds % 86400
+        hours = remaining_seconds // 3600
+        remaining_seconds %= 3600
+        minutes = remaining_seconds // 60
+        remaining_seconds %= 60
+        return '{}d{}h{}m{}s'.format(days, hours, minutes, remaining_seconds)
 
     @staticmethod
     def _datetime_string(time):

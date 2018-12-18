@@ -9,35 +9,24 @@ from foundations_contrib.consumers.jobs.queued.mixins.attribute_key_list import 
 import time, json
 
 
-class StageTime(AttributeKeyList):
+class StageTime(object):
     """Stores a list of all common stage input parameter keys for a project in redis
 
     Arguments:
         redis {redis.Redis} -- A Redis connection object
     """
 
-    def _get_attribute(self, message):   
-        parameter_list = message['input_parameters']
-        parameters = {}
-        for parameter in parameter_list:
-            self._add_stage_uuid_from_stage(parameter, parameters)
+    def __init__(self, redis):
+        self._redis = redis
 
-            if parameter['argument']['value']['type'] == 'stage':
-                self._add_stage_uuid_from_stage_with_no_input_params(parameter, parameters)
-        return parameters
+    def call(self, message, timestamp, meta_data):
+        """See above
+        
+        Arguments:
+            message {dict} -- Event attributes
+            timestamp {int} -- The time the event was created
+            meta_data {dict} -- Additional data about the event
+        """
 
-    def _get_attribute_key(self):
-        return 'stage_time'
-
-    def _add_stage_uuid_from_stage_with_no_input_params(self, parameter, parameters):
-        stage_uuid = parameter['argument']['value']['stage_uuid']
-        key = json.dumps({'stage_uuid': stage_uuid,
-            'time': time.time()})
-        parameters[key] = 'no_param_stage'
-    
-    def _add_stage_uuid_from_stage(self, parameter, parameters):
-        stage_uuid = parameter['stage_uuid']
-        parameter_value = parameter['argument']['value']
-        key = json.dumps({'stage_uuid': stage_uuid,
-                            'time': time.time()})
-        parameters[key] = parameter_value
+        for key in message['stage_uuids']:
+            self._redis.execute_command('ZADD', 'projects:{}:{}'.format(message['project_name'], 'stage_time'), 'NX', timestamp, key)

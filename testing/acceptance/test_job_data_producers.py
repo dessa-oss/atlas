@@ -63,7 +63,6 @@ class TestJobDataProducers(unittest.TestCase):
         from foundations import log_metric
         from foundations.global_state import foundations_context
         from foundations_internal.fast_serializer import deserialize
-        import json
         from time import time
 
         @create_stage
@@ -126,32 +125,13 @@ class TestJobDataProducers(unittest.TestCase):
         self.assertEqual(
             set(['some_argument', 'some_placeholder', 'some_stage']), input_parameter_names)
 
-        stage_times = self._redis.smembers(
-            'projects:project_with_successful_jobs:stage_time')
+        stage_times = self._redis.zrange(
+            'projects:project_with_successful_jobs:stage_time', 0 , -1)
 
-        new_stage_times = []
-        for stage_time in stage_times:
-            stage_time = json.loads(stage_time.decode())
-            new_stage_times.append(stage_time)
+        expected_list = [b'94fc8f23ef6dced1090999229ff6f378260a640d',
+                         b'efae5c309a72efdc06171132798547e1142bcb84']
 
-        stage_time_1, stage_time_2, stage_time_3, stage_time_4 = new_stage_times
-
-        self.assertTrue(current_time - stage_time_1['time'] < 60)
-        self.assertTrue(current_time - stage_time_2['time'] < 60)
-        self.assertTrue(current_time - stage_time_3['time'] < 60)
-        self.assertTrue(current_time - stage_time_4['time'] < 60)
-
-        stage_uuid_set = set([stage_time_1['stage_uuid'],
-                              stage_time_2['stage_uuid'],
-                              stage_time_3['stage_uuid'],
-                              stage_time_4['stage_uuid']])
-
-        expected_set = set(['94fc8f23ef6dced1090999229ff6f378260a640d',
-                            '94fc8f23ef6dced1090999229ff6f378260a640d',
-                            '94fc8f23ef6dced1090999229ff6f378260a640d',
-                            'efae5c309a72efdc06171132798547e1142bcb84'])
-
-        self.assertEqual(stage_uuid_set, expected_set)
+        self.assertCountEqual(stage_times, expected_list)
 
         user_name = self._redis.get('jobs:successful_job:user').decode()
         self.assertEqual('a_very_successful_user', user_name)
@@ -178,13 +158,13 @@ class TestJobDataProducers(unittest.TestCase):
         self.assertEqual(set(['successful_job']), running_jobs)
 
         serialized_run_parameters = self._redis.get(
-            'jobs:successful_job:parameters').decode()
-        run_parameters = json.loads(serialized_run_parameters)
+            'jobs:successful_job:parameters')
+        run_parameters = self._foundations_deserialize(serialized_run_parameters)
         self.assertEqual({'some_run_data': 777}, run_parameters)
 
         serialized_input_parameters = self._redis.get(
-            'jobs:successful_job:input_parameters').decode()
-        input_parameters = json.loads(serialized_input_parameters)
+            'jobs:successful_job:input_parameters')
+        input_parameters = self._foundations_deserialize(serialized_input_parameters)
         
         expected_input_parameters = [
             {
@@ -222,7 +202,6 @@ class TestJobDataProducers(unittest.TestCase):
     def test_produces_failed_job_data(self):
         from foundations import create_stage
         from foundations.utils import using_python_2
-        import json
 
         @create_stage
         def function():
@@ -236,8 +215,8 @@ class TestJobDataProducers(unittest.TestCase):
         self.assertEqual('Error', state)
 
         serialized_error_information = self._redis.get(
-            'jobs:failed_job:error_information').decode()
-        error_information = json.loads(serialized_error_information)
+            'jobs:failed_job:error_information')
+        error_information = self._foundations_deserialize(serialized_error_information)
 
         if using_python_2():
             self.assertEqual("<type 'exceptions.Exception'>",
@@ -247,3 +226,7 @@ class TestJobDataProducers(unittest.TestCase):
 
         self.assertEqual('I died!', error_information['exception'])
         self.assertIsNotNone(error_information['traceback'])
+
+    def _foundations_deserialize(self, serialized_value):
+        from foundations_internal.foundations_serializer import deserialize
+        return deserialize(serialized_value)

@@ -2,12 +2,14 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Dariem Perez <d.perez@dessa.com>, 11 2018
+Written by Dariem Perez <d.perez@dessa.com>, 12 2018
 """
 
 
-class StringParser(object):
+class NumberParser(object):
 
     def parse(self, value):
-        # TODO: probably some string sanitation is required
-        return str(value)
+        try:
+            return float(value)
+        except TypeError:
+            raise ValueError('Not able to convert "{}" to a number'.format(str(value)))

@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 import json
+import pickle
 import fakeredis
 from mock import patch
 import six
@@ -44,13 +45,12 @@ class TestJobDataRedis(unittest.TestCase):
             'project:{}:jobs:running'.format(project_name), job_id)
 
     def test_get_job_data_gets_data(self):
-        from foundations_internal.fast_serializer import serialize
         data = {
             'project': 'banana',
             'user': 'potter',
             'parameters': json.dumps({'harry': 'potter'}),
-            'input_parameters': json.dumps([{'ron': 'weasley'}]),
-            'metrics': serialize(('123', 'hermione', 'granger')),
+            'input_parameters': self._foundations_serialize([{'ron': 'weasley'}]),
+            'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
             'completed_time': '123'
@@ -77,13 +77,12 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(expected_result, result.get())
 
     def test_get_job_data_gets_data_different_data(self):
-        from foundations_internal.fast_serializer import serialize
         data = {
             'project': 'apple',
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps([{'harry': 'weasley'}]),
-            'metrics': serialize(('123', 'hermione', 'granger')),
+            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
+            'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -112,14 +111,13 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(expected_result, result.get())
 
     def test_get_job_data_all_jobs_single_job(self):
-        from foundations_internal.fast_serializer import serialize
         project_name = 'apple'
         data = {
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps([{'harry': 'weasley'}]),
-            'metrics': serialize(('123', 'hermione', 'granger')),
+            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
+            'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -147,14 +145,13 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(results[0], expected_result_1)
 
     def test_get_job_data_all_jobs_single_job_different_data(self):
-        from foundations_internal.fast_serializer import serialize
         project_name = 'pomme'
         data = {
             'project': project_name,
             'user': 'baker',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps([{'harry': 'weasley'}]),
-            'metrics': serialize(('123', 'hermione', 'granger')),
+            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
+            'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -182,14 +179,13 @@ class TestJobDataRedis(unittest.TestCase):
         self.assertDictEqual(results[0], expected_result_1)
 
     def test_get_job_data_all_jobs_two_jobs(self):
-        from foundations_internal.fast_serializer import serialize
         project_name = 'apple'
         data = {
             'project': project_name,
             'user': 'potter',
             'parameters': json.dumps({'ron': 'potter'}),
-            'input_parameters': json.dumps([{'harry': 'weasley'}]),
-            'metrics': serialize(('123', 'hermione', 'granger')),
+            'input_parameters': self._foundations_serialize([{'harry': 'weasley'}]),
+            'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
             'completed_time': '123'
@@ -233,7 +229,6 @@ class TestJobDataRedis(unittest.TestCase):
                              results, [expected_result_1, expected_result_2])
 
     def test_get_job_data_handles_missing_keys(self):
-        from foundations_internal.fast_serializer import serialize
         data = {
             'project': 'banana',
             'user': 'hi',
@@ -262,3 +257,11 @@ class TestJobDataRedis(unittest.TestCase):
             'completed_time': float('123')
         }
         self.assertDictEqual(expected_result, result.get())
+
+    def _foundations_serialize(self, data):
+        from foundations_internal.foundations_serializer import serialize
+        return serialize(data)
+
+    def _fast_serialize(self, data):
+        from foundations_internal.fast_serializer import serialize
+        return serialize(data)

@@ -43,6 +43,7 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
         import json
+        import pickle
 
         def callback(random_input_data):
             pass
@@ -70,11 +71,8 @@ class TestConsumers(unittest.TestCase):
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
         
         stage_time_key = self._stage_time(self._project_name)
-        stage_time = self._redis.smembers(stage_time_key)
-        for stage in stage_time:
-            stage = json.loads(stage.decode())
-            self.assertEqual('21aad1de62dcd003b4d28909bd2add8431fceec7', stage['stage_uuid'])
-            self.assertTrue(time() - stage['time'] < 0.1)
+        stage_time = self._redis.zrange(stage_time_key, 0, -1)
+        self.assertEqual(b'21aad1de62dcd003b4d28909bd2add8431fceec7', stage_time[0])
         
 
         queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
@@ -221,10 +219,10 @@ class TestConsumers(unittest.TestCase):
         self.assertEqual(project_metric_name, set([byte_string(key)]))
 
     def _get_and_deserialize(self, key):
-        import json
+        from foundations_internal.foundations_serializer import deserialize
 
-        serialized_data = self._redis.get(key).decode()
-        return json.loads(serialized_data)
+        serialized_data = self._redis.get(key)
+        return deserialize(serialized_data)
 
     def _random_name(self):
         return self._faker.name()

@@ -5,10 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.test_app_manager import TestAppManager
-from test.test_lazy_result import TestLazyResult
-from test.test_response import TestResponse
-from test.utils import *
-from test.v1 import *
-from test.v2beta import *
-from test.filters import *
+from foundations_internal.module_manager import ModuleManager
+
+module_manager = ModuleManager()

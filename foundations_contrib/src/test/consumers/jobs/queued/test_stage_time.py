@@ -17,80 +17,28 @@ class TestStageTime(unittest.TestCase):
         self._redis = Mock()
         self._consumer = StageTime(self._redis)
 
-    @patch('time.time')
-    def test_call_saved_run_data_keys(self, mock_time):
-        mock_time.return_value = 123
-        input_parameters = [{'argument': {'name': 'number_of_neurons', 'value': {'type': 'constant', 'value': 777}}, 'stage_uuid': 'stage1'}]
+    def test_call_saved_run_data_keys(self):
+        stage_uuids = ['stage_1']
         self._consumer.call({'project_name': 'here be dragons',
-                             'input_parameters': input_parameters}, None, None)
-        expected_value = {'stage_uuid': 'stage1',
-                          'time': 123}
-        self._redis.sadd.assert_called_with('projects:here be dragons:stage_time', json.dumps(expected_value))
+                             'input_parameters': {}, 'stage_uuids': stage_uuids}, None, None)
+        self._redis.execute_command.assert_called_with('ZADD', 'projects:here be dragons:stage_time', 'NX', None, 'stage_1')
 
-    @patch('time.time')
-    def test_call_saved_run_data_keys_different_keys(self, mock_time):
-        mock_time.return_value = 123
-        input_parameters = [
-            {'argument': {'name': 'hidden_layers', 'value': {'type': 'constant', 'value': 777}}, 'stage_uuid': 'stage1'}]
+    def test_call_saved_run_data_keys_different_keys(self):
+        stage_uuids = ['pineapple']
         self._consumer.call({'project_name': 'here be dragons',
-                             'input_parameters': input_parameters}, None, None)
-        expected_value = {
-                    'stage_uuid': 'stage1',
-                    'time': 123
-                    }
-        self._redis.sadd.assert_called_with(
-            'projects:here be dragons:stage_time', json.dumps(expected_value))
+                             'input_parameters': {}, 'stage_uuids': stage_uuids}, 123, None)
+        self._redis.execute_command.assert_called_with('ZADD', 'projects:here be dragons:stage_time', 'NX', 123, 'pineapple')
 
-    @patch('time.time')
-    def test_call_saved_run_data_keys_multiple_keys(self, mock_time):
-        mock_time.return_value = 123
-        input_parameters = [
-            {'argument': {'name': 'shown_layers', 'value': {'type': 'constant', 'value': 777}},
-                'stage_uuid': 'stage1'},
-            {'argument': {'name': 'neurons', 'value': {'type': 'constant', 'value': 777}}, 'stage_uuid': 'stage1'},
-        ]
+    def test_call_saved_run_data_keys_multiple_keys(self):
+        stage_uuids = ['pineapple', 'passionfruit']
         self._consumer.call({'project_name': 'here be dragons',
-                             'input_parameters': input_parameters}, None, None)
-        expected_value_1 = {
-            'stage_uuid': 'stage1',
-            'time': 123
-            }
-        expected_value_2 = {
-            'stage_uuid': 'stage1',
-            'time': 123
-            }
-        self._redis.sadd.assert_any_call(
-            'projects:here be dragons:stage_time', json.dumps(expected_value_1))
-        self._redis.sadd.assert_any_call(
-            'projects:here be dragons:stage_time', json.dumps(expected_value_2))
+                             'input_parameters': {}, 'stage_uuids': stage_uuids}, 123, None)
+        call_1 = call('ZADD', 'projects:here be dragons:stage_time', 'NX', 123, 'pineapple')
+        call_2 = call('ZADD', 'projects:here be dragons:stage_time', 'NX', 123, 'passionfruit')
+        self._redis.execute_command.assert_has_calls([call_1, call_2])
 
-    @patch('time.time')
-    def test_call_saved_run_data_keys_different_project_name(self, mock_time):
-        mock_time.return_value = 123
-        input_parameters = [{'argument': {'name': 'hidden_layers', 'value': {'type': 'constant', 'value': 777}}, 'stage_uuid': 'stage1'}]
+    def test_call_saved_run_data_keys_different_project_name(self):
+        stage_uuids = ['grapes']
         self._consumer.call({'project_name': 'here be sheep',
-                             'input_parameters': input_parameters}, None, None)
-        expected_value_1 = {
-            'stage_uuid': 'stage1',
-            'time': 123
-            }
-        self._redis.sadd.assert_called_with(
-            'projects:here be sheep:stage_time', json.dumps(expected_value_1))
-    
-    @patch('time.time')
-    def test_call_saved_run_data_stage_argument(self, mock_time):
-        mock_time.return_value = 123
-        input_parameters = [{'argument': {'name': 'hidden_layers', 'value': {'type': 'stage', 'stage_uuid': 'stage2'}}, 'stage_uuid': 'stage1'}]
-        self._consumer.call({'project_name': 'here be sheep',
-                             'input_parameters': input_parameters}, None, None)
-        expected_value_1 = {
-            'stage_uuid': 'stage1',
-            'time': 123
-            }
-        expected_value_2 = {
-            'stage_uuid': 'stage2',
-            'time': 123
-            }
-        call_1 = call('projects:here be sheep:stage_time', json.dumps(expected_value_1))
-        call_2 = call('projects:here be sheep:stage_time', json.dumps(expected_value_2))
-        self._redis.sadd.assert_has_calls( [call_1, call_2], any_order = True)
+                             'input_parameters': {}, 'stage_uuids': stage_uuids}, 777, None)
+        self._redis.execute_command.assert_called_with('ZADD', 'projects:here be sheep:stage_time', 'NX', 777, 'grapes')

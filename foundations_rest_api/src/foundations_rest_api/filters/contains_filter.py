@@ -6,6 +6,7 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 from foundations_rest_api.filters.api_filter_mixin import APIFilterMixin
 
+
 class ContainsFilter(APIFilterMixin):
 
     def __call__(self, result, params):
@@ -18,8 +19,7 @@ class ContainsFilter(APIFilterMixin):
     def _filter(self, result, params):
         for key, value in params.items():
             column_name = key.split('_contains', 1)[0]
-            if self._is_valid_column(result, column_name):
-                self._filter_column(result, column_name, value)
+            self._filter_column(result, column_name, value)
 
     def _filter_column(self, result, column_name, value):
         searched_value = self._enforce_safe_string(value)
@@ -29,7 +29,9 @@ class ContainsFilter(APIFilterMixin):
     def _filter_contains(self, result, column_name, searched_value):
 
         def column_value_in_options(item):
-            column_value = getattr(item, column_name)
+            column_value, item_parser = self._get_item_property_value_and_parser(item, column_name)
+            if item_parser is None:
+                return False
             value = self._enforce_safe_string(column_value)
             return searched_value.upper() in value.upper()
 

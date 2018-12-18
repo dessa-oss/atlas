@@ -25,13 +25,14 @@ class CompletedJobDataListing(object):
         """
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.job_data_shaper import JobDataShaper
-        from foundations_contrib.input_parameter_formatter import InputParameterFormatter
+        from foundations_contrib.input_parameter_indexer import InputParameterIndexer  
         from foundations.global_state import redis_connection
 
-        jobs_data = JobDataRedis.get_all_jobs_data(project_name, redis_connection)
-        
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
+
         for job in jobs_data:
-            job['input_params'] = InputParameterFormatter(project_name, job['input_params'], job['job_parameters'], redis_connection).format_input_parameters()
             job['output_metrics'] = JobDataShaper.shape_output_metrics(job['output_metrics'])
 
         return jobs_data
+
+

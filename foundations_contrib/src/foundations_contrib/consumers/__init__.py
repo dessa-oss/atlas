@@ -30,13 +30,14 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.set_user import SetUser
     from foundations_contrib.consumers.jobs.queued.project_tracker import ProjectTracker
     from foundations_contrib.consumers.jobs.queued.stage_time import StageTime
+    import foundations_internal.foundations_serializer as serializer
 
     import json
 
     _add_listener(CreationTime(redis), 'queue_job')
     _add_listener(InputParameterKeys(redis), 'queue_job')
     _add_listener(StageTime(redis), 'queue_job')
-    _add_listener(InputParameters(redis, json), 'queue_job')
+    _add_listener(InputParameters(redis, serializer), 'queue_job')
     _add_listener(JobState(redis), 'queue_job')
     _add_listener(ProjectListing(redis), 'queue_job')
     _add_listener(ProjectName(redis), 'queue_job')

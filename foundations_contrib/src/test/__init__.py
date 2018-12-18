@@ -23,7 +23,6 @@ from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
 from test.test_message_route_listener import TestMessageRouteListener
 from test.test_message_router import TestMessageRouter
 from test.test_middleware_manager import TestMiddlewareManager
-from test.test_module_manager import TestModuleManager
 from test.test_null_cache_backend import TestNullCacheBackend
 from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
 from test.test_null_stage_logger import TestNullStageLogger
@@ -36,3 +35,4 @@ from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper
 from test.test_job_data_redis import TestJobDataRedis
 from test.test_job_data_shaper import TestJobDataShaper
 from test.test_input_parameter_formatter import TestInputParameterFormatter
+from test.test_input_parameter_indexer import TestInputParameterIndexer
