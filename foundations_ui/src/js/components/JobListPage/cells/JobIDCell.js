@@ -19,7 +19,7 @@ class JobIDCell extends Component {
 
     const href = '/'.concat(jobID);
     return (
-      <a href={href} className={aClass}>{jobID}</a>
+      <p className={aClass}>{jobID}</p>
     );
   }
 }
