@@ -96,12 +96,12 @@ class NumberFilter extends Component {
           </div>
         </div>
 
-        <Checkbox
+        {/* <Checkbox
           name="Show 'not available' values"
           hidden={hideNotAvailable}
           changeHiddenParams={this.onChangeCheckbox}
           showAllFilters={showAllFilters}
-        />
+        /> */}
 
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
