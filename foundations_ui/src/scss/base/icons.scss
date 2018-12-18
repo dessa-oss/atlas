@@ -23,3 +23,10 @@ See assets/svgs/README.md for further information on SVG conversion process
   background-image: url('../assets/images/icons/icon-logo.png');
   @include icon-helper;
 }
+
+.i--icon-filtered {
+  background-image: url('../assets/images/icons/icon-filtered.png');
+  @include icon-helper;
+  height: 7px;
+  width: 7px;
+}

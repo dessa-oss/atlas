@@ -253,14 +253,14 @@ class JobTableHeader extends Component {
 
     let statusFilter = null;
     let hiddenInputParams = [];
+    hiddenInputParams = statuses.map(
+      (status) => {
+        if (status.hidden === true && status.hidden !== undefined) {
+          return status.name;
+        }
+      },
+    );
     if (isShowingStatusFilter) {
-      hiddenInputParams = statuses.map(
-        (status) => {
-          if (status.hidden === true) {
-            return status.name;
-          }
-        },
-      );
       statusFilter = (
         <StatusFilter
           columns={statuses}
@@ -385,6 +385,10 @@ class JobTableHeader extends Component {
       );
     }
 
+    hiddenInputParams = hiddenInputParams.filter((hiddenParam) => {
+      return hiddenParam !== undefined;
+    });
+
     return (
       <ScrollSync>
         <div className="job-list-container">
@@ -396,6 +400,11 @@ class JobTableHeader extends Component {
             toggleDurationFilter={this.toggleDurationFilter}
             toggleJobIdFilter={this.toggleJobIdFilter}
             toggleStartTimeFilter={this.toggleStartTimeFilter}
+            isStartTimeFiltered={startTimeFilters.length > 0}
+            isStatusFiltered={hiddenInputParams.length > 0}
+            isJobIdFiltered={jobIdFilters.length > 0}
+            isDurationFiltered={durationFilters.length > 0}
+            isUserFiltered={hiddenUsers.length > 0}
           />
           <InputMetric
             header="input parameter"
