@@ -35,6 +35,7 @@ module.exports = {
     "prefer-const": 1,
     "prefer-destructuring": 1,
     "react/sort-comp": 0,
+    "import/no-extraneous-dependencies": 1,
   }
 };
 

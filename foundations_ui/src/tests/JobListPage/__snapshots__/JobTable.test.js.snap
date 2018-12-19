@@ -19,9 +19,12 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingBooleanFilter={false}
       isShowingContainsFilter={false}
       isShowingDurationFilter={false}
+      isShowingJobIdFilter={false}
       isShowingNumberFilter={false}
+      isShowingStartTimeFilter={false}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
+      jobIdFilters={Array []}
       jobRows={
         Array [
           <p>
@@ -34,35 +37,20 @@ exports[`Shallow Renders Job Table 1`] = `
       numberFilterColumn=""
       numberFilters={Array []}
       rowNumbers={Array []}
+      startTimeFilters={Array []}
       statuses={Array []}
       updateBoolFilter={[Function]}
       updateContainsFilter={[Function]}
       updateDurationFilter={[Function]}
       updateHiddenStatus={[Function]}
       updateHiddenUser={[Function]}
+      updateJobIdFilter={[Function]}
       updateNumberFilter={[Function]}
+      updateStartTimeFilter={[Function]}
     />
     <div
       className="pagination-controls"
-    >
-      <p>
-        <span
-          className="font-bold"
-        >
-          Viewing:
-        </span>
-         1-100/600
-      </p>
-      <div
-        className="arrow-right"
-      />
-      <p>
-        Page 1
-      </p>
-      <div
-        className="arrow-left"
-      />
-    </div>
+    />
   </div>
 </div>
 `;

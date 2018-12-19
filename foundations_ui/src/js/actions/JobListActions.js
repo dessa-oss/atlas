@@ -21,16 +21,19 @@ class ProjectActions {
   }
 
   static filterJobs(
-    projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+    projectName, statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
   ) {
     // if no filters just get regular jobs
-    if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters)) {
+    if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+      startTimeFilters)) {
       return this.getJobs(projectName);
     }
 
     let url = this.getBaseJobListingURL(projectName);
     const filterURL = this.getFilterURL(
-      statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+      statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+      startTimeFilters,
     );
     url = url.concat('?').concat(filterURL);
 
@@ -238,7 +241,10 @@ class ProjectActions {
     return 'blue-header-text no-margin';
   }
 
-  static getFilterURL(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
+  static getFilterURL(
+    statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
+  ) {
     let url = '';
     let isFirstFilter = true;
     if (this.areStatusesHidden(statusFilter)) {
@@ -292,6 +298,21 @@ class ProjectActions {
       isFirstFilter = false;
     });
 
+    jobIdFilters.forEach((jobIdFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      url = this.addToURLContainFilter(url, jobIdFilter.searchText, 'job_id');
+      isFirstFilter = false;
+    });
+
+    startTimeFilters.forEach((startTimeFilter) => {
+      url = this.addAndIfNotFirstFilter(url, isFirstFilter);
+      // time format for api is MM_DD_YY_HH_mm
+      const startTime = this.getTimeForStartTimeURL(startTimeFilter.startTime);
+      const endTime = this.getTimeForStartTimeURL(startTimeFilter.endTime);
+      url = this.addToURLRangeNotHidden(url, startTime, endTime, 'start_time');
+      isFirstFilter = false;
+    });
+
     return url;
   }
 
@@ -306,7 +327,10 @@ class ProjectActions {
     return areHidden;
   }
 
-  static getAllFilters(statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters) {
+  static getAllFilters(
+    statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilters, jobIdFilters,
+    startTimeFilters,
+  ) {
     let updatedFilters = [];
     if (hiddenUsers.length > 0) {
       const visibleUsers = this.getVisibleFromFilter(allUsers, hiddenUsers);
@@ -344,6 +368,22 @@ class ProjectActions {
         const startTime = this.getTimeForDurationBubble(durationFilter.startTime);
         const endTime = this.getTimeForDurationBubble(durationFilter.endTime);
         const newRangeFilter = this.getRangeFilter('Duration', startTime, endTime);
+        updatedFilters.push(newRangeFilter);
+      });
+    }
+
+    if (jobIdFilters.length > 0) {
+      jobIdFilters.forEach((jobIdFilter) => {
+        const newJobIdFilter = this.getContainFilter(jobIdFilter.columnName, jobIdFilter.searchText);
+        updatedFilters.push(newJobIdFilter);
+      });
+    }
+
+    if (startTimeFilters.length > 0) {
+      startTimeFilters.forEach((startTimeFilter) => {
+        const startTime = this.getTimeForStartTimeBubble(startTimeFilter.startTime);
+        const endTime = this.getTimeForStartTimeBubble(startTimeFilter.endTime);
+        const newRangeFilter = this.getRangeFilter('Start Time', startTime, endTime);
         updatedFilters.push(newRangeFilter);
       });
     }
@@ -607,9 +647,30 @@ class ProjectActions {
     return `${time.days}d${time.hours}h${time.minutes}m${time.seconds}s`;
   }
 
-  static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters) {
+  static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
+    startTimeFilters) {
     return !this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0;
+      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
+      && startTimeFilters.length === 0;
+  }
+
+  static getTimeForStartTimeURL(time) {
+    // time format for api is MM_DD_YY_HH_mm
+    const date = new Date(time);
+    return `${this.prependZero(date.getMonth() + 1)}_${this.prependZero(date.getDate())}_${date.getFullYear()}`
+    + `_${this.prependZero(date.getHours())}_${this.prependZero(date.getMinutes())}`;
+  }
+
+  static prependZero(time) {
+    return ('0'.concat(time)).slice(-2);
+  }
+
+  static getTimeForStartTimeBubble(time) {
+    const date = new Date(time);
+    const year = date.getFullYear().toString().substr(-2);
+
+    return `${this.prependZero(date.getMonth() + 1)}/${this.prependZero(date.getDate())}/`
+    + `${year} ${this.prependZero(date.getHours())}:${this.prependZero(date.getMinutes())}`;
   }
 }
 

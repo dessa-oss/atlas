@@ -15,6 +15,8 @@ class TableStaticColumns extends Component {
       toggleUserFilter: this.props.toggleUserFilter,
       toggleStatusFilter: this.props.toggleStatusFilter,
       toggleDurationFilter: this.props.toggleDurationFilter,
+      toggleJobIdFilter: this.props.toggleJobIdFilter,
+      toggleStartTimeFilter: this.props.toggleStartTimeFilter,
     };
   }
 
@@ -29,7 +31,8 @@ class TableStaticColumns extends Component {
 
   render() {
     const {
-      rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter, toggleDurationFilter,
+      rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter, toggleDurationFilter, toggleJobIdFilter,
+      toggleStartTimeFilter,
     } = this.state;
 
     return (
@@ -37,14 +40,14 @@ class TableStaticColumns extends Component {
         <TableSectionHeader />
         <div className="full-height">
           <div className="job-column-header-container">
-            <JobColumnHeader title="Start Time" className="static-header" />
+            <JobColumnHeader title="Start Time" className="static-header" toggleFilter={toggleStartTimeFilter} />
             <JobColumnHeader
               title="Status"
               isStatus={isStatus}
               className="static-status-header"
               toggleFilter={toggleStatusFilter}
             />
-            <JobColumnHeader title="Job ID" className="static-header" />
+            <JobColumnHeader title="Job ID" className="static-header" toggleFilter={toggleJobIdFilter} />
             <JobColumnHeader title="Duration" className="static-header" toggleFilter={toggleDurationFilter} />
             <JobColumnHeader title="User" className="static-header" toggleFilter={toggleUserFilter} />
           </div>
@@ -70,6 +73,8 @@ TableStaticColumns.propTypes = {
   toggleUserFilter: PropTypes.func,
   toggleStatusFilter: PropTypes.func,
   toggleDurationFilter: PropTypes.func,
+  toggleJobIdFilter: PropTypes.func,
+  toggleStartTimeFilter: PropTypes.func,
 };
 
 TableStaticColumns.defaultProps = {
@@ -78,6 +83,8 @@ TableStaticColumns.defaultProps = {
   toggleUserFilter: () => {},
   toggleStatusFilter: () => {},
   toggleDurationFilter: () => {},
+  toggleJobIdFilter: () => {},
+  toggleStartTimeFilter: () => {},
 };
 
 export default TableStaticColumns;
