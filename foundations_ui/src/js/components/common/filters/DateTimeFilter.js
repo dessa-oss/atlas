@@ -62,6 +62,7 @@ class DateTimeFilter extends Component {
           </button>
         </div>
         <div className="date-time-picker">
+          <div className="i--icon-cal-clock" />
           <Flatpickr
             data-enable-time
             value={startDate}
@@ -70,6 +71,7 @@ class DateTimeFilter extends Component {
         </div>
         <p>and</p>
         <div className="date-time-picker">
+          <div className="i--icon-cal-clock" />
           <Flatpickr
             data-enable-time
             value={endDate}
