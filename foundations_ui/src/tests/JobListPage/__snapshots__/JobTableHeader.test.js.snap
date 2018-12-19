@@ -11,6 +11,11 @@ exports[`Shallow Renders Job Table Header 1`] = `
     className="job-list-container"
   >
     <TableStaticColumns
+      isDurationFiltered={false}
+      isJobIdFiltered={false}
+      isStartTimeFiltered={false}
+      isStatusFiltered={false}
+      isUserFiltered={false}
       jobRows={Array []}
       rowNumbers={Array []}
       toggleDurationFilter={[Function]}
@@ -22,6 +27,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     <InputMetric
       allInputParams={Array []}
       cellWidths={Array []}
+      filters={Array []}
       header="input parameter"
       hiddenInputParams={Array []}
       isMetric={false}
@@ -32,6 +38,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
     <InputMetric
       allInputParams={Array []}
       cellWidths={Array []}
+      filters={Array []}
       header="metrics"
       hiddenInputParams={Array []}
       isMetric={true}

@@ -150,6 +150,12 @@ const time = {
 const dateTime = 'Tue Mar 24 2015 20:00:00 GMT-0400 (Eastern Daylight Time)';
 const singleDigit = '1';
 const doubleDigit = '11';
+const columnFilter = [
+  { column: 'test1' },
+  { column: 'test2' }
+];
+const existingColumn = 'test1';
+const nonExistingColumn = 'not here';
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -632,4 +638,12 @@ it('getTimeForStartTimeBubble', () => {
   expect(bubble).toBe('03/24/15 20:00');
 });
 
-it('isColumnFiltered');
+it('isColumnFiltered, is filtered', () => {
+  const isFiltered = JobActions.isColumnFiltered(columnFilter, existingColumn);
+  expect(isFiltered).toBe(true);
+});
+
+it('isColumnFiltered, not filter', () => {
+  const isFiltered = JobActions.isColumnFiltered(columnFilter, nonExistingColumn);
+  expect(isFiltered).toBe(false);
+});

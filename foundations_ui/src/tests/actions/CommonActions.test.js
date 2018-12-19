@@ -115,6 +115,7 @@ const checkboxes = [
 ];
 const startTime = { 'days': '1', 'hours': '2', 'minutes': '3', 'seconds': '4' };
 const endTime = { 'days': '11', 'hours': '12', 'minutes': '13', 'seconds': '14' };
+const emptyFunc = () => {};
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -153,7 +154,7 @@ it('getTableSectionHeaderText with header', () => {
 });
 
 it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams);
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray);
   expect(headers.length).toBe(2);
 });
 
@@ -230,7 +231,7 @@ it('get InputMetricCellPDivlass error', () => {
 });
 
 it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, hidden);
+  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray);
   expect(headers.length).toBe(2);
 });
 

@@ -34,6 +34,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     boolFilters={Array []}
     containFilters={Array []}
     durationFilters={Array []}
+    filters={Array []}
     hiddenUsers={Array []}
     isLoaded={false}
     isMount={false}
