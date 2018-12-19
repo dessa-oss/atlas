@@ -14,6 +14,7 @@ class DurationFilter extends Component {
     this.onClearFilters = this.onClearFilters.bind(this);
     this.onChangeTime = this.onChangeTime.bind(this);
     this.updateInterval = this.updateInterval.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       startTime: this.props.startTime,
       endTime: this.props.endTime,
@@ -26,8 +27,10 @@ class DurationFilter extends Component {
     const {
       changeHiddenParams, toggleShowingFilter, startTime, endTime,
     } = this.state;
-    changeHiddenParams(startTime, endTime);
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      changeHiddenParams(startTime, endTime);
+      toggleShowingFilter();
+    }
   }
 
   async onCancel() {
@@ -74,8 +77,22 @@ class DurationFilter extends Component {
     }
   }
 
+  isDisabled() {
+    const { startTime, endTime } = this.state;
+    const startNumber = parseInt(`${startTime.days}${startTime.hours}${startTime.minutes}${startTime.seconds}`, 10);
+    const endNumber = parseInt(`${endTime.days}${endTime.hours}${endTime.minutes}${endTime.seconds}`, 10);
+    return startTime.days === '' || startTime.hours === '' || startTime.minutes === '' || startTime.seconds === ''
+      || endTime.days === '' || endTime.hours === '' || endTime.minutes === '' || endTime.seconds === ''
+      || startNumber < 0 || endNumber < 0 || startNumber > endNumber;
+  }
+
   render() {
     const { startTime, endTime } = this.state;
+
+    let applyClass = 'b--mat b--affirmative text-upper';
+    if (this.isDisabled()) {
+      applyClass += ' b--disabled';
+    }
 
     return (
       <div className="filter-container column-filter-container elevation-1 duration-filter-container">
@@ -190,7 +207,7 @@ class DurationFilter extends Component {
         </div>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );
