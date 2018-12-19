@@ -1,3 +1,5 @@
+<h1>Tracking a deployment</h1>
+After deploying the code into the execution environment, user's code can track a deployment through the **DeploymentWrapper** instance returned by the **run()** method of a **StageConnectorWrapper** instance.
 <span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L9)</span>
 ### DeploymentWrapper
 
@@ -97,4 +99,5 @@ Similar to is_job_complete, but with more information
 
 Returns:
 status -- String, which is either "Queued", "Running", "Completed", or "Error"
+
 

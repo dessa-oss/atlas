@@ -24,11 +24,9 @@ EXCLUDE = {
 PAGES = [
     {
         'page': 'ready_code.md',
-        'all_module_classes': [foundations.stage_logging,
-                               foundations.utils],
+        'all_module_classes': [foundations.stage_logging],
         'functions': [
             foundations.stage_logging.log_metric,
-            foundations.utils.split_at,
         ]
     },
     {

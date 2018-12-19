@@ -1,3 +1,5 @@
+<h1>Running stages</h1>
+Once the user has stages defined, it's time to run them in the execution environment. Functions decorated with **create_stage()** return the class **StageConnectorWrapper** which provides the way to deploy user's code to the execution environment and run stages.
 <span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L13)</span>
 ### StageConnectorWrapper
 
@@ -26,3 +28,4 @@ run(self, params_dict=None, job_name=None)
 ```python
 enable_caching(self)
 ```
+
