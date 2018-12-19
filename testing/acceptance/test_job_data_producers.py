@@ -212,7 +212,7 @@ class TestJobDataProducers(unittest.TestCase):
         deployment.wait_for_deployment_to_complete()
 
         state = self._redis.get('jobs:failed_job:state').decode()
-        self.assertEqual('Error', state)
+        self.assertEqual('failed', state)
 
         serialized_error_information = self._redis.get(
             'jobs:failed_job:error_information')
