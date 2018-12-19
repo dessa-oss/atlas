@@ -15,7 +15,7 @@ class StartTimeCell extends Component {
   render() {
     const { date, time, isError } = this.state;
 
-    const errorClass = isError ? 'error' : '';
+    const errorClass = isError ? 'failed' : '';
     const pClass = 'job-cell font-bold start-cell '.concat(errorClass);
     const spanClass = ''.concat(errorClass);
 

@@ -48,7 +48,7 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
         Object {
           "hidden": false,
-          "name": "Processing",
+          "name": "Running",
         },
         Object {
           "hidden": false,

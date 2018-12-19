@@ -99,9 +99,9 @@ class ProjectActions {
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
-    if (status.toLowerCase() === 'running' || status.toLowerCase() === 'processing') {
+    if (status.toLowerCase() === 'running') {
       statusCircle = 'status-yellow';
-    } else if (status.toLowerCase() === 'error') {
+    } else if (status.toLowerCase() === 'failed') {
       statusCircle = 'status-red';
     }
 
@@ -118,7 +118,7 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
-    const letterClass = isError ? 'error' : '';
+    const letterClass = isError ? 'failed' : '';
     const numberClass = isError
       ? 'font-bold error'
       : 'font-bold';
@@ -175,7 +175,7 @@ class ProjectActions {
     }
 
     if (inputParam && columns.includes(inputParam.name)
-    && inputParam.value) {
+      && inputParam.value) {
       return inputParam.value;
     }
     return 'not available';

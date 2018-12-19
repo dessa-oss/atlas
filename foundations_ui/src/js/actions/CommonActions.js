@@ -164,7 +164,7 @@ class CommonActions {
   }
 
   static isError(status) {
-    return status.toLowerCase() === 'error';
+    return status.toLowerCase() === 'failed';
   }
 
   static formatColumns(columns, hiddenInputParams, searchText = '') {
