@@ -11,6 +11,7 @@ class NumberFilter extends Component {
     this.onChangeMin = this.onChangeMin.bind(this);
     this.onChangeMax = this.onChangeMax.bind(this);
     this.onChangeCheckbox = this.onChangeCheckbox.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
@@ -27,8 +28,10 @@ class NumberFilter extends Component {
     const {
       changeHiddenParams, toggleShowingFilter, columnName, minValue, maxValue, hideNotAvailable,
     } = this.state;
-    changeHiddenParams(minValue, maxValue, hideNotAvailable, columnName);
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      changeHiddenParams(minValue, maxValue, hideNotAvailable, columnName);
+      toggleShowingFilter();
+    }
   }
 
   onCancel() {
@@ -53,6 +56,11 @@ class NumberFilter extends Component {
     this.setState({ hideNotAvailable: !hideNotAvailable, showAllFilters: false });
   }
 
+  isDisabled() {
+    const { minValue, maxValue } = this.state;
+    return minValue > maxValue || minValue === '' || maxValue === '';
+  }
+
   render() {
     const {
       minValue, maxValue, hideNotAvailable, showAllFilters, metricClass,
@@ -60,6 +68,11 @@ class NumberFilter extends Component {
 
     const divClass = 'filter-container column-filter-container elevation-1 number-filter-container '
       .concat(metricClass);
+
+    let applyClass = 'b--mat b--affirmative text-upper';
+    if (this.isDisabled()) {
+      applyClass += ' b--disabled';
+    }
 
     return (
       <div className={divClass}>
@@ -105,7 +118,7 @@ class NumberFilter extends Component {
 
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );
