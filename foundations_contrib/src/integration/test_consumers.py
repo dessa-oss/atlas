@@ -173,7 +173,7 @@ class TestConsumers(unittest.TestCase):
         current_time = time()
 
         state = self._redis.get('jobs:{}:state'.format(job_id))
-        self.assertEqual(b'Error', state)
+        self.assertEqual(b'failed', state)
 
         error_information_key = 'jobs:{}:error_information'.format(job_id)
         state = self._get_and_deserialize(error_information_key)
