@@ -53,7 +53,7 @@ class DateTimeFilter extends Component {
 
   isDisabled() {
     const { startDate, endDate } = this.state;
-    return startDate > endDate;
+    return startDate > endDate || startDate === null || endDate === null;
   }
 
   render() {
