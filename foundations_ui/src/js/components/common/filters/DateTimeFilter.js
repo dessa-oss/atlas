@@ -9,6 +9,7 @@ class DateTimeFilter extends Component {
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
     this.onChangeDateTime = this.onChangeDateTime.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
@@ -23,8 +24,10 @@ class DateTimeFilter extends Component {
     const {
       changeHiddenParams, toggleShowingFilter, startDate, endDate,
     } = this.state;
-    changeHiddenParams(startDate, endDate);
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      changeHiddenParams(startDate, endDate);
+      toggleShowingFilter();
+    }
   }
 
   async onCancel() {
@@ -46,6 +49,11 @@ class DateTimeFilter extends Component {
     } else {
       await this.setState({ endDate: new Date(e[0]) });
     }
+  }
+
+  isDisabled() {
+    const { startDate, endDate } = this.state;
+    return startDate > endDate;
   }
 
   render() {
@@ -83,6 +91,11 @@ class DateTimeFilter extends Component {
       );
     }
 
+    let applyClass = 'b--mat b--affirmative text-upper';
+    if (this.isDisabled()) {
+      applyClass += ' b--disabled';
+    }
+
     return (
       <div className="filter-container column-filter-container elevation-1 datetime-filter-container">
         <div className="column-filter-header">
@@ -116,7 +129,7 @@ class DateTimeFilter extends Component {
         </div>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );
