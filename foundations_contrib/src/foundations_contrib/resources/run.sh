@@ -40,7 +40,7 @@ else
   activate_path=venv/Scripts/activate
 fi
 
-if [ "${offline_mode}" != "OFFLINE" ]; then
+if [[ -z "${offline_mode}" ]]; then
   with_output_redirect echo "Checking for internet connection..."
   with_output_redirect ping -c 3 4.2.2.1
 
@@ -52,6 +52,8 @@ fi
 if [ "${offline_mode}" = "OFFLINE" ]; then
   echo "No internet connection - using system packages only." >&2
   pip_options="${pip_options} --no-index"
+else
+  echo "Internet connection detected, running in online mode." >&2
 fi
 
 cd $BASEDIR && \
