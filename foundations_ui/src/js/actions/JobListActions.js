@@ -101,7 +101,7 @@ class ProjectActions {
 
     if (status.toLowerCase() === 'running') {
       statusCircle = 'status-yellow';
-    } else if (status.toLowerCase() === 'failed') {
+    } else if (CommonActions.isError(status)) {
       statusCircle = 'status-red';
     }
 
@@ -118,7 +118,7 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
-    const letterClass = isError ? 'failed' : '';
+    const letterClass = CommonActions.errorStatus(isError);
     const numberClass = isError
       ? 'font-bold error'
       : 'font-bold';

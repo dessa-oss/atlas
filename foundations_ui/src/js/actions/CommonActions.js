@@ -167,6 +167,10 @@ class CommonActions {
     return status.toLowerCase() === 'failed';
   }
 
+  static errorStatus(isError) {
+    return isError ? 'failed' : '';
+  }
+
   static formatColumns(columns, hiddenInputParams, searchText = '') {
     const formatedColumns = [];
     if (columns !== null) {

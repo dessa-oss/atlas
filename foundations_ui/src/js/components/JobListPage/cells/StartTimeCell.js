@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobActions from '../../../actions/JobListActions';
+import CommonActions from '../../../actions/CommonActions';
 
 class StartTimeCell extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class StartTimeCell extends Component {
   render() {
     const { date, time, isError } = this.state;
 
-    const errorClass = isError ? 'failed' : '';
+    const errorClass = CommonActions.errorStatus(isError);
     const pClass = 'job-cell font-bold start-cell '.concat(errorClass);
     const spanClass = ''.concat(errorClass);
 
