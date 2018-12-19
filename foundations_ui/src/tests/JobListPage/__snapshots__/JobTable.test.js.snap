@@ -15,6 +15,7 @@ exports[`Shallow Renders Job Table 1`] = `
       boolFilters={Array []}
       containFilters={Array []}
       durationFilters={Array []}
+      filters={Array []}
       hiddenUsers={Array []}
       isShowingBooleanFilter={false}
       isShowingContainsFilter={false}

@@ -14,12 +14,21 @@ class JobColumnHeader extends Component {
       toggleFilter: this.props.toggleFilter,
       colType: this.props.colType,
       isMetric: this.props.isMetric,
+      isFiltered: this.props.isFiltered,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        isFiltered: nextProps.isFiltered,
+      },
+    );
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
@@ -27,6 +36,7 @@ class JobColumnHeader extends Component {
     const presentationClassName = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
 
     const tooltip = <Tooltip message={title} />;
+    const filterIcon = isFiltered ? <div className="i--icon-filtered" /> : null;
 
     return (
       <div
@@ -40,7 +50,9 @@ class JobColumnHeader extends Component {
             {title}
           </h4>
           {tooltip}
-          <div className="icon-container" />
+          <div className="icon-container">
+            {filterIcon}
+          </div>
           <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className={presentationClassName}>
             <div id={title} className={arrowClassName} />
           </div>
@@ -58,6 +70,7 @@ JobColumnHeader.propTypes = {
   toggleFilter: PropTypes.func,
   colType: PropTypes.string,
   isMetric: PropTypes.bool,
+  isFiltered: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -68,6 +81,7 @@ JobColumnHeader.defaultProps = {
   toggleFilter: () => {},
   colType: 'string',
   isMetric: false,
+  isFiltered: false,
 };
 
 export default JobColumnHeader;

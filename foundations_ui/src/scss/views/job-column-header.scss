@@ -78,10 +78,16 @@
 
     .icon-container {
       width: 25%;
+
+      .i--icon-filtered {
+        position: relative;
+        left: -5px;
+      }
     }
 
-    .arrow-continer {
-      width: 75%;
+    .arrow-down {
+      position: relative;
+      left: 10px;
     }
   }
 }

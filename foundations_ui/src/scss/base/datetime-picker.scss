@@ -2,6 +2,7 @@
 // the css file directly in our DateTimeFilter component
 
 .flatpickr-calendar {
+  height: fit-content;
   background: transparent;
   opacity: 0;
   display: none;
@@ -726,6 +727,21 @@ span.flatpickr-weekday {
 .flatpickr-time .flatpickr-am-pm:focus {
   background: #efefef;
 }
+
+.flatpickr-input {
+  @extend .f--din;
+  box-sizing: border-box;
+  position: relative;
+  background-color: white;
+  padding: 10px 10px 10px 10px;
+  font-size: 14px;
+  border-radius: 0;
+  border: 1px solid $color-border-bottom;
+  cursor: pointer;
+  height: 38px;
+  outline-width: 2px;
+}
+
 .flatpickr-input[readonly] {
   cursor: pointer;
 }

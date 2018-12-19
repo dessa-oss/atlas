@@ -672,6 +672,13 @@ class ProjectActions {
     return `${this.prependZero(date.getMonth() + 1)}/${this.prependZero(date.getDate())}/`
     + `${year} ${this.prependZero(date.getHours())}:${this.prependZero(date.getMinutes())}`;
   }
+
+  static isColumnFiltered(filteredArray, columnName) {
+    const filteredArrayMapped = filteredArray.map((filter) => {
+      return filter.column;
+    });
+    return filteredArrayMapped.includes(columnName);
+  }
 }
 
 export default ProjectActions;

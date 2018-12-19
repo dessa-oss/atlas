@@ -63,19 +63,20 @@
 
 .magnifying-glass
 {
-  font-size: 1.2em;
-  width: 0.4em;
-  height: 0.4em;
-  border: 0.1em solid $color-white;
+  font-size: 1.15em;
+  width: 0.5em;
+  height: 0.5em;
+  border: 0.1em solid #FFFFFF;
   position: relative;
   border-radius: 0.35em;
+  margin: 0px;
 }
 .magnifying-glass::before
 {
  content: "";
  display: inline-block;
  position: absolute;
- right: -0.25em;
+ right: -0.3em;
  bottom: -0.1em;
  border-width: 0;
  background: $color-white;
