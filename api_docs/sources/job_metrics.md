@@ -10,11 +10,14 @@ get_metrics_for_all_jobs(project_name)
 ```
 
 
-Returns metrics for all jobs for a given project
 
-Arguments:
-project_name {str} -- Name of the project to filter by
+Returns metrics for all jobs for a given project.
 
-Returns:
-[pandas.DataFrame] -- Pandas DataFrame containing all of the results
+__Arguments__
+
+- __project_name__ (str): Name of the project to filter by.
+
+__Returns__
+
+A Pandas DataFrame containing all of the results.
 

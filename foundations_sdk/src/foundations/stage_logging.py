@@ -12,4 +12,11 @@ stage_logging_context = StageLoggingContext(NullStageLogger())
 
 
 def log_metric(key, value):
+    """
+    Generate output metrics for the stage where it is called.
+
+    # Arguments
+        key (string): the name of the output metric.
+        value (any type): the value associated with the given output metric.
+    """
     stage_logging_context.log_metric(key, value)

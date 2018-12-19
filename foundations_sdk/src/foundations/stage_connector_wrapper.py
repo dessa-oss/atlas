@@ -52,6 +52,9 @@ class StageConnectorWrapper(object):
         return self
 
     def enable_caching(self):
+        """
+        Activates caching of all input parameters for this stage.
+        """
         self._stage_config.enable_caching()
         for argument in self._stage.stage_args():
             argument.enable_caching()
@@ -64,6 +67,15 @@ class StageConnectorWrapper(object):
         return self
 
     def run(self, params_dict=None, job_name=None, **kw_params):
+        """
+        Deploys and runs the current stage and the stages on which it depends in the configured execution
+        environment, creating a new job in the process.
+
+        # Arguments
+            params_dict (dictionary): parameters?.
+            job_name (string): the name of the job that would be created.
+            kw_params (extra keyword arguments): more params?.
+        """
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
         from foundations import log_manager

@@ -9,3 +9,12 @@ When using Foundations, user's code can take advantage of these useful functions
 log_metric(key, value)
 ```
 
+
+
+Generate output metrics for the stage where it is called.
+
+__Arguments__
+
+- __key__ (string): the name of the output metric.
+- __value__ (any type): the value associated with the given output metric.
+

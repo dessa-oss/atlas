@@ -5,16 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def create_stage(function):
-    """Take in a function and returns a method capable of generating stages
-    
-    Arguments:
-        function {callable} -- Function to wrap
-    
-    Returns:
-        callable -- Stage generator
-    """
 
+def create_stage(function):
+    """
+    Transforms any Python function into a callable that represents a stage in Foundations.
+
+    # Arguments
+        function (callable): Function to wrap.
+
+    # Returns
+        A callable that when executed returns a stage object.
+    """
 
     def stage(*args, **kwargs):
         from foundations.global_state import foundations_context
