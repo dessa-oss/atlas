@@ -12,27 +12,24 @@ def _pick_module():
         import pickle
     return pickle
 
-def serialize(item):
-    pickle = _pick_module()
-    return pickle.dumps(item, protocol=2)
+pickle = _pick_module()
 
+def serialize(item):
+    return pickle.dumps(item, protocol=2)
 
 def deserialize(serialized_item):
     try:
-        pickle = _pick_module()
         return None if serialized_item is None else pickle.loads(serialized_item)
     except ValueError:
         return None
 
 
 def serialize_to_file(item, file):
-    pickle = _pick_module()
     return pickle.dump(item, file, protocol=2)
 
 
 def deserialize_from_file(file):
     try:
-        pickle = _pick_module()
         return None if file is None else pickle.load(file)
     except ValueError:
         return None

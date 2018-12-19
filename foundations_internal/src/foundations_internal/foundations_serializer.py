@@ -1,4 +1,5 @@
 import foundations_internal.fast_serializer as pickle_serializer
+from foundations.utils import string_from_bytes
 import json
 
 HEADER_MAGIC = b'FNDS'
@@ -9,7 +10,6 @@ def serialize(value):
 dumps = serialize
 
 def deserialize(serialized_value):
-    from foundations.utils import string_from_bytes
 
     if serialized_value is None:
         return None
