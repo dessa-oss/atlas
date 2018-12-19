@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_rest_api.v2beta.models.extract_type import extract_type
 
 class InputParameterFormatter(object):
 
@@ -14,17 +15,18 @@ class InputParameterFormatter(object):
         self._job_parameters = job_parameters
 
     def format_input_parameters(self):
-        formatted_input_parameters = []
+        return list(self._valid_parameter_infos())
 
+    def _valid_parameter_infos(self):
+        for param in self._parameter_infos():
+            if not self._contains_split_at(param):
+                yield param
+    
+    def _parameter_infos(self):
         for param in self._input_parameters:
-            self._append_parameter_info(
-                param, formatted_input_parameters, self._stage_rank)
+            yield self._get_parameter_info(param, self._stage_rank)
 
-        return formatted_input_parameters
-
-    def _append_parameter_info(self, param, formatted_input_parameters, stage_rank):
-        from foundations_rest_api.v2beta.models.extract_type import extract_type
-
+    def _get_parameter_info(self, param, stage_rank):
         param_name = self._index_input_param(param, stage_rank)
         param_value, param_source = self._evaluate_input_param_value(
             param, stage_rank)
@@ -34,15 +36,12 @@ class InputParameterFormatter(object):
             value_type = 'string'
             param_value = type(param_value).__name__
 
-        input_param = {
+        return {
             'name': param_name,
             'value': param_value,
             'type': value_type,
             'source': param_source
         }
-
-        if not self._contains_split_at(input_param):
-            formatted_input_parameters.append(input_param)
 
     def _contains_split_at(self, input_param):
         if input_param['type'] == 'string':
