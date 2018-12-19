@@ -9,11 +9,16 @@ class DateTimeFilter extends Component {
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
     this.onChangeDateTime = this.onChangeDateTime.bind(this);
+    this.onPickerClose = this.onPickerClose.bind(this);
+    this.onPickerOpen = this.onPickerOpen.bind(this);
+    this.openClosePicker = this.openClosePicker.bind(this);
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
       startDate: this.props.startDate,
       endDate: this.props.endDate,
+      isStartPickerOpen: false,
+      isEndPickerOpen: false,
     };
   }
 
@@ -46,8 +51,72 @@ class DateTimeFilter extends Component {
     }
   }
 
+  async onPickerClose(isStartPicker) {
+    if (isStartPicker) {
+      await this.setState({ isStartPickerOpen: false });
+    } else {
+      await this.setState({ isEndPickerOpen: false });
+    }
+  }
+
+  async onPickerOpen(isStartPicker) {
+    if (isStartPicker) {
+      await this.setState({ isStartPickerOpen: true });
+    } else {
+      await this.setState({ isEndPickerOpen: true });
+    }
+  }
+
+  async openClosePicker(isStartPicker, isOpening) {
+    let picker = this.endPicker;
+    if (isStartPicker) {
+      picker = this.startPicker;
+    }
+
+    if (isOpening) {
+      await picker.flatpickr.open();
+    }
+  }
+
   render() {
-    const { startDate, endDate } = this.state;
+    const {
+      startDate, endDate, isStartPickerOpen, isEndPickerOpen,
+    } = this.state;
+
+    let startCalButton = (
+      <div
+        className="i--icon-cal-clock"
+        role="presentation"
+        onClick={() => { this.onPickerOpen(true); this.openClosePicker(true, true); }}
+      />
+    );
+    if (isStartPickerOpen) {
+      startCalButton = (
+        <div
+          className="i--icon-cal-clock"
+          style={{ 'background-color': 'red' }}
+          role="presentation"
+          onClick={() => { this.onPickerClose(true); this.openClosePicker(true, false); }}
+        />
+      );
+    }
+
+    let endCalButton = (
+      <div
+        className="i--icon-cal-clock"
+        role="presentation"
+        onClick={() => { this.onPickerOpen(false); this.openClosePicker(false, true); }}
+      />
+    );
+    if (isEndPickerOpen) {
+      endCalButton = (
+        <div
+          className="i--icon-cal-clock"
+          role="presentation"
+          onClick={() => { this.onPickerClose(false); this.openClosePicker(false, false); }}
+        />
+      );
+    }
 
     return (
       <div className="filter-container column-filter-container elevation-1 datetime-filter-container">
@@ -62,20 +131,30 @@ class DateTimeFilter extends Component {
           </button>
         </div>
         <div className="date-time-picker">
-          <div className="i--icon-cal-clock" />
+          {startCalButton}
           <Flatpickr
+            // options={{ clickOpens: false }}
             data-enable-time
+            id="start-flatpicker"
+            ref={(startPicker) => { this.startPicker = startPicker; }}
             value={startDate}
             onChange={(e) => { this.onChangeDateTime(e, true); }}
+            onClose={() => { this.onPickerClose(true); }}
+            onOpen={() => { }}
+            onClick={() => {}}
           />
         </div>
         <p>and</p>
         <div className="date-time-picker">
-          <div className="i--icon-cal-clock" />
+          {endCalButton}
           <Flatpickr
             data-enable-time
             value={endDate}
+            id="end-flatpicker"
+            ref={(endPicker) => { this.endPicker = endPicker; }}
             onChange={(e) => { this.onChangeDateTime(e, false); }}
+            onClose={() => { this.onPickerClose(false); }}
+            onOpen={() => { this.onPickerOpen(false); }}
           />
         </div>
         <div className="column-filter-buttons">
@@ -94,6 +173,8 @@ DateTimeFilter.propTypes = {
   hiddenInputParams: PropTypes.array,
   startDate: PropTypes.object,
   endDate: PropTypes.object,
+  isStartPickerOpen: PropTypes.bool,
+  isEndPickerOpen: PropTypes.bool,
 };
 
 DateTimeFilter.defaultProps = {
@@ -103,6 +184,8 @@ DateTimeFilter.defaultProps = {
   hiddenInputParams: [],
   startDate: null,
   endDate: null,
+  isStartPickerOpen: false,
+  isEndPickerOpen: false,
 };
 
 export default DateTimeFilter;

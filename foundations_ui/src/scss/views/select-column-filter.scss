@@ -116,11 +116,17 @@
 
       input {
         display: inline-block;
-        width: calc(100% - #{$icon-cal-size} - #{$margin-width});
+        width: 100%;
         vertical-align: top;
-        margin-left: $margin-width;
+        margin-left: -#{$icon-cal-size};
+        padding-left: calc(#{$icon-cal-size} + #{$margin-width});
+        background: transparent;
       }
     }
+  }
+
+  &.job-id-filter-container {
+    width: 380px;
   }
   
   &.duration-filter-container {
@@ -144,6 +150,7 @@
         width: 40px;
         text-align: right;
         font-style: italic;
+        color: $color-label-placeholder;
       }
     }
   }
