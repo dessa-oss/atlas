@@ -146,7 +146,16 @@ const time = {
   'hours': '2',
   'minutes': '3',
   'seconds': '4'
-}
+};
+const dateTime = 'Tue Mar 24 2015 20:00:00 GMT-0400 (Eastern Daylight Time)';
+const singleDigit = '1';
+const doubleDigit = '11';
+const columnFilter = [
+  { column: 'test1' },
+  { column: 'test2' }
+];
+const existingColumn = 'test1';
+const nonExistingColumn = 'not here';
 
 it('getDateDiff', () => {
   const now = Date.now();
@@ -382,13 +391,13 @@ it('getBaseJobListingURL', () => {
 });
 
 it('getFilterURL only 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Running,Error');
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  expect(URL).toBe('status=Processing,Error');
 });
 
 it('getFilterURL more than 1 type', () => {
-  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Running,Error&user=hidden1,hidden2');
+  const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -402,7 +411,7 @@ it('areStatusesHidden not hidden', () => {
 });
 
 it('getAllFilters', () => {
-  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  const updatedFilters = JobActions.getAllFilters(hiddenStatusFilter, allUsers, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(updatedFilters.length).toBe(6);
 
 });
@@ -600,11 +609,43 @@ it('getTimeForDurationBubble', () => {
 });
 
 it('areNoFilters, no filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(noFilters).toBe(true);
 });
 
 it('areNoFilters, has filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters, emptyFilters);
   expect(noFilters).toBe(false);
+});
+
+// Pending cause of Jenkins Timezone UTC vs EST issue
+xit('getTimeForStartTimeURL', () => {
+  const newURL = JobActions.getTimeForStartTimeURL(dateTime);
+  expect(newURL).toBe('03_24_2015_20_00');
+});
+
+it('prependZero, single digit', () =>{
+  const newDigit = JobActions.prependZero(singleDigit);
+  expect(newDigit).toBe('01');
+});
+
+it('prependZero, 2 digit', () => {
+  const newDigit = JobActions.prependZero(doubleDigit);
+  expect(newDigit).toBe('11');
+});
+
+// Pending cause of Jenkins Timezone UTC vs EST issue
+xit('getTimeForStartTimeBubble', () => {
+  const bubble = JobActions.getTimeForStartTimeBubble(dateTime);
+  expect(bubble).toBe('03/24/15 20:00');
+});
+
+it('isColumnFiltered, is filtered', () => {
+  const isFiltered = JobActions.isColumnFiltered(columnFilter, existingColumn);
+  expect(isFiltered).toBe(true);
+});
+
+it('isColumnFiltered, not filter', () => {
+  const isFiltered = JobActions.isColumnFiltered(columnFilter, nonExistingColumn);
+  expect(isFiltered).toBe(false);
 });

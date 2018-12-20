@@ -115,6 +115,9 @@ const checkboxes = [
 ];
 const startTime = { 'days': '1', 'hours': '2', 'minutes': '3', 'seconds': '4' };
 const endTime = { 'days': '11', 'hours': '12', 'minutes': '13', 'seconds': '14' };
+const emptyFunc = () => {};
+const disabled = () => { return true; };
+const notDisabled = () => { return false; };
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -153,7 +156,7 @@ it('getTableSectionHeaderText with header', () => {
 });
 
 it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams);
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray);
   expect(headers.length).toBe(2);
 });
 
@@ -230,7 +233,7 @@ it('get InputMetricCellPDivlass error', () => {
 });
 
 it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, hidden);
+  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray);
   expect(headers.length).toBe(2);
 });
 
@@ -370,9 +373,19 @@ it('getBoolFilters, non existing column', () => {
 });
 
 it('getDurationFilters', () => {
-  const newFilters = CommonActions.getDurationFilters(startTime, endTime);
+  const newFilters = CommonActions.getDurationFilters(startTime, endTime, 'Duration');
   expect(newFilters.length).toBe(1);
   expect(newFilters[0].startTime).not.toBe(null);
   expect(newFilters[0].endTime).not.toBe(null);
   expect(newFilters[0].columnName).toBe('Duration');
+});
+
+it('getApplyClass, not disabled', () => {
+  const applyClass = CommonActions.getApplyClass(notDisabled);
+  expect(applyClass).toBe('b--mat b--affirmative text-upper');
+});
+
+it('getApplyClass, disabled', () => {
+  const applyClass = CommonActions.getApplyClass(disabled);
+  expect(applyClass).toBe('b--mat b--affirmative text-upper b--disabled');
 });

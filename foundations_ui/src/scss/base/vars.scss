@@ -12,7 +12,7 @@ $one-third-width: 33%;
 // Job Table Vars
 $row-height: 35px;
 $table-section-width: 33.3%;
-$status-cell-width: 25px;
+$status-cell-width: 30px;
 $overview-content-margin-horizontal: 40px;
 $standard-header-padding: 8px;
 $standard-cell-padding: 5px;
@@ -29,7 +29,8 @@ $column-header-height: 53px;
 $metric-header-height: 36px;
 $static-status-width: 34px;
 $static-column-header-text-width: 80px;
-$table-row-width: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+$table-row-height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
+$table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$pagination-height});
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
 $number-sections: 3;
 
@@ -46,3 +47,4 @@ $status-filter-top: calc(#{$metric-header-height} + #{$column-header-height});
 $header-filter-height: 45px;
 $filter-body-height: 45px;
 $duration-filter-left: calc((#{$standard-cell-width} * 2 ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin} * 4));
+$job-id-filter-left: calc((#{$standard-cell-width} ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin}));

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
+const numCheckboxes = 2;
+
 class BooleanFilter extends Component {
   constructor(props) {
     super(props);
@@ -10,6 +12,7 @@ class BooleanFilter extends Component {
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       changeHiddenParams: this.props.changeHiddenParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
@@ -25,8 +28,10 @@ class BooleanFilter extends Component {
     const {
       changeHiddenParams, toggleShowingFilter, changedParams, columnName,
     } = this.state;
-    changeHiddenParams(changedParams, columnName);
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      changeHiddenParams(changedParams, columnName);
+      toggleShowingFilter();
+    }
   }
 
   onCancel() {
@@ -50,6 +55,11 @@ class BooleanFilter extends Component {
     this.setState({ changedParams: copyArray });
   }
 
+  isDisabled() {
+    const { changedParams } = this.state;
+    return changedParams.length >= numCheckboxes;
+  }
+
   render() {
     const {
       metricClass, isStatusCheckbox, showAllFilters, columns,
@@ -61,6 +71,8 @@ class BooleanFilter extends Component {
 
     const divClass = 'filter-container column-filter-container elevation-1 boolean-filter-container '
       .concat(metricClass);
+
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className={divClass}>
@@ -78,7 +90,7 @@ class BooleanFilter extends Component {
         </div>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );

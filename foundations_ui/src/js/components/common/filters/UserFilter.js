@@ -13,6 +13,7 @@ class SelectColumnFilter extends Component {
     this.updateSearchText = this.updateSearchText.bind(this);
     this.submitSearchText = this.submitSearchText.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
@@ -36,10 +37,12 @@ class SelectColumnFilter extends Component {
     const {
       changeHiddenParams, changedParams, toggleShowingFilter, searchUserFilter,
     } = this.state;
-    this.setState({ searchText: '' });
-    changeHiddenParams(changedParams);
-    searchUserFilter('');
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      this.setState({ searchText: '' });
+      changeHiddenParams(changedParams);
+      searchUserFilter('');
+      toggleShowingFilter();
+    }
   }
 
   onCancel() {
@@ -76,6 +79,11 @@ class SelectColumnFilter extends Component {
     searchUserFilter(searchText);
   }
 
+  isDisabled() {
+    const { columns, changedParams } = this.state;
+    return changedParams.length >= columns.length;
+  }
+
   render() {
     const { columns, showAllFilters, changedParams } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
@@ -83,6 +91,8 @@ class SelectColumnFilter extends Component {
     );
 
     const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
+
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <CheckboxFilter
@@ -93,6 +103,7 @@ class SelectColumnFilter extends Component {
         onClearFilters={this.onClearFilters}
         input={input}
         addedClass="user-filter-container"
+        applyClass={applyClass}
       />);
   }
 }

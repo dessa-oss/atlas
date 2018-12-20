@@ -4,9 +4,14 @@
   vertical-align: middle;
   border-bottom: 1px solid $color-border-bottom;
   width: 100%;
-  height: $table-row-width;
+  height: $table-row-height;
   overflow: scroll;
   
+  //this will hide the scrollbars
+  padding-right: 17px;
+  box-sizing: content-box;
+  margin-left: -17px;
+
   .job-cell:first-child() {
     border-left: 1px solid $color-border-bottom;
   }
@@ -35,6 +40,10 @@
   text-align: center;
   height: $row-number-height;
   overflow-y: scroll;
+
+  // this will hide the scrollbar
+  padding-right: 17px;
+  box-sizing: content-box;
   p {
     color: $color-9c-grey;
     height: $row-height;
