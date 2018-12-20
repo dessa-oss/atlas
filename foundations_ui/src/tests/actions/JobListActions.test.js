@@ -609,12 +609,12 @@ it('getTimeForDurationBubble', () => {
 });
 
 it('areNoFilters, no filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
   expect(noFilters).toBe(true);
 });
 
 it('areNoFilters, has filters', () => {
-  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters, emptyFilters);
+  const noFilters = JobActions.areNoFilters(emptyFilters, emptyFilters, emptyFilters, emptyFilters, hiddenBoolFilter, emptyFilters, emptyFilters, emptyFilters);
   expect(noFilters).toBe(false);
 });
 

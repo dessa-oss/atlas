@@ -389,3 +389,9 @@ it('getApplyClass, disabled', () => {
   const applyClass = CommonActions.getApplyClass(disabled);
   expect(applyClass).toBe('b--mat b--affirmative text-upper b--disabled');
 });
+
+it('getInputMetricFilterLeft', () => {
+  const emptyString = '';
+  const left = CommonActions.getInputMetricFilterLeft(emptyString);
+  expect(left).toBe(null);
+});

@@ -84,8 +84,10 @@ class BooleanFilter extends Component {
 
     const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
+    const style = CommonActions.getInputMetricFilterLeft(metricClass);
+
     return (
-      <div className={divClass}>
+      <div className={divClass} style={style}>
         <div className="column-filter-header">
           <button
             type="button"

@@ -275,6 +275,21 @@ class CommonActions {
     return applyClass;
   }
 
+  static getInputMetricFilterLeft(metricClass) {
+    let style = null;
+    const inputBorder = 3;
+    if (metricClass === 'is-metric') {
+      if (document.getElementsByClassName('job-static-columns-container').length > 1) {
+        const staticColumnLeft = document.getElementsByClassName('job-static-columns-container')[0].clientWidth;
+        const inputParamLeft = document.getElementsByClassName('job-static-columns-container')[1].clientWidth;
+
+        const filterLeft = staticColumnLeft + inputParamLeft + inputBorder;
+        style = { left: filterLeft };
+      }
+    }
+    return style;
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {
