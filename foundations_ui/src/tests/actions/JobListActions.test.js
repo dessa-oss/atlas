@@ -392,12 +392,12 @@ it('getBaseJobListingURL', () => {
 
 it('getFilterURL only 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error');
+  expect(URL).toBe('status=Processing,Failed');
 });
 
 it('getFilterURL more than 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
+  expect(URL).toBe('status=Processing,Failed&user=hidden1,hidden2');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -449,7 +449,7 @@ it('getFilterObject', () => {
 
 it('addStatusToURLNotHidden, not hidden', () => {
   const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
-  expect(updatedUrl).toBe('localhost/status=Error');
+  expect(updatedUrl).toBe('localhost/status=Failed');
 });
 
 it('addStatusToURLNotHidden, hidden', () => {
