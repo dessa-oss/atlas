@@ -52,7 +52,7 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
         Object {
           "hidden": false,
-          "name": "Error",
+          "name": "Failed",
         },
       ]
     }
