@@ -13,6 +13,7 @@ class CheckboxFilter extends Component {
       input: this.props.input,
       addedClass: this.props.addedClass,
       applyClass: this.props.applyClass,
+      onHideAll: this.props.onHideAll,
     };
   }
 
@@ -22,7 +23,7 @@ class CheckboxFilter extends Component {
 
   render() {
     const {
-      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input, addedClass, applyClass,
+      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input, addedClass, applyClass, onHideAll,
     } = this.state;
 
     const divClass = 'filter-container column-filter-container elevation-1 '.concat(addedClass);
@@ -42,7 +43,7 @@ class CheckboxFilter extends Component {
           <div className="column-control-buttons">
             <button
               type="button"
-              onClick={onClearFilters}
+              onClick={onHideAll}
               className="b--mat b--negation text-upper"
             >
             SELECT NONE
@@ -77,6 +78,7 @@ CheckboxFilter.propTypes = {
   input: PropTypes.object,
   addedClass: PropTypes.string,
   applyClass: PropTypes.string,
+  onHideAll: PropTypes.func,
 };
 
 CheckboxFilter.defaultProps = {
@@ -88,6 +90,7 @@ CheckboxFilter.defaultProps = {
   input: null,
   addedClass: '',
   applyClass: 'b--mat b--affirmative text-upper',
+  onHideAll: () => {},
 };
 
 export default CheckboxFilter;

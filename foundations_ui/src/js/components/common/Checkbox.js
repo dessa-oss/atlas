@@ -11,6 +11,7 @@ class Checkbox extends Component {
       changeHiddenParams: this.props.changeHiddenParams,
       unsetClearFilters: this.props.unsetClearFilters,
       statusCircle: this.props.statusCircle,
+      unsetHideFilters: this.props.unsetHideFilters,
     };
   }
 
@@ -18,15 +19,19 @@ class Checkbox extends Component {
     if (nextProps.showAllFilters) {
       this.setState({ hidden: false });
     }
+    if (nextProps.hideAllFilters) {
+      this.setState({ hidden: true });
+    }
   }
 
   onChange() {
     const {
-      hidden, changeHiddenParams, name, unsetClearFilters,
+      hidden, changeHiddenParams, name, unsetClearFilters, unsetHideFilters,
     } = this.state;
     this.setState({ hidden: !hidden });
     changeHiddenParams(name);
     unsetClearFilters();
+    unsetHideFilters();
   }
 
   render() {
@@ -63,6 +68,8 @@ Checkbox.propTypes = {
   showAllFilters: PropTypes.bool,
   unsetClearFilters: PropTypes.func,
   statusCircle: PropTypes.string,
+  hideAllFilters: PropTypes.bool,
+  unsetHideFilters: PropTypes.func,
 };
 
 Checkbox.defaultProps = {
@@ -72,6 +79,8 @@ Checkbox.defaultProps = {
   showAllFilters: false,
   unsetClearFilters: () => {},
   statusCircle: null,
+  hideAllFilters: false,
+  unsetHideFilters: () => {},
 };
 
 export default Checkbox;
