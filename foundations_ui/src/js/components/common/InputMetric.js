@@ -49,7 +49,12 @@ class InputMetric extends Component {
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
-    const rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+
+    if (rows === null) {
+      rows = [];
+      rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+    }
 
     return (
       <div className="job-static-columns-container">
