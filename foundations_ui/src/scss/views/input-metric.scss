@@ -26,6 +26,10 @@
   overflow-y: scroll;
   width: fit-content;
 
+  .empty-columns-message {
+    padding-left: calc(2 * #{$margin-width});
+  }
+
   &.column-header {
     height: $column-header-height;
   }
