@@ -1,7 +1,8 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: $table-section-width;
+  min-width: $min-metric-param-columns-container;
+  max-width: $table-section-width;
   height: 100%;
   white-space: nowrap;
   margin: 0px;
@@ -16,6 +17,7 @@
   overflow-x: scroll;
   border-left: 4px solid $color-border-bottom;
   position: relative;
+  margin-right: -6px;
 }
 
 .input-metric-column-container {

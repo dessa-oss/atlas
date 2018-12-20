@@ -44,7 +44,14 @@ class CheckboxFilter extends Component {
             onClick={onClearFilters}
             className="b--mat b--affirmative text-upper float-right"
           >
-          Clear Filters
+          SELECT ALL
+          </button>
+          <button
+            type="button"
+            onClick={onClearFilters}
+            className="b--mat b--negation text-upper float-right"
+          >
+          SELECT NONE
           </button>
         </div>
         <div className="column-filter-list">
