@@ -8,8 +8,8 @@ import JobActions from '../../actions/JobListActions';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
-  { name: 'Processing', hidden: false },
-  { name: 'Error', hidden: false },
+  { name: 'Running', hidden: false },
+  { name: 'Failed', hidden: false },
 ];
 
 const baseBoolCheckboxes = [
@@ -27,8 +27,8 @@ class JobListPage extends Component {
       filters: [],
       statuses: [
         { name: 'Completed', hidden: false },
-        { name: 'Processing', hidden: false },
-        { name: 'Error', hidden: false },
+        { name: 'Running', hidden: false },
+        { name: 'Failed', hidden: false },
       ],
       jobs: [],
       allUsers: [],

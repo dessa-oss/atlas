@@ -102,9 +102,9 @@ class ProjectActions {
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
-    if (status.toLowerCase() === 'running' || status.toLowerCase() === 'processing') {
+    if (status.toLowerCase() === 'running') {
       statusCircle = 'status-yellow';
-    } else if (status.toLowerCase() === 'error') {
+    } else if (CommonActions.isError(status)) {
       statusCircle = 'status-red';
     }
 
@@ -121,7 +121,7 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
-    const letterClass = isError ? 'error' : '';
+    const letterClass = CommonActions.errorStatus(isError);
     const numberClass = isError
       ? 'font-bold error'
       : 'font-bold';
@@ -178,7 +178,7 @@ class ProjectActions {
     }
 
     if (inputParam && columns.includes(inputParam.name)
-    && inputParam.value) {
+      && inputParam.value) {
       return inputParam.value;
     }
     return 'not available';

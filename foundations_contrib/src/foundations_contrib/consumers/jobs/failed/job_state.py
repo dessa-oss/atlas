@@ -25,4 +25,4 @@ class JobState(PropertySetter):
         return 'state'
 
     def _property_value(self, message, timestamp, meta_data):
-        return 'Error'
+        return 'failed'

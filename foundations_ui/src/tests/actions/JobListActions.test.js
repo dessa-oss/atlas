@@ -79,19 +79,19 @@ const projectName = 'project name';
 const noHiddenStatusFilter = [
   { name: 'Completed', hidden: false },
   { name: 'Processing', hidden: false },
-  { name: 'Error', hidden: false },
+  { name: 'Failed', hidden: false },
 ];
 const hiddenStatusFilter = [
   { name: 'Processing', hidden: false },
-  { name: 'Error', hidden: false },
+  { name: 'Failed', hidden: false },
   { name: 'Completed', hidden: true },
 ];
 const filters = [
-  { column: 'Status', value: 'Error' },
+  { column: 'Status', value: 'Failed' },
   { column: 'User', value: 'Buck' },
 ];
 const emptyFilters = [];
-const filterToRemove = { column: 'Status', value: 'Error' };
+const filterToRemove = { column: 'Status', value: 'Failed' };
 const jobs = [
   {
     user: 'user1'
@@ -106,7 +106,7 @@ const jobs = [
 const url = 'localhost/';
 const isFirst = true;
 const isNotFirst = false;
-const status = { name: 'Error', hidden: false };
+const status = { name: 'Failed', hidden: false };
 const colName = 'myCol';
 const colValue = 'myVal';
 const hasFilter = false;
@@ -302,7 +302,7 @@ it('gets TableSectionHeaderTextClass emptyHeader', () => {
 });
 
 it('getStatusCircle red', () => {
-  const status = 'error';
+  const status = 'Failed';
   const circleClass = JobActions.getStatusCircle(status);
   expect(circleClass).toBe('status status-red');
 });
@@ -392,12 +392,12 @@ it('getBaseJobListingURL', () => {
 
 it('getFilterURL only 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error');
+  expect(URL).toBe('status=Processing,Failed');
 });
 
 it('getFilterURL more than 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
+  expect(URL).toBe('status=Processing,Failed&user=hidden1,hidden2');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -449,7 +449,7 @@ it('getFilterObject', () => {
 
 it('addStatusToURLNotHidden, not hidden', () => {
   const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
-  expect(updatedUrl).toBe('localhost/status=Error');
+  expect(updatedUrl).toBe('localhost/status=Failed');
 });
 
 it('addStatusToURLNotHidden, hidden', () => {
