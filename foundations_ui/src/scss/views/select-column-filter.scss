@@ -126,7 +126,9 @@
   }
 
   &.job-id-filter-container {
-    width: 380px;
+    &:not(.not-metric) {
+      width: 380px;
+    }
   }
   
   &.duration-filter-container {
