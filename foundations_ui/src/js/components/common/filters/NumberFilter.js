@@ -25,6 +25,17 @@ class NumberFilter extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        maxValue: nextProps.maxValue,
+        minValue: nextProps.minValue,
+        columnName: nextProps.columnName,
+        metricClass: nextProps.metricClass,
+      },
+    );
+  }
+
   onApply() {
     const {
       changeHiddenParams, toggleShowingFilter, columnName, minValue, maxValue, hideNotAvailable,

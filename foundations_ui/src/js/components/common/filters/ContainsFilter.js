@@ -19,6 +19,16 @@ class ContainsFilter extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        filterString: nextProps.filterString,
+        columnName: nextProps.columnName,
+        metricClass: nextProps.metricClass,
+      },
+    );
+  }
+
   onApply() {
     const {
       changeHiddenParams, toggleShowingFilter, filterString, columnName,
