@@ -89,10 +89,7 @@ class DurationFilter extends Component {
   render() {
     const { startTime, endTime } = this.state;
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className="filter-container column-filter-container elevation-1 duration-filter-container">

@@ -71,10 +71,7 @@ class StatusFilter extends Component {
       columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
     );
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className="filter-container column-filter-container elevation-1 status-filter-container">

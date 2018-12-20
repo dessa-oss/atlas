@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Flatpickr from 'react-flatpickr';
+import CommonActions from '../../../actions/CommonActions';
 
 class DateTimeFilter extends Component {
   constructor(props) {
@@ -91,10 +92,7 @@ class DateTimeFilter extends Component {
       );
     }
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className="filter-container column-filter-container elevation-1 datetime-filter-container">

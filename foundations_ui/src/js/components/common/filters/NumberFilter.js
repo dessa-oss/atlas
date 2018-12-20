@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../Checkbox';
+import CommonActions from '../../../actions/CommonActions';
 
 class NumberFilter extends Component {
   constructor(props) {
@@ -69,10 +70,7 @@ class NumberFilter extends Component {
     const divClass = 'filter-container column-filter-container elevation-1 number-filter-container '
       .concat(metricClass);
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className={divClass}>

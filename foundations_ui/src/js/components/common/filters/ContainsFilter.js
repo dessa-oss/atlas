@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import CommonActions from '../../../actions/CommonActions';
 
 class ContainsFilter extends Component {
   constructor(props) {
@@ -51,10 +52,8 @@ class ContainsFilter extends Component {
 
     const divClass = 'filter-container column-filter-container elevation-1 job-id-filter-container '
       .concat(metricClass);
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className={divClass}>

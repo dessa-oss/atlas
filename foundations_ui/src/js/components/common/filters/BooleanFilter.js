@@ -72,10 +72,7 @@ class BooleanFilter extends Component {
     const divClass = 'filter-container column-filter-container elevation-1 boolean-filter-container '
       .concat(metricClass);
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className={divClass}>

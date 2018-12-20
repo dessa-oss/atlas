@@ -92,10 +92,7 @@ class SelectColumnFilter extends Component {
 
     const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
 
-    let applyClass = 'b--mat b--affirmative text-upper';
-    if (this.isDisabled()) {
-      applyClass += ' b--disabled';
-    }
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <CheckboxFilter
