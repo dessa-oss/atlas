@@ -24,6 +24,16 @@ class BooleanFilter extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        changedParams: nextProps.changedParams,
+        columnName: nextProps.columnName,
+        metricClass: nextProps.metricClass,
+      },
+    );
+  }
+
   onApply() {
     const {
       changeHiddenParams, toggleShowingFilter, changedParams, columnName,
