@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
 const isStatusCheckbox = true;
+const hidden = false;
 const numCheckboxes = 3;
 
 class StatusFilter extends Component {
@@ -68,7 +69,7 @@ class StatusFilter extends Component {
   render() {
     const { columns, showAllFilters } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
+      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, hidden, isStatusCheckbox,
     );
 
     const applyClass = CommonActions.getApplyClass(this.isDisabled);
