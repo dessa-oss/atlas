@@ -8,6 +8,10 @@
   margin: 0px;
   padding: 0px;
   position: relative;
+
+  &:first-of-type {
+    width: $table-section-width;
+  }
 }
 
 .input-metric-header-row-container {

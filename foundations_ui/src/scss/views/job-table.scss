@@ -22,7 +22,7 @@
   height: calc(100% - #{$header-nav-height} - #{$header-control-height} - 10px - 3px);
   margin-bottom: 10px;
   padding: 0px $overview-content-margin-horizontal;
-  width: calc(100% - #{$overview-content-margin-horizontal});
+  width: calc(100% - #{$overview-content-margin-horizontal} * 2);
   overflow-y: hidden;
 }
 
