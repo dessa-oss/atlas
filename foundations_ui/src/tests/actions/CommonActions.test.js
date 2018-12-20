@@ -116,6 +116,8 @@ const checkboxes = [
 const startTime = { 'days': '1', 'hours': '2', 'minutes': '3', 'seconds': '4' };
 const endTime = { 'days': '11', 'hours': '12', 'minutes': '13', 'seconds': '14' };
 const emptyFunc = () => {};
+const disabled = () => { return true; };
+const notDisabled = () => { return false; };
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -376,4 +378,14 @@ it('getDurationFilters', () => {
   expect(newFilters[0].startTime).not.toBe(null);
   expect(newFilters[0].endTime).not.toBe(null);
   expect(newFilters[0].columnName).toBe('Duration');
+});
+
+it('getApplyClass, not disabled', () => {
+  const applyClass = CommonActions.getApplyClass(notDisabled);
+  expect(applyClass).toBe('b--mat b--affirmative text-upper');
+});
+
+it('getApplyClass, disabled', () => {
+  const applyClass = CommonActions.getApplyClass(disabled);
+  expect(applyClass).toBe('b--mat b--affirmative text-upper b--disabled');
 });

@@ -267,6 +267,14 @@ class CommonActions {
     return [{ columnName, startTime, endTime }];
   }
 
+  static getApplyClass(isDisabled) {
+    let applyClass = 'b--mat b--affirmative text-upper';
+    if (isDisabled()) {
+      applyClass += ' b--disabled';
+    }
+    return applyClass;
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {

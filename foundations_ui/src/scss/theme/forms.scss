@@ -63,6 +63,11 @@ button.b--mat.b--affirmative:hover {
 button.b--mat.b--affirmative:active {
   background-color: $color-active-blue;
 }
+
+button.b--mat.b--disabled.b--affirmative {
+  background-color: $color-border-bottom;
+  color: $color-white;
+  }
   
 button.b--mat.b--negation {
   background-color: $color-negation-blue;
