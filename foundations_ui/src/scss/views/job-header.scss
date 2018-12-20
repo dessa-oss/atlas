@@ -103,13 +103,13 @@
     > div {
       display: inline-block;
       vertical-align: top;
-      border-bottom: 1px solid $color-border-bottom;
-      width: 685px;
+      border-bottom: $border-thin solid $color-border-bottom;
+      width: $job-header-sorting-container-width;
 
       &:nth-of-type(2){
-        margin-left: 15px;
+        margin-left: $margin-width;
         width: 121px;
-        border-right: 1px solid $color-border-bottom;
+        border-right: $border-thin solid $color-border-bottom;
         border-bottom: none;
       }
 
@@ -178,7 +178,7 @@
 @media only screen and (max-width: $minimum-screen-width) {
   .job-header-sorting-container {
     > div {
-      width: 365px;
+      width: $job-header-sorting-container-width-small-screen;
     }
   }
 }
