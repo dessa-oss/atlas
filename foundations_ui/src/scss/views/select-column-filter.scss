@@ -134,7 +134,7 @@
 
   &.job-id-filter-container {
     &:not(.not-metric) {
-      width: 380px;
+      width: $job-id-container-width;
     }
   }
   
