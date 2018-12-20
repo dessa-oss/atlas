@@ -15,9 +15,10 @@ Returns metrics for all jobs for a given project.
 
 __Arguments__
 
-- __project_name__ (str): Name of the project to filter by.
+- __project_name__ (string): Name of the project to filter by.
 
 __Returns__
 
-A Pandas DataFrame containing all of the results.
+- __metrics__ (DataFrame): A Pandas DataFrame containing all of the results.
+
 

@@ -15,11 +15,11 @@ def get_metrics_for_all_jobs(project_name):
     """
     Returns metrics for all jobs for a given project.
 
-    # Arguments
-        project_name (str): Name of the project to filter by.
+    Arguments:
+        project_name {string} -- Name of the project to filter by.
 
-    # Returns
-        A Pandas DataFrame containing all of the results.
+    Returns:
+        metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
     """
 
     return _flattened_job_metrics(project_name)

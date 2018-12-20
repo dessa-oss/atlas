@@ -10,11 +10,11 @@ def create_stage(function):
     """
     Transforms any Python function into a callable that represents a stage in Foundations.
 
-    # Arguments
-        function (callable): Function to wrap.
+    Arguments:
+        function {callable} -- Function to wrap.
 
-    # Returns
-        A callable that when executed returns a stage object.
+    Returns:
+        stage_generator {callable} -- A callable that when executed returns a stage object.
     """
 
     def stage(*args, **kwargs):

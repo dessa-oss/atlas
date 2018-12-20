@@ -191,6 +191,42 @@ def process_function_docstring(docstring):
     docstring = docstring.replace('    ', '')
     return docstring
 
+
+def transform_dessa_format(docstring):
+
+    def transform_section_header(line, section_header_word):
+        if line.strip() == section_header_word or line.strip() == section_header_word + ':':
+            line = line.replace(':', '')
+            line = line.replace(section_header_word, '# ' + section_header_word)
+        return line
+
+    def transform_arguments(line):
+        if ' -- ' in line:
+            line = line.rstrip()
+            line = line.replace(': {', ' (')
+            line = line.replace('{', '(')
+            line = line.replace('}', ')')
+            line = line.replace(' -- ', ': ')
+            if not line.endswith('.'):
+                line += '.'
+        return line
+
+    def transform_end_sections(docstring):
+        import re
+
+        return re.sub(r'([^\.])\n\n', r'\1.\n\n', docstring)
+
+    new_docstring = ''
+    docstring = transform_end_sections(docstring)
+    for line in docstring.split('\n'):
+        line = transform_section_header(line, 'Arguments')
+        line = transform_section_header(line, 'Returns')
+        line = transform_section_header(line, 'Raises')
+        line = transform_arguments(line)
+        new_docstring += line + '\n'
+    return new_docstring
+
+
 print('Cleaning up existing sources directory.')
 if os.path.exists('sources'):
     shutil.rmtree('sources')
@@ -232,6 +268,7 @@ for page_data in PAGES:
         subblocks.append(code_snippet(signature))
         docstring = cls.__doc__
         if docstring:
+            docstring = transform_dessa_format(docstring)
             subblocks.append(process_class_docstring(docstring))
         blocks.append('\n'.join(subblocks))
 
@@ -259,6 +296,7 @@ for page_data in PAGES:
         subblocks.append(code_snippet(signature))
         docstring = function.__doc__
         if docstring:
+            docstring = transform_dessa_format(docstring)
             subblocks.append(process_function_docstring(docstring))
         blocks.append('\n\n'.join(subblocks))
 

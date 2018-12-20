@@ -11,6 +11,15 @@ from foundations.context_aware import ContextAware
 
 
 class StageConnectorWrapper(object):
+    """
+    User-facing class representing stages on Foundations.
+
+    Arguments:
+        stage {StageConnector} --  the underlying stage object.
+        pipeline_context {PipelineContext} -- the pipeline context where this stage is going to be run.
+        stage_context {StageContext} -- context information for the stage
+        stage_config {StageConfig} -- configuration information for the stage
+    """
 
     def __init__(self, stage, pipeline_context, stage_context, stage_config):
         self._stage = stage
@@ -71,10 +80,10 @@ class StageConnectorWrapper(object):
         Deploys and runs the current stage and the stages on which it depends in the configured execution
         environment, creating a new job in the process.
 
-        # Arguments
-            params_dict (dictionary): parameters?.
-            job_name (string): the name of the job that would be created.
-            kw_params (extra keyword arguments): more params?.
+        Arguments:
+            params_dict {dictionary} -- optional dictionary of extra parameters to pass the job that would be created.
+            job_name {string} -- optional name for the job that would be created.
+            kw_params {keyword arguments} -- any other optional paramater to pass to the job.
         """
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
