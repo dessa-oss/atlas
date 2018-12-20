@@ -26,7 +26,7 @@ class ProjectActions {
   ) {
     // if no filters just get regular jobs
     if (this.areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
-      startTimeFilters)) {
+      jobIdFilters, startTimeFilters)) {
       return this.getJobs(projectName);
     }
 
@@ -648,10 +648,10 @@ class ProjectActions {
   }
 
   static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
-    startTimeFilters) {
+    jobIdFilters, startTimeFilters) {
     return !this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
       && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
-      && startTimeFilters.length === 0;
+      && jobIdFilters.length === 0 && startTimeFilters.length === 0;
   }
 
   static getTimeForStartTimeURL(time) {
