@@ -39,20 +39,22 @@ class CheckboxFilter extends Component {
           >
             <div className="magnifying-glass" />
           </button>
-          <button
-            type="button"
-            onClick={onClearFilters}
-            className="b--mat b--affirmative text-upper float-right"
-          >
-          SELECT ALL
-          </button>
-          <button
-            type="button"
-            onClick={onClearFilters}
-            className="b--mat b--negation text-upper float-right"
-          >
-          SELECT NONE
-          </button>
+          <div className="column-control-buttons">
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="b--mat b--negation text-upper"
+            >
+            SELECT NONE
+            </button>
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="b--mat b--affirmative text-upper"
+            >
+            SELECT ALL
+            </button>
+          </div>
         </div>
         <div className="column-filter-list">
           {checkboxes}
