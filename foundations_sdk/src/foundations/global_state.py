@@ -21,6 +21,7 @@ from foundations_internal.global_state import module_manager
 
 import concurrent.futures
 import redis
+import os
 
 
 _pipeline_context = PipelineContext()
@@ -34,4 +35,4 @@ middleware_manager = MiddlewareManager(config_manager)
 default_executor = concurrent.futures.ThreadPoolExecutor()
 message_router = MessageRouter()
 redis_connection = LazyRedis(RedisConnector(
-    config_manager, redis.Redis.from_url))
+    config_manager, redis.Redis.from_url, os.environ))

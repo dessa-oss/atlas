@@ -16,9 +16,10 @@ class RedisConnector(object):
         connection_callback {callable} -- Callback to provide the connection string to
     """
 
-    def __init__(self, config_manager, connection_callback):
-        self._config_manager = config_manager
+    def __init__(self, config_manager, connection_callback, environment):
+        self._config = config_manager.config()
         self._connection_callback = connection_callback
+        self._environment = environment
 
     def __call__(self):
         """Returns the result of the callback, given a connection string
@@ -27,11 +28,18 @@ class RedisConnector(object):
             object -- The return value of the evaluated callback
         """
 
-        if self._is_redis_configured():
-            connection_string = self._config_manager['redis_url']
-            return self._connection_callback(connection_string)
-        else:
-            return self._connection_callback('redis://localhost:6379')
+        connection_with_password = self._build_connection_string()
+        return self._connection_callback(connection_with_password)
 
-    def _is_redis_configured(self):
-        return 'redis_url' in self._config_manager.config()
+
+    def _get_connection_string(self):
+        return self._config.get('redis_url', 'redis://localhost:6379')
+
+    def _get_password(self):
+        return self._environment.get('FOUNDATIONS_REDIS_PASSWORD', '')
+
+    def _build_connection_string(self):
+        split_connection_string = self._get_connection_string().split('//')
+        scheme = split_connection_string[0]
+        host_with_port = split_connection_string[1]
+        return scheme + '//:' + self._get_password() + '@' + host_with_port
