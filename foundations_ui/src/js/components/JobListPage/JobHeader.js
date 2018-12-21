@@ -193,6 +193,10 @@ class JobHeader extends Component {
     if (hiddenBubbles.length === 0) {
       viewFilterClass += ' b--disabled';
     }
+    let clearFiltersClass = 'b--mat b--affirmative text-upper';
+    if (filters.length === 0) {
+      clearFiltersClass += ' b--disabled';
+    }
 
     return (
       <div className="job-header-container">
@@ -222,7 +226,7 @@ class JobHeader extends Component {
           <button
             type="button"
             onClick={clearFilters}
-            className="b--mat b--affirmative text-upper"
+            className={clearFiltersClass}
           >
             Clear Filters
           </button>

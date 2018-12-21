@@ -224,18 +224,21 @@ class JobListPage extends Component {
   }
 
   clearFilters() {
-    this.setState({
-      filters: [],
-      statuses: baseStatus,
-      hiddenUsers: [],
-      numberFilters: [],
-      containFilters: [],
-      boolCheckboxes: baseBoolCheckboxes,
-      durationFilter: [],
-      jobIdFilter: [],
-      startTimeFilter: [],
-    });
-    this.getJobs();
+    const { filters } = this.state;
+    if (filters.length > 0) {
+      this.setState({
+        filters: [],
+        statuses: baseStatus,
+        hiddenUsers: [],
+        numberFilters: [],
+        containFilters: [],
+        boolCheckboxes: baseBoolCheckboxes,
+        durationFilter: [],
+        jobIdFilter: [],
+        startTimeFilter: [],
+      });
+      this.getJobs();
+    }
   }
 
   async removeFilter(removeFilter) {
