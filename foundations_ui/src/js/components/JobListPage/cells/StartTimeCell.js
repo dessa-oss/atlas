@@ -9,14 +9,17 @@ class StartTimeCell extends Component {
       date: JobActions.getFormatedDate(this.props.startTime),
       time: JobActions.getFormatedTime(this.props.startTime),
       isError: this.props.isError,
+      rowNumber: this.props.rowNumber,
     };
   }
 
   render() {
-    const { date, time, isError } = this.state;
+    const {
+      date, time, isError, rowNumber,
+    } = this.state;
 
     const errorClass = isError ? 'error' : '';
-    const pClass = 'job-cell font-bold start-cell '.concat(errorClass);
+    const pClass = `job-cell font-bold start-cell ${errorClass} row-${rowNumber}`;
     const spanClass = ''.concat(errorClass);
 
     return (
@@ -28,11 +31,13 @@ class StartTimeCell extends Component {
 StartTimeCell.propTypes = {
   startTime: PropTypes.string,
   isError: PropTypes.bool,
+  rowNumber: PropTypes.number,
 };
 
 StartTimeCell.defaultProps = {
   startTime: '',
   isError: false,
+  rowNumber: 0,
 };
 
 export default StartTimeCell;

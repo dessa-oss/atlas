@@ -11,12 +11,13 @@ class DurationCell extends Component {
       minutes: JobActions.getDurationMinutes(this.props.duration),
       seconds: JobActions.getDurationSeconds(this.props.duration),
       isError: this.props.isError,
+      rowNumber: this.props.rowNumber,
     };
   }
 
   render() {
     const {
-      days, hours, minutes, seconds, isError,
+      days, hours, minutes, seconds, isError, rowNumber,
     } = this.state;
 
     let daysUI = null;
@@ -29,7 +30,9 @@ class DurationCell extends Component {
     minutesUI = JobActions.getDurationClass('minutes', days, hours, minutes, seconds, isError);
     secondsUI = JobActions.getDurationClass('seconds', days, hours, minutes, seconds, isError);
 
-    const pClass = isError ? 'job-cell duration-cell error' : 'job-cell duration-cell';
+    const pClass = isError
+      ? `job-cell duration-cell error row-${rowNumber}`
+      : `job-cell duration-cell row-${rowNumber}`;
 
     return (
       <p className={pClass}>{daysUI}{hoursUI}{minutesUI}{secondsUI}</p>
@@ -40,11 +43,13 @@ class DurationCell extends Component {
 DurationCell.propTypes = {
   duration: PropTypes.number,
   isError: PropTypes.bool,
+  rowNumber: PropTypes.number,
 };
 
 DurationCell.defaultProps = {
   duration: null,
   isError: false,
+  rowNumber: 0,
 };
 
 export default DurationCell;
