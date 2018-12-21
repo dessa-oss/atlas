@@ -17,7 +17,7 @@ exports[`Shallow Renders Job Table Row 1`] = `
     jobID=""
   />
   <DurationCell
-    duration={NaN}
+    duration={0}
     isError={false}
   />
   <UserCell

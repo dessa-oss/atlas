@@ -45,15 +45,18 @@ class ProjectActions {
   }
 
   // Helper Functions
-  static getDateDiff(earlierTime, laterTime) {
-    const earlierDate = new Date(earlierTime);
-    let laterDate;
-    if (laterTime != null) {
-      laterDate = new Date(laterTime);
-    } else {
-      laterDate = new Date(Date.now());
-    }
-    return laterDate.getTime() - earlierDate.getTime();
+  static parseDuration(duration) {
+    if (!duration) return 0;
+
+    const oneSecond = 1000;
+    let match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
+    let secondDuration = parseInt(match[1], 10) * 86400
+      + parseInt(match[2], 10) * 3600
+      + parseInt(match[3], 10) * 60
+      + parseInt(match[4], 10);
+    let millisecondDuration = secondDuration * oneSecond;
+
+    return millisecondDuration || 1000;
   }
 
   static getFormatedDate(startTime) {

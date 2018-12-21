@@ -126,8 +126,8 @@ class TestJobListingV2(unittest.TestCase):
             output_metrics=[],
             status='running',
             start_time='2001-09-09T01:46:39',
-            completed_time='No time available',
-            duration='57d20h53m21s'
+            completed_time=None,
+            duration='58d1h53m21s'
         )
 
         expected_job_2 = Job(
