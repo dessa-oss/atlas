@@ -125,8 +125,10 @@ class JobHeader extends Component {
   }
 
   toggleFilters() {
-    const { isShowingMoreFilters } = this.state;
-    this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+    const { isShowingMoreFilters, hiddenBubbles } = this.state;
+    if (hiddenBubbles.length > 0) {
+      this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+    }
   }
 
   async clickRemoveFilter(filter) {
@@ -187,6 +189,10 @@ class JobHeader extends Component {
       moreFilters = <ShowMoreFilters hiddenBubbles={hiddenBubbles} />;
       filterButtonText = 'Hide Filters';
     }
+    let viewFilterClass = 'b--mat b--affirmative text-upper';
+    if (hiddenBubbles.length === 0) {
+      viewFilterClass += ' b--disabled';
+    }
 
     return (
       <div className="job-header-container">
@@ -230,7 +236,7 @@ class JobHeader extends Component {
             <button
               type="button"
               onClick={this.toggleFilters}
-              className="b--mat b--affirmative text-upper"
+              className={viewFilterClass}
             >
               {filterButtonText}
             </button>
