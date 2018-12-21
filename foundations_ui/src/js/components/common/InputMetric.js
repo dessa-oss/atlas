@@ -9,6 +9,7 @@ class InputMetric extends Component {
     super(props);
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.updateSearchText = this.updateSearchText.bind(this);
+    this.hasNoRows = this.hasNoRows.bind(this);
     this.state = {
       header: this.props.header,
       hiddenInputParams: [],
@@ -39,6 +40,11 @@ class InputMetric extends Component {
     this.forceUpdate();
   }
 
+  hasNoRows(rows, flatParams) {
+    const { hiddenInputParams } = this.state;
+    return rows === null || rows.length === 0 || flatParams.length === hiddenInputParams.length;
+  }
+
   render() {
     const {
       header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
@@ -49,7 +55,11 @@ class InputMetric extends Component {
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
-    const rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+    if (this.hasNoRows(rows, flatParams)) {
+      rows = [];
+      rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+    }
 
     return (
       <div className="job-static-columns-container">

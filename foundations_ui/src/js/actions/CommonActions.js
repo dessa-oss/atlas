@@ -279,6 +279,23 @@ class CommonActions {
     return applyClass;
   }
 
+  static getInputMetricFilterLeft(metricClass) {
+    let style = null;
+    const inputBorder = 3;
+    if (this.isMetricAndHasContainers(metricClass)) {
+      const staticColumnLeft = document.getElementsByClassName('job-static-columns-container')[0].clientWidth;
+      const inputParamLeft = document.getElementsByClassName('job-static-columns-container')[1].clientWidth;
+
+      const filterLeft = staticColumnLeft + inputParamLeft + inputBorder;
+      style = { left: filterLeft };
+    }
+    return style;
+  }
+
+  static isMetricAndHasContainers(metricClass) {
+    return (metricClass === 'is-metric' && document.getElementsByClassName('job-static-columns-container').length > 1);
+  }
+
   // private functions, not cannot declare a private and static
   // function in JS https://stackoverflow.com/a/3218950
   static arrayDoesNotInclude(array, value) {
@@ -319,7 +336,10 @@ class CommonActions {
     return input.source === 'constant';
   }
 
-  static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters, statusCheckbox = false) {
+  static getCheckboxes(
+    columns, changeLocalParams, showAllFilters, unsetClearFilters, hideAllFilters,
+    statusCheckbox = false, unsetHideFilters = () => {},
+  ) {
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];
@@ -337,6 +357,8 @@ class CommonActions {
           showAllFilters={showAllFilters}
           unsetClearFilters={unsetClearFilters}
           statusCircle={statusCircle}
+          hideAllFilters={hideAllFilters}
+          unsetHideFilters={unsetHideFilters}
         />);
       });
     }

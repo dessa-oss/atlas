@@ -1,12 +1,17 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: $table-section-width;
+  min-width: $min-metric-param-columns-container;
+  max-width: $table-section-width;
   height: 100%;
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   position: relative;
+
+  &:first-of-type {
+    width: $table-section-width;
+  }
 }
 
 .input-metric-header-row-container {
@@ -16,6 +21,7 @@
   overflow-x: scroll;
   border-left: 4px solid $color-border-bottom;
   position: relative;
+  margin-right: -6px;
 }
 
 .input-metric-column-container {
@@ -23,6 +29,10 @@
   min-width: 100%;
   overflow-y: scroll;
   width: fit-content;
+
+  .empty-columns-message {
+    padding-left: calc(2 * #{$margin-width});
+  }
 
   &.column-header {
     height: $column-header-height;

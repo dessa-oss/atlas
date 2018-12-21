@@ -29,6 +29,7 @@ class JobTableHeader extends Component {
     this.getRangeFilterValues = this.getRangeFilterValues.bind(this);
     this.toggleJobIdFilter = this.toggleJobIdFilter.bind(this);
     this.toggleStartTimeFilter = this.toggleStartTimeFilter.bind(this);
+    this.hideOtherFilters = this.hideOtherFilters.bind(this);
     this.state = {
       allInputParams: this.props.allInputParams,
       allMetrics: this.props.allMetrics,
@@ -97,11 +98,13 @@ class JobTableHeader extends Component {
   toggleStatusFilter() {
     const { isShowingStatusFilter } = this.state;
     this.setState({ isShowingStatusFilter: !isShowingStatusFilter });
+    this.hideOtherFilters('Status');
   }
 
   toggleDurationFilter() {
     const { isShowingDurationFilter } = this.state;
     this.setState({ isShowingDurationFilter: !isShowingDurationFilter });
+    this.hideOtherFilters('Duration');
   }
 
   getColumnType(e) {
@@ -143,42 +146,77 @@ class JobTableHeader extends Component {
   toggleUserFilter() {
     const { isShowingUserFilter } = this.state;
     this.setState({ isShowingUserFilter: !isShowingUserFilter });
+    this.hideOtherFilters('User');
   }
 
   toggleJobIdFilter() {
     const { isShowingJobIdFilter } = this.state;
     this.setState({ isShowingJobIdFilter: !isShowingJobIdFilter });
+    this.hideOtherFilters('Job');
   }
 
   toggleStartTimeFilter() {
     const { isShowingStartTimeFilter } = this.state;
     this.setState({ isShowingStartTimeFilter: !isShowingStartTimeFilter });
+    this.hideOtherFilters('StartTime');
   }
 
   toggleInputMetricFilter(e) {
-    const { isShowingNumberFilter, isShowingContainsFilter, isShowingBooleanFilter } = this.state;
+    const {
+      numberFilterColumn,
+    } = this.state;
     let columnName = this.getColumnName(e);
     let columnType = this.getColumnType(e);
     let metricClass = this.getMetricClass(e);
 
     if (columnType === 'number') {
-      this.setState({
-        isShowingNumberFilter: !isShowingNumberFilter,
-        numberFilterColumn: columnName,
-        metricClass,
-      });
+      this.hideOtherFilters('Number');
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          isShowingNumberFilter: false,
+        });
+      } else {
+        this.setState({
+          isShowingNumberFilter: true,
+        });
+      }
     } else if (columnType === 'string') {
-      this.setState({
-        isShowingContainsFilter: !isShowingContainsFilter,
-        numberFilterColumn: columnName,
-        metricClass,
-      });
+      this.hideOtherFilters('Contains');
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          isShowingContainsFilter: false,
+        });
+      } else {
+        this.setState({
+          isShowingContainsFilter: true,
+        });
+      }
     } else if (columnType === 'bool') {
+      this.hideOtherFilters('Boolean');
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          isShowingBooleanFilter: false,
+        });
+      } else {
+        this.setState({
+          isShowingBooleanFilter: true,
+        });
+      }
+    }
+
+    if (e !== undefined) {
       this.setState({
-        isShowingBooleanFilter: !isShowingBooleanFilter,
-        numberFilterColumn: columnName,
         metricClass,
       });
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          numberFilterColumn: '',
+        });
+      } else {
+        this.setState({
+          numberFilterColumn: columnName,
+        });
+      }
     } else if (e === undefined) {
       // This means it's an apply/cancel button rather than a header arrow
       // so close everything
@@ -186,6 +224,7 @@ class JobTableHeader extends Component {
         isShowingNumberFilter: false,
         isShowingContainsFilter: false,
         isShowingBooleanFilter: false,
+        numberFilterColumn: '',
       });
     }
   }
@@ -200,6 +239,49 @@ class JobTableHeader extends Component {
       curMax = existingFilter.max;
     }
     return { min: curMin, max: curMax };
+  }
+
+  hideOtherFilters(filterToShow) {
+    if (filterToShow !== 'Duration') {
+      this.setState({
+        isShowingDurationFilter: false,
+      });
+    }
+    if (filterToShow !== 'Number') {
+      this.setState({
+        isShowingNumberFilter: false,
+      });
+    }
+    if (filterToShow !== 'Contains') {
+      this.setState({
+        isShowingContainsFilter: false,
+      });
+    }
+    if (filterToShow !== 'Boolean') {
+      this.setState({
+        isShowingBooleanFilter: false,
+      });
+    }
+    if (filterToShow !== 'Job') {
+      this.setState({
+        isShowingJobIdFilter: false,
+      });
+    }
+    if (filterToShow !== 'StartTime') {
+      this.setState({
+        isShowingStartTimeFilter: false,
+      });
+    }
+    if (filterToShow !== 'User') {
+      this.setState({
+        isShowingUserFilter: false,
+      });
+    }
+    if (filterToShow !== 'Status') {
+      this.setState({
+        isShowingStatusFilter: false,
+      });
+    }
   }
 
   render() {

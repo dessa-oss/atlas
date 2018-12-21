@@ -19,6 +19,13 @@
     }
   }
 
+  .column-control-buttons {
+    text-align: right;
+    button:first-child() {
+      margin-left: 0px;
+    }
+  }
+
   .column-filter-list {
     height: calc(100% - 145px);
     min-height: 100px;
@@ -126,7 +133,9 @@
   }
 
   &.job-id-filter-container {
-    width: 380px;
+    &:not(.not-metric) {
+      width: $job-id-container-width;
+    }
   }
   
   &.duration-filter-container {
@@ -219,15 +228,5 @@
     margin-right: 15px;
     box-sizing: border-box;
     padding-left: 5px;
-  }
-
-  div {
-    &:hover {
-      background-color: $color-hover-blue;
-    }
-
-    &:active {
-      background-color: $color-active-blue;
-    }
   }
 }

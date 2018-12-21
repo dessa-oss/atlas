@@ -17,6 +17,8 @@ class JobHeader extends Component {
     this.addToBubbleRefs = this.addToBubbleRefs.bind(this);
     this.removeBubbleFromRef = this.removeBubbleFromRef.bind(this);
     this.modifyBubble = this.modifyBubble.bind(this);
+    this.refsInFilters = this.refsInFilters.bind(this);
+    this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
@@ -31,17 +33,32 @@ class JobHeader extends Component {
   async componentWillReceiveProps(nextProps) {
     this.setState({ filters: nextProps.filters });
 
-    const { bubbleRefs, hiddenBubbles } = this.state;
+    const { hiddenBubbles } = this.state;
     const { clientWidth } = this.bubbleContainer;
+
+    const newRefs = this.refsInFilters(nextProps.filters);
 
     let curWidth = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
-    bubbleRefs.forEach((id) => {
+    curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
+    newRefs.forEach((id) => {
       const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
       curWidth = showHideResults.width;
       curHiddenBubbles = showHideResults.hiddenBubbles;
     });
     await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
+  }
+
+  refsInFilters(filters) {
+    return filters.map((filter) => {
+      return `${filter.column}-${filter.value}`;
+    });
+  }
+
+  getCurHiddenBubbles(newRefs, hiddenBubbles) {
+    return hiddenBubbles.filter((bubble) => {
+      return newRefs.indexOf(bubble) >= 0;
+    });
   }
 
   showHideBubbles(id, curWidth, clientWidth, hiddenBubbles) {

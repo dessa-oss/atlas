@@ -26,7 +26,14 @@ exports[`Shallow Renders InputMetric 1`] = `
     >
       <div
         className="input-metric-column-container"
-      />
+      >
+        <p
+          className="empty-columns-message"
+          key="no-rows-message"
+        >
+          There are no columns selected.
+        </p>
+      </div>
     </ScrollSyncPane>
   </div>
 </div>
