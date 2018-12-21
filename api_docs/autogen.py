@@ -222,6 +222,7 @@ def transform_dessa_format(docstring):
         line = transform_section_header(line, 'Arguments')
         line = transform_section_header(line, 'Returns')
         line = transform_section_header(line, 'Raises')
+        line = transform_section_header(line, 'Notes')
         line = transform_arguments(line)
         new_docstring += line + '\n'
     return new_docstring

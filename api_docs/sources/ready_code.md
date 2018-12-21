@@ -10,11 +10,23 @@ log_metric(key, value)
 
 
 
-Generate output metrics for the stage where it is called.
+Log metrics within a stage from where it is called.
 
 __Arguments__
 
 - __key__ (string): the name of the output metric.
-- __value__ (any type): the value associated with the given output metric.
+- __value__ (number, str, bool, array of base types, array of array of base types): the value associated with the given output metric.
+
+__Returns__
+
+- __Nothing__ (None).
+
+__Raises__
+
+TypeError: When a value of a non-supported type is provided as the metric value.
+
+__Notes__
+
+A stage containing this function won't fail if this function fails.
 
 
