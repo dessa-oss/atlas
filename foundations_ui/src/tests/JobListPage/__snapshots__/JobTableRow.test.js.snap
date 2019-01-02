@@ -20,7 +20,7 @@ exports[`Shallow Renders Job Table Row 1`] = `
     rowNumber={0}
   />
   <DurationCell
-    duration={NaN}
+    duration={0}
     isError={false}
     rowNumber={0}
   />

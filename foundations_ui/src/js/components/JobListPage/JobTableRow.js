@@ -28,7 +28,7 @@ class JobTableRow extends Component {
         <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <DurationCell
-          duration={JobActions.getDateDiff(job.start_time, job.completed_time)}
+          duration={JobActions.parseDuration(job.duration)}
           isError={isError}
           rowNumber={rowNumber}
         />

@@ -174,7 +174,11 @@ class CommonActions {
   }
 
   static isError(status) {
-    return status.toLowerCase() === 'error';
+    return status.toLowerCase() === 'failed';
+  }
+
+  static errorStatus(isError) {
+    return isError ? 'failed' : '';
   }
 
   static formatColumns(columns, hiddenInputParams, searchText = '') {
@@ -286,16 +290,18 @@ class CommonActions {
   static getInputMetricFilterLeft(metricClass) {
     let style = null;
     const inputBorder = 3;
-    if (metricClass === 'is-metric') {
-      if (document.getElementsByClassName('job-static-columns-container').length > 1) {
-        const staticColumnLeft = document.getElementsByClassName('job-static-columns-container')[0].clientWidth;
-        const inputParamLeft = document.getElementsByClassName('job-static-columns-container')[1].clientWidth;
+    if (this.isMetricAndHasContainers(metricClass)) {
+      const staticColumnLeft = document.getElementsByClassName('job-static-columns-container')[0].clientWidth;
+      const inputParamLeft = document.getElementsByClassName('job-static-columns-container')[1].clientWidth;
 
-        const filterLeft = staticColumnLeft + inputParamLeft + inputBorder;
-        style = { left: filterLeft };
-      }
+      const filterLeft = staticColumnLeft + inputParamLeft + inputBorder;
+      style = { left: filterLeft };
     }
     return style;
+  }
+
+  static isMetricAndHasContainers(metricClass) {
+    return (metricClass === 'is-metric' && document.getElementsByClassName('job-static-columns-container').length > 1);
   }
 
   // private functions, not cannot declare a private and static

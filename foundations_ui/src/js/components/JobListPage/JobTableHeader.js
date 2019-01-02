@@ -171,18 +171,27 @@ class JobTableHeader extends Component {
 
     if (columnType === 'number') {
       this.hideOtherFilters('Number');
+<<<<<<< HEAD
 
       if (numberFilterColumn === columnName) {
         this.setState({
           isShowingNumberFilter: false,
           numberFilterColumn: '',
           metricClass,
+=======
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          isShowingNumberFilter: false,
+>>>>>>> origin/2018-12-14-rc
         });
       } else {
         this.setState({
           isShowingNumberFilter: true,
+<<<<<<< HEAD
           numberFilterColumn: columnName,
           metricClass,
+=======
+>>>>>>> origin/2018-12-14-rc
         });
       }
     } else if (columnType === 'string') {
@@ -190,14 +199,20 @@ class JobTableHeader extends Component {
       if (numberFilterColumn === columnName) {
         this.setState({
           isShowingContainsFilter: false,
+<<<<<<< HEAD
           numberFilterColumn: '',
           metricClass,
+=======
+>>>>>>> origin/2018-12-14-rc
         });
       } else {
         this.setState({
           isShowingContainsFilter: true,
+<<<<<<< HEAD
           numberFilterColumn: columnName,
           metricClass,
+=======
+>>>>>>> origin/2018-12-14-rc
         });
       }
     } else if (columnType === 'bool') {
@@ -205,14 +220,35 @@ class JobTableHeader extends Component {
       if (numberFilterColumn === columnName) {
         this.setState({
           isShowingBooleanFilter: false,
+<<<<<<< HEAD
           numberFilterColumn: '',
           metricClass,
+=======
+>>>>>>> origin/2018-12-14-rc
         });
       } else {
         this.setState({
           isShowingBooleanFilter: true,
+<<<<<<< HEAD
           numberFilterColumn: columnName,
           metricClass,
+=======
+        });
+      }
+    }
+
+    if (e !== undefined) {
+      this.setState({
+        metricClass,
+      });
+      if (numberFilterColumn === columnName) {
+        this.setState({
+          numberFilterColumn: '',
+        });
+      } else {
+        this.setState({
+          numberFilterColumn: columnName,
+>>>>>>> origin/2018-12-14-rc
         });
       }
     } else if (e === undefined) {

@@ -79,19 +79,19 @@ const projectName = 'project name';
 const noHiddenStatusFilter = [
   { name: 'Completed', hidden: false },
   { name: 'Processing', hidden: false },
-  { name: 'Error', hidden: false },
+  { name: 'Failed', hidden: false },
 ];
 const hiddenStatusFilter = [
   { name: 'Processing', hidden: false },
-  { name: 'Error', hidden: false },
+  { name: 'Failed', hidden: false },
   { name: 'Completed', hidden: true },
 ];
 const filters = [
-  { column: 'Status', value: 'Error' },
+  { column: 'Status', value: 'Failed' },
   { column: 'User', value: 'Buck' },
 ];
 const emptyFilters = [];
-const filterToRemove = { column: 'Status', value: 'Error' };
+const filterToRemove = { column: 'Status', value: 'Failed' };
 const jobs = [
   {
     user: 'user1'
@@ -106,7 +106,7 @@ const jobs = [
 const url = 'localhost/';
 const isFirst = true;
 const isNotFirst = false;
-const status = { name: 'Error', hidden: false };
+const status = { name: 'Failed', hidden: false };
 const colName = 'myCol';
 const colValue = 'myVal';
 const hasFilter = false;
@@ -157,22 +157,6 @@ const columnFilter = [
 const existingColumn = 'test1';
 const nonExistingColumn = 'not here';
 
-it('getDateDiff', () => {
-  const now = Date.now();
-  const day1 = now;
-  const day2 = now + 1000;
-  const diff = JobActions.getDateDiff(day1, day2);
-  expect(diff).toBe(1000);
-});
-
-it('getDateDiff no 2nd time', () => {
-  const now = Date.now();
-  const day1 = now;
-  const day2 = null;
-  const diff = JobActions.getDateDiff(day1, day2);
-  expect(diff).toBeGreaterThanOrEqual(0);
-});
-
 it('getFormatedDate no date', () => {
   const date = null;
   const formatedDate = JobActions.getFormatedDate(date);
@@ -219,6 +203,66 @@ it('getDurationSeconds', () => {
   const time = '17500';
   const duration = JobActions.getDurationSeconds(time);
   expect(duration).toBe(17);
+});
+
+it('parseDuration should return the duration in milliseconds with seconds', () => {
+  const duration = '0d0h0m3s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(3000);
+});
+
+it('parseDuration should return the duration in milliseconds with differnt seconds', () => {
+  const duration = '0d0h0m13s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(13000);
+});
+
+it('parseDuration should return the duration in milliseconds with an empty time', () => {
+  const duration = '0d0h0m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(1000);
+});
+
+it('parseDuration should return the duration in milliseconds with no time', () => {
+  const duration = ''
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(0);
+});
+
+it('parseDuration should return the duration in milliseconds with minutes', () => {
+  const duration = '0d0h3m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(180000);
+});
+
+it('parseDuration should return the duration in milliseconds with different minutes', () => {
+  const duration = '0d0h7m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(420000);
+});
+
+it('parseDuration should return the duration in milliseconds with hours', () => {
+  const duration = '0d3h0m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(10800000);
+});
+
+it('parseDuration should return the duration in milliseconds with different hours', () => {
+  const duration = '0d7h0m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(25200000);
+});
+
+it('parseDuration should return the duration in milliseconds with days', () => {
+  const duration = '3d0h0m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(259200000);
+});
+
+it('parseDuration should return the duration in milliseconds with different days', () => {
+  const duration = '7d0h0m0s'
+  const durationMilliseconds = JobActions.parseDuration(duration);
+  expect(durationMilliseconds).toBe(604800000);
 });
 
 it('checks if field hidden, is not hidden', () => {
@@ -302,7 +346,7 @@ it('gets TableSectionHeaderTextClass emptyHeader', () => {
 });
 
 it('getStatusCircle red', () => {
-  const status = 'error';
+  const status = 'Failed';
   const circleClass = JobActions.getStatusCircle(status);
   expect(circleClass).toBe('status status-red');
 });
@@ -392,12 +436,12 @@ it('getBaseJobListingURL', () => {
 
 it('getFilterURL only 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error');
+  expect(URL).toBe('status=Processing,Failed');
 });
 
 it('getFilterURL more than 1 type', () => {
   const URL = JobActions.getFilterURL(hiddenStatusFilter, hiddenUserFilter, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters, emptyFilters);
-  expect(URL).toBe('status=Processing,Error&user=hidden1,hidden2');
+  expect(URL).toBe('status=Processing,Failed&user=hidden1,hidden2');
 });
 
 it('areStatusesHidden hidden', () => {
@@ -449,7 +493,7 @@ it('getFilterObject', () => {
 
 it('addStatusToURLNotHidden, not hidden', () => {
   const updatedUrl = JobActions.addStatusToURLNotHidden(url, isFirst, status);
-  expect(updatedUrl).toBe('localhost/status=Error');
+  expect(updatedUrl).toBe('localhost/status=Failed');
 });
 
 it('addStatusToURLNotHidden, hidden', () => {

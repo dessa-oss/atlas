@@ -121,11 +121,11 @@ class Job(PropertyModel):
         properties['completed_time'] = Job._datetime_string(completed_time)
 
         if completed_time:
-            end_time = datetime.utcfromtimestamp(completed_time)
+            end_time = datetime.fromtimestamp(completed_time)
         else:
             end_time = datetime.now()
 
-        time_delta = end_time - datetime.utcfromtimestamp(start_time)
+        time_delta = end_time - datetime.fromtimestamp(start_time)
         total_seconds = time_delta.total_seconds()
         properties['duration'] = Job._total_seconds_to_duration(total_seconds)
 
@@ -152,6 +152,6 @@ class Job(PropertyModel):
         from datetime import datetime
 
         if time is None:
-            return 'No time available'
+            return None
         date_time = datetime.utcfromtimestamp(time)
         return date_time.isoformat()

@@ -45,15 +45,18 @@ class ProjectActions {
   }
 
   // Helper Functions
-  static getDateDiff(earlierTime, laterTime) {
-    const earlierDate = new Date(earlierTime);
-    let laterDate;
-    if (laterTime != null) {
-      laterDate = new Date(laterTime);
-    } else {
-      laterDate = new Date(Date.now());
-    }
-    return laterDate.getTime() - earlierDate.getTime();
+  static parseDuration(duration) {
+    if (!duration) return 0;
+
+    const oneSecond = 1000;
+    let match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
+    let secondDuration = parseInt(match[1], 10) * 86400
+      + parseInt(match[2], 10) * 3600
+      + parseInt(match[3], 10) * 60
+      + parseInt(match[4], 10);
+    let millisecondDuration = secondDuration * oneSecond;
+
+    return millisecondDuration || 1000;
   }
 
   static getFormatedDate(startTime) {
@@ -102,9 +105,9 @@ class ProjectActions {
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
-    if (status.toLowerCase() === 'running' || status.toLowerCase() === 'processing') {
+    if (status.toLowerCase() === 'running') {
       statusCircle = 'status-yellow';
-    } else if (status.toLowerCase() === 'error') {
+    } else if (CommonActions.isError(status)) {
       statusCircle = 'status-red';
     }
 
@@ -121,7 +124,7 @@ class ProjectActions {
     let showingHours = false;
     let showingMinutes = false;
 
-    const letterClass = isError ? 'error' : '';
+    const letterClass = CommonActions.errorStatus(isError);
     const numberClass = isError
       ? 'font-bold error'
       : 'font-bold';
@@ -178,7 +181,7 @@ class ProjectActions {
     }
 
     if (inputParam && columns.includes(inputParam.name)
-    && inputParam.value) {
+      && inputParam.value) {
       return inputParam.value;
     }
     return 'not available';
@@ -649,9 +652,13 @@ class ProjectActions {
 
   static areNoFilters(statusFilter, userFilter, numberFilters, containFilters, boolFilters, durationFilters,
     jobIdFilters, startTimeFilters) {
-    return !this.areStatusesHidden(statusFilter) && userFilter.length === 0 && numberFilters.length === 0
-      && containFilters.length === 0 && !this.boolFilterArrayHasHidden(boolFilters) && durationFilters.length === 0
-      && jobIdFilters.length === 0 && startTimeFilters.length === 0;
+    const arrayFilters = [userFilter, numberFilters, containFilters, durationFilters, jobIdFilters, startTimeFilters];
+    const mappedFilters = arrayFilters.filter((filter) => {
+      return filter.length !== 0;
+    });
+    return !this.areStatusesHidden(statusFilter)
+    && !this.boolFilterArrayHasHidden(boolFilters)
+    && mappedFilters.length === 0;
   }
 
   static getTimeForStartTimeURL(time) {
