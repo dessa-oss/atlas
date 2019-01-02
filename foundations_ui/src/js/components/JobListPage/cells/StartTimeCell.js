@@ -19,13 +19,8 @@ class StartTimeCell extends Component {
       date, time, isError, rowNumber,
     } = this.state;
 
-<<<<<<< HEAD
-    const errorClass = isError ? 'error' : '';
-    const pClass = `job-cell font-bold start-cell ${errorClass} row-${rowNumber}`;
-=======
     const errorClass = CommonActions.errorStatus(isError);
-    const pClass = 'job-cell font-bold start-cell '.concat(errorClass);
->>>>>>> origin/2018-12-14-rc
+    const pClass = `job-cell font-bold start-cell ${errorClass} row-${rowNumber}`;
     const spanClass = ''.concat(errorClass);
 
     return (
