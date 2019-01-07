@@ -71,38 +71,42 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams) {
+  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams, rowNumber) {
     if (isMetric && job.output_metrics) {
-      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams);
+      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
 
     if (!isMetric && job.input_params && job.input_params.length > 0) {
-      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams);
+      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
     return null;
   }
 
-  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams) {
+  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
     let cells = [];
     cells = [];
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
-        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const cellType = this.getInputMetricCellType(input);
+        if (cellType.match(/array*/)) {
+          inputValue = this.transformArraysToString(inputValue);
+        }
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
           isError={isError}
           cellType={cellType}
+          rowNumber={rowNumber}
         />);
       }
     });
     return cells;
   }
 
-  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams) {
+  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
     const cells = [];
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
@@ -118,6 +122,7 @@ class CommonActions {
           value={inputValue}
           isError={isError}
           cellType={cellType}
+          rowNumber={rowNumber}
         />);
       } else {
         cells.push(null);
@@ -139,6 +144,7 @@ class CommonActions {
 
   static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
     let rows = null;
+    let rowNumber = 0;
     if (jobs.length > 0) {
       rows = [];
       jobs.forEach((job) => {
@@ -151,7 +157,9 @@ class CommonActions {
           isMetric={isMetric}
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
+          rowNumber={rowNumber}
         />);
+        rowNumber += 1;
       });
     }
     return rows;
@@ -161,8 +169,8 @@ class CommonActions {
     return isError ? `error type-${cellType}` : `type-${cellType}`;
   }
 
-  static getInputMetricCellDivClass(isError) {
-    return isError ? 'job-cell error' : 'job-cell';
+  static getInputMetricCellDivClass(isError, rowNumber) {
+    return isError ? `job-cell error row-${rowNumber}` : `job-cell row-${rowNumber}`;
   }
 
   static isError(status) {

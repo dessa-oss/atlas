@@ -2,6 +2,6 @@
 
 exports[`Shallow Renders Job ID Cell 1`] = `
 <p
-  className="job-cell job-id-cell"
+  className="job-cell job-id-cell row-0"
 />
 `;

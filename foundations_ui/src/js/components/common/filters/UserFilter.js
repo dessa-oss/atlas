@@ -125,7 +125,8 @@ class SelectColumnFilter extends Component {
         addedClass="user-filter-container"
         applyClass={applyClass}
         onHideAll={this.onHideAll}
-      />);
+      />
+    );
   }
 }
 

@@ -6,22 +6,27 @@ exports[`Shallow Renders Job Table Row 1`] = `
 >
   <StartTimeCell
     isError={false}
+    rowNumber={0}
     startTime=""
   />
   <StatusCell
     isError={false}
+    rowNumber={0}
     status="completed"
   />
   <JobIDCell
     isError={false}
     jobID=""
+    rowNumber={0}
   />
   <DurationCell
     duration={0}
     isError={false}
+    rowNumber={0}
   />
   <UserCell
     isError={false}
+    rowNumber={0}
     user=""
   />
 </div>
