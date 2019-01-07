@@ -264,14 +264,16 @@ for page_data in PAGES:
 
     for cls in classes:
         subblocks = []
-        signature = get_class_signature(cls)
-        subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
-        subblocks.append('### ' + cls.__name__ + '\n')
-        subblocks.append(code_snippet(signature))
         docstring = cls.__doc__
-        if docstring:
-            docstring = transform_dessa_format(docstring)
-            subblocks.append(process_class_docstring(docstring))
+        if not docstring.strip().startswith('###'):
+            signature = get_class_signature(cls)
+            subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
+            subblocks.append('### ' + cls.__name__ + '\n')
+            subblocks.append(code_snippet(signature))
+
+            if docstring:
+                docstring = transform_dessa_format(docstring)
+                subblocks.append(process_class_docstring(docstring))
         blocks.append('\n'.join(subblocks))
 
     functions = page_data.get('functions', [])

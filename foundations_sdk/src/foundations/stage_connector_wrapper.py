@@ -12,13 +12,7 @@ from foundations.context_aware import ContextAware
 
 class StageConnectorWrapper(object):
     """
-    User-facing class representing stages on Foundations.
-
-    Arguments:
-        stage {StageConnector} --  the underlying stage object.
-        pipeline_context {PipelineContext} -- the pipeline context where this stage is going to be run.
-        stage_context {StageContext} -- context information for the stage
-        stage_config {StageConfig} -- configuration information for the stage
+    ### The three numerals at the begining are a marker for not generating user documentation for the class.
     """
 
     def __init__(self, stage, pipeline_context, stage_context, stage_config):

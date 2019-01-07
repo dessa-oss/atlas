@@ -1,25 +1,9 @@
 <h1>Running stages</h1>
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L13)</span>
-### StageConnectorWrapper
-
-```python
-foundations.stage_connector_wrapper.StageConnectorWrapper(stage, pipeline_context, stage_context, stage_config)
-```
-
-
-User-facing class representing stages on Foundations.
-
-__Arguments__
-
-- __stage__ (StageConnector):  the underlying stage object.
-- __pipeline_context__ (PipelineContext): the pipeline context where this stage is going to be run.
-- __stage_context__ (StageContext): context information for the stage.
-- __stage_config__ (StageConfig): configuration information for the stage.
-
+The following methods are members of the stage object returned when a callable returned by **create_stage()** is called.
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L78)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L72)</span>
 
 ### run
 
@@ -42,7 +26,7 @@ __Arguments__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L63)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L57)</span>
 
 ### enable_caching
 
