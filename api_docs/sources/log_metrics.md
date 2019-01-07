@@ -19,7 +19,7 @@ __Arguments__
 
 __Returns__
 
-- __Nothing__ (None).
+- This function doesn't return a value.
 
 __Raises__
 

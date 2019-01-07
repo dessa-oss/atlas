@@ -20,7 +20,7 @@ def log_metric(key, value):
         value {number, str, bool, array of base types, array of array of base types} -- the value associated with the given output metric.
 
     Returns:
-        Nothing (None).
+        - This function doesn't return a value.
 
     Raises:
         TypeError -- When a value of a non-supported type is provided as the metric value.

@@ -57,6 +57,18 @@ class StageConnectorWrapper(object):
     def enable_caching(self):
         """
         Activates caching of all input parameters for this stage.
+
+        Arguments:
+            - This method doesn't receive any argument
+
+        Returns:
+            stage object -- The same object to which this method belongs.
+
+        Raises:
+            - This method normally doesn't raise exceptions.
+
+        Notes:
+            At this moment only input parameters that are return values of other stages are cached.
         """
         self._stage_config.enable_caching()
         for argument in self._stage.stage_args():
@@ -72,12 +84,21 @@ class StageConnectorWrapper(object):
     def run(self, params_dict=None, job_name=None, **kw_params):
         """
         Deploys and runs the current stage and the stages on which it depends in the configured execution
-        environment, creating a new job in the process.
+        environment, creating a new job.
 
         Arguments:
             params_dict {dictionary} -- optional dictionary of extra parameters to pass the job that would be created.
             job_name {string} -- optional name for the job that would be created.
             kw_params {keyword arguments} -- any other optional paramater to pass to the job.
+
+        Returns:
+            deployment {DeploymentWrapper} -- An object that allows tracking the deployment.
+
+        Raises:
+            TypeError -- When an unsupported type is passed to a user function
+
+        Notes
+            The new job runs asynchronously, the current process can continue execution.
         """
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
@@ -122,6 +143,9 @@ class StageConnectorWrapper(object):
         return self._stage.function_name()
 
     def split(self, num_children):
+        """
+
+        """
         from foundations.utils import split_at
 
         children = []

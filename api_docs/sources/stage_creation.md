@@ -20,4 +20,8 @@ __Returns__
 
 - __stage_generator__ (callable): A callable that when executed returns a stage object.
 
+__Raises__
+
+- This function normally doesn't raise exceptions.
+
 
