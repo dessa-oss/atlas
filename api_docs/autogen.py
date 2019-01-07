@@ -203,10 +203,13 @@ def transform_dessa_format(docstring):
     def transform_arguments(line):
         if ' -- ' in line:
             line = line.rstrip()
+            line = line.replace(' -- ', ': ')
+            if not ('{' in line or '(' in line):
+                line = line.replace(' ' * 8, ' ' * 8 + '- __')
+                line = line.replace(': ', '__: ')
             line = line.replace(': {', ' (')
             line = line.replace('{', '(')
             line = line.replace('}', ')')
-            line = line.replace(' -- ', ': ')
             if not line.endswith('.'):
                 line += '.'
         return line
@@ -219,10 +222,8 @@ def transform_dessa_format(docstring):
     new_docstring = ''
     docstring = transform_end_sections(docstring)
     for line in docstring.split('\n'):
-        line = transform_section_header(line, 'Arguments')
-        line = transform_section_header(line, 'Returns')
-        line = transform_section_header(line, 'Raises')
-        line = transform_section_header(line, 'Notes')
+        for header in 'Arguments', 'Returns', 'Raises', 'Notes':
+            line = transform_section_header(line, header)
         line = transform_arguments(line)
         new_docstring += line + '\n'
     return new_docstring

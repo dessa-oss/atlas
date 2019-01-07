@@ -23,7 +23,7 @@ def log_metric(key, value):
         Nothing (None).
 
     Raises:
-        TypeError: When a value of a non-supported type is provided as the metric value.
+        TypeError -- When a value of a non-supported type is provided as the metric value.
 
     Notes:
         A stage containing this function won't fail if this function fails.

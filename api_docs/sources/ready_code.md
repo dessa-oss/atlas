@@ -23,7 +23,7 @@ __Returns__
 
 __Raises__
 
-TypeError: When a value of a non-supported type is provided as the metric value.
+- __TypeError__: When a value of a non-supported type is provided as the metric value.
 
 __Notes__
 
