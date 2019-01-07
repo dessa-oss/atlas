@@ -21,8 +21,14 @@ class DeploymentWrapper(object):
         """
         Gets the name of the job being run
 
+        Arguments:
+            - This method doesn't receive arguments.
+
         Returns:
             job_name {string} -- The name of the job being run
+
+        Raises:
+            - This method normally doesn't raise any exception.
         """
 
         return self._deployment.job_name()
@@ -31,8 +37,14 @@ class DeploymentWrapper(object):
         """
         Returns whether the job being run has completed
 
+        Arguments:
+            - This method doesn't receive arguments.
+
         Returns:
             is_job_complete {boolean} -- True if the job is done, False otherwise (regardless of success / failure)
+
+        Raises:
+            - This method normally doesn't raise any exception.
         """
 
         return self._deployment.is_job_complete()
@@ -47,6 +59,9 @@ class DeploymentWrapper(object):
 
         Returns:
             results_dict {dictionary} -- Dict representing a more-or-less "serialized" PipelineContext for the job.  Will raise a RemoteException in the event of an exception thrown in the execution environment
+
+        Raises:
+            - This method normally doesn't raise any exception.
         """
 
         from foundations_internal.remote_exception import check_result
@@ -63,6 +78,12 @@ class DeploymentWrapper(object):
 
         Arguments:
             wait_seconds {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
+
+        Returns:
+            - This method doesn't return a value.
+
+        Raises:
+            - This method normally doesn't raise any exception.
         """
 
         import time
@@ -80,9 +101,14 @@ class DeploymentWrapper(object):
         """
         Similar to is_job_complete, but with more information
 
+        Arguments:
+            - This method doesn't receive arguments.
+
         Returns:
             status {string} -- String, which is either "Queued", "Running", "Completed", or "Error"
 
+        Raises:
+            - This method normally doesn't raise any exception.
         """
 
         return self._deployment.get_job_status()
