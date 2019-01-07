@@ -24,7 +24,6 @@ class hoverActions {
   static hover() {
     for (let row = 0; row < $('.job-table-row').length / 3; row += 1) {
       const rowClass = `.row-${row}`;
-      console.log(row);
       $('body').on('mouseenter', rowClass, () => hoverActions.onMouseEnter(rowClass, row));
       $('body').on('mouseleave', rowClass, () => hoverActions.onMouseLeave(rowClass, row));
     }
