@@ -9,7 +9,7 @@ dev_addr: '0.0.0.0:8000'
 pages:
 - Home: index.md
 - Stage creation: stage_creation.md
-- Log metrics: ready_code.md
-- Running stages: stages_running.md
-- Tracking a deployment: deployment.md
-- Reading job metrics: job_metrics.md
+- Log metrics: log_metrics.md
+- Running stages: running_stages.md
+- Tracking a deployment: tracking_deployment.md
+- Reading job metrics: reading_job_metrics.md

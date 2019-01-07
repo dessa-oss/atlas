@@ -23,7 +23,7 @@ EXCLUDE = {
 
 PAGES = [
     {
-        'page': 'ready_code.md',
+        'page': 'log_metrics.md',
         'all_module_classes': [foundations.stage_logging],
         'functions': [
             foundations.stage_logging.log_metric,
@@ -37,7 +37,7 @@ PAGES = [
         ]
     },
     {
-        'page': 'stages_running.md',
+        'page': 'running_stages.md',
         'all_module_classes': [foundations.stage_connector_wrapper],
         'functions': [
             foundations.stage_connector_wrapper.StageConnectorWrapper.run,
@@ -45,7 +45,7 @@ PAGES = [
         ]
     },
     {
-        'page': 'deployment.md',
+        'page': 'tracking_deployment.md',
         'all_module_classes': [foundations.deployment_wrapper],
         'functions': [
             foundations.deployment_wrapper.DeploymentWrapper.job_name,
@@ -56,7 +56,7 @@ PAGES = [
         ]
     },
     {
-        'page': 'job_metrics.md',
+        'page': 'reading_job_metrics.md',
         'all_module_classes': [foundations.projects],
         'functions': [
             foundations.projects.get_metrics_for_all_jobs,
