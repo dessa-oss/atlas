@@ -20,6 +20,9 @@ def get_metrics_for_all_jobs(project_name):
 
     Returns:
         metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
+
+    Raises:
+        - This function normally doesn't raise exceptions.
     """
 
     return _flattened_job_metrics(project_name)

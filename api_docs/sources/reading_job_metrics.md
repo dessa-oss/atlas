@@ -20,4 +20,8 @@ __Returns__
 
 - __metrics__ (DataFrame): A Pandas DataFrame containing all of the results.
 
+__Raises__
+
+- This function normally doesn't raise exceptions.
+
 
