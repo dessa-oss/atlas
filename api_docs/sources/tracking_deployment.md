@@ -92,11 +92,11 @@ __Arguments__
 
 __Returns__
 
-- __results_dict__ (dictionary): Dict representing a more-or-less "serialized" PipelineContext for the job.  Will raise a RemoteException in the event of an exception thrown in the execution environment.
+- __results_dict__ (dictionary): Dict representing a more-or-less "serialized" PipelineContext for the job.
 
 __Raises__
 
-- This method normally doesn't raise any exception.
+- __RemoteException__: In the event of an exception thrown in the execution environment.
 
 
 ----

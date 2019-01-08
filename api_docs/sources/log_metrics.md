@@ -14,8 +14,8 @@ Log metrics within a stage from where it is called.
 
 __Arguments__
 
-- __key__ (string): the name of the output metric.
-- __value__ (number, str, bool, array of base types, array of array of base types): the value associated with the given output metric.
+- __key__ (str): the name of the output metric.
+- __value__ (number, str, bool, array of [number|str|bool], array of array of [number|str|bool]): the value associated with the given output metric.
 
 __Returns__
 
