@@ -39,7 +39,7 @@ __Returns__
 
 __Raises__
 
-- This method  doesn't raise any exception.
+- This method doesn't raise any exception.
 
 
 ----
@@ -67,7 +67,7 @@ __Returns__
 
 __Raises__
 
-- This method  doesn't raise any exception.
+- This method doesn't raise any exception.
 
 
 ----
@@ -88,7 +88,6 @@ Waits for the job to complete and then fetches the results for the job.
 __Arguments__
 
 - __wait_seconds__ (float): The number of seconds to wait between job status check attempts (defaults to 5).
-- __verbose_errors__ (bool): Whether to output stack trace entries relating to Foundations in the event of an exception (defaults to False).
 
 __Returns__
 
@@ -101,7 +100,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L75)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L74)</span>
 
 ### wait_for_deployment_to_complete
 
@@ -124,12 +123,12 @@ __Returns__
 
 __Raises__
 
-- This method  doesn't raise any exception.
+- This method doesn't raise any exception.
 
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L100)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L99)</span>
 
 ### get_job_status
 
@@ -152,6 +151,6 @@ __Returns__
 
 __Raises__
 
-- This method  doesn't raise any exception.
+- This method doesn't raise any exception.
 
 

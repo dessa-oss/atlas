@@ -55,7 +55,6 @@ class DeploymentWrapper(object):
 
         Arguments:
             wait_seconds {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
-            verbose_errors {bool} -- Whether to output stack trace entries relating to Foundations in the event of an exception (defaults to False)
 
         Returns:
             results_dict {dictionary} -- Dict representing a more-or-less "serialized" PipelineContext for the job.

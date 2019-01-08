@@ -3,7 +3,7 @@ The following methods are members of the stage object returned when a callable r
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L84)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L81)</span>
 
 ### run
 
@@ -49,7 +49,7 @@ enable_caching(self)
 
 
 
-Activates caching of all input parameters for this stage.
+Activates caching of the result of current stage and any other stages that it depends on.
 
 __Arguments__
 
@@ -61,16 +61,12 @@ __Returns__
 
 __Raises__
 
-- This method  doesn't raise exceptions.
-
-__Notes__
-
-At this moment only input parameters that are return values of other stages are cached.
+- This method doesn't raise exceptions.
 
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L145)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L142)</span>
 
 ### split
 

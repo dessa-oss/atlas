@@ -56,7 +56,7 @@ class StageConnectorWrapper(object):
 
     def enable_caching(self):
         """
-        Activates caching of all input parameters for this stage.
+        Activates caching of the result of current stage and any other stages that it depends on.
 
         Arguments:
             - This method doesn't receive any argument
@@ -66,9 +66,6 @@ class StageConnectorWrapper(object):
 
         Raises:
             - This method doesn't raise exceptions.
-
-        Notes:
-            At this moment only input parameters that are return values of other stages are cached.
         """
         self._stage_config.enable_caching()
         for argument in self._stage.stage_args():
