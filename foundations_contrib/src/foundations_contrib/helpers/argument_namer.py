@@ -25,11 +25,11 @@ class ArgumentNamer(object):
 
         result = []
         argument_index = 0
-        default_argument_index = 0
 
         argspec = getargspec(self._function)
         filled_arguments = set()
 
+        defaults = self._get_function_defaults(argspec)
 
         for argument_name in argspec.args:
             if argument_name in self._keyword_arguments:
@@ -38,8 +38,7 @@ class ArgumentNamer(object):
                 result.append((argument_name, self._arguments[argument_index]))
                 argument_index += 1
             else:
-                result.append((argument_name, argspec.defaults[default_argument_index]))
-                default_argument_index += 1
+                result.append((argument_name, defaults[argument_name]))
             filled_arguments.add(argument_name)
 
         while argument_index < len(self._arguments):
@@ -51,3 +50,11 @@ class ArgumentNamer(object):
                 result.append((key, value))
 
         return result
+
+    def _get_function_defaults(self, argspec):
+        defaults = {}
+        if argspec.defaults:
+            for default_argument_index in range(len(argspec.defaults)):
+                reverse_index = -default_argument_index - 1
+                defaults[argspec.args[reverse_index]] = argspec.defaults[reverse_index]
+        return defaults
