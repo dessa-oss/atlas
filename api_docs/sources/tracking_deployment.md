@@ -1,22 +1,9 @@
 <h1>Tracking a deployment</h1>
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L9)</span>
-### DeploymentWrapper
-
-```python
-foundations.deployment_wrapper.DeploymentWrapper(deployment)
-```
-
-
-Provides user-facing functionality to deployment classes created through integrations (e.g. LocalShellJobDeployment, GCPJobDeployment).
-
-__Arguments__
-
-- __deployment__ (*JobDeployment): The integration-level job deployment to wrap.
-
+The following methods are members of the deployment object returned when the **run()** method of a stage is called.
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L20)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L21)</span>
 
 ### job_name
 
@@ -44,7 +31,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L36)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L37)</span>
 
 ### is_job_complete
 
@@ -72,7 +59,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L52)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L53)</span>
 
 ### fetch_job_results
 
@@ -100,7 +87,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L74)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L75)</span>
 
 ### wait_for_deployment_to_complete
 
@@ -128,7 +115,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L99)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L100)</span>
 
 ### get_job_status
 

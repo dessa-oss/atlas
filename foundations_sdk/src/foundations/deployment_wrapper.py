@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DeploymentWrapper(object):
     """
+    ### The three numerals at the begining are a marker for not generating user documentation for the class.
     Provides user-facing functionality to deployment classes created through integrations (e.g. LocalShellJobDeployment, GCPJobDeployment)
 
     Arguments:
