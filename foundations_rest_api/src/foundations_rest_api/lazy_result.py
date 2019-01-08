@@ -9,6 +9,7 @@ class LazyResult(object):
 
     def __init__(self, callback):
         self._callback = callback
+        self._result = None
 
     def only(self, only_fields):
 
@@ -29,7 +30,7 @@ class LazyResult(object):
         def lazy_only():
             from foundations_rest_api.v1.models.property_model import PropertyModel
 
-            result = self.evaluate()
+            result = self.evaluate(only_fields)
 
             if isinstance(result, list):
                 return [filter_properties(item, only_fields) for item in result]
@@ -78,24 +79,38 @@ class LazyResult(object):
 
         return LazyResult(filter_result)
 
-    def evaluate(self):
+    def evaluate(self, only_fields=None):
         from foundations_rest_api.v1.models.property_model import PropertyModel
+
+        if self._result is not None:
+            return self._result
 
         result = self._callback()
 
         if isinstance(result, list):
-            return [(item.evaluate() if self._is_lazy_result(item) else item) for item in result ]
+            self._result = [(item.evaluate(only_fields) if self._is_lazy_result(item) else item) for item in result ]
+            return self._result
 
         if self._is_lazy_result(result):
-            return result.evaluate()
+            self._result = result.evaluate(only_fields)
+            return self._result
 
         if isinstance(result, PropertyModel):
-            return self._evaluate_property_model(result)
+            self._result = self._evaluate_property_model(result, only_fields)
+            return self._result
 
         if isinstance(result, dict):
-            return self._evaluate_dict(result)
+            self._result = self._evaluate_dict(result)
+            return self._result
 
-        return result
+        self._result = result
+        return self._result
+
+    def map(self, callback):
+        def _inner():
+            result = self.evaluate()
+            return callback(result)
+        return LazyResult(_inner)
 
     def _is_lazy_result(self, value):
         return isinstance(value, LazyResult)
@@ -106,8 +121,9 @@ class LazyResult(object):
             attributes[key] = value.evaluate() if self._is_lazy_result(value) else value
         return attributes
 
-    def _evaluate_property_model(self, value):
+    def _evaluate_property_model(self, value, only_fields):
         for property_name, property_value in value.attributes.items():
             if self._is_lazy_result(property_value):
-                setattr(value, property_name, property_value.evaluate())
+                if only_fields is None or property_name in only_fields:
+                  setattr(value, property_name, property_value.evaluate())
         return value

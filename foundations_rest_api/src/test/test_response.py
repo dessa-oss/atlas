@@ -106,9 +106,29 @@ class TestResponse(unittest.TestCase):
     def test_as_json_with_parent(self):
         mock_parent = self.MockLazyResult('hello world')
         response_parent = Response('mock', mock_parent)
-        
+
         mock = self.MockLazyResult('hello world')
         response = Response('mock', mock, response_parent)
 
         response.evaluate()
         self.assertTrue(mock_parent.called)
+
+    def test_as_json_with_numpy_nan(self):
+        import numpy as np
+
+        mock = self.MockLazyResult({'hello': np.nan})
+        response = Response('mock', mock)
+        self.assertEqual({'hello': None}, response.as_json())
+
+    def test_as_json_with_python_nan(self):
+        mock = self.MockLazyResult({'hello': float('nan')})
+        response = Response('mock', mock)
+        self.assertEqual({'hello': None}, response.as_json())
+
+    def test_as_json_nested_nan(self):
+        mock = self.MockLazyResult([self.MockModel(data=float('nan'))])
+
+        mock2 = self.MockLazyResult(self.MockModel(data=mock))
+        response2 = Response('mock', mock2)
+
+        self.assertEqual({'data': [{'data': None}]}, response2.as_json())

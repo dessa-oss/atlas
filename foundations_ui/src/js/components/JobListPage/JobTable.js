@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
-import JobActions from '../../actions/JobListActions';
 
 class JobTable extends Component {
   constructor(props) {
@@ -14,6 +13,23 @@ class JobTable extends Component {
       allMetrics: this.props.allMetrics,
       statuses: this.props.statuses,
       updateHiddenStatus: this.props.updateHiddenStatus,
+      updateHiddenUser: this.props.updateHiddenUser,
+      updateNumberFilter: this.props.updateNumberFilter,
+      updateContainsFilter: this.props.updateContainsFilter,
+      updateBoolFilter: this.props.updateBoolFilter,
+      updateDurationFilter: this.props.updateDurationFilter,
+      updateJobIdFilter: this.props.updateJobIdFilter,
+      updateStartTimeFilter: this.props.updateStartTimeFilter,
+      allUsers: this.props.allUsers,
+      hiddenUsers: this.props.hiddenUsers,
+      numberFilters: this.props.numberFilters,
+      containFilters: this.props.containFilters,
+      boolFilters: this.props.boolFilters,
+      boolCheckboxes: this.props.boolCheckboxes,
+      durationFilters: this.props.durationFilters,
+      jobIdFilters: this.props.jobIdFilters,
+      startTimeFilters: this.props.startTimeFilters,
+      filters: this.props.filters,
     };
   }
 
@@ -25,13 +41,26 @@ class JobTable extends Component {
         isLoaded: nextProps.isLoaded,
         allInputParams: nextProps.allInputParams,
         allMetrics: nextProps.allMetrics,
+        allUsers: nextProps.allUsers,
+        hiddenUsers: nextProps.hiddenUsers,
+        boolCheckboxes: nextProps.boolCheckboxes,
+        numberFilters: nextProps.numberFilters,
+        containFilters: nextProps.containFilters,
+        boolFilters: nextProps.boolFilters,
+        durationFilters: nextProps.durationFilters,
+        jobIdFilters: nextProps.jobIdFilters,
+        startTimeFilters: nextProps.startTimeFilters,
+        filters: nextProps.filters,
       },
     );
   }
 
   render() {
     const {
-      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus,
+      jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
+      updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
+      boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
+      startTimeFilters, filters,
     } = this.state;
 
     let jobRows = [];
@@ -39,18 +68,18 @@ class JobTable extends Component {
     const rowNumbers = [];
     if (isLoaded) {
       if (jobs.length === 0) {
-        jobRows = <p>No Jobs available</p>;
+        jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
       } else {
         jobRows = [];
         jobs.forEach((job) => {
           const key = job.job_id;
-          jobRows.push(<JobTableRow key={key} job={job} />);
+          jobRows.push(<JobTableRow key={key} job={job} rowNumber={rowNum - 1} />);
           rowNumbers.push(<p key={key}>{rowNum}</p>);
           rowNum += 1;
         });
       }
     } else {
-      jobRows = <p>Loading Jobs</p>;
+      jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
     }
 
     return (
@@ -62,18 +91,31 @@ class JobTable extends Component {
             jobs={jobs}
             statuses={statuses}
             updateHiddenStatus={updateHiddenStatus}
+            rowNumbers={rowNumbers}
+            jobRows={jobRows}
+            updateHiddenUser={updateHiddenUser}
+            allUsers={allUsers}
+            hiddenUsers={hiddenUsers}
+            boolCheckboxes={boolCheckboxes}
+            updateNumberFilter={updateNumberFilter}
+            numberFilters={numberFilters}
+            updateContainsFilter={updateContainsFilter}
+            containFilters={containFilters}
+            updateBoolFilter={updateBoolFilter}
+            boolFilters={boolFilters}
+            updateDurationFilter={updateDurationFilter}
+            durationFilters={durationFilters}
+            updateJobIdFilter={updateJobIdFilter}
+            jobIdFilters={jobIdFilters}
+            updateStartTimeFilter={updateStartTimeFilter}
+            startTimeFilters={startTimeFilters}
+            filters={filters}
           />
-          <div className="table-row-number">
-            {rowNumbers}
-          </div>
-          <div className="job-table-row-container">
-            {jobRows}
-          </div>
           <div className="pagination-controls">
-            <p><span className="font-bold">Viewing:</span> 1-100/600</p>
+            {/* <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />
             <p>Page 1</p>
-            <div className="arrow-left" />
+            <div className="arrow-left" /> */}
           </div>
         </div>
       </div>
@@ -90,6 +132,23 @@ JobTable.propTypes = {
   allMetrics: PropTypes.array,
   updateHiddenStatus: PropTypes.func,
   statuses: PropTypes.array,
+  updateHiddenUser: PropTypes.func,
+  allUsers: PropTypes.array,
+  hiddenUsers: PropTypes.array,
+  updateNumberFilter: PropTypes.func,
+  numberFilters: PropTypes.array,
+  updateContainsFilter: PropTypes.func,
+  containFilters: PropTypes.array,
+  updateBoolFilter: PropTypes.func,
+  boolFilters: PropTypes.array,
+  boolCheckboxes: PropTypes.array,
+  updateDurationFilter: PropTypes.func,
+  durationFilters: PropTypes.array,
+  updateJobIdFilter: PropTypes.func,
+  jobIdFilters: PropTypes.array,
+  updateStartTimeFilter: PropTypes.func,
+  startTimeFilters: PropTypes.array,
+  filters: PropTypes.array,
 };
 
 JobTable.defaultProps = {
@@ -101,6 +160,23 @@ JobTable.defaultProps = {
   allMetrics: [],
   updateHiddenStatus: () => {},
   statuses: [],
+  updateHiddenUser: () => {},
+  allUsers: [],
+  hiddenUsers: [],
+  updateNumberFilter: () => {},
+  numberFilters: [],
+  updateContainsFilter: () => {},
+  containFilters: [],
+  updateBoolFilter: () => {},
+  boolFilters: [],
+  boolCheckboxes: [],
+  updateDurationFilter: () => {},
+  durationFilters: [],
+  updateJobIdFilter: () => {},
+  jobIdFilters: [],
+  updateStartTimeFilter: () => {},
+  startTimeFilters: [],
+  filters: [],
 };
 
 export default JobTable;

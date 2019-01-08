@@ -2,48 +2,92 @@
   display: inline-block;
   vertical-align: top;
   text-align: center;
-  height: 50px;
+  height: $column-header-height;
+  margin: auto;
+  padding-left: $standard-cell-padding;
+  padding-right: $standard-cell-padding;
 
-  h4{
-    min-width: 80px;
+  h4 {
+    min-width: $static-column-header-text-width;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-bottom: 0px;
-    padding-bottom: 3px;
-    margin-top: 6px;
+    margin-top: $standard-cell-padding;
   }
 
   .status-header{
-    min-width: 40px;
+    min-width: $static-status-width;
+    max-width: $static-status-width;
+    padding-left: 0px;
+    padding-right: 0px;
+    overflow: visible;
   }
 
-  .start-time-offset{
-    padding-left: 25px;
-    padding-right: 6px;
-  }
-
-.status-offset{
-  padding-left: 18px;
-
-  .icon-container {
-    width: 25%;
-  }
-
-  .arrow-continer {
-    width: 75%;
-  }
+  &:not(.status-header) {
+    width: $standard-cell-width;
 }
 
-  .job-id-offset{
-    padding-left: 20px;
-    padding-right: 20px;
+  .static-header {
+    width: $static-column-header-text-width;
+    margin: auto;
+    position: relative;
+
+    h4 {
+      &:hover {
+        + .tooltip {
+          display: block;
+        }
+      }
+    }
+
+    .tooltip {
+      top: -3px;
+      left: -15px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+
   }
 
-  .duration-offset{
-    padding-left: 35px;
-    padding-right: 35px;
-  }
+  .static-status-header {
+    max-width: $static-status-width;
+    min-width: $static-status-width;
+    margin: auto;
+    position: relative;
+    
+    h4 {
+      &:hover {
+        + .tooltip {
+          display: block;
+        }
+      }
+    }
 
-  .user-offset{
-    padding-left: 15px;
-    padding-right: 5px;
+    .tooltip {
+      min-width: fit-content;
+      width: fit-content;
+      top: -2px;
+      left: -5px;
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+
+    .icon-container {
+      width: 25%;
+
+      .i--icon-filtered {
+        position: relative;
+        left: -5px;
+      }
+    }
+
+    .arrow-down {
+      position: relative;
+      left: 10px;
+    }
   }
 }

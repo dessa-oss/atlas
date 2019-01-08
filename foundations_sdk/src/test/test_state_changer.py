@@ -7,7 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from foundations.state_changer import StateChanger
+from foundations_contrib.state_changer import StateChanger
+import foundations_internal
 
 
 class TestStateChanger(unittest.TestCase):
@@ -17,47 +18,44 @@ class TestStateChanger(unittest.TestCase):
 
     class MockPipeline(object):
         pass
-    
+
     class MockPipelineContext(object):
         pass
-    
-    def test_changes_state(self):
-        import foundations
 
+    def test_changes_state(self):
         pipeline = self.MockPipeline()
-        with StateChanger('foundations', 'pipeline', pipeline):
-            self.assertEqual(pipeline, foundations.pipeline)
+        with StateChanger('foundations_internal', 'pipeline', pipeline):
+            self.assertEqual(
+                pipeline, foundations_internal.pipeline)
 
     def test_changes_state_different_context(self):
-        import foundations
-
         pipeline_context = self.MockPipelineContext()
-        with StateChanger('foundations', 'pipeline_context', pipeline_context):
-            self.assertEqual(pipeline_context, foundations.pipeline_context)
+        with StateChanger('foundations_internal', 'pipeline_context', pipeline_context):
+            self.assertEqual(
+                pipeline_context, foundations_internal.pipeline_context)
 
     def test_changes_state_namespaced_value(self):
-        import foundations.argument
+        import foundations_internal.argument
 
-        foundations.argument.MockClass = self.MockClass()
+        foundations_internal.argument.MockClass = self.MockClass()
 
         mock_class = self.MockClass()
-        with StateChanger('foundations.argument', 'MockClass', mock_class):
-            self.assertEqual(mock_class, foundations.argument.MockClass)
+        with StateChanger('foundations_internal.argument', 'MockClass', mock_class):
+            self.assertEqual(
+                mock_class, foundations_internal.argument.MockClass)
 
     def test_resets_state(self):
-        import foundations
-
-        previous_pipeline = foundations.pipeline
+        previous_pipeline = foundations_internal.pipeline
         pipeline = self.MockPipelineContext()
-        with StateChanger('foundations', 'pipeline', pipeline):
+        with StateChanger('foundations_internal', 'pipeline', pipeline):
             pass
-        self.assertEqual(previous_pipeline, foundations.pipeline)
+        self.assertEqual(
+            previous_pipeline, foundations_internal.pipeline)
 
     def test_resets_state_different_context(self):
-        import foundations
-
-        previous_context = foundations.pipeline_context
+        previous_context = foundations_internal.pipeline_context
         pipeline_context = self.MockPipelineContext()
-        with StateChanger('foundations', 'pipeline_context', pipeline_context):
+        with StateChanger('foundations_internal', 'pipeline_context', pipeline_context):
             pass
-        self.assertEqual(previous_context, foundations.pipeline_context)
+        self.assertEqual(
+            previous_context, foundations_internal.pipeline_context)

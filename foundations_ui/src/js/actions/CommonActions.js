@@ -10,28 +10,34 @@ const oneElement = 1;
 
 class CommonActions {
   // Helper Functions
-  static getInputMetricColumnHeaders(allInputParams, resizeCells, hiddenInputParams) {
+  static getInputMetricColumnHeaders(
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+  ) {
     if (allInputParams.length > 0) {
-      return this.getInputParamHeaders(allInputParams, resizeCells, hiddenInputParams);
+      return this.getInputParamHeaders(
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+      );
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, resizeCells, hiddenInputParams) {
+  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray) {
     const inputParams = [];
-    let colIndex = 0;
     allInputParams.forEach((input) => {
-      if (this.arrayDoesNotInclude(hiddenInputParams, input)) {
-        const key = input;
+      if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
+        const key = input.name;
+        const colType = input.type;
+        const isFiltered = JobActions.isColumnFiltered(filteredArray, key);
         inputParams.push(<JobColumnHeader
           key={key}
-          title={input}
-          className="inline-block"
+          title={key}
+          className="inline-block full-width"
           containerClass="job-column-header"
-          sizeCallback={resizeCells}
-          colIndex={colIndex}
+          toggleFilter={toggleNumberFilter}
+          colType={colType}
+          isMetric={isMetric}
+          isFiltered={isFiltered}
         />);
-        colIndex += 1;
       }
     });
     return inputParams;
@@ -65,64 +71,80 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, cellWidths, isError, isMetric, columns, hiddenInputParams) {
+  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams, rowNumber) {
     if (isMetric && job.output_metrics) {
-      return this.getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric, hiddenInputParams);
+      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
 
     if (!isMetric && job.input_params && job.input_params.length > 0) {
-      return this.getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric, hiddenInputParams);
+      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
     return null;
   }
 
-  static getInputCellsFromInputParams(job, cellWidths, isError, columns, isMetric, hiddenInputParams) {
+  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
     let cells = [];
     cells = [];
-    let colIndex = 0;
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
-        const cellWidth = cellWidths[colIndex];
-        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        const cellType = this.getInputMetricCellType(input);
+        if (cellType.match(/array*/)) {
+          inputValue = this.transformArraysToString(inputValue);
+        }
         cells.push(<InputMetricCell
           key={key}
-          cellWidth={cellWidth}
           value={inputValue}
           isError={isError}
+          cellType={cellType}
+          rowNumber={rowNumber}
         />);
       }
-      colIndex += 1;
     });
     return cells;
   }
 
-  static getMetricCellsFromOutputMetrics(job, cellWidths, isError, columns, isMetric, hiddenInputParams) {
+  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
     const cells = [];
-    let colIndex = 0;
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
-        const cellWidth = cellWidths[colIndex];
-        const inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
+        const cellType = this.getInputMetricCellType(input);
+        if (cellType.match(/array*/)) {
+          inputValue = this.transformArraysToString(inputValue);
+        }
         cells.push(<InputMetricCell
           key={key}
-          cellWidth={cellWidth}
           value={inputValue}
           isError={isError}
+          cellType={cellType}
+          rowNumber={rowNumber}
         />);
       } else {
         cells.push(null);
       }
-      colIndex += 1;
     });
     return cells;
   }
 
-  static getInputMetricRows(jobs, cellWidths, isMetric, allInputMetricColumn, hiddenInputParams) {
+  static transformArraysToString(arrayValue) {
+    let newValue = '[';
+    arrayValue.forEach((element) => {
+      newValue = newValue.concat(String(element));
+      newValue += ', ';
+    });
+    newValue = newValue.slice(0, newValue.length - 2);
+    newValue += ']';
+    return newValue;
+  }
+
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
     let rows = null;
+    let rowNumber = 0;
     if (jobs.length > 0) {
       rows = [];
       jobs.forEach((job) => {
@@ -131,39 +153,44 @@ class CommonActions {
         rows.push(<InputMetricRow
           key={key}
           job={job}
-          cellWidths={cellWidths}
           isError={isError}
           isMetric={isMetric}
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
+          rowNumber={rowNumber}
         />);
+        rowNumber += 1;
       });
     }
     return rows;
   }
 
-  static getInputMetricCellPClass(isError) {
-    return isError ? 'font-bold error' : 'font-bold';
+  static getInputMetricCellPClass(isError, cellType) {
+    return isError ? `error type-${cellType}` : `type-${cellType}`;
   }
 
-  static getInputMetricCellDivClass(isError) {
-    return isError ? 'job-cell error' : 'job-cell';
+  static getInputMetricCellDivClass(isError, rowNumber) {
+    return isError ? `job-cell error row-${rowNumber}` : `job-cell row-${rowNumber}`;
   }
 
   static isError(status) {
-    return status.toLowerCase() === 'error';
+    return status.toLowerCase() === 'failed';
+  }
+
+  static errorStatus(isError) {
+    return isError ? 'failed' : '';
   }
 
   static formatColumns(columns, hiddenInputParams, searchText = '') {
     const formatedColumns = [];
     if (columns !== null) {
       columns.forEach((col) => {
-        if (col.toLowerCase().includes(searchText.toLowerCase())) {
+        if (col.name.toLowerCase().includes(searchText.toLowerCase())) {
           let isHidden = false;
-          if (hiddenInputParams.includes(col)) {
+          if (hiddenInputParams.includes(col.name)) {
             isHidden = true;
           }
-          formatedColumns.push({ name: col, hidden: isHidden });
+          formatedColumns.push({ name: col.name, hidden: isHidden });
         }
       });
     }
@@ -185,12 +212,96 @@ class CommonActions {
     return job.job_id.concat('-input-metric-row');
   }
 
-  static addBorderToElementWidth(element, borderWidth) {
+  static addBorderToElementWidth(element, borderWidth, hiddenWidth) {
+    if (hiddenWidth !== null) {
+      return hiddenWidth + borderWidth;
+    }
     return element.clientWidth + borderWidth;
   }
 
   static elementsWidthLargerThanParent(elementWidth, parentWidth) {
     return elementWidth > parentWidth;
+  }
+
+  static getInputMetricCellType(inputMetric) {
+    if (inputMetric && inputMetric.type) {
+      return inputMetric.type;
+    }
+    return 'not-available';
+  }
+
+  static getFlatArray(array) {
+    return array.map((element) => {
+      return element.name;
+    });
+  }
+
+  static getOldFiltersWithoutColumn(oldFilters, newColumnName) {
+    return oldFilters.filter(
+      (filter) => {
+        if (filter.columnName !== newColumnName) {
+          return true;
+        }
+      },
+    );
+  }
+
+  static getNumberFilters(oldFilters, newMin, newMax, newShowingNotAvailable, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
+    newFilters.push({
+      columnName: newColumnName,
+      min: newMin,
+      max: newMax,
+      showingNotAvailable: newShowingNotAvailable,
+    });
+    return newFilters;
+  }
+
+  static getContainFilters(oldFilters, newSearchText, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
+    newFilters.push({
+      columnName: newColumnName,
+      searchText: newSearchText,
+    });
+    return newFilters;
+  }
+
+  static getBoolFilters(oldFilters, newFormattedBool, newColumnName) {
+    const newFilters = this.getOldFiltersWithoutColumn(oldFilters, newColumnName);
+    newFilters.push({
+      columnName: newColumnName,
+      boolCheckboxes: newFormattedBool,
+    });
+    return newFilters;
+  }
+
+  static getDurationFilters(startTime, endTime, columnName) {
+    return [{ columnName, startTime, endTime }];
+  }
+
+  static getApplyClass(isDisabled) {
+    let applyClass = 'b--mat b--affirmative text-upper';
+    if (isDisabled()) {
+      applyClass += ' b--disabled';
+    }
+    return applyClass;
+  }
+
+  static getInputMetricFilterLeft(metricClass) {
+    let style = null;
+    const inputBorder = 3;
+    if (this.isMetricAndHasContainers(metricClass)) {
+      const staticColumnLeft = document.getElementsByClassName('job-static-columns-container')[0].clientWidth;
+      const inputParamLeft = document.getElementsByClassName('job-static-columns-container')[1].clientWidth;
+
+      const filterLeft = staticColumnLeft + inputParamLeft + inputBorder;
+      style = { left: filterLeft };
+    }
+    return style;
+  }
+
+  static isMetricAndHasContainers(metricClass) {
+    return (metricClass === 'is-metric' && document.getElementsByClassName('job-static-columns-container').length > 1);
   }
 
   // private functions, not cannot declare a private and static
@@ -233,7 +344,10 @@ class CommonActions {
     return input.source === 'constant';
   }
 
-  static getCheckboxes(columns, changeLocalParams, showAllFilters, unsetClearFilters, statusCheckbox = false) {
+  static getCheckboxes(
+    columns, changeLocalParams, showAllFilters, unsetClearFilters, hideAllFilters,
+    statusCheckbox = false, unsetHideFilters = () => {},
+  ) {
     let checkboxes = null;
     if (columns.length > 0) {
       checkboxes = [];
@@ -251,6 +365,8 @@ class CommonActions {
           showAllFilters={showAllFilters}
           unsetClearFilters={unsetClearFilters}
           statusCircle={statusCircle}
+          hideAllFilters={hideAllFilters}
+          unsetHideFilters={unsetHideFilters}
         />);
       });
     }

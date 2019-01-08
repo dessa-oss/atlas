@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 
 const isStatusCheckbox = true;
+const hidden = false;
+const numCheckboxes = 3;
 
 class StatusFilter extends Component {
   constructor(props) {
@@ -12,6 +14,7 @@ class StatusFilter extends Component {
     this.onCancel = this.onCancel.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
@@ -28,8 +31,10 @@ class StatusFilter extends Component {
 
   onApply() {
     const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
-    changeHiddenParams(changedParams);
-    toggleShowingFilter();
+    if (!this.isDisabled()) {
+      changeHiddenParams(changedParams);
+      toggleShowingFilter();
+    }
   }
 
   onCancel() {
@@ -53,11 +58,21 @@ class StatusFilter extends Component {
     this.setState({ changedParams: copyArray });
   }
 
+  isDisabled() {
+    const { changedParams } = this.state;
+    const filteredParams = changedParams.filter((param) => {
+      return param !== null && param !== undefined;
+    });
+    return filteredParams.length >= numCheckboxes;
+  }
+
   render() {
     const { columns, showAllFilters } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, isStatusCheckbox,
+      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, hidden, isStatusCheckbox,
     );
+
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <div className="filter-container column-filter-container elevation-1 status-filter-container">
@@ -75,7 +90,7 @@ class StatusFilter extends Component {
         </div>
         <div className="column-filter-buttons">
           <button type="button" onClick={this.onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={this.onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={this.onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );

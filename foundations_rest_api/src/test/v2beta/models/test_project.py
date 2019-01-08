@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import patch
 from foundations_rest_api.v2beta.models.project import Project
+from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
 
 class TestProjectV2(unittest.TestCase):
@@ -19,18 +20,11 @@ class TestProjectV2(unittest.TestCase):
 
         def get_pipeline_names(self):
             return self.list
-
-    def setUp(self):
-        from foundations.global_state import config_manager
-
-        self._listing = self.MockListing()
-
-        def get_listing():
-            return self._listing
-
-        config_manager['project_listing_implementation'] = {
-            'project_listing_type': get_listing
-        }
+        
+    class MockJob(PropertyModel):
+        job_id = PropertyModel.define_property()
+        input_params = PropertyModel.define_property()
+        output_metrics = PropertyModel.define_property()
 
     def tearDown(self):
         from foundations.global_state import config_manager
@@ -76,37 +70,151 @@ class TestProjectV2(unittest.TestCase):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
-    def test_all_returns_all_projects(self, mock_jobs):
-        mock_jobs.return_value = 'listed'
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
 
-        self._listing.list = ['project1']
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id = '123', input_params= [], output_metrics = [])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
 
         project = Project.all().evaluate()[0]
         expected_project = Project(
             name='project1',
             created_at = None,
             owner = None,
-            jobs = 'listed'
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [],
+            output_metric_names = []
         )
         self.assertEqual(expected_project, project)
+    
 
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
-    def test_all_returns_all_projects_multiple_projects(self, mock_jobs):
-        mock_jobs.return_value = 'listed'
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
 
-        self._listing.list = ['project1', 'project2']
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id = '123', input_params= [], output_metrics = [])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}, {'name': 'project2'}]
 
         project = [project for project in Project.all().evaluate()]
         expected_project = Project(
             name='project1',
             created_at = None,
             owner = None,
-            jobs = 'listed'
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [],
+            output_metric_names = []
         )
         expected_project_two = Project(
             name='project2',
             created_at = None,
             owner = None,
-            jobs = 'listed'
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [],
+            output_metric_names = []
         )
         self.assertEqual([expected_project, expected_project_two], project)
+    
+    @patch('foundations_rest_api.v2beta.models.job.Job.all')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_correct_input_param_names(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
+
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
+                                                                  input_params=[{'name': 'param_1', 'value': 'bye', 'type': 'string'}],
+                                                                  output_metrics=[])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
+
+        project = Project.all().evaluate()[0]
+        expected_project = Project(
+            name='project1',
+            created_at = None,
+            owner = None,
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [{'name': 'param_1', 'type': 'string'}],
+            output_metric_names = []
+        )
+        self.assertDictEqual(expected_project.input_parameter_names[0], project.input_parameter_names[0])
+    
+    @patch('foundations_rest_api.v2beta.models.job.Job.all')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_correct_input_param_names_2_input_param(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
+
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
+                                                                  input_params=[{'name': 'param_1', 'value': 'bye', 'type': 'string'},
+                                                                                {'name': 'param_2', 'value': '[hi]', 'type': 'list'}],
+                                                                  output_metrics=[])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
+
+        project = Project.all().evaluate()[0]
+        expected_project = Project(
+            name='project1',
+            created_at = None,
+            owner = None,
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [{'name': 'param_1', 'type': 'string'}, {'name': 'param_2', 'type': 'list'}],
+            output_metric_names = []
+        )
+        self.assertCountEqual(expected_project.input_parameter_names, project.input_parameter_names)
+    
+    @patch('foundations_rest_api.v2beta.models.job.Job.all')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_correct_ouput_metric_names(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
+
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
+                                                                  input_params=[],
+                                                                  output_metrics=[{'name': 'metric_1', 'type': 'list'}])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
+
+        project = Project.all().evaluate()[0]
+        expected_project = Project(
+            name='project1',
+            created_at = None,
+            owner = None,
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [],
+            output_metric_names = [{'name': 'metric_1', 'type': 'list'}]
+        )
+        self.assertCountEqual(expected_project.output_metric_names, project.output_metric_names)
+    
+    @patch('foundations_rest_api.v2beta.models.job.Job.all')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_correct_ouput_metric_names_multiple_metrics(self, mock_projects, mock_jobs):
+        from foundations_rest_api.lazy_result import LazyResult
+
+        mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
+                                                                  input_params=[],
+                                                                  output_metrics=[{'name': 'metric_1', 'type': 'list'},
+                                                                                {'name': 'metric_2', 'type': 'string'},
+                                                                                {'name': 'metric_3', 'type': 'hippo'}])])
+
+        mock_projects.list_projects.return_value = [{'name': 'project1'}]
+
+        project = Project.all().evaluate()[0]
+        expected_project = Project(
+            name='project1',
+            created_at = None,
+            owner = None,
+            jobs = [self.MockJob(job_id = '123', input_params= [], output_metrics = [])],
+            input_parameter_names = [],
+            output_metric_names=[{'name': 'metric_1', 'type': 'list'},
+                                 {'name': 'metric_2', 'type': 'string'},
+                                 {'name': 'metric_3', 'type': 'hippo'}
+                                 ]
+        )
+        self.assertCountEqual(expected_project.output_metric_names, project.output_metric_names)
+
+
+    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.models.project_listing.ProjectListing')
+    def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
+        Project.all().evaluate()
+        mock_projects.list_projects.assert_called_with(mock_redis)  

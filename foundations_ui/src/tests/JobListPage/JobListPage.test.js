@@ -14,10 +14,7 @@ it('Shallow Renders Job List Page', () => {
 // Won't actually get anything unless `projectName` is a project name
 // in your API
 it('Calls Get Job List', async () => {
-  const wrapper = mount(<JobListPage/>); 
-  const preState = wrapper.state();
-  await wrapper.instance().getJobs('projectName');
+  const wrapper = mount(<JobListPage projectName='myProject'/>); 
   const postState = wrapper.state();
-  expect(preState.isLoaded === false);
   expect(postState.isLoaded === true);
 });

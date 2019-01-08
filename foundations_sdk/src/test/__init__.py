@@ -5,72 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import sys
 
-if sys.version_info[0] >= 3:
-    from test.test_staged_module_loader import TestStagedModuleLoader
-    from test.test_staged_meta_finder import TestStagedMetaFinder
-else:
-    from test.test_staged_module_py2_loader import TestStagedModulePy2Loader
-    from test.test_staged_meta_py2_finder import TestStagedMetaPy2Finder
-
-
-from test.test_staged_module_internal_loader import TestStagedModuleInternalLoader
-from test.test_staged_meta_helper import TestStagedMetaHelper
-from test.test_null_pipeline_archive_listing import TestNullPipelineArchiveListing
-from test.test_bucket_pipeline_listing import TestBucketPipelineListing
-from test.test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing
-from test.test_prefixed_bucket import TestPrefixedBucket
-from test.test_local_file_system_bucket import TestLocalFileSystemBucket
 from test.test_config_manager import TestConfigManager
 from test.test_log_manager import TestLogManager
-from test.test_module_manager import TestModuleManager
-from test.test_middleware_chain import TestMiddlewareChain
-from test.test_middleware_manager import TestMiddlewareManager
 from test.test_argument_hasher import TestArgumentHasher
-from test.test_argument import TestArgument
-from test.test_live_argument import TestLiveArgument
-from test.test_constant_parameter import TestConstantParameter
-from test.test_dynamic_parameter import TestDynamicParameter
-from test.test_stage_parameter import TestStageParameter
-from test.test_provenance import TestProvenance
-from test.test_cache_name_generator import TestCacheNameGenerator
-from test.test_stage_connector_wrapper import TestStageConnectorWrapper
-from test.test_stage_cache import TestStageCache
-from test.test_pipeline_context import TestPipelineContext
-from test.test_cache import TestCache
-from test.test_null_cache_backend import TestNullCacheBackend
-from test.test_bucket_cache_backend import TestBucketCacheBackend
-from test.test_stage_context import TestStageContext
-from test.test_stage_logging_context import TestStageLoggingContext
-from test.test_stage_logger import TestStageLogger
 from test.test_global_import_serialize import TestGlobalImportSerialization
-from test.test_foundations_context import TestFoundationsContext
-from test.test_null_stage_logger import TestNullStageLogger
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
 from test.test_staging import TestStaging
-from test.test_scheduler import TestScheduler
 from test.test_scheduler_job_information import TestSchedulerJobInformation
 from test.test_job import TestJob
-from test.test_scheduler_legacy_backend import TestSchedulerLegacyBackend
-from test.test_scheduler_local_backend import TestSchedulerLocalBackend
-from test.test_local_shell_job_deployment import TestLocalShellJobDeployment
 from test.test_utils import TestUtils
-from test.test_error_printer import TestErrorPrinter
 from test.test_projects import TestProjects
-from test.test_deployment_manager import TestDeploymentManager
-from test.test_safe_inspect import TestSafeInspect
-from test.test_message_route import TestMessageRoute
-from test.test_message_router import TestMessageRouter
-from test.test_message_route_listener import TestMessageRouteListener
-from test.test_redis_pipeline_wrapper import TestRedisPipelineWrapper
-from test.test_job_data_redis import TestJobDataRedis
-from test.test_job_data_shaper import TestJobDataShaper
-from test.helpers import *
-from test.models import *
-from test.job_bundling import *
-from test.producers import *
-from test.consumers import *
-from test.middleware import *
-from test.deployment import *
+from test.test_stage_connector_wrapper import TestStageConnectorWrapper

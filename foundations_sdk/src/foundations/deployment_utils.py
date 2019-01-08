@@ -5,8 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 def gcp_deploy_job(job, job_name):
-    from foundations.job_source_bundle import JobSourceBundle
+    from foundations_contrib.job_source_bundle import JobSourceBundle
     from foundations.gcp_job_deployment import GCPJobDeployment
     from uuid import uuid4
 
@@ -15,6 +16,7 @@ def gcp_deploy_job(job, job_name):
     deployment = GCPJobDeployment(job_name, job, job_source_bundle)
     deployment.deploy()
     return deployment
+
 
 def extract_results(fetched_results):
     results = {}
@@ -25,10 +27,12 @@ def extract_results(fetched_results):
 
     return results
 
+
 def _grab_and_log_results(logger, deployment, error_handler):
     logged_results = deployment._try_get_results(error_handler)
     logger.info(deployment.job_name() + ": " + str(logged_results))
     return logged_results
+
 
 def collect_results_and_remove_finished_deployments(logger, deployment_set, error_handler):
     from foundations.utils import _remove_items_by_key
@@ -40,7 +44,8 @@ def collect_results_and_remove_finished_deployments(logger, deployment_set, erro
         logger.info(job_name + ": " + deployment.get_job_status())
 
         if deployment.is_job_complete():
-            logged_results = _grab_and_log_results(logger, deployment, error_handler)
+            logged_results = _grab_and_log_results(
+                logger, deployment, error_handler)
             jobs_done.append(deployment.job_name())
             all_logged_results.append(logged_results)
 
@@ -50,6 +55,7 @@ def collect_results_and_remove_finished_deployments(logger, deployment_set, erro
 
     return all_logged_results
 
+
 def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     import time
 
@@ -58,7 +64,8 @@ def wait_on_deployment_set(deployment_set, time_to_sleep=5, error_handler=None):
     log = log_manager.get_logger(__name__)
 
     while deployment_set != {}:
-        collect_results_and_remove_finished_deployments(log, deployment_set, error_handler)
+        collect_results_and_remove_finished_deployments(
+            log, deployment_set, error_handler)
         time.sleep(time_to_sleep)
 
     log.info('All deployments completed.')

@@ -3,6 +3,7 @@
 exports[`Shallow Renders SelectColumnFilter 1`] = `
 <CheckboxFilter
   addedClass=""
+  applyClass="b--mat b--affirmative text-upper"
   checkboxes={null}
   input={
     <input
@@ -13,6 +14,7 @@ exports[`Shallow Renders SelectColumnFilter 1`] = `
   onApply={[Function]}
   onCancel={[Function]}
   onClearFilters={[Function]}
+  onHideAll={[Function]}
   submitSearchText={[Function]}
 />
 `;

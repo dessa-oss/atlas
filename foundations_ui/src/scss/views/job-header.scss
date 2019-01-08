@@ -51,19 +51,17 @@
         display: inline-block;
         vertical-align: middle;
       
-        h1{
+        h1 {
           text-align: center;
           display: inline-block;
           vertical-align: baseline;
-          padding-bottom: 5px; 
           text-align: left;
           margin: 15px 0px;
         }
       
-        h2{
+        h2 {
           text-align: center;
           display: inline-block;
-          padding-bottom: 8px;
           text-align: right;
         }
     }
@@ -103,20 +101,19 @@
     margin-left: $overview-content-margin-horizontal;
 
     > div {
-      &:nth-of-type(2){
-        margin-left: 15px;
-        width: 121px;
-        border-right: 1px solid $color-border-bottom;
-        border-bottom: none;
-      }
-    }
-
-    > div {
       display: inline-block;
       vertical-align: top;
-      border-bottom: 1px solid $color-border-bottom;
-      width: 685px;
-        > div {
+      border-bottom: $border-thin solid $color-border-bottom;
+      width: $job-header-sorting-container-width;
+
+      &:nth-of-type(2){
+        margin-left: $margin-width;
+        width: 121px;
+        border-right: $border-thin solid $color-border-bottom;
+        border-bottom: none;
+      }
+
+      > div {
         display: inline-block;
         vertical-align: top;
         width: 595px;
@@ -160,8 +157,8 @@
         margin: 0px;
         display: inline-block;
         vertical-align: middle;
-        padding-right: 10px;
-        padding-left: 5px; 
+        padding-right: $standard-cell-padding;
+        padding-left: $standard-cell-padding;
       }
     }
 
@@ -177,24 +174,12 @@
     }
   }
 
-  @media only screen and (max-width: $minimum-screen-width) {
-    .job-summary-info-container {
-        width: calc(40% - 100px);
-    }
 
-    .job-header-sorting-container {
-        > div {
-          width: 495px;
-            > div {
-            width: 395px;
-          }
-        }
-      }
-      p {
-        margin: 0px;
-        display: inline-block;
-        vertical-align: middle;
-        padding-right: 10px;
-        padding-left: 5px; 
-      }
+@media only screen and (max-width: $minimum-screen-width) {
+  .job-header-sorting-container {
+    > div {
+      width: $job-header-sorting-container-width-small-screen;
     }
+  }
+}
+

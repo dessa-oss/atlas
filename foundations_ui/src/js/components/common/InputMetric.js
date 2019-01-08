@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ScrollSyncPane } from 'react-scroll-sync';
 import TableSectionHeader from './TableSectionHeader';
 import CommonActions from '../../actions/CommonActions';
 
 class InputMetric extends Component {
   constructor(props) {
     super(props);
-    this.resizeCells = this.resizeCells.bind(this);
-    this.isCellWidthSame = this.isCellWidthSame.bind(this);
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.updateSearchText = this.updateSearchText.bind(this);
+    this.hasNoRows = this.hasNoRows.bind(this);
     this.state = {
       header: this.props.header,
       hiddenInputParams: [],
       allInputParams: this.props.allInputParams,
       jobs: [],
-      cellWidths: new Array(this.props.allInputParams.length),
       isMetric: this.props.isMetric,
       searchText: '',
+      toggleNumberFilter: this.props.toggleNumberFilter,
+      filteredArray: this.props.filters,
     };
   }
 
@@ -25,20 +26,8 @@ class InputMetric extends Component {
     this.setState({
       allInputParams: nextProps.allInputParams,
       jobs: nextProps.jobs,
-      cellWidths: new Array(nextProps.allInputParams.length),
+      filteredArray: nextProps.filters,
     });
-  }
-
-  resizeCells(colIndex, newWidth) {
-    const { cellWidths } = this.state;
-    if (this.isCellWidthSame(cellWidths[colIndex], newWidth)) {
-      cellWidths[colIndex] = newWidth;
-      this.forceUpdate();
-    }
-  }
-
-  isCellWidthSame(oldWidth, newWidth) {
-    return (oldWidth !== newWidth);
   }
 
   changeHiddenParams(hiddenParams) {
@@ -51,19 +40,29 @@ class InputMetric extends Component {
     this.forceUpdate();
   }
 
+  hasNoRows(rows, flatParams) {
+    const { hiddenInputParams } = this.state;
+    return rows === null || rows.length === 0 || flatParams.length === hiddenInputParams.length;
+  }
+
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, cellWidths, isMetric, searchText,
+      header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
     } = this.state;
 
+    const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, this.resizeCells, hiddenInputParams,
+      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
-    const rows = CommonActions.getInputMetricRows(jobs, cellWidths, isMetric, allInputParams, hiddenInputParams);
+    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+    if (this.hasNoRows(rows, flatParams)) {
+      rows = [];
+      rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+    }
 
     return (
-      <div className="input-metric-container">
+      <div className="job-static-columns-container">
         <TableSectionHeader
           header={header}
           changeHiddenParams={this.changeHiddenParams}
@@ -73,9 +72,15 @@ class InputMetric extends Component {
           searchText={searchText}
           isMetric={isMetric}
         />
-        <div className="input-metric-column-header-container">
-          {inputParams}
-          {rows}
+        <div className="input-metric-header-row-container">
+          <div className="input-metric-column-container column-header">
+            {inputParams}
+          </div>
+          <ScrollSyncPane group="vertical">
+            <div className="input-metric-column-container">
+              {rows}
+            </div>
+          </ScrollSyncPane>
         </div>
       </div>
     );
@@ -90,6 +95,8 @@ InputMetric.propTypes = {
   cellWidths: PropTypes.array,
   isMetric: PropTypes.bool,
   searchText: PropTypes.string,
+  toggleNumberFilter: PropTypes.func,
+  filters: PropTypes.array,
 };
 
 InputMetric.defaultProps = {
@@ -100,6 +107,8 @@ InputMetric.defaultProps = {
   cellWidths: [],
   isMetric: false,
   searchText: '',
+  toggleNumberFilter: () => {},
+  filters: [],
 };
 
 

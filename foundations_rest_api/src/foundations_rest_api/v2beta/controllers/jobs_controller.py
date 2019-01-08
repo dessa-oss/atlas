@@ -15,6 +15,8 @@ class JobsController(object):
         from foundations_rest_api.v2beta.models.project import Project
         from foundations_rest_api.response import Response
 
-        jobs_data_future = Project.find_by(name=self.params['project_name']).only(['name', 'jobs'])
+        project_name = self.params.pop('project_name')
+        jobs_data_future = Project.find_by(name=project_name).only(
+                ['name', 'jobs', 'input_parameter_names', 'output_metric_names'])
         jobs_data_future = jobs_data_future.apply_filters(self.params, fields=['jobs'])
         return Response('Jobs', jobs_data_future)

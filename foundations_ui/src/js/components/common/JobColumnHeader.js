@@ -1,49 +1,62 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactResizeDetector from 'react-resize-detector';
 import JobActions from '../../actions/JobListActions';
+import Tooltip from './Tooltip';
 
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
-    this.onResize = this.onResize.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
       offsetDivClass: this.props.className,
       containerDivClass: this.props.containerClass,
-      sizeCallback: this.props.sizeCallback,
-      colIndex: this.props.colIndex,
       toggleFilter: this.props.toggleFilter,
+      colType: this.props.colType,
+      isMetric: this.props.isMetric,
+      isFiltered: this.props.isFiltered,
     };
   }
 
-  onResize(width, height) {
-    const { sizeCallback, colIndex } = this.state;
-    const { clientWidth } = this.headerContainer;
-    sizeCallback(colIndex, clientWidth);
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        isFiltered: nextProps.isFiltered,
+      },
+    );
   }
 
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered,
     } = this.state;
     const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
-    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus);
+    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
+    const divClassName = JobActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
+    const presentationClassName = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
+
+    const tooltip = <Tooltip message={title} />;
+    const filterIcon = isFiltered ? <div className="i--icon-filtered" /> : null;
 
     return (
       <div
-        className={containerDivClass}
+        className={divClassName}
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
-          <h4 className={headerClassName}>{title}</h4>
-          <div className="icon-container" />
-          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className="arrow-container">
-            <div className={arrowClassName} />
+          <h4
+            className={headerClassName}
+          >
+            {title}
+          </h4>
+          {tooltip}
+          <div className="icon-container">
+            {filterIcon}
+          </div>
+          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className={presentationClassName}>
+            <div id={title} className={arrowClassName} />
           </div>
         </div>
-        <ReactResizeDetector handleWidth handleHeight onResize={this.onResize} />
       </div>
     );
   }
@@ -54,9 +67,10 @@ JobColumnHeader.propTypes = {
   isStatus: PropTypes.bool,
   className: PropTypes.string,
   containerClass: PropTypes.string,
-  sizeCallback: PropTypes.func,
-  colIndex: PropTypes.number,
   toggleFilter: PropTypes.func,
+  colType: PropTypes.string,
+  isMetric: PropTypes.bool,
+  isFiltered: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -64,9 +78,10 @@ JobColumnHeader.defaultProps = {
   isStatus: false,
   className: '',
   containerClass: 'job-column-header',
-  sizeCallback: () => null,
-  colIndex: 0,
   toggleFilter: () => {},
+  colType: 'string',
+  isMetric: false,
+  isFiltered: false,
 };
 
 export default JobColumnHeader;

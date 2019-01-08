@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 import CheckboxFilter from './CheckboxFilter';
 
+const isStatus = false;
+
 class SelectColumnFilter extends Component {
   constructor(props) {
     super(props);
@@ -13,39 +15,65 @@ class SelectColumnFilter extends Component {
     this.updateSearchText = this.updateSearchText.bind(this);
     this.submitSearchText = this.submitSearchText.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.onHideAll = this.onHideAll.bind(this);
+    this.unsetHideAll = this.unsetHideAll.bind(this);
+    this.isDisabled = this.isDisabled.bind(this);
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
       changedParams: this.props.hiddenInputParams,
       toggleShowingFilter: this.props.toggleShowingFilter,
-      updateSearchText: this.props.updateSearchText,
+      searchUserFilter: this.props.searchUserFilter,
       searchText: '',
       showAllFilters: false,
+      hideAllFilters: false,
     };
   }
 
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ columns: nextProps.columns });
+    const { unsetClearFilters } = this.state;
+    if (unsetClearFilters) {
+      this.setState({ columns: nextProps.columns, changedParams: nextProps.hiddenInputParams });
+    }
+  }
+
+  onHideAll() {
+    const { columns } = this.props;
+    const filteredColumns = columns.map((filter) => {
+      return filter.name;
+    });
+    this.setState({ changedParams: filteredColumns, hideAllFilters: true, showAllFilters: false });
+  }
+
+  unsetHideAll() {
+    this.setState({ hideAllFilters: false });
   }
 
   onApply() {
-    const { changeHiddenParams, changedParams, toggleShowingFilter } = this.state;
-    changeHiddenParams(changedParams);
-    toggleShowingFilter();
+    const {
+      changeHiddenParams, changedParams, toggleShowingFilter, searchUserFilter,
+    } = this.state;
+    if (!this.isDisabled()) {
+      this.setState({ searchText: '' });
+      changeHiddenParams(changedParams);
+      searchUserFilter('');
+      toggleShowingFilter();
+    }
   }
 
   onCancel() {
-    const { toggleShowingFilter } = this.state;
-    this.setState({ changedParams: [] });
+    const { toggleShowingFilter, searchUserFilter } = this.state;
+    this.setState({ changedParams: [], searchText: '' });
+    searchUserFilter('');
     toggleShowingFilter();
   }
 
   onClearFilters() {
-    const { updateSearchText } = this.state;
+    const { searchUserFilter } = this.state;
     const emptyArray = [];
-    this.setState({ changedParams: emptyArray, showAllFilters: true });
-    updateSearchText('');
+    this.setState({ changedParams: emptyArray, showAllFilters: true, hideAllFilters: false });
+    searchUserFilter('');
     this.input.value = '';
   }
 
@@ -64,17 +92,27 @@ class SelectColumnFilter extends Component {
   }
 
   submitSearchText() {
-    const { searchText, updateSearchText } = this.state;
-    updateSearchText(searchText);
+    const { searchText, searchUserFilter } = this.state;
+    searchUserFilter(searchText);
+  }
+
+  isDisabled() {
+    const { columns, changedParams } = this.state;
+    return changedParams.length >= columns.length;
   }
 
   render() {
-    const { columns, showAllFilters } = this.state;
+    const {
+      columns, showAllFilters, changedParams, hideAllFilters,
+    } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
+      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, hideAllFilters, isStatus,
+      this.unsetHideAll,
     );
 
     const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
+
+    const applyClass = CommonActions.getApplyClass(this.isDisabled);
 
     return (
       <CheckboxFilter
@@ -85,7 +123,10 @@ class SelectColumnFilter extends Component {
         onClearFilters={this.onClearFilters}
         input={input}
         addedClass="user-filter-container"
-      />);
+        applyClass={applyClass}
+        onHideAll={this.onHideAll}
+      />
+    );
   }
 }
 
@@ -95,8 +136,9 @@ SelectColumnFilter.propTypes = {
   changedParams: PropTypes.array,
   toggleShowingFilter: PropTypes.func,
   hiddenInputParams: PropTypes.array,
-  updateSearchText: PropTypes.func,
+  searchUserFilter: PropTypes.func,
   showAllFilters: PropTypes.bool,
+  hideAllFilters: PropTypes.bool,
 };
 
 SelectColumnFilter.defaultProps = {
@@ -105,8 +147,9 @@ SelectColumnFilter.defaultProps = {
   changedParams: [],
   toggleShowingFilter: () => {},
   hiddenInputParams: [],
-  updateSearchText: () => {},
+  searchUserFilter: () => {},
   showAllFilters: false,
+  hideAllFilters: false,
 };
 
 export default SelectColumnFilter;

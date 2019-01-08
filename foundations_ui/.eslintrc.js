@@ -33,6 +33,9 @@ module.exports = {
     "array-callback-return": 0,
     "consistent-return": 0,
     "prefer-const": 1,
+    "prefer-destructuring": 1,
+    "react/sort-comp": 0,
+    "import/no-extraneous-dependencies": 1,
   }
 };
 

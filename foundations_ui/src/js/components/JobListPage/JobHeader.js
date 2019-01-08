@@ -10,58 +10,160 @@ class JobHeader extends Component {
     super(props);
     this.toggleFilters = this.toggleFilters.bind(this);
     this.clickRemoveFilter = this.clickRemoveFilter.bind(this);
+    this.showHideBubbles = this.showHideBubbles.bind(this);
+    this.addIfNotHidden = this.addIfNotHidden.bind(this);
+    this.removeFromHidden = this.removeFromHidden.bind(this);
+    this.getHiddenWidth = this.getHiddenWidth.bind(this);
+    this.addToBubbleRefs = this.addToBubbleRefs.bind(this);
+    this.removeBubbleFromRef = this.removeBubbleFromRef.bind(this);
+    this.modifyBubble = this.modifyBubble.bind(this);
+    this.refsInFilters = this.refsInFilters.bind(this);
+    this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
       bubbleRefs: [],
-      bubblesHidden: 0,
       isShowingMoreFilters: false,
       clearFilters: this.props.clearFilters,
       removeFilter: this.props.removeFilter,
+      hiddenBubbles: [],
     };
   }
 
-  componentDidMount() {
-    const { bubbleRefs } = this.state;
+  async componentWillReceiveProps(nextProps) {
+    this.setState({ filters: nextProps.filters });
+
+    const { hiddenBubbles } = this.state;
     const { clientWidth } = this.bubbleContainer;
 
-    let curWidth = 0;
-    let numHidden = 0;
-    bubbleRefs.forEach((bubble) => {
-      curWidth += CommonActions.addBorderToElementWidth(bubble, borderSize);
-      if (CommonActions.elementsWidthLargerThanParent(curWidth, clientWidth)) {
-        bubble.className += ' hidden';
-        numHidden += 1;
-      }
-    });
+    const newRefs = this.refsInFilters(nextProps.filters);
 
-    this.setState({ bubblesHidden: numHidden });
+    let curWidth = 0;
+    let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
+    curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
+    newRefs.forEach((id) => {
+      const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
+      curWidth = showHideResults.width;
+      curHiddenBubbles = showHideResults.hiddenBubbles;
+    });
+    await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ filters: nextProps.filters });
+  refsInFilters(filters) {
+    return filters.map((filter) => {
+      return `${filter.column}-${filter.value}`;
+    });
+  }
+
+  getCurHiddenBubbles(newRefs, hiddenBubbles) {
+    return hiddenBubbles.filter((bubble) => {
+      return newRefs.indexOf(bubble) >= 0;
+    });
+  }
+
+  showHideBubbles(id, curWidth, clientWidth, hiddenBubbles) {
+    let bubbleWidth = curWidth;
+    let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
+    if (id !== null) {
+      const bubble = document.getElementById(id);
+      if (bubble !== null) {
+        const modifyBubbleResults = this.modifyBubble(
+          curHiddenBubbles, id, bubble, bubbleWidth, clientWidth,
+        );
+        bubbleWidth = modifyBubbleResults.width;
+        curHiddenBubbles = modifyBubbleResults.hiddenBubbles;
+      }
+    }
+    return { width: bubbleWidth, hiddenBubbles: curHiddenBubbles };
+  }
+
+  modifyBubble(hiddenBubbles, id, bubble, curWidth, clientWidth) {
+    let bubbleWidth = curWidth;
+    let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
+    const hiddenWidth = this.getHiddenWidth(hiddenBubbles, id);
+    const curBubbleWidth = CommonActions.addBorderToElementWidth(bubble, borderSize, hiddenWidth);
+    bubbleWidth += curBubbleWidth;
+    if (CommonActions.elementsWidthLargerThanParent(bubbleWidth, clientWidth)) {
+      if (bubble && bubble.className && !bubble.className.includes(' hidden')) {
+        bubble.className += ' hidden';
+        curHiddenBubbles = this.addIfNotHidden(curHiddenBubbles, id, curBubbleWidth);
+      }
+    } else if (bubble && bubble.className && bubble.className.includes(' hidden')) {
+      bubble.className = bubble.className.replace(' hidden', '');
+      curHiddenBubbles = this.removeFromHidden(curHiddenBubbles, id);
+    }
+    return { width: bubbleWidth, hiddenBubbles: curHiddenBubbles };
+  }
+
+  addIfNotHidden(array, id, width) {
+    const newHidden = this.removeFromHidden(array, id);
+    newHidden.push({ id, width });
+    return newHidden;
+  }
+
+  removeFromHidden(array, id) {
+    let newHidden = CommonActions.deepCopyArray(array);
+    newHidden = newHidden.filter(
+      (filter) => {
+        return (filter.id && filter.id !== id) || (!filter.id && filter !== id);
+      },
+    );
+    return newHidden;
+  }
+
+  getHiddenWidth(array, id) {
+    let newHidden = CommonActions.deepCopyArray(array);
+    newHidden = newHidden.filter(
+      (filter) => {
+        return (filter.id === id);
+      },
+    );
+    if (newHidden[0]) {
+      return newHidden[0].width;
+    }
+    return null;
   }
 
   toggleFilters() {
-    const { isShowingMoreFilters } = this.state;
-    this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+    const { isShowingMoreFilters, hiddenBubbles } = this.state;
+    if (hiddenBubbles.length > 0) {
+      this.setState({ isShowingMoreFilters: !isShowingMoreFilters });
+    }
   }
 
-  clickRemoveFilter(filter) {
-    const { removeFilter } = this.state;
-    removeFilter(filter);
+  async clickRemoveFilter(filter) {
+    const { removeFilter, bubbleRefs } = this.state;
+    const id = filter.column.concat('-').concat(filter.value);
+    const currentBubbleRefs = this.removeBubbleFromRef(bubbleRefs, id);
+    await removeFilter(filter);
+    await this.setState({ bubbleRefs: currentBubbleRefs });
+  }
+
+  addToBubbleRefs(key) {
+    const { bubbleRefs } = this.state;
+    if (!bubbleRefs.includes(key)) {
+      bubbleRefs.push(key);
+    }
+  }
+
+  removeBubbleFromRef(bubbleRefs, id) {
+    return bubbleRefs.filter((bubble) => {
+      if (bubble !== id) {
+        return true;
+      }
+    });
   }
 
   render() {
     const {
-      project, filters, bubbleRefs, bubblesHidden, isShowingMoreFilters, clearFilters,
+      project, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
     } = this.state;
 
     const filterBubbles = [];
     filters.forEach((filter) => {
       const key = filter.column.concat('-').concat(filter.value);
       filterBubbles.push(
-        <div ref={(e) => { bubbleRefs.push(e); }} key={key} className="bubble inline-block">
+        <div ref={() => { this.addToBubbleRefs(key); }} id={key} key={key} className="bubble inline-block">
           <p className="font-bold">
             {filter.column}:<span> {filter.value}</span>
           </p>
@@ -71,11 +173,11 @@ class JobHeader extends Component {
     });
 
     let moreBubbles = null;
-    if (bubblesHidden > 0) {
+    if (hiddenBubbles.length > 0) {
       moreBubbles = (
         <div className="bubble more-bubble">
           <p className="font-bold text-blue text-upper">
-          + {bubblesHidden} More
+          + {hiddenBubbles.length} More
           </p>
         </div>
       );
@@ -84,8 +186,16 @@ class JobHeader extends Component {
     let moreFilters = null;
     let filterButtonText = 'View Filters';
     if (isShowingMoreFilters) {
-      moreFilters = <ShowMoreFilters filters={filters} bubblesHidden={bubblesHidden} />;
+      moreFilters = <ShowMoreFilters hiddenBubbles={hiddenBubbles} />;
       filterButtonText = 'Hide Filters';
+    }
+    let viewFilterClass = 'b--mat b--affirmative text-upper';
+    if (hiddenBubbles.length === 0) {
+      viewFilterClass += ' b--disabled';
+    }
+    let clearFiltersClass = 'b--mat b--affirmative text-upper';
+    if (filters.length === 0) {
+      clearFiltersClass += ' b--disabled';
     }
 
     return (
@@ -116,7 +226,7 @@ class JobHeader extends Component {
           <button
             type="button"
             onClick={clearFilters}
-            className="b--mat b--affirmative text-upper"
+            className={clearFiltersClass}
           >
             Clear Filters
           </button>
@@ -130,7 +240,7 @@ class JobHeader extends Component {
             <button
               type="button"
               onClick={this.toggleFilters}
-              className="b--mat b--affirmative text-upper"
+              className={viewFilterClass}
             >
               {filterButtonText}
             </button>
@@ -147,10 +257,11 @@ JobHeader.propTypes = {
   project: PropTypes.object,
   filters: PropTypes.array,
   bubbleRefs: PropTypes.array,
-  bubblesHidden: PropTypes.number,
   isShowingMoreFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
   removeFilter: PropTypes.func,
+  hiddenBubbles: PropTypes.array,
+
 };
 
 JobHeader.defaultProps = {
@@ -158,10 +269,10 @@ JobHeader.defaultProps = {
   project: { owner: 'null', created_at: 'null', name: 'null' },
   filters: [],
   bubbleRefs: [],
-  bubblesHidden: 0,
   isShowingMoreFilters: false,
   clearFilters: () => {},
   removeFilter: () => {},
+  hiddenBubbles: [],
 };
 
 export default JobHeader;

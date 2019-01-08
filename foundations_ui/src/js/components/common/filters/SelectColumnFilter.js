@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import CommonActions from '../../../actions/CommonActions';
 import CheckboxFilter from './CheckboxFilter';
 
+const isStatus = false;
+
 class SelectColumnFilter extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +15,8 @@ class SelectColumnFilter extends Component {
     this.updateSearchText = this.updateSearchText.bind(this);
     this.submitSearchText = this.submitSearchText.bind(this);
     this.unsetClearFilters = this.unsetClearFilters.bind(this);
+    this.onHideAll = this.onHideAll.bind(this);
+    this.unsetHideAll = this.unsetHideAll.bind(this);
     this.state = {
       columns: this.props.columns,
       changeHiddenParams: this.props.changeHiddenParams,
@@ -21,12 +25,24 @@ class SelectColumnFilter extends Component {
       updateSearchText: this.props.updateSearchText,
       searchText: '',
       showAllFilters: false,
+      hideAllFilters: false,
     };
   }
 
-
   componentWillReceiveProps(nextProps) {
     this.setState({ columns: nextProps.columns });
+  }
+
+  onHideAll() {
+    const { columns } = this.props;
+    const filteredColumns = columns.map((filter) => {
+      return filter.name;
+    });
+    this.setState({ changedParams: filteredColumns, hideAllFilters: true, showAllFilters: false });
+  }
+
+  unsetHideAll() {
+    this.setState({ hideAllFilters: false });
   }
 
   onApply() {
@@ -44,7 +60,7 @@ class SelectColumnFilter extends Component {
   onClearFilters() {
     const { updateSearchText } = this.state;
     const emptyArray = [];
-    this.setState({ changedParams: emptyArray, showAllFilters: true });
+    this.setState({ changedParams: emptyArray, showAllFilters: true, hideAllFilters: false });
     updateSearchText('');
     this.input.value = '';
   }
@@ -69,9 +85,10 @@ class SelectColumnFilter extends Component {
   }
 
   render() {
-    const { columns, showAllFilters } = this.state;
+    const { columns, showAllFilters, hideAllFilters } = this.state;
     const checkboxes = CommonActions.getCheckboxes(
-      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters,
+      columns, this.changeLocalParams, showAllFilters, this.unsetClearFilters, hideAllFilters, isStatus,
+      this.unsetHideAll,
     );
 
     const input = <input ref={(inputRef) => { this.input = inputRef; }} type="text" onChange={this.updateSearchText} />;
@@ -84,7 +101,9 @@ class SelectColumnFilter extends Component {
         submitSearchText={this.submitSearchText}
         onClearFilters={this.onClearFilters}
         input={input}
-      />);
+        onHideAll={this.onHideAll}
+      />
+    );
   }
 }
 
@@ -96,6 +115,7 @@ SelectColumnFilter.propTypes = {
   hiddenInputParams: PropTypes.array,
   updateSearchText: PropTypes.func,
   showAllFilters: PropTypes.bool,
+  hideAllFilters: PropTypes.bool,
 };
 
 SelectColumnFilter.defaultProps = {
@@ -106,6 +126,7 @@ SelectColumnFilter.defaultProps = {
   hiddenInputParams: [],
   updateSearchText: () => {},
   showAllFilters: false,
+  hideAllFilters: false,
 };
 
 export default SelectColumnFilter;

@@ -18,6 +18,7 @@ class Job(PropertyModel):
     status = PropertyModel.define_property()
     start_time = PropertyModel.define_property()
     completed_time = PropertyModel.define_property()
+    duration = PropertyModel.define_property()
 
     @staticmethod
     def all(project_name=None):
@@ -34,11 +35,14 @@ class Job(PropertyModel):
 
     @staticmethod
     def _load_jobs(project_name):
-        from foundations.job_data_redis import JobDataRedis
+        from foundations_contrib.job_data_redis import JobDataRedis
+        from foundations_contrib.input_parameter_indexer import InputParameterIndexer
         from foundations.global_state import redis_connection
 
         jobs = []
-        for job_properties in list(JobDataRedis.get_all_jobs_data(project_name, redis_connection)):
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
+
+        for job_properties in list(jobs_data):
             job = Job._build_job_model(job_properties)
             jobs.append(job)
         Job._default_order(jobs)
@@ -46,9 +50,10 @@ class Job(PropertyModel):
 
     @staticmethod
     def _build_job_model(job_data):
-        Job._reshape_input_params(job_data)
+        Job._extract_job_parameters(job_data)
         Job._reshape_output_metrics(job_data)
-        Job._update_job_properties(job_data)
+        Job._update_job_time_properties(job_data)
+        Job._trim_metric_values(job_data)
         job_data['project'] = job_data['project_name']
         del job_data['project_name']
         return Job(**job_data)
@@ -66,58 +71,6 @@ class Job(PropertyModel):
         run_data = job_data['job_parameters']
         del job_data['job_parameters']
         return run_data
-
-    @staticmethod
-    def _extract_input_params(job_data):
-        input_params = job_data['input_params']
-        del job_data['input_params']
-        job_data['input_params'] = []
-        return input_params
-
-    @staticmethod
-    def _extract_source_and_value(argument_value, run_data, stage_indices):
-        if argument_value['type'] == 'stage':
-            input_stage_index = stage_indices.get_index(argument_value['stage_uuid'])
-            value = '{}-{}'.format(argument_value['stage_name'], input_stage_index)
-            source = 'stage'
-        elif argument_value['type'] == 'dynamic':
-            value = run_data[argument_value['name']]
-            source = 'placeholder'
-        else:
-            value = argument_value['value']
-            source = 'constant'
-        return value, source
-
-    @staticmethod
-    def _flatten_input_params(job_data, param, run_data, stage_indices):
-        from foundations_rest_api.v2beta.models.extract_type import extract_type
-
-        stage_index = stage_indices.get_index(param['stage_uuid'])
-        name = '{}-{}'.format(param['argument']['name'], stage_index)
-        argument_value = param['argument']['value']
-        value, source = Job._extract_source_and_value(argument_value, run_data, stage_indices)
-        job_data['input_params'].append(
-            {
-                'name': name,
-                'value': value,
-                'type': extract_type(value),
-                'source': source,
-            }
-        )
-
-    @staticmethod
-    def _repopulate_input_params(job_data, input_params, run_data, stage_indices):
-        for param in input_params:
-            Job._flatten_input_params(job_data, param, run_data, stage_indices)
-
-
-    @staticmethod
-    def _reshape_input_params(job_data):
-        from foundations_rest_api.v2beta.models.index_allocator import IndexAllocator
-        run_data = Job._extract_job_parameters(job_data)
-        input_params = Job._extract_input_params(job_data)
-        stage_indices = IndexAllocator()
-        Job._repopulate_input_params(job_data, input_params, run_data, stage_indices)
 
     @staticmethod
     def _extract_output_metrics(job_data):
@@ -159,15 +112,46 @@ class Job(PropertyModel):
         Job._repopulate_metrics(job_data, new_metrics)
 
     @staticmethod
-    def _update_job_properties(properties):
-        properties['start_time'] = Job._datetime_string(properties['start_time'])
-        properties['completed_time'] = Job._datetime_string(properties['completed_time'])
+    def _update_job_time_properties(properties):
+        from datetime import datetime
+
+        start_time = properties['start_time']
+        completed_time = properties['completed_time']
+        properties['start_time'] = Job._datetime_string(start_time)
+        properties['completed_time'] = Job._datetime_string(completed_time)
+
+        if completed_time:
+            end_time = datetime.fromtimestamp(completed_time)
+        else:
+            end_time = datetime.now()
+
+        time_delta = end_time - datetime.fromtimestamp(start_time)
+        total_seconds = time_delta.total_seconds()
+        properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+
+    @staticmethod
+    def _trim_metric_values(job_data):
+        from foundations.utils import is_string
+        for metric in job_data['output_metrics']:
+            if is_string(metric['value']):
+                metric['value'] = metric['value'][:100]
+
+    @staticmethod
+    def _total_seconds_to_duration(total_seconds):
+        total_seconds = int(total_seconds)
+        days = total_seconds // 86400
+        remaining_seconds = total_seconds % 86400
+        hours = remaining_seconds // 3600
+        remaining_seconds %= 3600
+        minutes = remaining_seconds // 60
+        remaining_seconds %= 60
+        return '{}d{}h{}m{}s'.format(days, hours, minutes, remaining_seconds)
 
     @staticmethod
     def _datetime_string(time):
         from datetime import datetime
 
         if time is None:
-            return 'No time available'
+            return None
         date_time = datetime.utcfromtimestamp(time)
         return date_time.isoformat()

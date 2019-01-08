@@ -3,6 +3,8 @@
 *Foundations* library can be used in any Python machine learning development workflow.
 It integrates easily with different stages(steps) of the machine learning workflow irrespective of which machine learning library it's used with (Eg: Keras, Tensorflow).
 
+*Foundations* only support Python 3 and above versions.
+
 To start with, first install the Foundations library and then follow examples guide to see how it can be used.
 
 ## Installation
@@ -42,10 +44,10 @@ There are two ways to install Foundations library:
 [Wheel installation](STARTGUIDE.md#wheel-installation) or [Install from source](STARTGUIDE.md#install-from-source)
 
 ### Wheel Installation
-The `.whl` files for Python versions 2 and 3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
+The `.whl` files for Python3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
 There are different assets based on different job deployment strategies.
 
-You only need `foundations-<version>-<python-version>-none-any.whl` file for initial Foundations deployment.
+You only need `foundations-<version>-py3-none-any.whl` file for initial Foundations deployment.
 Choose the appropriate `whl` file to match the Python version installed on your machine.
 
 Run the following command to install Foundations:
@@ -80,7 +82,7 @@ It's important to note: if you're looking to use a different version of a packag
 
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
-## Redis Setup (local deployment only)
+### Redis Setup (local deployment only)
 
 Foundations' Result Reader uses Redis as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis.
 
@@ -99,9 +101,12 @@ Now that redis is running, when you run a job locally it'll get picked and and h
 If you want to stop the Redis container, run `docker ps`, get the container's ID, and then run `docker stop <container_id>`.
 
 ### Jupyter Notebook Setup
-The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started. 
+The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started.
 
-### Examples guide
+### Installing and Running the GUI
+Foundations provides a user interface with which one can view all information about jobs, including status (e.g. queued, running, completed) as well as logged metrics and start time.  As for how to to install and use it, have a look at the [GUI Guide](GUIGUIDE.md).
+
+## Examples guide
 We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 
 We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](/examples).

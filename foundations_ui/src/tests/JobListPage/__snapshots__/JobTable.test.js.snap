@@ -10,43 +10,48 @@ exports[`Shallow Renders Job Table 1`] = `
     <JobTableHeader
       allInputParams={Array []}
       allMetrics={Array []}
+      allUsers={Array []}
+      boolCheckboxes={Array []}
+      boolFilters={Array []}
+      containFilters={Array []}
+      durationFilters={Array []}
+      filters={Array []}
+      hiddenUsers={Array []}
+      isShowingBooleanFilter={false}
+      isShowingContainsFilter={false}
+      isShowingDurationFilter={false}
+      isShowingJobIdFilter={false}
+      isShowingNumberFilter={false}
+      isShowingStartTimeFilter={false}
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
+      jobIdFilters={Array []}
+      jobRows={
+        Array [
+          <p>
+            Loading Jobs
+          </p>,
+        ]
+      }
       jobs={Array []}
+      metricClass="not-metric"
+      numberFilterColumn=""
+      numberFilters={Array []}
+      rowNumbers={Array []}
+      startTimeFilters={Array []}
       statuses={Array []}
+      updateBoolFilter={[Function]}
+      updateContainsFilter={[Function]}
+      updateDurationFilter={[Function]}
       updateHiddenStatus={[Function]}
+      updateHiddenUser={[Function]}
+      updateJobIdFilter={[Function]}
+      updateNumberFilter={[Function]}
+      updateStartTimeFilter={[Function]}
     />
-    <div
-      className="table-row-number"
-    />
-    <div
-      className="job-table-row-container"
-    >
-      <p>
-        Loading Jobs
-      </p>
-    </div>
     <div
       className="pagination-controls"
-    >
-      <p>
-        <span
-          className="font-bold"
-        >
-          Viewing:
-        </span>
-         1-100/600
-      </p>
-      <div
-        className="arrow-right"
-      />
-      <p>
-        Page 1
-      </p>
-      <div
-        className="arrow-left"
-      />
-    </div>
+    />
   </div>
 </div>
 `;

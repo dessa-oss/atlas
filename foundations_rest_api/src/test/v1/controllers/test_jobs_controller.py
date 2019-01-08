@@ -53,7 +53,3 @@ class TestJobsController(unittest.TestCase):
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project'}
         self.assertEqual(expected_result, controller.index().as_json())
         mock.assert_called_with(name='the not so great potato project')
-
-
-
-
