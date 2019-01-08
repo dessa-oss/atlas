@@ -144,7 +144,20 @@ class StageConnectorWrapper(object):
 
     def split(self, num_children):
         """
+        When a function is wrapped in a stage and it has more than one return value (the return value
+        is a sequence), the wrapping stage cannot obtain how many values are contained in the returned
+        sequence due to language contrains. This method allows to specify the number of children values
+        and splits the result in a corresponding sequence of stages that can be pass forward.
 
+        Arguments:
+            num_children {int} -- number of children values contained in the stage result.
+
+        Returns:
+            children_stages {sequence} -- A sequence of children stages.
+
+        Raises:
+            TypeError -- If the current stage does not contain a sequence of values.
+            IndexError -- If the number of children values is less than __num_children__.
         """
         from foundations.utils import split_at
 

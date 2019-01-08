@@ -41,7 +41,8 @@ PAGES = [
         'all_module_classes': [foundations.stage_connector_wrapper],
         'functions': [
             foundations.stage_connector_wrapper.StageConnectorWrapper.run,
-            foundations.stage_connector_wrapper.StageConnectorWrapper.enable_caching
+            foundations.stage_connector_wrapper.StageConnectorWrapper.enable_caching,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.split
         ]
     },
     {
