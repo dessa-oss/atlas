@@ -27,6 +27,6 @@ __Raises__
 
 __Notes__
 
-A stage containing this function won't fail if this function fails.
+A stage containing this function won't fail if this function call fails.
 
 

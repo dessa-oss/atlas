@@ -26,6 +26,6 @@ def log_metric(key, value):
         TypeError -- When a value of a non-supported type is provided as the metric value.
 
     Notes:
-        A stage containing this function won't fail if this function fails.
+        A stage containing this function won't fail if this function call fails.
     """
     stage_logging_context.log_metric(key, value)
