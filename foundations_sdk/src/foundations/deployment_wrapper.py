@@ -28,7 +28,7 @@ class DeploymentWrapper(object):
             job_name {string} -- The name of the job being run
 
         Raises:
-            - This method normally doesn't raise any exception.
+            - This method doesn't raise any exception.
         """
 
         return self._deployment.job_name()
@@ -44,7 +44,7 @@ class DeploymentWrapper(object):
             is_job_complete {boolean} -- True if the job is done, False otherwise (regardless of success / failure)
 
         Raises:
-            - This method normally doesn't raise any exception.
+            - This method doesn't raise any exception.
         """
 
         return self._deployment.is_job_complete()
@@ -83,7 +83,7 @@ class DeploymentWrapper(object):
             - This method doesn't return a value.
 
         Raises:
-            - This method normally doesn't raise any exception.
+            - This method doesn't raise any exception.
         """
 
         import time
@@ -108,7 +108,7 @@ class DeploymentWrapper(object):
             status {string} -- String, which is either "Queued", "Running", "Completed", or "Error"
 
         Raises:
-            - This method normally doesn't raise any exception.
+            - This method doesn't raise any exception.
         """
 
         return self._deployment.get_job_status()

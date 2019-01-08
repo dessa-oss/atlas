@@ -65,7 +65,7 @@ class StageConnectorWrapper(object):
             stage object -- The same object to which this method belongs.
 
         Raises:
-            - This method normally doesn't raise exceptions.
+            - This method doesn't raise exceptions.
 
         Notes:
             At this moment only input parameters that are return values of other stages are cached.

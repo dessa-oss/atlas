@@ -17,7 +17,7 @@ def create_stage(function):
         stage_generator {callable} -- A callable that when executed returns a stage object.
 
     Raises:
-        - This function normally doesn't raise exceptions.
+        - This function doesn't raise exceptions.
     """
 
     def stage(*args, **kwargs):

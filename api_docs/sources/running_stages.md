@@ -61,7 +61,7 @@ __Returns__
 
 __Raises__
 
-- This method normally doesn't raise exceptions.
+- This method  doesn't raise exceptions.
 
 __Notes__
 

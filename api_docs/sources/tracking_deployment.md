@@ -39,7 +39,7 @@ __Returns__
 
 __Raises__
 
-- This method normally doesn't raise any exception.
+- This method  doesn't raise any exception.
 
 
 ----
@@ -67,7 +67,7 @@ __Returns__
 
 __Raises__
 
-- This method normally doesn't raise any exception.
+- This method  doesn't raise any exception.
 
 
 ----
@@ -124,7 +124,7 @@ __Returns__
 
 __Raises__
 
-- This method normally doesn't raise any exception.
+- This method  doesn't raise any exception.
 
 
 ----
@@ -152,6 +152,6 @@ __Returns__
 
 __Raises__
 
-- This method normally doesn't raise any exception.
+- This method  doesn't raise any exception.
 
 
