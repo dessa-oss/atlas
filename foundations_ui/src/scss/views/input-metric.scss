@@ -1,42 +1,82 @@
-.input-metric-container{
+.job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: $table-metric-section-width;
-  height: 36px;
+  min-width: $min-metric-param-columns-container;
+  max-width: $table-section-width;
+  height: 100%;
+  white-space: nowrap;
   margin: 0px;
   padding: 0px;
+  position: relative;
+
+  &:first-of-type {
+    width: $table-section-width;
+  }
 }
 
-.input-metric-column-header-container{
-  width: calc(100% - 1px); // To accomodate border
-  overflow: hidden;
-  overflow-x: scroll;
+.input-metric-header-row-container {
+  height: calc(100% - #{$metric-header-height});
+  width: 100%;
   overflow-y: scroll;
-  white-space: nowrap;
+  overflow-x: scroll;
   border-left: 4px solid $color-border-bottom;
+  position: relative;
+  margin-right: -6px;
+}
+
+.input-metric-column-container {
+  height: calc(100% - #{$pagination-height} - #{$column-header-height});
+  min-width: 100%;
+  overflow-y: scroll;
+  width: fit-content;
+
+  .empty-columns-message {
+    padding-left: calc(2 * #{$margin-width});
+  }
+
+  &.column-header {
+    height: $column-header-height;
+  }
 
   .job-column-header {
     border-right: 1px solid $color-border-bottom;
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    min-width: $standard-cell-width;
-    padding-left: 8px;
-    padding-right: 8px; 
+    min-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
+    max-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
+    padding-left: $standard-header-padding;
+    padding-right: $standard-header-padding;
+    position: relative;
 
     &:last-child {
       border-right: 0px;
     }
 
-    .status-header{
-      min-width: 40px;
+    div {
+      h4 {
+        &:hover {
+          + .tooltip {
+            display: block;
+          }
+        }
+      }
     }
+
+    .tooltip {
+      display: none;
+      &:hover {
+        display: block;
+      }
+    }
+    
   }
 
   .job-cell {
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
+    width: $standard-input-metric-cell-width;
     
     p{
       margin: 0px 15px;
@@ -45,6 +85,41 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      &.type-not-available {
+        font-style: italic;
+        color: $color-9c-grey;
+        &.error {
+          color: $color-status-rgba-red-half-opacity;
+        }
+      }
+
+      &.type-number, &.type-array {
+        text-align: right;
+
+        &.string {
+          text-align: center;
+        }
+      }
     }
   }
 }
+
+@media only screen and (max-width: $minimum-screen-width) {
+  .job-summary-info-container {
+      width: calc(40% - 100px);
+  }
+
+  .input-metric-column-container {
+    .job-cell {
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 10px;
+        padding-left: 5px; 
+      }
+    }
+  }
+
+  }

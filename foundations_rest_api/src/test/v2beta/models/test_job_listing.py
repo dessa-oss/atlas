@@ -6,11 +6,21 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
 import unittest
+from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
-from acceptance.v2beta.jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
+class TestJobListingV2(unittest.TestCase):
+
+    def setUp(self):
+        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.pipeline_context import PipelineContext
+        from foundations.global_state import redis_connection
+
+        redis_connection.flushall()
+
+        self._pipeline_context = PipelineContext()
+        self._pipeline = Pipeline(self._pipeline_context)
 
     def test_has_job_id(self):
         from uuid import uuid4
@@ -34,7 +44,8 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
 
     def test_has_input_params_different_params(self):
         job = Job(input_params=['some different list of parameters'])
-        self.assertEqual(['some different list of parameters'], job.input_params)
+        self.assertEqual(
+            ['some different list of parameters'], job.input_params)
 
     def test_has_output_metrics(self):
         job = Job(output_metrics={'a': 5})
@@ -76,23 +87,47 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
         job = Job(completed_time=884234222323)
         self.assertEqual(884234222323, job.completed_time)
 
-    def test_all_returns_multiple_jobs(self):
-        from time import sleep
+    @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
+    def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
+        from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
 
-        self._pipeline_context.provenance.project_name = 'random test project'
-        self._make_completed_job('my job x', 'some user')
-        sleep(0.01)
-        self._make_running_job('00000000-0000-0000-0000-000000000007', 'soju hero')
+        fake_current_datetime(1005000000)
+
+        mock_get_all_jobs_data.return_value = [
+            {
+                'project_name': 'random test project',
+                'job_id': 'my job x',
+                'user': 'some user',
+                'job_parameters': [],
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'completed',
+                'start_time':  123456789,
+                'completed_time': 2222222222
+            },
+            {
+                'project_name': 'random test project',
+                'job_id': '00000000-0000-0000-0000-000000000007',
+                'user': 'soju hero',
+                'job_parameters': [],
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'running',
+                'start_time': 999999999,
+                'completed_time': None
+            }
+        ]
 
         expected_job_1 = Job(
             job_id='00000000-0000-0000-0000-000000000007',
             project='random test project',
             user='soju hero',
-            start_time=None,
             input_params=[],
             output_metrics=[],
             status='running',
-            completed_time='No time available'
+            start_time='2001-09-09T01:46:39',
+            completed_time=None,
+            duration='58d1h53m21s'
         )
 
         expected_job_2 = Job(
@@ -102,16 +137,36 @@ class TestJobListingV2(JobsTestsHelperMixin, unittest.TestCase):
             input_params=[],
             output_metrics=[],
             status='completed',
-            start_time=None,
-            completed_time='2286-11-20T17:46:39'
+            start_time='1973-11-29T21:33:09',
+            completed_time='2040-06-02T03:57:02',
+            duration='24291d6h23m53s'
         )
 
         result = Job.all(project_name='random test project').evaluate()
 
-        #Hacked times to make them match since current implementation gets the current time. Not a good solution, should be mocked.
-        expected_job_1.start_time = result[0].start_time
-        expected_job_2.start_time = result[1].start_time
-        expected_job_2.completed_time = result[1].completed_time
-        expected_jobs = [expected_job_1, expected_job_2]
+        restore_real_current_datetime()
 
+        expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)
+
+    def _make_stage(self, uuid, function, *args, **kwargs):
+        from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+
+        builder = StageConnectorWrapperBuilder(self._pipeline_context)
+        builder = builder.uuid(uuid)
+        builder = builder.stage(self._pipeline.uuid(), function, args, kwargs)
+        builder = builder.hierarchy([self._pipeline.uuid()])
+        return builder.build()
+
+    def _make_job(self):
+        from foundations.global_state import message_router
+        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_contrib.producers.jobs.run_job import RunJob
+
+        QueueJob(message_router, self._pipeline_context).push_message()
+        RunJob(message_router, self._pipeline_context).push_message()
+
+    def _assert_list_contains_items(self, expected, result):
+        for item in expected:
+            if not item in result:
+                self.fail('Element {} not found in {}'.format(item, result))

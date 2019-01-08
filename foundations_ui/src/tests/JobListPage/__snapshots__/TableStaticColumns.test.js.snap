@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders TableStaticColumns 1`] = `
+<div
+  className="job-static-columns-container"
+>
+  <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
+    header=""
+    hiddenInputParams={Array []}
+    isMetric={false}
+    isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
+  />
+  <div
+    className="full-height"
+  >
+    <div
+      className="job-column-header-container"
+    >
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="Start Time"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-status-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={true}
+        title="Status"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="Job ID"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="Duration"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="User"
+        toggleFilter={[Function]}
+      />
+    </div>
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="table-row-number"
+      />
+    </ScrollSyncPane>
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="job-table-row-container"
+      />
+    </ScrollSyncPane>
+  </div>
+</div>
+`;

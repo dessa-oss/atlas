@@ -24,7 +24,7 @@ class App extends Component {
 
   render() {
     const {
-      page, selectedProject, projects,
+      page, selectedProject,
     } = this.state;
 
     let curPage = <ProjectPage selectProject={this.selectProject} />;

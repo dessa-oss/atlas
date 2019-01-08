@@ -12,6 +12,11 @@
   .checkbox-value {
   display: inline-block;
   vertical-align: middle;
+
+    .status {
+      display: inline-block;
+      position: inherit;
+    }
   }
   
   .checkbox-value h5{

@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations.job import Job
-from foundations.stage_context import StageContext
+from foundations_internal.stage_context import StageContext
 from foundations.context_aware import ContextAware
 
 
@@ -87,7 +87,7 @@ class StageConnectorWrapper(object):
         return self._stage.run(None, None, **filler_kwargs)
 
     def _make_builder(self):
-        from foundations.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
+        from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
         return StageConnectorWrapperBuilder(self._pipeline_context)
 
     def _set_builder_stage(self, builder, function, args, kwargs):

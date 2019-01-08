@@ -7,9 +7,9 @@ exports[`Shallow Renders Job List Page 1`] = `
   <Toolbar />
   <JobHeader
     bubbleRefs={Array []}
-    bubblesHidden={0}
     clearFilters={[Function]}
     filters={Array []}
+    hiddenBubbles={Array []}
     isShowingMoreFilters={false}
     numProjects={0}
     project={Object {}}
@@ -18,10 +18,31 @@ exports[`Shallow Renders Job List Page 1`] = `
   <JobTable
     allInputParams={Array []}
     allMetrics={Array []}
+    allUsers={Array []}
+    boolCheckboxes={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "True",
+        },
+        Object {
+          "hidden": false,
+          "name": "False",
+        },
+      ]
+    }
+    boolFilters={Array []}
+    containFilters={Array []}
+    durationFilters={Array []}
+    filters={Array []}
+    hiddenUsers={Array []}
     isLoaded={false}
     isMount={false}
+    jobIdFilters={Array []}
     jobs={Array []}
+    numberFilters={Array []}
     projectName=""
+    startTimeFilters={Array []}
     statuses={
       Array [
         Object {
@@ -30,15 +51,22 @@ exports[`Shallow Renders Job List Page 1`] = `
         },
         Object {
           "hidden": false,
-          "name": "Processing",
+          "name": "Running",
         },
         Object {
           "hidden": false,
-          "name": "Error",
+          "name": "Failed",
         },
       ]
     }
+    updateBoolFilter={[Function]}
+    updateContainsFilter={[Function]}
+    updateDurationFilter={[Function]}
     updateHiddenStatus={[Function]}
+    updateHiddenUser={[Function]}
+    updateJobIdFilter={[Function]}
+    updateNumberFilter={[Function]}
+    updateStartTimeFilter={[Function]}
   />
 </div>
 `;

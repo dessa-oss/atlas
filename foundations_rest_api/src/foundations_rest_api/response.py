@@ -43,6 +43,8 @@ class Response(object):
         return attributes
 
     def _value_as_json(self, value):
+        import math
+
         if isinstance(value, list):
             return [self._value_as_json(value) for value in value]
 
@@ -51,6 +53,9 @@ class Response(object):
 
         if isinstance(value, dict):
             return self._dictionary_attributes(value)
+
+        if isinstance(value, float) and math.isnan(value):
+            return None
 
         return value
 

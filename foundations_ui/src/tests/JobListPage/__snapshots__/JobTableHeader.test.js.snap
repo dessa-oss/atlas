@@ -1,85 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders Job Table Header 1`] = `
-<div
-  className="job-list-container"
+<ScrollSync
+  enabled={true}
+  horizontal={true}
+  proportional={true}
+  vertical={true}
 >
-  <TableSectionHeader
-    changeHiddenParams={[Function]}
-    columns={Array []}
-    header=""
-    hiddenInputParams={Array []}
-    isMetric={false}
-    isShowingFilter={false}
-    searchText=""
-    updateSearchText={[Function]}
-  />
-  <InputMetric
-    allInputParams={Array []}
-    cellWidths={Array []}
-    header="input parameter"
-    hiddenInputParams={Array []}
-    isMetric={false}
-    jobs={Array []}
-    searchText=""
-  />
-  <InputMetric
-    allInputParams={Array []}
-    cellWidths={Array []}
-    header="metrics"
-    hiddenInputParams={Array []}
-    isMetric={true}
-    jobs={Array []}
-    searchText=""
-  />
   <div
-    className="job-column-header-container"
+    className="job-list-container"
   >
-    <JobColumnHeader
-      className="start-time-offset"
-      colIndex={0}
-      containerClass="job-column-header"
-      isStatus={false}
-      sizeCallback={[Function]}
-      title="Start Time"
-      toggleFilter={[Function]}
+    <TableStaticColumns
+      isDurationFiltered={false}
+      isJobIdFiltered={false}
+      isStartTimeFiltered={false}
+      isStatusFiltered={false}
+      isUserFiltered={false}
+      jobRows={Array []}
+      rowNumbers={Array []}
+      toggleDurationFilter={[Function]}
+      toggleJobIdFilter={[Function]}
+      toggleStartTimeFilter={[Function]}
+      toggleStatusFilter={[Function]}
+      toggleUserFilter={[Function]}
     />
-    <JobColumnHeader
-      className="status-offset"
-      colIndex={0}
-      containerClass="job-column-header"
-      isStatus={true}
-      sizeCallback={[Function]}
-      title="Status"
-      toggleFilter={[Function]}
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      filters={Array []}
+      header="input parameter"
+      hiddenInputParams={Array []}
+      isMetric={false}
+      jobs={Array []}
+      searchText=""
+      toggleNumberFilter={[Function]}
     />
-    <JobColumnHeader
-      className="job-id-offset"
-      colIndex={0}
-      containerClass="job-column-header"
-      isStatus={false}
-      sizeCallback={[Function]}
-      title="Job ID"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="duration-offset"
-      colIndex={0}
-      containerClass="job-column-header"
-      isStatus={false}
-      sizeCallback={[Function]}
-      title="Duration"
-      toggleFilter={[Function]}
-    />
-    <JobColumnHeader
-      className="user-offset"
-      colIndex={0}
-      containerClass="job-column-header"
-      isStatus={false}
-      sizeCallback={[Function]}
-      title="User"
-      toggleFilter={[Function]}
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      filters={Array []}
+      header="metrics"
+      hiddenInputParams={Array []}
+      isMetric={true}
+      jobs={Array []}
+      searchText=""
+      toggleNumberFilter={[Function]}
     />
   </div>
-</div>
+</ScrollSync>
 `;

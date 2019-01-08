@@ -2,15 +2,10 @@
 
 exports[`Shallow Renders InputMetricCell 1`] = `
 <div
-  className="job-cell"
-  style={
-    Object {
-      "width": 115,
-    }
-  }
+  className="job-cell row-0"
 >
   <p
-    className="font-bold"
+    className="type-"
   />
 </div>
 `;

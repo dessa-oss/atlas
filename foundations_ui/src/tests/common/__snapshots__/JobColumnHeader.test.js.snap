@@ -10,27 +10,23 @@ exports[`Shallow Renders Job Column Header 1`] = `
     <h4
       className="blue-border-bottom"
     />
+    <Tooltip
+      message=""
+    />
     <div
       className="icon-container"
     />
     <div
-      className="arrow-container"
+      className="arrow-container string not-metric"
       onClick={[Function]}
       onKeyPress={[Function]}
       role="presentation"
     >
       <div
-        className="arrow-down float-right"
+        className="arrow-down float-right string not-metric"
+        id=""
       />
     </div>
   </div>
-  <ResizeDetector
-    handleHeight={true}
-    handleWidth={true}
-    onResize={[Function]}
-    refreshRate={1000}
-    resizableElementId=""
-    skipOnMount={false}
-  />
 </div>
 `;

@@ -5,16 +5,23 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def extract_type(value):
-    from foundations.utils import is_string
+from foundations.utils import is_string
+import numbers
 
-    if isinstance(value, float) or isinstance(value, int):
-        return 'number'
-    elif is_string(value):
-        return 'string'
-    elif is_string(value):
-        return 'bool'
-    elif isinstance(value, list):
-        return 'array ' + extract_type(value[0])
+def extract_type(value):
+    type_map = {
+        bool: 'bool',
+        float: 'number',
+        int: 'number',
+    }
+
+    result = type_map.get(value.__class__, None)
+    if result is None:
+        if is_string(value):
+            return 'string'
+        elif isinstance(value, list):
+            return 'array ' + extract_type(value[0])
+        else:
+            return 'unknown'
     else:
-        return 'unknown'
+        return result

@@ -8,15 +8,16 @@ class StatusCell extends Component {
     this.state = {
       status: this.props.status,
       isError: this.props.isError,
+      rowNumber: this.props.rowNumber,
     };
   }
 
   render() {
-    const { status, isError } = this.state;
+    const { status, isError, rowNumber } = this.state;
 
     const statusClass = JobActions.getStatusCircle(status);
 
-    const divClass = isError ? 'status-container error' : 'status-container';
+    const divClass = isError ? `status-cell job-cell error row-${rowNumber}` : `status-cell job-cell row-${rowNumber}`;
 
     return (
       <div className={divClass}>
@@ -29,11 +30,13 @@ class StatusCell extends Component {
 StatusCell.propTypes = {
   status: PropTypes.string,
   isError: PropTypes.bool,
+  rowNumber: PropTypes.number,
 };
 
 StatusCell.defaultProps = {
   status: '',
   isError: false,
+  rowNumber: 0,
 };
 
 export default StatusCell;

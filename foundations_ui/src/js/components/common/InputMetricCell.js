@@ -6,27 +6,27 @@ class InputMetricCell extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cellWidth: this.props.cellWidth,
       value: this.props.value,
       isError: this.props.isError,
+      cellType: this.props.cellType,
+      rowNumber: this.props.rowNumber,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ cellWidth: nextProps.cellWidth, value: nextProps.value });
+    this.setState({ value: nextProps.value });
   }
 
   render() {
-    const { cellWidth, value, isError } = this.state;
-    const divStyle = {
-      width: cellWidth,
-    };
+    const {
+      value, isError, cellType, rowNumber,
+    } = this.state;
 
-    const pClass = CommonActions.getInputMetricCellPClass(isError);
-    const divClass = CommonActions.getInputMetricCellDivClass(isError);
+    const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
+    const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber);
 
     return (
-      <div style={divStyle} className={divClass}>
+      <div className={divClass}>
         <p className={pClass}>{value}</p>
       </div>
     );
@@ -34,15 +34,17 @@ class InputMetricCell extends Component {
 }
 
 InputMetricCell.propTypes = {
-  cellWidth: PropTypes.number,
   value: PropTypes.any,
   isError: PropTypes.bool,
+  cellType: PropTypes.string,
+  rowNumber: PropTypes.number,
 };
 
 InputMetricCell.defaultProps = {
-  cellWidth: 115,
   value: '',
   isError: false,
+  cellType: '',
+  rowNumber: 0,
 };
 
 export default InputMetricCell;

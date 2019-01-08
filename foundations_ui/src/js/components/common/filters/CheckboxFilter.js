@@ -12,16 +12,18 @@ class CheckboxFilter extends Component {
       onClearFilters: this.props.onClearFilters,
       input: this.props.input,
       addedClass: this.props.addedClass,
+      applyClass: this.props.applyClass,
+      onHideAll: this.props.onHideAll,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ checkboxes: nextProps.checkboxes });
+    this.setState({ checkboxes: nextProps.checkboxes, applyClass: nextProps.applyClass });
   }
 
   render() {
     const {
-      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input, addedClass,
+      checkboxes, onCancel, onApply, submitSearchText, onClearFilters, input, addedClass, applyClass, onHideAll,
     } = this.state;
 
     const divClass = 'filter-container column-filter-container elevation-1 '.concat(addedClass);
@@ -38,20 +40,29 @@ class CheckboxFilter extends Component {
           >
             <div className="magnifying-glass" />
           </button>
-          <button
-            type="button"
-            onClick={onClearFilters}
-            className="b--mat b--affirmative text-upper float-right"
-          >
-          Clear Filters
-          </button>
+          <div className="column-control-buttons">
+            <button
+              type="button"
+              onClick={onHideAll}
+              className="b--mat b--negation text-upper"
+            >
+            SELECT NONE
+            </button>
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="b--mat b--affirmative text-upper"
+            >
+            SELECT ALL
+            </button>
+          </div>
         </div>
         <div className="column-filter-list">
           {checkboxes}
         </div>
         <div className="column-filter-buttons">
           <button type="button" onClick={onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={onApply} className="b--mat b--affirmative text-upper">Apply</button>
+          <button type="button" onClick={onApply} className={applyClass}>Apply</button>
         </div>
       </div>
     );
@@ -66,6 +77,8 @@ CheckboxFilter.propTypes = {
   onClearFilters: PropTypes.func,
   input: PropTypes.object,
   addedClass: PropTypes.string,
+  applyClass: PropTypes.string,
+  onHideAll: PropTypes.func,
 };
 
 CheckboxFilter.defaultProps = {
@@ -76,6 +89,8 @@ CheckboxFilter.defaultProps = {
   onClearFilters: () => {},
   input: null,
   addedClass: '',
+  applyClass: 'b--mat b--affirmative text-upper',
+  onHideAll: () => {},
 };
 
 export default CheckboxFilter;
