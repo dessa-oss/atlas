@@ -16,8 +16,8 @@ def log_metric(key, value):
     Log metrics within a stage from where it is called.
 
     Arguments:
-        key {string} -- the name of the output metric.
-        value {number, str, bool, array of base types, array of array of base types} -- the value associated with the given output metric.
+        key {str} -- the name of the output metric.
+        value {number, str, bool, array of [number|str|bool], array of array of [number|str|bool]} -- the value associated with the given output metric.
 
     Returns:
         - This function doesn't return a value.
