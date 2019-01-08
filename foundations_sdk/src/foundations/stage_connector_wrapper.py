@@ -95,7 +95,7 @@ class StageConnectorWrapper(object):
             deployment {DeploymentWrapper} -- An object that allows tracking the deployment.
 
         Raises:
-            TypeError -- When an unsupported type is passed to a user function
+            TypeError -- When the type of an argument passed to the function wrapped by this stage is not supported.
 
         Notes
             The new job runs asynchronously, the current process can continue execution.

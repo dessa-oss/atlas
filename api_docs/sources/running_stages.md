@@ -29,7 +29,7 @@ __Returns__
 
 __Raises__
 
-- __TypeError__: When an unsupported type is passed to a user function.
+- __TypeError__: When the type of an argument passed to the function wrapped by this stage is not supported.
 
 __Notes__
 
