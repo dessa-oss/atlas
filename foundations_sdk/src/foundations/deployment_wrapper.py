@@ -58,10 +58,10 @@ class DeploymentWrapper(object):
             verbose_errors {bool} -- Whether to output stack trace entries relating to Foundations in the event of an exception (defaults to False)
 
         Returns:
-            results_dict {dictionary} -- Dict representing a more-or-less "serialized" PipelineContext for the job.  Will raise a RemoteException in the event of an exception thrown in the execution environment
+            results_dict {dictionary} -- Dict representing a more-or-less "serialized" PipelineContext for the job.
 
         Raises:
-            - This method normally doesn't raise any exception.
+            RemoteException -- In the event of an exception thrown in the execution environment
         """
 
         from foundations_internal.remote_exception import check_result
