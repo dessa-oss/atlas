@@ -2,7 +2,7 @@
 
 exports[`Shallow Renders InputMetricCell 1`] = `
 <div
-  className="job-cell"
+  className="job-cell row-0"
 >
   <p
     className="type-"

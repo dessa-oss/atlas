@@ -5,6 +5,7 @@ import Toolbar from '../common/Toolbar';
 import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
+import hoverActions from '../../../scss/jquery/rowHovers';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -52,6 +53,7 @@ class JobListPage extends Component {
   async componentDidMount() {
     this.setState({ isMount: true });
     await this.getJobs();
+    hoverActions.hover();
   }
 
   componentWillUnmount() {
@@ -224,18 +226,21 @@ class JobListPage extends Component {
   }
 
   clearFilters() {
-    this.setState({
-      filters: [],
-      statuses: baseStatus,
-      hiddenUsers: [],
-      numberFilters: [],
-      containFilters: [],
-      boolCheckboxes: baseBoolCheckboxes,
-      durationFilter: [],
-      jobIdFilter: [],
-      startTimeFilter: [],
-    });
-    this.getJobs();
+    const { filters } = this.state;
+    if (filters.length > 0) {
+      this.setState({
+        filters: [],
+        statuses: baseStatus,
+        hiddenUsers: [],
+        numberFilters: [],
+        containFilters: [],
+        boolCheckboxes: baseBoolCheckboxes,
+        durationFilter: [],
+        jobIdFilter: [],
+        startTimeFilter: [],
+      });
+      this.getJobs();
+    }
   }
 
   async removeFilter(removeFilter) {

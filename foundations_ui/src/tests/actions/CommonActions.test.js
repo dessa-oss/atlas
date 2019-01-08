@@ -118,6 +118,7 @@ const endTime = { 'days': '11', 'hours': '12', 'minutes': '13', 'seconds': '14' 
 const emptyFunc = () => {};
 const disabled = () => { return true; };
 const notDisabled = () => { return false; };
+const rowNumber = 1;
 
 it('getTableSectionHeaderDiv empty header', () => {
   const header = '';
@@ -223,13 +224,13 @@ it('get InputMetricCellPClass error', () => {
 });
 
 it('get InputMetricCellDivClass', () => {
-  const metricClass = CommonActions.getInputMetricCellDivClass(noError);
-  expect(metricClass).toBe('job-cell');
+  const metricClass = CommonActions.getInputMetricCellDivClass(noError, rowNumber);
+  expect(metricClass).toBe('job-cell row-1');
 });
 
-it('get InputMetricCellPDivlass error', () => {
-  const metricClass = CommonActions.getInputMetricCellDivClass(error);
-  expect(metricClass).toBe('job-cell error');
+it('get InputMetricCellDivClass error', () => {
+  const metricClass = CommonActions.getInputMetricCellDivClass(error, rowNumber);
+  expect(metricClass).toBe('job-cell error row-1');
 });
 
 it('get InputParamHeaders', () => {
