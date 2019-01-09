@@ -29,7 +29,7 @@ class InputParameterFormatter(object):
     def _get_parameter_info(self, param, stage_rank):
         param_name = self._index_input_param(param, stage_rank)
         param_value, param_source = self._evaluate_input_param_value(
-            param, stage_rank)
+            param['argument']['value'], stage_rank)
 
         value_type = extract_type(param_value)
         if 'unknown' in value_type:
@@ -61,8 +61,7 @@ class InputParameterFormatter(object):
         index = max(stage_ranks.values(), default=0) + 1
         stage_ranks[stage_uuid] = index
 
-    def _evaluate_input_param_value(self, param, stage_rank):
-        argument_value = param['argument']['value']
+    def _evaluate_input_param_value(self, argument_value, stage_rank):
         if argument_value['type'] == 'stage':
             stage_uuid = argument_value['stage_uuid']
 
@@ -76,6 +75,9 @@ class InputParameterFormatter(object):
         elif argument_value['type'] == 'dynamic':
             value = self._job_parameters[argument_value['name']]
             source = 'placeholder'
+        elif argument_value['type'] == 'list':
+            value = [self._evaluate_input_param_value(parameter, stage_rank)[0] for parameter in argument_value['parameters']]
+            source = 'list'
         else:
             value = argument_value['value']
             source = 'constant'
