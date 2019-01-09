@@ -78,6 +78,9 @@ class InputParameterFormatter(object):
         elif argument_value['type'] == 'list':
             value = [self._evaluate_input_param_value(parameter, stage_rank)[0] for parameter in argument_value['parameters']]
             source = 'list'
+        elif argument_value['type'] == 'dict':
+            value = 'dict'
+            source = 'dict'
         else:
             value = argument_value['value']
             source = 'constant'
