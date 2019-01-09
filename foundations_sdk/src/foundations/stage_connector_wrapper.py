@@ -143,8 +143,8 @@ class StageConnectorWrapper(object):
         """
         When a function is wrapped in a stage and it has more than one return value (the return value
         is a sequence), the wrapping stage cannot obtain how many values are contained in the returned
-        sequence due to language contrains. This method allows to specify the number of children values
-        and splits the result in a corresponding sequence of stages that can be pass forward.
+        sequence due to language constraints. This method allows to specify the number of children values
+        and splits the result in a corresponding sequence of stages that can be passed forward.
 
         Arguments:
             num_children {int} -- number of children values contained in the stage result.
