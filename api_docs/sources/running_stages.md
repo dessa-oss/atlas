@@ -19,9 +19,8 @@ environment, creating a new job.
 
 __Arguments__
 
-- __params_dict__ (dictionary): optional dictionary of extra parameters to pass the job that would be created.
 - __job_name__ (string): optional name for the job that would be created.
-- __kw_params__ (keyword arguments): any other optional paramater to pass to the job.
+- __params_dict__ (dict): reserved for future versions, unused for now.
 
 __Returns__
 
@@ -66,7 +65,7 @@ __Raises__
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L142)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L141)</span>
 
 ### split
 

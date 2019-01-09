@@ -84,9 +84,8 @@ class StageConnectorWrapper(object):
         environment, creating a new job.
 
         Arguments:
-            params_dict {dictionary} -- optional dictionary of extra parameters to pass the job that would be created.
             job_name {string} -- optional name for the job that would be created.
-            kw_params {keyword arguments} -- any other optional paramater to pass to the job.
+            params_dict {dict} -- reserved for future versions, unused for now.
 
         Returns:
             deployment {DeploymentWrapper} -- An object that allows tracking the deployment.
