@@ -71,6 +71,7 @@ fetch_job_results(self, wait_seconds=5)
 
 
 Waits for the job to complete and then fetches the results for the job.
+It checks the status of the job periodically to test for completion.
 
 __Arguments__
 
@@ -84,10 +85,16 @@ __Raises__
 
 - __RemoteException__: In the event of an exception thrown in the execution environment.
 
+__Notes__
+
+A job is completed when it finishes running due to success or failure. This method will wait for
+any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
+way that makes it run forever.
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L75)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L81)</span>
 
 ### wait_for_deployment_to_complete
 
@@ -98,7 +105,7 @@ wait_for_deployment_to_complete(self, wait_seconds=5)
 
 
 
-Waits for the job to complete.
+Waits for the job to complete. It checks the status of the job periodically to test for completion.
 
 __Arguments__
 
@@ -112,10 +119,16 @@ __Raises__
 
 - This method doesn't raise any exception.
 
+__Notes__
+
+A job is completed when it finishes running due to success or failure. This method will wait for
+any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
+way that makes it run forever.
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L100)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L111)</span>
 
 ### get_job_status
 

@@ -52,7 +52,8 @@ class DeploymentWrapper(object):
 
     def fetch_job_results(self, wait_seconds=5):
         """
-        Waits for the job to complete and then fetches the results for the job
+        Waits for the job to complete and then fetches the results for the job.
+        It checks the status of the job periodically to test for completion.
 
         Arguments:
             wait_seconds {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
@@ -62,6 +63,11 @@ class DeploymentWrapper(object):
 
         Raises:
             RemoteException -- In the event of an exception thrown in the execution environment
+
+        Notes:
+            A job is completed when it finishes running due to success or failure. This method will wait for
+            any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
+            way that makes it run forever.
         """
 
         from foundations_internal.remote_exception import check_result
@@ -74,7 +80,7 @@ class DeploymentWrapper(object):
 
     def wait_for_deployment_to_complete(self, wait_seconds=5):
         """
-        Waits for the job to complete
+        Waits for the job to complete. It checks the status of the job periodically to test for completion.
 
         Arguments:
             wait_seconds {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
@@ -84,6 +90,11 @@ class DeploymentWrapper(object):
 
         Raises:
             - This method doesn't raise any exception.
+
+        Notes:
+            A job is completed when it finishes running due to success or failure. This method will wait for
+            any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
+            way that makes it run forever.
         """
 
         import time
