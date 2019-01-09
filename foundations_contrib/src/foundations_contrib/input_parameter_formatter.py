@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_rest_api.v2beta.models.extract_type import extract_type
 
+
 class InputParameterFormatter(object):
 
     def __init__(self, input_parameters, job_parameters, stage_rank):
@@ -21,7 +22,7 @@ class InputParameterFormatter(object):
         for param in self._parameter_infos():
             if not self._contains_split_at(param):
                 yield param
-    
+
     def _parameter_infos(self):
         for param in self._input_parameters:
             yield self._get_parameter_info(param, self._stage_rank)
@@ -63,14 +64,7 @@ class InputParameterFormatter(object):
 
     def _evaluate_input_param_value(self, argument_value, stage_rank):
         if argument_value['type'] == 'stage':
-            stage_uuid = argument_value['stage_uuid']
-
-            if stage_uuid not in stage_rank.keys():
-                self._update_stage_rank(stage_uuid, stage_rank)
-
-            input_stage_rank = stage_rank[stage_uuid]
-            value = '{}-{}'.format(argument_value['stage_name'],
-                                   input_stage_rank)
+            value = self._stage_value(argument_value, stage_rank)
             source = 'stage'
         elif argument_value['type'] == 'dynamic':
             value = self._job_parameters[argument_value['name']]
@@ -85,6 +79,15 @@ class InputParameterFormatter(object):
             value = argument_value['value']
             source = 'constant'
         return value, source
+
+    def _stage_value(self, argument_value, stage_rank):
+        stage_uuid = argument_value['stage_uuid']
+
+        if stage_uuid not in stage_rank.keys():
+            self._update_stage_rank(stage_uuid, stage_rank)
+
+        input_stage_rank = stage_rank[stage_uuid]
+        return '{}-{}'.format(argument_value['stage_name'], input_stage_rank)
 
     def _list_parameter_value(self, argument_value, stage_rank):
         return [self._evaluate_input_param_value(parameter, stage_rank)[0] for parameter in argument_value['parameters']]
