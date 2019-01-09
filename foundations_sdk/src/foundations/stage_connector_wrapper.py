@@ -155,6 +155,11 @@ class StageConnectorWrapper(object):
         Raises:
             TypeError -- If the current stage does not contain a sequence of values.
             IndexError -- If the number of children values is less than __num_children__.
+
+        Notes:
+            The exceptions thrown by this method only occur after the wrapped function is executed inside the
+            stage, when Foundations applies the splitting logic to the results. As a consequence,
+            these exceptions are thrown at a later time, when the stage is being executed in a job.
         """
         from foundations.utils import split_at
 
