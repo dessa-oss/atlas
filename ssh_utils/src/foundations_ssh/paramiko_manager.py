@@ -56,20 +56,13 @@ class ParamikoManager(object):
         return self._client.open_sftp()
     
     def exec_command(self, command_string):
-        """If connected, execute a command and return the string output.  Return None otherwise.
-            Arguments:
-                command_string: {str} -- The command to execute.
-
-        Returns:
-            output -- The output from the command as a utf-8 string.
+        """No longer supported way to execute commands on a remote system
+        
+        Arguments:
+            command_string {str} -- The command to execute
+        
+        Raises:
+            Exception -- An exception indicating that this is an invalid operator
         """
 
-        if not self._is_connected:
-            return None
-
-        _, stdout_stream, _ = self._client.exec_command(command_string)
-
-        output = stdout_stream.read()
-        stdout_stream.close()
-
-        return output.decode("utf-8").rstrip("\n")
+        raise Exception('Unsupported operation')
