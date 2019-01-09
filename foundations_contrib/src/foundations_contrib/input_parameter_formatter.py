@@ -76,7 +76,7 @@ class InputParameterFormatter(object):
             value = self._job_parameters[argument_value['name']]
             source = 'placeholder'
         elif argument_value['type'] == 'list':
-            value = [self._evaluate_input_param_value(parameter, stage_rank)[0] for parameter in argument_value['parameters']]
+            value = self._list_parameter_value(argument_value, stage_rank)
             source = 'list'
         elif argument_value['type'] == 'dict':
             value = 'dict'
@@ -85,3 +85,6 @@ class InputParameterFormatter(object):
             value = argument_value['value']
             source = 'constant'
         return value, source
+
+    def _list_parameter_value(self, argument_value, stage_rank):
+        return [self._evaluate_input_param_value(parameter, stage_rank)[0] for parameter in argument_value['parameters']]
