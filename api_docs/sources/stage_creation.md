@@ -10,7 +10,9 @@ create_stage(function)
 
 
 
-Transforms any Python function into a callable that represents a stage in Foundations.
+Given a Python function, returns a callable with the same signature (receiving the same arguments) as the
+wrapped function which can be called in the same way as the wrapped function but will create a stage
+in Foundations instead.
 
 __Arguments__
 
