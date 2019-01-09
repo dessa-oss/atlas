@@ -27,6 +27,7 @@ __Raises__
 
 __Notes__
 
-A stage containing this function will not fail if the process of logging the metric fails for a reason that doesn't raise any exceptions.
+A stage containing this function will not fail if the process of logging the metric fails for a
+reason that doesn't raise any exceptions.
 
 
