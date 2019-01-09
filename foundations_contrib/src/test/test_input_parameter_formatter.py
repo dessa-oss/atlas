@@ -267,20 +267,6 @@ class TestInputParameterFormatter(unittest.TestCase):
             input_param, job_param,  stage_rank).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
 
-    def test_format_input_parameters_list(self):
-        stage_uuid = 'gorilla'
-        stage_rank = {'gorilla': 1}
-        input_param = [{'argument': {'name': 'owl', 'value': {
-            'parameters': [{'type': 'constant', 'value': 'red'}], 'type': 'list'}}, 'stage_uuid': stage_uuid}]
-        job_param = {}
-        expected = [{'name': 'owl-1',
-                     'value': ['red'],
-                     'type': 'array string',
-                     'source': 'list'}]
-        result = InputParameterFormatter(
-            input_param, job_param,  stage_rank).format_input_parameters()
-        self.assertDictEqual(expected[0], result[0])
-
     def test_format_input_parameters_list_multiple_parameters(self):
         stage_uuid = 'gorilla'
         stage_rank = {'gorilla': 1}
