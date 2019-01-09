@@ -59,7 +59,7 @@ class StageConnectorWrapper(object):
         Activates caching of the result of current stage and any other stages that it depends on.
 
         Arguments:
-            - This method doesn't receive any argument
+            - This method doesn't receive any arguments.
 
         Returns:
             stage object -- The same object to which this method belongs.

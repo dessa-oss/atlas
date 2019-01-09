@@ -18,7 +18,7 @@ Gets the name of the job being run.
 
 __Arguments__
 
-- This method doesn't receive arguments.
+- This method doesn't receive any arguments.
 
 __Returns__
 
@@ -46,7 +46,7 @@ Returns whether the job being run has completed.
 
 __Arguments__
 
-- This method doesn't receive arguments.
+- This method doesn't receive any arguments.
 
 __Returns__
 
@@ -130,7 +130,7 @@ Similar to is_job_complete, but with more information.
 
 __Arguments__
 
-- This method doesn't receive arguments.
+- This method doesn't receive any arguments.
 
 __Returns__
 

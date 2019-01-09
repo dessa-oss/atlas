@@ -23,7 +23,7 @@ class DeploymentWrapper(object):
         Gets the name of the job being run
 
         Arguments:
-            - This method doesn't receive arguments.
+            - This method doesn't receive any arguments.
 
         Returns:
             job_name {string} -- The name of the job being run
@@ -39,7 +39,7 @@ class DeploymentWrapper(object):
         Returns whether the job being run has completed
 
         Arguments:
-            - This method doesn't receive arguments.
+            - This method doesn't receive any arguments.
 
         Returns:
             is_job_complete {boolean} -- True if the job is done, False otherwise (regardless of success / failure)
@@ -102,7 +102,7 @@ class DeploymentWrapper(object):
         Similar to is_job_complete, but with more information
 
         Arguments:
-            - This method doesn't receive arguments.
+            - This method doesn't receive any arguments.
 
         Returns:
             status {string} -- String, which is either "Queued", "Running", "Completed", or "Error"

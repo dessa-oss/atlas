@@ -53,7 +53,7 @@ Activates caching of the result of current stage and any other stages that it de
 
 __Arguments__
 
-- This method doesn't receive any argument.
+- This method doesn't receive any arguments.
 
 __Returns__
 
