@@ -10,25 +10,35 @@ class Argument(object):
 
     @staticmethod
     def generate_from(value, name):
+        if isinstance(value, Argument):
+            return value
+
+        parameter = Argument._generate_parameter_from(value, name)
+        return Argument(name, parameter)
+
+    @staticmethod
+    def _generate_parameter_from(value, name):
         from foundations.hyperparameter import Hyperparameter
         from foundations.stage_connector_wrapper import StageConnectorWrapper
         from foundations_contrib.constant_parameter import ConstantParameter
         from foundations_contrib.dynamic_parameter import DynamicParameter
         from foundations_contrib.stage_parameter import StageParameter
-
-        if isinstance(value, Argument):
-            return value
+        from foundations_contrib.list_parameter import ListParameter
 
         if isinstance(value, Hyperparameter):
             if value.name is None:
                 value.name = name
-            parameter = DynamicParameter(value)
-        elif isinstance(value, StageConnectorWrapper):
-            parameter = StageParameter(value)
-        else:
-            parameter = ConstantParameter(value)
+            return  DynamicParameter(value)
 
-        return Argument(name, parameter)
+        if isinstance(value, StageConnectorWrapper):
+            return StageParameter(value)
+        
+        if isinstance(value, list):
+            parameters = [Argument._generate_parameter_from(inner_value, None) for inner_value in value]
+            print(parameters)
+            return ListParameter(parameters)
+        
+        return ConstantParameter(value)
 
     def __init__(self, name, parameter):
         self._name = name
