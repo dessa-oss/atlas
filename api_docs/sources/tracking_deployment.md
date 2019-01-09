@@ -79,7 +79,7 @@ __Arguments__
 
 __Returns__
 
-- __results_dict__ (dictionary): Dict representing a more-or-less "serialized" PipelineContext for the job.
+- __results_dict__ (dict): Dict containing results for the stages. See a description below in Notes.
 
 __Raises__
 
@@ -91,10 +91,36 @@ A job is completed when it finishes running due to success or failure. This meth
 any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
 way that makes it run forever.
 
+The *results_dict* has three keys: *provenance*, *global_stage_context* and *stage_contexts*.
+The value of *provenance* is an object that contains internal information about the execution
+environment.
+
+The *global_stage_context* value is a dictionary containing the following keys and respective values.
+
+- *uuid*: the universally unique identifier that identifies this stage
+- *stage_log*: log information about this stage
+- *meta_data*: metadata associated to this stage
+- *data_uuid*: the universally unique identifier that identifies data associated to this stage
+- *stage_output*: the stage output
+- *error_information*: any error information associated to this stage
+- *start_time*: the time at which this stage started execution
+- *end_time*: the time at which this stage finished execution
+- *delta_time*: the time difference between *end_time* and *start_time*
+- *is_context_aware*: if this stage is context aware
+- *used_cache*: if the stage is using cache
+- *cache_uuid*: the universally unique identifier that identifies this stage cache
+- *cache_read_time*: the time at which the cache was read
+- *cache_write_time*: the time at which the cache was written
+- *has_stage_output*: if the stage has output.
+
+The *stage_contexts* value is a dictionary in which each key is a UUID identifiying the stages
+upon which this stage depends on. Each value associated to these keys correspond to the
+*global_stage_context* of the corresponding stage.
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L81)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L107)</span>
 
 ### wait_for_deployment_to_complete
 
@@ -128,7 +154,7 @@ way that makes it run forever.
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L111)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L137)</span>
 
 ### get_job_status
 
