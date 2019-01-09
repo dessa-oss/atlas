@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class ListParameter(object):
     """Represents a python list where the values are themselves parameters.
-    This is used to properly deference any internal parameters that are non-constant
+    This is used to properly dereference any internal parameters that are non-constant
     
     Arguments:
         list_of_parameters {dict} -- A list of parameters
@@ -18,13 +18,13 @@ class ListParameter(object):
         self._list_of_parameters = list_of_parameters
 
     def compute_value(self, runtime_data):
-        """Computes the resolves value of the parameter
+        """Computes the resolved value of the parameter
         
         Arguments:
             runtime_data {dict} -- Contains the runtime values defined when calling #run on a stage
         
         Returns:
-            object -- The result of evaluating the paremter with the given runtime data
+            object -- The result of evaluating the parameter with the given runtime data
         """
 
         return [parameter.compute_value(runtime_data) for parameter in self._list_of_parameters]
@@ -42,13 +42,13 @@ class ListParameter(object):
         return [parameter.provenance() for parameter in self._list_of_parameters]
 
     def hash(self, runtime_data):
-        """Computes a reproducable hashing value for this parameter
+        """Computes a reproducible hashing value for this parameter
         
         Arguments:
             runtime_data {dict} -- Contains the runtime values defined when calling #run on a stage
         
         Returns:
-            [type] -- [description]
+            str -- the hashed value as described above
         """
 
         from foundations.utils import merged_uuids

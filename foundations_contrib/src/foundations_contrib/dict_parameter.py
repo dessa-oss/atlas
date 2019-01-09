@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DictParameter(object):
     """Represents a python dictionary where the values are themselves parameters.
-    This is used to properly deference any internal parameters that are non-constant
+    This is used to properly dereference any internal parameters that are non-constant
     
     Arguments:
         dict_of_parameters {dict} -- A dictionary mapping keys to parameters
@@ -18,13 +18,13 @@ class DictParameter(object):
         self._dict_of_parameters = dict_of_parameters
 
     def compute_value(self, runtime_data):
-        """Computes the resolves value of the parameter
+        """Computes the resolved value of the parameter
         
         Arguments:
             runtime_data {dict} -- Contains the runtime values defined when calling #run on a stage
         
         Returns:
-            object -- The result of evaluating the paremter with the given runtime data
+            object -- The result of evaluating the parameter with the given runtime data
         """
 
         result = {}
@@ -48,13 +48,13 @@ class DictParameter(object):
         return result
 
     def hash(self, runtime_data):
-        """Computes a reproducable hashing value for this parameter
+        """Computes a reproducible hashing value for this parameter
         
         Arguments:
             runtime_data {dict} -- Contains the runtime values defined when calling #run on a stage
         
         Returns:
-            [type] -- [description]
+            str -- the hashed value as described above
         """
 
         from foundations.utils import merged_uuids
