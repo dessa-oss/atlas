@@ -35,7 +35,6 @@ class Argument(object):
         
         if isinstance(value, list):
             parameters = [Argument._generate_parameter_from(inner_value, None) for inner_value in value]
-            print(parameters)
             return ListParameter(parameters)
         
         return ConstantParameter(value)
