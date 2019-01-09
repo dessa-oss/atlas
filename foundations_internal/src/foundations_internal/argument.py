@@ -24,6 +24,7 @@ class Argument(object):
         from foundations_contrib.dynamic_parameter import DynamicParameter
         from foundations_contrib.stage_parameter import StageParameter
         from foundations_contrib.list_parameter import ListParameter
+        from foundations_contrib.dict_parameter import DictParameter
 
         if isinstance(value, Hyperparameter):
             if value.name is None:
@@ -36,6 +37,12 @@ class Argument(object):
         if isinstance(value, list):
             parameters = [Argument._generate_parameter_from(inner_value, None) for inner_value in value]
             return ListParameter(parameters)
+        
+        if isinstance(value, dict):
+            parameters = {}
+            for key, inner_value in value.items():
+                parameters[key] = Argument._generate_parameter_from(inner_value, None)
+            return DictParameter(parameters)
         
         return ConstantParameter(value)
 

@@ -55,6 +55,20 @@ class TestArgument(unittest.TestCase):
         argument = Argument.generate_from([733, self._make_stage(method)], None)
         self.assertEqual([733, 1233], argument.value({}))
 
+    def test_generate_argument_generates_dict_of_stages(self):
+        def method():
+            return 1233
+
+        argument = Argument.generate_from({'hello': self._make_stage(method)}, None)
+        self.assertEqual({'hello': 1233}, argument.value({}))
+
+    def test_generate_argument_generates_dict_of_parameters(self):
+        def method():
+            return 1233
+
+        argument = Argument.generate_from({'hello': 733, 'goodbye': self._make_stage(method)}, None)
+        self.assertEqual({'hello': 733, 'goodbye': 1233}, argument.value({}))
+
     def test_generate_argument_stores_name(self):
         argument = Argument.generate_from(5, 'hello')
         self.assertEqual('hello', argument.name())
