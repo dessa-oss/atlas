@@ -175,7 +175,7 @@ def process_class_docstring(docstring):
     return docstring
 
 
-def process_function_docstring(docstring):
+def process_function_docstring(docstring, is_method=False):
     docstring = re.sub(r'\n    # (.*)\n',
                        r'\n    __\1__\n\n',
                        docstring)
@@ -189,7 +189,10 @@ def process_function_docstring(docstring):
 
     docstring = docstring.replace('    ' * 6, '\t\t')
     docstring = docstring.replace('    ' * 4, '\t')
-    docstring = docstring.replace('    ', '')
+    docstring = docstring.replace('\n' + ' ' * 4, '\n')
+    docstring = docstring.replace('\n' + ' ' * 4, '\n')
+    if is_method:
+        docstring = docstring.replace('\n' + ' ' * 4, '\n')
     return docstring
 
 
@@ -218,7 +221,10 @@ def transform_dessa_format(docstring):
     def transform_end_sections(docstring):
         import re
 
-        return re.sub(r'(\n\s{8}(?!from).+[^\.])(?=\n\n)', r'\1.', docstring)
+        if '\n' + ' ' * 12 + 'from' in docstring:
+            return re.sub(r'(\n\s{12}(?!from).+[^\.])(?=\n\n)', r'\1.', docstring)
+        else:
+            return re.sub(r'(\n\s{8}(?!from).+[^\.])(?=\n\n)', r'\1.', docstring)
 
     new_docstring = ''
     docstring = transform_end_sections(docstring)
@@ -302,7 +308,9 @@ for page_data in PAGES:
         docstring = function.__doc__
         if docstring:
             docstring = transform_dessa_format(docstring)
-            subblocks.append(process_function_docstring(docstring))
+            argnames = function.__code__.co_varnames
+            is_method = len(argnames) > 0 and argnames[0] == 'self'
+            subblocks.append(process_function_docstring(docstring, is_method=is_method))
         blocks.append('\n\n'.join(subblocks))
 
     if not blocks:
