@@ -99,7 +99,7 @@ class StageConnectorWrapper(object):
 
         Arguments:
             job_name {string} -- optional name for the job that would be created.
-            params_dict {dict} -- reserved for future versions, unused for now.
+            params_dict {dict} -- optional way to pass values to stages that receive Foundation's Hyperparameter object(s).
 
         Returns:
             deployment {DeploymentWrapper} -- An object that allows tracking the deployment.
@@ -110,14 +110,16 @@ class StageConnectorWrapper(object):
         Notes:
             The new job runs asynchronously, the current process can continue execution.
 
+            You can pass hyperparameters values using both *params_dict* or keyword arguments syntax.
+
         Example:
             ```python
             import foundations
             from algorithms import train_model
 
             train_model = foundations.create_stage(train_model)
-            model = train_model()
-            model.run(job_name='Experiment number 2')
+            model = train_model(data1=foundations.Hyperparameter(), data2=foundations.Hyperparameter())
+            model.run(job_name='Experiment number 2', params_dict={'data1': 'value1'}, data2='value2')
             ```
         """
         from foundations.global_state import deployment_manager

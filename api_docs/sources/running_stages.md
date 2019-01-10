@@ -20,7 +20,7 @@ environment, creating a new job.
 __Arguments__
 
 - __job_name__ (string): optional name for the job that would be created.
-- __params_dict__ (dict): reserved for future versions, unused for now.
+- __params_dict__ (dict): optional way to pass values to stages that receive Foundation's Hyperparameter object(s).
 
 __Returns__
 
@@ -34,6 +34,8 @@ __Notes__
 
 The new job runs asynchronously, the current process can continue execution.
 
+You can pass hyperparameters values using both *params_dict* or keyword arguments syntax.
+
 __Example__
 
 ```python
@@ -41,8 +43,8 @@ import foundations
 from algorithms import train_model
 
 train_model = foundations.create_stage(train_model)
-model = train_model()
-model.run(job_name='Experiment number 2')
+model = train_model(data1=foundations.Hyperparameter(), data2=foundations.Hyperparameter())
+model.run(job_name='Experiment number 2', params_dict={'data1': 'value1'}, data2='value2')
 ```
 
 
@@ -91,7 +93,7 @@ model.run()
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L165)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L167)</span>
 
 ### split
 
