@@ -1,0 +1,22 @@
+from distutils.dir_util import copy_tree
+from pathlib import Path
+import sys
+import os
+
+def scaffold(new_directory):
+	copy_from = Path(__file__).parents[0].joinpath('template')
+	copy_to = Path().absolute().joinpath(new_directory)
+	copy_tree(copy_from, str(copy_to))
+
+
+def initialize():
+	try:
+		new_directory = sys.argv[1]
+		directory_path = Path(new_directory)
+
+		if directory_path.is_dir():
+			print('Error: directory already exists\n')
+		else:
+			scaffold(new_directory)
+	except IndexError:
+		print('Error: provide a project directory. \n\nExample: \n\n foundations init my_foundations_project\n')
