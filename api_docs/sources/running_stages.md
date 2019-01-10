@@ -3,7 +3,7 @@ After calling **create_stage()** a callable object &mdash; with the same argumen
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L81)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L95)</span>
 
 ### run
 
@@ -28,11 +28,22 @@ __Returns__
 
 __Raises__
 
-- __TypeError__: When the type of an argument passed to the function wrapped by this stage is not supported.
+- __    TypeError__: When the type of an argument passed to the function wrapped by this stage is not supported.
 
 __Notes__
 
 The new job runs asynchronously, the current process can continue execution.
+
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+model.run(job_name='Experiment number 2')
+```
 
 
 ----
@@ -56,16 +67,31 @@ __Arguments__
 
 __Returns__
 
-- __stage object__: The same object to which this method belongs.
+- __    stage object__: The same object to which this method belongs.
 
 __Raises__
 
 - This method doesn't raise exceptions.
 
+__Example__
+
+```python
+import foundations
+from data_helper import load_data
+from algorithms import train_model
+
+load_data = foundations.create_stage(load_data)
+train_model = foundations.create_stage(train_model)
+data = load_data()
+model = train_model(data)
+model.enable_caching()
+model.run()
+```
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L141)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/stage_connector_wrapper.py#L165)</span>
 
 ### split
 
@@ -91,13 +117,27 @@ __Returns__
 
 __Raises__
 
-- __TypeError__: If the current stage does not contain a sequence of values.
-- __IndexError__: If the number of children values is less than __num_children__.
+- __    TypeError__: If the current stage does not contain a sequence of values.
+- __    IndexError__: If the number of children values is less than __num_children__.
 
 __Notes__
 
 The exceptions thrown by this method only occur after the wrapped function is executed inside the
 stage, when Foundations applies the splitting logic to the results. As a consequence,
 these exceptions are thrown at a later time, when the stage is being executed in a job.
+.
+
+__Example__
+
+```python
+import foundations
+from algorithms import get_coordinates, train_with_coordinates
+
+get_coordinates = foundations.create_stage(get_coordinates)
+train_with_coordinates = foundations.create_stage(train_with_coordinates)
+x_coord, y_coord = get_coordinates().split(2)
+model = train_with_coordinates(x_coord, y_coord)
+model.run()
+```
 
 

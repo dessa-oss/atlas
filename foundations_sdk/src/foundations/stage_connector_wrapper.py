@@ -66,6 +66,20 @@ class StageConnectorWrapper(object):
 
         Raises:
             - This method doesn't raise exceptions.
+
+        Example:
+            ```python
+            import foundations
+            from data_helper import load_data
+            from algorithms import train_model
+
+            load_data = foundations.create_stage(load_data)
+            train_model = foundations.create_stage(train_model)
+            data = load_data()
+            model = train_model(data)
+            model.enable_caching()
+            model.run()
+            ```
         """
         self._stage_config.enable_caching()
         for argument in self._stage.stage_args():
@@ -93,8 +107,18 @@ class StageConnectorWrapper(object):
         Raises:
             TypeError -- When the type of an argument passed to the function wrapped by this stage is not supported.
 
-        Notes
+        Notes:
             The new job runs asynchronously, the current process can continue execution.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            model.run(job_name='Experiment number 2')
+            ```
         """
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
@@ -159,6 +183,19 @@ class StageConnectorWrapper(object):
             The exceptions thrown by this method only occur after the wrapped function is executed inside the
             stage, when Foundations applies the splitting logic to the results. As a consequence,
             these exceptions are thrown at a later time, when the stage is being executed in a job.
+
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import get_coordinates, train_with_coordinates
+
+            get_coordinates = foundations.create_stage(get_coordinates)
+            train_with_coordinates = foundations.create_stage(train_with_coordinates)
+            x_coord, y_coord = get_coordinates().split(2)
+            model = train_with_coordinates(x_coord, y_coord)
+            model.run()
+            ```
         """
         from foundations.utils import split_at
 

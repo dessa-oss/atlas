@@ -28,5 +28,15 @@ def log_metric(key, value):
     Notes:
         A stage containing this function will not fail if the process of logging the metric fails for a
         reason that doesn't raise any exceptions.
+
+    Example:
+        ```python
+        import foundations
+        from algorithms import calculate_score
+
+        def my_stage_code(self):
+            score = calculate_score()
+            foundations.log_metric('score', score)
+        ```
     """
     stage_logging_context.log_metric(key, value)

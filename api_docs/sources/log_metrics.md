@@ -30,4 +30,15 @@ __Notes__
 A stage containing this function will not fail if the process of logging the metric fails for a
 reason that doesn't raise any exceptions.
 
+__Example__
+
+```python
+import foundations
+from algorithms import calculate_score
+
+def my_stage_code(self):
+    score = calculate_score()
+    foundations.log_metric('score', score)
+```
+
 
