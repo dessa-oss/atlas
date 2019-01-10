@@ -18,10 +18,12 @@ def initialize():
 	try:
 		new_directory = sys.argv[1]
 		directory_path = Path(new_directory)
+		absolute_new_path = str(Path.cwd()) + '/' + new_directory
 
 		if directory_path.is_dir():
 			print('Error: directory already exists\n')
 		else:
 			scaffold(new_directory)
+			print('Success! New Foundations project created at:\n\n ' + absolute_new_path + '\n')
 	except IndexError:
 		print('Error: provide a project directory. \n\nExample: \n\n foundations-init my_foundations_project\n')
