@@ -25,8 +25,7 @@ start_ui () {
 
     docker run -d --rm \
         --name foundations-gui \
-        -e REACT_APP_API_URL="http://${node_ip}:37722/api/v1/" \
-        -e REACT_APP_BETA_API_URL="http://${node_ip}:37722/api/v2beta/" \
+        -e FOUNDATIONS_REST_API="${node_ip}:37722" \
         -p 3000:3000 \
         foundations-gui:${image_tag} \
         > /dev/null \
