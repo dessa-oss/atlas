@@ -218,12 +218,12 @@ def transform_dessa_format(docstring):
     def transform_end_sections(docstring):
         import re
 
-        return re.sub(r'([^\.])\n\n', r'\1.\n\n', docstring)
+        return re.sub(r'(\n\s{8}(?!from).+[^\.])(?=\n\n)', r'\1.', docstring)
 
     new_docstring = ''
     docstring = transform_end_sections(docstring)
     for line in docstring.split('\n'):
-        for header in 'Arguments', 'Returns', 'Raises', 'Notes':
+        for header in 'Arguments', 'Returns', 'Raises', 'Notes', 'Example':
             line = transform_section_header(line, header)
         line = transform_arguments(line)
         new_docstring += line + '\n'

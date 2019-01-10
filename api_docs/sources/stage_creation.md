@@ -26,4 +26,18 @@ __Raises__
 
 - This function doesn't raise exceptions.
 
+__Example__
+
+```python
+import foundations
+from data_helper import load_data
+from algorithms import train_model
+
+load_data = foundations.create_stage(load_data)
+train_model = foundations.create_stage(train_model)
+data = load_data()
+model = train_model(data)
+model.run()
+```
+
 

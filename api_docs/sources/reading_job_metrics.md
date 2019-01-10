@@ -22,6 +22,6 @@ __Returns__
 
 __Raises__
 
-- This function  doesn't raise exceptions.
+- This function doesn't raise exceptions.
 
 

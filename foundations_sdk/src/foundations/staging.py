@@ -19,7 +19,20 @@ def create_stage(function):
         stage_generator {callable} -- A callable that when executed returns a stage object.
 
     Raises:
-        - This function doesn't raise exceptions.
+        - This function doesn't raise exceptions
+
+    Example:
+        ```python
+        import foundations
+        from data_helper import load_data
+        from algorithms import train_model
+
+        load_data = foundations.create_stage(load_data)
+        train_model = foundations.create_stage(train_model)
+        data = load_data()
+        model = train_model(data)
+        model.run()
+        ```
     """
 
     def stage(*args, **kwargs):
