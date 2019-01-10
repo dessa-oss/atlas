@@ -11,9 +11,8 @@ class ProjectPage extends Component {
     this.getAllProjects = this.getAllProjects.bind(this);
     this.state = {
       isLoaded: false,
-      projects: this.props.projects,
+      projects: [],
       isMount: false,
-      selectProject: this.props.selectProject,
     };
   }
 
@@ -40,13 +39,13 @@ class ProjectPage extends Component {
   }
 
   render() {
-    const { isLoaded, projects, selectProject } = this.state;
+    const { isLoaded, projects } = this.state;
     let projectList;
     if (isLoaded) {
       if (projects.length === 0) {
         projectList = <p>No projects available</p>;
       } else {
-        projectList = ProjectActions.getAllProjects(projects, selectProject);
+        projectList = ProjectActions.getAllProjects(projects);
       }
     } else {
       projectList = <Loading loadingMessage="We are currently loading your projects" />;
@@ -70,14 +69,12 @@ ProjectPage.propTypes = {
   isMount: PropTypes.bool,
   isLoaded: PropTypes.bool,
   projects: PropTypes.array,
-  selectProject: PropTypes.func,
 };
 
 ProjectPage.defaultProps = {
   isMount: false,
   isLoaded: false,
   projects: [],
-  selectProject: () => null,
 };
 
 export default ProjectPage;
