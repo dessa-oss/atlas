@@ -24,4 +24,4 @@ def initialize():
 		else:
 			scaffold(new_directory)
 	except IndexError:
-		print('Error: provide a project directory. \n\nExample: \n\n foundations init my_foundations_project\n')
+		print('Error: provide a project directory. \n\nExample: \n\n foundations-init my_foundations_project\n')
