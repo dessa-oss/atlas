@@ -34,9 +34,12 @@ def log_metric(key, value):
         import foundations
         from algorithms import calculate_score
 
-        def my_stage_code(self):
+        def my_stage(self):
             score = calculate_score()
             foundations.log_metric('score', score)
+
+        my_stage = foundations.create_stage(my_stage)
+        my_stage.run()
         ```
     """
     stage_logging_context.log_metric(key, value)

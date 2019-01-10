@@ -24,4 +24,19 @@ __Raises__
 
 - This function doesn't raise exceptions.
 
+__Example__
+
+```python
+import foundations
+from algorithms import train_model, print_metrics
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+job_name = 'Experiment number 3'
+deployment = model.run(job_name=job_name)
+deployment.wait_for_deployment_to_complete()
+all_metrics = foundations.get_metrics_for_all_jobs(job_name)
+print_metrics(all_metrics)
+```
+
 

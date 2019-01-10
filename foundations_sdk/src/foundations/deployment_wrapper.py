@@ -30,6 +30,18 @@ class DeploymentWrapper(object):
 
         Raises:
             - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            job_name = deployment.job_name()
+            print('Running job:', job_name)
+            ```
         """
 
         return self._deployment.job_name()
@@ -46,6 +58,20 @@ class DeploymentWrapper(object):
 
         Raises:
             - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            if deployment.is_job_complete():
+                print('Job has finished.')
+            else:
+                print('Job is still running.')
+            ```
         """
 
         return self._deployment.is_job_complete()
@@ -94,6 +120,22 @@ class DeploymentWrapper(object):
             The *stage_contexts* value is a dictionary in which each key is a UUID identifiying the stages
             upon which this stage depends on. Each value associated to these keys correspond to the
             *global_stage_context* of the corresponding stage.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            results = deployment.fetch_job_results(wait_seconds=10)
+            stage_context = results['global_stage_context']
+            if stage_context['has_stage_output']:
+                print('Stage output:', stage_context['stage_output'])
+            else:
+                print('Got some error:', stage_context['error_information'])
+            ```
         """
 
         from foundations_internal.remote_exception import check_result
@@ -121,6 +163,18 @@ class DeploymentWrapper(object):
             A job is completed when it finishes running due to success or failure. This method will wait for
             any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
             way that makes it run forever.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            deployment.wait_for_deployment_to_complete(wait_seconds=3)
+            print('Job has finished.')
+            ```
         """
 
         import time
@@ -146,6 +200,18 @@ class DeploymentWrapper(object):
 
         Raises:
             - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            status = deployment.get_job_status()
+            print('Current job status:', status)
+            ```
         """
 
         return self._deployment.get_job_status()

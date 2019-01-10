@@ -14,7 +14,7 @@ job_name(self)
 
 
 
-Gets the name of the job being run.
+Gets the name of the job being run
 
 __Arguments__
 
@@ -28,10 +28,23 @@ __Raises__
 
 - This method doesn't raise any exception.
 
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+deployment = model.run()
+job_name = deployment.job_name()
+print('Running job:', job_name)
+```
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L37)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L49)</span>
 
 ### is_job_complete
 
@@ -42,7 +55,7 @@ is_job_complete(self)
 
 
 
-Returns whether the job being run has completed.
+Returns whether the job being run has completed
 
 __Arguments__
 
@@ -56,10 +69,25 @@ __Raises__
 
 - This method doesn't raise any exception.
 
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+deployment = model.run()
+if deployment.is_job_complete():
+	print('Job has finished.')
+else:
+	print('Job is still running.')
+```
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L53)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L79)</span>
 
 ### fetch_job_results
 
@@ -117,10 +145,27 @@ The *stage_contexts* value is a dictionary in which each key is a UUID identifiy
 upon which this stage depends on. Each value associated to these keys correspond to the
 *global_stage_context* of the corresponding stage.
 
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+deployment = model.run()
+results = deployment.fetch_job_results(wait_seconds=10)
+stage_context = results['global_stage_context']
+if stage_context['has_stage_output']:
+	print('Stage output:', stage_context['stage_output'])
+else:
+	print('Got some error:', stage_context['error_information'])
+```
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L107)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L149)</span>
 
 ### wait_for_deployment_to_complete
 
@@ -151,10 +196,23 @@ A job is completed when it finishes running due to success or failure. This meth
 any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
 way that makes it run forever.
 
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+deployment = model.run()
+deployment.wait_for_deployment_to_complete(wait_seconds=3)
+print('Job has finished.')
+```
+
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L137)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/deployment_wrapper.py#L191)</span>
 
 ### get_job_status
 
@@ -165,7 +223,7 @@ get_job_status(self)
 
 
 
-Similar to is_job_complete, but with more information.
+Similar to is_job_complete, but with more information
 
 __Arguments__
 
@@ -178,5 +236,18 @@ __Returns__
 __Raises__
 
 - This method doesn't raise any exception.
+
+__Example__
+
+```python
+import foundations
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+deployment = model.run()
+status = deployment.get_job_status()
+print('Current job status:', status)
+```
 
 
