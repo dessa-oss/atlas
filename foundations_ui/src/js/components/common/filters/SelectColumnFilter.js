@@ -102,7 +102,8 @@ class SelectColumnFilter extends Component {
         onClearFilters={this.onClearFilters}
         input={input}
         onHideAll={this.onHideAll}
-      />);
+      />
+    );
   }
 }
 
