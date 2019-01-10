@@ -14,23 +14,27 @@ Configurations define how your job will run. This uses the local deployment type
 
 /project_code
 	driver.py
+	model.py
 	README.md
 
-The project code directory is where all your model code should go, as well the driver application which tells Foundations how to structure stages.
+The `project_code` directory is where all your model code should go, as well the driver application which tells Foundations how to structure stages.
 
-### Post Processing
+...what is driver file
+...what is model file
+
+### Post processing
 
 /post_processing
 	results.py
 
-If you want to read and interact with results you've run, you'll add the code to the post processing directory.
+If you want to read and interact with experiments you've run, you'll add the code to the `post_processing` directory to be able to access experiment results.
 
 ### Data
 
 /data
 
-Where data sits.
+This is where you'll put the data to use in your model.
 
-## Requirements
 
-- redis running
+Stepbystep guides
+API docs
