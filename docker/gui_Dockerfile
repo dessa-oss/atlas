@@ -2,10 +2,27 @@ FROM node:8.14.0-jessie
 
 RUN mkdir -p /var/foundations_ui
 WORKDIR /var/foundations_ui
+
+RUN apt-get update \
+    && apt-get install -y apt-transport-https \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update \
+    && apt-get install -y yarn curl nginx bzip2 gettext-base git bc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY ./ /var/foundations_ui/
 
-RUN npm install
+ENV REACT_APP_API_URL=/foundations_rest_api/api/v1/
+ENV REACT_APP_BETA_API_URL=/foundations_rest_api/api/v2beta/
 
-EXPOSE 3000
-ENTRYPOINT ["npm"]
-CMD ["start"]
+RUN yarn install
+RUN yarn run build
+
+EXPOSE 8011
+COPY deploy/nginx.conf /etc/nginx/nginx.conf.template
+CMD ["/bin/bash", "/var/foundations_ui/deploy/run_ui.sh"]
