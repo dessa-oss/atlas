@@ -13,7 +13,8 @@ stage_logging_context = StageLoggingContext(NullStageLogger())
 
 def log_metric(key, value):
     """
-    Log metrics within a stage from where it is called.
+    Log metrics within a stage from where it is called. This is a way for Foundations to keep track of the
+    metric. After job is finished, metric is accessible programmatically or through GUI.
 
     Arguments:
         key {str} -- the name of the output metric.
