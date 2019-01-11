@@ -26,12 +26,12 @@ start_ui () {
     docker run -d --rm \
         --name foundations-gui \
         -e FOUNDATIONS_REST_API="${node_ip}:37722" \
-        -p 8011:8011 \
+        -p 6443:6443 \
         foundations-gui:${image_tag} \
         > /dev/null \
         && \
 
-    echo "Foundations UI listening on port 8011."
+    echo "Foundations UI listening on port 6443."
 }
 
 stop_ui () {
