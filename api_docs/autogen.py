@@ -18,12 +18,35 @@ import foundations
 
 
 EXCLUDE = {
-    
+
 }
 
 PAGES = [
     {
-        'page': 'deployment.md',
+        'page': 'log_metrics.md',
+        'all_module_classes': [foundations.stage_logging],
+        'functions': [
+            foundations.stage_logging.log_metric,
+        ]
+    },
+    {
+        'page': 'stage_creation.md',
+        'all_module_classes': [foundations.staging],
+        'functions': [
+            foundations.staging.create_stage,
+        ]
+    },
+    {
+        'page': 'running_stages.md',
+        'all_module_classes': [foundations.stage_connector_wrapper],
+        'functions': [
+            foundations.stage_connector_wrapper.StageConnectorWrapper.run,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.enable_caching,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.split
+        ]
+    },
+    {
+        'page': 'tracking_deployment.md',
         'all_module_classes': [foundations.deployment_wrapper],
         'functions': [
             foundations.deployment_wrapper.DeploymentWrapper.job_name,
@@ -32,7 +55,14 @@ PAGES = [
             foundations.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
             foundations.deployment_wrapper.DeploymentWrapper.get_job_status,
         ]
-    }
+    },
+    {
+        'page': 'reading_job_metrics.md',
+        'all_module_classes': [foundations.projects],
+        'functions': [
+            foundations.projects.get_metrics_for_all_jobs,
+        ]
+    },
 ]
 
 
@@ -145,7 +175,7 @@ def process_class_docstring(docstring):
     return docstring
 
 
-def process_function_docstring(docstring):
+def process_function_docstring(docstring, is_method=False):
     docstring = re.sub(r'\n    # (.*)\n',
                        r'\n    __\1__\n\n',
                        docstring)
@@ -159,8 +189,53 @@ def process_function_docstring(docstring):
 
     docstring = docstring.replace('    ' * 6, '\t\t')
     docstring = docstring.replace('    ' * 4, '\t')
-    docstring = docstring.replace('    ', '')
+    docstring = docstring.replace('\n' + ' ' * 4, '\n')
+    docstring = docstring.replace('\n' + ' ' * 4, '\n')
+    if is_method:
+        docstring = docstring.replace('\n' + ' ' * 4, '\n')
     return docstring
+
+
+def transform_dessa_format(docstring):
+
+    def transform_section_header(line, section_header_word):
+        if line.strip() == section_header_word or line.strip() == section_header_word + ':':
+            line = line.replace(':', '')
+            line = line.replace(section_header_word, '# ' + section_header_word)
+        return line
+
+    def transform_arguments(line):
+        if ' -- ' in line:
+            line = line.rstrip()
+            line = line.replace(' -- ', ': ')
+            if not ('{' in line or '(' in line):
+                line = line.replace(' ' * 8, ' ' * 8 + '- __')
+                line = line.replace(': ', '__: ')
+            line = line.replace(': {', ' (')
+            line = line.replace('{', '(')
+            line = line.replace('}', ')')
+            if not line.endswith('.'):
+                line += '.'
+        return line
+
+    def transform_end_sections(docstring):
+        import re
+
+        parts = docstring.split('```')
+        for index, part in enumerate(parts):
+            if not part.startswith('python\n'):
+                parts[index] = re.sub(r'(\n.+[^\.])(?=\n\n)', r'\1.', part)
+        return '```'.join(parts)
+
+    new_docstring = ''
+    docstring = transform_end_sections(docstring)
+    for line in docstring.split('\n'):
+        for header in 'Arguments', 'Returns', 'Raises', 'Notes', 'Example':
+            line = transform_section_header(line, header)
+        line = transform_arguments(line)
+        new_docstring += line + '\n'
+    return new_docstring
+
 
 print('Cleaning up existing sources directory.')
 if os.path.exists('sources'):
@@ -197,13 +272,16 @@ for page_data in PAGES:
 
     for cls in classes:
         subblocks = []
-        signature = get_class_signature(cls)
-        subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
-        subblocks.append('### ' + cls.__name__ + '\n')
-        subblocks.append(code_snippet(signature))
         docstring = cls.__doc__
-        if docstring:
-            subblocks.append(process_class_docstring(docstring))
+        if not docstring.strip().startswith('###'):
+            signature = get_class_signature(cls)
+            subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
+            subblocks.append('### ' + cls.__name__ + '\n')
+            subblocks.append(code_snippet(signature))
+
+            if docstring:
+                docstring = transform_dessa_format(docstring)
+                subblocks.append(process_class_docstring(docstring))
         blocks.append('\n'.join(subblocks))
 
     functions = page_data.get('functions', [])
@@ -230,7 +308,10 @@ for page_data in PAGES:
         subblocks.append(code_snippet(signature))
         docstring = function.__doc__
         if docstring:
-            subblocks.append(process_function_docstring(docstring))
+            docstring = transform_dessa_format(docstring)
+            argnames = function.__code__.co_varnames
+            is_method = len(argnames) > 0 and argnames[0] == 'self'
+            subblocks.append(process_function_docstring(docstring, is_method=is_method))
         blocks.append('\n\n'.join(subblocks))
 
     if not blocks:
