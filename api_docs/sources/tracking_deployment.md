@@ -123,7 +123,7 @@ The *results_dict* has three keys: *provenance*, *global_stage_context* and *sta
 The value of *provenance* is an object that contains internal information about the execution
 environment.
 
-The *global_stage_context* value is a dictionary containing the following keys and respective values
+The *global_stage_context* value is a dictionary containing the following keys and respective values.
 
 - *uuid*: the universally unique identifier that identifies this stage
 - *stage_log*: log information about this stage
@@ -139,7 +139,7 @@ The *global_stage_context* value is a dictionary containing the following keys a
 - *cache_uuid*: the universally unique identifier that identifies this stage cache
 - *cache_read_time*: the time at which the cache was read
 - *cache_write_time*: the time at which the cache was written
-- *has_stage_output*: if the stage has output
+- *has_stage_output*: if the stage has output.
 
 The *stage_contexts* value is a dictionary in which each key is a UUID identifiying the stages
 upon which this stage depends on. Each value associated to these keys correspond to the

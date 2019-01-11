@@ -179,7 +179,7 @@ class StageConnectorWrapper(object):
 
         Raises:
             TypeError -- If the current stage does not contain a sequence of values.
-            IndexError -- If the number of children values is less than __num_children__
+            IndexError -- If the number of children values is less than __num_children__.
 
         Notes:
             The exceptions thrown by this method only occur after the wrapped function is executed inside the
