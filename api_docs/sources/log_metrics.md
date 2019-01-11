@@ -10,7 +10,8 @@ log_metric(key, value)
 
 
 
-Log metrics within a stage from where it is called.
+Log metrics within a stage from where it is called. This is a way for Foundations to keep track of the
+metric. After job is finished, metric is accessible programmatically or through GUI.
 
 __Arguments__
 
@@ -38,7 +39,7 @@ from algorithms import calculate_score
 
 def my_stage(self):
     score = calculate_score()
-    foundations.log_metric('score', score).
+    foundations.log_metric('score', score)
 
 my_stage = foundations.create_stage(my_stage)
 my_stage.run()
