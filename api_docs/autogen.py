@@ -221,7 +221,11 @@ def transform_dessa_format(docstring):
     def transform_end_sections(docstring):
         import re
 
-        return re.sub(r'(\n\s{8}(?!(?:from)|(?:import)|(?:\s{4})).+[^\.])(?=\n\n)', r'\1.', docstring)
+        parts = docstring.split('```')
+        for index, part in enumerate(parts):
+            if not part.startswith('python\n'):
+                parts[index] = re.sub(r'(\n.+[^\.])(?=\n\n)', r'\1.', part)
+        return '```'.join(parts)
 
     new_docstring = ''
     docstring = transform_end_sections(docstring)
