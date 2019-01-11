@@ -190,7 +190,12 @@ class StageConnectorWrapper(object):
         Example:
             ```python
             import foundations
-            from algorithms import get_coordinates, train_with_coordinates
+            from algorithms import retrieve_latitude, retrieve_longitude, train_with_coordinates
+
+            def get_coordinates():
+                x_coord = retrieve_latitude()
+                y_coord = retrieve_longitude()
+                return x_coord, y_coord
 
             get_coordinates = foundations.create_stage(get_coordinates)
             train_with_coordinates = foundations.create_stage(train_with_coordinates)
