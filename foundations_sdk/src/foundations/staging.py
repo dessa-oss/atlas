@@ -8,9 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def create_stage(function):
     """
-    Given a Python function, returns a callable with the same signature (receiving the same arguments) as the
-    wrapped function which can be called in the same way as the wrapped function but will create a stage
-    in Foundations instead.
+    Takes a Python function as argument and returns a callable with the same signature (receiving the same
+    arguments) as the input function. The returned callable can be called in the same way as the input
+    function but will create a stage in Foundations instead. Wrapping a function as a stage makes it
+    possible for Foundations to track calls, inputs and outputs of the function.
 
     Arguments:
         function {callable} -- Function to wrap.
