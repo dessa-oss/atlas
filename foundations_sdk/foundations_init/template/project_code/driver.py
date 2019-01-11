@@ -5,9 +5,11 @@ Below we import foundations, as well as a function from our model file that we'l
 
 We then tell Foundations how to run by defining a path to a configuration file.
 
-Next we define a project name using `set_project_name`.
+Next we define a project name using `foundations.set_project_name()`.
 
-We define the experiment to run as `result` and the `.run()` which tells Foundations to run these stages.
+We define the experiment to run as `result` and then use Foundations's `.run()` method which tells Foundations to run these stages.
+
+Then you can run the driver file with `python driver.py` to send the experiment off to be run. To check results, see the `/results` directory where you'll read and interact with results.
 """
 
 import foundations
