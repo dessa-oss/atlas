@@ -64,7 +64,7 @@ class TestJobDataRedis(unittest.TestCase):
         result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
-            'project_name': 'banana',
+            'project_name': None,
             'job_id': job_id,
             'user': 'potter',
             'job_parameters': {'harry': 'potter'},
@@ -73,6 +73,29 @@ class TestJobDataRedis(unittest.TestCase):
             'status': 'dead',
             'start_time': float('456'),
             'completed_time': float('123')
+        }
+        self.assertDictEqual(expected_result, result.get())
+
+    def test_get_job_data_gets_data_default_data(self):
+        data = {}
+        job_id = 'the boy who lived'
+        redis_pipe = RedisPipelineWrapper(
+            self._redis.pipeline())
+        job_data = JobDataRedis(redis_pipe, job_id)
+        self._load_data_new_job(job_id, data)
+
+        result = job_data.get_job_data()
+        redis_pipe.execute()
+        expected_result = {
+            'project_name': None,
+            'job_id': job_id,
+            'user': None,
+            'job_parameters': {},
+            'input_params': [],
+            'output_metrics': [],
+            'status': None,
+            'start_time': None,
+            'completed_time': None
         }
         self.assertDictEqual(expected_result, result.get())
 
