@@ -64,7 +64,7 @@ class TestJobDataRedis(unittest.TestCase):
         result = job_data.get_job_data()
         redis_pipe.execute()
         expected_result = {
-            'project_name': None,
+            'project_name': 'banana',
             'job_id': job_id,
             'user': 'potter',
             'job_parameters': {'harry': 'potter'},
