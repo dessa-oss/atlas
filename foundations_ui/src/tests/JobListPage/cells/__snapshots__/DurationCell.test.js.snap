@@ -2,6 +2,6 @@
 
 exports[`Shallow Render Duration Cell 1`] = `
 <p
-  className="job-cell duration-cell"
+  className="job-cell duration-cell row-0"
 />
 `;

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-node_ip="192.168.0.21"
-redis_url="redis://192.168.0.21:6379"
+node_ip="10.1.8.61"
+redis_url="redis://10.1.8.61:6379"
 
 action="$1"
 
@@ -25,14 +25,13 @@ start_ui () {
 
     docker run -d --rm \
         --name foundations-gui \
-        -e REACT_APP_API_URL="http://${node_ip}:37722/api/v1/" \
-        -e REACT_APP_BETA_API_URL="http://${node_ip}:37722/api/v2beta/" \
-        -p 3000:3000 \
+        -e FOUNDATIONS_REST_API="${node_ip}:37722" \
+        -p 6443:6443 \
         foundations-gui:${image_tag} \
         > /dev/null \
         && \
 
-    echo "Foundations UI listening on port 3000."
+    echo "Foundations UI listening on port 6443."
 }
 
 stop_ui () {

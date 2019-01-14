@@ -2,7 +2,7 @@
 
 exports[`Shallow Renders Status Cell 1`] = `
 <div
-  className="status-cell job-cell"
+  className="status-cell job-cell row-0"
 >
   <span
     className="status status-green"
