@@ -4,6 +4,7 @@ import Toolbar from '../common/Toolbar';
 import ProjectActions from '../../actions/ProjectActions';
 import ProjectHeader from './ProjectHeader';
 import Loading from '../common/Loading';
+import ErrorMessage from '../common/ErrorMessage';
 
 class ProjectPage extends Component {
   constructor(props) {
@@ -41,15 +42,17 @@ class ProjectPage extends Component {
   render() {
     const { isLoaded, projects } = this.state;
     let projectList;
-    if (isLoaded) {
-      if (projects.length === 0) {
-        projectList = <p>No projects available</p>;
-      } else {
-        projectList = ProjectActions.getAllProjects(projects);
-      }
-    } else {
-      projectList = <Loading loadingMessage="We are currently loading your projects" />;
-    }
+    // if (isLoaded) {
+    //   if (projects.length === 0) {
+    //     projectList = <p>No projects available</p>;
+    //   } else {
+    //     projectList = ProjectActions.getAllProjects(projects);
+    //   }
+    // } else {
+    //   projectList = <Loading loadingMessage="We are currently loading your projects" />;
+    // }
+
+    projectList = <ErrorMessage errorCode={404} />;
 
     return (
       <div className="project-page-container">
@@ -57,7 +60,7 @@ class ProjectPage extends Component {
           <Toolbar />
           <ProjectHeader numProjects={projects.length} />
         </div>
-        <div className="projects-body-container">
+        <div className="project-body-container">
           {projectList}
         </div>
       </div>
