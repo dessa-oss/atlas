@@ -44,7 +44,7 @@ class Scaffold(object):
         """Gets the project name a user provides.
 
         Returns:
-                string -- name of project user provides.
+						string -- name of project user provides.
         """
 
         import sys
@@ -55,10 +55,10 @@ class Scaffold(object):
         """Checks if directory already exists.
 
         Arguments:
-                project_name {string} -- name that user provides for project.
+						project_name {string} -- name that user provides for project.
 
         Returns:
-                Boolean -- true if directory exists.
+						Boolean -- true if directory exists.
         """
 
         directory_path_exist = Path(project_name).is_dir()
@@ -87,7 +87,7 @@ class Scaffold(object):
         """Copies files from /template directory to new user defined location path.
 
         Arguments:
-                new_directory {string} -- directory for content to be copied to.
+						new_directory {string} -- directory for content to be copied to.
         """
 
         from distutils.dir_util import copy_tree
@@ -99,7 +99,7 @@ class Scaffold(object):
         """Method that helps find the absolute path to the template directory.
 
         Returns:
-                object -- Posix file object from pathlib.
+						object -- Posix file object from pathlib.
         """
 
         copy_from_path = Path(__file__).parents[0].joinpath('template')
@@ -109,10 +109,10 @@ class Scaffold(object):
         """Method that helps define the absolute path to the destination directory.
 
 				Arguments:
-								new_directory {string} -- directory for content to be copied to.
+						new_directory {string} -- directory for content to be copied to.
 
 				Returns:
-								object -- Posix file object from pathlib.
+						object -- Posix file object from pathlib.
 				"""
 
         copy_to_path = Path().absolute().joinpath(new_directory)
