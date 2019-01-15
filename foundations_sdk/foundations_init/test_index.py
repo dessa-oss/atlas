@@ -5,10 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_init.scaffold import initialize
+import unittest
 
-def main():
-    initialize()
+from scaffold import Scaffold
 
-if __name__ == '__main__':
-    main()
+class TestIndex(unittest.TestCase):
+    def test_intial_test(self):
+        
