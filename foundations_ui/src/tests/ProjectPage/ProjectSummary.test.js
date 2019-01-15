@@ -47,6 +47,6 @@ it('Sends Correct Path To Redirect', () => {
   const projectWrapper = shallow(<ProjectSummary project={project}/>);
   expect(ProjectActions.redirect).not.toHaveBeenCalled();
   projectWrapper.setState({ redirect: true});
-  expect(ProjectActions.redirect).toHaveBeenCalledWith("/projects/job_listing/test");
+  expect(ProjectActions.redirect).toHaveBeenCalledWith("/projects/test/job_listing");
 });
 
