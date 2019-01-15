@@ -32,7 +32,7 @@ class ErrorMessage extends Component {
     const errorBanner500 = '500 Internal Server Error';
     const errorSubtext500 = 'Our servers are having problems '
     + 'going through the astroid belts.'
-    + 'Check back again shortly.';
+    + ' Check back again shortly.';
     return {
       errorBanner: errorBanner500,
       errorSubtext: errorSubtext500,
@@ -44,7 +44,8 @@ class ErrorMessage extends Component {
     // const errorSubtext404 = <Text>Services are having temporary issues.{'\n'}
     // Contact our front desk support at
     // <a href='mailto:support@dessa.com'>support@dessa.com</a>or{'\n'}call us toll free at 1-899-623-5578'</Text>;
-    const errorSubtext404 = 'Services are having temporary issues.';
+    const errorSubtext404 = 'Services are having temporary issues.'
+    + ' Contact our front desk support at support@dessa.com or call us toll free at 1-899-623-5578.';
     return {
       errorBanner: errorBanner404,
       errorSubtext: errorSubtext404,

@@ -14,6 +14,7 @@ class ProjectPage extends Component {
       isLoaded: false,
       projects: [],
       isMount: false,
+      errorCaught: false,
     };
   }
 
@@ -34,25 +35,25 @@ class ProjectPage extends Component {
       if (apiProjects != null) {
         this.setState({ projects: apiProjects, isLoaded: true });
       } else {
-        this.setState({ projects: [], isLoaded: true });
+        this.setState({ projects: [], isLoaded: true, errorCaught: true });
       }
     }
   }
 
   render() {
-    const { isLoaded, projects } = this.state;
+    const { isLoaded, projects, errorCaught } = this.state;
     let projectList;
-    // if (isLoaded) {
-    //   if (projects.length === 0) {
-    //     projectList = <p>No projects available</p>;
-    //   } else {
-    //     projectList = ProjectActions.getAllProjects(projects);
-    //   }
-    // } else {
-    //   projectList = <Loading loadingMessage="We are currently loading your projects" />;
-    // }
-
-    projectList = <ErrorMessage errorCode={404} />;
+    if (isLoaded) {
+      if (errorCaught) {
+        projectList = <ErrorMessage errorCode={404} />;
+      } else if (projects.length === 0) {
+        projectList = <p>No projects available</p>;
+      } else {
+        projectList = ProjectActions.getAllProjects(projects);
+      }
+    } else {
+      projectList = <Loading loadingMessage="We are currently loading your projects" />;
+    }
 
     return (
       <div className="project-page-container">
@@ -71,12 +72,14 @@ class ProjectPage extends Component {
 ProjectPage.propTypes = {
   isMount: PropTypes.bool,
   isLoaded: PropTypes.bool,
+  errorCaught: PropTypes.bool,
   projects: PropTypes.array,
 };
 
 ProjectPage.defaultProps = {
   isMount: false,
   isLoaded: false,
+  errorCaught: false,
   projects: [],
 };
 
