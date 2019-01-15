@@ -6,6 +6,7 @@ import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
+import ErrorMessage from '../common/ErrorMessage';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -47,6 +48,7 @@ class JobListPage extends Component {
         { name: 'False', hidden: false },
       ],
       startTimeFilter: [],
+      queryStatus: 200,
     };
   }
 
@@ -62,9 +64,13 @@ class JobListPage extends Component {
 
   async getJobs() {
     const { projectName } = this.state;
-    const apiJobs = await JobActions.getJobs(projectName);
-    const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
-    this.formatAndSaveParams(apiJobs, allUsers);
+    const fetchedJobs = await JobActions.getJobs(projectName);
+    const apiJobs = fetchedJobs.result;
+    this.setState({ queryStatus: fetchedJobs.status });
+    if (this.state.queryStatus === 200) {
+      const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
+      this.formatAndSaveParams(apiJobs, allUsers);
+    }
   }
 
   async getFilteredJobs() {
@@ -305,36 +311,42 @@ class JobListPage extends Component {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
+      queryStatus,
     } = this.state;
     let jobList;
-    jobList = (
-      <JobTable
-        projectName={projectName}
-        statuses={statuses}
-        updateHiddenStatus={this.updateHiddenStatus}
-        updateHiddenUser={this.updateHiddenUser}
-        updateNumberFilter={this.updateNumberFilter}
-        updateContainsFilter={this.updateContainsFilter}
-        updateBoolFilter={this.updateBoolFilter}
-        updateDurationFilter={this.updateDurationFilter}
-        updateJobIdFilter={this.updateJobIdFilter}
-        updateStartTimeFilter={this.updateStartTimeFilter}
-        jobs={jobs}
-        isLoaded={isLoaded}
-        allInputParams={allInputParams}
-        allMetrics={allMetrics}
-        allUsers={allUsers}
-        hiddenUsers={hiddenUsers}
-        boolCheckboxes={boolCheckboxes}
-        numberFilters={numberFilters}
-        containFilters={containFilters}
-        boolFilters={boolFilters}
-        durationFilters={durationFilter}
-        jobIdFilters={jobIdFilter}
-        startTimeFilters={startTimeFilter}
-        filters={filters}
-      />
-    );
+    if (queryStatus === 200) {
+      jobList = (
+        <JobTable
+          projectName={projectName}
+          statuses={statuses}
+          updateHiddenStatus={this.updateHiddenStatus}
+          updateHiddenUser={this.updateHiddenUser}
+          updateNumberFilter={this.updateNumberFilter}
+          updateContainsFilter={this.updateContainsFilter}
+          updateBoolFilter={this.updateBoolFilter}
+          updateDurationFilter={this.updateDurationFilter}
+          updateJobIdFilter={this.updateJobIdFilter}
+          updateStartTimeFilter={this.updateStartTimeFilter}
+          jobs={jobs}
+          isLoaded={isLoaded}
+          allInputParams={allInputParams}
+          allMetrics={allMetrics}
+          allUsers={allUsers}
+          hiddenUsers={hiddenUsers}
+          boolCheckboxes={boolCheckboxes}
+          numberFilters={numberFilters}
+          containFilters={containFilters}
+          boolFilters={boolFilters}
+          durationFilters={durationFilter}
+          jobIdFilters={jobIdFilter}
+          startTimeFilters={startTimeFilter}
+          filters={filters}
+        />
+      );
+    } else {
+      jobList = <ErrorMessage errorCode={queryStatus} />;
+    }
+
     return (
       <div className="job-list-container">
         <Toolbar />
@@ -366,6 +378,7 @@ JobListPage.propTypes = {
   durationFilter: PropTypes.array,
   jobIdFilter: PropTypes.array,
   startTimeFilter: PropTypes.array,
+  queryStatus: PropTypes.number,
   match: PropTypes.shape({
     params: PropTypes.shape({
       projectName: PropTypes.string,
@@ -389,6 +402,7 @@ JobListPage.defaultProps = {
   durationFilter: [],
   jobIdFilter: [],
   startTimeFilter: [],
+  queryStatus: 200,
   match: {
     params: {
       projectName: '',

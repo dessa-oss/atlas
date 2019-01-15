@@ -3,13 +3,20 @@ const BaseActions = {
   baseBetaURL: process.env.REACT_APP_BETA_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v2beta/',
   getFromAPI(url) {
     const fullURL = this.baseURL.concat(url);
+    let status;
     return fetch(fullURL)
       .then(
-        res => res.json(),
+        (res) => {
+          status = res.status;
+          return res.json();
+        },
       )
       .then(
         (result) => {
-          return result;
+          return {
+            status,
+            result,
+          };
         },
       ).catch(
         (err) => {
@@ -20,13 +27,20 @@ const BaseActions = {
   // NOTE this is the method for Beta backend only
   getBetaFromAPI(url) {
     const fullURL = this.baseBetaURL.concat(url);
+    let status;
     return fetch(fullURL)
       .then(
-        res => res.json(),
+        (res) => {
+          status = res.status;
+          return res.json();
+        },
       )
       .then(
         (result) => {
-          return result;
+          return {
+            status,
+            result,
+          };
         },
       ).catch(
         (err) => {

@@ -14,7 +14,7 @@ class ProjectPage extends Component {
       isLoaded: false,
       projects: [],
       isMount: false,
-      errorCaught: false,
+      queryStatus: 200,
     };
   }
 
@@ -28,24 +28,25 @@ class ProjectPage extends Component {
   }
 
   async getAllProjects() {
-    const apiProjects = await ProjectActions.getProjects();
+    const fetchedProjects = await ProjectActions.getProjects();
+    const apiProjects = fetchedProjects.result;
     // use is mount for async as when it returns may have been unmounted
     const { isMount } = this.state;
     if (isMount) {
       if (apiProjects != null) {
-        this.setState({ projects: apiProjects, isLoaded: true });
+        this.setState({ projects: apiProjects, isLoaded: true, queryStatus: fetchedProjects.status });
       } else {
-        this.setState({ projects: [], isLoaded: true, errorCaught: true });
+        this.setState({ projects: [], isLoaded: true, queryStatus: fetchedProjects.status });
       }
     }
   }
 
   render() {
-    const { isLoaded, projects, errorCaught } = this.state;
+    const { isLoaded, projects, queryStatus } = this.state;
     let projectList;
     if (isLoaded) {
-      if (errorCaught) {
-        projectList = <ErrorMessage errorCode={500} />;
+      if (queryStatus !== 200) {
+        projectList = <ErrorMessage errorCode={queryStatus} />;
       } else if (projects.length === 0) {
         projectList = <p>No projects available</p>;
       } else {
@@ -72,14 +73,14 @@ class ProjectPage extends Component {
 ProjectPage.propTypes = {
   isMount: PropTypes.bool,
   isLoaded: PropTypes.bool,
-  errorCaught: PropTypes.bool,
+  queryStatus: PropTypes.number,
   projects: PropTypes.array,
 };
 
 ProjectPage.defaultProps = {
   isMount: false,
   isLoaded: false,
-  errorCaught: false,
+  queryStatus: 200,
   projects: [],
 };
 
