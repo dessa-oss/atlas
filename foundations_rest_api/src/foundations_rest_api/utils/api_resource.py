@@ -32,17 +32,17 @@ class APIResourceBuilder(object):
             instance = self._klass()
             instance.params = self._api_params(kwargs)
 
-            return instance.index().as_json()
+            response = instance.index()
+            return response.as_json(), response.status()
         return _get
 
     def _api_params(self, kwargs):
         from flask import request
 
         params = dict(kwargs)
-        dict_args = dict(request.args)
+        dict_args = request.args.to_dict(flat=False)
         for key, value in dict_args.items():
-            params[key] = value if len(
-                value) > 1 else value[0]
+            params[key] = value if len(value) > 1 else value[0]
         return params
 
 def api_resource(base_path):
