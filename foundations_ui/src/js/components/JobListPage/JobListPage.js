@@ -306,6 +306,35 @@ class JobListPage extends Component {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
     } = this.state;
+    let jobList;
+    jobList = (
+      <JobTable
+        projectName={projectName}
+        statuses={statuses}
+        updateHiddenStatus={this.updateHiddenStatus}
+        updateHiddenUser={this.updateHiddenUser}
+        updateNumberFilter={this.updateNumberFilter}
+        updateContainsFilter={this.updateContainsFilter}
+        updateBoolFilter={this.updateBoolFilter}
+        updateDurationFilter={this.updateDurationFilter}
+        updateJobIdFilter={this.updateJobIdFilter}
+        updateStartTimeFilter={this.updateStartTimeFilter}
+        jobs={jobs}
+        isLoaded={isLoaded}
+        allInputParams={allInputParams}
+        allMetrics={allMetrics}
+        allUsers={allUsers}
+        hiddenUsers={hiddenUsers}
+        boolCheckboxes={boolCheckboxes}
+        numberFilters={numberFilters}
+        containFilters={containFilters}
+        boolFilters={boolFilters}
+        durationFilters={durationFilter}
+        jobIdFilters={jobIdFilter}
+        startTimeFilters={startTimeFilter}
+        filters={filters}
+      />
+    );
     return (
       <div className="job-list-container">
         <Toolbar />
@@ -315,32 +344,7 @@ class JobListPage extends Component {
           clearFilters={this.clearFilters}
           removeFilter={this.removeFilter}
         />
-        <JobTable
-          projectName={projectName}
-          statuses={statuses}
-          updateHiddenStatus={this.updateHiddenStatus}
-          updateHiddenUser={this.updateHiddenUser}
-          updateNumberFilter={this.updateNumberFilter}
-          updateContainsFilter={this.updateContainsFilter}
-          updateBoolFilter={this.updateBoolFilter}
-          updateDurationFilter={this.updateDurationFilter}
-          updateJobIdFilter={this.updateJobIdFilter}
-          updateStartTimeFilter={this.updateStartTimeFilter}
-          jobs={jobs}
-          isLoaded={isLoaded}
-          allInputParams={allInputParams}
-          allMetrics={allMetrics}
-          allUsers={allUsers}
-          hiddenUsers={hiddenUsers}
-          boolCheckboxes={boolCheckboxes}
-          numberFilters={numberFilters}
-          containFilters={containFilters}
-          boolFilters={boolFilters}
-          durationFilters={durationFilter}
-          jobIdFilters={jobIdFilter}
-          startTimeFilters={startTimeFilter}
-          filters={filters}
-        />
+        {jobList}
       </div>
     );
   }

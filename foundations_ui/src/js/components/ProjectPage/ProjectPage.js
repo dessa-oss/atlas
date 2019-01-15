@@ -45,7 +45,7 @@ class ProjectPage extends Component {
     let projectList;
     if (isLoaded) {
       if (errorCaught) {
-        projectList = <ErrorMessage errorCode={404} />;
+        projectList = <ErrorMessage errorCode={500} />;
       } else if (projects.length === 0) {
         projectList = <p>No projects available</p>;
       } else {
