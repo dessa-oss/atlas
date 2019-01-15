@@ -10,25 +10,48 @@ from pathlib import Path
 import sys
 
 class Scaffold(object):
-    	
+
 	def __init__(self):
-		pass
+		self.command = None
+	
+	def source_template_path(self):
+		copy_from_path = Path(__file__).parents[0].joinpath('template')
+		return copy_from_path
+	
+	def destination_template_path(self, new_directory):
+		copy_to_path = Path().absolute().joinpath(new_directory)
+		return copy_to_path
     
 	def scaffold_project(self, new_directory):
-		copy_from = Path(__file__).parents[0].joinpath('template')
-		copy_to = Path().absolute().joinpath(new_directory)
+		copy_from = self.source_template_path()
+		copy_to = self.destination_template_path(new_directory)
 		copy_tree(copy_from, str(copy_to))
 
-	def initialize(self):
+	def setup(self):
 		try:
-			new_directory = sys.argv[1]
-			directory_path = Path(new_directory)
-			absolute_new_path = str(Path.cwd()) + '/' + new_directory
-
-			if directory_path.is_dir():
-				print('Error: directory already exists\n')
-			else:
-				self.scaffold_project(new_directory)
-				print('Success! New Foundations project created at:\n\n ' + absolute_new_path + '\n')
+			self.command = sys.argv[1]
+			self.arg_controller()
 		except IndexError:
-			print('Error: provide a project directory. \n\nExample: \n\n foundations-init my_foundations_project\n')
+			print('Error: no command given. To start a project, try: \n\n python -m foundations_init init <project_name>\n')
+	
+	def arg_controller(self):
+		if self.command == 'init':
+			self.foundations_init()
+		else:
+			print('Error: incorrect command. To start a project, try: \n\n python -m foundations_init init <project_name>\n')
+
+	def foundations_init(self):
+		try:
+			project_name = sys.argv[2]
+			
+			directory_path_exist = Path(project_name).is_dir()
+			absolute_new_path = str(Path.cwd()) + '/' + project_name
+
+			if directory_path_exist:
+				print('Error: directory already exists\n\n ' + absolute_new_path + '\n')
+			else:
+				self.scaffold_project(project_name)
+				print('Success! New Foundations project created at:\n\n ' + absolute_new_path + '\n')
+
+		except IndexError:
+			print('Error: incorrect command. To start a project, try: \n\n python -m foundations_init init <project_name>\n')
