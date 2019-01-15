@@ -19,6 +19,9 @@ def get_metrics_for_all_jobs(project_name):
 
     Returns:
         [pandas.DataFrame] -- Pandas DataFrame containing all of the results
+
+    Raises:
+        ValueError -- An exception indicating that the requested project does not exist
     """
 
     from foundations_contrib.models.project_listing import ProjectListing
