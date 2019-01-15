@@ -1,7 +1,16 @@
 #!/bin/bash
 
-node_ip="10.1.8.61"
-redis_url="redis://10.1.8.61:6379"
+if [[ -z "${REST_API_HOST}" ]]; then
+    node_ip="10.1.8.61"
+else
+    node_ip=$REST_API_HOST
+fi
+
+if [[ -z "${REDIS_URL}" ]]; then
+    redis_url="redis://10.1.8.61:6379"
+else
+    redis_url=$REDIS_URL
+fi
 
 action="$1"
 
@@ -18,7 +27,7 @@ start_ui () {
     docker run -d --rm \
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
-        -p 37722:37722 \
+        -p 37722:80 \
         foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
