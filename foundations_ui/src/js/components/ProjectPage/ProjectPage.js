@@ -61,7 +61,7 @@ class ProjectPage extends Component {
           <Toolbar />
           <ProjectHeader numProjects={projects.length} />
         </div>
-        <div className="project-body-container">
+        <div className="projects-body-container">
           {projectList}
         </div>
       </div>
