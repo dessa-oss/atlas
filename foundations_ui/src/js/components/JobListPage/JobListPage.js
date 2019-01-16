@@ -84,11 +84,15 @@ class JobListPage extends Component {
     if (visibleUsers.length === allUsers.length) {
       visibleUsers = [];
     }
-    const filterJobs = await JobActions.filterJobs(
+    const fetchedFilteredJobs = await JobActions.filterJobs(
       projectName, statuses, visibleUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
       startTimeFilter,
     );
-    return filterJobs;
+    this.setState({ queryStatus: fetchedFilteredJobs.status });
+    if (this.state.queryStatus === 200) {
+      return fetchedFilteredJobs.result;
+    }
+    return null;
   }
 
   async updateHiddenUser(hiddenFields) {
@@ -346,7 +350,6 @@ class JobListPage extends Component {
     } else {
       jobList = <ErrorMessage errorCode={queryStatus} />;
     }
-
     return (
       <div className="job-list-container">
         <Toolbar />
