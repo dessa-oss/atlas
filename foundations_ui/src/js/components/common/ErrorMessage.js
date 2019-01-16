@@ -41,9 +41,6 @@ class ErrorMessage extends Component {
 
   setNotFoundError() {
     const errorBanner404 = '404 Page Not Found';
-    // const errorSubtext404 = <Text>Services are having temporary issues.{'\n'}
-    // Contact our front desk support at
-    // <a href='mailto:support@dessa.com'>support@dessa.com</a>or{'\n'}call us toll free at 1-899-623-5578'</Text>;
     const errorSubtext404 = 'Services are having temporary issues.'
     + ' Contact our front desk support at support@dessa.com or call us toll free at 1-899-623-5578.';
     return {
@@ -54,7 +51,6 @@ class ErrorMessage extends Component {
 
 
   render() {
-    // const { notLoaded } = this.state;
     const { errorBanner, errorSubtext } = this.setContent();
 
     return (
