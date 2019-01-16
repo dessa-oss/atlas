@@ -34,4 +34,9 @@ class CommandLineInterface(object):
 
     def _init(self):
         from foundations_contrib.cli.scaffold import Scaffold
-        Scaffold(self._arguments.project_name).scaffold_project()
+        
+        result = Scaffold(self._arguments.project_name).scaffold_project()
+        if result:
+            print('Success! New Foundations project created at:\n\n{}\n'.format(project_path))
+        else:
+            print('Error: directory already exists\n\n{}\n'.format(project_path))

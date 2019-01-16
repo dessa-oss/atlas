@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.cli.test_project import TestProject
+from test.cli.test_scaffold import TestScaffold

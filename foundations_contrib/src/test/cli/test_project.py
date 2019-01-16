@@ -9,16 +9,8 @@ import unittest
 from mock import patch
 from pathlib import Path
 
-from contextlib import contextmanager
-
 from foundations_contrib.cli.project import Project
-
-@contextmanager
-def quick_patch(thing, method, callback):
-    old_method = getattr(thing, method)
-    setattr(thing, method, callback)
-    yield
-    setattr(thing, method, old_method)
+from test.cli.patching import quick_patch
 
 class TestProject(unittest.TestCase):
 
@@ -71,10 +63,8 @@ class TestProject(unittest.TestCase):
             self.assertTrue(Project('subproj').exists())
 
     def _patch_path_exists(self, expected_path):
-        from pathlib import Path
-
         mock = self._check_dir_callback(expected_path)
-        return quick_patch(Path, 'is_dir', mock)
+        return patch('pathlib.Path.is_dir', mock)
 
     def _check_dir_callback(self, expected_path):
         def _callback(self):

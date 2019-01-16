@@ -25,26 +25,22 @@ class Scaffold(object):
         """ Wrapping logic to check that user gave command and to start scaffolding if directory is unique and does not exist.
         """
 
-        project_path = self._project.path()
         if self._project.exists():
-            print('Error: directory already exists\n\n{}\n'.format(project_path))
+            return False
         else:
             self._perform_scaffolding()
-            print('Success! New Foundations project created at:\n\n{}\n'.format(project_path))
+            return True
 
     def _perform_scaffolding(self):
         from distutils.dir_util import copy_tree
 
-        copy_from = self.source_template_path()
+        copy_from = self._string_source_template_path()
         copy_to = self._project.string_path()
         copy_tree(copy_from, copy_to)
 
-    def source_template_path(self):
-        """Method that helps find the absolute path to the template directory.
+    def _string_source_template_path(self):
+        return str(self._source_template_path())
 
-        Returns:
-						object -- Posix file object from pathlib.
-        """
-
+    def _source_template_path(self):
         import foundations_contrib
         return foundations_contrib.root().joinpath('resources/template')
