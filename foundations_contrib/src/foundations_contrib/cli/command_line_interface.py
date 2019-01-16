@@ -11,6 +11,7 @@ class CommandLineInterface(object):
         from argparse import ArgumentParser
 
         self._argument_parser = ArgumentParser(prog='foundations')
+        self._argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
         self._argument_parser.set_defaults(function=self._no_command)
         subparsers = self._argument_parser.add_subparsers()
         
@@ -21,11 +22,16 @@ class CommandLineInterface(object):
         self._arguments = self._argument_parser.parse_args(args)
 
     def execute(self):
-        self._arguments.function(self._arguments)
+        self._arguments.function()
 
-    def _no_command(self, arguments):
-        self._argument_parser.print_help()
+    def _no_command(self):
+        import foundations
 
-    def _init(self, arguments):
+        if self._arguments.version:
+            print('Running Foundations version {}'.format(foundations.__version__))
+        else:
+            self._argument_parser.print_help()
+
+    def _init(self):
         from foundations_contrib.cli.scaffold import Scaffold
-        Scaffold(arguments.project_name).scaffold_project()
+        Scaffold(self._arguments.project_name).scaffold_project()
