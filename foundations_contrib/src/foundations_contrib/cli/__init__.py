@@ -5,11 +5,3 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_init.scaffold import Scaffold
-
-def main():
-    scaffold = Scaffold()
-    scaffold.setup()
-
-if __name__ == '__main__':
-    main()

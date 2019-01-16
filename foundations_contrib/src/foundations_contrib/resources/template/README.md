@@ -2,21 +2,21 @@
 
 This project template was generated with `foundations-init`. In this project you'll find the following structure:
 
-### Config
+## Config
 
-```
+```shell
 /config
-	default.config.yaml
+    default.config.yaml
 ```
 
 Configurations define how your job will run. This uses the local deployment type as default.
 
-### Project code
+## Project code
 
-```
+```shell
 /project_code
-	driver.py
-	model.py
+    driver.py
+    model.py
 ```
 
 The `project_code` directory is where all your model code should go, as well the driver file, which tells Foundations how to structure stages.
@@ -25,24 +25,24 @@ The driver should be used to set up the experiment. This is where you'll define 
 
 The model file is where your stages (python functions) will live.
 
-### Post processing
+## Post processing
 
-```
+```shell
 /post_processing
-	results.py
+    results.py
 ```
 
 If you want to read and interact with experiments you've run, you'll interact and analyze experiment results within the `post_processing` directory.
 
-### Data
+## Data
 
-```
+```shell
 /data
 ```
 
 This is where you'll put the data to use in your model.
 
-### Additional Resources
+## Additional Resources
 
 Step-by-step guide: [https://github.com/DeepLearnI/foundations/blob/master/documentation/STEPBYSTEPGUIDE.md](https://github.com/DeepLearnI/foundations/blob/master/documentation/STEPBYSTEPGUIDE.md)
 API docs: [https://dessa-foundations.readthedocs-hosted.com/en/latest/](https://dessa-foundations.readthedocs-hosted.com/en/latest/)
