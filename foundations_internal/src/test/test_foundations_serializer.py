@@ -67,7 +67,7 @@ class TestFoundationsSerializer(unittest.TestCase):
         self.assertEqual(serializer.deserialize, serializer.loads)
 
     @patch('pickle.dumps')
-    def test_serialize_protocol_version_4(self, mock_picke_dumps):
+    def test_serialize_protocol_version_4(self, mock_pickle_dumps):
         test_string = 'some maybe large string'
         serializer.serialize(test_string)
-        mock_picke_dumps.assert_called_with(test_string, protocol=4)
+        mock_pickle_dumps.assert_called_with(test_string, protocol=4)
