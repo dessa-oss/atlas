@@ -43,10 +43,17 @@ class Job(PropertyModel):
         jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
 
         for job_properties in list(jobs_data):
+            job_properties['input_params'] = list(Job._filter_out_non_hyper_parameter_inputs(job_properties['input_params']))
             job = Job._build_job_model(job_properties)
             jobs.append(job)
         Job._default_order(jobs)
         return jobs
+
+    @staticmethod
+    def _filter_out_non_hyper_parameter_inputs(input_params):
+        for param in input_params:
+            if param['source'] == 'placeholder':
+                yield param
 
     @staticmethod
     def _build_job_model(job_data):

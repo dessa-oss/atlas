@@ -16,6 +16,8 @@ from test.test_provenance import TestProvenance
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
 from test.test_bucket_cache_backend import TestBucketCacheBackend
 from test.test_constant_parameter import TestConstantParameter
+from test.test_list_parameter import TestListParameter
+from test.test_dict_parameter import TestDictParameter
 from test.test_dynamic_parameter import TestDynamicParameter
 from test.test_local_file_system_bucket import TestLocalFileSystemBucket
 from test.test_local_file_system_pipeline_listing import TestLocalFileSystemPipelineListing

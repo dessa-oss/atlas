@@ -18,7 +18,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
         klass._set_project_name('lou')
-        klass._make_completed_job_with_metrics('my job 3', 'bach')
+        klass._make_completed_job_with_metrics('my job 3', 'bach', arg1='life', arg2=42, kwarg1='pi', kwarg2=3.14)
 
     @classmethod
     def tearDownClass(klass):
@@ -27,19 +27,25 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         redis.flushall()
 
     @classmethod
-    def _prepare_job_input_data(klass):
-        from foundations import log_metric
+    def _prepare_job_input_data(klass, **kwargs):
+        from foundations import log_metric, Hyperparameter
 
         def callback(arg1, arg2, kwarg1=None, kwarg2=None):
             log_metric('hello', 20)
             return ', '.join([str(arg1), str(arg2), str(kwarg1), str(kwarg2)])
-        klass._pipeline.stage(callback, 'life', 42, 'pi', 3.14).run_same_process()
+        klass._pipeline.stage(
+            callback, 
+            Hyperparameter('arg1'), 
+            Hyperparameter('arg2'), 
+            kwarg1=Hyperparameter(), 
+            kwarg2=Hyperparameter()
+        ).run_same_process(**kwargs)
 
     @classmethod
-    def _make_completed_job_with_metrics(klass, job_name, user):
+    def _make_completed_job_with_metrics(klass, job_name, user, **kwargs):
         klass._pipeline_context.file_name = job_name
-        klass._prepare_job_input_data()
-        klass._make_completed_job(job_name, user)
+        klass._prepare_job_input_data(**kwargs)
+        klass._make_completed_job(job_name, user, **kwargs)
 
     def test_get_route(self):
         data = super(TestJobsListingUIFriendly, self).test_get_route()
@@ -54,7 +60,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         for index, var_value in enumerate(['life', 42, 'pi', 3.14]):
             self.assertEqual(job_data['input_params'][index]['value'], var_value)
         for index in range(4):
-            self.assertEqual(job_data['input_params'][index]['source'], 'constant')
+            self.assertEqual(job_data['input_params'][index]['source'], 'placeholder')
         input_parameter_names = data['input_parameter_names']
         expected_input_parameter_names = [{'name': 'kwarg2-0', 'type': 'number'},
                                           {'name': 'kwarg1-0', 'type': 'string'},

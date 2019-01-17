@@ -31,7 +31,7 @@ class JobHeader extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    this.setState({ filters: nextProps.filters });
+    this.setState({ filters: nextProps.filters, project: nextProps.project });
 
     const { hiddenBubbles } = this.state;
     const { clientWidth } = this.bubbleContainer;

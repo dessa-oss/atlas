@@ -36,5 +36,6 @@ setup(
     package_dir={'': 'src'},
     package_data={
         'foundations': ['resources/*'],
-    }
+    },
+    scripts=['foundations']
 )

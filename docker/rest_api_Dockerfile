@@ -1,19 +1,16 @@
-FROM python:3.5.2
+FROM tiangolo/uwsgi-nginx-flask:python3.6
+
+RUN python -m pip install --upgrade pip==18.1 && \
+    python -m pip install setuptools wheel
 
 RUN mkdir -p /var/foundations ~/.ssh
 COPY ./ /var/foundations/
 WORKDIR /var/foundations
 
-RUN python -m pip install --upgrade pip==18.1 && \
-    python -m pip install \
-        setuptools \
-        wheel \
-        && \
-    bash build_dist.sh && \
+RUN bash build_dist.sh && \
     rm -rf ./*
 
-COPY ./docker/run_api_server.py ./
+ENV SERVER_NAME=localhost
 
-EXPOSE 37722
-ENTRYPOINT ["python"]
-CMD ["run_api_server.py"]
+WORKDIR /app/
+COPY docker/run_api_server.py /app/main.py

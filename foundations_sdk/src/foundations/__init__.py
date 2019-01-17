@@ -43,7 +43,6 @@ from foundations_internal.versioning import __version__
 import foundations_internal.import_installer
 import foundations_contrib.consumers
 
-
 def _append_module():
     import sys
     module_manager.append_module(sys.modules[__name__])

@@ -48,9 +48,10 @@ class JobsTestsHelperMixinV2(object):
             restore_real_current_datetime()
 
     @classmethod
-    def _make_completed_job(klass, job_name, user, start_timestamp=None, end_timestamp=None):
+    def _make_completed_job(klass, job_name, user, start_timestamp=None, end_timestamp=None, **kwargs):
         klass._pipeline_context.file_name = job_name
         klass._pipeline_context.provenance.user_name = user
+        klass._pipeline_context.provenance.job_run_data = kwargs
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
         klass._fake_start_time(start_timestamp)
         RunJob(klass._message_router, klass._pipeline_context).push_message()

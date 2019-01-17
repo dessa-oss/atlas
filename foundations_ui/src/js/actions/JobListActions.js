@@ -176,12 +176,12 @@ class ProjectActions {
   }
 
   static getInputMetricValue(inputParam, isMetric, columns) {
-    if (isMetric && inputParam !== null && inputParam.value) {
+    if (isMetric && inputParam !== null && inputParam.value !== null) {
       return inputParam.value;
     }
 
     if (inputParam && columns.includes(inputParam.name)
-      && inputParam.value) {
+      && inputParam.value !== null) {
       return inputParam.value;
     }
     return 'not available';
