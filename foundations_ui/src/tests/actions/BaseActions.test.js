@@ -18,16 +18,16 @@ function mockFetch(data, status) {
 
 it('Gets Result and Status from API', async () => {
   fetch = mockFetch('data', 404);
-  const response = await BaseActions.getFromAPI('some_query_url')
-  expect(response.status).toEqual(404);
-  expect(response.result).toEqual('data')
+  const [status, result] = await BaseActions.getFromAPI('some_query_url');
+  expect(status).toEqual(404);
+  expect(result).toEqual('data');
   expect(fetch).toHaveBeenCalledTimes(1);
 });
 
 it('Gets Result and Status from BetaAPI', async () => {
   fetch = mockFetch('other_data', 500);
-  const response = await BaseActions.getBetaFromAPI('some_query_url')
-  expect(response.status).toEqual(500);
-  expect(response.result).toEqual('other_data')
+  const [status, result] = await BaseActions.getBetaFromAPI('some_query_url');
+  expect(status).toEqual(500);
+  expect(result).toEqual('other_data');
   expect(fetch).toHaveBeenCalledTimes(1);
 });

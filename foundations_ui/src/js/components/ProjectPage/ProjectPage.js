@@ -28,15 +28,14 @@ class ProjectPage extends Component {
   }
 
   async getAllProjects() {
-    const fetchedProjects = await ProjectActions.getProjects();
-    const apiProjects = fetchedProjects.result;
+    const [queryStatus, apiProjects] = await ProjectActions.getProjects();
     // use is mount for async as when it returns may have been unmounted
     const { isMount } = this.state;
     if (isMount) {
       if (apiProjects != null) {
-        this.setState({ projects: apiProjects, isLoaded: true, queryStatus: fetchedProjects.status });
+        this.setState({ projects: apiProjects, isLoaded: true, queryStatus });
       } else {
-        this.setState({ projects: [], isLoaded: true, queryStatus: fetchedProjects.status });
+        this.setState({ projects: [], isLoaded: true, queryStatus });
       }
     }
   }

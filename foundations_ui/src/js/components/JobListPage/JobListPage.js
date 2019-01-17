@@ -62,12 +62,20 @@ class JobListPage extends Component {
     this.setState({ isMount: false });
   }
 
+  checkStatusOk() {
+    const { queryStatus } = this.state;
+    if (queryStatus === 200) {
+      return true;
+    }
+    return false;
+  }
+
   async getJobs() {
     const { projectName } = this.state;
     const fetchedJobs = await JobActions.getJobs(projectName);
     const apiJobs = fetchedJobs.result;
     this.setState({ queryStatus: fetchedJobs.status });
-    if (this.state.queryStatus === 200) {
+    if (this.checkStatusOk()) {
       const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
       this.formatAndSaveParams(apiJobs, allUsers);
     }
@@ -89,7 +97,7 @@ class JobListPage extends Component {
       startTimeFilter,
     );
     this.setState({ queryStatus: fetchedFilteredJobs.status });
-    if (this.state.queryStatus === 200) {
+    if (this.checkStatusOk()) {
       return fetchedFilteredJobs.result;
     }
     return null;
@@ -309,6 +317,7 @@ class JobListPage extends Component {
     this.updateDurationFilter = this.updateDurationFilter.bind(this);
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
+    this.checkStatusOk = this.checkStatusOk.bind(this);
   }
 
   render() {
@@ -318,7 +327,7 @@ class JobListPage extends Component {
       queryStatus,
     } = this.state;
     let jobList;
-    if (queryStatus === 200) {
+    if (this.checkStatusOk()) {
       jobList = (
         <JobTable
           projectName={projectName}
