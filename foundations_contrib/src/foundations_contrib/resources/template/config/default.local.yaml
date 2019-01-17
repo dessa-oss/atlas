@@ -1,0 +1,40 @@
+cache_implementation:
+  cache_type: foundations.LocalFileSystemCacheBackend
+  constructor_arguments: [/tmp/foundations-cache]
+
+archive_listing_implementation:
+  archive_listing_type: foundations.LocalFileSystemPipelineListing
+  constructor_arguments: [/tmp/foundations-archive]
+
+stage_log_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+persisted_data_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+provenance_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+job_source_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+artifact_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+miscellaneous_archive_implementation:
+  archive_type: foundations.LocalFileSystemPipelineArchive
+  constructor_arguments: [/tmp/foundations-archive]
+
+project_listing_implementation:
+  project_listing_type: foundations.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
+  constructor_arguments: [/tmp/projects]
+
+deployment_implementation:
+  deployment_type: foundations.LocalShellJobDeployment
+
+redis_url: redis://localhost:6379
