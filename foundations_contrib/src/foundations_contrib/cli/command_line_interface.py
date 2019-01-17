@@ -42,6 +42,6 @@ class CommandLineInterface(object):
         project_name = self._arguments.project_name
         result = Scaffold(project_name).scaffold_project()
         if result:
-            CommandLineInterface.static_print('Success: New Foundations project {} created!'.format(project_name))
+            CommandLineInterface.static_print('Success: New Foundations project `{}` created!'.format(project_name))
         else:
-            CommandLineInterface.static_print('Error: project directory for {} already exists'.format(project_name))
+            CommandLineInterface.static_print('Error: project directory for `{}` already exists'.format(project_name))
