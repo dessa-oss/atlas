@@ -6,6 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class CommandLineInterface(object):
+
+    @staticmethod
+    def static_print(*args, **kwargs):
+        print(*args, **kwargs)
     
     def __init__(self, args):
         from argparse import ArgumentParser
@@ -28,7 +32,7 @@ class CommandLineInterface(object):
         import foundations
 
         if self._arguments.version:
-            print('Running Foundations version {}'.format(foundations.__version__))
+            CommandLineInterface.static_print('Running Foundations version {}'.format(foundations.__version__))
         else:
             self._argument_parser.print_help()
 
@@ -38,6 +42,6 @@ class CommandLineInterface(object):
         project_name = self._arguments.project_name
         result = Scaffold(project_name).scaffold_project()
         if result:
-            print('Success: New Foundations project {} created!'.format(project_name))
+            CommandLineInterface.static_print('Success: New Foundations project {} created!'.format(project_name))
         else:
-            print('Error: project directory for {} already exists'.format(project_name))
+            CommandLineInterface.static_print('Error: project directory for {} already exists'.format(project_name))

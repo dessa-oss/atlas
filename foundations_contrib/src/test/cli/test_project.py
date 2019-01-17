@@ -10,7 +10,6 @@ from mock import patch
 from pathlib import Path
 
 from foundations_contrib.cli.project import Project
-from test.cli.patching import quick_patch
 
 class TestProject(unittest.TestCase):
 
