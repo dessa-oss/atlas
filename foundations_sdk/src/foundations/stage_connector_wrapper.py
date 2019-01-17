@@ -11,6 +11,9 @@ from foundations.context_aware import ContextAware
 
 
 class StageConnectorWrapper(object):
+    """
+    ### The three numerals at the begining are a marker for not generating user documentation for the class.
+    """
 
     def __init__(self, stage, pipeline_context, stage_context, stage_config):
         self._stage = stage
@@ -52,6 +55,32 @@ class StageConnectorWrapper(object):
         return self
 
     def enable_caching(self):
+        """
+        Activates caching of the result of current stage and any other stages that it depends on.
+
+        Arguments:
+            - This method doesn't receive any arguments.
+
+        Returns:
+            stage object -- The same object to which this method belongs.
+
+        Raises:
+            - This method doesn't raise exceptions.
+
+        Example:
+            ```python
+            import foundations
+            from data_helper import load_data
+            from algorithms import train_model
+
+            load_data = foundations.create_stage(load_data)
+            train_model = foundations.create_stage(train_model)
+            data = load_data()
+            model = train_model(data)
+            model.enable_caching()
+            model.run()
+            ```
+        """
         self._stage_config.enable_caching()
         for argument in self._stage.stage_args():
             argument.enable_caching()
@@ -64,6 +93,35 @@ class StageConnectorWrapper(object):
         return self
 
     def run(self, params_dict=None, job_name=None, **kw_params):
+        """
+        Deploys and runs the current stage and the stages on which it depends in the configured execution
+        environment, creating a new job.
+
+        Arguments:
+            job_name {string} -- optional name for the job that would be created.
+            params_dict {dict} -- optional way to pass values to stages that receive Foundation's Hyperparameter object(s).
+
+        Returns:
+            deployment {DeploymentWrapper} -- An object that allows tracking the deployment.
+
+        Raises:
+            TypeError -- When the type of an argument passed to the function wrapped by this stage is not supported.
+
+        Notes:
+            The new job runs asynchronously, the current process can continue execution.
+
+            You can pass hyperparameters values using both *params_dict* or keyword arguments syntax.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model(data1=foundations.Hyperparameter(), data2=foundations.Hyperparameter())
+            model.run(job_name='Experiment number 2', params_dict={'data1': 'value1'}, data2='value2')
+            ```
+        """
         from foundations.global_state import deployment_manager
         from foundations.deployment_wrapper import DeploymentWrapper
         from foundations import log_manager
@@ -107,6 +165,44 @@ class StageConnectorWrapper(object):
         return self._stage.function_name()
 
     def split(self, num_children):
+        """
+        When a function is wrapped in a stage and it has more than one return value (the return value
+        is a sequence), the wrapping stage cannot obtain how many values are contained in the returned
+        sequence due to language constraints. This method allows to specify the number of children values
+        and splits the result in a corresponding sequence of stages that can be passed forward.
+
+        Arguments:
+            num_children {int} -- number of children values contained in the stage result.
+
+        Returns:
+            children_stages {sequence} -- A sequence of children stages.
+
+        Raises:
+            TypeError -- If the current stage does not contain a sequence of values.
+            IndexError -- If the number of children values is less than __num_children__.
+
+        Notes:
+            The exceptions thrown by this method only occur after the wrapped function is executed inside the
+            stage, when Foundations applies the splitting logic to the results. As a consequence,
+            these exceptions are thrown at a later time, when the stage is being executed in a job.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import retrieve_latitude, retrieve_longitude, train_with_coordinates
+
+            def get_coordinates():
+                x_coord = retrieve_longitude()
+                y_coord = retrieve_latitude()
+                return x_coord, y_coord
+
+            get_coordinates = foundations.create_stage(get_coordinates)
+            train_with_coordinates = foundations.create_stage(train_with_coordinates)
+            x_coord, y_coord = get_coordinates().split(2)
+            model = train_with_coordinates(x_coord, y_coord)
+            model.run()
+            ```
+        """
         from foundations.utils import split_at
 
         children = []
