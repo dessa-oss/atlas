@@ -16,6 +16,7 @@ class TestProjectListing(unittest.TestCase):
         self._projects = []
         self._redis_connection = Mock()
         self._redis_connection.zrange.side_effect = self._list_projects
+        self._redis_connection.zscore.side_effect = self._find_project
 
     def test_list_projects_lists_empty_projects(self):
         result = ProjectListing.list_projects(self._redis_connection)
@@ -35,8 +36,29 @@ class TestProjectListing(unittest.TestCase):
         result = ProjectListing.list_projects(self._redis_connection)
         self.assertEqual(expected_result, result)
 
+    def test_find_project_returns_none_if_project_does_not_exist(self):
+        result = ProjectListing.find_project(self._redis_connection, 'some project')
+        self.assertIsNone(result)
+
+    def test_find_project_returns_project_if_exists(self):
+        self._projects = [(b'some project', 3733.33)]
+        result = ProjectListing.find_project(self._redis_connection, 'some project')
+        self.assertEqual({'name': 'some project', 'created_at': 3733.33}, result)
+
+    def test_find_project_returns_project_if_exists_different_project(self):
+        self._projects = [(b'some project', 3733.33), (b'some other project', 4333.23)]
+        result = ProjectListing.find_project(self._redis_connection, 'some other project')
+        self.assertEqual({'name': 'some other project', 'created_at': 4333.23}, result)
+
     def _list_projects(self, key, start, end, withscores):
         if key == 'projects' and start == 0 and end == -1 and withscores:
             return self._projects
         else:
             return []
+
+    def _find_project(self, key, project):
+        projects = self._list_projects(key, 0, -1, withscores=True)
+        for name, score in projects:
+            if name.decode() == project:
+                return score
+        return None

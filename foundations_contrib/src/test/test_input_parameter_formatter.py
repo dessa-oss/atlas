@@ -252,3 +252,116 @@ class TestInputParameterFormatter(unittest.TestCase):
             stage_rank
         ).format_input_parameters()
         self.assertListEqual(expected, result)
+
+    def test_format_input_parameters_list(self):
+        stage_uuid = 'gorilla'
+        stage_rank = {'gorilla': 1}
+        input_param = [{'argument': {'name': 'owl', 'value': {
+            'parameters': [{'type': 'constant', 'value': 'red'}], 'type': 'list'}}, 'stage_uuid': stage_uuid}]
+        job_param = {}
+        expected = [{'name': 'owl-1',
+                     'value': ['red'],
+                     'type': 'array string',
+                     'source': 'list'}]
+        result = InputParameterFormatter(
+            input_param, job_param,  stage_rank).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+
+    def test_format_input_parameters_list_multiple_parameters(self):
+        stage_uuid = 'gorilla'
+        stage_rank = {'gorilla': 1}
+        input_param = [
+            {
+                'argument': {
+                    'name': 'owl',
+                    'value': {
+                        'parameters': [
+                            {
+                                'type': 'constant',
+                                'value': 'red'
+                            }, {
+                                'stage_name': 'hi',
+                                'type': 'stage',
+                                'stage_uuid': stage_uuid
+                            }
+                        ],
+                        'type': 'list'
+                    }
+                },
+                'stage_uuid': stage_uuid
+            }
+        ]
+        job_param = {}
+        expected = [
+            {
+                'name': 'owl-1',
+                'value': ['red', 'hi-1'],
+                'type': 'array string',
+                'source': 'list'
+            }
+        ]
+        result = InputParameterFormatter(
+            input_param, job_param,  stage_rank).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+
+    def test_format_input_parameters_dict(self):
+        stage_uuid = 'gorilla'
+        stage_rank = {'gorilla': 1}
+        input_param = [
+            {
+                'argument': {
+                    'name': 'owl', 'value': {
+                        'parameters': {
+                            'hello': {
+                                'type': 'constant', 'value': 'red'
+                            }
+                        },
+                        'type': 'dict'
+                    }
+                }, 'stage_uuid': stage_uuid}]
+        job_param = {}
+        expected = [{'name': 'owl-1',
+                     'value': 'dict',
+                     'type': 'string',
+                     'source': 'dict'}]
+        result = InputParameterFormatter(
+            input_param, job_param,  stage_rank).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+
+    def test_format_input_parameters_dict_multiple_parameters(self):
+        stage_uuid = 'gorilla'
+        stage_rank = {'gorilla': 1}
+        input_param = [
+            {
+                'argument': {
+                    'name': 'owl',
+                    'value': {
+                        'parameters': {
+                            'hello': {
+                                'type': 'constant',
+                                'value': 'red'
+                            },
+                            'goodbye': {
+                                'stage_name': 'hi',
+                                'type': 'stage',
+                                'stage_uuid': stage_uuid
+                            }
+                        },
+                        'type': 'dict'
+                    }
+                },
+                'stage_uuid': stage_uuid
+            }
+        ]
+        job_param = {}
+        expected = [
+            {
+                'name': 'owl-1',
+                'value': 'dict',
+                'type': 'string',
+                'source': 'dict'
+            }
+        ]
+        result = InputParameterFormatter(
+            input_param, job_param,  stage_rank).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])

@@ -70,7 +70,7 @@ class JobDataRedis(object):
         project_name = self._add_decoded_get_to_pipe('project')
         user = self._add_decoded_get_to_pipe('user')
         job_parameters = self._add_decoded_get_to_pipe(
-            'parameters').then(self._deserialize_list)
+            'parameters').then(self._deserialize_dict)
         input_parameters = self._add_get_to_pipe(
             'input_parameters').then(self._deserialize_list)
         output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
@@ -145,8 +145,14 @@ class JobDataRedis(object):
         return data.decode()
 
     def _deserialize_list(self, data):
+        return self._deserialize_or_default(data, [])
+
+    def _deserialize_dict(self, data):
+        return self._deserialize_or_default(data, {})
+
+    def _deserialize_or_default(self, data, default):
         from foundations_internal.foundations_serializer import deserialize
-        return deserialize(data) or []
+        return deserialize(data) or default
 
     def _make_float(self, time_string):
         if time_string is None:

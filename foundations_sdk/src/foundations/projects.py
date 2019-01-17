@@ -19,7 +19,17 @@ def get_metrics_for_all_jobs(project_name):
 
     Returns:
         [pandas.DataFrame] -- Pandas DataFrame containing all of the results
+
+    Raises:
+        ValueError -- An exception indicating that the requested project does not exist
     """
+
+    from foundations_contrib.models.project_listing import ProjectListing
+    from foundations.global_state import redis_connection
+
+    project_info = ProjectListing.find_project(redis_connection, project_name)
+    if project_info is None:
+        raise ValueError('Project `{}` does not exist!'.format(project_name))
 
     return _flattened_job_metrics(project_name)
 
