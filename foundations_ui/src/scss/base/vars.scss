@@ -35,7 +35,6 @@ $table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-head
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
 $number-sections: 3;
 $job-header-sorting-container-width: 685px;
-$job-header-sorting-container-width-small-screen: 365px;
 
 // Toolbar Vars
 $toolbar-height: 25px;

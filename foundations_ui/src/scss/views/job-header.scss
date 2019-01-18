@@ -175,11 +175,3 @@
   }
 
 
-@media only screen and (max-width: $minimum-screen-width) {
-  .job-header-sorting-container {
-    > div {
-      width: $job-header-sorting-container-width-small-screen;
-    }
-  }
-}
-
