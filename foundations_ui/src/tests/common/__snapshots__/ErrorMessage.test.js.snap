@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders ErrorMessage 1`] = `
+<div
+  className="error-body-container"
+>
+  <div
+    className="i--icon-astronaut-probs text-center"
+  />
+  <h1
+    className="blue-border-bottom font-bold"
+  >
+    Houston, we have a problem.
+  </h1>
+  <h2
+    className="font-bold"
+  >
+    404 Page Not Found
+  </h2>
+  <p>
+    Services are having temporary issues. Contact our front desk support at support@dessa.com or call us toll free at 1-899-623-5578.
+  </p>
+</div>
+`;
