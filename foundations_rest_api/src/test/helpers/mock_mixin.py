@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class MockMixin(object):
 
-    def tearDown(self):
+    def _mock_tear_down(self):
         for mock in self._get_mocks():
             mock.stop()
 

@@ -9,9 +9,10 @@ import unittest
 from mock import patch
 from foundations_rest_api.v2beta.models.project import Project
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
-from test.helpers.mock_mixin import MockMixin
+from test.helpers import set_up, tear_down
+from test.helpers.spec import Spec
 
-class TestProjectV2(MockMixin, unittest.TestCase):
+class TestProjectV2(Spec):
 
     class MockListing(object):
 
@@ -26,14 +27,13 @@ class TestProjectV2(MockMixin, unittest.TestCase):
         input_params = PropertyModel.define_property()
         output_metrics = PropertyModel.define_property()
 
-    def setUp(self):
-        super(TestProjectV2, self).setUp()
+    @set_up
+    def project_set_up(self):
         self._find_project = self.patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
 
-    def tearDown(self):
+    @tear_down
+    def project_tear_down(self):
         from foundations.global_state import config_manager
-
-        super(TestProjectV2, self).tearDown()
 
         keys = list(config_manager.config().keys())
         for key in keys:
