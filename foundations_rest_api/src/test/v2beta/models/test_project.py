@@ -9,9 +9,9 @@ import unittest
 from mock import patch
 from foundations_rest_api.v2beta.models.project import Project
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
+from test.helpers.mock_mixin import MockMixin
 
-
-class TestProjectV2(unittest.TestCase):
+class TestProjectV2(MockMixin, unittest.TestCase):
 
     class MockListing(object):
 
@@ -26,8 +26,14 @@ class TestProjectV2(unittest.TestCase):
         input_params = PropertyModel.define_property()
         output_metrics = PropertyModel.define_property()
 
+    def setUp(self):
+        super(TestProjectV2, self).setUp()
+        self._find_project = self.patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
+
     def tearDown(self):
         from foundations.global_state import config_manager
+
+        super(TestProjectV2, self).tearDown()
 
         keys = list(config_manager.config().keys())
         for key in keys:
@@ -68,6 +74,23 @@ class TestProjectV2(unittest.TestCase):
     def test_find_by_name_project_has_name_different_name(self):
         lazy_result = Project.find_by(name='my favourite project')
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
+
+    def test_find_looks_for_correct_project(self):
+        from foundations.global_state import redis_connection
+
+        Project.find_by(name='my favourite project').evaluate()
+        self._find_project.assert_called_with(redis_connection, 'my favourite project')
+
+    def test_find_looks_for_correct_project_different_project(self):
+        from foundations.global_state import redis_connection
+
+        Project.find_by(name='my least favourite project').evaluate()
+        self._find_project.assert_called_with(redis_connection, 'my least favourite project')
+
+    def test_find_returns_none_when_project_does_not_exist(self):
+        self._find_project.return_value = None
+        project = Project.find_by(name='my least favourite project').evaluate()
+        self.assertIsNone(project)
 
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')

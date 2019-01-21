@@ -82,9 +82,9 @@ class Project(PropertyModel):
         from foundations.global_state import redis_connection
         from foundations_contrib.models.project_listing import ProjectListing
 
-        # project_info = ProjectListing.find_project(redis_connection, name)
-        # if project_info is None:
-        #     return None
+        project_info = ProjectListing.find_project(redis_connection, name)
+        if project_info is None:
+            return None
 
         project = Project(name=name)
         project.created_at = None
