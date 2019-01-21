@@ -12,14 +12,39 @@ def set_project_name(project_name="default"):
 
 
 def get_metrics_for_all_jobs(project_name):
-    """Returns metrics for all jobs for a given project
+    """
+    Returns metrics for all jobs for a given project.
 
     Arguments:
-        project_name {str} -- Name of the project to filter by
+        project_name {string} -- Name of the project to filter by.
 
     Returns:
-        [pandas.DataFrame] -- Pandas DataFrame containing all of the results
+        metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
+
+    Raises:
+        ValueError -- An exception indicating that the requested project does not exist
+
+    Example:
+        ```python
+        import foundations
+        from algorithms import train_model, print_metrics
+
+        train_model = foundations.create_stage(train_model)
+        model = train_model()
+        job_name = 'Experiment number 3'
+        deployment = model.run(job_name=job_name)
+        deployment.wait_for_deployment_to_complete()
+        all_metrics = foundations.get_metrics_for_all_jobs(job_name)
+        print_metrics(all_metrics)
+        ```
     """
+
+    from foundations_contrib.models.project_listing import ProjectListing
+    from foundations.global_state import redis_connection
+
+    project_info = ProjectListing.find_project(redis_connection, project_name)
+    if project_info is None:
+        raise ValueError('Project `{}` does not exist!'.format(project_name))
 
     return _flattened_job_metrics(project_name)
 

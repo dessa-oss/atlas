@@ -5,11 +5,10 @@ const BaseActions = {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL)
       .then(
-        res => res.json(),
-      )
-      .then(
-        (result) => {
-          return result;
+        (res) => {
+          const status = res.status;
+          const result = res.json();
+          return Promise.all([status, result]);
         },
       ).catch(
         (err) => {
@@ -22,11 +21,10 @@ const BaseActions = {
     const fullURL = this.baseBetaURL.concat(url);
     return fetch(fullURL)
       .then(
-        res => res.json(),
-      )
-      .then(
-        (result) => {
-          return result;
+        (res) => {
+          const status = res.status;
+          const result = res.json();
+          return Promise.all([status, result]);
         },
       ).catch(
         (err) => {

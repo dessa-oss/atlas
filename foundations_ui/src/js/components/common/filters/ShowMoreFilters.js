@@ -6,6 +6,7 @@ class ShowMoreFilters extends Component {
     super(props);
     this.state = {
       hiddenBubbles: this.props.hiddenBubbles,
+      removeFilter: this.props.removeFilterCallback,
     };
   }
 
@@ -22,11 +23,14 @@ class ShowMoreFilters extends Component {
           <p className="font-bold">
             {name}:<span> {value}</span>
           </p>
-          <button type="button" className="close-button" />
+          <button
+            onClick={() => { this.state.removeFilter({ column: name, value }); }}
+            type="button"
+            className="close-button"
+          />
         </div>,
       );
     });
-
     return (
       <div className="show-more-filters-container elevation-1">
         {filterBubbles}
@@ -37,10 +41,12 @@ class ShowMoreFilters extends Component {
 
 ShowMoreFilters.propTypes = {
   hiddenBubbles: PropTypes.array,
+  removeFilterCallback: PropTypes.func,
 };
 
 ShowMoreFilters.defaultProps = {
   hiddenBubbles: [],
+  removeFilterCallback: () => {},
 };
 
 export default ShowMoreFilters;
