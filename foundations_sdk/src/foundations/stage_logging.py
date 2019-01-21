@@ -12,4 +12,35 @@ stage_logging_context = StageLoggingContext(NullStageLogger())
 
 
 def log_metric(key, value):
+    """
+    Log metrics within a stage from where it is called. This is a way for Foundations to keep track of the
+    metric. After job is finished, metric is accessible programmatically or through GUI.
+
+    Arguments:
+        key {str} -- the name of the output metric.
+        value {number, str, bool, array of [number|str|bool], array of array of [number|str|bool]} -- the value associated with the given output metric.
+
+    Returns:
+        - This function doesn't return a value.
+
+    Raises:
+        TypeError -- When a value of a non-supported type is provided as the metric value.
+
+    Notes:
+        A stage containing this function will not fail if the process of logging the metric fails for a
+        reason that doesn't raise any exceptions.
+
+    Example:
+        ```python
+        import foundations
+        from algorithms import calculate_score
+
+        def my_stage(self):
+            score = calculate_score()
+            foundations.log_metric('score', score)
+
+        my_stage = foundations.create_stage(my_stage)
+        my_stage.run()
+        ```
+    """
     stage_logging_context.log_metric(key, value)
