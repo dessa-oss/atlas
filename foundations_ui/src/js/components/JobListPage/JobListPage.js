@@ -6,6 +6,7 @@ import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
+import ErrorMessage from '../common/ErrorMessage';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -23,8 +24,8 @@ class JobListPage extends Component {
     super(props);
     this.bindAllJobs();
     this.state = {
-      projectName: this.props.projectName,
-      project: this.props.project,
+      projectName: this.props.match.params.projectName,
+      project: {},
       filters: [],
       statuses: [
         { name: 'Completed', hidden: false },
@@ -47,6 +48,7 @@ class JobListPage extends Component {
         { name: 'False', hidden: false },
       ],
       startTimeFilter: [],
+      queryStatus: 200,
     };
   }
 
@@ -60,11 +62,23 @@ class JobListPage extends Component {
     this.setState({ isMount: false });
   }
 
+  checkStatusOk() {
+    const { queryStatus } = this.state;
+    if (queryStatus === 200) {
+      return true;
+    }
+    return false;
+  }
+
   async getJobs() {
     const { projectName } = this.state;
-    const apiJobs = await JobActions.getJobs(projectName);
-    const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
-    this.formatAndSaveParams(apiJobs, allUsers);
+    const fetchedJobs = await JobActions.getJobs(projectName);
+    const apiJobs = fetchedJobs.result;
+    this.setState({ queryStatus: fetchedJobs.status });
+    if (this.checkStatusOk()) {
+      const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
+      this.formatAndSaveParams(apiJobs, allUsers);
+    }
   }
 
   async getFilteredJobs() {
@@ -78,11 +92,15 @@ class JobListPage extends Component {
     if (visibleUsers.length === allUsers.length) {
       visibleUsers = [];
     }
-    const filterJobs = await JobActions.filterJobs(
+    const fetchedFilteredJobs = await JobActions.filterJobs(
       projectName, statuses, visibleUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
       startTimeFilter,
     );
-    return filterJobs;
+    this.setState({ queryStatus: fetchedFilteredJobs.status });
+    if (this.checkStatusOk()) {
+      return fetchedFilteredJobs.result;
+    }
+    return null;
   }
 
   async updateHiddenUser(hiddenFields) {
@@ -197,11 +215,17 @@ class JobListPage extends Component {
     if (isMount) {
       if (apiJobs != null) {
         this.saveAPIJobs(apiJobs);
+        this.setProjectData(apiJobs);
         this.setState({ allUsers });
       } else {
         this.clearState();
       }
     }
+  }
+
+  setProjectData(apiJobs) {
+    const jobName = apiJobs.name;
+    this.setState({ project: { name: jobName } });
   }
 
   saveAPIJobs(apiJobs) {
@@ -281,6 +305,7 @@ class JobListPage extends Component {
     this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
     this.updateHiddenUser = this.updateHiddenUser.bind(this);
     this.saveAPIJobs = this.saveAPIJobs.bind(this);
+    this.setProjectData = this.setProjectData.bind(this);
     this.clearState = this.clearState.bind(this);
     this.saveFilters = this.saveFilters.bind(this);
     this.clearFilters = this.clearFilters.bind(this);
@@ -292,22 +317,18 @@ class JobListPage extends Component {
     this.updateDurationFilter = this.updateDurationFilter.bind(this);
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
+    this.checkStatusOk = this.checkStatusOk.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
+      queryStatus,
     } = this.state;
-    return (
-      <div className="job-list-container">
-        <Toolbar />
-        <JobHeader
-          project={project}
-          filters={filters}
-          clearFilters={this.clearFilters}
-          removeFilter={this.removeFilter}
-        />
+    let jobList;
+    if (this.checkStatusOk()) {
+      jobList = (
         <JobTable
           projectName={projectName}
           statuses={statuses}
@@ -334,6 +355,20 @@ class JobListPage extends Component {
           startTimeFilters={startTimeFilter}
           filters={filters}
         />
+      );
+    } else {
+      jobList = <ErrorMessage errorCode={queryStatus} />;
+    }
+    return (
+      <div className="job-list-container">
+        <Toolbar />
+        <JobHeader
+          project={project}
+          filters={filters}
+          clearFilters={this.clearFilters}
+          removeFilter={this.removeFilter}
+        />
+        {jobList}
       </div>
     );
   }
@@ -355,6 +390,12 @@ JobListPage.propTypes = {
   durationFilter: PropTypes.array,
   jobIdFilter: PropTypes.array,
   startTimeFilter: PropTypes.array,
+  queryStatus: PropTypes.number,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      projectName: PropTypes.string,
+    }),
+  }),
 };
 
 JobListPage.defaultProps = {
@@ -373,6 +414,12 @@ JobListPage.defaultProps = {
   durationFilter: [],
   jobIdFilter: [],
   startTimeFilter: [],
+  queryStatus: 200,
+  match: {
+    params: {
+      projectName: '',
+    },
+  },
 };
 
 export default JobListPage;

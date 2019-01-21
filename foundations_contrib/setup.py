@@ -16,6 +16,18 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+def list_files_recursively(root, start_directory):
+    import os
+    import os.path
+    previous_directory = os.getcwd()
+    os.chdir(root)
+    for directory, _, files in os.walk(start_directory):
+        for file in files:
+            yield os.path.join(directory, file)
+    os.chdir(previous_directory)
+
+package_data = list(list_files_recursively('src/foundations_contrib', 'resources'))
+
 setup(
     name='foundations_contrib',
     version=environ.get('build_version', '0.0.0'),
@@ -35,6 +47,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
-        'foundations_contrib': ['resources/*'],
+        'foundations_contrib': package_data,
     }
 )

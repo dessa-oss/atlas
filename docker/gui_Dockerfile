@@ -2,10 +2,34 @@ FROM node:8.14.0-jessie
 
 RUN mkdir -p /var/foundations_ui
 WORKDIR /var/foundations_ui
+
+RUN apt-get update \
+    && apt-get install -y apt-transport-https \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update \
+    && apt-get install -y openssl yarn curl nginx bzip2 gettext-base git bc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN openssl genrsa -des3 -passout pass:x -out /etc/nginx/localhost.pass.key \
+    && openssl rsa -passin pass:x -in /etc/nginx/localhost.pass.key -out /etc/nginx/localhost.key \
+    && rm /etc/nginx/localhost.pass.key \
+    && openssl req -new -key /etc/nginx/localhost.key -out /etc/nginx/localhost.csr -subj "/C=CA/ST=Ontario/L=Toronto/O=Dessa/OU=Engineering/CN=localhost" \
+    && openssl x509 -req -days 365 -in /etc/nginx/localhost.csr -signkey /etc/nginx/localhost.key -out /etc/nginx/localhost.crt
+
+ENV REACT_APP_API_URL=/foundations_rest_api/api/v1/
+ENV REACT_APP_BETA_API_URL=/foundations_rest_api/api/v2beta/
+ENV SERVER_NAME=localhost
+
 COPY ./ /var/foundations_ui/
 
-RUN npm install
+RUN yarn install
+RUN yarn run build
 
-EXPOSE 3000
-ENTRYPOINT ["npm"]
-CMD ["start"]
+EXPOSE 8011
+COPY deploy/nginx.conf /etc/nginx/nginx.conf.template
+CMD ["/bin/bash", "/var/foundations_ui/deploy/run_ui.sh"]

@@ -15,7 +15,7 @@ def _pick_module():
 pickle = _pick_module()
 
 def serialize(item):
-    return pickle.dumps(item, protocol=2)
+    return pickle.dumps(item, protocol=4)
 
 def deserialize(serialized_item):
     try:

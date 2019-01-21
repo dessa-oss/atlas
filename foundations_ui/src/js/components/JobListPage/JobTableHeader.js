@@ -492,7 +492,7 @@ class JobTableHeader extends Component {
             isUserFiltered={hiddenUsers.length > 0}
           />
           <InputMetric
-            header="input parameter"
+            header="hyperparameters"
             allInputParams={allInputParams}
             jobs={jobs}
             toggleNumberFilter={this.toggleInputMetricFilter}

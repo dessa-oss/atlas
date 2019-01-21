@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import BaseActions from './BaseActions';
 import ProjectSummary from '../components/ProjectPage/ProjectSummary';
 
@@ -8,17 +9,20 @@ class ProjectActions {
     return BaseActions.getFromAPI(url);
   }
 
-  static getAllProjects(projects, selectProject) {
+  static getAllProjects(projects) {
     const projectList = [];
     projects.forEach((project) => {
       const key = project.name.concat('-').concat(project.created_at);
       projectList.push(<ProjectSummary
         key={key}
         project={project}
-        selectProject={selectProject}
       />);
     });
     return projectList;
+  }
+
+  static redirect(urlName) {
+    return <Redirect push to={urlName} />;
   }
 }
 export default ProjectActions;
