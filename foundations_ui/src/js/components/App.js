@@ -5,6 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
 import JobListPage from './JobListPage/JobListPage';
+import ErrorMessage from './common/ErrorMessage';
 
 class App extends Component {
   render() {
@@ -15,9 +16,10 @@ class App extends Component {
             <Route exact path="/projects" component={ProjectPage} />
             <Redirect exact from="/" to="/projects" />
             <Route
-              path="/projects/job_listing/:projectName/"
+              path="/projects/:projectName/job_listing"
               component={JobListPage}
             />
+            <Route render={() => <ErrorMessage errorCode={404} />} />
           </Switch>
         </Router>
       </div>
