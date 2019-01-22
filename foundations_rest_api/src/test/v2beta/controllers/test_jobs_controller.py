@@ -7,7 +7,6 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 import unittest
 from mock import patch
-from foundations_rest_api.v2beta.controllers.jobs_controller import JobsController
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
 from test.helpers import let
@@ -41,6 +40,11 @@ class TestJobsControllerV2(Spec):
         from foundations_rest_api.lazy_result import LazyResult
         return LazyResult(lambda: None)
 
+    @let
+    def _controller(self):
+        from foundations_rest_api.v2beta.controllers.jobs_controller import JobsController
+        return JobsController()
+
     def test_index_returns_only_completed_jobs(self):
         self._project_find_by.return_value = self._make_lazy_result(
             'some project',
@@ -49,12 +53,11 @@ class TestJobsControllerV2(Spec):
             output_metric_names = 'metrics'
         )
 
-        controller = JobsController()
-        controller.params = {'project_name': 'the great potato project'}
+        self._controller.params = {'project_name': 'the great potato project'}
 
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': 'param', 'output_metric_names': 'metrics'}
-        self.assertEqual(expected_result, controller.index().as_json())
+        self.assertEqual(expected_result, self._controller.index().as_json())
         self._project_find_by.assert_called_with(name='the great potato project')
 
     def test_index_returns_only_running_jobs(self):
@@ -62,26 +65,23 @@ class TestJobsControllerV2(Spec):
             'some project',
             jobs = ['completed job 1', 'running job 2'])
 
-        controller = JobsController()
-        controller.params = {'project_name': 'the not so great potato project'}
+        self._controller.params = {'project_name': 'the not so great potato project'}
 
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': [], 'output_metric_names': []}
-        self.assertEqual(expected_result, controller.index().as_json())
+        self.assertEqual(expected_result, self._controller.index().as_json())
         self._project_find_by.assert_called_with(name='the not so great potato project')
 
     def test_index_404s_a_missing_project(self):
         self._project_find_by.return_value = self._empty_lazy_result
 
-        controller = JobsController()
-        controller.params = {'project_name': 'the not so great potato project'}
+        self._controller.params = {'project_name': 'the not so great potato project'}
 
-        self.assertEqual(404, controller.index().status())
+        self.assertEqual(404, self._controller.index().status())
 
     def test_index_returns_an_error_message_for_a_missing_project(self):
         self._project_find_by.return_value = self._empty_lazy_result
 
-        controller = JobsController()
-        controller.params = {'project_name': 'the not so great potato project'}
+        self._controller.params = {'project_name': 'the not so great potato project'}
 
-        self.assertEqual('This project was not found', controller.index().as_json())
+        self.assertEqual('This project was not found', self._controller.index().as_json())
