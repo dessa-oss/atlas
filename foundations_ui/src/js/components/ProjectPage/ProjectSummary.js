@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import ProjectActions from '../../actions/ProjectActions';
 
 class ProjectSummary extends Component {
   constructor(props) {
@@ -7,17 +9,19 @@ class ProjectSummary extends Component {
     this.viewClick = this.viewClick.bind(this);
     this.state = {
       project: this.props.project,
-      selectProject: this.props.selectProject,
     };
   }
 
   viewClick() {
-    const { project, selectProject } = this.state;
-    selectProject(project);
+    this.setState({ redirect: true });
   }
 
   render() {
     const { project } = this.state;
+    if (this.state.redirect) {
+      const jobListingPath = `/projects/${project.name}/job_listing`;
+      return ProjectActions.redirect(jobListingPath);
+    }
     return (
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
@@ -42,12 +46,10 @@ class ProjectSummary extends Component {
 
 ProjectSummary.propTypes = {
   project: PropTypes.object,
-  selectProject: PropTypes.func,
 };
 
 ProjectSummary.defaultProps = {
   project: {},
-  selectProject: () => null,
 };
 
 export default ProjectSummary;

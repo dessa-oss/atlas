@@ -44,8 +44,9 @@ class TestProjects(unittest.TestCase):
         self.assertEqual('some different project name',
                          foundations_context.pipeline_context().provenance.project_name)
 
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_returns_all_completed_job_data(self, mock):
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data(self, listing_mock, find_mock):
         from pandas import DataFrame, concat
         from pandas.util.testing import assert_frame_equal
 
@@ -55,7 +56,7 @@ class TestProjects(unittest.TestCase):
             {'name': 'd', 'value': '3', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
-        mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
@@ -63,8 +64,9 @@ class TestProjects(unittest.TestCase):
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
             'project1'), check_like=True)
 
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_different_position_in_list(self, mock):
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_with_two_variables_same_name_different_position_in_list(self, listing_mock, find_mock):
         from pandas import DataFrame
         from pandas.util.testing import assert_frame_equal
 
@@ -75,7 +77,7 @@ class TestProjects(unittest.TestCase):
             {'name': 'd-1', 'value': '4', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
-        mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
@@ -84,8 +86,9 @@ class TestProjects(unittest.TestCase):
             'project1'), check_like=True)
 
 
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_different_data(self, mock):
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_different_data(self, listing_mock, find_mock):
         from pandas import DataFrame
         from pandas.util.testing import assert_frame_equal
 
@@ -101,7 +104,7 @@ class TestProjects(unittest.TestCase):
             {'name': 'f-5', 'value': '6', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics_2 = {'win': 56}
-        mock.return_value = [
+        listing_mock.return_value = [
             {'project_name': 'project2', 'job_parameters': {'a': 5},
                 'input_params': input_params, 'output_metrics': output_metrics},
             {'project_name': 'project2', 'job_parameters': {'bad': 77},
@@ -116,8 +119,9 @@ class TestProjects(unittest.TestCase):
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
             'project2'), check_like=True)
 
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
-    def test_get_metrics_for_all_jobs_correct_order(self, mock):
+    def test_get_metrics_for_all_jobs_correct_order(self, listing_mock, find_mock):
         from pandas import DataFrame
         from pandas.util.testing import assert_frame_equal
 
@@ -128,7 +132,7 @@ class TestProjects(unittest.TestCase):
         ]
         output_metrics = {'loss': 100}
 
-        mock.return_value = [
+        listing_mock.return_value = [
             {'project_name': 'project1', 'job_parameters': {'a': 5},
                 'input_params': input_params, 'output_metrics': output_metrics}
         ]
@@ -139,6 +143,26 @@ class TestProjects(unittest.TestCase):
         ]
         expected_result = DataFrame(expected_data, columns=['project_name', 'b-0', 'c-1', 'd-2', 'loss'])
         assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
+    @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_missing_project(self, listing_mock, find_mock):
+        find_mock.return_value = None
+
+        with self.assertRaises(ValueError) as error_context:
+            get_metrics_for_all_jobs('project1')
+
+        self.assertTrue('Project `project1` does not exist!' in error_context.exception.args)
+
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
+    @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_missing_project_different_project(self, listing_mock, find_mock):
+        find_mock.return_value = None
+
+        with self.assertRaises(ValueError) as error_context:
+            get_metrics_for_all_jobs('project numba 5')
+
+        self.assertTrue('Project `project numba 5` does not exist!' in error_context.exception.args)
 
     def test_get_metrics_for_all_jobs_is_defined_globally(self):
         import foundations

@@ -1,54 +1,30 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router, Route, Switch, Redirect,
+} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
 import JobListPage from './JobListPage/JobListPage';
+import ErrorMessage from './common/ErrorMessage';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.changePage = this.changePage.bind(this);
-    this.selectProject = this.selectProject.bind(this);
-    this.state = {
-      page: '',
-      selectedProject: {},
-    };
-  }
-
-  changePage(newPage) {
-    this.setState({ page: newPage });
-  }
-
-  selectProject(project) {
-    this.setState({ selectedProject: project, page: 'jobList' });
-  }
-
   render() {
-    const {
-      page, selectedProject,
-    } = this.state;
-
-    let curPage = <ProjectPage selectProject={this.selectProject} />;
-
-    if (page === 'jobList') {
-      curPage = <JobListPage project={selectedProject} projectName={selectedProject.name} />;
-    }
-
     return (
       <div className="App">
-        {curPage}
+        <Router>
+          <Switch>
+            <Route exact path="/projects" component={ProjectPage} />
+            <Redirect exact from="/" to="/projects" />
+            <Route
+              path="/projects/:projectName/job_listing"
+              component={JobListPage}
+            />
+            <Route render={() => <ErrorMessage errorCode={404} />} />
+          </Switch>
+        </Router>
       </div>
     );
   }
 }
-
-App.propTypes = {
-  selectedProject: PropTypes.object,
-  page: PropTypes.string,
-};
-
-App.defaultProps = {
-  page: '',
-  selectedProject: { name: 'local_deployment' },
-};
 
 export default App;

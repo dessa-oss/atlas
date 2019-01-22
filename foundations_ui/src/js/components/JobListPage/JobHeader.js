@@ -19,6 +19,7 @@ class JobHeader extends Component {
     this.modifyBubble = this.modifyBubble.bind(this);
     this.refsInFilters = this.refsInFilters.bind(this);
     this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
+    this.removeHiddenButtonCallback = this.removeHiddenButtonCallback.bind(this);
     this.state = {
       project: this.props.project,
       filters: this.props.filters,
@@ -31,7 +32,7 @@ class JobHeader extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    this.setState({ filters: nextProps.filters });
+    this.setState({ filters: nextProps.filters, project: nextProps.project });
 
     const { hiddenBubbles } = this.state;
     const { clientWidth } = this.bubbleContainer;
@@ -154,6 +155,10 @@ class JobHeader extends Component {
     });
   }
 
+  removeHiddenButtonCallback(filterToRemove) {
+    this.clickRemoveFilter(filterToRemove);
+  }
+
   render() {
     const {
       project, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
@@ -186,12 +191,18 @@ class JobHeader extends Component {
     let moreFilters = null;
     let filterButtonText = 'View Filters';
     if (isShowingMoreFilters) {
-      moreFilters = <ShowMoreFilters hiddenBubbles={hiddenBubbles} />;
+      moreFilters = (
+        <ShowMoreFilters
+          hiddenBubbles={hiddenBubbles}
+          removeFilterCallback={this.removeHiddenButtonCallback}
+        />
+      );
       filterButtonText = 'Hide Filters';
     }
     let viewFilterClass = 'b--mat b--affirmative text-upper';
     if (hiddenBubbles.length === 0) {
       viewFilterClass += ' b--disabled';
+      moreFilters = null;
     }
     let clearFiltersClass = 'b--mat b--affirmative text-upper';
     if (filters.length === 0) {

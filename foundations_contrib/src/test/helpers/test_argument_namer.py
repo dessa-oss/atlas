@@ -130,6 +130,13 @@ class TestArgumentNamer(unittest.TestCase):
         namer = ArgumentNamer(function_with_one_default_value, (135,), {})
         self.assertEqual([('b', 135), ('c', 566)], namer.name_arguments())
 
+    def test_function_with_two_default_values(self):
+        def function_with_one_default_value(a, b=99, c=566):
+            pass
+
+        namer = ArgumentNamer(function_with_one_default_value, (77,), {'b': 33})
+        self.assertEqual([('a', 77), ('b', 33), ('c', 566)], namer.name_arguments())
+
     def test_function_with_instance(self):
         namer = ArgumentNamer(self._function_with_instance, (), {})
         self.assertEqual([('self', self)], namer.name_arguments())

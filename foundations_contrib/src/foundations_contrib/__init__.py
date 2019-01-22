@@ -5,6 +5,12 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
+
+def root():
+    from pathlib import Path
+    return Path(__file__).parents[0]
+
+
 def _append_module():
     import sys
     from foundations_internal.global_state import module_manager

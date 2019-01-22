@@ -4,6 +4,7 @@ import Toolbar from '../common/Toolbar';
 import ProjectActions from '../../actions/ProjectActions';
 import ProjectHeader from './ProjectHeader';
 import Loading from '../common/Loading';
+import ErrorMessage from '../common/ErrorMessage';
 
 class ProjectPage extends Component {
   constructor(props) {
@@ -11,9 +12,9 @@ class ProjectPage extends Component {
     this.getAllProjects = this.getAllProjects.bind(this);
     this.state = {
       isLoaded: false,
-      projects: this.props.projects,
+      projects: [],
       isMount: false,
-      selectProject: this.props.selectProject,
+      queryStatus: 200,
     };
   }
 
@@ -27,26 +28,28 @@ class ProjectPage extends Component {
   }
 
   async getAllProjects() {
-    const apiProjects = await ProjectActions.getProjects();
+    const [queryStatus, apiProjects] = await ProjectActions.getProjects();
     // use is mount for async as when it returns may have been unmounted
     const { isMount } = this.state;
     if (isMount) {
       if (apiProjects != null) {
-        this.setState({ projects: apiProjects, isLoaded: true });
+        this.setState({ projects: apiProjects, isLoaded: true, queryStatus });
       } else {
-        this.setState({ projects: [], isLoaded: true });
+        this.setState({ projects: [], isLoaded: true, queryStatus });
       }
     }
   }
 
   render() {
-    const { isLoaded, projects, selectProject } = this.state;
+    const { isLoaded, projects, queryStatus } = this.state;
     let projectList;
     if (isLoaded) {
-      if (projects.length === 0) {
+      if (queryStatus !== 200) {
+        projectList = <ErrorMessage errorCode={queryStatus} />;
+      } else if (projects.length === 0) {
         projectList = <p>No projects available</p>;
       } else {
-        projectList = ProjectActions.getAllProjects(projects, selectProject);
+        projectList = ProjectActions.getAllProjects(projects);
       }
     } else {
       projectList = <Loading loadingMessage="We are currently loading your projects" />;
@@ -69,15 +72,15 @@ class ProjectPage extends Component {
 ProjectPage.propTypes = {
   isMount: PropTypes.bool,
   isLoaded: PropTypes.bool,
+  queryStatus: PropTypes.number,
   projects: PropTypes.array,
-  selectProject: PropTypes.func,
 };
 
 ProjectPage.defaultProps = {
   isMount: false,
   isLoaded: false,
+  queryStatus: 200,
   projects: [],
-  selectProject: () => null,
 };
 
 export default ProjectPage;

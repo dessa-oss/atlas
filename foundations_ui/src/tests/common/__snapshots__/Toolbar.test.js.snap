@@ -4,9 +4,12 @@ exports[`Shallow Renders Toolbar Home 1`] = `
 <div
   className="toolbar-container"
 >
-  <p>
+  <Link
+    replace={false}
+    to="/projects"
+  >
     Home
-  </p>
+  </Link>
   <p>
     Support and Contact
   </p>
