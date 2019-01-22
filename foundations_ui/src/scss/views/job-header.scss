@@ -110,6 +110,7 @@
       > div {
         display: inline-block;
         vertical-align: top;
+        max-height: 35px;
         border-bottom: $border-thin solid $color-border-bottom;
         width: $job-header-sorting-container-width;
 
@@ -122,9 +123,10 @@
         > div {
           display: inline-block;
           vertical-align: top;
-          width: 595px;
+          width: 535px;
           height: 35px;
           min-height: 35px;
+          max-height: 35px;
           margin-top: 3px;
           white-space: nowrap;
           overflow: hidden;
