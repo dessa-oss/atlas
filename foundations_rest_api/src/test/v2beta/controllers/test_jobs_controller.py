@@ -10,8 +10,10 @@ from mock import patch
 from foundations_rest_api.v2beta.controllers.jobs_controller import JobsController
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
+from test.helpers import let
+from test.helpers.spec import Spec
 
-class TestJobsControllerV2(unittest.TestCase):
+class TestJobsControllerV2(Spec):
 
     class Mock(PropertyModel):
         name = PropertyModel.define_property()
@@ -30,9 +32,12 @@ class TestJobsControllerV2(unittest.TestCase):
                              input_parameter_names = input_parameter_names)
         return LazyResult(_callback)
 
-    @patch('foundations_rest_api.v2beta.models.project.Project.find_by')
-    def test_index_returns_only_completed_jobs(self, mock):
-        mock.return_value = self._make_lazy_result(
+    @let
+    def _project_find_by(self):
+        return self.patch('foundations_rest_api.v2beta.models.project.Project.find_by')
+
+    def test_index_returns_only_completed_jobs(self):
+        self._project_find_by.return_value = self._make_lazy_result(
             'some project',
             jobs = ['completed job 1', 'running job 2'],
             input_parameter_names = 'param',
@@ -45,11 +50,10 @@ class TestJobsControllerV2(unittest.TestCase):
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': 'param', 'output_metric_names': 'metrics'}
         self.assertEqual(expected_result, controller.index().as_json())
-        mock.assert_called_with(name='the great potato project')
+        self._project_find_by.assert_called_with(name='the great potato project')
 
-    @patch('foundations_rest_api.v2beta.models.project.Project.find_by')
-    def test_index_returns_only_running_jobs(self, mock):
-        mock.return_value = self._make_lazy_result(
+    def test_index_returns_only_running_jobs(self):
+        self._project_find_by.return_value = self._make_lazy_result(
             'some project',
             jobs = ['completed job 1', 'running job 2'])
 
@@ -59,4 +63,4 @@ class TestJobsControllerV2(unittest.TestCase):
         expected_result = {
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': [], 'output_metric_names': []}
         self.assertEqual(expected_result, controller.index().as_json())
-        mock.assert_called_with(name='the not so great potato project')
+        self._project_find_by.assert_called_with(name='the not so great potato project')

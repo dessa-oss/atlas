@@ -8,14 +8,20 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from test.helpers import set_up, tear_down
 from test.helpers.mock_mixin import MockMixin
+from test.helpers.let_mixin import LetMixin
 
-class Spec(unittest.TestCase, MockMixin):
+class Spec(unittest.TestCase, MockMixin, LetMixin):
+
+    @classmethod
+    def setUpClass(klass):
+        klass._collect_lets()
     
     def setUp(self):
         for setup_method in self._setup_methods():
             setup_method(self)
 
     def _setup_methods(self):
+        self._collect_lets()
         for function in self.__class__.__dict__.values():
             if isinstance(function, set_up):
                 yield function

@@ -18,3 +18,5 @@ class set_up(Callback):
 class tear_down(Callback):
     pass 
 
+class let(Callback):
+    pass
