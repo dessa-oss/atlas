@@ -19,7 +19,7 @@ class ProjectSummary extends Component {
   render() {
     const { project } = this.state;
     if (this.state.redirect) {
-      const jobListingPath = `/projects/job_listing/${project.name}`;
+      const jobListingPath = `/projects/${project.name}/job_listing`;
       return ProjectActions.redirect(jobListingPath);
     }
     return (

@@ -15,8 +15,11 @@ class ProjectActions {
     const url = this.getBaseJobListingURL(projectName);
     // TODO get Jobs is currently in Beta
     return BaseActions.getBetaFromAPI(url)
-      .then((res) => {
-        return res;
+      .then(([status, result]) => {
+        return {
+          status,
+          result,
+        };
       });
   }
 
@@ -39,8 +42,11 @@ class ProjectActions {
 
     // TODO get Jobs is currently in Beta
     return BaseActions.getBetaFromAPI(url)
-      .then((res) => {
-        return res;
+      .then(([status, result]) => {
+        return {
+          status,
+          result,
+        };
       });
   }
 
