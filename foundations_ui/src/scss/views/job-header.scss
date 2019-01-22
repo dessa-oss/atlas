@@ -104,11 +104,9 @@
 
     .job-header-sorting-container {
       vertical-align: top;
-      margin-top: 2%;
       margin-left: $overview-content-margin-horizontal;
       width: 100%;
-      position: relative;
-      bottom: 0;
+
       > div {
         display: inline-block;
         vertical-align: top;
@@ -125,7 +123,7 @@
         > div {
           display: inline-block;
           vertical-align: top;
-          width: 60px;
+          width: 55%;
           height: 35px;
           min-height: 35px;
           margin-top: 3px;
