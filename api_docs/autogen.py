@@ -26,6 +26,9 @@ PAGES = [
         'page': 'concepts.md',
     },
     {
+        'page': 'project_creation.md',
+    },
+    {
         'page': 'log_metrics.md',
         'all_module_classes': [foundations.stage_logging],
         'functions': [
@@ -276,13 +279,12 @@ for page_data in PAGES:
     for cls in classes:
         subblocks = []
         docstring = cls.__doc__
-        if not docstring.strip().startswith('###'):
-            signature = get_class_signature(cls)
-            subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
-            subblocks.append('### ' + cls.__name__ + '\n')
-            subblocks.append(code_snippet(signature))
+        if docstring and not docstring.strip().startswith('###'):
+                signature = get_class_signature(cls)
+                subblocks.append('<span style="float:right;">' + class_to_source_link(cls) + '</span>')
+                subblocks.append('### ' + cls.__name__ + '\n')
+                subblocks.append(code_snippet(signature))
 
-            if docstring:
                 docstring = transform_dessa_format(docstring)
                 subblocks.append(process_class_docstring(docstring))
         blocks.append('\n'.join(subblocks))
