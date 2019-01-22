@@ -36,6 +36,11 @@ class TestJobsControllerV2(Spec):
     def _project_find_by(self):
         return self.patch('foundations_rest_api.v2beta.models.project.Project.find_by')
 
+    @let
+    def _empty_lazy_result(self):
+        from foundations_rest_api.lazy_result import LazyResult
+        return LazyResult(lambda: None)
+
     def test_index_returns_only_completed_jobs(self):
         self._project_find_by.return_value = self._make_lazy_result(
             'some project',
@@ -64,3 +69,19 @@ class TestJobsControllerV2(Spec):
             'jobs': ['completed job 1', 'running job 2'], 'name': 'some project', 'input_parameter_names': [], 'output_metric_names': []}
         self.assertEqual(expected_result, controller.index().as_json())
         self._project_find_by.assert_called_with(name='the not so great potato project')
+
+    def test_index_404s_a_missing_project(self):
+        self._project_find_by.return_value = self._empty_lazy_result
+
+        controller = JobsController()
+        controller.params = {'project_name': 'the not so great potato project'}
+
+        self.assertEqual(404, controller.index().status())
+
+    def test_index_returns_an_error_message_for_a_missing_project(self):
+        self._project_find_by.return_value = self._empty_lazy_result
+
+        controller = JobsController()
+        controller.params = {'project_name': 'the not so great potato project'}
+
+        self.assertEqual('This project was not found', controller.index().as_json())

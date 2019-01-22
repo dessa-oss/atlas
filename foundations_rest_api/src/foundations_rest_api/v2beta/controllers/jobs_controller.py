@@ -20,6 +20,5 @@ class JobsController(object):
         jobs_data_future = Project.find_by(name=project_name).only(
                 ['name', 'jobs', 'input_parameter_names', 'output_metric_names'])
         jobs_data_future = jobs_data_future.apply_filters(self.params, fields=['jobs'])
-        # fallback = Response('Jobs', LazyResult(lambda: 'This project was not found'), status=404)
-        # return Response('Jobs', jobs_data_future, fallback=fallback)
-        return Response('Jobs', jobs_data_future)
+        fallback = Response('Jobs', LazyResult(lambda: 'This project was not found'), status=404)
+        return Response('Jobs', jobs_data_future, fallback=fallback)
