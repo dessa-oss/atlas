@@ -33,26 +33,23 @@ cleanup_and_exit () {
 
 trap 'cleanup_and_exit' SIGINT SIGTERM
 
-for python_version in python2 python3
+rm -rf /tmp/archives
+
+python -m virtualenv -p python3 /tmp/examples-venv
+source /tmp/examples-venv/bin/activate
+
+cd ..
+python -m pip install -r requirements.txt
+bash build_dist.sh
+cd examples
+
+python -m pip install -r requirements.txt
+
+for module in ${modules}
 do
-    rm -rf /tmp/archives
-
-    python -m virtualenv -p ${python_version} /tmp/examples-venv
-    source /tmp/examples-venv/bin/activate
-
-    cd ..
-    python -m pip install -r requirements.txt
-    bash build_dist.sh
-    cd examples
-
-    python -m pip install -r requirements.txt
-
-    for module in ${modules}
-    do
-        python -Wi -m ${module} || cleanup_and_exit ${module} ${python_version}
-    done
-
-    cleanup
+    python -Wi -m ${module} || cleanup_and_exit ${module} python3
 done
+
+cleanup
 
 exit 0
