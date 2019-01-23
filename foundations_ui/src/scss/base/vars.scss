@@ -37,6 +37,8 @@ $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-heig
 $number-sections: 3;
 $job-header-sorting-container-width: 620px;
 $job-header-sorting-container-width-small-screen: 395px;
+$job-header-sorting-filter-allowed-width: 535px;
+$job-header-sorting-filter-allowed-width-small-screen: 310px;
 
 // Toolbar Vars
 $toolbar-height: 25px;
