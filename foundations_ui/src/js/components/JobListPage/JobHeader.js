@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ShowMoreFilters from '../common/filters/ShowMoreFilters';
 import CommonActions from '../../actions/CommonActions';
 
-const borderSize = 2; // 1px per side
+const borderSize = 3; // 1px per side + space between bubbles
 
 class JobHeader extends Component {
   constructor(props) {
@@ -42,6 +42,7 @@ class JobHeader extends Component {
     let curWidth = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
+    newRefs.sort((a, b) => { return a.length - b.length; });
     newRefs.forEach((id) => {
       const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
       curWidth = showHideResults.width;
