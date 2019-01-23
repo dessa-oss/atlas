@@ -6,29 +6,15 @@ archive_listing_implementation:
   archive_listing_type: foundations_contrib.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
   constructor_arguments: ["C:\\foundations\\foundations-archive"]
 
-stage_log_archive_implementation:
+stage_log_archive_implementation: &archive_implementation
   archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
   constructor_arguments: ["C:\\foundations\\foundations-archive"]
 
-persisted_data_archive_implementation:
-  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
-  constructor_arguments: ["C:\\foundations\\foundations-archive"]
-
-provenance_archive_implementation:
-  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
-  constructor_arguments: ["C:\\foundations\\foundations-archive"]
-
-job_source_archive_implementation:
-  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
-  constructor_arguments: ["C:\\foundations\\foundations-archive"]
-
-artifact_archive_implementation:
-  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
-  constructor_arguments: ["C:\\foundations\\foundations-archive"]
-
-miscellaneous_archive_implementation:
-  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
-  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+persisted_data_archive_implementation: *archive_implementation
+provenance_archive_implementation: *archive_implementation
+job_source_archive_implementation: *archive_implementation
+artifact_archive_implementation: *archive_implementation
+miscellaneous_archive_implementation: *archive_implementation
 
 project_listing_implementation:
   project_listing_type: foundations_contrib.local_file_system_pipeline_listing.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
