@@ -183,4 +183,10 @@
       }
     }
 
-
+    @media only screen and (max-width: $minimum-job-header-screen-width) {
+      .job-header-sorting-container {
+        > div {
+          width: $job-header-sorting-container-width-small-screen;
+        }
+      }
+    }
