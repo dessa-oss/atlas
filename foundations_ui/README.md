@@ -27,3 +27,5 @@ Linting:
 - Files to ignore are in .eslintignore
 - To see how many lint errors/warnings run ./check_lint.sh
 - To attempt to automatically fix lint errors/warnings run ./fix_lint.sh
+
+Note: UI is supported for Chrome only. You may experience issues with other browsers.

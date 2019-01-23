@@ -36,9 +36,9 @@ $table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-head
 $row-number-height: calc(100% - #{$column-header-height} - #{$metric-header-height} - #{$pagination-height});
 $number-sections: 3;
 $job-header-sorting-container-width: 620px;
-$job-header-sorting-container-width-small-screen: 395px;
+$job-header-sorting-container-width-small-screen: 390px;
 $job-header-sorting-filter-allowed-width: 535px;
-$job-header-sorting-filter-allowed-width-small-screen: 310px;
+$job-header-sorting-filter-allowed-width-small-screen: 305px;
 
 // Toolbar Vars
 $toolbar-height: 25px;

@@ -2,7 +2,7 @@
     width: 100%;
     max-width: 100%;
     min-width: $minimum-site-width;
-    height: $header-control-height;
+    min-height: $header-control-height;
     background-color: $color-background;
     border-bottom: 2px solid $color-border-bottom;
   }
@@ -10,7 +10,7 @@
   .job-header-container-left{
     display: inline-block;
     min-width: $minimum-site-width;
-    height: $header-control-height;
+    min-height: $header-control-height;
     border-right: 1px solid #DCDCDC;
   }
   
@@ -105,6 +105,7 @@
     .job-header-sorting-container {
       vertical-align: top;
       margin-left: $overview-content-margin-horizontal;
+      margin-bottom: 10px;
       width: 100%;
 
       > div {
