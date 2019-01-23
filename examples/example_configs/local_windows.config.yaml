@@ -17,7 +17,7 @@ artifact_archive_implementation: *archive_implementation
 miscellaneous_archive_implementation: *archive_implementation
 
 project_listing_implementation:
-  project_listing_type: foundations_contrib.local_file_system_pipeline_listing.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
+  project_listing_type: foundations_contrib.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
   constructor_arguments: ["C:\\foundations\\projects"]
 
 deployment_implementation:
