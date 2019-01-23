@@ -17,9 +17,11 @@ class Response(object):
         parent {Response} -- Parent response to evaluate (default: {None})
     """
 
-    def __init__(self, resource_name, lazy_result, parent=None):
+    def __init__(self, resource_name, lazy_result, fallback=None, status=200, parent=None):
         self._lazy_result = lazy_result
         self._parent = parent
+        self._fallback = fallback
+        self._status = status
 
     def evaluate(self):
         """Calls the action callback and returns the result.
@@ -34,7 +36,34 @@ class Response(object):
         return self._lazy_result.evaluate()
 
     def as_json(self):
-        return self._value_as_json(self.evaluate())
+        json = self._as_json()
+        if json is None:
+            return self._get_fallback().as_json()
+        return json
+
+    def _as_json(self):
+        result = self.evaluate()
+        if result is None:
+            return None
+        return self._value_as_json(result)
+
+    def status(self):
+        """Returns the set status code or the fallback if no data
+        is available
+
+        Returns:
+            int -- Whatever the status code was set to for this or the fallback
+        """
+
+        result = self.evaluate()
+        if result is None:
+            return self._get_fallback().status()
+        return self._status
+
+    def _get_fallback(self):
+        if self._fallback is None:
+            raise ValueError('No response data and no fallback provided!')
+        return self._fallback
 
     def _dictionary_attributes(self, value):
         attributes = {}
