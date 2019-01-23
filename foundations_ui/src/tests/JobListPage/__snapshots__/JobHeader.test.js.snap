@@ -5,81 +5,85 @@ exports[`Shallow Renders Job List Page 1`] = `
   className="job-header-container"
 >
   <div
-    className="job-header-logo-container"
+    className="job-header-container-left"
   >
     <div
-      className="i--icon-logo"
-    />
-    <h2
-      className="font-bold"
+      className="job-header-logo-container"
     >
-      Foundations
-    </h2>
-  </div>
-  <div
-    className="job-header-info-container"
-  >
-    <div>
       <div
-        className="half-width inline-block"
+        className="i--icon-logo"
+      />
+      <h2
+        className="font-bold"
       >
-        <h1
-          className="blue-border-bottom font-bold"
+        Foundations
+      </h2>
+    </div>
+    <div
+      className="job-header-info-container"
+    >
+      <div>
+        <div
+          className="half-width inline-block"
         >
-          Job List
-        </h1>
+          <h1
+            className="blue-border-bottom font-bold"
+          >
+            Job List
+          </h1>
+        </div>
       </div>
     </div>
-  </div>
-  <div
-    className="job-summary-info-container"
-  >
-    <h2
-      className="font-bold"
+    <div
+      className="job-summary-info-container"
     >
-      null
-    </h2>
-    <p>
-      Data Source: Unknown
-    </p>
-    <p
-      className="font-bold"
-    >
-      Project owner: 
-      <span>
+      <h2
+        className="font-bold"
+      >
         null
-      </span>
-    </p>
-    <p
-      className="font-bold"
-    >
-      Created at: 
-      <span>
-        null
-      </span>
-    </p>
-  </div>
-  <div
-    className="job-header-sorting-container"
-  >
-    <button
-      className="b--mat b--affirmative text-upper b--disabled"
-      onClick={[Function]}
-      type="button"
-    >
-      Clear Filters
-    </button>
-    <div>
-      <div />
+      </h2>
+      <p>
+        Data Source: Unknown
+      </p>
+      <p
+        className="font-bold"
+      >
+        Project owner: 
+        <span>
+          null
+        </span>
+      </p>
+      <p
+        className="font-bold"
+      >
+        Created at: 
+        <span>
+          null
+        </span>
+      </p>
     </div>
-    <div>
+    <div
+      className="job-header-sorting-container"
+    >
       <button
         className="b--mat b--affirmative text-upper b--disabled"
         onClick={[Function]}
         type="button"
       >
-        View Filters
+        Clear Filters
       </button>
+      <div>
+        <div />
+      </div>
+      <div>
+        <button
+          className="b--mat b--affirmative text-upper b--disabled"
+          onClick={[Function]}
+          type="button"
+        >
+          View Filters
+        </button>
+      </div>
     </div>
   </div>
 </div>
