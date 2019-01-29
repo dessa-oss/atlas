@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import HoverCell from './HoverCell';
 
 class JobIDCell extends Component {
   constructor(props) {
     super(props);
+    this.toggleExpand = this.toggleExpand.bind(this);
     this.state = {
       jobID: this.props.jobID,
       isError: this.props.isError,
@@ -11,8 +13,22 @@ class JobIDCell extends Component {
     };
   }
 
+  toggleExpand(value) {
+    this.setState({ expand: value });
+  }
+
   render() {
-    const { jobID, isError, rowNumber } = this.state;
+    const {
+      jobID, isError, rowNumber, expand,
+    } = this.state;
+
+    const jobIdFormatted = <p>{jobID}</p>;
+
+    let hover;
+
+    if (expand) {
+      hover = <HoverCell textToRender={jobIdFormatted} />;
+    }
 
     const aClass = isError
       ? `job-cell job-id-cell error row-${rowNumber}`
@@ -20,7 +36,16 @@ class JobIDCell extends Component {
 
     const href = '/'.concat(jobID);
     return (
-      <p className={aClass}>{jobID}</p>
+      <div
+        className={aClass}
+        onMouseEnter={() => this.toggleExpand(true)}
+        onMouseLeave={() => this.toggleExpand(false)}
+      >
+        {jobIdFormatted}
+        <div>
+          {hover}
+        </div>
+      </div>
     );
   }
 }
