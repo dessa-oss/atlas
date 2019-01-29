@@ -27,12 +27,6 @@ class TestConfigTranslator(unittest.TestCase):
 
         self.assertIn('Got invalid deployment environment `azure`', error_context.exception.args)        
     
-    def test_raises_error_when_no_environment_provided(self):
-        with self.assertRaises(ValueError) as error_context:
-            self._translator.translate({})
-
-        self.assertIn('Got invalid deployment environment `None`', error_context.exception.args)        
-    
     def test_calls_translate_with_existing_environment(self):
         azure = Mock()
         azure.translate.return_value = 'some configured azure environment'
@@ -84,3 +78,11 @@ class TestConfigTranslator(unittest.TestCase):
             self._translator.translate({'job_deployment_env': 'potato'})
 
         self.assertIn('Got invalid deployment environment `potato`', error_context.exception.args)        
+    
+    def test_defaults_to_local_environment(self):
+        local = Mock()
+        local.translate.return_value = 'local configuration'
+        self._translator.add_translator('local', local)
+
+        translation = self._translator.translate({})
+        self.assertEqual('local configuration', translation)

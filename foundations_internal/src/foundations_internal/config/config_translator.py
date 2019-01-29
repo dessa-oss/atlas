@@ -14,7 +14,7 @@ class ConfigTranslator(object):
         self._translators[name] = translator
         
     def translate(self, source_config):
-        deployment_type = source_config.get('job_deployment_env')
+        deployment_type = source_config.get('job_deployment_env', 'local')
 
         if deployment_type in self._translators:
             return self._translators[deployment_type].translate(source_config)
