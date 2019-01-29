@@ -8,7 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class ConfigTranslator(object):
     
     def __init__(self):
-        self._translators = {}
+        from collections import OrderedDict
+        self._translators = OrderedDict()
 
     def add_translator(self, name, translator):
         self._translators[name] = translator
@@ -22,5 +23,6 @@ class ConfigTranslator(object):
         raise self._invalid_environment_error(source_config, deployment_type)
 
     def _invalid_environment_error(self, source_config, deployment_type):
-        error_message = 'Got invalid deployment environment `{}`'.format(deployment_type)
+        supported_deployments = str.join(', ', self._translators)
+        error_message = 'Invalid `job_deployment_env` value `{}`. Supported `job_deployment_env`s are: <{}>.'.format(deployment_type, supported_deployments)
         return ValueError(error_message)

@@ -19,13 +19,13 @@ class TestConfigTranslator(unittest.TestCase):
         with self.assertRaises(ValueError) as error_context:
             self._translator.translate({'job_deployment_env': 'gcp'})
 
-        self.assertIn('Got invalid deployment environment `gcp`', error_context.exception.args)        
+        self.assertIn('Invalid `job_deployment_env` value `gcp`. Supported `job_deployment_env`s are: <>.', error_context.exception.args)        
     
     def test_raises_error_when_no_translator_defined_different_name(self):
         with self.assertRaises(ValueError) as error_context:
             self._translator.translate({'job_deployment_env': 'azure'})
 
-        self.assertIn('Got invalid deployment environment `azure`', error_context.exception.args)        
+        self.assertIn('Invalid `job_deployment_env` value `azure`. Supported `job_deployment_env`s are: <>.', error_context.exception.args)        
     
     def test_calls_translate_with_existing_environment(self):
         azure = Mock()
@@ -71,13 +71,24 @@ class TestConfigTranslator(unittest.TestCase):
     
     def test_raises_error_when_invalid_environment_requested(self):
         gcp = Mock()
-        gcp.translate.return_value = 'gcp environment with configured data'
         self._translator.add_translator('gcp', gcp)
 
         with self.assertRaises(ValueError) as error_context:
             self._translator.translate({'job_deployment_env': 'potato'})
 
-        self.assertIn('Got invalid deployment environment `potato`', error_context.exception.args)        
+        self.assertIn('Invalid `job_deployment_env` value `potato`. Supported `job_deployment_env`s are: <gcp>.', error_context.exception.args)        
+    
+    def test_raises_error_when_invalid_environment_requested_multiple_environments(self):
+        gcp = Mock()
+        self._translator.add_translator('gcp', gcp)
+
+        azure = Mock()
+        self._translator.add_translator('azure', gcp)
+
+        with self.assertRaises(ValueError) as error_context:
+            self._translator.translate({'job_deployment_env': 'potato'})
+
+        self.assertIn('Invalid `job_deployment_env` value `potato`. Supported `job_deployment_env`s are: <gcp, azure>.', error_context.exception.args)        
     
     def test_defaults_to_local_environment(self):
         local = Mock()
