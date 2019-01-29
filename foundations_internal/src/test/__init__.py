@@ -27,6 +27,7 @@ from test.test_staged_module_internal_loader import TestStagedModuleInternalLoad
 from test.test_staged_meta_helper import TestStagedMetaHelper
 from test.test_stage_logging_context import TestStageLoggingContext
 from test.deployment import *
+from test.config import *
 
 import sys
 
