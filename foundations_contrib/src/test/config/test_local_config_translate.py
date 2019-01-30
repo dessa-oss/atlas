@@ -11,8 +11,18 @@ from mock import Mock
 import foundations_contrib.config.local_config_translate as translator
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let
+from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
 
-class TestLocalConfigTranslate(Spec):
+class TestLocalConfigTranslate(Spec, ConfigTranslates):
+
+    @let
+    def translator(self):
+        return translator
+
+    @let
+    def archive_type(self):
+        from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
+        return LocalFileSystemPipelineArchive
     
     def setUp(self):
         self._configuration = {
@@ -45,15 +55,6 @@ class TestLocalConfigTranslate(Spec):
         for archive_type in self._archive_types:
             config = result_config[archive_type]
             self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/projects/archive'])
-
-    def test_returns_archive_configurations_with_local_type(self):
-        from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
-
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['archive_type'], LocalFileSystemPipelineArchive)
 
     def test_returns_archive_listing_configuration_with_provided_path(self):
         self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
@@ -141,17 +142,3 @@ class TestLocalConfigTranslate(Spec):
         self._configuration['log_level'] = 'DEBUG'
         result_config = translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'DEBUG')
-
-    @let
-    def shell_command(self):
-        return self.patch('foundations_contrib.helpers.shell.find_bash')
-
-    def test_returns_shell_command(self):
-        self.shell_command.return_value = '/path/to/bash'
-        result_config = translator.translate(self._configuration)
-        self.assertEqual(result_config['shell_command'], '/path/to/bash')
-
-    def test_returns_shell_command_different_command(self):
-        self.shell_command.return_value = 'C:\\path\\to\\bash'
-        result_config = translator.translate(self._configuration)
-        self.assertEqual(result_config['shell_command'], 'C:\\path\\to\\bash')
