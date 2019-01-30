@@ -17,7 +17,7 @@ class Spec(unittest.TestCase, MockMixin, LetMixin):
         klass._collect_lets()
     
     def setUp(self):
-        self._collect_lets()
+        self.__class__._collect_lets()
         for setup_method in self._setup_methods():
             setup_method(self)
 
