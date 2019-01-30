@@ -5,4 +5,18 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers.spec import Spec
+class Callback(object):
+    def __init__(self, function):
+        self._function = function
+
+    def __call__(self, *args, **kwargs):
+        return self._function(*args, **kwargs)
+
+class set_up(Callback):
+    pass 
+
+class tear_down(Callback):
+    pass 
+
+class let(Callback):
+    pass
