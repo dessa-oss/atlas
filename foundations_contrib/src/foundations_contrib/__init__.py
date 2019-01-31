@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
+import foundations_contrib.config
+
 
 def root():
     from pathlib import Path
