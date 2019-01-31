@@ -12,7 +12,6 @@ from test.producers import *
 from test.consumers import *
 from test.middleware import *
 
-from test.test_provenance import TestProvenance
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
 from test.test_bucket_cache_backend import TestBucketCacheBackend
 from test.test_constant_parameter import TestConstantParameter
