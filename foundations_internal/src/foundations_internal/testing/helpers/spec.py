@@ -30,6 +30,7 @@ class Spec(unittest.TestCase, MockMixin, LetMixin):
         for tear_down_method in self._tear_down_methods():
             tear_down_method(self)
         self._mock_tear_down()
+        self._clear_lets()
 
     def _tear_down_methods(self):
         for function in self.__class__.__dict__.values():
