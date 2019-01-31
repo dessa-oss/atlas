@@ -40,7 +40,7 @@ class Job(PropertyModel):
         from foundations.global_state import redis_connection
 
         jobs = []
-        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True))
 
         for job_properties in list(jobs_data):
             job_properties['input_params'] = list(Job._filter_out_non_hyper_parameter_inputs(job_properties['input_params']))
