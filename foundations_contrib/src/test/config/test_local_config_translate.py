@@ -39,6 +39,7 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates):
     @set_up
     def set_up(self):
         del self._configuration['results_config']['archive_end_point']
+        del self._configuration['cache_config']['end_point']
 
         # ensure expanduser is patched
         self.expanduser.return_value = ''
@@ -105,6 +106,18 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates):
         result_config = self.translator.translate(self._configuration)
         config = result_config['project_listing_implementation']
         self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/projects'])
+
+    def test_returns_cache_with_default_path(self):
+        self.expanduser.return_value = '/home/lou'
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['cache_implementation']
+        self.assertEqual(config['constructor_arguments'], ['/home/lou/.foundations/job_data/cache'])
+
+    def test_returns_cache_with_default_path_different_home(self):
+        self.expanduser.return_value = '/home/hana'
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['cache_implementation']
+        self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/cache'])
 
     def test_returns_cache_configuration_with_provided_path(self):
         self._configuration['cache_config']['end_point'] = '/path/to/foundations/home'
