@@ -14,6 +14,7 @@ class BucketJobDeployment(object):
 
         self._config = {}
         self._config.update(config_manager.config())
+        self._config['_is_deployment'] = True
 
         self._code_bucket = code_bucket
         self._result_bucket = results_bucket

@@ -37,5 +37,6 @@ from test.test_job_data_redis import TestJobDataRedis
 from test.test_job_data_shaper import TestJobDataShaper
 from test.test_input_parameter_formatter import TestInputParameterFormatter
 from test.test_input_parameter_indexer import TestInputParameterIndexer
+from test.test_bucket_job_deployment import TestBucketJobDeployment
 
 from test.config import *
