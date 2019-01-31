@@ -10,7 +10,7 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
 
-    result_end_point = config['results_config']['archive_end_point']
+    result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
     return {
         'artifact_archive_implementation': _archive_implementation(result_end_point),
@@ -27,6 +27,12 @@ def translate(config):
         'log_level': _log_level(config),
         'shell_command': find_bash(),
     }
+
+def _get_default_archive_end_point():
+    from os.path import expanduser
+    from os.path import join
+
+    return join(expanduser('~'), '.foundations/job_data')
 
 def _log_level(config):
     return config.get('log_level', 'INFO')

@@ -6,10 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import Mock
+from mock import Mock, patch
 
 from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let
+from foundations_internal.testing.helpers import let, let_patch_mock, set_up
 from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
 
 class TestLocalConfigTranslate(Spec, ConfigTranslates):
@@ -33,6 +33,33 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates):
     def cache_type(self):
         from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
         return LocalFileSystemCacheBackend
+
+    expanduser = let_patch_mock('os.path.expanduser')
+
+    @set_up
+    def set_up(self):
+        del self._configuration['results_config']['archive_end_point']
+
+        # ensure expanduser is patched
+        self.expanduser.return_value = ''
+
+    def test_ensure_expandpath_called_properly(self):
+        result_config = self.translator.translate(self._configuration)
+        self.expanduser.assert_called_with('~')
+
+    def test_returns_archive_configurations_with_default_path(self):
+        self.expanduser.return_value = '/home/lou'
+        result_config = self.translator.translate(self._configuration)
+        for archive_type in self._archive_types:
+            config = result_config[archive_type]
+            self.assertEqual(config['constructor_arguments'], ['/home/lou/.foundations/job_data/archive'])
+
+    def test_returns_archive_configurations_with_default_path_different_home(self):
+        self.expanduser.return_value = '/home/hana'
+        result_config = self.translator.translate(self._configuration)
+        for archive_type in self._archive_types:
+            config = result_config[archive_type]
+            self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/archive'])
 
     def test_returns_archive_configurations_with_provided_path(self):
         self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
