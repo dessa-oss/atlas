@@ -13,6 +13,8 @@ from foundations_gcp.gcp_bucket import GCPBucket
 from foundations_gcp.global_state import *
 from foundations_gcp.versioning import __version__
 
+import foundations_gcp.config
+
 
 def _append_module():
     import sys
