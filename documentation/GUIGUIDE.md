@@ -23,9 +23,6 @@ These steps are not necessary if you already have the images or can download the
 0. Either build (see above for how to do that) the images or otherwise acquire them via `docker pull` or `docker load -i`.
 1. Ensure that you have the `foundations-rest-api` and `foundations-gui` images installed on your system, and both have the same tag.  If not, please tag them accordingly - any syntactically valid tag will work, so long as they're the same.
 2. Ensure that you have the `foundations_gui.sh` script whose version matches the image versions, e.g. if you built the images from the `master` branch, grab the `foundations_gui.sh` script from the `master` branch.
-3. Edit two variables in the `foundations_gui.sh` script as follows:
-    * `node_ip` is the ip of the node on which the REST API container will be hosted.  If you're going to have a GUI installation for development or otherwise on your own machine, and it will be accessed by only you, then you may put `localhost`.  If you want anyone else to access it, put the ip of the machine instead.
-    * `redis_url` is the url for the `redis:5` instance / installation that Foundations has been / will have been using.  It is of the form `redis://<redis_ip>:<redis_port>` - you can't use `localhost` in place of the redis ip, even if redis is running on the same node as the REST API.  Please do put the ip of the node hosting redis.
 
 ## Starting / Stopping the GUI
 
@@ -33,8 +30,19 @@ Make sure you have edited the `foundations_gui.sh` script as described in step 3
 
 ### Starting the GUI
 
+Before starting the GUI, you will need to set the location of your Redis installation by setting the `REDIS_URL` environment variable. Depending on where you plan to get your data from, this will need to be set to the ip address of that machine. For example, if you are trying to connect to a machine with the ip addres of `22.23.43.22`, you will need to run the following:
+
+```bash
+export REDIS_URL=redis://22.23.43.22
+```
+
+After that you can run:
+
 `./foundations_gui.sh start ui [image_tag]`
+
 * `image_tag` is optional - omit to use `latest` as a default
+
+You will then be able to visit your running gui at `https://localhost:6443`
 
 ### Stopping the GUI
 
