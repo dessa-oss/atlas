@@ -10,3 +10,4 @@ from test.test_remote_clock import TestRemoteClock
 from test.test_sftp_job_deployment import TestSFTPJobDeployment
 from test.test_default_legacy_backend import TestDefaultLegacyBackend
 from test.test_deployment_ssh_bucket import TestDeploymentSSHBucket
+from test.config import *
