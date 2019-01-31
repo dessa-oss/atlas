@@ -22,7 +22,8 @@ class TestDeploymentContextBucket(Spec):
 
     @set_up
     def set_up(self):
-        self.config_manager['_is_deployment'] = False
+        # ensure we use our config manager
+        self.config_manager
 
     @let
     def context_bucket(self):

@@ -43,4 +43,4 @@ class DeploymentContextBucket(object):
 
     def _is_deployment(self):
         from foundations.global_state import config_manager
-        return config_manager['_is_deployment']
+        return config_manager.config().get('_is_deployment', False)
