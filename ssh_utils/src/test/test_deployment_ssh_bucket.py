@@ -48,12 +48,22 @@ class TestDeploymentSSHBucket(Spec):
     remote_path = let_mock()
     local_file_system_path = let_mock()
 
-    def test_creates_sftp_bucket_with_correct_path(self):
+    def test_ensure_local_bucket_is_not_constructed(self):
         self.context_bucket
+        self.local_bucket_constructor.assert_not_called()
+
+    def test_ensure_deploy_bucket_is_not_constructed(self):
+        self.context_bucket
+        self.deploy_bucket_constructor.assert_not_called()
+
+    def test_creates_sftp_bucket_with_correct_path(self):
+        self.context_bucket.exists(self.name)
         self.local_bucket_constructor.assert_called_with(self.remote_path)
 
     def test_creates_local_bucket_with_correct_path(self):
-        self.context_bucket
+        self.config_manager['_is_deployment'] = True
+        
+        self.context_bucket.exists(self.name)
         self.deploy_bucket_constructor.assert_called_with(self.local_file_system_path)
 
     def test_upload_from_string_calls_local(self):
