@@ -6,9 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import Mock, patch
+from mock import Mock, patch, call
 
 from foundations_contrib.cli.command_line_interface import CommandLineInterface
+from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
 class TestCommandLineInterface(unittest.TestCase):
     
@@ -20,15 +21,35 @@ class TestCommandLineInterface(unittest.TestCase):
         sub_parsers_mock = Mock()
         parser_mock.add_subparsers.return_value = sub_parsers_mock
 
-        init_parser_mock = Mock()
-        sub_parsers_mock.add_parser.return_value = init_parser_mock
+        specific_parser_mock = Mock()
+        sub_parsers_mock.add_parser.return_value = specific_parser_mock
 
         CommandLineInterface([])
 
         parser_class_mock.assert_called_with(prog='foundations')
         parser_mock.add_argument.assert_called_with('--version', action='store_true', help='Displays the current Foundations version')
-        sub_parsers_mock.add_parser.assert_called_with('init', help='Creates a new Foundations project in the current directory')
-        init_parser_mock.add_argument.assert_called_with('project_name', type=str, help='Name of the project to create')
+
+
+        init_call = call('init', help='Creates a new Foundations project in the current directory')
+        deploy_call = call('deploy', help='Deploys a Foundations project to the specified environment')
+        info_call = call('info', help='Provides information about your Foundations project')
+
+        sub_parsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call], any_order=True)
+
+        init_argument_call = call('project_name', type=str, help='Name of the project to create')
+        deploy_argument_file_call = call('driver_file', type=str, help='Name of file to deploy')
+        deploy_argument_env_call = call('--env', help='Environment to run file in')
+        info_argument_env_call = call('--env', action='store_true')
+
+        specific_parser_mock.add_argument.assert_has_calls(
+            [
+                init_argument_call,
+                deploy_argument_env_call,
+                deploy_argument_file_call,
+                info_argument_env_call
+            ],
+            any_order=True
+        )
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
@@ -107,3 +128,55 @@ class TestCommandLineInterface(unittest.TestCase):
 
         CommandLineInterface(['init', 'your project']).execute()
         mock_print.assert_called_with('Error: project directory for `your project` already exists')
+    
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_info_env_flag_returns_environment_none_available(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = []
+        CommandLineInterface(['info', '--env']).execute()
+        mock_print.assert_called_with('No environments available')
+    
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_info_env_flag_returns_environment_one_available(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = ['/home/local.config.yaml']
+        CommandLineInterface(['info', '--env']).execute()
+        mock_print.assert_called_with({'local'})
+    
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_info_env_flag_returns_environment_local_and_global_available(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = ['/home/local.config.yaml', '~/foundations/local.config.yaml']
+        CommandLineInterface(['info', '--env']).execute()
+        mock_print.assert_called_with({'local'})
+
+    @patch.object(EnvironmentFetcher, 'find_environment')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_deploy_returns_correct_error_if_env_not_found(self, mock_print, mock_find_env):
+        mock_find_env.return_value = []
+        CommandLineInterface(['deploy', 'driver.py', '--env=local']).execute()
+        mock_print.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --envs`")
+
+    @patch.object(EnvironmentFetcher, 'find_environment')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_deploy_returns_correct_error_if_env_not_found_different_name(self, mock_print, mock_find_env):
+        mock_find_env.return_value = []
+        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        mock_print.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --envs`")
+
+    @patch.object(EnvironmentFetcher, 'find_environment')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_deploy_returns_correct_error_if_wrong_directory(self, mock_print, mock_find_env):
+        mock_find_env.return_value = "Wrong directory"
+        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        mock_print.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
+     
+    # @patch.object(EnvironmentFetcher, 'find_environment')
+    # @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    # def test_deploys_job_when_local_config_found(self, mock_print, mock_find_env):
+    #     mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+    #     CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+    #     mock_print.assert_called_with("Job deployed")
+
+#want a local prioritization test
+#driver file not found  

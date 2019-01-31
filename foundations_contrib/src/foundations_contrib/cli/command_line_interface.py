@@ -22,6 +22,16 @@ class CommandLineInterface(object):
         init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
         init_parser.add_argument('project_name', type=str, help='Name of the project to create')
         init_parser.set_defaults(function=self._init)
+
+        deploy_parser = subparsers.add_parser('deploy', help='Deploys a Foundations project to the specified environment')
+        deploy_parser.add_argument('driver_file', type=str, help='Name of file to deploy')
+        deploy_parser.add_argument('--env', help='Environment to run file in')
+        deploy_parser.set_defaults(function=self._deploy)
+
+        info_parser = subparsers.add_parser('info', help='Provides information about your Foundations project')
+        info_parser.add_argument('--env', action='store_true')
+        info_parser.set_defaults(function=self._info)
+        
         
         self._arguments = self._argument_parser.parse_args(args)
 
@@ -45,3 +55,29 @@ class CommandLineInterface(object):
             CommandLineInterface.static_print('Success: New Foundations project `{}` created!'.format(project_name))
         else:
             CommandLineInterface.static_print('Error: project directory for `{}` already exists'.format(project_name))
+        
+    def _info(self):
+        import re
+        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+
+        available_environments = EnvironmentFetcher().get_all_environments()
+
+        environment_names = []
+
+        for env in available_environments:
+            environment_names.append(env.split('/')[-1].split('.')[0])
+        if len(environment_names) == 0:
+            CommandLineInterface.static_print('No environments available')
+        else:
+            CommandLineInterface.static_print(set(environment_names))
+        
+    def _deploy(self):
+        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+
+        env_name = self._arguments.env
+        env_file_path = EnvironmentFetcher().find_environment(env_name)
+
+        if env_file_path == "Wrong directory":
+            CommandLineInterface.static_print("Foundations project not found. Deploy command must be run in foundations project directory"  )
+        else:
+            CommandLineInterface.static_print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --envs`".format(env_name))
