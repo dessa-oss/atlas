@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 """
 
+from test.test_provenance import TestProvenance
 from test.test_argument import TestArgument
 from test.test_cache_name_generator import TestCacheNameGenerator
 from test.test_cache import TestCache

@@ -38,6 +38,11 @@ class LetMixin(object):
         for klass_having_function, function_name in functions_to_remove:
             delattr(klass_having_function, function_name)
 
+    def _clear_lets(self):
+        for let_name in self._lets:
+            if hasattr(self, let_name):
+                delattr(self, let_name)
+
     @staticmethod
     def _klass_attributes(klass):
         for name in dir(klass):

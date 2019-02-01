@@ -10,7 +10,7 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
 
-    result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
+    result_end_point = config['results_config']['archive_end_point']
 
     return {
         'artifact_archive_implementation': _archive_implementation(result_end_point),
@@ -28,19 +28,13 @@ def translate(config):
         'shell_command': find_bash(),
     }
 
-def _get_default_archive_end_point():
-    from os.path import expanduser
-    from os.path import join
-
-    return join(expanduser('~'), '.foundations/job_data')
-
 def _log_level(config):
     return config.get('log_level', 'INFO')
 
 def _cache_implementation(config):
     from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
 
-    cache_end_point = config['cache_config'].get('end_point', _get_default_archive_end_point())
+    cache_end_point = config['cache_config']['end_point']
     cache_path = join(cache_end_point, 'cache')
     return {
         'cache_type': LocalFileSystemCacheBackend,
@@ -51,35 +45,38 @@ def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
 
 def _project_listing_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
+    from foundations.bucket_pipeline_listing import BucketPipelineListing
+    from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
     project_path = join(result_end_point, 'projects')
     return {
-        'archive_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': [project_path]
+        'archive_type': BucketPipelineListing,
+        'constructor_arguments': [DeploymentSSHBucket, project_path, project_path]
     }
 
 def _deployment_implementation():
-    from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+    from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
     return {
-        'deployment_type': LocalShellJobDeployment
+        'deployment_type': SFTPJobDeployment
     }
 
 def _archive_listing_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
+    from foundations.bucket_pipeline_listing import BucketPipelineListing
+    from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': [archive_path]
+        'archive_type': BucketPipelineListing,
+        'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
+    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+    from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': [archive_path]
+        'archive_type': BucketPipelineArchive,
+        'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
     }
 

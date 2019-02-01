@@ -10,7 +10,7 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
 
-    result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
+    result_end_point = config['results_config']['archive_end_point']
 
     return {
         'artifact_archive_implementation': _archive_implementation(result_end_point),
@@ -26,24 +26,24 @@ def translate(config):
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
         'shell_command': find_bash(),
+        'remote_user': config['ssh_config'].get('user', 'foundations'),
+        'remote_host': config['ssh_config']['host'],
+        'port': config['ssh_config'].get('port', 22),
+        'key_path': config['ssh_config']['key_path'],
+        'code_path': config['ssh_config']['code_path'],
+        'result_path': config['ssh_config']['result_path'],
     }
-
-def _get_default_archive_end_point():
-    from os.path import expanduser
-    from os.path import join
-
-    return join(expanduser('~'), '.foundations/job_data')
 
 def _log_level(config):
     return config.get('log_level', 'INFO')
 
 def _cache_implementation(config):
-    from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
+    from foundations_gcp.gcp_cache_backend import GCPCacheBackend
 
-    cache_end_point = config['cache_config'].get('end_point', _get_default_archive_end_point())
+    cache_end_point = config['cache_config']['end_point']
     cache_path = join(cache_end_point, 'cache')
     return {
-        'cache_type': LocalFileSystemCacheBackend,
+        'cache_type': GCPCacheBackend,
         'constructor_arguments': [cache_path]
     }
 
@@ -51,35 +51,35 @@ def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
 
 def _project_listing_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
+    from foundations_gcp.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
 
     project_path = join(result_end_point, 'projects')
     return {
-        'archive_type': LocalFileSystemPipelineListing,
+        'archive_type': GCPPipelineArchiveListing,
         'constructor_arguments': [project_path]
     }
 
 def _deployment_implementation():
-    from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+    from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
     return {
-        'deployment_type': LocalShellJobDeployment
+        'deployment_type': SFTPJobDeployment
     }
 
 def _archive_listing_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
+    from foundations_gcp.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': LocalFileSystemPipelineListing,
+        'archive_type': GCPPipelineArchiveListing,
         'constructor_arguments': [archive_path]
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
+    from foundations_gcp.gcp_pipeline_archive import GCPPipelineArchive
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': LocalFileSystemPipelineArchive,
+        'archive_type': GCPPipelineArchive,
         'constructor_arguments': [archive_path]
     }
 

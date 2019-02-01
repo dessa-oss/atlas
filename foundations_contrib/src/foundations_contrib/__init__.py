@@ -21,3 +21,13 @@ def _append_module():
 
 
 _append_module()
+
+
+def _inject_config_translate():
+    from foundations_internal.global_state import config_translator
+    import foundations_contrib.config.local_config_translate as translator
+
+    config_translator.add_translator('local', translator)
+
+
+_inject_config_translate()

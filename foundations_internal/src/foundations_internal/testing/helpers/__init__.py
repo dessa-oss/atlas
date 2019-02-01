@@ -20,3 +20,17 @@ class tear_down(Callback):
 
 class let(Callback):
     pass
+
+def let_mock():
+    from mock import Mock
+    
+    def _callback(self):
+        return Mock()
+    
+    return let(_callback)
+
+def let_patch_mock(name):
+    def _callback(self):
+        return self.patch(name)
+    
+    return let(_callback)
