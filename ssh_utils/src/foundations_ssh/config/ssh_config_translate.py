@@ -50,7 +50,7 @@ def _project_listing_implementation(result_end_point):
 
     project_path = join(result_end_point, 'projects')
     return {
-        'archive_type': BucketPipelineListing,
+        'project_listing_type': BucketPipelineListing,
         'constructor_arguments': [DeploymentSSHBucket, project_path, project_path]
     }
 
@@ -66,7 +66,7 @@ def _archive_listing_implementation(result_end_point):
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': BucketPipelineListing,
+        'archive_listing_type': BucketPipelineListing,
         'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
     }
 
