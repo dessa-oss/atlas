@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 11 2018
 """
 
+from test.test_provenance import TestProvenance
 from test.test_argument import TestArgument
 from test.test_cache_name_generator import TestCacheNameGenerator
 from test.test_cache import TestCache
@@ -27,6 +28,7 @@ from test.test_staged_module_internal_loader import TestStagedModuleInternalLoad
 from test.test_staged_meta_helper import TestStagedMetaHelper
 from test.test_stage_logging_context import TestStageLoggingContext
 from test.deployment import *
+from test.config import *
 
 import sys
 

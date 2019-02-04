@@ -29,6 +29,13 @@ class ConfigManager(object):
         if self._config is not None:
             self._load_config(self._config, path)
 
+    def add_simple_config_path(self, path):
+        from foundations_internal.global_state import config_translator
+
+        config = self._load_yaml(path)
+        new_config = config_translator.translate(config)
+        self.config().update(new_config)
+
     def freeze(self):
         self._frozen = True
 
@@ -45,11 +52,14 @@ class ConfigManager(object):
 
         self._config = config
 
-    def _load_config(self, config, path):
+    def _load_yaml(self, path):
         import yaml
 
         with open(path, 'r') as file:
-            config.update(yaml.load(file))
+            return yaml.load(file)
+
+    def _load_config(self, config, path):
+        config.update(self._load_yaml(path))
 
     def _get_config_paths(self):
         if len(self._config_paths) < 1:
