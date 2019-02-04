@@ -10,7 +10,6 @@ from mock import Mock
 from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from mock import patch
 from pathlib import Path
-
 class TestEnvironmentFetcher(unittest.TestCase):
     
     def setUp(self):
@@ -20,7 +19,9 @@ class TestEnvironmentFetcher(unittest.TestCase):
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), "Wrong directory")
 
     @patch('os.listdir', lambda: ['config'])
-    def test_environment_fetcher_checks_local_config_empty(self):
+    @patch('glob.glob')
+    def test_environment_fetcher_checks_local_config_empty(self, mock_glob):
+        mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
     
     @patch('os.getcwd', lambda: 'home/some/project')
@@ -30,7 +31,8 @@ class TestEnvironmentFetcher(unittest.TestCase):
         mock_glob.return_value = ['home/some/project/config/local.config.yaml']
         mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), ['home/some/project/config/local.config.yaml'])
-    
+        mock_glob.assert_called_with('home/some/project/config/*.config.yaml')
+
     @patch('os.getcwd', lambda: 'home/some/project')
     @patch('os.listdir')
     @patch('glob.glob')
@@ -52,19 +54,17 @@ class TestEnvironmentFetcher(unittest.TestCase):
         mock_glob.return_value = ['~/.foundations/config/local.config.yaml']
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), ['~/.foundations/config/local.config.yaml'])
     
+    @patch('os.path.expanduser')
     @patch('glob.glob')
-    def test_environment_fetcher_checks_global_config_multiple_yaml(self, mock_glob):
+    def test_environment_fetcher_checks_global_config_multiple_yaml(self, mock_glob, mock_user):
         yamls = [
             '~/.foundations/config/local.config.yaml',
             '~/.foundations/config/hippo.config.yaml'
             ]
         mock_glob.return_value = yamls
+        mock_user.return_value = '/home/.foundations/config'
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), yamls)
-
-    @patch('os.getcwd', lambda: 'home/some/project')
-    @patch('os.listdir', lambda: [])
-    def test_get_all_environments_returns_error_message_in_wrong_dir(self):
-        self.assertEqual(EnvironmentFetcher().get_all_environments(), "Wrong directory")
+        mock_glob.assert_called_with('/home/.foundations/config/*.config.yaml')
 
     
     @patch.object(EnvironmentFetcher, '_get_local_environments')
@@ -75,20 +75,32 @@ class TestEnvironmentFetcher(unittest.TestCase):
         self.assertListEqual(EnvironmentFetcher().get_all_environments(), ['456', '123'])
     
 
-    @patch.object(EnvironmentFetcher, 'get_all_environments')
-    def test_find_environment_no_environment(self, env_mock):
-        env_mock.return_value = ['/home/hairy.config.yaml']
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_find_environment_no_environment(self, global_mock, local_mock):
+        local_mock.return_value = ['/home/hairy.config.yaml']
+        global_mock.return_value = []
         env_name = 'local'
         self.assertListEqual(EnvironmentFetcher().find_environment(env_name), [])
     
-    @patch.object(EnvironmentFetcher, 'get_all_environments')
-    def test_find_environment_one_matching_environment(self, env_mock):
-        env_mock.return_value = ['/home/local.config.yaml']
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    def test_find_environment_returns_error_message_in_wrong_dir(self, local_mock):
+        env_name = 'hi'
+        local_mock.return_value = "Wrong directory"
+        self.assertEqual(EnvironmentFetcher().find_environment(env_name), "Wrong directory")
+    
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_find_environment_one_matching_environment(self, global_mock, local_mock):
+        local_mock.return_value = ['/home/local.config.yaml']
+        global_mock.return_value = ['/bob.config.yaml']
         env_name = 'local'
         self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/home/local.config.yaml'])
     
-    @patch.object(EnvironmentFetcher, 'get_all_environments')
-    def test_find_environment_multiple_matching_environments(self, env_mock):
-        env_mock.return_value = ['/home/local.config.yaml', '~/config/local.config.yaml']
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_find_environment_multiple_matching_environments(self, global_mock, local_mock):
+        local_mock.return_value = ['/home/local.config.yaml']
+        global_mock.return_value = ['/local.config.yaml']
         env_name = 'local'
-        self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/home/local.config.yaml', '~/config/local.config.yaml'])
+        self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/home/local.config.yaml', '/local.config.yaml'])

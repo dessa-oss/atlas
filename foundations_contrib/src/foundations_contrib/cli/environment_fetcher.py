@@ -15,18 +15,21 @@ class EnvironmentFetcher(object):
     
     def get_all_environments(self):
         local_environments = self._get_local_environments()
-        if local_environments == "Wrong directory":
-            return "Wrong directory"
 
         global_environments = self._get_global_environments()
 
-        return local_environments + global_environments
+        if local_environments != "Wrong directory":
+            return local_environments + global_environments
+        return global_environments
     
     def find_environment(self, env_name):
         file_name = '{}.{}'.format(env_name, 'config.yaml')
-        all_environments = self.get_all_environments()
-        if all_environments == "Wrong directory":
-            return all_environments
+        local_environments = self._get_local_environments()
+
+        if local_environments == "Wrong directory":
+            return local_environments
+        global_environments = self._get_global_environments()
+        all_environments = local_environments + global_environments
         return [env for env in all_environments if file_name in env]
 
 
@@ -40,12 +43,13 @@ class EnvironmentFetcher(object):
         if 'config' not in directories:
             return "Wrong directory" 
 
-        config_directory = '{}/{}'.format(cwd, 'config')
+        config_directory = '{}/{}/{}'.format(cwd, 'config', '*.config.yaml')
         return glob(config_directory)
         
     
     def _get_global_environments(self):
         from glob import glob
-        global_config_directory = '~/.foundations/config'
-        search_path = '{}/{}'.format(global_config_directory, '/*.config.yaml')
+        from os.path import expanduser
+        global_config_directory = expanduser('~/.foundations/config')
+        search_path = '{}/{}'.format(global_config_directory, '*.config.yaml')
         return glob(search_path)
