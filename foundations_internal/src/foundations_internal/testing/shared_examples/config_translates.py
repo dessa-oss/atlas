@@ -41,12 +41,12 @@ class ConfigTranslates(object):
         self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
         result_config = self.translator.translate(self._configuration)
         config = result_config['archive_listing_implementation']
-        self.assertEqual(config['archive_type'], self.listing_type)
+        self.assertEqual(config['archive_listing_type'], self.listing_type)
 
     def test_returns_project_listing_configurations_with_local_type(self):
         result_config = self.translator.translate(self._configuration)
         config = result_config['project_listing_implementation']
-        self.assertEqual(config['archive_type'], self.listing_type)
+        self.assertEqual(config['project_listing_type'], self.listing_type)
 
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)
