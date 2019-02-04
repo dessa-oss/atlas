@@ -55,7 +55,7 @@ def _project_listing_implementation(result_end_point):
 
     project_path = join(result_end_point, 'projects')
     return {
-        'archive_type': AWSPipelineArchiveListing,
+        'project_listing_type': AWSPipelineArchiveListing,
         'constructor_arguments': [project_path]
     }
 
@@ -70,7 +70,7 @@ def _archive_listing_implementation(result_end_point):
 
     archive_path = join(result_end_point, 'archive')
     return {
-        'archive_type': AWSPipelineArchiveListing,
+        'archive_listing_type': AWSPipelineArchiveListing,
         'constructor_arguments': [archive_path]
     }
 
