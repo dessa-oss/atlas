@@ -47,17 +47,24 @@ class AWSBucket(object):
         directory = dirname(pathname)
         path_filter = basename(pathname)
 
-        object_responses = self._connection.list_objects_v2(
-            Bucket=self._bucket_name, Prefix=directory + '/', Delimiter='/')
-        
-        if 'Contents' not in object_responses:
-            return []
+        if not (directory == '.' or directory == ''):
+            prefix = directory + '/'
+        else:
+            prefix = ''
 
-        object_names = [bucket_object['Key'] for bucket_object in object_responses['Contents']]
-        object_file_names = [basename(path) for path in object_names]
-        for path in object_file_names:
-            if fnmatch(path, path_filter):
-                yield '{}/{}'.format(directory, path)
+        object_responses = self._connection.list_objects_v2(
+            Bucket=self._bucket_name, Prefix=prefix, Delimiter='/')
+        
+        if 'Contents' in object_responses:
+            object_names = [bucket_object['Key'] for bucket_object in object_responses['Contents']]
+            object_file_names = [basename(path) for path in object_names]
+            for path in object_file_names:
+                if fnmatch(path, path_filter):
+                    yield prefix + path
+        
+        if 'CommonPrefixes' in object_responses:
+            for new_prefix in object_responses['CommonPrefixes']:
+                yield new_prefix['Prefix']
 
     def remove(self, name):
         self._connection.delete_object(Bucket=self._bucket_name, Key=name)

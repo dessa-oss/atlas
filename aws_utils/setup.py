@@ -24,6 +24,10 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
+    install_requires=[
+        'boto==2.49.0',
+        'boto3==1.9.86',
+    ],
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
