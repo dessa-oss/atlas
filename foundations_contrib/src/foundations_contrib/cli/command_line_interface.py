@@ -67,17 +67,18 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
         project_environment, global_environment = EnvironmentFetcher().get_all_environments()
-        global_environment = self._create_environment_list(global_environment)
 
         if len(global_environment) == 0 and (len(project_environment) == 0 or project_environment == "Wrong directory"):
             CommandLineInterface.static_print('No environments available')
         else:
-            CommandLineInterface.static_print("global configs:")
-            CommandLineInterface.static_print(self._format_environment_printout(global_environment))
+            self._print_configs('global', global_environment)
             if project_environment != 'Wrong directory': 
-                project_environment = self._create_environment_list(project_environment)
-                CommandLineInterface.static_print("project configs:")
-                CommandLineInterface.static_print(self._format_environment_printout(project_environment))
+                self._print_configs('project', project_environment)
+
+    def _print_configs(self, config_list_name, config_list):
+        config_list = self._create_environment_list(config_list)
+        CommandLineInterface.static_print("{} configs:".format(config_list_name))
+        CommandLineInterface.static_print(self._format_environment_printout(config_list))
     
     def _format_environment_printout(self, environment_array):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
@@ -104,7 +105,6 @@ class CommandLineInterface(object):
             sys.path.append(path_to_add)
             import_module(driver_name)
         
-
     def _get_driver_and_path(self, driver_name):
         import os
         if len(driver_name.split('/')) > 1:
