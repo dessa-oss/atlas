@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
-from foundations.job_bundler import JobBundler
+from foundations_contrib.job_bundler import JobBundler
 
 
 class AWSJobDeployment(object):

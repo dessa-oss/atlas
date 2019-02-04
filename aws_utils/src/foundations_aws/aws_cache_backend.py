@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
-from foundations.bucket_cache_backend import BucketCacheBackend
+from foundations_contrib.bucket_cache_backend import BucketCacheBackend
 
 class AWSCacheBackend(BucketCacheBackend):
 
