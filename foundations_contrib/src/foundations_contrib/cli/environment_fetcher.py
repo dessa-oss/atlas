@@ -15,12 +15,9 @@ class EnvironmentFetcher(object):
     
     def get_all_environments(self):
         local_environments = self._get_local_environments()
-
         global_environments = self._get_global_environments()
 
-        if local_environments != "Wrong directory":
-            return local_environments + global_environments
-        return global_environments
+        return local_environments, global_environments
     
     def find_environment(self, env_name):
         file_name = '{}.{}'.format(env_name, 'config.yaml')

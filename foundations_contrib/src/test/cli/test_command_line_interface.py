@@ -140,30 +140,60 @@ class TestCommandLineInterface(Spec):
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
     def test_info_env_flag_returns_environment_none_available(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = []
+        environment_fetcher_mock.return_value = ([], [])
+        CommandLineInterface(['info', '--env']).execute()
+        mock_print.assert_called_with('No environments available')
+
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    def test_info_env_flag_returns_environment_none_available_not_local(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = ("Wrong directory", [])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_with('No environments available')
     
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch.object(CommandLineInterface, '_format_environment_printout')
-    def test_info_env_flag_returns_environment_one_available(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = ['/home/local.config.yaml']
+    def test_info_env_flag_returns_environment_one_available_local(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = (['/home/local.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
-        mock_print.assert_called_with([['local','/home/local.config.yaml' ]])
+        global_call = call([])
+        project_call = call([['local','/home/local.config.yaml']])
+        mock_print.assert_has_calls([global_call, project_call], any_order = True)
     
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch.object(CommandLineInterface, '_format_environment_printout')
-    def test_info_env_flag_returns_environment_one_available_different_environment(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = ['/home/config/uat.config.yaml']
+    def test_info_env_flag_returns_environment_one_available_local_different_environment(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = (['/home/config/uat.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
+        global_call = call([])
+        project_call = call([['uat','/home/config/uat.config.yaml']])
+        mock_print.assert_has_calls([global_call, project_call], any_order = True)
+    
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch.object(CommandLineInterface, '_format_environment_printout')
+    def test_info_env_flag_returns_environment_one_available_global(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = ([], ['/home/config/uat.config.yaml'])
+        CommandLineInterface(['info', '--env']).execute()
+        global_call = call([['uat', '/home/config/uat.config.yaml']])
+        project_call = call([])
+        mock_print.assert_has_calls([global_call, project_call], any_order = True)
+    
+    @patch.object(EnvironmentFetcher, 'get_all_environments')
+    @patch.object(CommandLineInterface, '_format_environment_printout')
+    def test_info_env_flag_returns_environment_one_available_global_no_local(self, mock_print, environment_fetcher_mock):
+        environment_fetcher_mock.return_value = ("Wrong directory", ['/home/config/uat.config.yaml'])
+        CommandLineInterface(['info', '--env']).execute()
+        mock_print.assert_called_once()
         mock_print.assert_called_with([['uat', '/home/config/uat.config.yaml']])
     
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_local_and_global_available(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = ['/home/local.config.yaml', '~/foundations/local.config.yaml']
+        environment_fetcher_mock.return_value = (['/home/local.config.yaml'],['~/foundations/local.config.yaml'])
         CommandLineInterface(['info', '--env']).execute()
-        mock_print.assert_called_with([['local', '/home/local.config.yaml'], ['local','~/foundations/local.config.yaml']])
+        project_call = call([['local', '/home/local.config.yaml']])
+        global_call = call([['local','~/foundations/local.config.yaml']])
+        mock_print.assert_has_calls([project_call, global_call], any_order = True)
 
     @patch.object(EnvironmentFetcher, 'find_environment')
     @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')

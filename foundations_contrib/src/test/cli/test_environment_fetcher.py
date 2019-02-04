@@ -72,7 +72,21 @@ class TestEnvironmentFetcher(unittest.TestCase):
     def test_get_all_environments_returns_local_and_global_configs(self, global_mock, local_mock):
         global_mock.return_value = ['123']
         local_mock.return_value = ['456']
-        self.assertListEqual(EnvironmentFetcher().get_all_environments(), ['456', '123'])
+        self.assertEqual(EnvironmentFetcher().get_all_environments(), (['456'], ['123']))
+    
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_get_all_environments_returns_local_and_global_configs_wrong_directory(self, global_mock, local_mock):
+        global_mock.return_value = ['123']
+        local_mock.return_value = "Wrong directory"
+        self.assertEqual(EnvironmentFetcher().get_all_environments(), ("Wrong directory", ['123']))
+    
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_get_all_environments_returns_local_and_global_configs_no_local(self, global_mock, local_mock):
+        global_mock.return_value = ['123']
+        local_mock.return_value = []
+        self.assertEqual(EnvironmentFetcher().get_all_environments(), ([], ['123']))
     
 
     @patch.object(EnvironmentFetcher, '_get_local_environments')

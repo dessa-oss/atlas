@@ -66,13 +66,18 @@ class CommandLineInterface(object):
     def _info(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
-        available_environments = EnvironmentFetcher().get_all_environments()
-        environment_names = self._create_environment_list(available_environments)
+        project_environment, global_environment = EnvironmentFetcher().get_all_environments()
+        global_environment = self._create_environment_list(global_environment)
 
-        if len(environment_names) == 0:
+        if len(global_environment) == 0 and (len(project_environment) == 0 or project_environment == "Wrong directory"):
             CommandLineInterface.static_print('No environments available')
         else:
-            CommandLineInterface.static_print(self._format_environment_printout(environment_names))
+            CommandLineInterface.static_print("global configs:")
+            CommandLineInterface.static_print(self._format_environment_printout(global_environment))
+            if project_environment != 'Wrong directory': 
+                project_environment = self._create_environment_list(project_environment)
+                CommandLineInterface.static_print("project configs:")
+                CommandLineInterface.static_print(self._format_environment_printout(project_environment))
     
     def _format_environment_printout(self, environment_array):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
