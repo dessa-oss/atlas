@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job List Page 1`] = `
+<div
+  className="job-list-container"
+>
+  <Toolbar />
+  <JobHeader
+    bubbleRefs={Array []}
+    clearFilters={[Function]}
+    filters={Array []}
+    hiddenBubbles={Array []}
+    isShowingMoreFilters={false}
+    numProjects={0}
+    project={Object {}}
+    removeFilter={[Function]}
+  />
+  <JobTable
+    allInputParams={Array []}
+    allMetrics={Array []}
+    allUsers={Array []}
+    boolCheckboxes={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "True",
+        },
+        Object {
+          "hidden": false,
+          "name": "False",
+        },
+      ]
+    }
+    boolFilters={Array []}
+    containFilters={Array []}
+    durationFilters={Array []}
+    filters={Array []}
+    hiddenUsers={Array []}
+    isLoaded={false}
+    isMount={false}
+    jobIdFilters={Array []}
+    jobs={Array []}
+    numberFilters={Array []}
+    projectName=""
+    startTimeFilters={Array []}
+    statuses={
+      Array [
+        Object {
+          "hidden": false,
+          "name": "Completed",
+        },
+        Object {
+          "hidden": false,
+          "name": "Running",
+        },
+        Object {
+          "hidden": false,
+          "name": "Failed",
+        },
+      ]
+    }
+    updateBoolFilter={[Function]}
+    updateContainsFilter={[Function]}
+    updateDurationFilter={[Function]}
+    updateHiddenStatus={[Function]}
+    updateHiddenUser={[Function]}
+    updateJobIdFilter={[Function]}
+    updateNumberFilter={[Function]}
+    updateStartTimeFilter={[Function]}
+  />
+</div>
+`;

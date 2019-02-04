@@ -20,7 +20,7 @@ setup(
     name='foundations',
     version=environ.get('build_version', '0.0.0'),
     description='A tool for machine learning development',
-    classifiers=[ 
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
@@ -30,10 +30,12 @@ setup(
         'pandas==0.23.3',
         'PyYAML==3.13',
         'promise==2.2.1',
+        'futures; python_version == "2.7"',
     ],
     packages=find_packages('src'),
-    package_dir={'':'src'},
+    package_dir={'': 'src'},
     package_data={
         'foundations': ['resources/*'],
-    }
+    },
+    scripts=['foundations']
 )

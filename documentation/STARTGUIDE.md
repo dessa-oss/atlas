@@ -3,9 +3,38 @@
 *Foundations* library can be used in any Python machine learning development workflow.
 It integrates easily with different stages(steps) of the machine learning workflow irrespective of which machine learning library it's used with (Eg: Keras, Tensorflow).
 
+*Foundations* only support Python 3 and above versions.
+
 To start with, first install the Foundations library and then follow examples guide to see how it can be used.
 
 ## Installation
+
+### Windows
+
+You will need to install [git bash](https://git-scm.com/download/win) and [anaconda](https://conda.io/miniconda.html).
+To run Foundations correctly, you will need to run all comands from an Anaconda prompt.
+
+To install:
+
+- Open an Anaconda prompt
+- create a new conda environment by running 
+```
+conda create --name foundations python=3.6
+```
+- activate the environment by running 
+```
+conda activate foundations
+```
+- install dependencies via pip
+```
+pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
+```
+- install foundations libraries via pip using the [Wheel installation](STARTGUIDE.md#wheel-installation)
+
+There are more steps to consider to make Foundations run successfully on Windows. See these [instructions here](WINDOWS.md) for more details.
+
+### OSX/Linux
+
 It's recommended that you use either `virtualenv` or `conda` to setup your Foundations environment.
 Note: if using `virtualenv` make sure to create the environment outside the project directory as the directory will be compressed, and any extra dependencies will add to size and time for job running.
 
@@ -15,10 +44,10 @@ There are two ways to install Foundations library:
 [Wheel installation](STARTGUIDE.md#wheel-installation) or [Install from source](STARTGUIDE.md#install-from-source)
 
 ### Wheel Installation
-The `.whl` files for Python versions 2 and 3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
+The `.whl` files for Python3 are available per release on our [release page](https://github.com/DeepLearnI/foundations/releases).
 There are different assets based on different job deployment strategies.
 
-You only need `foundations-<version>-<python-version>-none-any.whl` file for initial Foundations deployment.
+You only need `foundations-<version>-py3-none-any.whl` file for initial Foundations deployment.
 Choose the appropriate `whl` file to match the Python version installed on your machine.
 
 Run the following command to install Foundations:
@@ -36,7 +65,7 @@ In the root of the repo specify Python version and run:
 
 This builds a new `.whl` file of Foundations and installs it within your `conda` or `virtualenv` environment.
 
-## Environment and Dependencies
+### Environment and Dependencies
 
 Foundations comes with a few dependencies that you'll see in [requirements.txt](https://github.com/DeepLearnI/foundations/blob/master/requirements.txt). The dependencies that get used when you run a job depend on your setup and deployment type. To get to know the different deployment types better see our docs on [configurations](https://github.com/DeepLearnI/foundations/tree/master/examples/example_configs).
 
@@ -53,10 +82,31 @@ It's important to note: if you're looking to use a different version of a packag
 
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
-### Jupyter Notebook Setup
-The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started. 
+### Redis Setup (local deployment only)
 
-### Examples guide
+Foundations' Result Reader uses Redis as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis.
+
+Steps to running Redis:
+
+- download and [install Docker](https://www.docker.com/get-started) if not already installed
+- download redis with `docker pull redis`
+- start redis with `docker run -d -p 6379:6379 redis`
+
+The `-d` option will allows us to run in detached mode, so you don't have to keep your shell open.
+
+The `-p` option allows us to publish a container's port to the host. In this case this means we've told docker that port 6379 inside the container should map to port 6379 of our machine.
+
+Now that redis is running, when you run a job locally it'll get picked and and handled by Redis. Additionally anytime you read results, Foundations will access the Redis store.
+
+If you want to stop the Redis container, run `docker ps`, get the container's ID, and then run `docker stop <container_id>`.
+
+### Jupyter Notebook Setup
+The full features of Foundations can also be used within a Jupyter notebook. Look at our [Jupyter Start Guide](JUPYTERSTARTGUIDE.md) to get started.
+
+### Installing and Running the GUI
+Foundations provides a user interface with which one can view all information about jobs, including status (e.g. queued, running, completed) as well as logged metrics and start time.  As for how to to install and use it, have a look at the [GUI Guide](GUIGUIDE.md).
+
+## Examples guide
 We have a [step by step guide](STEPBYSTEPGUIDE.md) on using Foundations with a very simple example.
 
 We also have made it more clear on how to use different features of Foundations. We try to keep them up to date as we release new and update Foundations. You can [find them all here](/examples).

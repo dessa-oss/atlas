@@ -16,24 +16,35 @@ class TestAPIResource(unittest.TestCase):
 
     class MockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return 'some data'
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
 
     class ParamsMockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return self.params
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
+
+    class ParamsMockWithIndexAndStatus(object):
+        def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _index():
+                return self.params
+            return Response('Mock', LazyResult(_index), status=403)
 
     class DifferentMockWithIndex(object):
         def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
             from foundations_rest_api.response import Response
             def _index():
                 return 'some different data'
-            return Response('Mock', _index)
+            return Response('Mock', LazyResult(_index))
 
     def test_returns_class(self):
         klass = api_resource('path/to/resource')(self.Mock)
@@ -62,6 +73,22 @@ class TestAPIResource(unittest.TestCase):
         with app_manager.app().test_client() as client:
             response = client.get('/path/to/resource/with/params')
             self.assertEqual(self._json_response(response), {})
+
+    def test_get_has_status_code(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/path/to/resource/with/params')(self.ParamsMockWithIndex)
+        with app_manager.app().test_client() as client:
+            response = client.get('/path/to/resource/with/params')
+            self.assertEqual(response.status_code, 200)
+
+    def test_get_has_status_code_different_code(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/path/to/resource/with/params/and/status/code')(self.ParamsMockWithIndexAndStatus)
+        with app_manager.app().test_client() as client:
+            response = client.get('/path/to/resource/with/params/and/status/code')
+            self.assertEqual(response.status_code, 403)
 
     def test_get_returns_path_param(self):
         from foundations_rest_api.global_state import app_manager

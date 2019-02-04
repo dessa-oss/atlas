@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Start Time Cell 1`] = `
+<div
+  className="job-cell start-cell  row-0"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <p
+    className="font-bold"
+  >
+     
+    <span
+      className=""
+    />
+  </p>
+  <div />
+</div>
+`;

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders InputMetricCell 1`] = `
+<div
+  className="job-cell row-0"
+>
+  <p
+    className="type-"
+  />
+</div>
+`;

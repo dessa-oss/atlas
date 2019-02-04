@@ -9,7 +9,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def _config():
     from uuid import uuid4
     from os import getcwd
-    from foundations import config_manager, LocalFileSystemCacheBackend, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
+    from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
+    from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
 
     # separates test runs
     test_uuid = uuid4()

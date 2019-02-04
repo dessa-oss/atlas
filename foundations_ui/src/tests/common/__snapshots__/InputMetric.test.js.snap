@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders InputMetric 1`] = `
+<div
+  className="job-static-columns-container"
+>
+  <TableSectionHeader
+    changeHiddenParams={[Function]}
+    columns={Array []}
+    header=""
+    hiddenInputParams={Array []}
+    isMetric={false}
+    isShowingFilter={false}
+    searchText=""
+    updateSearchText={[Function]}
+  />
+  <div
+    className="input-metric-header-row-container"
+  >
+    <div
+      className="input-metric-column-container column-header"
+    />
+    <ScrollSyncPane
+      enabled={true}
+      group="vertical"
+    >
+      <div
+        className="input-metric-column-container"
+      >
+        <p
+          className="empty-columns-message"
+          key="no-rows-message"
+        >
+          There are no columns selected.
+        </p>
+      </div>
+    </ScrollSyncPane>
+  </div>
+</div>
+`;

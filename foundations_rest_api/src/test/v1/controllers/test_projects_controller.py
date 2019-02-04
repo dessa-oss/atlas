@@ -14,7 +14,7 @@ class TestProjectsController(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.project.Project.all')
     def test_index_returns_all_projects(self, mock):
-        mock.return_value = self._make_response('snowbork drones')
+        mock.return_value = self._make_lazy_result('snowbork drones')
 
         controller = ProjectsController()
 
@@ -23,18 +23,18 @@ class TestProjectsController(unittest.TestCase):
 
     @patch('foundations_rest_api.v1.models.project.Project.all')
     def test_index_returns_all_projects_different_projects(self, mock):
-        mock.return_value = self._make_response('space2vec')
+        mock.return_value = self._make_lazy_result('space2vec')
 
         controller = ProjectsController()
 
         expected_result = [{'name': 'space2vec', 'created_at': None, 'owner': None}]
         self.assertEqual(expected_result, controller.index().as_json())
 
-    def _make_response(self, name):
-        from foundations_rest_api.response import Response
+    def _make_lazy_result(self, name):
+        from foundations_rest_api.lazy_result import LazyResult
         from foundations_rest_api.v1.models.project import Project
 
         def _callback():
             return [Project(name=name)]
 
-        return Response('Project', _callback)
+        return LazyResult(_callback)

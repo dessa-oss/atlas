@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Column Header 1`] = `
+<div
+  className="job-column-header"
+>
+  <div
+    className=""
+  >
+    <h4
+      className="blue-border-bottom"
+    />
+    <Tooltip
+      message=""
+    />
+    <div
+      className="icon-container"
+    />
+    <div
+      className="arrow-container string not-metric"
+      onClick={[Function]}
+      onKeyPress={[Function]}
+      role="presentation"
+    >
+      <div
+        className="arrow-down float-right string not-metric"
+        id=""
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,30 @@
+cache_implementation:
+  cache_type: foundations_contrib.local_file_system_cache_backend.LocalFileSystemCacheBackend
+  constructor_arguments: ["C:\\foundations\\foundations-cache"]
+
+archive_listing_implementation:
+  archive_listing_type: foundations_contrib.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+stage_log_archive_implementation: &archive_implementation
+  archive_type: foundations_contrib.local_file_system_pipeline_archive.LocalFileSystemPipelineArchive
+  constructor_arguments: ["C:\\foundations\\foundations-archive"]
+
+persisted_data_archive_implementation: *archive_implementation
+provenance_archive_implementation: *archive_implementation
+job_source_archive_implementation: *archive_implementation
+artifact_archive_implementation: *archive_implementation
+miscellaneous_archive_implementation: *archive_implementation
+
+project_listing_implementation:
+  project_listing_type: foundations_contrib.local_file_system_pipeline_listing.LocalFileSystemPipelineListing
+  constructor_arguments: ["C:\\foundations\\projects"]
+
+deployment_implementation:
+  deployment_type: foundations_contrib.local_shell_job_deployment.LocalShellJobDeployment
+
+redis_url: redis://localhost:6379
+
+shell_command:
+  "C:\\Program Files\\Git\\bin\\bash.exe"
+

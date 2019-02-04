@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders SelectColumnFilter 1`] = `
+<CheckboxFilter
+  addedClass=""
+  applyClass="b--mat b--affirmative text-upper"
+  checkboxes={null}
+  input={
+    <input
+      onChange={[Function]}
+      type="text"
+    />
+  }
+  onApply={[Function]}
+  onCancel={[Function]}
+  onClearFilters={[Function]}
+  onHideAll={[Function]}
+  submitSearchText={[Function]}
+/>
+`;

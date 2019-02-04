@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders HoverCell 1`] = `
+<div
+  className="job-cell-hover"
+>
+  <p />
+</div>
+`;

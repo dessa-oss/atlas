@@ -13,8 +13,8 @@ class GCPPipelineArchive(object):
 
     def __init__(self, bucket):
         from foundations_gcp.gcp_bucket import GCPBucket
-        from foundations.bucket_pipeline_archive import BucketPipelineArchive
-        from foundations.prefixed_bucket import PrefixedBucket
+        from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+        from foundations_contrib.prefixed_bucket import PrefixedBucket
 
         self._archive = BucketPipelineArchive(
             PrefixedBucket, 'pipeline_archives', GCPBucket, bucket)

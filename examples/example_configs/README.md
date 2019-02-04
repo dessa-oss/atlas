@@ -42,7 +42,7 @@ You'll find example configurations for different deployment types in `/examples/
 
 Foundations works with three different types of deployments:
 
-**Local Deployment:** this will run directly on the machine where the `.yaml` file is. This deployment doesn't require a queuing system.
+**Local Deployment:** this will run directly on the machine where the `.yaml` file is. This deployment doesn't require a queuing system. There are two versions of this, `local.config.yaml` for running on Linux and OSX, and `local_windows.config.yaml` for running on Windows.
 
 **Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration. When using this method of deployment, remember to authenticate with your Google Cloud service. Instructions on how to do this can be found [here](https://google-cloud.readthedocs.io/en/latest/core/auth.html).
 
@@ -161,6 +161,16 @@ Allowed values for `offline_mode` are `OFFLINE` and `FORCE_ONLINE`.  Setting any
 If `offline_mode` is set to `FORCE_ONLINE`, the connectivity check will be skipped and it will be assumed that we can `pip install` packages from the internet.
 
 Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
+
+### Using Redis for remote deployment
+
+If you're running jobs using either SSH or GCP deployment, you'll need to set your Redis connection configuration. This can be done like so:
+
+```
+redis_url: redis://422.428.428.42:33333
+```
+
+If no `redis_url` value is set, it will default to `localhost:6379`.
 
 ### example run_script_environment
 

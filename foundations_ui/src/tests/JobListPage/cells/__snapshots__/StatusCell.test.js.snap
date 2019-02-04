@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Status Cell 1`] = `
+<div
+  className="status-cell job-cell row-0"
+>
+  <span
+    className="status status-green"
+  />
+</div>
+`;

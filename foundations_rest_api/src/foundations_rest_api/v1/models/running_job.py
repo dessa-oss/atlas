@@ -24,7 +24,7 @@ class RunningJob(PropertyModel):
         Returns:
             list<RunningJob> -- All queued jobs
         """
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
             from foundations.global_state import deployment_manager
@@ -36,14 +36,14 @@ class RunningJob(PropertyModel):
                     user=info.user_submitted(),
                     start_time=info.submission_datetime().isoformat(),
                     job_parameters={},
-                    input_params=[], 
+                    input_params=[],
                     output_metrics={}
                 )
                 jobs.append(job)
 
             return jobs
 
-        return Response('QueueJob', _all)
+        return LazyResult(_all)
 
     @staticmethod
     def contexts():
@@ -55,7 +55,7 @@ class RunningJob(PropertyModel):
 
     @staticmethod
     def load_context(archiver):
-        from foundations.pipeline_context import PipelineContext
+        from foundations_internal.pipeline_context import PipelineContext
 
         context = PipelineContext()
         context.load_stage_log_from_archive(archiver)

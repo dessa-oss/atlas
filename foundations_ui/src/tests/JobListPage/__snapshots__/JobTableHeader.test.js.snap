@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job Table Header 1`] = `
+<ScrollSync
+  enabled={true}
+  horizontal={true}
+  proportional={true}
+  vertical={true}
+>
+  <div
+    className="job-list-container"
+  >
+    <TableStaticColumns
+      isDurationFiltered={false}
+      isJobIdFiltered={false}
+      isStartTimeFiltered={false}
+      isStatusFiltered={false}
+      isUserFiltered={false}
+      jobRows={Array []}
+      rowNumbers={Array []}
+      toggleDurationFilter={[Function]}
+      toggleJobIdFilter={[Function]}
+      toggleStartTimeFilter={[Function]}
+      toggleStatusFilter={[Function]}
+      toggleUserFilter={[Function]}
+    />
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      filters={Array []}
+      header="hyperparameters"
+      hiddenInputParams={Array []}
+      isMetric={false}
+      jobs={Array []}
+      searchText=""
+      toggleNumberFilter={[Function]}
+    />
+    <InputMetric
+      allInputParams={Array []}
+      cellWidths={Array []}
+      filters={Array []}
+      header="metrics"
+      hiddenInputParams={Array []}
+      isMetric={true}
+      jobs={Array []}
+      searchText=""
+      toggleNumberFilter={[Function]}
+    />
+  </div>
+</ScrollSync>
+`;

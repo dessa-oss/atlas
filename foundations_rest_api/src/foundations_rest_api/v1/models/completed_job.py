@@ -21,12 +21,12 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def all(project_name=None):
-        from foundations_rest_api.response import Response
+        from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
             return CompletedJob._all_internal(project_name)
 
-        return Response('CompletedJob', _all)
+        return LazyResult(_all)
 
     @staticmethod
     def _all_internal(project_name):
@@ -34,8 +34,7 @@ class CompletedJob(PropertyModel):
 
     @staticmethod
     def _load_jobs(project_name):
-        from foundations.models.pipeline_context_listing import PipelineContextListing
-        from foundations.thread_manager import ThreadManager
+        from foundations_contrib.models.pipeline_context_listing import PipelineContextListing
 
         completed_jobs = []
 
@@ -45,19 +44,20 @@ class CompletedJob(PropertyModel):
                 del job_properties['project_name']
                 completed_jobs.append(CompletedJob(**job_properties))
 
-        with ThreadManager() as manager:
-            for job_id, context in list(PipelineContextListing.pipeline_contexts()):
-                manager.spawn(_loop_body, job_id, context)
+        for job_id, context in list(PipelineContextListing.pipeline_contexts()):
+            _loop_body(job_id, context)
 
         return completed_jobs
 
     @staticmethod
     def _job_properties(context, job_id):
-        from foundations.models.completed_job_data import CompletedJobData
+        from foundations_contrib.models.completed_job_data import CompletedJobData
 
         properties = CompletedJobData(context, job_id).load_job()
-        properties['start_time'] = CompletedJob._datetime_string(properties['start_time'])
-        properties['completed_time'] = CompletedJob._datetime_string(properties['completed_time'])
+        properties['start_time'] = CompletedJob._datetime_string(
+            properties['start_time'])
+        properties['completed_time'] = CompletedJob._datetime_string(
+            properties['completed_time'])
         return properties
 
     @staticmethod

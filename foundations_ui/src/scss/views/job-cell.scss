@@ -1,0 +1,51 @@
+.job-cell{
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: $standard-cell-padding;
+  padding-right: $standard-cell-padding;
+  border-top: 1px solid $color-border-bottom;
+  border-right: 1px solid $color-border-bottom;
+  margin: 0px;
+  line-height: $row-height;
+  height: $row-height;
+  text-align: center;
+  width: $standard-cell-width;
+  position: relative;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.error {
+    color: $color-status-red;
+    background-color: $color-error-background;
+  }
+}
+
+.start-cell {
+  line-height: normal;
+}
+
+.job-id-cell {
+  line-height: normal;
+}
+
+.status-cell {
+  width: $status-cell-width;
+  position: relative;
+}
+
+.duration-cell{
+  text-align: right;
+}
+
+.job-cell-hover {
+  height: $row-height;
+  transition: all 0.3s ease;
+  background:#d1e4ff;
+  position: fixed;
+  z-index: 1;
+  margin-top: -43px;
+  margin-left: 0px;
+  text-align: center;
+}

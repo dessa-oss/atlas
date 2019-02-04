@@ -7,49 +7,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from foundations_rest_api.v1.models.running_job import RunningJob
-from foundations.scheduler_legacy_backend import LegacyBackend
+from foundations_contrib.scheduler_legacy_backend import LegacyBackend
+from .jobs_tests_helper_mixin import JobsTestsHelperMixin
 
 
-class TestRunningJob(unittest.TestCase):
-
-    class MockSchedulerBackend(LegacyBackend):
-
-        def __init__(self, expected_status, job_information):
-            self._expected_status = expected_status
-            self._job_information = job_information
-
-        def get_paginated(self, start_index, number_to_get, status):
-            if self._expected_status == status:
-                return self._job_information
-
-            return []
-
-    class MockDeployment(object):
-
-        def __init__(self, scheduler_backend_callback):
-            self._scheduler_backend_callback = scheduler_backend_callback
-
-        def scheduler_backend(self):
-            return self._scheduler_backend_callback
+class TestRunningJob(unittest.TestCase, JobsTestsHelperMixin):
 
     def setUp(self):
-        from foundations.global_state import config_manager
-        from foundations.global_state import deployment_manager
-
-        deployment_manager._scheduler = None # ugh...
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [])
-        self._mock_deployment = self.MockDeployment(self._scheduler_backend)
-
-        config_manager['deployment_implementation'] = {
-            'deployment_type': self._mock_deployment,
-        }
+        self._setup_deployment('RUNNING')
 
     def tearDown(self):
-        from foundations.global_state import config_manager
+        self._cleanup()
 
-        keys = list(config_manager.config().keys())
-        for key in keys:
-            del config_manager.config()[key]
     def test_has_job_id(self):
         from uuid import uuid4
 
@@ -102,17 +71,15 @@ class TestRunningJob(unittest.TestCase):
         self.assertEqual([], RunningJob.all().evaluate())
 
     def test_all_returns_job_information_from_scheduler(self):
-        from foundations.scheduler_job_information import JobInformation
-
-        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 123456789, 9999, 'RUNNING', 'soju hero')
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information])
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000000', 123456789, 9999, 'soju hero')
 
         expected_job = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju hero', 
-            start_time='1973-11-29T21:33:09', 
+            job_id='00000000-0000-0000-0000-000000000000',
+            user='soju hero',
+            start_time='1973-11-29T21:33:09',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         result = RunningJob.all().evaluate()[0]
@@ -120,32 +87,28 @@ class TestRunningJob(unittest.TestCase):
         self.assertEqual(expected_job, result)
 
     def test_all_returns_job_information_from_scheduler_with_different_jobs(self):
-        from foundations.scheduler_job_information import JobInformation
-
-        job_information = JobInformation('00000000-0000-0000-0000-000000000000', 987654321, 4444, 'RUNNING', 'soju zero')
-        job_information_two = JobInformation('00000000-0000-0000-0000-000000000001', 888888888, 3214, 'RUNNING', 'potato hero')
-        self._scheduler_backend_instance = self.MockSchedulerBackend('RUNNING', [job_information, job_information_two])
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000000', 987654321, 4444, 'soju zero')
+        self._make_running_job(
+            '00000000-0000-0000-0000-000000000001', 888888888, 3214, 'potato hero')
 
         expected_job = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000000', 
-            user='soju zero', 
-            start_time='2001-04-19T04:25:21', 
+            job_id='00000000-0000-0000-0000-000000000000',
+            user='soju zero',
+            start_time='2001-04-19T04:25:21',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         expected_job_two = RunningJob(
-            job_id='00000000-0000-0000-0000-000000000001', 
-            user='potato hero', 
-            start_time='1998-03-03T01:34:48', 
+            job_id='00000000-0000-0000-0000-000000000001',
+            user='potato hero',
+            start_time='1998-03-03T01:34:48',
             job_parameters={},
-            input_params=[], 
+            input_params=[],
             output_metrics={}
         )
         expected_jobs = [expected_job, expected_job_two]
         result = RunningJob.all().evaluate()
 
         self.assertEqual(expected_jobs, result)
-
-    def _scheduler_backend(self):
-        return self._scheduler_backend_instance

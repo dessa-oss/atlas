@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job List Page 1`] = `
+<div
+  className="job-header-container"
+>
+  <div
+    className="job-header-container-left"
+  >
+    <div
+      className="job-header-logo-container"
+    >
+      <div
+        className="i--icon-logo"
+      />
+      <h2
+        className="font-bold"
+      >
+        Foundations
+      </h2>
+    </div>
+    <div
+      className="job-header-info-container"
+    >
+      <div>
+        <div
+          className="half-width inline-block"
+        >
+          <h1
+            className="blue-border-bottom font-bold"
+          >
+            Job List
+          </h1>
+        </div>
+      </div>
+    </div>
+    <div
+      className="job-summary-info-container"
+    >
+      <h2
+        className="font-bold"
+      >
+        null
+      </h2>
+      <p>
+        Data Source: Unknown
+      </p>
+      <p
+        className="font-bold"
+      >
+        Project owner: 
+        <span>
+          null
+        </span>
+      </p>
+      <p
+        className="font-bold"
+      >
+        Created at: 
+        <span>
+          null
+        </span>
+      </p>
+    </div>
+    <div
+      className="job-header-sorting-container"
+    >
+      <button
+        className="b--mat b--affirmative text-upper b--disabled"
+        onClick={[Function]}
+        type="button"
+      >
+        Clear Filters
+      </button>
+      <div>
+        <div />
+      </div>
+      <div>
+        <button
+          className="b--mat b--affirmative text-upper b--disabled"
+          onClick={[Function]}
+          type="button"
+        >
+          View Filters
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

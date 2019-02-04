@@ -1,0 +1,17 @@
+site_name: Foundations
+theme: readthedocs
+docs_dir: api_docs/sources
+repo_url: https://github.com/DeepLearnI/foundations
+site_description: 'Documentation for Foundations, a platform for end-to-end machine learning. Created by Dessa.'
+
+dev_addr: '0.0.0.0:8000'
+
+pages:
+- Home: index.md
+- Foundations concepts: concepts.md
+- Project creation: project_creation.md
+- Stage creation: stage_creation.md
+- Log metrics: log_metrics.md
+- Running stages: running_stages.md
+- Tracking a deployment: tracking_deployment.md
+- Reading job metrics: reading_job_metrics.md

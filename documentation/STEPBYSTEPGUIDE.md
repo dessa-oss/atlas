@@ -104,7 +104,7 @@ This will read logged metrics for jobs ran under project name `demo_project`. It
 
 ### Web GUI
 
-To use the web GUI to view job information, see the README in `/foundations_ui` directory: [here](https://github.com/DeepLearnI/foundations/blob/master/foundations_ui/README.md).
+To use the web GUI to view job information, have a look [here](GUIGUIDE.md) for setup and run instructions.
 
 ## Step 6: Use Foundations caching feature
 

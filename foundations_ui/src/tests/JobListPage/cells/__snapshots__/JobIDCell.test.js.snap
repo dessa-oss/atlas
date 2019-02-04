@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Job ID Cell 1`] = `
+<div
+  className="job-cell job-id-cell row-0"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <p />
+  <div />
+</div>
+`;
