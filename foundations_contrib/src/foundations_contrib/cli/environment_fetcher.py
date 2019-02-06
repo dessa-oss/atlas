@@ -23,7 +23,7 @@ class EnvironmentFetcher(object):
         file_name = '{}.{}'.format(env_name, 'config.yaml')
         local_environments = self._get_local_environments()
 
-        if local_environments == "Wrong directory":
+        if local_environments == None:
             return local_environments
         global_environments = self._get_global_environments()
         all_environments = local_environments + global_environments
@@ -38,7 +38,7 @@ class EnvironmentFetcher(object):
         directories = os.listdir()
 
         if 'config' not in directories:
-            return "Wrong directory" 
+            return None
 
         config_directory = os.path.join(cwd, 'config', '*.config.yaml')
         return glob(config_directory)

@@ -16,7 +16,7 @@ class TestEnvironmentFetcher(unittest.TestCase):
         pass
         
     def test_environment_fetcher_checks_local_config_wrong_directory(self):
-        self.assertEqual(EnvironmentFetcher()._get_local_environments(), "Wrong directory")
+        self.assertEqual(EnvironmentFetcher()._get_local_environments(), None)
 
     @patch('os.listdir', lambda: ['config'])
     @patch('glob.glob')
@@ -78,8 +78,8 @@ class TestEnvironmentFetcher(unittest.TestCase):
     @patch.object(EnvironmentFetcher, '_get_global_environments')
     def test_get_all_environments_returns_local_and_global_configs_wrong_directory(self, global_mock, local_mock):
         global_mock.return_value = ['123']
-        local_mock.return_value = "Wrong directory"
-        self.assertEqual(EnvironmentFetcher().get_all_environments(), ("Wrong directory", ['123']))
+        local_mock.return_value = None
+        self.assertEqual(EnvironmentFetcher().get_all_environments(), (None, ['123']))
     
     @patch.object(EnvironmentFetcher, '_get_local_environments')
     @patch.object(EnvironmentFetcher, '_get_global_environments')
@@ -100,8 +100,8 @@ class TestEnvironmentFetcher(unittest.TestCase):
     @patch.object(EnvironmentFetcher, '_get_local_environments')
     def test_find_environment_returns_error_message_in_wrong_dir(self, local_mock):
         env_name = 'hi'
-        local_mock.return_value = "Wrong directory"
-        self.assertEqual(EnvironmentFetcher().find_environment(env_name), "Wrong directory")
+        local_mock.return_value = None
+        self.assertEqual(EnvironmentFetcher().find_environment(env_name), None)
     
     @patch.object(EnvironmentFetcher, '_get_local_environments')
     @patch.object(EnvironmentFetcher, '_get_global_environments')

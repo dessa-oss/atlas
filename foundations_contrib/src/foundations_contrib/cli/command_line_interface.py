@@ -68,11 +68,11 @@ class CommandLineInterface(object):
 
         project_environment, global_environment = EnvironmentFetcher().get_all_environments()
 
-        if len(global_environment) == 0 and (len(project_environment) == 0 or project_environment == "Wrong directory"):
+        if len(global_environment) == 0 and (project_environment == None or len(project_environment) == 0):
             CommandLineInterface.static_print('No environments available')
         else:
             self._print_configs('global', global_environment)
-            if project_environment != 'Wrong directory': 
+            if project_environment != None: 
                 self._print_configs('project', project_environment)
 
     def _print_configs(self, config_list_name, config_list):
@@ -119,7 +119,7 @@ class CommandLineInterface(object):
     
     def _check_environment_valid(self, environment_file_path, environment_name):
         valid = False
-        if environment_file_path == "Wrong directory":
+        if environment_file_path == None:
             CommandLineInterface.static_print("Foundations project not found. Deploy command must be run in foundations project directory")
         elif len(environment_file_path) == 0:
             CommandLineInterface.static_print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --envs`".format(environment_name))

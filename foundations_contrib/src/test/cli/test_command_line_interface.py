@@ -147,7 +147,7 @@ class TestCommandLineInterface(Spec):
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
     def test_info_env_flag_returns_environment_none_available_not_local(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = ("Wrong directory", [])
+        environment_fetcher_mock.return_value = (None, [])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_with('No environments available')
     
@@ -181,7 +181,7 @@ class TestCommandLineInterface(Spec):
     @patch.object(EnvironmentFetcher, 'get_all_environments')
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_global_no_local(self, mock_print, environment_fetcher_mock):
-        environment_fetcher_mock.return_value = ("Wrong directory", ['/home/config/uat.config.yaml'])
+        environment_fetcher_mock.return_value = (None, ['/home/config/uat.config.yaml'])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_once()
         mock_print.assert_called_with([['uat', '/home/config/uat.config.yaml']])
@@ -212,7 +212,7 @@ class TestCommandLineInterface(Spec):
     @patch.object(EnvironmentFetcher, 'find_environment')
     @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
     def test_deploy_returns_correct_error_if_wrong_directory(self, mock_print, mock_find_env):
-        mock_find_env.return_value = "Wrong directory"
+        mock_find_env.return_value = None
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         mock_print.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
      
