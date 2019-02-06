@@ -46,7 +46,7 @@ class EnvironmentFetcher(object):
     
     def _get_global_environments(self):
         from glob import glob
-        from os.path import expanduser
+        from os.path import expanduser, join
         global_config_directory = expanduser('~/.foundations/config')
-        search_path = '{}/{}'.format(global_config_directory, '*.config.yaml')
+        search_path = join(global_config_directory, '*.config.yaml')
         return glob(search_path)
