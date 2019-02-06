@@ -9,8 +9,18 @@ import unittest
 from foundations.config_manager import ConfigManager
 from mock import patch
 
+from foundations_internal.testing.helpers import let, let_patch_mock
+from foundations_internal.testing.helpers.spec import Spec
 
-class TestConfigManager(unittest.TestCase):
+class TestConfigManager(Spec):
+
+    @let
+    def config_manager(self):
+        return ConfigManager()
+
+    @let
+    def config(self):
+        return self.config_manager.config()    
 
     def test_config_returns_empty(self):
         config = ConfigManager().config()
@@ -48,6 +58,20 @@ class TestConfigManager(unittest.TestCase):
             'test/fixtures/multiple_configs/second.config.yaml')
         config = config_manager.config()
         self.assertEqual({'value': 'different value'}, config)
+
+    config_translator = let_patch_mock('foundations_internal.global_state.config_translator')
+
+    def test_add_simple_config_path_uses_translated_config(self):
+        self.config_translator.translate.return_value = {'some configuration': 'some value for the configuration'}
+        self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/first.config.yaml')
+        self.config_translator.translate.assert_called_with({'title': 'test config'})
+        self.assertEqual({'some configuration': 'some value for the configuration'}, self.config)
+
+    def test_add_simple_config_path_uses_translated_config_different_config(self):
+        self.config_translator.translate.return_value = {'some different configuration': 'a value of great importance'}
+        self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/second.config.yaml')
+        self.config_translator.translate.assert_called_with({'value': 'different value'})
+        self.assertEqual({'some different configuration': 'a value of great importance'}, self.config)
 
     def test_add_config_path_after_configured(self):
         config_manager = ConfigManager()
