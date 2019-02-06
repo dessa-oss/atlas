@@ -111,7 +111,7 @@ class CommandLineInterface(object):
         if len(driver_name.split('/')) > 1:
             additional_path = '/'.join(driver_name.split('/')[0:-1])
             driver_name = driver_name.split('/')[-1]
-            path = '{}/{}'.format(os.getcwd(), additional_path)
+            path = os.path.join(os.getcwd(), additional_path)
         else:
             path = os.getcwd()
         driver_name = driver_name.split('.')[0]               
@@ -129,7 +129,7 @@ class CommandLineInterface(object):
     
     def _check_driver_valid(self, driver_name):
         import os
-        if not os.path.isfile('{}/{}'.format(os.getcwd(), driver_name)):
+        if not os.path.isfile(os.path.join(os.getcwd(), driver_name)):
             CommandLineInterface.static_print('Driver file `{}` does not exist'.format(driver_name))
             return False
         return True

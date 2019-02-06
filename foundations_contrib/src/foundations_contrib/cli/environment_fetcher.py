@@ -40,7 +40,7 @@ class EnvironmentFetcher(object):
         if 'config' not in directories:
             return "Wrong directory" 
 
-        config_directory = '{}/{}/{}'.format(cwd, 'config', '*.config.yaml')
+        config_directory = os.path.join(cwd, 'config', '*.config.yaml')
         return glob(config_directory)
         
     
