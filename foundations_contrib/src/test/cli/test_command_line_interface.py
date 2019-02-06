@@ -228,6 +228,7 @@ class TestCommandLineInterface(Spec):
     run_file = let_patch_mock('importlib.import_module')
     os_cwd = let_patch_mock('os.getcwd')
     os_file_exists = let_patch_mock('os.path.isfile')
+    os_chdir = let_patch_mock('os.chdir')
 
     @set_up
     def set_up(self):
@@ -237,6 +238,7 @@ class TestCommandLineInterface(Spec):
         self.run_file
         self.os_cwd
         self.os_file_exists
+        self.os_chdir
     
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_loads_config_when_found(self, mock_find_env):
@@ -279,19 +281,19 @@ class TestCommandLineInterface(Spec):
         self.os_cwd.return_value = 'home/foundations/lou/'
         mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.run_file.assert_called_with('driver.py') 
+        self.run_file.assert_called_with('driver') 
     
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_imports_driver_file_different_file(self, mock_find_env):
         self.os_cwd.return_value = 'home/foundations/lou'
         mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'hippo/dingo.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', 'hippo/dingo', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/hippo')
-        self.run_file.assert_called_with('dingo.py') 
+        self.run_file.assert_called_with('dingo') 
     
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_imports_driver_file_different_name(self, mock_find_env):
         self.os_cwd.return_value = 'home/foundations/lou/'
         mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
-        self.run_file.assert_called_with('passenger.py')    
+        self.run_file.assert_called_with('passenger')    

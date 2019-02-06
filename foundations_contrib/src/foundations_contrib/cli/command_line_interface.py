@@ -103,8 +103,9 @@ class CommandLineInterface(object):
             config_manager.add_simple_config_path(env_file_path[0])
             driver_name, path_to_add = self._get_driver_and_path(driver_name)
             sys.path.append(path_to_add)
+            os.chdir(path_to_add)
             import_module(driver_name)
-        
+               
     def _get_driver_and_path(self, driver_name):
         import os
         if len(driver_name.split('/')) > 1:
@@ -112,7 +113,8 @@ class CommandLineInterface(object):
             driver_name = driver_name.split('/')[-1]
             path = '{}/{}'.format(os.getcwd(), additional_path)
         else:
-            path = os.getcwd()               
+            path = os.getcwd()
+        driver_name = driver_name.split('.')[0]               
         return driver_name, path
     
     def _check_environment_valid(self, environment_file_path, environment_name):
