@@ -13,11 +13,7 @@ class CommandLineInterface(object):
         print(*args, **kwargs)
     
     def __init__(self, args):
-        from argparse import ArgumentParser
-
-        self._argument_parser = ArgumentParser(prog='foundations')
-        self._argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
-        self._argument_parser.set_defaults(function=self._no_command)
+        self._argument_parser = self._initialize_argument_parser()
         subparsers = self._argument_parser.add_subparsers()
 
         self._initialize_init_parser(subparsers)
@@ -25,6 +21,13 @@ class CommandLineInterface(object):
         self._initialize_info_parser(subparsers)
       
         self._arguments = self._argument_parser.parse_args(args)
+    
+    def _initialize_argument_parser(self): 
+        from argparse import ArgumentParser
+        argument_parser = ArgumentParser(prog='foundations')
+        argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
+        argument_parser.set_defaults(function=self._no_command)
+        return argument_parser
     
     def _initialize_init_parser(self, subparsers):
         init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
@@ -90,8 +93,6 @@ class CommandLineInterface(object):
         return environment_names
       
     def _deploy(self):
-        import os, sys
-        from importlib import import_module
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations.global_state import config_manager     
 
@@ -101,16 +102,26 @@ class CommandLineInterface(object):
 
         if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
             config_manager.add_simple_config_path(env_file_path[0])
-            driver_name, path_to_add = self._get_driver_and_path(driver_name)
-            sys.path.append(path_to_add)
-            os.chdir(path_to_add)
-            import_module(driver_name)
+            self._run_driver_file(driver_name)
+
+    
+    def _run_driver_file(self, driver_name):
+        import os
+        import sys
+        from importlib import import_module
+        
+        driver_name, path_to_add = self._get_driver_and_path(driver_name)
+        sys.path.append(path_to_add)
+        os.chdir(path_to_add)
+        import_module(driver_name)
                
     def _get_driver_and_path(self, driver_name):
         import os
-        if len(driver_name.split('/')) > 1:
-            additional_path = '/'.join(driver_name.split('/')[0:-1])
-            driver_name = driver_name.split('/')[-1]
+
+        split_driver_name = driver_name.split('/')
+        if len(split_driver_name) > 1:
+            additional_path = '/'.join(split_driver_name[0:-1])
+            driver_name = split_driver_name[-1]
             path = os.path.join(os.getcwd(), additional_path)
         else:
             path = os.getcwd()
