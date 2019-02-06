@@ -80,7 +80,6 @@ class Provenance(object):
     def fill_random_state(self):
         self.random_state = random.getstate()
 
-    # TODO: look into better way to test pip modules
     def fill_pip_modules(self):
         import subprocess
         from foundations.utils import string_from_bytes
