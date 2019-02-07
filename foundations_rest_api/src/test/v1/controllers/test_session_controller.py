@@ -7,11 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 from mock import Mock, patch
+import json
 
 # from flask import test_request_context
 from foundations_rest_api.global_state import app_manager
 from foundations_rest_api.v1.controllers.session_controller import SessionController
-
+from foundations_rest_api.v1.models.session import Session
 class TestSessionController(unittest.TestCase):
     
     def setUp(self):
@@ -27,5 +28,38 @@ class TestSessionController(unittest.TestCase):
         with app_manager.app().test_request_context(
             data = 'asdafdnasasasas'
         ):
-            self.assertEqual('Bad request', SessionController().post().as_json())
+            self.assertEqual('Bad Request', SessionController().post().as_json())
     
+    @patch.object(Session, 'auth')
+    def test_session_returns_status_200_if_password_valid(self, mock_auth):
+        with app_manager.app().test_request_context(
+            data = json.dumps('{"password": "bananas"}')
+        ):
+            mock_auth.return_value = 200
+            self.assertEqual(200, SessionController().post().status())
+    
+    @patch.object(Session, 'auth')
+    def test_session_returns_correct_message_if_status_200_and_password_valid(self, mock_auth):
+        with app_manager.app().test_request_context(
+            data = '{"password": "bananas"}'
+        ):
+            mock_auth.return_value = 200
+            self.assertEqual('OK', SessionController().post().as_json())
+
+    @patch.object(Session, 'auth')
+    def test_session_returns_status_401_if_password_valid(self, mock_auth):
+        with app_manager.app().test_request_context(
+            data = '{"password": "apples"}'
+            ):
+            mock_auth.return_value = 401
+            self.assertEqual(401, SessionController().post().status())
+    
+    @patch.object(Session, 'auth')
+    def test_session_returns_correct_message_if_status_401_and_password_valid(self, mock_auth):
+        with app_manager.app().test_request_context(
+            data = '{"password": "oranges"}'
+        ):
+            mock_auth.return_value = 401
+            self.assertEqual('Unauthorized', SessionController().post().as_json())
+       
+        
