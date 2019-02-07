@@ -275,6 +275,15 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['deploy', 'hana/driver.py', '--env=uat']).execute()
         self.os_file_exists.assert_called_with('home/foundations/lou/hana/driver.py')
         mock_print.assert_called_with('Driver file `hana/driver.py` does not exist')
+    
+    @patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.static_print')
+    @patch.object(EnvironmentFetcher, 'find_environment')
+    def test_deploy_returns_error_if_driver_file_does_not_have_py_extension(self, mock_find_env, mock_print):
+        self.os_cwd.return_value = 'home/foundations/lou'
+        self.os_file_exists.return_value = True
+        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', 'hana/driver.exe', '--env=uat']).execute()
+        mock_print.assert_called_with('Driver file `hana/driver.exe` needs to be a python file with an extension `.py`')
 
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_imports_driver_file(self, mock_find_env):
@@ -287,7 +296,7 @@ class TestCommandLineInterface(Spec):
     def test_deploy_imports_driver_file_different_file(self, mock_find_env):
         self.os_cwd.return_value = 'home/foundations/lou'
         mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'hippo/dingo', '--env=uat']).execute()
+        CommandLineInterface(['deploy', 'hippo/dingo.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/hippo')
         self.run_file.assert_called_with('dingo') 
     

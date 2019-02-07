@@ -117,14 +117,14 @@ class CommandLineInterface(object):
                
     def _get_driver_and_path(self, driver_name):
         import os
+        dirname = os.path.dirname(driver_name)
 
-        split_driver_name = driver_name.split('/')
-        if len(split_driver_name) > 1:
-            additional_path = '/'.join(split_driver_name[0:-1])
-            driver_name = split_driver_name[-1]
-            path = os.path.join(os.getcwd(), additional_path)
+        if dirname:
+            driver_name = os.path.basename(driver_name)
+            path = os.path.join(os.getcwd(), dirname)
         else:
             path = os.getcwd()
+
         driver_name = driver_name.split('.')[0]               
         return driver_name, path
     
@@ -143,4 +143,7 @@ class CommandLineInterface(object):
         if not os.path.isfile(os.path.join(os.getcwd(), driver_name)):
             CommandLineInterface.static_print('Driver file `{}` does not exist'.format(driver_name))
             return False
-        return True
+        if driver_name.split('.')[-1] != 'py':
+            CommandLineInterface.static_print('Driver file `{}` needs to be a python file with an extension `.py`'.format(driver_name))
+            return False
+        return True 
