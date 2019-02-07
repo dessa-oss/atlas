@@ -8,8 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class APIResourceBuilder(object):
 
     def __init__(self, klass, base_path):
-        print(base_path)
-        print('----------')
         self._klass = klass
         self._base_path = base_path
         self._api_actions = {}
