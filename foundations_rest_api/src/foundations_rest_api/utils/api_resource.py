@@ -10,11 +10,21 @@ class APIResourceBuilder(object):
     def __init__(self, klass, base_path):
         self._klass = klass
         self._base_path = base_path
+        self._api_actions = {}
 
-    def _create_index_route(self):
+    def _load_index_route(self):
         if hasattr(self._klass, 'index'):
-            resource_class = self._create_api_resource()
-            self._add_resource(resource_class)
+            self._api_actions['get'] = self._get_api_index()
+    
+    def _load_post_route(self):
+        if hasattr(self._klass, 'post'):
+            self._api_actions['post'] = self._post_api_create()
+    
+    def _create_action(self):
+        self._load_index_route()
+        self._load_post_route()
+        resource_class = self._create_api_resource()
+        self._add_resource(resource_class)
 
     def _add_resource(self, resource_class):
         from foundations_rest_api.global_state import app_manager
@@ -25,7 +35,7 @@ class APIResourceBuilder(object):
         import random
 
         class_name = '_%08x' % random.getrandbits(32)
-        return type(class_name, (Resource,), {'get': self._get_api_index()})
+        return type(class_name, (Resource,), self._api_actions)
 
     def _get_api_index(self):
         def _get(resource_self, **kwargs):
@@ -35,6 +45,14 @@ class APIResourceBuilder(object):
             response = instance.index()
             return response.as_json(), response.status()
         return _get
+    
+    def _post_api_create(self):
+        def _post(resource_self, **kwargs):
+            instance = self._klass()
+
+            response = instance.post()
+            return response.as_json(), response.status()
+        return _post
 
     def _api_params(self, kwargs):
         from flask import request
@@ -49,7 +67,7 @@ def api_resource(base_path):
     def _make_api_resource(klass):
         """Decorator for defining resource for controllers
         """
-        APIResourceBuilder(klass, base_path)._create_index_route()
+        APIResourceBuilder(klass, base_path)._create_action()
         return klass
 
     return _make_api_resource
