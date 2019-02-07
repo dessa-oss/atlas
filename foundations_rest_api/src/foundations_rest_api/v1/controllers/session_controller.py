@@ -14,16 +14,10 @@ from http import HTTPStatus
 @api_resource('/api/v1/login')
 class SessionController(object):
 
-    def post(self):
-        from foundations_rest_api.v1.models.session import Session
-        
+    def post(self):      
         try:
             json.loads((request.data).decode())
-            password = request.form.get('password')
-            if Session.auth(password) == 200:
-                return self._response(HTTPStatus.OK)
-            elif Session.auth(password) == 401: 
-                return self._response(HTTPStatus.UNAUTHORIZED)                  
+            return self._authenticate_password()               
         except json.decoder.JSONDecodeError:
             return self._response(HTTPStatus.BAD_REQUEST) 
 
@@ -31,4 +25,12 @@ class SessionController(object):
         from foundations_rest_api.lazy_result import LazyResult
         from foundations_rest_api.response import Response
         return Response('Session', LazyResult(lambda: error.phrase), status=error.value)
+    
+    def _authenticate_password(self):
+        from foundations_rest_api.v1.models.session import Session
+        password = request.form.get('password')
+        if Session.auth(password) == 200:
+            return self._response(HTTPStatus.OK)
+        elif Session.auth(password) == 401: 
+            return self._response(HTTPStatus.UNAUTHORIZED)  
         
