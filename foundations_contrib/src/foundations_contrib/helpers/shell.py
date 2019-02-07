@@ -9,11 +9,11 @@ def find_bash():
     import os
 
     if os.name == 'nt':
-        return _find_bash()
+        return _find_windows_bash()
 
     return '/bin/bash'
 
-def _find_bash():
+def _find_windows_bash():
     winreg = _winreg_module()
     import csv
     StringIO = _get_string_io()
