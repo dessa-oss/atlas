@@ -21,6 +21,29 @@ class TestAPIResource(unittest.TestCase):
             def _index():
                 return 'some data'
             return Response('Mock', LazyResult(_index))
+    
+    class MockWithPost(object):
+        def post(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _post():
+                return 'some data'
+            return Response('Mock', LazyResult(_post))
+    
+    class MockWithIndexAndPost(object):
+        def index(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _index():
+                return 'some index data'
+            return Response('Mock', LazyResult(_index))
+            
+        def post(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _post():
+                return 'some post data'
+            return Response('Mock', LazyResult(_post))
 
     class ParamsMockWithIndex(object):
         def index(self):
@@ -47,7 +70,7 @@ class TestAPIResource(unittest.TestCase):
             return Response('Mock', LazyResult(_index))
 
     def test_returns_class(self):
-        klass = api_resource('path/to/resource')(self.Mock)
+        klass = api_resource('/path/to/resource')(self.Mock)
         self.assertEqual(klass, self.Mock)
 
     def test_get_returns_index(self):
@@ -57,6 +80,14 @@ class TestAPIResource(unittest.TestCase):
         with app_manager.app().test_client() as client:
             response = client.get('/path/to/resource')
             self.assertEqual(self._json_response(response), 'some data')
+    
+    def test_post_returns_post(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/path/to/resource')(self.MockWithPost)
+        with app_manager.app().test_client() as client:
+            response = client.post('/path/to/resource')
+            self.assertEqual(self._json_response(response), 'some data')
 
     def test_get_returns_index_different_data(self):
         from foundations_rest_api.global_state import app_manager
@@ -65,6 +96,16 @@ class TestAPIResource(unittest.TestCase):
         with app_manager.app().test_client() as client:
             response = client.get('/path/to/different/resource')
             self.assertEqual(self._json_response(response), 'some different data')
+    
+    def test_get_and_post_returns_index_and_post(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/path/to/another/resource')(self.MockWithIndexAndPost)
+        with app_manager.app().test_client() as client:
+            post_response = client.post('/path/to/another/resource')
+            get_response = client.get('/path/to/another/resource')
+            self.assertEqual(self._json_response(post_response), 'some post data')
+            self.assertEqual(self._json_response(get_response), 'some index data')
 
     def test_get_returns_empty_params(self):
         from foundations_rest_api.global_state import app_manager
