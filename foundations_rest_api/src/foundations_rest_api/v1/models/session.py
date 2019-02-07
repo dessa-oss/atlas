@@ -12,4 +12,7 @@ class Session(object):
     
     @staticmethod
     def auth(password):
-        pass
+        import os
+        if password == os.environ['PASSWORD']:
+            return 200
+        return 401
