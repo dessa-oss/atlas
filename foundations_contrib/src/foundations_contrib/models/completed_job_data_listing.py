@@ -11,7 +11,7 @@ class CompletedJobDataListing(object):
     As below
     """
     @staticmethod
-    def completed_job_data(project_name):
+    def completed_job_data(project_name, include_input_params):
         """
         Returns all data for running and completed jobs under a specific project name. 
 
@@ -28,7 +28,8 @@ class CompletedJobDataListing(object):
         from foundations_contrib.input_parameter_indexer import InputParameterIndexer  
         from foundations.global_state import redis_connection
 
-        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection))
+        job_data = JobDataRedis.get_all_jobs_data(project_name, redis_connection, include_input_params)
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, job_data)
 
         for job in jobs_data:
             job['output_metrics'] = JobDataShaper.shape_output_metrics(job['output_metrics'])

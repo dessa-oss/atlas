@@ -22,7 +22,7 @@ __Returns__
 
 __Raises__
 
-- This function doesn't raise exceptions.
+- __ValueError__: An exception indicating that the requested project does not exist.
 
 __Example__
 

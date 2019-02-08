@@ -108,10 +108,84 @@ class TestResponse(unittest.TestCase):
         response_parent = Response('mock', mock_parent)
 
         mock = self.MockLazyResult('hello world')
-        response = Response('mock', mock, response_parent)
+        response = Response('mock', mock, parent=response_parent)
 
         response.evaluate()
         self.assertTrue(mock_parent.called)
+
+    def test_as_json_with_fallback(self):
+        mock_fallback = self.MockLazyResult('hello world')
+        response_fallback = Response('mock', mock_fallback)
+
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock, fallback=response_fallback)
+
+        response.evaluate()
+        self.assertEqual('hello world', response.as_json())
+
+    def test_as_json_with_fallback_different_fallback(self):
+        mock_fallback = self.MockLazyResult('hello and goodbye to the world')
+        response_fallback = Response('mock', mock_fallback)
+
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock, fallback=response_fallback)
+
+        response.evaluate()
+        self.assertEqual('hello and goodbye to the world', response.as_json())
+
+    def test_as_json_with_no_result_and_no_fallback(self):
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock)
+
+        with self.assertRaises(ValueError) as error_context:
+            response.as_json()
+        self.assertTrue('No response data and no fallback provided!' in error_context.exception.args)
+
+    def test_status(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock)
+
+        self.assertEqual(200, response.status())
+
+    def test_status_set_status(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, status=202)
+
+        self.assertEqual(202, response.status())
+
+    def test_status_set_status_different_status(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, status=403)
+
+        self.assertEqual(403, response.status())
+
+    def test_status_with_fallback(self):
+        mock_fallback = self.MockLazyResult('')
+        response_fallback = Response('mock', mock_fallback, status=202)
+
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock, fallback=response_fallback)
+
+        response.evaluate()
+        self.assertEqual(202, response.status())
+
+    def test_status_with_fallback_different_fallback(self):
+        mock_fallback = self.MockLazyResult('')
+        response_fallback = Response('mock', mock_fallback, status=404)
+
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock, fallback=response_fallback)
+
+        response.evaluate()
+        self.assertEqual(404, response.status())
+
+    def test_status_with_no_result_and_no_fallback(self):
+        mock = self.MockLazyResult(None)
+        response = Response('mock', mock)
+
+        with self.assertRaises(ValueError) as error_context:
+            response.status()
+        self.assertTrue('No response data and no fallback provided!' in error_context.exception.args)
 
     def test_as_json_with_numpy_nan(self):
         import numpy as np

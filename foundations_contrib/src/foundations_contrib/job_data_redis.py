@@ -20,7 +20,7 @@ class JobDataRedis(object):
         self._job_id = job_id
 
     @staticmethod
-    def get_all_jobs_data(project_name, redis_connection):
+    def get_all_jobs_data(project_name, redis_connection, include_input_params):
         """
         Gets all data related to jobs in a given project from Redis.
 
@@ -38,7 +38,7 @@ class JobDataRedis(object):
 
         pipe = JobDataRedis._create_redis_pipeline(redis_connection)
         futures = JobDataRedis._get_data_for_each_job(
-            job_ids, pipe)
+            job_ids, pipe, include_input_params)
         pipe.execute()
         return [future.get() for future in futures]
 
@@ -48,8 +48,8 @@ class JobDataRedis(object):
         return RedisPipelineWrapper(redis_connection.pipeline())
 
     @staticmethod
-    def _get_data_for_each_job(job_ids, pipe):
-        return [JobDataRedis(pipe, job_id).get_job_data()
+    def _get_data_for_each_job(job_ids, pipe, include_input_params):
+        return [JobDataRedis(pipe, job_id).get_job_data(include_input_params)
                 for job_id in job_ids]
 
     @staticmethod
@@ -58,7 +58,7 @@ class JobDataRedis(object):
             'project:{}:jobs:running'.format(project_name))
         return [job_id.decode() for job_id in job_ids]
 
-    def get_job_data(self):
+    def get_job_data(self, include_input_params):
         """
         Gets all data related to a given job from Redis.
 
@@ -71,8 +71,12 @@ class JobDataRedis(object):
         user = self._add_decoded_get_to_pipe('user')
         job_parameters = self._add_decoded_get_to_pipe(
             'parameters').then(self._deserialize_dict)
-        input_parameters = self._add_get_to_pipe(
-            'input_parameters').then(self._deserialize_list)
+        if include_input_params:
+            input_parameters = self._add_get_to_pipe(
+                'input_parameters').then(self._deserialize_list)
+        else:
+            input_parameters = Promise()
+            input_parameters.fulfill([])
         output_metrics = self._add_lrange_to_pipe_and_deserialize('metrics')
         status = self._add_decoded_get_to_pipe('state')
         start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
