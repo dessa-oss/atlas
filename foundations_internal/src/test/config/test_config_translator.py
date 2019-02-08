@@ -9,11 +9,19 @@ import unittest
 from mock import Mock
 
 from foundations_internal.config.config_translator import ConfigTranslator
+from foundations_internal.testing.helpers.spec import Spec
+from foundations_internal.testing.helpers import let_patch_mock, set_up
 
-class TestConfigTranslator(unittest.TestCase):
+class TestConfigTranslator(Spec):
 
-    def setUp(self):
+    mock_import = let_patch_mock('importlib.import_module')
+
+    @set_up
+    def set_up(self):
         self._translator = ConfigTranslator()
+
+        # ensure our import is being used
+        self.mock_import
     
     def test_raises_error_when_no_translator_defined(self):
         with self.assertRaises(ValueError) as error_context:
@@ -97,3 +105,48 @@ class TestConfigTranslator(unittest.TestCase):
 
         translation = self._translator.translate({})
         self.assertEqual('local configuration', translation)
+
+    def test_supports_importing_module_for_adding_additional_configurations(self):
+        self.mock_import.side_effect = self._do_module_patch('super custom deployment environment')
+        translation = self._translator.translate({'job_deployment_env': 'super_deployment'})
+        self.assertEqual('super custom deployment environment', translation)
+
+    def test_supports_importing_module_for_adding_additional_configurations_different_environment(self):
+        self.mock_import.side_effect = self._do_module_patch('super weak custom deployment environment')
+        translation = self._translator.translate({'job_deployment_env': 'weak_deployment'})
+        self.assertEqual('super weak custom deployment environment', translation)
+
+    def test_raises_error_if_cannot_import_config(self):
+        self.mock_import.side_effect = self._raise_module_patch
+
+        with self.assertRaises(ValueError) as error_context:
+            self._translator.translate({'job_deployment_env': 'potato'})
+
+        self.assertIn('Invalid `job_deployment_env` value `potato`. Supported `job_deployment_env`s are: <>.', error_context.exception.args)        
+
+    def test_does_not_call_import_when_translate_exists(self):
+        gcp = Mock()
+        gcp.translate.return_value = 'gcp environment with configured data'
+        self._translator.add_translator('gcp', gcp)
+
+        self._translator.translate({'job_deployment_env': 'gcp'})
+        self.mock_import.assert_not_called()
+
+    def test_does_not_call_import_when_translate_exists_different_environment(self):
+        local = Mock()
+        local.translate.return_value = 'local environment with configured data'
+        self._translator.add_translator('local', local)
+
+        self._translator.translate({'job_deployment_env': 'local'})
+        self.mock_import.assert_not_called()
+
+    def _do_module_patch(self, config_translation):
+        def _callback(module_name):
+            config_name = module_name.split('foundations_')[1]
+            translator = Mock()
+            translator.translate.return_value = config_translation
+            self._translator.add_translator(config_name, translator)
+        return _callback
+
+    def _raise_module_patch(self, module_name):
+        raise ImportError('Module does not exist')

@@ -17,10 +17,20 @@ class ConfigTranslator(object):
     def translate(self, source_config):
         deployment_type = source_config.get('job_deployment_env', 'local')
 
+        self._load_additional_module_if_necessary(deployment_type)
+
         if not deployment_type in self._translators:
             raise self._invalid_environment_error(source_config, deployment_type)
 
         return self._translators[deployment_type].translate(source_config)
+
+    def _load_additional_module_if_necessary(self, deployment_type):
+        if not deployment_type in self._translators:
+            try:
+                from importlib import import_module
+                import_module('foundations_{}'.format(deployment_type))
+            except ImportError:
+                pass
 
     def _invalid_environment_error(self, source_config, deployment_type):
         supported_deployments = str.join(', ', self._translators)
