@@ -44,7 +44,7 @@ class TestJobDataProducers(unittest.TestCase):
         deployment = stage.run(some_run_data=777, job_name='successful_job')
         deployment.wait_for_deployment_to_complete()
 
-        all_job_data = JobDataRedis.get_all_jobs_data('default', self._redis)
+        all_job_data = JobDataRedis.get_all_jobs_data('default', self._redis, True)
 
         job_data = all_job_data[0]
         self.assertEqual('default', job_data['project_name'])

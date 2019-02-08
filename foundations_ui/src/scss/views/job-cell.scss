@@ -9,14 +9,25 @@
   line-height: $row-height;
   height: $row-height;
   text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
   width: $standard-cell-width;
-  
+  position: relative;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   &.error {
     color: $color-status-red;
     background-color: $color-error-background;
   }
+}
+
+.start-cell {
+  line-height: normal;
+}
+
+.job-id-cell {
+  line-height: normal;
 }
 
 .status-cell {
@@ -26,4 +37,15 @@
 
 .duration-cell{
   text-align: right;
+}
+
+.job-cell-hover {
+  height: $row-height;
+  transition: all 0.3s ease;
+  background:#d1e4ff;
+  position: fixed;
+  z-index: 1;
+  margin-top: -43px;
+  margin-left: 0px;
+  text-align: center;
 }

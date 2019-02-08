@@ -45,3 +45,4 @@ foundations.zip
 .history
 site/
 **/.idea*
+!examples/example_configs/*.config.yaml

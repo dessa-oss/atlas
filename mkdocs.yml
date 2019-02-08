@@ -9,6 +9,7 @@ dev_addr: '0.0.0.0:8000'
 pages:
 - Home: index.md
 - Foundations concepts: concepts.md
+- Project creation: project_creation.md
 - Stage creation: stage_creation.md
 - Log metrics: log_metrics.md
 - Running stages: running_stages.md

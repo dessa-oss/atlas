@@ -47,7 +47,7 @@ class TestProjects(unittest.TestCase):
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_returns_all_completed_job_data(self, listing_mock, find_mock):
-        from pandas import DataFrame, concat
+        from pandas import DataFrame
         from pandas.util.testing import assert_frame_equal
 
         input_params = [
@@ -60,9 +60,46 @@ class TestProjects(unittest.TestCase):
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
-            [{'project_name': 'project1', 'b': '1', 'c': '2', 'd': '3', 'loss': 100}])
+            [
+                {
+                    'project_name': 'project1',
+                    'b': '1',
+                    'c': '2',
+                    'd': '3',
+                    'loss': 100,
+                    'a': 5
+                }
+            ]
+        )
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1'), check_like=True)
+            'project1', True), check_like=True)
+
+    @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
+    @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
+    def test_get_metrics_for_all_jobs_returns_all_completed_job_data_without_input_parameters(self, listing_mock, find_mock):
+        from pandas import DataFrame
+        from pandas.util.testing import assert_frame_equal
+
+        input_params = [
+            {'name': 'b', 'value': '1', 'type': 'string', 'source': 'constant'},
+            {'name': 'c', 'value': '2', 'type': 'string', 'source': 'constant'},
+            {'name': 'd', 'value': '3', 'type': 'string', 'source': 'constant'},
+        ]
+        output_metrics = {'loss': 100}
+        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+            'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
+
+        expected_result = DataFrame(
+            [
+                {
+                    'project_name': 'project1',
+                    'loss': 100,
+                    'a': 5
+                }
+            ]
+        )
+        assert_frame_equal(expected_result, get_metrics_for_all_jobs(
+            'project1', False), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -81,10 +118,20 @@ class TestProjects(unittest.TestCase):
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
-            [{'d-0': '1', 'd-1': '4', 'project_name': 'project1', 'loss': 100, 'c': '2', 'b': '3'}])
+            [
+                {
+                    'd-0': '1',
+                    'd-1': '4',
+                    'project_name': 'project1',
+                    'loss': 100,
+                    'c': '2',
+                    'b': '3',
+                    'a': 5
+                }
+            ]
+        )
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1'), check_like=True)
-
+            'project1', True), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -112,12 +159,28 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'project_name': 'project2', 'b-0': '1','loss': 100, 'd-2': '3', 'c-1': '2'},
-            {'e-4': '5', 'project_name': 'project2','win': 56, 'd-3': '4', 'f-5': '6'},
+            {
+                'project_name': 'project2',
+                'b-0': '1',
+                'loss': 100,
+                'd-2': '3',
+                'c-1': '2',
+                'a': 5,
+                'bad': None,
+            },
+            {
+                'e-4': '5',
+                'project_name': 'project2',
+                'win': 56,
+                'd-3': '4',
+                'f-5': '6',
+                'a': None,
+                'bad': 77
+            },
         ]
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project2'), check_like=True)
+            'project2', True), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -138,11 +201,19 @@ class TestProjects(unittest.TestCase):
         ]
 
         expected_data = [
-            {'project_name': 'project1', 'b-0': '1',
-                'c-1': '2', 'd-2': '3', 'loss': 100},
+            {
+                'project_name': 'project1',
+                'b-0': '1',
+                'c-1': '2',
+                'd-2': '3',
+                'loss': 100,
+                'a': 5
+            },
         ]
-        expected_result = DataFrame(expected_data, columns=['project_name', 'b-0', 'c-1', 'd-2', 'loss'])
-        assert_frame_equal(expected_result, get_metrics_for_all_jobs('project1'))
+        expected_result = DataFrame(expected_data, columns=[
+                                    'project_name', 'a', 'b-0', 'c-1', 'd-2', 'loss'])
+        assert_frame_equal(
+            expected_result, get_metrics_for_all_jobs('project1', True))
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -152,7 +223,8 @@ class TestProjects(unittest.TestCase):
         with self.assertRaises(ValueError) as error_context:
             get_metrics_for_all_jobs('project1')
 
-        self.assertTrue('Project `project1` does not exist!' in error_context.exception.args)
+        self.assertTrue(
+            'Project `project1` does not exist!' in error_context.exception.args)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -162,9 +234,11 @@ class TestProjects(unittest.TestCase):
         with self.assertRaises(ValueError) as error_context:
             get_metrics_for_all_jobs('project numba 5')
 
-        self.assertTrue('Project `project numba 5` does not exist!' in error_context.exception.args)
+        self.assertTrue(
+            'Project `project numba 5` does not exist!' in error_context.exception.args)
 
     def test_get_metrics_for_all_jobs_is_defined_globally(self):
         import foundations
 
-        self.assertEqual(get_metrics_for_all_jobs, foundations.get_metrics_for_all_jobs)
+        self.assertEqual(get_metrics_for_all_jobs,
+                         foundations.get_metrics_for_all_jobs)

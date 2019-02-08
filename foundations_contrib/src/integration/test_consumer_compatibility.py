@@ -32,7 +32,7 @@ class TestConsumerCompatibility(unittest.TestCase):
         from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
 
         async_redis = RedisPipelineWrapper(self._redis.pipeline())
-        future = JobDataRedis(async_redis, job_id).get_job_data()
+        future = JobDataRedis(async_redis, job_id).get_job_data(True)
         async_redis.execute()
 
         return future.get()
