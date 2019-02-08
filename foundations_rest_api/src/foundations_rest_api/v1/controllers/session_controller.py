@@ -15,11 +15,10 @@ from http import HTTPStatus
 class SessionController(object):
 
     def post(self):      
-        try:
-            json.loads((request.data).decode())
-            return self._authenticate_password()               
-        except json.decoder.JSONDecodeError:
-            return self._response(HTTPStatus.BAD_REQUEST) 
+        if 'password' in request.form:
+            return self._authenticate_password()
+        else:
+            return self._response(HTTPStatus.BAD_REQUEST)
 
     def _response(self, error):
         from foundations_rest_api.lazy_result import LazyResult
@@ -31,6 +30,6 @@ class SessionController(object):
         password = request.form.get('password')
         if Session.auth(password) == 200:
             return self._response(HTTPStatus.OK)
-        elif Session.auth(password) == 401: 
-            return self._response(HTTPStatus.UNAUTHORIZED)  
+        else:
+            return self._response(HTTPStatus.UNAUTHORIZED)
         

@@ -5,14 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class Session(object):
-    
+
     def __init__(self):
         pass
-    
+
     @staticmethod
     def auth(password):
         import os
-        if password == os.environ['PASSWORD']:
+        if password == os.environ.get('GUIPASSWORD', None):
             return 200
-        return 401
+        else:
+            return 401
+        
