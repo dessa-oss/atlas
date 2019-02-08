@@ -17,10 +17,10 @@ class ConfigTranslator(object):
     def translate(self, source_config):
         deployment_type = source_config.get('job_deployment_env', 'local')
 
-        if deployment_type in self._translators:
-            return self._translators[deployment_type].translate(source_config)
+        if not deployment_type in self._translators:
+            raise self._invalid_environment_error(source_config, deployment_type)
 
-        raise self._invalid_environment_error(source_config, deployment_type)
+        return self._translators[deployment_type].translate(source_config)
 
     def _invalid_environment_error(self, source_config, deployment_type):
         supported_deployments = str.join(', ', self._translators)
