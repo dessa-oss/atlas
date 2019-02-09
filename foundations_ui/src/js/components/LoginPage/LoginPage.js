@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
-import ProjectActions from '../../actions/ProjectActions';
+import LoginActions from '../../actions/LoginActions';
 import LoginHeader from './LoginHeader';
 
 class LoginPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = {
+      loginStatus: null,
+      value: '',
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,8 +21,21 @@ class LoginPage extends Component {
   }
 
   handleSubmit(event) {
-    alert(`A name was submitted: ${this.state.value}`);
+    const data = new FormData(event.target);
+    fetch('http://127.0.0.1:37722/api/v1/login', {
+      method: 'post',
+      body: data,
+    });
     event.preventDefault();
+  }
+
+  async login() {
+    const loginStatus = await LoginActions.getProjects();
+    // use is mount for async as when it returns may have been unmounted
+    const { isMount } = this.state;
+    if (isMount) {
+      this.setState({ loginStatus: loginStatus});
+    }
   }
 
   render() {
@@ -33,7 +49,7 @@ class LoginPage extends Component {
           <form onSubmit={this.handleSubmit}>
             <label>
               Password:
-              <input type="text" value={this.state.value} onChange={this.handleChange} />
+              <input type="text" name="password" value={this.state.value} onChange={this.handleChange} />
             </label>
             <input type="submit" value="Submit" />
           </form>
@@ -46,16 +62,14 @@ class LoginPage extends Component {
 
 LoginPage.propTypes = {
   isMount: PropTypes.bool,
-  isLoaded: PropTypes.bool,
-  queryStatus: PropTypes.number,
-  projects: PropTypes.array,
+  loginStatus: PropTypes.bool,
 };
 
 LoginPage.defaultProps = {
   isMount: false,
   isLoaded: false,
   queryStatus: 200,
-  projects: [],
+  loginStatus: false,
 };
 
 export default LoginPage;
