@@ -16,7 +16,7 @@ const BaseActions = {
         },
       );
   },
-  
+
   postToAPI(url, body) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
