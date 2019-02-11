@@ -24,6 +24,7 @@ class LoginPage extends Component {
   }
 
   handleSubmit(event) {
+    console.log('--------submitted')
     const data = new FormData(event.target);
     this.login(data);
     event.preventDefault();
@@ -63,7 +64,7 @@ class LoginPage extends Component {
           <form onSubmit={this.handleSubmit}>
             <label>
               Password:
-              <input type="text" name="password" value={this.state.value} onChange={this.handleChange} />
+              <input type="password" name="password" value={this.state.value} onChange={this.handleChange} />
             </label>
             <input type="submit" value="Submit" />
           </form>
