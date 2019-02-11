@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
 import LoginActions from '../../actions/LoginActions';
 import LoginHeader from './LoginHeader';
+import ErrorMessage from '../common/ErrorMessage';
 
 class LoginPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginStatus: null,
+      isLoggedIn: null,
+      loginResponse: [],
       value: '',
     };
+    this.login = this.login.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,23 +25,34 @@ class LoginPage extends Component {
 
   handleSubmit(event) {
     const data = new FormData(event.target);
-    fetch('http://127.0.0.1:37722/api/v1/login', {
-      method: 'post',
-      body: data,
-    });
+    this.login(data);
     event.preventDefault();
   }
 
-  async login() {
-    const loginStatus = await LoginActions.getProjects();
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      this.setState({ loginStatus: loginStatus});
-    }
+  async login(data) {
+    const response = await LoginActions.postLogin(data);
+    this.setState({
+      loginResponse: response,
+      isLoggedIn: response[0] === 200,
+    });
   }
 
   render() {
+    const { isLoggedIn, loginResponse } = this.state;
+
+    let passwordError;
+    if (isLoggedIn) {
+      return LoginActions.redirect('/projects');
+    }
+
+    if (loginResponse[0] === 401) {
+      passwordError = 'Incorrect password.';
+    }
+
+    if (loginResponse[0] === 400) {
+      return <ErrorMessage errorCode={loginResponse[0]} />;
+    }
+
     return (
       <div className="login-page-container">
         <div className="header">
@@ -53,7 +67,7 @@ class LoginPage extends Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
-
+          <p>{passwordError}</p>
         </div>
       </div>
     );
@@ -62,14 +76,16 @@ class LoginPage extends Component {
 
 LoginPage.propTypes = {
   isMount: PropTypes.bool,
-  loginStatus: PropTypes.bool,
+  isLoggedIn: PropTypes.bool,
+  isLoaded: PropTypes.bool,
+  loginResponse: PropTypes.array,
 };
 
 LoginPage.defaultProps = {
   isMount: false,
   isLoaded: false,
-  queryStatus: 200,
-  loginStatus: false,
+  isLoggedIn: false,
+  loginResponse: [],
 };
 
 export default LoginPage;

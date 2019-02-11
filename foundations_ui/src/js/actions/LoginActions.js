@@ -3,9 +3,9 @@ import { Redirect } from 'react-router-dom';
 import BaseActions from './BaseActions';
 
 class LoginActions {
-  static postLogin() {
+  static postLogin(body) {
     const url = 'login';
-    return BaseActions.postFromAPI(url);
+    return BaseActions.postFromAPI(url, body);
   }
 
   static redirect(urlName) {

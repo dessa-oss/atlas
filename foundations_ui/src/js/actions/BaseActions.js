@@ -16,10 +16,11 @@ const BaseActions = {
         },
       );
   },
-  postFromAPI(url) {
+  postFromAPI(url, body) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
       method: 'POST',
+      body,
     }).then(
       (res) => {
         const status = res.status;
