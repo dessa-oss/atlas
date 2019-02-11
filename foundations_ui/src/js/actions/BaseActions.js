@@ -16,7 +16,8 @@ const BaseActions = {
         },
       );
   },
-  postFromAPI(url, body) {
+  
+  postToAPI(url, body) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
       method: 'POST',
@@ -33,6 +34,7 @@ const BaseActions = {
       },
     );
   },
+
   // NOTE this is the method for Beta backend only
   getBetaFromAPI(url) {
     const fullURL = this.baseBetaURL.concat(url);

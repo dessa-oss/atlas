@@ -5,7 +5,7 @@ import BaseActions from './BaseActions';
 class LoginActions {
   static postLogin(body) {
     const url = 'login';
-    return BaseActions.postFromAPI(url, body);
+    return BaseActions.postToAPI(url, body);
   }
 
   static redirect(urlName) {
