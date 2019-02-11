@@ -33,7 +33,7 @@ def throws_exception(input):
 def return_error_message(err):
     return "error code: " + str(err)
 
-def path_check():
+def get_and_log_python_path_as_metric():
     import sys
 
     python_path = sys.executable
