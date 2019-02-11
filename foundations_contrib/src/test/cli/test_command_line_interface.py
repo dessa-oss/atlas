@@ -15,12 +15,12 @@ from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from foundations import ConfigManager
 
 
-from foundations_internal.testing.helpers import let_patch_mock, set_up
+from foundations_internal.testing.helpers import let, let_patch_mock, set_up
 from foundations_internal.testing.helpers.spec import Spec
 
 
 class TestCommandLineInterface(Spec):
-    
+
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
         parser_mock = Mock()
@@ -226,25 +226,33 @@ class TestCommandLineInterface(Spec):
     config_manager = let_patch_mock('foundations.global_state.config_manager')
     sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
-    os_cwd = let_patch_mock('os.getcwd')
+
+    @let
+    def os_cwd(self):
+        mock = self.patch('os.getcwd')
+        mock.return_value = '/path/to/where/ever/we/are'
+        return mock
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
+    exit_mock = let_patch_mock('sys.exit')
 
     @set_up
     def set_up(self):
-        # ensure we use out config_manager
-        self.config_manager
+        self._use_config_manager()
+        self._use_exit_mock()
+
         self.sys_path
         self.run_file
         self.os_cwd
         self.os_file_exists
         self.os_chdir
-    
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_loads_config_when_found(self, mock_find_env):
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.config_manager.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
+
+    def _use_config_manager(self):
+        self.config_manager
+
+    def _use_exit_mock(self):
+        self.exit_mock
     
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_loads_config_when_found(self, mock_find_env):
