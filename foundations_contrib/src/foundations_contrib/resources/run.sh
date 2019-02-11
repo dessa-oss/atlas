@@ -58,10 +58,10 @@ fi
 
 cd $BASEDIR && \
   . $activate_path && \
-  with_output_redirect echo Running python version `${python_path} --version` located at ${python_path} && \
+  with_output_redirect echo Running python version `python --version` located at $(which python) && \
   touch requirements.txt && \
-  with_output_redirect ${python_path} -m pip install ${pip_options} -r requirements.txt && \
-  PYTHONUNBUFFERED=TRUE ${python_path} main.py
+  with_output_redirect python -m pip install ${pip_options} -r requirements.txt && \
+  PYTHONUNBUFFERED=TRUE python main.py
   
 status=$?
 
