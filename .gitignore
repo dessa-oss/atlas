@@ -45,3 +45,5 @@ foundations.zip
 .history
 site/
 **/.idea*
+
+!foundations_ui/package.json
