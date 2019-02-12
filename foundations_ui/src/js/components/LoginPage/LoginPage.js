@@ -24,7 +24,6 @@ class LoginPage extends Component {
   }
 
   handleSubmit(event) {
-    console.log('--------submitted')
     const data = new FormData(event.target);
     this.login(data);
     event.preventDefault();

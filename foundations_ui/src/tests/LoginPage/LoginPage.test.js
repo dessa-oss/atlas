@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import fake from 'faker';
 import LoginPage from '../../js/components/LoginPage/LoginPage';
 import { shallow, mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import configureTests from '../setupTests';
+
 import LoginActions from '../../js/actions/LoginActions';
 
 configureTests();
@@ -19,27 +21,34 @@ it('isLoggedIn is null by Default', () => {
 });
 
 
-it('Calls HandleSubmit on Submit', () => {
-    <MemoryRouter>
-        const fakeEvent = {preventDefault: () => console.log('preventDefault') };
-        const mockedSubmitFunction = jest.fn(event => {
-            console.log("Mocked function");
-        });
-        const wrapper = mount(<LoginPage/>);
-        console.log(wrapper.find('form'))
-        wrapper.find('form').simulate('submit', fakeEvent)
-        expect(wrapper.instance().handleSubmit()).toBeCalled()
-    </MemoryRouter>
+it("postLogin is called on Login", async () => {
+    LoginActions.postLogin = jest.fn().mockResolvedValue([200, 'OK']);
+    const wrapper = shallow(<LoginPage/>);
+    const fake_data = {password: fake.lorem.word()};
+    await wrapper.instance().login(fake_data)
+    expect(LoginActions.postLogin).toBeCalledWith(fake_data)
+
 });
 
-// it("Sets loginResponse and isLoggedIn on Login", () => {
-//     LoginActions.postLogin = jest.fn();
-//     LoginActions.postLogin.mockReturnValueOnce = [200, 'OK'];
-//     const wrapper = shallow(<LoginPage/>);
-//     wrapper.instance().login('data')
-//     expect(LoginActions.postLogin).toBeCalled()
-//     expect(wrapper.state('isLoggedIn')).toEqual(true)
-//     expect(wrapper.state('loginResponse')).toEqual([999, 'OK'])
+it("Sets isLoggedIn to True on Login", async () => {
+    LoginActions.postLogin = jest.fn().mockResolvedValue([200, 'OK']);
+    const wrapper = shallow(<LoginPage/>);
+    await wrapper.instance().login('data')
+    expect(wrapper.state('isLoggedIn')).toEqual(true)
 
-// });
+});
 
+it("Sets isLoggedIn to False on Login", async () => {
+    LoginActions.postLogin = jest.fn().mockResolvedValue([401, 'Unauthorized']);
+    const wrapper = shallow(<LoginPage/>);
+    const fake_data = {password: fake.lorem.word()};
+    await wrapper.instance().login(fake_data)
+    expect(wrapper.state('isLoggedIn')).toEqual(false)
+});
+
+it("Sets loginResponse on Login", async () => {
+    LoginActions.postLogin = jest.fn().mockResolvedValue([200, 'OK']);
+    const wrapper = shallow(<LoginPage/>);
+    await wrapper.instance().login('data')
+    expect(wrapper.state('loginResponse')).toEqual([200, 'OK'])
+});
