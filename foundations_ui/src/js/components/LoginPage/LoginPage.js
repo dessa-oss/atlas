@@ -67,7 +67,7 @@ class LoginPage extends Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
-          <p>{passwordError}</p>
+          <p className="auth-error">{passwordError}</p>
         </div>
       </div>
     );

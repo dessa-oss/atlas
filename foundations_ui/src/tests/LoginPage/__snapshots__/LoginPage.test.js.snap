@@ -32,7 +32,9 @@ exports[`Shallow Renders ProjectPage 1`] = `
         value="Submit"
       />
     </form>
-    <p />
+    <p
+      className="auth-error"
+    />
   </div>
 </div>
 `;

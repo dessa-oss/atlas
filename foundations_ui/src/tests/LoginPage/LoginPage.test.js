@@ -72,3 +72,11 @@ it("calls redirect if isLoggedIn", () => {
     })
     expect(LoginActions.redirect).toBeCalledWith('/projects');
 })
+
+it("displays correct password error when unauthorized", () => {
+    const wrapper = shallow(<LoginPage/>);
+    wrapper.setState({
+        loginResponse: [401, 'Unauthorized']
+    })
+    expect(wrapper.find('.auth-error').text('Incorrect password'));
+})
