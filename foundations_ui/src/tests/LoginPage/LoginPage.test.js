@@ -5,6 +5,7 @@ import LoginPage from '../../js/components/LoginPage/LoginPage';
 import { shallow, mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import configureTests from '../setupTests';
+import ErrorMessage from '../../js/components/common/ErrorMessage';
 
 import LoginActions from '../../js/actions/LoginActions';
 
@@ -80,3 +81,14 @@ it("displays correct password error when unauthorized", () => {
     })
     expect(wrapper.find('.auth-error').text('Incorrect password'));
 })
+
+// it("displays error message when bad request", () => {
+    
+//     const wrapper = shallow(<LoginPage/>);
+//     wrapper.setState({
+//         loginResponse: [400, 'Bad Request']
+//     })
+//     console.log('wrapper: ', wrapper.instance())
+//     console.log('wrapper')
+//     // expect(wrapper.find('ErrorMessage').exists()).toEqual(false);
+// })
