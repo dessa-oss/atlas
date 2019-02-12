@@ -55,7 +55,4 @@ class TestSessionController(unittest.TestCase):
         with app_manager.app().test_request_context():
             request.form = ImmutableMultiDict([('password', 'dog')])
             mock_auth.return_value = 401
-            self.assertEqual('Unauthorized', SessionController().post().as_json())
-            
-       
-        
+            self.assertEqual('Unauthorized', SessionController().post().as_json())      
