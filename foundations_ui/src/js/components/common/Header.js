@@ -18,7 +18,7 @@ class ProjectHeader extends Component {
     const { numProjects, pageTitle } = this.state;
 
     let projectCount;
-    
+
     if (pageTitle === 'Projects') {
       projectCount = (
         <div className="half-width inline-block text-right">
