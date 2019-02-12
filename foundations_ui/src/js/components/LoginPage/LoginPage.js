@@ -14,7 +14,6 @@ class LoginPage extends Component {
       value: '',
     };
     this.login = this.login.bind(this);
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }

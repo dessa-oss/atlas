@@ -9,7 +9,6 @@ import unittest
 from mock import Mock, patch
 import json
 
-# from flask import test_request_context
 from foundations_rest_api.global_state import app_manager
 from foundations_rest_api.v1.controllers.session_controller import SessionController
 from foundations_rest_api.v1.models.session import Session
@@ -17,9 +16,6 @@ from werkzeug import ImmutableMultiDict
 from flask import request
 
 class TestSessionController(unittest.TestCase):
-    
-    def setUp(self):
-        pass
 
     def test_session_returns_status_400_if_bad_json(self):
         with app_manager.app().test_request_context(
@@ -60,5 +56,6 @@ class TestSessionController(unittest.TestCase):
             request.form = ImmutableMultiDict([('password', 'dog')])
             mock_auth.return_value = 401
             self.assertEqual('Unauthorized', SessionController().post().as_json())
+            
        
         

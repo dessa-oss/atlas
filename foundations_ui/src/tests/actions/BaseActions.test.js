@@ -16,12 +16,6 @@ function mockFetch(data, status) {
   );
 }
 
-// function mockFetchError(data, status) {
-//   return jest.fn().mockImplementation(() => {
-//     Promise.reject(new Error())
-//   });
-// }
-
 it('Gets Result and Status from API', async () => {
   fetch = mockFetch('data', 404);
   const [status, result] = await BaseActions.getFromAPI('some_query_url');
@@ -68,11 +62,3 @@ it('Posts Results to API Different Data', async () => {
     }
   )
 });
-
-// it('Posts Results Returns Null If Error', async () => {
-//   // expect.assertions(1);
-//   fetch = mockFetchError();
-//   const result = await BaseActions.postToAPI('login', 'some body else');
-//   expect(result).toEqual(null);
-//   expect(fetch).toHaveBeenCalledTimes(1);
-// });
