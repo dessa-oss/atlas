@@ -29,8 +29,25 @@ class RedisConnector(object):
         """
 
         connection_with_password = self._build_connection_string()
-        return self._connection_callback(connection_with_password)
+        connection = self._connection_callback(connection_with_password)
+        self._validate_redis_connection(connection)
+        return connection
 
+    def _validate_redis_connection(self, connection):
+        import redis
+
+        try:
+            connection.ping()
+        except redis.connection.ConnectionError as error:
+            if self._redis_is_possibly_encrypted_error(error):
+                raise ConnectionError('Unable to connect to Redis, due to potential encryption error.')
+            else:
+                raise error
+
+    def _redis_is_possibly_encrypted_error(self, error):
+        import redis
+
+        return error.args[0] == redis.connection.SERVER_CLOSED_CONNECTION_ERROR
 
     def _get_connection_string(self):
         return self._config.get('redis_url', 'redis://localhost:6379')
