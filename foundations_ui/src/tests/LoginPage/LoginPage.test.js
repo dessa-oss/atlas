@@ -63,3 +63,12 @@ it("handleSubmit should call login function", async () => {
     wrapperInstance.handleSubmit(mockEvent)
     expect(wrapperInstance.login).toBeCalledWith(new FormData())
 });
+
+it("calls redirect if isLoggedIn", () => {
+    const wrapper = shallow(<LoginPage/>);
+    LoginActions.redirect = jest.fn();
+    wrapper.setState({
+        isLoggedIn: true
+    })
+    expect(LoginActions.redirect).toBeCalledWith('/projects');
+})
