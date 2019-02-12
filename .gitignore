@@ -45,5 +45,6 @@ foundations.zip
 .history
 site/
 **/.idea*
+**/*.rdb
 
 !foundations_ui/package.json
