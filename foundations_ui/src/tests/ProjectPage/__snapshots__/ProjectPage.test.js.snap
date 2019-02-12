@@ -10,6 +10,7 @@ exports[`Shallow Renders ProjectPage 1`] = `
     <Toolbar />
     <ProjectHeader
       numProjects={0}
+      pageTitle="Projects"
     />
   </div>
   <div

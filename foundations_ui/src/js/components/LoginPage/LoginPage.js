@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
 import LoginActions from '../../actions/LoginActions';
-import LoginHeader from './LoginHeader';
+import Header from '../common/Header';
 import ErrorMessage from '../common/ErrorMessage';
 
 class LoginPage extends Component {
@@ -57,7 +57,7 @@ class LoginPage extends Component {
       <div className="login-page-container">
         <div className="header">
           <Toolbar />
-          <LoginHeader pageTitle="Login" />
+          <Header pageTitle="Login" />
         </div>
         <div className="login-body-container">
           <form onSubmit={this.handleSubmit}>

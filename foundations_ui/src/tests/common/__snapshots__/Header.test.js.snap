@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Shallow Renders LoginHeader 1`] = `
+exports[`Shallow Renders ProjectHeader 1`] = `
 <div
   className="project-header-container"
 >
@@ -27,12 +27,26 @@ exports[`Shallow Renders LoginHeader 1`] = `
       >
         <h1
           className="blue-border-bottom font-bold"
-        />
+        >
+          Projects
+        </h1>
       </div>
+      <div
+        className="half-width inline-block text-right"
+      >
+        <h2
+          className="blue-border-bottom font-bold"
+        >
+          Total Projects: 
+          <span>
+            0
+          </span>
+        </h2>
+      </div>
+      <div
+        className="project-header-sort-filter-container"
+      />
     </div>
-    <div
-      className="project-header-sort-filter-container"
-    />
   </div>
 </div>
 `;

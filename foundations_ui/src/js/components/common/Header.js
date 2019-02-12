@@ -6,6 +6,7 @@ class ProjectHeader extends Component {
     super(props);
     this.state = {
       numProjects: this.props.numProjects,
+      pageTitle: this.props.pageTitle,
     };
   }
 
@@ -14,7 +15,20 @@ class ProjectHeader extends Component {
   }
 
   render() {
-    const { numProjects } = this.state;
+    const { numProjects, pageTitle } = this.state;
+
+    let projectCount;
+    
+    if (pageTitle === 'Projects') {
+      projectCount = (
+        <div className="half-width inline-block text-right">
+          <h2 className="blue-border-bottom font-bold">
+              Total Projects: <span>{numProjects}</span>
+          </h2>
+        </div>
+      );
+    }
+
 
     return (
       <div className="project-header-container">
@@ -25,15 +39,11 @@ class ProjectHeader extends Component {
         <div className="project-header-info-container">
           <div className="project-header-total-projects-container">
             <div className="half-width inline-block">
-              <h1 className="blue-border-bottom font-bold">Projects</h1>
+              <h1 className="blue-border-bottom font-bold">{pageTitle}</h1>
             </div>
-            <div className="half-width inline-block text-right">
-              <h2 className="blue-border-bottom font-bold">
-                Total Projects: <span>{numProjects}</span>
-              </h2>
-            </div>
+            {projectCount}
+            <div className="project-header-sort-filter-container" />
           </div>
-          <div className="project-header-sort-filter-container" />
         </div>
       </div>
     );
@@ -42,10 +52,12 @@ class ProjectHeader extends Component {
 
 ProjectHeader.propTypes = {
   numProjects: PropTypes.number,
+  pageTitle: PropTypes.string,
 };
 
 ProjectHeader.defaultProps = {
   numProjects: 0,
+  pageTitle: 'Projects',
 };
 
 export default ProjectHeader;

@@ -8,7 +8,8 @@ exports[`Shallow Renders ProjectPage 1`] = `
     className="header"
   >
     <Toolbar />
-    <LoginHeader
+    <ProjectHeader
+      numProjects={0}
       pageTitle="Login"
     />
   </div>
