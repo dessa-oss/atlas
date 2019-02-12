@@ -73,6 +73,19 @@ node {
                 sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_ssh-0.0.0-py3-none-any.whl"
             }
         }
+        ws("${WORKSPACE}/aws_utils/") {
+            stage('Python3 AWS Install Requirements') {
+                sh "python -m pip install pysftp"
+            }
+            ws("${WORKSPACE}/src") {
+                stage('Python3 AWS Unit Tests'){
+                    sh "python -Wi -m unittest test"
+                }
+            }
+            stage('Python3 AWS Create Artifact') {
+                sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_aws-0.0.0-py3-none-any.whl"
+            }
+        }
         ws("${WORKSPACE}/gcp_utils/") {
             stage('Python3 GCP Install Requirements') {
                 sh "python -m pip install google-api-python-client google-auth-httplib2 google-cloud-storage"

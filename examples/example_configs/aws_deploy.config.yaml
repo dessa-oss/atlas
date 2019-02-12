@@ -1,0 +1,35 @@
+cache_implementation:
+  cache_type: foundations_aws.AWSCacheBackend
+  constructor_arguments: [result-test]
+
+archive_listing_implementation:
+  archive_listing_type: foundations_aws.AWSPipelineArchiveListing
+  constructor_arguments: [result-test]
+
+stage_log_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+persisted_data_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+provenance_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+job_source_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+artifact_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+miscellaneous_archive_implementation:
+  archive_type: foundations_aws.AWSPipelineArchive
+  constructor_arguments: [result-test]
+
+deployment_implementation:
+  deployment_type: foundations_aws.AWSJobDeployment
+  constructor_arguments: [code-test, result-test]

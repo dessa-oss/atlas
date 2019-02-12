@@ -22,4 +22,5 @@ build_module foundations_contrib foundations_contrib && \
 build_module foundations_sdk foundations && \
 build_module gcp_utils foundations_gcp && \
 build_module ssh_utils foundations_ssh && \
+build_module aws_utils foundations_aws && \
 build_module foundations_rest_api foundations_rest_api
