@@ -50,3 +50,4 @@ foundations.zip
 site/
 **/.idea*
 !examples/example_configs/*.config.yaml
+testing/test-cli-init

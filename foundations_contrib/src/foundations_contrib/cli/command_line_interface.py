@@ -103,7 +103,8 @@ class CommandLineInterface(object):
         if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
             config_manager.add_simple_config_path(env_file_path[0])
             self._run_driver_file(driver_name)
-
+        else:
+            exit(1)
     
     def _run_driver_file(self, driver_name):
         import os
