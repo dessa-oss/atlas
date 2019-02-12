@@ -52,3 +52,14 @@ it("Sets loginResponse on Login", async () => {
     await wrapper.instance().login('data')
     expect(wrapper.state('loginResponse')).toEqual([200, 'OK'])
 });
+
+it("handleSubmit should call login function", async () => {
+    const wrapper = shallow(<LoginPage/>);
+    const wrapperInstance = wrapper.instance();
+    const mockEvent = {
+        preventDefault: () => '',
+    }
+    wrapperInstance.login = jest.fn().mockResolvedValue('cat')
+    wrapperInstance.handleSubmit(mockEvent)
+    expect(wrapperInstance.login).toBeCalledWith(new FormData())
+});
