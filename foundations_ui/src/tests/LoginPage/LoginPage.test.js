@@ -65,6 +65,16 @@ it("handleSubmit should call login function", async () => {
     expect(wrapperInstance.login).toBeCalledWith(new FormData())
 });
 
+it("handleChange should update value state", async () => {
+    const wrapper = shallow(<LoginPage/>);
+    const wrapperInstance = wrapper.instance();
+    const mockEvent = {
+        target: {value: 'dog'}
+    }
+    wrapperInstance.handleChange(mockEvent)
+    expect(wrapper.state('value')).toEqual('dog')
+});
+
 it("calls redirect if isLoggedIn", () => {
     const wrapper = shallow(<LoginPage/>);
     LoginActions.redirect = jest.fn();
@@ -82,13 +92,10 @@ it("displays correct password error when unauthorized", () => {
     expect(wrapper.find('.auth-error').text('Incorrect password'));
 })
 
-// it("displays error message when bad request", () => {
-    
-//     const wrapper = shallow(<LoginPage/>);
-//     wrapper.setState({
-//         loginResponse: [400, 'Bad Request']
-//     })
-//     console.log('wrapper: ', wrapper.instance())
-//     console.log('wrapper')
-//     // expect(wrapper.find('ErrorMessage').exists()).toEqual(false);
-// })
+it("displays error message when bad request", () => {  
+    const wrapper = shallow(<LoginPage/>);
+    wrapper.setState({
+        loginResponse: [400, 'Bad Request']
+    })
+    expect(wrapper.find('ErrorMessage').exists()).toEqual(true);
+})
