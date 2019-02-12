@@ -5,7 +5,7 @@
 
 
 ```python
-get_metrics_for_all_jobs(project_name)
+get_metrics_for_all_jobs(project_name, include_input_params=False)
 ```
 
 
@@ -15,6 +15,7 @@ Returns metrics for all jobs for a given project.
 __Arguments__
 
 - __project_name__ (string): Name of the project to filter by.
+- __include_input_params__ (boolean): Optional way to specify if metrics should include all model input metrics.
 
 __Returns__
 
