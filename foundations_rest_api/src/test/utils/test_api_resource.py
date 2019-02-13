@@ -6,9 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import patch
+from mock import patch, Mock
 from foundations_rest_api.utils.api_resource import api_resource
 from test.helpers.api_resource_mocks import APIResourceMocks
+from foundations_rest_api.lazy_result import LazyResult
+from foundations_rest_api.response import Response
 
 class TestAPIResource(unittest.TestCase):
 
@@ -31,6 +33,33 @@ class TestAPIResource(unittest.TestCase):
         with app_manager.app().test_client() as client:
             response = client.post('/path/to/resource')
             self.assertEqual(self._json_response(response), 'some data')
+        
+    
+    def test_post_sets_params(self):
+        from foundations_rest_api.global_state import app_manager
+
+        mock_klass = Mock()
+        mock_instance = Mock()
+        mock_klass.return_value = mock_instance
+        mock_instance.post.side_effect = lambda: Response('Mock', LazyResult(lambda: mock_instance.params))
+
+        klass = api_resource('/path/to/resource/with/query/params')(mock_klass)
+        with app_manager.app().test_client() as client:
+            response = client.post('/path/to/resource/with/query/params', data={'password': 'world'})
+            self.assertEqual(self._json_response(response), {'password': 'world'})
+
+    def test_post_sets_params_different_params(self):
+        from foundations_rest_api.global_state import app_manager
+
+        mock_klass = Mock()
+        mock_instance = Mock()
+        mock_klass.return_value = mock_instance
+        mock_instance.post.side_effect = lambda: Response('Mock', LazyResult(lambda: mock_instance.params))
+
+        klass = api_resource('/path/to/resource/with/query/params')(mock_klass)
+        with app_manager.app().test_client() as client:
+            response = client.post('/path/to/resource/with/query/params', data={'password': 'world', 'cat': 'dog'})
+            self.assertEqual(self._json_response(response), {'password': 'world', 'cat': 'dog'})
 
     def test_get_returns_index_different_data(self):
         from foundations_rest_api.global_state import app_manager

@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from flask import request
 class APIResourceBuilder(object):
 
     def __init__(self, klass, base_path):
@@ -47,8 +48,9 @@ class APIResourceBuilder(object):
         return _get
     
     def _post_api_create(self):
-        def _post(resource_self, **kwargs):
+        def _post(resource_self):
             instance = self._klass()
+            instance.params = request.form
 
             response = instance.post()
             return response.as_json(), response.status()
