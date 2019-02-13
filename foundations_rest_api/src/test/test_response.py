@@ -6,10 +6,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from mock import Mock
 from foundations_rest_api.response import Response
 from foundations_rest_api.v1.models.property_model import PropertyModel
 
-class TestResponse(unittest.TestCase):
+from foundations_internal.testing.helpers import let
+from foundations_internal.testing.helpers.spec import Spec
+
+class TestResponse(Spec):
 
     class MockModel(PropertyModel):
         data = PropertyModel.define_property()
@@ -41,6 +45,32 @@ class TestResponse(unittest.TestCase):
             for key, value in value.items():
                 attributes[key] = value.evaluate() if isinstance(value, TestResponse.MockLazyResult) else value
             return attributes
+
+    @let
+    def faker(self):
+        import faker
+        return faker.Faker()
+
+    @let
+    def resource_name(self):
+        return self.faker.name()
+
+    @let
+    def dummy_value(self):
+        return self.faker.color_name()
+    
+    def test_resource_name_matches_input(self):
+        result = Mock()
+        response = Response(self.resource_name, result)
+        self.assertEqual(self.resource_name, response.resource_name())
+
+    def test_constant_returns_constant_resource(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(self.dummy_value, response.as_json())
+    
+    def test_constant_returns_constant_resource_with_constant_name(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual('Constant', response.resource_name())
 
     def test_evaluate(self):
         mock = self.MockLazyResult('hello')

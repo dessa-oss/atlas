@@ -16,12 +16,22 @@ class Response(object):
     Keyword Arguments:
         parent {Response} -- Parent response to evaluate (default: {None})
     """
+    
+    @staticmethod
+    def constant(value):
+        return Response('Constant', Response._constant_lazy_result(value))
+
+    @staticmethod
+    def _constant_lazy_result(value):
+        from foundations_rest_api.lazy_result import LazyResult
+        return LazyResult(lambda: value)
 
     def __init__(self, resource_name, lazy_result, fallback=None, status=200, parent=None):
         self._lazy_result = lazy_result
         self._parent = parent
         self._fallback = fallback
         self._status = status
+        self._resource_name = resource_name
 
     def evaluate(self):
         """Calls the action callback and returns the result.
@@ -59,6 +69,9 @@ class Response(object):
         if result is None:
             return self._get_fallback().status()
         return self._status
+    
+    def resource_name(self):
+        return self._resource_name
 
     def _get_fallback(self):
         if self._fallback is None:
@@ -95,3 +108,4 @@ class Response(object):
     def _is_property_model(self, value):
         from foundations_rest_api.v1.models.property_model import PropertyModel
         return isinstance(value, PropertyModel)
+    
