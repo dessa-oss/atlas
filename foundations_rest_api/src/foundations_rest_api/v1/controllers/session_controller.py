@@ -28,7 +28,7 @@ class SessionController(object):
     def _authenticate_password(self):
         from foundations_rest_api.v1.models.session import Session
 
-        if Session.auth(self._password) == 200:
+        if Session.auth(self._password):
             return self._response(HTTPStatus.OK)
         else:
             return self._response(HTTPStatus.UNAUTHORIZED)

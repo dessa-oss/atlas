@@ -17,9 +17,9 @@ class Session(object):
 
         Returns: Status code
         """
+
         import os
-        if password == os.environ.get('FOUNDATIONS_GUI_PASSWORD', None):
-            return 200
-        else:
-            return 401
+        
+        return password == os.environ.get('FOUNDATIONS_GUI_PASSWORD', None)
+
         

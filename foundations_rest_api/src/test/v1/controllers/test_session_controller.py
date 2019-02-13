@@ -50,20 +50,20 @@ class TestSessionController(Spec):
     
     def test_session_returns_status_200_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
-        self.mock_auth.return_value = 200
+        self.mock_auth.return_value = True
         self.assertEqual(200, self.session_controller.post().status())
     
     def test_session_returns_correct_message_if_status_200_and_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
-        self.mock_auth.return_value = 200
+        self.mock_auth.return_value = True 
         self.assertEqual('OK', self.session_controller.post().as_json())
 
     def test_session_returns_status_401_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
-        self.mock_auth.return_value = 401
+        self.mock_auth.return_value = False
         self.assertEqual(401, self.session_controller.post().status())
     
     def test_session_returns_correct_message_if_status_401_and_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
-        self.mock_auth.return_value = 401
+        self.mock_auth.return_value = False
         self.assertEqual('Unauthorized', self.session_controller.post().as_json())
