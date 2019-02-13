@@ -30,7 +30,22 @@ class Session(PropertyModel):
     @staticmethod
     def find(token):
         from foundations_rest_api.lazy_result import LazyResult
-        return LazyResult(lambda: None)
+
+        def _find():
+            return Session._find_internal(token)
+
+        return LazyResult(_find)
+    
+    @staticmethod
+    def create():
+        import base64
+        import Crypto
+
+        token = Crypto.Random.new().read(124)
+        token = base64.b64encode(token).decode()
+
+        return Session(token=token)
+
     
     def save(self):
         from foundations.global_state import redis_connection
@@ -38,6 +53,13 @@ class Session(PropertyModel):
         session_key = 'session:{}'.format(self.token)
         redis_connection.set(session_key, 'valid')
         redis_connection.expire(session_key, Session.THIRTY_DAYS)
-    
-    
-        
+
+    @staticmethod
+    def _find_internal(token):
+        from foundations.global_state import redis_connection
+
+        exists = redis_connection.get('session:{}'.format(token))
+        if exists is not None:
+            return Session(token=token)
+        else:
+            return None
