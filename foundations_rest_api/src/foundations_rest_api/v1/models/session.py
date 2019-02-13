@@ -9,6 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_rest_api.common.models.property_model import PropertyModel
 
 class Session(PropertyModel):
+    THIRTY_DAYS = 2592000
 
     token = PropertyModel.define_property()
 
@@ -28,5 +29,8 @@ class Session(PropertyModel):
 
     def save(self):
         from foundations.global_state import redis_connection
-        redis_connection.set('session:{}'.format(self.token), 'valid')
+
+        session_key = 'session:{}'.format(self.token)
+        redis_connection.set(session_key, 'valid')
+        redis_connection.expire(session_key, Session.THIRTY_DAYS)
         

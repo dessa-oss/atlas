@@ -51,5 +51,9 @@ class TestSession(Spec):
     def test_save_saved_to_redis(self):
         self.session.save()
         self.mock_redis.set.assert_called_with('session:{}'.format(self.fake_token), 'valid')
+    
+    def test_save_sets_expiry_in_redis(self):
+        self.session.save()
+        self.mock_redis.expire.assert_called_with('session:{}'.format(self.fake_token), 2592000)
 
 
