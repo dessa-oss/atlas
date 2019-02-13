@@ -21,10 +21,9 @@ class SessionController(object):
             return self._response(HTTPStatus.BAD_REQUEST)
 
     def _response(self, error):
-        from foundations_rest_api.lazy_result import LazyResult
         from foundations_rest_api.response import Response
         
-        return Response('Session', LazyResult(lambda: error.phrase), status=error.value)
+        return Response.constant(error.phrase, status=error.value)
     
     def _authenticate_password(self):
         from foundations_rest_api.v1.models.session import Session
