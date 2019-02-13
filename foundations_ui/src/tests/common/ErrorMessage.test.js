@@ -43,3 +43,11 @@ it('Returns Correct Banner and Subtext for 404 Error', () => {
   expect(returnValues.errorSubtext).toEqual('Services are having temporary issues.'
   + ' Contact our front desk support at support@dessa.com or call us toll free at 1-899-623-5578.')
 });
+
+it('Returns Correct Banner and Subtext for 400 Error', () => {
+  const wrapper = shallow(<ErrorMessage errorCode={400}/>);
+  const returnValues = wrapper.instance().setContent();
+  expect(returnValues.errorBanner).toEqual('400 Bad Request Error');
+  expect(returnValues.errorSubtext).toEqual('The request was malformed, please try a proper request.')
+});
+

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
 import ProjectActions from '../../actions/ProjectActions';
-import ProjectHeader from './ProjectHeader';
+import Header from '../common/Header';
 import Loading from '../common/Loading';
 import ErrorMessage from '../common/ErrorMessage';
 
@@ -59,7 +59,7 @@ class ProjectPage extends Component {
       <div className="project-page-container">
         <div className="header">
           <Toolbar />
-          <ProjectHeader numProjects={projects.length} />
+          <Header pageTitle="Projects" numProjects={projects.length} />
         </div>
         <div className="projects-body-container">
           {projectList}
