@@ -38,13 +38,7 @@ class Session(PropertyModel):
     
     @staticmethod
     def create():
-        import base64
-        import Crypto
-
-        token = Crypto.Random.new().read(124)
-        token = base64.b64encode(token).decode()
-
-        return Session(token=token)
+        return Session(token=Session._generate_token())
 
     
     def save(self):
@@ -63,3 +57,11 @@ class Session(PropertyModel):
             return Session(token=token)
         else:
             return None
+            
+    @staticmethod
+    def _generate_token():
+        import base64
+        import Crypto
+
+        token = Crypto.Random.new().read(124)
+        return base64.b64encode(token).decode()
