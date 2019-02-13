@@ -54,14 +54,18 @@ class TestSession(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_redis
-    
+        self.mock_token_generator.return_value = self.random_token_data
+
     def test_session_has_token(self):
         self.assertEquals(self.session.token, self.fake_token)
     
     def test_save_saved_to_redis(self):
         self.session.save()
         self.mock_redis.set.assert_called_with(self.session_key, 'valid')
+
+    def test_save_returns_itself(self):
+        result = self.session.save()
+        self.assertTrue(result is self.session)
     
     def test_save_sets_expiry_in_redis(self):
         self.session.save()
@@ -88,3 +92,8 @@ class TestSession(Spec):
         self.mock_token_generator.return_value = self.random_token_data
         session = Session.create()
         self.assertEquals(session, Session(token=self.fake_token))
+
+    @patch('foundations_rest_api.v1.models.session.Session.save')
+    def test_create_saves_session(self, mock_save):
+        session = Session.create()
+        mock_save.assert_called()

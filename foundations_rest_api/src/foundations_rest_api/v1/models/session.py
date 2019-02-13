@@ -38,7 +38,7 @@ class Session(PropertyModel):
     
     @staticmethod
     def create():
-        return Session(token=Session._generate_token())
+        return Session(token=Session._generate_token()).save()
 
     
     def save(self):
@@ -47,6 +47,8 @@ class Session(PropertyModel):
         session_key = 'session:{}'.format(self.token)
         redis_connection.set(session_key, 'valid')
         redis_connection.expire(session_key, Session.THIRTY_DAYS)
+
+        return self
 
     @staticmethod
     def _find_internal(token):
