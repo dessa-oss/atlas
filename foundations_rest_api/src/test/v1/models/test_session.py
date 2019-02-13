@@ -10,7 +10,7 @@ from mock import Mock, patch
 
 from foundations_rest_api.v1.models.session import Session
 
-from foundations_internal.testing.helpers import let_patch_mock, set_up
+from foundations_internal.testing.helpers import let, let_patch_mock, set_up
 from foundations_internal.testing.helpers.spec import Spec
 
 class TestSession(Spec):
@@ -29,3 +29,27 @@ class TestSession(Spec):
     def test_auth_returns_200_if_correct_password_different_password(self):
         password ='rhino'
         self.assertTrue(Session.auth(password))
+    
+    @let
+    def fake_token(self):
+        import faker
+        return faker.Faker().sha1()
+
+    @let
+    def session(self):
+        return Session(token=self.fake_token)
+
+    mock_redis = let_patch_mock('foundations.global_state.redis_connection')
+
+    @set_up
+    def set_up(self):
+        self.mock_redis
+    
+    def test_session_has_token(self):
+        self.assertEquals(self.session.token, self.fake_token)
+    
+    def test_save_saved_to_redis(self):
+        self.session.save()
+        self.mock_redis.set.assert_called_with('session:{}'.format(self.fake_token), 'valid')
+
+

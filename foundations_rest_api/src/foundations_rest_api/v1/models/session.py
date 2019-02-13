@@ -6,7 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-class Session(object):
+from foundations_rest_api.common.models.property_model import PropertyModel
+
+class Session(PropertyModel):
+
+    token = PropertyModel.define_property()
 
     @staticmethod
     def auth(password):
@@ -22,4 +26,7 @@ class Session(object):
         
         return password == os.environ.get('FOUNDATIONS_GUI_PASSWORD', None)
 
+    def save(self):
+        from foundations.global_state import redis_connection
+        redis_connection.set('session:{}'.format(self.token), 'valid')
         
