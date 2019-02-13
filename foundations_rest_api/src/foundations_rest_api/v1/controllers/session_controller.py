@@ -15,7 +15,7 @@ from http import HTTPStatus
 class SessionController(object):
 
     def post(self):      
-        if 'password' in request.form:
+        if self._password is not None:
             return self._authenticate_password()
         else:
             return self._response(HTTPStatus.BAD_REQUEST)
@@ -23,13 +23,17 @@ class SessionController(object):
     def _response(self, error):
         from foundations_rest_api.lazy_result import LazyResult
         from foundations_rest_api.response import Response
+        
         return Response('Session', LazyResult(lambda: error.phrase), status=error.value)
     
     def _authenticate_password(self):
         from foundations_rest_api.v1.models.session import Session
-        password = request.form.get('password')
-        if Session.auth(password) == 200:
+
+        if Session.auth(self._password) == 200:
             return self._response(HTTPStatus.OK)
         else:
             return self._response(HTTPStatus.UNAUTHORIZED)
         
+    @property
+    def _password(self):
+        return self.params.get('password')
