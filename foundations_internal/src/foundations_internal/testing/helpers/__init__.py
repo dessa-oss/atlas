@@ -21,6 +21,9 @@ class tear_down(Callback):
 class let(Callback):
     pass
 
+class let_now(let):
+    pass
+
 def let_mock():
     from mock import Mock
     
@@ -33,4 +36,4 @@ def let_patch_mock(name):
     def _callback(self):
         return self.patch(name)
     
-    return let(_callback)
+    return let_now(_callback)
