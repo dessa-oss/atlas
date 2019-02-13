@@ -61,7 +61,7 @@ class Session(PropertyModel):
     @staticmethod
     def _generate_token():
         import base64
-        import Crypto
+        from Crypto import Random
 
-        token = Crypto.Random.new().read(124)
+        token = Random.new().read(124)
         return base64.b64encode(token).decode()

@@ -29,6 +29,7 @@ class SessionController(object):
         from foundations_rest_api.v1.models.session import Session
 
         if Session.auth(self._password):
+            Session.create()
             return self._response(HTTPStatus.OK)
         else:
             return self._response(HTTPStatus.UNAUTHORIZED)
