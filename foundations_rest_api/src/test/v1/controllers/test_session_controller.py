@@ -61,13 +61,13 @@ class TestSessionController(Spec):
     def test_session_returns_correct_message_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
         self.mock_auth.return_value = True 
-        self.session_controller.post()
-        self.mock_create.assert_called()
+        self.assertEqual('OK', self.session_controller.post().as_json())
 
     def test_session_calls_session_save_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
         self.mock_auth.return_value = True 
-        self.assertEqual('OK', self.session_controller.post().as_json())
+        self.session_controller.post()
+        self.mock_create.assert_called()
 
     def test_session_returns_status_401_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
