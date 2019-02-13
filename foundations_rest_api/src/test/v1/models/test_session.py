@@ -56,4 +56,6 @@ class TestSession(Spec):
         self.session.save()
         self.mock_redis.expire.assert_called_with('session:{}'.format(self.fake_token), 2592000)
 
-
+    
+    def test_find_returns_empty_lazy_result(self):
+        self.assertIsNone(Session.find(token=self.fake_token).evaluate())

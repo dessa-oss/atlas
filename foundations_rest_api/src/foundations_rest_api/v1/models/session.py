@@ -27,10 +27,17 @@ class Session(PropertyModel):
         
         return password == os.environ.get('FOUNDATIONS_GUI_PASSWORD', None)
 
+    @staticmethod
+    def find(token):
+        from foundations_rest_api.lazy_result import LazyResult
+        return LazyResult(lambda: None)
+    
     def save(self):
         from foundations.global_state import redis_connection
 
         session_key = 'session:{}'.format(self.token)
         redis_connection.set(session_key, 'valid')
         redis_connection.expire(session_key, Session.THIRTY_DAYS)
+    
+    
         
