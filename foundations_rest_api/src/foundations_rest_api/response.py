@@ -18,8 +18,8 @@ class Response(object):
     """
     
     @staticmethod
-    def constant(value):
-        return Response('Constant', Response._constant_lazy_result(value))
+    def constant(value, status=200):
+        return Response('Constant', Response._constant_lazy_result(value), status=status)
 
     @staticmethod
     def _constant_lazy_result(value):

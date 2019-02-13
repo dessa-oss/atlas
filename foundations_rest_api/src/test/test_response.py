@@ -67,6 +67,14 @@ class TestResponse(Spec):
     def test_constant_returns_constant_resource(self):
         response = Response.constant(self.dummy_value)
         self.assertEqual(self.dummy_value, response.as_json())
+
+    def test_constant_returns_constant_resource_with_status_provided(self):
+        response = Response.constant(self.dummy_value, status=732)
+        self.assertEqual(732, response.status())
+
+    def test_constant_returns_constant_resource_with_default_status(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(200, response.status())
     
     def test_constant_returns_constant_resource_with_constant_name(self):
         response = Response.constant(self.dummy_value)
