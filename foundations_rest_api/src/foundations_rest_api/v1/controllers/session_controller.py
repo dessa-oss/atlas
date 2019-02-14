@@ -20,7 +20,7 @@ class SessionController(object):
         else:
             return self._response(HTTPStatus.BAD_REQUEST)
 
-    def _response(self, error, cookie="some cookie"):
+    def _response(self, error, cookie=None):
         from foundations_rest_api.response import Response
         
         return Response.constant(error.phrase, status=error.value, cookie=cookie)
