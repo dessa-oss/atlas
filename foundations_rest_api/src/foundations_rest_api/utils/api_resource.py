@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from flask import request
+from flask import request, make_response, Response
 class APIResourceBuilder(object):
 
     def __init__(self, klass, base_path):
@@ -53,7 +53,7 @@ class APIResourceBuilder(object):
             instance.params = request.form
 
             response = instance.post()
-            return response.as_json(), response.status()
+            return response.as_json(), response.status(), {'Set-Cookie': response.cookie()}
         return _post
 
     def _api_params(self, kwargs):

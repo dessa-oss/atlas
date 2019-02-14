@@ -12,7 +12,15 @@ from test.helpers.api_resource_mocks import APIResourceMocks
 from foundations_rest_api.lazy_result import LazyResult
 from foundations_rest_api.response import Response
 
-class TestAPIResource(unittest.TestCase):
+from foundations_internal.testing.helpers.spec import Spec
+from foundations_internal.testing.helpers import let
+
+class TestAPIResource(Spec):
+
+    @let
+    def random_cookie(self):
+        from faker import Faker
+        return Faker().sha256()
 
     def test_returns_class(self):
         klass = api_resource('/path/to/resource')(APIResourceMocks.Mock)
@@ -38,10 +46,10 @@ class TestAPIResource(unittest.TestCase):
     def test_post_sets_params(self):
         from foundations_rest_api.global_state import app_manager
 
-        mock_klass = Mock()
-        mock_instance = Mock()
-        mock_klass.return_value = mock_instance
-        mock_instance.post.side_effect = lambda: Response('Mock', LazyResult(lambda: mock_instance.params))
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('post', _callback)
 
         klass = api_resource('/path/to/resource/with/query/params')(mock_klass)
         with app_manager.app().test_client() as client:
@@ -51,14 +59,14 @@ class TestAPIResource(unittest.TestCase):
     def test_post_sets_params_different_params(self):
         from foundations_rest_api.global_state import app_manager
 
-        mock_klass = Mock()
-        mock_instance = Mock()
-        mock_klass.return_value = mock_instance
-        mock_instance.post.side_effect = lambda: Response('Mock', LazyResult(lambda: mock_instance.params))
+        def _callback(mock_instance):
+            return mock_instance.params
 
-        klass = api_resource('/path/to/resource/with/query/params')(mock_klass)
+        mock_klass = self._mock_resource('post', _callback)
+
+        klass = api_resource('/path/to/different/resource/with/query/params')(mock_klass)
         with app_manager.app().test_client() as client:
-            response = client.post('/path/to/resource/with/query/params', data={'password': 'world', 'cat': 'dog'})
+            response = client.post('/path/to/different/resource/with/query/params', data={'password': 'world', 'cat': 'dog'})
             self.assertEqual(self._json_response(response), {'password': 'world', 'cat': 'dog'})
 
     def test_get_returns_index_different_data(self):
@@ -119,6 +127,18 @@ class TestAPIResource(unittest.TestCase):
             response = client.post('/posty/path/to/resource/with/params/and/status/code')
             self.assertEqual(response.status_code, 403)
 
+    def test_post_has_cookie(self):
+        from foundations_rest_api.global_state import app_manager
+
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('post', _callback, cookie=self.random_cookie, )
+        klass = api_resource('/path/to/post/resource/with/a/cookie/yum')(mock_klass)
+        with app_manager.app().test_client() as client:
+            response = client.post('/path/to/post/resource/with/a/cookie/yum', data={'password': 'world'})
+            self.assertEqual(self.random_cookie, response.headers.get('Set-Cookie'))
+
     def test_get_returns_path_param(self):
         from foundations_rest_api.global_state import app_manager
 
@@ -143,9 +163,20 @@ class TestAPIResource(unittest.TestCase):
             response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
             self.assertEqual(self._json_response(response), {'hello': ['world', 'lou']})
 
+    def _mock_resource(self, method, callback, status=200, cookie=None):
+        from foundations_rest_api.lazy_result import LazyResult
+
+        mock_klass = Mock()
+        mock_instance = Mock()
+        mock_klass.return_value = mock_instance
+        result = LazyResult(lambda: callback(mock_instance))
+        getattr(mock_instance, method).side_effect = lambda: Response('Mock', result, status=status, cookie=cookie)
+        return mock_klass
+
     def _json_response(self, response):
         from foundations.utils import string_from_bytes
-        from json import loads
+        from json import loads, dumps
 
         data = string_from_bytes(response.data)
+
         return loads(data)
