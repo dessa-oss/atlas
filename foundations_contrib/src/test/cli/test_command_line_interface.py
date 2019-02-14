@@ -83,47 +83,33 @@ class TestCommandLineInterface(Spec):
     def test_scaffold_creates_scaffold_with_project_name_different_project(self, scaffold_mock):
         CommandLineInterface(['init', 'my different project']).execute()
         scaffold_mock.assert_called_with('my different project')
-        
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_scaffolds_with_project_name_different_project(self, scaffold_mock):
-        scaffold_instance = Mock()
-        scaffold_mock.return_value = scaffold_instance
 
+    scaffold_project_mock = let_patch_mock('foundations_contrib.cli.scaffold.Scaffold.scaffold_project')
+        
+    def test_scaffold_scaffolds_with_project_name_different_project(self):
         CommandLineInterface(['init', 'my project']).execute()
-        scaffold_instance.scaffold_project.assert_called()
+        self.scaffold_project_mock.assert_called()
             
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_prints_success_message(self, scaffold_mock):
-        scaffold_instance = Mock()
-        scaffold_mock.return_value = scaffold_instance
-        scaffold_instance.scaffold_project.return_value = True
+    def test_scaffold_prints_success_message(self):
+        self.scaffold_project_mock.return_value = True
 
         CommandLineInterface(['init', 'my project']).execute()
         self.print_mock.assert_called_with('Success: New Foundations project `my project` created!')
             
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_prints_success_message_different_project(self, scaffold_mock):
-        scaffold_instance = Mock()
-        scaffold_mock.return_value = scaffold_instance
-        scaffold_instance.scaffold_project.return_value = True
+    def test_scaffold_prints_success_message_different_project(self):
+        self.scaffold_project_mock.return_value = True
 
         CommandLineInterface(['init', 'your project']).execute()
         self.print_mock.assert_called_with('Success: New Foundations project `your project` created!')
             
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_prints_failure_message(self, scaffold_mock):
-        scaffold_instance = Mock()
-        scaffold_mock.return_value = scaffold_instance
-        scaffold_instance.scaffold_project.return_value = False
+    def test_scaffold_prints_failure_message(self):
+        self.scaffold_project_mock.return_value = False
 
         CommandLineInterface(['init', 'my project']).execute()
         self.print_mock.assert_called_with('Error: project directory for `my project` already exists')
             
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_prints_failure_message_different_project(self, scaffold_mock):
-        scaffold_instance = Mock()
-        scaffold_mock.return_value = scaffold_instance
-        scaffold_instance.scaffold_project.return_value = False
+    def test_scaffold_prints_failure_message_different_project(self):
+        self.scaffold_project_mock.return_value = False
 
         CommandLineInterface(['init', 'your project']).execute()
         self.print_mock.assert_called_with('Error: project directory for `your project` already exists')
