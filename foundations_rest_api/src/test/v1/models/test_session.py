@@ -101,14 +101,24 @@ class TestSession(Spec):
     def test_is_authorized_returns_true_with_no_password(self):
         self.assertTrue(Session.is_authorized({}))
     
-    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platypus'} )
     def test_authorized_returns_false_with_password_no_cookies(self):
         self.assertFalse(Session.is_authorized({}))
+    
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platypus'} )
+    def test_authorized_returns_false_with_password_no_token_cookie(self):
+        self.assertFalse(Session.is_authorized({'peanut': 'butter'}))
 
-    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platypus'} )
     def test_authorized_returns_false_with_password_and_valid_cookie(self):
         self.assertTrue(Session.is_authorized({'auth_token': 'stuff'}))
 
-    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
-    def test_authorized_returns_false_with_password_and_valid_cookie(self):
-        self.assertTrue(Session.is_authorized({'auth_token': 'stuff'}))
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platypus'} )
+    def test_authorized_returns_false_with_password_and_invalid_cookie(self):
+        self.mock_redis.get.return_value = None
+        self.assertFalse(Session.is_authorized({'auth_token': 'stuff'}))
+
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platypus'} )
+    def test_authorized_uses_correct_token(self):
+        Session.is_authorized({'auth_token': self.fake_token})
+        self.mock_redis.get.assert_called_with(self.session_key)

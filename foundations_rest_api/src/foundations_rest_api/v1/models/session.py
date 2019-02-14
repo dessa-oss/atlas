@@ -54,7 +54,13 @@ class Session(PropertyModel):
     def is_authorized(cookies):
         import os
 
-        return not 'FOUNDATIONS_GUI_PASSWORD' in os.environ or cookies
+        if not 'FOUNDATIONS_GUI_PASSWORD' in os.environ:
+            return True
+
+        if not 'auth_token' in cookies:
+            return False
+
+        return Session._find_internal(cookies['auth_token'])
 
     @staticmethod
     def _find_internal(token):
