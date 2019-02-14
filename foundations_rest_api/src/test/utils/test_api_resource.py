@@ -103,6 +103,22 @@ class TestAPIResource(unittest.TestCase):
             response = client.get('/path/to/resource/with/params/and/status/code')
             self.assertEqual(response.status_code, 403)
 
+    def test_post_has_status_code(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/path/to/another/resource')(APIResourceMocks.MockWithIndexAndPost)
+        with app_manager.app().test_client() as client:
+            response = client.post('/path/to/another/resource')
+            self.assertEqual(response.status_code, 200)
+
+    def test_post_has_status_code_different_code(self):
+        from foundations_rest_api.global_state import app_manager
+
+        klass = api_resource('/posty/path/to/resource/with/params/and/status/code')(APIResourceMocks.ParamsMockWithPostAndStatus)
+        with app_manager.app().test_client() as client:
+            response = client.post('/posty/path/to/resource/with/params/and/status/code')
+            self.assertEqual(response.status_code, 403)
+
     def test_get_returns_path_param(self):
         from foundations_rest_api.global_state import app_manager
 
