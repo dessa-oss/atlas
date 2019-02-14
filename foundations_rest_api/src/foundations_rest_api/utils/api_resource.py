@@ -55,7 +55,8 @@ class APIResourceBuilder(object):
             response = instance.post()
             cookie = None
             if response.cookie():
-                cookie = '{}={}'.format(list(response.cookie().keys())[0], list(response.cookie().values())[0])
+                cookie_key, cookie_value = list(response.cookie().items())[0]
+                cookie = '{}={}'.format(cookie_key, cookie_value)
             return response.as_json(), response.status(), {'Set-Cookie': cookie}
         return _post
 
