@@ -163,27 +163,33 @@ class TestCommandLineInterface(Spec):
         global_call = call([['local','~/foundations/local.config.yaml']])
         mock_print.assert_has_calls([project_call, global_call], any_order = True)
 
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_returns_correct_error_if_env_not_found(self, mock_find_env):
-        mock_find_env.return_value = []
+    def test_deploy_returns_correct_error_if_env_not_found(self):
+        self.find_environment_mock.return_value = []
         CommandLineInterface(['deploy', 'driver.py', '--env=local']).execute()
         self.print_mock.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --envs`")
 
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_returns_correct_error_if_env_not_found_different_name(self, mock_find_env):
-        mock_find_env.return_value = []
+    def test_deploy_returns_correct_error_if_env_not_found_different_name(self):
+        self.find_environment_mock.return_value = []
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.print_mock.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --envs`")
 
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_returns_correct_error_if_wrong_directory(self, mock_find_env):
-        mock_find_env.return_value = None
+    def test_exits_the_process_with_exit_status_of_one(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['deploy', 'driver.py', '--env=non-existant-env']).execute()
+        self.exit_mock.assert_called_with(1)
+
+    def test_does_not_exit_when_environments_exist(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        self.exit_mock.assert_not_called()
+
+    def test_deploy_returns_correct_error_if_wrong_directory(self):
+        self.find_environment_mock.return_value = None
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.print_mock.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
      
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploys_job_when_local_config_found(self, mock_find_env):
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+    def test_deploys_job_when_local_config_found(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.print_mock.assert_not_called()
 
@@ -202,62 +208,55 @@ class TestCommandLineInterface(Spec):
     exit_mock = let_patch_mock('sys.exit')
     print_mock = let_patch_mock('builtins.print')
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
+    find_environment_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.find_environment')
 
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_loads_config_when_found(self, mock_find_env):
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+    def test_deploy_loads_config_when_found(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.config_manager.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_adds_file_to_py_path(self, mock_find_env):
+    def test_deploy_adds_file_to_py_path(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/')
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_adds_file_to_py_path_different_path(self, mock_find_env):
+    def test_deploy_adds_file_to_py_path_different_path(self):
         self.os_cwd.return_value = 'home/foundations/hana/'
-        mock_find_env.return_value = ["home/foundations/hana/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/hana/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/hana/')
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_returns_error_if_driver_file_does_not_exist(self, mock_find_env):
+    def test_deploy_returns_error_if_driver_file_does_not_exist(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = False
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'hana/driver.py', '--env=uat']).execute()
         self.os_file_exists.assert_called_with('home/foundations/lou/hana/driver.py')
         self.print_mock.assert_called_with('Driver file `hana/driver.py` does not exist')
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_returns_error_if_driver_file_does_not_have_py_extension(self, mock_find_env):
+    def test_deploy_returns_error_if_driver_file_does_not_have_py_extension(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = True
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'hana/driver.exe', '--env=uat']).execute()
         self.print_mock.assert_called_with('Driver file `hana/driver.exe` needs to be a python file with an extension `.py`')
 
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_imports_driver_file(self, mock_find_env):
+    def test_deploy_imports_driver_file(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.run_file.assert_called_with('driver') 
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_imports_driver_file_different_file(self, mock_find_env):
+    def test_deploy_imports_driver_file_different_file(self):
         self.os_cwd.return_value = 'home/foundations/lou'
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'hippo/dingo.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/hippo')
         self.run_file.assert_called_with('dingo') 
     
-    @patch.object(EnvironmentFetcher, 'find_environment')
-    def test_deploy_imports_driver_file_different_name(self, mock_find_env):
+    def test_deploy_imports_driver_file_different_name(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
-        mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
         self.run_file.assert_called_with('passenger')    

@@ -17,7 +17,7 @@ class CommandLineInterface(object):
         self._initialize_info_parser(subparsers)
       
         self._arguments = self._argument_parser.parse_args(args)
-    
+        
     def _initialize_argument_parser(self): 
         from argparse import ArgumentParser
         argument_parser = ArgumentParser(prog='foundations')
@@ -89,6 +89,8 @@ class CommandLineInterface(object):
         return environment_names
       
     def _deploy(self):
+        import sys
+
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations.global_state import config_manager     
 
@@ -99,6 +101,8 @@ class CommandLineInterface(object):
         if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
             config_manager.add_simple_config_path(env_file_path[0])
             self._run_driver_file(driver_name)
+        else:
+            sys.exit(1)
     
     def _run_driver_file(self, driver_name):
         import os
