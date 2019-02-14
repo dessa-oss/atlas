@@ -15,7 +15,7 @@ from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from foundations import ConfigManager
 
 
-from foundations_internal.testing.helpers import let, let_patch_mock, set_up
+from foundations_internal.testing.helpers import let, let_now, let_patch_mock
 from foundations_internal.testing.helpers.spec import Spec
 
 
@@ -212,7 +212,7 @@ class TestCommandLineInterface(Spec):
     sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
 
-    @let
+    @let_now
     def os_cwd(self):
         mock = self.patch('os.getcwd')
         mock.return_value = '/path/to/where/ever/we/are'
@@ -223,27 +223,6 @@ class TestCommandLineInterface(Spec):
     exit_mock = let_patch_mock('sys.exit')
     print_mock = let_patch_mock('builtins.print')
 
-    @set_up
-    def set_up(self):
-        self._use_config_manager()
-        self._use_exit_mock()
-        self._use_print_mock()
-
-        self.sys_path
-        self.run_file
-        self.os_cwd
-        self.os_file_exists
-        self.os_chdir
-
-    def _use_config_manager(self):
-        self.config_manager
-
-    def _use_exit_mock(self):
-        self.exit_mock
-
-    def _use_print_mock(self):
-        self.print_mock
-    
     @patch.object(EnvironmentFetcher, 'find_environment')
     def test_deploy_loads_config_when_found(self, mock_find_env):
         mock_find_env.return_value = ["home/foundations/lou/config/uat.config.yaml"]
