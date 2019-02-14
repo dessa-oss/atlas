@@ -79,6 +79,11 @@ class TestSessionController(Spec):
         self.mock_create.return_value = mock_session_instance
         self.session_controller.post()
         mock_constant_response.assert_called_with('OK', status=200, cookie=self.random_cookie)
+    
+    def test_session_calls_response_without_token_if_password_invalid(self):
+        self.session_controller.params = {'password': 'cave'}
+        self.mock_auth.return_value = False 
+        self.assertIsNone(self.session_controller.post().cookie())
 
     def test_session_returns_status_401_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}
