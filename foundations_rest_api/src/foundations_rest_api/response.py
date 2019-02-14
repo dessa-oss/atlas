@@ -18,8 +18,8 @@ class Response(object):
     """
     
     @staticmethod
-    def constant(value, status=200):
-        return Response('Constant', Response._constant_lazy_result(value), status=status)
+    def constant(value, cookie=None, status=200):
+        return Response('Constant', Response._constant_lazy_result(value), cookie=cookie, status=status)
 
     @staticmethod
     def _constant_lazy_result(value):

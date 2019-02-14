@@ -59,6 +59,10 @@ class TestResponse(Spec):
     def dummy_value(self):
         return self.faker.color_name()
     
+    @let
+    def dummy_cookie(self):
+        return self.faker.sha1()
+    
     def test_resource_name_matches_input(self):
         result = Mock()
         response = Response(self.resource_name, result)
@@ -79,6 +83,14 @@ class TestResponse(Spec):
     def test_constant_returns_constant_resource_with_constant_name(self):
         response = Response.constant(self.dummy_value)
         self.assertEqual('Constant', response.resource_name())
+    
+    def test_constant_returns_constant_resource_with_cookie_provided(self):
+        response = Response.constant(self.dummy_value, cookie=self.dummy_cookie)
+        self.assertEqual(self.dummy_cookie, response.cookie())
+    
+    def test_constant_returns_constant_with_default_cookie_value(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(None, response.cookie())
 
     def test_evaluate(self):
         mock = self.MockLazyResult('hello')
