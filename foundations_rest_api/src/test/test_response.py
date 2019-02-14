@@ -256,3 +256,9 @@ class TestResponse(Spec):
         response = Response('mock', mock, cookie='Lemon Drop')
 
         self.assertEqual('Lemon Drop', response.cookie())
+
+    def test_supports_cookie_default_as_none(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock)
+
+        self.assertIsNone(response.cookie()) 
