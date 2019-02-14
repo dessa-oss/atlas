@@ -19,8 +19,24 @@ class TestAPIResource(Spec):
 
     @let
     def random_cookie(self):
+        return {self.random_cookie_key: self.random_cookie_value}
+
+    @let
+    def cookie_string(self):
+        return '{}={}'.format(self.random_cookie_key, self.random_cookie_value)
+
+    @let
+    def random_cookie_key(self):
+        return self.faker.name()
+
+    @let
+    def random_cookie_value(self):
+        return self.faker.sha256()
+
+    @let
+    def faker(self):
         from faker import Faker
-        return Faker().sha256()
+        return Faker()
 
     def test_returns_class(self):
         klass = api_resource('/path/to/resource')(APIResourceMocks.Mock)
@@ -137,7 +153,7 @@ class TestAPIResource(Spec):
         klass = api_resource('/path/to/post/resource/with/a/cookie/yum')(mock_klass)
         with app_manager.app().test_client() as client:
             response = client.post('/path/to/post/resource/with/a/cookie/yum', data={'password': 'world'})
-            self.assertEqual(self.random_cookie, response.headers.get('Set-Cookie'))
+            self.assertEqual(self.cookie_string, response.headers.get('Set-Cookie'))
 
     def test_get_returns_path_param(self):
         from foundations_rest_api.global_state import app_manager
