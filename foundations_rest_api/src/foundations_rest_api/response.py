@@ -26,12 +26,13 @@ class Response(object):
         from foundations_rest_api.lazy_result import LazyResult
         return LazyResult(lambda: value)
 
-    def __init__(self, resource_name, lazy_result, fallback=None, status=200, parent=None):
+    def __init__(self, resource_name, lazy_result, fallback=None, status=200, parent=None, cookie=None):
         self._lazy_result = lazy_result
         self._parent = parent
         self._fallback = fallback
         self._status = status
         self._resource_name = resource_name
+        self._cookie = cookie
 
     def evaluate(self):
         """Calls the action callback and returns the result.
@@ -72,6 +73,9 @@ class Response(object):
     
     def resource_name(self):
         return self._resource_name
+    
+    def cookie(self):
+        return self._cookie
 
     def _get_fallback(self):
         if self._fallback is None:

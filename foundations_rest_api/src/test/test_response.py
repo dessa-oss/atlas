@@ -244,3 +244,15 @@ class TestResponse(Spec):
         response2 = Response('mock', mock2)
 
         self.assertEqual({'data': [{'data': None}]}, response2.as_json())
+
+    def test_supports_cookie(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, cookie='Chocolate Chip')
+
+        self.assertEqual('Chocolate Chip', response.cookie()) 
+
+    def test_supports_cookie_different_cookie(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, cookie='Lemon Drop')
+
+        self.assertEqual('Lemon Drop', response.cookie())
