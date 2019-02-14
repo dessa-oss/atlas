@@ -17,6 +17,7 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
 
     Arguments:
         project_name {string} -- Name of the project to filter by.
+        include_input_params {boolean} -- Optional way to specify if metrics should include all model input metrics
 
     Returns:
         metrics {DataFrame} -- A Pandas DataFrame containing all of the results.

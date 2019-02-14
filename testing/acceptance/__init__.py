@@ -16,3 +16,4 @@ from acceptance.test_run_job_with_unserializable_outputs import TestRunJobWithUn
 from acceptance.test_recursion_limit import TestRecursionLimit
 from acceptance.test_job_data_producers import TestJobDataProducers
 from acceptance.test_cli_init import TestCLIInit
+from acceptance.test_job_uses_venv_created_by_foundations import TestJobUsesVenvCreatedByFoundations

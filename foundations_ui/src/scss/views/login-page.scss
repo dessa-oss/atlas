@@ -1,0 +1,25 @@
+.login-page-container{
+    background-color: $color-background-grey;
+  }
+  
+  .login-body-container{
+    width: 705px;
+    max-width: 705px;
+    margin: auto;
+    padding-top: 188px;
+    padding-bottom: 30px;
+    min-height: calc(100vh - 200px);
+  }
+  
+  label {
+      font-size: 22px;
+  }
+
+  input {
+      width: 200px;
+  }
+  
+  .header{
+    position: fixed;
+    width: 100%;
+  }

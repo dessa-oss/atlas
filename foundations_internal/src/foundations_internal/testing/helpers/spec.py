@@ -9,15 +9,19 @@ import unittest
 from foundations_internal.testing.helpers import set_up, tear_down
 from foundations_internal.testing.helpers.mock_mixin import MockMixin
 from foundations_internal.testing.helpers.let_mixin import LetMixin
+from foundations_internal.testing.helpers.let_now_mixin import LetNowMixin
 
-class Spec(unittest.TestCase, MockMixin, LetMixin):
+class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
 
     @classmethod
     def setUpClass(klass):
+        klass._collect_let_nows()
         klass._collect_lets()
     
     def setUp(self):
+        self.__class__._collect_let_nows()
         self.__class__._collect_lets()
+        self._setup_let_nows()
         for setup_method in self._setup_methods():
             setup_method(self)
 

@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders ProjectPage 1`] = `
+<div
+  className="login-page-container"
+>
+  <div
+    className="header"
+  >
+    <Toolbar />
+    <ProjectHeader
+      numProjects={0}
+      pageTitle="Login"
+    />
+  </div>
+  <div
+    className="login-body-container"
+  >
+    <form
+      onSubmit={[Function]}
+    >
+      <label>
+        Password:
+        <input
+          name="password"
+          onChange={[Function]}
+          type="password"
+          value=""
+        />
+      </label>
+      <input
+        type="submit"
+        value="Submit"
+      />
+    </form>
+    <p
+      className="auth-error"
+    />
+  </div>
+</div>
+`;

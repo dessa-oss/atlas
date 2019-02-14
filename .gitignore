@@ -49,5 +49,8 @@ foundations.zip
 .history
 site/
 **/.idea*
+**/*.rdb
+
+!foundations_ui/package.json
 !examples/example_configs/*.config.yaml
 testing/test-cli-init

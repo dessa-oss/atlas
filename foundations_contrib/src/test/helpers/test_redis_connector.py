@@ -75,3 +75,36 @@ class TestRedisConnector(unittest.TestCase):
         self._config_manager['redis_url'] = 'redis://lou:7733'
         self._connector()
         self._connection_callback.assert_called_once_with('redis://:camelcamel@lou:7733')
+
+    def test_call_raises_exception_when_a_connection_error_happens(self):
+        self._connection.ping.side_effect = self._raise_connection_error
+        with self.assertRaises(ConnectionError) as error_context:
+            self._connector()
+        self.assertIn('Unable to connect to Redis, due to potential encryption error.', error_context.exception.args)
+
+    def test_call_raises_exception_underlying_exception(self):
+        self._connection.ping.side_effect = self._raise_configuration_error
+        with self.assertRaises(ValueError) as error_context:
+            self._connector()
+        self.assertIn('Invalid connection.', error_context.exception.args)
+
+    def test_call_raises_exception_when_an_unexpected_error_happens(self):
+        import redis
+
+        self._connection.ping.side_effect = self._raise_different_connection_error
+        with self.assertRaises(redis.exceptions.ConnectionError) as error_context:
+            self._connector()
+        self.assertIn('Something broke!', error_context.exception.args)
+
+    def _raise_connection_error(self):
+        import redis
+
+        raise redis.exceptions.ConnectionError(redis.connection.SERVER_CLOSED_CONNECTION_ERROR)
+
+    def _raise_different_connection_error(self):
+        import redis
+
+        raise redis.exceptions.ConnectionError('Something broke!')
+
+    def _raise_configuration_error(self):
+        raise ValueError('Invalid connection.')
