@@ -8,10 +8,6 @@ from tabulate import tabulate
 
 class CommandLineInterface(object):
 
-    @staticmethod
-    def static_print(*args, **kwargs):
-        print(*args, **kwargs)
-    
     def __init__(self, args):
         self._argument_parser = self._initialize_argument_parser()
         subparsers = self._argument_parser.add_subparsers()
@@ -52,7 +48,7 @@ class CommandLineInterface(object):
         import foundations
 
         if self._arguments.version:
-            CommandLineInterface.static_print('Running Foundations version {}'.format(foundations.__version__))
+            print('Running Foundations version {}'.format(foundations.__version__))
         else:
             self._argument_parser.print_help()
 
@@ -62,9 +58,9 @@ class CommandLineInterface(object):
         project_name = self._arguments.project_name
         result = Scaffold(project_name).scaffold_project()
         if result:
-            CommandLineInterface.static_print('Success: New Foundations project `{}` created!'.format(project_name))
+            print('Success: New Foundations project `{}` created!'.format(project_name))
         else:
-            CommandLineInterface.static_print('Error: project directory for `{}` already exists'.format(project_name))
+            print('Error: project directory for `{}` already exists'.format(project_name))
         
     def _info(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
@@ -72,7 +68,7 @@ class CommandLineInterface(object):
         project_environment, global_environment = EnvironmentFetcher().get_all_environments()
 
         if len(global_environment) == 0 and (project_environment == None or len(project_environment) == 0):
-            CommandLineInterface.static_print('No environments available')
+            print('No environments available')
         else:
             self._print_configs('global', global_environment)
             if project_environment != None: 
@@ -80,8 +76,8 @@ class CommandLineInterface(object):
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)
-        CommandLineInterface.static_print("{} configs:".format(config_list_name))
-        CommandLineInterface.static_print(self._format_environment_printout(config_list))
+        print("{} configs:".format(config_list_name))
+        print(self._format_environment_printout(config_list))
     
     def _format_environment_printout(self, environment_array):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
@@ -103,8 +99,6 @@ class CommandLineInterface(object):
         if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
             config_manager.add_simple_config_path(env_file_path[0])
             self._run_driver_file(driver_name)
-        else:
-            exit(1)
     
     def _run_driver_file(self, driver_name):
         import os
@@ -132,9 +126,9 @@ class CommandLineInterface(object):
     def _check_environment_valid(self, environment_file_path, environment_name):
         valid = False
         if environment_file_path == None:
-            CommandLineInterface.static_print("Foundations project not found. Deploy command must be run in foundations project directory")
+            print("Foundations project not found. Deploy command must be run in foundations project directory")
         elif len(environment_file_path) == 0:
-            CommandLineInterface.static_print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --envs`".format(environment_name))
+            print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --envs`".format(environment_name))
         else:
             valid = True
         return valid
@@ -142,9 +136,9 @@ class CommandLineInterface(object):
     def _check_driver_valid(self, driver_name):
         import os
         if not os.path.isfile(os.path.join(os.getcwd(), driver_name)):
-            CommandLineInterface.static_print('Driver file `{}` does not exist'.format(driver_name))
+            print('Driver file `{}` does not exist'.format(driver_name))
             return False
         if driver_name.split('.')[-1] != 'py':
-            CommandLineInterface.static_print('Driver file `{}` needs to be a python file with an extension `.py`'.format(driver_name))
+            print('Driver file `{}` needs to be a python file with an extension `.py`'.format(driver_name))
             return False
         return True 
