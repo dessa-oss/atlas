@@ -97,3 +97,18 @@ class TestSession(Spec):
     def test_create_saves_session(self, mock_save):
         session = Session.create()
         mock_save.assert_called()
+
+    def test_is_authorized_returns_true_with_no_password(self):
+        self.assertTrue(Session.is_authorized({}))
+    
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
+    def test_authorized_returns_false_with_password_no_cookies(self):
+        self.assertFalse(Session.is_authorized({}))
+
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
+    def test_authorized_returns_false_with_password_and_valid_cookie(self):
+        self.assertTrue(Session.is_authorized({'auth_token': 'stuff'}))
+
+    @patch.dict('os.environ',{'FOUNDATIONS_GUI_PASSWORD': 'platapus'} )
+    def test_authorized_returns_false_with_password_and_valid_cookie(self):
+        self.assertTrue(Session.is_authorized({'auth_token': 'stuff'}))

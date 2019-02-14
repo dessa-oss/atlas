@@ -51,6 +51,12 @@ class Session(PropertyModel):
         return self
 
     @staticmethod
+    def is_authorized(cookies):
+        import os
+
+        return not 'FOUNDATIONS_GUI_PASSWORD' in os.environ or cookies
+
+    @staticmethod
     def _find_internal(token):
         from foundations.global_state import redis_connection
 
