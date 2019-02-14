@@ -37,3 +37,15 @@ def let_patch_mock(name):
         return self.patch(name)
     
     return let_now(_callback)
+
+def let_patch_instance(name):
+    from mock import Mock
+
+    def _callback(self):
+        mock_klass = self.patch(name)
+        mock_instance = Mock()
+        mock_klass.return_value = mock_instance
+
+        return mock_instance
+    
+    return let_now(_callback)

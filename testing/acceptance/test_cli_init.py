@@ -20,6 +20,14 @@ class TestCLIInit(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env local"])
+
+        self.assertEqual(driver_deploy_exit_code, 0)
+
+    def test_cli_can_run_job_with_default_configuration(self):
+        import subprocess
+
+        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init/project_code && python driver.py"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
