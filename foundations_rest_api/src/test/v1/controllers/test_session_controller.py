@@ -20,20 +20,19 @@ class TestSessionController(Spec):
     @let
     def session_controller(self):
         return SessionController()
+    
+    @let
+    def random_cookie(self):
+        from faker import Faker
+        return Faker().sha256()
 
     mock_auth = let_patch_mock('foundations_rest_api.v1.models.session.Session.auth')
     mock_create = let_patch_mock('foundations_rest_api.v1.models.session.Session.create')
 
-    @set_up
-    def set_up(self):
-        self._ensure_mock_auth_used()
-        self._ensure_mock_create_used()
-
-    def _ensure_mock_auth_used(self):
-        self.mock_auth
-    
-    def _ensure_mock_create_used(self):
-        self.mock_create
+    # def mock_create_fn():
+    #         mock_session_instance = Mock()
+    #         mock_session_instance.target.side_effect = self.random_cookie
+    #         return mock_session_instance
 
     def test_session_returns_status_400_if_bad_json(self):
         self.session_controller.params = {'hats': 'cold'}
@@ -68,6 +67,18 @@ class TestSessionController(Spec):
         self.mock_auth.return_value = True 
         self.session_controller.post()
         self.mock_create.assert_called()
+
+    @patch('foundations_rest_api.response.Response.constant')
+    def test_session_calls_response_with_token_if_password_valid(self, mock_constant_response):
+
+        mock_session_instance = Mock()
+        mock_session_instance.token = self.random_cookie
+
+        self.session_controller.params = {'password': 'cave'}
+        self.mock_auth.return_value = True 
+        self.mock_create.return_value = mock_session_instance
+        self.session_controller.post()
+        mock_constant_response.assert_called_with('OK', status=200, cookie=self.random_cookie)
 
     def test_session_returns_status_401_if_password_valid(self):
         self.session_controller.params = {'password': 'cave'}

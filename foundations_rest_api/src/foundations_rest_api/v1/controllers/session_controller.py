@@ -20,17 +20,17 @@ class SessionController(object):
         else:
             return self._response(HTTPStatus.BAD_REQUEST)
 
-    def _response(self, error):
+    def _response(self, error, cookie="some cookie"):
         from foundations_rest_api.response import Response
         
-        return Response.constant(error.phrase, status=error.value)
+        return Response.constant(error.phrase, status=error.value, cookie=cookie)
     
     def _authenticate_password(self):
         from foundations_rest_api.v1.models.session import Session
 
         if Session.auth(self._password):
-            Session.create()
-            return self._response(HTTPStatus.OK)
+            session_token = Session.create().token
+            return self._response(HTTPStatus.OK, cookie=session_token)
         else:
             return self._response(HTTPStatus.UNAUTHORIZED)
         
