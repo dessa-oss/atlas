@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from flask import request
+from flask import request, make_response, Response
+from foundations_rest_api.v1.models.session import Session
 class APIResourceBuilder(object):
 
     def __init__(self, klass, base_path):
@@ -44,7 +45,10 @@ class APIResourceBuilder(object):
             instance.params = self._api_params(kwargs)
 
             response = instance.index()
+            if not Session.is_authorized(request.cookies):
+                return 'Unauthorized', 401
             return response.as_json(), response.status()
+            
         return _get
     
     def _post_api_create(self):
@@ -53,7 +57,11 @@ class APIResourceBuilder(object):
             instance.params = request.form
 
             response = instance.post()
-            return response.as_json(), response.status()
+            cookie = None
+            if response.cookie():
+                cookie_key, cookie_value = list(response.cookie().items())[0]
+                cookie = '{}={}'.format(cookie_key, cookie_value)
+            return response.as_json(), response.status(), {'Set-Cookie': cookie}
         return _post
 
     def _api_params(self, kwargs):

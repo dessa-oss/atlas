@@ -22,17 +22,16 @@ class TestSessionController(Spec):
         return SessionController()
     
     @let
-    def random_cookie(self):
+    def random_token(self):
         from faker import Faker
         return Faker().sha256()
 
+    @let
+    def random_cookie(self):
+        return {'auth_token': self.random_token}
+
     mock_auth = let_patch_mock('foundations_rest_api.v1.models.session.Session.auth')
     mock_create = let_patch_mock('foundations_rest_api.v1.models.session.Session.create')
-
-    # def mock_create_fn():
-    #         mock_session_instance = Mock()
-    #         mock_session_instance.target.side_effect = self.random_cookie
-    #         return mock_session_instance
 
     def test_session_returns_status_400_if_bad_json(self):
         self.session_controller.params = {'hats': 'cold'}
@@ -72,7 +71,7 @@ class TestSessionController(Spec):
     def test_session_calls_response_with_token_if_password_valid(self, mock_constant_response):
 
         mock_session_instance = Mock()
-        mock_session_instance.token = self.random_cookie
+        mock_session_instance.token = self.random_token
 
         self.session_controller.params = {'password': 'cave'}
         self.mock_auth.return_value = True 

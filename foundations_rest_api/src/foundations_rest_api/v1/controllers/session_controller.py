@@ -30,7 +30,8 @@ class SessionController(object):
 
         if Session.auth(self._password):
             session_token = Session.create().token
-            return self._response(HTTPStatus.OK, cookie=session_token)
+            session_cookie = {'auth_token': session_token}
+            return self._response(HTTPStatus.OK, cookie=session_cookie)
         else:
             return self._response(HTTPStatus.UNAUTHORIZED)
         
