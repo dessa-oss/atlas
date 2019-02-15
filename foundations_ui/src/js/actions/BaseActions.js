@@ -57,4 +57,5 @@ const BaseActions = {
       );
   },
 };
+
 export default BaseActions;
