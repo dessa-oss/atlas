@@ -28,7 +28,7 @@ class TestAppManager(unittest.TestCase):
     def test_uses_cors(self, mock):
         app_manager = AppManager()
         app = app_manager.app()
-        mock.assert_called_with(app)
+        mock.assert_called_with(app, supports_credentials=True)
 
     @patch('flask_cors.CORS')
     def test_uses_calls_cors_only_once(self, mock):
