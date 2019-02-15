@@ -9,7 +9,7 @@ const day = hour * 24;
 const isStatusField = true;
 const statusText = 'Status';
 
-class ProjectActions {
+class JobListActions {
   // API Calls
   static getJobs(projectName) {
     const url = this.getBaseJobListingURL(projectName);
@@ -692,6 +692,10 @@ class ProjectActions {
     });
     return filteredArrayMapped.includes(columnName);
   }
+
+  static redirect(url) {
+    return BaseActions.redirectRoute(url);
+  }
 }
 
-export default ProjectActions;
+export default JobListActions;

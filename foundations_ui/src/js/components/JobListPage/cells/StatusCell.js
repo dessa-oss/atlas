@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import JobActions from '../../../actions/JobListActions';
+import JobListActions from '../../../actions/JobListActions';
 
 class StatusCell extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class StatusCell extends Component {
   render() {
     const { status, isError, rowNumber } = this.state;
 
-    const statusClass = JobActions.getStatusCircle(status);
+    const statusClass = JobListActions.getStatusCircle(status);
 
     const divClass = isError ? `status-cell job-cell error row-${rowNumber}` : `status-cell job-cell row-${rowNumber}`;
 
