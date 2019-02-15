@@ -5,6 +5,7 @@ import { shallow, mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import configureTests from '../setupTests';
 import ProjectActions from '../../js/actions/ProjectActions';
+import LoginPage from '../../js/components/LoginPage/LoginPage';
 
 configureTests();
 
@@ -46,4 +47,15 @@ it('Sets QueryStatus Based on getProjects Response', async () => {
     expect(preState.queryStatus).toEqual(200);
     expect(wrapper.state.queryStatus).toEqual(404);
   </MemoryRouter>
+});
+
+it('Calls Redirect to the Login Page if QueryStats is 401', () => {
+  const wrapper = shallow(<ProjectPage />)
+  ProjectActions.redirect = jest.fn();
+  wrapper.setState({
+    queryStatus: 401,
+    isLoaded: true,
+  });
+  expect(ProjectActions.redirect).toBeCalledWith('/login');
+
 });

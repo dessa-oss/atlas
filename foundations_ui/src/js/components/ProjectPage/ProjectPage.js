@@ -44,6 +44,9 @@ class ProjectPage extends Component {
     const { isLoaded, projects, queryStatus } = this.state;
     let projectList;
     if (isLoaded) {
+      if (queryStatus === 401) {
+        return ProjectActions.redirect('/login');
+      }
       if (queryStatus !== 200) {
         projectList = <ErrorMessage errorCode={queryStatus} />;
       } else if (projects.length === 0) {
