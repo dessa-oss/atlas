@@ -53,11 +53,13 @@ def _add_consumers_for_run_job(redis):
     from foundations_contrib.consumers.jobs.running.job_state import JobState
     from foundations_contrib.consumers.jobs.running.project_listing import ProjectListing
     from foundations_contrib.consumers.jobs.running.remove_queued_job import RemoveQueuedJob
+    from foundations_contrib.consumers.jobs.running.remove_global_queued_job import RemoveGlobalQueuedJob
     from foundations_contrib.consumers.jobs.running.start_time import StartTime
 
     _add_listener(JobState(redis), 'run_job')
     _add_listener(ProjectListing(redis), 'run_job')
     _add_listener(RemoveQueuedJob(redis), 'run_job')
+    _add_listener(RemoveGlobalQueuedJob(redis), 'run_job')
     _add_listener(StartTime(redis), 'run_job')
 
 

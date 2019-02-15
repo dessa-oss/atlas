@@ -74,7 +74,6 @@ class TestConsumers(unittest.TestCase):
         stage_time = self._redis.zrange(stage_time_key, 0, -1)
         self.assertEqual(b'21aad1de62dcd003b4d28909bd2add8431fceec7', stage_time[0])
         
-
         queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
         queued_jobs = self._redis.smembers(queued_job_key)
         self.assertEqual(set([byte_string(self._job_id)]), queued_jobs)
@@ -125,8 +124,20 @@ class TestConsumers(unittest.TestCase):
         from foundations_contrib.producers.jobs.run_job import RunJob
         from time import time
 
+        queued_job_key = 'project:{}:jobs:queued'.format(self._project_name)
+        self._redis.sadd(queued_job_key, self._job_id)
+
+        global_queued_job_key = 'projects:global:jobs:queued'
+        self._redis.sadd(global_queued_job_key, self._job_id)
+
         current_time = time()
         RunJob(self._message_router, self._pipeline_context).push_message()
+
+        queued_jobs = self._redis.smembers(queued_job_key)
+        self.assertEqual(set(), queued_jobs)
+
+        global_queued_jobs = self._redis.smembers(global_queued_job_key)
+        self.assertEqual(set(), global_queued_jobs)
 
         running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
         running_and_completed_jobs = self._redis.smembers(running_jobs_key)
