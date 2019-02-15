@@ -1,3 +1,7 @@
+import React from 'react';
+import { Redirect } from 'react-router-dom';
+
+
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v1/',
   baseBetaURL: process.env.REACT_APP_BETA_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v2beta/',
@@ -55,6 +59,10 @@ const BaseActions = {
           return null;
         },
       );
+  },
+
+  redirectRoute(urlName) {
+    return <Redirect push to={urlName} />;
   },
 };
 

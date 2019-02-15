@@ -1,5 +1,8 @@
 import configureTests from '../setupTests';
 import BaseActions from '../../js/actions/BaseActions';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
+
 
 configureTests();
 
@@ -83,3 +86,8 @@ it('Posts Results to API Different Data', async () => {
     },
   );
 });
+
+it('Redirect returns Redirect', () => {
+  const redirectOutput = BaseActions.redirectRoute("/projects");
+  expect(redirectOutput).toEqual(<Redirect push to="/projects" />);
+})

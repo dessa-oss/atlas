@@ -49,7 +49,7 @@ it('Sets QueryStatus Based on getProjects Response', async () => {
   </MemoryRouter>
 });
 
-it('Calls Redirect to the Login Page if QueryStats is 401', () => {
+it('Calls Redirect to the Login Page if QueryStatus is 401', () => {
   const wrapper = shallow(<ProjectPage />)
   ProjectActions.redirect = jest.fn();
   wrapper.setState({
@@ -57,5 +57,4 @@ it('Calls Redirect to the Login Page if QueryStats is 401', () => {
     isLoaded: true,
   });
   expect(ProjectActions.redirect).toBeCalledWith('/login');
-
 });
