@@ -13,7 +13,7 @@ from foundations_rest_api.lazy_result import LazyResult
 from foundations_rest_api.response import Response
 
 from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let
+from foundations_internal.testing.helpers import let, let_patch_mock
 
 class TestAPIResource(Spec):
 
@@ -37,6 +37,8 @@ class TestAPIResource(Spec):
     def faker(self):
         from faker import Faker
         return Faker()
+
+    authorization_mock = let_patch_mock('foundations_rest_api.v1.models.session.Session.is_authorized')
 
     def test_returns_class(self):
         klass = api_resource('/path/to/resource')(APIResourceMocks.Mock)
@@ -178,6 +180,35 @@ class TestAPIResource(Spec):
         with app_manager.app().test_client() as client:
             response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
             self.assertEqual(self._json_response(response), {'hello': ['world', 'lou']})
+
+    def test_get_returns_unauthorized_when_not_authenticated(self):
+        from foundations_rest_api.global_state import app_manager
+
+        def _callback(mock_instance):
+            return ''
+
+        mock_klass = self._mock_resource('index', _callback)
+        klass = api_resource('/path/to/resource/that/is/unauthorized')(mock_klass)
+
+        self.authorization_mock.return_value = False
+        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
+        with app_manager.app().test_client() as client:
+            response = client.get('/path/to/resource/that/is/unauthorized', headers=headers)
+            self.assertEqual(self._json_response(response), 'Unauthorized')
+    
+    def test_get_calls_session_is_authorized_with_correct_parameters(self):
+        from foundations_rest_api.global_state import app_manager
+
+        def _callback(mock_instance):
+            return ''
+
+        mock_klass = self._mock_resource('index', _callback)
+        klass = api_resource('/path/to/resource/that/takes/cookie')(mock_klass)
+
+        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
+        with app_manager.app().test_client() as client:
+            response = client.get('/path/to/resource/that/takes/cookie', headers=headers)
+            self.authorization_mock.assert_called_with({'auth_token': self.random_cookie_value})
 
     def _mock_resource(self, method, callback, status=200, cookie=None):
         from foundations_rest_api.lazy_result import LazyResult
