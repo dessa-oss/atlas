@@ -79,6 +79,10 @@ class TestConsumers(unittest.TestCase):
         queued_jobs = self._redis.smembers(queued_job_key)
         self.assertEqual(set([byte_string(self._job_id)]), queued_jobs)
 
+        global_queued_job_key = 'projects:global:jobs:queued'.format(self._project_name)
+        global_queued_jobs = self._redis.smembers(global_queued_job_key)
+        self.assertEqual(set([byte_string(self._job_id)]), global_queued_jobs)
+
         job_parameters_key = 'jobs:{}:parameters'.format(self._job_id)
         job_parameters = self._get_and_deserialize(job_parameters_key)
         self.assertEqual(expected_job_parameters, job_parameters)

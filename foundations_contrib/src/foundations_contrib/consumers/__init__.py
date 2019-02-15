@@ -24,6 +24,7 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.input_parameters import InputParameters
     from foundations_contrib.consumers.jobs.queued.job_state import JobState
     from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
+    from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
     from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
     from foundations_contrib.consumers.jobs.queued.run_data_keys import RunDataKeys
     from foundations_contrib.consumers.jobs.queued.run_data import RunData
@@ -40,6 +41,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(InputParameters(redis, serializer), 'queue_job')
     _add_listener(JobState(redis), 'queue_job')
     _add_listener(ProjectListing(redis), 'queue_job')
+    _add_listener(GlobalListing(redis), 'queue_job')
     _add_listener(ProjectName(redis), 'queue_job')
     _add_listener(RunDataKeys(redis), 'queue_job')
     _add_listener(RunData(redis, json), 'queue_job')
