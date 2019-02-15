@@ -3,7 +3,7 @@ import JobColumnHeader from '../components/common/JobColumnHeader';
 import InputMetricCell from '../components/common/InputMetricCell';
 import InputMetricRow from '../components/common/InputMetricRow';
 import Checkbox from '../components/common/Checkbox';
-import JobActions from './JobListActions';
+import JobListActions from './JobListActions';
 
 const notFound = -1;
 const oneElement = 1;
@@ -27,7 +27,7 @@ class CommonActions {
       if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
-        const isFiltered = JobActions.isColumnFiltered(filteredArray, key);
+        const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
@@ -89,7 +89,7 @@ class CommonActions {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.input_params, col, isMetric);
         const key = this.getInputMetricKey(input, col, isMetric);
-        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const cellType = this.getInputMetricCellType(input);
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
@@ -111,7 +111,7 @@ class CommonActions {
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
         const input = this.getInputMetricInput(job.output_metrics, col, isMetric);
-        let inputValue = JobActions.getInputMetricValue(input, isMetric, columns);
+        let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
         const cellType = this.getInputMetricCellType(input);
         if (cellType.match(/array*/)) {
@@ -354,7 +354,7 @@ class CommonActions {
       columns.forEach((col) => {
         let statusCircle = null;
         if (statusCheckbox) {
-          statusCircle = JobActions.getStatusCircle(col.name);
+          statusCircle = JobListActions.getStatusCircle(col.name);
         }
         const key = col.name.concat('-checkbox');
         checkboxes.push(<Checkbox
