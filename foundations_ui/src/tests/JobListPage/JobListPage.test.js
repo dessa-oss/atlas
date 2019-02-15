@@ -4,7 +4,7 @@ import JobListPage from '../../js/components/JobListPage/JobListPage';
 import { shallow, mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import configureTests from '../setupTests';
-import JobActions from '../../js/actions/JobListActions'
+import JobListActions from '../../js/actions/JobListActions'
 
 configureTests();
 
@@ -23,20 +23,19 @@ it('Calls Get Job List', async () => {
   </MemoryRouter>
 });
 
-// it('Calls Redirect to the Login Page if QueryStats is 401', () => {
-//   const wrapper = shallow(<JobListPage />)
-//   JobActions.redirect = jest.fn();
-//   wrapper.setState({
-//     queryStatus: 401,
-//     isLoaded: true,
-//   });
-//   expect(JobActions.redirect).toBeCalledWith('/login');
-// });
+it('Calls Redirect to the Login Page if QueryStats is 401', () => {
+  const wrapper = shallow(<JobListPage />)
+  JobListActions.redirect = jest.fn();
+  wrapper.setState({
+    queryStatus: 401,
+  });
+  expect(JobListActions.redirect).toBeCalledWith('/login');
+});
 
 it('Sets QueryStatus Based On Fetch Response', () => {
   <MemoryRouter>
-    JobActions.getJobs = jest.fn();
-    JobActions.getJobs.status.mockReturnValue({404});
+    JobListActions.getJobs = jest.fn();
+    JobListActions.getJobs.status.mockReturnValue({404});
     const wrapper = mount(<JobListPage projectName='myProject'/>);
     const preState = wrapper.state();
     await wrapper.instance().getJobs() 

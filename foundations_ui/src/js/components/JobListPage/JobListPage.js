@@ -327,6 +327,9 @@ class JobListPage extends Component {
       queryStatus,
     } = this.state;
     let jobList;
+    if (queryStatus === 401) {
+      return JobListActions.redirect('/login');
+    }
     if (this.checkStatusOk()) {
       jobList = (
         <JobTable
