@@ -10,6 +10,7 @@ class ProjectPage extends Component {
   constructor(props) {
     super(props);
     this.getAllProjects = this.getAllProjects.bind(this);
+    this.setProjectList = this.setProjectList.bind(this);
     this.state = {
       isLoaded: false,
       projects: [],
@@ -40,6 +41,17 @@ class ProjectPage extends Component {
     }
   }
 
+  setProjectList() {
+    const { projects, queryStatus } = this.state;
+    if (queryStatus !== 200) {
+      return <ErrorMessage errorCode={queryStatus} />;
+    }
+    if (projects.length === 0) {
+      return <p>No projects available</p>;
+    }
+    return ProjectActions.getAllProjects(projects);
+  }
+
   render() {
     const { isLoaded, projects, queryStatus } = this.state;
     let projectList;
@@ -47,13 +59,7 @@ class ProjectPage extends Component {
       if (queryStatus === 401) {
         return ProjectActions.redirect('/login');
       }
-      if (queryStatus !== 200) {
-        projectList = <ErrorMessage errorCode={queryStatus} />;
-      } else if (projects.length === 0) {
-        projectList = <p>No projects available</p>;
-      } else {
-        projectList = ProjectActions.getAllProjects(projects);
-      }
+      projectList = this.setProjectList();
     } else {
       projectList = <Loading loadingMessage="We are currently loading your projects" />;
     }
