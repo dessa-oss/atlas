@@ -10,6 +10,4 @@ Then to get all experiment results from a particular project we use `foundations
 
 import foundations
 
-foundations.config_manager.add_config_path('../config/default.local.yaml')
-
 foundations.get_metrics_for_all_jobs("my-foundations-project")
