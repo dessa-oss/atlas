@@ -23,7 +23,7 @@ it('Calls Get Job List', async () => {
   </MemoryRouter>
 });
 
-it('Calls Redirect to the Login Page if QueryStats is 401', () => {
+it('Calls Redirect to the Login Page if QueryStatus is 401', () => {
   const wrapper = shallow(<JobListPage />)
   JobListActions.redirect = jest.fn();
   wrapper.setState({
