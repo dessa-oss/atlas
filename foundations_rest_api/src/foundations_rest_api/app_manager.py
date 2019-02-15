@@ -23,7 +23,7 @@ class AppManager(object):
 
         if self._app is None:
             self._app = Flask(__name__)
-            CORS(self._app)
+            CORS(self._app, supports_credentials=True)
 
         return self._app
 
