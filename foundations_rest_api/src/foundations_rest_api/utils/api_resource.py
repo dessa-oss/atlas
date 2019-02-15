@@ -46,7 +46,7 @@ class APIResourceBuilder(object):
 
             response = instance.index()
             if not Session.is_authorized(request.cookies):
-                return 'Unauthorized'
+                return 'Unauthorized', 401
             return response.as_json(), response.status()
             
         return _get

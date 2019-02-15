@@ -31,7 +31,7 @@ class TestAPIResource(Spec):
 
     @let
     def uri_path(self):
-        return '/' + self.faker.uri_path()
+        return '/' + self.faker.uri_path(10)
 
     @let
     def random_cookie_key(self):
@@ -170,6 +170,16 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path, headers=self.cookie_header)
             self.assertEqual(self._json_response(response), 'Unauthorized')
     
+    def test_get_returns_unauthorized_status_when_not_authenticated(self):
+        mock_klass = self._mock_resource('index', self._empty_callback)
+        klass = api_resource(self.uri_path)(mock_klass)
+
+        self.authorization_mock.return_value = False
+        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
+        with self._test_client() as client:
+            response = client.get(self.uri_path, headers=self.cookie_header)
+            self.assertEqual(response.status_code, 401)
+
     def test_get_calls_session_is_authorized_with_correct_parameters(self):
         mock_klass = self._mock_resource('index', self._empty_callback)
         klass = api_resource(self.uri_path)(mock_klass)
