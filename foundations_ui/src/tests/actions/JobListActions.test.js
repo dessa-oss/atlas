@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow, mount } from 'enzyme';
+import { Redirect } from 'react-router-dom';
 import configureTests from '../setupTests';
 import JobActions from '../../js/actions/JobListActions';
 
@@ -740,3 +741,8 @@ it('isColumnFiltered, not filter', () => {
   const isFiltered = JobActions.isColumnFiltered(columnFilter, nonExistingColumn);
   expect(isFiltered).toBe(false);
 });
+
+it('Redirect returns Redirect', () => {
+  const redirectOutput = JobActions.redirect("/login");
+  expect(redirectOutput).toEqual(<Redirect push to="/login" />);
+})

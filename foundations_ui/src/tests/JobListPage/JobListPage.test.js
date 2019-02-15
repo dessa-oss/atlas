@@ -23,6 +23,16 @@ it('Calls Get Job List', async () => {
   </MemoryRouter>
 });
 
+// it('Calls Redirect to the Login Page if QueryStats is 401', () => {
+//   const wrapper = shallow(<JobListPage />)
+//   JobActions.redirect = jest.fn();
+//   wrapper.setState({
+//     queryStatus: 401,
+//     isLoaded: true,
+//   });
+//   expect(JobActions.redirect).toBeCalledWith('/login');
+// });
+
 it('Sets QueryStatus Based On Fetch Response', () => {
   <MemoryRouter>
     JobActions.getJobs = jest.fn();
