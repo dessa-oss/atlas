@@ -15,7 +15,6 @@ Then you can run the driver file with `python driver.py` to send the experiment 
 import foundations
 from model import dummy_function
 
-foundations.config_manager.add_config_path('../config/default.local.yaml')
 foundations.set_project_name('my-foundations-project')
 
 dummy_function = foundations.create_stage(dummy_function)
