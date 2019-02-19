@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import JobActions from '../../actions/JobListActions';
+import JobListActions from '../../actions/JobListActions';
 import Tooltip from './Tooltip';
 
 class JobColumnHeader extends Component {
@@ -30,10 +30,10 @@ class JobColumnHeader extends Component {
     const {
       title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered,
     } = this.state;
-    const headerClassName = JobActions.getJobColumnHeaderH4Class(isStatus);
-    const arrowClassName = JobActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
-    const divClassName = JobActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
-    const presentationClassName = JobActions.getJobColumnHeaderPresentationClass(colType, isMetric);
+    const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
+    const arrowClassName = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
+    const divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
+    const presentationClassName = JobListActions.getJobColumnHeaderPresentationClass(colType, isMetric);
 
     const tooltip = <Tooltip message={title} />;
     const filterIcon = isFiltered ? <div className="i--icon-filtered" /> : null;
