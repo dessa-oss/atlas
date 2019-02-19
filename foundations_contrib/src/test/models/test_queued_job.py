@@ -20,10 +20,7 @@ class TestQueuedJob(Spec):
 
     mock_time = let_patch_mock('time.time')
 
-    @let
-    def mock_redis(self):
-        from fakeredis import FakeRedis
-        return FakeRedis()
+    mock_redis = let_patch_mock('foundations.global_state.redis_connection', FakeRedis())
 
     @let
     def mock_redis_pipeline(self):
@@ -57,6 +54,25 @@ class TestQueuedJob(Spec):
         return random.randint(1, 100)
 
     @let
+    def job_id_two(self):
+        return self.faker.sha256()
+
+    @let
+    def queued_time_two(self):
+        import random
+        return random.randint(1, 100)
+
+    @let
+    def project_name_two(self):
+        import uuid
+        return str(uuid.uuid4())
+
+    @let
+    def time_since_queued_two(self):
+        from time import time
+        return time() - self.queued_time_two
+
+    @let
     def queued_job(self):
         return QueuedJob(
             job_id=self.job_id,
@@ -65,13 +81,26 @@ class TestQueuedJob(Spec):
             time_since_queued=self.time_since_queued
         )
 
-    @set_up
-    def set_up(self):
-        self.mock_time.return_value = self.queued_time + self.time_since_queued
+    @let
+    def queued_job_two(self):
+        return QueuedJob(
+            job_id=self.job_id_two,
+            queued_time=self.queued_time_two,
+            project_name=self.project_name_two,
+            time_since_queued=self.time_since_queued_two
+        )
 
     @let
     def queue_message(self):
         return {'job_id': self.job_id, 'project_name': self.project_name}
+
+    @let
+    def queue_message_two(self):
+        return {'job_id': self.job_id_two, 'project_name': self.project_name_two}
+
+    @set_up
+    def set_up(self):
+        self.mock_time.return_value = self.queued_time + self.time_since_queued
 
     def test_has_job_id(self):
         self.assertEqual(self.job_id, self.queued_job.job_id)
@@ -102,8 +131,22 @@ class TestQueuedJob(Spec):
 
         self.assertEqual(self.queued_job, job)
 
-    def test_all_returns_empty_list_when_no_queued_jobs(self):
-        self.assertEqual([], QueuedJob.all())
+    def test_all_async_returns_empty_list_when_no_queued_jobs(self):
+        jobs = QueuedJob.all()
+        self.assertEqual([], jobs)
+
+    def test_all_async_returns_jobs(self):
+        self._store_job_data()
+
+        jobs = QueuedJob.all()
+        self.assert_list_contains_items([self.queued_job], jobs)
+
+    def test_all_async_returns_jobs_multiple_jobs(self):
+        self._store_job_data()
+        self._store_job_data_two()
+
+        jobs = QueuedJob.all()
+        self.assert_list_contains_items([self.queued_job, self.queued_job_two], jobs)
 
     def _store_job_data(self):
         from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
@@ -113,3 +156,12 @@ class TestQueuedJob(Spec):
         CreationTime(self.mock_redis).call(self.queue_message, self.queued_time, {})
         ProjectName(self.mock_redis).call(self.queue_message, self.queued_time, {})
         GlobalListing(self.mock_redis).call(self.queue_message, self.queued_time, {})
+
+    def _store_job_data_two(self):
+        from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
+        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
+        from foundations_contrib.consumers.jobs.queued.global_listing import GlobalListing
+
+        CreationTime(self.mock_redis).call(self.queue_message_two, self.queued_time_two, {})
+        ProjectName(self.mock_redis).call(self.queue_message_two, self.queued_time_two, {})
+        GlobalListing(self.mock_redis).call(self.queue_message_two, self.queued_time_two, {})

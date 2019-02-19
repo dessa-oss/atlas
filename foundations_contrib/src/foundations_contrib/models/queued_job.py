@@ -26,7 +26,19 @@ class QueuedJob(PropertyModel):
 
     @staticmethod
     def all():
-        return []
+        from foundations.global_state import redis_connection
+        from promise import Promise
+        from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
+
+        job_ids = [job_id.decode() for job_id in redis_connection.smembers('projects:global:jobs:queued')]
+        pipeline = redis_connection.pipeline()
+        async_redis = RedisPipelineWrapper(pipeline)
+
+        async_jobs = [QueuedJob.find_async(async_redis, job_id) for job_id in job_ids]
+
+        async_redis.execute()
+
+        return Promise.all(async_jobs).get()
 
     @staticmethod
     def _make_queued_job_callback(job_id):
