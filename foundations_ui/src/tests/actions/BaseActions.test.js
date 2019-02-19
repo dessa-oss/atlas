@@ -1,9 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { shallow, mount } from 'enzyme';
-import { Redirect } from 'react-router-dom';
 import configureTests from '../setupTests';
 import BaseActions from '../../js/actions/BaseActions';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
+
 
 configureTests();
 
@@ -11,12 +10,12 @@ function mockFetch(data, status) {
   return jest.fn().mockImplementation(() =>
     Promise.resolve({
       status: status,
-      json: () => data
+      json: () => data,
     })
   );
 }
 
-it('Gets Result and Status from API', async () => {
+it('Gets Result and Status from getAPI', async () => {
   fetch = mockFetch('data', 404);
   const [status, result] = await BaseActions.getFromAPI('some_query_url');
   expect(status).toEqual(404);
@@ -24,12 +23,35 @@ it('Gets Result and Status from API', async () => {
   expect(fetch).toHaveBeenCalledTimes(1);
 });
 
-it('Gets Result and Status from BetaAPI', async () => {
+it('Calls getAPI with Correct Params', async () => {
+  fetch = mockFetch('other_data', 500);
+  const [status, result] = await BaseActions.getFromAPI('some_query_url');
+  expect(status).toEqual(500);
+  expect(result).toEqual('other_data');
+  expect(fetch).toBeCalledWith('http://private-83924-dessa.apiary-mock.com/api/v1/some_query_url',
+  {
+    credentials: 'include',
+  });
+});
+
+it('Gets Result and Status from getBetaAPI', async () => {
   fetch = mockFetch('other_data', 500);
   const [status, result] = await BaseActions.getBetaFromAPI('some_query_url');
   expect(status).toEqual(500);
   expect(result).toEqual('other_data');
   expect(fetch).toHaveBeenCalledTimes(1);
+});
+
+it('Calls getBetaAPI with Correct Params', async () => {
+  fetch = mockFetch('other_data', 500);
+  const [status, result] = await BaseActions.getBetaFromAPI('some_query_url');
+  expect(status).toEqual(500);
+  expect(result).toEqual('other_data');
+  expect(fetch).toBeCalledWith('http://private-83924-dessa.apiary-mock.com/api/v2beta/some_query_url',
+    {
+      credentials: 'include',
+    }
+  );
 });
 
 it('Posts Results to API', async () => {
@@ -42,9 +64,10 @@ it('Posts Results to API', async () => {
     'http://private-83924-dessa.apiary-mock.com/api/v1/login', 
     {
       method: 'POST',
-      body: 'some body'
-    }
-  )
+      body: 'some body',
+      credentials: 'include',
+    },
+  );
 });
 
 
@@ -58,7 +81,13 @@ it('Posts Results to API Different Data', async () => {
     'http://private-83924-dessa.apiary-mock.com/api/v1/login', 
     {
       method: 'POST',
-      body: 'some body else'
-    }
-  )
+      body: 'some body else',
+      credentials: 'include',
+    },
+  );
 });
+
+it('Redirect returns Redirect', () => {
+  const redirectOutput = BaseActions.redirectRoute("/projects");
+  expect(redirectOutput).toEqual(<Redirect push to="/projects" />);
+})

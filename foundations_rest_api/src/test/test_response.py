@@ -6,10 +6,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from mock import Mock
 from foundations_rest_api.response import Response
 from foundations_rest_api.v1.models.property_model import PropertyModel
 
-class TestResponse(unittest.TestCase):
+from foundations_internal.testing.helpers import let
+from foundations_internal.testing.helpers.spec import Spec
+
+class TestResponse(Spec):
 
     class MockModel(PropertyModel):
         data = PropertyModel.define_property()
@@ -41,6 +45,52 @@ class TestResponse(unittest.TestCase):
             for key, value in value.items():
                 attributes[key] = value.evaluate() if isinstance(value, TestResponse.MockLazyResult) else value
             return attributes
+
+    @let
+    def faker(self):
+        import faker
+        return faker.Faker()
+
+    @let
+    def resource_name(self):
+        return self.faker.name()
+
+    @let
+    def dummy_value(self):
+        return self.faker.color_name()
+    
+    @let
+    def dummy_cookie(self):
+        return self.faker.sha1()
+    
+    def test_resource_name_matches_input(self):
+        result = Mock()
+        response = Response(self.resource_name, result)
+        self.assertEqual(self.resource_name, response.resource_name())
+
+    def test_constant_returns_constant_resource(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(self.dummy_value, response.as_json())
+
+    def test_constant_returns_constant_resource_with_status_provided(self):
+        response = Response.constant(self.dummy_value, status=732)
+        self.assertEqual(732, response.status())
+
+    def test_constant_returns_constant_resource_with_default_status(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(200, response.status())
+    
+    def test_constant_returns_constant_resource_with_constant_name(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual('Constant', response.resource_name())
+    
+    def test_constant_returns_constant_resource_with_cookie_provided(self):
+        response = Response.constant(self.dummy_value, cookie=self.dummy_cookie)
+        self.assertEqual(self.dummy_cookie, response.cookie())
+    
+    def test_constant_returns_constant_with_default_cookie_value(self):
+        response = Response.constant(self.dummy_value)
+        self.assertEqual(None, response.cookie())
 
     def test_evaluate(self):
         mock = self.MockLazyResult('hello')
@@ -206,3 +256,21 @@ class TestResponse(unittest.TestCase):
         response2 = Response('mock', mock2)
 
         self.assertEqual({'data': [{'data': None}]}, response2.as_json())
+
+    def test_supports_cookie(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, cookie='Chocolate Chip')
+
+        self.assertEqual('Chocolate Chip', response.cookie()) 
+
+    def test_supports_cookie_different_cookie(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock, cookie='Lemon Drop')
+
+        self.assertEqual('Lemon Drop', response.cookie())
+
+    def test_supports_cookie_default_as_none(self):
+        mock = self.MockLazyResult('hello world')
+        response = Response('mock', mock)
+
+        self.assertIsNone(response.cookie()) 

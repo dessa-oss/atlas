@@ -5,7 +5,7 @@ import StatusCell from './cells/StatusCell';
 import JobIDCell from './cells/JobIDCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
-import JobActions from '../../actions/JobListActions';
+import JobListActions from '../../actions/JobListActions';
 import CommonActions from '../../actions/CommonActions';
 
 class JobTableRow extends Component {
@@ -28,7 +28,7 @@ class JobTableRow extends Component {
         <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <DurationCell
-          duration={JobActions.parseDuration(job.duration)}
+          duration={JobListActions.parseDuration(job.duration)}
           isError={isError}
           rowNumber={rowNumber}
         />
