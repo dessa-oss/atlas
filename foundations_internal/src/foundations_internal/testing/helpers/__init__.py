@@ -32,9 +32,9 @@ def let_mock():
     
     return let(_callback)
 
-def let_patch_mock(name):
+def let_patch_mock(name, *args, **kwargs):
     def _callback(self):
-        return self.patch(name)
+        return self.patch(name, *args, **kwargs)
     
     return let_now(_callback)
 
