@@ -1,4 +1,8 @@
-<h1>Project creation</h1>
+<h1>Foundations CLI Tool</h1>
+
+The Foundations Command Line Tool provides users with a simple way to interact and manage projects in Foundations. The supported functionalities are listed below.
+
+#Project creation#
 
 The best way to start using Foundations is by creating a project using the Foundations command line tool.
 
