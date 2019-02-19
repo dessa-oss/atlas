@@ -43,6 +43,7 @@ setup(
         'PyYAML==3.13',
         'promise==2.2.1',
         'futures; python_version == "2.7"',
+        'tabulate==0.8.3'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
