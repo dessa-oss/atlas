@@ -140,7 +140,7 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(mock_klass)
         with self._test_client() as client:
             response = client.post(self.uri_path, data={'password': 'world'})
-            self.assertEqual(self.cookie_string, response.headers.get('Set-Cookie'))
+            self.assertEqual(self.cookie_string + ';path=/', response.headers.get('Set-Cookie'))
 
     def test_get_returns_path_param(self):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)

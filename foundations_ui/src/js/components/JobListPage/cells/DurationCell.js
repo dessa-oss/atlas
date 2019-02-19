@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import JobActions from '../../../actions/JobListActions';
+import JobListActions from '../../../actions/JobListActions';
 
 class DurationCell extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      days: JobActions.getDurationDays(this.props.duration),
-      hours: JobActions.getDurationHours(this.props.duration),
-      minutes: JobActions.getDurationMinutes(this.props.duration),
-      seconds: JobActions.getDurationSeconds(this.props.duration),
+      days: JobListActions.getDurationDays(this.props.duration),
+      hours: JobListActions.getDurationHours(this.props.duration),
+      minutes: JobListActions.getDurationMinutes(this.props.duration),
+      seconds: JobListActions.getDurationSeconds(this.props.duration),
       isError: this.props.isError,
       rowNumber: this.props.rowNumber,
     };
@@ -25,10 +25,10 @@ class DurationCell extends Component {
     let minutesUI = null;
     let secondsUI = null;
 
-    daysUI = JobActions.getDurationClass('days', days, hours, minutes, seconds, isError);
-    hoursUI = JobActions.getDurationClass('hours', days, hours, minutes, seconds, isError);
-    minutesUI = JobActions.getDurationClass('minutes', days, hours, minutes, seconds, isError);
-    secondsUI = JobActions.getDurationClass('seconds', days, hours, minutes, seconds, isError);
+    daysUI = JobListActions.getDurationClass('days', days, hours, minutes, seconds, isError);
+    hoursUI = JobListActions.getDurationClass('hours', days, hours, minutes, seconds, isError);
+    minutesUI = JobListActions.getDurationClass('minutes', days, hours, minutes, seconds, isError);
+    secondsUI = JobListActions.getDurationClass('seconds', days, hours, minutes, seconds, isError);
 
     const pClass = isError
       ? `job-cell duration-cell error row-${rowNumber}`

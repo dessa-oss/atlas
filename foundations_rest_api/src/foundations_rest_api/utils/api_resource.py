@@ -60,8 +60,8 @@ class APIResourceBuilder(object):
             cookie = None
             if response.cookie():
                 cookie_key, cookie_value = list(response.cookie().items())[0]
-                cookie = '{}={}'.format(cookie_key, cookie_value)
-            return response.as_json(), response.status(), {'Set-Cookie': cookie}
+                cookie = '{}={};path=/'.format(cookie_key, cookie_value)
+            return response.as_json(), response.status(), {'Set-Cookie': cookie }
         return _post
 
     def _api_params(self, kwargs):
