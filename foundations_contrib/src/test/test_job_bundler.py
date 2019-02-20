@@ -151,7 +151,7 @@ class TestJobBundler(Spec):
         self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
 
-    def test_bundle_job_script_environment(self):
+    def test_bundle_job_adds_script_environment(self):
         import foundations_contrib
 
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
@@ -161,7 +161,19 @@ class TestJobBundler(Spec):
         with patch('foundations_contrib.simple_tempfile.SimpleTempfile') as mocked_simple_temp_file_class:
             with patch.object(foundations_contrib.job_bundling.script_environment.ScriptEnvironment, 'write_environment'):
                 mocked_simple_temp_file_class.return_value = self.MockSimpleTempfile('fake_temp_file_name')
-                job_bundler = JobBundler('fake_name', {'run_script_environment': ''}, None, mock_job_source_bundle)
+                fake_config = {'run_script_environment': ''}
+                job_bundler = JobBundler('fake_name', fake_config, None, mock_job_source_bundle)
                 job_bundler._bundle_job()
 
         mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
+
+    def test_bundle_job_adds_job_directory(self):
+        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
+        mock_tar = self.MockFileContextManager()
+        self.mock_tarfile_open.return_value = mock_tar
+
+        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+
+        self.mock_os_chdir.assert_has_calls([call(job_bundler._resource_directory)])
+        mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
