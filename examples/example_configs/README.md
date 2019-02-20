@@ -60,6 +60,9 @@ config_manager.add_config_path('config/local_default.config.yaml')
 ```
 It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
 
+**Amazon Web Services (AWS) Deployment:** for use with Amazon's cloud service. A queuing system is required for use of this deployment configuration.  This has been tested using AWS Lambda + AWS Batch as the queuing + scheduling system.
+
+**SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system.
 
 ## Configuration Options
 
@@ -153,7 +156,9 @@ Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the 
 
 This variable is used to tell the `run.sh` that there is no internet.  This ensures that pip will not waste time trying to download packages when it can't.
 
-Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
+Allowed values for `offline_mode` are `OFFLINE` and `FORCE_ONLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
+
+If `offline_mode` is set to `FORCE_ONLINE`, the connectivity check will be skipped and it will be assumed that we can `pip install` packages from the internet.
 
 Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
 

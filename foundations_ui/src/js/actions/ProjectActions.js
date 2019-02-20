@@ -1,5 +1,4 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import BaseActions from './BaseActions';
 import ProjectSummary from '../components/ProjectPage/ProjectSummary';
 
@@ -22,7 +21,7 @@ class ProjectActions {
   }
 
   static redirect(urlName) {
-    return <Redirect push to={urlName} />;
+    return BaseActions.redirectRoute(urlName);
   }
 }
 export default ProjectActions;

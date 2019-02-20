@@ -4,7 +4,7 @@ import JobTable from './JobTable';
 import Toolbar from '../common/Toolbar';
 import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
-import JobActions from '../../actions/JobListActions';
+import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ErrorMessage from '../common/ErrorMessage';
 
@@ -72,11 +72,11 @@ class JobListPage extends Component {
 
   async getJobs() {
     const { projectName } = this.state;
-    const fetchedJobs = await JobActions.getJobs(projectName);
+    const fetchedJobs = await JobListActions.getJobs(projectName);
     const apiJobs = fetchedJobs.result;
     this.setState({ queryStatus: fetchedJobs.status });
     if (this.checkStatusOk()) {
-      const allUsers = JobActions.getAllJobUsers(apiJobs.jobs);
+      const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
       this.formatAndSaveParams(apiJobs, allUsers);
     }
   }
@@ -88,11 +88,11 @@ class JobListPage extends Component {
     } = this.state;
 
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    let visibleUsers = JobActions.getVisibleFromFilter(flatUsers, hiddenUsers);
+    let visibleUsers = JobListActions.getVisibleFromFilter(flatUsers, hiddenUsers);
     if (visibleUsers.length === allUsers.length) {
       visibleUsers = [];
     }
-    const fetchedFilteredJobs = await JobActions.filterJobs(
+    const fetchedFilteredJobs = await JobListActions.filterJobs(
       projectName, statuses, visibleUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
       startTimeFilter,
     );
@@ -242,7 +242,7 @@ class JobListPage extends Component {
       startTimeFilter,
     } = this.state;
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const newFilters = JobActions.getAllFilters(
+    const newFilters = JobListActions.getAllFilters(
       statuses, flatUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
       startTimeFilter,
     );
@@ -272,16 +272,16 @@ class JobListPage extends Component {
       filters, statuses, allUsers, hiddenUsers, numberFilters, containFilters, boolFilters, durationFilter, jobIdFilter,
       startTimeFilter,
     } = this.state;
-    const newFilters = JobActions.removeFilter(filters, removeFilter);
-    const newStatuses = JobActions.getUpdatedStatuses(statuses, newFilters);
+    const newFilters = JobListActions.removeFilter(filters, removeFilter);
+    const newStatuses = JobListActions.getUpdatedStatuses(statuses, newFilters);
     const flatUsers = CommonActions.getFlatArray(allUsers);
-    const newHiddenUsers = JobActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
-    const newNumberFilters = JobActions.removeFilterByName(numberFilters, removeFilter);
-    const newContainFilters = JobActions.removeFilterByName(containFilters, removeFilter);
-    const newBoolFilters = JobActions.removeFilterByName(boolFilters, removeFilter);
-    const newDurationFilter = JobActions.removeFilterByName(durationFilter, removeFilter);
-    const newJobIdFilter = JobActions.removeFilterByName(jobIdFilter, removeFilter);
-    const newStartTimeFilter = JobActions.removeFilterByName(startTimeFilter, removeFilter);
+    const newHiddenUsers = JobListActions.updateHiddenParams(flatUsers, removeFilter.value, hiddenUsers);
+    const newNumberFilters = JobListActions.removeFilterByName(numberFilters, removeFilter);
+    const newContainFilters = JobListActions.removeFilterByName(containFilters, removeFilter);
+    const newBoolFilters = JobListActions.removeFilterByName(boolFilters, removeFilter);
+    const newDurationFilter = JobListActions.removeFilterByName(durationFilter, removeFilter);
+    const newJobIdFilter = JobListActions.removeFilterByName(jobIdFilter, removeFilter);
+    const newStartTimeFilter = JobListActions.removeFilterByName(startTimeFilter, removeFilter);
     await this.setState({
       filters: newFilters,
       statuses: newStatuses,
@@ -327,6 +327,9 @@ class JobListPage extends Component {
       queryStatus,
     } = this.state;
     let jobList;
+    if (queryStatus === 401) {
+      return JobListActions.redirect('/login');
+    }
     if (this.checkStatusOk()) {
       jobList = (
         <JobTable

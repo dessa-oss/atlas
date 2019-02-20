@@ -7,6 +7,7 @@ class ErrorMessage extends Component {
     this.setContent = this.setContent.bind(this);
     this.setInternalServerError = this.setInternalServerError.bind(this);
     this.setNotFoundError = this.setNotFoundError.bind(this);
+    this.setBadRequestError = this.setBadRequestError.bind(this);
     this.state = {
       errorCode: this.props.errorCode,
     };
@@ -19,6 +20,9 @@ class ErrorMessage extends Component {
     }
     if (errorCode === 500) {
       return this.setInternalServerError();
+    }
+    if (errorCode === 400) {
+      return this.setBadRequestError();
     }
     console.log('Error code not valid');
 
@@ -46,6 +50,15 @@ class ErrorMessage extends Component {
     return {
       errorBanner: errorBanner404,
       errorSubtext: errorSubtext404,
+    };
+  }
+
+  setBadRequestError() {
+    const errorBanner400 = '400 Bad Request Error';
+    const errorSubtext400 = 'The request was malformed, please try a proper request.';
+    return {
+      errorBanner: errorBanner400,
+      errorSubtext: errorSubtext400,
     };
   }
 

@@ -10,3 +10,4 @@ from foundations_rest_api.v1.controllers.queued_jobs_controller import QueuedJob
 from foundations_rest_api.v1.controllers.running_jobs_controller import RunningJobsController
 from foundations_rest_api.v1.controllers.projects_controller import ProjectsController
 from foundations_rest_api.v1.controllers.jobs_controller import JobsController
+from foundations_rest_api.v1.controllers.session_controller import SessionController
