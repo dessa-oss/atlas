@@ -43,10 +43,10 @@ exports[`Shallow Renders ProjectHeader 1`] = `
           </span>
         </h2>
       </div>
+      <div
+        className="project-header-sort-filter-container"
+      />
     </div>
-    <div
-      className="project-header-sort-filter-container"
-    />
   </div>
 </div>
 `;

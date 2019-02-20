@@ -23,6 +23,10 @@ ssh_utils/build
 ssh_utils/dist
 ssh_utils/foundations_ssh.egg-info
 ssh_utils/src/foundations_ssh.egg-info
+aws_utils/build
+aws_utils/dist
+aws_utils/foundations_aws.egg-info
+aws_utils/src/foundations_aws.egg-info
 ui_utils/build
 ui_utils/dist
 ui_utils/foundations_ui.egg-info
@@ -45,4 +49,9 @@ foundations.zip
 .history
 site/
 **/.idea*
+**/*.rdb
+
+!foundations_ui/package.json
 !examples/example_configs/*.config.yaml
+!foundations_contrib/src/foundations_contrib/resources/template/config/*.config.yaml
+testing/test-cli-init

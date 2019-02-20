@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import foundations
 import random
 
 
@@ -31,3 +32,9 @@ def throws_exception(input):
 
 def return_error_message(err):
     return "error code: " + str(err)
+
+def get_and_log_python_path_as_metric():
+    import sys
+
+    python_path = sys.executable
+    foundations.log_metric("python_path", python_path)

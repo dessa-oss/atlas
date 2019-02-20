@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import HoverCell from './HoverCell';
-import JobActions from '../../../actions/JobListActions';
+import JobListActions from '../../../actions/JobListActions';
 import CommonActions from '../../../actions/CommonActions';
 
 
@@ -10,8 +10,8 @@ class StartTimeCell extends Component {
     super(props);
     this.toggleExpand = this.toggleExpand.bind(this);
     this.state = {
-      date: JobActions.getFormatedDate(this.props.startTime),
-      time: JobActions.getFormatedTime(this.props.startTime),
+      date: JobListActions.getFormatedDate(this.props.startTime),
+      time: JobListActions.getFormatedTime(this.props.startTime),
       isError: this.props.isError,
       rowNumber: this.props.rowNumber,
       expand: false,

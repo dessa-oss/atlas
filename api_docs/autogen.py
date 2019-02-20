@@ -26,6 +26,24 @@ PAGES = [
         'page': 'concepts.md',
     },
     {
+        'page': 'start_guide.md',
+    },
+    {
+        'page': 'step_by_step_guide.md',
+    },
+    {
+        'page': 'quick_start.md',
+    },
+    {
+        'page': 'windows.md',
+    },
+    {
+        'page': 'configs.md',
+    },
+    {
+        'page': 'jupyter.md',
+    },
+    {
         'page': 'project_creation.md',
     },
     {

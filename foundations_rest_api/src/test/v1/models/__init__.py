@@ -11,3 +11,4 @@ from test.v1.models.test_running_job import TestRunningJob
 from test.v1.models.test_queued_job import TestQueuedJob
 from test.v1.models.test_project import TestProject
 from test.v1.models.test_job_listing import TestJobListing
+from test.v1.models.test_session import TestSession

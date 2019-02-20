@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
+import LoginPage from './LoginPage/LoginPage';
 import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
 
@@ -13,6 +14,7 @@ class App extends Component {
       <div className="App">
         <Router>
           <Switch>
+            <Route exact path="/login" component={LoginPage} />
             <Route exact path="/projects" component={ProjectPage} />
             <Redirect exact from="/" to="/projects" />
             <Route
