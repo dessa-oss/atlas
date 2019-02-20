@@ -17,13 +17,11 @@ class TestObfuscator(Spec):
     mock_subprocess_run = let_patch_mock('subprocess.run')
     
     def test_obfuscate_calls_pyarmor(self):
-        self.mock_subprocess_run
         obfuscator = Obfuscator()
         obfuscator.obfuscate('/fake/path')
         self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path'])
 
     def test_obfuscate_calls_pyarmor_with_entrypoint(self):
-        self.mock_subprocess_run
         obfuscator = Obfuscator()
         obfuscator.obfuscate('/fake/path', 'fake_script.py')
         self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path', '--entry=fake_script.py'])

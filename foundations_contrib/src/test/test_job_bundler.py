@@ -17,6 +17,7 @@ class TestJobBundler(Spec):
 
     mock_os_remove = let_patch_mock('os.remove')
     mock_tarfile_open = let_patch_mock('tarfile.open')
+    mock_builtins_open = let_patch_mock('builtins.open')
     
     def test_job_name_method_returns_job_name(self):
        job_bundler = JobBundler('fake_name', {}, None, None)
@@ -31,7 +32,6 @@ class TestJobBundler(Spec):
        self.assertEqual(job_bundler.job_archive(), '../fake_name.tgz')
     
     def test_cleanup_removes_correct_files(self):
-        self.mock_os_remove
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.cleanup()
         remove_archive = call('../fake_name.tgz')
@@ -40,7 +40,6 @@ class TestJobBundler(Spec):
         self.mock_os_remove.assert_has_calls([remove_archive, remove_bin, remove_config])
     
     def test_unbundle_opens_correct_file(self):
-        self.mock_tarfile_open
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.unbundle()
         self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'r:gz')
