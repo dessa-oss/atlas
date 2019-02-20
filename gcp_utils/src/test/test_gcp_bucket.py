@@ -59,6 +59,6 @@ class TestGCPBucket(Spec):
         self.gcp_bucket.exists(self.file_name)
         self.blob.exists.assert_called()
     
-    def test_exists_returns_blob_exists_value(self):
+    def test_exists_returns_true_when_blob_exists_is_true(self):
         self.blob.exists.return_value = True
         self.assertEqual(self.gcp_bucket.exists(self.file_name), True)
