@@ -64,6 +64,14 @@ class APIResourceMocks(object):
                 return self.params
             return Response('Mock', LazyResult(_index), status=403)
 
+    class ParamsMockWithPostAndStatus(object):
+        def post(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _index():
+                return self.params
+            return Response('Mock', LazyResult(_index), status=403)
+
     class DifferentMockWithIndex(object):
         def index(self):
             from foundations_rest_api.lazy_result import LazyResult

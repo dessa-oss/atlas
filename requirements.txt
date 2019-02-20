@@ -14,3 +14,4 @@ boto==2.49.0
 flask-restful==0.3.6
 Flask-Cors==3.0.6
 mkdocs==1.0.4
+tabulate==0.8.3

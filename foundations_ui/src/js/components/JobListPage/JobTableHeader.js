@@ -11,7 +11,7 @@ import ContainsFilter from '../common/filters/ContainsFilter';
 import BooleanFilter from '../common/filters/BooleanFilter';
 import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
-import JobActions from '../../actions/JobListActions';
+import JobListActions from '../../actions/JobListActions';
 
 const isMetric = true;
 
@@ -231,7 +231,7 @@ class JobTableHeader extends Component {
 
   getRangeFilterValues() {
     const { numberFilters, numberFilterColumn } = this.state;
-    const existingFilter = JobActions.getExistingValuesForFilter(numberFilters, numberFilterColumn);
+    const existingFilter = JobListActions.getExistingValuesForFilter(numberFilters, numberFilterColumn);
     let curMin = 0;
     let curMax = 0;
     if (existingFilter) {
@@ -358,7 +358,7 @@ class JobTableHeader extends Component {
 
     let durationFilter = null;
     if (isShowingDurationFilter) {
-      const existingFilter = JobActions.getExistingValuesForFilter(durationFilters, 'Duration');
+      const existingFilter = JobListActions.getExistingValuesForFilter(durationFilters, 'Duration');
       let startValue = {
         days: '0', hours: '0', minutes: '0', seconds: '0',
       };
@@ -396,7 +396,7 @@ class JobTableHeader extends Component {
 
     let containsFilter = null;
     if (isShowingContainsFilter) {
-      const existingFilter = JobActions.getExistingValuesForFilter(containFilters, numberFilterColumn);
+      const existingFilter = JobListActions.getExistingValuesForFilter(containFilters, numberFilterColumn);
       let containString = '';
       if (existingFilter) {
         containString = existingFilter.searchText;
@@ -416,10 +416,10 @@ class JobTableHeader extends Component {
     let changedBoolParams = [];
     let boolColumns = CommonActions.deepCopyArray(boolCheckboxes);
     if (isShowingBooleanFilter) {
-      const existingFilter = JobActions.getExistingValuesForFilter(boolFilters, numberFilterColumn);
+      const existingFilter = JobListActions.getExistingValuesForFilter(boolFilters, numberFilterColumn);
       if (existingFilter) {
         boolColumns = existingFilter.boolCheckboxes;
-        changedBoolParams = JobActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
+        changedBoolParams = JobListActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
       }
       booleanFilter = (
         <BooleanFilter
@@ -435,7 +435,7 @@ class JobTableHeader extends Component {
 
     let jobIDFilter = null;
     if (isShowingJobIdFilter) {
-      const existingFilter = JobActions.getExistingValuesForFilter(jobIdFilters, 'Job Id');
+      const existingFilter = JobListActions.getExistingValuesForFilter(jobIdFilters, 'Job Id');
       let containString = '';
       if (existingFilter) {
         containString = existingFilter.searchText;
@@ -453,7 +453,7 @@ class JobTableHeader extends Component {
 
     let startFilter = null;
     if (isShowingStartTimeFilter) {
-      const existingFilter = JobActions.getExistingValuesForFilter(startTimeFilters, 'Start Time');
+      const existingFilter = JobListActions.getExistingValuesForFilter(startTimeFilters, 'Start Time');
       let startDate = null;
       let endDate = null;
       if (existingFilter) {
