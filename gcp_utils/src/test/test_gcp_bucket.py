@@ -54,3 +54,11 @@ class TestGCPBucket(Spec):
     def test_upload_from_file_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_file(self.file_name, self.data)
         self.blob.upload_from_file.assert_called_with(self.data)
+    
+    def test_exists_calls_blob_exists(self):
+        self.gcp_bucket.exists(self.file_name)
+        self.blob.exists.assert_called()
+    
+    def test_exists_returns_blob_exists_value(self):
+        self.blob.exists.return_value = True
+        self.assertEqual(self.gcp_bucket.exists(self.file_name), True)
