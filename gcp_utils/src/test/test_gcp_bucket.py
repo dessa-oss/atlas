@@ -87,3 +87,9 @@ class TestGCPBucket(Spec):
     def test_download_to_file_rewinds_file(self):
         self.gcp_bucket.download_to_file(self.file_name, self.mock_file)
         self.mock_file.seek.assert_called_with(0)
+
+    def test_remove_calls_remove_on_the_blob(self):
+        self.gcp_bucket.remove(self.file_name)
+        self.blob.delete.assert_called()
+
+
