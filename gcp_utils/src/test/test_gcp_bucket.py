@@ -18,6 +18,7 @@ class TestGCPBucket(Spec):
     bucket_connection = let_patch_instance('foundations_gcp.global_state.connection_manager.bucket_connection')
     bucket = let_mock()
     blob = let_mock()
+    mock_file = let_mock()
 
     @let
     def faker(self):
@@ -74,3 +75,15 @@ class TestGCPBucket(Spec):
     def test_download_as_string_returns_data_stored_in_blob_when_blob_returns_binary(self):
         self.blob.download_as_string.return_value = self.encoded_data
         self.assertEqual(self.encoded_data, self.gcp_bucket.download_as_string(self.file_name))
+
+    def test_download_to_file_calls_blob_method_with_input_file(self):
+        self.gcp_bucket.download_to_file(self.file_name, self.mock_file)
+        self.blob.download_to_file.assert_called_with(self.mock_file)
+
+    def test_download_to_file_flushes_file(self):
+        self.gcp_bucket.download_to_file(self.file_name, self.mock_file)
+        self.mock_file.flush.assert_called()
+
+    def test_download_to_file_rewinds_file(self):
+        self.gcp_bucket.download_to_file(self.file_name, self.mock_file)
+        self.mock_file.seek.assert_called_with(0)

@@ -52,7 +52,7 @@ class GCPBucket(object):
     def remove(self, name):
         self._log().debug('Removing {}'.format(name))
         self._blob(name).delete()
-    
+
     def move(self, source, destination):
         blob = self._blob(source)
         self._bucket.rename_blob(blob, destination)
