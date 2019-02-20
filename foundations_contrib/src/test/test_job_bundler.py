@@ -20,8 +20,8 @@ class TestJobBundler(Spec):
     mock_builtins_open = let_patch_mock('builtins.open')
     mock_yaml_dump = let_patch_mock('yaml.dump')
     mock_glob_glob = let_patch_mock('glob.glob')
-    mock_global_state = let_patch_mock('foundations.global_state')
     mock_os_chdir = let_patch_mock('os.chdir')
+    mock_simple_temp_file_class = let_patch_mock('foundations_contrib.simple_tempfile.SimpleTempfile')
 
     class MockFileContextManager(Mock):
 
@@ -79,15 +79,13 @@ class TestJobBundler(Spec):
         return_object.extractall.assert_called()
 
     def test_save_job_opens_file(self):
-        mock_job = Mock()
-        mock_job.serialize = lambda: 'something'
+        mock_job = self._create_mock_job()
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_job()
         self.mock_builtins_open.assert_called_with('fake_name.bin', 'w+b')
 
     def test_save_job_writes_to_file(self):
-        mock_job = Mock()
-        mock_job.serialize = lambda: 'something'
+        mock_job = self._create_mock_job()
         return_object = self.MockFileContextManager()
         self.mock_builtins_open.return_value = return_object
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
@@ -95,15 +93,13 @@ class TestJobBundler(Spec):
         return_object.write.assert_called_with('something')
 
     def test_save_config_opens_file(self):
-        mock_job = Mock()
-        mock_job.serialize = lambda: 'something'
+        mock_job = self._create_mock_job()
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_config()
         self.mock_builtins_open.assert_called_with('fake_name.config.yaml', 'w+')
 
     def test_save_config_dumps_to_file(self):
-        mock_job = Mock()
-        mock_job.serialize = lambda: 'something'
+        mock_job = self._create_mock_job()
         return_object = self.MockFileContextManager()
         self.mock_builtins_open.return_value = return_object
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
@@ -117,9 +113,7 @@ class TestJobBundler(Spec):
         self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'w:gz')
 
     def test_bundle_job_adds_archive_and_binary_to_tarball(self):
-        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
-        self.mock_tarfile_open.return_value = mock_tar
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
         job_bundler._bundle_job()
         add_archive_call = call('fake_source_archive_name', arcname='fake_name/job.tgz')
@@ -127,9 +121,7 @@ class TestJobBundler(Spec):
         mock_tar.add.assert_has_calls([add_archive_call, add_binary_call], any_order=True)
 
     def test_bundle_job_adds_config_files(self):
-        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
-        self.mock_tarfile_open.return_value = mock_tar
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
         self.mock_glob_glob.return_value = ['fake_config_filename.config.yaml']
         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
         job_bundler._bundle_job()
@@ -139,9 +131,7 @@ class TestJobBundler(Spec):
     def test_bundle_job_adds_modules(self):
         import foundations_internal
 
-        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
-        self.mock_tarfile_open.return_value = mock_tar
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
         with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
                           return_value=[('fake_module_name', 'fake_module_directory')]):
@@ -154,26 +144,33 @@ class TestJobBundler(Spec):
     def test_bundle_job_adds_script_environment(self):
         import foundations_contrib
 
-        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
-        self.mock_tarfile_open.return_value = mock_tar
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
-        with patch('foundations_contrib.simple_tempfile.SimpleTempfile') as mocked_simple_temp_file_class:
-            with patch.object(foundations_contrib.job_bundling.script_environment.ScriptEnvironment, 'write_environment'):
-                mocked_simple_temp_file_class.return_value = self.MockSimpleTempfile('fake_temp_file_name')
-                fake_config = {'run_script_environment': ''}
-                job_bundler = JobBundler('fake_name', fake_config, None, mock_job_source_bundle)
-                job_bundler._bundle_job()
+        self.mock_simple_temp_file_class.return_value = self.MockSimpleTempfile('fake_temp_file_name')
+        with patch.object(foundations_contrib.job_bundling.script_environment.ScriptEnvironment, 'write_environment'):
+            fake_config = {'run_script_environment': ''}
+            job_bundler = JobBundler('fake_name', fake_config, None, mock_job_source_bundle)
+            job_bundler._bundle_job()
 
         mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
 
     def test_bundle_job_adds_job_directory(self):
-        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
-        self.mock_tarfile_open.return_value = mock_tar
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
         job_bundler._bundle_job()
 
         self.mock_os_chdir.assert_has_calls([call(job_bundler._resource_directory)])
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
+
+    def _setup_archive_and_tar(self):
+        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
+        mock_tar = self.MockFileContextManager()
+        self.mock_tarfile_open.return_value = mock_tar
+
+        return mock_job_source_bundle, mock_tar
+
+    def _create_mock_job(self):
+        mock_job = Mock()
+        mock_job.serialize = lambda: 'something'
+        return mock_job
