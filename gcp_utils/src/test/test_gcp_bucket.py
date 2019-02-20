@@ -37,6 +37,10 @@ class TestGCPBucket(Spec):
         return self.faker.sha256()
 
     @let
+    def encoded_data(self):
+        return self.data.encode('utf-8')
+
+    @let
     def gcp_bucket(self):
         return GCPBucket(self.bucket_name)
 
@@ -62,3 +66,11 @@ class TestGCPBucket(Spec):
     def test_exists_returns_true_when_blob_exists_is_true(self):
         self.blob.exists.return_value = True
         self.assertTrue(self.gcp_bucket.exists(self.file_name))
+
+    def test_download_as_string_returns_data_stored_in_blob(self):
+        self.blob.download_as_string.return_value = self.data
+        self.assertEqual(self.encoded_data, self.gcp_bucket.download_as_string(self.file_name))
+
+    def test_download_as_string_returns_data_stored_in_blob_when_blob_returns_binary(self):
+        self.blob.download_as_string.return_value = self.encoded_data
+        self.assertEqual(self.encoded_data, self.gcp_bucket.download_as_string(self.file_name))
