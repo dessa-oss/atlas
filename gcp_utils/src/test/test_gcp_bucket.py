@@ -50,3 +50,7 @@ class TestGCPBucket(Spec):
     def test_upload_from_string_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_string(self.file_name, self.data)
         self.blob.upload_from_string.assert_called_with(self.data)
+    
+    def test_upload_from_file_uploads_data_to_bucket(self):
+        self.gcp_bucket.upload_from_file(self.file_name, self.data)
+        self.blob.upload_from_file.assert_called_with(self.data)
