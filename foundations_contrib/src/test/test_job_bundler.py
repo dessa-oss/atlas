@@ -18,6 +18,7 @@ class TestJobBundler(Spec):
     mock_os_remove = let_patch_mock('os.remove')
     mock_tarfile_open = let_patch_mock('tarfile.open')
     mock_builtins_open = let_patch_mock('builtins.open')
+    mock_yaml_dump = let_patch_mock('yaml.dump')
 
     class MockFileContextManager(Mock):
 
@@ -74,3 +75,37 @@ class TestJobBundler(Spec):
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_job()
         return_object.write.assert_called_with('something')
+
+    def test_save_config_opens_file(self):
+        mock_job = Mock()
+        mock_job.serialize = lambda: 'something'
+        job_bundler = JobBundler('fake_name', {}, mock_job, None)
+        job_bundler._save_config()
+        self.mock_builtins_open.assert_called_with('fake_name.config.yaml', 'w+')
+
+    def test_save_config_dumps_to_file(self):
+        mock_job = Mock()
+        mock_job.serialize = lambda: 'something'
+        return_object = self.MockFileContextManager()
+        self.mock_builtins_open.return_value = return_object
+        job_bundler = JobBundler('fake_name', {}, mock_job, None)
+        job_bundler._save_config()
+        self.mock_yaml_dump.assert_called_with({'job_name': 'fake_name'}, return_object)
+
+    def test_bundle_job_opens_file(self):
+        mock_job_source_bundle = Mock()
+        mock_job_source_bundle.job_archive = lambda: 'fake_source_archive_name'
+        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+        self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'w:gz')
+
+    def test_bundle_adds_archive_and_binary_to_tarball(self):
+        mock_job_source_bundle = Mock()
+        mock_job_source_bundle.job_archive = lambda: 'fake_source_archive_name'
+        mock_tar = self.MockFileContextManager()
+        self.mock_tarfile_open.return_value = mock_tar
+        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+        add_archive_call = call('fake_source_archive_name', arcname='fake_name/job.tgz')
+        add_binary_call = call('fake_name.bin', arcname='fake_name/fake_name.bin')
+        mock_tar.add.assert_has_calls([add_archive_call, add_binary_call], any_order=True)
