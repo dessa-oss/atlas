@@ -21,7 +21,6 @@ class TestJobBundler(Spec):
     mock_yaml_dump = let_patch_mock('yaml.dump')
     mock_glob_glob = let_patch_mock('glob.glob')
     mock_global_state = let_patch_mock('foundations.global_state')
-    # mock_module_manager = let_patch_mock('foundations.global_state.module_manager')
     mock_os_chdir = let_patch_mock('os.chdir')
 
     class MockFileContextManager(Mock):
@@ -41,14 +40,15 @@ class TestJobBundler(Spec):
         def job_archive(self):
             return self._archive_name
 
-    class MockModuleManager(Mock):
+    class MockSimpleTempfile(object):
 
-        def __init__(self, module_directories_and_names):
-            super().__init__()
-            self._module_directories_and_names = module_directories_and_names
+        def __init__(self, temp_file_name=''):
+            #super().__init__()
+            self._temp_file_name = temp_file_name
 
-        def module_directories_and_names(self):
-            return self._module_directories_and_names
+        @property
+        def name(self):
+            return self._temp_file_name
 
     def test_job_name_method_returns_job_name(self):
        job_bundler = JobBundler('fake_name', {}, None, None)
@@ -143,16 +143,14 @@ class TestJobBundler(Spec):
     def test_bundle_job_adds_modules(self):
         import foundations_internal
 
+        mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
+        mock_tar = self.MockFileContextManager()
+        self.mock_tarfile_open.return_value = mock_tar
+
         with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
                           return_value=[('fake_module_name', 'fake_module_directory')]):
-
-            mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-            mock_tar = self.MockFileContextManager()
-            self.mock_tarfile_open.return_value = mock_tar
-
             job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
             job_bundler._bundle_job()
 
-
-            self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
-            mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
+        self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
+        mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
