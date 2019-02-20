@@ -46,19 +46,19 @@ class TestGCPBucket(Spec):
         self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_name)
         self.bucket.blob = ConditionalReturn()
         self.bucket.blob.return_when(self.blob, self.file_name)
-    
+
     def test_upload_from_string_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_string(self.file_name, self.data)
         self.blob.upload_from_string.assert_called_with(self.data)
-    
+
     def test_upload_from_file_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_file(self.file_name, self.data)
         self.blob.upload_from_file.assert_called_with(self.data)
-    
+
     def test_exists_calls_blob_exists(self):
-        self.gcp_bucket.exists(self.file_name)
-        self.blob.exists.assert_called()
-    
+        self.blob.exists.return_value = False
+        self.assertFalse(self.gcp_bucket.exists(self.file_name))
+
     def test_exists_returns_true_when_blob_exists_is_true(self):
         self.blob.exists.return_value = True
-        self.assertEqual(self.gcp_bucket.exists(self.file_name), True)
+        self.assertTrue(self.gcp_bucket.exists(self.file_name))
