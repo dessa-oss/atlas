@@ -55,6 +55,7 @@ class TestGCPBucket(Spec):
         self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_name)
         self.bucket.blob = ConditionalReturn()
         self.bucket.blob.return_when(self.blob, self.file_name)
+        self.bucket.list_blobs = ConditionalReturn()
 
     def test_upload_from_string_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_string(self.file_name, self.data)
@@ -101,22 +102,22 @@ class TestGCPBucket(Spec):
         self.bucket.rename_blob.assert_called_with(self.blob, self.other_file_name)
 
     def test_list_files_returns_no_files_when_bucket_is_empty(self):
-        self.bucket.list_blobs.return_value = []
+        self._mock_list_blobs([])
         self.assertEqual([], list(self.gcp_bucket.list_files('*')))
 
     def test_list_files_returns_a_single_file(self):
-        self.bucket.list_blobs.return_value = [
+        self._mock_list_blobs([
             self._create_mock_object(self.file_name)
-        ]
+        ])
         result = list(self.gcp_bucket.list_files('*'))
         expected_result = ['/' + self.file_name]
         self.assertEqual(expected_result, result)
 
     def test_list_files_returns_multiple_files(self):
-        self.bucket.list_blobs.return_value = [
+        self._mock_list_blobs([
             self._create_mock_object(self.file_name),
             self._create_mock_object(self.other_file_name)
-        ]
+        ])
         result = list(self.gcp_bucket.list_files('*'))
         expected_result = [
             '/' + self.file_name,
@@ -128,3 +129,9 @@ class TestGCPBucket(Spec):
         mock = Mock()
         mock.name = name
         return mock
+
+    def _mock_list_blobs(self, blobs_return_value):
+        self.bucket.list_blobs.return_when(
+            blobs_return_value,
+            prefix='/', delimiter='/'
+        )
