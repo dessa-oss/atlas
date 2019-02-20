@@ -99,3 +99,32 @@ class TestGCPBucket(Spec):
     def test_move_calls_rename_on_the_blob_with_new_filename(self):
         self.gcp_bucket.move(self.file_name, self.other_file_name)
         self.bucket.rename_blob.assert_called_with(self.blob, self.other_file_name)
+
+    def test_list_files_returns_no_files_when_bucket_is_empty(self):
+        self.bucket.list_blobs.return_value = []
+        self.assertEqual([], list(self.gcp_bucket.list_files('*')))
+
+    def test_list_files_returns_a_single_file(self):
+        self.bucket.list_blobs.return_value = [
+            self._create_mock_object(self.file_name)
+        ]
+        result = list(self.gcp_bucket.list_files('*'))
+        expected_result = ['/' + self.file_name]
+        self.assertEqual(expected_result, result)
+
+    def test_list_files_returns_multiple_files(self):
+        self.bucket.list_blobs.return_value = [
+            self._create_mock_object(self.file_name),
+            self._create_mock_object(self.other_file_name)
+        ]
+        result = list(self.gcp_bucket.list_files('*'))
+        expected_result = [
+            '/' + self.file_name,
+            '/' + self.other_file_name
+        ]
+        self.assertEqual(expected_result, result)
+
+    def _create_mock_object(self, name):
+        mock = Mock()
+        mock.name = name
+        return mock
