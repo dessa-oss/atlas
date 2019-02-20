@@ -30,6 +30,10 @@ class TestGCPBucket(Spec):
         return self.faker.name()
 
     @let
+    def other_file_name(self):
+        return self.faker.name()
+
+    @let
     def bucket_name(self):
         return self.faker.name()
 
@@ -92,4 +96,6 @@ class TestGCPBucket(Spec):
         self.gcp_bucket.remove(self.file_name)
         self.blob.delete.assert_called()
 
-
+    def test_move_calls_rename_on_the_blob_with_new_filename(self):
+        self.gcp_bucket.move(self.file_name, self.other_file_name)
+        self.bucket.rename_blob.assert_called_with(self.blob, self.other_file_name)
