@@ -29,3 +29,6 @@ class ConditionalReturn(Mock):
     def return_when(self, value, *args, **kwargs):
         key = (args, kwargs)
         self._returns.append((key, value))
+
+    def clear(self):
+        self._returns = []

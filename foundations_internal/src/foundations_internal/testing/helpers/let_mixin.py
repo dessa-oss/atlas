@@ -40,7 +40,7 @@ class LetMixin(object):
 
     def _clear_lets(self):
         for let_name in self._lets:
-            if hasattr(self, let_name):
+            if let_name in self.__dict__:
                 delattr(self, let_name)
 
     @staticmethod
