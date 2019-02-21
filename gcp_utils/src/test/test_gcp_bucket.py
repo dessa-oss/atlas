@@ -30,11 +30,27 @@ class TestGCPBucket(Spec):
         return self.faker.name()
 
     @let
+    def upload_file_name(self):
+        return self.file_name
+
+    @let
     def other_file_name(self):
         return self.faker.name()
 
     @let
     def bucket_name(self):
+        return self.faker.name()
+
+    @let
+    def bucket_prefix(self):
+        return self.faker.name()
+
+    @let
+    def bucket_postfix(self):
+        return self.faker.name()
+
+    @let
+    def bucket_postfix_two(self):
         return self.faker.name()
 
     @let
@@ -54,11 +70,39 @@ class TestGCPBucket(Spec):
         self.bucket_connection.get_bucket = ConditionalReturn()
         self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_name)
         self.bucket.blob = ConditionalReturn()
-        self.bucket.blob.return_when(self.blob, self.file_name)
+        self.bucket.blob.return_when(self.blob, self.upload_file_name)
         self.bucket.list_blobs = ConditionalReturn()
 
     def test_upload_from_string_uploads_data_to_bucket(self):
         self.gcp_bucket.upload_from_string(self.file_name, self.data)
+        self.blob.upload_from_string.assert_called_with(self.data)
+
+    def test_upload_from_string_uploads_data_to_bucket_with_prefix(self):
+        bucket_name = self.bucket_prefix + '/' + self.bucket_postfix
+        upload_file_name = self.bucket_postfix + '/' + self.file_name
+        
+        self.bucket_connection.get_bucket.clear()
+        self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_prefix)
+        self.bucket.blob.clear()
+        self.bucket.blob.return_when(self.blob, upload_file_name)
+
+        gcp_bucket = GCPBucket(bucket_name)
+
+        gcp_bucket.upload_from_string(self.file_name, self.data)
+        self.blob.upload_from_string.assert_called_with(self.data)
+
+    def test_upload_from_string_uploads_data_to_bucket_with_long_prefix(self):
+        bucket_name = self.bucket_prefix + '/' + self.bucket_postfix + '/' + self.bucket_postfix_two
+        upload_file_name = self.bucket_postfix + '/' + self.bucket_postfix_two + '/' + self.file_name
+        
+        self.bucket_connection.get_bucket.clear()
+        self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_prefix)
+        self.bucket.blob.clear()
+        self.bucket.blob.return_when(self.blob, upload_file_name)
+
+        gcp_bucket = GCPBucket(bucket_name)
+
+        gcp_bucket.upload_from_string(self.file_name, self.data)
         self.blob.upload_from_string.assert_called_with(self.data)
 
     def test_upload_from_file_uploads_data_to_bucket(self):
@@ -123,8 +167,7 @@ class TestGCPBucket(Spec):
             '/' + self.file_name,
             '/' + self.other_file_name
         ]
-        self.assertEqual(expected_result, result)
-    
+        self.assertEqual(expected_result, result)    
 
     def test_list_files_returns_filters_files(self):
         self._mock_list_blobs([
@@ -137,6 +180,49 @@ class TestGCPBucket(Spec):
         ]
         self.assertEqual(expected_result, result)
     
+    def test_list_files_returns_filters_files_with_bucket_prefix(self):
+        bucket_name = self.bucket_prefix + '/' + self.bucket_postfix
+        
+        self.bucket_connection.get_bucket.clear()
+        self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_prefix)
+
+        gcp_bucket = GCPBucket(bucket_name)
+        self._mock_list_blobs([
+            self._create_mock_object(self.bucket_postfix + '/file_one'),
+            self._create_mock_object(self.bucket_postfix + '/file_two')
+        ], prefix=self.bucket_postfix + '/')
+        result = list(gcp_bucket.list_files('file_one'))
+        expected_result = [
+            '/file_one'
+        ]
+        self.assertEqual(expected_result, result)
+    
+    def test_list_files_returns_a_single_file_relative_to_path(self):
+        self._mock_list_blobs([
+            self._create_mock_object('some/path/file_one.txt')
+            ], 
+            prefix='some/path/'
+        )
+        result = list(self.gcp_bucket.list_files('some/path/*'))
+        expected_result = ['some/path/file_one.txt']
+        self.assertEqual(expected_result, result)
+    
+    def test_list_files_returns_filters_files_with_bucket_prefix_and_path_prefix(self):
+        bucket_name = self.bucket_prefix + '/' + self.bucket_postfix
+        
+        self.bucket_connection.get_bucket.clear()
+        self.bucket_connection.get_bucket.return_when(self.bucket, self.bucket_prefix)
+
+        gcp_bucket = GCPBucket(bucket_name)
+        self._mock_list_blobs([
+            self._create_mock_object(self.bucket_postfix + '/some/path/file_one.txt')
+        ], prefix=self.bucket_postfix + '/some/path/')
+        result = list(gcp_bucket.list_files('some/path/*'))
+        expected_result = [
+            'some/path/file_one.txt'
+        ]
+        self.assertEqual(expected_result, result)
+
     def test_list_files_returns_filters_files_on_file_extension(self):
         self._mock_list_blobs([
             self._create_mock_object('file_one.txt'),
@@ -153,8 +239,8 @@ class TestGCPBucket(Spec):
         mock.name = name
         return mock
 
-    def _mock_list_blobs(self, blobs_return_value):
+    def _mock_list_blobs(self, blobs_return_value, prefix='/'):
         self.bucket.list_blobs.return_when(
             blobs_return_value,
-            prefix='/', delimiter='/'
+            prefix=prefix, delimiter='/'
         )

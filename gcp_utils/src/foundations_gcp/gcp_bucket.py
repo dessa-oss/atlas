@@ -9,8 +9,16 @@ class GCPBucket(object):
 
     def __init__(self, name):
         from foundations_gcp.global_state import connection_manager
+        import traceback
 
-        self._bucket_name = name
+        split_name = name.split('/', 1)
+        self._bucket_name = split_name[0]
+
+        if len(split_name) > 1:
+            self._bucket_postfix = split_name[1] + '/'
+        else:
+            self._bucket_postfix = ''
+
         self._bucket = connection_manager.bucket_connection().get_bucket(self._bucket_name)
 
     def upload_from_string(self, name, data):
@@ -39,15 +47,26 @@ class GCPBucket(object):
         from fnmatch import fnmatch
 
         directory = dirname(pathname)
+        prefix = self._list_files_prefix(directory)
         path_filter = basename(pathname)
 
-        objects = self._bucket.list_blobs(
-            prefix=directory + '/', delimiter='/')
+        objects = self._bucket.list_blobs(prefix=prefix, delimiter='/')
         object_names = [bucket_object.name for bucket_object in objects]
         object_file_names = [basename(path) for path in object_names]
         for path in object_file_names:
             if fnmatch(path, path_filter):
                 yield '{}/{}'.format(directory, path)
+
+    def _list_files_prefix(self, directory):
+        from os.path import join
+        
+        if self._bucket_postfix:
+            prefix = self._bucket_postfix
+            if directory:
+                prefix += directory + '/'
+        else:
+            prefix = directory + '/'
+        return prefix
 
     def remove(self, name):
         self._log().debug('Removing {}'.format(name))
@@ -58,7 +77,7 @@ class GCPBucket(object):
         self._bucket.rename_blob(blob, destination)
 
     def _blob(self, name):
-        return self._bucket.blob(name)
+        return self._bucket.blob(self._bucket_postfix + name)
 
     def _log(self):
         from foundations.global_state import log_manager
