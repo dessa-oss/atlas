@@ -163,6 +163,54 @@ class TestJobBundler(Spec):
         self.mock_os_chdir.assert_has_calls([call(job_bundler._resource_directory)])
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
 
+    @patch.object(JobBundler, '_tar_obfuscated_modules')
+    @patch.object(JobBundler, '_tar_original_modules')
+    def test_tar_original_modules_is_called(self, mock_tar_original_modules, mock_tar_obfuscated_modules):
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+        mock_tar_original_modules.assert_called_with(mock_tar)
+        mock_tar_obfuscated_modules.assert_not_called()
+
+
+    @patch.object(JobBundler, '_tar_original_modules')
+    @patch.object(JobBundler, '_tar_obfuscated_modules')
+    def test_tar_obfuscated_modules_is_called(self, mock_tar_obfuscated_modules, mock_tar_original_modules):
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+        config = {'obfuscate': True}
+        job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+        mock_tar_obfuscated_modules.assert_called_with(mock_tar)
+        mock_tar_original_modules.assert_not_called()
+
+    def test_is_remote_deployment_returns_true_when_local(self):
+        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+
+        mock_job_source_bundle, _ = self._setup_archive_and_tar()
+        config = {
+            'deployment_implementation': {
+                'deployment_type': LocalShellJobDeployment
+            }
+        }
+        job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
+        job_bundler._bundle_job()
+        self.assertTrue(job_bundler._is_remote_deployment())
+
+    def test_is_remote_deployment_returns_false_when_not_local(self):
+        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+
+        mock_job_source_bundle, _ = self._setup_archive_and_tar()
+
+        for deployment in SFTPJobDeployment, 'FakeGCPJobDeployment':
+            config = {
+                'deployment_implementation': {
+                    'deployment_type': deployment
+                }
+            }
+            job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
+            job_bundler._bundle_job()
+            self.assertFalse(job_bundler._is_remote_deployment())
+
     def _setup_archive_and_tar(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
         mock_tar = self.MockFileContextManager()

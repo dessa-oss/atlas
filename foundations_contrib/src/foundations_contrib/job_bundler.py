@@ -68,13 +68,17 @@ class JobBundler(object):
         with open(self._job_config_yaml(), 'w+') as file:
             yaml.dump(self._config, file)
 
+    def _is_remote_deployment(self):
+        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+
+        return self._config['deployment_implementation']['deployment_type'] == LocalShellJobDeployment
+
     def _bundle_job(self):
         import tarfile
         import glob
         import os
         from pipes import quote
         from foundations_contrib.simple_tempfile import SimpleTempfile
-        from foundations.global_state import module_manager
         from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
 
         with WorkingDirectoryStack():
@@ -88,11 +92,10 @@ class JobBundler(object):
                 for config_file in glob.glob('*.config.yaml'):
                     tar.add(config_file,
                             arcname=self._job_name + '/' + config_file)
-
-                for module_name, module_directory in module_manager.module_directories_and_names():
-                    self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
-                    os.chdir(module_directory)
-                    tar.add(".", arcname=self._job_name + '/' + module_name)
+                if self._config.get('obfuscate', False):
+                    self._tar_obfuscated_modules(tar)
+                else:
+                    self._tar_original_modules(tar)
 
                 if 'run_script_environment' in self._config:
                     with SimpleTempfile('w+') as temp_file:
@@ -102,6 +105,19 @@ class JobBundler(object):
 
                 os.chdir(self._resource_directory)
                 tar.add(".", arcname=self._job_name)
+
+    def _tar_original_modules(self, tarfile):
+        import os
+        from foundations.global_state import module_manager
+
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
+            os.chdir(module_directory)
+            tarfile.add(".", arcname=self._job_name + '/' + module_name)
+
+    def _tar_obfuscated_modules(self, tarfile):
+        return
+
 
     def _log(self):
         from foundations.global_state import log_manager
