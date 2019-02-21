@@ -124,6 +124,29 @@ class TestGCPBucket(Spec):
             '/' + self.other_file_name
         ]
         self.assertEqual(expected_result, result)
+    
+
+    def test_list_files_returns_filters_files(self):
+        self._mock_list_blobs([
+            self._create_mock_object('file_one'),
+            self._create_mock_object('file_two')
+        ])
+        result = list(self.gcp_bucket.list_files('file_one'))
+        expected_result = [
+            '/file_one'
+        ]
+        self.assertEqual(expected_result, result)
+    
+    def test_list_files_returns_filters_files_on_file_extension(self):
+        self._mock_list_blobs([
+            self._create_mock_object('file_one.txt'),
+            self._create_mock_object('file_two.exe')
+        ])
+        result = list(self.gcp_bucket.list_files('*.exe'))
+        expected_result = [
+            '/file_two.exe'
+        ]
+        self.assertEqual(expected_result, result)
 
     def _create_mock_object(self, name):
         mock = Mock()
