@@ -5,9 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_contrib.change_directory import ChangeDirectory
-
-
 class JobSourceBundle(object):
 
     def __init__(self, bundle_name, target_path):
@@ -44,6 +41,7 @@ class JobSourceBundle(object):
     def unbundle(self, path_to_save):
         import tarfile
         from distutils.dir_util import mkpath
+        from foundations_contrib.change_directory import ChangeDirectory
 
         with tarfile.open(self.job_archive(), "r:gz") as tar:
             mkpath(path_to_save)
