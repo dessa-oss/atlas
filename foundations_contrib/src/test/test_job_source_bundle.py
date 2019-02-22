@@ -142,6 +142,15 @@ class TestJobSourceBundle(Spec):
         job_source_bundle.unbundle('../')
         mock_tar.extractall.assert_called()
 
+    def test_file_listing_calls_tarfile_open_with_correct_arguments(self):
+        mock_tar = self.MockTarWithFiles()
+        self.mock_tarfile_open.return_value = mock_tar
+        archive_name = '{}{}.tgz'.format(self.fake_target_name, self.fake_bundle_name)
+        job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
+        some_var = job_source_bundle.file_listing()
+        next(some_var)
+        self.mock_tarfile_open.assert_called_with(archive_name, 'r:gz')
+
     def test_bundle_calls_tarfile_open_with_correct_arguments(self):
         archive_name = '{}{}.tgz'.format(self.fake_target_name, self.fake_bundle_name)
         job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
