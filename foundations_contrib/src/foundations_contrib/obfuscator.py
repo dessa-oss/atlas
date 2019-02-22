@@ -7,10 +7,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class Obfuscator(object):
     
-    def obfuscate(self, path, script=None):
+    def _obfuscate(self, path, script=None):
         import subprocess
 
         cmd_line = ['pyarmor', 'obfuscate', '--src={}'.format(path)]
         if script:
             cmd_line.append('--entry={}'.format(script))
         subprocess.run(cmd_line)
+
+    def obfuscate_all(self, path, script=None):
+        import os
+
+        for root_dir, _, _ in os.walk(path):
+            self._obfuscate(root_dir)
