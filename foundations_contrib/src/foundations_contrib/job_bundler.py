@@ -116,7 +116,15 @@ class JobBundler(object):
             tarfile.add(".", arcname=self._job_name + '/' + module_name)
 
     def _tar_obfuscated_modules(self, tarfile):
-        return
+        import os
+        from foundations.global_state import module_manager
+        from foundations_contrib.obfuscator import Obfuscator
+
+        obfuscator = Obfuscator()
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            self._log().debug('Obfuscating module {} at {}'.format(module_name, module_directory))
+            obfuscator.obfuscate(module_directory)
+            os.chdir(os.path.join(module_directory, 'dist'))
 
 
     def _log(self):

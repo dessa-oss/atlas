@@ -9,6 +9,7 @@ import unittest
 from mock import Mock, call, patch
 
 from foundations_contrib.job_bundler import JobBundler
+from foundations_contrib.obfuscator import Obfuscator
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
 
@@ -210,6 +211,31 @@ class TestJobBundler(Spec):
             job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
             job_bundler._bundle_job()
             self.assertFalse(job_bundler._is_remote_deployment())
+
+    @patch.object(Obfuscator, 'obfuscate')
+    def test_tar_obfuscated_modules_calls_obfuscate_on_all_modules(self, mock_obfuscate):
+        import foundations_internal
+
+        with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
+            return_value=[('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_dir_2')]):
+            job_bundler = JobBundler('fake_name', {}, None, None)
+            job_bundler._tar_obfuscated_modules(Mock())
+        first_call = call('fake_module_directory')
+        second_call = call('fake_dir_2')
+        mock_obfuscate.assert_has_calls([first_call, second_call])
+
+    @patch.object(Obfuscator, 'obfuscate')
+    def test_tar_obfuscated_modules_calls_chdir_to_dists_directory(self, mock_obfuscate):
+        import foundations_internal
+
+        with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
+            return_value=[('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_dir_2')]):
+            job_bundler = JobBundler('fake_name', {}, None, None)
+            job_bundler._tar_obfuscated_modules(Mock())
+
+        first_call = call('fake_module_directory/dist')
+        second_call = call('fake_dir_2/dist')
+        self.mock_os_chdir.assert_has_calls([first_call, second_call])
 
     def _setup_archive_and_tar(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
