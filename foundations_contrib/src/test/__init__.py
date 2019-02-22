@@ -43,5 +43,6 @@ from test.test_deployment_context_bucket import TestDeploymentContextBucket
 from test.test_lazy_bucket import TestLazyBucket
 from test.test_obfuscator import TestObfuscator
 from test.test_job_bundler import TestJobBundler
+from test.test_job_source_bundle import TestJobSourceBundle
 
 from test.config import *
