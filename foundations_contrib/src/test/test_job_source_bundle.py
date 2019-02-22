@@ -15,6 +15,8 @@ from foundations_internal.testing.helpers import let, let_mock, set_up, let_patc
 class TestJobSourceBundle(Spec):
 
     mock_uuid4 = let_patch_mock('uuid.uuid4')
+    mock_os_remove = let_patch_mock('os.remove')
+    mock_os_exists = let_patch_mock('os.path.exists')
     
     @let
     def fake_bundle_name(self):
@@ -64,6 +66,27 @@ class TestJobSourceBundle(Spec):
     def test_job_archive_returns_job_archive(self):
         job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
         self.assertEqual(job_source_bundle.job_archive(), '{}{}.tgz'.format(self.fake_target_name, self.fake_bundle_name))
+    
+    def test_cleanup_checks_job_archive_exists(self):
+        job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
+        job_source_bundle.cleanup()
+        self.mock_os_exists.assert_called_with('{}{}.tgz'.format(self.fake_target_name, self.fake_bundle_name))
+    
+    def test_cleanup_calls_remove_when_job_archive_exists(self):
+        self.mock_os_exists.return_value = True
+        job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
+        job_source_bundle.cleanup()
+        self.mock_os_remove.assert_called_with('{}{}.tgz'.format(self.fake_target_name, self.fake_bundle_name))
+        
+    def test_cleanup_does_not_calls_remove_when_job_archive_exists(self):
+        self.mock_os_exists.return_value = False
+        job_source_bundle = JobSourceBundle(self.fake_bundle_name, self.fake_target_name)
+        job_source_bundle.cleanup()
+        self.mock_os_remove.assert_not_called()
+        
+
+
+
 
 
     
