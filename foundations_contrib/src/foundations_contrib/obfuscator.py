@@ -21,3 +21,4 @@ class Obfuscator(object):
         for root_dir, _, _ in os.walk(path):
             if root_dir.split('/')[-1] != '__pycache__':
                 self._obfuscate(root_dir)
+                yield root_dir
