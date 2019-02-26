@@ -47,7 +47,7 @@ In the Foundations project root directory, running the following command will de
 ```shellscript
 $ foundations deploy <relative_path_to_driver_file>.py --env=<env_name>
 ```
-Foundations will first look for any `*.config.yaml` file in the `/config` directory that has the `job_deployment_env` matching the env_name. If a matching configuration file is found, Foundations will deploy the job to that specified environment. Otherwise, it will then look for the configuration in the global directory `~/.foundations/config` . If no configuration files are found, the command will return an error.
+Foundations will first look for any `<env_name>.config.yaml` file in the `/config` directory that matches the specified `--env` argument. If a matching configuration file is found, Foundations will deploy the job to that specified environment. Otherwise, it will then look for the configuration in the global directory `~/.foundations/config` . If no configuration files are found, the command will return an error.
 
 Available configuration files (and environments) can be found using:
 ```shellscript

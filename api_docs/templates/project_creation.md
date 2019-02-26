@@ -57,6 +57,8 @@ To deploy the driver in the above example, run:
 $ foundations deploy project_code/driver.py --env=local
 ```
 
+Foundations will first look for any `<env_name>.config.yaml` file in the `/config` directory that matches the specified `--env` argument. If a matching configuration file is found, Foundations will deploy the job to that specified environment. Otherwise, it will then look for the configuration in the global directory `~/.foundations/config` . If no configuration files are found, the command will return an error.
+
 **Note:** Ensure your `driver_file` does not include the following header, otherwise you will get an error:
 ```python
 if __name__ == "__main__":
