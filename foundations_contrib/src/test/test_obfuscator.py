@@ -37,3 +37,12 @@ class TestObfuscator(Spec):
         call_1 = call('/fake_root')
         call_2 = call('/fake_root/fake_child_dir_1')
         mock_obfuscate.assert_has_calls([call_1, call_2])
+    
+    @patch.object(Obfuscator, '_obfuscate')
+    def test_obfuscate_all_calls_obfuscate_except_on_pycache(self, mock_obfuscate):
+        self.mock_os_walk.return_value = [
+            ('/fake_root', ['fake_child_dir_1', '__pycache__'], ['fake_file_1']),
+            ('/fake_root/__pycache__', [], [])
+        ]
+        Obfuscator().obfuscate_all('/fake_root')
+        mock_obfuscate.assert_called_once_with('/fake_root')
