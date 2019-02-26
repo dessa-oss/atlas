@@ -75,36 +75,39 @@ class JobBundler(object):
 
     def _bundle_job(self):
         import tarfile
-        import glob
-        import os
-        from pipes import quote
-        from foundations_contrib.simple_tempfile import SimpleTempfile
-        from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
 
         with WorkingDirectoryStack():
             with tarfile.open(self.job_archive(), "w:gz") as tar:
-                tar.add(self._job_source_bundle.job_archive(),
+                self._add_files_to_tarball(tar)
+
+    def _add_files_to_tarball(self, tar):
+        import glob
+        import os
+
+        from foundations_contrib.simple_tempfile import SimpleTempfile
+        from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
+        tar.add(self._job_source_bundle.job_archive(),
                         arcname=self._job_name + '/job.tgz')
 
-                tar.add(self._job_binary(), arcname=self._job_name +
-                        '/' + self._job_binary())
+        tar.add(self._job_binary(), arcname=self._job_name +
+                '/' + self._job_binary())
 
-                for config_file in glob.glob('*.config.yaml'):
-                    tar.add(config_file,
-                            arcname=self._job_name + '/' + config_file)
-                if self._config.get('obfuscate', False):
-                    self._tar_obfuscated_modules(tar)
-                else:
-                    self._tar_original_modules(tar)
+        for config_file in glob.glob('*.config.yaml'):
+            tar.add(config_file,
+                    arcname=self._job_name + '/' + config_file)
+        if self._config.get('obfuscate', False):
+            self._tar_obfuscated_modules(tar)
+        else:
+            self._tar_original_modules(tar)
 
-                if 'run_script_environment' in self._config:
-                    with SimpleTempfile('w+') as temp_file:
-                        ScriptEnvironment(self._config).write_environment(temp_file)
-                        tar.add(temp_file.name,
-                                arcname=self._job_name + '/run.env')
+        if 'run_script_environment' in self._config:
+            with SimpleTempfile('w+') as temp_file:
+                ScriptEnvironment(self._config).write_environment(temp_file)
+                tar.add(temp_file.name,
+                        arcname=self._job_name + '/run.env')
 
-                os.chdir(self._resource_directory)
-                tar.add(".", arcname=self._job_name)
+        os.chdir(self._resource_directory)
+        tar.add(".", arcname=self._job_name)
 
     def _tar_original_modules(self, tarfile):
         import os
@@ -123,7 +126,7 @@ class JobBundler(object):
         obfuscator = Obfuscator()
         for module_name, module_directory in module_manager.module_directories_and_names():
             self._log().debug('Obfuscating module {} at {}'.format(module_name, module_directory))
-            obfuscator.obfuscate(module_directory)
+            obfuscator.obfuscate_all(module_directory)
             os.chdir(os.path.join(module_directory, 'dist'))
 
 

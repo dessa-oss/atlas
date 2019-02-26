@@ -212,7 +212,7 @@ class TestJobBundler(Spec):
             job_bundler._bundle_job()
             self.assertFalse(job_bundler._is_remote_deployment())
 
-    @patch.object(Obfuscator, 'obfuscate')
+    @patch.object(Obfuscator, 'obfuscate_all')
     def test_tar_obfuscated_modules_calls_obfuscate_on_all_modules(self, mock_obfuscate):
         import foundations_internal
 
@@ -224,7 +224,7 @@ class TestJobBundler(Spec):
         second_call = call('fake_dir_2')
         mock_obfuscate.assert_has_calls([first_call, second_call])
 
-    @patch.object(Obfuscator, 'obfuscate')
+    @patch.object(Obfuscator, 'obfuscate_all')
     def test_tar_obfuscated_modules_calls_chdir_to_dists_directory(self, mock_obfuscate):
         import foundations_internal
 
