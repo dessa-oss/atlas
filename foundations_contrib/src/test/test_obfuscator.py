@@ -16,6 +16,7 @@ class TestObfuscator(Spec):
 
     mock_subprocess_run = let_patch_mock('subprocess.run')
     mock_os_walk = let_patch_mock('os.walk')
+    mock_shutil_rmtree = let_patch_mock('shutil.rmtree')
 
     def test_obfuscate_calls_pyarmor(self):
         obfuscator = Obfuscator()
@@ -57,3 +58,18 @@ class TestObfuscator(Spec):
         obfuscate_all_generator = Obfuscator().obfuscate_all('/fake_root')
         self.assertEqual(next(obfuscate_all_generator), '/fake_root')
         self.assertEqual(next(obfuscate_all_generator), '/fake_root/fake_child_dir_1')
+
+
+    def test_cleanup_calls_rmtree(self):
+        self.mock_os_walk.return_value = [
+            ('/fake_root', ['fake_child_dir_1', 'dist'], ['fake_file_1']),
+            ('/fake_root/dist', [], ['fake_file_2']),
+            ('/fake_root/fake_child_dir_1', ['dist'], ['fake_file_3']),
+            ('/fake_root/fake_child_dir_1/dist', [], ['fake_file_4']),
+        ]
+        Obfuscator().cleanup('/fake_root')
+        call_1 = call('/fake_root/dist')
+        call_2 = call('/fake_root/fake_child_dir_1/dist')
+        self.mock_shutil_rmtree.assert_has_calls([call_1, call_2])
+
+

@@ -22,3 +22,11 @@ class Obfuscator(object):
             if root_dir.split('/')[-1] != '__pycache__':
                 self._obfuscate(root_dir)
                 yield root_dir
+    
+    def cleanup(self, path):
+        import os
+        import shutil
+        for root_dir, _, _ in os.walk(path):
+            if root_dir.split('/')[-1] == 'dist':
+                shutil.rmtree(root_dir)
+
