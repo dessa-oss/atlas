@@ -8,10 +8,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class SlackNotifier(object):
     
     def send_message(self, channel, message):
+        slack_client = self._create_client()
+        if slack_client is not None:
+            slack_client.api_call('chat.postMessage', text=message)
+
+    @staticmethod
+    def _create_client():
         from slackclient import SlackClient
         import os
 
         slack_token = os.environ.get('FOUNDATIONS_SLACK_TOKEN')
         if slack_token is not None:
-            slackclient = SlackClient(slack_token)
-            slackclient.api_call('chat.postMessage', text=message)
+            return SlackClient(slack_token)
