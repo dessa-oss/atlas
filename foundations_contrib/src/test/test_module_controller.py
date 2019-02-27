@@ -40,8 +40,8 @@ class TestModuleController(Spec):
         module_name, module_directory =  next(module_controller.get_foundations_modules())
         self.assertEqual(module_name, 'fake_module_name')
         self.assertEqual(module_directory, 'fake_module_directory')
-        # with self.assertRaises(StopIteration):
-        #     next(module_controller.get_foundations_modules())
+        with self.assertRaises(StopIteration):
+            next(module_controller.get_foundations_modules())
     
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
     def test_get_foundations_modules_yields_two_modules_only(self, mock_module_directories_and_names):
@@ -50,8 +50,8 @@ class TestModuleController(Spec):
         module_controller = ModuleController(self.default_config)
         self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name', 'fake_module_directory'))
         self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name_2', 'fake_module_directory_2'))
-        # with self.assertRaises(StopIteration):
-        #     next(module_controller.get_foundations_modules())
+        with self.assertRaises(StopIteration):
+            next(module_controller.get_foundations_modules())
 
 
     def test_is_remote_deployment_returns_true_when_local(self):
@@ -109,7 +109,7 @@ class TestModuleController(Spec):
     def test_get_foundations_modules_returns_generator_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
         from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
         mock_module_manager.return_value = [('who_cares','obfuscated/return/path')]
-        mock_obfuscator.return_value = TestModuleController._return_generator(['obfuscated/return/path/dist'])
+        mock_obfuscator.return_value = ['obfuscated/return/path/dist']
 
         config = {
             'obfuscate': True,
@@ -118,7 +118,7 @@ class TestModuleController(Spec):
             }
         }
         module_controller = ModuleController(config)
-        self.assertEqual(next(module_controller.get_foundations_modules()), 'obfuscated/return/path/dist')
+        self.assertEqual(next(module_controller.get_foundations_modules())[1], 'obfuscated/return/path/dist')
 
 
 

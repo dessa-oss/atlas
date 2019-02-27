@@ -13,14 +13,9 @@ class ModuleController(object):
     
     def get_foundations_modules(self):
         from foundations.global_state import module_manager
-        from foundations_contrib.obfuscator import Obfuscator
 
         if self._is_remote_deployment() and self._need_obfuscation():
-            print('obfuscated')
-            for module_name, module_directory in module_manager.module_directories_and_names():
-                obfuscator = Obfuscator()
-                return obfuscator.obfuscate_all(module_directory)
-        print('not obfuscating')
+            return self._create_obfuscator_generator()
         return module_manager.module_directories_and_names()
 
     def _is_remote_deployment(self):
@@ -29,3 +24,11 @@ class ModuleController(object):
     
     def _need_obfuscation(self):
         return self._config.get('obfuscate', False)
+    
+    def _create_obfuscator_generator(self):
+        from foundations.global_state import module_manager
+        from foundations_contrib.obfuscator import Obfuscator
+
+        for module_name, module_directory in module_manager.module_directories_and_names():
+            for obfuscated_directory in Obfuscator().obfuscate_all(module_directory):
+                yield 'fake stuff', obfuscated_directory
