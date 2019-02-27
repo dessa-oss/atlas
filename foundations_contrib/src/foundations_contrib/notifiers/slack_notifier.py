@@ -11,7 +11,7 @@ class SlackNotifier(object):
         self._slack_client = self._create_client()
     
     def send_message(self, channel, message):
-        if self._slack_client is not None:
+        if self._slack_client is not None and channel is not None:
             self._slack_client.api_call('chat.postMessage', text=message)
 
     @staticmethod

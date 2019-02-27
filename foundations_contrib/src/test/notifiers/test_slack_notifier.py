@@ -45,13 +45,17 @@ class TestSlackNotifier(Spec):
     
     def test_notify_does_not_send_message_when_token_is_missing(self):
         del self.os_env['FOUNDATIONS_SLACK_TOKEN']
-        self.notifier.send_message(None, self.message)
+        self.notifier.send_message('', self.message)
         self.mock_slack_client_instance.api_call.assert_not_called()
 
     def test_notify_only_creates_one_client(self):
         self.notifier.send_message('', self.message)
         self.notifier.send_message('', self.message)
         self.mock_slack_client.assert_called_once()
+    
+    def test_notify_does_not_send_message_channel_is_missing(self):
+        self.notifier.send_message(None, self.message)
+        self.mock_slack_client_instance.api_call.assert_not_called()
 
     def _set_up_mocks(self):
         pass
