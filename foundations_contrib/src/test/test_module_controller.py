@@ -37,22 +37,23 @@ class TestModuleController(Spec):
         mock_module_directories_and_names.return_value = TestModuleController._return_generator([
             ('fake_module_name', 'fake_module_directory')])
         module_controller = ModuleController(self.default_config)
-        module_name, module_directory =  next(module_controller.get_foundations_modules())
+        foundations_modules_generator = module_controller.get_foundations_modules()
+        module_name, module_directory =  next(foundations_modules_generator)
         self.assertEqual(module_name, 'fake_module_name')
         self.assertEqual(module_directory, 'fake_module_directory')
         with self.assertRaises(StopIteration):
-            next(module_controller.get_foundations_modules())
+            next(foundations_modules_generator)
     
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
     def test_get_foundations_modules_yields_two_modules_only(self, mock_module_directories_and_names):
         mock_module_directories_and_names.return_value = TestModuleController._return_generator([
             ('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_module_directory_2')])
         module_controller = ModuleController(self.default_config)
-        self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name', 'fake_module_directory'))
-        self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name_2', 'fake_module_directory_2'))
+        foundations_modules_generator = module_controller.get_foundations_modules()
+        self.assertEqual(next(foundations_modules_generator), ('fake_module_name', 'fake_module_directory'))
+        self.assertEqual(next(foundations_modules_generator), ('fake_module_name_2', 'fake_module_directory_2'))
         with self.assertRaises(StopIteration):
-            next(module_controller.get_foundations_modules())
-
+            next(foundations_modules_generator)
 
     def test_is_remote_deployment_returns_true_when_local(self):
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
@@ -91,7 +92,7 @@ class TestModuleController(Spec):
     @patch.object(Obfuscator, 'obfuscate_all')
     def test_get_foundations_modules_calls_obfuscator_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
         from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
-        mock_module_manager.return_value = [('who_cares','obfuscated/return/path')]
+        mock_module_manager.return_value = TestModuleController._return_generator([('who_cares','obfuscated/return/path')])
 
         config = {
             'obfuscate': True,
@@ -106,9 +107,9 @@ class TestModuleController(Spec):
     
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
     @patch.object(Obfuscator, 'obfuscate_all')
-    def test_get_foundations_modules_returns_generator_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
+    def test_get_foundations_modules_returns_generator_with_correct_abs_path_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
         from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
-        mock_module_manager.return_value = [('who_cares','obfuscated/return/path')]
+        mock_module_manager.return_value = TestModuleController._return_generator([('who_cares','obfuscated/return/path')])
         mock_obfuscator.return_value = ['obfuscated/return/path/dist']
 
         config = {
@@ -118,7 +119,31 @@ class TestModuleController(Spec):
             }
         }
         module_controller = ModuleController(config)
-        self.assertEqual(next(module_controller.get_foundations_modules())[1], 'obfuscated/return/path/dist')
+
+        foundations_modules_generator = module_controller.get_foundations_modules()
+        self.assertEqual(next(foundations_modules_generator)[1], 'obfuscated/return/path/dist')
+        with self.assertRaises(StopIteration):
+            next(foundations_modules_generator)
 
 
+    @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
+    @patch.object(Obfuscator, 'obfuscate_all')
+    def test_get_foundations_modules_returns_generator_with_correct_relative_path_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
+        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+        mock_module_manager.return_value = TestModuleController._return_generator([('fake_foundations_package', '/abs/path/fake_foundations_package')])
+        mock_obfuscator.return_value = ['/abs/path/fake_foundations_package/dist',
+                                        '/abs/path/fake_foundations_package/child_package/dist']
 
+        config = {
+            'obfuscate': True,
+            'deployment_implementation': {
+                'deployment_type': SFTPJobDeployment
+            }
+        }
+        module_controller = ModuleController(config)
+        foundations_modules_generator = module_controller.get_foundations_modules()
+        self.assertEqual(next(foundations_modules_generator)[0], 'fake_foundations_package')
+        self.assertEqual(next(foundations_modules_generator)[0], 'fake_foundations_package/child_package')
+        with self.assertRaises(StopIteration):
+            next(foundations_modules_generator)
+        
