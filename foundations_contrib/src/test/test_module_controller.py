@@ -89,7 +89,7 @@ class TestModuleController(Spec):
 
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
     @patch.object(Obfuscator, 'obfuscate_all')
-    def test_get_foundations_modules_returns_generator_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
+    def test_get_foundations_modules_calls_obfuscator_if_obfuscation_needed(self, mock_obfuscator, mock_module_manager):
         from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
         mock_module_manager.return_value = [('who_cares','obfuscated/return/path')]
 
@@ -100,7 +100,7 @@ class TestModuleController(Spec):
             }
         }
         module_controller = ModuleController(config)
-        module_controller.get_foundations_modules()
+        list(module_controller.get_foundations_modules())
         mock_obfuscator.assert_called_once_with('obfuscated/return/path')
 
     
