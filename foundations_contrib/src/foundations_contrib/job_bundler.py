@@ -68,11 +68,6 @@ class JobBundler(object):
         with open(self._job_config_yaml(), 'w+') as file:
             yaml.dump(self._config, file)
 
-    def _is_remote_deployment(self):
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-
-        return self._config['deployment_implementation']['deployment_type'] == LocalShellJobDeployment
-
     def _bundle_job(self):
         import tarfile
 

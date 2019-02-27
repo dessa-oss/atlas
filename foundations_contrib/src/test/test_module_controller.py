@@ -27,7 +27,7 @@ class TestModuleController(Spec):
 
         mock_module_directories_and_names.return_value = TestModuleController._return_generator([
             ('fake_module_name', 'fake_module_directory')])
-        module_controller = ModuleController()
+        module_controller = ModuleController({})
         module_name, module_directory =  next(module_controller.get_foundations_modules())
         self.assertEqual(module_name, 'fake_module_name')
         self.assertEqual(module_directory, 'fake_module_directory')
@@ -38,8 +38,32 @@ class TestModuleController(Spec):
     def test_get_foundations_modules_yields_two_modules_only(self, mock_module_directories_and_names):
         mock_module_directories_and_names.return_value = TestModuleController._return_generator([
             ('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_module_directory_2')])
-        module_controller = ModuleController()
+        module_controller = ModuleController({})
         self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name', 'fake_module_directory'))
         self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name_2', 'fake_module_directory_2'))
         with self.assertRaises(StopIteration):
             next(module_controller.get_foundations_modules())
+
+
+    def test_is_remote_deployment_returns_true_when_local(self):
+        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+
+        config = {
+            'deployment_implementation': {
+                'deployment_type': LocalShellJobDeployment
+            }
+        }
+        module_controller = ModuleController(config)
+        self.assertTrue(module_controller._is_remote_deployment())
+
+    def test_is_remote_deployment_returns_false_when_not_local(self):
+        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+
+        for deployment in SFTPJobDeployment, 'FakeGCPJobDeployment':
+            config = {
+                'deployment_implementation': {
+                    'deployment_type': deployment
+                }
+            }
+            module_controller = ModuleController(config)
+            self.assertFalse(module_controller._is_remote_deployment())

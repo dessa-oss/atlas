@@ -184,34 +184,6 @@ class TestJobBundler(Spec):
         mock_tar_obfuscated_modules.assert_called_with(mock_tar)
         mock_tar_original_modules.assert_not_called()
 
-    def test_is_remote_deployment_returns_true_when_local(self):
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-
-        mock_job_source_bundle, _ = self._setup_archive_and_tar()
-        config = {
-            'deployment_implementation': {
-                'deployment_type': LocalShellJobDeployment
-            }
-        }
-        job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
-        job_bundler._bundle_job()
-        self.assertTrue(job_bundler._is_remote_deployment())
-
-    def test_is_remote_deployment_returns_false_when_not_local(self):
-        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
-
-        mock_job_source_bundle, _ = self._setup_archive_and_tar()
-
-        for deployment in SFTPJobDeployment, 'FakeGCPJobDeployment':
-            config = {
-                'deployment_implementation': {
-                    'deployment_type': deployment
-                }
-            }
-            job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
-            job_bundler._bundle_job()
-            self.assertFalse(job_bundler._is_remote_deployment())
-
     @patch.object(Obfuscator, 'obfuscate_all')
     def test_tar_obfuscated_modules_calls_obfuscate_on_all_modules(self, mock_obfuscate):
         import foundations_internal
