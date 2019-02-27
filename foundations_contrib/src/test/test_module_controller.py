@@ -23,7 +23,7 @@ class TestModuleController(Spec):
             yield item
 
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
-    def test_bundle_job_adds_modules(self, mock_module_directories_and_names):
+    def test_get_foundations_modules_yields_one_module_only(self, mock_module_directories_and_names):
 
         mock_module_directories_and_names.return_value = TestModuleController._return_generator([
             ('fake_module_name', 'fake_module_directory')])
@@ -31,3 +31,15 @@ class TestModuleController(Spec):
         module_name, module_directory =  next(module_controller.get_foundations_modules())
         self.assertEqual(module_name, 'fake_module_name')
         self.assertEqual(module_directory, 'fake_module_directory')
+        with self.assertRaises(StopIteration):
+            next(module_controller.get_foundations_modules())
+    
+    @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
+    def test_get_foundations_modules_yields_two_modules_only(self, mock_module_directories_and_names):
+        mock_module_directories_and_names.return_value = TestModuleController._return_generator([
+            ('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_module_directory_2')])
+        module_controller = ModuleController()
+        self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name', 'fake_module_directory'))
+        self.assertEqual(next(module_controller.get_foundations_modules()), ('fake_module_name_2', 'fake_module_directory_2'))
+        with self.assertRaises(StopIteration):
+            next(module_controller.get_foundations_modules())
