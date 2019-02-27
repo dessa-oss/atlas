@@ -18,11 +18,14 @@ class Obfuscator(object):
     def obfuscate_all(self, path, script=None):
         import os
 
+        list_of_directories = []
+
         for root_dir, _, _ in os.walk(path):
             if os.path.basename(root_dir) != '__pycache__':
                 self._obfuscate(root_dir)
-                yield os.path.join(root_dir, 'dist')
-    
+                list_of_directories.append(os.path.join(root_dir, 'dist'))
+        return list_of_directories
+
     def cleanup(self, path):
         import os
         import shutil
