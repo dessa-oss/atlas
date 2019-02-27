@@ -67,3 +67,19 @@ class TestModuleController(Spec):
             }
             module_controller = ModuleController(config)
             self.assertFalse(module_controller._is_remote_deployment())
+
+    def test_need_obfuscation_returns_true_when_in_config(self):
+        config = {'obfuscate': True}
+        module_controller = ModuleController(config)
+        self.assertTrue(module_controller._need_obfuscation())
+    
+    def test_need_obfuscation_returns_false_when_not_in_config(self):
+        module_controller = ModuleController({})
+        self.assertFalse(module_controller._need_obfuscation())
+    
+    def test_need_obfuscation_returns_false_when_in_config(self):
+        config = {'obfuscate': False}
+        module_controller = ModuleController(config)
+        self.assertFalse(module_controller._need_obfuscation())
+
+
