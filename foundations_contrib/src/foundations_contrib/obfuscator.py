@@ -21,7 +21,7 @@ class Obfuscator(object):
         for root_dir, _, _ in os.walk(path):
             if os.path.basename(root_dir) != '__pycache__':
                 self._obfuscate(root_dir)
-                yield root_dir
+                yield os.path.join(root_dir, 'dist')
     
     def cleanup(self, path):
         import os

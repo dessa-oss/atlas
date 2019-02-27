@@ -56,8 +56,8 @@ class TestObfuscator(Spec):
             ('/fake_root/fake_child_dir_1', [], [])
         ]
         obfuscate_all_generator = Obfuscator().obfuscate_all('/fake_root')
-        self.assertEqual(next(obfuscate_all_generator), '/fake_root')
-        self.assertEqual(next(obfuscate_all_generator), '/fake_root/fake_child_dir_1')
+        self.assertEqual(next(obfuscate_all_generator), '/fake_root/dist')
+        self.assertEqual(next(obfuscate_all_generator), '/fake_root/fake_child_dir_1/dist')
 
     def test_cleanup_calls_rmtree_on_one_directory(self):
         self.mock_os_walk.return_value = [
