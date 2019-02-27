@@ -48,6 +48,10 @@ class TestSlackNotifier(Spec):
         self.notifier.send_message(None, self.message)
         self.mock_slack_client_instance.api_call.assert_not_called()
 
+    def test_notify_only_creates_one_client(self):
+        self.notifier.send_message('', self.message)
+        self.notifier.send_message('', self.message)
+        self.mock_slack_client.assert_called_once()
 
     def _set_up_mocks(self):
         pass

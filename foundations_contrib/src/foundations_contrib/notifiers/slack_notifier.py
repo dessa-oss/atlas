@@ -6,11 +6,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class SlackNotifier(object):
+
+    def __init__(self):
+        self._slack_client = self._create_client()
     
     def send_message(self, channel, message):
-        slack_client = self._create_client()
-        if slack_client is not None:
-            slack_client.api_call('chat.postMessage', text=message)
+        if self._slack_client is not None:
+            self._slack_client.api_call('chat.postMessage', text=message)
 
     @staticmethod
     def _create_client():
