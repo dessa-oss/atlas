@@ -43,3 +43,4 @@ from test.test_deployment_context_bucket import TestDeploymentContextBucket
 from test.test_lazy_bucket import TestLazyBucket
 
 from test.config import *
+from test.notifiers import *
