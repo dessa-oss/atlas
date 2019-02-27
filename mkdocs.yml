@@ -16,7 +16,6 @@ pages:
   - Foundations CLI: project_creation.md
   - Foundations GUI: gui.md
   - Deploying To Different Environments: configs.md
-  - Windows Instructions: windows.md
 - SDK REFERENCE:
   - Stage Creation: stage_creation.md
   - Log Metrics: log_metrics.md
