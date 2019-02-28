@@ -81,6 +81,7 @@ class JobBundler(object):
 
         from foundations_contrib.simple_tempfile import SimpleTempfile
         from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
+
         tar.add(self._job_source_bundle.job_archive(),
                         arcname=self._job_name + '/job.tgz')
 
@@ -90,10 +91,8 @@ class JobBundler(object):
         for config_file in glob.glob('*.config.yaml'):
             tar.add(config_file,
                     arcname=self._job_name + '/' + config_file)
-        if self._config.get('obfuscate', False):
-            self._tar_obfuscated_modules(tar)
-        else:
-            self._tar_original_modules(tar)
+
+        self._tar_modules(tar)
 
         if 'run_script_environment' in self._config:
             with SimpleTempfile('w+') as temp_file:
@@ -104,14 +103,13 @@ class JobBundler(object):
         os.chdir(self._resource_directory)
         tar.add(".", arcname=self._job_name)
 
-    def _tar_original_modules(self, tarfile):
+    def _tar_modules(self, tarfile):
         import os
-        from foundations.global_state import module_manager
+        from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
 
-        for module_name, module_directory in module_manager.module_directories_and_names():
+        for module_name, module_directory in ModuleObfuscationController(self._config).get_foundations_modules():
             self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
-            os.chdir(module_directory)
-            tarfile.add(".", arcname=self._job_name + '/' + module_name)
+            tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
 
     def _tar_obfuscated_modules(self, tarfile):
         import os

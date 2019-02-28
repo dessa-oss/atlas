@@ -10,6 +10,7 @@ from mock import Mock, call, patch
 
 from foundations_contrib.job_bundler import JobBundler
 from foundations_contrib.obfuscator import Obfuscator
+from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
 
@@ -23,6 +24,19 @@ class TestJobBundler(Spec):
     mock_glob_glob = let_patch_mock('glob.glob')
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_simple_temp_file_class = let_patch_mock('foundations_contrib.simple_tempfile.SimpleTempfile')
+
+    @let
+    def _default_config(self):
+        return {
+            'deployment_implementation': {
+                'deployment_type': 'something'
+            }
+        }
+
+    @staticmethod
+    def _return_generator(input):
+        for item in input:
+            yield item
 
     class MockFileContextManager(Mock):
 
@@ -40,12 +54,24 @@ class TestJobBundler(Spec):
 
         def job_archive(self):
             return self._archive_name
+    
+        def bundle(self):
+            pass
+    
+        def cleanup(self):
+            pass
 
     class MockSimpleTempfile(MockFileContextManager):
 
         def __init__(self, temp_file_name):
             super().__init__()
             self.name = temp_file_name
+
+
+    class MockJob(Mock):
+
+        def serialize(self):
+            pass
 
     def test_job_name_method_returns_job_name(self):
        job_bundler = JobBundler('fake_name', {}, None, None)
@@ -109,7 +135,8 @@ class TestJobBundler(Spec):
 
     def test_bundle_job_opens_file(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+
+        job_bundler = JobBundler('fake_name', self._default_config, None, mock_job_source_bundle)
         job_bundler._bundle_job()
         self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'w:gz')
 
@@ -129,20 +156,63 @@ class TestJobBundler(Spec):
         add_config_call = call('fake_config_filename.config.yaml', arcname='fake_name/fake_config_filename.config.yaml')
         mock_tar.add.assert_has_calls([add_config_call])
 
-    def test_bundle_job_adds_modules(self):
-        import foundations_internal
 
+    @patch.object(ModuleObfuscationController, 'get_foundations_modules')
+    def test_bundle_calls_module_obfuscation_controller(self, mock_get_foundations_modules):
+        config = {}
+        mock_job_source_bundle, _ = self._setup_archive_and_tar()
+        mock_job = self.MockJob()
+        job_bundler = JobBundler('fake_name', config, mock_job, mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_get_foundations_modules.assert_called()
+
+    # def test_bundle_job_adds_modules(self):
+    #     import foundations_internal
+
+    #     mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+    #     with patch.object(ModuleObfuscationController, 'get_foundations_modules',
+    #                       return_value=[('fake_module_name', 'fake_module_directory')]):
+    #         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
+    #         job_bundler._bundle_job()
+
+    #     self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
+    #     mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
+
+    @patch.object(ModuleObfuscationController, 'get_foundations_modules')
+    def test_bundle_add_module_directory_to_tar(self, mock_get_foundations_modules):
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+        mock_get_foundations_modules.return_value = self._return_generator([('fake_module_name', 'fake_module_directory')])
 
-        with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
-                          return_value=[('fake_module_name', 'fake_module_directory')]):
-            job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
-            job_bundler._bundle_job()
+        job_bundler = JobBundler('fake_name', {}, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
 
-        self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
-        mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
+        mock_tar.add.assert_any_call('fake_module_directory', arcname='fake_name/fake_module_name')
+    
+    @patch.object(ModuleObfuscationController, 'get_foundations_modules')
+    def test_bundle_add_module_directory_to_tar_different_name(self, mock_get_foundations_modules):
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+        mock_get_foundations_modules.return_value = self._return_generator([('real_module_name', 'real_module_directory')])
 
-    def test_bundle_job_adds_script_environment(self):
+        job_bundler = JobBundler('real_name', {}, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_tar.add.assert_any_call('real_module_directory', arcname='real_name/real_module_name')
+
+    @patch.object(ModuleObfuscationController, 'get_foundations_modules')
+    def test_bundle_add_module_directory_to_tar_multiple_modules(self, mock_get_foundations_modules):
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+        mock_get_foundations_modules.return_value = self._return_generator([('real_module_name', 'real_module_directory'), ('totally_fake_module_name', 'lol_directory')])
+
+        job_bundler = JobBundler('real_name', {}, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_tar.add.assert_any_call('real_module_directory', arcname='real_name/real_module_name')
+        mock_tar.add.assert_any_call('lol_directory', arcname='real_name/totally_fake_module_name')
+
+    @patch('foundations_contrib.module_obfuscation_controller.ModuleObfuscationController')
+    def test_bundle_job_adds_script_environment(self, mock_module_obfuscation_controller):
         import foundations_contrib
 
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
@@ -150,65 +220,22 @@ class TestJobBundler(Spec):
         self.mock_simple_temp_file_class.return_value = self.MockSimpleTempfile('fake_temp_file_name')
         with patch.object(foundations_contrib.job_bundling.script_environment.ScriptEnvironment, 'write_environment'):
             fake_config = {'run_script_environment': ''}
-            job_bundler = JobBundler('fake_name', fake_config, None, mock_job_source_bundle)
-            job_bundler._bundle_job()
+            job_bundler = JobBundler('fake_name', fake_config, self.MockJob(), mock_job_source_bundle)
+            job_bundler.bundle()
 
         mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
 
-    def test_bundle_job_adds_job_directory(self):
+    @patch('os.path.dirname')
+    def test_bundle_job_adds_job_directory(self, mock_dirname):
+        mock_dirname.return_value = '/directory/path'
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
-        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
-        job_bundler._bundle_job()
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
 
-        self.mock_os_chdir.assert_has_calls([call(job_bundler._resource_directory)])
+        self.mock_os_chdir.assert_has_calls([call('/directory/path/resources')])
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
-
-    @patch.object(JobBundler, '_tar_obfuscated_modules')
-    @patch.object(JobBundler, '_tar_original_modules')
-    def test_tar_original_modules_is_called(self, mock_tar_original_modules, mock_tar_obfuscated_modules):
-        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
-        job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
-        job_bundler._bundle_job()
-        mock_tar_original_modules.assert_called_with(mock_tar)
-        mock_tar_obfuscated_modules.assert_not_called()
-
-
-    @patch.object(JobBundler, '_tar_original_modules')
-    @patch.object(JobBundler, '_tar_obfuscated_modules')
-    def test_tar_obfuscated_modules_is_called(self, mock_tar_obfuscated_modules, mock_tar_original_modules):
-        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
-        config = {'obfuscate': True}
-        job_bundler = JobBundler('fake_name', config, None, mock_job_source_bundle)
-        job_bundler._bundle_job()
-        mock_tar_obfuscated_modules.assert_called_with(mock_tar)
-        mock_tar_original_modules.assert_not_called()
-
-    @patch.object(Obfuscator, 'obfuscate_all')
-    def test_tar_obfuscated_modules_calls_obfuscate_on_all_modules(self, mock_obfuscate):
-        import foundations_internal
-
-        with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
-            return_value=[('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_dir_2')]):
-            job_bundler = JobBundler('fake_name', {}, None, None)
-            job_bundler._tar_obfuscated_modules(Mock())
-        first_call = call('fake_module_directory')
-        second_call = call('fake_dir_2')
-        mock_obfuscate.assert_has_calls([first_call, second_call])
-
-    @patch.object(Obfuscator, 'obfuscate_all')
-    def test_tar_obfuscated_modules_calls_chdir_to_dists_directory(self, mock_obfuscate):
-        import foundations_internal
-
-        with patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names',
-            return_value=[('fake_module_name', 'fake_module_directory'), ('fake_module_name_2', 'fake_dir_2')]):
-            job_bundler = JobBundler('fake_name', {}, None, None)
-            job_bundler._tar_obfuscated_modules(Mock())
-
-        first_call = call('fake_module_directory/dist')
-        second_call = call('fake_dir_2/dist')
-        self.mock_os_chdir.assert_has_calls([first_call, second_call])
-
+ 
     def _setup_archive_and_tar(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
         mock_tar = self.MockFileContextManager()
