@@ -16,7 +16,8 @@ class ModuleObfuscationController(object):
 
         if self._is_remote_deployment() and self._need_obfuscation():
             yield from self._create_obfuscator_generator()
-        yield from module_manager.module_directories_and_names()
+        else: 
+            yield from module_manager.module_directories_and_names()
 
     def _is_remote_deployment(self):
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment

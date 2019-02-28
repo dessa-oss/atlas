@@ -145,3 +145,4 @@ class TestModuleObfuscationController(Spec):
         self.assertEqual(next(foundations_modules_generator)[0], 'fake_foundations_package/child_package')
         with self.assertRaises(StopIteration):
             next(foundations_modules_generator)
+            
