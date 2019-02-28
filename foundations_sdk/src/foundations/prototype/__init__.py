@@ -5,5 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.v2beta.models.test_project import TestProjectV2
-from test.v2beta.models.test_job_listing import TestJobListingV2
+from foundations.prototype.jobs import get_queued_jobs

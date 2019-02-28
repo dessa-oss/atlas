@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_rest_api.v1.models.property_model import PropertyModel
+from foundations_contrib.models.property_model import PropertyModel
 
 
 class TestPropertyModel(unittest.TestCase):

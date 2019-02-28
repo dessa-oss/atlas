@@ -5,6 +5,8 @@
 First, lets install the Foundations library and then follow a [step-by-step](../step_by_step
 _guide/) guide to see how it can be used.
 
+#Installing Foundations Environment
+
 ##OSX/Linux
 
 It's recommended that you use either [virtualenv](https://virtualenv.pypa.io/en/latest/installation/) or [conda](https://conda.io/projects/conda/en/latest/user-guide/index.html) to setup your Foundations environment.
@@ -35,6 +37,36 @@ In the root of the repo specify Python version and run:
 ./build_dist.sh
 ```
 This will build a new `.whl` file of Foundations and install it within your `conda` or `virtualenv` environment.
+
+##Windows
+
+You will need to install [git bash](https://git-scm.com/download/win) and [anaconda](https://conda.io/miniconda.html). To run Foundations correctly, you will need to run all comands from an Anaconda prompt.
+
+<h3>1. Setup Virtual Environment</h3>
+
+- Open an Anaconda prompt
+- Create a new conda environment by running
+```
+conda create --name found-env python=3.6
+```
+- Activate the environment by running
+```
+conda activate found-env
+```
+- Install dependencies via pip
+```
+pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
+```
+<h3>2. Install Foundations WHL </h3>
+
+The `.whl` files for Python 3.X are available and will be provided by the Dessa team. There are different assets based on different job deployment strategies.
+
+You only need `foundations-<version>-py3-none-any.whl` file for initial Foundations deployment.
+
+Run the following command to install Foundations:
+```
+python -m pip install -U <path-to-downloaded-whl-file>
+```
 
 ## Environment and Dependencies
 
@@ -128,3 +160,33 @@ _Note: Environment variables need to be run in your notebook every time you refr
 
 ## Installing and Running the GUI
 Foundations provides a user interface with which one can view all information about jobs, including status (e.g. queued, running, completed) as well as logged metrics and start time.  As for how to to install and use it, have a look at the [GUI guide](../gui/).
+
+## Deploying Jobs
+
+For full documentation on how to deploy jobs, please refer to the documentation[here](../configs/#how-to-deploy).
+
+<h2>Windows</h2>
+
+To deploy jobs on Windows, users can use different configuration files to specify where the job should be run. 
+
+<h3>Setting up local configuration</h3>
+
+In order to get Foundations working correctly on Windows, you'll have to ensure that you environment is set up correctly. When installing software dependencies (such as Anaconda or Git), the default installation settings should be sufficient to get things working.
+
+<h3> Deploying jobs</h3>
+As per the [project creation](../project_creation/#project-creation) command, new projects will automatically have a local configuration to start deploying jobs using Foundations.
+
+<h3> Local deployment</h3>
+```yml
+job_deployment_env: local
+results_config:
+    archive_end_point: C:\\foundations\\foundations-archive
+    redis_end_point: redis://localhost:6379
+cache_config:
+    end_point: C:\\foundations\\foundations-cache
+log_level: INFO
+```
+ Please take note that when specifying different paths for the configuration options on Windows, all paths must be prefixed by the Windows partition (ie `C:\\`) that they are located on.
+
+<h3> Deploying remote jobs from Windows</h3>
+It is also important to understand that if you are deploying from Windows to the Foundations scheduler that the paths defined in you configuration must retain their Linux form. For example, we would use `/path/to/remote/jobs` instead of `C:\path\to\remote\jobs`

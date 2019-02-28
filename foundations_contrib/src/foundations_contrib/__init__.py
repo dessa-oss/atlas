@@ -6,7 +6,7 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
 import foundations_contrib.config
-
+import foundations_contrib._promise_hacks
 
 def root():
     from pathlib import Path
