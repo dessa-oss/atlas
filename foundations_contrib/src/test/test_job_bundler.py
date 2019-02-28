@@ -167,19 +167,6 @@ class TestJobBundler(Spec):
 
         mock_get_foundations_modules.assert_called()
 
-    # def test_bundle_job_adds_modules(self):
-    #     import foundations_internal
-
-    #     mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
-
-    #     with patch.object(ModuleObfuscationController, 'get_foundations_modules',
-    #                       return_value=[('fake_module_name', 'fake_module_directory')]):
-    #         job_bundler = JobBundler('fake_name', {}, None, mock_job_source_bundle)
-    #         job_bundler._bundle_job()
-
-    #     self.mock_os_chdir.assert_has_calls([call('fake_module_directory')])
-    #     mock_tar.add.assert_has_calls([call('.', arcname='fake_name/fake_module_name')])
-
     @patch.object(ModuleObfuscationController, 'get_foundations_modules')
     def test_bundle_add_module_directory_to_tar(self, mock_get_foundations_modules):
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
