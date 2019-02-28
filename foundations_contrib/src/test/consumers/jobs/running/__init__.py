@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.consumers.jobs.running.test_remove_queued_job import TestRemoveQueuedJob
+from test.consumers.jobs.running.test_remove_global_queued_job import TestRemoveGlobalQueuedJob
 from test.consumers.jobs.running.test_project_listing import TestProjectListing
 from test.consumers.jobs.running.test_start_time import TestStartTime
 from test.consumers.jobs.running.test_job_state import TestJobState
