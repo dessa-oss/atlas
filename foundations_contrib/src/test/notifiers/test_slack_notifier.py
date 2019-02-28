@@ -11,6 +11,7 @@ from mock import Mock
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_patch_mock, let_mock, let_now, set_up
 from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
+from foundations_internal.testing.helpers.partial_callable_mock import PartialCallableMock
 
 class TestSlackNotifier(Spec):
 
@@ -32,6 +33,10 @@ class TestSlackNotifier(Spec):
     def token(self):
         return self.faker.sha256()
     
+    @let
+    def channel(self):
+        return self.faker.name()
+    
     mock_slack_client_instance = let_mock()
 
     @set_up
@@ -40,8 +45,9 @@ class TestSlackNotifier(Spec):
         self.mock_slack_client.return_when(self.mock_slack_client_instance, self.token)
 
     def test_notify_sends_message_to_slack(self):
+        self.mock_slack_client_instance.api_call = PartialCallableMock()
         self.notifier.send_message('', self.message)
-        self.mock_slack_client_instance.api_call.assert_called_with('chat.postMessage', text=self.message)
+        self.mock_slack_client_instance.api_call.assert_called_with_partial('chat.postMessage', text=self.message)
     
     def test_notify_does_not_send_message_when_token_is_missing(self):
         del self.os_env['FOUNDATIONS_SLACK_TOKEN']
@@ -56,7 +62,10 @@ class TestSlackNotifier(Spec):
     def test_notify_does_not_send_message_channel_is_missing(self):
         self.notifier.send_message(None, self.message)
         self.mock_slack_client_instance.api_call.assert_not_called()
-
-    def _set_up_mocks(self):
-        pass
+    
+    def test_notify_sends_to_correct_channel(self):
+        self.mock_slack_client_instance.api_call = PartialCallableMock()
+        self.notifier.send_message(self.channel, self.message)
+        actual_args, actual_kwargs = self.mock_slack_client_instance.api_call.call_args
+        self.mock_slack_client_instance.api_call.assert_called_with_partial('chat.postMessage', channel=self.channel)
 
