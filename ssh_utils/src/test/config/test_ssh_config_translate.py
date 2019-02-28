@@ -101,3 +101,17 @@ class TestSSHConfigTranslate(Spec, ConfigTranslates):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'DEBUG')
+
+    def test_returns_obfuscate_false_if_not_set(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['obfuscate'], False)
+
+    def test_returns_obfuscate_true_if_set_true(self):
+        self._configuration['obfuscate'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertTrue(result_config['obfuscate'])
+    
+    def test_returns_obfuscate_false_if_set_false(self):
+        self._configuration['obfuscate'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertFalse(result_config['obfuscate'])

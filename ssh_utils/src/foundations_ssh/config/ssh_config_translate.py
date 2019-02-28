@@ -26,6 +26,7 @@ def translate(config):
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
         'shell_command': find_bash(),
+        'obfuscate': _obfuscate(config),
     }
 
 def _log_level(config):
@@ -79,4 +80,7 @@ def _archive_implementation(result_end_point):
         'archive_type': BucketPipelineArchive,
         'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
     }
+
+def _obfuscate(config):
+    return config.get('obfuscate', False)
 
