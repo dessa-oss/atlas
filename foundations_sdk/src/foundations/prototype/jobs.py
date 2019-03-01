@@ -14,4 +14,4 @@ def get_queued_jobs():
     return DataFrame(job_attributes)
 
 def cancel_queued_jobs(job_list):
-    return {}
+    return {job_id: False for job_id in job_list}
