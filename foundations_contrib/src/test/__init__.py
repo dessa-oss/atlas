@@ -45,5 +45,7 @@ from test.test_obfuscator import TestObfuscator
 from test.test_job_bundler import TestJobBundler
 from test.test_job_source_bundle import TestJobSourceBundle
 from test.test_module_obfuscation_controller import TestModuleObfuscationController
+from test.test_obfuscation_detection_mixin import TestObfuscationDetectionMixin
+
 
 from test.config import *
