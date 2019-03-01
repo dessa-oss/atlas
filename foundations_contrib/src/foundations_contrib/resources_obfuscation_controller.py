@@ -13,6 +13,13 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
         self._config = config
         self._module_directory = os.path.dirname(os.path.abspath(__file__))
         self._resource_directory = os.path.join(self._module_directory, "resources")
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        from foundations_contrib.obfuscator import Obfuscator
+        Obfuscator().cleanup(self._resource_directory)
 
     def get_resources(self):
         if self.is_obfuscation_activated():
