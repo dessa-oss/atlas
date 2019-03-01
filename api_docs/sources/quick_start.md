@@ -1,6 +1,6 @@
 <h1>Quick-Start Guide</h1>
 
-Welcome to the Foundations quick-start guide! The following instructions should help you get setup with Foundations and ready to run your first job on your local machine. For more information on any of the steps, please refer to the full [installation](../start_guide/) guide.
+Welcome to the Foundations quick-start guide! The following instructions should help you get setup with Foundations as quick as possible and ready to run your first job on your local machine. For more information on any of the steps, please refer to the full [installation](../start_guide/) guide.
 
 #OSX/Linux
 

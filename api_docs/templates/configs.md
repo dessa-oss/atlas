@@ -1,40 +1,66 @@
-# Setting up config.yaml in Foundations
+<h1>Setting Up Different Deployment Environments in Foundations</h1>
 
-The goal of this document is to outline how Foundations uses a configuration-driven approach to deployment, and how to setup your configurations depending on where the execution environment(compute) will occur.
+Foundations uses a configuration-driven approach to deployment, and which configurations are selected when deploying a job determines where the execution environment(compute) will occur.
 
 Configuration in Foundations is done through `config.yaml` files.
 
-## Vocabulary
+## Concepts and Vocabulary
 
 It's important to understand the language used around deployment so that we can properly understand how models are run, and where.
 
-Driver application: this where your code exist for using Foundations for both setting up stages and running them.
+**Driver Application**: this where your code exist for using Foundations for both setting up stages and running them.   
 
-Execution environment: this is where models are computed i.e where jobs run.
+**Execution Environment**: this is where models are computed (ie: where jobs run). This can be a variety of different locations such as local (where you run model code on your local machine), or on a remote server (Google Cloud Platorm, Amazon Web Services, other SSH servers). See below for more details on Types of Deployments.
 
-Job: this is the unit used to describe the package that is the model, source code, and metadata that gets sent to be computed.
+**Job**: this is the unit used to describe the package that is the model, source code, and metadata that gets sent to be computed.  
 
-Deployment: you can think of deployment as how the job gets run (executed).
+**Deployment**: you can think of deployment as how the job gets run (executed).  
 
-Queuing system: a way for multiple jobs to be sent to the execution environment, where they'll be put in line before they get run.
+**Queuing System**: a way for multiple jobs to be sent to the execution environment, where they'll be put in line before they get run.  
 
 ## Types of Deployments
 
-You'll find example configurations for different deployment types in `/examples/example_config`.
-
-Foundations works with three different types of deployments:
+Foundations works with a few different types of deployment options:
 
 **Local Deployment:** this will run directly on the machine where the `.yaml` file is. This deployment doesn't require a queuing system. There are two versions of this, `local.config.yaml` for running on Linux and OSX, and `local_windows.config.yaml` for running on Windows.
 
 **Google Cloud Platform (GCP) Deployment:** for use with Google's cloud service. A queuing system is required for use of this deployment configuration. When using this method of deployment, remember to authenticate with your Google Cloud service. Instructions on how to do this can be found [here](https://google-cloud.readthedocs.io/en/latest/core/auth.html).
 
+**Amazon Web Services (AWS) Deployment:** for use with Amazon's cloud service. A queuing system is required for use of this deployment configuration. When using this method of deployment, remember to authenticate with your AWS service. Instructions on how to do this can be found [here](https://docs.aws.amazon.com/codedeploy/latest/userguide/auth-and-access-control.html).
+
 **SSH Deployment:** this type of deployment uses a simple way of sending a job to a compute box and getting results. It expects to work with Foundations' SCP-style queueing system. 
 
-The example folder contains seperate `_deploy` and `_results` config for _SSH Deployment_. This is because the SSH deployment initially stores the archives locally before sending it off remotely. With respect to workflow you can imagine using the deployment config with your code that's used for running a job––and using the results config to read results.
+To select which of the above to deploy a job to, users specifiy different configuration files which contain parameters and additional information so that Foundations can properly access and run model code on the environment.
 
-## Usage
+## How to Deploy
 
-You can specify the .config.yaml configuration file for your script using the `add_config_path` method in the `config_manager`. 
+Configuration files can live both globally on the machine or locally per Foundations project. When using the `foundations init` command, a default configuration file is [automatically created](../project_creation/#project-creation) in the `/config` directory. To set global environments, add `*.config.yaml` files to `~/.foundations/config`. You may need to create this directory first with:
+
+```bash
+mkdir ~/.foundations/config
+```
+
+Jobs can then be deployed to different environments in two ways:
+
+<h3>1. Using the Foundations CLI</h3>
+In the Foundations project root directory, running the following command will deploy jobs to user-specified environments:
+```shellscript
+$ foundations deploy <relative_path_to_driver_file>.py --env=<env_name>
+```
+Foundations will first look for any `<env_name>.config.yaml` file in the `/config` directory that matches the specified `--env` argument. If a matching configuration file is found, Foundations will deploy the job to that specified environment. Otherwise, it will then look for the configuration in the global directory `~/.foundations/config` . If no configuration files are found, the command will return an error.
+
+Available configuration files (and environments) can be found using:
+```shellscript
+$ foundations info --env
+```
+
+For more information on the Foundations CLI, please refer to the documentation [here](../project_creation/)
+
+**Note:** If your code contains adding the config path via the SDK below, this **will** override the selected environment by the deploy command.
+
+<h3>2. Foundations SDK</h3>
+
+When writing your driver application, you can specify the `.config.yaml` configuration file for your script using the `add_config_path` method in the `config_manager` . 
 ```
 from foundations import config_manager
 
@@ -42,147 +68,58 @@ config_manager.add_config_path('config/local_default.config.yaml')
 ```
 It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
 
-
 ## Configuration Options
 
-*Note: If no `config.yaml` is provided default values are used.*
+*Note: Typically, the Dessa team will provide tested and properly setup configuration files for deployment to the different environments which will not require users to modify any configuration options. In addition, if no `config.yaml` is provided, then Foundations will use built-in default values for job deployments*
 
-All configurations take two arguments, `cache_type` (object), and `constructor_argument` (list). `constructor_argument` is how you can define the file path for any type of storage on the execution environment.
+### Define Environment 
 
-`constructor_argument` has different defaults depending on the type of deployment used. When using GCP deployment there is no default so `constructor_argument` will need to be defined for each configuration.
+**job_deployment_env**: specifies what to label the environment as for deploying jobs. You can view all available all environments with the [Foundations CLI](../configs/) command: `foundations info --env`
 
-**cache_implementation**: Foundations uses caching to save time on rerunning stages that haven't changed, this configuration allows the integrator to define where caching should occur in the execution environment. The default value is `NullCacheBackend` which means no caching.
+### Results Configurations
 
-**archive_listing_implementation**: The archives listings configuration allows Foundations to specify how to list and enumerate items. The default value is `NullArchiveListing` which means no archiving is provided.
-
-## Archive Configurations:
-
-The below configurations allow Foundations to know where and how data is stored in the execution environment.
-
-Default values for below parameters is `NullArchive` which means no archiving is provided.
-
-**persisted_data_archive_implementation**: persisted data is how Foundations saves the returns value from a stage. If you want to run a job and see results, you'll need to persist the data and define where it should be saved.
-
-**provenance_archive_implementation**: provenance is information about stage relationships that Foundations can save in order to have a historical record of how a series of stages ran.
-
-**job_source_archive_implementation**: this is all the source code wrapped up in an archive object that will allow for a job to be fully reproducible. 
-
-**artifact_archive_implementation**: this is how Foundations interacts with the model artifact for the job. Model artifacts are the way Foundations can save a model for later use.
-
-**stage_log_archive_implementation**: stage logs are where you can save results from your model.
-
-**miscellaneous_archive_implementation**: additional information about the job.
-
-## Deployment Configurations:
-
-**deployment_implementation**: defines either GCP, local, or SSH type deployment. The default is `LocalShellJobDeployment` which means it will use current working directory.
-
-
-## Additional Configurations
-
-For SSH deployments you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
-
-```
-remote_user: lou
-remote_host: 422.428.428.42
-port: 22222
-shell_command: /bin/bash
-code_path: /home/lou/mount/testbed/jobs
-result_path: /home/lou/mount/testbed/results
-key_path: <key_path>
-log_level: DEBUG
+```json
+'results_config': {
+    'archive_end_point': '/path/to/archives',
+    'redis_end_point': 'redis://someredis'
+},
 ```
 
-Just like with SSH the `remote_user` and `remote_host` value will be the login for the execution environment machine.  The `port` entry specifies what port the SSH service is listening to on the remote machine.  It is optional - not specifying it will give it the default of 22.
+**archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory.
 
-`shell_command`: needed for the queuing system to know how to run a `.sh` file. This is a necessary configuration as different platforms require different paths to running shell scripts.
+**redis_end_point**: redis endpoint where we want to store results for faster reading
 
-`code_path`: the directory where jobs should be stored.
+### Cache Configurations
 
+```json
+'cache_config': {
+    'end_point': '/path/to/the/cache'
+},
+```
+
+**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory.
+
+### Additional Configurations
+
+For SSH deployments to remote addresses, you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
+
+```json
+'ssh_config': {
+    'user': lou
+    'host': '11.22.33.44',
+    'port': 2222
+    'key_path': '/path/to/the/keys',
+    'code_path': '/path/to/the/code',
+    'result_path': '/path/to/the/result',
+}
+```
+
+Just like with standard SSH, the `user` and `host` values will be the login for the execution environment machine. The `port` entry specifies what port the SSH service is listening to on the remote machine. It is *optional* - not specifying it will give it the default of 22.
+
+`key_path`: the private key necessary for using SSH.  
+`code_path`: the directory where jobs should be stored.  
 `result_path`: the directory where job results should be stored after they've been run.
 
-`key_path`: the private key necessary for using SSH.
-
-`log_level`: for debugging purposes if set to `DEBUG` Foundations will be verbose in its output. Remove this configuration will turn off debug mode and will default to using `INFO`. This is a wrapper on top of Python's logging.
-
-## Run script environment configs
-
-Foundations creates its own virtual environment when running.  To set environment variables in that virtual environment, set the `run_script_environment` option.  This option is set by providing to it key-value pairs (where the key is the environment variable name and the value is the value to set in the variable):
-
-```
-run_script_environment:
-    var0: value0
-    var1: value1
-    ...
-```
-
-The environment variables Foundations exposes are `log_level` and `offline_mode`.
-
-### log_level
-
-The `log_level` used here is for the `run.sh` script, including (for example) the output for `pip` when it installs libraries before running a submitted job.  The difference between this `log_level` and the one in the previous section is that this is for the `run.sh` script (i.e. everything the job requires in order to run) and is set under `run_script_environment`, while the previous `log_level` is for the Foundations job itself and has no parent configuration.
+<h3>log_level</h3>
 
 Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the `log_level` option described in the previous section.  Leaving it unset is the same as setting `INFO`.  Setting any other value will disable all logging for all non-job-related processes.
-
-### offline_mode
-
-This variable is used to tell the `run.sh` that there is no internet.  This ensures that pip will not waste time trying to download packages when it can't.
-
-Allowed values for `offline_mode` are `OFFLINE`.  Setting any other value is the same as leaving it unset.  If unset, the `run.sh` will check for internet access before performing a `pip install`.  If this check fails, the `run.sh` will set `offline_mode` to `OFFLINE`.  If it succeeds, pip will be allowed to access the internet as necessary in order to download any python packages specified in your `requirements.txt`.
-
-Keep in mind that if offline mode is set (either by you or by the `run.sh`) and pip finds a package in your `requirements.txt` that is not already on your system, job execution will correctly terminate with an error written to stderr.
-
-### Using Redis for remote deployment
-
-If you're running jobs using either SSH or GCP deployment, you'll need to set your Redis connection configuration. This can be done like so:
-
-```
-redis_url: redis://422.428.428.42:33333
-```
-
-If no `redis_url` value is set, it will default to `localhost:6379`.
-
-### example run_script_environment
-
-The below is for the case where you want `DEBUG`-level logging for `run.sh` processes and online mode:
-
-```
-run_script_environment:
-    log_level: DEBUG
-```
-
-The below is for the case where you want `INFO`-level logging for `run.sh` processes and offline mode:
-
-```
-run_script_environment:
-    log_level: INFO # can omit this line entirely - log_level is INFO by default!
-    offline_mode: OFFLINE
-```
-
-## Using the config_manager
-
-The `config_manager` can be used to override specific settings in default config specified in the `.config.yaml`. 
-
-The general format of use:
-`config_manager['<configuration>'] = <new config settings>`
-
-### example changing log_level
-The below could be used if you want to change the log_level in one of your experiments but don't want to modify your entire configuration.
-
-```
-from foundations import config_manager
-
-config_manager['log_level'] = DEBUG
-```
-
-### example changing archive listing implementation
-The below could be used to change the archive storage locations of one of your experiments. 
-```
-from foundations import config_manager, LocalFileSystemPipelineListing
-
-config_manager['archive_listing_implementation'] = {
-    'archive_listing_type': LocalFileSystemPipelineListing,
-    'constructor_arguments': [/tmp/specialLocation],
-}
-
-```

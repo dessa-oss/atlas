@@ -36,6 +36,11 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
         self._mock_tear_down()
         self._clear_lets()
 
+    def assert_list_contains_items(self, expected, result):
+        for item in expected:
+            if not item in result:
+                raise AssertionError('Expected to find {} in {}'.format(item, result))
+
     def _tear_down_methods(self):
         for function in self.__class__.__dict__.values():
             if isinstance(function, tear_down):

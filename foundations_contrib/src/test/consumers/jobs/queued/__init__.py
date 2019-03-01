@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.consumers.jobs.queued.test_project_listing import TestQueuedProjectListing
+from test.consumers.jobs.queued.test_global_listing import TestQueuedGlobalListing
 from test.consumers.jobs.queued.test_job_state import TestQueuedJobState
 from test.consumers.jobs.queued.test_project_name import TestProjectName
 from test.consumers.jobs.queued.test_run_data import TestRunData

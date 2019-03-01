@@ -27,6 +27,12 @@ def translate(config):
         'log_level': _log_level(config),
         'shell_command': find_bash(),
         'obfuscate': _obfuscate(config),
+        'remote_user': config['ssh_config'].get('user', 'foundations'),
+        'code_path': config['ssh_config']['code_path'],
+        'port': config['ssh_config'].get('port', 22),
+        'result_path': config['ssh_config']['result_path'],
+        'key_path': config['ssh_config']['key_path'],
+        'remote_host': config['ssh_config']['host'],
     }
 
 def _log_level(config):
