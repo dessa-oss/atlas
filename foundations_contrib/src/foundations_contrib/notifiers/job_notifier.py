@@ -12,4 +12,5 @@ class JobNotifier(object):
         self._slack_notifier = slack_notifier
 
     def send_message(self, message):
-        self._slack_notifier.send_message(message=message, channel=self._channel)
+        if not self._slack_notifier.send_message(message=message, channel=self._channel):
+            self._slack_notifier.send_message(message=message)

@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import Mock
+from mock import Mock, call
 
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_patch_mock, let_mock, let_now, set_up
@@ -50,3 +50,21 @@ class TestJobNotifier(Spec):
         self.slack_notifier.send_message = PartialCallableMock()
         self.notifier.send_message(self.message)
         self.slack_notifier.send_message.assert_called_with_partial(channel=self.channel)
+
+    def test_sends_message_to_slack_notifier_when_first_attempt_fails(self):
+        self.slack_notifier.send_message = PartialCallableMock()
+        self.slack_notifier.send_message.return_value = False
+        self.notifier.send_message(self.message)
+        self.slack_notifier.send_message.assert_called_with_partial(message=self.message)
+
+    def test_that_notifier_retries_after_one_failure(self):
+        self.slack_notifier.send_message.return_value = False
+        self.notifier.send_message(self.message)
+        call_count = self.slack_notifier.send_message.call_count
+        self.assertEqual(call_count, 2)
+
+    def test_that_notifier_does_not_retry_if_succeeds(self):
+        self.slack_notifier.send_message.return_value = True
+        self.notifier.send_message(self.message)
+        call_count = self.slack_notifier.send_message.call_count
+        self.assertEqual(call_count, 1)               
