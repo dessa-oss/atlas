@@ -15,9 +15,15 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
         self._resource_directory = os.path.join(self._module_directory, "resources")
 
     def get_resources(self):
+        import shutil
         from foundations_contrib.obfuscator import Obfuscator
 
         if self.is_obfuscation_activated():
             Obfuscator().obfuscate(self._resource_directory, script='main.py')
-            return os.path.join(self._resource_directory, 'dist')
+            dist_directory = os.path.join(self._resource_directory, 'dist')
+            for resource_file in 'run.sh', 'foundations_requirements.txt':
+                src_path = os.path.join(self._resource_directory, resource_file)
+                dest_path = os.path.join(self._resource_directory, 'dist', resource_file)
+                shutil.copyfile(src_path, dest_path)
+            return dist_directory
         return self._resource_directory

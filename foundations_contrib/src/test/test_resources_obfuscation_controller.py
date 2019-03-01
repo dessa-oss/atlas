@@ -17,6 +17,7 @@ from foundations_internal.testing.helpers import let, let_mock, set_up, let_patc
 class TestResourcesObfuscationController(Spec):
 
     mock_os_dirname = let_patch_mock('os.path.dirname')
+    mock_shutil_copyfile = let_patch_mock('shutil.copyfile')
 
     @let
     def default_config(self):
@@ -72,4 +73,18 @@ class TestResourcesObfuscationController(Spec):
         config['deployment_implementation']['deployment_type'] = 'notLocal'
         resources_obfuscation_controller = ResourcesObfuscationController(config)
         self.assertEqual(resources_obfuscation_controller.get_resources(), '/directory/path/resources/dist')
+    
+    def test_get_resources_adds_files_to_dist_resources_directory_if_obfuscated(self, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path'
+        config = self.default_config
+        config['obfuscate_foundations'] = True
+        config['deployment_implementation']['deployment_type'] = 'notLocal'
+        resources_obfuscation_controller = ResourcesObfuscationController(config)
+        resources_obfuscation_controller.get_resources()
+        run_sh_call = call('/directory/path/resources/run.sh', '/directory/path/resources/dist/run.sh')
+        foundations_requirements_call = call(
+            '/directory/path/resources/foundations_requirements.txt',
+            '/directory/path/resources/dist/foundations_requirements.txt')
+        self.mock_shutil_copyfile.assert_has_calls([run_sh_call, foundations_requirements_call])
+
     
