@@ -45,7 +45,7 @@ class TestSlackNotifier(Spec):
         self.mock_slack_client.return_when(self.mock_slack_client_instance, self.token)
 
     def test_notify_sends_message_to_slack(self):
-        self.mock_slack_client_instance.api_call = PartialCallableMock()
+        self._setup_mock()
         self.notifier.send_message('', self.message)
         self.mock_slack_client_instance.api_call.assert_called_with_partial('chat.postMessage', text=self.message)
     
@@ -55,6 +55,7 @@ class TestSlackNotifier(Spec):
         self.mock_slack_client_instance.api_call.assert_not_called()
 
     def test_notify_only_creates_one_client(self):
+        self._setup_mock()
         self.notifier.send_message('', self.message)
         self.notifier.send_message('', self.message)
         self.mock_slack_client.assert_called_once()
@@ -64,8 +65,23 @@ class TestSlackNotifier(Spec):
         self.mock_slack_client_instance.api_call.assert_not_called()
     
     def test_notify_sends_to_correct_channel(self):
-        self.mock_slack_client_instance.api_call = PartialCallableMock()
+        self._setup_mock()
         self.notifier.send_message(self.channel, self.message)
         actual_args, actual_kwargs = self.mock_slack_client_instance.api_call.call_args
         self.mock_slack_client_instance.api_call.assert_called_with_partial('chat.postMessage', channel=self.channel)
 
+    def test_notify_return_true_when_api_call_succeeds(self):
+        self._setup_mock()
+        self.assertTrue(self.notifier.send_message(self.channel, self.message))
+
+    def test_notify_return_false_when_api_call_fails(self):
+        self.mock_slack_client_instance.api_call.return_value = {'ok': False}
+        self.assertFalse(self.notifier.send_message(self.channel, self.message))
+
+    def test_notify_return_true_when_token_not_provided(self):
+        del self.os_env['FOUNDATIONS_SLACK_TOKEN']
+        self.assertTrue(self.notifier.send_message(self.channel, self.message))
+
+    def _setup_mock(self):
+        self.mock_slack_client_instance.api_call = PartialCallableMock()
+        self.mock_slack_client_instance.api_call.return_value = {'ok': True}

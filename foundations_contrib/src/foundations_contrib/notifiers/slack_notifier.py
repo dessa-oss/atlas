@@ -12,7 +12,9 @@ class SlackNotifier(object):
     
     def send_message(self, channel, message):
         if self._check_can_send(channel):
-            self._slack_client.api_call('chat.postMessage', channel=channel, text=message)
+            response = self._slack_client.api_call('chat.postMessage', channel=channel, text=message)
+            return response['ok']
+        return True
 
     @staticmethod
     def _create_client():
