@@ -41,12 +41,6 @@ class TestAPIResource(Spec):
     def random_cookie_value(self):
         return self.faker.sha256()
 
-    @let
-    def faker(self):
-        from faker import Faker
-        return Faker()
-        
-
     authorization_mock = let_patch_mock('foundations_rest_api.v1.models.session.Session.is_authorized')
 
     def test_returns_class(self):
