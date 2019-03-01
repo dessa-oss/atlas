@@ -4,13 +4,19 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+from foundations_contrib.obfuscation_detection_mixin import ObfuscationDetectionMixin
 import os
 
-class ResourcesObfuscationController(object):
+class ResourcesObfuscationController(ObfuscationDetectionMixin):
 
     def __init__(self, config):
+        self._config = config
         self._module_directory = os.path.dirname(os.path.abspath(__file__))
         self._resource_directory = os.path.join(self._module_directory, "resources")
 
     def get_resources(self):
+        from foundations_contrib.obfuscator import Obfuscator
+
+        if self.is_obfuscation_activated():
+            Obfuscator().obfuscate(self._resource_directory, script='main.py')
         return self._resource_directory

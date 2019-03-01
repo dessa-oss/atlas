@@ -13,10 +13,10 @@ from foundations_contrib.resources_obfuscation_controller import ResourcesObfusc
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
 
+@patch.object(Obfuscator, 'obfuscate')
 class TestResourcesObfuscationController(Spec):
 
     mock_os_dirname = let_patch_mock('os.path.dirname')
-
 
     @let
     def default_config(self):
@@ -28,16 +28,39 @@ class TestResourcesObfuscationController(Spec):
             }
         }
     
-
-    def test_get_resources_returns_resources_directory_if_not_obfuscated(self):
+    def test_get_resources_returns_resources_directory_if_not_obfuscated(self, mock_obfuscate_fn):
         self.mock_os_dirname.return_value = '/directory/path'
         config = self.default_config
         resources_obfuscation_controller = ResourcesObfuscationController(config)
         self.assertEqual(resources_obfuscation_controller.get_resources(), '/directory/path/resources')
-    
-    def test_get_resources_returns_resources_directory_if_not_obfuscated_different_directory(self):
+
+    def test_get_resources_returns_resources_directory_if_not_obfuscated_different_directory(self, mock_obfuscate_fn):
         self.mock_os_dirname.return_value = '/directory/path/different'
         config = self.default_config
         resources_obfuscation_controller = ResourcesObfuscationController(config)
         self.assertEqual(resources_obfuscation_controller.get_resources(), '/directory/path/different/resources')
 
+    def test_get_resources_calls_obfuscate_with_correct_args_if_obfuscated(self, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path'
+        config = self.default_config
+        config['obfuscate_foundations'] = True
+        config['deployment_implementation']['deployment_type'] = 'notLocal'
+        resources_obfuscation_controller = ResourcesObfuscationController(config)
+        resources_obfuscation_controller.get_resources()
+        mock_obfuscate_fn.assert_called_with('/directory/path/resources', script='main.py')
+
+    def test_get_resources_calls_obfuscate_with_correct_args_if_obfuscated_with_different_name(self, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path/different'
+        config = self.default_config
+        config['obfuscate_foundations'] = True
+        config['deployment_implementation']['deployment_type'] = 'notLocal'
+        resources_obfuscation_controller = ResourcesObfuscationController(config)
+        resources_obfuscation_controller.get_resources()
+        mock_obfuscate_fn.assert_called_with('/directory/path/different/resources', script='main.py')
+
+    def test_get_resources_obfuscate_not_called_with_default_config(self, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path'
+        config = self.default_config
+        resources_obfuscation_controller = ResourcesObfuscationController(config)
+        resources_obfuscation_controller.get_resources()
+        mock_obfuscate_fn.assert_not_called()
