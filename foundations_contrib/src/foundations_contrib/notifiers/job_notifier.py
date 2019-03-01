@@ -8,7 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobNotifier(object):
     
     def __init__(self, config_manager, slack_notifier):
+        self._channel = config_manager.config().get('job_notification_channel')
         self._slack_notifier = slack_notifier
 
     def send_message(self, message):
-        self._slack_notifier.send_message(message=message, channel=None)
+        self._slack_notifier.send_message(message=message, channel=self._channel)

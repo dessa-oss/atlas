@@ -46,6 +46,7 @@ class TestJobNotifier(Spec):
         self.slack_notifier.send_message.assert_called_with_partial(channel=None)
 
     def test_uses_channel_in_config(self):
+        self.config_manager['job_notification_channel'] = self.channel
         self.slack_notifier.send_message = PartialCallableMock()
         self.notifier.send_message(self.message)
-        self.slack_notifier.send_message.assert_called_with_partial(channel=None)
+        self.slack_notifier.send_message.assert_called_with_partial(channel=self.channel)
