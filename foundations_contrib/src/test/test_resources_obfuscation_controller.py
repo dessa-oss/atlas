@@ -64,3 +64,12 @@ class TestResourcesObfuscationController(Spec):
         resources_obfuscation_controller = ResourcesObfuscationController(config)
         resources_obfuscation_controller.get_resources()
         mock_obfuscate_fn.assert_not_called()
+
+    def test_get_resources_returns_dist_resources_directory_if_obfuscated(self, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path'
+        config = self.default_config
+        config['obfuscate_foundations'] = True
+        config['deployment_implementation']['deployment_type'] = 'notLocal'
+        resources_obfuscation_controller = ResourcesObfuscationController(config)
+        self.assertEqual(resources_obfuscation_controller.get_resources(), '/directory/path/resources/dist')
+    

@@ -19,4 +19,5 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
 
         if self.is_obfuscation_activated():
             Obfuscator().obfuscate(self._resource_directory, script='main.py')
+            return os.path.join(self._resource_directory, 'dist')
         return self._resource_directory
