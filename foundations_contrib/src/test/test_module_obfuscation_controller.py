@@ -113,3 +113,29 @@ class TestModuleObfuscationController(Spec):
         self.assertEqual(next(foundations_modules_generator)[0], 'fake_foundations_package/child_package')
         with self.assertRaises(StopIteration):
             next(foundations_modules_generator)
+
+    @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
+    @patch.object(Obfuscator, 'obfuscate_all')
+    @patch.object(Obfuscator, 'cleanup')
+    def test_cleanup_when_exiting_context_manager(self, mock_obfuscator_cleanup, mock_obfuscate_all, mock_module_manager):
+        mock_module_manager.return_value = TestModuleObfuscationController._return_generator([('fake_foundations_package', '/abs/path/fake_foundations_package')])
+
+        config = self.default_config
+        config['obfuscate_foundations'] = True
+        config['deployment_implementation']['deployment_type'] = 'notLocal'
+        with ModuleObfuscationController(config) as module_obfuscation_controller:
+            module_obfuscation_controller.get_foundations_modules()
+            mock_obfuscator_cleanup.assert_not_called()
+        mock_obfuscator_cleanup.assert_called_with('/abs/path/fake_foundations_package')
+    
+    @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
+    @patch.object(Obfuscator, 'obfuscate_all')
+    @patch.object(Obfuscator, 'cleanup')
+    def test_cleanup_not_called_when_exiting_context_manager_if_not_obfuscated(self, mock_obfuscator_cleanup, mock_obfuscate_all, mock_module_manager):
+        mock_module_manager.return_value = TestModuleObfuscationController._return_generator([('fake_foundations_package', '/abs/path/fake_foundations_package')])
+
+        config = self.default_config
+        with ModuleObfuscationController(config) as module_obfuscation_controller:
+            module_obfuscation_controller.get_foundations_modules()
+            mock_obfuscator_cleanup.assert_not_called()
+        mock_obfuscator_cleanup.assert_not_called()

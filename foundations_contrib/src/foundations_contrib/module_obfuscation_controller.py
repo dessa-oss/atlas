@@ -12,6 +12,17 @@ class ModuleObfuscationController(ObfuscationDetectionMixin):
     def __init__(self, config):
         self._config = config
     
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        from foundations.global_state import module_manager
+        from foundations_contrib.obfuscator import Obfuscator
+
+        if self.is_obfuscation_activated():
+            for module_name, module_root_directory in module_manager.module_directories_and_names():
+                Obfuscator().cleanup(module_root_directory)
+    
     def get_foundations_modules(self):
         from foundations.global_state import module_manager
 
