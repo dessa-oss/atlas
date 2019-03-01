@@ -13,6 +13,14 @@ from foundations_internal.testing.helpers import let, let_patch_mock, let_mock, 
 from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
 from foundations_internal.testing.helpers.partial_callable_mock import PartialCallableMock
 
+def _create_retry_test(number_of_retries):
+    def _callback(self):
+        self.slack_notifier.send_message.side_effect = [False] * (number_of_retries-1) + [True]
+        self.notifier.send_message(self.message)
+        call_count = self.slack_notifier.send_message.call_count
+        self.assertEqual(call_count, number_of_retries)
+    return _callback
+
 class TestJobNotifier(Spec):
     
     @let
@@ -64,11 +72,7 @@ class TestJobNotifier(Spec):
         self.notifier.send_message(self.message)
         self.slack_notifier.send_message.assert_called_with_partial(channel=self.channel)
 
-    def test_that_notifier_retries_after_one_failure(self):
-        self.slack_notifier.send_message.side_effect = [False, True]
-        self.notifier.send_message(self.message)
-        call_count = self.slack_notifier.send_message.call_count
-        self.assertEqual(call_count, 2)
+    test_that_notifier_retries_after_one_failure = _create_retry_test(2)
 
     def test_that_notifier_does_not_retry_if_succeeds(self):
         self.slack_notifier.send_message.return_value = True
@@ -76,14 +80,12 @@ class TestJobNotifier(Spec):
         call_count = self.slack_notifier.send_message.call_count
         self.assertEqual(call_count, 1)
 
-    def test_that_notifier_retries_twice_after_two_failures(self):
-        self.slack_notifier.send_message.side_effect = [False, False, True]
-        self.notifier.send_message(self.message)
-        call_count = self.slack_notifier.send_message.call_count
-        self.assertEqual(call_count, 3)
+    test_that_notifier_retries_three_times_after_two_failures = _create_retry_test(3)
 
-    def test_that_notifier_retries_twice_after_three_failures(self):
-        self.slack_notifier.send_message.side_effect = [False, False, False, True]
-        self.notifier.send_message(self.message)
-        call_count = self.slack_notifier.send_message.call_count
-        self.assertEqual(call_count, 4)        
+    test_that_notifier_retries_four_times_after_three_failures = _create_retry_test(4)
+
+    test_that_notifier_retries_five_time_after_four_failures = _create_retry_test(5)
+
+        
+        
+        
