@@ -11,6 +11,7 @@ from mock import Mock, call, patch
 from foundations_contrib.job_bundler import JobBundler
 from foundations_contrib.obfuscator import Obfuscator
 from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
+from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
 
@@ -28,6 +29,7 @@ class TestJobBundler(Spec):
     @let
     def _default_config(self):
         return {
+            'obfuscate_foundations': False,
             'deployment_implementation': {
                 'deployment_type': 'something'
             }
@@ -38,13 +40,33 @@ class TestJobBundler(Spec):
         for item in input:
             yield item
 
-    class MockFileContextManager(Mock):
+    class MockContextManager(Mock):
 
         def __enter__(self):
             return self
 
         def __exit__(self, exc_type, exc_val, exc_tb):
             return self
+
+    class MockObfuscationContextManager(object):
+
+        def __init__(self):
+            self.entered = False
+            self.exited = False
+
+        def __enter__(self):
+            self.entered = True
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.exited = True
+            return self
+
+        def get_resources(self):
+            pass
+
+        def get_foundations_modules(self):
+            pass
 
     class MockJobSourceBundle(Mock):
 
@@ -61,7 +83,7 @@ class TestJobBundler(Spec):
         def cleanup(self):
             pass
 
-    class MockSimpleTempfile(MockFileContextManager):
+    class MockSimpleTempfile(MockContextManager):
 
         def __init__(self, temp_file_name):
             super().__init__()
@@ -99,7 +121,7 @@ class TestJobBundler(Spec):
         self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'r:gz')
 
     def test_unbundle_extracts_from_tarfile(self):
-        return_object = self.MockFileContextManager()
+        return_object = self.MockContextManager()
         self.mock_tarfile_open.return_value = return_object
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.unbundle()
@@ -113,7 +135,7 @@ class TestJobBundler(Spec):
 
     def test_save_job_writes_to_file(self):
         mock_job = self._create_mock_job()
-        return_object = self.MockFileContextManager()
+        return_object = self.MockContextManager()
         self.mock_builtins_open.return_value = return_object
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_job()
@@ -127,7 +149,7 @@ class TestJobBundler(Spec):
 
     def test_save_config_dumps_to_file(self):
         mock_job = self._create_mock_job()
-        return_object = self.MockFileContextManager()
+        return_object = self.MockContextManager()
         self.mock_builtins_open.return_value = return_object
         job_bundler = JobBundler('fake_name', {}, mock_job, None)
         job_bundler._save_config()
@@ -212,9 +234,39 @@ class TestJobBundler(Spec):
 
         mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
 
-    @patch('os.path.dirname')
-    def test_bundle_job_adds_job_directory(self, mock_dirname):
-        mock_dirname.return_value = '/directory/path'
+    @patch.object(ResourcesObfuscationController, '__enter__')
+    def test_bundle_enters_resource_obfuscation_controller_context_manager(self, mock_resources_obfuscation_controller_enter):
+
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_resources_obfuscation_controller_enter.assert_called()
+
+
+    @patch.object(ResourcesObfuscationController, '__exit__')
+    def test_bundle_exits_resource_obfuscation_controller_context_manager(self, mock_resources_obfuscation_controller_exit):
+
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_resources_obfuscation_controller_exit.assert_called()
+        
+    @patch.object(ResourcesObfuscationController, 'get_resources')
+    def test_bundle_calls_resource_obfuscation_controller(self, mock_resources_obfuscation_controller_get_resources):
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_resources_obfuscation_controller_get_resources.assert_called()
+
+    @patch.object(ResourcesObfuscationController, 'get_resources')
+    def test_bundle_adds_resources_directory(self, mock_resources_obfuscation_controller_get_resources):
+        mock_resources_obfuscation_controller_get_resources.return_value = '/directory/path/resources'
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
         job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
@@ -222,10 +274,12 @@ class TestJobBundler(Spec):
 
         self.mock_os_chdir.assert_has_calls([call('/directory/path/resources')])
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
- 
+
+
+
     def _setup_archive_and_tar(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
-        mock_tar = self.MockFileContextManager()
+        mock_tar = self.MockContextManager()
         self.mock_tarfile_open.return_value = mock_tar
 
         return mock_job_source_bundle, mock_tar

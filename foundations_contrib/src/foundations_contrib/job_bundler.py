@@ -19,8 +19,6 @@ class JobBundler(object):
         self._job_name = job_name
         self._job = job
         self._job_source_bundle = job_source_bundle
-        self._module_directory = os.path.dirname(os.path.abspath(__file__))
-        self._resource_directory = self._module_directory + "/resources"
 
     def job_name(self):
         return self._job_name
@@ -81,6 +79,7 @@ class JobBundler(object):
 
         from foundations_contrib.simple_tempfile import SimpleTempfile
         from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
+        from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
 
         tar.add(self._job_source_bundle.job_archive(),
                         arcname=self._job_name + '/job.tgz')
@@ -100,8 +99,11 @@ class JobBundler(object):
                 tar.add(temp_file.name,
                         arcname=self._job_name + '/run.env')
 
-        os.chdir(self._resource_directory)
-        tar.add(".", arcname=self._job_name)
+        
+        with ResourcesObfuscationController(self._config) as resources_obfuscation_controller:
+            resources_directory = resources_obfuscation_controller.get_resources()
+            os.chdir(resources_directory)
+            tar.add(".", arcname=self._job_name)
 
     def _tar_modules(self, tarfile):
         import os
