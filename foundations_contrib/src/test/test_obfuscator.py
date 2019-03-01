@@ -20,15 +20,15 @@ class TestObfuscator(Spec):
 
     def test_obfuscate_calls_pyarmor(self):
         obfuscator = Obfuscator()
-        obfuscator._obfuscate('/fake/path')
+        obfuscator.obfuscate('/fake/path')
         self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path'])
 
     def test_obfuscate_calls_pyarmor_with_entrypoint(self):
         obfuscator = Obfuscator()
-        obfuscator._obfuscate('/fake/path', 'fake_script.py')
+        obfuscator.obfuscate('/fake/path', 'fake_script.py')
         self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path', '--entry=fake_script.py'])
 
-    @patch.object(Obfuscator, '_obfuscate')
+    @patch.object(Obfuscator, 'obfuscate')
     def test_obfuscate_all_calls_obfuscate_recursively(self, mock_obfuscate):
         self.mock_os_walk.return_value = [
             ('/fake_root', ['fake_child_dir_1', 'fake_child_dir_2'], ['fake_file_1']),
@@ -40,7 +40,7 @@ class TestObfuscator(Spec):
         call_2 = call('/fake_root/fake_child_dir_1')
         mock_obfuscate.assert_has_calls([call_1, call_2])
     
-    @patch.object(Obfuscator, '_obfuscate')
+    @patch.object(Obfuscator, 'obfuscate')
     def test_obfuscate_all_calls_obfuscate_except_on_pycache(self, mock_obfuscate):
         self.mock_os_walk.return_value = [
             ('/fake_root', ['fake_child_dir_1', '__pycache__'], ['fake_file_1']),
@@ -49,7 +49,7 @@ class TestObfuscator(Spec):
         list(Obfuscator().obfuscate_all('/fake_root'))
         mock_obfuscate.assert_called_once_with('/fake_root')
 
-    @patch.object(Obfuscator, '_obfuscate')
+    @patch.object(Obfuscator, 'obfuscate')
     def test_obfuscate_all_yields_root_dir(self, mock_obfuscate):
         self.mock_os_walk.return_value = [
             ('/fake_root', ['fake_child_dir_1', '__pycache__'], ['fake_file_1']),

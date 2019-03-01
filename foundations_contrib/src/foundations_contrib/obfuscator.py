@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class Obfuscator(object):
     
-    def _obfuscate(self, path, script=None):
+    def obfuscate(self, path, script=None):
         import subprocess
 
         cmd_line = ['pyarmor', 'obfuscate', '--src={}'.format(path)]
@@ -20,7 +20,7 @@ class Obfuscator(object):
 
         for root_dir, _, _ in os.walk(path):
             if os.path.basename(root_dir) != '__pycache__':
-                self._obfuscate(root_dir)
+                self.obfuscate(root_dir)
                 yield os.path.join(root_dir, 'dist')
 
     def cleanup(self, path):
