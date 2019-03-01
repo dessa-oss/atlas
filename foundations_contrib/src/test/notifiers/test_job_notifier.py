@@ -81,3 +81,9 @@ class TestJobNotifier(Spec):
         self.notifier.send_message(self.message)
         call_count = self.slack_notifier.send_message.call_count
         self.assertEqual(call_count, 3)
+
+    def test_that_notifier_retries_twice_after_three_failures(self):
+        self.slack_notifier.send_message.side_effect = [False, False, False, True]
+        self.notifier.send_message(self.message)
+        call_count = self.slack_notifier.send_message.call_count
+        self.assertEqual(call_count, 4)        
