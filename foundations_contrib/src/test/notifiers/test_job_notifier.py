@@ -65,7 +65,7 @@ class TestJobNotifier(Spec):
         self.slack_notifier.send_message.assert_called_with_partial(channel=self.channel)
 
     def test_that_notifier_retries_after_one_failure(self):
-        self.slack_notifier.send_message.return_value = False
+        self.slack_notifier.send_message.side_effect = [False, True]
         self.notifier.send_message(self.message)
         call_count = self.slack_notifier.send_message.call_count
         self.assertEqual(call_count, 2)
@@ -74,4 +74,10 @@ class TestJobNotifier(Spec):
         self.slack_notifier.send_message.return_value = True
         self.notifier.send_message(self.message)
         call_count = self.slack_notifier.send_message.call_count
-        self.assertEqual(call_count, 1)               
+        self.assertEqual(call_count, 1)
+
+    def test_that_notifier_retries_twice_after_two_failures(self):
+        self.slack_notifier.send_message.side_effect = [False, False, True]
+        self.notifier.send_message(self.message)
+        call_count = self.slack_notifier.send_message.call_count
+        self.assertEqual(call_count, 3)
