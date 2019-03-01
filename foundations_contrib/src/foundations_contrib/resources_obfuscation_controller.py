@@ -19,7 +19,8 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
 
     def __exit__(self, exc_type, exc_value, traceback):
         from foundations_contrib.obfuscator import Obfuscator
-        Obfuscator().cleanup(self._resource_directory)
+        if self.is_obfuscation_activated():
+            Obfuscator().cleanup(self._resource_directory)
 
     def get_resources(self):
         if self.is_obfuscation_activated():

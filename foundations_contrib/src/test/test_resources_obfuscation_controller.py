@@ -97,3 +97,12 @@ class TestResourcesObfuscationController(Spec):
             resources_obfuscation_controller.get_resources()
             mock_obfuscator_cleanup.assert_not_called()
         mock_obfuscator_cleanup.assert_called_with('/directory/path/resources')
+    
+    @patch.object(Obfuscator, 'cleanup')
+    def test_cleanup_not_called_when_exiting_context_manager_when_not_obfuscated(self, mock_obfuscator_cleanup, mock_obfuscate_fn):
+        self.mock_os_dirname.return_value = '/directory/path'
+        config = self.default_config
+        with ResourcesObfuscationController(config) as resources_obfuscation_controller:
+            resources_obfuscation_controller.get_resources()
+            mock_obfuscator_cleanup.assert_not_called()
+        mock_obfuscator_cleanup.assert_not_called()
