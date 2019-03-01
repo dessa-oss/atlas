@@ -15,7 +15,7 @@ from pandas.util.testing import assert_frame_equal
 
 from foundations.prototype.jobs import get_queued_jobs
 
-class TestPrototypeJobs(Spec):
+class TestGetQueuedJobs(Spec):
 
     all_queued_jobs_mock = let_patch_mock('foundations_contrib.models.queued_job.QueuedJob.all')
     

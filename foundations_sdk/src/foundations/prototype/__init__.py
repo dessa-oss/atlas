@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations.prototype.jobs import get_queued_jobs
+from foundations.prototype.jobs import cancel_queued_jobs

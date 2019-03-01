@@ -12,3 +12,6 @@ def get_queued_jobs():
     job_attributes = [job.attributes for job in QueuedJob.all()]
 
     return DataFrame(job_attributes)
+
+def cancel_queued_jobs(job_list):
+    return {}
