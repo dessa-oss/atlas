@@ -5,5 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.notifiers.test_slack_notifier import TestSlackNotifier
-from test.notifiers.test_job_notifier import TestJobNotifier
+class JobNotifier(object):
+    
+    def __init__(self, config_manager, slack_notifier):
+        self._slack_notifier = slack_notifier
+
+    def send_message(self, message):
+        self._slack_notifier.send_message(message=message, channel=None)

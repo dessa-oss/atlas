@@ -20,11 +20,6 @@ class TestBucketJobDeployment(Spec):
         return BucketJobDeployment(self.job_name, self.job, self.job_source_bundle, self.code_bucket, self.results_bucket)
 
     @let
-    def faker(self):
-        from faker import Faker
-        return Faker()
-
-    @let
     def job_name(self):
         return self.faker.name()
 

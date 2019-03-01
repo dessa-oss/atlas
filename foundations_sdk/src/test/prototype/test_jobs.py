@@ -19,11 +19,6 @@ class TestPrototypeJobs(Spec):
 
     all_queued_jobs_mock = let_patch_mock('foundations_contrib.models.queued_job.QueuedJob.all')
     
-    @let
-    def faker(self):
-        import faker
-        return faker.Faker()
-
     def test_get_queued_jobs_returns_empty_data_frame(self):
         self.all_queued_jobs_mock.return_value = []
 

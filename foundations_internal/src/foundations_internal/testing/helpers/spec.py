@@ -22,6 +22,10 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
     def setUpClass(klass):
         klass._collect_let_nows()
         klass._collect_lets()
+
+    @classmethod
+    def tearDownClass(klass):
+        klass._restore_original_lets()
     
     def setUp(self):
         self.__class__._collect_let_nows()
