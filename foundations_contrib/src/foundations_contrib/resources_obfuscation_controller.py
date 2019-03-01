@@ -15,15 +15,21 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
         self._resource_directory = os.path.join(self._module_directory, "resources")
 
     def get_resources(self):
-        import shutil
+        if self.is_obfuscation_activated():
+            return self._get_obfuscated_resources_directory()    
+        return self._resource_directory
+
+    def _get_obfuscated_resources_directory(self):
         from foundations_contrib.obfuscator import Obfuscator
 
-        if self.is_obfuscation_activated():
-            Obfuscator().obfuscate(self._resource_directory, script='main.py')
-            dist_directory = os.path.join(self._resource_directory, 'dist')
-            for resource_file in 'run.sh', 'foundations_requirements.txt':
-                src_path = os.path.join(self._resource_directory, resource_file)
-                dest_path = os.path.join(self._resource_directory, 'dist', resource_file)
-                shutil.copyfile(src_path, dest_path)
-            return dist_directory
-        return self._resource_directory
+        Obfuscator().obfuscate(self._resource_directory, script='main.py')
+        for resource_file in 'run.sh', 'foundations_requirements.txt':
+            self._copy_file_to_dist_directory(resource_file)
+        return os.path.join(self._resource_directory, 'dist')
+
+    def _copy_file_to_dist_directory(self, resource_file):
+        import shutil
+
+        src_path = os.path.join(self._resource_directory, resource_file)
+        dest_path = os.path.join(self._resource_directory, 'dist', resource_file)
+        shutil.copyfile(src_path, dest_path)
