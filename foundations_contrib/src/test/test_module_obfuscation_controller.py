@@ -74,7 +74,7 @@ class TestModuleObfuscationController(Spec):
 
     def test_need_obfuscation_returns_true_when_in_config(self):
         config = self.default_config
-        config['obfuscate'] = True
+        config['obfuscate_foundations'] = True
         module_obfuscation_controller = ModuleObfuscationController(config)
         self.assertTrue(module_obfuscation_controller._need_obfuscation())
     
@@ -84,7 +84,7 @@ class TestModuleObfuscationController(Spec):
     
     def test_need_obfuscation_returns_false_when_in_config(self):
         config = self.default_config
-        config['obfuscate'] = False
+        config['obfuscate_foundations'] = False
         module_obfuscation_controller = ModuleObfuscationController(config)
         self.assertFalse(module_obfuscation_controller._need_obfuscation())
 
@@ -95,7 +95,7 @@ class TestModuleObfuscationController(Spec):
         mock_module_manager.return_value = TestModuleObfuscationController._return_generator([('who_cares','obfuscated/return/path')])
 
         config = {
-            'obfuscate': True,
+            'obfuscate_foundations': True,
             'deployment_implementation': {
                 'deployment_type': SFTPJobDeployment
             }
@@ -113,7 +113,7 @@ class TestModuleObfuscationController(Spec):
         mock_obfuscator.return_value = TestModuleObfuscationController._return_generator(['obfuscated/return/path/dist'])
 
         config = {
-            'obfuscate': True,
+            'obfuscate_foundations': True,
             'deployment_implementation': {
                 'deployment_type': SFTPJobDeployment
             }
@@ -134,7 +134,7 @@ class TestModuleObfuscationController(Spec):
         mock_obfuscator.return_value = TestModuleObfuscationController._return_generator(['/abs/path/fake_foundations_package/dist', '/abs/path/fake_foundations_package/child_package/dist'])
 
         config = {
-            'obfuscate': True,
+            'obfuscate_foundations': True,
             'deployment_implementation': {
                 'deployment_type': SFTPJobDeployment
             }

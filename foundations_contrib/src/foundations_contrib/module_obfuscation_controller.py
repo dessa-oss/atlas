@@ -24,7 +24,7 @@ class ModuleObfuscationController(object):
         return self._config['deployment_implementation']['deployment_type'] != LocalShellJobDeployment
     
     def _need_obfuscation(self):
-        return self._config.get('obfuscate', False)
+        return self._config.get('obfuscate_foundations', False)
         
     def _create_obfuscator_generator(self):
         from foundations.global_state import module_manager
