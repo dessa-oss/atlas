@@ -26,6 +26,7 @@ class TestModuleObfuscationController(Spec):
     def default_config(self):
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
         return {
+            'obfuscate_foundations': False,
             'deployment_implementation': {
                 'deployment_type': LocalShellJobDeployment
             }
@@ -54,39 +55,6 @@ class TestModuleObfuscationController(Spec):
         self.assertEqual(next(foundations_modules_generator), ('fake_module_name_2', 'fake_module_directory_2'))
         with self.assertRaises(StopIteration):
             next(foundations_modules_generator)
-
-    def test_is_remote_deployment_returns_true_when_local(self):
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-        module_obfuscation_controller = ModuleObfuscationController(self.default_config)
-        self.assertFalse(module_obfuscation_controller._is_remote_deployment())
-
-    def test_is_remote_deployment_returns_false_when_not_local(self):
-        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
-
-        for deployment in SFTPJobDeployment, 'FakeGCPJobDeployment':
-            config = {
-                'deployment_implementation': {
-                    'deployment_type': deployment
-                }
-            }
-            module_obfuscation_controller = ModuleObfuscationController(config)
-            self.assertTrue(module_obfuscation_controller._is_remote_deployment())
-
-    def test_need_obfuscation_returns_true_when_in_config(self):
-        config = self.default_config
-        config['obfuscate_foundations'] = True
-        module_obfuscation_controller = ModuleObfuscationController(config)
-        self.assertTrue(module_obfuscation_controller._need_obfuscation())
-    
-    def test_need_obfuscation_returns_false_when_not_in_config(self):
-        module_obfuscation_controller = ModuleObfuscationController({})
-        self.assertFalse(module_obfuscation_controller._need_obfuscation())
-    
-    def test_need_obfuscation_returns_false_when_in_config(self):
-        config = self.default_config
-        config['obfuscate_foundations'] = False
-        module_obfuscation_controller = ModuleObfuscationController(config)
-        self.assertFalse(module_obfuscation_controller._need_obfuscation())
 
     @patch.object(foundations_internal.module_manager.ModuleManager, 'module_directories_and_names')
     @patch.object(Obfuscator, 'obfuscate_all')
@@ -145,4 +113,3 @@ class TestModuleObfuscationController(Spec):
         self.assertEqual(next(foundations_modules_generator)[0], 'fake_foundations_package/child_package')
         with self.assertRaises(StopIteration):
             next(foundations_modules_generator)
-            

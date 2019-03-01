@@ -5,8 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_contrib.obfuscation_detection_mixin import ObfuscationDetectionMixin
 
-class ModuleObfuscationController(object):
+class ModuleObfuscationController(ObfuscationDetectionMixin):
 
     def __init__(self, config):
         self._config = config
@@ -14,17 +15,11 @@ class ModuleObfuscationController(object):
     def get_foundations_modules(self):
         from foundations.global_state import module_manager
 
-        if self._is_remote_deployment() and self._need_obfuscation():
+        if self.is_obfuscation_activated():
             yield from self._create_obfuscator_generator()
-        else: 
+        else:
             yield from module_manager.module_directories_and_names()
 
-    def _is_remote_deployment(self):
-        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-        return self._config['deployment_implementation']['deployment_type'] != LocalShellJobDeployment
-    
-    def _need_obfuscation(self):
-        return self._config.get('obfuscate_foundations', False)
         
     def _create_obfuscator_generator(self):
         from foundations.global_state import module_manager
