@@ -42,6 +42,13 @@ class TestCompletedJobHelpers(Spec):
         from foundations.prototype.helpers.completed import list_jobs
         self.assertEqual(self.listing, list_jobs(self.redis))
 
+    def test_list_archived_jobs_returns_all_archived_jobs(self):
+        from foundations.prototype.helpers.completed import list_archived_jobs
+
+        for job_id in self.listing:
+            self.redis.sadd('projects:global:jobs:archived', job_id)
+        self.assertEqual(self.listing, list_archived_jobs(self.redis))
+
     def test_remove_jobs_removes_all_completed_jobs(self):
         from foundations.prototype.helpers.completed import remove_jobs, list_jobs
         remove_jobs(self.redis, [self.random_job_id])
