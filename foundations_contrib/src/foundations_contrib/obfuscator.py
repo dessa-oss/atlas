@@ -9,8 +9,11 @@ class Obfuscator(object):
     
     def obfuscate(self, path, script=None):
         import subprocess
+        import os
 
-        cmd_line = ['pyarmor', 'obfuscate', '--src={}'.format(path)]
+        os.chdir(path)
+        
+        cmd_line = ['pyarmor', 'obfuscate', '--src=.']
         if script:
             cmd_line.append('--entry={}'.format(script))
         subprocess.run(cmd_line)

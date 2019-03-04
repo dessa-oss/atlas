@@ -16,17 +16,23 @@ class TestObfuscator(Spec):
 
     mock_subprocess_run = let_patch_mock('subprocess.run')
     mock_os_walk = let_patch_mock('os.walk')
+    mock_os_chdir = let_patch_mock('os.chdir')
     mock_shutil_rmtree = let_patch_mock('shutil.rmtree')
 
     def test_obfuscate_calls_pyarmor(self):
         obfuscator = Obfuscator()
         obfuscator.obfuscate('/fake/path')
-        self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path'])
+        self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=.'])
+    
+    def test_obfuscate_calls_os_chdir_with_path_to_obfuscate(self):
+        obfuscator = Obfuscator()
+        obfuscator.obfuscate('/fake/path')
+        self.mock_os_chdir.assert_called_with('/fake/path')
 
     def test_obfuscate_calls_pyarmor_with_entrypoint(self):
         obfuscator = Obfuscator()
         obfuscator.obfuscate('/fake/path', 'fake_script.py')
-        self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=/fake/path', '--entry=fake_script.py'])
+        self.mock_subprocess_run.assert_called_with(['pyarmor', 'obfuscate', '--src=.', '--entry=fake_script.py'])
 
     @patch.object(Obfuscator, 'obfuscate')
     def test_obfuscate_all_calls_obfuscate_recursively(self, mock_obfuscate):
