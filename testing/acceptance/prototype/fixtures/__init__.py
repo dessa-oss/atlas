@@ -4,5 +4,3 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-
-from test.prototype.test_get_queued_jobs import TestGetQueuedJobs
