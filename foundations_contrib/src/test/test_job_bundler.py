@@ -276,6 +276,27 @@ class TestJobBundler(Spec):
         mock_tar.add.assert_has_calls([call('.', arcname='fake_name')])
 
 
+    @patch.object(ModuleObfuscationController, '__enter__')
+    def test_bundle_enters_module_obfuscation_controller_context_manager(self, mock_module_obfuscation_controller_enter):
+
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_module_obfuscation_controller_enter.assert_called()
+    
+
+    @patch.object(ModuleObfuscationController, '__exit__')
+    def test_bundle_exits_module_obfuscation_controller_context_manager(self, mock_module_obfuscation_controller_exit):
+
+        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
+
+        job_bundler = JobBundler('fake_name', self._default_config, self.MockJob(), mock_job_source_bundle)
+        job_bundler.bundle()
+
+        mock_module_obfuscation_controller_exit.assert_called()
+        
 
     def _setup_archive_and_tar(self):
         mock_job_source_bundle = self.MockJobSourceBundle('fake_source_archive_name')
