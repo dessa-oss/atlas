@@ -11,3 +11,7 @@ def list_jobs(redis):
 def remove_jobs(redis, list_of_job_ids):
     for job_id in list_of_job_ids:
         redis.srem('projects:global:jobs:completed', job_id)
+
+def add_jobs_to_archive(redis, list_of_job_ids):
+    for job_id in list_of_job_ids:
+        redis.sadd('projects:global:jobs:archived', job_id)

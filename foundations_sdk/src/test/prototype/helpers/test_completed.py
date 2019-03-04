@@ -52,6 +52,16 @@ class TestCompletedJobHelpers(Spec):
         remove_jobs(self.redis, [self.random_job_id, self.random_job_id_two])
         self.assertEqual(self.listing - {self.random_job_id, self.random_job_id_two}, list_jobs(self.redis))
 
+    def test_add_jobs_to_archive_adds_job_to_archive(self):
+        from foundations.prototype.helpers.completed import add_jobs_to_archive
+        add_jobs_to_archive(self.redis, [self.random_job_id])
+        self.assertEqual({self.random_job_id.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
+
+    def test_add_jobs_to_archive_adds_jobs_to_archive_multiple_jobs(self):
+        from foundations.prototype.helpers.completed import add_jobs_to_archive
+        add_jobs_to_archive(self.redis, [self.random_job_id, self.random_job_id_two])
+        self.assertEqual({self.random_job_id.encode('utf-8'), self.random_job_id_two.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
+
     def _random_uuid(self):
         from uuid import uuid4
         return str(uuid4())
