@@ -53,6 +53,12 @@ class TestPrototypeJobs(Spec):
         result = archive_jobs([self.job_id])
         self.assertEqual({self.job_id: True}, result)
 
+    def test_archive_jobs_removes_completed_jobs(self):
+        self._track_completed_job(self.job_id)
+        archive_jobs([self.job_id])
+        result = archive_jobs([self.job_id])
+        self.assertEqual({self.job_id: False}, result)
+
     def test_archive_jobs_returns_job_mapped_to_true_when_job_exists_with_multiple_jobs(self):
         self._track_completed_job(self.job_id)
         self._track_completed_job(self.job_id_two)
