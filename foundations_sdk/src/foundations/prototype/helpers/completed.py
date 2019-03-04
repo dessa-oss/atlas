@@ -6,4 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def list_jobs(redis):
-    return redis.smembers('projects:global:jobs:completed')
+    return {job_id.decode() for job_id in redis.smembers('projects:global:jobs:completed')}

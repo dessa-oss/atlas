@@ -11,17 +11,29 @@ from foundations_internal.testing.helpers.conditional_return import ConditionalR
 
 class TestCompletedJobHelpers(Spec):
     
-    redis = let_mock()
+    @let
+    def redis(self):
+        from fakeredis import FakeRedis
+        return FakeRedis()
 
     @let
     def listing(self):
-        return self.faker.sha256()
+        return {self._random_uuid() for _ in range(self.job_count)}
+
+    @let
+    def job_count(self):
+        import random
+        return random.randint(1, 10)
 
     @set_up
     def set_up(self):
-        self.redis.smembers = ConditionalReturn()
-        self.redis.smembers.return_when(self.listing, 'projects:global:jobs:completed')
+        for job_id in self.listing:
+            self.redis.sadd('projects:global:jobs:completed', job_id)
 
     def test_returns_all_completed_job(self):
         from foundations.prototype.helpers.completed import list_jobs
         self.assertEqual(self.listing, list_jobs(self.redis))
+
+    def _random_uuid(self):
+        from uuid import uuid4
+        return str(uuid4())
