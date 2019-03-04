@@ -5,10 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.global_state import message_router
+from foundations.global_state import message_router, config_manager
+from foundations_contrib.notifiers.slack_notifier import SlackNotifier
+from foundations_contrib.notifiers.job_notifier import JobNotifier
 
 _add_listener = message_router.add_listener
-
+_job_notifier = JobNotifier(config_manager, SlackNotifier())
 
 def _add_consumers_for_stage_log_middleware(redis):
     from foundations_contrib.consumers.job_metric_consumer import JobMetricConsumer
@@ -31,6 +33,7 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.set_user import SetUser
     from foundations_contrib.consumers.jobs.queued.project_tracker import ProjectTracker
     from foundations_contrib.consumers.jobs.queued.stage_time import StageTime
+    from foundations_contrib.consumers.jobs.queued.job_notifier import JobNotifier
     import foundations_internal.foundations_serializer as serializer
 
     import json
@@ -47,6 +50,7 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(RunData(redis, json), 'queue_job')
     _add_listener(SetUser(redis), 'queue_job')
     _add_listener(ProjectTracker(redis), 'queue_job')
+    _add_listener(JobNotifier(_job_notifier), 'queue_job')
 
 
 def _add_consumers_for_run_job(redis):
@@ -55,31 +59,37 @@ def _add_consumers_for_run_job(redis):
     from foundations_contrib.consumers.jobs.running.remove_queued_job import RemoveQueuedJob
     from foundations_contrib.consumers.jobs.running.remove_global_queued_job import RemoveGlobalQueuedJob
     from foundations_contrib.consumers.jobs.running.start_time import StartTime
+    from foundations_contrib.consumers.jobs.running.job_notifier import JobNotifier
 
     _add_listener(JobState(redis), 'run_job')
     _add_listener(ProjectListing(redis), 'run_job')
     _add_listener(RemoveQueuedJob(redis), 'run_job')
     _add_listener(RemoveGlobalQueuedJob(redis), 'run_job')
     _add_listener(StartTime(redis), 'run_job')
+    _add_listener(JobNotifier(_job_notifier), 'run_job')
 
 
 def _add_consumers_for_complete_job(redis):
     from foundations_contrib.consumers.jobs.completed.completed_time import CompletedTime
     from foundations_contrib.consumers.jobs.completed.job_state import JobState
+    from foundations_contrib.consumers.jobs.completed.job_notifier import JobNotifier
 
     _add_listener(CompletedTime(redis), 'complete_job')
     _add_listener(JobState(redis), 'complete_job')
+    _add_listener(JobNotifier(_job_notifier), 'complete_job')
 
 
 def _add_consumers_for_fail_job(redis):
     from foundations_contrib.consumers.jobs.completed.completed_time import CompletedTime
     from foundations_contrib.consumers.jobs.failed.error_data import ErrorData
     from foundations_contrib.consumers.jobs.failed.job_state import JobState
+    from foundations_contrib.consumers.jobs.failed.job_notifier import JobNotifier
     import json
 
     _add_listener(CompletedTime(redis), 'fail_job')
     _add_listener(ErrorData(redis, json), 'fail_job')
     _add_listener(JobState(redis), 'fail_job')
+    _add_listener(JobNotifier(_job_notifier), 'fail_job')
 
 
 def _create_redis_instance_and_add_consumers():

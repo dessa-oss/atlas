@@ -5,18 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.stage_connector_wrapper import StageConnectorWrapper
 from foundations_internal.stage_context import StageContext
-from foundations.context_aware import ContextAware
-from foundations.utils import generate_uuid
-from foundations.utils import merged_uuids
 
 
 class Pipeline(object):
 
     def __init__(self, pipeline_context):
         self._pipeline_context = pipeline_context
-        self._uuid = generate_uuid('Humble beginnings...')
+        self._uuid = 'eecbbe4788acaee0393bcad40f37f134566ad8a7'
 
     def pipeline_context(self):
         return self._pipeline_context
