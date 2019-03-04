@@ -169,6 +169,7 @@ class TestConsumers(unittest.TestCase):
 
     def test_completed_job_consumers(self):
         from foundations.global_state import message_router
+        from foundations.utils import byte_string
         from time import time
 
         project_name = self._faker.name()
@@ -191,6 +192,11 @@ class TestConsumers(unittest.TestCase):
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
         self.assertIn('Completed', notification)
+
+        completed_jobs_key = 'projects:global:jobs:completed'
+        running_and_completed_jobs = self._redis.smembers(completed_jobs_key)
+        expected_jobs = set([byte_string(self._job_id)])
+        self.assertEqual(expected_jobs, running_and_completed_jobs)
 
     def test_failed_job_consumers(self):
         from foundations.global_state import message_router

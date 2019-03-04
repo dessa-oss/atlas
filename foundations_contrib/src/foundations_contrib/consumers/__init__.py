@@ -73,9 +73,11 @@ def _add_consumers_for_complete_job(redis):
     from foundations_contrib.consumers.jobs.completed.completed_time import CompletedTime
     from foundations_contrib.consumers.jobs.completed.job_state import JobState
     from foundations_contrib.consumers.jobs.completed.job_notifier import JobNotifier
+    from foundations_contrib.consumers.jobs.completed.global_listing import GlobalListing
 
     _add_listener(CompletedTime(redis), 'complete_job')
     _add_listener(JobState(redis), 'complete_job')
+    _add_listener(GlobalListing(redis), 'complete_job')
     _add_listener(JobNotifier(_job_notifier), 'complete_job')
 
 
