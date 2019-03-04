@@ -54,4 +54,5 @@ site/
 !foundations_ui/package.json
 !examples/example_configs/*.config.yaml
 !foundations_contrib/src/foundations_contrib/resources/template/config/*.config.yaml
+!**/fixtures/**/*.config.yaml
 testing/test-cli-init
