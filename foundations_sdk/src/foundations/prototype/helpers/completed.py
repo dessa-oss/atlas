@@ -5,6 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.prototype.test_jobs import TestPrototypeJobs
-
-from test.prototype.helpers import *
+def list_jobs(redis):
+    return redis.smembers('projects:global:jobs:completed')

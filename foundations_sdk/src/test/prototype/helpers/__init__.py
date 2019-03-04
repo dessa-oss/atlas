@@ -5,6 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.prototype.test_jobs import TestPrototypeJobs
-
-from test.prototype.helpers import *
+from test.prototype.helpers.test_completed import TestCompletedJobHelpers
