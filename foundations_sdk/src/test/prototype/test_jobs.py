@@ -21,25 +21,20 @@ class TestPrototypeJobs(Spec):
 
     all_queued_jobs_mock = let_patch_mock('foundations_contrib.models.queued_job.QueuedJob.all')
 
-    redis = let_patch_mock('foundations_contrib.global_state.redis_connection')
-
-    @let
-    def completed_job_listing(self):
-        return set()
-
     @let_now
-    def all_completed_jobs_mock(self):
-        mock = self.patch('foundations.prototype.helpers.completed.list_jobs', ConditionalReturn())
-        mock.return_when(self.completed_job_listing, self.redis)
-        return mock
+    def redis(self):
+        from fakeredis import FakeRedis
+        redis = FakeRedis()
+        redis.flushall()
+        return self.patch('foundations_contrib.global_state.redis_connection', redis)
 
     @let
     def job_id(self):
-        return uuid4()
+        return self._random_uuid()
 
     @let
     def job_id_two(self):
-        return uuid4()
+        return self._random_uuid()
 
     def test_archive_jobs_returns_empty_when_no_jobs(self):
         result = archive_jobs([])
@@ -54,18 +49,18 @@ class TestPrototypeJobs(Spec):
         self.assertEqual({self.job_id: False, self.job_id_two: False}, result)
 
     def test_archive_jobs_returns_job_mapped_to_true_when_job_exists(self):
-        self.completed_job_listing.add(self.job_id)
+        self._track_completed_job(self.job_id)
         result = archive_jobs([self.job_id])
         self.assertEqual({self.job_id: True}, result)
 
     def test_archive_jobs_returns_job_mapped_to_true_when_job_exists_with_multiple_jobs(self):
-        self.completed_job_listing.add(self.job_id)
-        self.completed_job_listing.add(self.job_id_two)
+        self._track_completed_job(self.job_id)
+        self._track_completed_job(self.job_id_two)
         result = archive_jobs([self.job_id, self.job_id_two])
         self.assertEqual({self.job_id: True, self.job_id_two: True}, result)
 
     def test_archive_jobs_returns_job_mapped_to_true_when_job_exists_with_multiple_jobs_only_one_exists(self):
-        self.completed_job_listing.add(self.job_id_two)
+        self._track_completed_job(self.job_id_two)
         result = archive_jobs([self.job_id, self.job_id_two])
         self.assertEqual({self.job_id: False, self.job_id_two: True}, result)
 
@@ -119,6 +114,9 @@ class TestPrototypeJobs(Spec):
     def test_get_queued_jobs_is_global(self):
         import foundations.prototype
         self.assertEqual(get_queued_jobs, foundations.prototype.get_queued_jobs)
+    
+    def _track_completed_job(self, job_id):
+        self.redis.sadd('projects:global:jobs:completed', job_id)
 
     def _random_queued_job(self):
         from foundations_contrib.models.queued_job import QueuedJob
@@ -130,3 +128,8 @@ class TestPrototypeJobs(Spec):
             time_since_queued=random.randint(1, 100),
             project_name=self.faker.name()
         )
+    
+    @staticmethod
+    def _random_uuid():
+        from uuid import uuid4
+        return str(uuid4())
