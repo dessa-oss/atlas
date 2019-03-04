@@ -12,3 +12,10 @@ def get_queued_jobs():
     job_attributes = [job.attributes for job in QueuedJob.all()]
 
     return DataFrame(job_attributes)
+
+def archive_jobs(list_of_job_ids):
+    from foundations_contrib.global_state import redis_connection
+    from foundations.prototype.helpers.completed import list_jobs
+
+    completed_jobs = list_jobs(redis_connection)
+    return {job_id: job_id in completed_jobs for job_id in list_of_job_ids}
