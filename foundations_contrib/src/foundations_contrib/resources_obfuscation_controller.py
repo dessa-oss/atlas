@@ -40,7 +40,4 @@ class ResourcesObfuscationController(ObfuscationDetectionMixin):
 
         src_path = os.path.join(self._resource_directory, resource_file)
         dest_path = os.path.join(self._resource_directory, 'dist', resource_file)
-        shutil.copyfile(src_path, dest_path)
-
-        if resource_file == 'run.sh':
-            os.chmod(dest_path, 0o550)
+        shutil.copy2(src_path, dest_path)

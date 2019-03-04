@@ -17,8 +17,7 @@ from foundations_internal.testing.helpers import let, let_mock, set_up, let_patc
 class TestResourcesObfuscationController(Spec):
 
     mock_os_dirname = let_patch_mock('os.path.dirname')
-    mock_shutil_copyfile = let_patch_mock('shutil.copyfile')
-    mock_os_chmod = let_patch_mock('os.chmod')
+    mock_shutil_copy2 = let_patch_mock('shutil.copy2')
 
     @let
     def default_config(self):
@@ -86,16 +85,16 @@ class TestResourcesObfuscationController(Spec):
         foundations_requirements_call = call(
             '/directory/path/resources/foundations_requirements.txt',
             '/directory/path/resources/dist/foundations_requirements.txt')
-        self.mock_shutil_copyfile.assert_has_calls([run_sh_call, foundations_requirements_call])
+        self.mock_shutil_copy2.assert_has_calls([run_sh_call, foundations_requirements_call])
 
-    def test_get_resources_changes_permission_on_run_sh_in_dist_directory(self, mock_obfuscate_fn):
-        self.mock_os_dirname.return_value = '/directory/path'
-        config = self.default_config
-        config['obfuscate_foundations'] = True
-        config['deployment_implementation']['deployment_type'] = 'notLocal'
-        resources_obfuscation_controller = ResourcesObfuscationController(config)
-        resources_obfuscation_controller.get_resources()
-        self.mock_os_chmod.assert_called_once_with('/directory/path/resources/dist/run.sh', 0o550)
+    # def test_get_resources_changes_permission_on_run_sh_in_dist_directory(self, mock_obfuscate_fn):
+    #     self.mock_os_dirname.return_value = '/directory/path'
+    #     config = self.default_config
+    #     config['obfuscate_foundations'] = True
+    #     config['deployment_implementation']['deployment_type'] = 'notLocal'
+    #     resources_obfuscation_controller = ResourcesObfuscationController(config)
+    #     resources_obfuscation_controller.get_resources()
+    #     self.mock_os_chmod.assert_called_once_with('/directory/path/resources/dist/run.sh', 0o550)
    
     @patch.object(Obfuscator, 'cleanup')
     def test_cleanup_when_exiting_context_manager(self, mock_obfuscator_cleanup, mock_obfuscate_fn):
