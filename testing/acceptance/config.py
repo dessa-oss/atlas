@@ -38,6 +38,7 @@ def _config():
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
     config_manager['log_level'] = 'CRITICAL'
+    config_manager['obfuscate_foundations'] = False
 
 
 _config()

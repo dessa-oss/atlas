@@ -75,3 +75,17 @@ class ConfigTranslates(object):
         self.shell_command.return_value = 'C:\\path\\to\\bash'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['shell_command'], 'C:\\path\\to\\bash')
+
+    def test_returns_obfuscate_false_if_not_set(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['obfuscate_foundations'], False)
+
+    def test_returns_obfuscate_true_if_set_true(self):
+        self._configuration['obfuscate_foundations'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertTrue(result_config['obfuscate_foundations'])
+    
+    def test_returns_obfuscate_false_if_set_false(self):
+        self._configuration['obfuscate_foundations'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertFalse(result_config['obfuscate_foundations'])

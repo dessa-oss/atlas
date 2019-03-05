@@ -26,6 +26,7 @@ def translate(config):
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
         'shell_command': find_bash(),
+        'obfuscate_foundations': _obfuscate_foundations(config),
         'remote_user': config['ssh_config'].get('user', 'foundations'),
         'code_path': config['ssh_config']['code_path'],
         'port': config['ssh_config'].get('port', 22),
@@ -85,4 +86,7 @@ def _archive_implementation(result_end_point):
         'archive_type': BucketPipelineArchive,
         'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
     }
+
+def _obfuscate_foundations(config):
+    return config.get('obfuscate_foundations', False)
 
