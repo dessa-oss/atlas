@@ -8,41 +8,40 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import patch
 
-from foundations.projects import set_project_name
-from foundations.projects import get_metrics_for_all_jobs
+from foundations.projects import *
+from foundations_internal.testing.helpers import *
+from foundations_internal.testing.helpers.spec import Spec
 
+class TestProjects(Spec):
 
-class TestProjects(unittest.TestCase):
+    @let
+    def foundations_context(self):
+        from foundations.global_state import foundations_context
+        return foundations_context
 
     def test_set_project_name_sets_project_name(self):
-        from foundations.global_state import foundations_context
-
         set_project_name('some project')
         self.assertEqual(
-            'some project', foundations_context.pipeline_context().provenance.project_name)
+            'some project', self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_sets_project_name_different_name(self):
-        from foundations.global_state import foundations_context
-
         set_project_name('some different project name')
         self.assertEqual('some different project name',
-                         foundations_context.pipeline_context().provenance.project_name)
+                         self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_is_global(self):
-        from foundations.global_state import foundations_context
         import foundations
 
         foundations.set_project_name('some project')
         self.assertEqual(
-            'some project', foundations_context.pipeline_context().provenance.project_name)
+            'some project', self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_is_global(self):
-        from foundations.global_state import foundations_context
         import foundations
 
         foundations.set_project_name('some different project name')
         self.assertEqual('some different project name',
-                         foundations_context.pipeline_context().provenance.project_name)
+                         self.foundations_context.pipeline_context().provenance.project_name)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')

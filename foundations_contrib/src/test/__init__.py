@@ -13,6 +13,7 @@ from test.consumers import *
 from test.middleware import *
 from test.cli import *
 
+from test.test_config_manager import TestConfigManager
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
 from test.test_bucket_cache_backend import TestBucketCacheBackend
 from test.test_constant_parameter import TestConstantParameter
@@ -48,5 +49,7 @@ from test.test_module_obfuscation_controller import TestModuleObfuscationControl
 from test.test_obfuscation_detection_mixin import TestObfuscationDetectionMixin
 from test.test_resources_obfuscation_controller import TestResourcesObfuscationController
 
+from test.test_log_manager import TestLogManager
 
 from test.config import *
+from test.notifiers import *

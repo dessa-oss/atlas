@@ -21,11 +21,6 @@ class TestQueuedJobQuery(Spec):
         return FakeRedis()
 
     @let
-    def faker(self):
-        import faker
-        return faker.Faker()
-
-    @let
     def job_id(self):
         return self.faker.sha256()
 

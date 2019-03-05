@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations.log_manager import LogManager
+from foundations_contrib.log_manager import LogManager
 
 
 class TestLogManager(unittest.TestCase):
