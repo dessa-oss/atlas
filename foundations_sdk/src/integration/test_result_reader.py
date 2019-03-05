@@ -6,7 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations import Pipeline, PipelineContext, Job, JobPersister, ResultReader
+from foundations_internal.pipeline import Pipeline
+from foundations_internal.pipeline_context import PipelineContext
+from foundations import Job, JobPersister, ResultReader
 
 
 class TestResultReader(unittest.TestCase):

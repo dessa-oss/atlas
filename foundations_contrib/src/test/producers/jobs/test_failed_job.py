@@ -41,6 +41,16 @@ class TestProducerFailedJob(unittest.TestCase):
         self._producer.push_message()
         self.assertEqual('neural nets in space!', self.message['job_id'])
 
+    def test_push_message_sends_complete_job_message_with_project_name(self):
+        self._pipeline_context.provenance.project_name = 'my fantastic job'
+        self._producer.push_message()
+        self.assertDictContainsSubset({'project_name': 'my fantastic job'}, self.message)
+
+    def test_push_message_sends_complete_job_message_with_project_name_different_job(self):
+        self._pipeline_context.provenance.project_name = 'neural nets in space!'
+        self._producer.push_message()
+        self.assertDictContainsSubset({'project_name': 'neural nets in space!'}, self.message)
+
     def test_push_message_sends_fail_job_message_with_error_information_error_type(self):
         self._error_information['type'] = 'Exception'
         self._producer.push_message()

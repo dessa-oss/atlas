@@ -17,3 +17,4 @@ from test.consumers.jobs.queued.test_creation_time import TestCreationTime
 from test.consumers.jobs.queued.test_set_user import TestSetUser
 from test.consumers.jobs.queued.test_project_tracker import TestProjectTracker
 from test.consumers.jobs.queued.test_stage_time import TestStageTime
+from test.consumers.jobs.queued.test_queued_job_notifier import TestQueuedJobNotifier
