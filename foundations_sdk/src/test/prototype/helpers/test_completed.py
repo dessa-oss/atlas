@@ -33,6 +33,14 @@ class TestCompletedJobHelpers(Spec):
     def random_job_id_two(self):
         return random.choice(list(self.listing))
 
+    @let
+    def project_name(self):
+        return self.faker.name()
+
+    @let
+    def project_name_two(self):
+        return self.faker.name()
+
     @set_up
     def set_up(self):
         for job_id in self.listing:
@@ -41,6 +49,18 @@ class TestCompletedJobHelpers(Spec):
     def test_list_jobs_returns_all_completed_jobs(self):
         from foundations.prototype.helpers.completed import list_jobs
         self.assertEqual(self.listing, list_jobs(self.redis))
+
+    def test_job_project_names_returns_project_names(self):
+        from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
+        from foundations.prototype.helpers.completed import job_project_names
+
+        consumer = ProjectName(self.redis)
+        consumer.call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
+        consumer.call({'project_name': self.project_name_two, 'job_id': self.random_job_id_two}, None, {})
+        
+        result = job_project_names(self.redis, [self.random_job_id, self.random_job_id_two])
+        expected = {self.random_job_id: self.project_name, self.random_job_id_two: self.project_name_two}
+        self.assertEqual(expected, result)
 
     def test_list_archived_jobs_returns_all_archived_jobs(self):
         from foundations.prototype.helpers.completed import list_archived_jobs

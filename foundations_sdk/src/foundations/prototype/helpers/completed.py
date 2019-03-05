@@ -15,6 +15,12 @@ def remove_jobs(redis, list_of_job_ids):
     for job_id in list_of_job_ids:
         redis.srem(_COMPLETED_JOBS_KEY, job_id)
 
+def job_project_names(redis, list_of_job_ids):
+    return {job_id: _job_project_name(redis, job_id) for job_id in list_of_job_ids}
+
+def _job_project_name(redis, job_id):
+    return redis.get('jobs:{}:project'.format(job_id)).decode()
+
 def add_jobs_to_archive(redis, list_of_job_ids):
     for job_id in list_of_job_ids:
         redis.sadd(_ARCHIVED_JOBS_KEY, job_id)
