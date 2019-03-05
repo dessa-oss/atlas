@@ -46,4 +46,20 @@ class TestCancelQueuedJobs(Spec):
         expected_job_cancel_status = {job_id: False}
 
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
-    
+
+    def test_cancel_succeeds_if_job_is_queued_and_deployed_remotely(self):
+        import foundations
+        import acceptance.prototype.remote_config
+
+        from acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+
+        wait_five_seconds = foundations.create_stage(wait_five_seconds)
+        finishes_instantly = foundations.create_stage(finishes_instantly)
+
+        wait_five_seconds_deployment_object = wait_five_seconds().run()
+        finishes_instantly_deployment_object = finishes_instantly().run()
+
+        job_id = finishes_instantly_deployment_object.job_name()
+        expected_job_cancel_status = {job_id: True}
+
+        self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
