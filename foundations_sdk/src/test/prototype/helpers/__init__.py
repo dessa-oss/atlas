@@ -5,6 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.consumers.jobs.failed.test_job_state import TestFailedJobState
-from test.consumers.jobs.failed.test_error_data import TestErrorData
-from test.consumers.jobs.failed.test_failed_job_notifier import TestFailedJobNotifier
+from test.prototype.helpers.test_completed import TestCompletedJobHelpers

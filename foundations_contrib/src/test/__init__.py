@@ -13,6 +13,7 @@ from test.consumers import *
 from test.middleware import *
 from test.cli import *
 
+from test.test_config_manager import TestConfigManager
 from test.test_bucket_pipeline_listing import TestBucketPipelineListing
 from test.test_bucket_cache_backend import TestBucketCacheBackend
 from test.test_constant_parameter import TestConstantParameter
@@ -41,6 +42,7 @@ from test.test_input_parameter_indexer import TestInputParameterIndexer
 from test.test_bucket_job_deployment import TestBucketJobDeployment
 from test.test_deployment_context_bucket import TestDeploymentContextBucket
 from test.test_lazy_bucket import TestLazyBucket
+from test.test_log_manager import TestLogManager
 
 from test.config import *
 from test.notifiers import *

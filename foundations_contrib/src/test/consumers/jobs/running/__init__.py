@@ -10,3 +10,4 @@ from test.consumers.jobs.running.test_remove_global_queued_job import TestRemove
 from test.consumers.jobs.running.test_project_listing import TestProjectListing
 from test.consumers.jobs.running.test_start_time import TestStartTime
 from test.consumers.jobs.running.test_job_state import TestJobState
+from test.consumers.jobs.running.test_running_job_notifier import TestRunningJobNotifier
