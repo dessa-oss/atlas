@@ -17,7 +17,7 @@ from uuid import uuid4
 
 from foundations.prototype.jobs import *
 
-class TestPrototypeJobs(Spec):
+class TestGetQueuedJobs(Spec):
 
     all_queued_jobs_mock = let_patch_mock('foundations_contrib.models.queued_job.QueuedJob.all')
 
