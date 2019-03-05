@@ -36,7 +36,6 @@ class TestArchiveJobs(Spec):
     def test_only_archives_completed_jobs(self):
         self.assertEqual({self.job_id_to_archive: True, self.invalid_job_id: False}, self.archive_jobs_result)
 
-    @skip('Not yet implemented')
     def test_removes_archived_jobs_from_completed_jobs(self):
         from foundations import get_metrics_for_all_jobs
 
