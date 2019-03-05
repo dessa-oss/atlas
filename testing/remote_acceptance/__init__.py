@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from acceptance.prototype.test_cancel_queued_jobs import TestCancelQueuedJobs
+from remote_acceptance.prototype import *

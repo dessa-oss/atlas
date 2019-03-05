@@ -16,8 +16,21 @@ class TestCancelQueuedJobs(Spec):
 
     @tear_down
     def tear_down(self):
-        from acceptance.cleanup import cleanup
+        from remote_acceptance.cleanup import cleanup
         cleanup()
+    
+    @set_up
+    def set_up(self):
+        from foundations import config_manager
+        from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+
+        import remote_acceptance.prototype.remote_config as remote_config
+
+        remote_config.config()
+
+        config_manager['deployment_implementation'] = {
+            'deployment_type': LocalShellJobDeployment
+        }
 
     def test_cancel_no_jobs_if_job_list_is_empty(self):
         cancelled_jobs_with_status = cancel_queued_jobs([])
@@ -34,7 +47,7 @@ class TestCancelQueuedJobs(Spec):
     def test_cancel_fails_if_jobs_run_locally(self):
         import foundations
 
-        from acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+        from remote_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
 
         wait_five_seconds = foundations.create_stage(wait_five_seconds)
         finishes_instantly = foundations.create_stage(finishes_instantly)
@@ -44,22 +57,5 @@ class TestCancelQueuedJobs(Spec):
 
         job_id = finishes_instantly_deployment_object.job_name()
         expected_job_cancel_status = {job_id: False}
-
-        self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
-
-    def test_cancel_succeeds_if_job_is_queued_and_deployed_remotely(self):
-        import foundations
-        import acceptance.prototype.remote_config
-
-        from acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
-
-        wait_five_seconds = foundations.create_stage(wait_five_seconds)
-        finishes_instantly = foundations.create_stage(finishes_instantly)
-
-        wait_five_seconds_deployment_object = wait_five_seconds().run()
-        finishes_instantly_deployment_object = finishes_instantly().run()
-
-        job_id = finishes_instantly_deployment_object.job_name()
-        expected_job_cancel_status = {job_id: True}
 
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))

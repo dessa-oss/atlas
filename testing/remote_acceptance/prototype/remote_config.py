@@ -10,7 +10,7 @@ from uuid import uuid4
 TEST_UUID = uuid4()
 
 
-def _config():
+def config():
     from os import getcwd, environ
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
     import foundations_ssh
@@ -28,14 +28,26 @@ def _config():
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
     config_manager['log_level'] = 'CRITICAL'
-    config_manager['remote_user'] = 'foundations'
-    config_manager['remote_host'] = environ['FOUNDATIONS_SCHEDULER_HOST'] 
-    config_manager['shell_command'] = '/bin/bash'
-    config_manager['code_path'] = '/scheduler_root/jobs'
-    config_manager['result_path'] = '/scheduler_root/results'
-    config_manager['key_path'] = '/tmp/scheduler.pem'
-    config_manager['deployment_implementation'] = {
-        'deployment_type': foundations_ssh.SFTPJobDeployment
-    }
 
-_config()
+    scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
+
+    if scheduler_host is None:
+        print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
+        exit(1)
+
+    if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
+        config_manager['remote_user'] = 'foundations'
+        config_manager['remote_host'] = scheduler_host 
+        config_manager['shell_command'] = '/bin/bash'
+        config_manager['code_path'] = '/scheduler_root/jobs'
+        config_manager['result_path'] = '/scheduler_root/results'
+        config_manager['key_path'] = '/tmp/scheduler.pem'
+        config_manager['redis_url'] = 'redis://redis-job-data.foundations-scheduler:6379'
+    else:
+        config_manager['remote_user'] = 'pairing'
+        config_manager['remote_host'] = scheduler_host
+        config_manager['shell_command'] = '/bin/bash'
+        config_manager['code_path'] = '/tmp/foundations/jobs'
+        config_manager['result_path'] = '/tmp/foundations/results'
+        config_manager['key_path'] = '~/.ssh/id_rsa'
+        config_manager['redis_url'] = 'redis://{}:6379'.format(scheduler_host)
