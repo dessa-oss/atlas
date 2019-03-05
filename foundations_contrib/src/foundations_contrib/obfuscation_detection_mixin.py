@@ -15,4 +15,4 @@ class ObfuscationDetectionMixin(object):
         return self._config['deployment_implementation']['deployment_type'] != LocalShellJobDeployment
     
     def _obfuscation_set(self):
-        return self._config['obfuscate_foundations']
+        return self._config.get('obfuscate_foundations', False)
