@@ -42,8 +42,8 @@ setup(
         'pandas==0.23.3',
         'PyYAML==3.13',
         'promise==2.2.1',
-        'futures; python_version == "2.7"',
-        'tabulate==0.8.3'
+        'tabulate==0.8.3',
+        'slackclient==1.3.0'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
