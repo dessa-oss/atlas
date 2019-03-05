@@ -23,7 +23,7 @@ class TestCompletedJobHelpers(Spec):
     @let
     def job_count(self):
         import random
-        return random.randint(1, 10)
+        return random.randint(2, 10)
 
     @let
     def random_job_id(self):
@@ -31,7 +31,7 @@ class TestCompletedJobHelpers(Spec):
 
     @let
     def random_job_id_two(self):
-        return random.choice(list(self.listing))
+        return random.choice(list(self.listing - {self.random_job_id}))
 
     @let
     def project_name(self):
@@ -71,12 +71,22 @@ class TestCompletedJobHelpers(Spec):
 
     def test_remove_jobs_removes_all_completed_jobs(self):
         from foundations.prototype.helpers.completed import remove_jobs, list_jobs
-        remove_jobs(self.redis, [self.random_job_id])
+        remove_jobs(self.redis, {self.random_job_id: self.project_name})
         self.assertEqual(self.listing - {self.random_job_id}, list_jobs(self.redis))
+
+    def test_remove_jobs_removes_all_completed_jobs_from_projects(self):
+        from foundations_contrib.consumers.jobs.running.project_listing import ProjectListing
+        from foundations.prototype.helpers.completed import remove_jobs, list_jobs
+
+        ProjectListing(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
+        ProjectListing(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id_two}, None, {})
+        remove_jobs(self.redis, {self.random_job_id: self.project_name})
+        project_job_count = self.redis.scard('project:{}:jobs:running'.format(self.project_name))
+        self.assertEqual(1, project_job_count)
 
     def test_remove_jobs_removes_all_completed_jobs_multiple_jobs(self):
         from foundations.prototype.helpers.completed import remove_jobs, list_jobs
-        remove_jobs(self.redis, [self.random_job_id, self.random_job_id_two])
+        remove_jobs(self.redis, {self.random_job_id: self.project_name, self.random_job_id_two: self.project_name_two})
         self.assertEqual(self.listing - {self.random_job_id, self.random_job_id_two}, list_jobs(self.redis))
 
     def test_add_jobs_to_archive_adds_job_to_archive(self):

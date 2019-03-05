@@ -21,7 +21,8 @@ def archive_jobs(list_of_job_ids):
     completed_jobs = list_jobs(redis_connection)
 
     pipeline = RedisPipelineWrapper(redis_connection.pipeline())
-    remove_jobs(redis_connection, list_of_job_ids)
+    job_id_project_mapping = {job_id:None for job_id in list_of_job_ids}
+    remove_jobs(redis_connection, job_id_project_mapping)
     add_jobs_to_archive(redis_connection, list_of_job_ids)
     pipeline.execute()
 
