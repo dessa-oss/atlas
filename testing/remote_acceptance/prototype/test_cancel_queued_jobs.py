@@ -24,7 +24,7 @@ class TestCancelQueuedJobs(Spec):
         from foundations import config_manager
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 
-        import remote_acceptance.prototype.remote_config as remote_config
+        import remote_acceptance.config.remote_config as remote_config
 
         remote_config.config()
 

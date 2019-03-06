@@ -28,6 +28,7 @@ def config():
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
     config_manager['log_level'] = 'CRITICAL'
+    config_manager['obfuscate_foundations'] = False
 
     scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
 

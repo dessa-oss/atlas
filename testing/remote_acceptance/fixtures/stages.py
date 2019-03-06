@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from remote_acceptance.prototype import *
-from remote_acceptance.test_obfuscate_jobs import TestObfuscateJobs
+
+def add_two_numbers(num1, num2):
+    return num1 + num2
