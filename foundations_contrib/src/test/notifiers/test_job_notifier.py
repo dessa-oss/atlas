@@ -9,7 +9,7 @@ import unittest
 from mock import Mock, call
 
 from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_patch_mock, let_mock, let_now, set_up
+from foundations_internal.testing.helpers import *
 from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
 from foundations_internal.testing.helpers.partial_callable_mock import PartialCallableMock
 
@@ -26,6 +26,10 @@ class TestJobNotifier(Spec):
     @let
     def channel(self):
         return self.faker.name()
+    
+    @let
+    def channel_two(self):
+        return self.faker.name()
 
     @let
     def message(self):
@@ -38,7 +42,7 @@ class TestJobNotifier(Spec):
     
     slack_notifier = let_mock()
 
-    @let
+    @let_now
     def notifier(self):
         from foundations_contrib.notifiers.job_notifier import JobNotifier
         return JobNotifier(self.config_manager, self.slack_notifier)
