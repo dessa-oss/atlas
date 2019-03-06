@@ -45,6 +45,25 @@ class TestObfuscateJobs(Spec):
         time.sleep(3)
 
         self.assertTrue(self._check_source_code_obfuscated(add_two_numbers_deployment_object.job_name()))
+    
+    def test_job_does_not_obfuscates_source_code_when_remote_and_obfuscate_false(self):
+        import foundations
+        import time
+        from remote_acceptance.fixtures.stages import add_two_numbers
+        
+
+        config_manager['obfuscate_foundations'] = False
+
+        config_manager['deployment_implementation'] = {
+            'deployment_type': SFTPJobDeployment
+        }
+
+        add_two_numbers = foundations.create_stage(add_two_numbers)
+        add_two_numbers_deployment_object = add_two_numbers(3, 5).run()
+        add_two_numbers_deployment_object.wait_for_deployment_to_complete()
+        time.sleep(3)
+
+        self.assertFalse(self._check_source_code_obfuscated(add_two_numbers_deployment_object.job_name()))
 
 
     def test_job_still_completes_when_obfuscated(self):
