@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_internal.stage_context import StageContext
 
-
 class Pipeline(object):
 
     def __init__(self, pipeline_context):

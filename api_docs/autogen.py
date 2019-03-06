@@ -15,6 +15,7 @@ if sys.version[0] == '2':
     sys.setdefaultencoding('utf8')
 
 import foundations
+import foundations.prototype
 
 
 EXCLUDE = {
@@ -58,6 +59,14 @@ PAGES = [
         'all_module_classes': [foundations.staging],
         'functions': [
             foundations.staging.create_stage,
+        ]
+    },
+    {
+        'page': 'manage_jobs.md',
+        'all_module_classes': [foundations.prototype.jobs],
+        'functions': [
+            foundations.prototype.jobs.get_queued_jobs,
+            foundations.prototype.jobs.archive_jobs,
         ]
     },
     {
