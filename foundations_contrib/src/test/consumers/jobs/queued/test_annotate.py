@@ -38,7 +38,6 @@ class TestAnnotate(Spec):
         return random.randint(2, 10)
 
     def test_call_saves_annotations(self):
-        time = 1551457960.22515
         self.consumer.call({'job_id': self.job_id, 'annotations': self.annotations}, None, None)
         result_annotations = self.redis.hgetall('jobs:{}:annotations'.format(self.job_id))
         decoded_annotations = {key.decode(): value.decode() for key, value in result_annotations.items()}
