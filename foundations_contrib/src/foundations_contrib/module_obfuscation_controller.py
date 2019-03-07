@@ -16,7 +16,7 @@ class ModuleObfuscationController(ObfuscationDetectionMixin):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        from foundations.global_state import module_manager
+        from foundations_internal.global_state import module_manager
         from foundations_contrib.obfuscator import Obfuscator
 
         if self.is_obfuscation_activated():
@@ -24,7 +24,7 @@ class ModuleObfuscationController(ObfuscationDetectionMixin):
                 Obfuscator().cleanup(module_root_directory)
     
     def get_foundations_modules(self):
-        from foundations.global_state import module_manager
+        from foundations_internal.global_state import module_manager
 
         if self.is_obfuscation_activated():
             yield from self._create_obfuscator_generator()
@@ -33,7 +33,7 @@ class ModuleObfuscationController(ObfuscationDetectionMixin):
 
         
     def _create_obfuscator_generator(self):
-        from foundations.global_state import module_manager
+        from foundations_internal.global_state import module_manager
         from foundations_contrib.obfuscator import Obfuscator
 
         obfuscator = Obfuscator()
