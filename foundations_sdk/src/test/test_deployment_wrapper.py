@@ -116,3 +116,9 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.get_logs(), 'some fancier logs')
+    
+    def test_get_logs_returns_error_message_if_deployment_object_does_not_have_get_logs_method(self):
+        deployment = object()
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.get_logs(), 'Current deployment method does not support get_logs()')

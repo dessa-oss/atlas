@@ -240,4 +240,6 @@ class DeploymentWrapper(object):
             ```
         """
 
+        if not hasattr(self._deployment, 'get_logs'):
+            return 'Current deployment method does not support get_logs()'
         return self._deployment.get_logs()
