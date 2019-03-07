@@ -41,3 +41,17 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertFalse(deployment_wrapper.is_job_complete())
+    
+    def test_get_job_status_returns_completed_if_deployment_job_is_completed(self):
+        deployment = Mock()
+        deployment.get_job_status.return_value = 'Completed'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.get_job_status(),'Completed')
+    
+    def test_get_job_status_returns_completed_if_deployment_job_is_queued(self):
+        deployment = Mock()
+        deployment.get_job_status.return_value = 'Queued'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.get_job_status(),'Queued')
