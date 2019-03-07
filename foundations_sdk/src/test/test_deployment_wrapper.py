@@ -56,8 +56,6 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.get_job_status(),'Queued')
 
-
-
     @patch('time.sleep')
     def test_wait_for_deployment_to_complete_only_sleeps_if_job_not_complete(self, mock_time_sleep):
         deployment = Mock()
@@ -68,3 +66,26 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper = DeploymentWrapper(deployment)
         deployment_wrapper.wait_for_deployment_to_complete()
         mock_time_sleep.assert_called_once_with(5)
+    
+    @patch('time.sleep')
+    def test_wait_for_deployment_to_complete_only_sleeps_for_specified_time_if_job_not_complete(self, mock_time_sleep):
+        deployment = Mock()
+        states = [False, True]
+        deployment.job_name.return_value = 'whatever'
+        deployment.is_job_complete = lambda: states.pop(0)
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        deployment_wrapper.wait_for_deployment_to_complete(2)
+        mock_time_sleep.assert_called_once_with(2)
+
+    @patch('foundations_internal.remote_exception.check_result')
+    def test_fetch_job_results_calls_check_results_with_correct_arguments(self, check_result_mock):
+        deployment = Mock()
+        deployment.fetch_job_results.return_value = 'result'
+        deployment.job_name.return_value = 'whatever'
+        deployment.is_job_complete.return_value = True
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        deployment_wrapper.fetch_job_results()
+
+        check_result_mock.assert_called_once_with('whatever', 'result')

@@ -140,8 +140,7 @@ class DeploymentWrapper(object):
 
         from foundations_internal.remote_exception import check_result
 
-        if not self.is_job_complete():
-            self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
+        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
 
         result = self._deployment.fetch_job_results()
         return check_result(self.job_name(), result)
