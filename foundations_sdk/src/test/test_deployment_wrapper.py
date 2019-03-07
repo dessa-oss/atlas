@@ -89,3 +89,15 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper.fetch_job_results()
 
         check_result_mock.assert_called_once_with('whatever', 'result')
+    
+    @patch('foundations_internal.remote_exception.check_result')
+    def test_fetch_job_results_returns_check_result_return_value(self, check_result_mock):
+        deployment = Mock()
+        deployment.fetch_job_results.return_value = 'result'
+        deployment.job_name.return_value = 'whatever'
+        deployment.is_job_complete.return_value = True
+
+        check_result_mock.return_value = 'Result is checked'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.fetch_job_results(), 'Result is checked')
