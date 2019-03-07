@@ -31,5 +31,5 @@ class FailedJob(object):
             'traceback': traceback.format_list(self._error_information['traceback'])
         }
         job_id = self._pipeline_context.file_name
-        message = {'job_id': job_id, 'error_information': error_information}
+        message = {'job_id': job_id, 'error_information': error_information, 'project_name': self._pipeline_context.provenance.project_name}
         self._message_router.push_message('fail_job', message)

@@ -31,12 +31,22 @@ class TestProducerCompleteJob(unittest.TestCase):
     def test_push_message_sends_complete_job_message_with_job_id(self):
         self._pipeline_context.file_name = 'my fantastic job'
         self._producer.push_message()
-        self.assertEqual({'job_id': 'my fantastic job'}, self.message)
+        self.assertDictContainsSubset({'job_id': 'my fantastic job'}, self.message)
 
     def test_push_message_sends_complete_job_message_with_job_id_different_job(self):
         self._pipeline_context.file_name = 'neural nets in space!'
         self._producer.push_message()
-        self.assertEqual({'job_id': 'neural nets in space!'}, self.message)
+        self.assertDictContainsSubset({'job_id': 'neural nets in space!'}, self.message)
+
+    def test_push_message_sends_complete_job_message_with_project_name(self):
+        self._pipeline_context.provenance.project_name = 'my fantastic job'
+        self._producer.push_message()
+        self.assertDictContainsSubset({'project_name': 'my fantastic job'}, self.message)
+
+    def test_push_message_sends_complete_job_message_with_project_name_different_job(self):
+        self._pipeline_context.provenance.project_name = 'neural nets in space!'
+        self._producer.push_message()
+        self.assertDictContainsSubset({'project_name': 'neural nets in space!'}, self.message)
 
     def _push_message(self, route_name, message):
         self.route_name = route_name

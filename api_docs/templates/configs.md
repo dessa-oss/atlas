@@ -101,7 +101,7 @@ It is recommended that your `.config.yaml` file is not stored within the same di
 
 ### Additional Configurations
 
-For SSH deployments to remote addresses, you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
+For any SSH deployment (including GCP and AWS) to remote addresses, you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
 ```json
 'ssh_config': {
@@ -113,12 +113,12 @@ For SSH deployments to remote addresses, you'll need to define some additional v
     'result_path': '/path/to/the/result',
 }
 ```
-
-Just like with standard SSH, the `user` and `host` values will be the login for the execution environment machine. The `port` entry specifies what port the SSH service is listening to on the remote machine. It is *optional* - not specifying it will give it the default of 22.
-
-`key_path`: the private key necessary for using SSH.  
-`code_path`: the directory where jobs should be stored.  
-`result_path`: the directory where job results should be stored after they've been run.
+**user** (*optional*): what user profile to access the remote server as. By default, it will use `foundations`.  
+**host** (*required*): the remote machine ip address.  
+**port** (*optional*): specifies what port the SSH service is listening to on the remote machine. By default uses port 22.  
+**key_path** (*required*): the private key necessary for using SSH.   
+**code_path** (*required*): the directory where jobs should be stored.   
+**result_path** (*required*): the directory where job results should be stored after they've been run.  
 
 <h3>log_level</h3>
 

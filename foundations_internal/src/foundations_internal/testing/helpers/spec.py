@@ -6,17 +6,26 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_internal.testing.helpers import set_up, tear_down
+from foundations_internal.testing.helpers import let, set_up, tear_down
 from foundations_internal.testing.helpers.mock_mixin import MockMixin
 from foundations_internal.testing.helpers.let_mixin import LetMixin
 from foundations_internal.testing.helpers.let_now_mixin import LetNowMixin
 
 class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
 
+    @let
+    def faker(self):
+        from faker import Faker
+        return Faker()
+
     @classmethod
     def setUpClass(klass):
         klass._collect_let_nows()
         klass._collect_lets()
+
+    @classmethod
+    def tearDownClass(klass):
+        klass._restore_original_lets()
     
     def setUp(self):
         self.__class__._collect_let_nows()

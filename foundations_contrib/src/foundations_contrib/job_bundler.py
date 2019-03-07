@@ -19,8 +19,6 @@ class JobBundler(object):
         self._job_name = job_name
         self._job = job
         self._job_source_bundle = job_source_bundle
-        self._module_directory = os.path.dirname(os.path.abspath(__file__))
-        self._resource_directory = self._module_directory + "/resources"
 
     def job_name(self):
         return self._job_name
@@ -70,38 +68,63 @@ class JobBundler(object):
 
     def _bundle_job(self):
         import tarfile
-        import glob
-        import os
-        from pipes import quote
-        from foundations_contrib.simple_tempfile import SimpleTempfile
-        from foundations.global_state import module_manager
-        from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
 
         with WorkingDirectoryStack():
             with tarfile.open(self.job_archive(), "w:gz") as tar:
-                tar.add(self._job_source_bundle.job_archive(),
-                        arcname=self._job_name + '/job.tgz')
+                self._add_files_to_tarball(tar)
 
-                tar.add(self._job_binary(), arcname=self._job_name +
-                        '/' + self._job_binary())
+    def _add_files_to_tarball(self, tar):
+        self._tar_job_source_bundle_archive(tar)
+        self._tar_job_binary(tar)
+        self._tar_config_files(tar)
+        self._tar_foundations_modules(tar)
+        if 'run_script_environment' in self._config:
+            self._tar_env(tar)
+        self._tar_resources(tar)
+    
+    def _tar_job_source_bundle_archive(self, tarfile):
+        import os
 
-                for config_file in glob.glob('*.config.yaml'):
-                    tar.add(config_file,
-                            arcname=self._job_name + '/' + config_file)
+        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, 'job.tgz'))
+    
+    def _tar_job_binary(self, tarfile):
+        import os
 
-                for module_name, module_directory in module_manager.module_directories_and_names():
-                    self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
-                    os.chdir(module_directory)
-                    tar.add(".", arcname=self._job_name + '/' + module_name)
+        tarfile.add(self._job_binary(), arcname=os.path.join(self._job_name, self._job_binary()))
+    
+    def _tar_config_files(self, tarfile):
+        import glob
+        import os
 
-                if 'run_script_environment' in self._config:
-                    with SimpleTempfile('w+') as temp_file:
-                        ScriptEnvironment(self._config).write_environment(temp_file)
-                        tar.add(temp_file.name,
-                                arcname=self._job_name + '/run.env')
+        for config_file in glob.glob('*.config.yaml'):
+            tarfile.add(config_file, arcname=os.path.join(self._job_name, config_file))
 
-                os.chdir(self._resource_directory)
-                tar.add(".", arcname=self._job_name)
+    def _tar_env(self, tarfile):
+        import os
+        from foundations_contrib.simple_tempfile import SimpleTempfile
+        from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
+
+        with SimpleTempfile('w+') as temp_file:
+            ScriptEnvironment(self._config).write_environment(temp_file)
+            tarfile.add(temp_file.name, arcname=os.path.join(self._job_name, 'run.env'))
+
+    def _tar_resources(self, tarfile): 
+        import os
+        from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
+
+        with ResourcesObfuscationController(self._config) as resources_obfuscation_controller:
+            resources_directory = resources_obfuscation_controller.get_resources()
+            os.chdir(resources_directory)
+            tarfile.add(".", arcname=self._job_name)
+
+    def _tar_foundations_modules(self, tarfile):
+        import os
+        from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
+
+        with ModuleObfuscationController(self._config) as module_obfuscation_controller:
+            for module_name, module_directory in module_obfuscation_controller.get_foundations_modules():
+                self._log().debug('Adding module {} at {}'.format(module_name, module_directory))
+                tarfile.add(module_directory, arcname=self._job_name + '/' + module_name)
 
     def _log(self):
         from foundations.global_state import log_manager
