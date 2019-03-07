@@ -216,4 +216,28 @@ class DeploymentWrapper(object):
         return self._deployment.get_job_status()
     
     def get_logs(self):
+        """
+        Get stdout log for job deployed with SSH job deployment
+
+        Arguments:
+            - This method doesn't receive any arguments.
+
+        Returns:
+            log {string} -- String, which is the contents of the stdout log stream
+        Raises:
+            - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            logs = deployment.get_logs()
+            print('Stdout log:', logs)
+            ```
+        """
+
         return self._deployment.get_logs()
