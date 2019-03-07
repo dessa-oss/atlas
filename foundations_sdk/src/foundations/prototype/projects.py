@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.prototype.test_jobs import TestPrototypeJobs
-from test.prototype.test_projects import TestPrototypeProjects
+def get_metrics_for_all_jobs(project_name):
+    import foundations
+    from pandas import DataFrame
 
-from test.prototype.helpers import *
+    return foundations.get_metrics_for_all_jobs(project_name)
