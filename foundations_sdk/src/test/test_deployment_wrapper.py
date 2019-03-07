@@ -101,3 +101,18 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.fetch_job_results(), 'Result is checked')
+
+
+    def test_get_logs_returns_deployment_object_get_logs_return_value(self):
+        deployment = Mock()
+        deployment.get_logs.return_value = 'some fancy logs'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.get_logs(), 'some fancy logs')
+    
+    def test_get_logs_returns_deployment_object_get_logs_different_return_value(self):
+        deployment = Mock()
+        deployment.get_logs.return_value = 'some fancier logs'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.get_logs(), 'some fancier logs')

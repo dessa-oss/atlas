@@ -214,3 +214,6 @@ class DeploymentWrapper(object):
         """
 
         return self._deployment.get_job_status()
+    
+    def get_logs(self):
+        return self._deployment.get_logs()
