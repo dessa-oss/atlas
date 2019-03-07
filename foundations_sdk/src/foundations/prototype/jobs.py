@@ -39,6 +39,9 @@ def get_queued_jobs():
 
     return DataFrame(job_attributes)
 
+def cancel_queued_jobs(job_list):
+    return {job_id: False for job_id in job_list}
+
 def archive_jobs(list_of_job_ids):
     """
     Archives completed jobs, removing them from any project results on both the GUI and SDK

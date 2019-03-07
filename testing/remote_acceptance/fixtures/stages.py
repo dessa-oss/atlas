@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.prototype.test_get_queued_jobs import TestGetQueuedJobs
-from test.prototype.helpers import *
+
+def add_two_numbers(num1, num2):
+    return num1 + num2

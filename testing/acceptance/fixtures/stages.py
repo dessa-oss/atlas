@@ -38,3 +38,6 @@ def get_and_log_python_path_as_metric():
 
     python_path = sys.executable
     foundations.log_metric("python_path", python_path)
+
+def add_two_numbers(num1, num2):
+    return num1 + num2
