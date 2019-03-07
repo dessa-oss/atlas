@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 import unittest
 
-from mock import Mock
+from mock import Mock, patch
 
 from foundations_internal.testing.helpers import set_up, tear_down
 from foundations_internal.testing.helpers.spec import Spec
@@ -55,3 +55,16 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.get_job_status(),'Queued')
+
+
+
+    @patch('time.sleep')
+    def test_wait_for_deployment_to_complete_only_sleeps_if_job_not_complete(self, mock_time_sleep):
+        deployment = Mock()
+        states = [False, True]
+        deployment.job_name.return_value = 'whatever'
+        deployment.is_job_complete = lambda: states.pop(0)
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        deployment_wrapper.wait_for_deployment_to_complete()
+        mock_time_sleep.assert_called_once_with(5)
