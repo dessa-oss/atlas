@@ -47,7 +47,7 @@ class TestLocalObfuscateJobs(Spec):
             # Now calmly search in the data dumped to RAM for our target
             for cmdline in cmdlines:
                 if cmdline:
-                        pyarmor_run.value += cmdline.decode().find('pyarmor\0obfuscate') + 1
+                    pyarmor_run.value += cmdline.decode().find('pyarmor\0obfuscate') + 1
 
 
         config_manager['obfuscate_foundations'] = True
@@ -62,7 +62,7 @@ class TestLocalObfuscateJobs(Spec):
         monitor_processes = Process(target=monitor_processes_func, args=(bundling, pyarmor_run))
         run_foundations = Process(target=run_foundations_func, args=(bundling,))
         monitor_processes.start()
-        time.sleep(0.1)
+        time.sleep(0.001)
         run_foundations.start()
         run_foundations.join()
         monitor_processes.join()
