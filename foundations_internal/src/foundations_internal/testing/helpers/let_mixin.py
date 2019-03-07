@@ -29,14 +29,19 @@ class LetMixin(object):
         if getattr(klass, '_lets', None) is None:
             klass._lets = {}
 
-        functions_to_remove = []
-        for function_name, klass_having_function, function in LetMixin._klass_attributes(klass):
-            if isinstance(function, let):
-                functions_to_remove.append((klass_having_function, function_name))
-                klass._lets[function_name] = function
-        
-        for klass_having_function, function_name in functions_to_remove:
-            delattr(klass_having_function, function_name)
+            klass._original_lets = []
+            for function_name, klass_having_function, function in LetMixin._klass_attributes(klass):
+                if isinstance(function, let):
+                    klass._original_lets.append((klass_having_function, function_name, function))
+                    klass._lets[function_name] = function
+
+            for klass_having_function, function_name, _ in klass._original_lets:
+                delattr(klass_having_function, function_name)
+
+    @classmethod
+    def _restore_original_lets(klass):
+        for klass_having_function, function_name, function in klass._original_lets:
+            setattr(klass_having_function, function_name, function)
 
     def _clear_lets(self):
         for let_name in self._lets:

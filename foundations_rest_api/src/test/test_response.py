@@ -47,11 +47,6 @@ class TestResponse(Spec):
             return attributes
 
     @let
-    def faker(self):
-        import faker
-        return faker.Faker()
-
-    @let
     def resource_name(self):
         return self.faker.name()
 

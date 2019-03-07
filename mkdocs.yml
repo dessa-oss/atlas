@@ -22,3 +22,6 @@ pages:
   - Running Stages: running_stages.md
   - Tracking a Deployment: tracking_deployment.md
   - Reading Job Metrics: reading_job_metrics.md
+- EXPERIMENTAL FEATURES:
+  - Managing Jobs: manage_jobs.md
+  - Slack Notifications: slack.md

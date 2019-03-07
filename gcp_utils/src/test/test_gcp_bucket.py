@@ -21,11 +21,6 @@ class TestGCPBucket(Spec):
     mock_file = let_mock()
 
     @let
-    def faker(self):
-        from faker import Faker
-        return Faker()
-
-    @let
     def file_name(self):
         return self.faker.name()
 

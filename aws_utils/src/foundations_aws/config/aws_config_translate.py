@@ -32,6 +32,7 @@ def translate(config):
         'key_path': config['ssh_config']['key_path'],
         'code_path': config['ssh_config']['code_path'],
         'result_path': config['ssh_config']['result_path'],
+        'obfuscate_foundations': _obfuscate_foundations(config),
     }
 
 def _log_level(config):
@@ -82,4 +83,7 @@ def _archive_implementation(result_end_point):
         'archive_type': AWSPipelineArchive,
         'constructor_arguments': [archive_path]
     }
+
+def _obfuscate_foundations(config):
+    return config.get('obfuscate_foundations', False)
 

@@ -26,6 +26,7 @@ def translate(config):
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
         'shell_command': find_bash(),
+        'obfuscate_foundations': _obfuscate_foundations(config),
     }
 
 def _get_default_archive_end_point():
@@ -82,4 +83,7 @@ def _archive_implementation(result_end_point):
         'archive_type': LocalFileSystemPipelineArchive,
         'constructor_arguments': [archive_path]
     }
+
+def _obfuscate_foundations(config):
+    return config.get('obfuscate_foundations', False)
 
