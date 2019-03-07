@@ -27,3 +27,17 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.job_name(), 'job2')
+
+    def test_is_job_complete_returns_true_if_deployment_job_is_complete(self):
+        deployment = Mock()
+        deployment.is_job_complete.return_value = True
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertTrue(deployment_wrapper.is_job_complete())
+    
+    def test_is_job_complete_returns_false_if_deployment_job_is_not_complete(self):
+        deployment = Mock()
+        deployment.is_job_complete.return_value = False
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertFalse(deployment_wrapper.is_job_complete())
