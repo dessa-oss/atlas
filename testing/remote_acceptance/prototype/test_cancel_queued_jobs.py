@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-
 from foundations_internal.testing.helpers import set_up, tear_down
 from foundations_internal.testing.helpers.spec import Spec
 
@@ -30,6 +29,14 @@ class TestCancelQueuedJobs(Spec):
 
         config_manager['deployment_implementation'] = {
             'deployment_type': LocalShellJobDeployment
+        }
+    
+    def _use_remote_deployment(self):
+        from foundations import config_manager
+        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+        
+        config_manager['deployment_implementation'] = {
+            'deployment_type': SFTPJobDeployment
         }
 
     def test_cancel_no_jobs_if_job_list_is_empty(self):
@@ -59,3 +66,58 @@ class TestCancelQueuedJobs(Spec):
         expected_job_cancel_status = {job_id: False}
 
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
+
+    def test_cancel_succeeds_if_jobs_run_remotely(self):
+        import foundations
+
+        from remote_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+        self._use_remote_deployment()
+
+        wait_five_seconds = foundations.create_stage(wait_five_seconds)
+        finishes_instantly = foundations.create_stage(finishes_instantly)
+
+        wait_five_seconds_deployment_object = wait_five_seconds().run()
+        finishes_instantly_deployment_object = finishes_instantly().run()
+
+        job_id = finishes_instantly_deployment_object.job_name()
+        expected_job_cancel_status = {job_id: True}
+
+        self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))        
+
+    def test_cancel_fails_if_job_is_completed(self):
+        import foundations
+
+        from remote_acceptance.prototype.fixtures.stages import finishes_instantly
+        self._use_remote_deployment()
+
+        finishes_instantly = foundations.create_stage(finishes_instantly)
+        deployment_object = finishes_instantly().run()
+        deployment_object.wait_for_deployment_to_complete()
+
+        job_id = deployment_object.job_name()
+        expected_job_cancel_status = {job_id: False}
+
+        self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
+
+    def test_cancel_job_removes_job_from_job_directory(self):
+        import foundations
+        from foundations import config_manager
+        from foundations_ssh.sftp_bucket import SFTPBucket
+
+        from remote_acceptance.prototype.fixtures.stages import finishes_instantly, wait_five_seconds
+
+        self._use_remote_deployment()
+        sftp_bucket = SFTPBucket(config_manager['code_path'])
+
+        wait_five_seconds = foundations.create_stage(wait_five_seconds)
+        finishes_instantly = foundations.create_stage(finishes_instantly)
+
+        wait_five_seconds_deployment_object = wait_five_seconds().run()
+        deployment_object = finishes_instantly().run()
+
+        job_id = deployment_object.job_name()
+        cancel_queued_jobs([job_id])
+
+        job_exists = sftp_bucket.exists(job_id + '.tgz')
+
+        self.assertFalse(job_exists)

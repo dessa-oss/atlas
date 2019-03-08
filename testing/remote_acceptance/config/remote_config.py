@@ -14,6 +14,7 @@ def config():
     from os import getcwd, environ
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
     import foundations_ssh
+    import getpass
 
     archive_implementation = {
         'archive_type': LocalFileSystemPipelineArchive
@@ -45,10 +46,10 @@ def config():
         config_manager['key_path'] = '/tmp/scheduler.pem'
         config_manager['redis_url'] = 'redis://redis-job-data.foundations-scheduler:6379'
     else:
-        config_manager['remote_user'] = 'pairing'
+        config_manager['remote_user'] = getpass.getuser()
         config_manager['remote_host'] = scheduler_host
         config_manager['shell_command'] = '/bin/bash'
         config_manager['code_path'] = '/tmp/foundations/jobs'
         config_manager['result_path'] = '/tmp/foundations/results'
-        config_manager['key_path'] = '~/.ssh/id_rsa'
+        config_manager['key_path'] = '~/.ssh/id_local'
         config_manager['redis_url'] = 'redis://{}:6379'.format(scheduler_host)

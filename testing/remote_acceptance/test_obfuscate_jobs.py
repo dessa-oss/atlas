@@ -12,6 +12,7 @@ from foundations_internal.testing.helpers.spec import Spec
 from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 from foundations import config_manager
+from foundations_ssh.sftp_bucket import SFTPBucket
 
 class TestObfuscateJobs(Spec):
 
@@ -80,7 +81,7 @@ class TestObfuscateJobs(Spec):
         add_two_numbers = foundations.create_stage(add_two_numbers)
         add_two_numbers_deployment_object = add_two_numbers(3, 5).run()
         add_two_numbers_deployment_object.wait_for_deployment_to_complete()
-        time.sleep(3)
+        time.sleep(10)
 
         self.assertEqual(add_two_numbers_deployment_object.get_job_status(), 'Completed')
     
@@ -89,13 +90,19 @@ class TestObfuscateJobs(Spec):
         import os
         import tarfile
         import shutil
-
+        
+        local_job_archive = '/tmp' 
         current_dir = os.getcwd()
 
         job_archive_location = '{}_archive'.format(config_manager['code_path'])
-        os.chdir(job_archive_location)  
 
+        sftp_bucket = SFTPBucket(job_archive_location)
         job_tar_name = '{}.tgz'.format(job_id)
+
+        with open(os.path.join(local_job_archive, job_tar_name), 'w+b') as file:
+            sftp_bucket.download_to_file(job_tar_name , file)
+        
+        os.chdir(local_job_archive)  
 
         foundations_init_file_location = os.path.join(job_id, 'foundations', '__init__.py')
 
@@ -106,6 +113,6 @@ class TestObfuscateJobs(Spec):
             file_head = init_file.readline()[0:11]
         
         os.chdir(current_dir)
-        shutil.rmtree(os.path.join(job_archive_location, job_id))
+        shutil.rmtree(os.path.join(local_job_archive, job_id))
         
         return file_head == b'__pyarmor__'
