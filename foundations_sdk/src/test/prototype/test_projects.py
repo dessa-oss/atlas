@@ -43,8 +43,6 @@ class TestPrototypeProjects(Spec):
 
     @let
     def metrics(self):
-        from pandas import DataFrame
-
         return DataFrame([
             {
                 'loss': '99',
@@ -59,25 +57,54 @@ class TestPrototypeProjects(Spec):
     def annotations(self):
         return {
             'model': 'mlp',
-            'learning rate': 999999
+            'learning rate': '999999'
         }
+
+    @let
+    def annotations_data_frame(self):
+        return DataFrame([
+            {'tag_{}'.format(key): value for key, value in self.annotations.items()}
+        ])
 
     @let
     def annotations_two(self):
         return {
             'model': 'logreg',
-            'learning rate': 5465
+            'learning rate': '5465'
         }
+
+    @let
+    def annotations_data_frame_two(self):
+        return DataFrame([
+            {'tag_{}'.format(key): value for key, value in self.annotations_two.items()}
+        ])
 
     def test_returns_metrics_data_frame(self):
         metrics = get_metrics_for_all_jobs(self.project_name)
         metric_subset = metrics[list(self.metrics)]
         assert_frame_equal(self.metrics, metric_subset)
 
-    @skip
     def test_returns_stored_annotations(self):
         from foundations_contrib.consumers.jobs.queued.annotate import Annotate
+        
+        Annotate(self.redis).call({'job_id': self.job_id, 'annotations': self.annotations}, None, {})
+        
+        metrics = get_metrics_for_all_jobs(self.project_name)
+        job_metrics = metrics[metrics['job_id'] == self.job_id]
+        job_annotations = job_metrics[list(self.annotations_data_frame)]
+
+        assert_frame_equal(self.annotations_data_frame, job_annotations)
+
+    def test_returns_stored_annotations_multiple_annotations(self):
+        from foundations_contrib.consumers.jobs.queued.annotate import Annotate
+        import pandas
         
         annotator = Annotate(self.redis)
         annotator.call({'job_id': self.job_id, 'annotations': self.annotations}, None, {})
         annotator.call({'job_id': self.job_id_two, 'annotations': self.annotations_two}, None, {})
+        
+        metrics = get_metrics_for_all_jobs(self.project_name)
+        job_annotations = metrics[list(self.annotations_data_frame)]
+
+        expected_data_frame = pandas.concat([self.annotations_data_frame, self.annotations_data_frame_two], ignore_index=True)
+        assert_frame_equal(expected_data_frame, job_annotations)
