@@ -8,7 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_internal.testing.helpers import *
 from foundations_internal.testing.helpers.spec import Spec
 
-@skip
+from pandas.util.testing import assert_frame_equal
+
 class TestJobAnnotations(Spec):
 
     @let
@@ -58,7 +59,8 @@ class TestJobAnnotations(Spec):
         self._run_job()
 
         metrics = get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == self.job_id][0]
+        job_metrics = metrics[metrics['job_id'] == self.job_id]
+        job_metrics = list(metrics.T.to_dict().values())[0]
         self.assertEqual('simple mlp', job_metrics['tag_model type'])
         self.assertEqual('out of time', job_metrics['tag_data set'])
         self.assertEqual('drinking tea', job_metrics['tag_what I was doing'])
@@ -69,14 +71,14 @@ class TestJobAnnotations(Spec):
         
         self._run_job()
 
-        prototype_metrics = foundations.prototype.get_metrics_for_all_jobs('default')
-        prototype_metrics.drop(['tag_model type', 'tag_data set', 'tag_what I was doing'], inplace=True)
-        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self.job_id][0]
-        
         metrics = foundations.get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == self.job_id][0]
+        job_metrics = metrics[metrics['job_id'] == self.job_id].loc[[0]]
 
-        self.assertEqual(job_metrics, prototype_job_metrics)
+        prototype_metrics = foundations.prototype.get_metrics_for_all_jobs('default')
+        prototype_metrics = prototype_metrics[list(job_metrics)]
+        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self.job_id].loc[[0]]
+        
+        assert_frame_equal(job_metrics, prototype_job_metrics)
 
     def _run_job(self):
         deployment = self.job.run()
