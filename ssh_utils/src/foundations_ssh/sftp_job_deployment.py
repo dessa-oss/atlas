@@ -66,6 +66,23 @@ class SFTPJobDeployment(object):
             except:
                 return constants.deployment_error
 
+    def get_logs(self):
+        import io
+        import subprocess
+        import os
+
+        log_file_name = self._deployment.job_name() + '.stdout'
+        config = self._deployment.config()
+        key_path = config['key_path']
+        remote_host = config['remote_host']
+        code_path = config['code_path']
+        log_path = os.path.join(os.path.dirname(code_path), 'logs', '*', log_file_name)
+        memory_file = io.BytesIO()
+        foundations_login_host = 'foundations@{}'.format(remote_host)
+        cmdline = "'cat {}'".format(log_path)
+
+        subprocess.Popen(['ssh', '-i', key_path, foundations_login_host, cmdline], stdout=memory_file)
+
     def _code_path(self):
         from foundations.global_state import config_manager
         return config_manager['code_path']
