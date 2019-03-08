@@ -215,7 +215,7 @@ class DeploymentWrapper(object):
 
         return self._deployment.get_job_status()
     
-    def get_logs(self):
+    def get_job_logs(self):
         """
         Get stdout log for job deployed with SSH job deployment
 
@@ -235,11 +235,11 @@ class DeploymentWrapper(object):
             train_model = foundations.create_stage(train_model)
             model = train_model()
             deployment = model.run()
-            logs = deployment.get_logs()
+            logs = deployment.get_job_logs()
             print('Stdout log:', logs)
             ```
         """
 
-        if not hasattr(self._deployment, 'get_logs'):
-            return 'Current deployment method does not support get_logs()'
-        return self._deployment.get_logs()
+        if not hasattr(self._deployment, 'get_job_logs'):
+            return 'Current deployment method does not support get_job_logs()'
+        return self._deployment.get_job_logs()
