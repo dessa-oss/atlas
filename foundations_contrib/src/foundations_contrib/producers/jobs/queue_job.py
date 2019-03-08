@@ -34,6 +34,7 @@ class QueueJob(object):
             'project_name': provenance.project_name,
             'job_parameters': provenance.job_run_data,
             'user_name': provenance.user_name,
+            'annotations': provenance.annotations,
             'input_parameters': input_params,
             'stage_uuids': provenance.stage_hierarchy.entries.keys()
         }

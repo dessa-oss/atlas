@@ -155,6 +155,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
         self.assertEqual(provenance.user_name, 'default')
+        self.assertEqual(provenance.annotations, {})
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
         provenance = Provenance()
@@ -171,6 +172,7 @@ class TestProvenance(unittest.TestCase):
         provenance.job_run_data = {'layers': 99, 'neurons_per_layer': 9999}
         provenance.project_name = 'my wonderful project'
         provenance.user_name = 'Alan Turing'
+        provenance.annotations = {'model': 'mlp', 'layer': 'all of them'}
         provenance.save_to_archive(mock_archive)
 
         provenance_two = Provenance()
@@ -189,6 +191,7 @@ class TestProvenance(unittest.TestCase):
                          'layers': 99, 'neurons_per_layer': 9999})
         self.assertEqual(provenance_two.project_name, 'my wonderful project')
         self.assertEqual(provenance_two.user_name, 'Alan Turing')
+        self.assertEqual(provenance_two.annotations, {'model': 'mlp', 'layer': 'all of them'})
 
     def test_save_to_archive_with_no_job_source(self):
         provenance = Provenance()
