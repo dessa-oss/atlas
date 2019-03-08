@@ -106,3 +106,24 @@ class TestSFTPJobDeployment(Spec):
         expected_args = ['ssh', '-i', 'path/to/key.pem', 'foundations@0.0.0.0', "'cat /home/foundations/logs/*/job_uuid.stdout'"]
         self.mock_popen.assert_called_with(expected_args, stdout=byte_io_instance)
     
+    @patch('foundations_ssh.sftp_bucket.SFTPBucket')
+    @patch('foundations.global_state.config_manager')
+    def test_get_logs_returns_byte_io_as_string(self, mock_config_manager, mock_sftp_bucket):
+        config  = {
+            'key_path': 'path/to/key.pem',
+            'remote_host': '0.0.0.0',
+            'code_path': '/home/foundations/jobs',
+            'result_path': 'path/to/results'
+        }
+
+        mock_config_manager.config.return_value = config
+        mock_config_manager.__getitem__ = lambda obj, key: config[key]
+        
+        byte_io_instance = Mock()
+        byte_io_instance.read.return_value = b'byte string'
+        self.mock_bytes_io.return_value = byte_io_instance
+
+        sftp_job_deployment = SFTPJobDeployment('job_uuid', Mock(), Mock())
+       
+        self.assertEqual(sftp_job_deployment.get_logs(), 'byte string')
+    

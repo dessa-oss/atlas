@@ -82,6 +82,7 @@ class SFTPJobDeployment(object):
         cmdline = "'cat {}'".format(log_path)
 
         subprocess.Popen(['ssh', '-i', key_path, foundations_login_host, cmdline], stdout=memory_file)
+        return memory_file.read().decode()
 
     def _code_path(self):
         from foundations.global_state import config_manager
