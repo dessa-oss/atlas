@@ -16,6 +16,10 @@ from foundations.prototype.projects import *
 
 class TestPrototypeProjects(Spec):
 
+    @let
+    def provenance_annotations(self):
+        return {}
+
     @let_now
     def redis(self):
         from fakeredis import FakeRedis
@@ -74,10 +78,34 @@ class TestPrototypeProjects(Spec):
         }
 
     @let
+    def random_tag(self):
+        return self.faker.name()
+
+    @let
+    def random_tag_value(self):
+        return self.faker.sentence()
+
+    @let
     def annotations_data_frame_two(self):
         return DataFrame([
             {'tag_{}'.format(key): value for key, value in self.annotations_two.items()}
         ])
+
+    mock_logger = let_mock()
+
+    @let_now
+    def get_logger_mock(self):
+        from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
+
+        mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
+        mock.return_when(self.mock_logger, 'foundations.prototype.projects')
+        return mock
+
+    @set_up
+    def set_up(self):
+        from foundations_contrib.global_state import foundations_context
+
+        foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
 
     def test_returns_metrics_data_frame(self):
         metrics = get_metrics_for_all_jobs(self.project_name)
@@ -108,3 +136,17 @@ class TestPrototypeProjects(Spec):
 
         expected_data_frame = pandas.concat([self.annotations_data_frame, self.annotations_data_frame_two], ignore_index=True)
         assert_frame_equal(expected_data_frame, job_annotations)
+
+    def test_set_tag_stores_tag_in_provenance(self):
+        set_tag(self.random_tag, self.random_tag_value)
+        self.assertEqual({self.random_tag: self.random_tag_value}, self.provenance_annotations)
+
+    def test_set_tag_logs_warning_when_set_twice(self):
+        set_tag(self.random_tag, self.random_tag_value)
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warn.assert_called_with('Tag `{}` updated to `{}`'.format(self.random_tag, self.random_tag_value))
+        
+    def test_get_metrics_for_all_jobs_is_global(self):
+        import foundations.prototype
+        self.assertEqual(get_metrics_for_all_jobs, foundations.prototype.get_metrics_for_all_jobs)
+

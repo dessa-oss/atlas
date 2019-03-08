@@ -24,3 +24,11 @@ def get_metrics_for_all_jobs(project_name):
             row[tag_key] = value
     
     return DataFrame(metric_rows)
+
+def set_tag(key, value):
+    from foundations_contrib.global_state import foundations_context, log_manager
+
+    annotations = foundations_context.pipeline_context().provenance.annotations
+    if key in annotations:
+        log_manager.get_logger(__name__).warn('Tag `{}` updated to `{}`'.format(key, value))
+    annotations[key] = value
