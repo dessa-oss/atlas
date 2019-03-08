@@ -34,4 +34,4 @@ class TestRetrieveLogs(Spec):
         function_that_prints = foundations.create_stage(function_that_prints)
         function_that_prints_deployment_object = function_that_prints().run()
 
-        self.assertIn(function_that_prints_deployment_object.get_jobs(), "I am a function \n I print things")
+        self.assertIn("I am a function \n I print things", function_that_prints_deployment_object.get_job_logs())
