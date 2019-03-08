@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from test.prototype.helpers.test_completed import TestCompletedJobHelpers
 from test.prototype.helpers.test_annotate import TestAnnotate
+from test.prototype.helpers.test_queued import TestQueuedJobHelpers

@@ -39,8 +39,27 @@ def get_queued_jobs():
 
     return DataFrame(job_attributes)
 
-def cancel_queued_jobs(job_list):
-    return {job_id: False for job_id in job_list}
+def cancel_queued_jobs(list_of_job_ids):
+    from foundations_contrib.global_state import redis_connection
+    from foundations.prototype.helpers.queued import list_jobs, remove_jobs, add_jobs_to_archive, job_project_names, remove_job_from_code_path
+    from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
+    from foundations import config_manager
+
+    queued_jobs = list_jobs(redis_connection)
+    pipeline = RedisPipelineWrapper(redis_connection.pipeline())
+    job_id_project_mapping = job_project_names(redis_connection, list_of_job_ids)
+    remove_jobs(redis_connection, job_id_project_mapping)
+    add_jobs_to_archive(redis_connection, list_of_job_ids)
+
+    for job_id in list_of_job_ids:
+        try:
+            remove_job_from_code_path(config_manager, job_id)
+        except IOError:
+            continue
+    
+    pipeline.execute()
+
+    return {job_id: job_id in queued_jobs for job_id in list_of_job_ids}
 
 def archive_jobs(list_of_job_ids):
     """

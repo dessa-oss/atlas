@@ -30,6 +30,7 @@ setup(
         'pandas==0.23.3',
         'PyYAML==3.13',
         'promise==2.2.1',
+        'pyarmor==5.2.3',
         'futures; python_version == "2.7"',
     ],
     packages=find_packages('src'),

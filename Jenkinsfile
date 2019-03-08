@@ -59,6 +59,9 @@ node {
             stage('Python3 Foundations Acceptance Tests') {
                 sh "python -Wi -m unittest acceptance"
             }
+            stage('Python3 Foundations Acceptance Tests for Remote Deploys') {
+                sh "python -Wi -m unittest remote_acceptance"
+            }
         }
         ws("${WORKSPACE}/ssh_utils/") {
             stage('Python3 SSH Install Requirements') {
