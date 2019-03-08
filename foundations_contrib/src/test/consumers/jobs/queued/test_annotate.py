@@ -37,6 +37,12 @@ class TestAnnotate(Spec):
         import random
         return random.randint(2, 10)
 
+    def test_call_supports_empty_annotations(self):
+        self.consumer.call({'job_id': self.job_id, 'annotations': {}}, None, None)
+        result_annotations = self.redis.hgetall('jobs:{}:annotations'.format(self.job_id))
+        decoded_annotations = {key.decode(): value.decode() for key, value in result_annotations.items()}
+        self.assertEqual({}, decoded_annotations)
+    
     def test_call_saves_annotations(self):
         self.consumer.call({'job_id': self.job_id, 'annotations': self.annotations}, None, None)
         result_annotations = self.redis.hgetall('jobs:{}:annotations'.format(self.job_id))

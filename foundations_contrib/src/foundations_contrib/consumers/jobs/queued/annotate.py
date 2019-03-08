@@ -17,4 +17,5 @@ class Annotate(object):
     
     def call(self, message, timestamp, metadata):
         key = 'jobs:{}:annotations'.format(message['job_id'])
-        self._redis.hmset(key, message['annotations'])
+        if message['annotations']:
+            self._redis.hmset(key, message['annotations'])
