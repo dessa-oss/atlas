@@ -5,8 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.prototype.test_jobs import TestPrototypeJobs
-from test.prototype.test_projects import TestPrototypeProjects
-from test.prototype.test_get_queued_jobs import TestGetQueuedJobs
+def wait_five_seconds():
+    import time
+    time.sleep(5)
 
-from test.prototype.helpers import *
+def finishes_instantly():
+    pass
