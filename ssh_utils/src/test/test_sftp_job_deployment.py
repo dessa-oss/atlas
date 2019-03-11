@@ -18,10 +18,21 @@ import test.ssh_utils_fixtures.sftp_job_deployment_fixtures as sjf
 import foundations.constants as constants
 from foundations_internal.testing.helpers.spec import Spec
 from foundations_internal.testing.helpers import *
+from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
 
 class TestSFTPJobDeployment(Spec):
 
     mock_bytes_io = let_patch_mock('io.BytesIO')
+
+    mock_datetime_class = let_mock()
+
+    @let_now
+    def mock_current_time(self):
+        from datetime import datetime
+        
+        time = datetime(2019, 3, 11, 11, 10, 51, 546731)
+        self.mock_datetime_class.now.return_value = time
+        return time
 
     @let_now
     def mock_popen(self):
@@ -38,6 +49,18 @@ class TestSFTPJobDeployment(Spec):
     @let
     def encoded_process_output(self):
         return self.process_output.encode('utf-8')
+
+    @let
+    def remote_user(self):
+        return self.faker.name()
+    
+    @let
+    def fake_path(self):
+        return self.faker.uri_path()
+    
+    @let 
+    def job_name(self):
+        return self.faker.sha1()
 
     @set_up
     def set_up(self):
@@ -105,12 +128,10 @@ class TestSFTPJobDeployment(Spec):
     
     @patch('foundations_ssh.sftp_bucket.SFTPBucket')
     @patch('foundations.global_state.config_manager')
-    def test_get_job_logs_calls_popen_with_correct_arguments_to_ssh_into_scheduler(self, mock_config_manager, mock_sftp_bucket):
+    def test_get_job_logs_creates_sftp_bucket_with_correct_path(self, mock_config_manager, mock_sftp_bucket):
         config  = {
-            'key_path': 'path/to/key.pem',
-            'remote_host': '0.0.0.0',
-            'code_path': '/home/foundations/jobs',
-            'result_path': 'path/to/results'
+            'code_path': self.fake_path + '/jobs',
+            'result_path': 'path/to/results',
         }
 
         mock_config_manager.config.return_value = config
@@ -118,24 +139,28 @@ class TestSFTPJobDeployment(Spec):
 
         sftp_job_deployment = SFTPJobDeployment('job_uuid', Mock(), Mock())
         sftp_job_deployment.get_job_logs()
-
-        expected_args = ['ssh', '-i', 'path/to/key.pem', 'foundations@0.0.0.0', "'cat /home/foundations/logs/*/job_uuid.stdout'"]
-        self.mock_popen.assert_called_with(expected_args, stdout=-1)
     
-    @patch.object(subprocess.Popen, 'communicate')
+        mock_sftp_bucket.assert_called_with(self.fake_path + '/logs')
+    
     @patch('foundations_ssh.sftp_bucket.SFTPBucket')
     @patch('foundations.global_state.config_manager')
-    def test_get_job_logs_returns_byte_io_as_string(self, mock_config_manager, mock_sftp_bucket, mock_communicate):
+    def test_get_job_logs_calls_sftp_download_as_string_with_correct_arguments(self, mock_config_manager, mock_sftp_bucket):
         config  = {
-            'key_path': 'path/to/key.pem',
-            'remote_host': '0.0.0.0',
             'code_path': '/home/foundations/jobs',
-            'result_path': 'path/to/results'
+            'result_path': 'path/to/results',
         }
 
         mock_config_manager.config.return_value = config
         mock_config_manager.__getitem__ = lambda obj, key: config[key]
+    
+        self.patch('datetime.datetime', self.mock_datetime_class)
+        sftp_job_deployment = SFTPJobDeployment(self.job_name, Mock(), Mock())        
+        
+        mock_sftp_bucket_instance = Mock()
+        mock_sftp_bucket.return_value = mock_sftp_bucket_instance
+        mock_sftp_bucket_instance.download_as_string = ConditionalReturn()
 
-        sftp_job_deployment = SFTPJobDeployment('job_uuid', Mock(), Mock())
-        self.assertEqual(sftp_job_deployment.get_job_logs(), self.process_output)
+        file_to_call = '2019-03-11/{}.stdout'.format(self.job_name)
+        mock_sftp_bucket_instance.download_as_string.return_when(b'return_value', file_to_call)
+        self.assertEqual(sftp_job_deployment.get_job_logs(), 'return_value')
     

@@ -13,4 +13,4 @@ def finishes_instantly():
     pass
 
 def function_that_prints():
-    print("I am a function \n I print things")
+    print("I am a function. I print things")

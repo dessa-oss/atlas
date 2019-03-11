@@ -27,11 +27,15 @@ class TestRetrieveLogs(Spec):
         }
     
     def test_get_log_returns_log_as_string(self):
+        import time
         import foundations
 
         from remote_acceptance.prototype.fixtures.stages import function_that_prints
 
         function_that_prints = foundations.create_stage(function_that_prints)
         function_that_prints_deployment_object = function_that_prints().run()
+        function_that_prints_deployment_object.wait_for_deployment_to_complete(15)
+        # time.sleep(60)
 
-        self.assertIn("I am a function \n I print things", function_that_prints_deployment_object.get_job_logs())
+        job_id = function_that_prints_deployment_object.job_name()
+        self.assertIn("I am a function. I print things", function_that_prints_deployment_object.get_job_logs())
