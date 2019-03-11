@@ -96,6 +96,13 @@ PAGES = [
             foundations.projects.get_metrics_for_all_jobs,
         ]
     },
+        {
+        'page': 'set_project_name.md',
+        'all_module_classes': [foundations.projects],
+        'functions': [
+            foundations.projects.set_project_name,
+        ]
+    }
 ]
 
 
