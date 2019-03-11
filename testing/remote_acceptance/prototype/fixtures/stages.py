@@ -11,3 +11,6 @@ def wait_five_seconds():
 
 def finishes_instantly():
     pass
+
+def function_that_prints():
+    print("I am a function. I print things")

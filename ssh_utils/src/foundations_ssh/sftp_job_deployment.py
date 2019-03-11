@@ -11,6 +11,7 @@ class SFTPJobDeployment(object):
     def __init__(self, job_name, job, job_source_bundle):
         from foundations_contrib.bucket_job_deployment import BucketJobDeployment
         from foundations_ssh.sftp_bucket import SFTPBucket
+        from datetime import datetime
 
         self._deployment = BucketJobDeployment(
             job_name,
@@ -19,6 +20,7 @@ class SFTPJobDeployment(object):
             SFTPBucket(self._code_path()),
             SFTPBucket(self._result_path())
         )
+        self._current_date = datetime.now()
 
     @staticmethod
     def scheduler_backend():
@@ -65,6 +67,21 @@ class SFTPJobDeployment(object):
                     return constants.deployment_completed
             except:
                 return constants.deployment_error
+
+    def get_job_logs(self):
+        import io
+        import subprocess
+        import os
+        from foundations_ssh.sftp_bucket import SFTPBucket
+
+        day_string = self._current_date.strftime('%Y-%m-%d')
+        log_file_name = self.job_name() + '.stdout'
+        code_path = self.config()['code_path']
+        log_base_path = os.path.join(os.path.dirname(code_path), 'logs')
+        log_bucket = SFTPBucket(log_base_path)
+        log_path = '{}/{}'.format(day_string, log_file_name)
+
+        return log_bucket.download_as_string(log_path).decode()
 
     def _code_path(self):
         from foundations.global_state import config_manager

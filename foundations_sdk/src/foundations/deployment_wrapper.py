@@ -140,8 +140,7 @@ class DeploymentWrapper(object):
 
         from foundations_internal.remote_exception import check_result
 
-        if not self.is_job_complete():
-            self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
+        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
 
         result = self._deployment.fetch_job_results()
         return check_result(self.job_name(), result)
@@ -215,14 +214,32 @@ class DeploymentWrapper(object):
         """
 
         return self._deployment.get_job_status()
+    
+    def get_job_logs(self):
+        """
+        Get stdout log for job deployed with SSH job deployment
 
-    def _try_get_results(self, error_handler):
-        from foundations.deployment_utils import extract_results
+        Arguments:
+            - This method doesn't receive any arguments.
 
-        try:
-            return extract_results(self.fetch_job_results())
-        except Exception as e:
-            if error_handler is not None:
-                error_handler(e)
-            else:
-                raise e
+        Returns:
+            log {string} -- String, which is the contents of the stdout log stream
+        Raises:
+            - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            logs = deployment.get_job_logs()
+            print('Stdout log:', logs)
+            ```
+        """
+
+        if not hasattr(self._deployment, 'get_job_logs'):
+            return 'Current deployment method does not support get_job_logs()'
+        return self._deployment.get_job_logs()
