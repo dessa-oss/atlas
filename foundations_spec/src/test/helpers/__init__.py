@@ -5,5 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.extensions import *
-from test.helpers import *
+from test.helpers.test_mock_mixin import TestMockMixin
