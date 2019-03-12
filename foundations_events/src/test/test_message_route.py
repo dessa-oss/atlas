@@ -8,10 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 import unittest
 from mock import patch, call
 
-import foundations
 import time
-from foundations_internal.message_route import MessageRoute
-from foundations_contrib.message_route_listener import MessageRouteListener
+from foundations_events.message_route import MessageRoute
+from foundations_events.message_route_listener import MessageRouteListener
 
 
 class TestMessageRoute(unittest.TestCase):

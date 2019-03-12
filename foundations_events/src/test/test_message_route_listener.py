@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 
 import unittest
 
-from foundations_contrib.message_route_listener import MessageRouteListener
+from foundations_events.message_route_listener import MessageRouteListener
 
 
 class TestMessageRouteListener(unittest.TestCase):

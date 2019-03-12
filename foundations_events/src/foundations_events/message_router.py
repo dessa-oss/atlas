@@ -23,7 +23,7 @@ class MessageRouter(object):
                 listener {MessageRouteListener} -- listener to add to route
                 route_name {string} -- name of route to add listener to
             """
-            from foundations_internal.message_route import MessageRoute
+            from foundations_events.message_route import MessageRoute
 
             foundName = False
 

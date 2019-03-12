@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from unittest import skip
+from mock import call
 
 class Callback(object):
     def __init__(self, function):

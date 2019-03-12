@@ -5,20 +5,34 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
-import unittest
-from mock import patch, call
+from foundations_spec import *
 
-import foundations_internal
-from foundations_contrib.message_router import MessageRouter
-from foundations_internal.message_route import MessageRoute
+from foundations_events.message_router import MessageRouter
+from foundations_events.message_route import MessageRoute
 
 
-class TestMessageRouter(unittest.TestCase):
+class TestMessageRouter(Spec):
 
-    def setUp(self):
+    mock_message_route = let_patch_mock('foundations_events.message_route.MessageRoute.push_message')
+
+    @let_now
+    def time_mock(self):
+        mock = self.patch('time.time')
+        mock.return_value = self.current_time
+        
+        return mock
+
+    @let
+    def current_time(self):
+        import random
+        return random.randint(2, 999999999)
+
+    @set_up
+    def set_up(self):
         self.message_router = MessageRouter()
 
-    def tearDown(self):
+    @tear_down
+    def tear_down(self):
         self.message_router.reset_routes()
 
     def test_creates_single_instance(self):
@@ -47,47 +61,31 @@ class TestMessageRouter(unittest.TestCase):
         self.assertTrue(self.message_router._in_route('event2'))
         self.assertTrue(self.message_router._in_route('event3'))
 
-    @patch.object(MessageRoute, 'push_message')
-    def test_message_not_pushed_if_no_listeners(self, mock):
+    def test_message_not_pushed_if_no_listeners(self):
         self.message_router.push_message('event1', 'message')
-        mock.assert_not_called()
+        self.mock_message_route.assert_not_called()
     
-    @patch.object(foundations_internal.message_route.MessageRoute, 'push_message')
-    @patch('time.time', return_value=123)
-    def test_message_sent_to_listener(self, mock_time, mock):
+    def test_message_sent_to_listener(self):
         self.message_router.add_listener(self.MockListener(), 'event1')
         self.message_router.push_message('event1', 'message')
-        mock.assert_called_with('message', 123, None)  
+        self.mock_message_route.assert_called_with('message', self.current_time, None)  
     
-    @patch.object(foundations_internal.message_route.MessageRoute, 'push_message')
-    @patch('time.time', return_value=123)
-    def test_message_sent_to_listener_with_metadata(self, mock_time, mock):
+    def test_message_sent_to_listener_with_metadata(self):
         self.message_router.add_listener(self.MockListener(), 'event1')
         self.message_router.push_message('event1', 'message', {'meta': 'data'})
-        mock.assert_called_with('message', 123, {'meta': 'data'}) 
+        self.mock_message_route.assert_called_with('message', self.current_time, {'meta': 'data'}) 
     
-    @patch.object(foundations_internal.message_route.MessageRoute, 'push_message')
-    @patch('time.time', return_value=754)
-    def test_message_sent_to_listener_with_different_timestamp(self, mock_time, mock):
-        self.message_router.add_listener(self.MockListener(), 'event1')
-        self.message_router.push_message('event1', 'message', {'meta': 'data'})
-        mock.assert_called_with('message', 754, {'meta': 'data'}) 
-    
-    @patch.object(foundations_internal.message_route.MessageRoute, 'push_message')
-    @patch('time.time', return_value=123)
-    def test_message_sent_to_listener_with_timestamp_provided(self, mock_time, mock):
+    def test_message_sent_to_listener_with_timestamp_provided(self):
         self.message_router.add_listener(self.MockListener(), 'event1')
         self.message_router.push_message('event1', 'message', {'meta': 'data'}, timestamp=999)
-        mock.assert_called_with('message', 999, {'meta': 'data'}) 
+        self.mock_message_route.assert_called_with('message', 999, {'meta': 'data'}) 
         
-    @patch.object(foundations_internal.message_route.MessageRoute, 'push_message')
-    @patch('time.time', return_value=123)
-    def test_messages_sent_to_multiple_listeners(self, mock_time, mock):
+    def test_messages_sent_to_multiple_listeners(self):
         self.message_router.add_listener(self.MockListener(), 'event1')
         self.message_router.add_listener(self.MockListener(), 'event2')
         self.message_router.push_message('event1', 'message1')
         self.message_router.push_message('event2', 'message2',)
-        mock.assert_has_calls([call('message1', 123, None), call('message2', 123, None)])
+        self.mock_message_route.assert_has_calls([call('message1', self.current_time, None), call('message2', self.current_time, None)])
 
 
     

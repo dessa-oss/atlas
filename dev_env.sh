@@ -6,6 +6,7 @@ add_path () {
 
 cwd=`pwd`
 add_path "$cwd/foundations_spec/src" && \
+    add_path "$cwd/foundations_events/src" && \
     add_path "$cwd/foundations_internal/src" && \
     add_path "$cwd/foundations_contrib/src" && \
     add_path "$cwd/foundations_sdk/src" && \

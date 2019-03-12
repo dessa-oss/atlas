@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_contrib.helpers.redis_connector import RedisConnector
 from foundations_contrib.helpers.lazy_redis import LazyRedis
-from foundations_contrib.message_router import MessageRouter
+from foundations_events.message_router import MessageRouter
 from foundations_contrib.middleware_manager import MiddlewareManager
 from foundations_contrib.log_manager import LogManager
 from foundations_internal.deployment_manager import DeploymentManager

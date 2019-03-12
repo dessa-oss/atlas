@@ -18,10 +18,11 @@ build_module () {
 }
 
 build_module foundations_spec foundations_spec && \
-build_module foundations_internal foundations_internal && \
-build_module foundations_contrib foundations_contrib && \
-build_module foundations_sdk foundations && \
-build_module gcp_utils foundations_gcp && \
-build_module ssh_utils foundations_ssh && \
-build_module aws_utils foundations_aws && \
-build_module foundations_rest_api foundations_rest_api
+    build_module foundations_events foundations_events && \
+    build_module foundations_internal foundations_internal && \
+    build_module foundations_contrib foundations_contrib && \
+    build_module foundations_sdk foundations && \
+    build_module gcp_utils foundations_gcp && \
+    build_module ssh_utils foundations_ssh && \
+    build_module aws_utils foundations_aws && \
+    build_module foundations_rest_api foundations_rest_api
