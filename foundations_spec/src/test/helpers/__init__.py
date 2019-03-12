@@ -8,3 +8,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from test.helpers.test_mock_mixin import TestMockMixin
 from test.helpers.test_let_now_mixin import TestLetNowMixin
 from test.helpers.test_conditional_return import TestConditionalReturn
+from test.helpers.test_partial_callable_mock import TestPartialCallableMock
