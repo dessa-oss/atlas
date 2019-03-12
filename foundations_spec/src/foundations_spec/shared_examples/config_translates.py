@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers import let
+from foundations_spec.helpers import let
 
 class ConfigTranslates(object):
     

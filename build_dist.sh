@@ -17,6 +17,7 @@ build_module () {
     python -m pip install -U ${directory}/dist/${module_name}-${wheel_name_tail}
 }
 
+build_module foundations_spec foundations_spec && \
 build_module foundations_internal foundations_internal && \
 build_module foundations_contrib foundations_contrib && \
 build_module foundations_sdk foundations && \
