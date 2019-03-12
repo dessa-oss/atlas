@@ -10,6 +10,8 @@ import unittest
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import *
 
+from mock import MagicMock
+
 class TestSpec(unittest.TestCase):
 
     class MockSpec(Spec):
@@ -28,3 +30,35 @@ class TestSpec(unittest.TestCase):
 
         self.spec.setUp()
         self.assertIsInstance(self.spec.faker, faker.generator.Generator)
+
+    def test_calls_set_up_methods(self):
+        mock = MagicMock()
+        
+        self.MockSpec.set_up = set_up(lambda spec_self: mock())
+        self.spec.setUp()
+        mock.assert_called()
+
+    def test_calls_set_up_methods_mutiple_methods(self):
+        mock = MagicMock()
+        mock2 = MagicMock()
+        
+        self.MockSpec.set_up = set_up(lambda spec_self: mock())
+        self.MockSpec.set_up_2 = set_up(lambda spec_self: mock2())
+        self.spec.setUp()
+        mock2.assert_called()
+
+    def test_calls_tear_down_methods(self):
+        mock = MagicMock()
+        
+        self.MockSpec.tear_down = tear_down(lambda spec_self: mock())
+        self.spec.tearDown()
+        mock.assert_called()
+
+    def test_calls_tear_down_methods_mutiple_methods(self):
+        mock = MagicMock()
+        mock2 = MagicMock()
+        
+        self.MockSpec.tear_down = tear_down(lambda spec_self: mock())
+        self.MockSpec.tear_down_2 = tear_down(lambda spec_self: mock2())
+        self.spec.tearDown()
+        mock2.assert_called()
