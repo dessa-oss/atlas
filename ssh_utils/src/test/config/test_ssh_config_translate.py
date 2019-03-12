@@ -10,7 +10,7 @@ from mock import Mock
 
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, set_up
-from foundations_spec.shared_examples.config_translates import ConfigTranslates
+from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
 
 from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 

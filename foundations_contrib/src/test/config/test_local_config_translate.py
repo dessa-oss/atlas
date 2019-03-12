@@ -10,7 +10,7 @@ from mock import Mock, patch
 
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_patch_mock, set_up
-from foundations_spec.shared_examples.config_translates import ConfigTranslates
+from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
 
 class TestLocalConfigTranslate(Spec, ConfigTranslates):
 
