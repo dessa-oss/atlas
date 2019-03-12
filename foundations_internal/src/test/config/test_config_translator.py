@@ -9,8 +9,8 @@ import unittest
 from mock import Mock
 
 from foundations_internal.config.config_translator import ConfigTranslator
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let_patch_mock, set_up
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let_patch_mock, set_up
 
 class TestConfigTranslator(Spec):
 

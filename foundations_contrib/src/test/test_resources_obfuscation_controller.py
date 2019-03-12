@@ -10,8 +10,8 @@ from mock import Mock, call, patch
 from foundations_contrib.job_bundler import JobBundler
 from foundations_contrib.obfuscator import Obfuscator
 from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
 
 @patch.object(Obfuscator, 'obfuscate')
 class TestResourcesObfuscationController(Spec):

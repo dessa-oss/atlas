@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers.spec import Spec

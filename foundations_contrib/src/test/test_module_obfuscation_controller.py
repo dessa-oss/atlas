@@ -11,8 +11,8 @@ from mock import Mock, call, patch
 import foundations_internal
 from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
 from foundations_contrib.obfuscator import Obfuscator
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
 
 
 class TestModuleObfuscationController(Spec):

@@ -10,8 +10,8 @@ from mock import Mock, patch
 
 import foundations_contrib.helpers.shell as shell
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let
 
 class TestShell(Spec):
     

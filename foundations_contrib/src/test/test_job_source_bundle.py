@@ -9,8 +9,8 @@ import unittest
 from mock import Mock, patch, call
 
 from foundations_contrib.job_source_bundle import JobSourceBundle
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
 
 class TestJobSourceBundle(Spec):
 

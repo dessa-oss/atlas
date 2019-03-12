@@ -15,8 +15,8 @@ from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from foundations import ConfigManager
 
 
-from foundations_internal.testing.helpers import let, let_now, let_patch_mock
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let, let_now, let_patch_mock
+from foundations_spec.helpers.spec import Spec
 
 
 class TestCommandLineInterface(Spec):

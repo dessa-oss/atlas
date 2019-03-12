@@ -10,8 +10,8 @@ from mock import Mock
 
 from foundations_contrib.models.queued_job_query import QueuedJobQuery
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let
 
 class TestQueuedJobQuery(Spec):
     

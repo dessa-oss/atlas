@@ -6,8 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_internal.testing.helpers import set_up, tear_down
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import set_up, tear_down
+from foundations_spec.helpers.spec import Spec
 
 from foundations.prototype import cancel_queued_jobs
 

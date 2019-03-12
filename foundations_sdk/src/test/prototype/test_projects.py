@@ -5,9 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
-from foundations_internal.testing.helpers import *
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers.conditional_return import ConditionalReturn
+from foundations_spec.helpers import *
 from pandas import DataFrame
 from pandas.util.testing import assert_frame_equal
 from uuid import uuid4
@@ -95,7 +95,7 @@ class TestPrototypeProjects(Spec):
 
     @let_now
     def get_logger_mock(self):
-        from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
+        from foundations_spec.helpers.conditional_return import ConditionalReturn
 
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
         mock.return_when(self.mock_logger, 'foundations.prototype.projects')

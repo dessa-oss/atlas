@@ -8,8 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_internal.testing.helpers import let_patch_mock, let_mock, let, set_up
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let_patch_mock, let_mock, let, set_up
+from foundations_spec.helpers.spec import Spec
 
 
 class TestAWSBucket(Spec):

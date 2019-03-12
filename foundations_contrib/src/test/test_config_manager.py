@@ -9,8 +9,8 @@ import unittest
 from foundations.config_manager import ConfigManager
 from mock import patch
 
-from foundations_internal.testing.helpers import let, let_patch_mock
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let, let_patch_mock
+from foundations_spec.helpers.spec import Spec
 
 class TestConfigManager(Spec):
 

@@ -8,8 +8,8 @@ import unittest
 
 from mock import Mock, patch
 
-from foundations_internal.testing.helpers import set_up, tear_down
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import set_up, tear_down
+from foundations_spec.helpers.spec import Spec
 from foundations.deployment_wrapper import DeploymentWrapper
 
 class TestDeploymentWrapper(Spec):

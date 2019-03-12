@@ -10,8 +10,8 @@ from mock import Mock
 
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let
 
 class TestBucketJobDeployment(Spec):
     

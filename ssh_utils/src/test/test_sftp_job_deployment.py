@@ -16,9 +16,9 @@ from mock import patch, Mock
 from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
 import test.ssh_utils_fixtures.sftp_job_deployment_fixtures as sjf
 import foundations.constants as constants
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import *
-from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import *
+from foundations_spec.helpers.conditional_return import ConditionalReturn
 
 class TestSFTPJobDeployment(Spec):
 

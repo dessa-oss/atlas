@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers.let_mixin import LetMixin
+from foundations_spec.helpers.let_mixin import LetMixin

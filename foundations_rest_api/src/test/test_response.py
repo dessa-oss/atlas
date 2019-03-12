@@ -10,8 +10,8 @@ from mock import Mock
 from foundations_rest_api.response import Response
 from foundations_rest_api.v1.models.property_model import PropertyModel
 
-from foundations_internal.testing.helpers import let
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let
+from foundations_spec.helpers.spec import Spec
 
 class TestResponse(Spec):
 

@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers.mock_mixin import MockMixin
+from foundations_spec.helpers.mock_mixin import MockMixin

@@ -12,8 +12,8 @@ from test.helpers.api_resource_mocks import APIResourceMocks
 from foundations_rest_api.lazy_result import LazyResult
 from foundations_rest_api.response import Response
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers import let, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers import let, let_patch_mock
 
 class TestAPIResource(Spec):
 

@@ -9,8 +9,8 @@ import unittest
 from mock import patch
 
 from foundations.projects import *
-from foundations_internal.testing.helpers import *
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import *
+from foundations_spec.helpers.spec import Spec
 
 class TestProjects(Spec):
 

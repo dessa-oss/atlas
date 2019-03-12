@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_internal.testing.helpers import *
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import *
+from foundations_spec.helpers.spec import Spec
 
 from pandas.util.testing import assert_frame_equal
 

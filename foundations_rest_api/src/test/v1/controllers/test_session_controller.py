@@ -12,8 +12,8 @@ import json
 from foundations_rest_api.global_state import app_manager
 from foundations_rest_api.v1.controllers.session_controller import SessionController
 
-from foundations_internal.testing.helpers import let, let_patch_mock, set_up
-from foundations_internal.testing.helpers.spec import Spec
+from foundations_spec.helpers import let, let_patch_mock, set_up
+from foundations_spec.helpers.spec import Spec
 
 class TestSessionController(Spec):
 

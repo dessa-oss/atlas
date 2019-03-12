@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_internal.testing.helpers.spec import Spec
-from foundations_internal.testing.helpers.conditional_return import ConditionalReturn
-from foundations_internal.testing.helpers import set_up, let, let_mock, let_now, let_patch_mock
+from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers.conditional_return import ConditionalReturn
+from foundations_spec.helpers import set_up, let, let_mock, let_now, let_patch_mock
 
 class TestConnectionManager(Spec):
 
