@@ -5,12 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
-import unittest
-
+from foundations_spec import *
 from foundations_events.message_route_listener import MessageRouteListener
 
-
-class TestMessageRouteListener(unittest.TestCase):
+class TestMessageRouteListener(Spec):
 
     def test_call_method(self):
         test_listener = MessageRouteListener()
