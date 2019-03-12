@@ -10,13 +10,13 @@ class LetNowMixin(object):
 
     @classmethod
     def _collect_let_nows(klass):
-        from foundations_internal.testing.helpers import let_now
-        from foundations_internal.testing.helpers.let_mixin import LetMixin
+        from foundations_spec.helpers import let_now
+        from foundations_spec.helpers.let_mixin import LetMixin
 
         if getattr(klass, '_let_nows', None) is None:
             klass._let_nows = {}
 
-        for function_name, klass_having_function, function in LetMixin._klass_attributes(klass):
+        for function_name, _, function in LetMixin._klass_attributes(klass):
             if isinstance(function, let_now):
                 klass._let_nows[function_name] = function
 

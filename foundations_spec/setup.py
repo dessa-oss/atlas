@@ -25,7 +25,8 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'mock==2.0.0'
+        'mock==2.0.0',
+        'Faker==1.0.0',
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

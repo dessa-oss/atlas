@@ -24,7 +24,7 @@ class LetMixin(object):
 
     @classmethod
     def _collect_lets(klass):
-        from foundations_internal.testing.helpers import let
+        from foundations_spec.helpers import let
 
         if getattr(klass, '_lets', None) is None:
             klass._lets = {}
@@ -40,6 +40,7 @@ class LetMixin(object):
 
     @classmethod
     def _restore_original_lets(klass):
+        del klass._lets
         for klass_having_function, function_name, function in klass._original_lets:
             setattr(klass_having_function, function_name, function)
 
