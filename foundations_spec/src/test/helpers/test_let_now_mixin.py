@@ -29,6 +29,7 @@ class TestLetNowMixin(unittest.TestCase):
         value = self.faker.sentence()
         self.MockSpec.fake_attribute = let_now(lambda spec_self: value)
         
+        self.MockSpec.setUpClass()
         self.spec.setUp()
         self.assertEqual(value, self.spec.__dict__['fake_attribute'])
 
@@ -39,5 +40,6 @@ class TestLetNowMixin(unittest.TestCase):
         value_two = self.faker.sentence()
         self.MockSpec.fake_attribute_two = let_now(lambda spec_self: value_two)
         
+        self.MockSpec.setUpClass()
         self.spec.setUp()
         self.assertEqual(value_two, self.spec.__dict__['fake_attribute_two'])
