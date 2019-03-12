@@ -23,6 +23,19 @@ node {
                 sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations-0.0.0-py3-none-any.whl"
             }
         }
+        ws("${WORKSPACE}/foundations_spec/") {
+            stage('Python3 Foundations Spec Install Requirements') {
+                sh "python -m pip install mock=2.0.0 Faker==1.0.0"
+            }
+            ws("${WORKSPACE}/src") {
+                stage('Python3 Foundations Spec Unit Tests') {
+                    sh "python -Wi -m unittest test"
+                }
+            }
+            stage('Python3 Foundations Spec Create Artifact') {
+                sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_spec-0.0.0-py3-none-any.whl"
+            }
+        }
         ws("${WORKSPACE}/foundations_contrib/") {
             stage('Python3 Foundations Contrib Install Requirements') {
                 sh "python -m pip install PyYAML==3.13 dill==0.2.8.2 pandas==0.23.3 futures promise==2.2.1 redis==2.10.6"
