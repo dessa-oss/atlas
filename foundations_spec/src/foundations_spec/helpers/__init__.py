@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from unittest import skip
-from mock import call
+from mock import call, Mock
 
 class Callback(object):
     def __init__(self, function):
@@ -28,7 +28,6 @@ class let_now(let):
     pass
 
 def let_mock():
-    from mock import Mock
     
     def _callback(self):
         return Mock()
@@ -42,7 +41,6 @@ def let_patch_mock(name, *args, **kwargs):
     return let_now(_callback)
 
 def let_patch_instance(name):
-    from mock import Mock
 
     def _callback(self):
         mock_klass = self.patch(name)
