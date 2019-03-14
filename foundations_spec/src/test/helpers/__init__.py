@@ -13,3 +13,4 @@ from test.helpers.test_let_mixin import TestLetMixin
 from test.helpers.test_let_mixin_inheritence import TestLetMixinInheritence
 from test.helpers.test_let_mixin_multi_inheritence import TestLetMixinMultiInheritence
 from test.helpers.test_spec import TestSpec
+from test.helpers.test_set_up_inheritence import TestSetUpInheritence
