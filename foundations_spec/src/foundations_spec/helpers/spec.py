@@ -51,6 +51,6 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
                 raise AssertionError('Expected to find {} in {}'.format(item, result))
 
     def _tear_down_methods(self):
-        for function in self.__class__.__dict__.values():
+        for _, _, function in LetMixin._klass_attributes(self.__class__):
             if isinstance(function, tear_down):
                 yield function
