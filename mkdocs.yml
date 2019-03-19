@@ -1,5 +1,7 @@
 site_name: Foundations
-theme: readthedocs
+theme: 
+  name: readthedocs
+  custom_dir: api_docs/custom_theme
 docs_dir: api_docs/sources
 repo_url: https://github.com/DeepLearnI/foundations
 site_description: 'Documentation for Foundations, a platform for end-to-end machine learning. Created by Dessa.'
