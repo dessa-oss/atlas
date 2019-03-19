@@ -108,3 +108,29 @@ class TestRedisConnector(unittest.TestCase):
 
     def _raise_configuration_error(self):
         raise ValueError('Invalid connection.')
+
+    def test_call_calls_callback_with_unix_connection_string_without_password(self):
+        self._config_manager['redis_url'] = 'unix:///var/run/redis.sock?db=0'
+        self._connector()
+        self._connection_callback.assert_called_once_with('unix://:@/var/run/redis.sock?db=0')
+
+    def test_call_calls_callback_with_unix_connection_string_with_password(self):
+        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
+
+        self._config_manager['redis_url'] = 'unix:///var/run/redis.sock?db=0'
+        self._connector()
+        self._connection_callback.assert_called_once_with('unix://:hanahana@/var/run/redis.sock?db=0')
+
+    def test_call_calls_callback_with_different_unix_connection_string_with_password(self):
+        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
+
+        self._config_manager['redis_url'] = 'unix:///run/linux/sockets/redis5.sock?db=0'
+        self._connector()
+        self._connection_callback.assert_called_once_with('unix://:hanahana@/run/linux/sockets/redis5.sock?db=0')
+
+    def test_call_calls_callback_with_unix_connection_string_with_different_password(self):
+        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'camelcamel'
+
+        self._config_manager['redis_url'] = 'unix:///run/linux/sockets/redis5.sock?db=0'
+        self._connector()
+        self._connection_callback.assert_called_once_with('unix://:camelcamel@/run/linux/sockets/redis5.sock?db=0')
