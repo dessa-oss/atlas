@@ -1,6 +1,6 @@
 <h1>Training a Neural Network on the MNIST Dataset</h1>
 
-In this example, we will use Foundations and Keras to train a simple Neural Net on the infamous MNIST dataset. We will be leveraging the dataset directly from keras, so no download of data is required. It is highly recommended to first create a new project using the Foundations CLI [command](../project_creation/#project-creation). The following example code will then go directly into the driver.py and model.py files respectively.
+In this example, we will use Foundations and Keras to train a simple Neural Net on the famous MNIST dataset. We will be leveraging the dataset directly from keras, so no download of data is required. It is highly recommended to first create a new project using the Foundations CLI [command](../project_creation/#project-creation). The following example code will then go directly into the driver.py and model.py files respectively.
 
 The workflow of the example will be as follows:  
 <span>1. </span> Load the data  

@@ -108,6 +108,73 @@ def train_logistic_regression(x_train, y_train, *logistic_regression_args, **log
     return model
 ```
 ---
+##Hyperparameter Tuning
+
+**driver.py**
+```python
+import foundations
+from model import train_logistic_regression
+from utilities.prep import union
+from utilities.logging import log_formatted
+from utilities.data_pipeline import load_data, fill_categorical_nulls, split_inputs_and_targets, split_training_and_validation, impute, one_hot_encode, drop_non_numeric_columns, get_metrics
+
+# Create stages from the data pipeline functions
+union = foundations.create_stage(union)
+train_logistic_regression = foundations.create_stage(train_logistic_regression)
+log_formatted = foundations.create_stage(log_formatted)
+load_data = foundations.create_stage(load_data)
+fill_categorical_nulls = foundations.create_stage(fill_categorical_nulls)
+split_inputs_and_targets = foundations.create_stage(split_inputs_and_targets)
+split_training_and_validation = foundations.create_stage(split_training_and_validation)
+impute = foundations.create_stage(impute)
+one_hot_encode = foundations.create_stage(one_hot_encode)
+drop_non_numeric_columns = foundations.create_stage(drop_non_numeric_columns)
+get_metrics = foundations.create_stage(get_metrics)
+
+# Set the project name
+foundations.set_project_name('Titantic Hyperparameter Search')
+
+# 1. Prepare the data
+data = load_data().enable_caching()
+data = fill_categorical_nulls(data).enable_caching()
+
+inputs, targets = split_inputs_and_targets(data=data).enable_caching().split(2)
+
+# 2. Data processing and feature engineering
+x_train, x_valid, y_train, y_valid = split_training_and_validation(
+    inputs=inputs, targets=targets).enable_caching().split(4)
+x_train, x_valid = impute(x_train=x_train, x_valid=x_valid).enable_caching().split(2)
+x_train, x_valid = one_hot_encode(x_train=x_train, x_valid=x_valid).enable_caching().split(2)
+x_train, x_valid = drop_non_numeric_columns(x_train=x_train, x_valid=x_valid).enable_caching().split(2)
+
+# 3. Model training and scoring
+params = {
+    'C': foundations.Hyperparameter('C'),
+    'max_iter': foundations.Hyperparameter('max_iter'),
+}
+
+model = train_logistic_regression(x_train, y_train, **params)
+
+# 4. Validate Model
+y_train, train_score = get_metrics(model=model, inputs=x_train, targets=y_train, data_set_name='Training').split(2)
+y_valid, valid_score = get_metrics(model=model, inputs=x_valid, targets=y_valid, data_set_name='Validation').split(2)
+
+log = log_formatted('\nTraining score was {}\nValidation score was {}', train_score, valid_score)
+
+params_ranges = {
+    'C': foundations.DiscreteHyperparameter([0.25, 0.125, 1.0]),
+    'max_iter': foundations.DiscreteHyperparameter([100, 200])
+}
+
+# the below line of code is equivalent to:
+#
+# for C in [0.25, 0.125, 1.0]:
+#     for max_iter in [100, 200]:
+#         log.run(C=C, max_iter=max_iter)
+#
+log.grid_search(params_ranges)
+```
+---
 ##Utility Classes and Functions  
 
 **encoder_wrapper.py**
@@ -126,7 +193,7 @@ class EncoderWrapper(object):
         return self
 
     def transform(self, data_frame):
-        from utils.prep import encode
+        from utilities.prep import encode
         return encode(data_frame, self._encoder, self._columns)
 ```
 **one_hot_encoder.py**
@@ -145,7 +212,7 @@ class OneHotEncoder(object):
         return self
 
     def transform(self, data_frame):
-        from common.prep import get_mode, impute_for_one_hot, one_hot_encode
+        from utilities.prep import get_mode, impute_for_one_hot, one_hot_encode
 
         for column in data_frame:
             values = self._allowed_values[column]
@@ -164,8 +231,8 @@ class OneHotEncoder(object):
 ```python
 import pandas as pd
 from sklearn.preprocessing import Imputer
-from utils.encoder_wrapper import EncoderWrapper
-from utils.one_hot_encoder import OneHotEncoder
+from utilities.encoder_wrapper import EncoderWrapper
+from utilities.one_hot_encoder import OneHotEncoder
 
 def fillna(data_frame, column, value):
     data_frame[column].fillna(value, inplace=True)
@@ -238,7 +305,7 @@ def _log():
 ```
 **data_pipeline.py**
 ```python
-from utils.prep import fillna, train_imputer, train_one_hot_encoder, drop_non_numeric
+from utilities.prep import fillna, train_imputer, train_one_hot_encoder, drop_non_numeric
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import foundations
