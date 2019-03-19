@@ -28,3 +28,9 @@ pages:
   - Tagging Jobs: tag_jobs.md
   - Tracking Job Logs: job_logs.md
   - Slack Notifications: slack.md
+- EXAMPLES:
+  - MLP Neural Network: mnist_example.md
+  - MLP Hyperparameter Tuning: hyperparameter_mnist.md
+  - XGBoost: xgboost_example.md
+  - Logistic Regression: regression.md
+  
