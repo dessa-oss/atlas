@@ -80,7 +80,7 @@ driver.py
 X_train, X_test, y_train, y_test = load_data().enable_caching().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(
+X_train, X_test, Y_train, Y_test = preprocess_data(
     X_train, X_test, y_train, y_test, num_classes).enable_caching().split(4)
 ```
 
@@ -90,13 +90,13 @@ Overall, our files now look like this:
 driver.py
 """
 import foundations
-from model import load_data, reshape, build_model, train_model, eval_model
+from model import load_data, preprocess_data, build_model, train_model, eval_model
 
 foundations.set_project_name("MNIST Hyperparameter Example")
 
 # Create stages based off pipeline functions for Foundations to run
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 train_model = foundations.create_stage(train_model)
 eval_model = foundations.create_stage(eval_model)
@@ -111,17 +111,17 @@ dropout_rate = foundations.Hyperparameter('dropout_rate')
 X_train, X_test, y_train, y_test = load_data().enable_caching().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(
+X_train, X_test, Y_train, Y_test = preprocess_data(
     X_train, X_test, y_train, y_test, num_classes).enable_caching().split(4)
 
 # 3. Build the neural net 
-final_model = build_model(dropout_rate)
+model = build_model(dropout_rate)
 
 # 4.a Train the model
-result = train_model(batch_size, epoch, final_model, X_train, X_test, Y_train, Y_test)
+trained_model = train_model(batch_size, epoch, model, X_train, X_test, Y_train, Y_test)
 
 # 4.b Validate the model
-validation = eval_model(result, X_test, Y_test)
+validation = eval_model(trained_model, X_test, Y_test)
 
 #For each iteration, Foundations will deploy a new job and pass those values in as hyperparameters to the job
 for dropout_rate in [0.2, 0.5]:
@@ -150,7 +150,7 @@ def load_data():
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     return X_train, X_test, y_train, y_test
 
-def reshape(X_train, X_test, y_train, y_test, num_classes):
+def preprocess_data(X_train, X_test, y_train, y_test, num_classes):
     X_train = X_train.reshape(60000, 784)
     X_test = X_test.reshape(10000, 784)
     X_train = X_train.astype('float32')
@@ -253,13 +253,13 @@ The new driver.py file should now look like:
 driver.py
 """
 import foundations
-from model import load_data, reshape, build_model, train_model, eval_model
+from model import load_data, preprocess_data, build_model, train_model, eval_model
 
 foundations.set_project_name("MNIST Hyperparameter Example")
 
 # Create stages based off pipeline functions for Foundations to run
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 train_model = foundations.create_stage(train_model)
 eval_model = foundations.create_stage(eval_model)
@@ -274,17 +274,17 @@ dropout_rate = foundations.Hyperparameter('dropout_rate')
 X_train, X_test, y_train, y_test = load_data().enable_caching().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(
+X_train, X_test, Y_train, Y_test = preprocess_data(
     X_train, X_test, y_train, y_test, num_classes).enable_caching().split(4)
 
 # 3. Build the neural net 
-final_model = build_model(dropout_rate)
+model = build_model(dropout_rate)
 
 # 4.a Train the model
-result = train_model(batch_size, epoch, final_model, X_train, X_test, Y_train, Y_test)
+trained_model = train_model(batch_size, epoch, model, X_train, X_test, Y_train, Y_test)
 
 # 4.b Validate the model
-validation = eval_model(result, X_test, Y_test)
+validation = eval_model(trained_model, X_test, Y_test)
 
 params_ranges = {
     'dropout_rate': foundations.DiscreteHyperparameter([0.2, 0.5]),
@@ -312,13 +312,13 @@ Deploying the code above should produce the same output as running the Hyperpara
 driver.py
 """
 import foundations
-from model import load_data, reshape, build_model, train_model, eval_model
+from model import load_data, preprocess_data, build_model, train_model, eval_model
 
 foundations.set_project_name("MNIST Hyperparameter Example")
 
 # Create stages based off pipeline functions for Foundations to run
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 train_model = foundations.create_stage(train_model)
 eval_model = foundations.create_stage(eval_model)
@@ -333,17 +333,17 @@ dropout_rate = foundations.Hyperparameter('dropout_rate')
 X_train, X_test, y_train, y_test = load_data().enable_caching().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(
+X_train, X_test, Y_train, Y_test = preprocess_data(
     X_train, X_test, y_train, y_test, num_classes).enable_caching().split(4)
 
 # 3. Build the neural net 
-final_model = build_model(dropout_rate)
+model = build_model(dropout_rate)
 
 # 4.a Train the model
-result = train_model(batch_size, epoch, final_model, X_train, X_test, Y_train, Y_test)
+trained_model = train_model(batch_size, epoch, model, X_train, X_test, Y_train, Y_test)
 
 # 4.b Validate the model
-validation = eval_model(result, X_test, Y_test)
+validation = eval_model(trained_model, X_test, Y_test)
 
 params_ranges = {
     'dropout_rate': foundations.DiscreteHyperparameter([0.2, 0.5]),
@@ -375,7 +375,7 @@ def load_data():
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     return X_train, X_test, y_train, y_test
 
-def reshape(X_train, X_test, y_train, y_test, num_classes):
+def preprocess_data(X_train, X_test, y_train, y_test, num_classes):
     X_train = X_train.reshape(60000, 784)
     X_test = X_test.reshape(10000, 784)
     X_train = X_train.astype('float32')

@@ -6,7 +6,7 @@ The workflow of the example will be as follows:
 <span>1. </span> Load the data  
 <span>2. </span> Prepare the data  
 <span>3. </span> Build the neural net  
-<span>4. </span> Model training and Validation
+<span>4. </span> Model training and validation
 
 Rather than run the whole model in one call, we divide each step in the model into a stage, so that Foundations can wrap the your code in layers which perform provenance tracking, caching, prepping your job for deployment, etc.
 
@@ -78,7 +78,7 @@ Now that we have the data available, we need to reduce the images down into a ve
 """
 model.py
 """
-def reshape(X_train, X_test, y_train, y_test, num_classes):
+def preprocess_data(X_train, X_test, y_train, y_test, num_classes):
     X_train = X_train.reshape(60000, 784)
     X_test = X_test.reshape(10000, 784)
     X_train = X_train.astype('float32')
@@ -89,7 +89,7 @@ def reshape(X_train, X_test, y_train, y_test, num_classes):
     Y_test = np_utils.to_categorical(y_test, num_classes)
     return X_train, X_test, Y_train, Y_test
 ```
-In the driver.py, we can create a stage out of the reshape function:  
+In the driver.py, we can create a stage out of the preprocess_data function:  
 
 ```python
 """
@@ -97,18 +97,18 @@ driver.py
 """
 import foundations
 
-from model import load_data, reshape
+from model import load_data, preprocess_data
 
 foundations.set_project_name("MNIST Example")
 
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 
 X_train, X_test, y_train, y_test = load_data().split(4)
 
-X_train, X_test, Y_train, Y_test = reshape(X_train, X_test, y_train, y_test, 10).split(4)
+X_train, X_test, Y_train, Y_test = preprocess_data(X_train, X_test, y_train, y_test, 10).split(4)
 ```
-Here we pipe the outputs of the `load_data()` stage into the `reshape()` stage. Outputs of one stage can be treated as standard variables, and can be used in future stages. Because the `reshape` input function returns 4 values, we need to use `.split()` again to indicated to Foundations how many values are generated from the input function.
+Here we pipe the outputs of the `load_data()` stage into the `preprocess_data()` stage. Outputs of one stage can be treated as standard variables, and can be used in future stages. Because the `preprocess_data` input function returns 4 values, we need to use `.split()` again to indicate to Foundations how many values are generated from the input function.
 
 ##3. Build the model
 Now that we have loaded and processed the data, the next step is to build out our neural net using keras. Let's add a `build_model` function in the model.py file:  
@@ -137,19 +137,19 @@ driver.py
 """
 import foundations
 
-from model import load_data, reshape, build_model
+from model import load_data, preprocess_data, build_model
 
 foundations.set_project_name("MNIST Example")
 
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 
 X_train, X_test, y_train, y_test = load_data().split(4)
 
-X_train, X_test, Y_train, Y_test = reshape(X_train, X_test, y_train, y_test, 10).split(4)
+X_train, X_test, Y_train, Y_test = preprocess_data(X_train, X_test, y_train, y_test, 10).split(4)
 
-final_model = build_model()
+model = build_model()
 ```
 Although the stage we've created doesn't take in any inputs relative to previous stages in the pipeline, Foundations will still return a stage object which can be used in other future stages.
 
@@ -179,13 +179,13 @@ driver.py
 """
 import foundations
 
-from model import load_data, reshape, build_model, train_model, eval_model
+from model import load_data, preprocess_data, build_model, train_model, eval_model
 
 foundations.set_project_name("MNIST Example")
 
 # Create stages based off pipeline functions for Foundations to run
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 train_model = foundations.create_stage(train_model)
 eval_model = foundations.create_stage(eval_model)
@@ -194,16 +194,16 @@ eval_model = foundations.create_stage(eval_model)
 X_train, X_test, y_train, y_test = load_data().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(X_train, X_test, y_train, y_test, 10).split(4)
+X_train, X_test, Y_train, Y_test = preprocess_data(X_train, X_test, y_train, y_test, 10).split(4)
 
 # 3. Build the neural net 
-final_model = build_model()
+model = build_model()
 
 # 4.a Train the model
-result = train_model(128, 5, final_model, X_train, X_test, Y_train, Y_test)
+trained_model = train_model(128, 5, model, X_train, X_test, Y_train, Y_test)
 
 # 4.b Validate the model
-validation = eval_model(result, X_test, Y_test)
+validation = eval_model(trained_model, X_test, Y_test)
 ```
 Now that we've created five stages, the last thing is to let Foundations which one to execute. Since we want to run the whole pipeline, we call `.run()` to the **last** stage in the pipeline. This signals to Foundations that essentially we want to run the final stage, as well as every previous stage which has inputs to the final one.
 
@@ -212,7 +212,7 @@ validation.run()
 ```
 When we call `.run()` on the final stage, Foundations will execute all stages and properly pass in the returned values into the proper coressponding stages. Essentially, a graph of defined stages is created and will run all stages that lead to the final stage. This creates a workflow where each stage can have its own logging and tracking:
 ```
-Foundations ─── load_data ──── reshape ──── train_model ──── validation.run()
+Foundations ─── load_data ──── preprocess_data ──── train_model ──── validation.run()
              │                                   │
              └─────────── build_model ───────────┘
 ```
@@ -271,13 +271,13 @@ To further improve the model, you can experiment with different models, transfor
 ```python
 import foundations
 
-from model import load_data, reshape, build_model, train_model, eval_model
+from model import load_data, preprocess_data, build_model, train_model, eval_model
 
 foundations.set_project_name("MNIST Example")
 
 # Create stages based off pipeline functions for Foundations to run
 load_data = foundations.create_stage(load_data)
-reshape = foundations.create_stage(reshape)
+preprocess_data = foundations.create_stage(preprocess_data)
 build_model = foundations.create_stage(build_model)
 train_model = foundations.create_stage(train_model)
 eval_model = foundations.create_stage(eval_model)
@@ -291,15 +291,16 @@ epoch = 5
 X_train, X_test, y_train, y_test = load_data().split(4)
 
 # 2. Process data
-X_train, X_test, Y_train, Y_test = reshape(X_train, X_test, y_train, y_test, num_classes).split(4)
+X_train, X_test, Y_train, Y_test = preprocess_data(X_train, X_test, y_train, y_test, num_classes).split(4)
 
 # 3. Build the neural net 
-final_model = build_model()
+model = build_model()
 
 # 4.a Train the model
-result = train_model(batch_size, epoch, final_model, X_train, X_test, Y_train, Y_test)
+trained_model = train_model(batch_size, epoch, model, X_train, X_test, Y_train, Y_test)
+
 # 4.b Validate the model
-validation = eval_model(result, X_test, Y_test)
+validation = eval_model(trained_model, X_test, Y_test)
 
 validation.run()
 ```
@@ -322,7 +323,7 @@ def load_data():
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
     return X_train, X_test, y_train, y_test
 
-def reshape(X_train, X_test, y_train, y_test, num_classes):
+def preprocess_data(X_train, X_test, y_train, y_test, num_classes):
     X_train = X_train.reshape(60000, 784)
     X_test = X_test.reshape(10000, 784)
     X_train = X_train.astype('float32')
