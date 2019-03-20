@@ -1,3 +1,4 @@
+
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       <span class="fa fa-book"> Read the Docs</span>
@@ -7,8 +8,8 @@
     <div class="rst-other-versions">
       <dl>
         <dt>{{ ('Versions') }}</dt>
-        {% for slug, url in versions %}
-          <dd><a href="{{ url }}">{{ slug }}</a></dd>
+        {% for version in versions %}
+          <dd><a href="{{ url }}">{{ version.slug }}</a></dd>
         {% endfor %}
       </dl>
       <dl>
