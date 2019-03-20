@@ -1,5 +1,5 @@
 <h1>Managing Jobs</h1>
-The following methods are used to manage the job queue  for deployments
+The following methods are used to manage the job queue for deployments and give users maximum flexibility when deploying and organizing experiments.
 
 **NOTE:** These features are **EXPERIMENTAL** and may be subject to change in future releases.  
 
@@ -48,6 +48,50 @@ print(job_queue)
 ----
 
 <span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/prototype/jobs.py#L42)</span>
+
+### cancel_queued_jobs
+
+
+```python
+cancel_queued_jobs(list_of_job_ids)
+```
+
+
+
+Cancels jobs which are currently in the queue, preventing them from eventually running when resources are available.
+
+__Arguments__
+
+- __list_of_job_ids__ (array): a list of job_ids as strings to cancel.
+
+__Returns__
+
+- __cancelled_statuses__ (dict): A dictionary indicating if the cancelling of a queued job was successful or not for each input job_id.
+
+__Raises__
+
+- This method doesn't raise any exceptions.
+
+__Example__
+
+```python
+import foundations
+import foundations.prototype
+from algorithms import train_model
+
+train_model = foundations.create_stage(train_model)
+model = train_model()
+model.run()
+
+foundations.prototype.get_queued_jobs()
+job_queue = foundations.prototype.cancel_queued_jobs(['209762cb-c767-4aea-bcaa-35b131982915'])
+print(job_queue)
+```
+
+
+----
+
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/prototype/jobs.py#L91)</span>
 
 ### archive_jobs
 

@@ -224,6 +224,7 @@ class DeploymentWrapper(object):
 
         Returns:
             log {string} -- String, which is the contents of the stdout log stream
+            
         Raises:
             - This method doesn't raise any exception.
 

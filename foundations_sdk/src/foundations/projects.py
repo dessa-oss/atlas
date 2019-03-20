@@ -7,6 +7,30 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def set_project_name(project_name="default"):
+    """
+    Sets the project a given job. This allows Foundations to know that multiple jobs belong to the same project. The project name is later used to retrieve metrics and analyze experiments
+
+    Arguments:
+        project_name {string} -- Optional name specifying which project the job is part of. If no project name is specified, the job will be deployed under the "default" project
+
+    Returns:
+        - This function doesn't return a value.
+
+    Raises:
+        - This method doesn't raise any exceptions.
+
+    Example:
+        ```python
+        import foundations
+        from algorithms import train_model
+
+        foundations.set_project_name("my project")
+
+        train_model = foundations.create_stage(train_model)
+        model = train_model()
+        deployment = model.run()
+        ```
+    """
     from foundations.global_state import foundations_context
     foundations_context.set_project_name(project_name)
 

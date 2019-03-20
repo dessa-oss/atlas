@@ -66,7 +66,16 @@ PAGES = [
         'all_module_classes': [foundations.prototype.jobs],
         'functions': [
             foundations.prototype.jobs.get_queued_jobs,
-            foundations.prototype.jobs.archive_jobs,
+            foundations.prototype.jobs.cancel_queued_jobs,
+            foundations.prototype.jobs.archive_jobs
+        ]
+    },
+    {
+        'page': 'tag_jobs.md',
+        'all_module_classes': [foundations.prototype.projects],
+        'functions': [
+            foundations.prototype.projects.set_tag,
+            foundations.prototype.projects.get_metrics_for_all_jobs
         ]
     },
     {
@@ -90,12 +99,26 @@ PAGES = [
         ]
     },
     {
+        'page': 'job_logs.md',
+        'all_module_classes': [foundations.deployment_wrapper],
+        'functions': [
+            foundations.deployment_wrapper.DeploymentWrapper.get_job_logs
+        ]
+    },
+    {
         'page': 'reading_job_metrics.md',
         'all_module_classes': [foundations.projects],
         'functions': [
             foundations.projects.get_metrics_for_all_jobs,
         ]
     },
+        {
+        'page': 'set_project_name.md',
+        'all_module_classes': [foundations.projects],
+        'functions': [
+            foundations.projects.set_project_name,
+        ]
+    }
 ]
 
 

@@ -1,5 +1,5 @@
 <h1>Managing Jobs</h1>
-The following methods are used to manage the job queue  for deployments
+The following methods are used to manage the job queue for deployments and give users maximum flexibility when deploying and organizing experiments.
 
 **NOTE:** These features are **EXPERIMENTAL** and may be subject to change in future releases.  
 

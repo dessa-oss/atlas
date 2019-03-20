@@ -40,6 +40,33 @@ def get_queued_jobs():
     return DataFrame(job_attributes)
 
 def cancel_queued_jobs(list_of_job_ids):
+    """
+    Cancels jobs which are currently in the queue, preventing them from eventually running when resources are available
+
+    Arguments:
+        list_of_job_ids {array} -- a list of job_ids as strings to cancel from the Foundations job queue
+
+    Returns:
+        cancelled_statuses {dict} -- A dictionary indicating if the cancelling of a queued job was successful or not for each input job_id
+
+    Raises:
+        - This method doesn't raise any exceptions.
+
+    Example:
+        ```python
+        import foundations
+        import foundations.prototype
+        from algorithms import train_model
+        
+        train_model = foundations.create_stage(train_model)
+        model = train_model()
+        model.run()
+
+        foundations.prototype.get_queued_jobs()
+        job_queue = foundations.prototype.cancel_queued_jobs(['209762cb-c767-4aea-bcaa-35b131982915'])
+        print(job_queue)
+        ```
+    """
     from foundations_contrib.global_state import redis_connection
     from foundations.prototype.helpers.queued import list_jobs, remove_jobs, add_jobs_to_archive, job_project_names, remove_job_from_code_path
     from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper

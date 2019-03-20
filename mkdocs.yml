@@ -10,13 +10,14 @@ pages:
 - Home: index.md
 - Foundations Concepts: concepts.md
 - USER GUIDE:
-  - Quick-Start Guide: quick_start.md
+  - Quick-Start Setup Guide: quick_start.md
   - Getting Started with Foundations: step_by_step_guide.md
   - Installation Guide: start_guide.md
   - Foundations CLI: project_creation.md
   - Foundations GUI: gui.md
   - Deploying To Different Environments: configs.md
 - SDK REFERENCE:
+  - Defining Projects: set_project_name.md
   - Stage Creation: stage_creation.md
   - Log Metrics: log_metrics.md
   - Running Stages: running_stages.md
@@ -24,4 +25,6 @@ pages:
   - Reading Job Metrics: reading_job_metrics.md
 - EXPERIMENTAL FEATURES:
   - Managing Jobs: manage_jobs.md
+  - Tagging Jobs: tag_jobs.md
+  - Tracking Job Logs: job_logs.md
   - Slack Notifications: slack.md
