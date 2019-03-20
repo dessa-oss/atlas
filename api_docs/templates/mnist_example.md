@@ -72,7 +72,7 @@ Here, we've turned the `load_data` function into a Foundations stage which retur
 Also, notice how we split the dataset above into training and test data. Because of this, when we turn `load_data` into a stage for Foundations to manage, we'll need to use the `.split()` [function](../running_stages/#split) in the driver file so that we correctly capture the number of returned values.  
 
 ##2. Prepare the data
-Now that we have the data available, we need to reduce the images down into a vector of pixels so that our MLP model can properly understand the inputs. We also want to normalize the pixel values from grey-scale to values between 0 and 1, as well as encode the outputs to values between 0-9 so we can classify the values in the images. In the model.py lets add a new function:
+Now that we have the data available, we need preprocess the data to ensure that our model can properly handle it. For example,  we will need to reduce the images down into a vector of pixels so that our MLP model can properly understand the inputs. We also want to normalize the pixel values from grey-scale to values between 0 and 1, as well as encode the outputs to values between 0-9 so we can classify the values in the images. In the model.py lets add a new function:
 
 ```python
 """
