@@ -25,7 +25,7 @@ node {
         }
         ws("${WORKSPACE}/foundations_spec/") {
             stage('Python3 Foundations Spec Install Requirements') {
-                sh "python -m pip install mock=2.0.0 Faker==1.0.0"
+                sh "python -m pip install mock==2.0.0 Faker==1.0.0"
             }
             ws("${WORKSPACE}/src") {
                 stage('Python3 Foundations Spec Unit Tests') {
