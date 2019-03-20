@@ -8,9 +8,9 @@
     <div class="rst-other-versions">
       <dl>
         <dt>{{ ('Versions') }}</dt>
-        {% for version in versions %}
-          <dd><a href="{{ url }}">{{ version.slug }}</a></dd>
-        {% endfor %}
+        'versions': [{% for version in versions %}
+        ("{{ version.slug }}", "/{{ version.project.language }}/{{ version.slug}}/"),{% endfor %}
+        ],
       </dl>
       <dl>
         <dt>{{ ('Downloads') }}</dt>
