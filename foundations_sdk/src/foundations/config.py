@@ -6,10 +6,13 @@ Written by Susan Davis <s.davis@dessa.com>, 03 2019
 """
 
 def set_environment(environment_name):
-    from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
     from foundations_contrib.global_state import config_manager
 
-    environment_fetcher = EnvironmentFetcher()
-    path = environment_fetcher.find_environment(environment_name)
-
+    path = _environment_path(environment_name)
     config_manager.add_simple_config_path(path)
+
+def _environment_path(environment_name):
+    from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+
+    environment_fetcher = EnvironmentFetcher()
+    return environment_fetcher.find_environment(environment_name)
