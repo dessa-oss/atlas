@@ -15,4 +15,8 @@ def _environment_path(environment_name):
     from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
     environment_fetcher = EnvironmentFetcher()
-    return environment_fetcher.find_environment(environment_name)[0]
+    paths = environment_fetcher.find_environment(environment_name)
+    if paths:
+        return paths[0]
+    else:
+        raise ValueError('No environment {} found, please set a valid deployment environment with foundations.set_environment'.format(environment_name))
