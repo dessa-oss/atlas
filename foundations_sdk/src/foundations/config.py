@@ -19,4 +19,7 @@ def _environment_path(environment_name):
     if paths:
         return paths[0]
     else:
-        raise ValueError('No environment {} found, please set a valid deployment environment with foundations.set_environment'.format(environment_name))
+        raise ValueError(_missing_environment_message(environment_name))
+
+def _missing_environment_message(environment_name):
+    return 'No environment {} found, please set a valid deployment environment with foundations.set_environment'.format(environment_name)
