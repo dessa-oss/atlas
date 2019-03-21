@@ -31,3 +31,9 @@ class TestConfig(Spec):
 
         set_environment(self.environment_name)
         self.mock_config_manager.add_simple_config_path.assert_called_with(self.path)
+
+    def test_set_environment_is_globally_accesible(self):
+        import foundations.config
+        import foundations
+
+        self.assertEqual(foundations.set_environment, foundations.config.set_environment)
