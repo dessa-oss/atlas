@@ -39,6 +39,14 @@ foundations_contrib/build
 foundations_contrib/dist
 foundations_contrib/foundations_contrib.egg-info
 foundations_contrib/src/foundations_contrib.egg-info
+foundations_spec/build
+foundations_spec/dist
+foundations_spec/foundations_spec.egg-info
+foundations_spec/src/foundations_spec.egg-info
+foundations_events/build
+foundations_events/dist
+foundations_events/foundations_events.egg-info
+foundations_events/src/foundations_events.egg-info
 
 **/node_modules
 tmp
