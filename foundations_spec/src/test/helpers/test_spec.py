@@ -21,9 +21,12 @@ class TestSpec(unittest.TestCase):
         self.MockSpec.setUpClass()
         self.spec = self.MockSpec()
 
+        self._skip_tear_down = False
+
     def tearDown(self):
-        self.spec.tearDown()
-        self.MockSpec.tearDownClass()
+        if not self._skip_tear_down:
+            self.spec.tearDown()
+            self.MockSpec.tearDownClass()
     
     def test_has_faker(self):
         import faker
@@ -77,4 +80,24 @@ class TestSpec(unittest.TestCase):
         self.MockSpec.set_up_class = set_up_class(lambda spec_self: mock())
         self.MockSpec.set_up_class_2 = set_up_class(lambda spec_self: mock2())
         self.spec.setUpClass()
+        mock2.assert_called()
+    
+    def test_calls_tear_down_class_methods(self):
+        self._skip_tear_down = True
+
+        mock = MagicMock()
+        
+        self.MockSpec.tear_down_class = tear_down_class(lambda spec_self: mock())
+        self.spec.tearDownClass()
+        mock.assert_called()
+
+    def test_calls_tear_down_class_methods_mutiple_methods(self):
+        self._skip_tear_down = True
+
+        mock = MagicMock()
+        mock2 = MagicMock()
+        
+        self.MockSpec.tear_down_class = tear_down_class(lambda spec_self: mock())
+        self.MockSpec.tear_down_class_2 = tear_down_class(lambda spec_self: mock2())
+        self.spec.tearDownClass()
         mock2.assert_called()

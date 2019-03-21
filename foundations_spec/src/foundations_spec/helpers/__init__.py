@@ -24,6 +24,9 @@ class set_up_class(Callback):
 class tear_down(Callback):
     pass 
 
+class tear_down_class(Callback):
+    pass
+
 class let(Callback):
     pass
 
