@@ -25,5 +25,4 @@ def apply_caching(response):
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Content-Type"] = "application/json"
-    response.headers["Access-Control-Allow-Origin"] = "request-originating server addresses"
     return response
