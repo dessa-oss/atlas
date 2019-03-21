@@ -62,3 +62,19 @@ class TestSpec(unittest.TestCase):
         self.MockSpec.tear_down_2 = tear_down(lambda spec_self: mock2())
         self.spec.tearDown()
         mock2.assert_called()
+
+    def test_calls_set_up_class_methods(self):
+        mock = MagicMock()
+        
+        self.MockSpec.set_up_class = set_up_class(lambda spec_self: mock())
+        self.spec.setUpClass()
+        mock.assert_called()
+
+    def test_calls_set_up_methods_mutiple_methods(self):
+        mock = MagicMock()
+        mock2 = MagicMock()
+        
+        self.MockSpec.set_up_class = set_up_class(lambda spec_self: mock())
+        self.MockSpec.set_up_class_2 = set_up_class(lambda spec_self: mock2())
+        self.spec.setUpClass()
+        mock2.assert_called()

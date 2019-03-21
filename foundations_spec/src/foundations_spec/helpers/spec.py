@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_spec.helpers import let, set_up, tear_down
+from foundations_spec.helpers import let, set_up, tear_down, set_up_class
 from foundations_spec.helpers.mock_mixin import MockMixin
 from foundations_spec.helpers.let_mixin import LetMixin
 from foundations_spec.helpers.let_now_mixin import LetNowMixin
@@ -22,6 +22,8 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
     def setUpClass(klass):
         klass._collect_let_nows()
         klass._collect_lets()
+        for setup_class_method in klass._setup_class_methods():
+            setup_class_method(klass)
 
     @classmethod
     def tearDownClass(klass):
@@ -37,6 +39,12 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
     def _setup_methods(self):
         for _, _, function in LetMixin._klass_attributes(self.__class__):
             if isinstance(function, set_up):
+                yield function
+    
+    @classmethod
+    def _setup_class_methods(klass):
+        for _, _, function in LetMixin._klass_attributes(klass):
+            if isinstance(function, set_up_class):
                 yield function
     
     def tearDown(self):

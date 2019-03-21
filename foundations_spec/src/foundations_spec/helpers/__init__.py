@@ -18,6 +18,9 @@ class Callback(object):
 class set_up(Callback):
     pass 
 
+class set_up_class(Callback):
+    pass
+
 class tear_down(Callback):
     pass 
 
