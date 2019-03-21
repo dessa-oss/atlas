@@ -5,3 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
+
+def _append_module():
+    import sys
+    from foundations.global_state import module_manager
+    
+    module_manager.append_module(sys.modules[__name__])
+
+
+_append_module()
