@@ -22,18 +22,24 @@ class TestJobPreparation(Spec):
     message_router = let_mock()
 
     @let
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let
     def pipeline_context(self):
         from foundations_internal.pipeline_context import PipelineContext
         return PipelineContext()
 
     @set_up
     def set_up(self):
-
         self._job = Mock()
         self._job.pipeline_context.return_value = self.pipeline_context
         self._run_data = {'some random data': self._random_uuid()}
         self._job.kwargs = self._run_data
         self._job_id = self._random_uuid()
+
+        self.config_manager['deployment_implementation'] = 'some kind of deployment'
 
     def test_prepare_sets_job_id(self):
         prepare_job(self.message_router, self._job, self._job_id)
@@ -47,6 +53,13 @@ class TestJobPreparation(Spec):
     def test_pushes_queue_message(self):
         prepare_job(self.message_router, self._job, self._job_id)
         self.queue_job_instance.push_message.assert_called_once()
+
+    def test_raise_exception_when_no_deployment_set(self):
+        del self.config_manager.config()['deployment_implementation']
+        with self.assertRaises(ValueError) as error_context:
+            prepare_job(self.message_router, self._job, self._job_id)
+        
+        self.assertIn('No environment found, please set deployment environments with foundations.set_environment', error_context.exception.args)
 
     def _random_uuid(self):
         from uuid import uuid4
