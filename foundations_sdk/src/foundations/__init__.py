@@ -42,6 +42,7 @@ from foundations_internal.scheduler import Scheduler
 from foundations_internal.versioning import __version__
 import foundations_internal.import_installer
 import foundations_contrib.consumers
+import foundations_events
 
 def _append_module():
     import sys
