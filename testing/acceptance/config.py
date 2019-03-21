@@ -13,6 +13,7 @@ TEST_UUID = uuid4()
 def _config():
     from os import getcwd
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
+    from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 
     # below is used to ensure we get a different cache for every run
     config_manager['cache_implementation'] = {
@@ -30,6 +31,9 @@ def _config():
     config_manager['archive_listing_implementation'] = {
         'archive_listing_type': LocalFileSystemPipelineListing,
         'constructor_arguments': [archive_root],
+    }
+    config_manager['deployment_implementation'] = {
+        'deployment_type': LocalShellJobDeployment
     }
     config_manager['stage_log_archive_implementation'] = archive_implementation
     config_manager['persisted_data_archive_implementation'] = archive_implementation
