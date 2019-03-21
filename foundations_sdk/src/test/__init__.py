@@ -17,4 +17,5 @@ from test.test_utils import TestUtils
 from test.test_projects import TestProjects
 from test.test_stage_connector_wrapper import TestStageConnectorWrapper
 from test.test_deployment_wrapper import TestDeploymentWrapper
+from test.test_config import TestConfig
 from test.prototype import *
