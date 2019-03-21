@@ -15,4 +15,4 @@ def _environment_path(environment_name):
     from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
     environment_fetcher = EnvironmentFetcher()
-    return environment_fetcher.find_environment(environment_name)
+    return environment_fetcher.find_environment(environment_name)[0]

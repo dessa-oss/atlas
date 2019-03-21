@@ -24,7 +24,7 @@ class TestConfig(Spec):
     @set_up
     def set_up(self):
         self.mock_environment_fetcher.find_environment = ConditionalReturn()
-        self.mock_environment_fetcher.find_environment.return_when(self.path, self.environment_name)
+        self.mock_environment_fetcher.find_environment.return_when([self.path], self.environment_name)
     
     def test_adds_simple_configuration_to_config_manager(self):
         from foundations.config import set_environment        
