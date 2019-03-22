@@ -132,7 +132,7 @@ class CommandLineInterface(object):
         if environment_file_path == None:
             print("Foundations project not found. Deploy command must be run in foundations project directory")
         elif len(environment_file_path) == 0:
-            print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --envs`".format(environment_name))
+            print("Could not find environment name: `{}`. You can list all discoverable environments with `foundations info --env`".format(environment_name))
         else:
             valid = True
         return valid

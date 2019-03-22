@@ -166,12 +166,12 @@ class TestCommandLineInterface(Spec):
     def test_deploy_returns_correct_error_if_env_not_found(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['deploy', 'driver.py', '--env=local']).execute()
-        self.print_mock.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --envs`")
+        self.print_mock.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --env`")
 
     def test_deploy_returns_correct_error_if_env_not_found_different_name(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.print_mock.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --envs`")
+        self.print_mock.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --env`")
 
     def test_exits_the_process_with_exit_status_of_one(self):
         self.find_environment_mock.return_value = []
