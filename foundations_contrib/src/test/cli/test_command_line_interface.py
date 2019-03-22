@@ -117,12 +117,12 @@ class TestCommandLineInterface(Spec):
     def test_info_env_flag_returns_environment_none_available(self):
         self.environment_fetcher_mock.return_value = ([], [])
         CommandLineInterface(['info', '--env']).execute()
-        self.print_mock.assert_called_with('None')
+        self.print_mock.assert_called_with('No environments available')
 
     def test_info_env_flag_returns_environment_none_available_not_local(self):
         self.environment_fetcher_mock.return_value = (None, [])
         CommandLineInterface(['info', '--env']).execute()
-        self.print_mock.assert_called_with('None')
+        self.print_mock.assert_called_with('No environments available')
     
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_local(self, mock_print):
