@@ -17,7 +17,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_ssh',
+    name='foundations_scheduler_plugin',
     version=environ.get('build_version', '0.0.0'),
     description='A tool for machine learning development',
     classifiers=[
@@ -32,6 +32,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
-        'foundations_ssh': ['resources/*'],
+        'foundations_scheduler_plugin': ['resources/*'],
     }
 )
