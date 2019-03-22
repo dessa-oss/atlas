@@ -101,7 +101,7 @@ class TestEnvironmentFetcher(unittest.TestCase):
     def test_find_environment_returns_error_message_in_wrong_dir(self, local_mock):
         env_name = 'hi'
         local_mock.return_value = None
-        self.assertEqual(EnvironmentFetcher().find_environment(env_name), None)
+        self.assertEqual(EnvironmentFetcher().find_environment(env_name), [])
     
     @patch.object(EnvironmentFetcher, '_get_local_environments')
     @patch.object(EnvironmentFetcher, '_get_global_environments')
