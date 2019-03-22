@@ -24,7 +24,7 @@ class EnvironmentFetcher(object):
         local_environments = self._get_local_environments()
 
         if local_environments == None:
-            return local_environments
+            local_environments = []
         global_environments = self._get_global_environments()
         all_environments = local_environments + global_environments
         return [env for env in all_environments if file_name in env]

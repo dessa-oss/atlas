@@ -25,4 +25,5 @@ build_module foundations_spec foundations_spec && \
     build_module gcp_utils foundations_gcp && \
     build_module ssh_utils foundations_ssh && \
     build_module aws_utils foundations_aws && \
+    build_module foundations_scheduler_plugin foundations_scheduler_plugin && \
     build_module foundations_rest_api foundations_rest_api
