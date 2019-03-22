@@ -68,7 +68,7 @@ class CommandLineInterface(object):
         project_environment, global_environment = EnvironmentFetcher().get_all_environments()
 
         if len(global_environment) == 0 and (project_environment == None or len(project_environment) == 0):
-            print('No environments available')
+            print('None')
         else:
             self._print_configs('global', global_environment)
             if project_environment != None: 
