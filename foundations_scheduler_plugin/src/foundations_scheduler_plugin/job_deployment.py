@@ -46,7 +46,7 @@ class JobDeployment(object):
         raise NotImplementedError
 
     def get_job_status(self):
-        pass
+        return self._scheduler.get_job_status(self._job_id)
 
     def get_job_logs(self):
-        pass
+        return self._scheduler.get_job_logs(self._job_id)

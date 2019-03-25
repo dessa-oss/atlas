@@ -59,6 +59,24 @@ class TestJobDeployment(Spec):
         from uuid import uuid4
         return str(uuid4())
 
+    @let
+    def job_status(self):
+        return self.faker.word()
+
+    @let_now
+    def mock_scheduler_job_status(self):
+        self.mock_scheduler_instance.get_job_status = ConditionalReturn()
+        self.mock_scheduler_instance.get_job_status.return_when(self.job_status, self.job_id)
+
+    @let
+    def job_logs(self):
+        return self.faker.sentence()
+
+    @let_now
+    def mock_scheduler_job_logs(self):
+        self.mock_scheduler_instance.get_job_logs = ConditionalReturn()
+        self.mock_scheduler_instance.get_job_logs.return_when(self.job_logs, self.job_id)
+
     job = let_mock()
     job_source_bundle = let_mock()
 
@@ -103,6 +121,12 @@ class TestJobDeployment(Spec):
     def test_deploy_submits_job_to_scheduler(self):
         self.deployment.deploy()
         self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar)
+
+    def test_get_job_status_returns_status(self):
+        self.assertEqual(self.job_status, self.deployment.get_job_status())
+
+    def test_get_job_logs_returns_logs(self):
+        self.assertEqual(self.job_logs, self.deployment.get_job_logs())
 
     @staticmethod
     def _error_callback():
