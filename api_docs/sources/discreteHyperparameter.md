@@ -1,7 +1,7 @@
-<h1>Discrete Hyperparameter</h1>
-The following class can be used to define a structured way of specifying discrete Hyperparameter values which Foundations will iterate through during runtime
+<h1>Additional Hyperparameter Classes</h1>
+The following classes can be used to define structured ways of specifying different Hyperparameter values which Foundations will iterate through during runtime. 
 
-**NOTE:** This feature is **EXPERIMENTAL** and may be subject to change in future releases.  
+**NOTE:** These features are **EXPERIMENTAL** and may be subject to change in future releases.  
 
 ---
 <span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/discrete_hyperparameter.py#L14)</span>
