@@ -118,6 +118,14 @@ PAGES = [
         'functions': [
             foundations.projects.set_project_name,
         ]
+    },
+    {
+        'page': 'stage_search.md',
+        'all_module_classes': [foundations.stage_connector_wrapper],
+        'functions': [
+            foundations.stage_connector_wrapper.StageConnectorWrapper.random_search,
+            foundations.stage_connector_wrapper.StageConnectorWrapper.grid_search,
+        ]
     }
 ]
 

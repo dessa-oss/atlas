@@ -18,12 +18,15 @@ pages:
   - Deploying To Different Environments: configs.md
 - SDK REFERENCE:
   - Defining Projects: set_project_name.md
+  - Defining Hyperparameters: hyperparameters.md
   - Stage Creation: stage_creation.md
   - Log Metrics: log_metrics.md
   - Running Stages: running_stages.md
   - Tracking a Deployment: tracking_deployment.md
   - Reading Job Metrics: reading_job_metrics.md
 - EXPERIMENTAL FEATURES:
+  - Additional Hyperparameters Types: discreteHyperparameter.md
+  - Hyperparameter Searching: stage_search.md
   - Managing Jobs: manage_jobs.md
   - Tagging Jobs: tag_jobs.md
   - Tracking Job Logs: job_logs.md
@@ -33,4 +36,5 @@ pages:
   - MLP Hyperparameter Tuning: hyperparameter_mnist.md
   - XGBoost: xgboost_example.md
   - Logistic Regression: regression.md
+  - Remote Environment Deployment: remote_deployment_example.md
   

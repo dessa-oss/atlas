@@ -8,9 +8,9 @@ The workflow of the example will be as follows:
 <span>3. </span> Train the Model  
 <span>4. </span> Validation and Results
 
-Rather than run the whole model in one call, we divide each step in the model into a stage, so that Foundations can wrap the your code in layers which perform provenance tracking, caching, prepping your job for deployment, etc.
+For best practices, rather than run the whole model in one call, we will divide each step in the model into independent functions, making model development more modular and easier to debug. Foundations will then be used to wrap these functions to perform provenance tracking, caching, prepping your job for deployment, etc.
 
-Some additional python dependencies you may need to install include: `sklearn` `xgboost`
+Some additional python dependencies you will need to install include: `sklearn` `xgboost`
 
 The directory structure should look like this to run the model correctly:
 ```
@@ -197,7 +197,9 @@ predictions = train_model(param, num_round, dtrain, dtest)
 results = best_results(predictions, y_test)
 results.run()
 ```
-Notice that we also call `.run()` on the final stage. Since we want to run the whole pipeline, we call `.run()` to the **last** stage in the pipeline. This signals to Foundations that essentially we want to run the final stage, as well as every previous stage which has inputs to the final one.
+Notice that we also call `.run()` on the final stage. When stages are created, Foundations tracks them with a directed acyclic graph (DAG) of the different defined stages. This allows stages to be run independently of each other for debugging or testing. In addition, all input and output stages prior to the executed stage in the DAG are automatically run as well so that the expected result can be properly captured.
+
+Since we want to run the whole model workflow, we call `.run()` to the **last** stage in the pipeline. This signals to Foundations that essentially we want to run the final stage, as well as every previous stage which has inputs to the final one.
 
 When we call `.run()` on the final stage, Foundations will execute all stages and properly pass in the returned values into the proper coressponding stages. Essentially, a graph of defined stages is created and will run all stages that lead to the final stage. This creates a workflow where each stage can have its own logging and tracking:
 ```

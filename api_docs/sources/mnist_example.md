@@ -8,9 +8,9 @@ The workflow of the example will be as follows:
 <span>3. </span> Build the neural net  
 <span>4. </span> Model training and validation
 
-Rather than run the whole model in one call, we divide each step in the model into a stage, so that Foundations can wrap the your code in layers which perform provenance tracking, caching, prepping your job for deployment, etc.
+For best practices, rather than run the whole model in one call, we will divide each step in the model into independent functions, making model development more modular and easier to debug. Foundations will then be used to wrap these functions to perform provenance tracking, caching, prepping your job for deployment, etc.
 
-Some additional python dependencies you may need to install include: `keras` `tensorflow`
+Some additional python dependencies you will need include: `keras` `tensorflow`.
 
 The directory structure should look like this to run the model correctly:
 ```
@@ -21,7 +21,7 @@ mnist_example
 ├── post_processing
 │   └── results.py
 ├── project_code
-|   ├── driver.py
+│   ├── driver.py
 │   └── model.py
 └── README.txt
 ```
@@ -72,7 +72,7 @@ Here, we've turned the `load_data` function into a Foundations stage which retur
 Also, notice how we split the dataset above into training and test data. Because of this, when we turn `load_data` into a stage for Foundations to manage, we'll need to use the `.split()` [function](../running_stages/#split) in the driver file so that we correctly capture the number of returned values.  
 
 ##2. Prepare the data
-Now that we have the data available, we need to reduce the images down into a vector of pixels so that our MLP model can properly understand the inputs. We also want to normalize the pixel values from grey-scale to values between 0 and 1, as well as encode the outputs to values between 0-9 so we can classify the values in the images. In the model.py lets add a new function:
+Now that we have the data available, we need preprocess the data to ensure that our model can properly handle it. For example,  we will need to reduce the images down into a vector of pixels so that our MLP model can properly understand the inputs. We also want to normalize the pixel values from grey-scale to values between 0 and 1, as well as encode the outputs to values between 0-9 so we can classify the values in the images. In the model.py lets add a new function:
 
 ```python
 """
@@ -205,7 +205,9 @@ trained_model = train_model(128, 5, model, X_train, X_test, Y_train, Y_test)
 # 4.b Validate the model
 validation = eval_model(trained_model, X_test, Y_test)
 ```
-Now that we've created five stages, the last thing is to let Foundations which one to execute. Since we want to run the whole pipeline, we call `.run()` to the **last** stage in the pipeline. This signals to Foundations that essentially we want to run the final stage, as well as every previous stage which has inputs to the final one.
+Now that we've created five stages, the last thing is to let Foundations know which one to execute. When stages are created, Foundations tracks them with a directed acyclic graph (DAG) of the different defined stages. This allows stages to be run independently of each other for debugging or testing. In addition, all input and output stages prior to the executed stage in the DAG are automatically run as well so that the expected result can be properly captured.
+
+Since we want to run the whole workflow, we call `.run()` on the **last** stage in this model (which is validation). This signals to Foundations that essentially we want to run the final stage, as well as every previous stage which has inputs to the final one.
 
 ```python
 validation.run()
