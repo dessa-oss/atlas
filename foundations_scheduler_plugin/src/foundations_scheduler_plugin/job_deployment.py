@@ -8,12 +8,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class JobDeployment(object):
 
-    def __init__(self, job_name, job, job_source_bundle):
+    def __init__(self, job_id, job, job_source_bundle):
         from foundations_contrib.global_state import config_manager
 
         self._config = {}
         self._config.update(config_manager.config())
         self._config['_is_deployment'] = True
+
+        self._job_id = job_id
 
     @staticmethod
     def scheduler_backend():
@@ -23,7 +25,7 @@ class JobDeployment(object):
         return self._config
 
     def job_name(self):
-        pass
+        return self._job_id
 
     def deploy(self):
         pass

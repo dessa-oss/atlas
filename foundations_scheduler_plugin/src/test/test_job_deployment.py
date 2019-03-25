@@ -49,4 +49,5 @@ class TestJobDeployment(Spec):
         with self.assertRaises(NotImplementedError):
             JobDeployment.scheduler_backend()
 
-
+    def test_job_name_is_job_id(self):
+        self.assertEqual(self.job_id, self.deployment.job_name())
