@@ -40,7 +40,7 @@ class JobDeployment(object):
             self._job_bundler.cleanup()
 
     def is_job_complete(self):
-        pass
+        return self.get_job_status() == 'completed'
 
     def fetch_job_results(self):
         raise NotImplementedError

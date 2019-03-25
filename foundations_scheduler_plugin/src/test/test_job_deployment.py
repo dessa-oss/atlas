@@ -128,6 +128,15 @@ class TestJobDeployment(Spec):
     def test_get_job_logs_returns_logs(self):
         self.assertEqual(self.job_logs, self.deployment.get_job_logs())
 
+    def test_is_job_complete_returns_false_when_not_completed(self):
+        self.assertEqual(False, self.deployment.is_job_complete())
+
+    def test_is_job_complete_returns_true_when_completed(self):
+        self.mock_scheduler_instance.get_job_status = ConditionalReturn()
+        self.mock_scheduler_instance.get_job_status.return_when('completed', self.job_id)
+
+        self.assertEqual(True, self.deployment.is_job_complete())
+
     @staticmethod
     def _error_callback():
         raise Exception
