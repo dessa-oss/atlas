@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
+from foundations_scheduler_plugin.job_deployment import JobDeployment
 
 class TestJobDeployment(Spec):
 
@@ -25,7 +26,6 @@ class TestJobDeployment(Spec):
 
     @let
     def deployment(self):
-        from foundations_scheduler_plugin.job_deployment import JobDeployment
         return JobDeployment(self.job_id, self.job, self.job_source_bundle)
 
     @let
@@ -44,3 +44,9 @@ class TestJobDeployment(Spec):
 
     def test_stores_config_with_deployment_mode_set(self):
         self.assertEqual(True, self.deployment.config()['_is_deployment'])
+
+    def test_scheduler_method_not_implemented(self):
+        with self.assertRaises(NotImplementedError):
+            JobDeployment.scheduler_backend()
+
+

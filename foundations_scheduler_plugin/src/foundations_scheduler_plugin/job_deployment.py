@@ -17,7 +17,7 @@ class JobDeployment(object):
 
     @staticmethod
     def scheduler_backend():
-        pass
+        raise NotImplementedError
 
     def config(self):
         return self._config
