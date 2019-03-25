@@ -51,3 +51,7 @@ class TestJobDeployment(Spec):
 
     def test_job_name_is_job_id(self):
         self.assertEqual(self.job_id, self.deployment.job_name())
+
+    def test_fetch_job_results_not_implemented(self):
+        with self.assertRaises(NotImplementedError):
+            self.deployment.fetch_job_results()

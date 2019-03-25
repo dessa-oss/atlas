@@ -34,7 +34,7 @@ class JobDeployment(object):
         pass
 
     def fetch_job_results(self):
-        pass
+        raise NotImplementedError
 
     def get_job_status(self):
         pass
