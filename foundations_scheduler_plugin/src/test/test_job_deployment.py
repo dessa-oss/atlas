@@ -12,6 +12,28 @@ from foundations_scheduler_plugin.job_deployment import JobDeployment
 
 class TestJobDeployment(Spec):
 
+    @let_now
+    def mock_bundler_instance(self):
+        instance = Mock()
+        instance.job_archive.return_value = self.path_to_tar
+
+        klass = self.patch('foundations_contrib.job_bundler.JobBundler', ConditionalReturn())
+        klass.return_when(instance, self.job_id, self.result_config, self.job, self.job_source_bundle)
+        return instance
+
+    @let_now
+    def mock_scheduler_instance(self):
+        instance = Mock()
+        klass = self.patch('foundations_scheduler.scheduler.Scheduler', ConditionalReturn())
+        klass.return_when(instance, self.result_config)
+        return instance
+
+    @let
+    def result_config(self):
+        config = {'_is_deployment': True}
+        config.update(self.config_manager_config)
+        return config
+
     @let
     def config_manager_config(self):
         return self.faker.pydict()
@@ -23,6 +45,10 @@ class TestJobDeployment(Spec):
         config_manager = ConfigManager()
         config_manager.config().update(self.config_manager_config)
         return self.patch('foundations_contrib.global_state.config_manager', config_manager)
+
+    @let
+    def path_to_tar(self):
+        return self.faker.uri_path()
 
     @let
     def deployment(self):
@@ -55,3 +81,29 @@ class TestJobDeployment(Spec):
     def test_fetch_job_results_not_implemented(self):
         with self.assertRaises(NotImplementedError):
             self.deployment.fetch_job_results()
+
+    def test_deploy_bundles_job(self):
+        self.deployment.deploy()
+        self.mock_bundler_instance.bundle.assert_called()
+
+    def test_deploy_cleans_up(self):
+        self.deployment.deploy()
+        self.mock_bundler_instance.cleanup.assert_called()
+
+    def test_deploy_cleans_up_when_submit_fails(self):
+        self.mock_scheduler_instance.submit_job.side_effect = self._error_callback
+
+        try:
+            self.deployment.deploy()
+        except Exception:
+            pass
+
+        self.mock_bundler_instance.cleanup.assert_called()
+
+    def test_deploy_submits_job_to_scheduler(self):
+        self.deployment.deploy()
+        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar)
+
+    @staticmethod
+    def _error_callback():
+        raise Exception

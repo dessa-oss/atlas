@@ -10,12 +10,17 @@ class JobDeployment(object):
 
     def __init__(self, job_id, job, job_source_bundle):
         from foundations_contrib.global_state import config_manager
+        from foundations_contrib.job_bundler import JobBundler
+        from foundations_scheduler.scheduler import Scheduler
 
         self._config = {}
         self._config.update(config_manager.config())
         self._config['_is_deployment'] = True
 
         self._job_id = job_id
+        self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
+
+        self._scheduler = Scheduler(self._config)
 
     @staticmethod
     def scheduler_backend():
@@ -28,7 +33,11 @@ class JobDeployment(object):
         return self._job_id
 
     def deploy(self):
-        pass
+        try:
+            self._job_bundler.bundle()
+            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive())
+        finally:
+            self._job_bundler.cleanup()
 
     def is_job_complete(self):
         pass
