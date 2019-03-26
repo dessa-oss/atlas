@@ -128,25 +128,19 @@ class TestCommandLineInterface(Spec):
     def test_info_env_flag_returns_environment_one_available_local(self, mock_print):
         self.environment_fetcher_mock.return_value = (['/home/local.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
-        global_call = call([])
-        project_call = call([['local','/home/local.config.yaml']])
-        mock_print.assert_has_calls([global_call, project_call], any_order = True)
+        mock_print.assert_called_with([['local','/home/local.config.yaml']])
     
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_local_different_environment(self, mock_print):
         self.environment_fetcher_mock.return_value = (['/home/config/uat.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
-        global_call = call([])
-        project_call = call([['uat','/home/config/uat.config.yaml']])
-        mock_print.assert_has_calls([global_call, project_call], any_order = True)
+        mock_print.assert_called_with([['uat','/home/config/uat.config.yaml']])
     
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_global(self, mock_print):
         self.environment_fetcher_mock.return_value = ([], ['/home/config/uat.config.yaml'])
         CommandLineInterface(['info', '--env']).execute()
-        global_call = call([['uat', '/home/config/uat.config.yaml']])
-        project_call = call([])
-        mock_print.assert_has_calls([global_call, project_call], any_order = True)
+        mock_print.assert_called_with([['uat', '/home/config/uat.config.yaml']])
     
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_global_no_local(self, mock_print):

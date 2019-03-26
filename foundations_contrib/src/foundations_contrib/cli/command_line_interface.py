@@ -71,13 +71,18 @@ class CommandLineInterface(object):
             print('No environments available')
         else:
             self._print_configs('global', global_environment)
-            if project_environment != None: 
+            if project_environment != None:
                 self._print_configs('project', project_environment)
+            else:
+                self._print_configs('project', [])
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)
-        print("{} configs:".format(config_list_name))
-        print(self._format_environment_printout(config_list))
+        print("\n{} configs:".format(config_list_name))
+        if len(config_list) == 0:
+            print('No environments exist for {}.'.format(config_list_name))
+        else:
+            print(self._format_environment_printout(config_list))
     
     def _format_environment_printout(self, environment_array):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
