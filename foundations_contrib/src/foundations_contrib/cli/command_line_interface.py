@@ -65,6 +65,12 @@ class CommandLineInterface(object):
     def _info(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
+        env_name = self._arguments.env
+        
+        if not env_name:
+            print('usage: foundations info [--env ENV]')
+            return
+
         project_environment, global_environment = EnvironmentFetcher().get_all_environments()
 
         if len(global_environment) == 0 and (project_environment == None or len(project_environment) == 0):
@@ -97,7 +103,7 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations.global_state import config_manager     
 
-        driver_name =   self._arguments.driver_file
+        driver_name = self._arguments.driver_file
         env_name = self._arguments.env
         env_file_path = EnvironmentFetcher().find_environment(env_name)
 
