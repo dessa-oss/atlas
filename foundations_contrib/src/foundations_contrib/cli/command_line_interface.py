@@ -78,7 +78,7 @@ class CommandLineInterface(object):
         config_list = self._create_environment_list(config_list)
         print("\n{} configs:".format(config_list_name))
         if len(config_list) == 0:
-            print('No environments exist for {}.'.format(config_list_name))
+            print('No {} environments available'.format(config_list_name))
         else:
             print(self._format_environment_printout(config_list))
     
