@@ -73,8 +73,6 @@ class CommandLineInterface(object):
             self._print_configs('global', global_environment)
             if project_environment != None:
                 self._print_configs('project', project_environment)
-            else:
-                self._print_configs('project', [])
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)
