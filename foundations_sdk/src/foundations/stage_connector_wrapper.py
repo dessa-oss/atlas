@@ -242,7 +242,7 @@ class StageConnectorWrapper(object):
 
     def random_search(self, params_range_dict, max_iterations):
         """
-        Calls .run() with random combinations of the hyperparameters used and evaluates each model
+        Replaces the .run() call on a stage and launches multiple jobs with random combinations of the hyperparameters passed in.
 
         Arguments:
             params_range_dict {dict} -- a dictionary containing FloatingHyperparameter or DiscreteHyperparameter objects
@@ -252,6 +252,8 @@ class StageConnectorWrapper(object):
             deployments {dict} -- a dictionary containing individual deployment objects mapped by job_id
 
         Raises:
+            ValueError -- When the value of a Hyperparameter passed into the function is not iterable.
+            AttributeError -- When the dictionary passed in does not contain a Hyperparameter object.
             TypeError -- When the type of an argument passed to the function wrapped by this stage is not supported.
 
         Example:
@@ -259,10 +261,17 @@ class StageConnectorWrapper(object):
             import foundations
             from algorithms import train_model
 
+            foundations.set_project_name('random_search_example')
             train_model = foundations.create_stage(train_model)
             model = train_model(data1=foundations.Hyperparameter())
-            model.random_search(job_name='Experiment number 2', 
-                params_dict={'data1': foundations.FloatingHyperparameter(0.25, 1, 0.025)})
+
+            # Launches 5 jobs where random values between 0.25 and 1 at increments of 0.025 are selected
+            # Ex: 5 independent jobs where the data1 values are (0.25, 0.55, 0.425, 0.7, 0.325)
+            model.random_search( 
+                params_dict={'data1': foundations.FloatingHyperparameter(0.25, 1, 0.025), 5})
+            
+            # Results from the 5 jobs can be retrieved with get_metrics_for_all_jobs
+            print(foundations.get_metrics_for_all_jobs('random_search_example')
             ```
         """
         from foundations.set_random_searcher import SetRandomSearcher
@@ -273,17 +282,18 @@ class StageConnectorWrapper(object):
 
     def grid_search(self, params_range_dict, max_iterations=None):
         """
-        Calls .run() for every combination of hyperparameters specified and evaluates each model
+        Replaces the .run() call on a stage and launches multiple jobs with every combinations of the hyperparameters passed in.
 
         Arguments:
             params_range_dict {dict} -- a dictionary containing FloatingHyperparameter or DiscreteHyperparameter objects
-            max_iterations {int} -- optional parameter to specify number of total loops to run, none by default 
-            which will loop through every combination
+            max_iterations {int} -- optional parameter to specify maximum number of total loops to run, none by default which will loop through every possible combination of Hyperparameter values passed in.
 
         Returns:
             deployments {dict} -- a dictionary containing individual deployment objects mapped by job_id
 
         Raises:
+            ValueError -- When the value of an Hyperparameter passed into the function is not iterable.
+            AttributeError -- When the dictionary passed in does not contain a Hyperparameter object.
             TypeError -- When the type of an argument passed to the function wrapped by this stage is not supported.
 
         Example:
@@ -291,10 +301,19 @@ class StageConnectorWrapper(object):
             import foundations
             from algorithms import train_model
 
+            foundations.set_project_name('grid_search_example')
             train_model = foundations.create_stage(train_model)
-            model = train_model(data1=foundations.Hyperparameter())
-            model.grid_search(job_name='Experiment number 2', 
-                params_dict={'data1': foundations.DiscreteHyperparameter([0.25, 0.125, 1.0])})
+            model = train_model(data1=foundations.Hyperparameter(), data2=foundations.Hyperparameter())
+
+            # Launches 9 jobs where the values of data1 and data2 are the exactly same as the ones defined in the Hyperparameters
+            # Ex: 9 independent jobs where the data1 values are exactly(0.25, 0.125, 1) 
+            # for each exact step value of data2 (4, 5, 6) in the distribution
+            model.grid_search(
+                params_dict={'data1': foundations.DiscreteHyperparameter([0.25, 0.125, 1.0]),
+                                'data2': foundations.FloatingHyperparameter(4, 6, 1)})
+
+            # Results from the 9 jobs can be retrieved with get_metrics_for_all_jobs
+            print(foundations.get_metrics_for_all_jobs('grid_search_example')
             ```
         """
         from foundations.set_grid_searcher import SetGridSearcher

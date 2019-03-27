@@ -10,7 +10,10 @@ The workflow of the example will be as follows:
 
 It is recommended to first create a new project using the Foundations CLI [command](../project_creation/#project-creation). Then, download the `train.csv` from the Kaggle link above, rename it to `titanic.csv`, and place it in the `data` directory. In this example, we will splitting the dataset up into both training and validation sets from this one CSV. 
 
-Some additional python dependencies you will need to install include: `pandas`  `PyYaml`  `sklearn`  `scipy`
+Some additional python dependencies you will need to install include: `pandas`  `PyYaml`  `sklearn`  `scipy`.  
+
+These can be installed locally with `pip` or other package managers. For remote deployments, these additional libraries will need to be included in a `requirements.txt` file and placed in the project root directory. For more information on remote deployments, check out the example [here](../remote_deployment_example/).
+
  
 This example will also use utility code commonly used during data preparation/data cleaning, as well as extracting, transforming, and loading the data into models. In the Foundations framework, code is expected to be structured into stages - instead of a monolithic code block, you have functions which represent stages in a job. 
 

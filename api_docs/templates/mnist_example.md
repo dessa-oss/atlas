@@ -10,7 +10,9 @@ The workflow of the example will be as follows:
 
 For best practices, rather than run the whole model in one call, we will divide each step in the model into independent functions, making model development more modular and easier to debug. Foundations will then be used to wrap these functions to perform provenance tracking, caching, prepping your job for deployment, etc.
 
-Some additional python dependencies you will need include: `keras` `tensorflow`.
+Some additional python dependencies you will need include: `keras` `tensorflow`.  
+
+These can be installed locally with `pip` or other package managers. For remote deployments, these additional libraries will need to be included in a `requirements.txt` file and placed in the project root directory. For more information on remote deployments, check out the example [here](../remote_deployment_example/). 
 
 The directory structure should look like this to run the model correctly:
 ```

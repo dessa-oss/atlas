@@ -17,7 +17,7 @@ Creates a DiscreteHyperparameter object which holds an internal list of possible
 
 __Arguments__
 
-- __values__ (list): The list of values to use for hyperparameter substitution.
+- __values__ (list): The list of numeric values to use for hyperparameter substitution.
 
 __Example__
 
@@ -27,7 +27,7 @@ from algorithms import train_model
 
 train_model = foundations.create_stage(train_model)
 model = train_model(data1=foundations.Hyperparameter())
-model.grid_search(job_name='Experiment number 2', 
+model.grid_search(
     params_dict={'data1': foundations.DiscreteHyperparameter([0.25, 0.125, 1.0])})
 ```
 ---
@@ -44,9 +44,9 @@ Creates a new FloatingHyperparameter object used for an analogue of range() for 
 
 __Arguments__
 
-- __min__ (float): Left end of uniform distribution.
-- __max__ (float): Right end of uniform distribution.
-- __step__ (float): Grid size for grid search - think range(min, max, step), where max is actually included.  Defaults to None (useful for random search)
+- __min__ (float): Left end of uniform distribution. Included in searching
+- __max__ (float): Right end of uniform distribution. Included in searching
+- __step__ (float): Grid size for grid search - think range(min, max, step), where max is actually included. Defaults to None (useful for random search)
 
 __Example__
 
@@ -56,6 +56,6 @@ from algorithms import train_model
 
 train_model = foundations.create_stage(train_model)
 model = train_model(data1=foundations.Hyperparameter())
-model.grid_search(job_name='Experiment number 3', 
+model.grid_search(
     params_dict={'data1': foundations.FloatingHyperparameter(0.25, 1, 0.25)})
 ```
