@@ -185,7 +185,7 @@ def eval_model(model, X_test, Y_test):
     foundations.log_metric('Test score:', score[0])
     foundations.log_metric('Test accuracy:', score[1])
 ```
-Now, lets run the model! Using the [deploy] (../project_creation/#deploying-jobs) command and deploying the driver.py file will result in 8 total jobs being run. When fetching results, you should expect a dataframe similar to the following:
+Now, lets run the model! Using the [deploy](../project_creation/#deploying-jobs) command and deploying the driver.py file will result in 8 total jobs being run. When fetching results, you should expect a dataframe similar to the following:
 
 ```python
 import foundations
