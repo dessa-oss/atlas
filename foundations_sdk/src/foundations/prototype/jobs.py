@@ -90,7 +90,7 @@ def cancel_queued_jobs(list_of_job_ids):
 
 def archive_jobs(list_of_job_ids):
     """
-    Archives completed jobs, removing them from any project results on both the GUI and SDK
+    Archives completed jobs, removing them from any project results on both the GUI and SDK. This function doesn't delete the jobs permanently, but only hides them from appearing again.
 
     Arguments:
         list_of_job_ids {array} -- a list of job_ids as strings to archive

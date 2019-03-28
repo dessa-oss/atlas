@@ -62,7 +62,7 @@ Cancels jobs which are currently in the queue, preventing them from eventually r
 
 __Arguments__
 
-- __list_of_job_ids__ (array): a list of job_ids as strings to cancel.
+- __list_of_job_ids__ (array): a list of job_ids as strings to cancel from the Foundations job queue.
 
 __Returns__
 
@@ -102,7 +102,7 @@ archive_jobs(list_of_job_ids)
 
 
 
-Archives completed jobs, removing them from any project results on both the GUI and SDK.
+Archives completed jobs, removing them from any project results on both the GUI and SDK. This function doesn't delete the jobs permanently, but only hides them from appearing again.
 
 __Arguments__
 
