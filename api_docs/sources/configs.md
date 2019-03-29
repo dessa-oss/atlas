@@ -56,17 +56,17 @@ $ foundations info --env
 
 For more information on the Foundations CLI, please refer to the documentation [here](../project_creation/)
 
-**Note:** If your code contains adding the config path via the SDK below, this **will** override the selected environment by the deploy command.
+**Note:** If your code contains setting the environment via the notebook instructions below, this **will** override the selected environment by the deploy command.
 
-<h3>2. Foundations SDK</h3>
+<h3>2. Using Notebooks</h3>
 
-When writing your driver application, you can specify the `.config.yaml` configuration file for your script using the `add_config_path` method in the `config_manager` . 
+When using a notebook such as Jupyter to develop your model code, you can deploy jobs by running any stage that calls the `.run()` function. However, you will first need to specify the deployment environment for your notebook using the `set_environment` function. 
 ```
-from foundations import config_manager
+import foundations
 
-config_manager.add_config_path('config/local_default.config.yaml')
+foundations.set_environment('local')
 ```
-It is recommended that your `.config.yaml` file is not stored within the same directory as the script you're deploying. 
+If choosing to deploy this way, the notebook will have to be situated in the project root directory and any functions imported from relative files will need to be specified accordingly. For more information on setting environments, please refer documentation [here](../set_deployment_env/).
 
 ## Configuration Options
 

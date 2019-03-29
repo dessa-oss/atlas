@@ -126,6 +126,13 @@ PAGES = [
             foundations.stage_connector_wrapper.StageConnectorWrapper.random_search,
             foundations.stage_connector_wrapper.StageConnectorWrapper.grid_search,
         ]
+    },
+        {
+        'page': 'set_deployment_env.md',
+        'all_module_classes': [foundations.config],
+        'functions': [
+            foundations.config.set_environment
+        ]
     }
 ]
 

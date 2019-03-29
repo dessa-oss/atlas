@@ -2,7 +2,7 @@
 
 In this tutorial we will go over how to build and deploy a model using Foundations, as well as demonstrate additional features. To use Foundations to its maximum extent, we recommend seperating any job deployment code from the actual model itself. For this example, we will seperate all model code into a file called model.py and any job deployment code into deploy.py which will just use the functions defined in model.py.
 
-This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code locally; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with `python driver.py`.
+This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code locally; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with the Foundations CLI command: `foundations deploy project_code/driver.py --env=local`.
 
 <h3>Before you start</h3>
 
@@ -54,12 +54,10 @@ For best coding practices we recommend breaking down model code into different s
 
 ## Step 2: Use Foundations to run model code
 
-Create a new notebook called `driver.ipynb` in the `project_code` directory and for the code below. The following `driver.py` file shows how to shows how to use Foundations to run model code.
+Create a new notebook called `driver.ipynb` in the project root directory and add the code below. The following file shows how to shows how to use Foundations to run model code.
 ```python
 import foundations
-from model import incr_by_10, mult
-
-foundations.config_manager.add_config_path('../config/default.local.yaml')
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)
@@ -79,13 +77,8 @@ result.run()
 Let's break it down line by line:
 
 ```python
-foundations.config_manager.add_config_path('../config/default.local.yaml')
-```
-This line specifies the location of the configuration file which Foundations will reference for deployment details of the job. For this tutorial, we will only deploy job in our local environment; however, Foundations supports deploying to remote environments as well which can be specified with different configuration files. More information can be found [here](../configs/) 
-
-```python
 import foundations
-from models.model import incr_by_10, mult
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)
@@ -108,7 +101,16 @@ This behaves the same as above where `result` is now a `stage_object` since it's
 # run the model
 result.run()
 ```
-To execute any stage, we need to invoke `run` function on the stage_object. This step will execute the stage and any dependent stage it needs to invoke. Give it a try!
+To execute any stage, we need to invoke `run` function on the stage_object. This step will execute the stage and any dependent stage it needs to invoke. 
+
+Finally, before deploying the job, we need to specify the deployment environment in the notebook. Before the `.run()` function, we need to run the following line in Jupyter to specify to Foundations what environment to run the job in:
+
+```python
+foundations.set_environment('local')
+```
+This line specifies the location of the configuration file which Foundations will reference for deployment details of the job. For this tutorial, we will only deploy job in our local environment; however, Foundations supports deploying to remote environments as well which can be specified with different configuration files. More information can be found [here](../configs/).
+
+To deploy the job, run the cell containing the `.run()` function. Give it a try!
 
 ## Step 3: Specifying project names for your experiments
 
@@ -179,9 +181,7 @@ Reference the main [start guide](../start_guide/) for a more detailed explanatio
 ```python
 # driver.py
 import foundations
-from model import incr_by_10, mult
-
-foundations.config_manager.add_config_path('../config/default.local.yaml')
+from project_code.model import incr_by_10, mult
 
 incr_by_10 = foundations.create_stage(incr_by_10)
 mult = foundations.create_stage(mult)
