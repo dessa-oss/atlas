@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.extensions.test_fake_redis import TestFakeRedis
+from test.extensions.test_get_ip_address import TestGetIPAddress

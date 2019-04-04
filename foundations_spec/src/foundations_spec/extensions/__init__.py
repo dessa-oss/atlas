@@ -15,3 +15,10 @@ def let_fake_redis():
         redis.flushall()
         return redis
     return _callback
+
+def get_network_adapter(name):
+    import ifaddr
+
+    for adapter in ifaddr.get_adapters():
+        if adapter.name == name:
+            return adapter
