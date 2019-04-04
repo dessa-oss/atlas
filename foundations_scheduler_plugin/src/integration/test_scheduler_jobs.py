@@ -43,24 +43,8 @@ class TestSchedulerJobs(Spec):
         from foundations.deployment_wrapper import DeploymentWrapper
         return DeploymentWrapper(self.deployment)
 
-    @let
-    def redis_ip(self):
-        docker_adapter = self._get_docker_adapter()
-        
-        for ip in docker_adapter.ips:
-            if isinstance(ip.ip, str):
-                return ip.ip
-
-    def _get_docker_adapter(self):
-        import ifaddr
-
-        for adapter in ifaddr.get_adapters():
-            if adapter.name == 'docker0':
-                return adapter
-
     @set_up
     def set_up(self):
-        self.load_config()
         self.deployment.deploy()
         self._wait_for_job_to_complete()
 
@@ -70,16 +54,6 @@ class TestSchedulerJobs(Spec):
     def test_creates_log(self):
         self.assertIn('Finished stage', self.deployment_wrapper.get_job_logs())
     
-    def load_config(self):
-        import os
-        from foundations_contrib.global_state import config_manager
-        config_manager['remote_host'] = 'localhost'
-        config_manager['remote_user'] = 'job-uploader'
-        config_manager['port'] = 31222
-        config_manager['key_path'] = os.path.expanduser('~/.ssh/id_foundations_scheduler')
-        config_manager['code_path'] = '/jobs'
-        config_manager['redis_url'] = 'redis://{}:6379'.format(self.redis_ip)
-
     def _wait_for_job_to_complete(self):
         from time import sleep
 

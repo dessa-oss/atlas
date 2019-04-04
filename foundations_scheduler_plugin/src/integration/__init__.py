@@ -5,4 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
+import integration.config
+
 from integration.test_scheduler_jobs import TestSchedulerJobs
