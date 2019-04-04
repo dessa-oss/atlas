@@ -62,9 +62,9 @@ def _project_listing_implementation(result_end_point):
     }
 
 def _deployment_implementation():
-    from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+    from foundations_scheduler_plugin.job_deployment import JobDeployment
     return {
-        'deployment_type': SFTPJobDeployment
+        'deployment_type': JobDeployment
     }
 
 def _archive_listing_implementation(result_end_point):

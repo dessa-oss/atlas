@@ -68,11 +68,11 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates):
         self.assertEqual(config['constructor_arguments'], [DeploymentSSHBucket, '/Users/ml-developer/projects/archive', '/Users/ml-developer/projects/archive'])
 
     def test_returns_deployment_with_sftp_type(self):
-        from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
+        from foundations_scheduler_plugin.job_deployment import JobDeployment
 
         result_config = self.translator.translate(self._configuration)
         config = result_config['deployment_implementation']
-        self.assertEqual(config['deployment_type'], SFTPJobDeployment)
+        self.assertEqual(config['deployment_type'], JobDeployment)
 
     def test_returns_project_listing_configuration_with_provided_path(self):
         self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
