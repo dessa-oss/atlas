@@ -67,9 +67,8 @@ class TestSchedulerJobs(Spec):
     def test_runs_job(self):
         self.assertEqual('completed', self.deployment_wrapper.get_job_status())
 
-    @skip
     def test_creates_log(self):
-        self.assertIn('Completed', self.deployment_wrapper.get_job_logs())
+        self.assertIn('Finished stage', self.deployment_wrapper.get_job_logs())
     
     def load_config(self):
         import os
