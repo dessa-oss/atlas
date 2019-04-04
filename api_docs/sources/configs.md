@@ -74,7 +74,7 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 
 ### Define Environment 
 
-**job_deployment_env**: specifies what to label the environment as for deploying jobs. You can view all available all environments with the [Foundations CLI](../configs/) command: `foundations info --env`
+**job_deployment_env**: specifies what environment to use for deploying jobs. Currently the supported environments are `local`, `ssh`, `gcp`, `aws`
 
 ### Results Configurations
 
@@ -85,7 +85,7 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 },
 ```
 
-**archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory.
+**archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
 
 **redis_end_point**: redis endpoint where we want to store results for faster reading
 
@@ -97,7 +97,7 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 },
 ```
 
-**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory.
+**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
 
 ### Additional Configurations
 
@@ -123,3 +123,70 @@ For any SSH deployment (including GCP and AWS) to remote addresses, you'll need 
 <h3>log_level</h3>
 
 Allowed values for `log_level` are `INFO`, `ERROR`, and `DEBUG`, just as in the `log_level` option described in the previous section.  Leaving it unset is the same as setting `INFO`.  Setting any other value will disable all logging for all non-job-related processes.
+
+## Sample Configurations
+```yaml
+job_deployment_env: local
+results_config: 
+    archive_end_point: /path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /path/to/the/cache
+
+log_level: ERROR
+```
+
+```yaml
+job_deployment_env: ssh
+results_config: 
+    archive_end_point: /path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /path/to/the/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: ERROR
+```
+
+```yaml
+job_deployment_env: gcp
+results_config: 
+    archive_end_point: /<gcp-bucket>/path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /<gcp-bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: ERROR
+```
+
+```yaml
+job_deployment_env: aws
+results_config: 
+    archive_end_point: /<s3-bucket>/path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: /<s3-bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: ERROR
+```

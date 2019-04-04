@@ -37,7 +37,7 @@ ssh_config:
   key_path: <local/path/to/private/key>
 ```
 
-Here, you will specify the paths of the remote environment for storing cached results, jobs, and redis as well as credentials for SSH, GCP and AWS deployments. More information on the different parameters can be found [here](../configs/#configuration-options).
+Here, you will specify the paths of the remote environment for storing cached results, jobs, and redis as well as credentials for SSH, GCP and AWS deployments. More information on the different parameters and example configuration files can be found [here](../configs/#configuration-options).
 
 ##2. Specify Additional Remote Dependencies
 

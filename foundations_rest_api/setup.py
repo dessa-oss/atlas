@@ -28,6 +28,7 @@ setup(
         'foundations',
         'flask-restful==0.3.6',
         'Flask-Cors==3.0.6',
+        'Werkzeug==0.14.1',
         'pycrypto==2.6.1',
     ],
     packages=find_packages('src'),

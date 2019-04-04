@@ -116,7 +116,7 @@ node {
             }
             ws("${WORKSPACE}/foundations_rest_api/") {
                 stage('Python3 REST API Install Requirements') {
-                    sh "python -m pip install flask flask-restful Flask-Cors"
+                    sh "python -m pip install flask==1.0.2 flask-restful==0.3.6 Flask-Cors==3.0.6 Werkzeug==0.14.1"
                 }
                 ws("${WORKSPACE}/src") {
                     stage('Python3 Foundations REST API Unit Tests') {
