@@ -22,3 +22,10 @@ def get_network_adapter(name):
     for adapter in ifaddr.get_adapters():
         if adapter.name == name:
             return adapter
+
+def get_network_address(adapter_name):
+    network_adapter = get_network_adapter(adapter_name)
+    
+    for ip in network_adapter.ips:
+        if isinstance(ip.ip, str):
+            return ip.ip
