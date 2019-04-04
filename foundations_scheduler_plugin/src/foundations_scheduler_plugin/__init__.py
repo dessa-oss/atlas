@@ -9,7 +9,7 @@ def _inject_config_translate():
     from foundations_internal.global_state import config_translator
     import foundations_scheduler_plugin.config.foundations_scheduler_config_translate as translator
 
-    config_translator.add_translator('foundations_scheduler', translator)
+    config_translator.add_translator('scheduler_plugin', translator)
 
 def _append_module():
     import sys

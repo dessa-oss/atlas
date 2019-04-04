@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import scheduler_acceptance.config.remote_config
 from scheduler_acceptance.test_can_run_job import TestCanRunJob
+from scheduler_acceptance.test_cli_deployment import TestCliDeployment
