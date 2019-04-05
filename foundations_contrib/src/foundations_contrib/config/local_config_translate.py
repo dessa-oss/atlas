@@ -27,6 +27,10 @@ def translate(config):
         'log_level': _log_level(config),
         'shell_command': find_bash(),
         'obfuscate_foundations': _obfuscate_foundations(config),
+        'run_script_environment': {
+            'log_level': _log_level(config)
+        }
+        
     }
 
 def _get_default_archive_end_point():

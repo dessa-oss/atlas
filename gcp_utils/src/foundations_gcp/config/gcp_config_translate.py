@@ -33,6 +33,9 @@ def translate(config):
         'code_path': config['ssh_config']['code_path'],
         'result_path': config['ssh_config']['result_path'],
         'obfuscate_foundations': _obfuscate_foundations(config),
+        'run_script_environment': {
+            'log_level': _log_level(config)
+        }
     }
 
 def _log_level(config):

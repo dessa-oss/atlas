@@ -178,13 +178,4 @@ class TestSSHConfigTranslate(Spec, ConfigTranslates):
         self._configuration['ssh_config']['result_path'] = '/home/foundations/scheduler/result'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['result_path'], '/home/foundations/scheduler/result')
-    
-    def test_returns_run_script_environment_with_log_level_same_as_local_log_level(self):
-        self._configuration['log_level'] = 'DEBUG'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['run_script_environment']['log_level'], 'DEBUG')
-    
-    def test_returns_run_script_environment_with_log_level_same_as_local_log_level_different_level(self):
-        self._configuration['log_level'] = 'INFO'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['run_script_environment']['log_level'], 'INFO')
+
