@@ -12,6 +12,8 @@ from foundations_scheduler_plugin.job_deployment import JobDeployment
 
 class TestJobDeployment(Spec):
 
+    mock_api_wrapper = let_patch_instance('foundations_scheduler_core.kubernetes_api_wrapper.KubernetesApiWrapper')
+
     @let_now
     def mock_bundler_instance(self):
         instance = Mock()
@@ -25,7 +27,7 @@ class TestJobDeployment(Spec):
     def mock_scheduler_instance(self):
         instance = Mock()
         klass = self.patch('foundations_scheduler.scheduler.Scheduler', ConditionalReturn())
-        klass.return_when(instance, self.result_config)
+        klass.return_when(instance, self.mock_api_wrapper, self.result_config)
         return instance
 
     @let

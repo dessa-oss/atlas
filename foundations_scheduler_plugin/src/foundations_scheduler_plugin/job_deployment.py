@@ -12,6 +12,7 @@ class JobDeployment(object):
         from foundations_contrib.global_state import config_manager
         from foundations_contrib.job_bundler import JobBundler
         from foundations_scheduler.scheduler import Scheduler
+        from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
 
         self._config = {}
         self._config.update(config_manager.config())
@@ -20,7 +21,7 @@ class JobDeployment(object):
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
 
-        self._scheduler = Scheduler(self._config)
+        self._scheduler = Scheduler(KubernetesApiWrapper(), self._config)
 
     @staticmethod
     def scheduler_backend():
