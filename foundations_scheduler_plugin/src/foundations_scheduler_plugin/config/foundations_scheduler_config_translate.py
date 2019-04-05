@@ -33,6 +33,9 @@ def translate(config):
         'result_path': config['ssh_config']['result_path'],
         'key_path': config['ssh_config']['key_path'],
         'remote_host': config['ssh_config']['host'],
+        'run_script_environment': {
+            'log_level': _log_level(config)
+        }
     }
 
 def _log_level(config):
