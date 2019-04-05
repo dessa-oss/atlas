@@ -10,6 +10,7 @@ from foundations_spec.helpers import let, set_up, set_up_class, tear_down, tear_
 from foundations_spec.helpers.mock_mixin import MockMixin
 from foundations_spec.helpers.let_mixin import LetMixin
 from foundations_spec.helpers.let_now_mixin import LetNowMixin
+from contextlib import contextmanager
 
 class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
 
@@ -59,6 +60,14 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
         for item in expected:
             if not item in result:
                 raise AssertionError('Expected to find {} in {}'.format(item, result))
+
+    @contextmanager
+    def assert_does_not_raise(self):
+        try:
+            yield
+        except Exception as error:
+            error_class = error.__class__.__name__
+            raise AssertionError("Expected not to raise error, but got {} with '{}'".format(error_class, error))
 
     def _tear_down_methods(self):
         for _, _, function in LetMixin._klass_attributes(self.__class__):

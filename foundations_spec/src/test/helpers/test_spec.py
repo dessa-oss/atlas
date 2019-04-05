@@ -101,3 +101,11 @@ class TestSpec(unittest.TestCase):
         self.MockSpec.tear_down_class_2 = tear_down_class(lambda spec_self: mock2())
         self.spec.tearDownClass()
         mock2.assert_called()
+
+    def test_assert_does_not_raise_raises_assertion_when_error_exists(self):
+        error_data = self.spec.faker.sentence()
+        with self.assertRaises(AssertionError) as error_context:
+            with self.spec.assert_does_not_raise():
+                raise ValueError(error_data)
+
+        self.assertIn("Expected not to raise error, but got ValueError with '{}'".format(error_data), error_context.exception.args)
