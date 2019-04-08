@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_spec.helpers import let
+from foundations_spec import *
 
 class ConfigTranslates(object):
     
@@ -31,12 +31,6 @@ class ConfigTranslates(object):
             'stage_log_archive_implementation',
         ]
     
-    def test_returns_archive_listing_configurations_with_local_type(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['archive_listing_type'], self.listing_type)
-
     def test_returns_project_listing_configurations_with_local_type(self):
         result_config = self.translator.translate(self._configuration)
         config = result_config['project_listing_implementation']

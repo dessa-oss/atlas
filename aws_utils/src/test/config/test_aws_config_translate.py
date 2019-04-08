@@ -49,18 +49,6 @@ class TestAWSConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
             'result_path': '',
         }
 
-    def test_returns_archive_listing_configuration_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'path/to/foundations/bucket'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['path/to/foundations/bucket/archive'])
-
-    def test_returns_archive_listing_configuration_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['ml-developer/projects/archive'])
-
     def test_returns_deployment_with_local_type(self):
         from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
 

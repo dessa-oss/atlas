@@ -70,13 +70,11 @@ def _deployment_implementation():
     }
 
 def _archive_listing_implementation(result_end_point):
-    from foundations_gcp.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
+    from foundations_contrib.config.mixin import storage_implementation
+    from foundations_gcp.gcp_bucket import GCPBucket
+    from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_listing_type': GCPPipelineArchiveListing,
-        'constructor_arguments': [archive_path]
-    }
+    return storage_implementation('archive_listing_type', BucketPipelineListing, result_end_point, GCPBucket)
 
 def _archive_implementation(result_end_point):
     from foundations_contrib.config.mixin import archive_implementation
