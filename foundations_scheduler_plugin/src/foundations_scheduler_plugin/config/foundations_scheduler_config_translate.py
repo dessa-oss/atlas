@@ -71,26 +71,17 @@ def _deployment_implementation():
     }
 
 def _archive_listing_implementation(result_end_point):
-    from foundations.bucket_pipeline_listing import BucketPipelineListing
+    from foundations_contrib.config.mixin import storage_implementation
     from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
+    from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_listing_type': BucketPipelineListing,
-        'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
-    }
+    return storage_implementation('archive_listing_type', BucketPipelineListing, result_end_point, DeploymentSSHBucket.bucket_from_single_path)
 
 def _archive_implementation(result_end_point):
-    from foundations.utils import file_archive_name
-    from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
-    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+    from foundations_contrib.config.mixin import archive_implementation
     from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_type': BucketPipelineArchive,
-        'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
-    }
-
+    return archive_implementation(result_end_point, DeploymentSSHBucket.bucket_from_single_path)
+    
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)

@@ -7,10 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
+from foundations_internal.testing.shared_examples.test_bucket_from_scheme import TestBucketFromScheme
+
 
 from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
-class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates):
+class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
     
     @let
     def translator(self):
@@ -31,6 +33,11 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates):
     def cache_type(self):
         from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
         return LocalFileSystemCacheBackend
+    
+    @let
+    def bucket_type(self):
+        from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
+        return DeploymentSSHBucket.bucket_from_single_path
 
     @set_up
     def ssh_set_up(self):
@@ -40,32 +47,6 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates):
             'code_path': '',
             'result_path': '',
         }
-
-    def test_returns_archive_configurations_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], [DeploymentSSHBucket, '/path/to/foundations/home/archive', '/path/to/foundations/home/archive'])
-
-    def test_returns_archive_configurations_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/Users/ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], [DeploymentSSHBucket, '/Users/ml-developer/projects/archive', '/Users/ml-developer/projects/archive'])
-
-    def test_returns_archive_listing_configuration_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], [DeploymentSSHBucket, '/path/to/foundations/home/archive', '/path/to/foundations/home/archive'])
-
-    def test_returns_archive_listing_configuration_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/Users/ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], [DeploymentSSHBucket, '/Users/ml-developer/projects/archive', '/Users/ml-developer/projects/archive'])
 
     def test_returns_deployment_with_sftp_type(self):
         from foundations_scheduler_plugin.job_deployment import JobDeployment
