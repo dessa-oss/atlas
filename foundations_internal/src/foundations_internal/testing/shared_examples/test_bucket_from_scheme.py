@@ -89,7 +89,7 @@ class TestBucketFromScheme(object):
         config = result_config['archive_listing_implementation']
         self.assertEqual([AWSBucket, self.fake_bucket_path + '/archive'], config['constructor_arguments'])
 
-    def test_returns_archive_configurations_with_gcp_scheme(self):
+    def test_returns_archive_listing_configurations_with_gcp_scheme(self):
         from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
 
         self._configuration['results_config']['archive_end_point'] = self.gcp_bucket_path
