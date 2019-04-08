@@ -10,6 +10,7 @@ from mock import Mock
 
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_mock, let_patch_mock, set_up
+from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
 class TestDeploymentSSHBucket(Spec):
     
@@ -30,8 +31,15 @@ class TestDeploymentSSHBucket(Spec):
 
     @let
     def context_bucket(self):
-        from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
         return DeploymentSSHBucket(self.remote_path, self.local_file_system_path)
+    
+    @let
+    def fake_path(self):
+        return self.faker.uri_path()
+
+    @let
+    def fake_path_two(self):
+        return self.faker.uri_path()
 
     local_bucket_constructor = let_patch_mock('foundations_ssh.sftp_bucket.SFTPBucket')    
     deploy_bucket_constructor = let_patch_mock('foundations_contrib.local_file_system_bucket.LocalFileSystemBucket')
@@ -177,3 +185,15 @@ class TestDeploymentSSHBucket(Spec):
         result = self.context_bucket.move(self.source, self.destination)
         self.deploy_bucket.move.assert_called_with(self.source, self.destination)
         self.assertEqual(self.dummy, result)
+    
+    def test_bucket_from_single_path_returns_bucket_with_path_used_for_both_local_and_remote(self):
+        self.assertEqual(DeploymentSSHBucket(self.fake_path, self.fake_path), DeploymentSSHBucket.bucket_from_single_path(self.fake_path))
+
+    def test_buckets_are_equal_when_all_paths_are_equal(self):
+        self.assertEqual(DeploymentSSHBucket(self.fake_path, self.fake_path_two), DeploymentSSHBucket(self.fake_path, self.fake_path_two))
+
+    def test_buckets_are_not_equal_when_sftp_paths_different(self):
+        self.assertNotEqual(DeploymentSSHBucket(self.fake_path, self.fake_path_two), DeploymentSSHBucket(self.fake_path_two, self.fake_path_two))
+
+    def test_buckets_are_not_equal_when_file_system_path_are_different(self):
+        self.assertNotEqual(DeploymentSSHBucket(self.fake_path, self.fake_path_two), DeploymentSSHBucket(self.fake_path, self.fake_path))
