@@ -79,13 +79,10 @@ def _archive_listing_implementation(result_end_point):
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_gcp.gcp_pipeline_archive import GCPPipelineArchive
+    from foundations_contrib.config.mixin import archive_implementation
+    from foundations_gcp.gcp_bucket import GCPBucket
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_type': GCPPipelineArchive,
-        'constructor_arguments': [archive_path]
-    }
+    return archive_implementation(result_end_point, GCPBucket)
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)

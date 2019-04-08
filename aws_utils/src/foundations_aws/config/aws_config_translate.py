@@ -79,13 +79,10 @@ def _archive_listing_implementation(result_end_point):
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_aws.aws_pipeline_archive import AWSPipelineArchive
+    from foundations_contrib.config.mixin import archive_implementation
+    from foundations_aws.aws_bucket import AWSBucket
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_type': AWSPipelineArchive,
-        'constructor_arguments': [archive_path]
-    }
+    return archive_implementation(result_end_point, AWSBucket)
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)

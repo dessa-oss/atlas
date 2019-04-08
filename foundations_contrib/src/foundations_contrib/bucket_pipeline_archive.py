@@ -5,8 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.utils import file_archive_name
-from foundations.utils import file_archive_name_with_additional_prefix
+from foundations_contrib.utils import file_archive_name
+from foundations_contrib.utils import file_archive_name_with_additional_prefix
 
 
 class BucketPipelineArchive(object):

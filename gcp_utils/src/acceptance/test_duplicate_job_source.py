@@ -48,7 +48,8 @@ class TestDuplicateJobSource(unittest.TestCase):
         SimpleBucketWorker(make_code_bucket(), make_result_bucket()).run_once(set())
 
     def _make_deployment(self, stage, **kwargs):
-        from foundations import Job, JobSourceBundle, DeploymentWrapper, BucketJobDeployment
+        from foundations import Job, DeploymentWrapper, BucketJobDeployment
+        from foundations_contrib.job_source_bundle import JobSourceBundle
         from uuid import uuid4
         from acceptance.config import make_code_bucket, make_result_bucket
 

@@ -80,34 +80,10 @@ def _archive_listing_implementation(result_end_point):
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_contrib.config.bucket_type_fetcher import for_scheme
-    from foundations_contrib.local_file_system_pipeline_archive import LocalFileSystemPipelineArchive
-    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
-    from foundations_aws.aws_bucket import AWSBucket
+    from foundations_contrib.config.mixin import archive_implementation
+    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
-    archive_path = join(result_end_point, 'archive')
-    scheme = _parse_scheme(result_end_point)
-    bucket_type = for_scheme(scheme, None)
-
-    if bucket_type:
-        return {
-            'archive_type': BucketPipelineArchive,
-            'constructor_arguments': [bucket_type, archive_path[5:]]
-        }
-
-    return {
-        'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': [archive_path]
-    }
+    return archive_implementation(result_end_point, LocalFileSystemBucket)
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)
-
-def _parse_scheme(uri):
-    from urllib.parse import urlparse
-
-    scheme = urlparse(uri).scheme
-    if scheme == '':
-        return None
-
-    return scheme

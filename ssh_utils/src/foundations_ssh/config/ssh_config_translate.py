@@ -81,14 +81,10 @@ def _archive_listing_implementation(result_end_point):
     }
 
 def _archive_implementation(result_end_point):
-    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+    from foundations_contrib.config.mixin import archive_implementation
     from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
-    archive_path = join(result_end_point, 'archive')
-    return {
-        'archive_type': BucketPipelineArchive,
-        'constructor_arguments': [DeploymentSSHBucket, archive_path, archive_path]
-    }
+    return archive_implementation(result_end_point, DeploymentSSHBucket.bucket_from_single_path)
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)

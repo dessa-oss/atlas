@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations.utils import tgz_archive_without_extension
 from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 from foundations_contrib.change_directory import ChangeDirectory
+from foundations_contrib.simple_tempfile import SimpleTempfile
 
 
 class SimpleBucketWorker(object):
@@ -48,7 +49,6 @@ class SimpleBucketWorker(object):
 
     def _bundle_job_results(self, archive_name):
         import tarfile
-        from foundations import SimpleTempfile
 
         job_name = self._job_name(archive_name)
         with SimpleTempfile('w+b') as temp_file:
@@ -76,7 +76,6 @@ class SimpleBucketWorker(object):
 
     def _extract_archive(self, archive_name):
         import tarfile
-        from foundations import SimpleTempfile
 
         with SimpleTempfile('w+b') as temp_file:
             self._code_bucket.download_to_file(archive_name, temp_file.file)

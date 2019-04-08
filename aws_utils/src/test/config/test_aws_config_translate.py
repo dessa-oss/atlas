@@ -11,8 +11,9 @@ from mock import Mock
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, set_up
 from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
+from foundations_internal.testing.shared_examples.test_bucket_from_scheme import TestBucketFromScheme
 
-class TestAWSConfigTranslate(Spec, ConfigTranslates):
+class TestAWSConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
 
     @let
     def translator(self):
@@ -33,6 +34,11 @@ class TestAWSConfigTranslate(Spec, ConfigTranslates):
     def cache_type(self):
         from foundations_aws.aws_cache_backend import AWSCacheBackend
         return AWSCacheBackend
+    
+    @let
+    def bucket_type(self):
+        from foundations_aws.aws_bucket import AWSBucket
+        return AWSBucket
 
     @set_up
     def set_up(self):
@@ -42,20 +48,6 @@ class TestAWSConfigTranslate(Spec, ConfigTranslates):
             'code_path': '',
             'result_path': '',
         }
-
-    def test_returns_archive_configurations_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'path/to/foundations/bucket'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['path/to/foundations/bucket/archive'])
-
-    def test_returns_archive_configurations_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['ml-developer/projects/archive'])
 
     def test_returns_archive_listing_configuration_with_provided_path(self):
         self._configuration['results_config']['archive_end_point'] = 'path/to/foundations/bucket'

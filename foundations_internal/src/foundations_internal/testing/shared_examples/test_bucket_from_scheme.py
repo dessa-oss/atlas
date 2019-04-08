@@ -56,3 +56,19 @@ class TestBucketFromScheme(object):
         for archive_type in self._archive_types:
             config = result_config[archive_type]
             self.assertEqual([GCPBucket, self.fake_bucket_path + '/archive'], config['constructor_arguments'])
+    
+    def test_returns_archive_configurations_with_default(self):
+        from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+
+        self._configuration['results_config']['archive_end_point'] = self.fake_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        for archive_type in self._archive_types:
+            config = result_config[archive_type]
+            self.assertEqual(BucketPipelineArchive, config['archive_type'])
+    
+    def test_returns_constructor_arguments_with_default(self):
+        self._configuration['results_config']['archive_end_point'] = self.fake_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        for archive_type in self._archive_types:
+            config = result_config[archive_type]
+            self.assertEqual([self.bucket_type, self.fake_bucket_path + '/archive'], config['constructor_arguments'])

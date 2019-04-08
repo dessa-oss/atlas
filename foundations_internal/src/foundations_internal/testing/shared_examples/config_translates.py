@@ -31,12 +31,6 @@ class ConfigTranslates(object):
             'stage_log_archive_implementation',
         ]
     
-    def test_returns_archive_configurations_with_correct_type(self):
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['archive_type'], self.archive_type)
-
     def test_returns_archive_listing_configurations_with_local_type(self):
         self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
         result_config = self.translator.translate(self._configuration)

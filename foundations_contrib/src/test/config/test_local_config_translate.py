@@ -11,7 +11,7 @@ from mock import Mock, patch
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_patch_mock, set_up
 from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
-from test.shared_examples.test_bucket_from_scheme import TestBucketFromScheme
+from foundations_internal.testing.shared_examples.test_bucket_from_scheme import TestBucketFromScheme
 
 class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
 
@@ -34,6 +34,11 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
     def cache_type(self):
         from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
         return LocalFileSystemCacheBackend
+    
+    @let
+    def bucket_type(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+        return LocalFileSystemBucket
 
     expanduser = let_patch_mock('os.path.expanduser')
 
@@ -48,46 +53,6 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
     def test_ensure_expandpath_called_properly(self):
         result_config = self.translator.translate(self._configuration)
         self.expanduser.assert_called_with('~')
-
-    def test_returns_archive_configurations_with_default_path(self):
-        self.expanduser.return_value = '/home/lou'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['/home/lou/.foundations/job_data/archive'])
-
-    def test_returns_archive_configurations_with_default_path_different_home(self):
-        self.expanduser.return_value = '/home/hana'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/archive'])
-
-    def test_returns_archive_configurations_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['/path/to/foundations/home/archive'])
-
-    def test_returns_archive_configurations_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/Users/ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        for archive_type in self._archive_types:
-            config = result_config[archive_type]
-            self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/projects/archive'])
-
-    def test_returns_archive_listing_configuration_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/path/to/foundations/home/archive'])
-
-    def test_returns_archive_listing_configuration_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/Users/ml-developer/projects'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['archive_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/projects/archive'])
 
     def test_returns_deployment_with_local_type(self):
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
