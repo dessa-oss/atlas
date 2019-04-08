@@ -22,10 +22,12 @@ def _config():
         return
 
     archive_implementation = {
-        'archive_type': LocalFileSystemPipelineArchive
+        'archive_type': LocalFileSystemPipelineArchive,
+        'constructor_arguments': ['/archive']
     }
     config_manager['archive_listing_implementation'] = {
-        'archive_listing_type': LocalFileSystemPipelineListing
+        'archive_listing_type': LocalFileSystemPipelineListing,
+        'constructor_arguments': ['/archive']
     }
     config_manager['stage_log_archive_implementation'] = archive_implementation
     config_manager['persisted_data_archive_implementation'] = archive_implementation
