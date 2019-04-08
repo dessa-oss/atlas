@@ -11,8 +11,9 @@ from mock import Mock, patch
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_patch_mock, set_up
 from foundations_internal.testing.shared_examples.config_translates import ConfigTranslates
+from test.shared_examples.test_bucket_from_scheme import TestBucketFromScheme
 
-class TestLocalConfigTranslate(Spec, ConfigTranslates):
+class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
 
     @let
     def translator(self):
