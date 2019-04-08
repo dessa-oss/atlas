@@ -51,6 +51,14 @@ def _cache_implementation(config):
         'constructor_arguments': [cache_path]
     }
 
+def _cache_implementation(config):
+    from foundations_contrib.config.mixin import storage_implementation
+    from foundations_contrib.bucket_cache_backend import BucketCacheBackend
+    from foundations_aws.aws_bucket import AWSBucket
+
+    cache_end_point = config['cache_config']['end_point']
+    return storage_implementation('cache_type', BucketCacheBackend, cache_end_point, AWSBucket)
+
 def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
 

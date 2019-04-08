@@ -45,11 +45,6 @@ class ConfigTranslates(object):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://11.22.33.44:9738')
 
-    def test_returns_cache_configurations_with_local_type(self):
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['cache_implementation']
-        self.assertEqual(config['cache_type'], self.cache_type)
-
     @let
     def shell_command(self):
         return self.patch('foundations_contrib.helpers.shell.find_bash')

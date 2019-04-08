@@ -42,14 +42,12 @@ def _log_level(config):
     return config.get('log_level', 'INFO')
 
 def _cache_implementation(config):
-    from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
+    from foundations_contrib.config.mixin import storage_implementation
+    from foundations_contrib.bucket_cache_backend import BucketCacheBackend
+    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
     cache_end_point = config['cache_config']['end_point']
-    cache_path = join(cache_end_point, 'cache')
-    return {
-        'cache_type': LocalFileSystemCacheBackend,
-        'constructor_arguments': [cache_path]
-    }
+    return storage_implementation('cache_type', BucketCacheBackend, cache_end_point, LocalFileSystemBucket)
 
 def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')

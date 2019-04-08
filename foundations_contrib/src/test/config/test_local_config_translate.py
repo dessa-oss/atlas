@@ -85,18 +85,6 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         config = result_config['cache_implementation']
         self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/cache'])
 
-    def test_returns_cache_configuration_with_provided_path(self):
-        self._configuration['cache_config']['end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['cache_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/path/to/foundations/home/cache'])
-
-    def test_returns_cache_configuration_with_provided_path_different_path(self):
-        self._configuration['cache_config']['end_point'] = '/Users/ml-developer'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['cache_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/cache'])
-
     def test_returns_log_level_configured_to_default(self):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'INFO')
