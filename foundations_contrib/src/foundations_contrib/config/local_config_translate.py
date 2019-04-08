@@ -45,7 +45,12 @@ def _log_level(config):
 def _cache_implementation(config):
     from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
 
-    cache_end_point = config['cache_config'].get('end_point', _get_default_archive_end_point())
+    cache_config = config['cache_config']
+    if 'end_point' in cache_config:
+        cache_end_point = cache_config['end_point']
+    else:
+        cache_end_point = _get_default_archive_end_point()
+
     cache_path = join(cache_end_point, 'cache')
     return {
         'cache_type': LocalFileSystemCacheBackend,
