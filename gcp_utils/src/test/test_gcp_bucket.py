@@ -149,7 +149,7 @@ class TestGCPBucket(Spec):
             self._create_mock_object(self.file_name)
         ])
         result = list(self.gcp_bucket.list_files('*'))
-        expected_result = ['/' + self.file_name]
+        expected_result = [self.file_name]
         self.assertEqual(expected_result, result)
 
     def test_list_files_returns_multiple_files(self):
@@ -159,8 +159,8 @@ class TestGCPBucket(Spec):
         ])
         result = list(self.gcp_bucket.list_files('*'))
         expected_result = [
-            '/' + self.file_name,
-            '/' + self.other_file_name
+            self.file_name,
+            self.other_file_name
         ]
         self.assertEqual(expected_result, result)    
 
@@ -171,7 +171,7 @@ class TestGCPBucket(Spec):
         ])
         result = list(self.gcp_bucket.list_files('file_one'))
         expected_result = [
-            '/file_one'
+            'file_one'
         ]
         self.assertEqual(expected_result, result)
     
@@ -188,7 +188,7 @@ class TestGCPBucket(Spec):
         ], prefix=self.bucket_postfix + '/')
         result = list(gcp_bucket.list_files('file_one'))
         expected_result = [
-            '/file_one'
+            'file_one'
         ]
         self.assertEqual(expected_result, result)
     
@@ -225,7 +225,7 @@ class TestGCPBucket(Spec):
         ])
         result = list(self.gcp_bucket.list_files('*.exe'))
         expected_result = [
-            '/file_two.exe'
+            'file_two.exe'
         ]
         self.assertEqual(expected_result, result)
 
