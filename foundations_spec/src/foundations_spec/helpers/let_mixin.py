@@ -13,9 +13,7 @@ class LetMixin(object):
 
         lets = self.__class__._lets
         if name in lets:
-            value = lets[name].evaluate(self)
-            setattr(self, name, value)
-            return value
+            return lets[name].assign_value(name, self)
 
         raise AttributeError(self._missing_attribute_message(name))
 

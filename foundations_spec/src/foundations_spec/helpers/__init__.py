@@ -8,12 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from unittest import skip
 from mock import call, Mock
 
-class Callback(object):
-    def __init__(self, function):
-        self._function = function
-
-    def evaluate(self, other_self):
-        return self._function(other_self)
+from foundations_spec.helpers.callback import Callback
+from foundations_spec.helpers.let import let
 
 class set_up(Callback):
     pass 
@@ -25,9 +21,6 @@ class tear_down(Callback):
     pass 
 
 class tear_down_class(Callback):
-    pass
-
-class let(Callback):
     pass
 
 class let_now(let):
