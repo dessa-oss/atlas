@@ -81,3 +81,8 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'DEBUG')
+
+    def test_supports_missing_ssh_config(self):
+        del self._configuration['ssh_config']
+        with self.assert_does_not_raise():
+            result_config = self.translator.translate(self._configuration)

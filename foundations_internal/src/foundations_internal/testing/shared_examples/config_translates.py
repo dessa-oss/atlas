@@ -18,6 +18,12 @@ class ConfigTranslates(object):
             'cache_config': {
                 'end_point': '',
             },
+            'ssh_config': {
+                'host': '',
+                'key_path': '',
+                'code_path': '',
+                'result_path': '',
+            }
         }
 
     @let
@@ -30,6 +36,31 @@ class ConfigTranslates(object):
             'provenance_archive_implementation',
             'stage_log_archive_implementation',
         ]
+    
+    @let
+    def fake_user(self):
+        return self.faker.last_name()
+
+    @let
+    def fake_ip(self):
+        return self.faker.ipv4()
+
+    @let
+    def fake_port(self):
+        return self.faker.random_number()
+
+    @let
+    def fake_key_path(self):
+        return self.faker.uri_path()
+    
+    @let
+    def fake_code_path(self):
+        return self.faker.uri_path()
+    
+    @let
+    def fake_result_path(self):
+        return self.faker.uri_path()
+
 
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)
@@ -77,3 +108,41 @@ class ConfigTranslates(object):
         self._configuration['log_level'] = 'INFO'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['run_script_environment']['log_level'], 'INFO')
+
+    def test_returns_ssh_user_default_user(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_user'], 'foundations')
+
+    def test_returns_ssh_user(self):
+        self._configuration['ssh_config']['user'] = self.fake_user
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_user'], self.fake_user)
+    
+    def test_returns_host(self):
+        self._configuration['ssh_config']['host'] = self.fake_ip
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_host'], self.fake_ip)
+    
+    def test_returns_port_default_port(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['port'], 22)
+    
+    def test_returns_port(self):
+        self._configuration['ssh_config']['port'] = self.fake_port
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['port'], self.fake_port)
+    
+    def test_returns_key_path(self):
+        self._configuration['ssh_config']['key_path'] = self.fake_key_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['key_path'], self.fake_key_path)
+
+    def test_returns_code_path(self):
+        self._configuration['ssh_config']['code_path'] = self.fake_code_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['code_path'], self.fake_code_path)
+    
+    def test_returns_result_path(self):
+        self._configuration['ssh_config']['result_path'] = self.fake_result_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['result_path'], self.fake_result_path)

@@ -12,7 +12,7 @@ def translate(config):
 
     result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
-    return {
+    result = {
         'artifact_archive_implementation': _archive_implementation(result_end_point),
         'job_source_archive_implementation': _archive_implementation(result_end_point),
         'miscellaneous_archive_implementation': _archive_implementation(result_end_point),
@@ -30,8 +30,17 @@ def translate(config):
         'run_script_environment': {
             'log_level': _log_level(config)
         }
-        
     }
+    if 'ssh_config' in config:
+        result.update({
+            'remote_user': config['ssh_config'].get('user', 'foundations'),
+            'code_path': config['ssh_config']['code_path'],
+            'port': config['ssh_config'].get('port', 22),
+            'result_path': config['ssh_config']['result_path'],
+            'key_path': config['ssh_config']['key_path'],
+            'remote_host': config['ssh_config']['host'],
+        })
+    return result 
 
 def _get_default_archive_end_point():
     from os.path import expanduser
