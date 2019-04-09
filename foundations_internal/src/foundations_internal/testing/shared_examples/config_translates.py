@@ -30,11 +30,6 @@ class ConfigTranslates(object):
             'provenance_archive_implementation',
             'stage_log_archive_implementation',
         ]
-    
-    def test_returns_project_listing_configurations_with_local_type(self):
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['project_listing_type'], self.listing_type)
 
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)

@@ -97,6 +97,30 @@ class TestBucketFromScheme(object):
         config = result_config['archive_listing_implementation']
         self.assertEqual(BucketPipelineListing, config['archive_listing_type'])
 
+    def test_returns_project_listing_configurations_with_s3_scheme(self):
+        from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
+
+        self._configuration['results_config']['archive_end_point'] = self.s3_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['project_listing_implementation']
+        self.assertEqual(BucketPipelineListing, config['project_listing_type'])
+
+    def test_returns_project_listing_configurations_constructor_arguments_with_s3_scheme(self):
+        from foundations_aws.aws_bucket import AWSBucket
+
+        self._configuration['results_config']['archive_end_point'] = self.s3_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['project_listing_implementation']
+        self.assertEqual([AWSBucket, self.fake_bucket_path + '/projects'], config['constructor_arguments'])
+
+    def test_returns_project_listing_configurations_with_gcp_scheme(self):
+        from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
+
+        self._configuration['results_config']['archive_end_point'] = self.gcp_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['project_listing_implementation']
+        self.assertEqual(BucketPipelineListing, config['project_listing_type'])
+
     def test_returns_cache_configurations_with_s3_scheme(self):
         from foundations_contrib.bucket_cache_backend_for_config import BucketCacheBackendForConfig
 

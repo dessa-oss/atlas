@@ -61,18 +61,6 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         config = result_config['deployment_implementation']
         self.assertEqual(config['deployment_type'], LocalShellJobDeployment)
 
-    def test_returns_project_listing_configuration_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/path/to/foundations/home'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/path/to/foundations/home/projects'])
-
-    def test_returns_project_listing_configuration_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = '/Users/ml-developer'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/Users/ml-developer/projects'])
-
     def test_returns_cache_with_default_path(self):
         self.expanduser.return_value = '/home/lou'
         result_config = self.translator.translate(self._configuration)

@@ -52,13 +52,10 @@ def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
 
 def _project_listing_implementation(result_end_point):
-    from foundations_gcp.gcp_pipeline_archive_listing import GCPPipelineArchiveListing
+    from foundations_contrib.config.mixin import project_listing_implementation
+    from foundations_gcp.gcp_bucket import GCPBucket
 
-    project_path = join(result_end_point, 'projects')
-    return {
-        'project_listing_type': GCPPipelineArchiveListing,
-        'constructor_arguments': [project_path]
-    }
+    return project_listing_implementation(result_end_point, GCPBucket)
 
 def _deployment_implementation():
     from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
@@ -67,11 +64,10 @@ def _deployment_implementation():
     }
 
 def _archive_listing_implementation(result_end_point):
-    from foundations_contrib.config.mixin import storage_implementation
+    from foundations_contrib.config.mixin import archive_listing_implementation
     from foundations_gcp.gcp_bucket import GCPBucket
-    from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
 
-    return storage_implementation('archive_listing_type', BucketPipelineListing, result_end_point, GCPBucket)
+    return archive_listing_implementation(result_end_point, GCPBucket)
 
 def _archive_implementation(result_end_point):
     from foundations_contrib.config.mixin import archive_implementation

@@ -56,18 +56,6 @@ class TestGCPConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         config = result_config['deployment_implementation']
         self.assertEqual(config['deployment_type'], SFTPJobDeployment)
 
-    def test_returns_project_listing_configuration_with_provided_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'path/to/foundations/bucket'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['path/to/foundations/bucket/projects'])
-
-    def test_returns_project_listing_configuration_with_provided_path_different_path(self):
-        self._configuration['results_config']['archive_end_point'] = 'ml-developer'
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['project_listing_implementation']
-        self.assertEqual(config['constructor_arguments'], ['ml-developer/projects'])
-
     def test_returns_log_level_configured_to_default(self):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'INFO')
