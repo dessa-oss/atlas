@@ -5,31 +5,52 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
+def ssh_configuration(config):
+    return {
+        'remote_user': config['ssh_config'].get('user', 'foundations'),
+        'code_path': config['ssh_config']['code_path'],
+        'port': config['ssh_config'].get('port', 22),
+        'result_path': config['ssh_config']['result_path'],
+        'key_path': config['ssh_config']['key_path'],
+        'remote_host': config['ssh_config']['host'],
+    }
+
+
 def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
     return _storage_implementation('archive_type', BucketPipelineArchive, 'archive', result_end_point, default_bucket_type)
-    
+
+
 def archive_listing_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
     return _storage_implementation('archive_listing_type', BucketPipelineListing, 'archive', result_end_point, default_bucket_type)
-    
+
+
 def project_listing_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
     return _storage_implementation('project_listing_type', BucketPipelineListing, 'projects', result_end_point, default_bucket_type)
-    
+
+
 def cache_implementation(cache_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
     from foundations_contrib.bucket_cache_backend_for_config import BucketCacheBackendForConfig
 
     return _storage_implementation('cache_type', BucketCacheBackendForConfig, 'cache', cache_end_point, default_bucket_type)
 
+
 def _storage_implementation(type_key, type_value, type_name, result_end_point, default_bucket_type):
-    bucket_type, uri = _parse_bucket_type_and_uri(type_name, result_end_point, default_bucket_type)
+    bucket_type, uri = _parse_bucket_type_and_uri(
+        type_name,
+        result_end_point,
+        default_bucket_type
+    )
 
     return {
         type_key: type_value,
         'constructor_arguments': [bucket_type, uri.netloc + uri.path]
     }
+
 
 def _parse_bucket_type_and_uri(type_name, result_end_point, default_bucket_type):
     from os.path import join

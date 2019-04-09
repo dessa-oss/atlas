@@ -9,6 +9,7 @@ from os.path import join
 
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
+    from foundations_contrib.config.mixin import ssh_configuration
 
     result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
@@ -32,14 +33,7 @@ def translate(config):
         }
     }
     if 'ssh_config' in config:
-        result.update({
-            'remote_user': config['ssh_config'].get('user', 'foundations'),
-            'code_path': config['ssh_config']['code_path'],
-            'port': config['ssh_config'].get('port', 22),
-            'result_path': config['ssh_config']['result_path'],
-            'key_path': config['ssh_config']['key_path'],
-            'remote_host': config['ssh_config']['host'],
-        })
+        result.update(ssh_configuration(config))
     return result 
 
 def _get_default_archive_end_point():
