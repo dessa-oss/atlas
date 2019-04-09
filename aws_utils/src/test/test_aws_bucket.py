@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import unittest
 from mock import Mock
 
-from foundations_spec.helpers import let_patch_mock, let_mock, let, set_up
-from foundations_spec.helpers.spec import Spec
+from foundations_spec import *
 
+from foundations_aws.aws_bucket import AWSBucket
 
 class TestAWSBucket(Spec):
 
@@ -57,19 +57,93 @@ class TestAWSBucket(Spec):
         'foundations_aws.global_state.connection_manager'
     )
     connection = let_mock()
+    mock_file = let_mock()
+
+    @let
+    def file_name(self):
+        return self.faker.name()
+
+    @let
+    def data(self):
+        return self.faker.sha256()
+
+    @let
+    def data_body(self):
+        mock = Mock()
+        mock.read.return_value = self.data
+        mock.iter_chunks.return_value = [self.data]
+        return mock
+
+    @let
+    def bucket_prefix(self):
+        return self.faker.name()
+
+    @let
+    def bucket_postfix(self):
+        return self.faker.uri_path()
+
+    @let
+    def bucket_name_with_slashes(self):
+        return self.bucket_prefix + '/' + self.bucket_postfix
+
+    @let
+    def upload_file_name_with_slashes(self):
+        return self.bucket_postfix + '/' + self.file_name
 
     @let
     def bucket(self):
-        from foundations_aws.aws_bucket import AWSBucket
         return AWSBucket(self.bucket_path)
+
+    @let
+    def bucket_with_slashes(self):
+        return AWSBucket(self.bucket_name_with_slashes)
 
     @let
     def bucket_path(self):
         return 'testing-bucket'
+    
+    @let
+    def source_path(self):
+        return self.faker.name()
+    
+    @let
+    def source_path_with_slashes(self):
+        return self.bucket_postfix + '/' + self.source_path
 
     @set_up
     def set_up(self):
         self.connection_manager.bucket_connection.return_value = self.connection
+
+    def test_upload_from_string_uploads_data_to_bucket_with_prefix(self):
+        self.bucket_with_slashes.upload_from_string(self.file_name, self.data)
+        self.connection.put_object.assert_called_with(Bucket=self.bucket_prefix, Key=self.upload_file_name_with_slashes, Body=self.data)
+
+    def test_exists_returns_true_when_file_exists_with_prefix(self):
+        self.bucket_with_slashes.exists(self.file_name)
+        self.connection.head_object.assert_called_with(Bucket=self.bucket_prefix, Key=self.upload_file_name_with_slashes)
+
+    def test_download_as_string_uploads_data_to_bucket_with_prefix(self):
+        self.connection.get_object = ConditionalReturn()
+        self.connection.get_object.return_when({'Body': self.data_body}, Bucket=self.bucket_prefix, Key=self.upload_file_name_with_slashes)
+
+        result = self.bucket_with_slashes.download_as_string(self.file_name)
+        self.assertEqual(self.data, result)
+    
+    def test_download_to_file_uploads_data_to_bucket_with_prefix(self):
+        self.connection.get_object = ConditionalReturn()
+        self.connection.get_object.return_when({'Body': self.data_body}, Bucket=self.bucket_prefix, Key=self.upload_file_name_with_slashes)
+
+        result = self.bucket_with_slashes.download_to_file(self.file_name, self.mock_file)
+        self.mock_file.write.assert_called_with(self.data)
+
+    def test_remove_removes_prefixed_files(self):
+        self.bucket_with_slashes.remove(self.file_name)
+        self.connection.delete_object.assert_called_with(Bucket=self.bucket_prefix, Key=self.upload_file_name_with_slashes)
+
+    def test_move_moves_prefixed_files(self):
+        self.bucket_with_slashes.move(self.source_path, self.file_name)
+        source_info = {'Bucket': self.bucket_prefix, 'Key': self.source_path_with_slashes}
+        self.connection.copy_object.assert_called_with(Bucket=self.bucket_prefix, CopySource=source_info, Key=self.upload_file_name_with_slashes)
 
     def test_list_files_returns_empty(self):
         self.connection.list_objects_v2.side_effect = self.MockListing(
@@ -134,6 +208,14 @@ class TestAWSBucket(Spec):
             ['some_stuff_here', 'no_stuff_there', 'some_more_stuff_here']
         )
         self.assertEqual(['some_stuff_here', 'some_more_stuff_here'], self._fetch_listing('some_*_here'))
+
+    def test_list_files_supports_prefixes(self):
+        self.connection.list_objects_v2.side_effect = self.MockListing(
+            self.bucket_prefix,
+            [self.upload_file_name_with_slashes]
+        )
+        result = list(self.bucket_with_slashes.list_files('*'))
+        self.assertEqual([self.file_name], result)
 
     def _fetch_listing(self, pathname):
         generator = self.bucket.list_files(pathname)
