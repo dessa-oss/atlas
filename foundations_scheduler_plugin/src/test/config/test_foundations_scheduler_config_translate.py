@@ -54,12 +54,3 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucket
         result_config = self.translator.translate(self._configuration)
         config = result_config['deployment_implementation']
         self.assertEqual(config['deployment_type'], JobDeployment)
-
-    def test_returns_log_level_configured_to_default(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['log_level'], 'INFO')
-
-    def test_returns_log_level_configured(self):
-        self._configuration['log_level'] = 'DEBUG'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['log_level'], 'DEBUG')

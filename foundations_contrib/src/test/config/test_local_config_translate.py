@@ -73,15 +73,6 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         config = result_config['cache_implementation']
         self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/cache'])
 
-    def test_returns_log_level_configured_to_default(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['log_level'], 'INFO')
-
-    def test_returns_log_level_configured(self):
-        self._configuration['log_level'] = 'DEBUG'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['log_level'], 'DEBUG')
-
     def test_supports_missing_ssh_config(self):
         del self._configuration['ssh_config']
         with self.assert_does_not_raise():

@@ -146,3 +146,12 @@ class ConfigTranslates(object):
         self._configuration['ssh_config']['result_path'] = self.fake_result_path
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['result_path'], self.fake_result_path)
+
+    def test_returns_log_level_configured_to_default(self):
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['log_level'], 'INFO')
+
+    def test_returns_log_level_configured(self):
+        self._configuration['log_level'] = 'DEBUG'
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['log_level'], 'DEBUG')
