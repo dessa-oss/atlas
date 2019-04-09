@@ -9,6 +9,12 @@ def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
     return storage_implementation('archive_type', BucketPipelineArchive, result_end_point, default_bucket_type)
     
+def cache_implementation(cache_end_point, default_bucket_type):
+    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+    from foundations_contrib.bucket_cache_backend_for_config import BucketCacheBackendForConfig
+
+    return storage_implementation('cache_type', BucketCacheBackendForConfig, cache_end_point, default_bucket_type)
+
 def storage_implementation(type_key, type_value, result_end_point, default_bucket_type):
 
     bucket_type, uri = _parse_bucket_type_and_uri(type_key, result_end_point, default_bucket_type)
