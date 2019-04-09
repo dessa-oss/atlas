@@ -13,7 +13,7 @@ class LetMixin(object):
 
         lets = self.__class__._lets
         if name in lets:
-            value = lets[name](self)
+            value = lets[name].evaluate(self)
             setattr(self, name, value)
             return value
 

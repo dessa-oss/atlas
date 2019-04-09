@@ -24,12 +24,12 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
         klass._collect_let_nows()
         klass._collect_lets()
         for setup_class_method in klass._setup_class_methods():
-            setup_class_method(klass)
+            setup_class_method.evaluate(klass)
 
     @classmethod
     def tearDownClass(klass):
         for tear_down_class_method in klass._tear_down_class_methods():
-            tear_down_class_method(klass)
+            tear_down_class_method.evaluate(klass)
         klass._restore_original_lets()
     
     def setUp(self):
@@ -37,7 +37,7 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
         self.__class__._collect_lets()
         self._setup_let_nows()
         for setup_method in self._setup_methods():
-            setup_method(self)
+            setup_method.evaluate(self)
 
     def _setup_methods(self):
         for _, _, function in LetMixin._klass_attributes(self.__class__):
@@ -52,7 +52,7 @@ class Spec(unittest.TestCase, MockMixin, LetMixin, LetNowMixin):
     
     def tearDown(self):
         for tear_down_method in self._tear_down_methods():
-            tear_down_method(self)
+            tear_down_method.evaluate(self)
         self._mock_tear_down()
         self._clear_lets()
 

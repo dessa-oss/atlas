@@ -12,8 +12,8 @@ class Callback(object):
     def __init__(self, function):
         self._function = function
 
-    def __call__(self, *args, **kwargs):
-        return self._function(*args, **kwargs)
+    def evaluate(self, other_self):
+        return self._function(other_self)
 
 class set_up(Callback):
     pass 
