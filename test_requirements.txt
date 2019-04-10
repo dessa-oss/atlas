@@ -3,3 +3,4 @@ freezegun==0.3.11
 Faker==1.0.0
 fakeredis==0.15.0
 ifaddr==0.1.6
+twine==1.13.0
