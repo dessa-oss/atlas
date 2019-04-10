@@ -29,3 +29,6 @@ class DeploymentSSHBucket(DeploymentContextBucket):
 
     def __eq__(self, rhs):
         return self._sftp_path == rhs._sftp_path and self._file_system_path == rhs._file_system_path
+
+def bucket_from_single_path(path):
+    return DeploymentSSHBucket.bucket_from_single_path(path)

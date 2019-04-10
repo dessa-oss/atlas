@@ -11,6 +11,7 @@ from mock import Mock
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_mock, let_patch_mock, set_up
 from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
+import foundations_ssh.deployment_ssh_bucket as deployment_ssh_bucket
 
 class TestDeploymentSSHBucket(Spec):
     
@@ -187,7 +188,7 @@ class TestDeploymentSSHBucket(Spec):
         self.assertEqual(self.dummy, result)
     
     def test_bucket_from_single_path_returns_bucket_with_path_used_for_both_local_and_remote(self):
-        self.assertEqual(DeploymentSSHBucket(self.fake_path, self.fake_path), DeploymentSSHBucket.bucket_from_single_path(self.fake_path))
+        self.assertEqual(DeploymentSSHBucket(self.fake_path, self.fake_path), deployment_ssh_bucket.bucket_from_single_path(self.fake_path))
 
     def test_buckets_are_equal_when_all_paths_are_equal(self):
         self.assertEqual(DeploymentSSHBucket(self.fake_path, self.fake_path_two), DeploymentSSHBucket(self.fake_path, self.fake_path_two))
