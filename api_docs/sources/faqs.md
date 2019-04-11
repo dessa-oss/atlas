@@ -26,6 +26,7 @@
 * [What is a global environment configuration vs a project-specific environment configuration?](../faqs/#what-is-a-global-environment-configuration-vs-a-project-specific-environment-configuration)
 * [What are the differences between running a job locally versus remotely?](../faqs/#what-are-the-differences-between-running-a-job-locally-versus-remotely)
 * [What remote deployments does Foundations support?](../faqs/#what-remote-deployments-does-foundations-support)
+* [Can I store my job results or cache in a different remote location than where I run my job?](../faqs/#can-i-store-my-job-results-or-cache-in-a-different-remote-location-than-where-i-run-my-job)
 * [Is there a way to run a series of batch jobs whose parameters depend on the results of previous jobs?](../faqs/#is-there-a-way-to-run-a-series-of-batch-jobs-whose-parameters-depend-on-the-results-of-previous-jobs)
 * [How do I clear single jobs from the Redis Queue so they don’t show up in the results? How do I clear all jobs?](../faqs/#how-do-i-clear-single-jobs-from-the-redis-queue-so-they-dont-show-up-in-the-results-how-do-i-clear-all-jobs)
 
@@ -156,6 +157,10 @@ Running a job locally uses the resources on the local machine to execute the cod
 ---
 ####What remote deployments does Foundations support?
 Foundations supports deployments to AWS, GCP, or other remote machines via SSH access. These are configurable by setting up environment configuration files and selecting the appropriate one when deploying. More information on remote deployments can be found [here](../configs/).
+
+---
+####Can I store my job results or cache in a different remote location than where I run my job?
+As long as the necessary credentials are setup across different environments, Foundations can support storage of job results and cache to different remote locations. This can be setup in the deployment configuration file by specifying the path with the full URI schema needed to access that remote machine. For example, if you deploy the job locally and want to store the results in GCP, you can specify the path as `gcp://<bucket>/path/to/archive` and Foundations will automatically push results to that specified path. More information on remote deployment paths can be found [here](../configs/#configuration-options)
 
 ---
 ####Is there a way to run a series of batch jobs whose parameters depend on the results of previous jobs?
