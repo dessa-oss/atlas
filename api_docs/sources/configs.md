@@ -87,6 +87,10 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 
 **archive_end_point**: defines full path to where to store results. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
 
+Foundations also supports cross-environment storage for results. By specifying the URI schema of the desired endpoint, the job results can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the results in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/archives`
+
+Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
+
 **redis_end_point**: redis endpoint where we want to store results for faster reading
 
 ### Cache Configurations
@@ -98,6 +102,10 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 ```
 
 **end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
+
+Foundations also supports cross-environment storage for the cache. By specifying the URI schema of the desired endpoint, the cached stages can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the cached stages in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/archives`
+
+Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 ### Additional Configurations
 

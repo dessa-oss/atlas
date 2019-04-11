@@ -9,6 +9,7 @@ dev_addr: '0.0.0.0:8000'
 pages:
 - Home: index.md
 - Foundations Concepts: concepts.md
+- FAQs: faqs.md
 - USER GUIDE:
   - Quick-Start Setup Guide: quick_start.md
   - Getting Started with Foundations: step_by_step_guide.md
