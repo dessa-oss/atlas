@@ -11,10 +11,6 @@ from foundations_contrib.middleware.basic_stage_middleware import BasicStageMidd
 
 class TestConstantParameter(Spec):
 
-    class MockClass(object):
-        def __str__(self, *args):
-            return str(args)
-    
     @let
     def fake_arguments(self):
         return tuple(self.faker.words())
@@ -58,8 +54,3 @@ class TestConstantParameter(Spec):
     def test_str_returns_underlying_str_different_value(self):
         parameter = ConstantParameter('hello world')
         self.assertEqual('hello world', str(parameter))
-    
-    def test_str_supports_passing_arguments(self):
-        mock_class = self.MockClass()
-        parameter = ConstantParameter(mock_class)
-        self.assertEqual(str(self.fake_arguments), parameter.__str__(*self.fake_arguments))
