@@ -6,11 +6,13 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 class Preprocessor(object):
-    def __init__(self):
+    def __init__(self, callback):
         self._number_of_transformers = 0
+        self._callback = callback
 
-    def __call__(self):
+    def __call__(self, *args, **kwargs):
         Preprocessor.active_preprocessor = self
+        return self._callback(*args, **kwargs)
     
     def new_transformer(self, transformer):
         self._number_of_transformers += 1

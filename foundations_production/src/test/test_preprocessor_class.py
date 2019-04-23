@@ -12,24 +12,35 @@ from foundations_production.preprocessor_class import Preprocessor
 class TestPreprocessorClass(Spec):
 
     mock_transformer = let_mock()
+    mock_callback = let_mock()
 
     @let
     def random_number(self):
         import random
         return random.randint(1, 10)
+    
+    @set_up
+    def set_up(self):
+        self.preprocessor_instance = Preprocessor(self.mock_callback)
 
     def test_preprocessor_sets_active_preprocessor_to_itself_when_called(self):
-        preprocessor_instance = Preprocessor()
-        preprocessor_instance()
-        self.assertIs(preprocessor_instance, Preprocessor.active_preprocessor)
+        self.preprocessor_instance()
+        self.assertIs(self.preprocessor_instance, Preprocessor.active_preprocessor)
+
+    def test_preprocessor_calls_callback_when_called(self):
+        self.mock_callback.return_value = self.random_number
+        self.assertEqual(self.random_number, self.preprocessor_instance())
+    
+    def test_preprocessor_calls_callback_with_arguments_when_called(self):
+        self.mock_callback.return_value = self.random_number
+        self.preprocessor_instance('gorilla', banana='yellow')
+        self.mock_callback.assert_called_with('gorilla', banana='yellow')
 
     def test_new_transformer_returns_transformer_index_of_0_when_first_transformer_added(self):
-        preprocessor_instance = Preprocessor()
-        transformer_id = preprocessor_instance.new_transformer(self.mock_transformer)
+        transformer_id = self.preprocessor_instance.new_transformer(self.mock_transformer)
         self.assertEqual(0, transformer_id)
     
     def test_new_transformer_returns_correct_transformer_index_when_transformer_added(self):
-        preprocessor_instance = Preprocessor()
         for _ in range(self.random_number):
-            transformer_id = preprocessor_instance.new_transformer(self.mock_transformer)
+            transformer_id = self.preprocessor_instance.new_transformer(self.mock_transformer)
         self.assertEqual(self.random_number - 1, transformer_id)
