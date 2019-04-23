@@ -38,13 +38,13 @@ class TestModelPackage(Spec):
     
     @skip('Not ready yet')
     def test_can_create_and_consume_model_package(self):
-        import foundations.production
+        import foundations_production
 
         foundations.set_project_name('production_titanic_test')
 
-        @foundations.production.preprocessor
+        @foundations_production.preprocessor
         def preprocessor(input_data):
-            transformer = foundations.production.Transformer(["Sex", "Cabin", "Fare"], self.AddAverageToValueTransformer)
+            transformer = foundations_production.Transformer(["Sex", "Cabin", "Fare"], self.AddAverageToValueTransformer)
             transformer.fit(input_data)
             return transformer.transform(input_data)
 
@@ -67,14 +67,14 @@ class TestModelPackage(Spec):
         preprocessor.set_inference_mode()
         preprocessed_validation_data = preprocessor(validation_data)
 
-        @foundations.production.model
+        @foundations_production.model
         def model(train_data, validation_data):
             train_features = train_data[["Sex", "Cabin", "Fare"]]
             train_targets = train_data[["Survived"]]
             validation_features = validation_data[["Sex", "Cabin", "Fare"]]
             validation_targets = validation_data[["Survived"]]
 
-            model_transformer = foundations.production.Model(self.Model)
+            model_transformer = foundations_production.Model(self.Model)
             model_transformer.fit(train_features, train_targets, validation_features, validation_targets)
             return model_transformer.predict(validation_features)
 
@@ -92,7 +92,7 @@ class TestModelPackage(Spec):
 
         job_id = job.job_name()
 
-        model_package = foundations.production.load_model_package(job_id)
+        model_package = foundations_production.load_model_package(job_id)
 
         preprocessed_production_dataset = model_package.preprocessor(production_dataset)
 
