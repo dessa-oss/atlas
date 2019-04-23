@@ -21,3 +21,4 @@ from acceptance.test_archive_jobs import TestArchiveJobs
 from acceptance.test_job_annotations import TestJobAnnotations
 from acceptance.test_local_obfuscate_jobs import TestLocalObfuscateJobs
 from acceptance.test_set_environment import TestSetEnvironment
+from acceptance.test_model_package import TestModelPackage
