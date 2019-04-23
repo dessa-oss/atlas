@@ -10,7 +10,7 @@ import foundations
 
 class BaseTransformer(object):
 
-    def __init__(self, preprocessor, columns, transformation):
+    def __init__(self, preprocessor, transformation):
         self._encoder = None
         self._transformation = transformation
 

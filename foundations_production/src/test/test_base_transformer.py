@@ -16,13 +16,9 @@ class TestBaseTransformer(Spec):
     mock_data_two = let_mock() 
 
     @let
-    def columns(self):
-        return self.faker.words()
-
-    @let
     def transformer(self):
         from foundations_production.base_transformer import BaseTransformer
-        return BaseTransformer(self.preprocessor, self.columns, self.transformation)
+        return BaseTransformer(self.preprocessor, self.transformation)
 
     @set_up
     def set_up(self):
