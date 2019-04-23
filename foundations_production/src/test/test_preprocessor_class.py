@@ -79,6 +79,16 @@ class TestPreprocessorClass(Spec):
 
         self.assertEqual(2, self.mock_transformer.load.call_count)
 
+    def test_preprocessor_is_set_to_inference_mode_after_being_run(self):
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
+
+        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance()
+        preprocessor_instance()
+
+        self.assertEqual(1, self.mock_transformer.load.call_count)
+
     def test_preprocessor_loads_transformers_if_inference_mode_is_set(self):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)

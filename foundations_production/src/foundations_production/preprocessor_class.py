@@ -24,6 +24,8 @@ class Preprocessor(object):
             for transformer in self._transformers:
                 transformer.load()
 
+        self._is_inference_mode = True
+
         return callback_value
     
     def new_transformer(self, transformer):
