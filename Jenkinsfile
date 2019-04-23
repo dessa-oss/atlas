@@ -71,6 +71,19 @@ node {
                     sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_internal-0.0.0-py3-none-any.whl"
                 }
             }
+            ws("${WORKSPACE}/foundations_production/") {
+                ws("${WORKSPACE}/src") {
+                    stage('Python3 Foundations Production Unit Tests') {
+                        sh "python -Wi -m unittest test"
+                    }
+                    stage('Python3 Foundations Production Integration Tests') {
+                        sh "python -Wi -m unittest integration"
+                    }
+                }
+                stage('Python3 Foundations Production Create Artifact') {
+                    sh "python setup.py sdist bdist_wheel && python -m pip install -U dist/foundations_production-0.0.0-py3-none-any.whl"
+                }
+            }
             ws("${WORKSPACE}/testing"){
                 stage('Python3 Foundations Acceptance Tests') {
                     sh "python -Wi -m unittest acceptance"

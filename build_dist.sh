@@ -32,4 +32,5 @@ build_module foundations_spec foundations_spec $cwd && \
     build_module ssh_utils foundations_ssh $cwd && \
     build_module aws_utils foundations_aws $cwd && \
     build_module foundations_scheduler_plugin foundations_scheduler_plugin $cwd && \
-    build_module foundations_rest_api foundations_rest_api $cwd
+    build_module foundations_rest_api foundations_rest_api $cwd && \
+    build_module foundations_production foundations_production $cwd

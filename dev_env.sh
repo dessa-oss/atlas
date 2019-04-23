@@ -14,4 +14,5 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/gcp_utils/src" && \
     add_path "$cwd/aws_utils/src" && \
     add_path "$cwd/foundations_scheduler_plugin/src" && \
+    add_path "$cwd/foundations_production/src" && \
     add_path "$cwd/foundations_rest_api/src"
