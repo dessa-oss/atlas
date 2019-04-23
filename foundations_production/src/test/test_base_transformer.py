@@ -28,7 +28,7 @@ class TestBaseTransformer(Spec):
     def set_up(self):
         self._fit_data = None
         self.transformation.fit.side_effect = self._fit_transformation
-        self.transformation.transform.side_effect = self._transform_transformation
+        self.transformation.transform.side_effect = self._transformed_transformation
     
     def test_encoder_raises_value_error_when_not_fit(self):
         with self.assertRaises(ValueError) as context:
@@ -69,11 +69,11 @@ class TestBaseTransformer(Spec):
         transformed_training_data = training_data + validation_data
 
         self.transformer.fit(training_data)
-        encoding_stage = self.transformer.transform(validation_data)
+        encoding_stage = self.transformer.transformed_data(validation_data)
 
         self.assertEqual(transformed_training_data, encoding_stage.run_same_process())
 
-    def _transform_transformation(self, data):
+    def _transformed_transformation(self, data):
         return self._fit_data + data
 
     def _fit_transformation(self, data):
