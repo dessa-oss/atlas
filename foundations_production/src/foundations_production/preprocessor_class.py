@@ -6,6 +6,8 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 class Preprocessor(object):
+    active_preprocessor = None
+
     def __init__(self, callback):
         self._transformers = []
         self._callback = callback

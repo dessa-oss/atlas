@@ -25,9 +25,20 @@ class TestPreprocessorClass(Spec):
     def set_up(self):
         self.preprocessor_instance = Preprocessor(self.mock_callback)
 
+    @tear_down
+    def tear_down(self):
+        try:
+            getattr(Preprocessor, 'active_preprocessor')
+            Preprocessor.active_preprocessor = None
+        except AttributeError:
+            pass
+
     def test_preprocessor_sets_active_preprocessor_to_itself_when_called(self):
         self.preprocessor_instance()
         self.assertIs(self.preprocessor_instance, Preprocessor.active_preprocessor)
+
+    def test_preprocessor_active_preprocessor_is_none_by_default(self):
+        self.assertIsNone(Preprocessor.active_preprocessor)
 
     def test_preprocessor_calls_callback_when_called(self):
         self.mock_callback.return_value = self.random_number
