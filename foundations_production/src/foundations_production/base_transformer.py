@@ -22,6 +22,13 @@ class BaseTransformer(object):
         if self._encoder is not None:
             return self._encoder
         raise ValueError('Transformer has not been fit. Call #fit() before using with encoder.')
+    
+    def transform(self, data):
+        return foundations.create_stage(self._transformation_stage)(data, self.encoder())
+
+    @staticmethod
+    def _transformation_stage(data, transformation):
+        return transformation.transform(data)
 
     @staticmethod
     def _fit_stage(data, transformation):

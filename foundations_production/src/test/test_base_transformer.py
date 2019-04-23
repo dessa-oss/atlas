@@ -5,16 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-
 from foundations_spec import *
-
+import random
 
 class TestBaseTransformer(Spec):
 
     preprocessor = let_mock()
     transformation = let_mock()
     mock_data = let_mock()
-    mock_data_two = let_mock()
+    mock_data_two = let_mock() 
 
     @let
     def columns(self):
@@ -29,6 +28,7 @@ class TestBaseTransformer(Spec):
     def set_up(self):
         self._fit_data = None
         self.transformation.fit.side_effect = self._fit_transformation
+        self.transformation.transform.side_effect = self._transform_transformation
     
     def test_encoder_raises_value_error_when_not_fit(self):
         with self.assertRaises(ValueError) as context:
@@ -62,6 +62,19 @@ class TestBaseTransformer(Spec):
         self.transformer.encoder().run_same_process()
 
         self.assertEqual(self.mock_data, self._fit_data)
+
+    def test_running_transform_returns_stage_that_encodes_data(self):
+        training_data = random.randint(0, 100)
+        validation_data = random.randint(0, 100)
+        transformed_training_data = training_data + validation_data
+
+        self.transformer.fit(training_data)
+        encoding_stage = self.transformer.transform(validation_data)
+
+        self.assertEqual(transformed_training_data, encoding_stage.run_same_process())
+
+    def _transform_transformation(self, data):
+        return self._fit_data + data
 
     def _fit_transformation(self, data):
         self._fit_data = data
