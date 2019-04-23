@@ -15,6 +15,8 @@ class Preprocessor(object):
         self._is_inference_mode = False
 
     def __call__(self, *args, **kwargs):
+        self._transformers = []
+
         Preprocessor.active_preprocessor = self
         callback_value = self._callback(*args, **kwargs)
 

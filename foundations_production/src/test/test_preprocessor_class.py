@@ -68,6 +68,17 @@ class TestPreprocessorClass(Spec):
 
         self.mock_transformer.load.assert_called()
     
+    def test_preprocessor_does_not_double_track_transformers_if_preprocessor_called_twice(self):
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
+
+        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance.set_inference_mode()
+        preprocessor_instance()
+        preprocessor_instance()
+
+        self.assertEqual(2, self.mock_transformer.load.call_count)
+
     def test_preprocessor_loads_transformers_if_inference_mode_is_set(self):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
