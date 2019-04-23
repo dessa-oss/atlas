@@ -68,3 +68,12 @@ class TestPreprocessorClass(Spec):
 
         self.mock_transformer.load.assert_called()
         self.mock_transformer_2.load.assert_called()
+
+    def test_preprocessor_does_not_load_transformer_if_inference_mode_is_not_set(self):
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
+
+        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance()
+
+        self.mock_transformer.load.assert_not_called()
