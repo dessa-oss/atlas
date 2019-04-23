@@ -15,7 +15,8 @@ class BaseTransformer(object):
         self._transformation = transformation
 
     def fit(self, data):
-        self._encoder = foundations.create_stage(self._fit_stage)(data, self._transformation)
+        if self._encoder is None:
+            self._encoder = foundations.create_stage(self._fit_stage)(data, self._transformation)
 
     def encoder(self):
         if self._encoder is not None:

@@ -14,6 +14,7 @@ class TestBaseTransformer(Spec):
     preprocessor = let_mock()
     transformation = let_mock()
     mock_data = let_mock()
+    mock_data_two = let_mock()
 
     @let
     def columns(self):
@@ -27,6 +28,7 @@ class TestBaseTransformer(Spec):
     @set_up
     def set_up(self):
         self._fit_data = None
+        self.transformation.fit.side_effect = self._fit_transformation
     
     def test_encoder_raises_value_error_when_not_fit(self):
         with self.assertRaises(ValueError) as context:
@@ -34,8 +36,6 @@ class TestBaseTransformer(Spec):
         self.assertIn('Transformer has not been fit. Call #fit() before using with encoder.', context.exception.args)
 
     def test_encoder_returns_fitted_transformation_when_fit_called(self):
-        self.transformation.fit.side_effect = self._fit_transformation
-
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
         stage.run_same_process()
@@ -54,6 +54,14 @@ class TestBaseTransformer(Spec):
         self.transformer.encoder().run_same_process()
 
         self.transformation.fit.assert_called_once()
+
+    def test_fitting_only_fits_once(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.fit(self.mock_data_two)
+
+        self.transformer.encoder().run_same_process()
+
+        self.assertEqual(self.mock_data, self._fit_data)
 
     def _fit_transformation(self, data):
         self._fit_data = data
