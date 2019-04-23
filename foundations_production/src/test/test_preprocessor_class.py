@@ -12,6 +12,8 @@ from foundations_production.preprocessor_class import Preprocessor
 class TestPreprocessorClass(Spec):
 
     mock_transformer = let_mock()
+    mock_transformer_2 = let_mock()
+
     mock_callback = let_mock()
 
     @let
@@ -44,3 +46,25 @@ class TestPreprocessorClass(Spec):
         for _ in range(self.random_number):
             transformer_id = self.preprocessor_instance.new_transformer(self.mock_transformer)
         self.assertEqual(self.random_number - 1, transformer_id)
+
+    def test_preprocessor_loads_transformer_if_inference_mode_is_set(self):
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
+
+        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance.set_inference_mode()
+        preprocessor_instance()
+
+        self.mock_transformer.load.assert_called()
+    
+    def test_preprocessor_loads_transformers_if_inference_mode_is_set(self):
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
+            Preprocessor.active_preprocessor.new_transformer(self.mock_transformer_2)
+
+        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance.set_inference_mode()
+        preprocessor_instance()
+
+        self.mock_transformer.load.assert_called()
+        self.mock_transformer_2.load.assert_called()
