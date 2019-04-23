@@ -7,10 +7,11 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 class Preprocessor(object):
     def __init__(self):
-        pass
+        self._number_of_transformers = 0
 
     def __call__(self):
         Preprocessor.active_preprocessor = self
     
     def new_transformer(self, transformer):
-        return 0
+        self._number_of_transformers += 1
+        return self._number_of_transformers - 1
