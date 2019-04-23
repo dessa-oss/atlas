@@ -7,6 +7,8 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 def _append_module():
     import sys
+    from foundations_contrib.global_state import module_manager
+
     module_manager.append_module(sys.modules[__name__])
 
 
