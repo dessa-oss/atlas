@@ -5,4 +5,6 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-from integration.test_preprocessor import TestPreprocessor
+def log_predictions_for_assertion(preprocessed_data):
+    foundations.log_metric('preprocessed_data_sex', list(preprocessed_data['Sex']))
+    foundations.log_metric('preprocessed_data_cabin', list(preprocessed_data['Cabin']))

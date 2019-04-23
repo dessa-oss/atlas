@@ -5,4 +5,12 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-from integration.test_preprocessor import TestPreprocessor
+class Preprocessor(object):
+    def __init__(self):
+        pass
+
+    def __call__(self):
+        Preprocessor.active_preprocessor = self
+    
+    def new_transformer(self, transformer):
+        return 0

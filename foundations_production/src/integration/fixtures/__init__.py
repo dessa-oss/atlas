@@ -4,5 +4,3 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-
-from integration.test_preprocessor import TestPreprocessor

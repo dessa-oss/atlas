@@ -6,3 +6,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 from test.test_base_transformer import TestBaseTransformer
+from test.test_preprocessor_class import TestPreprocessorClass
