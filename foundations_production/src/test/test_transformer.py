@@ -50,7 +50,7 @@ class TestTransformer(Spec):
         Transformer(self.fake_column_names, self.user_transformer_class)
         self.base_transformer_class.assert_called_with(self.global_preprocessor, self.persister, self.user_transformer)
     
-    def test_fit_calls_base_transformer_fit_with_split_data(self):
+    def test_fit_fits_selected_columns(self):
         from pandas.testing import assert_frame_equal
 
         selected_columns = self.fake_column_names[0:2]
@@ -59,4 +59,15 @@ class TestTransformer(Spec):
         transformer.fit(self.fake_data)
 
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
+        assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
+
+    def test_transform_transforms_selected_columns(self):
+        from pandas.testing import assert_frame_equal
+
+        selected_columns = self.fake_column_names[0:2]
+
+        transformer = Transformer(selected_columns, self.user_transformer_class)
+        transformer.transform(self.fake_data)
+
+        sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
         assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
