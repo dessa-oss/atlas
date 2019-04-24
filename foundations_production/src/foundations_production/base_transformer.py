@@ -34,11 +34,13 @@ class BaseTransformer(object):
 
     def _fit_stage(self, *args, **kwargs):
         if self._should_load:
-            loaded_transformation = self._persister.load_transformation(self._transformer_index)
-            return loaded_transformation
+            return self._loaded_transformer()
         self._transformation.fit(*args, **kwargs)
         self._persister.save_transformation(self._transformer_index, self._transformation)
         return self._transformation
+
+    def _loaded_transformer(self):
+        return self._persister.load_transformation(self._transformer_index)
 
     @staticmethod
     def _transformation_stage(transformation, *args, **kwargs):
