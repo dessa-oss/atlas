@@ -36,8 +36,8 @@ class BaseTransformer(object):
         if self._should_load:
             loaded_transformation = self._persister.load_transformation(self._transformer_index)
             return loaded_transformation
-        self._persister.save_transformation(self._transformer_index, self._transformation)
         self._transformation.fit(data)
+        self._persister.save_transformation(self._transformer_index, self._transformation)
         return self._transformation
 
     @staticmethod

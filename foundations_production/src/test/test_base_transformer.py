@@ -91,6 +91,21 @@ class TestBaseTransformer(Spec):
 
         self.persister.save_transformation.assert_not_called()
 
+    def test_call_fit_before_save_transformation(self):
+        def mock_fit(data):
+            self._mock_fit_called = True
+
+        def mock_save_transformation(transformer_index, transformation):
+            if not self._mock_fit_called:
+                raise AssertionError('transformation.fit() not called before persister.save_transformation()')
+        
+        self._mock_fit_called = False
+        self.transformation.fit = mock_fit
+        self.persister.save_transformation = mock_save_transformation
+
+        self.transformer.fit(self.mock_data)
+        stage = self.transformer.encoder()
+        stage.run_same_process()
 
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
