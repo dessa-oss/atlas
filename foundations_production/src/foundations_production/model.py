@@ -13,7 +13,9 @@ class Model(object):
         from foundations_production.persister import Persister
         from foundations_production import model_package
 
-        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(model_package), user_transformer_class(*args, **kwargs))
+        user_transformer = user_transformer_class(*args, **kwargs)
+        persister = Persister(model_package)
+        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, persister, user_transformer)
 
     def fit(self, training_inputs, training_targets, validation_inputs, validation_targets):
         self._base_transformer.fit(training_inputs, training_targets, validation_inputs, validation_targets)
