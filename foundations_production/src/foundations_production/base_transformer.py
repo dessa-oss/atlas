@@ -35,6 +35,9 @@ class BaseTransformer(object):
     def _fit_stage(self, *args, **kwargs):
         if self._should_load:
             return self._loaded_transformer()
+        return self._fitted_transformer(*args, **kwargs)
+
+    def _fitted_transformer(self, *args, **kwargs):
         self._transformation.fit(*args, **kwargs)
         self._persister.save_transformation(self._transformer_index, self._transformation)
         return self._transformation
