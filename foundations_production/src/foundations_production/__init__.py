@@ -17,3 +17,4 @@ def _append_module():
 
 
 _append_module()
+model_package = None

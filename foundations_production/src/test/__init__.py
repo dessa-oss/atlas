@@ -8,3 +8,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 from test.test_base_transformer import TestBaseTransformer
 from test.test_preprocessor_class import TestPreprocessorClass
 from test.test_preprocessor_decorator import TestPreprocessorDecorator
+from test.test_transformer import TestTransformer
