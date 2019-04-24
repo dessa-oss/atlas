@@ -13,5 +13,8 @@ class Transformer(object):
         from foundations_production.persister import Persister
         from foundations_production import model_package
 
-        BaseTransformer(Preprocessor.active_preprocessor, Persister(model_package), user_transformer_class())
+        self._columns = list_of_columns
+        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(model_package), user_transformer_class())
 
+    def fit(self, data):
+        self._base_transformer.fit(data[self._columns])

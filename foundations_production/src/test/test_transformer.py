@@ -10,7 +10,7 @@ from foundations_production.transformer import Transformer
 
 class TestTransformer(Spec):
 
-    base_transformer = let_patch_mock('foundations_production.base_transformer.BaseTransformer')
+    base_transformer_class = let_patch_mock('foundations_production.base_transformer.BaseTransformer')
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     persister_class = let_patch_mock('foundations_production.persister.Persister')
     global_model_package = let_patch_mock('foundations_production.model_package')
@@ -18,12 +18,26 @@ class TestTransformer(Spec):
 
     @let
     def fake_column_names(self):
-        return self.faker.words()
+        return self.faker.words(3)
     
+    @let
+    def fake_data(self):
+        import pandas
+
+        return pandas.DataFrame({
+            self.fake_column_names[0]: [1],
+            self.fake_column_names[1]: [1],
+            self.fake_column_names[2]: [1]
+        })
+
     @let
     def user_transformer(self):
         return self.user_transformer_class.return_value
     
+    @let
+    def base_transformer(self):
+        return self.base_transformer_class.return_value
+
     @let
     def persister(self):
         return self.persister_class.return_value
@@ -34,6 +48,15 @@ class TestTransformer(Spec):
     
     def test_transformer_constructs_base_transformer_with_correct_arguments(self):
         Transformer(self.fake_column_names, self.user_transformer_class)
-        self.base_transformer.assert_called_with(self.global_preprocessor, self.persister, self.user_transformer)
+        self.base_transformer_class.assert_called_with(self.global_preprocessor, self.persister, self.user_transformer)
+    
+    def test_fit_calls_base_transformer_fit_with_split_data(self):
+        from pandas.testing import assert_frame_equal
 
+        selected_columns = self.fake_column_names[0:2]
 
+        transformer = Transformer(selected_columns, self.user_transformer_class)
+        transformer.fit(self.fake_data)
+
+        sliced_dataframe = self.base_transformer.fit.call_args[0][0]
+        assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
