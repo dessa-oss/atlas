@@ -25,9 +25,26 @@ class TestTransformer(Spec):
         import pandas
 
         return pandas.DataFrame({
-            self.fake_column_names[0]: [1],
-            self.fake_column_names[1]: [1],
-            self.fake_column_names[2]: [1]
+            self.fake_column_names[0]: [self.random_int],
+            self.fake_column_names[1]: [self.random_int],
+            self.fake_column_names[2]: [self.random_int]
+        })
+
+    @let
+    def random_int(self):
+        return self.faker.random_int()
+
+    @let
+    def different_random_int(self):
+        return self.faker.random_int()
+
+    @let
+    def fake_transformed_data(self):
+        import pandas
+
+        return pandas.DataFrame({
+            self.fake_column_names[0]: [self.different_random_int],
+            self.fake_column_names[1]: [self.different_random_int]
         })
 
     @let
@@ -60,7 +77,7 @@ class TestTransformer(Spec):
 
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
         assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
-
+    
     def test_transform_transforms_selected_columns(self):
         from pandas.testing import assert_frame_equal
 
@@ -71,3 +88,15 @@ class TestTransformer(Spec):
 
         sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
         assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
+
+    def test_transform_returns_transformed_selected_columns(self):
+        from pandas.testing import assert_frame_equal
+
+        self.base_transformer.transformed_data.return_value = self.fake_transformed_data
+
+        selected_columns = self.fake_column_names[0:2]
+
+        transformer = Transformer(selected_columns, self.user_transformer_class)
+        joined_data = transformer.transform(self.fake_data)
+
+        assert_frame_equal(self.fake_transformed_data, joined_data)

@@ -20,4 +20,4 @@ class Transformer(object):
         self._base_transformer.fit(data[self._columns])
 
     def transform(self, data):
-        self._base_transformer.transformed_data(data[self._columns])
+        return self._base_transformer.transformed_data(data[self._columns])
