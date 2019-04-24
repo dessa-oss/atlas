@@ -34,10 +34,10 @@ class BaseTransformer(object):
 
     def _fit_stage(self, data):
         loaded_transformation = self._persister.load_transformation(self._transformer_index)
-        self._transformation.fit(data)
         self._persister.save_transformation(self._transformer_index, self._transformation)
         if self._should_load:
             return loaded_transformation
+        self._transformation.fit(data)
         return self._transformation
 
     @staticmethod

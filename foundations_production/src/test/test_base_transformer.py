@@ -67,6 +67,14 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
 
         self.assertEqual(self.loaded_tranformation, stage.run_same_process())
+
+    def test_trasformer_fit_is_not_called_when_load_is_called(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.load()
+        stage = self.transformer.encoder()
+        stage.run_same_process()
+
+        self.transformation.fit.assert_not_called()
  
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
