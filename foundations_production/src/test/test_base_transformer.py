@@ -49,6 +49,14 @@ class TestBaseTransformer(Spec):
 
         self.persister.save_transformation.assert_called_with(self.transformer_index, self.transformation)
 
+    def test_encoder_stage_loads_transformation_from_persister_when_load_called(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.load()
+        stage = self.transformer.encoder()
+        stage.run_same_process()
+
+        self.persister.load_transformation.assert_called_with(self.transformer_index)
+
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()

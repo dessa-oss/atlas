@@ -28,7 +28,11 @@ class BaseTransformer(object):
     def transformed_data(self, data):
         return foundations.create_stage(self._transformation_stage)(data, self.encoder())
 
+    def load(self):
+        pass
+
     def _fit_stage(self, data):
+        self._persister.load_transformation(self._transformer_index)
         self._transformation.fit(data)
         self._persister.save_transformation(self._transformer_index, self._transformation)
         return self._transformation
