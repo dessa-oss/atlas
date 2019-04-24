@@ -15,7 +15,7 @@ class TestBaseTransformer(Spec):
     mock_data = let_mock()
     mock_data_two = let_mock() 
 
-    @let
+    @let_now
     def transformer(self):
         from foundations_production.base_transformer import BaseTransformer
         return BaseTransformer(self.preprocessor, self.transformation)
@@ -68,6 +68,9 @@ class TestBaseTransformer(Spec):
         encoding_stage = self.transformer.transformed_data(validation_data)
 
         self.assertEqual(transformed_training_data, encoding_stage.run_same_process())
+    
+    def test_base_transformer_registers_itself_with_preprocessor_when_constructed(self):
+        self.preprocessor.new_transformer.assert_called_with(self.transformer)
 
     def _transformed_transformation(self, data):
         return self._fit_data + data

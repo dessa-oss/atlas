@@ -13,6 +13,7 @@ class BaseTransformer(object):
     def __init__(self, preprocessor, transformation):
         self._encoder = None
         self._transformation = transformation
+        preprocessor.new_transformer(self)
 
     def fit(self, data):
         if self._encoder is None:
