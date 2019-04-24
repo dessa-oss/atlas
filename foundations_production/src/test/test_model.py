@@ -12,7 +12,22 @@ class TestModel(Spec):
 
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     global_model_package = let_patch_mock('foundations_production.model_package')
-    user_transformer_class = let_mock()
+
+    @let
+    def transformer_args(self):
+        return self.faker.words()
+
+    @let
+    def transformer_kwargs(self):
+        return self.faker.pydict()
+
+    user_transformer = let_mock()
+    
+    @let_now
+    def user_transformer_class(self):
+        klass = ConditionalReturn()
+        klass.return_when(self.user_transformer, *self.transformer_args, **self.transformer_kwargs)
+        return klass
 
     @let_now
     def persister(self):
@@ -26,10 +41,6 @@ class TestModel(Spec):
     fake_validation_inputs = let_mock()
     fake_validation_targets = let_mock()
 
-    @let
-    def user_transformer(self):
-        return self.user_transformer_class.return_value
-    
     @let_now
     def base_transformer(self):
         instance = Mock()
@@ -44,7 +55,7 @@ class TestModel(Spec):
 
     @let
     def transformer(self):
-        return Model(self.user_transformer_class)
+        return Model(self.user_transformer_class, *self.transformer_args, **self.transformer_kwargs)
 
     @set_up
     def set_up(self):
