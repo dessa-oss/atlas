@@ -10,14 +10,15 @@ import foundations
 
 class BaseTransformer(object):
 
-    def __init__(self, preprocessor, transformation):
+    def __init__(self, preprocessor, persister, transformation):
         self._encoder = None
         self._transformation = transformation
-        preprocessor.new_transformer(self)
+        self._persister = persister
+        self._transformer_index = preprocessor.new_transformer(self)
 
     def fit(self, data):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._fit_stage)(data, self._transformation)
+            self._encoder = foundations.create_stage(self._fit_stage)(data)
 
     def encoder(self):
         if self._encoder is not None:
@@ -27,11 +28,11 @@ class BaseTransformer(object):
     def transformed_data(self, data):
         return foundations.create_stage(self._transformation_stage)(data, self.encoder())
 
+    def _fit_stage(self, data):
+        self._transformation.fit(data)
+        self._persister.save_transformation(self._transformer_index, self._transformation)
+        return self._transformation
+
     @staticmethod
     def _transformation_stage(data, transformation):
         return transformation.transform(data)
-
-    @staticmethod
-    def _fit_stage(data, transformation):
-        transformation.fit(data)
-        return transformation

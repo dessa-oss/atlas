@@ -14,18 +14,22 @@ class TestBaseTransformer(Spec):
     transformation = let_mock()
     mock_data = let_mock()
     mock_data_two = let_mock() 
+    persister = let_mock()
 
-    @let_now
-    def transformer(self):
-        from foundations_production.base_transformer import BaseTransformer
-        return BaseTransformer(self.preprocessor, self.transformation)
+    @let
+    def transformer_index(self):
+        return self.faker.random_int()
 
     @set_up
     def set_up(self):
+        from foundations_production.base_transformer import BaseTransformer
+
         self._fit_data = None
         self.transformation.fit.side_effect = self._fit_transformation
         self.transformation.transform.side_effect = self._transformed_transformation
-    
+        self.preprocessor.new_transformer.return_value = self.transformer_index
+        self.transformer = BaseTransformer(self.preprocessor, self.persister, self.transformation)
+
     def test_encoder_raises_value_error_when_not_fit(self):
         with self.assertRaises(ValueError) as context:
             self.transformer.encoder()
@@ -37,6 +41,13 @@ class TestBaseTransformer(Spec):
         stage.run_same_process()
 
         self.assertEqual(self.mock_data, self._fit_data)
+
+    def test_encoder_stage_persists_fitted_transformation_when_run(self):
+        self.transformer.fit(self.mock_data)
+        stage = self.transformer.encoder()
+        stage.run_same_process()
+
+        self.persister.save_transformation.assert_called_with(self.transformer_index, self.transformation)
 
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
