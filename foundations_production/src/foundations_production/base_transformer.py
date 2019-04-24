@@ -26,8 +26,8 @@ class BaseTransformer(object):
             return self._encoder
         raise ValueError('Transformer has not been fit. Call #fit() before using with encoder.')
     
-    def transformed_data(self, data):
-        return foundations.create_stage(self._transformation_stage)(data, self.encoder())
+    def transformed_data(self, *args, **kwargs):
+        return foundations.create_stage(self._transformation_stage)(self.encoder(), *args, **kwargs)
 
     def load(self):
         self._should_load = True
@@ -41,5 +41,5 @@ class BaseTransformer(object):
         return self._transformation
 
     @staticmethod
-    def _transformation_stage(data, transformation):
-        return transformation.transform(data)
+    def _transformation_stage(transformation, *args, **kwargs):
+        return transformation.transform(*args, **kwargs)

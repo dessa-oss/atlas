@@ -153,8 +153,22 @@ class TestBaseTransformer(Spec):
 
         self.assertEqual((args, kwargs), self._fit_data)
 
+    def test_transform_data_supports_arbitrary_arguments(self):
+        self.transformation.transform.side_effect = self._complex_transformed_transformation
+
+        args = tuple(self.faker.words())
+        kwargs = self.faker.pydict()
+
+        self.transformer.fit(None)
+        encoding_stage = self.transformer.transformed_data(*args, **kwargs)
+
+        self.assertEqual((args, kwargs), encoding_stage.run_same_process())
+
     def _transformed_transformation(self, data):
         return self._fit_data + data
+
+    def _complex_transformed_transformation(self, *args, **kwargs):
+        return (args, kwargs)
 
     def _fit_transformation(self, data):
         self._fit_data = data
