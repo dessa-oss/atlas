@@ -83,6 +83,15 @@ class TestBaseTransformer(Spec):
 
         self.persister.load_transformation.assert_not_called()
 
+    def test_do_not_save_transformation_when_load_is_called(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.load()
+        stage = self.transformer.encoder()
+        stage.run_same_process()
+
+        self.persister.save_transformation.assert_not_called()
+
+
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
