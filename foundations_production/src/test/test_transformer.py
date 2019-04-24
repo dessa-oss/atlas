@@ -23,8 +23,17 @@ class TestTransformer(Spec):
     @let
     def user_transformer(self):
         return self.user_transformer_class.return_value
+    
+    @let
+    def persister(self):
+        return self.persister_class.return_value
           
     def test_transformer_constructs_persister_with_global_model_package(self):
         Transformer(self.fake_column_names, self.user_transformer_class)
         self.persister_class.assert_called_with(self.global_model_package)
+    
+    def test_transformer_constructs_base_transformer_with_correct_arguments(self):
+        Transformer(self.fake_column_names, self.user_transformer_class)
+        self.base_transformer.assert_called_with(self.global_preprocessor, self.persister, self.user_transformer)
+
 

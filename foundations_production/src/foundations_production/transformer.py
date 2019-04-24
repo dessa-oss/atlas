@@ -13,5 +13,5 @@ class Transformer(object):
         from foundations_production.persister import Persister
         from foundations_production import model_package
 
-        Persister(model_package)
+        BaseTransformer(Preprocessor.active_preprocessor, Persister(model_package), user_transformer_class())
 
