@@ -141,8 +141,23 @@ class TestBaseTransformer(Spec):
     def test_base_transformer_registers_itself_with_preprocessor_when_constructed(self):
         self.preprocessor.new_transformer.assert_called_with(self.transformer)
 
+    def test_fit_supports_arbitrary_arguments(self):
+        self.transformation.fit.side_effect = self._complex_fit_transformation
+
+        args = tuple(self.faker.words())
+        kwargs = self.faker.pydict()
+
+        self.transformer.fit(*args, **kwargs)
+        stage = self.transformer.encoder()
+        stage.run_same_process()
+
+        self.assertEqual((args, kwargs), self._fit_data)
+
     def _transformed_transformation(self, data):
         return self._fit_data + data
 
     def _fit_transformation(self, data):
         self._fit_data = data
+
+    def _complex_fit_transformation(self, *args, **kwargs):
+        self._fit_data = (args, kwargs)
