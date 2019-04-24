@@ -15,6 +15,7 @@ class TestBaseTransformer(Spec):
     mock_data = let_mock()
     mock_data_two = let_mock() 
     persister = let_mock()
+    loaded_tranformation = let_mock()
 
     @let
     def transformer_index(self):
@@ -57,6 +58,16 @@ class TestBaseTransformer(Spec):
 
         self.persister.load_transformation.assert_called_with(self.transformer_index)
 
+    def test_encoder_stage_returns_loaded_transformation_when_load_called(self):
+        self.persister.load_transformation.return_value = self.loaded_tranformation
+        
+        self.transformer.fit(self.mock_data)
+        self.transformer.load()
+        
+        stage = self.transformer.encoder()
+
+        self.assertEqual(self.loaded_tranformation, stage.run_same_process())
+ 
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()

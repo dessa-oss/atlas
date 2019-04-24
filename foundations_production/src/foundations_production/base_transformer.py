@@ -15,6 +15,7 @@ class BaseTransformer(object):
         self._transformation = transformation
         self._persister = persister
         self._transformer_index = preprocessor.new_transformer(self)
+        self._should_load = False
 
     def fit(self, data):
         if self._encoder is None:
@@ -29,12 +30,14 @@ class BaseTransformer(object):
         return foundations.create_stage(self._transformation_stage)(data, self.encoder())
 
     def load(self):
-        pass
+        self._should_load = True
 
     def _fit_stage(self, data):
-        self._persister.load_transformation(self._transformer_index)
+        loaded_transformation = self._persister.load_transformation(self._transformer_index)
         self._transformation.fit(data)
         self._persister.save_transformation(self._transformer_index, self._transformation)
+        if self._should_load:
+            return loaded_transformation
         return self._transformation
 
     @staticmethod
