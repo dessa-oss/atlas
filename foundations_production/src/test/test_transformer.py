@@ -118,3 +118,13 @@ class TestTransformer(Spec):
         joined_data = transformer.transform(self.fake_data)
 
         assert_frame_equal(self.fake_transformed_data, joined_data)
+
+    def test_user_transformer_constructs_with_arbitrary_arguments(self):
+        args = self.faker.words()
+        kwargs = self.faker.pydict()
+
+        transformer = Transformer(self.user_transformer_class, self.fake_column_names, *args, **kwargs)
+
+        self.user_transformer_class.assert_called_with(*args, **kwargs)
+
+
