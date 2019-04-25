@@ -11,7 +11,8 @@ from foundations_production.model_class import Model
 class TestModel(Spec):
 
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
-    global_model_package = let_patch_mock('foundations_production.model_package')
+    config_manager_config = let_patch_mock('foundations.config_manager.config')
+    artifact_archive = let_mock()
 
     @let
     def transformer_args(self):
@@ -31,9 +32,10 @@ class TestModel(Spec):
 
     @let_now
     def persister(self):
+        self.config_manager_config.return_value = {'artifact_archive_implementation': self.artifact_archive}
         instance = Mock()
         klass = self.patch('foundations_production.persister.Persister', ConditionalReturn())
-        klass.return_when(instance, self.global_model_package)
+        klass.return_when(instance, self.artifact_archive)
         return instance
 
     fake_training_inputs = let_mock()
