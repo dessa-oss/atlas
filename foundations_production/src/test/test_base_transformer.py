@@ -24,7 +24,7 @@ class TestBaseTransformer(Spec):
         return self.faker.random_int()
 
     @let
-    def construct_transformation(self):
+    def transformation_instance(self):
         transformation = Mock()
         transformation.fit = self.mock_fit
         transformation.transform = self.mock_transform
@@ -35,7 +35,7 @@ class TestBaseTransformer(Spec):
         import foundations
 
         def _construct_transformation():
-            return self.construct_transformation
+            return self.transformation_instance
     
         return foundations.create_stage(_construct_transformation)()
 
@@ -67,7 +67,7 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.save_transformation.assert_called_with(self.transformer_index, self.construct_transformation)
+        self.persister.save_transformation.assert_called_with(self.transformer_index, self.transformation_instance)
 
     def test_encoder_stage_loads_transformation_from_persister_when_load_called(self):
         self.transformer.fit(self.mock_data)
@@ -125,7 +125,7 @@ class TestBaseTransformer(Spec):
     def test_encoder_stage_returns_transformation_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
-        self.assertEqual(self.construct_transformation, stage.run_same_process())
+        self.assertEqual(self.transformation_instance, stage.run_same_process())
 
     def test_running_encoder_stage_twice_calls_fit_once(self):
         self.transformer.fit(self.mock_data)
