@@ -11,7 +11,7 @@ class Persister(object):
         self._archiver = archiver
 
     def load_user_defined_transformer(self, transformer_id):
-        pass
+        return self._archiver.fetch_artifact('preprocessor/' + transformer_id)
 
     def save_user_defined_transformer(self, transformer_id, transformer):
         self._archiver.append_artifact('preprocessor/' + transformer_id, transformer)

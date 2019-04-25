@@ -22,8 +22,16 @@ class TestPersister(Spec):
     def transformer_artifact_name(self):
         return 'preprocessor/' + self.transformer_id
 
-    def test_save_transformer_saves_serialized_transformer_to_model_package(self):
-        persister = Persister(self.archiver)
-        persister.save_user_defined_transformer(self.transformer_id, self.transformer)
+    @let
+    def persister(self):
+        return Persister(self.archiver)
 
+    def test_save_transformer_saves_serialized_transformer_to_model_package(self):
+        self.persister.save_user_defined_transformer(self.transformer_id, self.transformer)
         self.archiver.append_artifact.assert_called_with(self.transformer_artifact_name, self.transformer)
+
+    def test_load_transformer_loads_serialized_transformer_from_model_package(self):
+        self.archiver.fetch_artifact = ConditionalReturn()
+        self.archiver.fetch_artifact.return_when(self.transformer, self.transformer_artifact_name)
+        loaded_transformer = self.persister.load_user_defined_transformer(self.transformer_id)
+        self.assertEqual(self.transformer, loaded_transformer)
