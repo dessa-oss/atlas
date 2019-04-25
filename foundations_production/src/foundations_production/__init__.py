@@ -7,7 +7,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 def preprocessor(preprocessor_callback):
     from foundations_production.preprocessor_class import Preprocessor
-    return Preprocessor(preprocessor_callback)
+    return Preprocessor(preprocessor_callback, "transformer")
 
 def _append_module():
     import sys

@@ -16,7 +16,7 @@ class TestPreprocessorDecorator(Spec):
 
     def test_preprocessor_decorator_takes_callback_and_constructs_preprocessor_that_uses_callback(self):
         preprocessor(self.mock_callback)
-        self.mock_preprocessor_class.assert_called_with(self.mock_callback)
+        self.mock_preprocessor_class.assert_called_with(self.mock_callback, "transformer")
 
     def test_preprocessor_decorator_takes_callback_and_returns_preprocessor_that_uses_callback(self):
         self.assertIs(self.mock_preprocessor_class.return_value, preprocessor(self.mock_callback))
