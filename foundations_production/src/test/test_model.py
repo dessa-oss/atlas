@@ -44,8 +44,15 @@ class TestModel(Spec):
     @let_now
     def base_transformer(self):
         instance = Mock()
-        klass = self.patch('foundations_production.base_transformer.BaseTransformer', ConditionalReturn())
-        klass.return_when(instance, self.global_preprocessor, self.persister, self.user_transformer)
+
+        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+            self.assertEqual(self.global_preprocessor, preprocessor)
+            self.assertEqual(self.persister, persister)
+            self.assertEqual(self.user_transformer, user_defined_transformer_stage.run_same_process())
+            return instance
+
+        klass = self.patch('foundations_production.base_transformer.BaseTransformer')
+        klass.side_effect = _base_transformer_constructor
         return instance
 
     @let_now
@@ -55,11 +62,14 @@ class TestModel(Spec):
 
     @let
     def transformer(self):
-        return Model(self.user_transformer_class, *self.transformer_args, **self.transformer_kwargs)
+        return Model(self.user_transformer_class_callback, *self.transformer_args, **self.transformer_kwargs)
 
     @set_up
     def set_up(self):
         self.mock_transform.return_when(self.fake_validation_targets, self.fake_validation_inputs)
+
+    def user_transformer_class_callback(self, *args, **kwargs):
+        return self.user_transformer_class(*args, **kwargs)
           
     def test_fit_fits_selected_columns(self):
         self.transformer.fit(

@@ -12,10 +12,11 @@ class Model(object):
         from foundations_production.preprocessor_class import Preprocessor
         from foundations_production.persister import Persister
         from foundations_production import model_package
+        import foundations
 
-        user_model = user_model_class(*args, **kwargs)
         persister = Persister(model_package)
-        self._base_model = BaseTransformer(Preprocessor.active_preprocessor, persister, user_model)
+        user_stage = foundations.create_stage(user_model_class)(*args, **kwargs)
+        self._base_model = BaseTransformer(Preprocessor.active_preprocessor, persister, user_stage)
 
     def fit(self, training_inputs, training_targets, validation_inputs, validation_targets):
         self._base_model.fit(training_inputs, training_targets, validation_inputs, validation_targets)
