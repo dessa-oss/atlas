@@ -72,7 +72,7 @@ class TestTransformer(Spec):
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, selected_columns)
+        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
         transformer.fit(self.fake_data)
 
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
@@ -92,7 +92,7 @@ class TestTransformer(Spec):
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, selected_columns)
+        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
         transformer.transform(self.fake_data)
 
         sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
@@ -114,7 +114,7 @@ class TestTransformer(Spec):
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, selected_columns)
+        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
         joined_data = transformer.transform(self.fake_data)
 
         assert_frame_equal(self.fake_transformed_data, joined_data)
@@ -123,8 +123,15 @@ class TestTransformer(Spec):
         args = self.faker.words()
         kwargs = self.faker.pydict()
 
-        transformer = Transformer(self.user_transformer_class, self.fake_column_names, *args, **kwargs)
+        transformer = Transformer(self.user_transformer_class, list_of_columns=self.fake_column_names, *args, **kwargs)
 
         self.user_transformer_class.assert_called_with(*args, **kwargs)
+
+    def test_user_transformer_constructs_with_single_arguement_and_no_columns(self):
+        arg = self.faker.word()
+
+        transformer = Transformer(self.user_transformer_class, arg)
+
+        self.user_transformer_class.assert_called_with(arg)
 
 
