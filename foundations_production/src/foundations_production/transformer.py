@@ -15,7 +15,7 @@ class Transformer(object):
 
         self._columns = kwargs.pop('list_of_columns', None)
         user_stage = foundations.create_stage(user_transformer_class)(*args, **kwargs)
-        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(self._get_artifact_archive()), user_stage)
+        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(self._get_pipeline_archiver()), user_stage)
 
     def fit(self, data):
         self._base_transformer.fit(self._column_data(data))
@@ -30,7 +30,12 @@ class Transformer(object):
             return data
     
     @staticmethod
-    def _get_artifact_archive():
-        from foundations import config_manager
-        config = config_manager.config()
-        return config['artifact_archive_implementation']
+    def _get_pipeline_archiver():
+        from foundations_internal.pipeline_archiver import PipelineArchiver
+        from foundations_contrib.archiving import load_archive
+        from foundations_contrib.global_state import foundations_context
+
+        job_id = foundations_context.job_id()
+        artifact_archive = load_archive('artifact_archive')
+
+        return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)

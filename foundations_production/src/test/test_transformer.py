@@ -14,10 +14,24 @@ class TestTransformer(Spec):
     base_transformer = let_mock()
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     persister_class = let_patch_mock('foundations_production.persister.Persister')
-    config_manager_config = let_patch_mock('foundations.config_manager.config')
     user_transformer_class = let_mock()
-
+    foundations_context = let_patch_mock('foundations_contrib.global_state.foundations_context')
+    pipeline_archiver = let_mock()
     artifact_archive = let_mock()
+    
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+
+    @let_now
+    def load_archive(self):
+        load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
+        load_archive.return_when(self.artifact_archive, 'artifact_archive')
+        return load_archive
+
+    @let
+    def pipeline_archiver_class(self):
+        return self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
 
     def user_transformer_class_callback(self, *args, **kwargs):
         return self.user_transformer_class(*args, **kwargs)
@@ -69,11 +83,12 @@ class TestTransformer(Spec):
 
         self.base_transformer_class.side_effect = _base_transformer_constructor
         
-        self.config_manager_config.return_value = {'artifact_archive_implementation': self.artifact_archive}
+        self.foundations_context.job_id.return_value = self.job_id
+        self.pipeline_archiver_class.return_when(self.pipeline_archiver, self.job_id, None, None, None, None, None, self.artifact_archive, None)
           
-    def test_transformer_constructs_persister_with_artifact_archive(self):
+    def test_transformer_constructs_persister_with_pipeline_archiver(self):
         Transformer(self.user_transformer_class_callback, self.fake_column_names)
-        self.persister_class.assert_called_with(self.artifact_archive)
+        self.persister_class.assert_called_with(self.pipeline_archiver)
     
     def test_transformer_constructs_base_transformer_with_correct_arguments(self):
         def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
