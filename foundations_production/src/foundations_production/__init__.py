@@ -9,12 +9,15 @@ def preprocessor(preprocessor_callback):
     from foundations_production.preprocessor_class import Preprocessor
     return Preprocessor(preprocessor_callback, "transformer")
 
+def model(preprocessor_callback):
+    from foundations_production.preprocessor_class import Preprocessor
+    return Preprocessor(preprocessor_callback, "model")
+
 def _append_module():
     import sys
     from foundations_contrib.global_state import module_manager
 
     module_manager.append_module(sys.modules[__name__])
-
 
 _append_module()
 model_package = None

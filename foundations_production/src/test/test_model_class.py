@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_production.model import Model
+from foundations_production.model_class import Model
 
 class TestModel(Spec):
 
