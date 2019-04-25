@@ -21,9 +21,13 @@ class TestPreprocessorClass(Spec):
         import random
         return random.randint(1, 10)
     
+    @let
+    def preprocessor_name(self):
+        return self.faker.word()
+
     @set_up
     def set_up(self):
-        self.preprocessor_instance = Preprocessor(self.mock_callback)
+        self.preprocessor_instance = Preprocessor(self.mock_callback, self.preprocessor_name)
 
     @tear_down
     def tear_down(self):
@@ -51,18 +55,18 @@ class TestPreprocessorClass(Spec):
 
     def test_new_transformer_returns_transformer_index_of_0_when_first_transformer_added(self):
         transformer_id = self.preprocessor_instance.new_transformer(self.mock_transformer)
-        self.assertEqual(0, transformer_id)
+        self.assertEqual('{}_0'.format(self.preprocessor_name), transformer_id)
     
     def test_new_transformer_returns_correct_transformer_index_when_transformer_added(self):
         for _ in range(self.random_number):
             transformer_id = self.preprocessor_instance.new_transformer(self.mock_transformer)
-        self.assertEqual(self.random_number - 1, transformer_id)
+        self.assertEqual('{}_{}'.format(self.preprocessor_name, self.random_number - 1), transformer_id)
 
     def test_preprocessor_loads_transformer_if_inference_mode_is_set(self):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
 
-        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
         preprocessor_instance.set_inference_mode()
         preprocessor_instance()
 
@@ -72,7 +76,7 @@ class TestPreprocessorClass(Spec):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
 
-        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
         preprocessor_instance.set_inference_mode()
         preprocessor_instance()
         preprocessor_instance()
@@ -83,7 +87,7 @@ class TestPreprocessorClass(Spec):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
 
-        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
         preprocessor_instance()
         preprocessor_instance()
 
@@ -93,8 +97,8 @@ class TestPreprocessorClass(Spec):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer_2)
-
-        preprocessor_instance = Preprocessor(_callback)
+       
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
         preprocessor_instance.set_inference_mode()
         preprocessor_instance()
 
@@ -105,7 +109,7 @@ class TestPreprocessorClass(Spec):
         def _callback():
             Preprocessor.active_preprocessor.new_transformer(self.mock_transformer)
 
-        preprocessor_instance = Preprocessor(_callback)
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
         preprocessor_instance()
 
         self.mock_transformer.load.assert_not_called()

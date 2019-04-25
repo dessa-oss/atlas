@@ -9,10 +9,11 @@ class Preprocessor(object):
 
     active_preprocessor = None
 
-    def __init__(self, callback):
+    def __init__(self, callback, preprocessor_name):
         self._transformers = []
         self._callback = callback
         self._is_inference_mode = False
+        self._preprocessor_name = preprocessor_name
 
     def __call__(self, *args, **kwargs):
         self._transformers = []
@@ -30,7 +31,9 @@ class Preprocessor(object):
     
     def new_transformer(self, transformer):
         self._transformers.append(transformer)
-        return len(self._transformers) - 1
+        transformer_index = len(self._transformers) - 1
+        transformer_id = '{}_{}'.format(self._preprocessor_name, transformer_index)
+        return transformer_id
     
     def set_inference_mode(self):
         self._is_inference_mode = True
