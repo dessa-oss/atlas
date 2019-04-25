@@ -11,8 +11,28 @@ from foundations_production.model_class import Model
 class TestModel(Spec):
 
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
-    config_manager_config = let_patch_mock('foundations.config_manager.config')
     artifact_archive = let_mock()
+    foundations_context = let_patch_mock('foundations_contrib.global_state.foundations_context')
+    pipeline_archiver = let_mock()
+    artifact_archive = let_mock()
+
+    @let_now
+    def job_id(self):
+        job_id = self.faker.uuid4()
+        self.foundations_context.job_id.return_value = job_id
+        return job_id
+    
+    @let_now
+    def load_archive(self):
+        load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
+        load_archive.return_when(self.artifact_archive, 'artifact_archive')
+        return load_archive
+    
+    @let_now
+    def pipeline_archiver_class(self):
+        pipeline_archiver_class = self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
+        pipeline_archiver_class.return_when(self.pipeline_archiver, self.job_id, None, None, None, None, None, self.artifact_archive, None)
+        return pipeline_archiver_class
 
     @let
     def transformer_args(self):
@@ -32,10 +52,9 @@ class TestModel(Spec):
 
     @let_now
     def persister(self):
-        self.config_manager_config.return_value = {'artifact_archive_implementation': self.artifact_archive}
         instance = Mock()
         klass = self.patch('foundations_production.persister.Persister', ConditionalReturn())
-        klass.return_when(instance, self.artifact_archive)
+        klass.return_when(instance, self.pipeline_archiver)
         return instance
 
     fake_training_inputs = let_mock()

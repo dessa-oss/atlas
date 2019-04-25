@@ -13,7 +13,7 @@ class Model(object):
         from foundations_production.persister import Persister
         import foundations
 
-        persister = Persister(self._get_artifact_archive())
+        persister = Persister(self._get_pipeline_archiver())
         user_stage = foundations.create_stage(user_model_class)(*args, **kwargs)
         self._base_model = BaseTransformer(Preprocessor.active_preprocessor, persister, user_stage)
 
@@ -24,7 +24,12 @@ class Model(object):
         return self._base_model.transformed_data(inputs)
 
     @staticmethod
-    def _get_artifact_archive():
-        from foundations import config_manager
-        config = config_manager.config()
-        return config['artifact_archive_implementation']
+    def _get_pipeline_archiver():
+        from foundations_internal.pipeline_archiver import PipelineArchiver
+        from foundations_contrib.archiving import load_archive
+        from foundations_contrib.global_state import foundations_context
+
+        job_id = foundations_context.job_id()
+        artifact_archive = load_archive('artifact_archive')
+
+        return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)
