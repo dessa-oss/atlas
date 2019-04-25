@@ -64,3 +64,6 @@ class FoundationsContext(object):
 
     def set_project_name(self, project_name):
         self.pipeline_context().provenance.project_name = project_name
+
+    def job_id(self):
+        return self.pipeline_context().file_name

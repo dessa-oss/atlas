@@ -6,10 +6,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+
+from foundations_spec import *
 from foundations_internal.foundations_context import FoundationsContext
 
 
-class TestFoundationsContext(unittest.TestCase):
+class TestFoundationsContext(Spec):
+
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
 
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
@@ -50,3 +56,7 @@ class TestFoundationsContext(unittest.TestCase):
         self._context.set_project_name('my other project')
         self.assertEqual('my other project',
                          self._pipeline_context.provenance.project_name)
+
+    def test_get_job_id(self):
+        self._pipeline_context.file_name = self.job_id
+        self.assertEqual(self.job_id, self._context.job_id())
