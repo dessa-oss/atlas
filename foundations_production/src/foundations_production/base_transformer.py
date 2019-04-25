@@ -15,14 +15,14 @@ class BaseTransformer(object):
         persister = PropertyModel.define_property()
         should_load = PropertyModel.define_property()
 
-    def __init__(self, preprocessor, persister, transformation):
+    def __init__(self, preprocessor, persister, user_defined_transformer):
         self._encoder = None
-        self._transformation = transformation
+        self._user_defined_transformer = user_defined_transformer
         self._state = self.State(should_load=False, transformer_index=preprocessor.new_transformer(self), persister=persister)
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._fit_stage)(self._state, self._transformation, *args, **kwargs)
+            self._encoder = foundations.create_stage(self._fit_stage)(self._state, self._user_defined_transformer, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -30,27 +30,27 @@ class BaseTransformer(object):
         raise ValueError('Transformer has not been fit. Call #fit() before using with encoder.')
     
     def transformed_data(self, *args, **kwargs):
-        return foundations.create_stage(self._transformation_stage)(self.encoder(), *args, **kwargs)
+        return foundations.create_stage(self._user_defined_transformer_stage)(self.encoder(), *args, **kwargs)
 
     def load(self):
         self._state.should_load = True
 
     @staticmethod
-    def _fit_stage(state, transformation, *args, **kwargs):
+    def _fit_stage(state, user_defined_transformer, *args, **kwargs):
         if state.should_load:
             return BaseTransformer._loaded_transformer(state)
-        return BaseTransformer._fitted_transformer(state, transformation, *args, **kwargs)
+        return BaseTransformer._fitted_transformer(state, user_defined_transformer, *args, **kwargs)
 
     @staticmethod
-    def _fitted_transformer(state, transformation, *args, **kwargs):
-        transformation.fit(*args, **kwargs)
-        state.persister.save_transformation(state.transformer_index, transformation)
-        return transformation
+    def _fitted_transformer(state, user_defined_transformer, *args, **kwargs):
+        user_defined_transformer.fit(*args, **kwargs)
+        state.persister.save_user_defined_transformer(state.transformer_index, user_defined_transformer)
+        return user_defined_transformer
 
     @staticmethod
     def _loaded_transformer(state):
-        return state.persister.load_transformation(state.transformer_index)
+        return state.persister.load_user_defined_transformer(state.transformer_index)
 
     @staticmethod
-    def _transformation_stage(transformation, *args, **kwargs):
-        return transformation.transform(*args, **kwargs)
+    def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):
+        return user_defined_transformer.transform(*args, **kwargs)

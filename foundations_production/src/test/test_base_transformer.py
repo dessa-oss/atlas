@@ -24,30 +24,30 @@ class TestBaseTransformer(Spec):
         return self.faker.random_int()
 
     @let
-    def transformation_instance(self):
-        transformation = Mock()
-        transformation.fit = self.mock_fit
-        transformation.transform = self.mock_transform
-        return transformation
+    def user_defined_transformer_instance(self):
+        user_defined_transformer = Mock()
+        user_defined_transformer.fit = self.mock_fit
+        user_defined_transformer.transform = self.mock_transform
+        return user_defined_transformer
 
     @let
-    def transformation(self):
+    def user_defined_transformer(self):
         import foundations
 
-        def _construct_transformation():
-            return self.transformation_instance
+        def _construct_user_defined_transformer():
+            return self.user_defined_transformer_instance
     
-        return foundations.create_stage(_construct_transformation)()
+        return foundations.create_stage(_construct_user_defined_transformer)()
 
     @set_up
     def set_up(self):
         from foundations_production.base_transformer import BaseTransformer
 
         self._fit_data = None
-        self.mock_fit.side_effect = self._fit_transformation
-        self.mock_transform.side_effect = self._transformed_transformation
+        self.mock_fit.side_effect = self._fit_user_defined_transformer
+        self.mock_transform.side_effect = self._transformed_user_defined_transformer
         self.preprocessor.new_transformer.return_value = self.transformer_index
-        self.transformer = BaseTransformer(self.preprocessor, self.persister, self.transformation)
+        self.transformer = BaseTransformer(self.preprocessor, self.persister, self.user_defined_transformer)
         self._mock_fit_called = False
 
     def test_encoder_raises_value_error_when_not_fit(self):
@@ -55,30 +55,30 @@ class TestBaseTransformer(Spec):
             self.transformer.encoder()
         self.assertIn('Transformer has not been fit. Call #fit() before using with encoder.', context.exception.args)
 
-    def test_encoder_returns_fitted_transformation_when_fit_called(self):
+    def test_encoder_returns_fitted_user_defined_transformer_when_fit_called(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
         stage.run_same_process()
 
         self.assertEqual(self.mock_data, self._fit_data)
 
-    def test_encoder_stage_persists_fitted_transformation_when_run(self):
+    def test_encoder_stage_persists_fitted_user_defined_transformer_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.save_transformation.assert_called_with(self.transformer_index, self.transformation_instance)
+        self.persister.save_user_defined_transformer.assert_called_with(self.transformer_index, self.user_defined_transformer_instance)
 
-    def test_encoder_stage_loads_transformation_from_persister_when_load_called(self):
+    def test_encoder_stage_loads_user_defined_transformer_from_persister_when_load_called(self):
         self.transformer.fit(self.mock_data)
         self.transformer.load()
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.load_transformation.assert_called_with(self.transformer_index)
+        self.persister.load_user_defined_transformer.assert_called_with(self.transformer_index)
 
-    def test_encoder_stage_returns_loaded_transformation_when_load_called(self):
-        self.persister.load_transformation.return_value = self.loaded_tranformation
+    def test_encoder_stage_returns_loaded_user_defined_transformer_when_load_called(self):
+        self.persister.load_user_defined_transformer.return_value = self.loaded_tranformation
         
         self.transformer.fit(self.mock_data)
         self.transformer.load()
@@ -100,32 +100,32 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.load_transformation.assert_not_called()
+        self.persister.load_user_defined_transformer.assert_not_called()
 
-    def test_do_not_save_transformation_when_load_is_called(self):
+    def test_do_not_save_user_defined_transformer_when_load_is_called(self):
         self.transformer.fit(self.mock_data)
         self.transformer.load()
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.save_transformation.assert_not_called()
+        self.persister.save_user_defined_transformer.assert_not_called()
 
-    def test_call_fit_before_save_transformation(self):
+    def test_call_fit_before_save_user_defined_transformer(self):
 
-        def mock_save_transformation(transformer_index, transformation):
+        def mock_save_user_defined_transformer(transformer_index, user_defined_transformer):
             if not self._mock_fit_called:
-                raise AssertionError('transformation.fit() not called before persister.save_transformation()')
+                raise AssertionError('user_defined_transformer.fit() not called before persister.save_user_defined_transformer()')
         
-        self.persister.save_transformation = mock_save_transformation
+        self.persister.save_user_defined_transformer = mock_save_user_defined_transformer
 
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-    def test_encoder_stage_returns_transformation_when_run(self):
+    def test_encoder_stage_returns_user_defined_transformer_when_run(self):
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
-        self.assertEqual(self.transformation_instance, stage.run_same_process())
+        self.assertEqual(self.user_defined_transformer_instance, stage.run_same_process())
 
     def test_running_encoder_stage_twice_calls_fit_once(self):
         self.transformer.fit(self.mock_data)
@@ -157,7 +157,7 @@ class TestBaseTransformer(Spec):
         self.preprocessor.new_transformer.assert_called_with(self.transformer)
 
     def test_fit_supports_arbitrary_arguments(self):
-        self.mock_fit.side_effect = self._complex_fit_transformation
+        self.mock_fit.side_effect = self._complex_fit_user_defined_transformer
 
         args = tuple(self.faker.words())
         kwargs = self.faker.pydict()
@@ -169,7 +169,7 @@ class TestBaseTransformer(Spec):
         self.assertEqual((args, kwargs), self._fit_data)
 
     def test_transform_data_supports_arbitrary_arguments(self):
-        self.mock_transform.side_effect = self._complex_transformed_transformation
+        self.mock_transform.side_effect = self._complex_transformed_user_defined_transformer
 
         args = tuple(self.faker.words())
         kwargs = self.faker.pydict()
@@ -179,15 +179,15 @@ class TestBaseTransformer(Spec):
 
         self.assertEqual((args, kwargs), encoding_stage.run_same_process())
 
-    def _transformed_transformation(self, data):
+    def _transformed_user_defined_transformer(self, data):
         return self._fit_data + data
 
-    def _complex_transformed_transformation(self, *args, **kwargs):
+    def _complex_transformed_user_defined_transformer(self, *args, **kwargs):
         return (args, kwargs)
 
-    def _fit_transformation(self, data):
+    def _fit_user_defined_transformer(self, data):
         self._mock_fit_called = True
         self._fit_data = data
 
-    def _complex_fit_transformation(self, *args, **kwargs):
+    def _complex_fit_user_defined_transformer(self, *args, **kwargs):
         self._fit_data = (args, kwargs)
