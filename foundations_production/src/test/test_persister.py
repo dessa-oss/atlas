@@ -11,22 +11,19 @@ from foundations_production.persister import Persister
 
 class TestPersister(Spec):
     
-    mock_serialize = let_patch_mock('foundations_internal.serializer.serialize')
-    model_package = let_mock()
-    user_defined_transformer = let_mock()
+    archiver = let_mock()
+    transformer = let_mock()
 
     @let
-    def transformer_index(self):
-        return self.faker.random_int()
+    def transformer_id(self):
+        return '{}_{}'.format(self.faker.word(), self.faker.random_int())
 
     @let
-    def serialized_transformer(self):
-        return self.faker.sentence()
+    def transformer_artifact_name(self):
+        return 'preprocessor/' + self.transformer_id
 
     def test_save_transformer_saves_serialized_transformer_to_model_package(self):
-        self.mock_serialize.return_value = self.serialized_transformer
+        persister = Persister(self.archiver)
+        persister.save_user_defined_transformer(self.transformer_id, self.transformer)
 
-        persister = Persister(self.model_package)
-        persister.save_user_defined_transformer(self.transformer_index, self.user_defined_transformer)
-
-        self.model_package.save_serialized_transformer.assert_called_with(self.serialized_transformer)
+        self.archiver.append_artifact.assert_called_with(self.transformer_artifact_name, self.transformer)
