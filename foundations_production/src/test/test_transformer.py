@@ -14,8 +14,10 @@ class TestTransformer(Spec):
     base_transformer = let_mock()
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     persister_class = let_patch_mock('foundations_production.persister.Persister')
-    global_model_package = let_patch_mock('foundations_production.model_package')
+    config_manager_config = let_patch_mock('foundations.config_manager.config')
     user_transformer_class = let_mock()
+
+    artifact_archive = let_mock()
 
     def user_transformer_class_callback(self, *args, **kwargs):
         return self.user_transformer_class(*args, **kwargs)
@@ -66,10 +68,12 @@ class TestTransformer(Spec):
             return self.base_transformer
 
         self.base_transformer_class.side_effect = _base_transformer_constructor
+        
+        self.config_manager_config.return_value = {'artifact_archive_implementation': self.artifact_archive}
           
-    def test_transformer_constructs_persister_with_global_model_package(self):
+    def test_transformer_constructs_persister_with_artifact_archive(self):
         Transformer(self.user_transformer_class_callback, self.fake_column_names)
-        self.persister_class.assert_called_with(self.global_model_package)
+        self.persister_class.assert_called_with(self.artifact_archive)
     
     def test_transformer_constructs_base_transformer_with_correct_arguments(self):
         def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):

@@ -11,12 +11,11 @@ class Transformer(object):
         from foundations_production.base_transformer import BaseTransformer
         from foundations_production.preprocessor_class import Preprocessor
         from foundations_production.persister import Persister
-        from foundations_production import model_package
         import foundations
 
         self._columns = kwargs.pop('list_of_columns', None)
         user_stage = foundations.create_stage(user_transformer_class)(*args, **kwargs)
-        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(model_package), user_stage)
+        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(self._get_artifact_archive()), user_stage)
 
     def fit(self, data):
         self._base_transformer.fit(self._column_data(data))
@@ -29,3 +28,9 @@ class Transformer(object):
             return data[self._columns]
         else:
             return data
+    
+    @staticmethod
+    def _get_artifact_archive():
+        from foundations import config_manager
+        config = config_manager.config()
+        return config['artifact_archive_implementation']
