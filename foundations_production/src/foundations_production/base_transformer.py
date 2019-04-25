@@ -6,20 +6,23 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import foundations
-
+from foundations_contrib.models.property_model import PropertyModel
 
 class BaseTransformer(object):
+
+    class State(PropertyModel):
+        transformer_index = PropertyModel.define_property()
+        persister = PropertyModel.define_property()
+        should_load = PropertyModel.define_property()
 
     def __init__(self, preprocessor, persister, transformation):
         self._encoder = None
         self._transformation = transformation
-        self._persister = persister
-        self._transformer_index = preprocessor.new_transformer(self)
-        self._should_load = False
+        self._state = self.State(should_load=False, transformer_index=preprocessor.new_transformer(self), persister=persister)
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._fit_stage)(*args, **kwargs)
+            self._encoder = foundations.create_stage(self._fit_stage)(self._state, self._transformation, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -30,20 +33,23 @@ class BaseTransformer(object):
         return foundations.create_stage(self._transformation_stage)(self.encoder(), *args, **kwargs)
 
     def load(self):
-        self._should_load = True
+        self._state.should_load = True
 
-    def _fit_stage(self, *args, **kwargs):
-        if self._should_load:
-            return self._loaded_transformer()
-        return self._fitted_transformer(*args, **kwargs)
+    @staticmethod
+    def _fit_stage(state, transformation, *args, **kwargs):
+        if state.should_load:
+            return BaseTransformer._loaded_transformer(state)
+        return BaseTransformer._fitted_transformer(state, transformation, *args, **kwargs)
 
-    def _fitted_transformer(self, *args, **kwargs):
-        self._transformation.fit(*args, **kwargs)
-        self._persister.save_transformation(self._transformer_index, self._transformation)
-        return self._transformation
+    @staticmethod
+    def _fitted_transformer(state, transformation, *args, **kwargs):
+        transformation.fit(*args, **kwargs)
+        state.persister.save_transformation(state.transformer_index, transformation)
+        return transformation
 
-    def _loaded_transformer(self):
-        return self._persister.load_transformation(self._transformer_index)
+    @staticmethod
+    def _loaded_transformer(state):
+        return state.persister.load_transformation(state.transformer_index)
 
     @staticmethod
     def _transformation_stage(transformation, *args, **kwargs):
