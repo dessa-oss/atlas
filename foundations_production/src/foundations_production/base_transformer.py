@@ -15,6 +15,19 @@ class BaseTransformer(object):
         persister = PropertyModel.define_property()
         should_load = PropertyModel.define_property()
 
+        def fit_stage(self, user_defined_transformer, *args, **kwargs):
+            if self.should_load:
+                return self._loaded_transformer()
+            return self._fitted_transformer(user_defined_transformer, *args, **kwargs)
+        
+        def _loaded_transformer(self):
+            return self.persister.load_user_defined_transformer(self.transformer_index)
+
+        def _fitted_transformer(self, user_defined_transformer, *args, **kwargs):
+            user_defined_transformer.fit(*args, **kwargs)
+            self.persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
+            return user_defined_transformer
+
     def __init__(self, preprocessor, persister, user_defined_transformer):
         self._encoder = None
         self._user_defined_transformer = user_defined_transformer
@@ -22,7 +35,7 @@ class BaseTransformer(object):
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._fit_stage)(self._state, self._user_defined_transformer, *args, **kwargs)
+            self._encoder = foundations.create_stage(self._state.fit_stage)(self._user_defined_transformer, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -34,22 +47,6 @@ class BaseTransformer(object):
 
     def load(self):
         self._state.should_load = True
-
-    @staticmethod
-    def _fit_stage(state, user_defined_transformer, *args, **kwargs):
-        if state.should_load:
-            return BaseTransformer._loaded_transformer(state)
-        return BaseTransformer._fitted_transformer(state, user_defined_transformer, *args, **kwargs)
-
-    @staticmethod
-    def _fitted_transformer(state, user_defined_transformer, *args, **kwargs):
-        user_defined_transformer.fit(*args, **kwargs)
-        state.persister.save_user_defined_transformer(state.transformer_index, user_defined_transformer)
-        return user_defined_transformer
-
-    @staticmethod
-    def _loaded_transformer(state):
-        return state.persister.load_user_defined_transformer(state.transformer_index)
 
     @staticmethod
     def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):
