@@ -11,10 +11,14 @@ from foundations_production.transformer import Transformer
 class TestTransformer(Spec):
 
     base_transformer_class = let_patch_mock('foundations_production.base_transformer.BaseTransformer')
+    base_transformer = let_mock()
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     persister_class = let_patch_mock('foundations_production.persister.Persister')
     global_model_package = let_patch_mock('foundations_production.model_package')
     user_transformer_class = let_mock()
+
+    def user_transformer_class_callback(self, *args, **kwargs):
+        return self.user_transformer_class(*args, **kwargs)
 
     @let
     def fake_column_names(self):
@@ -52,27 +56,36 @@ class TestTransformer(Spec):
         return self.user_transformer_class.return_value
     
     @let
-    def base_transformer(self):
-        return self.base_transformer_class.return_value
-
-    @let
     def persister(self):
         return self.persister_class.return_value
+
+    @set_up
+    def set_up(self):
+        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+            user_defined_transformer_stage.run_same_process()
+            return self.base_transformer
+
+        self.base_transformer_class.side_effect = _base_transformer_constructor
           
     def test_transformer_constructs_persister_with_global_model_package(self):
-        Transformer(self.user_transformer_class, self.fake_column_names)
+        Transformer(self.user_transformer_class_callback, self.fake_column_names)
         self.persister_class.assert_called_with(self.global_model_package)
     
     def test_transformer_constructs_base_transformer_with_correct_arguments(self):
-        Transformer(self.user_transformer_class, self.fake_column_names)
-        self.base_transformer_class.assert_called_with(self.global_preprocessor, self.persister, self.user_transformer)
+        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+            self.assertEqual(self.global_preprocessor, preprocessor)
+            self.assertEqual(self.persister, persister)
+            self.assertEqual(self.user_transformer, user_defined_transformer_stage.run_same_process())
+
+        self.base_transformer_class.side_effect = _base_transformer_constructor
+        Transformer(self.user_transformer_class_callback, self.fake_column_names)
     
     def test_fit_fits_selected_columns(self):
         from pandas.testing import assert_frame_equal
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
+        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
         transformer.fit(self.fake_data)
 
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
@@ -81,7 +94,7 @@ class TestTransformer(Spec):
     def test_fit_fits_all_columns_when_none_provided(self):
         from pandas.testing import assert_frame_equal
 
-        transformer = Transformer(self.user_transformer_class)
+        transformer = Transformer(self.user_transformer_class_callback)
         transformer.fit(self.fake_data)
 
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
@@ -92,7 +105,7 @@ class TestTransformer(Spec):
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
+        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
         transformer.transform(self.fake_data)
 
         sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
@@ -101,7 +114,7 @@ class TestTransformer(Spec):
     def test_transform_returns_all_transformed_data_when_no_columns_specified(self):
         from pandas.testing import assert_frame_equal
 
-        transformer = Transformer(self.user_transformer_class)
+        transformer = Transformer(self.user_transformer_class_callback)
         transformer.transform(self.fake_data)
 
         sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
@@ -114,7 +127,7 @@ class TestTransformer(Spec):
 
         selected_columns = self.fake_column_names[0:2]
 
-        transformer = Transformer(self.user_transformer_class, list_of_columns=selected_columns)
+        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
         joined_data = transformer.transform(self.fake_data)
 
         assert_frame_equal(self.fake_transformed_data, joined_data)
@@ -123,14 +136,14 @@ class TestTransformer(Spec):
         args = self.faker.words()
         kwargs = self.faker.pydict()
 
-        transformer = Transformer(self.user_transformer_class, list_of_columns=self.fake_column_names, *args, **kwargs)
+        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=self.fake_column_names, *args, **kwargs)
 
         self.user_transformer_class.assert_called_with(*args, **kwargs)
 
     def test_user_transformer_constructs_with_single_arguement_and_no_columns(self):
         arg = self.faker.word()
 
-        transformer = Transformer(self.user_transformer_class, arg)
+        transformer = Transformer(self.user_transformer_class_callback, arg)
 
         self.user_transformer_class.assert_called_with(arg)
 
