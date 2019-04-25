@@ -17,3 +17,4 @@ from test.test_preprocessor_decorator import TestPreprocessorDecorator
 from test.test_model_decorator import TestModelDecorator
 from test.test_transformer import TestTransformer
 from test.test_model_class import TestModel
+from test.test_persister import TestPersister

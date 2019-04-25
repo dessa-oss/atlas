@@ -6,4 +6,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class Persister(object):
-    pass
+    
+    def __init__(self, model_package):
+        self._model_package = model_package
+
+    def load_user_defined_transformer(self, transformer_id):
+        pass
+
+    def save_user_defined_transformer(self, transformer_id, transformer):
+        from foundations_internal.serializer import serialize
+
+        self._model_package.save_serialized_transformer(serialize(1))
