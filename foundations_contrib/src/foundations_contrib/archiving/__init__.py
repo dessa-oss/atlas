@@ -21,3 +21,10 @@ def get_pipeline_archiver():
     artifact_archive = load_archive('artifact_archive')
 
     return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)
+
+def get_pipeline_archiver_for_job(job_id):
+    from foundations_internal.pipeline_archiver import PipelineArchiver
+
+    artifact_archive = load_archive('artifact_archive')
+
+    return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)
