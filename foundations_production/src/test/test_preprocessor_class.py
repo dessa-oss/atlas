@@ -16,6 +16,8 @@ class TestPreprocessorClass(Spec):
 
     mock_callback = let_mock()
 
+    mock_archiver = let_patch_instance('foundations_contrib.archiving.get_pipeline_archiver')
+
     @let
     def random_number(self):
         import random
@@ -46,7 +48,13 @@ class TestPreprocessorClass(Spec):
 
     def test_preprocessor_calls_callback_when_called(self):
         self.mock_callback.return_value = self.random_number
-        self.assertEqual(self.random_number, self.preprocessor_instance())
+        self.assertEqual(self.random_number, self.preprocessor_instance().run_same_process())
+    
+    def test_preprocessor_calls_callback_when_called_and_supports_tuple_return(self):
+        expected_result = tuple(self.faker.words())
+        self.mock_callback.return_value = expected_result
+        result = tuple(stage.run_same_process() for stage in self.preprocessor_instance())
+        self.assertEqual(expected_result, result)
     
     def test_preprocessor_calls_callback_with_arguments_when_called(self):
         self.mock_callback.return_value = self.random_number
@@ -113,3 +121,12 @@ class TestPreprocessorClass(Spec):
         preprocessor_instance()
 
         self.mock_transformer.load.assert_not_called()
+
+    def test_preprocessor_saves_callback_when_returned_stage_is_executed(self):
+        stage = self.preprocessor_instance()
+        stage.run_same_process()
+        self.mock_archiver.append_artifact.assert_called_with('preprocessor/' + self.preprocessor_name + '.pkl', self.mock_callback)
+
+    def test_preprocessor_saves_callback_when_instantiated(self):
+        self.preprocessor_instance()
+        self.mock_archiver.append_artifact.assert_not_called()

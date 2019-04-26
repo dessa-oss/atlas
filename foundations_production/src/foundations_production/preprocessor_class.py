@@ -16,6 +16,8 @@ class Preprocessor(object):
         self._preprocessor_name = preprocessor_name
 
     def __call__(self, *args, **kwargs):
+        import foundations
+
         self._transformers = []
 
         Preprocessor.active_preprocessor = self
@@ -27,7 +29,15 @@ class Preprocessor(object):
 
         self._is_inference_mode = True
 
-        return callback_value
+        result = foundations.create_stage(self._serialize_callback)(callback_value)
+        if isinstance(callback_value, tuple):
+            result = result.split(len(callback_value))
+        return result
+
+    def _serialize_callback(self, args):
+        from foundations_contrib.archiving import get_pipeline_archiver
+        get_pipeline_archiver().append_artifact('preprocessor/' + self._preprocessor_name + '.pkl', self._callback)
+        return args
     
     def new_transformer(self, transformer):
         self._transformers.append(transformer)
