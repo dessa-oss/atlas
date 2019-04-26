@@ -13,14 +13,10 @@ def load_archive(name):
     return config_manager.reflect_instance(name, 'archive', lambda: NullArchive())
 
 def get_pipeline_archiver():
-    from foundations_internal.pipeline_archiver import PipelineArchiver
-    from foundations_contrib.archiving import load_archive
     from foundations_contrib.global_state import foundations_context
 
     job_id = foundations_context.job_id()
-    artifact_archive = load_archive('artifact_archive')
-
-    return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)
+    return get_pipeline_archiver_for_job(job_id)
 
 def get_pipeline_archiver_for_job(job_id):
     from foundations_internal.pipeline_archiver import PipelineArchiver
