@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from test.archiving.test_load_archive import TestLoadArchive
+from test.archiving.test_load_pipeline_archiver import TestLoadPipelineArchiver

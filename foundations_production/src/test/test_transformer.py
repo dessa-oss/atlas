@@ -29,7 +29,7 @@ class TestTransformer(Spec):
         load_archive.return_when(self.artifact_archive, 'artifact_archive')
         return load_archive
 
-    @let
+    @let_now
     def pipeline_archiver_class(self):
         return self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
 
