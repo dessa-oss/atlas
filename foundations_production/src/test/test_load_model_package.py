@@ -25,11 +25,19 @@ class TestLoadModelPackage(Spec):
         mock_get_pipeline_archiver.return_when(self.mock_pipeline_archiver, self.job_id)
         return mock_get_pipeline_archiver
 
-
-    def test_load_model_package_loads_transformer_preprocessor(self):
+    @set_up
+    def set_up(self):
         self.mock_pipeline_archiver.fetch_artifact = ConditionalReturn()
         self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_transformer_callback, 'preprocessor/transformer.pkl')
+        self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_model_callback, 'preprocessor/model.pkl')
 
+
+    def test_load_model_package_loads_transformer_preprocessor(self):
         model_package = load_model_package(self.job_id)
         model_package.preprocessor(self.mock_production_data)
         self.mock_transformer_callback.assert_called_with(self.mock_production_data)
+
+    def test_load_model_package_loads_model_preprocessor(self):
+        model_package = load_model_package(self.job_id)
+        model_package.model(self.mock_production_data)
+        self.mock_model_callback.assert_called_with(self.mock_production_data)
