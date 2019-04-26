@@ -16,8 +16,6 @@ class Preprocessor(object):
         self._preprocessor_name = preprocessor_name
 
     def __call__(self, *args, **kwargs):
-        import foundations
-
         self._transformers = []
 
         Preprocessor.active_preprocessor = self
@@ -28,6 +26,11 @@ class Preprocessor(object):
                 transformer.load()
 
         self._is_inference_mode = True
+
+        return self._serialization_stage(callback_value)
+
+    def  _serialization_stage(self, callback_value):
+        import foundations
 
         result = foundations.create_stage(self._serialize_callback)(callback_value)
         if isinstance(callback_value, tuple):
