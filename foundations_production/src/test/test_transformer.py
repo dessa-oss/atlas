@@ -13,7 +13,6 @@ class TestTransformer(Spec):
     base_transformer_class = let_patch_mock('foundations_production.base_transformer.BaseTransformer')
     base_transformer = let_mock()
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
-    persister_class = let_patch_mock('foundations_production.persister.Persister')
     user_transformer_class = let_mock()
     foundations_context = let_patch_mock('foundations_contrib.global_state.foundations_context')
     pipeline_archiver = let_mock()
@@ -71,13 +70,9 @@ class TestTransformer(Spec):
     def user_transformer(self):
         return self.user_transformer_class.return_value
     
-    @let
-    def persister(self):
-        return self.persister_class.return_value
-
     @set_up
     def set_up(self):
-        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+        def _base_transformer_constructor(preprocessor, user_defined_transformer_stage):
             user_defined_transformer_stage.run_same_process()
             return self.base_transformer
 
@@ -86,14 +81,9 @@ class TestTransformer(Spec):
         self.foundations_context.job_id.return_value = self.job_id
         self.pipeline_archiver_class.return_when(self.pipeline_archiver, self.job_id, None, None, None, None, None, self.artifact_archive, None)
           
-    def test_transformer_constructs_persister_with_pipeline_archiver(self):
-        Transformer(self.user_transformer_class_callback, self.fake_column_names)
-        self.persister_class.assert_called_with(self.pipeline_archiver)
-    
     def test_transformer_constructs_base_transformer_with_correct_arguments(self):
-        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+        def _base_transformer_constructor(preprocessor, user_defined_transformer_stage):
             self.assertEqual(self.global_preprocessor, preprocessor)
-            self.assertEqual(self.persister, persister)
             self.assertEqual(self.user_transformer, user_defined_transformer_stage.run_same_process())
 
         self.base_transformer_class.side_effect = _base_transformer_constructor

@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class Model(object):
     
     def __init__(self, user_model_class, *args, **kwargs):

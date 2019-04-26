@@ -18,6 +18,29 @@ class TestPreprocessorClass(Spec):
 
     mock_archiver = let_patch_instance('foundations_contrib.archiving.get_pipeline_archiver')
 
+    @let_now
+    def foundations_context(self):
+        from foundations_internal.foundations_context import FoundationsContext
+        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext(self.pipeline))
+
+    @let_now
+    def pipeline_context(self):
+        from foundations_internal.pipeline_context import PipelineContext
+        return PipelineContext()
+
+    @let_now
+    def pipeline(self):
+        from foundations_internal.pipeline import Pipeline
+        return Pipeline(self.pipeline_context)
+
+    @set_up
+    def set_up_foundations_context(self):
+        self.pipeline_context.file_name = self.job_id
+
+    @let
+    def job_id(self):
+        return self.faker.sha1()
+
     @let
     def random_number(self):
         import random
@@ -130,3 +153,12 @@ class TestPreprocessorClass(Spec):
     def test_preprocessor_saves_callback_when_instantiated(self):
         self.preprocessor_instance()
         self.mock_archiver.append_artifact.assert_not_called()
+
+    def test_job_id_is_a_stage_that_returns_the_current_job_id(self):
+        job_id_stage = self.preprocessor_instance.job_id
+        self.assertEqual(self.job_id, job_id_stage.run_same_process())
+
+    def test_job_id_is_the_value_of_the_job_id_when_one_is_provided(self):
+        preprocessor = Preprocessor(self.mock_callback, self.preprocessor_name, job_id=self.job_id)
+        job_id_stage = preprocessor.job_id
+        self.assertEqual(self.job_id, job_id_stage.run_same_process())

@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 import foundations
 from foundations_contrib.models.property_model import PropertyModel
 
@@ -12,30 +13,31 @@ class BaseTransformer(object):
 
     class State(PropertyModel):
         transformer_index = PropertyModel.define_property()
-        persister = PropertyModel.define_property()
         should_load = PropertyModel.define_property()
 
-        def fit_stage(self, user_defined_transformer, *args, **kwargs):
+        def fit_stage(self, persister, user_defined_transformer, *args, **kwargs):
             if self.should_load:
-                return self._loaded_transformer()
-            return self._fitted_transformer(user_defined_transformer, *args, **kwargs)
+                return self._loaded_transformer(persister)
+            return self._fitted_transformer(persister, user_defined_transformer, *args, **kwargs)
         
-        def _loaded_transformer(self):
-            return self.persister.load_user_defined_transformer(self.transformer_index)
+        def _loaded_transformer(self, persister):
+            return persister.load_user_defined_transformer(self.transformer_index)
 
-        def _fitted_transformer(self, user_defined_transformer, *args, **kwargs):
+        def _fitted_transformer(self, persister, user_defined_transformer, *args, **kwargs):
             user_defined_transformer.fit(*args, **kwargs)
-            self.persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
+            persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
             return user_defined_transformer
 
-    def __init__(self, preprocessor, persister, user_defined_transformer):
+    def __init__(self, preprocessor, user_defined_transformer):
         self._encoder = None
         self._user_defined_transformer = user_defined_transformer
-        self._state = self.State(should_load=False, transformer_index=preprocessor.new_transformer(self), persister=persister)
+
+        self._persister_stage = foundations.create_stage(self._create_persister)(job_id=preprocessor.job_id)
+        self._state = self.State(should_load=False, transformer_index=preprocessor.new_transformer(self))
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._state.fit_stage)(self._user_defined_transformer, *args, **kwargs)
+            self._encoder = foundations.create_stage(self._state.fit_stage)(self._persister_stage, self._user_defined_transformer, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -47,6 +49,11 @@ class BaseTransformer(object):
 
     def load(self):
         self._state.should_load = True
+
+    @staticmethod
+    def _create_persister(job_id):
+        from foundations_production.persister import Persister
+        return Persister(job_id)
 
     @staticmethod
     def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):

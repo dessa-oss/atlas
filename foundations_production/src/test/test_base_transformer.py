@@ -13,11 +13,21 @@ class TestBaseTransformer(Spec):
     preprocessor = let_mock()
     mock_data = let_mock()
     mock_data_two = let_mock() 
-    persister = let_mock()
     loaded_tranformation = let_mock()
+    persister = let_mock()
 
     mock_fit = let_mock()
     mock_transform = let_mock()
+
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+    
+    @let_now
+    def persister_klass(self):
+        klass = self.patch('foundations_production.persister.Persister', ConditionalReturn())
+        klass.return_when(self.persister, self.job_id)
+        return klass
 
     @let
     def transformer_index(self):
@@ -47,7 +57,8 @@ class TestBaseTransformer(Spec):
         self.mock_fit.side_effect = self._fit_user_defined_transformer
         self.mock_transform.side_effect = self._transformed_user_defined_transformer
         self.preprocessor.new_transformer.return_value = self.transformer_index
-        self.transformer = BaseTransformer(self.preprocessor, self.persister, self.user_defined_transformer)
+        self.preprocessor.job_id = self.job_id
+        self.transformer = BaseTransformer(self.preprocessor, self.user_defined_transformer)
         self._mock_fit_called = False
 
     def test_encoder_raises_value_error_when_not_fit(self):
@@ -68,6 +79,10 @@ class TestBaseTransformer(Spec):
         stage.run_same_process()
 
         self.persister.save_user_defined_transformer.assert_called_with(self.transformer_index, self.user_defined_transformer_instance)
+
+    def test_encoder_stage_should_not_create_persister_before_fit_stage_run(self):
+        self.transformer.fit(self.mock_data)
+        self.persister_klass.assert_not_called()
 
     def test_encoder_stage_loads_user_defined_transformer_from_persister_when_load_called(self):
         self.transformer.fit(self.mock_data)

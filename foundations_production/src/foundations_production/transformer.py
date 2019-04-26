@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class Transformer(object):
     
     def __init__(self, user_transformer_class, *args, **kwargs):
@@ -16,7 +17,7 @@ class Transformer(object):
 
         self._columns = kwargs.pop('list_of_columns', None)
         user_stage = foundations.create_stage(user_transformer_class)(*args, **kwargs)
-        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, Persister(get_pipeline_archiver()), user_stage)
+        self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, user_stage)
 
     def fit(self, data):
         self._base_transformer.fit(self._column_data(data))

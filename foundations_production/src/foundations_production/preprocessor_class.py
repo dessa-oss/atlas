@@ -5,15 +5,20 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
+
 class Preprocessor(object):
 
     active_preprocessor = None
 
-    def __init__(self, callback, preprocessor_name):
+    def __init__(self, callback, preprocessor_name, job_id=None):
+        import foundations
+
         self._transformers = []
         self._callback = callback
         self._is_inference_mode = False
         self._preprocessor_name = preprocessor_name
+
+        self.job_id = foundations.create_stage(self._job_id_stage)(job_id)
 
     def __call__(self, *args, **kwargs):
         self._transformers = []
@@ -28,6 +33,15 @@ class Preprocessor(object):
         self._is_inference_mode = True
 
         return self._serialization_stage(callback_value)
+
+    @staticmethod
+    def _job_id_stage(job_id):
+        from foundations_contrib.global_state import foundations_context
+
+        if job_id is None:
+            return foundations_context.job_id()
+        else:
+            return job_id
 
     def  _serialization_stage(self, callback_value):
         import foundations
