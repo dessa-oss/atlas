@@ -11,9 +11,10 @@ class Model(object):
         from foundations_production.base_transformer import BaseTransformer
         from foundations_production.preprocessor_class import Preprocessor
         from foundations_production.persister import Persister
+        from foundations_contrib.archiving import get_pipeline_archiver
         import foundations
 
-        persister = Persister(self._get_pipeline_archiver())
+        persister = Persister(get_pipeline_archiver())
         user_stage = foundations.create_stage(user_model_class)(*args, **kwargs)
         self._base_model = BaseTransformer(Preprocessor.active_preprocessor, persister, user_stage)
 
@@ -22,14 +23,3 @@ class Model(object):
 
     def predict(self, inputs):
         return self._base_model.transformed_data(inputs)
-
-    @staticmethod
-    def _get_pipeline_archiver():
-        from foundations_internal.pipeline_archiver import PipelineArchiver
-        from foundations_contrib.archiving import load_archive
-        from foundations_contrib.global_state import foundations_context
-
-        job_id = foundations_context.job_id()
-        artifact_archive = load_archive('artifact_archive')
-
-        return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)
