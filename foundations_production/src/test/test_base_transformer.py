@@ -18,6 +18,7 @@ class TestBaseTransformer(Spec):
 
     mock_fit = let_mock()
     mock_transform = let_mock()
+    mock_predict = let_mock()
 
     @let
     def job_id(self):
@@ -35,10 +36,34 @@ class TestBaseTransformer(Spec):
 
     @let
     def user_defined_transformer_instance(self):
-        user_defined_transformer = Mock()
+        class Transformer(object):
+        
+            def fit():
+                pass
+        
+            def transform(*args, **kwargs):
+                pass
+
+        user_defined_transformer = Transformer()
         user_defined_transformer.fit = self.mock_fit
         user_defined_transformer.transform = self.mock_transform
         return user_defined_transformer
+
+    @let
+    def user_defined_model_instance(self):
+
+        class Model(object):
+        
+            def fit():
+                pass
+        
+            def predict(*args, **kwargs):
+                pass
+
+        user_defined_model = Model()
+        user_defined_model.fit = self.mock_fit
+        user_defined_model.predict = self.mock_predict
+        return user_defined_model
 
     @let
     def user_defined_transformer(self):
@@ -48,6 +73,15 @@ class TestBaseTransformer(Spec):
             return self.user_defined_transformer_instance
     
         return foundations.create_stage(_construct_user_defined_transformer)()
+
+    @let
+    def user_defined_model(self):
+        import foundations
+
+        def _construct_user_defined_model():
+            return self.user_defined_model_instance
+    
+        return foundations.create_stage(_construct_user_defined_model)()
 
     @set_up
     def set_up(self):
@@ -193,6 +227,19 @@ class TestBaseTransformer(Spec):
         encoding_stage = self.transformer.transformed_data(*args, **kwargs)
 
         self.assertEqual((args, kwargs), encoding_stage.run_same_process())
+
+    def test_transform_data_calls_predict_when_user_defined_model_is_passed(self):
+        from foundations_production.base_transformer import BaseTransformer
+
+        args = tuple(self.faker.words())
+        kwargs = self.faker.pydict()
+
+        transformer = BaseTransformer(self.preprocessor, self.user_defined_model)
+        transformer.fit(None)
+        encoding_stage = transformer.transformed_data(*args, **kwargs)
+        encoding_stage.run_same_process()
+
+        self.mock_predict.assert_called_with(*args, **kwargs)
 
     def _transformed_user_defined_transformer(self, data):
         return self._fit_data + data

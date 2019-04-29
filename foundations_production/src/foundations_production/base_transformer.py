@@ -74,4 +74,6 @@ class BaseTransformer(object):
 
     @staticmethod
     def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):
+        if hasattr(user_defined_transformer, 'predict'):
+            return user_defined_transformer.predict(*args, **kwargs)
         return user_defined_transformer.transform(*args, **kwargs)

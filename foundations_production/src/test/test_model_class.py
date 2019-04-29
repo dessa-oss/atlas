@@ -96,6 +96,3 @@ class TestModel(Spec):
     def test_transform_transforms_selected_columns(self):
         self.assertEqual(self.fake_validation_targets, self.transformer.predict(self.fake_validation_inputs))
     
-    def test_transform_and_predict_are_same(self):
-        model = self.transformer
-        self.assertEqual(model.predict, model.transform)
