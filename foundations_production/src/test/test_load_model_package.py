@@ -43,4 +43,8 @@ class TestLoadModelPackage(Spec):
 
     def test_model_preprocessor_inference_mode_is_true(self):
         model_package = load_model_package(self.job_id)
-        self.assertTrue(model_package.model.get_inference_mode())
+        self.assertTrue(model_package.model.get_inference_mode())   
+    
+    def test_transformer_preprocessor_inference_mode_is_true(self):
+        model_package = load_model_package(self.job_id)
+        self.assertTrue(model_package.preprocessor.get_inference_mode())

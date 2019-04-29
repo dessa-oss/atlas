@@ -25,6 +25,7 @@ def load_model_package(job_id):
     preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/transformer.pkl')
     model_callback = pipeline_archiver.fetch_artifact('preprocessor/model.pkl')
     preprocessor = Preprocessor(preprocessor_callback, 'transformer')
+    preprocessor.set_inference_mode()
     model_preprocessor = Preprocessor(model_callback, 'model')
     model_preprocessor.set_inference_mode()
     return _model_package(preprocessor = preprocessor, model = model_preprocessor)
