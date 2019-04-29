@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
+from foundations_contrib.archiving import get_pipeline_archiver
 from foundations_contrib.global_state import foundations_context
 
 class Preprocessor(object):
@@ -51,7 +52,6 @@ class Preprocessor(object):
         return result
 
     def _serialize_callback(self, args):
-        from foundations_contrib.archiving import get_pipeline_archiver
         get_pipeline_archiver().append_artifact('preprocessor/' + self._preprocessor_name + '.pkl', self._callback)
         return args
     
