@@ -22,3 +22,5 @@ class Model(object):
 
     def predict(self, inputs):
         return self._base_model.transformed_data(inputs)
+
+    transform = predict
