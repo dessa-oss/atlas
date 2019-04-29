@@ -7,14 +7,31 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import foundations
-from foundations_contrib.models.property_model import PropertyModel
 
 class BaseTransformer(object):
 
-    class State(PropertyModel):
-        transformer_index = PropertyModel.define_property()
-        should_load = PropertyModel.define_property()
+    class State(object):
 
+        def __init__(self, should_load, transformer_index):
+            self._should_load = should_load
+            self._transformer_index = transformer_index
+        
+        @property
+        def should_load(self):
+            return self._should_load
+        
+        @should_load.setter
+        def should_load(self, value):
+            self._should_load = value
+
+        @property
+        def transformer_index(self):
+            return self._transformer_index
+        
+        @transformer_index.setter
+        def transformer_index(self, value):
+            self._transformer_index = value
+             
         def fit_stage(self, persister, user_defined_transformer, *args, **kwargs):
             if self.should_load:
                 return self._loaded_transformer(persister)
