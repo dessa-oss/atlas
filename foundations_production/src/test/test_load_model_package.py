@@ -31,7 +31,6 @@ class TestLoadModelPackage(Spec):
         self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_transformer_callback, 'preprocessor/transformer.pkl')
         self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_model_callback, 'preprocessor/model.pkl')
 
-
     def test_load_model_package_loads_transformer_preprocessor(self):
         model_package = load_model_package(self.job_id)
         model_package.preprocessor(self.mock_production_data)
@@ -41,3 +40,7 @@ class TestLoadModelPackage(Spec):
         model_package = load_model_package(self.job_id)
         model_package.model(self.mock_production_data)
         self.mock_model_callback.assert_called_with(self.mock_production_data)
+
+    def test_model_preprocessor_inference_mode_is_true(self):
+        model_package = load_model_package(self.job_id)
+        self.assertTrue(model_package.model.get_inference_mode())
