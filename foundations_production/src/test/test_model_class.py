@@ -27,12 +27,6 @@ class TestModel(Spec):
         load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
         load_archive.return_when(self.artifact_archive, 'artifact_archive')
         return load_archive
-    
-    @let_now
-    def pipeline_archiver_class(self):
-        pipeline_archiver_class = self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
-        pipeline_archiver_class.return_when(self.pipeline_archiver, self.job_id, None, None, None, None, None, self.artifact_archive, None)
-        return pipeline_archiver_class
 
     @let
     def transformer_args(self):
@@ -50,13 +44,6 @@ class TestModel(Spec):
         klass.return_when(self.user_transformer, *self.transformer_args, **self.transformer_kwargs)
         return klass
 
-    @let_now
-    def persister(self):
-        instance = Mock()
-        klass = self.patch('foundations_production.persister.Persister', ConditionalReturn())
-        klass.return_when(instance, self.pipeline_archiver)
-        return instance
-
     fake_training_inputs = let_mock()
     fake_training_targets = let_mock()
     fake_validation_inputs = let_mock()
@@ -66,9 +53,8 @@ class TestModel(Spec):
     def base_transformer(self):
         instance = Mock()
 
-        def _base_transformer_constructor(preprocessor, persister, user_defined_transformer_stage):
+        def _base_transformer_constructor(preprocessor, user_defined_transformer_stage):
             self.assertEqual(self.global_preprocessor, preprocessor)
-            self.assertEqual(self.persister, persister)
             self.assertEqual(self.user_transformer, user_defined_transformer_stage.run_same_process())
             return instance
 

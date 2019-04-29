@@ -11,13 +11,11 @@ class Model(object):
     def __init__(self, user_model_class, *args, **kwargs):
         from foundations_production.base_transformer import BaseTransformer
         from foundations_production.preprocessor_class import Preprocessor
-        from foundations_production.persister import Persister
         from foundations_contrib.archiving import get_pipeline_archiver
         import foundations
 
-        persister = Persister(get_pipeline_archiver())
         user_stage = foundations.create_stage(user_model_class)(*args, **kwargs)
-        self._base_model = BaseTransformer(Preprocessor.active_preprocessor, persister, user_stage)
+        self._base_model = BaseTransformer(Preprocessor.active_preprocessor, user_stage)
 
     def fit(self, training_inputs, training_targets, validation_inputs, validation_targets):
         self._base_model.fit(training_inputs, training_targets, validation_inputs, validation_targets)
