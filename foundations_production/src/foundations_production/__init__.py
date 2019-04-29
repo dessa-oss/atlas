@@ -6,6 +6,8 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 import collections
+from foundations_production.transformer import Transformer
+from foundations_production.model_class import Model
 
 _model_package = collections.namedtuple('ModelPackage', ['preprocessor', 'model'])
 

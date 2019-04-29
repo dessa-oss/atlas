@@ -6,6 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+import foundations_production
+import foundations
 import pandas
 
 
@@ -36,15 +38,13 @@ class TestModelPackage(Spec):
                 predicted_labels.append(int(row < self.max_fare))
             return pandas.DataFrame({"Survived": predicted_labels})
     
-    @skip('Not ready yet')
+    @skip('not ready')
     def test_can_create_and_consume_model_package(self):
-        import foundations_production
-
         foundations.set_project_name('production_titanic_test')
 
         @foundations_production.preprocessor
         def preprocessor(input_data):
-            transformer = foundations_production.Transformer(["Sex", "Cabin", "Fare"], self.AddAverageToValueTransformer)
+            transformer = foundations_production.Transformer(self.AddAverageToValueTransformer, list_of_columns=["Sex", "Cabin", "Fare"])
             transformer.fit(input_data)
             return transformer.transform(input_data)
 
