@@ -18,17 +18,20 @@ def model(preprocessor_callback):
     return Preprocessor(preprocessor_callback, 'model')
 
 def load_model_package(job_id):
-    from foundations_production.preprocessor_class import Preprocessor
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
-    preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/transformer.pkl')
-    model_callback = pipeline_archiver.fetch_artifact('preprocessor/model.pkl')
-    preprocessor = Preprocessor(preprocessor_callback, 'transformer')
-    preprocessor.set_inference_mode()
-    model_preprocessor = Preprocessor(model_callback, 'model')
-    model_preprocessor.set_inference_mode()
+    preprocessor = _load_preprocessor(pipeline_archiver, 'transformer')
+    model_preprocessor = _load_preprocessor(pipeline_archiver, 'model')
     return _model_package(preprocessor = preprocessor, model = model_preprocessor)
+
+def _load_preprocessor(pipeline_archiver, preprocessor_name):
+    from foundations_production.preprocessor_class import Preprocessor
+
+    preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/{}.pkl'.format(preprocessor_name))
+    preprocessor = Preprocessor(preprocessor_callback, preprocessor_name)
+    preprocessor.set_inference_mode()
+    return preprocessor
 
 def _append_module():
     import sys
