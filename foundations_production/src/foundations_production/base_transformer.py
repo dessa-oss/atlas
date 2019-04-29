@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import foundations
+from foundations_production.persister import Persister
 
 class BaseTransformer(object):
 
@@ -69,7 +70,6 @@ class BaseTransformer(object):
 
     @staticmethod
     def _create_persister(job_id):
-        from foundations_production.persister import Persister
         return Persister(job_id)
 
     @staticmethod

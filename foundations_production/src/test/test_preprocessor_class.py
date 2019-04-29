@@ -21,7 +21,7 @@ class TestPreprocessorClass(Spec):
     @let_now
     def foundations_context(self):
         from foundations_internal.foundations_context import FoundationsContext
-        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext(self.pipeline))
+        return self.patch('foundations_production.preprocessor_class.foundations_context', FoundationsContext(self.pipeline))
 
     @let_now
     def pipeline_context(self):

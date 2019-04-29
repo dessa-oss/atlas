@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
+from foundations_contrib.global_state import foundations_context
 
 class Preprocessor(object):
 
@@ -36,8 +37,6 @@ class Preprocessor(object):
 
     @staticmethod
     def _job_id_stage(job_id):
-        from foundations_contrib.global_state import foundations_context
-
         if job_id is None:
             return foundations_context.job_id()
         else:

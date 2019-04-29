@@ -25,7 +25,7 @@ class TestBaseTransformer(Spec):
     
     @let_now
     def persister_klass(self):
-        klass = self.patch('foundations_production.persister.Persister', ConditionalReturn())
+        klass = self.patch('foundations_production.base_transformer.Persister', ConditionalReturn())
         klass.return_when(self.persister, self.job_id)
         return klass
 
