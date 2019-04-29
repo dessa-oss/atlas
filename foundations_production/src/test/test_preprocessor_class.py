@@ -162,3 +162,10 @@ class TestPreprocessorClass(Spec):
         preprocessor = Preprocessor(self.mock_callback, self.preprocessor_name, job_id=self.job_id)
         job_id_stage = preprocessor.job_id
         self.assertEqual(self.job_id, job_id_stage.run_same_process())
+    
+    def test_get_inference_mode_gets_inference_mode_false_by_default(self):
+        self.assertFalse(self.preprocessor_instance.get_inference_mode())
+    
+    def test_get_inference_mode_gets_inference_mode_true_when_set(self):
+        self.preprocessor_instance.set_inference_mode()
+        self.assertTrue(self.preprocessor_instance.get_inference_mode())

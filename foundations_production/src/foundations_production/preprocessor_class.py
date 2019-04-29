@@ -64,3 +64,6 @@ class Preprocessor(object):
     
     def set_inference_mode(self):
         self._is_inference_mode = True
+    
+    def get_inference_mode(self):
+        return self._is_inference_mode
