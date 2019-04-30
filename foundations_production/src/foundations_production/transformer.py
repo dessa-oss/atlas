@@ -13,18 +13,11 @@ class Transformer(object):
         from foundations_production.preprocessor_class import Preprocessor
         import foundations
 
-        self._columns = kwargs.pop('list_of_columns', None)
         user_stage = foundations.create_stage(user_transformer_class)(*args, **kwargs)
         self._base_transformer = BaseTransformer(Preprocessor.active_preprocessor, user_stage)
 
     def fit(self, data):
-        self._base_transformer.fit(self._column_data(data))
+        self._base_transformer.fit(data)
 
     def transform(self, data):
-        return self._base_transformer.transformed_data(self._column_data(data))
-
-    def _column_data(self, data):
-        if self._columns is not None:
-            return data[self._columns]
-        else:
-            return data
+        return self._base_transformer.transformed_data(data)

@@ -87,20 +87,10 @@ class TestTransformer(Spec):
             self.assertEqual(self.user_transformer, user_defined_transformer_stage.run_same_process())
 
         self.base_transformer_class.side_effect = _base_transformer_constructor
-        Transformer(self.user_transformer_class_callback, self.fake_column_names)
+        Transformer(self.user_transformer_class_callback)
     
-    def test_fit_fits_selected_columns(self):
-        from pandas.testing import assert_frame_equal
-
-        selected_columns = self.fake_column_names[0:2]
-
-        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
-        transformer.fit(self.fake_data)
-
-        sliced_dataframe = self.base_transformer.fit.call_args[0][0]
-        assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
     
-    def test_fit_fits_all_columns_when_none_provided(self):
+    def test_fit_fits_all_columns(self):
         from pandas.testing import assert_frame_equal
 
         transformer = Transformer(self.user_transformer_class_callback)
@@ -109,47 +99,24 @@ class TestTransformer(Spec):
         sliced_dataframe = self.base_transformer.fit.call_args[0][0]
         assert_frame_equal(self.fake_data, sliced_dataframe)
     
-    def test_transform_transforms_selected_columns(self):
-        from pandas.testing import assert_frame_equal
-
-        selected_columns = self.fake_column_names[0:2]
-
-        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
-        transformer.transform(self.fake_data)
-
-        sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
-        assert_frame_equal(self.fake_data[selected_columns], sliced_dataframe)
-
-    def test_transform_returns_all_transformed_data_when_no_columns_specified(self):
+    def test_transform_transforms_all_data(self):
         from pandas.testing import assert_frame_equal
 
         transformer = Transformer(self.user_transformer_class_callback)
         transformer.transform(self.fake_data)
 
         sliced_dataframe = self.base_transformer.transformed_data.call_args[0][0]
-        assert_frame_equal(self.fake_data, sliced_dataframe)        
-
-    def test_transform_returns_transformed_selected_columns(self):
-        from pandas.testing import assert_frame_equal
-
-        self.base_transformer.transformed_data.return_value = self.fake_transformed_data
-
-        selected_columns = self.fake_column_names[0:2]
-
-        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=selected_columns)
-        joined_data = transformer.transform(self.fake_data)
-
-        assert_frame_equal(self.fake_transformed_data, joined_data)
+        assert_frame_equal(self.fake_data, sliced_dataframe)
 
     def test_user_transformer_constructs_with_arbitrary_arguments(self):
         args = self.faker.words()
         kwargs = self.faker.pydict()
 
-        transformer = Transformer(self.user_transformer_class_callback, list_of_columns=self.fake_column_names, *args, **kwargs)
+        transformer = Transformer(self.user_transformer_class_callback, *args, **kwargs)
 
         self.user_transformer_class.assert_called_with(*args, **kwargs)
 
-    def test_user_transformer_constructs_with_single_arguement_and_no_columns(self):
+    def test_user_transformer_constructs_with_single_argument_and_no_columns(self):
         arg = self.faker.word()
 
         transformer = Transformer(self.user_transformer_class_callback, arg)

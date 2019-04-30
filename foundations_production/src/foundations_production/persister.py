@@ -11,6 +11,7 @@ class Persister(object):
     def __init__(self, job_id):
         from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
+        self._job_id = job_id
         self._archiver = get_pipeline_archiver_for_job(job_id)
 
     def load_user_defined_transformer(self, transformer_id):

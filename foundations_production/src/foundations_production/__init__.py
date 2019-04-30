@@ -23,15 +23,15 @@ def load_model_package(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
-    preprocessor = _load_preprocessor(pipeline_archiver, 'transformer')
-    model_preprocessor = _load_preprocessor(pipeline_archiver, 'model')
+    preprocessor = _load_preprocessor(pipeline_archiver, 'transformer', job_id)
+    model_preprocessor = _load_preprocessor(pipeline_archiver, 'model', job_id)
     return _model_package(preprocessor = preprocessor, model = model_preprocessor)
 
-def _load_preprocessor(pipeline_archiver, preprocessor_name):
+def _load_preprocessor(pipeline_archiver, preprocessor_name, job_id):
     from foundations_production.preprocessor_class import Preprocessor
 
     preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/{}.pkl'.format(preprocessor_name))
-    preprocessor = Preprocessor(preprocessor_callback, preprocessor_name)
+    preprocessor = Preprocessor(preprocessor_callback, preprocessor_name, job_id)
     preprocessor.set_inference_mode()
     return preprocessor
 
