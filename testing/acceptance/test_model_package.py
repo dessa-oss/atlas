@@ -15,6 +15,8 @@ import pandas
 class TestModelPackage(Spec):
 
     def test_can_create_and_consume_model_package(self):
+        from foundations_contrib.global_state import foundations_context
+
         job = train_model_package.validation_predictions.run()
         job.wait_for_deployment_to_complete()
         job_id = job.job_name()
@@ -27,7 +29,7 @@ class TestModelPackage(Spec):
             "Fare": [10]
         })
         preprocessed_production_dataset = model_package.preprocessor(production_dataset)
-        production_predictions = model_package.model(preprocessed_production_dataset, preprocessed_production_dataset)
+        production_predictions = model_package.model.predict(preprocessed_production_dataset)
 
         production_job = foundations.create_stage(production_model_package.log_predictions_for_assertion)(production_predictions).run()
         production_job.wait_for_deployment_to_complete()

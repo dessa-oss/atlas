@@ -40,18 +40,13 @@ def split_inputs_and_targets(data):
     else:
         return data[["Sex", "Cabin", "Fare"]], None
 
-def model_preprocessor(train_data, validation_data):
+def split_data(train_data, validation_data):
     split_inputs_and_targets_stage = foundations.create_stage(split_inputs_and_targets)
     train_features, train_targets = split_inputs_and_targets_stage(train_data).split(2)
     validation_features, validation_targets = split_inputs_and_targets_stage(validation_data).split(2)
-
-    model_transformer = foundations_production.Model(Model)
-    model_transformer.fit(train_features, train_targets, validation_features, validation_targets)
-
-    return model_transformer.predict(validation_features)
+    return train_features, train_targets, validation_features, validation_targets
 
 preprocessor = foundations_production.preprocessor(transformer_preprocessor)
-model = foundations_production.model(model_preprocessor)
 
 train_data = pandas.DataFrame({
     "Sex": [0, 1, 4],
@@ -71,6 +66,8 @@ preprocessed_train_data = preprocessor(train_data)
 
 preprocessor.set_inference_mode()
 preprocessed_validation_data = preprocessor(validation_data)
+train_features, train_targets, validation_features, validation_targets = split_data(preprocessed_train_data, preprocessed_validation_data)
 
-validation_predictions = model(preprocessed_train_data, preprocessed_validation_data)
-
+model = foundations_production.Model(Model)
+model.fit(train_features, train_targets, validation_features, validation_targets)
+validation_predictions = model.predict(validation_features)
