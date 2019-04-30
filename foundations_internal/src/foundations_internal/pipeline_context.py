@@ -14,7 +14,7 @@ class PipelineContext(object):
     def __init__(self):
         import uuid
 
-        self.file_name = str(uuid.uuid4()) + ".json"
+        self._file_name = None
         self.provenance = Provenance()
         self.stage_contexts = {}
         self.global_stage_context = StageContext()
@@ -25,6 +25,16 @@ class PipelineContext(object):
         self._job_source_archive_loaded = False
         self._artifact_archive_loaded = False
         self._miscellaneous_archive_loaded = False
+
+    @property
+    def file_name(self):
+        if not self._file_name:
+            raise ValueError('Job ID is currently undefined, please set before retrieving')
+        return self._file_name
+    
+    @file_name.setter
+    def file_name(self, value):
+        self._file_name = value
 
     def mark_fully_loaded(self):
         self._stage_log_archive_loaded = True

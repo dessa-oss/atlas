@@ -5,11 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from foundations_internal.pipeline_context import PipelineContext
 
 
-class TestPipelineContext(unittest.TestCase):
+class TestPipelineContext(Spec):
 
     class MockStageContext(object):
         def __init__(self):
@@ -104,6 +104,24 @@ class TestPipelineContext(unittest.TestCase):
             self.archiver = archiver
             self.load_artifact_counter += 1
 
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+
+    @let
+    def pipeline_context(self):
+        return PipelineContext()
+
+    def test_file_name_raises_exception_when_not_yet_defined(self):
+        with self.assertRaises(ValueError) as error_context:
+            self.pipeline_context.file_name
+        
+        self.assertIn('Job ID is currently undefined, please set before retrieving', error_context.exception.args)
+
+    def test_file_name_returns_job_id(self):
+        self.pipeline_context.file_name = self.job_id
+        self.assertEqual(self.job_id, self.pipeline_context.file_name)
+
     def test_add_stage_context(self):
         pipeline_context = PipelineContext()
 
@@ -152,6 +170,7 @@ class TestPipelineContext(unittest.TestCase):
 
     def test_save_uses_save_method_on_result_saver(self):
         pipeline_context = PipelineContext()
+        pipeline_context.file_name = self.job_id
         mock_result_saver = self.MockResultSaver()
 
         pipeline_context.save(mock_result_saver)
