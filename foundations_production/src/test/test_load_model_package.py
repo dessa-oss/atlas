@@ -11,7 +11,6 @@ from foundations_production import load_model_package
 class TestLoadModelPackage(Spec):
 
     mock_transformer_callback = let_mock()
-    mock_model_callback = let_mock()
     mock_pipeline_archiver = let_mock()
     mock_production_data = let_mock()
 
@@ -29,7 +28,6 @@ class TestLoadModelPackage(Spec):
     def set_up(self):
         self.mock_pipeline_archiver.fetch_artifact = ConditionalReturn()
         self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_transformer_callback, 'preprocessor/transformer.pkl')
-        self.mock_pipeline_archiver.fetch_artifact.return_when(self.mock_model_callback, 'preprocessor/model.pkl')
 
     def test_load_model_package_loads_transformer_preprocessor(self):
         model_package = load_model_package(self.job_id)
@@ -47,11 +45,6 @@ class TestLoadModelPackage(Spec):
         model_package.preprocessor(self.mock_production_data)
         self.assertEqual(self.job_id, model_package.preprocessor.job_id.run_same_process())
 
-    def test_load_model_package_loads_model_preprocessor(self):
-        model_package = load_model_package(self.job_id)
-        model_package.model(self.mock_production_data)
-        self.mock_model_callback.assert_called_with(self.mock_production_data)
-
     def test_load_model_package_loads_model_preprocessor_with_correct_name(self):
         model_package = load_model_package(self.job_id)
         new_transformer_index = model_package.model.new_transformer(None)
@@ -59,11 +52,13 @@ class TestLoadModelPackage(Spec):
 
     def test_load_model_package_loads_model_preprocessor_with_job_id(self):
         model_package = load_model_package(self.job_id)
-        self.assertEqual(self.job_id, model_package.model.job_id.run_same_process())
+        self.assertEqual(self.job_id, model_package.model.job_id)
 
-    def test_model_preprocessor_inference_mode_is_true(self):
+    def test_model_preprocessor_is_production_model(self):
+        from foundations_production.production_model import ProductionModel
+
         model_package = load_model_package(self.job_id)
-        self.assertTrue(model_package.model.get_inference_mode())   
+        self.assertIsInstance(model_package.model, ProductionModel)   
     
     def test_transformer_preprocessor_inference_mode_is_true(self):
         model_package = load_model_package(self.job_id)

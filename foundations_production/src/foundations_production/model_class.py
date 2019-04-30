@@ -6,18 +6,30 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
+from foundations_contrib.global_state import foundations_context
+
+
 class Model(object):
     
     def __init__(self, user_model_class, *args, **kwargs):
+        from foundations import create_stage
         from foundations_production.base_transformer import BaseTransformer
-        from foundations_production.preprocessor_class import Preprocessor
-        import foundations
 
-        user_stage = foundations.create_stage(user_model_class)(*args, **kwargs)
-        self._base_model = BaseTransformer(Preprocessor.active_preprocessor, user_stage)
+        user_stage = create_stage(user_model_class)(*args, **kwargs)
+        
+        self.job_id = create_stage(self._job_id_stage)()
+        self._base_model = BaseTransformer(self, user_stage)
 
-    def fit(self, training_inputs, training_targets, validation_inputs, validation_targets):
-        self._base_model.fit(training_inputs, training_targets, validation_inputs, validation_targets)
+    @staticmethod
+    def _job_id_stage():
+        return foundations_context.job_id()
 
-    def predict(self, inputs):
-        return self._base_model.transformed_data(inputs)
+    def fit(self, *args, **kwargs):
+        self._base_model.fit(*args, **kwargs)
+        return self._base_model.encoder()
+
+    def predict(self, *args, **kwargs):
+        return self._base_model.transformed_data(*args, **kwargs)
+
+    def new_transformer(self, transformer):
+        return 'model_0'
