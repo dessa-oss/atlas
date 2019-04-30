@@ -15,10 +15,6 @@ def preprocessor(preprocessor_callback):
     from foundations_production.preprocessor_class import Preprocessor
     return Preprocessor(preprocessor_callback, 'transformer')
 
-def model(preprocessor_callback):
-    from foundations_production.preprocessor_class import Preprocessor
-    return Preprocessor(preprocessor_callback, 'model')
-
 def load_model_package(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
     from foundations_production.production_model import ProductionModel
