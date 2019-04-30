@@ -16,7 +16,12 @@ class TestPreprocessorClass(Spec):
 
     mock_callback = let_mock()
 
-    mock_archiver = let_patch_instance('foundations_production.preprocessor_class.get_pipeline_archiver')
+    @let_now
+    def mock_archiver(self):
+        instance = Mock()
+        callback = self.patch('foundations_production.preprocessor_class.get_pipeline_archiver_for_job', ConditionalReturn())
+        callback.return_when(instance, self.job_id)
+        return instance
 
     @let_now
     def foundations_context(self):

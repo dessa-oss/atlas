@@ -11,7 +11,6 @@ class Transformer(object):
     def __init__(self, user_transformer_class, *args, **kwargs):
         from foundations_production.base_transformer import BaseTransformer
         from foundations_production.preprocessor_class import Preprocessor
-        from foundations_contrib.archiving import get_pipeline_archiver
         import foundations
 
         self._columns = kwargs.pop('list_of_columns', None)
