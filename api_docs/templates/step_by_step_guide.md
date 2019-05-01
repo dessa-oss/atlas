@@ -2,15 +2,14 @@
 
 In this tutorial we will go over how to build and deploy a model using Foundations, as well as demonstrate additional features. To use Foundations to its maximum extent, we recommend seperating any job deployment code from the actual model itself. For this example, we will seperate all model code into a file called model.py and any job deployment code into deploy.py which will just use the functions defined in model.py.
 
-This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code locally; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with the Foundations CLI command: `foundations deploy project_code/driver.py --env=local`.
+This tutorial will also be using Jupyter Notebook as the primary interface to deploy model code **locally**; however, Foundations is **not** dependant of Jupyter Notebook and models can be deployed natively through Python. For those wishing to run the code without Jupyter, simply run the driver code with the Foundations CLI command: `foundations deploy project_code/driver.py --env=local`.
 
 <h3>Before you start</h3>
 
 You should have already [installed Foundations](../quick_start/) as well as [Jupyter Notebook](../start_guide/#jupyter-notebook-setup) up and runnning.
 
 ## Step 0: Set your configuration (optional)
-
-If you are:
+This tutorial will deploy and run model code on your local machine using the auto-generated environment configuration file from the [init](../project_creation/#project-creation) command. However, if you are:
 
  - Planning on running your foundations code on a remote environment like Google Cloud Platform (GCP) or SSH
  - Want to modify where foundations stores data when running locally
@@ -18,10 +17,12 @@ If you are:
  - Looking to modify the verbosity of foundations logs
  - Looking to set environment variables in your deployment environment
 
- you can customize your configurations. Instructions and examples on how to do this can be found [here](../configs/).
+you can customize your configurations. Instructions and examples on how to do this can be found [here](../configs/#configuration-options). 
+
+Additional information on what deployment environments are and how to set up Foundations configuration files can be found under [Deploying to Different Environments](../configs/)
 
 
- *By default, foundations will deploy locally, running your code on your local machine.*
+*By default, foundations will deploy locally, running your code on your local machine.*
 
 ## Step 1: Writing model code
 

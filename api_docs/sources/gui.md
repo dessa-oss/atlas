@@ -5,6 +5,8 @@ Foundations provides a user interface with which one can view all information ab
 
 ## Installation
 
+The GUI images can either be built directly from the source code, or will be provided by the Dessa team. If you are building the images yourself, please refer to the instructions on [Building Images](../gui/#building-images) first, otherwise please skip ahead to [Installation with Docker](../gui/#installation-with-docker)
+
 <h3>Dependencies</h3>
 
 The recommended way to run the GUI is via Docker. It is recommended to use `Docker >= 18.09` which Foundations is validated against.
@@ -13,19 +15,24 @@ If you wish to build the GUI from source, we also require `Python >= 3.5` .
 
 As with Foundations itself, there must be an accessible `redis:5` instance / installation. See the [start guide](../start_guide/) for more information.
 
-<h3>Building Images</h3>
+###Building Images###
 
-If the images have already been built or provided, skip ahead to the [Installation Process](../gui/#Installation Process) below.
+If starting the GUI with the source code, you will need to build the docker images before running them. If the images have already been built and provided by the Dessa team, skip ahead to the [Installation Process](../gui/#installation-process) below.
 
-0. If you haven't done so already, clone the Foundations repo and checkout the desired branch (probably `master`).
+0. If you haven't done so already, clone the Foundations repo and checkout the desired branch (ideally the release branch of the Foundations version you will be using).
 1. Navigate to the root directory of the Foundations repository.
 2. Run `./build_gui.sh` &mdash; this will build and tag the images.
+3. Verify the docker images are available via `docker images`. Ensure that you have the `foundations-rest-api` and `foundations-gui` images installed on your system, and both have the same tag.  If not, please tag them accordingly - any syntactically valid tag will work, so long as they're the same.
+4. Now you're ready to [start the GUI](../gui/#startingstopping-the-gui)!
 
-</h3>Installation Process</h3>
+###Installation with Docker###
 
-0. Either build (see above for how to do that) the images or otherwise acquire them via `docker pull` or `docker load -i`.
-1. Ensure that you have the `foundations-rest-api` and `foundations-gui` images installed on your system, and both have the same tag.  If not, please tag them accordingly - any syntactically valid tag will work, so long as they're the same.
-2. Ensure that you have the `foundations_gui.sh` script whose version matches the image versions, e.g. if you built the images from the `master` branch, grab the `foundations_gui.sh` script from the `master` branch.
+If the images have already been built and provided by the Dessa team, you will not need to build them yourself, but rather install them into your own docker instance.
+
+1. Load the docker images into your instance via `docker pull` or `docker load -i`. Verify the docker images are available via `docker images`.
+2. Ensure that you have the `foundations-rest-api` and `foundations-gui` images installed on your system, and both have the same tag.  If not, please tag them accordingly - any syntactically valid tag will work, so long as they're the same.
+3. Ensure that you have the `foundations_gui.sh` script whose version matches the image versions, e.g. if you built the images from the `master` branch, grab the `foundations_gui.sh` script from the `master` branch.
+4. Now you're ready to [start the GUI](../gui/#startingstopping-the-gui)!
 
 ##Starting/Stopping the GUI
 
@@ -45,7 +52,7 @@ After that you can run:
 
 * `image_tag` is optional - omit to use `latest` as a default
 
-You will then be able to visit your running gui at `https://localhost:6443`
+You will then be able to visit your running gui at `https://localhost:6443`. You should also be able to see the `foundations-rest-api` and `foundations-gui` images up and running with `docker ps`
 
 <h3>Stopping the GUI</h3>
 

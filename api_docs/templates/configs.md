@@ -10,11 +10,13 @@ It's important to understand the language used around deployment so that we can 
 
 **Driver Application**: this where your code exist for using Foundations for both setting up stages and running them.   
 
-**Execution Environment**: this is where models are computed (ie: where jobs run). This can be a variety of different locations such as local (where you run model code on your local machine), or on a remote server (Google Cloud Platorm, Amazon Web Services, other SSH servers). See below for more details on Types of Deployments.
+**Execution Environment**: this is the infrastrucre where models are actually computed (ie: where the actual jobs are run). This can be a variety of different locations such as local (where you run model code on your local machine), or on a remote server (Google Cloud Platorm, Amazon Web Services, other SSH servers). See below for more details on Types of Deployments.
+
+**Deployment Environment**: See *Execution Environment*
 
 **Job**: this is the unit used to describe the package that is the model, source code, and metadata that gets sent to be computed.  
 
-**Deployment**: you can think of deployment as how the job gets run (executed).  
+**Deployment**: the process of bundling, transfering and running (executing) a Foundations job on any environment.  
 
 **Queuing System**: a way for multiple jobs to be sent to the execution environment, where they'll be put in line before they get run.  
 
@@ -74,14 +76,16 @@ If choosing to deploy this way, the notebook will have to be situated in the pro
 
 ### Define Environment 
 
-**job_deployment_env**: specifies what environment to use for deploying jobs. Currently the supported environments are `local`, `ssh`, `gcp`, `aws`
+**job_deployment_env**: specifies what environment to use for deploying jobs. Currently the supported environments are `local`, `ssh`, `gcp`, `aws`. 
+
+For deployments to specifc versions of the job orchestrator (scheduler), `scheduler_plugin` is used instead. This will be advised by the Dessa team if deemed necessary.
 
 ### Results Configurations
 
-```json
-'results_config': {
-    'archive_end_point': '/path/to/archives',
-    'redis_end_point': 'redis://someredis'
+```yaml
+results_config: {
+    archive_end_point: /path/to/archives,
+    redis_end_point: redis://someredis
 },
 ```
 
@@ -95,15 +99,15 @@ Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 ### Cache Configurations
 
-```json
-'cache_config': {
-    'end_point': '/path/to/the/cache'
+```yaml
+cache_config: {
+    end_point: /path/to/the/cache
 },
 ```
 
-**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/archives`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
+**end_point**: defines full path to where to store cache files. The default is `local` which means it will use current project directory. For AWS and GCP deployments, this path can be specified with the following format: `<bucket>/path/to/cache`. By specifying the job_deployment_env, Foundations will automatically determine the right endpoint. 
 
-Foundations also supports cross-environment storage for the cache. By specifying the URI schema of the desired endpoint, the cached stages can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the cached stages in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/archives`
+Foundations also supports cross-environment storage for the cache. By specifying the URI schema of the desired endpoint, the cached stages can be stored in a different location from where the actual job was run. For example, if a job is deployed to GCP but you want to store the cached stages in AWS, you can specify the full path with URI schema as: `s3://<bucket>/path/to/cache`
 
 Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
@@ -111,14 +115,14 @@ Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 For any SSH deployment (including GCP and AWS) to remote addresses, you'll need to define some additional values so that Foundations is able to SSH into the execution environment. Here's an example usage:
 
-```json
-'ssh_config': {
-    'user': lou
-    'host': '11.22.33.44',
-    'port': 2222
-    'key_path': '/path/to/the/keys',
-    'code_path': '/path/to/the/code',
-    'result_path': '/path/to/the/result',
+```yaml
+ssh_config: {
+    user: lou
+    host: 11.22.33.44,
+    port: 2222
+    key_path: /path/to/the/keys,
+    code_path: /path/to/the/code,
+    result_path: /path/to/the/result,
 }
 ```
 **user** (*optional*): what user profile to access the remote server as. By default, it will use `foundations`.  
@@ -142,7 +146,7 @@ results_config:
 cache_config: 
     end_point: /path/to/the/cache
 
-log_level: ERROR
+log_level: INFO
 ```
 
 ```yaml
@@ -160,7 +164,7 @@ ssh_config:
     code_path: /path/to/the/code
     result_path: /path/to/the/result
 
-log_level: ERROR
+log_level: DEBUG
 ```
 
 ```yaml
@@ -196,5 +200,25 @@ ssh_config:
     code_path: /path/to/the/code
     result_path: /path/to/the/result
 
-log_level: ERROR
+log_level: INFO
+```
+
+```yaml
+#Example config.yaml with storage to different remote location (gcp)
+
+job_deployment_env: aws
+results_config: 
+    archive_end_point: gs://<bucket>/path/to/archives
+    redis_end_point: redis://someredis
+
+cache_config: 
+    end_point: gs://<bucket>/path/to/cache
+
+ssh_config: 
+    host: 11.22.33.44
+    key_path: /path/to/the/keys
+    code_path: /path/to/the/code
+    result_path: /path/to/the/result
+
+log_level: INFO
 ```
