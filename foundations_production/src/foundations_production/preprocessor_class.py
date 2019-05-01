@@ -7,6 +7,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 from foundations_contrib.archiving import get_pipeline_archiver_for_job
 from foundations_contrib.global_state import foundations_context
+from foundations import create_stage
 
 class Preprocessor(object):
 
@@ -44,9 +45,7 @@ class Preprocessor(object):
             return job_id
 
     def  _serialization_stage(self, callback_value):
-        import foundations
-
-        result = foundations.create_stage(self._serialize_callback)(callback_value)
+        result = create_stage(self._serialize_callback)(callback_value)
         if isinstance(callback_value, tuple):
             result = result.split(len(callback_value))
         return result

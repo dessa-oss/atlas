@@ -5,6 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations.global_state import foundations_context
+
+class Stage(object):
+    def __init__(self, function):
+        self._function = function
+
+    def __call__(self, *args, **kwargs):
+        return foundations_context.pipeline().stage(self._function, *args, **kwargs)
 
 def create_stage(function):
     """
@@ -36,7 +44,4 @@ def create_stage(function):
         ```
     """
 
-    def stage(*args, **kwargs):
-        from foundations.global_state import foundations_context
-        return foundations_context.pipeline().stage(function, *args, **kwargs)
-    return stage
+    return Stage(function)
