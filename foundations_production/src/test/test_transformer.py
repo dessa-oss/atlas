@@ -122,5 +122,8 @@ class TestTransformer(Spec):
         transformer = Transformer(self.user_transformer_class_callback, arg)
 
         self.user_transformer_class.assert_called_with(arg)
-
+    
+    def test_encoder_returns_encoder(self):
+        transformer = Transformer(self.user_transformer_class_callback)
+        self.assertEqual(self.base_transformer.encoder(), transformer.encoder())
 

@@ -21,3 +21,6 @@ class Transformer(object):
 
     def transform(self, data):
         return self._base_transformer.transformed_data(data)
+    
+    def encoder(self):
+        return self._base_transformer.encoder()
