@@ -235,7 +235,6 @@ class StageConnectorWrapper(object):
         return auto_stage
 
     def __getitem__(self, key):
-        # raise Exception('NOOP')
         def getitem(data, key):
             return data[key]
 
