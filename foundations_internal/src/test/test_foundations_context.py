@@ -60,3 +60,21 @@ class TestFoundationsContext(Spec):
     def test_get_job_id(self):
         self._pipeline_context.file_name = self.job_id
         self.assertEqual(self.job_id, self._context.job_id())
+
+    def test_pickle_getstate_raises_exception(self):
+        with self.assertRaises(ValueError) as error_context:
+            self._context.__getstate__()
+        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
+
+    def test_pickle_setstate_raises_exception(self):
+        with self.assertRaises(ValueError) as error_context:
+            self._context.__setstate__({})
+        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
+
+    def test_is_unserializable(self):
+        import pickle
+
+        with self.assertRaises(ValueError) as error_context:
+            pickle.dumps(self._context)
+
+        self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
