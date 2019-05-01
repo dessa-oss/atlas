@@ -42,3 +42,6 @@ def _create_foundations_context():
     return FoundationsContext(_pipeline)
 
 foundations_context = _create_foundations_context()
+
+def current_foundations_context():
+    return foundations_context

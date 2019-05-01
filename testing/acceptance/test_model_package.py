@@ -14,6 +14,11 @@ import pandas
 
 class TestModelPackage(Spec):
 
+    @set_up
+    def set_up(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
+
     def test_can_create_and_consume_model_package(self):
         from foundations_contrib.global_state import foundations_context
 

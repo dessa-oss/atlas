@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-from foundations_contrib.global_state import foundations_context
+from foundations_contrib.global_state import current_foundations_context
 
 
 class Model(object):
@@ -22,7 +22,7 @@ class Model(object):
 
     @staticmethod
     def _job_id_stage():
-        return foundations_context.job_id()
+        return current_foundations_context().job_id()
 
     def fit(self, *args, **kwargs):
         self._base_model.fit(*args, **kwargs)

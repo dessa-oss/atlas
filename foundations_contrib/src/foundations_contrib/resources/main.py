@@ -12,6 +12,7 @@ from foundations_internal.error_printer import ErrorPrinter
 from foundations_contrib.job_source_bundle import JobSourceBundle
 from foundations_internal.serializer import serialize_to_file
 from foundations_internal.compat import compat_raise
+from foundations_contrib.global_state import foundations_context
 
 
 def main():
@@ -44,6 +45,7 @@ def main():
     config = pipeline_context.provenance.config
 
     pipeline_context.provenance.job_source_bundle = job_source_bundle
+    foundations_context.pipeline()._pipeline_context = pipeline_context
 
     def mark_job_failed():
         from foundations_contrib.producers.jobs.failed_job import FailedJob

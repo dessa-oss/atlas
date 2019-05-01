@@ -6,7 +6,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 from foundations_contrib.archiving import get_pipeline_archiver_for_job
-from foundations_contrib.global_state import foundations_context
+from foundations_contrib.global_state import current_foundations_context
 from foundations import create_stage
 
 class Preprocessor(object):
@@ -40,7 +40,7 @@ class Preprocessor(object):
     @staticmethod
     def _job_id_stage(job_id):
         if job_id is None:
-            return foundations_context.job_id()
+            return current_foundations_context().job_id()
         else:
             return job_id
 
@@ -51,7 +51,7 @@ class Preprocessor(object):
         return result
 
     def _serialize_callback(self, args):
-        job_id = foundations_context.job_id()
+        job_id = current_foundations_context().job_id()
         get_pipeline_archiver_for_job(job_id).append_artifact('preprocessor/' + self._preprocessor_name + '.pkl', self._callback)
         return args
 
