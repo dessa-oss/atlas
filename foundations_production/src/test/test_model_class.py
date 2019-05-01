@@ -93,3 +93,6 @@ class TestModel(Spec):
         self.mock_base_transformer.transformed_data.return_when(predicted_results, *self.fake_args, **self.fake_kwargs)
 
         self.assertEqual(predicted_results, self.model.predict(*self.fake_args, **self.fake_kwargs))
+    
+    def test_encoder_returns_encoder(self):
+        self.assertEqual(self.mock_base_transformer.encoder(), self.model.encoder())

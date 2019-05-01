@@ -33,3 +33,6 @@ class Model(object):
 
     def new_transformer(self, transformer):
         return 'model_0'
+
+    def encoder(self):
+        return self._base_model.encoder()
