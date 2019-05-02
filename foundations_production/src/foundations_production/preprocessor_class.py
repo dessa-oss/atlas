@@ -45,14 +45,19 @@ class Preprocessor(object):
             return job_id
 
     def  _serialization_stage(self, callback_value):
-        result = create_stage(self._serialize_callback)(callback_value)
+        from foundations_internal.serializer import serialize
+
+        serialized_callback = serialize(self._callback)
+        result = create_stage(self._serialize_callback)(self._preprocessor_name, serialized_callback, callback_value)
+
         if isinstance(callback_value, tuple):
             result = result.split(len(callback_value))
         return result
 
-    def _serialize_callback(self, args):
+    @staticmethod
+    def _serialize_callback(preprocessor_name, callback, args):
         job_id = current_foundations_context().job_id()
-        get_pipeline_archiver_for_job(job_id).append_artifact('preprocessor/' + self._preprocessor_name + '.pkl', self._callback)
+        get_pipeline_archiver_for_job(job_id).append_artifact('preprocessor/' + preprocessor_name + '.pkl', callback)
         return args
 
     def new_transformer(self, transformer):

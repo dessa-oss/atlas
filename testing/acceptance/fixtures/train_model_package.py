@@ -1,5 +1,5 @@
 import foundations
-import foundations_production
+from foundations_production import preprocessor, Transformer, Model
 import pandas
 
 class AddAverageToValueTransformer(object):
@@ -15,7 +15,7 @@ class AddAverageToValueTransformer(object):
         data[["Sex", "Cabin", "Fare"]] = data[["Sex", "Cabin", "Fare"]] + self.average
         return data
 
-class Model(object):
+class TestModel(object):
 
     def __init__(self):
         self.max_fare = 0
@@ -29,8 +29,9 @@ class Model(object):
             predicted_labels.append(int(row < self.max_fare))
         return pandas.DataFrame({"Survived": predicted_labels})
 
-def transformer_preprocessor(input_data):
-    transformer = foundations_production.Transformer(AddAverageToValueTransformer)
+@preprocessor
+def preprocessor(input_data):
+    transformer = Transformer(AddAverageToValueTransformer)
     transformer.fit(input_data)
     return transformer.transform(input_data)
 
@@ -45,8 +46,6 @@ def split_data(train_data, validation_data):
     train_features, train_targets = split_inputs_and_targets_stage(train_data).split(2)
     validation_features, validation_targets = split_inputs_and_targets_stage(validation_data).split(2)
     return train_features, train_targets, validation_features, validation_targets
-
-preprocessor = foundations_production.preprocessor(transformer_preprocessor)
 
 train_data = pandas.DataFrame({
     "Sex": [0, 1, 4],
@@ -68,6 +67,6 @@ preprocessor.set_inference_mode()
 preprocessed_validation_data = preprocessor(validation_data)
 train_features, train_targets, validation_features, validation_targets = split_data(preprocessed_train_data, preprocessed_validation_data)
 
-model = foundations_production.Model(Model)
+model = Model(TestModel)
 model.fit(train_features, train_targets, validation_features, validation_targets)
 validation_predictions = model.predict(validation_features)

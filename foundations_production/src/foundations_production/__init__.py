@@ -26,8 +26,10 @@ def load_model_package(job_id):
 
 def _load_preprocessor(pipeline_archiver, preprocessor_name, job_id):
     from foundations_production.preprocessor_class import Preprocessor
+    from foundations_internal.serializer import deserialize
 
-    preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/{}.pkl'.format(preprocessor_name))
+    serialized_preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/{}.pkl'.format(preprocessor_name))
+    preprocessor_callback = deserialize(serialized_preprocessor_callback)
     preprocessor = Preprocessor(preprocessor_callback, preprocessor_name, job_id)
     preprocessor.set_inference_mode()
     return preprocessor
