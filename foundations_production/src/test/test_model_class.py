@@ -12,9 +12,13 @@ class TestModel(Spec):
 
     global_preprocessor = let_patch_mock('foundations_production.preprocessor_class.Preprocessor.active_preprocessor')
     artifact_archive = let_mock()
-    foundations_context = let_patch_mock('foundations_production.model_class.foundations_context')
+    current_foundations_context = let_patch_mock('foundations_production.model_class.current_foundations_context')
     pipeline_archiver = let_mock()
     artifact_archive = let_mock()
+    
+    @let_now
+    def foundations_context(self):
+        return self.current_foundations_context.return_value
 
     @let_now
     def job_id(self):
