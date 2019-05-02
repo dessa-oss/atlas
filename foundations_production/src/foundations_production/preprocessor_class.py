@@ -71,3 +71,13 @@ class Preprocessor(object):
     
     def get_inference_mode(self):
         return self._is_inference_mode
+
+    @staticmethod
+    def load_preprocessor(pipeline_archiver, preprocessor_name, job_id):
+        from foundations_internal.serializer import deserialize
+
+        serialized_preprocessor_callback = pipeline_archiver.fetch_artifact('preprocessor/{}.pkl'.format(preprocessor_name))
+        preprocessor_callback = deserialize(serialized_preprocessor_callback)
+        preprocessor = Preprocessor(preprocessor_callback, preprocessor_name, job_id)
+        preprocessor.set_inference_mode()
+        return preprocessor
