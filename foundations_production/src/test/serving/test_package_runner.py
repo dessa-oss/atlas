@@ -27,6 +27,11 @@ class TestPackageRunner(Spec):
     
     mock_load_model_package = let_patch_mock('foundations_production.load_model_package')
 
+    @set_up
+    def set_up(self):
+        self.mock_pipe.recv.return_value = self.fake_data
+        self.mock_load_model_package.return_value = self.mock_model_package
+
     def test_run_prediction_runs_prediction_on_model_with_correct_data(self):
         model_package = Mock()
         model_package.model.predict = ConditionalReturn()
@@ -39,13 +44,11 @@ class TestPackageRunner(Spec):
         run_model_package(self.model_package_id, Mock())
         self.mock_load_model_package.assert_called_with(self.model_package_id)
     
-    def test_run_model_package_receives_data_from_pipe(self):
-        patched_run_prediction = self.patch('foundations_production.serving.package_runner.run_prediction')
-        self.mock_load_model_package.return_value = self.mock_model_package
-
-        self.mock_pipe.recv.return_value = self.fake_data
+    def test_run_model_package_puts_predictions_into_pipe(self):
+        patched_run_prediction = self.patch('foundations_production.serving.package_runner.run_prediction', ConditionalReturn())
+        patched_run_prediction.return_when(self.prediction, self.mock_model_package, self.fake_data)
 
         run_model_package(self.model_package_id, self.mock_pipe)
 
-        patched_run_prediction.assert_called_with(self.mock_model_package, self.fake_data)
+        self.mock_pipe.send.assert_called_with(self.prediction)
         
