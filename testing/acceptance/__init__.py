@@ -24,3 +24,4 @@ from acceptance.test_set_environment import TestSetEnvironment
 from acceptance.test_model_package import TestModelPackage
 from acceptance.test_class_stage_deployment import TestClassStageDeployment
 from acceptance.test_deploy_model_package import TestDeployModelPackage
+from acceptance.test_retrain_model import TestRetrainModel

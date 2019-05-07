@@ -18,8 +18,10 @@ class TestDeployModelPackage(Spec):
 
         subprocess.run(['foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(self.job_id), '--slug=snail'])
 
-        base_url = 'http://localhost:5000/v1/snail/{}'.format(self.job_id)
+        base_url = 'http://localhost:5000/v1/snail'
         self._assert_successful_get(base_url)
+        self._assert_successful_get(base_url + '/model')
+        self._assert_successful_get(base_url + '/predictions')
 
         subprocess.run(['foundations', 'serving', 'stop'])
 
