@@ -15,6 +15,7 @@ class CommandLineInterface(object):
         self._initialize_init_parser(subparsers)
         self._initialize_deploy_parser(subparsers)
         self._initialize_info_parser(subparsers)
+        self._initialize_serving_parser(subparsers)
       
         self._arguments = self._argument_parser.parse_args(args)
         
@@ -40,6 +41,20 @@ class CommandLineInterface(object):
         info_parser = subparsers.add_parser('info', help='Provides information about your Foundations project')
         info_parser.add_argument('--env', action='store_true')
         info_parser.set_defaults(function=self._info)
+
+    def _initialize_serving_parser(self, subparsers):
+        serving_parser = subparsers.add_parser('serving', help='Start serving a model package')
+        serving_subparsers = serving_parser.add_subparsers()
+        self._initialize_serving_deploy_parser(serving_subparsers)
+    
+    def _initialize_serving_deploy_parser(self, serving_subparsers):
+        serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
+        serving_deploy_parser.add_argument('rest', help='Uses REST format content type')
+        serving_deploy_parser.add_argument('--domain', type=str, help='Domain and port of the model package server')
+        serving_deploy_parser.add_argument('--model-id', type=str, help='Model package ID')
+        serving_deploy_parser.add_argument('--slug', type=str, help='Model package namespace string')
+        serving_deploy_parser.set_defaults(function=self._model_serving_deploy)
+
 
     def execute(self):
         self._arguments.function()
@@ -112,7 +127,32 @@ class CommandLineInterface(object):
             self._run_driver_file(driver_name)
         else:
             sys.exit(1)
-    
+
+    def _get_model_server_pid(self):
+        with open('/tmp/foundations_model_server.pid', 'r') as pidfile:
+            return pidfile.read()
+
+    def _get_model_server_command_line(self, pid):
+        with open('/proc/{}/cmdline'.format(pid), 'r') as cmdline_file:
+            return cmdline_file.read()
+
+    def _is_model_server_running(self):
+        try:
+            pid = self._get_model_server_pid()
+            command_line = self._get_model_server_command_line(pid)
+            return 'foundations_model_server.py' in command_line
+        except OSError:
+            return False
+
+    def _model_serving_deploy(self):
+        import subprocess
+
+        if self._is_model_server_running():
+            print('Model server is already running.')
+        else:
+            subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain), '--model-id={}'.format(self._arguments.model_id), '--slug={}'.format(self._arguments.slug)])
+            
+
     def _run_driver_file(self, driver_name):
         import os
         import sys
