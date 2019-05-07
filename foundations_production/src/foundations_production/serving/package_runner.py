@@ -8,8 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def run_prediction(model_package, data):
     return model_package.model.predict(data)
 
-def run_model_package(model_package_id, queue):
+def run_model_package(model_package_id, pipe):
     from foundations_production import load_model_package
-    load_model_package(model_package_id)
+    model_package = load_model_package(model_package_id)
+    data = pipe.recv()
+    run_prediction(model_package, data)
 
-    
