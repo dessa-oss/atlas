@@ -20,6 +20,7 @@ class TestProducerRunJob(unittest.TestCase):
         self.message = None
 
         self._pipeline_context = PipelineContext()
+        self._pipeline_context.file_name = 'some_project'
         self._router = Mock()
         self._router.push_message.side_effect = self._push_message
         self._producer = RunJob(self._router, self._pipeline_context)
