@@ -19,4 +19,5 @@ from test.test_model_class import TestModel
 from test.test_production_model import TestProductionModel
 from test.test_persister import TestPersister
 from test.test_load_model_package import TestLoadModelPackage
+from test.test_model_package import TestModelPackage
 from test.serving import *
