@@ -151,6 +151,7 @@ class CommandLineInterface(object):
             print('Model server is already running.')
         else:
             subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain), '--model-id={}'.format(self._arguments.model_id), '--slug={}'.format(self._arguments.slug)])
+        subprocess.run(['python', 'foundations_model_package.py', '--model-id={}'.format(self._arguments.model_id)])
             
 
     def _run_driver_file(self, driver_name):

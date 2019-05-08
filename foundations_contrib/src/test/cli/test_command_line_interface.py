@@ -279,14 +279,13 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.open_mock.assert_called_with('/proc/123/cmdline', 'r')
 
-    def test_serving_deploy_rest_prints_message_if_server_is_already_running(self):
+    def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
         mock_proc_file = Mock()
         mock_proc_file.__enter__ = lambda x: mock_proc_file
         mock_proc_file.__exit__ = Mock()
         mock_proc_file.read.return_value = '**foundations_model_server.py**'
         self.open_mock.return_value = mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_run.assert_not_called()
         self.print_mock.assert_called_with('Model server is already running.')
 
     def test_serving_deploy_rest_runs_model_server_when_server_is_not_running(self):
@@ -296,9 +295,16 @@ class TestCommandLineInterface(Spec):
         mock_proc_file.read.return_value = '**another_process.py**'
         self.open_mock.return_value = mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail'])
+        self.subprocess_run.assert_any_call(['python', 'foundations_model_server.py', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail'])
+                                              
 
     def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile(self):
         self.open_mock.side_effect = OSError()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail'])
+        self.subprocess_run.assert_any_call(['python', 'foundations_model_server.py', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail'])
+
+    def test_serving_deploy_rest_starts_model_package_serving_process(self):
+        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()        
+        self.subprocess_run.assert_called_with(['python', 'foundations_model_package.py', '--model-id=some_id'])
+
+
