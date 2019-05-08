@@ -246,3 +246,16 @@ class TestPreprocessorClass(Spec):
 
         self.assertFalse(preprocessor.get_inference_mode())
 
+    def test_preprocessor_does_not_load_loaded_transformer_when_inference_mode_false(self):
+        transformer = MockTransformerClass()
+
+        def _callback():
+            Preprocessor.active_preprocessor.new_transformer(transformer)
+
+        preprocessor_instance = Preprocessor(_callback, self.preprocessor_name)
+        preprocessor_instance.set_inference_mode()
+        preprocessor_instance()
+        preprocessor_instance.set_inference_mode(inference_mode=False)
+        preprocessor_instance()
+
+        self.assertEqual(1, transformer.load_call_count)
