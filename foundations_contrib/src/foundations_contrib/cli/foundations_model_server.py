@@ -7,13 +7,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class FoundationsModelServer(object):
 
-    def run(self):
+    def _create_pid_file(self):
         import os
-        from flask import Flask
 
         with open('/tmp/foundations_model_server.pid', 'w') as pidfile:
             pidfile.write(str(os.getpid()))
 
+    def run(self):
+        from flask import Flask
+
+        self._create_pid_file()
         app = Flask(__name__)
         app.run()
 
