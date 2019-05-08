@@ -50,6 +50,24 @@ class TestRestartableProcess(Spec):
         restartable_process.close()
         self.mock_process_instance.close.assert_called()
 
+    def test_terminate_terminates_only_once(self):
+        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
+        restartable_process.start()
+        restartable_process.close()
+        restartable_process.close()
+        self.mock_process_instance.close.assert_called_once()
+
+    def test_terminate_starts_only_once(self):
+        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
+        restartable_process.start()
+        restartable_process.start()
+        self.mock_process_instance.start.assert_called_once()
+    
+    def test_start_returns_existing_master_pipe_if_process_already_started(self):
+        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
+        restartable_process.start()
+        master_pipe = restartable_process.start()
+        self.assertEqual(self.connection_master_pipe, master_pipe)
 
         
 

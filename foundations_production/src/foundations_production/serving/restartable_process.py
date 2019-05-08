@@ -17,14 +17,21 @@ class RestartableProcess(object):
     def start(self):
         from multiprocessing import Process, Pipe
 
-        master_pipe, worker_pipe = Pipe()
-        self._master_pipe = master_pipe
-        process = Process(target=self._target, args=(self._args + (worker_pipe,)), kwargs=self._kwargs, daemon=True)
-        self._process = process
-        process.start()
-        return master_pipe
+        if not self._process:
+            master_pipe, worker_pipe = Pipe()
+            self._master_pipe = master_pipe
+            process = Process(target=self._target, args=(self._args + (worker_pipe,)), kwargs=self._kwargs, daemon=True)
+            self._process = process
+            process.start()
+            
+        return self._master_pipe
     
     def close(self):
+        if self._master_pipe is not None:
+            self._master_pipe.close()
+            
+        if self._process is not None:
+            self._process.close()
 
-        self._master_pipe.close()
-        self._process.close()
+        self._process = None
+        self._master_pipe = None
