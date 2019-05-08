@@ -8,8 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 import collections
 from foundations_production.transformer import Transformer
 from foundations_production.model_class import Model
-
-_model_package = collections.namedtuple('ModelPackage', ['preprocessor', 'model'])
+from foundations_production.model_package import ModelPackage
 
 def preprocessor(preprocessor_callback):
     from foundations_production.preprocessor_class import Preprocessor
@@ -23,7 +22,7 @@ def load_model_package(job_id):
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
     preprocessor = Preprocessor.load_preprocessor(pipeline_archiver, 'transformer', job_id)
     model_preprocessor = ProductionModel(job_id)
-    return _model_package(preprocessor = preprocessor, model = model_preprocessor)
+    return ModelPackage(preprocessor=preprocessor, model=model_preprocessor)
 
 def _append_module():
     import sys
