@@ -295,15 +295,12 @@ class TestCommandLineInterface(Spec):
         mock_proc_file.read.return_value = '**another_process.py**'
         self.open_mock.return_value = mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_run.assert_any_call(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
+        self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
                                               
     def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile(self):
         self.open_mock.side_effect = OSError()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_run.assert_any_call(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
+        self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
 
-    def test_serving_deploy_rest_starts_model_package_serving_process(self):
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()        
-        self.subprocess_run.assert_called_with(['python', 'foundations_model_package.py', '--model-id=some_id', '--slug=snail'])
 
 
