@@ -7,10 +7,13 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 class PackagePool(object):
     def __init__(self, active_package_limit):
-        pass
+        self._pipe = None
 
     def add_package(self, model_id):
         from foundations_production.serving.restartable_process import RestartableProcess
         from foundations_production.serving.package_runner import run_model_package
 
-        RestartableProcess(target=run_model_package, args=(model_id))
+        self._pipe = RestartableProcess(target=run_model_package, args=(model_id))
+
+    def run_prediction_on_package(self, model_id, data):
+        self._pipe.send(data)
