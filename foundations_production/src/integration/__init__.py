@@ -7,3 +7,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 from integration.test_preprocessor import TestPreprocessor
 from integration.serving import *
+from integration.test_deploy_model_package_process import TestDeployModelPackageProcess
