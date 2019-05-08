@@ -55,3 +55,9 @@ class TestPackagePool(Spec):
         package_pool.run_prediction_on_package(self.model_id, self.fake_data)
         self.model_1_pipe.send.assert_called_with(self.fake_data)
 
+    def test_package_pool_does_not_exceed_limit(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)   
+        self.model_1_process.close.assert_called()
+
