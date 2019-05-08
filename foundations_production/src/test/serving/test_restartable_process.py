@@ -41,9 +41,15 @@ class TestRestartableProcess(Spec):
     def test_terminate_closes_master_pipe(self):
         restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
         restartable_process.start()
-        restartable_process.terminate()
+        restartable_process.close()
         self.connection_master_pipe.close.assert_called()
+    
+    def test_terminate_terminates_process(self):
+        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
+        restartable_process.start()
+        restartable_process.close()
+        self.mock_process_instance.close.assert_called()
 
-        
+
         
 
