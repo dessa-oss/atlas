@@ -300,7 +300,7 @@ class TestCommandLineInterface(Spec):
 
     def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_called_with('Failed to start model server.')
+        self.print_mock.assert_called_with('Failed to start model server.', file=sys.stderr)
 
     def test_serving_deploy_rest_calls_deploy_model_rest_api_if_server_is_running(self):
         self.mock_file.read.return_value = '**foundations_model_server.py**'

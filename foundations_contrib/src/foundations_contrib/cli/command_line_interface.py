@@ -160,7 +160,7 @@ class CommandLineInterface(object):
         else:
             subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain)])
             if not self._is_model_server_running():
-                print('Failed to start model server.')
+                print('Failed to start model server.', file=sys.stderr)
                 sys.exit(1)
 
     def _run_driver_file(self, driver_name):
