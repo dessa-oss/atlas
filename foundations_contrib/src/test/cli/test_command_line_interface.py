@@ -197,6 +197,13 @@ class TestCommandLineInterface(Spec):
         mock.return_value = '/path/to/where/ever/we/are'
         return mock
 
+    @let_now
+    def mock_file(self):
+        mock_file_object = Mock()
+        mock_file_object.__enter__ = lambda x: mock_file_object
+        mock_file_object.__exit__ = Mock()
+        return mock_file_object
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     subprocess_run = let_patch_mock('subprocess.run')
@@ -262,38 +269,26 @@ class TestCommandLineInterface(Spec):
         self.open_mock.assert_any_call('/tmp/foundations_model_server.pid', 'r')
 
     def test_serving_deploy_rest_reads_pid_file(self):
-        mock_pid_file = Mock()
-        mock_pid_file.__enter__ = lambda x: mock_pid_file
-        mock_pid_file.__exit__ = Mock()
-        mock_pid_file.read.return_value = '123'
-        self.open_mock.return_value = mock_pid_file
+        self.mock_file.read.return_value = '123'
+        self.open_mock.return_value = self.mock_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        mock_pid_file.read.assert_called()
+        self.mock_file.read.assert_called()
 
     def test_serving_deploy_rest_gets_pid_corresponding_to_model_server_if_model_server_is_running(self):
-        mock_pid_file = Mock()
-        mock_pid_file.__enter__ = lambda x: mock_pid_file
-        mock_pid_file.__exit__ = Mock()
-        mock_pid_file.read.return_value = '123'
-        self.open_mock.return_value = mock_pid_file
+        self.mock_file.read.return_value = '123'
+        self.open_mock.return_value = self.mock_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.open_mock.assert_called_with('/proc/123/cmdline', 'r')
 
     def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
-        mock_proc_file = Mock()
-        mock_proc_file.__enter__ = lambda x: mock_proc_file
-        mock_proc_file.__exit__ = Mock()
-        mock_proc_file.read.return_value = '**foundations_model_server.py**'
-        self.open_mock.return_value = mock_proc_file
+        self.mock_file.read.return_value = '**foundations_model_server.py**'
+        self.open_mock.return_value = self.mock_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_called_with('Model server is already running.')
 
     def test_serving_deploy_rest_runs_model_server_when_server_is_not_running(self):
-        mock_proc_file = Mock()
-        mock_proc_file.__enter__ = lambda x: mock_proc_file
-        mock_proc_file.__exit__ = Mock()
-        mock_proc_file.read.return_value = '**another_process.py**'
-        self.open_mock.return_value = mock_proc_file
+        self.mock_file.read.return_value = '**another_process.py**'
+        self.open_mock.return_value = self.mock_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
                                               
