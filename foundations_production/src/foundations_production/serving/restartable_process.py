@@ -27,10 +27,8 @@ class RestartableProcess(object):
         return self._master_pipe
     
     def close(self):
-        if self._master_pipe is not None:
-            self._master_pipe.close()
-            
         if self._process is not None:
+            self._master_pipe.close()
             self._process.close()
 
         self._process = None

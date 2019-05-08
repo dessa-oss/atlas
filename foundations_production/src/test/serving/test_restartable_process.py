@@ -27,46 +27,41 @@ class TestRestartableProcess(Spec):
     def set_up(self):
         self.mock_process = self.patch('multiprocessing.Process', ConditionalReturn())
         self.mock_process.return_when(self.mock_process_instance, target=self.target, args=(self.args + (self.connection_worker_pipe,)), kwargs=self.kwargs, daemon=True)
-
         self.mock_pipe.return_value = (self.connection_master_pipe, self.connection_worker_pipe)
+        self.restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
 
     def test_start_restartable_process_starts_process(self):
-        RestartableProcess(self.target, self.args, self.kwargs).start()
+        self.restartable_process.start()
         self.mock_process_instance.start.assert_called()
     
     def test_start_returns_master_end_of_pipe(self):
-        actual_pipe = RestartableProcess(self.target, self.args, self.kwargs).start()
+        actual_pipe = self.restartable_process.start()
         self.assertEqual(self.connection_master_pipe, actual_pipe)
     
     def test_terminate_closes_master_pipe(self):
-        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
-        restartable_process.start()
-        restartable_process.close()
+        self.restartable_process.start()
+        self.restartable_process.close()
         self.connection_master_pipe.close.assert_called()
     
     def test_terminate_terminates_process(self):
-        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
-        restartable_process.start()
-        restartable_process.close()
+        self.restartable_process.start()
+        self.restartable_process.close()
         self.mock_process_instance.close.assert_called()
 
     def test_terminate_terminates_only_once(self):
-        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
-        restartable_process.start()
-        restartable_process.close()
-        restartable_process.close()
+        self.restartable_process.start()
+        self.restartable_process.close()
+        self.restartable_process.close()
         self.mock_process_instance.close.assert_called_once()
 
     def test_terminate_starts_only_once(self):
-        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
-        restartable_process.start()
-        restartable_process.start()
+        self.restartable_process.start()
+        self.restartable_process.start()
         self.mock_process_instance.start.assert_called_once()
     
     def test_start_returns_existing_master_pipe_if_process_already_started(self):
-        restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
-        restartable_process.start()
-        master_pipe = restartable_process.start()
+        self.restartable_process.start()
+        master_pipe = self.restartable_process.start()
         self.assertEqual(self.connection_master_pipe, master_pipe)
 
         
