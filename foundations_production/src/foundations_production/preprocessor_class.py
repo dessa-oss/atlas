@@ -66,8 +66,8 @@ class Preprocessor(object):
         transformer_id = '{}_{}'.format(self._preprocessor_name, transformer_index)
         return transformer_id
     
-    def set_inference_mode(self):
-        self._is_inference_mode = True
+    def set_inference_mode(self, inference_mode=True):
+        self._is_inference_mode = inference_mode
     
     def get_inference_mode(self):
         return self._is_inference_mode

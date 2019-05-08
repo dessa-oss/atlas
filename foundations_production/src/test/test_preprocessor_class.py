@@ -20,10 +20,12 @@ class MockTransformerClass(object):
     def load(self):
         self.loaded = True
         self.load_call_count+=1
+
 class MockClass(object):
     def __call__(self, *args):
         if args:
             return args[0] + 5
+
 class TestPreprocessorClass(Spec):
 
     mock_transformer = let_mock()
@@ -237,3 +239,10 @@ class TestPreprocessorClass(Spec):
     def test_transformer_preprocessor_inference_mode_is_true(self):
         preprocessor = Preprocessor.load_preprocessor(self.mock_pipeline_archiver, self.fake_name, self.job_id)
         self.assertTrue(preprocessor.get_inference_mode())
+
+    def test_inference_mode_false_when_inference_mode_set_to_false(self):
+        preprocessor = Preprocessor.load_preprocessor(self.mock_pipeline_archiver, self.fake_name, self.job_id)
+        preprocessor.set_inference_mode(inference_mode=False)
+
+        self.assertFalse(preprocessor.get_inference_mode())
+
