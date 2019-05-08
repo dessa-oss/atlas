@@ -9,3 +9,4 @@ from test.cli.test_project import TestProject
 from test.cli.test_scaffold import TestScaffold
 from test.cli.test_command_line_interface import TestCommandLineInterface
 from test.cli.test_environment_fetcher import TestEnvironmentFetcher
+from test.cli.test_foundations_model_server import TestFoundationsModelServer
