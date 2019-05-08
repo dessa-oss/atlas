@@ -15,7 +15,7 @@ class RestartableProcess(object):
     def start(self):
         from multiprocessing import Process, Pipe
 
-        _, worker_pipe = Pipe()
+        master_pipe, worker_pipe = Pipe()
         process = Process(target=self._target, args=(self._args + (worker_pipe,)), kwargs=self._kwargs, daemon=True)
         process.start()
-        
+        return master_pipe
