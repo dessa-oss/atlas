@@ -75,4 +75,3 @@ class TestProductionModel(Spec):
     
     def test_encoder_returns_encoder(self):
         self.assertEqual(self.mock_base_transformer.encoder(), self.model.encoder())
-        

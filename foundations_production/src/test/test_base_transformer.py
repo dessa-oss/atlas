@@ -241,6 +241,23 @@ class TestBaseTransformer(Spec):
 
         self.mock_predict.assert_called_with(*args, **kwargs)
 
+    def test_encoder_is_reset_when_tranformer_reset(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.reset()
+        self.transformer.fit(self.mock_data_two)
+        self.transformer.encoder().run_same_process()
+
+        self.assertEqual(self.mock_data_two, self._fit_data)
+
+    def test_transformer_does_not_load_when_tranformer_reset(self):
+        self.transformer.fit(self.mock_data)
+        self.transformer.load()
+        self.transformer.reset()
+        self.transformer.fit(self.mock_data_two)
+        self.transformer.encoder().run_same_process()
+
+        self.persister.load_user_defined_transformer.assert_not_called()
+
     def _transformed_user_defined_transformer(self, data):
         return self._fit_data + data
 

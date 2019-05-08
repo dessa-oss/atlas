@@ -68,6 +68,10 @@ class BaseTransformer(object):
     def load(self):
         self._state.should_load = True
 
+    def reset(self):
+        self._state.should_load = False
+        self._encoder = None
+        
     @staticmethod
     def _create_persister(job_id):
         return Persister(job_id)
