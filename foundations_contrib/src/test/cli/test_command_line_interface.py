@@ -210,6 +210,7 @@ class TestCommandLineInterface(Spec):
     exit_mock = let_patch_mock('sys.exit')
     print_mock = let_patch_mock('builtins.print')
     open_mock = let_patch_mock('builtins.open')
+    requests_post_mock = let_patch_mock('requests.post')
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
     find_environment_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.find_environment')
 
@@ -297,5 +298,13 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_run.assert_called_with(['python', 'foundations_model_server.py', '--domain=localhost:8000'])
 
+    def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
+        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
+        self.print_mock.assert_called_with('Failed to start model server.')
 
-
+    def test_serving_deploy_rest_calls_deploy_model_rest_api_if_server_is_running(self):
+        self.mock_file.read.return_value = '**foundations_model_server.py**'
+        self.open_mock.return_value = self.mock_file
+        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
+        url = 'http://{}/v1/{}/model/'.format('localhost:8000', 'snail')
+        self.requests_post_mock.assert_called_with(url, data = {'model_id':'some_id'})

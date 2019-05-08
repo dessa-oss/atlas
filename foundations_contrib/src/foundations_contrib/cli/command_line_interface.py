@@ -128,6 +128,21 @@ class CommandLineInterface(object):
         else:
             sys.exit(1)
 
+    def _model_serving_deploy(self):
+        import subprocess
+        import requests
+        import sys
+
+        if self._is_model_server_running():
+            print('Model server is already running.')
+        else:
+            subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain)])
+        if self._is_model_server_running():
+            response = requests.post('http://{}/v1/{}/model/'.format(self._arguments.domain, self._arguments.slug), data = {'model_id': self._arguments.model_id})
+        else:
+            print('Failed to start model server.')
+            sys.exit(1)
+
     def _get_model_server_pid(self):
         with open('/tmp/foundations_model_server.pid', 'r') as pidfile:
             return pidfile.read()
@@ -143,14 +158,6 @@ class CommandLineInterface(object):
             return 'foundations_model_server.py' in command_line
         except OSError:
             return False
-
-    def _model_serving_deploy(self):
-        import subprocess
-
-        if self._is_model_server_running():
-            print('Model server is already running.')
-        else:
-            subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain)])
 
     def _run_driver_file(self, driver_name):
         import os
