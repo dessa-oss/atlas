@@ -13,7 +13,8 @@ class PackagePool(object):
         from foundations_production.serving.restartable_process import RestartableProcess
         from foundations_production.serving.package_runner import run_model_package
 
-        pipe = RestartableProcess(target=run_model_package, args=(model_id))
+        process = RestartableProcess(target=run_model_package, args=(model_id))
+        pipe = process.start()
         self._model_packages[model_id] = pipe
 
     def run_prediction_on_package(self, model_id, data):

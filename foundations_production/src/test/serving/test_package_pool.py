@@ -11,8 +11,11 @@ from foundations_production.serving.package_runner import run_model_package
 
 class TestPackagePool(Spec):
 
+    model_1_process = let_mock()
+    model_2_process = let_mock()
     model_1_pipe = let_mock()
     model_2_pipe = let_mock()
+
 
     @let
     def model_id(self):
@@ -29,8 +32,10 @@ class TestPackagePool(Spec):
     @set_up
     def set_up(self):
         self.mock_process = self.patch('foundations_production.serving.restartable_process.RestartableProcess', ConditionalReturn())
-        self.mock_process.return_when(self.model_1_pipe, target=run_model_package, args=(self.model_id))
-        self.mock_process.return_when(self.model_2_pipe, target=run_model_package, args=(self.model_2_id))
+        self.mock_process.return_when(self.model_1_process, target=run_model_package, args=(self.model_id))
+        self.mock_process.return_when(self.model_2_process, target=run_model_package, args=(self.model_2_id))
+        self.model_1_process.start.return_value = self.model_1_pipe
+        self.model_2_process.start.return_value = self.model_2_pipe
 
     def test_package_pool_add_package_creates_new_process(self):
         package_pool = PackagePool(active_package_limit=1)
