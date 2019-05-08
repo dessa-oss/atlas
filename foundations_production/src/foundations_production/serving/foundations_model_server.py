@@ -7,11 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class FoundationsModelServer(object):
 
-    def _create_pid_file(self):
-        import os
-
-        with open('/tmp/foundations_model_server.pid', 'w') as pidfile:
-            pidfile.write(str(os.getpid()))
+    pid_file_path = '/var/tmp/foundations_model_server.pid'
 
     def run(self):
         from flask import Flask
@@ -20,6 +16,11 @@ class FoundationsModelServer(object):
         app = Flask(__name__)
         app.run()
 
+    def _create_pid_file(self):
+        import os
+
+        with open(self.pid_file_path, 'w') as pidfile:
+            pidfile.write(str(os.getpid()))
 
 if __name__ == '__main__':
     foundations_model_server = FoundationsModelServer()

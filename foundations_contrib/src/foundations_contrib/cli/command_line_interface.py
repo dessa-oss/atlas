@@ -129,27 +129,8 @@ class CommandLineInterface(object):
             sys.exit(1)
 
     def _model_serving_deploy(self):
-        import requests
-
         self._start_model_server_if_not_running()
-        response = requests.post('http://{}/v1/{}/model/'.format(self._arguments.domain, self._arguments.slug), data = {'model_id': self._arguments.model_id})
-            
-
-    def _get_model_server_pid(self):
-        with open('/tmp/foundations_model_server.pid', 'r') as pidfile:
-            return pidfile.read()
-
-    def _get_model_server_command_line(self, pid):
-        with open('/proc/{}/cmdline'.format(pid), 'r') as cmdline_file:
-            return cmdline_file.read()
-
-    def _is_model_server_running(self):
-        try:
-            pid = self._get_model_server_pid()
-            command_line = self._get_model_server_command_line(pid)
-            return 'foundations_model_server.py' in command_line
-        except OSError:
-            return False
+        self._deploy_model_package()
 
     def _start_model_server_if_not_running(self):
         import subprocess
@@ -161,7 +142,36 @@ class CommandLineInterface(object):
             subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain)])
             if not self._is_model_server_running():
                 print('Failed to start model server.', file=sys.stderr)
-                sys.exit(1)
+                sys.exit(10)
+
+    def _deploy_model_package(self):
+        import requests
+        import sys
+
+        response = requests.post('http://{}/v1/{}/model/'.format(self._arguments.domain, self._arguments.slug), data = {'model_id': self._arguments.model_id})
+        if response.status_code == 200:
+            print('Model package was deployed successfully to model server.')
+        else:
+            print('Failed to deploy model package to model server.', file=sys.stderr)
+            sys.exit(11)
+
+    def _is_model_server_running(self):
+        try:
+            pid = self._get_model_server_pid()
+            command_line = self._get_model_server_command_line(pid)
+            return 'foundations_model_server.py' in command_line
+        except OSError:
+            return False
+
+    def _get_model_server_pid(self):
+        from foundations_production.serving.foundations_model_server import FoundationsModelServer
+
+        with open(FoundationsModelServer.pid_file_path, 'r') as pidfile:
+            return pidfile.read()
+
+    def _get_model_server_command_line(self, pid):
+        with open('/proc/{}/cmdline'.format(pid), 'r') as cmdline_file:
+            return cmdline_file.read()
 
     def _run_driver_file(self, driver_name):
         import os
