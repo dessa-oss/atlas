@@ -18,14 +18,14 @@ class TestFoundationsModelServer(Spec):
     os_getpid_mock = let_patch_mock('os.getpid')
     flask_mock = let_patch_mock('flask.Flask')
 
-    def test_foundations_model_server_creates_pid_file(self):
+    def test_foundations_model_server_run_method_creates_pid_file(self):
         from foundations_contrib.cli.foundations_model_server import FoundationsModelServer
 
         model_server = FoundationsModelServer()
         model_server.run()
         self.open_mock.assert_called_with('/tmp/foundations_model_server.pid', 'w')
 
-    def test_foundations_model_server_writes_current_process_pid_to_pid_file(self):
+    def test_foundations_model_server_run_method_writes_current_process_pid_to_pid_file(self):
         from foundations_contrib.cli.foundations_model_server import FoundationsModelServer
 
         mock_pid_file = Mock()
@@ -37,7 +37,7 @@ class TestFoundationsModelServer(Spec):
         model_server.run()
         mock_pid_file.write.assert_called_with('123')
 
-    def test_foundations_model_server_creates_flask_application(self):
+    def test_foundations_model_server_run_method_creates_flask_application(self):
         from foundations_contrib.cli.foundations_model_server import FoundationsModelServer
 
         model_server = FoundationsModelServer()
@@ -46,7 +46,7 @@ class TestFoundationsModelServer(Spec):
         self.flask_mock.assert_called_with('foundations_contrib.cli.foundations_model_server')
 
 
-    def test_foundations_model_server_runs_flask_application(self):
+    def test_foundations_model_server_run_method_runs_flask_application(self):
         from foundations_contrib.cli.foundations_model_server import FoundationsModelServer
 
         flask_app_mock = Mock()
