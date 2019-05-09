@@ -7,21 +7,22 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 def create_retraining_job(model_package_id, features_location, targets_location):
     model_package = _model_package_for_retraining(model_package_id)
-
     features, targets = _data_for_retraining(features_location, targets_location)
+    preprocessed_features = _preprocessed_features(model_package, features)
+    return _retrained_model(model_package, preprocessed_features, targets)
 
-    preprocessor = model_package.preprocessor
-    preprocessed_features = preprocessor(features)
-    
+def _retrained_model(model_package, preprocessed_features, targets):    
     production_model = model_package.model
-
     return production_model.retrain(preprocessed_features, targets)
+
+def _preprocessed_features(model_package, features):    
+    preprocessor = model_package.preprocessor
+    return preprocessor(features)
 
 def _data_for_retraining(features_location, targets_location):
     import foundations
 
     data_from_file_stage = foundations.create_stage(_load_data_stage)
-
     features = data_from_file_stage(features_location)
     targets = data_from_file_stage(targets_location)
 
