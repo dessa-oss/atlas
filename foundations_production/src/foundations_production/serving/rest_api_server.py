@@ -22,10 +22,16 @@ class RestAPIServer(object):
         self._app.run()
         
     def _load_routes(self, flask_app):
-        from flask import request
+        from flask import request, abort, jsonify
         
+        @flask_app.before_request
+        def accept_only_json():
+            if not request.is_json: 
+                abort(400)
+
         @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'])
         def manage_model_package(user_defined_model_name):
+            #model_id = request.get_json
             return 'response'
 
         @flask_app.route('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'])
