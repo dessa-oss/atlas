@@ -10,22 +10,33 @@ from mock import Mock
 
 from foundations_spec.helpers import let, let_now, let_patch_mock, set_up
 from foundations_spec.helpers.spec import Spec
-from flask import Flask
 
 class TestRestAPIServer(Spec):
+
+    @set_up
+    def set_up(self):
+        package_pool_class_mock = self.patch('foundations_production.serving.package_pool.PackagePool')
+        self.package_pool_mock = Mock()
+        package_pool_class_mock.return_value = self.package_pool_mock
+        self.request_mock = self.patch('flask.request')
 
     def test_add_new_model_package_in_manage_model_package_route(self):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
-        package_pool_class_mock = self.patch('foundations_production.serving.package_pool.PackagePool')
-        package_pool_mock = Mock()
-        package_pool_class_mock.return_value = package_pool_mock
-
-        request_mock = self.patch('flask.request')
-        request_mock.get_json.return_value = {'model_id': 'some_model_id'}
-
+        self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
         rest_api_server = RestAPIServer()
         manage_model_package_function = rest_api_server.app.view_functions.get('manage_model_package')
         manage_model_package_function('some_model')
+        self.package_pool_mock.add_package.assert_called_with('some_model_id')
 
-        package_pool_mock.add_package.assert_called_with('some_model_id')
+    def test_add_new_model_package_fails_with_bad_request_if_no_model_id_is_passed(self):
+        from foundations_production.serving.rest_api_server import RestAPIServer
+        from werkzeug.exceptions import BadRequest
+
+        self.request_mock.get_json.return_value = {'other_key': 'some_model_id'}
+        rest_api_server = RestAPIServer()
+        manage_model_package_function = rest_api_server.app.view_functions.get('manage_model_package')
+        with self.assertRaises(BadRequest) as exception_context:
+            manage_model_package_function('some_model')
+        self.assertEqual(exception_context.exception.code, 400)
+        

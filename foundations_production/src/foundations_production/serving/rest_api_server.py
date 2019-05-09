@@ -14,6 +14,19 @@ class RestAPIServer(object):
         self._app = Flask(__name__)
         self._load_routes(self._app)
 
+
+    def exceptions_as_http_error_codes(method):
+
+        def method_decorator(*args, **kwargs):
+            from flask import request, abort
+
+            try:
+                return method(*args, **kwargs)
+            except KeyError:
+                abort(400)
+
+        return method_decorator
+
     @property
     def app(self):
         return self._app
@@ -22,33 +35,54 @@ class RestAPIServer(object):
         self._app.run()
         
     def _load_routes(self, flask_app):
-        from flask import request, abort, jsonify
-        
+
         @flask_app.before_request
         def accept_only_json():
+            from flask import request, abort
+
             if not request.is_json: 
                 abort(400)
 
         @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'])
         def manage_model_package(user_defined_model_name):
-            try:
-                model_id = request.get_json()['model_id']
-                self._package_pool.add_package(model_id)
-            except KeyError:
-                abort(400)
+            return self._manage_model_package(user_defined_model_name)
 
         @flask_app.route('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'])
         def train_all_model_packages(user_defined_model_name):
-            return 'response'
+            return self._train_all_model_packages(user_defined_model_name)
 
         @flask_app.route('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'])
         def train_one_model_package(user_defined_model_name, version):
-            return 'response'
+            return self._train_one_model_package(user_defined_model_name, version)
 
         @flask_app.route('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'])
         def predictions_from_model_package(user_defined_model_name):
-            return 'response'
+            return self._predictions_from_model_package(user_defined_model_name)
 
-        @flask_app.route('/v1/<user_defined_model_name>/predictions/<id>', methods=['GET', 'HEAD'])
-        def predict_with_model_package(user_defined_model_name, id):
-            return 'response'
+        @flask_app.route('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'])
+        def predict_with_model_package(user_defined_model_name, prediction_id):
+            return self._predict_with_model_package(user_defined_model_name, prediction_id)
+
+    @exceptions_as_http_error_codes
+    def _manage_model_package(self, user_defined_model_name):
+        from flask import request, jsonify
+        
+        model_id = request.get_json()['model_id']
+        self._package_pool.add_package(model_id)
+        return 'response'
+
+    @exceptions_as_http_error_codes
+    def _train_all_model_packages(self, user_defined_model_name):
+        return 'response'
+
+    @exceptions_as_http_error_codes
+    def _train_one_model_package(self, user_defined_model_name, version):
+        return 'response'
+
+    @exceptions_as_http_error_codes
+    def _predictions_from_model_package(self, user_defined_model_name):
+        return 'response'
+
+    @exceptions_as_http_error_codes
+    def _predict_with_model_package(self, user_defined_model_name, prediction_id):
+        return 'response'
