@@ -23,7 +23,8 @@ class BaseTransformer(object):
                 loaded_transformer = self._loaded_transformer(persister)
 
                 if self.should_retrain:
-                    self._fit_transformer(persister, loaded_transformer, *args, **kwargs)
+                    persister_for_current_job = self._persister_for_retraining()
+                    self._fit_transformer(persister_for_current_job, loaded_transformer, *args, **kwargs)
 
                 return loaded_transformer
 
@@ -36,6 +37,12 @@ class BaseTransformer(object):
         def _fit_transformer(self, persister, user_defined_transformer, *args, **kwargs):
             user_defined_transformer.fit(*args, **kwargs)
             persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
+    
+        @staticmethod
+        def _persister_for_retraining():
+            from foundations_contrib.global_state import current_foundations_context
+            current_job_id = current_foundations_context().job_id()
+            return Persister(current_job_id)
 
     def __init__(self, preprocessor, user_defined_transformer):
         self._encoder = None
