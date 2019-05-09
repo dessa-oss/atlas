@@ -14,7 +14,6 @@ class RestAPIServer(object):
         self._app = Flask(__name__)
         self._load_routes(self._app)
 
-
     def exceptions_as_http_error_codes(method):
 
         def method_decorator(*args, **kwargs):
