@@ -8,22 +8,22 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 def load_routes(flask_app):
     from flask import request
     
-    @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE'])
+    @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'])
     def manage_model_package(user_defined_model_name):
         return 'response'
 
-    @flask_app.route('/v1/<user_defined_model_name>/model', methods=[])
+    @flask_app.route('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'])
     def train_all_model_packages(user_defined_model_name):
-        pass
+        return 'response'
 
-    @flask_app.route('/v1/<user_defined_model_name>/model/<version>', methods=[])
-    def train_one_model_package(user_defined_model_name):
-        pass
+    @flask_app.route('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'])
+    def train_one_model_package(user_defined_model_name, version):
+        return 'response'
 
-    @flask_app.route('/v1/<user_defined_model_name>/predictions', methods=[])
+    @flask_app.route('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'])
     def predictions_from_model_package(user_defined_model_name):
-        pass
+        return 'response'
 
-    @flask_app.route('/v1/<user_defined_model_name>/predictions/<id>', methods=[])
-    def predict_with_model_package(user_defined_model_name):
-        pass
+    @flask_app.route('/v1/<user_defined_model_name>/predictions/<id>', methods=['GET', 'HEAD'])
+    def predict_with_model_package(user_defined_model_name, id):
+        return 'response'
