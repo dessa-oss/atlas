@@ -51,6 +51,10 @@ foundations_scheduler_plugin/build
 foundations_scheduler_plugin/dist
 foundations_scheduler_plugin/foundations_scheduler_plugin.egg-info
 foundations_scheduler_plugin/src/foundations_scheduler_plugin.egg-info
+foundations_production/build
+foundations_production/dist
+foundations_production/foundations_production.egg-info
+foundations_production/src/foundations_production.egg-info
 **/node_modules
 tmp
 **/*.csv
@@ -61,6 +65,8 @@ foundations.zip
 site/
 **/.idea*
 **/*.rdb
+build
+dist
 
 !foundations_ui/package.json
 !examples/example_configs/*.config.yaml

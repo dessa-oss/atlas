@@ -11,3 +11,4 @@ from test.serving.test_restartable_process import TestRestartableProcess
 from test.serving.test_package_runner import TestPackageRunner
 from test.serving.test_foundations_model_server import TestFoundationsModelServer
 from test.serving.test_package_pool import TestPackagePool
+from test.serving.inference import *
