@@ -20,6 +20,7 @@ class TestModelServerRoutes(Spec):
 
         self.app = Flask(__name__)
         load_routes(self.app)
+        self.client = self.app.test_client()
 
     def test_manage_model_package_route_is_added(self):
         self.assertIn('manage_model_package', self.app.view_functions)
@@ -35,3 +36,23 @@ class TestModelServerRoutes(Spec):
 
     def test_predict_with_model_package_route_is_added(self):
         self.assertIn('predict_with_model_package', self.app.view_functions)
+
+    def test_manage_model_package_route_has_get_method(self):
+        response = self.client.get('/v1/some_model/')
+        self.assertNotIn(response.status_code, [405, 500])
+
+    def test_manage_model_package_route_has_post_method(self):
+        response = self.client.post('/v1/some_model/')
+        self.assertNotIn(response.status_code, [405, 500])
+
+    def test_manage_model_package_route_has_head_method(self):
+        response = self.client.head('/v1/some_model/')
+        self.assertNotIn(response.status_code, [405, 500])
+
+    def test_manage_model_package_route_has_delete_method(self):
+        response = self.client.delete('/v1/some_model/')
+        self.assertNotIn(response.status_code, [405, 500])
+
+    def test_manage_model_route_has_no_put_method(self):
+        response = self.client.put('/v1/some_model/')
+        self.assertEqual(response.status_code, 405)

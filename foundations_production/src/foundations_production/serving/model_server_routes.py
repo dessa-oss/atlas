@@ -8,9 +8,9 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 def load_routes(flask_app):
     from flask import request
     
-    @flask_app.route('/v1/<user_defined_model_name>', methods=[])
+    @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE'])
     def manage_model_package(user_defined_model_name):
-        pass
+        return 'response'
 
     @flask_app.route('/v1/<user_defined_model_name>/model', methods=[])
     def train_all_model_packages(user_defined_model_name):
