@@ -30,7 +30,16 @@ class PackagePool(object):
 
     def get_pipe(self, model_id):
         model_package = self._model_packages.get(model_id, None)
-        if model_package:
-            model_package['process'].start()
-            return model_package['pipe']
-        return model_package
+
+        if not model_package:
+            return None
+
+        if model_id not in self._active_packages:
+            if len(self._model_packages) >= self._active_package_limit:
+                self._remove_process_from_pool()
+
+            updated_model_pipe = model_package['process'].start()
+            model_package['pipe'] = updated_model_pipe
+            self._active_packages.append(model_id)
+
+        return model_package['pipe']

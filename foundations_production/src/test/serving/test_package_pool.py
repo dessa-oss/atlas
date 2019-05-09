@@ -15,6 +15,7 @@ class TestPackagePool(Spec):
     model_2_process = let_mock()
     model_3_process = let_mock()
     model_1_pipe = let_mock()
+    model_1_new_pipe = let_mock()
     model_2_pipe = let_mock()
     model_3_pipe = let_mock()
 
@@ -41,7 +42,7 @@ class TestPackagePool(Spec):
         self.mock_process.return_when(self.model_1_process, target=run_model_package, args=(self.model_id))
         self.mock_process.return_when(self.model_2_process, target=run_model_package, args=(self.model_2_id))
         self.mock_process.return_when(self.model_3_process, target=run_model_package, args=(self.model_3_id))
-        self.model_1_process.start.return_value = self.model_1_pipe
+        self.model_1_process.start.side_effect = [self.model_1_pipe, self.model_1_new_pipe]
         self.model_2_process.start.return_value = self.model_2_pipe
         self.model_3_process.start.return_value = self.model_3_pipe
 
@@ -80,3 +81,34 @@ class TestPackagePool(Spec):
         package_pool.add_package(self.model_2_id)
         package_pool.get_pipe(self.model_id)
         self.assertEqual(2, self.model_1_process.start.call_count)
+    
+    def test_get_pipe_does_not_starts_process_if_active(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.get_pipe(self.model_id)
+        self.model_1_process.start.assert_called_once()
+    
+    def test_get_pipe_does_starts_process_once_if_inactive(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        package_pool.get_pipe(self.model_id)
+        package_pool.get_pipe(self.model_id)
+
+        self.assertEqual(2, self.model_1_process.start.call_count)
+    
+    def test_get_pipe_does_not_exceed_active_process_limit(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        package_pool.get_pipe(self.model_id)
+
+        self.model_2_process.close.assert_called_once()
+    
+    def test_get_pipe_updates_stored_pipe_when_process_restarted(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        pipe = package_pool.get_pipe(self.model_id)
+        self.assertEqual(self.model_1_new_pipe, pipe)
+
