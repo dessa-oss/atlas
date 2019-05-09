@@ -10,15 +10,18 @@ class PackagePool(object):
         self._model_packages = {}
         self._active_packages = []
         self._active_package_limit = active_package_limit
+    
+    def _remove_process_from_pool(self):
+        process_to_kill = self._active_packages[0]
+        self._active_packages.pop(0)
+        self._model_packages[process_to_kill]['process'].close()
 
     def add_package(self, model_id):
         from foundations_production.serving.restartable_process import RestartableProcess
         from foundations_production.serving.package_runner import run_model_package
 
         if len(self._model_packages) >= self._active_package_limit:
-            process_to_kill = self._active_packages[0]
-            self._active_packages = self._active_packages[1:]
-            self._model_packages[process_to_kill]['process'].close()
+            self._remove_process_from_pool()
 
         process = RestartableProcess(target=run_model_package, args=(model_id))
         pipe = process.start()
