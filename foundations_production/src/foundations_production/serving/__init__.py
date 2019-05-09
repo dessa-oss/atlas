@@ -5,12 +5,13 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-def create_retraining_job(model_package_id, features_location, targets_location):
+def _load_data_stage(file_location):
     from foundations_production.serving.data_from_file import data_from_file
+    return data_from_file(file_location)
+
+def create_retraining_job(model_package_id, features_location, targets_location):
     import foundations
 
-    def dummy_function():
-        pass
+    data_from_file_stage = foundations.create_stage(_load_data_stage)
 
-    data_from_file(features_location)
-    return foundations.create_stage(dummy_function)()
+    return data_from_file_stage(features_location)
