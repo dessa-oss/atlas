@@ -91,13 +91,12 @@ class TestProductionModel(Spec):
         self.mock_base_transformer.prepare_for_retrain.assert_called_once()
 
     def test_retrain_loads_and_fits_model_with_new_data(self):
-        expected_fit_stage = Mock()
         self.mock_base_transformer.fit = ConditionalReturn()
         self.mock_base_transformer.fit.return_when(None)
-        self.mock_base_transformer.fit.return_when(expected_fit_stage, *self.fake_args, **self.fake_kwargs)
-
+        self.mock_base_transformer.fit.return_when(None, *self.fake_args, **self.fake_kwargs)
+        
         fit_stage = self.model.retrain(*self.fake_args, **self.fake_kwargs)
-        self.assertEqual(expected_fit_stage, fit_stage)
+        self.assertEqual(self.mock_base_transformer.encoder(), fit_stage)
 
     def test_encoder_returns_encoder(self):
         self.assertEqual(self.mock_base_transformer.encoder(), self.model.encoder())

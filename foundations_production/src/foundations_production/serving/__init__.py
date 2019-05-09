@@ -13,7 +13,7 @@ def create_retraining_job(model_package_id, features_location, targets_location)
 
 def _retrained_model(model_package, preprocessed_features, targets):    
     production_model = model_package.model
-    return production_model.retrain(preprocessed_features, targets)
+    return production_model.retrain(preprocessed_features, targets, None, None)
 
 def _preprocessed_features(model_package, features):    
     preprocessor = model_package.preprocessor

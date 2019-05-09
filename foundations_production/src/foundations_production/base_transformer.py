@@ -21,7 +21,7 @@ class BaseTransformer(object):
         def fit_stage(self, persister, user_defined_transformer, *args, **kwargs):
             if self.should_load:
                 loaded_transformer = self._loaded_transformer(persister)
-                
+
                 if self.should_retrain:
                     self._fit_transformer(persister, loaded_transformer, *args, **kwargs)
 

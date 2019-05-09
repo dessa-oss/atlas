@@ -54,7 +54,7 @@ class TestCreateRetrainingJob(Spec):
         import foundations
 
         callback = ConditionalReturn()
-        callback.return_when(self.mock_retrained_model, self.mock_preprocessed_features, self.mock_targets)
+        callback.return_when(self.mock_retrained_model, self.mock_preprocessed_features, self.mock_targets, None, None)
 
         def _production_model_retrain_internal_callback(*args, **kwargs):
             return callback(*args, **kwargs)

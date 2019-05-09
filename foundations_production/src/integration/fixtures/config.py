@@ -6,9 +6,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 # separates test runs
+from os import getcwd
+import shutil
 from uuid import uuid4
 TEST_UUID = uuid4()
 
+_local_temp_directory = getcwd() + '/tmp'
 
 def _config():
     from os import getcwd
@@ -22,7 +25,7 @@ def _config():
     }
 
     # below is used to create archives for all different types
-    archive_root = getcwd() + '/tmp/archives_{}'.format(TEST_UUID)
+    archive_root = _local_temp_directory + '/archives_{}'.format(TEST_UUID)
 
     archive_implementation = {
         'archive_type': LocalFileSystemPipelineArchive,
@@ -44,5 +47,5 @@ def _config():
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
 
-
+shutil.rmtree(_local_temp_directory, ignore_errors=True)
 _config()

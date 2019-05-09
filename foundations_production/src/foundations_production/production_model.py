@@ -33,4 +33,5 @@ class ProductionModel(object):
 
     def retrain(self, *args, **kwargs):
         self._base_model.prepare_for_retrain()
-        return self._base_model.fit(*args, **kwargs)
+        self._base_model.fit(*args, **kwargs)
+        return self.encoder()

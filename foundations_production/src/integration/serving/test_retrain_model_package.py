@@ -48,7 +48,7 @@ class TestRetrainModelPackage(Spec):
         retraining_job.wait_for_deployment_to_complete()
         new_model_package_id = retraining_job.job_name()
 
-        new_model_package = load_model_package(new_model_id)
+        new_model_package = load_model_package(new_model_package_id)
 
         production_dataset = pandas.DataFrame({
             'Sex': [0, 3],
@@ -64,7 +64,6 @@ class TestRetrainModelPackage(Spec):
         })
 
         actual_predictions = production_predictions.run_same_process()
-
         assert_frame_equal(expected_predictions, actual_predictions)
 
     def _create_retraining_data_sets(self):
