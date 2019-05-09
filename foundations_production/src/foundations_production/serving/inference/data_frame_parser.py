@@ -14,5 +14,18 @@ class DataFrameParser(object):
         columns = self._data_frame_columns(input)
         return DataFrame(input['rows'], columns=columns)
 
+    def data_frame_as_json(self, input):
+        schema = []
+        for column_name in input:
+            column_data_type = str(input[column_name].dtype)
+            schema.append({
+                'name': column_name,
+                'type': column_data_type
+            })
+        
+        rows = input.values.tolist()
+        return {'rows': rows, 'schema': schema}
+
     def _data_frame_columns(self, input):
         return [field['name'] for field in input['schema']]
+

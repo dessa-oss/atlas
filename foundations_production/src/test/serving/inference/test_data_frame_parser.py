@@ -22,11 +22,26 @@ class TestDataFrameParser(Spec):
         assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
 
     def test_data_frame_for_returns_data_frame_for_single_row_and_column(self):
-        input = {'rows': [['some value']], 'schema': [{'name': 'first column', 'type': 'str'}]}
+        input = {'rows': [['some value']], 'schema': [{'name': 'first column', 'type': 'object'}]}
         expected_data_frame = DataFrame([{'first column': 'some value'}])
         assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
 
     def test_data_frame_for_returns_data_frame_for_mutiple_rows_and_columns(self):
-        input = {'rows': [['value', 43234], ['spider', 323]], 'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]}
+        input = {'rows': [['value', 43234], ['spider', 323]], 'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]}
         expected_data_frame = DataFrame([{'1st column': 'value', '2nd column': 43234}, {'1st column': 'spider', '2nd column': 323}])
         assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
+
+    def test_data_frame_as_json_returns_an_empty_data_frame(self):
+        input_data_frame = DataFrame([])
+        output = {'rows': [], 'schema': []}
+        self.assertEqual(output, self.parser.data_frame_as_json(input_data_frame))
+
+    def test_data_frame_as_json_returns_data_frame_as_json_single_row_and_column(self):
+        input_data_frame = DataFrame([{'first column': 'some value'}])
+        output = {'rows': [['some value']], 'schema': [{'name': 'first column', 'type': 'object'}]}
+        self.assertEqual(output, self.parser.data_frame_as_json(input_data_frame))
+
+    def test_data_frame_as_json_returns_data_frame_as_json_mutiple_rows_and_columns(self):
+        input_data_frame = DataFrame([{'1st column': 'value', '2nd column': 43234}, {'1st column': 'spider', '2nd column': 323}])
+        output = {'rows': [['value', 43234], ['spider', 323]], 'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]}
+        self.assertEqual(output, self.parser.data_frame_as_json(input_data_frame))
