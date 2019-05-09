@@ -36,3 +36,9 @@ class TestCommunicator(Spec):
         data = Communicator().receive_from_server()
 
         self.assertEqual(self.fake_data, data)
+    
+    def test_communicator_receive_from_client_receives_data_from_client(self):
+        self.mock_master_pipe.recv.return_value = json.dumps(self.fake_data)
+        data = Communicator().receive_from_client()
+
+        self.assertEqual(self.fake_data, data)

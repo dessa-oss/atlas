@@ -21,5 +21,9 @@ class Communicator(object):
     def send_to_server(self, data):
         self._worker_pipe.send(json.dumps(data))
 
+    def receive_from_client(self):
+        return json.loads(self._master_pipe.recv()) 
+        
     def receive_from_server(self):
         return json.loads(self._worker_pipe.recv()) 
+    
