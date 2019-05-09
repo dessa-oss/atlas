@@ -49,6 +49,15 @@ class TestInferer(Spec):
 
     def test_predictions_for_returns_predictions_for_input_data(self):
         self.assertEqual(self.predictions, self.inferer.predictions_for(self.input_data))
+    
+    def test_inferers_with_same_model_package_are_the_same_inferer(self):
+        rhs = Inferer(self.model_package)
+        self.assertEqual(rhs, self.inferer)
+
+    def test_inferers_with_diff_model_package_are_diff_inferers(self):
+        rhs_model_package = Mock()
+        rhs = Inferer(rhs_model_package)
+        self.assertNotEqual(rhs, self.inferer)
 
     def _preprocessor(self, input):
         return self.preprocessor_callback(input)

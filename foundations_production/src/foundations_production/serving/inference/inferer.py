@@ -15,6 +15,9 @@ class Inferer(object):
         transformed_data = self._preprocessed_data(input_data)
         predictions = self._model_predictions(transformed_data)
         return predictions.run_same_process()
+
+    def __eq__(self, rhs):
+        return self._model_package == rhs._model_package
         
     def _preprocessed_data(self, input_data):
         return self._model_package.preprocessor(input_data)
