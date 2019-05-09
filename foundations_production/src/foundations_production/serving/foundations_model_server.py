@@ -18,8 +18,10 @@ class FoundationsModelServer(object):
 
     def _start_flask_server(self):
         from flask import Flask
+        from foundations_production.serving.model_server_routes import load_routes
 
         app = Flask(__name__)
+        load_routes(app)
         app.run()
 
     def _create_new_pid_file(self):

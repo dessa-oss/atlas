@@ -101,3 +101,11 @@ class TestFoundationsModelServer(Spec):
         model_server = FoundationsModelServer()
         model_server.run()
         logger.error.assert_called_with('Fake error')
+
+    def test_foundations_model_server_loads_routes(self):
+        from foundations_production.serving.foundations_model_server import FoundationsModelServer
+
+        load_routes_mock = self.patch('foundations_production.serving.model_server_routes.load_routes')
+        model_server = FoundationsModelServer()
+        model_server.run()
+        load_routes_mock.assert_called_with(self.flask_app_mock)
