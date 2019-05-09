@@ -28,11 +28,17 @@ class TestCommandLineInterface(Spec):
         parser_mock = Mock()
         parser_class_mock.return_value = parser_mock
 
-        sub_parsers_mock = Mock()
-        parser_mock.add_subparsers.return_value = sub_parsers_mock
+        level_1_subparsers_mock = Mock()
+        parser_mock.add_subparsers.return_value = level_1_subparsers_mock
 
-        specific_parser_mock = Mock()
-        sub_parsers_mock.add_parser.return_value = specific_parser_mock
+        level_2_parser_mock = Mock()
+        level_1_subparsers_mock.add_parser.return_value = level_2_parser_mock
+
+        level_2_subparsers_mock = Mock()
+        level_2_parser_mock.add_subparsers.return_value = level_2_subparsers_mock
+
+        level_3_parser_mock = Mock()
+        level_2_subparsers_mock.add_parser.return_value = level_3_parser_mock
 
         CommandLineInterface([])
 
@@ -43,22 +49,40 @@ class TestCommandLineInterface(Spec):
         init_call = call('init', help='Creates a new Foundations project in the current directory')
         deploy_call = call('deploy', help='Deploys a Foundations project to the specified environment')
         info_call = call('info', help='Provides information about your Foundations project')
+        serving_call = call('serving', help='Start serving a model package')
 
-        sub_parsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call], any_order=True)
+        level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
         deploy_argument_file_call = call('driver_file', type=str, help='Name of file to deploy')
         deploy_argument_env_call = call('--env', help='Environment to run file in')
         info_argument_env_call = call('--env', action='store_true')
 
-        specific_parser_mock.add_argument.assert_has_calls(
+        level_2_parser_mock.add_argument.assert_has_calls(
             [
                 init_argument_call,
                 deploy_argument_env_call,
                 deploy_argument_file_call,
-                info_argument_env_call
+                info_argument_env_call,
             ],
             any_order=True
+        )
+
+        serving_deploy_call = call('deploy', help='Deploy model package to foundations model package server')
+        level_2_subparsers_mock.add_parser.assert_has_calls([serving_deploy_call], any_order=True)
+
+        serving_deploy_rest_call = call('rest', help='Uses REST format content type')
+        serving_deploy_domain_call = call('--domain', type=str, help='Domain and port of the model package server')
+        serving_deploy_model_id_call = call('--model-id', type=str, help='Model package ID')
+        serving_deploy_slug_call = call('--slug', type=str, help='Model package namespace string')
+
+        level_3_parser_mock.add_argument.assert_has_calls(
+            [
+                serving_deploy_rest_call,
+                serving_deploy_domain_call,
+                serving_deploy_model_id_call,
+                serving_deploy_slug_call,
+            ]
         )
 
     def test_execute_spits_out_help(self):
