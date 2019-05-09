@@ -9,9 +9,16 @@ def _load_data_stage(file_location):
     from foundations_production.serving.data_from_file import data_from_file
     return data_from_file(file_location)
 
+def _join_stage(*args):
+    return args
+
 def create_retraining_job(model_package_id, features_location, targets_location):
     import foundations
 
     data_from_file_stage = foundations.create_stage(_load_data_stage)
+    join_stage = foundations.create_stage(_join_stage)
 
-    return data_from_file_stage(features_location)
+    features = data_from_file_stage(features_location)
+    targets = data_from_file_stage(targets_location)
+
+    return join_stage(features, targets)

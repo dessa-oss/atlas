@@ -29,9 +29,24 @@ class TestCreateRetrainingJob(Spec):
         job = create_retraining_job(self.job_id, features_location=self.fake_features_path, targets_location=self.fake_targets_path)
         job.run_same_process()
 
-        mock_data_from_file.assert_called_with(self.fake_features_path)
+        mock_data_from_file.assert_any_call(self.fake_features_path)
 
     def test_retraining_job_loads_features_only_when_job_executed(self):
+        mock_data_from_file = self.patch('foundations_production.serving.data_from_file.data_from_file', Mock())
+
+        job = create_retraining_job(self.job_id, features_location=self.fake_features_path, targets_location=self.fake_targets_path)
+
+        mock_data_from_file.assert_not_called()
+
+    def test_retraining_job_loads_targets(self):
+        mock_data_from_file = self.patch('foundations_production.serving.data_from_file.data_from_file', Mock())
+
+        job = create_retraining_job(self.job_id, features_location=self.fake_features_path, targets_location=self.fake_targets_path)
+        job.run_same_process()
+
+        mock_data_from_file.assert_any_call(self.fake_targets_path)
+
+    def test_retraining_job_loads_targets_only_when_job_executed(self):
         mock_data_from_file = self.patch('foundations_production.serving.data_from_file.data_from_file', Mock())
 
         job = create_retraining_job(self.job_id, features_location=self.fake_features_path, targets_location=self.fake_targets_path)
