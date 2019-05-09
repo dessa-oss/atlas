@@ -10,7 +10,10 @@ class Predicter(object):
     
     @staticmethod
     def predictor_for(model_package_id):
-        pass
+        from foundations_production import load_model_package
+        
+        model_package = load_model_package(model_package_id)
+        return Predicter(model_package)
 
     def __init__(self, model_package):
         self._model_package = model_package
