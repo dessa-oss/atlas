@@ -15,6 +15,13 @@ class TestPredictor(Spec):
     inferer = let_mock()
 
     @let
+    def input(self):
+        return {
+            'rows': [['value', 43234], ['spider', 323]], 
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+
+    @let
     def model_package_id(self):
         return self.faker.uuid4()
 
@@ -42,3 +49,9 @@ class TestPredictor(Spec):
 
         expected_predictor = Predictor(Inferer(self.model_package))
         self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))
+
+    # def test_predictor_predicts_given_input_data(self):
+    #     from foundations_production.serving.inference.inferer import Inferer
+
+    #     expected_predictor = Predictor(Inferer(self.model_package))
+    #     self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))
