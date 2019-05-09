@@ -15,15 +15,13 @@ class RestartableProcess(object):
         self._process = None
     
     def start(self):
-        from multiprocessing import Process, Pipe
+        from multiprocessing import Process
         from foundations_production.serving.communicator import Communicator
 
         if not self._process:
-            communicator = Communicator()
-            self._communicator = communicator
-            process = Process(target=self._target, args=(self._args + (communicator,)), kwargs=self._kwargs, daemon=True)
-            self._process = process
-            process.start()
+            self._communicator = Communicator()
+            self._process = Process(target=self._target, args=(self._args + (self._communicator,)), kwargs=self._kwargs, daemon=True)
+            self._process.start()
             
         return self._communicator
     
