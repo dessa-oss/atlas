@@ -31,8 +31,11 @@ class RestAPIServer(object):
 
         @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'])
         def manage_model_package(user_defined_model_name):
-            #model_id = request.get_json
-            return 'response'
+            try:
+                model_id = request.get_json()['model_id']
+                self._package_pool.add_package(model_id)
+            except KeyError:
+                abort(400)
 
         @flask_app.route('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'])
         def train_all_model_packages(user_defined_model_name):

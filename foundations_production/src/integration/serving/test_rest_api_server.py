@@ -24,10 +24,8 @@ class TestRestAPIServer(Spec):
     
     @let_now
     def mock_json_request_kwargs(self):
-        import json
 
-        return {'data': json.dumps(dict(foo='bar')),
-                'content_type': 'application/json'}
+        return {'json': dict(foo='bar')}
 
     def test_manage_model_package_route_is_added(self):
         self.assertIn('manage_model_package', self.app.view_functions)
