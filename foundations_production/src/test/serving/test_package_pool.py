@@ -14,10 +14,10 @@ class TestPackagePool(Spec):
     model_1_process = let_mock()
     model_2_process = let_mock()
     model_3_process = let_mock()
-    model_1_ipc = let_mock()
-    model_1_new_ipc = let_mock()
-    model_2_ipc = let_mock()
-    model_3_ipc = let_mock()
+    model_1_communicator = let_mock()
+    model_1_new_communicator = let_mock()
+    model_2_communicator = let_mock()
+    model_3_communicator = let_mock()
 
 
     @let
@@ -42,9 +42,9 @@ class TestPackagePool(Spec):
         self.mock_process.return_when(self.model_1_process, target=run_model_package, args=(self.model_id))
         self.mock_process.return_when(self.model_2_process, target=run_model_package, args=(self.model_2_id))
         self.mock_process.return_when(self.model_3_process, target=run_model_package, args=(self.model_3_id))
-        self.model_1_process.start.side_effect = [self.model_1_ipc, self.model_1_new_ipc]
-        self.model_2_process.start.return_value = self.model_2_ipc
-        self.model_3_process.start.return_value = self.model_3_ipc
+        self.model_1_process.start.side_effect = [self.model_1_communicator, self.model_1_new_communicator]
+        self.model_2_process.start.return_value = self.model_2_communicator
+        self.model_3_process.start.return_value = self.model_3_communicator
 
     def test_package_pool_add_package_creates_new_process(self):
         package_pool = PackagePool(active_package_limit=1)
@@ -66,49 +66,49 @@ class TestPackagePool(Spec):
         package_pool.add_package(self.model_3_id)
         self.model_1_process.close.assert_called_once()
     
-    def test_get_ipc_gets_correct_ipc(self):
+    def test_get_communicator_gets_correct_communicator(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
-        self.assertEqual(self.model_1_ipc, package_pool.get_ipc(self.model_id))
+        self.assertEqual(self.model_1_communicator, package_pool.get_communicator(self.model_id))
 
-    def test_get_ipc_returns_none_when_model_doesnt_exist(self):
+    def test_get_communicator_returns_none_when_model_doesnt_exist(self):
         package_pool = PackagePool(active_package_limit=1)
-        self.assertEqual(None, package_pool.get_ipc(self.model_id))
+        self.assertEqual(None, package_pool.get_communicator(self.model_id))
     
-    def test_get_ipc_starts_process_if_inactive(self):
+    def test_get_communicator_starts_process_if_inactive(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
-        package_pool.get_ipc(self.model_id)
+        package_pool.get_communicator(self.model_id)
         self.assertEqual(2, self.model_1_process.start.call_count)
     
-    def test_get_ipc_does_not_starts_process_if_active(self):
+    def test_get_communicator_does_not_starts_process_if_active(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
-        package_pool.get_ipc(self.model_id)
+        package_pool.get_communicator(self.model_id)
         self.model_1_process.start.assert_called_once()
     
-    def test_get_ipc_does_starts_process_once_if_inactive(self):
+    def test_get_communicator_does_starts_process_once_if_inactive(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
-        package_pool.get_ipc(self.model_id)
-        package_pool.get_ipc(self.model_id)
+        package_pool.get_communicator(self.model_id)
+        package_pool.get_communicator(self.model_id)
 
         self.assertEqual(2, self.model_1_process.start.call_count)
     
-    def test_get_ipc_does_not_exceed_active_process_limit(self):
+    def test_get_communicator_does_not_exceed_active_process_limit(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
-        package_pool.get_ipc(self.model_id)
+        package_pool.get_communicator(self.model_id)
 
         self.model_2_process.close.assert_called_once()
     
-    def test_get_ipc_updates_stored_ipc_when_process_restarted(self):
+    def test_get_communicator_updates_stored_communicator_when_process_restarted(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
-        ipc = package_pool.get_ipc(self.model_id)
-        self.assertEqual(self.model_1_new_ipc, ipc)
+        communicator = package_pool.get_communicator(self.model_id)
+        self.assertEqual(self.model_1_new_communicator, communicator)
 
