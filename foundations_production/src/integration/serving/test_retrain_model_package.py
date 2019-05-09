@@ -39,17 +39,16 @@ class TestRetrainModelPackage(Spec):
         from pandas.testing import assert_frame_equal
 
         from foundations_production import load_model_package
-
-        model_package = load_model_package(self._job_id)
+        from foundations_production.serving import create_retraining_job
 
         features_location = 'local://{}'.format(self.features_file_name)
         targets_location = 'local://{}'.format(self.targets_file_name)
 
-        job = model_package.retrain(features=features_location, targets=location).run()
-        job.wait_for_deployment_to_complete()
-        new_job_id = job.job_name()
+        retraining_job = create_retraining_job(self._job_id, features_location=features_location, targets_location=targets_location).run()
+        retraining_job.wait_for_deployment_to_complete()
+        new_model_package_id = retraining_job.job_name()
 
-        new_model_package = load_model_package(new_job_id)
+        new_model_package = load_model_package(new_model_id)
 
         production_dataset = pandas.DataFrame({
             'Sex': [0, 3],
