@@ -7,4 +7,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 from test.serving.inference.test_inferer import TestInferer
 from test.serving.inference.test_data_frame_parser import TestDataFrameParser
-from test.serving.inference.test_predicter import TestPredicter
+from test.serving.inference.test_predictor import TestPredictor

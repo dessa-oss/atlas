@@ -6,19 +6,19 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 
-class Predicter(object):
+class Predictor(object):
     
     @staticmethod
     def predictor_for(model_package_id):
         from foundations_production import load_model_package
         
         model_package = load_model_package(model_package_id)
-        return Predicter(model_package)
+        return Predictor(model_package)
 
     def __init__(self, model_package):
         self._model_package = model_package
 
-    def predict(self, inputs):
+    def json_predictions_for(self, json_inputs):
         pass
 
     def __eq__(self, rhs):

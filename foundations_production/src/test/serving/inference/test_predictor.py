@@ -7,9 +7,9 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 
 
 from foundations_spec import *
-from foundations_production.serving.inference.predicter import Predicter
+from foundations_production.serving.inference.predictor import Predictor
 
-class TestPredicter(Spec):
+class TestPredictor(Spec):
 
     model_package = let_mock()
 
@@ -24,17 +24,17 @@ class TestPredicter(Spec):
         return mock
 
     @let
-    def predicter(self):
-        return Predicter(self.model_package)
+    def predictor(self):
+        return Predictor(self.model_package)
     
-    def test_predicters_with_same_model_package_are_the_same_predicter(self):
-        rhs = Predicter(self.model_package)
-        self.assertEqual(rhs, self.predicter)
+    def test_predictors_with_same_model_package_are_the_same_predictor(self):
+        rhs = Predictor(self.model_package)
+        self.assertEqual(rhs, self.predictor)
 
-    def test_predicters_with_diff_model_package_are_diff_predicters(self):
+    def test_predictors_with_diff_model_package_are_diff_predictors(self):
         rhs_model_package = Mock()
-        rhs = Predicter(rhs_model_package)
-        self.assertNotEqual(rhs, self.predicter)
+        rhs = Predictor(rhs_model_package)
+        self.assertNotEqual(rhs, self.predictor)
 
     def test_predictor_for_returns_predictor_for_requested_model_package_id(self):
-        self.assertEqual(self.predicter, Predicter.predictor_for(self.model_package_id))
+        self.assertEqual(self.predictor, Predictor.predictor_for(self.model_package_id))
