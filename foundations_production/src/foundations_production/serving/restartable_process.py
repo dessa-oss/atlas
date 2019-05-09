@@ -11,25 +11,26 @@ class RestartableProcess(object):
         self._target = target
         self._args = args
         self._kwargs = kwargs
-        self._master_pipe = None
+        self._communicator = None
         self._process = None
     
     def start(self):
         from multiprocessing import Process, Pipe
+        from foundations_production.serving.communicator import Communicator
 
         if not self._process:
-            master_pipe, worker_pipe = Pipe()
-            self._master_pipe = master_pipe
-            process = Process(target=self._target, args=(self._args + (worker_pipe,)), kwargs=self._kwargs, daemon=True)
+            communicator = Communicator()
+            self._communicator = communicator
+            process = Process(target=self._target, args=(self._args + (communicator,)), kwargs=self._kwargs, daemon=True)
             self._process = process
             process.start()
             
-        return self._master_pipe
+        return self._communicator
     
     def close(self):
         if self._process is not None:
-            self._master_pipe.close()
+            self._communicator.close()
             self._process.close()
 
         self._process = None
-        self._master_pipe = None
+        self._communicator = None
