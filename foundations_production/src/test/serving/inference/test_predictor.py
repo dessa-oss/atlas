@@ -12,6 +12,7 @@ from foundations_production.serving.inference.predictor import Predictor
 class TestPredictor(Spec):
 
     model_package = let_mock()
+    inferer = let_mock()
 
     @let
     def model_package_id(self):
@@ -25,16 +26,19 @@ class TestPredictor(Spec):
 
     @let
     def predictor(self):
-        return Predictor(self.model_package)
+        return Predictor(self.inferer)
     
     def test_predictors_with_same_model_package_are_the_same_predictor(self):
-        rhs = Predictor(self.model_package)
+        rhs = Predictor(self.inferer)
         self.assertEqual(rhs, self.predictor)
 
-    def test_predictors_with_diff_model_package_are_diff_predictors(self):
-        rhs_model_package = Mock()
-        rhs = Predictor(rhs_model_package)
+    def test_predictors_with_diff_inferer_are_diff_predictors(self):
+        rhs_inferer = Mock()
+        rhs = Predictor(rhs_inferer)
         self.assertNotEqual(rhs, self.predictor)
 
     def test_predictor_for_returns_predictor_for_requested_model_package_id(self):
-        self.assertEqual(self.predictor, Predictor.predictor_for(self.model_package_id))
+        from foundations_production.serving.inference.inferer import Inferer
+
+        expected_predictor = Predictor(Inferer(self.model_package))
+        self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))

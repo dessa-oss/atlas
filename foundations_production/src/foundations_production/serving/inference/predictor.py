@@ -11,15 +11,17 @@ class Predictor(object):
     @staticmethod
     def predictor_for(model_package_id):
         from foundations_production import load_model_package
+        from foundations_production.serving.inference.inferer import Inferer
         
         model_package = load_model_package(model_package_id)
-        return Predictor(model_package)
+        inferer = Inferer(model_package)
+        return Predictor(inferer)
 
-    def __init__(self, model_package):
-        self._model_package = model_package
+    def __init__(self, inferer):
+        self._inferer = inferer
 
     def json_predictions_for(self, json_inputs):
         pass
 
     def __eq__(self, rhs):
-        return self._model_package == rhs._model_package
+        return self._inferer == rhs._inferer
