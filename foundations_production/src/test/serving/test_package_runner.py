@@ -26,7 +26,7 @@ class TestPackageRunner(Spec):
     def number_of_calls(self):
         return self.faker.random_int(2,10)
     
-    mock_pipe = let_mock()
+    mock_communicator = let_mock()
     mock_model_package = let_mock()
     
     mock_load_model_package = let_patch_mock('foundations_production.load_model_package')
@@ -44,27 +44,27 @@ class TestPackageRunner(Spec):
         self.assertEqual(self.prediction, actual_prediction)
     
     def test_run_model_package_loads_model_package(self):
-        self.mock_pipe.recv.side_effect = [self.fake_data, 'STOP']
+        self.mock_communicator.receive_from_server.side_effect = [self.fake_data, 'STOP']
 
-        run_model_package(self.model_package_id, self.mock_pipe)
+        run_model_package(self.model_package_id, self.mock_communicator)
         self.mock_load_model_package.assert_called_with(self.model_package_id)
     
     def test_run_model_package_puts_predictions_into_pipe(self):
-        self.mock_pipe.recv.side_effect = [self.fake_data, 'STOP']
+        self.mock_communicator.receive_from_server.side_effect = [self.fake_data, 'STOP']
 
         patched_run_prediction = self.patch('foundations_production.serving.package_runner.run_prediction', ConditionalReturn())
         patched_run_prediction.return_when(self.prediction, self.mock_model_package, self.fake_data)
 
-        run_model_package(self.model_package_id, self.mock_pipe)
+        run_model_package(self.model_package_id, self.mock_communicator)
 
-        self.mock_pipe.send.assert_called_with(self.prediction)
+        self.mock_communicator.send_to_server.assert_called_with(self.prediction)
     
     def test_run_model_package_runs_until_stop_received(self):
         call_array = [self.fake_data]*self.number_of_calls
         call_array.append('STOP')
 
-        self.mock_pipe.recv.side_effect = call_array
+        self.mock_communicator.receive_from_server.side_effect = call_array
 
-        run_model_package(self.model_package_id, self.mock_pipe)
-        self.assertEqual(self.mock_pipe.send.call_count, self.number_of_calls)
+        run_model_package(self.model_package_id, self.mock_communicator)
+        self.assertEqual(self.mock_communicator.send_to_server.call_count, self.number_of_calls)
         
