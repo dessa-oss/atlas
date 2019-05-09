@@ -1,3 +1,4 @@
 from integration.serving.test_data_from_file import TestDataFromFile
 from integration.serving.test_retrain_model_package import TestRetrainModelPackage
+from integration.test_deploy_model_package_process import TestDeployModelPackageProcess
 from integration.serving.inference import *
