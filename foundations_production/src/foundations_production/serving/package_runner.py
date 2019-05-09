@@ -10,11 +10,11 @@ def run_model_package(model_package_id, communicator):
     model_package = load_model_package(model_package_id)
 
     while True:
-        data = communicator.receive_from_server()
+        data = communicator.get_action_request()
         if data == 'STOP':
             return
         prediction = run_prediction(model_package, data)
-        communicator.send_to_server(prediction)
+        communicator.set_response(prediction)
 
 def run_prediction(model_package, data):
     return model_package.model.predict(data)

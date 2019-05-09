@@ -25,8 +25,12 @@ class TestPackageRunner(Spec):
     @let
     def number_of_calls(self):
         return self.faker.random_int(2,10)
+
+    @let
+    def communicator(self):
+        from foundations_production.serving.communicator import Communicator
+        return Communicator()
     
-    mock_communicator = let_mock()
     mock_model_package = let_mock()
     
     mock_load_model_package = let_patch_mock('foundations_production.load_model_package')
@@ -35,36 +39,35 @@ class TestPackageRunner(Spec):
     def set_up(self):
         self.mock_load_model_package.return_value = self.mock_model_package
 
-    def test_run_prediction_runs_prediction_on_model_with_correct_data(self):
-        model_package = Mock()
-        model_package.model.predict = ConditionalReturn()
-        model_package.model.predict.return_when(self.prediction, self.fake_data)
+        self.mock_model_package.model.predict = ConditionalReturn()
+        self.mock_model_package.model.predict.return_when(self.prediction, self.fake_data)
 
-        actual_prediction = run_prediction(model_package, self.fake_data)
+    def test_run_prediction_runs_prediction_on_model_with_correct_data(self):
+        actual_prediction = run_prediction(self.mock_model_package, self.fake_data)
         self.assertEqual(self.prediction, actual_prediction)
     
     def test_run_model_package_loads_model_package(self):
-        self.mock_communicator.receive_from_server.side_effect = [self.fake_data, 'STOP']
+        self.communicator.set_action_request(self.fake_data)
+        self.communicator.set_action_request('STOP')
 
-        run_model_package(self.model_package_id, self.mock_communicator)
+        run_model_package(self.model_package_id, self.communicator)
         self.mock_load_model_package.assert_called_with(self.model_package_id)
     
     def test_run_model_package_puts_predictions_into_pipe(self):
-        self.mock_communicator.receive_from_server.side_effect = [self.fake_data, 'STOP']
+        self.communicator.set_action_request(self.fake_data)
+        self.communicator.set_action_request('STOP')
 
-        patched_run_prediction = self.patch('foundations_production.serving.package_runner.run_prediction', ConditionalReturn())
-        patched_run_prediction.return_when(self.prediction, self.mock_model_package, self.fake_data)
+        run_model_package(self.model_package_id, self.communicator)
 
-        run_model_package(self.model_package_id, self.mock_communicator)
-
-        self.mock_communicator.send_to_server.assert_called_with(self.prediction)
+        self.assertEqual(self.prediction, self.communicator.get_response())
     
     def test_run_model_package_runs_until_stop_received(self):
-        call_array = [self.fake_data]*self.number_of_calls
-        call_array.append('STOP')
+        for _ in range(self.number_of_calls):
+            self.communicator.set_action_request(self.fake_data)
+        self.communicator.set_action_request('STOP')
 
-        self.mock_communicator.receive_from_server.side_effect = call_array
+        run_model_package(self.model_package_id, self.communicator)
 
-        run_model_package(self.model_package_id, self.mock_communicator)
-        self.assertEqual(self.mock_communicator.send_to_server.call_count, self.number_of_calls)
-        
+        responses = [self.communicator.get_response() for _ in range(self.number_of_calls)]
+        expected_responses = [self.prediction] * self.number_of_calls
+        self.assertEqual(expected_responses, responses)

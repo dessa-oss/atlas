@@ -23,23 +23,23 @@ class TestCommunicator(Spec):
     def set_up(self):
         self.mock_pipe.return_value = (self.mock_master_pipe, self.mock_worker_pipe)
     
-    def test_communicator_send_sends_data_to_client(self):
-        Communicator().send_to_client(self.fake_data)
+    def test_communicator_sets_action_data_for_package_runner(self):
+        Communicator().set_action_request(self.fake_data)
         self.mock_master_pipe.send.assert_called_with(json.dumps(self.fake_data))
     
-    def test_communicator_send_sends_data_to_server(self):
-        Communicator().send_to_server(self.fake_data)
+    def test_communicator_sets_action_response_data_for_package_runner(self):
+        Communicator().set_response(self.fake_data)
         self.mock_worker_pipe.send.assert_called_with(json.dumps(self.fake_data))
     
-    def test_communicator_receive_from_server_receives_data_from_server(self):
+    def test_communicator_gets_action_request_from_client(self):
         self.mock_worker_pipe.recv.return_value = json.dumps(self.fake_data)
-        data = Communicator().receive_from_server()
+        data = Communicator().get_action_request()
 
         self.assertEqual(self.fake_data, data)
     
-    def test_communicator_receive_from_client_receives_data_from_client(self):
+    def test_communicator_gets_response_from_package_runner(self):
         self.mock_master_pipe.recv.return_value = json.dumps(self.fake_data)
-        data = Communicator().receive_from_client()
+        data = Communicator().get_response()
 
         self.assertEqual(self.fake_data, data)
 

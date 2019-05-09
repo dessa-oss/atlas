@@ -15,16 +15,16 @@ class Communicator(object):
         self._master_pipe = master_pipe
         self._worker_pipe = worker_pipe
 
-    def send_to_client(self, data):
-        self._master_pipe.send(json.dumps(data))    
+    def set_action_request(self, data_to_predict_on):
+        self._master_pipe.send(json.dumps(data_to_predict_on))    
 
-    def send_to_server(self, data):
-        self._worker_pipe.send(json.dumps(data))
+    def set_response(self, prediction):
+        self._worker_pipe.send(json.dumps(prediction))
 
-    def receive_from_client(self):
+    def get_response(self):
         return json.loads(self._master_pipe.recv()) 
 
-    def receive_from_server(self):
+    def get_action_request(self):
         return json.loads(self._worker_pipe.recv()) 
     
     def close(self):
