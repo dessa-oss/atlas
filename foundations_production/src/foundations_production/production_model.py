@@ -30,3 +30,7 @@ class ProductionModel(object):
 
     def encoder(self):
         return self._base_model.encoder()
+
+    def retrain(self, *args, **kwargs):
+        self._base_model.prepare_for_retrain()
+        return self._base_model.fit(*args, **kwargs)

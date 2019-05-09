@@ -52,6 +52,19 @@ class TestProductionModel(Spec):
     def model(self):
         return ProductionModel(self.job_id)
 
+    @let
+    def fake_data_from_stage(self):
+        import foundations
+        
+        def fake_data():
+            return self.fake_retraining_data
+
+        return foundations.create_stage(fake_data)()
+
+    @let
+    def fake_retraining_data(self):
+        return self.faker.sentence()
+
     def test_construction_calls_fit(self):
         self.model
         self.mock_base_transformer.fit.assert_called()
@@ -72,6 +85,19 @@ class TestProductionModel(Spec):
         self.mock_base_transformer.transformed_data.return_when(predicted_results, *self.fake_args, **self.fake_kwargs)
 
         self.assertEqual(predicted_results, self.model.predict(*self.fake_args, **self.fake_kwargs))
-    
+
+    def test_retrain_prepares_model_for_retrain(self):
+        self.model.retrain(*self.fake_args, **self.fake_kwargs)
+        self.mock_base_transformer.prepare_for_retrain.assert_called_once()
+
+    def test_retrain_loads_and_fits_model_with_new_data(self):
+        expected_fit_stage = Mock()
+        self.mock_base_transformer.fit = ConditionalReturn()
+        self.mock_base_transformer.fit.return_when(None)
+        self.mock_base_transformer.fit.return_when(expected_fit_stage, *self.fake_args, **self.fake_kwargs)
+
+        fit_stage = self.model.retrain(*self.fake_args, **self.fake_kwargs)
+        self.assertEqual(expected_fit_stage, fit_stage)
+
     def test_encoder_returns_encoder(self):
         self.assertEqual(self.mock_base_transformer.encoder(), self.model.encoder())
