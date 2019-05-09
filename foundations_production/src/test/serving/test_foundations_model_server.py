@@ -72,7 +72,7 @@ class TestFoundationsModelServer(Spec):
         self.open_mock.return_value = self.mock_pid_file
         model_server = FoundationsModelServer()
         model_server.run()
-        self.flask_mock.assert_called_with('foundations_production.serving.foundations_model_server')
+        self.flask_mock.assert_called_with('foundations_production.serving.rest_api_server')
 
     def test_foundations_model_server_run_method_runs_flask_application(self):
         from foundations_production.serving.foundations_model_server import FoundationsModelServer
@@ -102,10 +102,12 @@ class TestFoundationsModelServer(Spec):
         model_server.run()
         logger.error.assert_called_with('Fake error')
 
-    def test_foundations_model_server_loads_routes(self):
+    def test_foundations_model_server_runs_rest_api_server(self):
         from foundations_production.serving.foundations_model_server import FoundationsModelServer
 
-        load_routes_mock = self.patch('foundations_production.serving.model_server_routes.load_routes')
+        rest_api_server_class_mock = self.patch('foundations_production.serving.rest_api_server.RestAPIServer')
+        rest_api_server_mock = Mock()
+        rest_api_server_class_mock.return_value = rest_api_server_mock
         model_server = FoundationsModelServer()
         model_server.run()
-        load_routes_mock.assert_called_with(self.flask_app_mock)
+        rest_api_server_mock.run.assert_called()

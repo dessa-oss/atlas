@@ -12,17 +12,15 @@ class FoundationsModelServer(object):
     def run(self):
         try:
             self._create_new_pid_file()
-            self._start_flask_server()
+            self._start_rest_api_server()
         except OSError as exception:
             self._log_server_failure(exception)
 
-    def _start_flask_server(self):
-        from flask import Flask
-        from foundations_production.serving.model_server_routes import load_routes
+    def _start_rest_api_server(self):
+        from foundations_production.serving.rest_api_server import RestAPIServer
 
-        app = Flask(__name__)
-        load_routes(app)
-        app.run()
+        rest_api_server = RestAPIServer()
+        rest_api_server.run()
 
     def _create_new_pid_file(self):
         import os

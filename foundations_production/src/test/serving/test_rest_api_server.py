@@ -12,5 +12,5 @@ from foundations_spec.helpers import let, let_now, let_patch_mock, set_up
 from foundations_spec.helpers.spec import Spec
 from flask import Flask
 
-class TestModelServerRoutes(Spec):
+class TestRestAPIServer(Spec):
     pass

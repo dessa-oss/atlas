@@ -12,14 +12,14 @@ from foundations_spec.helpers import let, let_now, let_patch_mock, set_up
 from foundations_spec.helpers.spec import Spec
 from flask import Flask
 
-class TestModelServerRoutes(Spec):
+class TestRestAPIServer(Spec):
     
     @set_up
     def set_up(self):
-        from foundations_production.serving.model_server_routes import load_routes
+        from foundations_production.serving.rest_api_server import RestAPIServer
 
-        self.app = Flask(__name__)
-        load_routes(self.app)
+        self.rest_api_server = RestAPIServer()
+        self.app = self.rest_api_server.app
         self.client = self.app.test_client()
 
     def test_manage_model_package_route_is_added(self):
