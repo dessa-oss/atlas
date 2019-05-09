@@ -26,4 +26,7 @@ class PackagePool(object):
         self._active_packages.append(model_id)
 
     def get_pipe(self, model_id):
-        return self._model_packages[model_id]['pipe']
+        model_package = self._model_packages.get(model_id, None)
+        if model_package:
+            return model_package['pipe']
+        return model_package

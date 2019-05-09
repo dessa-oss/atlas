@@ -70,3 +70,7 @@ class TestPackagePool(Spec):
         package_pool.add_package(self.model_id)
         self.assertEqual(self.model_1_pipe, package_pool.get_pipe(self.model_id))
 
+    def test_get_pipe_returns_none_when_model_doesnt_exist(self):
+        package_pool = PackagePool(active_package_limit=1)
+        self.assertEqual(None, package_pool.get_pipe(self.model_id))
+
