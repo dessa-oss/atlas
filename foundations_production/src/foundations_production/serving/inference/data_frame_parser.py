@@ -5,5 +5,10 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-from test.serving.inference.test_inferer import TestInferer
-from test.serving.inference.test_data_frame_parser import TestDataFrameParser
+
+class DataFrameParser(object):
+    
+    def data_frame_for(self, input):
+        from pandas import DataFrame
+
+        return DataFrame([])
