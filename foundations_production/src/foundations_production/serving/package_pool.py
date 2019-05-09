@@ -25,6 +25,5 @@ class PackagePool(object):
         self._model_packages[model_id] = {'pipe': pipe, 'process': process}
         self._active_packages.append(model_id)
 
-
-    def run_prediction_on_package(self, model_id, data):
-        self._model_packages[model_id]['pipe'].send(data)
+    def get_pipe(self, model_id):
+        return self._model_packages[model_id]['pipe']

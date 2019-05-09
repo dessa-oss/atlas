@@ -49,20 +49,7 @@ class TestPackagePool(Spec):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         self.mock_process.assert_called_with(target=run_model_package, args=(self.model_id))
-    
-    def test_run_prediction_on_package_calls_correct_pipe(self):
-        package_pool = PackagePool(active_package_limit=1)
-        package_pool.add_package(self.model_id)
-        package_pool.run_prediction_on_package(self.model_id, self.fake_data)
-        self.model_1_pipe.send.assert_called_with(self.fake_data)
-
-    def test_run_prediction_on_package_calls_coorect_pipe_when_multiple_packages(self):
-        package_pool = PackagePool(active_package_limit=1)
-        package_pool.add_package(self.model_id)
-        package_pool.add_package(self.model_2_id)
-        package_pool.run_prediction_on_package(self.model_id, self.fake_data)
-        self.model_1_pipe.send.assert_called_with(self.fake_data)
-
+        
     def test_package_pool_does_not_exceed_limit(self):
         package_pool = PackagePool(active_package_limit=2)
         package_pool.add_package(self.model_id)
@@ -77,4 +64,9 @@ class TestPackagePool(Spec):
         package_pool.add_package(self.model_2_id)
         package_pool.add_package(self.model_3_id)
         self.model_1_process.close.assert_called_once()
+    
+    def test_get_pipe_gets_correct_pipe(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        self.assertEqual(self.model_1_pipe, package_pool.get_pipe(self.model_id))
 
