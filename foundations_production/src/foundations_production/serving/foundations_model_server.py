@@ -10,17 +10,46 @@ class FoundationsModelServer(object):
     pid_file_path = '/var/tmp/foundations_model_server.pid'
 
     def run(self):
+        try:
+            self._create_new_pid_file()
+            self._start_flask_server()
+        except OSError as exception:
+            self._log_server_failure(exception)
+
+    def _start_flask_server(self):
         from flask import Flask
 
-        self._create_pid_file()
         app = Flask(__name__)
         app.run()
+
+    def _create_new_pid_file(self):
+        import os
+
+        self._remove_old_pid_file()
+        self._create_pid_file()
+        if not os.path.exists(self.pid_file_path):
+            raise FileNotFoundError('Failed to create PID file for Foundations model server')
+
+    def _remove_old_pid_file(self):
+        import os
+
+        try:
+            os.remove(self.pid_file_path)
+        except FileNotFoundError:
+            pass
 
     def _create_pid_file(self):
         import os
 
         with open(self.pid_file_path, 'w') as pidfile:
             pidfile.write(str(os.getpid()))
+
+    def _log_server_failure(self, exception):
+        import logging
+        
+        logger = logging.getLogger()
+        logger.error(str(exception))
+
 
 if __name__ == '__main__':
     foundations_model_server = FoundationsModelServer()
