@@ -11,4 +11,6 @@ class DataFrameParser(object):
     def data_frame_for(self, input):
         from pandas import DataFrame
 
-        return DataFrame([])
+        columns = [field['name'] for field in input['schema']]
+
+        return DataFrame(input['rows'], columns=columns)

@@ -13,20 +13,20 @@ from foundations_production.serving.inference.data_frame_parser import DataFrame
 class TestDataFrameParser(Spec):
     
     @let
-    def empty_schema(self):
-        return []
-
-    @let
-    def empty_rows(self):
-        return []
-
-    @let
     def parser(self):
         return DataFrameParser()
     
     def test_data_frame_for_returns_an_empty_data_frame(self):
-        input = {'rows': self.empty_rows, 'schema': self.empty_schema}
+        input = {'rows': [], 'schema': []}
         expected_data_frame = DataFrame([])
         assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
 
-    
+    def test_data_frame_for_returns_data_frame_for_single_row_and_column(self):
+        input = {'rows': [['some value']], 'schema': [{'name': 'first column', 'type': 'str'}]}
+        expected_data_frame = DataFrame([{'first column': 'some value'}])
+        assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
+
+    def test_data_frame_for_returns_data_frame_for_mutiple_rows_and_columns(self):
+        input = {'rows': [['value', 43234], ['spider', 323]], 'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]}
+        expected_data_frame = DataFrame([{'1st column': 'value', '2nd column': 43234}, {'1st column': 'spider', '2nd column': 323}])
+        assert_frame_equal(expected_data_frame, self.parser.data_frame_for(input))
