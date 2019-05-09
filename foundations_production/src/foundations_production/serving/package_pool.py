@@ -31,5 +31,6 @@ class PackagePool(object):
     def get_pipe(self, model_id):
         model_package = self._model_packages.get(model_id, None)
         if model_package:
+            model_package['process'].start()
             return model_package['pipe']
         return model_package

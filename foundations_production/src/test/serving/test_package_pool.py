@@ -73,4 +73,10 @@ class TestPackagePool(Spec):
     def test_get_pipe_returns_none_when_model_doesnt_exist(self):
         package_pool = PackagePool(active_package_limit=1)
         self.assertEqual(None, package_pool.get_pipe(self.model_id))
-
+    
+    def test_get_pipe_starts_process_if_inactive(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        package_pool.get_pipe(self.model_id)
+        self.assertEqual(2, self.model_1_process.start.call_count)
