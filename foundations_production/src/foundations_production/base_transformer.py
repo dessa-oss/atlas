@@ -61,6 +61,7 @@ class BaseTransformer(object):
 
     def prepare_for_retrain(self):
         self._state.should_retrain = True
+        self._encoder = None
         
     @staticmethod
     def _create_persister(job_id):
