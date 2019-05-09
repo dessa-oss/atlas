@@ -6,9 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_production.serving.data_loader import DataLoader
+from foundations_production.serving.data_from_file import data_from_file
 
-class TestDataLoader(Spec):
+class TestDataFromFile(Spec):
 
     @set_up
     def set_up(self):
@@ -39,12 +39,10 @@ class TestDataLoader(Spec):
         
         return features
 
-    def test_data_loader_loads_local_file(self):
+    def test_data_from_file_loads_local_file(self):
         from pandas.testing import assert_frame_equal
 
-        data_loader = DataLoader()
-        dataframe = data_loader.load_data(self.file_name_with_scheme)
-
+        dataframe = data_from_file(self.file_name_with_scheme)
         assert_frame_equal(self.features, dataframe)
         
 

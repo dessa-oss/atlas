@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.serving.test_package_runner import TestPackageRunner
-from test.serving.test_data_loader import TestDataLoader
+from test.serving.test_data_from_file import TestDataFromFile
 from test.serving.test_restartable_process import TestRestartableProcess
 from test.serving.test_package_runner import TestPackageRunner
 from test.serving.test_foundations_model_server import TestFoundationsModelServer

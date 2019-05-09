@@ -6,10 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_production.serving.data_loader import DataLoader
+from foundations_production.serving.data_from_file import data_from_file
 from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
-class TestDataLoader(Spec):
+class TestDataFromFile(Spec):
 
     local_file_system_bucket_class = let_patch_mock('foundations_contrib.local_file_system_bucket.LocalFileSystemBucket', ConditionalReturn())
     local_file_system_bucket_instance = let_mock()
@@ -41,6 +41,5 @@ class TestDataLoader(Spec):
         self.local_file_system_bucket_instance.download_as_string = ConditionalReturn()
         self.local_file_system_bucket_instance.download_as_string.return_when(self.fake_serialized_data, self.file_name)
 
-        data_loader = DataLoader()
-        data = data_loader.load_data(self.file_name_with_scheme)
+        data = data_from_file(self.file_name_with_scheme)
         self.assertEqual(self.fake_data, data)
