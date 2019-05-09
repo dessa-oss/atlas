@@ -21,8 +21,8 @@ def load_model_package(job_id):
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
     preprocessor = Preprocessor.load_preprocessor(pipeline_archiver, 'transformer', job_id)
-    model_preprocessor = ProductionModel(job_id)
-    return ModelPackage(preprocessor=preprocessor, model=model_preprocessor)
+    model = ProductionModel(job_id)
+    return ModelPackage(preprocessor=preprocessor, model=model)
 
 def _append_module():
     import sys
