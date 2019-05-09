@@ -23,7 +23,11 @@ class Communicator(object):
 
     def receive_from_client(self):
         return json.loads(self._master_pipe.recv()) 
-        
+
     def receive_from_server(self):
         return json.loads(self._worker_pipe.recv()) 
+    
+    def close(self):
+        self._master_pipe.close()
+        self._worker_pipe.close()
     

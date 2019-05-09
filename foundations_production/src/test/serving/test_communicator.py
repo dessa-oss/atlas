@@ -42,3 +42,11 @@ class TestCommunicator(Spec):
         data = Communicator().receive_from_client()
 
         self.assertEqual(self.fake_data, data)
+
+    def test_communicator_closes_master_pipe(self):
+        Communicator().close()
+        self.mock_master_pipe.close.assert_called_once()
+    
+    def test_communicator_closes_worker_pipe(self):
+        Communicator().close()
+        self.mock_worker_pipe.close.assert_called_once()
