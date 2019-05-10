@@ -22,6 +22,11 @@ class TestPredictor(Spec):
         }
 
     @let
+    def input_as_dataframe(self):
+        import pandas
+        return pandas.DataFrame({'1st column': ['value', 'spider'], '2nd column': [43234,323]})
+
+    @let
     def model_package_id(self):
         return self.faker.uuid4()
 
@@ -50,8 +55,14 @@ class TestPredictor(Spec):
         expected_predictor = Predictor(Inferer(self.model_package))
         self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))
     
-    def test_json_predictions_for_coverts_json_input_data_into_dataframe(self):
+    def test_json_predictions_for_converts_json_input_data_into_dataframe(self):
         mock_data_frame_parser = self.patch('foundations_production.serving.inference.data_frame_parser.DataFrameParser')
         self.predictor.json_predictions_for(self.input)
         mock_data_frame_parser.return_value.data_frame_for.assert_called_with(self.input)
+    
+    def test_json_predictions_for_calls_prediction_on_inferer(self):
+        from pandas.testing import assert_frame_equal
+        self.predictor.json_predictions_for(self.input)
+        actual_dataframe_inputs = self.inferer.predictions_for.call_args
+        assert_frame_equal(self.input_as_dataframe, actual_dataframe_inputs[0][0])
 

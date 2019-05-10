@@ -22,7 +22,8 @@ class Predictor(object):
 
     def json_predictions_for(self, json_inputs):
         from foundations_production.serving.inference.data_frame_parser import DataFrameParser
-        DataFrameParser().data_frame_for(json_inputs)
+        dataframe_inputs = DataFrameParser().data_frame_for(json_inputs)
+        self._inferer.predictions_for(dataframe_inputs)
  
 
     def __eq__(self, rhs):
