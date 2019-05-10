@@ -58,9 +58,12 @@ class RestAPIServer(object):
         from flask import request, jsonify
         from flask import make_response
         
-        model_id = request.get_json()['model_id']
-        self._package_pool.add_package(model_id)
-        return jsonify({'deployed_model_id': model_id})
+        if request.method == 'POST':
+            model_id = request.get_json()['model_id']
+            self._package_pool.add_package(model_id)
+            return jsonify({'deployed_model_id': model_id})
+
+        return 'response'
 
     @exceptions_as_http_error_codes
     def train_all_model_packages(self, user_defined_model_name):

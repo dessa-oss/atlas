@@ -23,6 +23,7 @@ class TestRestAPIServer(Spec):
     def test_add_new_model_package_in_manage_model_package_route(self):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
+        self.request_mock.method = 'POST'
         self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
         rest_api_server = RestAPIServer()
         manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
@@ -34,6 +35,7 @@ class TestRestAPIServer(Spec):
         from foundations_production.serving.rest_api_server import RestAPIServer
         from werkzeug.exceptions import BadRequest
 
+        self.request_mock.method = 'POST'
         self.request_mock.get_json.return_value = {'other_key': 'some_model_id'}
         rest_api_server = RestAPIServer()
         manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
@@ -45,6 +47,7 @@ class TestRestAPIServer(Spec):
     def test_add_new_model_package_returns_meaningful_response_if_successful(self):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
+        self.request_mock.method = 'POST'
         self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
         rest_api_server = RestAPIServer()
         manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
@@ -52,3 +55,5 @@ class TestRestAPIServer(Spec):
             response = manage_model_package_function('some_model')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json['deployed_model_id'], 'some_model_id')
+
+        

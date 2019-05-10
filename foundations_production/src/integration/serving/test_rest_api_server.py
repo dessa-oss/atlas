@@ -13,6 +13,7 @@ from foundations_spec.helpers.spec import Spec
 from flask import Flask
 
 class TestRestAPIServer(Spec):
+    package_pool_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
     
     @set_up
     def set_up(self):
@@ -141,3 +142,11 @@ class TestRestAPIServer(Spec):
     def test_rest_api_accepts_only_json(self):
         response = self.client.post('/v1/some_model/', data='bad data')
         self.assertEqual(response.status_code, 400)
+
+    def test_deploy_new_model_package_happens_with_post_request(self):
+        response = self.client.post('/v1/some_model/', json={'model_id': 'some_model_id'})
+        self.assertEqual(response.json['deployed_model_id'], 'some_model_id')
+
+    def test_deploy_new_model_package_doesnt_happen_with_get_request(self):
+        response = self.client.get('/v1/some_model/', json={'model_id': 'some_model_id'})
+        self.assertNotIn('deployed_model_id', response.data.decode())
