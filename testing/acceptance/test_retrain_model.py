@@ -9,6 +9,7 @@ from foundations_spec import *
 
 import acceptance.fixtures.train_model_package as train_model_package
 
+@skip
 class TestRetrainModel(Spec):
     
     @let
