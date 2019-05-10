@@ -17,7 +17,8 @@ from test.test_preprocessor_decorator import TestPreprocessorDecorator
 from test.test_transformer import TestTransformer
 from test.test_model_class import TestModel
 from test.test_production_model import TestProductionModel
-from test.test_persister import TestPersister
+from test.test_transformer_loader import TestTransformerLoader
+from test.test_transformer_saver import TestTransformerSaver
 from test.test_load_model_package import TestLoadModelPackage
 from test.test_model_package import TestModelPackage
 from test.serving import *
