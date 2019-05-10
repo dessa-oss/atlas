@@ -39,4 +39,4 @@ class TestRestAPIServer(Spec):
         with self.assertRaises(BadRequest) as exception_context:
             manage_model_package_function('some_model')
         self.assertEqual(exception_context.exception.code, 400)
-        
+        self.assertEqual('400 Bad Request: Missing field in JSON data: model_id', str(exception_context.exception))

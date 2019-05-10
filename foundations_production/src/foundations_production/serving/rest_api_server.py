@@ -20,11 +20,14 @@ class RestAPIServer(object):
         @wraps(method)
         def method_decorator(*args, **kwargs):
             from flask import request, abort
+            from werkzeug.exceptions import BadRequestKeyError
 
             try:
                 return method(*args, **kwargs)
-            except KeyError:
-                abort(400)
+            except KeyError as exception:
+                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(exception.args[0]))
+            except Exception:
+                abort(500)
 
         return method_decorator
 
