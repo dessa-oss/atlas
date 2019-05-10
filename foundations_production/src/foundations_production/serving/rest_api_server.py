@@ -15,7 +15,9 @@ class RestAPIServer(object):
         self._load_routes(self._app)
 
     def exceptions_as_http_error_codes(method):
+        from functools import wraps
 
+        @wraps(method)
         def method_decorator(*args, **kwargs):
             from flask import request, abort
 
@@ -41,29 +43,15 @@ class RestAPIServer(object):
 
             if not request.is_json: 
                 abort(400)
-
-        @flask_app.route('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'])
-        def manage_model_package(user_defined_model_name):
-            return self._manage_model_package(user_defined_model_name)
-
-        @flask_app.route('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'])
-        def train_all_model_packages(user_defined_model_name):
-            return self._train_all_model_packages(user_defined_model_name)
-
-        @flask_app.route('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'])
-        def train_one_model_package(user_defined_model_name, version):
-            return self._train_one_model_package(user_defined_model_name, version)
-
-        @flask_app.route('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'])
-        def predictions_from_model_package(user_defined_model_name):
-            return self._predictions_from_model_package(user_defined_model_name)
-
-        @flask_app.route('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'])
-        def predict_with_model_package(user_defined_model_name, prediction_id):
-            return self._predict_with_model_package(user_defined_model_name, prediction_id)
+        
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_all_model_packages)
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_one_model_package)
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'], view_func=self.predict_with_model_package)
 
     @exceptions_as_http_error_codes
-    def _manage_model_package(self, user_defined_model_name):
+    def manage_model_package(self, user_defined_model_name):
         from flask import request, jsonify
         
         model_id = request.get_json()['model_id']
@@ -71,17 +59,17 @@ class RestAPIServer(object):
         return 'response'
 
     @exceptions_as_http_error_codes
-    def _train_all_model_packages(self, user_defined_model_name):
+    def train_all_model_packages(self, user_defined_model_name):
         return 'response'
 
     @exceptions_as_http_error_codes
-    def _train_one_model_package(self, user_defined_model_name, version):
+    def train_one_model_package(self, user_defined_model_name, version):
         return 'response'
 
     @exceptions_as_http_error_codes
-    def _predictions_from_model_package(self, user_defined_model_name):
+    def predictions_from_model_package(self, user_defined_model_name):
         return 'response'
 
     @exceptions_as_http_error_codes
-    def _predict_with_model_package(self, user_defined_model_name, prediction_id):
+    def predict_with_model_package(self, user_defined_model_name, prediction_id):
         return 'response'
