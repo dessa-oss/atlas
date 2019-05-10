@@ -19,6 +19,7 @@ class TestFoundationsModelServer(Spec):
     os_getpid_mock = let_patch_mock('os.getpid')
     os_path_exists = let_patch_mock('os.path.exists')
     flask_mock = let_patch_mock('flask.Flask')
+    argument_parser_class_mock = let_patch_mock('argparse.ArgumentParser')
 
     @let_now
     def mock_pid_file(self):
@@ -111,3 +112,32 @@ class TestFoundationsModelServer(Spec):
         model_server = FoundationsModelServer()
         model_server.run()
         rest_api_server_mock.run.assert_called()
+
+    def test_foundations_model_server_gets_domain_and_port_from_cli(self):
+        from foundations_production.serving.foundations_model_server import main
+
+        parser_mock = Mock()
+        self.argument_parser_class_mock.return_value = parser_mock
+        parsed_arguments_mock = Mock()
+        parser_mock.parse_args.return_value = parsed_arguments_mock
+        parsed_arguments_mock.domain = ''
+
+        main()
+        parser_mock.add_argument.assert_called_with('--domain', type=str, help='domain and port used by foundations model server')
+
+    def test_foundations_model_server_passes_domain_and_port_to_run_method(self):
+        from foundations_production.serving.foundations_model_server import main
+
+        parser_mock = Mock()
+        self.argument_parser_class_mock.return_value = parser_mock
+        parsed_arguments_mock = Mock()
+        parser_mock.parse_args.return_value = parsed_arguments_mock
+        parsed_arguments_mock.domain = 'some_domain:1234'
+
+        foundations_model_server_class_mock = self.patch('foundations_production.serving.foundations_model_server.FoundationsModelServer')
+        foundations_model_server_mock = Mock()
+        foundations_model_server_class_mock.return_value = foundations_model_server_mock
+
+        main()
+        parser_mock.parse_args.assert_called()
+        foundations_model_server_mock.run.assert_called_with(domain='some_domain', port=1234)

@@ -9,7 +9,7 @@ class FoundationsModelServer(object):
 
     pid_file_path = '/var/tmp/foundations_model_server.pid'
 
-    def run(self):
+    def run(self, domain='localhost', port=5000):
         try:
             self._create_new_pid_file()
             self._start_rest_api_server()
@@ -50,7 +50,20 @@ class FoundationsModelServer(object):
         logger = logging.getLogger()
         logger.error(str(exception))
 
+def main():
+    from argparse import ArgumentParser
+
+    argument_parser = ArgumentParser(help='starts foundations model server')
+    argument_parser.add_argument('--domain', type=str, help='domain and port used by foundations model server')
+    parsed_arguments = argument_parser.parse_args()
+    if parsed_arguments.domain:
+        domain, port = parsed_arguments.domain.split(':')
+        port = int(port)
+    else:
+        domain = 'localhost'
+        port = 5000
+    foundations_model_server = FoundationsModelServer()
+    foundations_model_server.run(domain=domain, port=port)
 
 if __name__ == '__main__':
-    foundations_model_server = FoundationsModelServer()
-    foundations_model_server.run()
+    main()
