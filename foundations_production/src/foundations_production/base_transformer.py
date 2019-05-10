@@ -7,8 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import foundations
-from foundations_production.persister import Persister
 from foundations_production.transformer_saver import TransformerSaver
+from foundations_production.transformer_loader import TransformerLoader
 
 class BaseTransformer(object):
 
@@ -19,11 +19,11 @@ class BaseTransformer(object):
             self.should_retrain = False
             self.transformer_index = transformer_index
              
-        def fit_stage(self, persister, user_defined_transformer, *args, **kwargs):
+        def fit_stage(self, transformer_loader, user_defined_transformer, *args, **kwargs):
             transformer_saver_for_currently_executing_job = self._transformer_saver_for_currently_executing_job()
 
             if self.should_load:
-                loaded_transformer = self._loaded_transformer(persister)
+                loaded_transformer = self._loaded_transformer(transformer_loader)
 
                 if self.should_retrain:
                     self._fit_transformer(transformer_saver_for_currently_executing_job, loaded_transformer, *args, **kwargs)
@@ -33,12 +33,12 @@ class BaseTransformer(object):
             self._fit_transformer(transformer_saver_for_currently_executing_job, user_defined_transformer, *args, **kwargs)
             return user_defined_transformer
         
-        def _loaded_transformer(self, persister):
-            return persister.load_user_defined_transformer(self.transformer_index)
+        def _loaded_transformer(self, transformer_loader):
+            return transformer_loader.load_user_defined_transformer(self.transformer_index)
 
-        def _fit_transformer(self, persister, user_defined_transformer, *args, **kwargs):
+        def _fit_transformer(self, transformer_saver, user_defined_transformer, *args, **kwargs):
             user_defined_transformer.fit(*args, **kwargs)
-            persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
+            transformer_saver.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
     
         @staticmethod
         def _transformer_saver_for_currently_executing_job():
@@ -50,12 +50,12 @@ class BaseTransformer(object):
         self._encoder = None
         self._user_defined_transformer = user_defined_transformer
 
-        self._persister_stage = foundations.create_stage(self._create_persister)(job_id=preprocessor.job_id)
+        self._transformer_loader_stage = foundations.create_stage(self._create_transformer_loader)(job_id=preprocessor.job_id)
         self._state = self.State(transformer_index=preprocessor.new_transformer(self))
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._state.fit_stage)(self._persister_stage, self._user_defined_transformer, *args, **kwargs)
+            self._encoder = foundations.create_stage(self._state.fit_stage)(self._transformer_loader_stage, self._user_defined_transformer, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -73,8 +73,8 @@ class BaseTransformer(object):
         self._encoder = None
         
     @staticmethod
-    def _create_persister(job_id):
-        return Persister(job_id)
+    def _create_transformer_loader(job_id):
+        return TransformerLoader(job_id)
 
     @staticmethod
     def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):

@@ -14,8 +14,8 @@ class TestBaseTransformer(Spec):
     mock_data = let_mock()
     mock_data_two = let_mock() 
     loaded_transformation = let_mock()
-    persister = let_mock()
     transformer_saver = let_mock()
+    transformer_loader = let_mock()
 
     mock_fit = let_mock()
     mock_transform = let_mock()
@@ -91,9 +91,9 @@ class TestBaseTransformer(Spec):
         return klass
 
     @let_now
-    def persister_klass(self):
-        klass = self.patch('foundations_production.base_transformer.Persister', ConditionalReturn())
-        klass.return_when(self.persister, self.job_id)
+    def transformer_loader_klass(self):
+        klass = self.patch('foundations_production.base_transformer.TransformerLoader', ConditionalReturn())
+        klass.return_when(self.transformer_loader, self.job_id)
         return klass
 
     @set_up
@@ -129,20 +129,20 @@ class TestBaseTransformer(Spec):
 
         self.transformer_saver.save_user_defined_transformer.assert_called_with(self.transformer_index, self.user_defined_transformer_instance)
 
-    def test_encoder_stage_should_not_create_persister_before_fit_stage_run(self):
+    def test_encoder_stage_should_not_create_transformer_loader_before_fit_stage_run(self):
         self.transformer.fit(self.mock_data)
-        self.persister_klass.assert_not_called()
+        self.transformer_loader_klass.assert_not_called()
 
-    def test_encoder_stage_loads_user_defined_transformer_from_persister_when_load_called(self):
+    def test_encoder_stage_loads_user_defined_transformer_from_transformer_loader_when_load_called(self):
         self.transformer.fit(self.mock_data)
         self.transformer.load()
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.load_user_defined_transformer.assert_called_with(self.transformer_index)
+        self.transformer_loader.load_user_defined_transformer.assert_called_with(self.transformer_index)
 
     def test_encoder_stage_returns_loaded_user_defined_transformer_when_load_called(self):
-        self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
+        self.transformer_loader.load_user_defined_transformer.return_value = self.loaded_transformation
         
         self.transformer.fit(self.mock_data)
         self.transformer.load()
@@ -164,7 +164,7 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister.load_user_defined_transformer.assert_not_called()
+        self.transformer_loader.load_user_defined_transformer.assert_not_called()
 
     def test_do_not_save_user_defined_transformer_when_load_is_called(self):
         self.transformer.fit(self.mock_data)
@@ -257,7 +257,7 @@ class TestBaseTransformer(Spec):
         self.mock_predict.assert_called_with(*args, **kwargs)
 
     def test_user_defined_transformer_is_loaded_and_then_fit_when_base_transformer_prepared_for_retrain(self):
-        self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
+        self.transformer_loader.load_user_defined_transformer.return_value = self.loaded_transformation
         
         self.transformer.prepare_for_retrain()
         self.transformer.fit(self.mock_data)
@@ -267,7 +267,7 @@ class TestBaseTransformer(Spec):
         self.loaded_transformation.fit.assert_called_with(self.mock_data)
 
     def test_retrained_transformer_is_persisted_using_transformer_saver_for_current_job(self):
-        self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
+        self.transformer_loader.load_user_defined_transformer.return_value = self.loaded_transformation
         
         self.transformer.prepare_for_retrain()
         self.transformer.fit(self.mock_data)
@@ -277,7 +277,7 @@ class TestBaseTransformer(Spec):
         self.transformer_saver.save_user_defined_transformer.assert_called_with(self.transformer_index, self.loaded_transformation)
 
     def test_user_defined_transformer_is_refit_with_new_data_when_base_transformer_prepared_for_retrain(self):
-        self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
+        self.transformer_loader.load_user_defined_transformer.return_value = self.loaded_transformation
         
         self.transformer.fit(self.mock_data)
         self.transformer.load()
