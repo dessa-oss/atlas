@@ -33,7 +33,6 @@ class TestRetrainModelPackage(Spec):
         os.remove(self.features_file_name)
         os.remove(self.targets_file_name)
 
-    @skip('not ready yet')
     def test_retrain_runs_retraining_foundations_job(self):
         import pandas
         from pandas.testing import assert_frame_equal
