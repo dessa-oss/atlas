@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_production.serving.package_runner import run_model_package, run_prediction
+from foundations_production.serving.package_runner import run_model_package
 
 class TestPackageRunner(Spec):
 
@@ -31,27 +31,22 @@ class TestPackageRunner(Spec):
         from foundations_production.serving.communicator import Communicator
         return Communicator()
     
-    mock_model_package = let_mock()
+    mock_predictor = let_mock()
     
-    mock_load_model_package = let_patch_mock('foundations_production.load_model_package')
-
     @set_up
     def set_up(self):
-        self.mock_load_model_package.return_value = self.mock_model_package
-
-        self.mock_model_package.model.predict = ConditionalReturn()
-        self.mock_model_package.model.predict.return_when(self.prediction, self.fake_data)
-
-    def test_run_prediction_runs_prediction_on_model_with_correct_data(self):
-        actual_prediction = run_prediction(self.mock_model_package, self.fake_data)
-        self.assertEqual(self.prediction, actual_prediction)
+        self.mock_predictor_class = self.patch('foundations_production.serving.inference.predictor.Predictor')
+        self.mock_predictor_class.predictor_for = ConditionalReturn()
+        self.mock_predictor_class.predictor_for.return_when(self.mock_predictor, self.model_package_id)
+        self.mock_predictor.json_predictions_for = ConditionalReturn()
+        self.mock_predictor.json_predictions_for.return_when(self.prediction, self.fake_data)
     
     def test_run_model_package_loads_model_package(self):
         self.communicator.set_action_request(self.fake_data)
         self.communicator.set_action_request('STOP')
 
         run_model_package(self.model_package_id, self.communicator)
-        self.mock_load_model_package.assert_called_with(self.model_package_id)
+        self.mock_predictor_class.predictor_for.assert_called_with(self.model_package_id)
     
     def test_run_model_package_puts_predictions_into_pipe(self):
         self.communicator.set_action_request(self.fake_data)

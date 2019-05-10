@@ -6,15 +6,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def run_model_package(model_package_id, communicator):
-    from foundations_production import load_model_package
-    model_package = load_model_package(model_package_id)
+    from foundations_production.serving.inference.predictor import Predictor
+    
+    predictor = Predictor.predictor_for(model_package_id)
 
     while True:
-        data = communicator.get_action_request()
-        if data == 'STOP':
+        json_input_data = communicator.get_action_request()
+        if json_input_data == 'STOP':
             return
-        prediction = run_prediction(model_package, data)
-        communicator.set_response(prediction)
-
-def run_prediction(model_package, data):
-    return model_package.model.predict(data)
+        json_predictions = predictor.json_predictions_for(json_input_data)
+        communicator.set_response(json_predictions)
