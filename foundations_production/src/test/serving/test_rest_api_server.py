@@ -25,7 +25,7 @@ class TestRestAPIServer(Spec):
 
         self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
         rest_api_server = RestAPIServer()
-        manage_model_package_function = rest_api_server.app.view_functions.get('manage_model_package')
+        manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
         manage_model_package_function('some_model')
         self.package_pool_mock.add_package.assert_called_with('some_model_id')
 
@@ -35,7 +35,7 @@ class TestRestAPIServer(Spec):
 
         self.request_mock.get_json.return_value = {'other_key': 'some_model_id'}
         rest_api_server = RestAPIServer()
-        manage_model_package_function = rest_api_server.app.view_functions.get('manage_model_package')
+        manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
         with self.assertRaises(BadRequest) as exception_context:
             manage_model_package_function('some_model')
         self.assertEqual(exception_context.exception.code, 400)

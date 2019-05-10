@@ -11,8 +11,8 @@ class RestAPIServer(object):
         from foundations_production.serving.package_pool import PackagePool
 
         self._package_pool = PackagePool(1000)
-        self._app = Flask(__name__)
-        self._load_routes(self._app)
+        self._flask = Flask(__name__)
+        self._register_routes(self._flask)
 
     def exceptions_as_http_error_codes(method):
         from functools import wraps
@@ -29,26 +29,26 @@ class RestAPIServer(object):
         return method_decorator
 
     @property
-    def app(self):
-        return self._app
+    def flask(self):
+        return self._flask
 
     def run(self):
-        self._app.run()
+        self._flask.run()
         
-    def _load_routes(self, flask_app):
+    def _register_routes(self, flask):
 
-        @flask_app.before_request
+        @flask.before_request
         def accept_only_json():
             from flask import request, abort
 
             if not request.is_json: 
                 abort(400)
         
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_all_model_packages)
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_one_model_package)
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'], view_func=self.predict_with_model_package)
+        flask.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
+        flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_all_model_packages)
+        flask.add_url_rule('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_one_model_package)
+        flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
+        flask.add_url_rule('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'], view_func=self.predict_with_model_package)
 
     @exceptions_as_http_error_codes
     def manage_model_package(self, user_defined_model_name):

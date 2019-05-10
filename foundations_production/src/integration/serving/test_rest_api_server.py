@@ -19,8 +19,8 @@ class TestRestAPIServer(Spec):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
         self.rest_api_server = RestAPIServer()
-        self.app = self.rest_api_server.app
-        self.client = self.app.test_client()
+        self.flask = self.rest_api_server.flask
+        self.client = self.flask.test_client()
     
     @let_now
     def mock_json_request_kwargs(self):
@@ -28,19 +28,19 @@ class TestRestAPIServer(Spec):
         return {'json': dict(foo='bar')}
 
     def test_manage_model_package_route_is_added(self):
-        self.assertIn('manage_model_package', self.app.view_functions)
+        self.assertIn('manage_model_package', self.flask.view_functions)
 
     def test_training_all_model_packages_route_is_added(self):
-        self.assertIn('train_all_model_packages', self.app.view_functions)
+        self.assertIn('train_all_model_packages', self.flask.view_functions)
 
     def test_training_one_model_package_route_is_added(self):
-        self.assertIn('train_one_model_package', self.app.view_functions)
+        self.assertIn('train_one_model_package', self.flask.view_functions)
 
     def test_predictions_from_model_package_route_is_added(self):
-        self.assertIn('predictions_from_model_package', self.app.view_functions)
+        self.assertIn('predictions_from_model_package', self.flask.view_functions)
 
     def test_predict_with_model_package_route_is_added(self):
-        self.assertIn('predict_with_model_package', self.app.view_functions)
+        self.assertIn('predict_with_model_package', self.flask.view_functions)
 
     def test_manage_model_package_route_has_get_method(self):
         response = self.client.get('/v1/some_model/')
