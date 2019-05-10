@@ -35,9 +35,9 @@ class RestAPIServer(object):
     def flask(self):
         return self._flask
 
-    def run(self):
-        self._flask.run()
-        
+    def run(self, host='localhost', port=5000):
+        self._flask.run(host=host, port=port)
+
     def _register_routes(self, flask):
 
         @flask.before_request

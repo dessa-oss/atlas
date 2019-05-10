@@ -19,7 +19,7 @@ class TestFoundationsModelServer(Spec):
     os_getpid_mock = let_patch_mock('os.getpid')
     os_path_exists = let_patch_mock('os.path.exists')
     flask_mock = let_patch_mock('flask.Flask')
-    argument_parser_class_mock = let_patch_mock('argparse.ArgumentParser')
+    argument_parser_class_mock = let_patch_mock('argparse.ArgumentParser')        
 
     @let_now
     def mock_pid_file(self):
@@ -27,13 +27,23 @@ class TestFoundationsModelServer(Spec):
         mock_file.__enter__ = lambda x: mock_file
         mock_file.__exit__ = Mock()
         return mock_file
-    
+
+    def _get_rest_api_server_mock(self):
+        rest_api_server_mock = Mock()
+        rest_api_server_class_mock = self.patch('foundations_production.serving.rest_api_server.RestAPIServer')
+        rest_api_server_class_mock.return_value = rest_api_server_mock
+        return rest_api_server_mock
     
     @set_up
     def set_up(self):
         self.flask_app_mock = Mock()
         self.flask_mock.return_value = self.flask_app_mock
         self.os_path_exists.return_value = True
+
+        self.parser_mock = Mock()
+        self.argument_parser_class_mock.return_value = self.parser_mock
+        self.parsed_arguments_mock = Mock()
+        self.parser_mock.parse_args.return_value = self.parsed_arguments_mock
 
     def test_foundations_model_server_run_calls_os_remove(self):
         from foundations_production.serving.foundations_model_server import FoundationsModelServer
@@ -106,9 +116,7 @@ class TestFoundationsModelServer(Spec):
     def test_foundations_model_server_runs_rest_api_server(self):
         from foundations_production.serving.foundations_model_server import FoundationsModelServer
 
-        rest_api_server_class_mock = self.patch('foundations_production.serving.rest_api_server.RestAPIServer')
-        rest_api_server_mock = Mock()
-        rest_api_server_class_mock.return_value = rest_api_server_mock
+        rest_api_server_mock = self._get_rest_api_server_mock()
         model_server = FoundationsModelServer()
         model_server.run()
         rest_api_server_mock.run.assert_called()
@@ -116,28 +124,17 @@ class TestFoundationsModelServer(Spec):
     def test_foundations_model_server_gets_domain_and_port_from_cli(self):
         from foundations_production.serving.foundations_model_server import main
 
-        parser_mock = Mock()
-        self.argument_parser_class_mock.return_value = parser_mock
-        parsed_arguments_mock = Mock()
-        parser_mock.parse_args.return_value = parsed_arguments_mock
-        parsed_arguments_mock.domain = ''
-
+        self.parsed_arguments_mock.domain = ''
         main()
-        parser_mock.add_argument.assert_called_with('--domain', type=str, help='domain and port used by foundations model server')
+        self.parser_mock.add_argument.assert_called_with('--domain', type=str, help='domain and port used by foundations model server')
 
-    def test_foundations_model_server_passes_domain_and_port_to_run_method(self):
+    def test_foundations_model_server_passes_domain_and_port_to_rest_api_server_run_method(self):
         from foundations_production.serving.foundations_model_server import main
 
-        parser_mock = Mock()
-        self.argument_parser_class_mock.return_value = parser_mock
-        parsed_arguments_mock = Mock()
-        parser_mock.parse_args.return_value = parsed_arguments_mock
-        parsed_arguments_mock.domain = 'some_domain:1234'
-
-        foundations_model_server_class_mock = self.patch('foundations_production.serving.foundations_model_server.FoundationsModelServer')
-        foundations_model_server_mock = Mock()
-        foundations_model_server_class_mock.return_value = foundations_model_server_mock
-
+        self.parsed_arguments_mock.domain = 'some_domain:1234'
+        rest_api_server_mock = self._get_rest_api_server_mock()
         main()
-        parser_mock.parse_args.assert_called()
-        foundations_model_server_mock.run.assert_called_with(domain='some_domain', port=1234)
+        self.parser_mock.parse_args.assert_called()
+        rest_api_server_mock.run.assert_called_with(host='some_domain', port=1234)
+
+    

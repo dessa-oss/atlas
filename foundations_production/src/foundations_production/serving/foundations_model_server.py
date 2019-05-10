@@ -12,15 +12,15 @@ class FoundationsModelServer(object):
     def run(self, domain='localhost', port=5000):
         try:
             self._create_new_pid_file()
-            self._start_rest_api_server()
+            self._start_rest_api_server(host=domain, port=port)
         except OSError as exception:
             self._log_server_failure(exception)
 
-    def _start_rest_api_server(self):
+    def _start_rest_api_server(self, host='localhost', port=5000):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
         rest_api_server = RestAPIServer()
-        rest_api_server.run()
+        rest_api_server.run(host=host, port=port)
 
     def _create_new_pid_file(self):
         import os
