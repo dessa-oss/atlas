@@ -9,7 +9,6 @@ from foundations_spec import *
 
 import acceptance.fixtures.train_model_package as train_model_package
 
-@skip
 class TestRetrainModel(Spec):
     
     @let
@@ -41,6 +40,9 @@ class TestRetrainModel(Spec):
         os.remove(self.targets_file_name)
 
     def test_retrain_creates_new_model_package(self):
+        import pandas
+        from pandas.testing import assert_frame_equal
+
         import requests
 
         route_url = 'http://localhost:5000/v1/snail/model'
@@ -54,9 +56,25 @@ class TestRetrainModel(Spec):
 
         new_model_package_id = response.json()['created_job_uuid']
 
-        self._assert_model_package_exists(new_model_package_id, 30)
+        new_model_package = self._get_model_package(new_model_package_id, 30)
 
-    def _assert_model_package_exists(self, model_package_id, timeout):
+        production_dataset = pandas.DataFrame({
+            'Sex': [0, 3],
+            'Cabin': [101, 4],
+            'Fare': [20, 10]
+        })
+
+        preprocessed_production_dataset = new_model_package.preprocessor(production_dataset)
+        production_predictions = new_model_package.model.predict(preprocessed_production_dataset)
+
+        expected_predictions = pandas.DataFrame({
+            'Survived': [0, 1]
+        })
+
+        actual_predictions = production_predictions.run_same_process()
+        assert_frame_equal(expected_predictions, actual_predictions)
+
+    def _get_model_package(self, model_package_id, timeout):
         import time
         from foundations_production import load_model_package
 
@@ -64,8 +82,7 @@ class TestRetrainModel(Spec):
 
         while time.time() - start_time < timeout:
             try:
-                load_model_package(model_package_id)
-                return
+                return load_model_package(model_package_id)
             except FileNotFoundError:
                 time.sleep(3)
 

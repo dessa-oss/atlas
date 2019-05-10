@@ -139,7 +139,7 @@ class CommandLineInterface(object):
         if self._is_model_server_running():
             print('Model server is already running.')
         else:
-            subprocess.run(['python', 'foundations_model_server.py', '--domain={}'.format(self._arguments.domain)])
+            subprocess.run(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain={}'.format(self._arguments.domain)])
             if not self._is_model_server_running():
                 print('Failed to start model server.', file=sys.stderr)
                 sys.exit(10)
@@ -159,7 +159,7 @@ class CommandLineInterface(object):
         try:
             pid = self._get_model_server_pid()
             command_line = self._get_model_server_command_line(pid)
-            return 'foundations_model_server.py' in command_line
+            return 'foundations_production.serving.foundations_model_server' in command_line
         except OSError:
             return False
 
