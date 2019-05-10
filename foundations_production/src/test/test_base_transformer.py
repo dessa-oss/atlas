@@ -21,7 +21,7 @@ class TestBaseTransformer(Spec):
     mock_transform = let_mock()
     mock_predict = let_mock()
 
-    mock_current_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    mock_current_foundations_context = let_patch_instance('foundations_production.base_transformer.current_foundations_context')
 
     @let
     def job_id(self):

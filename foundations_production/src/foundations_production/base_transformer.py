@@ -9,6 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import foundations
 from foundations_production.transformer_saver import TransformerSaver
 from foundations_production.transformer_loader import TransformerLoader
+from foundations_contrib.global_state import current_foundations_context
 
 class BaseTransformer(object):
 
@@ -19,18 +20,16 @@ class BaseTransformer(object):
             self.should_retrain = False
             self.transformer_index = transformer_index
              
-        def fit_stage(self, transformer_loader, user_defined_transformer, *args, **kwargs):
-            transformer_saver_for_currently_executing_job = self._transformer_saver_for_currently_executing_job()
-
+        def fit_stage(self, transformer_loader, transformer_saver, user_defined_transformer, *args, **kwargs):
             if self.should_load:
                 loaded_transformer = self._loaded_transformer(transformer_loader)
 
                 if self.should_retrain:
-                    self._fit_transformer(transformer_saver_for_currently_executing_job, loaded_transformer, *args, **kwargs)
+                    self._fit_transformer(transformer_saver, loaded_transformer, *args, **kwargs)
 
                 return loaded_transformer
 
-            self._fit_transformer(transformer_saver_for_currently_executing_job, user_defined_transformer, *args, **kwargs)
+            self._fit_transformer(transformer_saver, user_defined_transformer, *args, **kwargs)
             return user_defined_transformer
         
         def _loaded_transformer(self, transformer_loader):
@@ -39,23 +38,20 @@ class BaseTransformer(object):
         def _fit_transformer(self, transformer_saver, user_defined_transformer, *args, **kwargs):
             user_defined_transformer.fit(*args, **kwargs)
             transformer_saver.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
-    
-        @staticmethod
-        def _transformer_saver_for_currently_executing_job():
-            from foundations_contrib.global_state import current_foundations_context
-            current_job_id = current_foundations_context().job_id()
-            return TransformerSaver(current_job_id)
 
     def __init__(self, preprocessor, user_defined_transformer):
         self._encoder = None
         self._user_defined_transformer = user_defined_transformer
 
+        id_of_job_to_run = foundations.create_stage(self._get_id_of_job_to_run)()
+
+        self._transformer_saver_stage = foundations.create_stage(self._create_transformer_saver)(job_id=id_of_job_to_run)
         self._transformer_loader_stage = foundations.create_stage(self._create_transformer_loader)(job_id=preprocessor.job_id)
         self._state = self.State(transformer_index=preprocessor.new_transformer(self))
 
     def fit(self, *args, **kwargs):
         if self._encoder is None:
-            self._encoder = foundations.create_stage(self._state.fit_stage)(self._transformer_loader_stage, self._user_defined_transformer, *args, **kwargs)
+            self._encoder = foundations.create_stage(self._state.fit_stage)(self._transformer_loader_stage, self._transformer_saver_stage, self._user_defined_transformer, *args, **kwargs)
 
     def encoder(self):
         if self._encoder is not None:
@@ -75,6 +71,14 @@ class BaseTransformer(object):
     @staticmethod
     def _create_transformer_loader(job_id):
         return TransformerLoader(job_id)
+
+    @staticmethod
+    def _create_transformer_saver(job_id):
+        return TransformerSaver(job_id)
+
+    @staticmethod
+    def _get_id_of_job_to_run():
+        return current_foundations_context().job_id()
 
     @staticmethod
     def _user_defined_transformer_stage(user_defined_transformer, *args, **kwargs):
