@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 from foundations_production.persister import Persister
+from foundations_production.transformer_saver import TransformerSaver
 
 class BaseTransformer(object):
 
@@ -19,17 +20,17 @@ class BaseTransformer(object):
             self.transformer_index = transformer_index
              
         def fit_stage(self, persister, user_defined_transformer, *args, **kwargs):
-            persister_for_saving = self._persister_for_current_job()
+            transformer_saver_for_currently_executing_job = self._transformer_saver_for_currently_executing_job()
 
             if self.should_load:
                 loaded_transformer = self._loaded_transformer(persister)
 
                 if self.should_retrain:
-                    self._fit_transformer(persister_for_saving, loaded_transformer, *args, **kwargs)
+                    self._fit_transformer(transformer_saver_for_currently_executing_job, loaded_transformer, *args, **kwargs)
 
                 return loaded_transformer
 
-            self._fit_transformer(persister_for_saving, user_defined_transformer, *args, **kwargs)
+            self._fit_transformer(transformer_saver_for_currently_executing_job, user_defined_transformer, *args, **kwargs)
             return user_defined_transformer
         
         def _loaded_transformer(self, persister):
@@ -40,10 +41,10 @@ class BaseTransformer(object):
             persister.save_user_defined_transformer(self.transformer_index, user_defined_transformer)
     
         @staticmethod
-        def _persister_for_current_job():
+        def _transformer_saver_for_currently_executing_job():
             from foundations_contrib.global_state import current_foundations_context
             current_job_id = current_foundations_context().job_id()
-            return Persister(current_job_id)
+            return TransformerSaver(current_job_id)
 
     def __init__(self, preprocessor, user_defined_transformer):
         self._encoder = None

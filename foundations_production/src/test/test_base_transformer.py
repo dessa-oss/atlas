@@ -15,7 +15,7 @@ class TestBaseTransformer(Spec):
     mock_data_two = let_mock() 
     loaded_transformation = let_mock()
     persister = let_mock()
-    persister_for_current_job = let_mock()
+    transformer_saver = let_mock()
 
     mock_fit = let_mock()
     mock_transform = let_mock()
@@ -31,16 +31,9 @@ class TestBaseTransformer(Spec):
     def executing_job_id(self):
         return self.faker.uuid4()
 
-    @let_now
-    def persister_klass(self):
-        klass = self.patch('foundations_production.base_transformer.Persister', ConditionalReturn())
-        klass.return_when(self.persister, self.job_id)
-        klass.return_when(self.persister_for_current_job, self.executing_job_id)
-        return klass
-
     @let
     def transformer_index(self):
-        return self.faker.random_int()
+        return 'transformer_{}'.format(self.faker.random_int())
 
     @let
     def user_defined_transformer_instance(self):
@@ -91,6 +84,18 @@ class TestBaseTransformer(Spec):
     
         return foundations.create_stage(_construct_user_defined_model)()
 
+    @let_now
+    def transformer_saver_klass(self):
+        klass = self.patch('foundations_production.base_transformer.TransformerSaver', ConditionalReturn())
+        klass.return_when(self.transformer_saver, self.executing_job_id)
+        return klass
+
+    @let_now
+    def persister_klass(self):
+        klass = self.patch('foundations_production.base_transformer.Persister', ConditionalReturn())
+        klass.return_when(self.persister, self.job_id)
+        return klass
+
     @set_up
     def set_up(self):
         from foundations_production.base_transformer import BaseTransformer
@@ -122,7 +127,7 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister_for_current_job.save_user_defined_transformer.assert_called_with(self.transformer_index, self.user_defined_transformer_instance)
+        self.transformer_saver.save_user_defined_transformer.assert_called_with(self.transformer_index, self.user_defined_transformer_instance)
 
     def test_encoder_stage_should_not_create_persister_before_fit_stage_run(self):
         self.transformer.fit(self.mock_data)
@@ -167,15 +172,15 @@ class TestBaseTransformer(Spec):
         stage = self.transformer.encoder()
         stage.run_same_process()
 
-        self.persister_for_current_job.save_user_defined_transformer.assert_not_called()
+        self.transformer_saver.save_user_defined_transformer.assert_not_called()
 
     def test_call_fit_before_save_user_defined_transformer(self):
 
         def mock_save_user_defined_transformer(transformer_index, user_defined_transformer):
             if not self._mock_fit_called:
-                raise AssertionError('user_defined_transformer.fit() not called before persister.save_user_defined_transformer()')
+                raise AssertionError('user_defined_transformer.fit() not called before transformer_saver.save_user_defined_transformer()')
         
-        self.persister_for_current_job.save_user_defined_transformer = mock_save_user_defined_transformer
+        self.transformer_saver.save_user_defined_transformer = mock_save_user_defined_transformer
 
         self.transformer.fit(self.mock_data)
         stage = self.transformer.encoder()
@@ -261,7 +266,7 @@ class TestBaseTransformer(Spec):
 
         self.loaded_transformation.fit.assert_called_with(self.mock_data)
 
-    def test_retrained_transformer_is_persisted_using_persister_for_executing_job(self):
+    def test_retrained_transformer_is_persisted_using_transformer_saver_for_current_job(self):
         self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
         
         self.transformer.prepare_for_retrain()
@@ -269,7 +274,7 @@ class TestBaseTransformer(Spec):
         self.transformer.load()
         retrain_stage = self.transformer.encoder().run_same_process()
 
-        self.persister_for_current_job.save_user_defined_transformer.assert_called_with(self.transformer_index, self.loaded_transformation)
+        self.transformer_saver.save_user_defined_transformer.assert_called_with(self.transformer_index, self.loaded_transformation)
 
     def test_user_defined_transformer_is_refit_with_new_data_when_base_transformer_prepared_for_retrain(self):
         self.persister.load_user_defined_transformer.return_value = self.loaded_transformation
