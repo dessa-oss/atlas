@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class RestartableProcess(object):
     
-    def __init__(self, target, args, kwargs):
+    def __init__(self, target, args=(), kwargs={}):
         self._target = target
         self._args = args
         self._kwargs = kwargs

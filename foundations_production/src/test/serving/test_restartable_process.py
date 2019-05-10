@@ -12,6 +12,7 @@ class TestRestartableProcess(Spec):
 
     target = let_mock()
     mock_process_instance = let_mock()
+    mock_process_instance_2 = let_mock()
     mock_communicator_instance = let_mock()
     mock_communicator_instance_2 = let_mock()
     mock_communicator = let_patch_mock('foundations_production.serving.communicator.Communicator')
@@ -28,6 +29,7 @@ class TestRestartableProcess(Spec):
     def set_up(self):
         self.mock_process = self.patch('multiprocessing.Process', ConditionalReturn())
         self.mock_process.return_when(self.mock_process_instance, target=self.target, args=(self.args + (self.mock_communicator_instance,)), kwargs=self.kwargs, daemon=True)
+        self.mock_process.return_when(self.mock_process_instance_2, target=self.target, args=(() + (self.mock_communicator_instance,)), kwargs={}, daemon=True)
         self.restartable_process = RestartableProcess(self.target, self.args, self.kwargs)
         self.mock_communicator.side_effect = [self.mock_communicator_instance, self.mock_communicator_instance_2]
 
@@ -64,6 +66,7 @@ class TestRestartableProcess(Spec):
         self.restartable_process.start()
         communicator = self.restartable_process.start()
         self.assertEqual(self.mock_communicator_instance, communicator)
-
-        
-
+    
+    def test_restartable_process_has_default_args_and_kwargs(self):
+        RestartableProcess(self.target).start()
+        self.mock_process_instance_2.start.assert_called()
