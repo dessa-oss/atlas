@@ -24,7 +24,19 @@ class TestPredictor(Spec):
     @let
     def input_as_dataframe(self):
         import pandas
-        return pandas.DataFrame({'1st column': ['value', 'spider'], '2nd column': [43234,323]})
+        return pandas.DataFrame({'1st column': ['value', 'spider'], '2nd column': [43234, 323]})
+    
+    @let
+    def predictions(self):
+        return {
+            'rows': [['apple', 43234], ['banana', 323]], 
+            'schema': [{'name': 'best column', 'type': 'object'}, {'name': 'worst column', 'type': 'int64'}]
+        }
+
+    @let
+    def predictions_as_dataframe(self):
+        import pandas
+        return pandas.DataFrame({'best column': ['apple', 'banana'], 'worst column': [43234, 323]})
 
     @let
     def model_package_id(self):
@@ -62,7 +74,14 @@ class TestPredictor(Spec):
     
     def test_json_predictions_for_calls_prediction_on_inferer(self):
         from pandas.testing import assert_frame_equal
+
+        self.inferer.predictions_for.return_value = self.predictions_as_dataframe
         self.predictor.json_predictions_for(self.input)
         actual_dataframe_inputs = self.inferer.predictions_for.call_args
         assert_frame_equal(self.input_as_dataframe, actual_dataframe_inputs[0][0])
+
+    def test_json_predictions_for_return_predictions_as_json(self):
+        self.inferer.predictions_for.return_value = self.predictions_as_dataframe
+        predictions_as_json = self.predictor.json_predictions_for(self.input)
+        self.assertEqual(self.predictions, predictions_as_json)
 
