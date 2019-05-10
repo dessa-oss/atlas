@@ -26,7 +26,8 @@ class TestRestAPIServer(Spec):
         self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
         rest_api_server = RestAPIServer()
         manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
-        manage_model_package_function('some_model')
+        with rest_api_server.flask.app_context():
+            manage_model_package_function('some_model')
         self.package_pool_mock.add_package.assert_called_with('some_model_id')
 
     def test_add_new_model_package_fails_with_bad_request_if_no_model_id_is_passed(self):
@@ -40,3 +41,14 @@ class TestRestAPIServer(Spec):
             manage_model_package_function('some_model')
         self.assertEqual(exception_context.exception.code, 400)
         self.assertEqual('400 Bad Request: Missing field in JSON data: model_id', str(exception_context.exception))
+
+    def test_add_new_model_package_returns_meaningful_response_if_successful(self):
+        from foundations_production.serving.rest_api_server import RestAPIServer
+
+        self.request_mock.get_json.return_value = {'model_id': 'some_model_id'}
+        rest_api_server = RestAPIServer()
+        manage_model_package_function = rest_api_server.flask.view_functions.get('manage_model_package')
+        with rest_api_server.flask.app_context():
+            response = manage_model_package_function('some_model')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json['deployed_model_id'], 'some_model_id')

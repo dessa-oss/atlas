@@ -56,10 +56,11 @@ class RestAPIServer(object):
     @exceptions_as_http_error_codes
     def manage_model_package(self, user_defined_model_name):
         from flask import request, jsonify
+        from flask import make_response
         
         model_id = request.get_json()['model_id']
         self._package_pool.add_package(model_id)
-        return 'response'
+        return jsonify({'deployed_model_id': model_id})
 
     @exceptions_as_http_error_codes
     def train_all_model_packages(self, user_defined_model_name):
