@@ -17,7 +17,7 @@ class PackagePool(object):
 
         self._remove_process_from_pool_if_limit_exceeded()
 
-        process = RestartableProcess(target=run_model_package, args=(model_id))
+        process = RestartableProcess(target=run_model_package, args=(model_id,))
         communicator = process.start()
 
         self._model_packages[model_id] = {'communicator': communicator, 'process': process}

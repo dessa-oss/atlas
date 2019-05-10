@@ -20,7 +20,8 @@ class RestartableProcess(object):
 
         if not self._process:
             self._communicator = Communicator()
-            self._process = Process(target=self._target, args=(self._args + (self._communicator,)), kwargs=self._kwargs, daemon=True)
+            process_spawn_arguments = (*self._args, self._communicator)
+            self._process = Process(target=self._target, args=process_spawn_arguments, kwargs=self._kwargs, daemon=True)
             self._process.start()
             
         return self._communicator

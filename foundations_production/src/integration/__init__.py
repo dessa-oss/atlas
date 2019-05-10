@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
+import integration.config
+
 import integration.fixtures.config
 from integration.test_preprocessor import TestPreprocessor
 from integration.serving import *
