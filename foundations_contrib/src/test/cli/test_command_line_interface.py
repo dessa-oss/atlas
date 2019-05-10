@@ -15,11 +15,7 @@ from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from foundations_production.serving.foundations_model_server import FoundationsModelServer
 from foundations import ConfigManager
 
-
-from foundations_spec.helpers import let, let_now, let_patch_mock
-from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers.conditional_return import ConditionalReturn
-
+from foundations_spec import *
 
 class TestCommandLineInterface(Spec):
 
@@ -220,6 +216,11 @@ class TestCommandLineInterface(Spec):
     sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
 
+    @let
+    def fake_model_server_pid(self):
+        import random
+        return random.randint(1,65000)
+
     @let_now
     def os_cwd(self):
         mock = self.patch('os.getcwd')
@@ -242,6 +243,7 @@ class TestCommandLineInterface(Spec):
 
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
+    os_kill = let_patch_mock('os.kill')
     subprocess_popen = let_patch_mock('subprocess.Popen')
     print_mock = let_patch_mock('builtins.print')
     exit_mock = let_patch_mock('sys.exit')
@@ -308,23 +310,23 @@ class TestCommandLineInterface(Spec):
         self.open_mock.assert_any_call(FoundationsModelServer.pid_file_path, 'r')
 
     def test_serving_deploy_rest_reads_pid_file(self):
-        self.mock_pid_file.read.return_value = '123'
+        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
         self.open_mock.return_value = self.mock_pid_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.mock_pid_file.read.assert_called()
 
     def test_serving_deploy_rest_gets_pid_corresponding_to_model_server_if_model_server_is_running(self):
-        self.mock_pid_file.read.return_value = '123'
+        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
         self.open_mock.return_value = self.mock_pid_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.open_mock.assert_called_with('/proc/123/cmdline', 'r')
+        self.open_mock.assert_called_with('/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
 
     def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
-        self.mock_pid_file.read.return_value = '123'
+        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
         self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
         open_mock = self.patch('builtins.open', ConditionalReturn())
         open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
-        open_mock.return_when(self.mock_proc_file, '/proc/123/cmdline', 'r')
+        open_mock.return_when(self.mock_proc_file, '/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_any_call('Model server is already running.')
 
@@ -369,3 +371,13 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_called_with('Failed to deploy model package to model server.', file=sys.stderr)
         self.exit_mock.assert_called_with(11)
+
+    def test_serving_stop_kills_model_server(self):
+        import signal
+
+        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
+        self.open_mock.return_value = self.mock_pid_file
+
+        CommandLineInterface(['serving', 'stop']).execute()
+        
+        self.os_kill.assert_called_once_with(self.fake_model_server_pid, signal.SIGINT)

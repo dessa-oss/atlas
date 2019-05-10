@@ -46,6 +46,7 @@ class CommandLineInterface(object):
         serving_parser = subparsers.add_parser('serving', help='Start serving a model package')
         serving_subparsers = serving_parser.add_subparsers()
         self._initialize_serving_deploy_parser(serving_subparsers)
+        self._initialize_serving_stop_parser(serving_subparsers)
     
     def _initialize_serving_deploy_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
@@ -55,6 +56,9 @@ class CommandLineInterface(object):
         serving_deploy_parser.add_argument('--slug', type=str, help='Model package namespace string')
         serving_deploy_parser.set_defaults(function=self._model_serving_deploy)
 
+    def _initialize_serving_stop_parser(self, serving_subparsers):
+        serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
+        serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
     def execute(self):
         self._arguments.function()
@@ -131,6 +135,13 @@ class CommandLineInterface(object):
     def _model_serving_deploy(self):
         self._start_model_server_if_not_running()
         self._deploy_model_package()
+    
+    def _model_serving_stop(self):
+        import os
+        import signal
+
+        pid = self._get_model_server_pid()
+        os.kill(int(pid), signal.SIGINT)
 
     def _start_model_server_if_not_running(self):
         import subprocess
