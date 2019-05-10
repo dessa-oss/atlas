@@ -49,9 +49,9 @@ class TestPredictor(Spec):
 
         expected_predictor = Predictor(Inferer(self.model_package))
         self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))
+    
+    def test_json_predictions_for_coverts_json_input_data_into_dataframe(self):
+        mock_data_frame_parser = self.patch('foundations_production.serving.inference.data_frame_parser.DataFrameParser')
+        self.predictor.json_predictions_for(self.input)
+        mock_data_frame_parser.return_value.data_frame_for.assert_called_with(self.input)
 
-    # def test_predictor_predicts_given_input_data(self):
-    #     from foundations_production.serving.inference.inferer import Inferer
-
-    #     expected_predictor = Predictor(Inferer(self.model_package))
-    #     self.assertEqual(expected_predictor, Predictor.predictor_for(self.model_package_id))
