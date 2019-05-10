@@ -140,8 +140,11 @@ class CommandLineInterface(object):
         import os
         import signal
 
-        pid = self._get_model_server_pid()
-        os.kill(int(pid), signal.SIGINT)
+        try:
+            pid = self._get_model_server_pid()
+            os.kill(int(pid), signal.SIGINT)
+        except OSError:
+            pass
 
     def _start_model_server_if_not_running(self):
         import subprocess
