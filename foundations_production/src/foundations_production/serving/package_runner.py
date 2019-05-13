@@ -14,5 +14,13 @@ def run_model_package(model_package_id, communicator):
         json_input_data = communicator.get_action_request()
         if json_input_data == 'STOP':
             return
-        json_predictions = predictor.json_predictions_for(json_input_data)
-        communicator.set_response(json_predictions)
+        try:
+            json_predictions = predictor.json_predictions_for(json_input_data)
+            communicator.set_response(json_predictions)
+        except Exception as e:
+            expected_return = {
+                'name': 'Exception',
+                'value': str(e)
+            }
+            communicator.set_response(expected_return)
+            

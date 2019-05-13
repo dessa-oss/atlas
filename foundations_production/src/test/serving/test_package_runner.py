@@ -19,6 +19,10 @@ class TestPackageRunner(Spec):
         return self.faker.word()
     
     @let
+    def fake_data_that_errors(self):
+        return self.faker.word()
+    
+    @let
     def model_package_id(self):
         return self.faker.uuid4()
     
@@ -40,7 +44,8 @@ class TestPackageRunner(Spec):
         self.mock_predictor_class.predictor_for.return_when(self.mock_predictor, self.model_package_id)
         self.mock_predictor.json_predictions_for = ConditionalReturn()
         self.mock_predictor.json_predictions_for.return_when(self.prediction, self.fake_data)
-    
+        # self.mock_predictor.json_predictions_for.return_when(Exception('Test exception'), self.fake_data_that_errors)
+
     def test_run_model_package_loads_model_package(self):
         self.communicator.set_action_request(self.fake_data)
         self.communicator.set_action_request('STOP')
@@ -66,3 +71,19 @@ class TestPackageRunner(Spec):
         responses = [self.communicator.get_response() for _ in range(self.number_of_calls)]
         expected_responses = [self.prediction] * self.number_of_calls
         self.assertEqual(expected_responses, responses)
+    
+    def test_run_model_package_returns_error_in_json_when_thrown(self):
+        def raise_exception(data):
+            raise Exception('Test exception')
+
+        self.mock_predictor.json_predictions_for = raise_exception
+        self.communicator.set_action_request(self.fake_data_that_errors)
+        self.communicator.set_action_request('STOP')
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        expected_return = {
+            'name': 'Exception',
+            'value': 'Test exception'
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
