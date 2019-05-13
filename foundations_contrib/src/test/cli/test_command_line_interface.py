@@ -413,7 +413,7 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serving', 'stop']).execute()
         self.os_kill.assert_not_called()
 
-    def test_model_server_starts_after_9_attempts(self):
+    def test_cli_does_not_fail_if_model_server_starts_before_900_ms(self):
         self.open_mock.side_effect = OSError()
         response_mock = Mock()
         response_mock.status_code = 200

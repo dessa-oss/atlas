@@ -149,21 +149,26 @@ class CommandLineInterface(object):
     def _start_model_server_if_not_running(self):
         import subprocess
         import sys
-        from time import sleep
 
         if self._is_model_server_running():
             print('Model server is already running.')
         else:
             subprocess_command_to_run = ['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain={}'.format(self._arguments.domain)]
             subprocess.Popen(subprocess_command_to_run, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            max_retry = 10
-            retry = 1
-            while retry < max_retry and not self._is_model_server_running():
-                sleep(0.1)
-                retry += 1
+            
+            self._wait_for_model_server_to_start()
             if not self._is_model_server_running():
                 print('Failed to start model server.', file=sys.stderr)
                 sys.exit(10)
+
+    def _wait_for_model_server_to_start(self):
+        from time import sleep
+
+        max_attempts = 10
+        attempts = 1
+        while attempts < max_attempts and not self._is_model_server_running():
+            sleep(0.1)
+            attempts += 1
 
     def _deploy_model_package(self):
         import requests
