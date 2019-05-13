@@ -121,6 +121,14 @@ class TestFoundationsModelServer(Spec):
         model_server.run()
         rest_api_server_mock.run.assert_called()
 
+    def test_foundations_model_server_argument_parser_class_has_description(self):
+        from foundations_production.serving.foundations_model_server import main
+
+        self.parsed_arguments_mock.domain = 'some_domain:1234'
+        main()
+        self.argument_parser_class_mock.assert_called_with(description='starts foundations model server')
+
+
     def test_foundations_model_server_gets_domain_and_port_from_cli(self):
         from foundations_production.serving.foundations_model_server import main
 

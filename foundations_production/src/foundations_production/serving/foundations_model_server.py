@@ -53,7 +53,7 @@ class FoundationsModelServer(object):
 def main():
     from argparse import ArgumentParser
 
-    argument_parser = ArgumentParser(help='starts foundations model server')
+    argument_parser = ArgumentParser(description='starts foundations model server')
     argument_parser.add_argument('--domain', type=str, help='domain and port used by foundations model server')
     parsed_arguments = argument_parser.parse_args()
     if parsed_arguments.domain:
