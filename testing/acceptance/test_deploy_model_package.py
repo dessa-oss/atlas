@@ -12,7 +12,6 @@ class TestDeployModelPackage(Spec):
     def job_id(self):
         return self.faker.uuid4()
 
-    @skip('not yet implemented')
     def test_deploy_model_package_via_cli(self):
         import subprocess
 
