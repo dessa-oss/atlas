@@ -139,7 +139,7 @@ class TestRestAPIServer(Spec):
         response = self.client.delete('/v1/some_model/predictions/some_id', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
 
-    def test_rest_api_accepts_only_json(self):
+    def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
         response = self.client.post('/v1/some_model/', data='bad data')
         self.assertEqual(response.status_code, 400)
 

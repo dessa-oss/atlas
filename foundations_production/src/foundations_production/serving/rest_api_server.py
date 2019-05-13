@@ -44,7 +44,7 @@ class RestAPIServer(object):
         def accept_only_json():
             from flask import request, abort
 
-            if not request.is_json: 
+            if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(400)
         
         flask.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)

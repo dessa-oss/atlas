@@ -375,8 +375,8 @@ class TestCommandLineInterface(Spec):
         self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
         self.open_mock.return_value = self.mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        url = 'http://{}/v1/{}/model/'.format('localhost:8000', 'snail')
-        self.requests_post_mock.assert_called_with(url, data = {'model_id':'some_id'})
+        url = 'http://{}/v1/{}/'.format('localhost:8000', 'snail')
+        self.requests_post_mock.assert_called_with(url, json = {'model_id':'some_id'})
 
     def test_serving_deploy_rest_informs_user_if_model_package_was_deployed_successfully(self):
         self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
