@@ -12,12 +12,13 @@ import fakeredis
 from mock import patch
 import six
 
+from foundations_spec import *
 from foundations_contrib.job_data_redis import JobDataRedis
 from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
 from foundations.global_state import redis_connection
 
 
-class TestJobDataRedis(unittest.TestCase):
+class TestJobDataRedis(Spec):
 
     def setUp(self):
         self._redis = fakeredis.FakeStrictRedis()
@@ -312,6 +313,24 @@ class TestJobDataRedis(unittest.TestCase):
             'completed_time': float('123')
         }
         self.assertDictEqual(expected_result, result.get())
+
+    @let
+    def fake_timestamp(self):
+        self.faker.time()
+    
+    @let
+    def fake_job_1(self):
+        return self.faker.uuid4()
+    
+    @let
+    def fake_job_2(self):
+        return self.faker.uuid4()
+    
+    def test_list_all_completed_jobs_lists_completed_jobs(self):
+        self._set_redis(self.fake_job_1, 'completed_time', self.fake_timestamp)
+        self._set_redis(self.fake_job_2, 'completed_time', self.fake_timestamp)
+        expected_result = [self.fake_job_1, self.fake_job_2]
+        self.assertEqual(expected_result, JobDataRedis.list_all_completed_jobs(self._redis))
 
     def _foundations_serialize(self, data):
         from foundations_internal.foundations_serializer import serialize

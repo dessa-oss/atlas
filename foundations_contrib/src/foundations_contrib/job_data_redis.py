@@ -51,6 +51,11 @@ class JobDataRedis(object):
     def _get_data_for_each_job(job_ids, pipe, include_input_params):
         return [JobDataRedis(pipe, job_id).get_job_data(include_input_params)
                 for job_id in job_ids]
+    
+    @staticmethod
+    def list_all_completed_jobs(redis_connection):
+        completed_job_keys = redis_connection.keys('jobs:*:completed_time')
+        return [key.decode().split(':')[1] for key in completed_job_keys]
 
     @staticmethod
     def _fetch_project_job_ids(project_name, redis_connection):
