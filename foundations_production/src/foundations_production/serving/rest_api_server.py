@@ -26,7 +26,8 @@ class RestAPIServer(object):
             try:
                 return method(*args, **kwargs)
             except KeyError as exception:
-                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(exception.args[0]))
+                missing_key = exception.args[0]
+                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
             except Exception:
                 abort(500)
 
