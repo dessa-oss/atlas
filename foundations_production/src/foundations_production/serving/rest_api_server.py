@@ -13,6 +13,7 @@ class RestAPIServer(object):
         self._package_pool = PackagePool(1000)
         self._flask = Flask(__name__)
         self._register_routes(self._flask)
+        self._model_package_mapping = {}
 
     def exceptions_as_http_error_codes(method):
         from functools import wraps
@@ -61,13 +62,49 @@ class RestAPIServer(object):
         if request.method == 'POST':
             model_id = request.get_json()['model_id']
             self._package_pool.add_package(model_id)
+            self._model_package_mapping[user_defined_model_name] = model_id
             return jsonify({'deployed_model_id': model_id})
 
         return 'response'
 
     @exceptions_as_http_error_codes
     def train_latest_model_package(self, user_defined_model_name):
-        return 'response'
+        from flask import request, jsonify, make_response
+        from foundations_production.serving import create_retraining_job
+
+        if user_defined_model_name not in self._model_package_mapping:
+            return make_response('response', 404)
+
+        if request.method in ['GET', 'HEAD']:
+            return make_response('response', 200)
+
+        targets_location, features_location = self._retraining_data_locations(request)
+
+        model_package_id = self._model_package_id_from_name(user_defined_model_name)
+        retraining_job_deployment = self._deploy_retraining_job(model_package_id, targets_location, features_location)
+        response_body = self._response_body_with_retraining_job_id(retraining_job_deployment)
+
+        return make_response(response_body, 202)
+
+    def _deploy_retraining_job(self, model_package_id, targets_location, features_location):
+        from foundations_production.serving import create_retraining_job
+
+        retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
+        return retraining_job.run()
+
+    def _retraining_data_locations(self, request):
+        request_body = request.get_json()
+        features_location = request_body['features_file']
+        targets_location = request_body['targets_file']
+        
+        return targets_location, features_location
+
+    def _model_package_id_from_name(self, user_defined_model_name):
+        return self._model_package_mapping[user_defined_model_name]
+
+    def _response_body_with_retraining_job_id(self, retraining_job_deployment):
+        from flask import jsonify
+        return jsonify({'created_job_uuid': retraining_job_deployment.job_name()})
 
     @exceptions_as_http_error_codes
     def train_one_model_package(self, user_defined_model_name, version):
