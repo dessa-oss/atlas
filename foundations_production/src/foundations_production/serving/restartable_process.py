@@ -29,7 +29,7 @@ class RestartableProcess(object):
     def close(self):
         if self._process is not None:
             self._communicator.close()
-            self._process.close()
+            self._process.terminate()
 
         self._process = None
         self._communicator = None
