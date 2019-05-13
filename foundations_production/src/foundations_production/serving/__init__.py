@@ -32,7 +32,6 @@ def _model_package_for_retraining(model_package_id):
     from foundations_production import load_model_package
 
     model_package = load_model_package(model_package_id)
-    
     preprocessor = model_package.preprocessor
     preprocessor.set_inference_mode(False)
 
