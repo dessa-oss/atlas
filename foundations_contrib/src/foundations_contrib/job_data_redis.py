@@ -43,6 +43,15 @@ class JobDataRedis(object):
         return [future.get() for future in futures]
 
     @staticmethod
+    def list_all_completed_jobs(redis_connection):
+        completed_job_keys = redis_connection.keys('jobs:*:completed_time')
+        return [key.decode().split(':')[1] for key in completed_job_keys]
+    
+    @staticmethod
+    def is_job_completed(job_id, redis_connection):
+        return job_id in JobDataRedis.list_all_completed_jobs(redis_connection)
+
+    @staticmethod
     def _create_redis_pipeline(redis_connection):
         from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
         return RedisPipelineWrapper(redis_connection.pipeline())
@@ -51,11 +60,6 @@ class JobDataRedis(object):
     def _get_data_for_each_job(job_ids, pipe, include_input_params):
         return [JobDataRedis(pipe, job_id).get_job_data(include_input_params)
                 for job_id in job_ids]
-    
-    @staticmethod
-    def list_all_completed_jobs(redis_connection):
-        completed_job_keys = redis_connection.keys('jobs:*:completed_time')
-        return [key.decode().split(':')[1] for key in completed_job_keys]
 
     @staticmethod
     def _fetch_project_job_ids(project_name, redis_connection):

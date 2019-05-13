@@ -331,6 +331,13 @@ class TestJobDataRedis(Spec):
         self._set_redis(self.fake_job_2, 'completed_time', self.fake_timestamp)
         expected_result = [self.fake_job_1, self.fake_job_2]
         self.assertEqual(expected_result, JobDataRedis.list_all_completed_jobs(self._redis))
+    
+    def test_is_job_completed_returns_true_if_job_exists(self):
+        self._set_redis(self.fake_job_1, 'completed_time', self.fake_timestamp)
+        self.assertTrue(JobDataRedis.is_job_completed(self.fake_job_1, self._redis))
+    
+    def test_is_job_completed_returns_false_if_job_does_not_exist(self):
+        self.assertFalse(JobDataRedis.is_job_completed(self.fake_job_1, self._redis))
 
     def _foundations_serialize(self, data):
         from foundations_internal.foundations_serializer import serialize
