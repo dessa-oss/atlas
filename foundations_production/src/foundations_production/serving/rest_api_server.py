@@ -48,7 +48,7 @@ class RestAPIServer(object):
                 abort(400)
         
         flask.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
-        flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_all_model_packages)
+        flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_latest_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_one_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/predictions/<prediction_id>', methods=['GET', 'HEAD'], view_func=self.predict_with_model_package)
@@ -66,7 +66,7 @@ class RestAPIServer(object):
         return 'response'
 
     @exceptions_as_http_error_codes
-    def train_all_model_packages(self, user_defined_model_name):
+    def train_latest_model_package(self, user_defined_model_name):
         return 'response'
 
     @exceptions_as_http_error_codes

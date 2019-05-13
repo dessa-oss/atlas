@@ -32,7 +32,7 @@ class TestRestAPIServer(Spec):
         self.assertIn('manage_model_package', self.flask.view_functions)
 
     def test_training_all_model_packages_route_is_added(self):
-        self.assertIn('train_all_model_packages', self.flask.view_functions)
+        self.assertIn('train_latest_model_package', self.flask.view_functions)
 
     def test_training_one_model_package_route_is_added(self):
         self.assertIn('train_one_model_package', self.flask.view_functions)
