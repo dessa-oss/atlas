@@ -52,10 +52,7 @@ class TestDeployModelPackageProcess(Spec):
         
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.titanic_model_package_id)
-
-        communicator_to_package = package_pool.get_communicator(self.titanic_model_package_id)
-        communicator_to_package.set_action_request(self.titanic_input_data)
-        predictions = communicator_to_package.get_response()
+        predictions = self._get_titanic_predictions(package_pool)
 
         self.assertEqual(self.titanic_predictions, predictions)
 
@@ -68,17 +65,29 @@ class TestDeployModelPackageProcess(Spec):
         package_pool.add_package(self.titanic_model_package_id)
         package_pool.add_package(self.fake_model_package_id)
 
-        communicator_to_titanic_package = package_pool.get_communicator(self.titanic_model_package_id)
-        communicator_to_titanic_package.set_action_request(self.titanic_input_data)
-        actual_titanic_predictions = communicator_to_titanic_package.get_response()
-    
-        communicator_to_fake_package = package_pool.get_communicator(self.fake_model_package_id)
-        communicator_to_fake_package.set_action_request(self.fake_input_data)
-        actual_fake_predictions = communicator_to_fake_package.get_response()
+        actual_titanic_predictions = self._get_titanic_predictions(package_pool)
+        actual_fake_predictions = self._get_fake_model_package_predictions(package_pool)
 
         self.assertEqual(self.titanic_predictions, actual_titanic_predictions)
         self.assertEqual(self.fake_predictions, actual_fake_predictions)
+    
+    def _set_job_name(self, job_name):
+        from foundations_contrib.global_state import foundations_context       
+        foundations_context.pipeline_context().file_name = job_name
 
     def _run_fake_model_package(self):
-        model_package = fake_model_package.validation_predictions.run()
-        self.fake_model_package_id = model_package.job_name()
+        fake_model_package_name = 'integration-job-2'
+        self._set_job_name(fake_model_package_name)
+        
+        fake_model_package.validation_predictions.run_same_process()
+        self.fake_model_package_id = fake_model_package_name
+    
+    def _get_titanic_predictions(self, package_pool):
+        communicator_to_package = package_pool.get_communicator(self.titanic_model_package_id)
+        communicator_to_package.set_action_request(self.titanic_input_data)
+        return communicator_to_package.get_response()
+    
+    def _get_fake_model_package_predictions(self, package_pool):
+        communicator_to_fake_package = package_pool.get_communicator(self.fake_model_package_id)
+        communicator_to_fake_package.set_action_request(self.fake_input_data)
+        return communicator_to_fake_package.get_response()
