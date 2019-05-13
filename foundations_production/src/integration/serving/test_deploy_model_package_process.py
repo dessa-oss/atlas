@@ -6,42 +6,79 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 from foundations_spec import *
-import integration.fixtures.train_model_package as train_model_package
+import integration.fixtures.train_model_package as titanic_model_package
+import integration.fixtures.fake_model_package as fake_model_package
 import foundations
 
 class TestDeployModelPackageProcess(Spec):
 
     @let
-    def input_data(self):
+    def titanic_input_data(self):
         return {
             'rows': [[0, 20, 100]], 
             'schema': [{'name': 'Sex', 'type': 'int'}, {'name': 'Cabin', 'type': 'int'}, {'name': 'Fare', 'type': 'int'}]
         }
     
     @let
-    def predictions(self):
+    def titanic_predictions(self):
         return {
             'rows': [[0]],
             'schema': [{'name': 'Survived', 'type': 'int64'}]
+        }
+    
+    @let
+    def fake_input_data(self):
+        return {
+            'rows': [['value', 43234], ['spider', 323]], 
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+    
+    @let
+    def fake_predictions(self):
+        return {
+            'rows': [['value transformed predicted', 43667], ['spider transformed predicted', 756]], 
+            'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]
         }
 
     @set_up
     def set_up(self):
         from integration.config import integration_job_name
 
-        model_package_1 = train_model_package.validation_predictions.run_same_process()
-        self.model_package_1_id = integration_job_name
+        titanic_model_package.validation_predictions.run_same_process()
+        self.titanic_model_package_id = integration_job_name
 
-    def test_can_load_and_predict_on_a_model_packages(self):
+    def test_can_load_and_predict_on_a_model_package(self):
         from foundations_production.serving.package_pool import PackagePool
         
         package_pool = PackagePool(active_package_limit=1)
-        package_pool.add_package(self.model_package_1_id)
+        package_pool.add_package(self.titanic_model_package_id)
 
-        communicator_to_package = package_pool.get_communicator(self.model_package_1_id)
-        communicator_to_package.set_action_request(self.input_data)
+        communicator_to_package = package_pool.get_communicator(self.titanic_model_package_id)
+        communicator_to_package.set_action_request(self.titanic_input_data)
         predictions = communicator_to_package.get_response()
 
-        self.assertEqual(self.predictions, predictions)
+        self.assertEqual(self.titanic_predictions, predictions)
 
+    def test_can_load_and_predict_on_multiple_model_packages(self):
+        from foundations_production.serving.package_pool import PackagePool
 
+        self._run_fake_model_package()
+        
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.titanic_model_package_id)
+        package_pool.add_package(self.fake_model_package_id)
+
+        communicator_to_titanic_package = package_pool.get_communicator(self.titanic_model_package_id)
+        communicator_to_titanic_package.set_action_request(self.titanic_input_data)
+        actual_titanic_predictions = communicator_to_titanic_package.get_response()
+    
+        communicator_to_fake_package = package_pool.get_communicator(self.fake_model_package_id)
+        communicator_to_fake_package.set_action_request(self.fake_input_data)
+        actual_fake_predictions = communicator_to_fake_package.get_response()
+
+        self.assertEqual(self.titanic_predictions, actual_titanic_predictions)
+        self.assertEqual(self.fake_predictions, actual_fake_predictions)
+
+    def _run_fake_model_package(self):
+        model_package = fake_model_package.validation_predictions.run()
+        self.fake_model_package_id = model_package.job_name()
