@@ -41,7 +41,7 @@ class TestPackagePool(Spec):
         model_process = Mock()
         model_communicator = Mock()
 
-        self.mock_process.return_when(model_process, target=run_model_package, args=(model_id))
+        self.mock_process.return_when(model_process, target=run_model_package, args=(model_id,))
         model_process.start.return_value = model_communicator
 
         return model_process, model_communicator
@@ -49,22 +49,22 @@ class TestPackagePool(Spec):
     def test_package_pool_add_package_creates_new_process(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
-        self.mock_process.assert_called_with(target=run_model_package, args=(self.model_id))
+        self.mock_process.assert_called_with(target=run_model_package, args=(self.model_id,))
         
     def test_package_pool_does_not_exceed_limit(self):
         package_pool = PackagePool(active_package_limit=2)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
         package_pool.add_package(self.model_3_id)
-        self.model_1_process.close.assert_called_once()
-        self.model_2_process.close.assert_not_called()
+        self.model_1_process.terminate.assert_called_once()
+        self.model_2_process.terminate.assert_not_called()
     
     def test_package_pool_does_not_close_not_active_process(self):
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
         package_pool.add_package(self.model_3_id)
-        self.model_1_process.close.assert_called_once()
+        self.model_1_process.terminate.assert_called_once()
     
     def test_get_communicator_gets_correct_communicator(self):
         package_pool = PackagePool(active_package_limit=1)
@@ -103,7 +103,7 @@ class TestPackagePool(Spec):
         package_pool.add_package(self.model_2_id)
         package_pool.get_communicator(self.model_id)
 
-        self.model_2_process.close.assert_called_once()
+        self.model_2_process.terminate.assert_called_once()
     
     def test_get_communicator_updates_stored_communicator_when_process_restarted(self):
         package_pool = PackagePool(active_package_limit=1)

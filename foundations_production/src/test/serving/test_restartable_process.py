@@ -43,18 +43,18 @@ class TestRestartableProcess(Spec):
     
     def test_terminate_closes_communicator(self):
         self.restartable_process.start()
-        self.restartable_process.close()
+        self.restartable_process.terminate()
         self.mock_communicator_instance.close.assert_called()
     
     def test_terminate_terminates_process(self):
         self.restartable_process.start()
-        self.restartable_process.close()
+        self.restartable_process.terminate()
         self.mock_process_instance.terminate.assert_called()
 
     def test_terminate_terminates_only_once(self):
         self.restartable_process.start()
-        self.restartable_process.close()
-        self.restartable_process.close()
+        self.restartable_process.terminate()
+        self.restartable_process.terminate()
         self.mock_process_instance.terminate.assert_called_once()
 
     def test_terminate_starts_only_once(self):
