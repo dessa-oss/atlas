@@ -19,6 +19,20 @@ from foundations_spec import *
 
 class TestCommandLineInterface(Spec):
 
+    class MockSleep(object):
+        
+        _epsilon = 0.0001
+
+        def __init__(self):
+            self._time_elapsed = 0
+            self.time_to_wait = 0
+            self.callback = lambda: None
+
+        def __call__(self, wait_time):
+            self._time_elapsed += wait_time
+            if self._time_elapsed >= self.time_to_wait - self._epsilon:
+                self.callback()
+
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
         parser_mock = Mock()
@@ -241,6 +255,17 @@ class TestCommandLineInterface(Spec):
     def mock_proc_file(self):
         return self._get_mock_file()
 
+    @let_now
+    def sleep_mock(self):
+        return self.patch('time.sleep', self.MockSleep())
+
+    @let
+    def server_startup_time(self):
+        from random import random
+
+        between_zero_and_one = random()
+        return between_zero_and_one * 0.7 + 0.2
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -322,11 +347,7 @@ class TestCommandLineInterface(Spec):
         self.open_mock.assert_called_with('/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
 
     def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
-        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
-        open_mock = self.patch('builtins.open', ConditionalReturn())
-        open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
-        open_mock.return_when(self.mock_proc_file, '/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
+        self._bring_server_up()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_any_call('Model server is already running.')
 
@@ -391,3 +412,22 @@ class TestCommandLineInterface(Spec):
 
         CommandLineInterface(['serving', 'stop']).execute()
         self.os_kill.assert_not_called()
+
+    def test_model_server_starts_after_9_attempts(self):
+        self.open_mock.side_effect = OSError()
+        response_mock = Mock()
+        response_mock.status_code = 200
+        self.requests_post_mock.return_value = response_mock
+
+        self.sleep_mock.time_to_wait = self.server_startup_time
+        self.sleep_mock.callback = self._bring_server_up
+
+        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
+        self.exit_mock.assert_not_called()
+
+    def _bring_server_up(self):
+        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
+        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
+        self.open_mock = self.patch('builtins.open', ConditionalReturn())
+        self.open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
+        self.open_mock.return_when(self.mock_proc_file, '/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
