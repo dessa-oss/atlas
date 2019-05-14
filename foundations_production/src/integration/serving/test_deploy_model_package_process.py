@@ -8,7 +8,6 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 from foundations_spec import *
 import integration.fixtures.train_model_package as titanic_model_package
 import integration.fixtures.fake_model_package as fake_model_package
-import foundations
 
 class TestDeployModelPackageProcess(Spec):
 
@@ -32,7 +31,10 @@ class TestDeployModelPackageProcess(Spec):
             'rows': [['value', 43234], ['spider', 323]], 
             'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
         }
-    
+    @let
+    def model_id(self):
+        return self.faker.uuid4()
+
     @let
     def fake_predictions(self):
         return {
@@ -40,14 +42,21 @@ class TestDeployModelPackageProcess(Spec):
             'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]
         }
 
-    @set_up
+    @set_up_class
     def set_up(self):
-        from integration.config import integration_job_name
+        model_package = titanic_model_package.validation_predictions.run()
+        model_package.wait_for_deployment_to_complete()
+        self.titanic_model_package_id = model_package.job_name()
+    
+    def test_exception_raised_when_model_package_does_not_exist(self):
+        from foundations_production.serving.package_pool import PackagePool
+        
+        package_pool = PackagePool(active_package_limit=1)
+        with self.assertRaises(KeyError) as context:
+            package_pool.add_package(self.model_id)
 
-        titanic_model_package.validation_predictions.run_same_process()
-        self.titanic_model_package_id = integration_job_name
+        self.assertTrue('Model Package ID {} does not exist'.format(self.model_id) in str(context.exception))
 
-    @skip
     def test_can_load_and_predict_on_a_model_package(self):
         from foundations_production.serving.package_pool import PackagePool
         
@@ -57,7 +66,6 @@ class TestDeployModelPackageProcess(Spec):
 
         self.assertEqual(self.titanic_predictions, predictions)
 
-    @skip
     def test_can_load_and_predict_on_multiple_model_packages(self):
         from foundations_production.serving.package_pool import PackagePool
 
@@ -73,16 +81,10 @@ class TestDeployModelPackageProcess(Spec):
         self.assertEqual(self.titanic_predictions, actual_titanic_predictions)
         self.assertEqual(self.fake_predictions, actual_fake_predictions)
     
-    def _set_job_name(self, job_name):
-        from foundations_contrib.global_state import foundations_context       
-        foundations_context.pipeline_context().file_name = job_name
-
-    def _run_fake_model_package(self):
-        fake_model_package_name = 'integration-job-2'
-        self._set_job_name(fake_model_package_name)
-        
-        fake_model_package.validation_predictions.run_same_process()
-        self.fake_model_package_id = fake_model_package_name
+    def _run_fake_model_package(self):        
+        model_package = fake_model_package.validation_predictions.run()
+        model_package.wait_for_deployment_to_complete()
+        self.fake_model_package_id = model_package.job_name()
     
     def _get_titanic_predictions(self, package_pool):
         communicator_to_package = package_pool.get_communicator(self.titanic_model_package_id)

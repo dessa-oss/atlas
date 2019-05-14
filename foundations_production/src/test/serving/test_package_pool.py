@@ -137,3 +137,19 @@ class TestPackagePool(Spec):
         with self.assertRaises(Exception) as context:
             package_pool.add_package(self.model_id)
         self.assertTrue(self.fake_error_message in str(context.exception))
+    
+    def test_get_communicator_reraises_error_received_from_process(self):
+        self.model_1_new_communicator.get_response()
+
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        
+        self.model_1_new_communicator.set_response({
+            'name': 'Exception',
+            'value': self.fake_error_message
+        })
+
+        with self.assertRaises(Exception) as context:
+            package_pool.get_communicator(self.model_id)
+        self.assertTrue(self.fake_error_message in str(context.exception))

@@ -18,11 +18,9 @@ class PackagePool(object):
         self._remove_process_from_pool_if_limit_exceeded()
 
         process = RestartableProcess(target=run_model_package, args=(model_id,))
-        communicator = process.start()
-
-        process_response = communicator.get_response()
-        if process_response != 'SUCCESS: predictor created':
-            raise eval(process_response['name'])(process_response['value']) 
+        communicator = process.start() 
+        
+        self._check_if_predictor_created_successfully(communicator)
 
         self._model_packages[model_id] = {'communicator': communicator, 'process': process}
         self._active_packages.append(model_id)
@@ -48,5 +46,12 @@ class PackagePool(object):
         self._remove_process_from_pool_if_limit_exceeded()
         
         updated_model_communicator = model_package['process'].start()
+        self._check_if_predictor_created_successfully(updated_model_communicator)
+
         model_package['communicator'] = updated_model_communicator
         self._active_packages.append(model_id)
+
+    def _check_if_predictor_created_successfully(self, communicator):
+        process_response = communicator.get_response()
+        if process_response != 'SUCCESS: predictor created':
+            raise eval(process_response['name'])(process_response['value']) 
