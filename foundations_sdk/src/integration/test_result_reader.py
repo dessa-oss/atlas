@@ -5,13 +5,14 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
+
 from foundations_internal.pipeline import Pipeline
 from foundations_internal.pipeline_context import PipelineContext
 from foundations import Job, JobPersister, ResultReader
 
 
-class TestResultReader(unittest.TestCase):
+class TestResultReader(Spec):
 
     def test_creates_job_information(self):
         def method():
@@ -93,7 +94,12 @@ class TestResultReader(unittest.TestCase):
         self._persist_stage(stage)
 
     def _make_pipeline(self):
-        return Pipeline(PipelineContext())
+        return Pipeline(self._pipeline_context_with_job_id())
+
+    def _pipeline_context_with_job_id(self):
+        context =  PipelineContext()
+        context.file_name = 'integration-test-job'
+        return context
 
     def _persist_stage(self, stage):
         persister = self._make_persister(stage)

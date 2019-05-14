@@ -9,8 +9,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def _config():
     from uuid import uuid4
     from os import getcwd
-    from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
+    from foundations_contrib.global_state import config_manager, current_foundations_context
     from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
+    from foundations import LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
+
+    # ensure a job uuid is set
+    current_foundations_context().pipeline_context().file_name = 'integration-test-job'
 
     # separates test runs
     test_uuid = uuid4()
