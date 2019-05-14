@@ -13,6 +13,8 @@ from foundations_spec import *
 class TestRestAPIServer(Spec):
 
     mock_create_retraining_job = let_patch_mock('foundations_production.serving.create_retraining_job', ConditionalReturn())
+    package_pool_class_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
+    package_pool_mock = Mock()
     mock_job = let_mock()
     mock_job_deployment = let_mock()
 
@@ -41,14 +43,13 @@ class TestRestAPIServer(Spec):
             targets_location='s3://path/to/targets/file.pkl'
         )
 
-        package_pool_class_mock = self.patch('foundations_production.serving.package_pool.PackagePool')
-        self.package_pool_mock = Mock()
-        package_pool_class_mock.return_value = self.package_pool_mock
+        self.package_pool_class_mock.return_value = self.package_pool_mock
         self.request_mock = self.patch('flask.request')
 
         self.rest_api_server = RestAPIServer()
         self.manage_model_package_function = self.rest_api_server.flask.view_functions.get('manage_model_package')
         self.train_latest_model_package_function = self.rest_api_server.flask.view_functions.get('train_latest_model_package')
+        self.predictions_from_model_package_function = self.rest_api_server.flask.view_functions.get('predictions_from_model_package')
 
     def test_add_new_model_package_in_manage_model_package_route(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
@@ -136,6 +137,20 @@ class TestRestAPIServer(Spec):
 
         with self.rest_api_server.flask.app_context():
             response = self.train_latest_model_package_function(self.user_defined_model_name)
+
+        self.assertEqual(200, response.status_code)
+    
+    def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {
+            'rows': [['value', 43234], ['spider', 323]], 
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+
+        with self.rest_api_server.flask.app_context():
+            response = self.predictions_from_model_package_function(self.user_defined_model_name)
 
         self.assertEqual(200, response.status_code)
 

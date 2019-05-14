@@ -130,7 +130,8 @@ class RestAPIServer(object, metaclass=Singleton):
 
     @exceptions_as_http_error_codes
     def predictions_from_model_package(self, user_defined_model_name):
-        return 'response'
+        from flask import make_response
+        return make_response('response', 200)
 
     @exceptions_as_http_error_codes
     def predict_with_model_package(self, user_defined_model_name, prediction_id):
