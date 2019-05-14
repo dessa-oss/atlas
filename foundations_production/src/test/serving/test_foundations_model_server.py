@@ -134,7 +134,15 @@ class TestFoundationsModelServer(Spec):
 
         self.parsed_arguments_mock.domain = ''
         main()
-        self.parser_mock.add_argument.assert_called_with('--domain', type=str, help='domain and port used by foundations model server')
+        self.parser_mock.add_argument.assert_any_call('--domain', type=str, help='domain and port used by foundations model server')
+
+    def test_foundations_model_server_gets_model_config_file_path_from_cli(self):
+        from foundations_production.serving.foundations_model_server import main
+
+        self.parsed_arguments_mock.domain = ''
+        self.parsed_arguments_mock.config_file = ''
+        main()
+        self.parser_mock.add_argument.assert_any_call('--config-file', type=str, help='path to foundations configuration file used by foundations model server')
 
     def test_foundations_model_server_passes_domain_and_port_to_rest_api_server_run_method(self):
         from foundations_production.serving.foundations_model_server import main

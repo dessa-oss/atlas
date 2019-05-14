@@ -56,6 +56,7 @@ def _get_arguments():
 
     argument_parser = ArgumentParser(description='starts foundations model server')
     argument_parser.add_argument('--domain', type=str, help='domain and port used by foundations model server')
+    argument_parser.add_argument('--config-file', type=str, help='path to foundations configuration file used by foundations model server')
     return argument_parser.parse_args()
 
 
