@@ -20,6 +20,10 @@ class PackagePool(object):
         process = RestartableProcess(target=run_model_package, args=(model_id,))
         communicator = process.start()
 
+        process_response = communicator.get_response()
+        if process_response != 'SUCCESS: predictor created':
+            raise eval(process_response['name'])(process_response['value']) 
+
         self._model_packages[model_id] = {'communicator': communicator, 'process': process}
         self._active_packages.append(model_id)
 
