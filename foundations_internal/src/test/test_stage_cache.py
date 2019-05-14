@@ -105,7 +105,6 @@ class TestStageCache(Spec):
             'fa7d3bb37675cc2388eb118a2b1c0d893d5e586a', stage_cache.cache_name())
 
     def test_cache_returns_nothing(self):
-
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
         self.assertEqual(Nothing(), stage_cache.fetch_option())
