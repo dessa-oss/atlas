@@ -18,10 +18,8 @@ def load_model_package(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
     from foundations_production.production_model import ProductionModel
     from foundations_production.preprocessor_class import Preprocessor
-    from foundations_contrib.global_state import redis_connection
-    from foundations_contrib.job_data_redis import JobDataRedis
 
-    if not JobDataRedis.is_job_completed(job_id, redis_connection):
+    if not _model_package_exists(job_id):
         raise KeyError('Model Package ID {} does not exist'.format(job_id))
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
@@ -34,5 +32,11 @@ def _append_module():
     from foundations_contrib.global_state import module_manager
 
     module_manager.append_module(sys.modules[__name__])
+
+def _model_package_exists(job_id):
+    from foundations_contrib.global_state import redis_connection
+    from foundations_contrib.job_data_redis import JobDataRedis
+
+    return JobDataRedis.is_job_completed(job_id, redis_connection)
 
 _append_module()
