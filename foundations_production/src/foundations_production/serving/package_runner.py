@@ -7,8 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def run_model_package(model_package_id, communicator):
     from foundations_production.serving.inference.predictor import Predictor
+    import sys
     
-    predictor = Predictor.predictor_for(model_package_id)
+    try:
+        predictor = Predictor.predictor_for(model_package_id)
+        communicator.set_response('SUCCESS: predictor created')
+    except Exception as e:
+        _send_exception(e, communicator)
+        return
 
     while True:
         json_input_data = communicator.get_action_request()
@@ -18,9 +24,12 @@ def run_model_package(model_package_id, communicator):
             json_predictions = predictor.json_predictions_for(json_input_data)
             communicator.set_response(json_predictions)
         except Exception as e:
-            expected_return = {
-                'name': 'Exception',
-                'value': str(e)
-            }
-            communicator.set_response(expected_return)
-            
+            _send_exception(e, communicator)
+            return
+
+def _send_exception(exception, communicator):
+    expected_return = {
+        'name': str(type(exception).__name__),
+        'value': str(exception)
+    }
+    communicator.set_response(expected_return)

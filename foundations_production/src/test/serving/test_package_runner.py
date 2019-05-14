@@ -44,7 +44,6 @@ class TestPackageRunner(Spec):
         self.mock_predictor_class.predictor_for.return_when(self.mock_predictor, self.model_package_id)
         self.mock_predictor.json_predictions_for = ConditionalReturn()
         self.mock_predictor.json_predictions_for.return_when(self.prediction, self.fake_data)
-        # self.mock_predictor.json_predictions_for.return_when(Exception('Test exception'), self.fake_data_that_errors)
 
     def test_run_model_package_loads_model_package(self):
         self.communicator.set_action_request(self.fake_data)
@@ -58,6 +57,7 @@ class TestPackageRunner(Spec):
         self.communicator.set_action_request('STOP')
 
         run_model_package(self.model_package_id, self.communicator)
+        self._remove_success_token_from_pipe()
 
         self.assertEqual(self.prediction, self.communicator.get_response())
     
@@ -68,17 +68,51 @@ class TestPackageRunner(Spec):
 
         run_model_package(self.model_package_id, self.communicator)
 
+        self._remove_success_token_from_pipe()
+
         responses = [self.communicator.get_response() for _ in range(self.number_of_calls)]
         expected_responses = [self.prediction] * self.number_of_calls
         self.assertEqual(expected_responses, responses)
     
-    def test_run_model_package_returns_error_in_json_when_thrown(self):
+    def test_run_model_package_returns_error_in_json_when_prediction_for_throws_exception(self):
         def raise_exception(data):
             raise Exception('Test exception')
 
         self.mock_predictor.json_predictions_for = raise_exception
         self.communicator.set_action_request(self.fake_data_that_errors)
-        self.communicator.set_action_request('STOP')
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        self._remove_success_token_from_pipe()
+
+        expected_return = {
+            'name': 'Exception',
+            'value': 'Test exception'
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
+    
+    def test_run_model_package_returns_error_in_json_when_prediction_for_throws_type_error(self):
+        def raise_exception(data):
+            raise TypeError('Wrong type')
+
+        self.mock_predictor.json_predictions_for = raise_exception
+        self.communicator.set_action_request(self.fake_data_that_errors)
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        self._remove_success_token_from_pipe()
+
+        expected_return = {
+            'name': 'TypeError',
+            'value': 'Wrong type'
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
+    
+    def test_run_model_package_returns_error_when_predictor_for_throws_exception(self):
+        def raise_exception(data):
+            raise Exception('Test exception')
+
+        self.mock_predictor_class.predictor_for = raise_exception
 
         run_model_package(self.model_package_id, self.communicator)
 
@@ -87,3 +121,27 @@ class TestPackageRunner(Spec):
             'value': 'Test exception'
         }
         self.assertEqual(expected_return, self.communicator.get_response())
+    
+    def test_run_model_package_returns_error_when_predictor_for_throws_value_error(self):
+        def raise_exception(data):
+            raise ValueError('Different message')
+
+        self.mock_predictor_class.predictor_for = raise_exception
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        expected_return = {
+            'name': 'ValueError',
+            'value': 'Different message'
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
+
+    def test_run_model_package_returns_error_when_predictor_for_throws_value_error(self):
+        self.communicator.set_action_request('STOP')
+        run_model_package(self.model_package_id, self.communicator)
+
+        expected_return = 'SUCCESS: predictor created'
+        self.assertEqual(expected_return, self.communicator.get_response())
+    
+    def _remove_success_token_from_pipe(self):
+        self.communicator.get_response()
