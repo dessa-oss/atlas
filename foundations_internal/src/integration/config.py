@@ -5,10 +5,8 @@ Proprietary and confidential
 Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
+def _configure():
+    from foundations_contrib.global_state import current_foundations_context
+    current_foundations_context().pipeline_context().file_name = 'integration-test-job'
 
-import integration.config
-
-from integration.test_run_stages import TestRunStages
-from integration.test_serializable_contexts import TestSerializableContexts
-from integration.test_stage_logging import TestStageLogging
-from integration.test_iterable_stage_inputs import TestIterableStageInputs
+_configure()
