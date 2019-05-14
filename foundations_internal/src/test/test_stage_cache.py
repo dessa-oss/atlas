@@ -84,6 +84,14 @@ class TestStageCache(Spec):
     def stage_uuid(self):
         return 'some uuid'
 
+    @let
+    def stage_with_different_uuid(self):
+        return self.MockStage(self.different_stage_uuid)
+
+    @let
+    def different_stage_uuid(self):
+        return 'some different uuid'
+
     def test_cache_sets_cache_name(self):
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
@@ -91,11 +99,11 @@ class TestStageCache(Spec):
             '6bbe865851bc74298ad8bbae0113745a618eb27f', stage_cache.cache_name())
 
     def test_cache_sets_cache_name_different_name(self):
-        stage = self.MockStage('some other uuid')
+        stage = self.MockStage('some different uuid')
         stage_cache = StageCache(
             self.pipeline_context, stage, self._make_config(True), ())
         self.assertEqual(
-            '4632ba0ef31b2b9022a3991625cc075f9025ee31', stage_cache.cache_name())
+            'fa7d3bb37675cc2388eb118a2b1c0d893d5e586a', stage_cache.cache_name())
 
     def test_cache_returns_nothing(self):
         from foundations_contrib.nothing import Nothing
