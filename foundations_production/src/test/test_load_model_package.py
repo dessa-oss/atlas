@@ -12,6 +12,7 @@ class TestLoadModelPackage(Spec):
 
     mock_pipeline_archiver = let_mock()
     mock_preprocessor = let_mock()
+    mock_is_job_completed = let_patch_mock('foundations_contrib.job_data_redis.JobDataRedis.is_job_completed')
     
     @let_now
     def mock_load_preprocessor(self):
@@ -28,7 +29,11 @@ class TestLoadModelPackage(Spec):
         mock_get_pipeline_archiver = self.patch('foundations_contrib.archiving.get_pipeline_archiver_for_job', ConditionalReturn())
         mock_get_pipeline_archiver.return_when(self.mock_pipeline_archiver, self.job_id)
         return mock_get_pipeline_archiver
-    
+
+    @set_up
+    def set_up(self):
+        self.mock_is_job_completed.return_value = True
+
     def test_load_model_package_loads_model_preprocessor_with_correct_name(self):
         model_package = load_model_package(self.job_id)
         new_transformer_index = model_package.model.new_transformer(None)
@@ -47,3 +52,15 @@ class TestLoadModelPackage(Spec):
     def test_load_model_package_returns_correct_preprocessor(self):
         model_package = load_model_package(self.job_id)
         self.assertEqual(self.mock_preprocessor, model_package.preprocessor)
+
+    def test_load_model_package_raises_error_if_job_not_completed(self):
+        self.mock_is_job_completed.return_value = False
+        with self.assertRaises(KeyError) as context:
+            load_model_package(self.job_id)
+        
+        self.assertTrue('Model Package ID {} does not exist'.format(self.job_id) in str(context.exception))
+
+    def test_load_model_package_calls_is_job_completed_with_correct_arguments(self):
+        from foundations_contrib.global_state import redis_connection
+        load_model_package(self.job_id)
+        self.mock_is_job_completed.assert_called_with(self.job_id, redis_connection)
