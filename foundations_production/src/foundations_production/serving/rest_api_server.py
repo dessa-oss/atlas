@@ -129,8 +129,15 @@ class RestAPIServer(object):
 
     @exceptions_as_http_error_codes
     def predictions_from_model_package(self, user_defined_model_name):
-        from flask import make_response
-        return make_response('response', 200)
+        from flask import make_response, request
+        import json
+
+        model_id = self._model_package_mapping.get(user_defined_model_name)
+        communicator = self._package_pool.get_communicator(model_id)
+        communicator.set_action_request(request.get_json())
+        predictions = communicator.get_response()
+
+        return make_response(json.dumps(predictions), 200)
 
     @exceptions_as_http_error_codes
     def predict_with_model_package(self, user_defined_model_name, prediction_id):

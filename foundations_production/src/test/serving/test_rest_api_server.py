@@ -17,6 +17,7 @@ class TestRestAPIServer(Spec):
     package_pool_mock = Mock()
     mock_job = let_mock()
     mock_job_deployment = let_mock()
+    communicator = let_mock()
 
     @let
     def retraining_job_id(self):
@@ -44,6 +45,8 @@ class TestRestAPIServer(Spec):
         )
 
         self.package_pool_class_mock.return_value = self.package_pool_mock
+        self.package_pool_mock.get_communicator = ConditionalReturn()
+        self.package_pool_mock.get_communicator.return_when(self.communicator, self.model_package_id)
         self.request_mock = self.patch('flask.request')
 
         self.rest_api_server = RestAPIServer()
@@ -142,6 +145,7 @@ class TestRestAPIServer(Spec):
     
     def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+        self.communicator.get_response.return_value = {}
 
         self.request_mock.method = 'PUT'
         self.request_mock.get_json.return_value = {
@@ -153,6 +157,46 @@ class TestRestAPIServer(Spec):
             response = self.predictions_from_model_package_function(self.user_defined_model_name)
 
         self.assertEqual(200, response.status_code)
+
+    def test_predictions_from_model_package_returns_predicitions_in_body(self):
+        import json
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        expected_prediction_json = {
+            'rows': [['value transformed predicted', 43667], ['spider transformed predicted', 756]], 
+            'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]
+        }
+        self.communicator.get_response.return_value = expected_prediction_json
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {
+            'rows': [['value', 43234], ['spider', 323]], 
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+
+        with self.rest_api_server.flask.app_context():
+            response = self.predictions_from_model_package_function(self.user_defined_model_name)
+
+        self.assertEqual(expected_prediction_json, json.loads(response.get_data()))
+    
+
+    def test_predictions_from_model_package_sets_action_request_for_prediction(self):
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        prediction_input_json = {
+            'rows': [['value', 43234], ['spider', 323]], 
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+
+        self.request_mock.get_json.return_value = prediction_input_json
+        self.communicator.get_response.return_value = {}
+
+        self.request_mock.method = 'PUT'
+
+        with self.rest_api_server.flask.app_context():
+            response = self.predictions_from_model_package_function(self.user_defined_model_name)
+
+        self.communicator.set_action_request.assert_called_with(prediction_input_json)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
         self.request_mock.method = 'POST'
