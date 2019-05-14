@@ -5,21 +5,12 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-class Singleton(type):
-
-    _instance = None
-
-    def __call__(klass, *args, **kwargs):
-        if klass._instance is None:
-            klass._instance = super(Singleton, klass).__call__(*args, **kwargs)
-        return klass._instance
-
 class RestAPIServer(object):
 
     def __init__(self):
         from flask import Flask
-        from flask_cors import CORS
         from flask_restful import Api
+        from foundations_production.serving import register_app_manager
         from foundations_production.serving.package_pool import PackagePool
 
         self._package_pool = PackagePool(1000)
@@ -27,6 +18,7 @@ class RestAPIServer(object):
         self._api = Api(self._flask)
         self._register_routes(self._flask)
         self._model_package_mapping = {}
+        register_app_manager(self)
 
     def exceptions_as_http_error_codes(method):
         from functools import wraps

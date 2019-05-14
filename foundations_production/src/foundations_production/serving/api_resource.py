@@ -27,15 +27,10 @@ class APIResourceBuilder(object):
         if hasattr(self._klass, 'put'):
             self._api_actions['put'] = self._put_api_create()
 
-    def _load_head_route(self):
-        if hasattr(self._klass, 'head'):
-            self._api_actions['head'] = self._head_api_create()
-
     def _create_action(self):
         self._load_index_route()
         self._load_post_route()
         self._load_put_route()
-        self._load_head_route()
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
 
@@ -88,12 +83,13 @@ class APIResourceBuilder(object):
         return params
 
 def api_resource(base_path):
+
     def _make_api_resource(klass):
         """Decorator for defining resource for controllers
         """
-        from foundations_production.serving.rest_api_server import RestAPIServer
+        from foundations_production.serving import get_app_manager
 
-        app_manager = RestAPIServer()
+        app_manager = get_app_manager()
 
         APIResourceBuilder(app_manager, klass, base_path)._create_action()
         return klass

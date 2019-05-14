@@ -42,6 +42,7 @@ class TestFoundationsModelServer(Spec):
     @set_up
     def set_up(self):
         self.flask_app_mock = Mock()
+        self.flask_app_mock.view_functions = {}
         self.flask_mock.return_value = self.flask_app_mock
         self.os_path_exists.return_value = True
 

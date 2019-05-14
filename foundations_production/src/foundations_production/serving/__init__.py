@@ -40,3 +40,26 @@ def _model_package_for_retraining(model_package_id):
 def _load_data_stage(file_location):
     from foundations_production.serving.data_from_file import data_from_file
     return data_from_file(file_location)
+
+
+class AppManagerPlaceHolder(object):
+
+    _queue = []
+
+    class ApiPlaceHolder(object):
+
+        def add_resource(self, resource_class, base_path):
+            AppManagerPlaceHolder._queue.append((resource_class, base_path))
+
+    def api(self):
+        return self.ApiPlaceHolder()
+
+    def get_queue(self):
+        return self._queue
+
+def register_app_manager(app_manager):
+    for resource_class, base_path in AppManagerPlaceHolder().get_queue():
+        app_manager.api().add_resource(resource_class, base_path)
+
+def get_app_manager():
+    return AppManagerPlaceHolder()

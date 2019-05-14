@@ -28,8 +28,11 @@ class TestAPIResource(Spec):
     def test_get_returns_index(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndex)
         with self._test_client() as client:
-            response = client.get(self.uri_path)
-            self.assertEqual(response.json, 'some data')
+            get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
+            self.assertEqual(get_response.json, 'some data')
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
     
     def test_post_returns_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPost)
@@ -62,34 +65,47 @@ class TestAPIResource(Spec):
     def test_get_returns_index_different_data(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.DifferentMockWithIndex)
         with self._test_client() as client:
-            response = client.get(self.uri_path)
-            self.assertEqual(response.json, 'some different data')
+            get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
+            self.assertEqual(get_response.json, 'some different data')
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
     
     def test_get_and_post_returns_index_and_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndexAndPost)
         with self._test_client() as client:
             post_response = client.post(self.uri_path, json={})
             get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
             self.assertEqual(post_response.json, 'some post data')
             self.assertEqual(get_response.json, 'some index data')
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
 
     def test_get_returns_empty_params(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
-            response = client.get(self.uri_path)
-            self.assertEqual(response.json, {})
+            get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
+            self.assertEqual(get_response.json, {})
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
 
     def test_get_has_status_code(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
-            response = client.get(self.uri_path)
-            self.assertEqual(response.status_code, 200)
+            get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
+            self.assertEqual(get_response.status_code, 200)
+            self.assertEqual(head_response.status_code, 200)
 
     def test_get_has_status_code_different_code(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndexAndStatus)
         with self._test_client() as client:
-            response = client.get(self.uri_path)
-            self.assertEqual(response.status_code, 403)
+            get_response = client.get(self.uri_path)
+            head_response = client.head(self.uri_path)
+            self.assertEqual(get_response.status_code, 403)
+            self.assertEqual(head_response.status_code, 403)
 
     def test_post_has_status_code(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndexAndPost)
@@ -106,20 +122,29 @@ class TestAPIResource(Spec):
     def test_get_returns_path_param(self):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
-            response = client.get('/path/to/resource/with/value/params')
-            self.assertEqual(response.json, {'project_name': 'value'})
+            get_response = client.get('/path/to/resource/with/value/params')
+            head_response = client.head('/path/to/resource/with/value/params')
+            self.assertEqual(get_response.json, {'project_name': 'value'})
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
 
     def test_get_returns_path_with_query_params(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
-            response = client.get(self.uri_path + '?hello=world')
-            self.assertEqual(response.json, {'hello': 'world'})
+            get_response = client.get(self.uri_path + '?hello=world')
+            head_response = client.head(self.uri_path + '?hello=world')
+            self.assertEqual(get_response.json, {'hello': 'world'})
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
 
     def test_get_returns_path_with_query_list_params(self):
         klass = api_resource('/path/to/resource/with/query_list/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
-            response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
-            self.assertEqual(response.json, {'hello': ['world', 'lou']})
+            get_response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
+            head_response = client.head('/path/to/resource/with/query_list/params?hello=world&hello=lou')
+            self.assertEqual(get_response.json, {'hello': ['world', 'lou']})
+            self.assertEqual(get_response.headers, head_response.headers)
+            self.assertEqual(get_response.status_code, head_response.status_code)
 
     def test_put_request_returns_return_value_of_resource_put_method(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPut)
@@ -147,24 +172,23 @@ class TestAPIResource(Spec):
             response = client.put(self.uri_path, json={})
             self.assertEqual(response.status_code, fake_status_code)
 
-    def test_head_returns_path_param(self):
-        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
-        with self._test_client() as client:
-            print('>>>>>>>>>>>', client.head('/path/to/resource/with/value/params').json)
-            response = client.head('/path/to/resource/with/value/params')
-            self.assertEqual(response.json, {'project_name': 'value'})
+    # def test_head_returns_path_param(self):
+    #     klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
+    #     with self._test_client() as client:
+    #         response = client.head('/path/to/resource/with/value/params')
+    #         self.assertEqual(response.json, {'project_name': 'value'})
 
-    def test_head_returns_path_with_query_params(self):
-        klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
-        with self._test_client() as client:
-            response = client.head(self.uri_path + '?hello=world')
-            self.assertEqual(response.json, {'hello': 'world'})
+    # def test_head_returns_path_with_query_params(self):
+    #     klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
+    #     with self._test_client() as client:
+    #         response = client.head(self.uri_path + '?hello=world')
+    #         self.assertEqual(response.json, {'hello': 'world'})
 
-    def test_head_returns_path_with_query_list_params(self):
-        klass = api_resource('/path/to/resource/with/query_list/params')(APIResourceMocks.ParamsMockWithIndex)
-        with self._test_client() as client:
-            response = client.head('/path/to/resource/with/query_list/params?hello=world&hello=lou')
-            self.assertEqual(response.json, {'hello': ['world', 'lou']})
+    # def test_head_returns_path_with_query_list_params(self):
+    #     klass = api_resource('/path/to/resource/with/query_list/params')(APIResourceMocks.ParamsMockWithIndex)
+    #     with self._test_client() as client:
+    #         response = client.head('/path/to/resource/with/query_list/params?hello=world&hello=lou')
+    #         self.assertEqual(response.json, {'hello': ['world', 'lou']})
 
     def _empty_callback(self, mock_instance):
         return ''
