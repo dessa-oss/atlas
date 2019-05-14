@@ -64,7 +64,10 @@ class TestStageCache(Spec):
         def hash(self):
             return self._hash
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
+    @let_now
+    def cache_manager(self):
+        return self.patch('foundations.global_state.cache_manager', MockCacheManager())
+
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_cache_name(self):
         stage = self.MockStage('some uuid')
@@ -74,7 +77,6 @@ class TestStageCache(Spec):
         self.assertEqual(
             '6bbe865851bc74298ad8bbae0113745a618eb27f', stage_cache.cache_name())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_cache_name_different_name(self):
         stage = self.MockStage('some other uuid')
@@ -84,7 +86,6 @@ class TestStageCache(Spec):
         self.assertEqual(
             '4632ba0ef31b2b9022a3991625cc075f9025ee31', stage_cache.cache_name())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_nothing(self):
         from foundations_contrib.nothing import Nothing
@@ -95,7 +96,6 @@ class TestStageCache(Spec):
             pipeline_context, stage, self._make_config(True), ())
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_something_when_set(self):
         from foundations.global_state import cache_manager
@@ -108,7 +108,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('6bbe865851bc74298ad8bbae0113745a618eb27f', 'some value', {})
         self.assertEqual(Something('some value'), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_nothing_when_set_but_cache_disabled(self):
         from foundations.global_state import cache_manager
@@ -121,7 +120,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('6bbe865851bc74298ad8bbae0113745a618eb27f', 'some value', {})
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_nothing_when_set_different_value(self):
         from foundations.global_state import cache_manager
@@ -134,7 +132,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('77777777777777777777777777777777777777777', 'some value', {})
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_something_when_set_with_different_uuid(self):
         from foundations.global_state import cache_manager
@@ -147,7 +144,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('fa7d3bb37675cc2388eb118a2b1c0d893d5e586a', 'some value', {})
         self.assertEqual(Something('some value'), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_something_when_set_with_different_arguments(self):
         from foundations.global_state import cache_manager
@@ -161,7 +157,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('b5d5d3dfe880a4d68ac0f5587c1aa640bbd1674f', 'some value', {})
         self.assertEqual(Something('some value'), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_something_when_set_with_multiple_arguments(self):
         from foundations.global_state import cache_manager
@@ -176,7 +171,6 @@ class TestStageCache(Spec):
         cache_manager.cache().set('8f1888f6f97d96c03255f1a6fd61b762bbc4fc6e', 'some value', {})
         self.assertEqual(Something('some value'), stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_returns_something_when_set_with_different_value(self):
         from foundations.global_state import cache_manager
@@ -191,7 +185,6 @@ class TestStageCache(Spec):
         self.assertEqual(Something('some different value'),
                          stage_cache.fetch_option())
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_something_when_set(self):
         from foundations.global_state import cache_manager
@@ -206,7 +199,6 @@ class TestStageCache(Spec):
             '6bbe865851bc74298ad8bbae0113745a618eb27f')
         self.assertEqual(Something('some value'), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_includes_meta_data_when_set(self):
         from foundations.global_state import cache_manager
@@ -222,7 +214,6 @@ class TestStageCache(Spec):
         ).meta_data['6bbe865851bc74298ad8bbae0113745a618eb27f']
         self.assertEqual({'job_uuid': 'actually the job name'}, result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_includes_meta_data_when_set_different_meta_data(self):
         from foundations.global_state import cache_manager
@@ -239,7 +230,6 @@ class TestStageCache(Spec):
         self.assertEqual(
             {'job_uuid': 'actually the job name, but a different one'}, result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_nothing_when_set_but_cache_disabled(self):
         from foundations.global_state import cache_manager
@@ -254,7 +244,6 @@ class TestStageCache(Spec):
             '6bbe865851bc74298ad8bbae0113745a618eb27f')
         self.assertEqual(Nothing(), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_nothing_and_returns_the_value_when_set_but_cache_disabled(self):
         stage = self.MockStage('some uuid')
@@ -264,7 +253,6 @@ class TestStageCache(Spec):
         result = stage_cache.submit('some value')
         self.assertEqual('some value', result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_something_when_set_with_different_uuid(self):
         from foundations.global_state import cache_manager
@@ -279,7 +267,6 @@ class TestStageCache(Spec):
             'fa7d3bb37675cc2388eb118a2b1c0d893d5e586a')
         self.assertEqual(Something('some value'), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(2))
     def test_cache_sets_something_when_set_with_different_version(self):
         from foundations.global_state import cache_manager
@@ -294,7 +281,6 @@ class TestStageCache(Spec):
             '5aa7bd0dc3561e68b3fc788c2a762f22e1bb2374')
         self.assertEqual(Something('some value'), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_something_when_set_with_different_arguments(self):
         from foundations.global_state import cache_manager
@@ -310,7 +296,6 @@ class TestStageCache(Spec):
             'b5d5d3dfe880a4d68ac0f5587c1aa640bbd1674f')
         self.assertEqual(Something('some value'), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_something_when_set_with_multiple_arguments(self):
         from foundations.global_state import cache_manager
@@ -327,7 +312,6 @@ class TestStageCache(Spec):
             '8f1888f6f97d96c03255f1a6fd61b762bbc4fc6e')
         self.assertEqual(Something('some value'), result)
 
-    @patch('foundations.global_state.cache_manager', MockCacheManager())
     @patch('sys.version_info', MockVersion(3))
     def test_cache_sets_something_when_set_with_different_value(self):
         from foundations.global_state import cache_manager
