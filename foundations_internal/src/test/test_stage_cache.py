@@ -5,7 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
+
 from mock import patch
 from foundations_internal.stage_cache import StageCache
 
@@ -45,7 +46,7 @@ class MockVersion(object):
         self.major = major
 
 
-class TestStageCache(unittest.TestCase):
+class TestStageCache(Spec):
 
     class MockStage(object):
 
@@ -352,4 +353,7 @@ class TestStageCache(unittest.TestCase):
 
     def _make_pipeline_context(self):
         from foundations_internal.pipeline_context import PipelineContext
-        return PipelineContext()
+
+        pipeline_context = PipelineContext()
+        pipeline_context.file_name = 'test-job'
+        return pipeline_context
