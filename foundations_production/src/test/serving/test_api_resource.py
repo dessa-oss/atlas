@@ -36,8 +36,7 @@ class TestAPIResource(Spec):
         with self._test_client() as client:
             response = client.post(self.uri_path, json={})
             self.assertEqual(response.json, 'some data')
-        
-    
+
     def test_post_sets_params(self):
         def _callback(mock_instance):
             return mock_instance.params
@@ -121,6 +120,32 @@ class TestAPIResource(Spec):
         with self._test_client() as client:
             response = client.get('/path/to/resource/with/query_list/params?hello=world&hello=lou')
             self.assertEqual(response.json, {'hello': ['world', 'lou']})
+
+    def test_put_request_returns_return_value_of_resource_put_method(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPut)
+        with self._test_client() as client:
+            response = client.put(self.uri_path, json={})
+            self.assertEqual(response.json, 'some put data')
+
+    def test_put_sets_params(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        fake_put_data = self.faker.pydict(3, False, 'int', 'str', 'float')
+        mock_klass = self._mock_resource('put', _callback)
+
+        klass = api_resource(self.uri_path)(mock_klass)
+        with self._test_client() as client:
+            response = client.put(self.uri_path, json=fake_put_data)
+            self.assertEqual(response.json, fake_put_data)
+
+    def test_put_has_status_code(self):
+        fake_status_code = self.faker.pyint()
+        APIResourceMocks.ParamsMockWithPutAndStatus.status_code = fake_status_code
+        klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithPutAndStatus)
+        with self._test_client() as client:
+            response = client.put(self.uri_path, json={})
+            self.assertEqual(response.status_code, fake_status_code)
 
     def _empty_callback(self, mock_instance):
         return ''

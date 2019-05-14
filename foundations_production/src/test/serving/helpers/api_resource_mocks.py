@@ -55,7 +55,6 @@ class APIResourceMocks(object):
                 return self.params
             return Response('Mock', LazyResult(_index))
 
-
     class ParamsMockWithIndexAndStatus(object):
         def index(self):
             from foundations_rest_api.lazy_result import LazyResult
@@ -79,3 +78,21 @@ class APIResourceMocks(object):
             def _index():
                 return 'some different data'
             return Response('Mock', LazyResult(_index))
+
+    class MockWithPut(object):
+        def put(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _put():
+                return 'some put data'
+            return Response('Mock', LazyResult(_put))
+
+    class ParamsMockWithPutAndStatus(object):
+        status_code = -1
+
+        def put(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _put():
+                return self.params
+            return Response('Mock', LazyResult(_put), status=self.status_code)
