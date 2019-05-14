@@ -14,11 +14,25 @@ from foundations import Job, JobPersister, ResultReader
 
 class TestResultReader(Spec):
 
+    @let
+    def job_pipeline(self):
+        return Pipeline(self.pipeline_context_with_job_id)
+
+    @let
+    def pipeline_context_with_job_id(self):
+        context =  PipelineContext()
+        context.file_name = self.job_uuid
+        return context
+
+    @let
+    def job_uuid(self):
+        return self.faker.uuid4()
+
     def test_creates_job_information(self):
         def method():
             pass
 
-        stage = self._make_pipeline().stage(method)
+        stage = self.job_pipeline.stage(method)
         self._run_and_persist(stage)
 
         job_information = self._create_reader_and_get_job_information(stage)
@@ -31,7 +45,7 @@ class TestResultReader(Spec):
         def method2():
             pass
 
-        pipeline = self._make_pipeline()
+        pipeline = self.job_pipeline
 
         stage = pipeline.stage(method)
         self._run_and_persist(stage)
@@ -49,7 +63,7 @@ class TestResultReader(Spec):
         def method():
             pass
 
-        pipeline = self._make_pipeline()
+        pipeline = self.job_pipeline
         stage = pipeline.stage(method)
         self._run_and_persist(stage)
 
@@ -61,7 +75,7 @@ class TestResultReader(Spec):
         def method():
             pass
 
-        stage = self._make_pipeline().stage(method)
+        stage = self.job_pipeline.stage(method)
         self._run_and_persist(stage)
 
         job_information = self._create_reader_and_get_job_information(stage)
@@ -72,7 +86,7 @@ class TestResultReader(Spec):
         def method():
             pass
 
-        stage = self._make_pipeline().stage(method)
+        stage = self.job_pipeline.stage(method)
         self._run_and_persist(stage)
 
         job_information = self._create_reader_and_get_job_information(stage)
@@ -92,14 +106,6 @@ class TestResultReader(Spec):
     def _run_and_persist(self, stage):
         stage.run_same_process()
         self._persist_stage(stage)
-
-    def _make_pipeline(self):
-        return Pipeline(self._pipeline_context_with_job_id())
-
-    def _pipeline_context_with_job_id(self):
-        context =  PipelineContext()
-        context.file_name = 'integration-test-job'
-        return context
 
     def _persist_stage(self, stage):
         persister = self._make_persister(stage)
