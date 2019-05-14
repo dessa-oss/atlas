@@ -160,6 +160,7 @@ class TestRestAPIServer(Spec):
 
     def test_predictions_from_model_package_returns_predicitions_in_body(self):
         import json
+        
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
 
         expected_prediction_json = {
@@ -197,6 +198,25 @@ class TestRestAPIServer(Spec):
             response = self.predictions_from_model_package_function(self.user_defined_model_name)
 
         self.communicator.set_action_request.assert_called_with(prediction_input_json)
+
+    def test_predictions_from_model_package_returns_500_when_prediction_returns_error(self):
+        import json
+        from werkzeug.exceptions import InternalServerError
+
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        expected_prediction_json = {
+            'name': 'Exception',
+            'value': 'Something went wrong :('
+        }
+        self.communicator.get_response.return_value = expected_prediction_json
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {}
+
+        with self.assertRaises(InternalServerError) as error_context: 
+            with self.rest_api_server.flask.app_context():
+                response = self.predictions_from_model_package_function(self.user_defined_model_name)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
         self.request_mock.method = 'POST'

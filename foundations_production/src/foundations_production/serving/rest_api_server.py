@@ -136,8 +136,11 @@ class RestAPIServer(object):
         communicator = self._package_pool.get_communicator(model_id)
         communicator.set_action_request(request.get_json())
         predictions = communicator.get_response()
+        if predictions.get('name'):
+            raise eval(predictions['name'])
 
-        return make_response(json.dumps(predictions), 200)
+        response = make_response(json.dumps(predictions), 200)
+        return response
 
     @exceptions_as_http_error_codes
     def predict_with_model_package(self, user_defined_model_name, prediction_id):
