@@ -149,14 +149,17 @@ class CommandLineInterface(object):
     def _start_model_server_if_not_running(self):
         import subprocess
         import sys
+        import os
 
         if self._is_model_server_running():
             print('Model server is already running.')
         else:
+            model_server_config_path = os.environ['MODEL_SERVER_CONFIG_PATH']
+
             subprocess_command_to_run = [
                 'python', '-m', 'foundations_production.serving.foundations_model_server',
                 '--domain={}'.format(self._arguments.domain),
-                '--config-file=model_server.config.yaml'
+                '--config-file={}'.format(model_server_config_path)
             ]
 
             subprocess.Popen(subprocess_command_to_run, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

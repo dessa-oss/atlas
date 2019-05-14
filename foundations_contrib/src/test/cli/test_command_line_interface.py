@@ -33,6 +33,14 @@ class TestCommandLineInterface(Spec):
             if self._time_elapsed >= self.time_to_wait - self._epsilon:
                 self.callback()
 
+    @let_now
+    def mock_environment(self):
+        return self.patch('os.environ', {})
+
+    @set_up
+    def set_up(self):
+        self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = '/path/to/file'
+
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
         parser_mock = Mock()
@@ -357,14 +365,23 @@ class TestCommandLineInterface(Spec):
         self.mock_proc_file.read.return_value = '**another_process.py**'
         self.open_mock.return_value = self.mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=model_server.config.yaml'], stdout=DEVNULL, stderr=DEVNULL)
+        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
                                               
     def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile(self):
         from subprocess import DEVNULL
 
         self.open_mock.side_effect = OSError()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=model_server.config.yaml'], stdout=DEVNULL, stderr=DEVNULL)
+        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
+
+    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile_different_model_config(self):
+        from subprocess import DEVNULL
+
+        self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = 'a/path/to/another/file'
+
+        self.open_mock.side_effect = OSError()
+        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
+        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=a/path/to/another/file'], stdout=DEVNULL, stderr=DEVNULL)
 
     def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
