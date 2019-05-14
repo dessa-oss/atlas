@@ -76,10 +76,17 @@ class TestStageCache(Spec):
     def pipeline_context(self):
         return self._make_pipeline_context()
 
+    @let
+    def stage(self):
+        return self.MockStage(self.stage_uuid)
+
+    @let
+    def stage_uuid(self):
+        return 'some uuid'
+
     def test_cache_sets_cache_name(self):
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         self.assertEqual(
             '6bbe865851bc74298ad8bbae0113745a618eb27f', stage_cache.cache_name())
 
@@ -93,18 +100,16 @@ class TestStageCache(Spec):
     def test_cache_returns_nothing(self):
         from foundations_contrib.nothing import Nothing
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
     def test_cache_returns_something_when_set(self):
         from foundations.global_state import cache_manager
         from foundations_contrib.something import Something
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         cache_manager.cache().set('6bbe865851bc74298ad8bbae0113745a618eb27f', 'some value', {})
         self.assertEqual(Something('some value'), stage_cache.fetch_option())
 
@@ -112,9 +117,8 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.nothing import Nothing
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(False), ())
+            self.pipeline_context, self.stage, self._make_config(False), ())
         cache_manager.cache().set('6bbe865851bc74298ad8bbae0113745a618eb27f', 'some value', {})
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
@@ -122,9 +126,8 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.nothing import Nothing
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         cache_manager.cache().set('77777777777777777777777777777777777777777', 'some value', {})
         self.assertEqual(Nothing(), stage_cache.fetch_option())
 
@@ -177,9 +180,8 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.something import Something
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         stage_cache.submit('some value')
         result = cache_manager.cache().get_option(
             '6bbe865851bc74298ad8bbae0113745a618eb27f')
@@ -189,10 +191,9 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.something import Something
 
-        stage = self.MockStage('some uuid')
         self.pipeline_context.file_name = 'actually the job name'
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         stage_cache.submit('some value')
         result = cache_manager.cache(
         ).meta_data['6bbe865851bc74298ad8bbae0113745a618eb27f']
@@ -202,10 +203,9 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.something import Something
 
-        stage = self.MockStage('some uuid')
         self.pipeline_context.file_name = 'actually the job name, but a different one'
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(True), ())
+            self.pipeline_context, self.stage, self._make_config(True), ())
         stage_cache.submit('some value')
         result = cache_manager.cache(
         ).meta_data['6bbe865851bc74298ad8bbae0113745a618eb27f']
@@ -216,18 +216,16 @@ class TestStageCache(Spec):
         from foundations.global_state import cache_manager
         from foundations_contrib.nothing import Nothing
 
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(False), ())
+            self.pipeline_context, self.stage, self._make_config(False), ())
         stage_cache.submit('some value')
         result = cache_manager.cache().get_option(
             '6bbe865851bc74298ad8bbae0113745a618eb27f')
         self.assertEqual(Nothing(), result)
 
     def test_cache_sets_nothing_and_returns_the_value_when_set_but_cache_disabled(self):
-        stage = self.MockStage('some uuid')
         stage_cache = StageCache(
-            self.pipeline_context, stage, self._make_config(False), ())
+            self.pipeline_context, self.stage, self._make_config(False), ())
         result = stage_cache.submit('some value')
         self.assertEqual('some value', result)
 
