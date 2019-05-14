@@ -14,12 +14,6 @@ def load_archive(name):
 
 def get_pipeline_archiver_for_job(job_id):
     from foundations_internal.pipeline_archiver import PipelineArchiver
-    from foundations_contrib.global_state import redis_connection
-    from foundations_contrib.job_data_redis import JobDataRedis
-
-    if not JobDataRedis.is_job_completed(job_id, redis_connection):
-        raise KeyError('Model Package ID {} does not exist'.format(job_id))
 
     artifact_archive = load_archive('artifact_archive')
-
     return PipelineArchiver(job_id, None, None, None, None, None, artifact_archive, None)

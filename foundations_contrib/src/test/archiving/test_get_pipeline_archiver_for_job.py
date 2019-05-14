@@ -11,8 +11,6 @@ from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
 class TestGetPipelineArchiverForJob(Spec):
 
-    mock_is_job_completed = let_patch_mock('foundations_contrib.job_data_redis.JobDataRedis.is_job_completed')
-
     @let
     def job_id(self):
         return self.faker.sha1()
@@ -32,18 +30,4 @@ class TestGetPipelineArchiverForJob(Spec):
         return instance
 
     def test_get_pipeline_archive_for_job_returns_correct_pipeline_archiver_for_job_id(self):
-        self.mock_is_job_completed.return_value = True
         self.assertEqual(self.pipeline_archiver, get_pipeline_archiver_for_job(self.job_id))
-    
-    def test_get_pipeline_archive_for_job_raises_error_if_job_not_completed(self):
-        self.mock_is_job_completed.return_value = False
-        with self.assertRaises(KeyError) as context:
-            get_pipeline_archiver_for_job(self.job_id)
-        
-        self.assertTrue('Model Package ID {} does not exist'.format(self.job_id) in str(context.exception))
-
-    def test_get_pipeline_archive_for_job_calls_is_job_completed_with_correct_arguments(self):
-        from foundations_contrib.global_state import redis_connection
-        self.mock_is_job_completed.return_value = True
-        get_pipeline_archiver_for_job(self.job_id)
-        self.mock_is_job_completed.assert_called_with(self.job_id, redis_connection)
