@@ -19,7 +19,12 @@ class TestFoundationsModelServer(Spec):
     os_getpid_mock = let_patch_mock('os.getpid')
     os_path_exists = let_patch_mock('os.path.exists')
     flask_mock = let_patch_mock('flask.Flask')
-    argument_parser_class_mock = let_patch_mock('argparse.ArgumentParser')        
+    argument_parser_class_mock = let_patch_mock('argparse.ArgumentParser')    
+    config_manager_mock = let_patch_mock('foundations_contrib.global_state.config_manager')  
+
+    @let
+    def config_file_path(self):
+        return self.faker.file_path()  
 
     @let_now
     def mock_pid_file(self):
@@ -153,4 +158,10 @@ class TestFoundationsModelServer(Spec):
         self.parser_mock.parse_args.assert_called()
         rest_api_server_mock.run.assert_called_with(host='some_domain', port=1234)
 
-    
+    def test_foundations_model_server_passes_config_file_path_to_config_manager_add_simple_config_path_method(self):
+        from foundations_production.serving.foundations_model_server import main
+
+        self.parsed_arguments_mock.domain = 'some_domain:1234'
+        self.parsed_arguments_mock.config_file = self.config_file_path
+        main()
+        self.config_manager_mock.add_simple_config_path.assert_called_with(self.config_file_path)

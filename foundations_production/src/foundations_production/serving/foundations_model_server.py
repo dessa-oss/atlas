@@ -71,7 +71,12 @@ def _parse_domain(domain_string):
 
 
 def main():
+    from foundations_contrib.global_state import config_manager
+    
     parsed_arguments = _get_arguments()
+
+    config_manager.add_simple_config_path(parsed_arguments.config_file)
+    
     host, port = _parse_domain(parsed_arguments.domain)
     foundations_model_server = FoundationsModelServer()
     foundations_model_server.run(host=host, port=port)
