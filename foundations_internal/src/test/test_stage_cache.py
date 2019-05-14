@@ -10,6 +10,7 @@ from foundations_spec import *
 from mock import patch
 from foundations_internal.stage_cache import StageCache
 
+from foundations_contrib.something import Something
 
 class MockCache(object):
 
@@ -22,7 +23,6 @@ class MockCache(object):
         return self.cache.get(key, Nothing())
 
     def set(self, key, value, metadata):
-        from foundations_contrib.something import Something
         self.cache[key] = Something(value)
         self.meta_data[key] = metadata
         return value
@@ -113,7 +113,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_something_when_set(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
@@ -140,7 +139,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_something_when_set_with_different_uuid(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage_with_different_uuid, self._make_config(True), ())
@@ -149,7 +147,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_something_when_set_with_different_arguments(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         argument = self.MockLiveArgument('hello?')
         stage_cache = StageCache(
@@ -159,7 +156,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_something_when_set_with_multiple_arguments(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         argument = self.MockLiveArgument('hello?')
         argument_two = self.MockLiveArgument('hello again')
@@ -170,7 +166,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_something_when_set_with_different_value(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage_with_different_uuid, self._make_config(True), ())
@@ -181,7 +176,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_something_when_set(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
@@ -192,7 +186,6 @@ class TestStageCache(Spec):
 
     def test_cache_includes_meta_data_when_set(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         self.pipeline_context.file_name = 'actually the job name'
         stage_cache = StageCache(
@@ -204,7 +197,6 @@ class TestStageCache(Spec):
 
     def test_cache_includes_meta_data_when_set_different_meta_data(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         self.pipeline_context.file_name = 'actually the job name, but a different one'
         stage_cache = StageCache(
@@ -234,7 +226,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_something_when_set_with_different_uuid(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage_with_different_uuid, self._make_config(True), ())
@@ -246,7 +237,6 @@ class TestStageCache(Spec):
     @patch('sys.version_info', MockVersion(2))
     def test_cache_sets_something_when_set_with_different_version(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage_with_different_uuid, self._make_config(True), ())
@@ -257,7 +247,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_something_when_set_with_different_arguments(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         argument = self.MockLiveArgument('hello?')
         stage_cache = StageCache(
@@ -269,7 +258,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_something_when_set_with_multiple_arguments(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         argument = self.MockLiveArgument('hello?')
         argument_two = self.MockLiveArgument('hello again')
@@ -282,7 +270,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_something_when_set_with_different_value(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.something import Something
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage_with_different_uuid, self._make_config(True), ())
