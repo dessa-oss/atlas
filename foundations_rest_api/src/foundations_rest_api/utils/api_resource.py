@@ -9,7 +9,8 @@ from flask import request, make_response, Response
 from foundations_rest_api.v1.models.session import Session
 class APIResourceBuilder(object):
 
-    def __init__(self, klass, base_path):
+    def __init__(self, app_manager, klass, base_path):
+        self._app_manager = app_manager
         self._klass = klass
         self._base_path = base_path
         self._api_actions = {}
@@ -29,8 +30,7 @@ class APIResourceBuilder(object):
         self._add_resource(resource_class)
 
     def _add_resource(self, resource_class):
-        from foundations_rest_api.global_state import app_manager
-        app_manager.api().add_resource(resource_class, self._base_path)
+        self._app_manager.api().add_resource(resource_class, self._base_path)
 
     def _create_api_resource(self):
         from flask_restful import Resource
@@ -77,7 +77,9 @@ def api_resource(base_path):
     def _make_api_resource(klass):
         """Decorator for defining resource for controllers
         """
-        APIResourceBuilder(klass, base_path)._create_action()
+        from foundations_rest_api.global_state import app_manager
+
+        APIResourceBuilder(app_manager, klass, base_path)._create_action()
         return klass
 
     return _make_api_resource
