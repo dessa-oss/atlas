@@ -65,7 +65,7 @@ class RestAPIServer(object, metaclass=Singleton):
 
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(400)
-        
+
         flask.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_latest_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/model/<version>', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_one_model_package)

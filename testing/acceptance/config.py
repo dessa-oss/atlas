@@ -7,11 +7,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 # separates test runs
 from uuid import uuid4
-TEST_UUID = uuid4()
+from os import getcwd, environ
 
+if 'TEST_UUID' not in environ:
+    environ['TEST_UUID'] = str(uuid4())
+
+TEST_UUID = environ['TEST_UUID']
+ARCHIVE_ROOT = getcwd() + '/tmp/archives_{}/archive'.format(TEST_UUID)
 
 def _config():
-    from os import getcwd
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
     from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 
@@ -22,15 +26,14 @@ def _config():
     }
 
     # below is used to create archives for all different types
-    archive_root = getcwd() + '/tmp/archives_{}'.format(TEST_UUID)
 
     archive_implementation = {
         'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': [archive_root],
+        'constructor_arguments': [ARCHIVE_ROOT],
     }
     config_manager['archive_listing_implementation'] = {
         'archive_listing_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': [archive_root],
+        'constructor_arguments': [ARCHIVE_ROOT],
     }
     config_manager['deployment_implementation'] = {
         'deployment_type': LocalShellJobDeployment

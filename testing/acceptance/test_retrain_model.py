@@ -9,7 +9,6 @@ from foundations_spec import *
 
 import acceptance.fixtures.train_model_package as train_model_package
 
-@skip
 class TestRetrainModel(Spec):
     
     @let
@@ -20,6 +19,10 @@ class TestRetrainModel(Spec):
     def targets_file_name(self):
         return '/tmp/{}.pkl'.format(self.faker.uuid4())
 
+    @let
+    def model_server_config_path(self):
+        return 'model_server.config.yaml'
+
     @set_up
     def set_up(self):
         import subprocess
@@ -28,6 +31,7 @@ class TestRetrainModel(Spec):
         job_id = job.job_name()
 
         self._create_retraining_data_sets()
+        self._create_model_server_config_file()
 
         subprocess.run(['foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'])
 
@@ -39,6 +43,7 @@ class TestRetrainModel(Spec):
         subprocess.run(['foundations', 'serving', 'stop'])
         os.remove(self.features_file_name)
         os.remove(self.targets_file_name)
+        os.remove(self.model_server_config_path)
 
     def test_retrain_creates_new_model_package(self):
         import pandas
@@ -46,7 +51,7 @@ class TestRetrainModel(Spec):
 
         import requests
 
-        route_url = 'http://localhost:5000/v1/snail/model'
+        route_url = 'http://localhost:5000/v1/snail/model/'
         payload = {
             'targets_file': 'local://{}'.format(self.targets_file_name),
             'features_file': 'local://{}'.format(self.features_file_name)
@@ -110,3 +115,20 @@ class TestRetrainModel(Spec):
 
         with open(file_name, 'wb') as dataframe_file:
             pickle.dump(dataframe, dataframe_file)
+
+    def _create_model_server_config_file(self):
+        from acceptance.config import ARCHIVE_ROOT
+        import yaml
+        import os.path as path
+
+        config_dictionary = {
+            'job_deployment_env': 'local',
+            'results_config': {
+                'archive_end_point': 'local://' + path.dirname(ARCHIVE_ROOT)
+            },
+            'cache_config': {},
+            'obfuscate_foundations': False
+        }
+
+        with open(self.model_server_config_path, 'w') as config_file:
+            yaml.dump(config_dictionary, config_file)
