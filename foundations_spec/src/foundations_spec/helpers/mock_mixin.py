@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class MockMixin(object):
 
     def _mock_tear_down(self):
-        for mock in self._get_mocks():
+        for mock in reversed(self._get_mocks()):
             mock.stop()
 
     def patch(self, *args, **kwargs):

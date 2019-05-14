@@ -58,3 +58,15 @@ class TestMockMixin(unittest.TestCase):
         self._do_tear_down = False
         self.assertNotEqual(mock, os.environ)
         self.assertNotEqual(mock_2, sys.modules)
+
+    def test_unpatches_when_teared_down_multiple_patches_on_same_object(self):
+        import os
+
+        original_environment = os.environ
+
+        mock = self._mixin.patch('os.environ')
+        mock_2 = self._mixin.patch('os.environ')
+        self._mixin._mock_tear_down()
+
+        self._do_tear_down = False
+        self.assertEqual(original_environment, os.environ)
