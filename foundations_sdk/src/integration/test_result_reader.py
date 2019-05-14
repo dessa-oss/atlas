@@ -45,12 +45,10 @@ class TestResultReader(Spec):
         def method2():
             pass
 
-        pipeline = self.job_pipeline
-
-        stage = pipeline.stage(method)
+        stage = self.job_pipeline.stage(method)
         self._run_and_persist(stage)
 
-        stage2 = pipeline.stage(method2)
+        stage2 = self.job_pipeline.stage(method2)
         self._run_and_persist(stage2)
 
         job_information = self._create_reader_and_get_job_information(stage)
@@ -63,13 +61,12 @@ class TestResultReader(Spec):
         def method():
             pass
 
-        pipeline = self.job_pipeline
-        stage = pipeline.stage(method)
+        stage = self.job_pipeline.stage(method)
         self._run_and_persist(stage)
 
         job_information = self._create_reader_and_get_job_information(stage)
         parent_list = job_information['parent_ids'].iloc[0]
-        self.assertIn(pipeline.uuid(), parent_list)
+        self.assertIn(self.job_pipeline.uuid(), parent_list)
 
     def test_stores_stage_name(self):
         def method():
