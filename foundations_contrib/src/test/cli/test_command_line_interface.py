@@ -357,14 +357,14 @@ class TestCommandLineInterface(Spec):
         self.mock_proc_file.read.return_value = '**another_process.py**'
         self.open_mock.return_value = self.mock_proc_file
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000'], stdout=DEVNULL, stderr=DEVNULL)
+        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=model_server.config.yaml'], stdout=DEVNULL, stderr=DEVNULL)
                                               
     def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile(self):
         from subprocess import DEVNULL
 
         self.open_mock.side_effect = OSError()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000'], stdout=DEVNULL, stderr=DEVNULL)
+        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=model_server.config.yaml'], stdout=DEVNULL, stderr=DEVNULL)
 
     def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()

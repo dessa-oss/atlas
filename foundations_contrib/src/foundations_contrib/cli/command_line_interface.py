@@ -153,7 +153,12 @@ class CommandLineInterface(object):
         if self._is_model_server_running():
             print('Model server is already running.')
         else:
-            subprocess_command_to_run = ['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain={}'.format(self._arguments.domain)]
+            subprocess_command_to_run = [
+                'python', '-m', 'foundations_production.serving.foundations_model_server',
+                '--domain={}'.format(self._arguments.domain),
+                '--config-file=model_server.config.yaml'
+            ]
+
             subprocess.Popen(subprocess_command_to_run, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
             self._wait_for_model_server_to_start()
