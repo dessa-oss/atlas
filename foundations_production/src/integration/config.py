@@ -12,12 +12,16 @@ from uuid import uuid4
 
 TEST_UUID = uuid4()
 _local_temp_directory = getcwd() + '/tmp'
+integration_job_name = 'integration-test-job'
 
 def _configure():
     import foundations
     from foundations import LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
     from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-    from foundations_contrib.global_state import config_manager
+    from foundations_contrib.global_state import config_manager, current_foundations_context
+
+    # set up job name
+    current_foundations_context().pipeline_context().file_name = integration_job_name
 
     # below is used to ensure we get a different cache for every run
     config_manager['cache_implementation'] = {

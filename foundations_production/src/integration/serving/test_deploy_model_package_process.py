@@ -47,6 +47,7 @@ class TestDeployModelPackageProcess(Spec):
         titanic_model_package.validation_predictions.run_same_process()
         self.titanic_model_package_id = integration_job_name
 
+    @skip
     def test_can_load_and_predict_on_a_model_package(self):
         from foundations_production.serving.package_pool import PackagePool
         
@@ -56,6 +57,7 @@ class TestDeployModelPackageProcess(Spec):
 
         self.assertEqual(self.titanic_predictions, predictions)
 
+    @skip
     def test_can_load_and_predict_on_multiple_model_packages(self):
         from foundations_production.serving.package_pool import PackagePool
 
