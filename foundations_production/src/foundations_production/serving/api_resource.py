@@ -27,10 +27,15 @@ class APIResourceBuilder(object):
         if hasattr(self._klass, 'put'):
             self._api_actions['put'] = self._put_api_create()
 
+    def _load_head_route(self):
+        if hasattr(self._klass, 'head'):
+            self._api_actions['head'] = self._head_api_create()
+
     def _create_action(self):
         self._load_index_route()
         self._load_post_route()
         self._load_put_route()
+        self._load_head_route()
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
 
@@ -44,33 +49,34 @@ class APIResourceBuilder(object):
         class_name = '_%08x' % random.getrandbits(32)
         return type(class_name, (Resource,), self._api_actions)
 
-    def _get_api_index(self):
-        def _get(resource_self, **kwargs):
+    def _handle_request_without_body(self, method_name):
+        def request_handler(resource, **kwargs):
             instance = self._klass()
             instance.params = self._api_params(kwargs)
 
-            response = instance.index()
+            method = getattr(instance, method_name)
+            response = method()
             return response.as_json(), response.status()
-            
-        return _get
-    
-    def _post_api_create(self):
-        def _post(resource_self):
+        return request_handler
+
+    def _handle_request_with_body(self, method_name):
+        def request_handler(resource):
             instance = self._klass()
             instance.params = request.json
 
-            response = instance.post()
+            method = getattr(instance, method_name)
+            response = method()
             return response.as_json(), response.status()
-        return _post
+        return request_handler
+
+    def _get_api_index(self):            
+        return self._handle_request_without_body('index')
+
+    def _post_api_create(self):
+        return self._handle_request_with_body('post')
 
     def _put_api_create(self):
-        def _put(resource_self):
-            instance = self._klass()
-            instance.params = request.json
-
-            response = instance.put()
-            return response.as_json(), response.status()
-        return _put
+        return self._handle_request_with_body('put')
 
     def _api_params(self, kwargs):
         from flask import request

@@ -14,7 +14,7 @@ class Singleton(type):
             klass._instance = super(Singleton, klass).__call__(*args, **kwargs)
         return klass._instance
 
-class RestAPIServer(object, metaclass=Singleton):
+class RestAPIServer(object):
 
     def __init__(self):
         from flask import Flask
@@ -24,7 +24,6 @@ class RestAPIServer(object, metaclass=Singleton):
 
         self._package_pool = PackagePool(1000)
         self._flask = Flask(__name__)
-        CORS(self._flask, supports_credentials=False)
         self._api = Api(self._flask)
         self._register_routes(self._flask)
         self._model_package_mapping = {}
