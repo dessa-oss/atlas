@@ -5,12 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from foundations.config_manager import ConfigManager
 from mock import patch
-
-from foundations_spec.helpers import let, let_patch_mock
-from foundations_spec.helpers.spec import Spec
 
 class TestConfigManager(Spec):
 

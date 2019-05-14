@@ -18,7 +18,7 @@ def _find_windows_bash():
     import csv
     StringIO = _get_string_io()
 
-    sub_key = 'Directory\shell\git_shell\command'
+    sub_key = 'Directory\\shell\\git_shell\\command'
     value = winreg.QueryValue(winreg.HKEY_CLASSES_ROOT, sub_key)
     with StringIO(value) as file:
         reader = csv.reader(file, delimiter=' ', quotechar='"')

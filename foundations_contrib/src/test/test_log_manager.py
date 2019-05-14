@@ -78,7 +78,7 @@ class TestLogManager(unittest.TestCase):
         log_manager = LogManager(self.config_manager)
         log_manager.get_logger('foundations.config_manager')
         root_logger = logging.getLogger()
-        self.assertEquals(1, len(root_logger.handlers))
+        self.assertEqual(1, len(root_logger.handlers))
 
     def test_log_handler_return_format(self):
         import logging
@@ -88,7 +88,7 @@ class TestLogManager(unittest.TestCase):
         root_logger = logging.getLogger()
         log_handler = root_logger.handlers[0]
         formatter = log_handler.formatter
-        self.assertEquals('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
+        self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
 
     def test_log_handler_return_stdout(self):
         import logging
@@ -98,7 +98,7 @@ class TestLogManager(unittest.TestCase):
         log_manager.get_logger('foundations.config_manager')
         root_logger = logging.getLogger()
         log_handler = root_logger.handlers[0]
-        self.assertEquals(stdout, log_handler.stream)
+        self.assertEqual(stdout, log_handler.stream)
 
     def test_logger_return_cached_logger(self):
         import logging

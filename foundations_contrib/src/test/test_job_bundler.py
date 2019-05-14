@@ -223,6 +223,7 @@ class TestJobBundler(Spec):
     @patch('foundations_contrib.module_obfuscation_controller.ModuleObfuscationController')
     def test_bundle_job_adds_script_environment(self, mock_module_obfuscation_controller):
         import foundations_contrib
+        import foundations_contrib.job_bundling.script_environment
 
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
 
