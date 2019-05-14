@@ -11,15 +11,12 @@ import shutil
 from uuid import uuid4
 
 TEST_UUID = uuid4()
-
-integration_job_name = 'integration-job'
 _local_temp_directory = getcwd() + '/tmp'
 
 def _configure():
     import foundations
     from foundations import LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
     from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-    from foundations_contrib.global_state import foundations_context
     from foundations_contrib.global_state import config_manager
 
     # below is used to ensure we get a different cache for every run
@@ -50,8 +47,6 @@ def _configure():
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
-
-    foundations_context.pipeline_context().file_name = integration_job_name
 
 shutil.rmtree(_local_temp_directory, ignore_errors=True)
 _configure()

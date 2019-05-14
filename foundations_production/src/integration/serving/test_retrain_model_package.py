@@ -20,10 +20,9 @@ class TestRetrainModelPackage(Spec):
 
     @set_up
     def set_up(self):
-        from integration.config import integration_job_name
-
-        job = validation_predictions.run_same_process()
-        self._job_id = integration_job_name
+        job = validation_predictions.run()
+        job.wait_for_deployment_to_complete()
+        self._job_id = job.job_name()
 
         self._create_retraining_data_sets()
 
