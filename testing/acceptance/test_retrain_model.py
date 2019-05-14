@@ -25,7 +25,11 @@ class TestRetrainModel(Spec):
 
     @set_up
     def set_up(self):
+        import os
         import subprocess
+
+        os.environ['MODEL_SERVER_CONFIG_PATH'] = self.model_server_config_path
+
         job = train_model_package.validation_predictions.run()
         job.wait_for_deployment_to_complete()
         job_id = job.job_name()
