@@ -11,6 +11,7 @@ from mock import patch
 from foundations_internal.stage_cache import StageCache
 
 from foundations_contrib.something import Something
+from foundations_contrib.nothing import Nothing
 
 class MockCache(object):
 
@@ -19,7 +20,6 @@ class MockCache(object):
         self.meta_data = {}
 
     def get_option(self, key):
-        from foundations_contrib.nothing import Nothing
         return self.cache.get(key, Nothing())
 
     def set(self, key, value, metadata):
@@ -105,7 +105,6 @@ class TestStageCache(Spec):
             'fa7d3bb37675cc2388eb118a2b1c0d893d5e586a', stage_cache.cache_name())
 
     def test_cache_returns_nothing(self):
-        from foundations_contrib.nothing import Nothing
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
@@ -121,7 +120,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_nothing_when_set_but_cache_disabled(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.nothing import Nothing
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(False), ())
@@ -130,7 +128,6 @@ class TestStageCache(Spec):
 
     def test_cache_returns_nothing_when_set_different_value(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.nothing import Nothing
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(True), ())
@@ -209,7 +206,6 @@ class TestStageCache(Spec):
 
     def test_cache_sets_nothing_when_set_but_cache_disabled(self):
         from foundations.global_state import cache_manager
-        from foundations_contrib.nothing import Nothing
 
         stage_cache = StageCache(
             self.pipeline_context, self.stage, self._make_config(False), ())
