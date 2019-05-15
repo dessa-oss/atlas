@@ -11,22 +11,24 @@ from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
 class TestGetPipelineArchiverForJob(Spec):
 
+    mock_load_archive = let_patch_mock('foundations_contrib.archiving.load_archive', ConditionalReturn())
+    artifact_archive = let_mock()
+    job_source_archive = let_mock()
+
     @let
     def job_id(self):
         return self.faker.sha1()
 
-    @let_now
-    def artifact_archive(self):
-        archive = Mock()
-        load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
-        load_archive.return_when(archive, 'artifact_archive')
-        return archive
+    @set_up
+    def set_up(self):
+        self.mock_load_archive.return_when(self.artifact_archive, 'artifact_archive')
+        self.mock_load_archive.return_when(self.job_source_archive, 'job_source_archive')
 
     @let_now
     def pipeline_archiver(self):
         instance = Mock()
         klass = self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
-        klass.return_when(instance, self.job_id, None, None, None, None, None, self.artifact_archive, None)
+        klass.return_when(instance, self.job_id, None, None, None, None, self.job_source_archive, self.artifact_archive, None)
         return instance
 
     def test_get_pipeline_archive_for_job_returns_correct_pipeline_archiver_for_job_id(self):
