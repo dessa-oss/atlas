@@ -6,7 +6,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def run_model_package(model_package_id, communicator):
+    import os
+    from foundations_production.serving import create_job_workspace
+
     predictor = _create_predictor_for(model_package_id, communicator)
+    create_job_workspace(model_package_id)
+    os.chdir('/tmp/foundations_workspaces/{}'.format(model_package_id))
+
     if not predictor:
         return
 
