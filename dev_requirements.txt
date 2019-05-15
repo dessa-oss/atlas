@@ -12,3 +12,5 @@ flask==1.0.2
 flask-restful==0.3.6
 Flask-Cors==3.0.6
 Werkzeug==0.14.1
+foundations_scheduler_core
+foundations_scheduler_sdk
