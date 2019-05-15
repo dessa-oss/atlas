@@ -58,7 +58,10 @@ class AppManagerPlaceHolder(object):
         return self._queue
 
 def register_app_manager(app_manager):
-    for resource_class, base_path in AppManagerPlaceHolder().get_queue():
+    queue = AppManagerPlaceHolder().get_queue()
+    while len(queue) > 0:
+        resource_class, base_path = queue.pop(0)
+    #for resource_class, base_path in AppManagerPlaceHolder().get_queue():
         app_manager.api().add_resource(resource_class, base_path)
 
 def get_app_manager():

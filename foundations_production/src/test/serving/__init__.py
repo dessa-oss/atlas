@@ -16,4 +16,5 @@ from test.serving.test_create_retraining_job import TestCreateRetrainingJob
 from test.serving.test_communicator import TestCommunicator
 from test.serving.test_rest_api_server import TestRestAPIServer
 from test.serving.test_api_resource import TestAPIResource
+from test.serving.test_rest_api_server_provider import TestRestAPIServerProvider
 
