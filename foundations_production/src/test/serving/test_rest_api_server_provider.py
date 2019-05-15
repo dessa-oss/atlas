@@ -48,7 +48,7 @@ class TestRestAPIServerProvider(Spec):
         mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
 
     
-    def test_add_queue_not_called_if_api_server_is_running(self):
+    def test_placeholder_not_used_if_api_server_is_running(self):
         mock_rest_api_server_instance = Mock()
         mock_resource = Mock()
         self.mock_rest_api_server_class.return_value = mock_rest_api_server_instance
