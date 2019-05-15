@@ -45,11 +45,8 @@ class MiddlewareChain(object):
             return callback(args, kwargs)
 
     def _execute_middleware(self, current_middleware, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback):
-        self._log().debug('Calling middleware %s', repr(current_middleware))
         result = current_middleware.call(
             upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, next_callback)
-        self._log().debug('Middleware %s returned %s',
-                          repr(current_middleware), repr(result))
         return result
 
     def _log(self):

@@ -22,7 +22,6 @@ class Stage(object):
     def run(self, upstream_result_callback, filler_builder, **filler_kwargs):
         def execute(args, kwargs):
             result = self.function(*args, **kwargs)
-            self._log().debug('Stage result: %s', repr(result))
             return result
         return self._middleware.call(upstream_result_callback, filler_builder, filler_kwargs, self.args, self.kwargs, execute)
 
