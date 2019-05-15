@@ -13,6 +13,8 @@ from foundations_production.serving.package_runner import run_model_package
 
 class TestPackagePool(Spec):
 
+    mock_rmtree = let_patch_mock('shutil.rmtree')
+
     @let
     def model_id(self):
         return self.faker.uuid4()
@@ -36,6 +38,8 @@ class TestPackagePool(Spec):
 
     @set_up
     def set_up(self):
+        self._model_1_process_terminated = False
+        
         self.model_1_new_communicator = self._create_and_set_success_response_on_communicator()
         self.mock_process = self.patch('foundations_production.serving.restartable_process.RestartableProcess', ConditionalReturn())
         self.model_1_process, self.model_1_communicator = self._create_new_model_process(self.model_id)
@@ -118,6 +122,29 @@ class TestPackagePool(Spec):
         package_pool.get_communicator(self.model_id)
 
         self.model_2_process.terminate.assert_called_once()
+
+    def test_model_package_workspace_removed_when_limit_exceeded(self):
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
+        package_pool.get_communicator(self.model_id)
+
+        self.mock_rmtree.assert_called_with('/tmp/foundations_workspaces/{}'.format(self.model_2_id))
+
+    def test_model_package_workspace_removed_after_process_terminated(self):
+        def _set_model_1_process_terminated():
+            self._model_1_process_terminated = True
+
+        def _check_model_1_process_terminated(*args):
+            if not self._model_1_process_terminated:
+                raise AssertionError('workspace should be deleted after process terminated, not before')
+
+        self.model_1_process.terminate.side_effect = _set_model_1_process_terminated
+        self.mock_rmtree.side_effect = _check_model_1_process_terminated
+
+        package_pool = PackagePool(active_package_limit=1)
+        package_pool.add_package(self.model_id)
+        package_pool.add_package(self.model_2_id)
 
     def test_get_communicator_updates_stored_communicator_when_process_restarted(self):
         package_pool = PackagePool(active_package_limit=1)
