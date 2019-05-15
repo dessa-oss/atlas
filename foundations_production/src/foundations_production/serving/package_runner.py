@@ -12,10 +12,18 @@ def run_model_package(model_package_id, communicator):
 
     workspace_path = '/tmp/foundations_workspaces/{}'.format(model_package_id)
 
-    create_job_workspace(model_package_id)
-    os.chdir(workspace_path)
-    sys.path.append(workspace_path)
-    predictor = _create_predictor_for(model_package_id, communicator)
+    try:
+        create_job_workspace(model_package_id)
+        os.chdir(workspace_path)
+        sys.path.append(workspace_path)
+        predictor = _create_predictor_for(model_package_id, communicator)
+    except FileNotFoundError:
+        key_error = KeyError('Model Package ID {} does not exist'.format(model_package_id))
+        _send_exception(key_error, communicator)
+        predictor = None
+    except Exception as e:
+        _send_exception(e, communicator)
+        predictor = None
 
     if not predictor:
         return
@@ -35,12 +43,8 @@ def _send_exception(exception, communicator):
 def _create_predictor_for(model_package_id, communicator):
     from foundations_production.serving.inference.predictor import Predictor
     
-    try:
-        predictor = Predictor.predictor_for(model_package_id)
-        communicator.set_response('SUCCESS: predictor created')
-    except Exception as e:
-        _send_exception(e, communicator)
-        predictor =  None
+    predictor = Predictor.predictor_for(model_package_id)
+    communicator.set_response('SUCCESS: predictor created')
 
     return predictor
 

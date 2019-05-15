@@ -147,6 +147,28 @@ class TestPackageRunner(Spec):
             'value': 'Different message'
         }
         self.assertEqual(expected_return, self.communicator.get_response())
+    
+    def test_run_model_package_returns_error_when_create_job_workspace_for_throws_value_error(self):
+        self.mock_create_job_workspace.side_effect = ValueError('Different message')
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        expected_return = {
+            'name': 'ValueError',
+            'value': 'Different message'
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
+
+    def test_run_model_package_returns_key_error_when_create_job_workspace_for_throws_file_not_found_error(self):
+        self.mock_create_job_workspace.side_effect = FileNotFoundError('Different message')
+
+        run_model_package(self.model_package_id, self.communicator)
+
+        expected_return = {
+            'name': 'KeyError',
+            'value': "'Model Package ID {} does not exist'".format(self.model_package_id)
+        }
+        self.assertEqual(expected_return, self.communicator.get_response())
 
     def test_run_model_package_returns_error_when_predictor_for_throws_value_error(self):
         self.communicator.set_action_request('STOP')
