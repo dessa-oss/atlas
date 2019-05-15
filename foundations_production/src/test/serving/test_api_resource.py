@@ -172,6 +172,28 @@ class TestAPIResource(Spec):
             response = client.put(self.uri_path, json={})
             self.assertEqual(response.status_code, fake_status_code)
 
+    def test_post_returns_path_param(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('post', _callback)
+
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params/that/uses/post/')(mock_klass)
+        with self._test_client() as client:
+            response = client.post('/path/to/resource/with/value/params/that/uses/post/', json={'another': 'value'})
+            self.assertEqual(response.json, {'project_name': 'value', 'another': 'value'})
+
+    def test_put_returns_path_param(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('put', _callback)
+
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params/that/uses/put/')(mock_klass)
+        with self._test_client() as client:
+            response = client.put('/path/to/resource/with/value/params/that/uses/put/', json={'another': 'value'})
+            self.assertEqual(response.json, {'project_name': 'value', 'another': 'value'})
+
     def _empty_callback(self, mock_instance):
         return ''
 
@@ -179,16 +201,18 @@ class TestAPIResource(Spec):
         from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.rest_api_server_provider import register_rest_api_server, get_rest_api_server
 
-        register_rest_api_server(RestAPIServer())
+        RestAPIServer()
         rest_api_server = get_rest_api_server()
         return rest_api_server.flask.test_client()
 
-    def _mock_resource(self, method, callback, status=200):
+    @staticmethod
+    def _mock_resource(method, callback, status=200):
         from foundations_rest_api.lazy_result import LazyResult
 
         mock_klass = Mock()
         mock_instance = Mock()
         mock_klass.return_value = mock_instance
         result = LazyResult(lambda: callback(mock_instance))
-        getattr(mock_instance, method).side_effect = lambda: Response('Mock', result, status=status)
+        method_mock = getattr(mock_instance, method)
+        method_mock.return_value = Response('Mock', result, status=status)
         return mock_klass

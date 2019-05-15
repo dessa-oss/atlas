@@ -44,34 +44,27 @@ class APIResourceBuilder(object):
         class_name = '_%08x' % random.getrandbits(32)
         return type(class_name, (Resource,), self._api_actions)
 
-    def _handle_request_without_body(self, method_name):
+    def _get_request_handler(self, method_name):
+
         def request_handler(resource, **kwargs):
             instance = self._klass()
             instance.params = self._api_params(kwargs)
-
+            if hasattr(instance, 'json'):
+                instance.params.update(request.json)
             method = getattr(instance, method_name)
             response = method()
             return response.as_json(), response.status()
+
         return request_handler
 
-    def _handle_request_with_body(self, method_name):
-        def request_handler(resource):
-            instance = self._klass()
-            instance.params = request.json
-
-            method = getattr(instance, method_name)
-            response = method()
-            return response.as_json(), response.status()
-        return request_handler
-
-    def _get_api_index(self):            
-        return self._handle_request_without_body('index')
+    def _get_api_index(self):
+        return self._get_request_handler('index')
 
     def _post_api_create(self):
-        return self._handle_request_with_body('post')
+        return self._get_request_handler('post')
 
     def _put_api_create(self):
-        return self._handle_request_with_body('put')
+        return self._get_request_handler('put')
 
     def _api_params(self, kwargs):
         from flask import request
@@ -90,7 +83,6 @@ def api_resource(base_path):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
         rest_api_server = get_rest_api_server()
-
         APIResourceBuilder(rest_api_server, klass, base_path)._create_action()
         return klass
 
