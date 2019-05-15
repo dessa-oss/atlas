@@ -48,9 +48,11 @@ class TestSchedulerJobs(Spec):
         self.deployment.deploy()
         self._wait_for_job_to_complete()
 
+    @skip('CI Kubernetes Not Ready')
     def test_runs_job(self):
         self.assertEqual('completed', self.deployment_wrapper.get_job_status())
 
+    @skip('CI Kubernetes Not Ready')
     def test_creates_log(self):
         self.assertIn('Finished stage', self.deployment_wrapper.get_job_logs())
     
