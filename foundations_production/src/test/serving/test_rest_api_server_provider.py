@@ -10,11 +10,15 @@ from foundations_production.serving.rest_api_server_provider import get_rest_api
 
 class TestRestAPIServerProvider(Spec):
 
-    mock_rest_api_server_class = let_patch_mock('foundations_production.serving.rest_api_server.RestAPIServer')
+    @set_up
+    def set_up(self):
+        from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
+        _RestAPIServerProvider.reset()
 
     @tear_down
     def tear_down(self):
-        register_rest_api_server(None)
+        from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
+        _RestAPIServerProvider.reset()
 
     @let
     def fake_path(self):
@@ -28,7 +32,6 @@ class TestRestAPIServerProvider(Spec):
 
     def test_get_rest_api_server_returns_the_server_if_server_is_running(self):
         mock_rest_api_server_instance = Mock()
-        self.mock_rest_api_server_class.return_value = mock_rest_api_server_instance
         
         register_rest_api_server(mock_rest_api_server_instance)
 
@@ -38,7 +41,6 @@ class TestRestAPIServerProvider(Spec):
     def test_if_add_resource_called_and_server_not_running_route_and_resource_are_added_to_queue(self):
         mock_rest_api_server_instance = Mock() 
         mock_resource = Mock()
-        self.mock_rest_api_server_class.return_value = mock_rest_api_server_instance
 
         rest_api_server_provider = get_rest_api_server()
         rest_api_server_provider.api().add_resource(mock_resource, self.fake_path)
@@ -51,7 +53,6 @@ class TestRestAPIServerProvider(Spec):
     def test_placeholder_not_used_if_api_server_is_running(self):
         mock_rest_api_server_instance = Mock()
         mock_resource = Mock()
-        self.mock_rest_api_server_class.return_value = mock_rest_api_server_instance
         
         rest_api_server_like_object = get_rest_api_server()
         register_rest_api_server(mock_rest_api_server_instance)
@@ -59,3 +60,14 @@ class TestRestAPIServerProvider(Spec):
         rest_api_server_like_object.api().add_resource(mock_resource, self.fake_path)
 
         mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
+
+    def test_provider_checks_if_instance_exists(self):
+        mock_rest_api_server_instance_1 = Mock() 
+        mock_rest_api_server_instance_2 = Mock() 
+
+        register_rest_api_server(mock_rest_api_server_instance_1)
+        register_rest_api_server(mock_rest_api_server_instance_2)
+
+        expected_rest_api_server_instance = get_rest_api_server()
+
+        self.assertEqual(expected_rest_api_server_instance, mock_rest_api_server_instance_1)

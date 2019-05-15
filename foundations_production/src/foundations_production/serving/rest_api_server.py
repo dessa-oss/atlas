@@ -10,7 +10,7 @@ class RestAPIServer(object):
     def __init__(self):
         from flask import Flask
         from flask_restful import Api
-        from foundations_production.serving import register_app_manager
+        from foundations_production.serving.rest_api_server_provider import register_rest_api_server
         from foundations_production.serving.package_pool import PackagePool
 
         self._package_pool = PackagePool(1000)
@@ -18,7 +18,7 @@ class RestAPIServer(object):
         self._api = Api(self._flask)
         self._register_routes(self._flask)
         self._model_package_mapping = {}
-        register_app_manager(self)
+        register_rest_api_server(self)
 
     def exceptions_as_http_error_codes(method):
         from functools import wraps

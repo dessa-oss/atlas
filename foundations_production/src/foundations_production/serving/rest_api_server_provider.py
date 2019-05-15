@@ -8,7 +8,6 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 class _RestAPIServerProvider(object):
 
     _rest_api_server = None
-
     _queue = []
 
     class _APIPlaceHolder(object):
@@ -23,23 +22,30 @@ class _RestAPIServerProvider(object):
         return self._APIPlaceHolder()
 
     @classmethod
+    def reset(klass):
+        klass._rest_api_server = None
+        klass._queue = []
+
+    @classmethod
     def store_rest_api_server(klass, rest_api_server):
-        klass._rest_api_server = rest_api_server
-        if klass._rest_api_server is not None:
+        if klass._rest_api_server is None:
+            klass._rest_api_server = rest_api_server
             klass._update_rest_api_server()
     
+    @classmethod
+    def get_rest_api_server(klass):
+        return klass._rest_api_server
+
     @classmethod
     def _update_rest_api_server(klass):
         while len(klass._queue) > 0:
             resource_class, base_path = klass._queue.pop(0)
             klass._rest_api_server.api().add_resource(resource_class, base_path)
 
-    @classmethod
-    def get_rest_api_server(klass):
-        return klass._rest_api_server
 
 def register_rest_api_server(rest_api_server):
     _RestAPIServerProvider.store_rest_api_server(rest_api_server)
+
 
 def get_rest_api_server():
     rest_api_server_reference = _RestAPIServerProvider.get_rest_api_server()

@@ -87,11 +87,11 @@ def api_resource(base_path):
     def _make_api_resource(klass):
         """Decorator for defining resource for controllers
         """
-        from foundations_production.serving import get_app_manager
+        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
-        app_manager = get_app_manager()
+        rest_api_server = get_rest_api_server()
 
-        APIResourceBuilder(app_manager, klass, base_path)._create_action()
+        APIResourceBuilder(rest_api_server, klass, base_path)._create_action()
         return klass
 
     return _make_api_resource

@@ -176,10 +176,12 @@ class TestAPIResource(Spec):
         return ''
 
     def _test_client(self):
-        from foundations_production.serving.rest_api_server import RestAPIServer 
+        from foundations_production.serving.rest_api_server import RestAPIServer
+        from foundations_production.serving.rest_api_server_provider import register_rest_api_server, get_rest_api_server
 
-        app_manager = RestAPIServer()
-        return app_manager.flask.test_client()
+        register_rest_api_server(RestAPIServer())
+        rest_api_server = get_rest_api_server()
+        return rest_api_server.flask.test_client()
 
     def _mock_resource(self, method, callback, status=200):
         from foundations_rest_api.lazy_result import LazyResult
