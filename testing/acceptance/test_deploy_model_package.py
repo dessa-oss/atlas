@@ -16,13 +16,13 @@ class TestDeployModelPackage(Spec):
     def set_up(self):
         import subprocess
 
-        subprocess.run(['foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(self.job_id), '--slug=snail'])
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(self.job_id), '--slug=snail'])
 
     @tear_down
     def tear_down(self):
         import subprocess
 
-        subprocess.run(['foundations', 'serving', 'stop'])
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
 
     def test_deploy_model_package_via_cli(self):
         base_url = 'http://localhost:5000/v1/snail'

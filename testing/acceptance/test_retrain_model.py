@@ -37,14 +37,14 @@ class TestRetrainModel(Spec):
         self._create_retraining_data_sets()
         self._create_model_server_config_file()
 
-        subprocess.run(['foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'])
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'])
 
     @tear_down
     def tear_down(self):
         import os
         import subprocess
 
-        subprocess.run(['foundations', 'serving', 'stop'])
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
         os.remove(self.features_file_name)
         os.remove(self.targets_file_name)
         os.remove(self.model_server_config_path)

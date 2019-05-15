@@ -19,7 +19,7 @@ class TestRunModelPredictions(Spec):
         model.wait_for_deployment_to_complete()
         model_id = model.job_name()
         
-        subprocess.run(['foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'])
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'])
 
     @let
     def input_data(self):
