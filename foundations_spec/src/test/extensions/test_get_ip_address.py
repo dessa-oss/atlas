@@ -39,3 +39,7 @@ class TestGetIPAddress(Spec):
     def test_get_network_address_returns_correct_ip_address(self):
         from foundations_spec.extensions import get_network_address
         self.assertEqual(self.fake_ip_address, get_network_address(self.fake_adapter_name))
+
+    def test_get_network_address_returns_none_when_adapter_missing(self):
+        from foundations_spec.extensions import get_network_address
+        self.assertIsNone(get_network_address(self.faker.name()))

@@ -26,6 +26,7 @@ def get_network_adapter(name):
 def get_network_address(adapter_name):
     network_adapter = get_network_adapter(adapter_name)
     
-    for ip in network_adapter.ips:
-        if isinstance(ip.ip, str):
-            return ip.ip
+    if network_adapter is not None:
+        for ip in network_adapter.ips:
+            if isinstance(ip.ip, str):
+                return ip.ip
