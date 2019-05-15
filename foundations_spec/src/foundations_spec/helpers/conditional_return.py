@@ -26,9 +26,9 @@ class ConditionalReturn(Mock):
             error_message_correct_value += '\n ({}, {})'.format(return_args, return_kwargs)
         raise AssertionError(error_message_called_with + error_message_correct_value)
 
-    def return_when(self, value, *args, **kwargs):
+    def return_when(self, value_to_be_returned_by_condition, *args, **kwargs):
         key = (args, kwargs)
-        self._returns.append((key, value))
+        self._returns.append((key, value_to_be_returned_by_condition))
 
     def clear(self):
         self._returns = []

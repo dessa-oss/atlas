@@ -63,6 +63,14 @@ Supported arguments:
         self.conditional_return(fake_param)
         self.conditional_return.assert_called_with(fake_param)
 
+    def test_supports_specifying_value_param(self):
+        fake_param = self.faker.sentence()
+        
+        mock = Mock()
+        self.conditional_return.return_when(mock, value=fake_param)
+        self.conditional_return(value=fake_param)
+        self.conditional_return.assert_called_with(value=fake_param)
+
     def test_clear_params(self):
         fake_param = self.faker.sentence()
          
