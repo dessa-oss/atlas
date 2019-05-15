@@ -6,7 +6,7 @@ node {
         }
         container("python3") {
             stage('Python3 Foundations Install Test Requirements') {
-                sh "python -m pip install -r test_requirements.txt"
+                sh "./ci_install_requirements.sh"
                 sh "./build_dist.sh"
                 sh "./upload_modules_to_artifactory.sh"
             }
