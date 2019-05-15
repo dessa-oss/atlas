@@ -14,7 +14,10 @@ class _RestAPIServerProvider(object):
     class _APIPlaceHolder(object):
 
         def add_resource(self, resource_class, base_path):
-            _RestAPIServerProvider._queue.append((resource_class, base_path))
+            if _RestAPIServerProvider._rest_api_server is None:
+                _RestAPIServerProvider._queue.append((resource_class, base_path))
+            else:
+                _RestAPIServerProvider._rest_api_server.api().add_resource(resource_class, base_path)
 
     def api(self):
         return self._APIPlaceHolder()
@@ -22,7 +25,8 @@ class _RestAPIServerProvider(object):
     @classmethod
     def store_rest_api_server(klass, rest_api_server):
         klass._rest_api_server = rest_api_server
-        klass._update_rest_api_server()
+        if klass._rest_api_server is not None:
+            klass._update_rest_api_server()
     
     @classmethod
     def _update_rest_api_server(klass):

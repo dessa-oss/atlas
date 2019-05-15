@@ -20,7 +20,7 @@ class TestRestAPIServerProvider(Spec):
     def fake_path(self):
         return self.faker.uri_path()
 
-    def test_get_rest_api_server_returns_placeholder_as_detault_if_server_is_not_running(self):
+    def test_get_rest_api_server_returns_placeholder_as_default_if_server_is_not_running(self):
         from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
 
         rest_api_server_like_object = get_rest_api_server()
@@ -44,5 +44,18 @@ class TestRestAPIServerProvider(Spec):
         rest_api_server_provider.api().add_resource(mock_resource, self.fake_path)
 
         register_rest_api_server(mock_rest_api_server_instance)
+
+        mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
+
+    
+    def test_add_queue_not_called_if_api_server_is_running(self):
+        mock_rest_api_server_instance = Mock()
+        mock_resource = Mock()
+        self.mock_rest_api_server_class.return_value = mock_rest_api_server_instance
+        
+        rest_api_server_like_object = get_rest_api_server()
+        register_rest_api_server(mock_rest_api_server_instance)
+
+        rest_api_server_like_object.api().add_resource(mock_resource, self.fake_path)
 
         mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
