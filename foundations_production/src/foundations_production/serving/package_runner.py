@@ -7,10 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def run_model_package(model_package_id, communicator):
     import os
+    import sys
     from foundations_production.serving import create_job_workspace
 
+    workspace_path = '/tmp/foundations_workspaces/{}'.format(model_package_id)
+
     create_job_workspace(model_package_id)
-    os.chdir('/tmp/foundations_workspaces/{}'.format(model_package_id))
+    os.chdir(workspace_path)
+    sys.path.append(workspace_path)
     predictor = _create_predictor_for(model_package_id, communicator)
 
     if not predictor:

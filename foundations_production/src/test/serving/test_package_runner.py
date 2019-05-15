@@ -35,6 +35,10 @@ class TestPackageRunner(Spec):
         from foundations_production.serving.communicator import Communicator
         return Communicator()
     
+    @let
+    def workspace_directory(self):
+        return '/tmp/foundations_workspaces/{}'.format(self.model_package_id)
+
     mock_create_job_workspace = let_patch_mock('foundations_production.serving.create_job_workspace')
     mock_chdir = let_patch_mock('os.chdir')
     mock_predictor = let_mock()
@@ -161,7 +165,15 @@ class TestPackageRunner(Spec):
         self.communicator.set_action_request('STOP')
         run_model_package(self.model_package_id, self.communicator)
 
-        self.mock_chdir.assert_called_with('/tmp/foundations_workspaces/{}'.format(self.model_package_id))
+        self.mock_chdir.assert_called_with(self.workspace_directory)
+
+    def test_run_model_package_adds_workspace_directory_to_python_path(self):
+        mock_sys_path = self.patch('sys.path')
+
+        self.communicator.set_action_request('STOP')
+        run_model_package(self.model_package_id, self.communicator)
+
+        mock_sys_path.append.assert_called_with(self.workspace_directory)
     
     def _set_create_job_workspace_called(self, *args):
         self._create_job_workspace_called = True
