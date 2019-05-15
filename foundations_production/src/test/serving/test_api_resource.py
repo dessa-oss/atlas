@@ -172,24 +172,6 @@ class TestAPIResource(Spec):
             response = client.put(self.uri_path, json={})
             self.assertEqual(response.status_code, fake_status_code)
 
-    # def test_head_returns_path_param(self):
-    #     klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
-    #     with self._test_client() as client:
-    #         response = client.head('/path/to/resource/with/value/params')
-    #         self.assertEqual(response.json, {'project_name': 'value'})
-
-    # def test_head_returns_path_with_query_params(self):
-    #     klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndex)
-    #     with self._test_client() as client:
-    #         response = client.head(self.uri_path + '?hello=world')
-    #         self.assertEqual(response.json, {'hello': 'world'})
-
-    # def test_head_returns_path_with_query_list_params(self):
-    #     klass = api_resource('/path/to/resource/with/query_list/params')(APIResourceMocks.ParamsMockWithIndex)
-    #     with self._test_client() as client:
-    #         response = client.head('/path/to/resource/with/query_list/params?hello=world&hello=lou')
-    #         self.assertEqual(response.json, {'hello': ['world', 'lou']})
-
     def _empty_callback(self, mock_instance):
         return ''
 
