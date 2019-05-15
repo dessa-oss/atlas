@@ -10,6 +10,8 @@ def run_model_package(model_package_id, communicator):
     import sys
     from foundations_production.serving import create_job_workspace
 
+    _set_job_id()
+
     workspace_path = '/tmp/foundations_workspaces/{}'.format(model_package_id)
 
     try:
@@ -32,6 +34,10 @@ def run_model_package(model_package_id, communicator):
         json_input_data = communicator.get_action_request()
         if not _successful_run_of_json_predictions_for(model_package_id, communicator, predictor, json_input_data):
             return 
+
+def _set_job_id():
+    from foundations_contrib.global_state import current_foundations_context
+    current_foundations_context().pipeline_context().file_name = 'package_running'
 
 def _send_exception(exception, communicator):
     expected_return = {

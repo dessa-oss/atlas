@@ -43,6 +43,9 @@ class TestPackageRunner(Spec):
     mock_chdir = let_patch_mock('os.chdir')
     mock_predictor = let_mock()
 
+    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    mock_pipeline_context = let_mock()
+
     @set_up
     def set_up(self):
         self._create_job_workspace_called = False
@@ -56,6 +59,8 @@ class TestPackageRunner(Spec):
 
         self.mock_create_job_workspace.side_effect = self._set_create_job_workspace_called
         self.mock_chdir.side_effect = self._check_create_job_workspace_called_and_set_chdir_called
+
+        self.mock_foundations_context.pipeline_context.return_value = self.mock_pipeline_context
 
     def test_run_model_package_loads_model_package(self):
         self.communicator.set_action_request(self.fake_data)
@@ -197,6 +202,12 @@ class TestPackageRunner(Spec):
 
         mock_sys_path.append.assert_called_with(self.workspace_directory)
     
+    def test_run_model_package_sets_job_id_to_dummy_value(self):
+        self.communicator.set_action_request('STOP')
+        run_model_package(self.model_package_id, self.communicator)
+
+        self.assertEqual('package_running', self.mock_pipeline_context.file_name)
+
     def _set_create_job_workspace_called(self, *args):
         self._create_job_workspace_called = True
     
