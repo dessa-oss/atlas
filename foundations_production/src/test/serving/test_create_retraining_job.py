@@ -10,8 +10,7 @@ from foundations_spec import *
 from foundations_production.serving import create_retraining_job
 
 class TestCreateRetrainingJob(Spec):
-    
-    mock_data_from_file = let_patch_mock('foundations_production.serving.data_from_file.data_from_file', ConditionalReturn())
+
     mock_load_model_package = let_patch_mock('foundations_production.load_model_package', ConditionalReturn())
 
     mock_features = let_mock()
@@ -24,6 +23,13 @@ class TestCreateRetrainingJob(Spec):
     mock_retrained_model = let_mock()
 
     mock_preprocessor_callback = ConditionalReturn()
+
+    mock_create_job_workspace = let_patch_mock('foundations_production.serving.create_job_workspace')
+    mock_chdir = let_patch_mock('os.chdir')
+
+    @let
+    def workspace_directory(self):
+        return '/tmp/foundations_workspaces/{}'.format(self.job_id)
 
     @let
     def job_id(self):
@@ -66,8 +72,23 @@ class TestCreateRetrainingJob(Spec):
         from foundations_production.model_package import ModelPackage
         return ModelPackage(model=self.mock_production_model, preprocessor=self.mock_preprocessor)
 
+    @let
+    def retraining_job(self):
+        return create_retraining_job(
+            self.job_id,
+            features_location=self.fake_features_path,
+            targets_location=self.fake_targets_path
+        )
+
     @set_up
     def set_up(self):
+        self._create_job_workspace_called = False
+        self._chdir_called = False
+
+        self.mock_create_job_workspace.side_effect = self._set_create_job_workspace_called
+        self.mock_chdir.side_effect = self._check_create_job_workspace_called_and_set_chdir_called
+
+        self.mock_data_from_file = self.patch('foundations_production.serving.data_from_file.data_from_file', ConditionalReturn())
         self.mock_data_from_file.return_when(self.mock_features, self.fake_features_path)
         self.mock_data_from_file.return_when(self.mock_targets, self.fake_targets_path)
 
@@ -77,18 +98,39 @@ class TestCreateRetrainingJob(Spec):
 
         self.mock_production_model.retrain.side_effect = self.production_model_retrain_callback
 
-        self._retraining_job = create_retraining_job(
-            self.job_id,
-            features_location=self.fake_features_path,
-            targets_location=self.fake_targets_path
-        )
-
     def test_retraining_job_loads_files_only_when_job_executed(self):
         self.mock_data_from_file.assert_not_called()
 
     def test_retraining_job_sets_preprocessor_inference_mode_to_false(self):
+        self.retraining_job
         self.mock_preprocessor.set_inference_mode.assert_called_once_with(False)
 
     def test_retraining_job_retrains_model_when_job_executed(self):
-        retrained_model = self._retraining_job.run_same_process()
+        retrained_model = self.retraining_job.run_same_process()
         self.assertEqual(self.mock_retrained_model, retrained_model)
+
+    def test_retraining_job_creates_job_workspace(self):
+        self.retraining_job.run_same_process()
+        self.mock_create_job_workspace.assert_called_with(self.job_id)
+
+    def test_retraining_job_changes_directory_to_workspace_directory(self):
+        self.retraining_job.run_same_process()
+        self.mock_chdir.assert_called_with(self.workspace_directory)
+
+    def test_retraining_job_adds_workspace_directory_to_python_path(self):
+        mock_sys_path = self.patch('sys.path')
+
+        self.retraining_job.run_same_process()
+        mock_sys_path.append.assert_called_with(self.workspace_directory)
+
+    def _set_create_job_workspace_called(self, *args):
+        self._create_job_workspace_called = True
+
+    def _check_create_job_workspace_called_and_set_chdir_called(self, *args):
+        if not self._create_job_workspace_called:
+            raise AssertionError('Job workspace needs to be created before directory changed')
+        self._chdir_called = True
+
+    def _check_chdir_called(self, *args):
+        if not self._chdir_called:
+            raise AssertionError('Directory needs to be changed before predictor created')

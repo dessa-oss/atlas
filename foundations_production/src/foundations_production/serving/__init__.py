@@ -6,10 +6,22 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 def create_retraining_job(model_package_id, features_location, targets_location):
-    model_package = _model_package_for_retraining(model_package_id)
+    preparation_stage = _prepare_job_workspace(model_package_id)
+    model_package = _model_package_for_retraining(preparation_stage, model_package_id)
     features, targets = _data_for_retraining(features_location, targets_location)
     preprocessed_features = _preprocessed_features(model_package, features)
     return _retrained_model(model_package, preprocessed_features, targets)
+
+def _prepare_job_workspace(model_package_id):
+    import os
+    import sys
+    from foundations_production.serving import create_job_workspace
+
+    workspace_path = '/tmp/foundations_workspaces/{}'.format(model_package_id)
+
+    create_job_workspace(model_package_id)
+    os.chdir(workspace_path)
+    sys.path.append(workspace_path)
 
 def _retrained_model(model_package, preprocessed_features, targets):    
     production_model = model_package.model
@@ -28,7 +40,7 @@ def _data_for_retraining(features_location, targets_location):
 
     return features, targets
 
-def _model_package_for_retraining(model_package_id):
+def _model_package_for_retraining(preparation_stage, model_package_id):
     from foundations_production import load_model_package
 
     model_package = load_model_package(model_package_id)
