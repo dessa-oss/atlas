@@ -47,7 +47,7 @@ node {
             archiveArtifacts artifacts: '**/*.whl', fingerprint: true
         }
     } catch (Exception error) {
-        // slackSend(color: '#FF0000', message: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
+        slackSend(color: '#FF0000', message: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
         throw error
     }
 }
