@@ -25,7 +25,7 @@ class TestCreateJobWorkspace(Spec):
 
     @let
     def workspace_path(self):
-        return '/tmp/foundations_workspaces/' + self.job_id
+        return '/tmp/foundations_workspaces/{}/'.format(self.job_id)
 
     @set_up
     def set_up(self):
@@ -45,7 +45,7 @@ class TestCreateJobWorkspace(Spec):
 
     def test_create_job_workspace_fetches_job_source_bundle_to_workspace_directory(self):
         create_job_workspace(self.job_id)
-        self.mock_pipeline_archiver.fetch_job_source.assert_called_with(self.workspace_path + '/' + self.job_id + '.tgz')
+        self.mock_pipeline_archiver.fetch_job_source.assert_called_with(self.workspace_path + self.job_id + '.tgz')
 
     def test_create_job_workspace_extracts_before_cleaning_up_job_source_bundle(self):
         create_job_workspace(self.job_id)

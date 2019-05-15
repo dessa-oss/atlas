@@ -71,11 +71,11 @@ def create_job_workspace(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
     from foundations_contrib.job_source_bundle import JobSourceBundle
 
-    workspace_path = '/tmp/foundations_workspaces/{}'.format(job_id)
+    workspace_path = '/tmp/foundations_workspaces/{}/'.format(job_id)
     os.makedirs(workspace_path, exist_ok=True)
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
-    pipeline_archiver.fetch_job_source('{}/{}.tgz'.format(workspace_path, job_id))
+    pipeline_archiver.fetch_job_source(workspace_path + '{}.tgz'.format(job_id))
 
     job_source_bundle = JobSourceBundle(job_id, workspace_path)
     job_source_bundle.unbundle(workspace_path)
