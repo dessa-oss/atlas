@@ -8,8 +8,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 import unittest
 from mock import Mock
 
-from foundations_spec.helpers import let, let_now, let_patch_mock, set_up
-from foundations_spec.helpers.spec import Spec
+from foundations_spec import *
 from flask import Flask
 
 class TestRestAPIServer(Spec):
@@ -103,10 +102,12 @@ class TestRestAPIServer(Spec):
         response = self.client.delete('/v1/some_model/model/', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
 
+    @skip
     def test_predictions_from_model_package_route_has_get_method(self):
         response = self.client.get('/v1/some_model/predictions')
         self.assertNotIn(response.status_code, [405, 500])
 
+    @skip
     def test_predictions_from_model_package_route_has_post_method(self):
         response = self.client.post('/v1/some_model/predictions', **self.mock_json_request_kwargs)
         self.assertNotIn(response.status_code, [405, 500])
