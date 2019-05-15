@@ -5,13 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from foundations_contrib.middleware.new_cache_middleware import NewCacheMiddleware
 
 from test.shared_examples.test_middleware_callback import TestMiddlewareCallback
 
 
-class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
+class TestNewCacheMiddleware(Spec, TestMiddlewareCallback):
 
     class MockStageCache(object):
 
@@ -35,7 +35,8 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
         def submit(self, value):
             self.value = value
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.stage_config import StageConfig
         from foundations_internal.stage_context import StageContext
@@ -100,6 +101,19 @@ class TestNewCacheMiddleware(unittest.TestCase, TestMiddlewareCallback):
         result = middleware.call(
             None, self.MockFiller, {}, (), {}, self._callback)
         self.assertEqual('some value', result)
+
+    def test_does_not_use_cache_when_disabled(self):
+        from foundations_contrib.something import Something
+
+        self._stage_config.allow_caching = False
+        cache = self._mock_stage_cache_method(
+            self._pipeline_context, self._stage, self._stage_config, ())
+        cache.cached_value = Something('some value')
+
+        middleware = self._make_middleware()
+        result = middleware.call(
+            None, self.MockFiller, {}, (), {}, self._callback)
+        self.assertEqual(self._callback_result, result)
 
     def test_indicates_cache_used_when_present(self):
         from foundations_contrib.something import Something

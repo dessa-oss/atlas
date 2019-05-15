@@ -20,10 +20,11 @@ class NewCacheMiddleware(BasicStageMiddleware):
             self._pipeline_context, self._stage, self._stage_config, args)
         self._stage_context.cache_uuid = stage_cache.cache_name()
 
-        cached_value = stage_cache.fetch_option()
-        if cached_value.is_present():
-            self._stage_context.used_cache = True
-            return cached_value.get()
+        if self._stage_config.allow_caching:
+            cached_value = stage_cache.fetch_option()
+            if cached_value.is_present():
+                self._stage_context.used_cache = True
+                return cached_value.get()
 
         result = callback(args, kwargs)
         stage_cache.submit(result)
