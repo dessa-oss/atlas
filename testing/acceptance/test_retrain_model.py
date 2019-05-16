@@ -8,8 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 import acceptance.fixtures.train_model_package as train_model_package
+from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
 
-class TestRetrainModel(Spec):
+class TestRetrainModel(ModelServingConfigMixin):
     
     @let
     def features_file_name(self):
@@ -19,23 +20,16 @@ class TestRetrainModel(Spec):
     def targets_file_name(self):
         return '/tmp/{}.pkl'.format(self.faker.uuid4())
 
-    @let
-    def model_server_config_path(self):
-        return 'model_server.config.yaml'
-
     @set_up
     def set_up(self):
-        import os
         import subprocess
 
-        os.environ['MODEL_SERVER_CONFIG_PATH'] = self.model_server_config_path
-
+        self.set_up_model_server_config()
         job = train_model_package.validation_predictions.run()
         job.wait_for_deployment_to_complete()
         job_id = job.job_name()
 
         self._create_retraining_data_sets()
-        self._create_model_server_config_file()
 
         subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'])
 
@@ -47,7 +41,7 @@ class TestRetrainModel(Spec):
         subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
         os.remove(self.features_file_name)
         os.remove(self.targets_file_name)
-        os.remove(self.model_server_config_path)
+        self.tear_down_model_server_config()
 
     def test_retrain_creates_new_model_package(self):
         import pandas
@@ -119,20 +113,3 @@ class TestRetrainModel(Spec):
 
         with open(file_name, 'wb') as dataframe_file:
             pickle.dump(dataframe, dataframe_file)
-
-    def _create_model_server_config_file(self):
-        from acceptance.config import ARCHIVE_ROOT
-        import yaml
-        import os.path as path
-
-        config_dictionary = {
-            'job_deployment_env': 'local',
-            'results_config': {
-                'archive_end_point': 'local://' + path.dirname(ARCHIVE_ROOT)
-            },
-            'cache_config': {},
-            'obfuscate_foundations': False
-        }
-
-        with open(self.model_server_config_path, 'w') as config_file:
-            yaml.dump(config_dictionary, config_file)

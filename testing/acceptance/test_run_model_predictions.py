@@ -7,40 +7,39 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import acceptance.fixtures.train_model_package as train_model_package
+from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
 
-
-class TestRunModelPredictions(Spec):
+class TestRunModelPredictions(ModelServingConfigMixin):
 
     @set_up
     def set_up(self):
         import subprocess
 
+        self.set_up_model_server_config()
         model = train_model_package.validation_predictions.run()
         model.wait_for_deployment_to_complete()
         model_id = model.job_name()
-        
+
         subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'])
+
+    @tear_down
+    def tear_down(self):
+        import subprocess
+
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+        self.tear_down_model_server_config()
 
     @let
     def input_data(self):
-        import pandas
-        return pandas.DataFrame({
-            "Sex": [0],
-            "Cabin": [101],
-            "Fare": [10]
-        })
+        return {
+            'rows': [[0, 20, 100]], 
+            'schema': [{'name': 'Sex', 'type': 'int'}, {'name': 'Cabin', 'type': 'int'}, {'name': 'Fare', 'type': 'int'}]
+        }
 
-    @skip('not yet implemented')
     def test_run_model_predictions(self):
         import requests
-        import pandas
 
-        response = requests.post('https://ip/v1/snail/predictions', json=self.input_data.to_json())
+        response = requests.post('http://localhost:5000/v1/snail/predictions', json=self.input_data)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(1, response.json['prediction_id'])
-
-        get_response = requests.get('https://ip/v1/snail/predictions/1')
-        self.assertEqual(200, get_response.status_code)
-
-        expected_prediction = pandas.DataFrame({'predictions': [1]})
-        self.assertEqual(expected_prediction.to_json(), get_response.json)
+        expected_predictions = {'rows': [[0]], 'schema': [{'name': 'Survived', 'type': 'int64'}]}
+        self.assertEqual(expected_predictions, response.json())

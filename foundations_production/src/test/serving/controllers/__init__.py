@@ -6,3 +6,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
 from test.serving.controllers.test_model_package_controller import TestModelPackageController
+from test.serving.controllers.test_retrain_model_package_controller import TestRetrainModelPackageController

@@ -49,5 +49,5 @@ class TestModelPackageController(Spec):
 
     def test_deploy_new_model_package_doesnt_happen_with_get_request(self):
         response = self.client.get('/v1/some_model/', json={'model_id': 'some_model_id'})
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn('deployed_model_id', response.data.decode())
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json, 'model package not found')

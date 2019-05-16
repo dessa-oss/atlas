@@ -7,27 +7,22 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def run_model_package(model_package_id, communicator):
     import os
-    import sys
-    from foundations_production.serving import extract_job_source, workspace_path
+    from foundations_production.serving import extract_job_source, workspace_path, prepare_job_workspace
 
     _set_job_id()
 
     workspace_path = workspace_path(model_package_id)
 
     try:
-        extract_job_source(model_package_id)
+        prepare_job_workspace(model_package_id)
         os.chdir(workspace_path)
-        sys.path.append(workspace_path)
         predictor = _create_predictor_for(model_package_id, communicator)
     except FileNotFoundError:
         key_error = KeyError('Model Package ID {} does not exist'.format(model_package_id))
         _send_exception(key_error, communicator)
-        predictor = None
+        return
     except Exception as e:
         _send_exception(e, communicator)
-        predictor = None
-
-    if not predictor:
         return
 
     while True:

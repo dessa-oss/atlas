@@ -41,10 +41,10 @@ class PackagePool(object):
         from foundations_production.serving import workspace_path
 
         if len(self._model_packages) >= self._active_package_limit:
-            process_to_kill = self._active_packages[0]
+            model_id_to_remove = self._active_packages[0]
             self._active_packages.pop(0)
-            self._model_packages[process_to_kill]['process'].terminate()
-            rmtree(workspace_path(process_to_kill))
+            self._model_packages[model_id_to_remove]['process'].terminate()
+            rmtree(workspace_path(model_id_to_remove))
     
     def _restart_process_and_update_communicator(self, model_package, model_id):
         self._remove_process_from_pool_if_limit_exceeded()

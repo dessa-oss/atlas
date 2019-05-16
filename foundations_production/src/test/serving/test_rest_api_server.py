@@ -14,12 +14,15 @@ from foundations_production.serving.rest_api_server import RestAPIServer
 @skip
 class TestRestAPIServer(Spec):
 
-    mock_create_retraining_job = let_patch_mock('foundations_production.serving.create_retraining_job', ConditionalReturn())
     package_pool_class_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
     package_pool_mock = Mock()
     mock_job = let_mock()
     mock_job_deployment = let_mock()
     communicator = let_mock()
+
+    mock_os_chdir = let_patch_mock('os.chdir')
+    mock_os_getcwd = let_patch_mock('os.getcwd')
+    mock_prepare_job_workspace = let_patch_mock('foundations_production.serving.prepare_job_workspace')
 
     @let
     def retraining_job_id(self):
@@ -33,18 +36,63 @@ class TestRestAPIServer(Spec):
     def user_defined_model_name(self):
         return self.faker.word()
 
+    @let
+    def initial_working_directory(self):
+        return self.faker.file_path()
+
+    @let
+    def workspace_path(self):
+        from foundations_production.serving import workspace_path
+        return workspace_path(self.model_package_id)
+
+    def _create_retraining_job(self, *args, **kwargs):
+        expected_args = (self.model_package_id,)
+        expected_kwargs = {
+            'features_location': 'local:///path/to/features/file.pkl',
+            'targets_location':'s3://path/to/targets/file.pkl'
+        }
+
+        if (args, kwargs) != (expected_args, kwargs):
+            raise AssertionError('create_retraining_job not called with ' + str(expected_args) + ' ' + str(expected_kwargs))
+
+        if self._working_directory != self.workspace_path:
+            raise AssertionError('create_retraining_job called when not in workspace path')
+
+        return self.mock_job
+
+    def _run(self):
+        self._retraining_job_run = True
+        return self.mock_job_deployment
+
+    def _chdir(self, path):
+        if self._working_directory == self.initial_working_directory:
+            if not self._workspace_prepared:
+                raise AssertionError('pls do not chdir before prepping workspace dir')
+
+            self._working_directory = path
+            return
+
+        if path != self.initial_working_directory or not self._retraining_job_run:
+            raise AssertionError('need to change back to previous cwd after running retrain job')
+
+    def _prepare_job_workspace(self, job_id):
+        self._workspace_prepared = True
+
     @set_up
     def set_up(self):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
+        self._workspace_prepared = False
+        self._working_directory = self.initial_working_directory
+        self._retraining_job_run = False
+
+        self.mock_os_chdir.side_effect = self._chdir
+        self.mock_os_getcwd.side_effect = lambda: self._working_directory
+        self.mock_prepare_job_workspace.side_effect = self._prepare_job_workspace
+
         self.mock_job_deployment.job_name.return_value = self.retraining_job_id
-        self.mock_job.run.return_value = self.mock_job_deployment
-        self.mock_create_retraining_job.return_when(
-            self.mock_job,
-            self.model_package_id,
-            features_location='local:///path/to/features/file.pkl',
-            targets_location='s3://path/to/targets/file.pkl'
-        )
+        self.mock_job.run.side_effect = self._run
+        self.mock_create_retraining_job = self.patch('foundations_production.serving.create_retraining_job', self._create_retraining_job)
 
         self.package_pool_class_mock.return_value = self.package_pool_mock
         self.package_pool_mock.get_communicator = ConditionalReturn()
@@ -203,6 +251,34 @@ class TestRestAPIServer(Spec):
         with self.assertRaises(InternalServerError) as error_context:
             with self.rest_api_server.flask.app_context():
                 response = self.predictions_from_model_package_function(self.user_defined_model_name)
+
+    def test_train_latest_model_package_chdir_back_to_original_cwd_after_job_deployed(self):
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {
+            'targets_file': 's3://path/to/targets/file.pkl',
+            'features_file': 'local:///path/to/features/file.pkl'
+        }
+
+        with self.rest_api_server.flask.app_context():
+            response = self.train_latest_model_package_function(self.user_defined_model_name)
+
+        self.assertEqual(2, self.mock_os_chdir.call_count)
+
+    def test_train_latest_model_package_prepares_job_workspace(self):
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {
+            'targets_file': 's3://path/to/targets/file.pkl',
+            'features_file': 'local:///path/to/features/file.pkl'
+        }
+
+        with self.rest_api_server.flask.app_context():
+            response = self.train_latest_model_package_function(self.user_defined_model_name)
+
+        self.mock_prepare_job_workspace.assert_called_with(self.model_package_id)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
         from foundations_production.serving.controllers.model_package_controller import ModelPackageController
