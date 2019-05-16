@@ -11,9 +11,10 @@ from os import getcwd, environ
 
 if 'TEST_UUID' not in environ:
     environ['TEST_UUID'] = str(uuid4())
+    environ['ARCHIVE_ROOT'] = getcwd() + '/tmp/archives_{}/archive'.format(environ['TEST_UUID'])
 
 TEST_UUID = environ['TEST_UUID']
-ARCHIVE_ROOT = getcwd() + '/tmp/archives_{}/archive'.format(TEST_UUID)
+ARCHIVE_ROOT = environ['ARCHIVE_ROOT']
 
 def _config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend

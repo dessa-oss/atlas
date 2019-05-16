@@ -7,9 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
-from foundations_production.serving import create_job_workspace
+from foundations_production.serving import extract_job_source
 
-class TestCreateJobWorkspace(Spec):
+class TestExtractJobSource(Spec):
 
     mock_get_pipeline_archiver_for_job = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job', ConditionalReturn())
     mock_pipeline_archiver = let_mock()
@@ -40,15 +40,15 @@ class TestCreateJobWorkspace(Spec):
         self.mock_job_source_bundle.unbundle.side_effect = self._check_fetch_job_source_called
 
     def test_job_workspace_directory_created(self):
-        create_job_workspace(self.job_id)
+        extract_job_source(self.job_id)
         self.mock_os_makedirs.assert_called_with(self.workspace_path, exist_ok=True)
 
-    def test_create_job_workspace_fetches_job_source_bundle_to_workspace_directory(self):
-        create_job_workspace(self.job_id)
+    def test_extract_job_source_fetches_job_source_bundle_to_workspace_directory(self):
+        extract_job_source(self.job_id)
         self.mock_pipeline_archiver.fetch_job_source.assert_called_with(self.workspace_path + self.job_id + '.tgz')
 
-    def test_create_job_workspace_extracts_before_cleaning_up_job_source_bundle(self):
-        create_job_workspace(self.job_id)
+    def test_extract_job_source_extracts_before_cleaning_up_job_source_bundle(self):
+        extract_job_source(self.job_id)
         expected_calls = [call.unbundle(self.workspace_path), call.cleanup()]
         self.assertEqual(expected_calls, self.mock_job_source_bundle.method_calls)
     

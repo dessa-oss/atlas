@@ -18,11 +18,11 @@ def create_retraining_job(model_package_id, features_location, targets_location)
 def _prepare_job_workspace(model_package_id):
     import os
     import sys
-    from foundations_production.serving import create_job_workspace
+    from foundations_production.serving import extract_job_source
 
     workspace_path_for_model_package = workspace_path(model_package_id)
 
-    create_job_workspace(model_package_id)
+    extract_job_source(model_package_id)
     os.chdir(workspace_path_for_model_package)
     sys.path.append(workspace_path_for_model_package)
 
@@ -56,7 +56,7 @@ def _load_data_stage(file_location):
     from foundations_production.serving.data_from_file import data_from_file
     return data_from_file(file_location)
 
-def create_job_workspace(job_id):
+def extract_job_source(job_id):
     import os
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
     from foundations_contrib.job_source_bundle import JobSourceBundle

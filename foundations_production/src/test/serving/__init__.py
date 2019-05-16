@@ -17,6 +17,6 @@ from test.serving.test_communicator import TestCommunicator
 from test.serving.test_rest_api_server import TestRestAPIServer
 from test.serving.test_api_resource import TestAPIResource
 from test.serving.test_rest_api_server_provider import TestRestAPIServerProvider
-from test.serving.test_create_job_workspace import TestCreateJobWorkspace
+from test.serving.test_extract_job_source import TestExtractJobSource
 from test.serving.controllers import *
 from test.serving.test_workspace_path import TestWorkspacePath

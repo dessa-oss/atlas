@@ -24,7 +24,7 @@ class TestCreateRetrainingJob(Spec):
 
     mock_preprocessor_callback = ConditionalReturn()
 
-    mock_create_job_workspace = let_patch_mock('foundations_production.serving.create_job_workspace')
+    mock_extract_job_source = let_patch_mock('foundations_production.serving.extract_job_source')
     mock_chdir = let_patch_mock('os.chdir')
 
     @let
@@ -82,11 +82,11 @@ class TestCreateRetrainingJob(Spec):
 
     @set_up
     def set_up(self):
-        self._create_job_workspace_called = False
+        self._extract_job_source_called = False
         self._chdir_called = False
 
-        self.mock_create_job_workspace.side_effect = self._set_create_job_workspace_called
-        self.mock_chdir.side_effect = self._check_create_job_workspace_called_and_set_chdir_called
+        self.mock_extract_job_source.side_effect = self._set_extract_job_source_called
+        self.mock_chdir.side_effect = self._check_extract_job_source_called_and_set_chdir_called
 
         self.mock_data_from_file = self.patch('foundations_production.serving.data_from_file.data_from_file', ConditionalReturn())
         self.mock_data_from_file.return_when(self.mock_features, self.fake_features_path)
@@ -111,7 +111,7 @@ class TestCreateRetrainingJob(Spec):
 
     def test_retraining_job_creates_job_workspace(self):
         self.retraining_job.run_same_process()
-        self.mock_create_job_workspace.assert_called_with(self.job_id)
+        self.mock_extract_job_source.assert_called_with(self.job_id)
 
     def test_retraining_job_changes_directory_to_workspace_directory(self):
         self.retraining_job.run_same_process()
@@ -123,11 +123,11 @@ class TestCreateRetrainingJob(Spec):
         self.retraining_job.run_same_process()
         mock_sys_path.append.assert_called_with(self.workspace_directory)
 
-    def _set_create_job_workspace_called(self, *args):
-        self._create_job_workspace_called = True
+    def _set_extract_job_source_called(self, *args):
+        self._extract_job_source_called = True
 
-    def _check_create_job_workspace_called_and_set_chdir_called(self, *args):
-        if not self._create_job_workspace_called:
+    def _check_extract_job_source_called_and_set_chdir_called(self, *args):
+        if not self._extract_job_source_called:
             raise AssertionError('Job workspace needs to be created before directory changed')
         self._chdir_called = True
 

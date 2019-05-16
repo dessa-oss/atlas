@@ -39,7 +39,7 @@ class TestPackageRunner(Spec):
     def workspace_directory(self):
         return '/tmp/foundations_workspaces/{}'.format(self.model_package_id)
 
-    mock_create_job_workspace = let_patch_mock('foundations_production.serving.create_job_workspace')
+    mock_extract_job_source = let_patch_mock('foundations_production.serving.extract_job_source')
     mock_chdir = let_patch_mock('os.chdir')
     mock_predictor = let_mock()
 
@@ -48,7 +48,7 @@ class TestPackageRunner(Spec):
 
     @set_up
     def set_up(self):
-        self._create_job_workspace_called = False
+        self._extract_job_source_called = False
         self._chdir_called = False
 
         self.mock_predictor_class = self.patch('foundations_production.serving.inference.predictor.Predictor')
@@ -57,8 +57,8 @@ class TestPackageRunner(Spec):
         self.mock_predictor.json_predictions_for = ConditionalReturn()
         self.mock_predictor.json_predictions_for.return_when(self.prediction, self.fake_data)
 
-        self.mock_create_job_workspace.side_effect = self._set_create_job_workspace_called
-        self.mock_chdir.side_effect = self._check_create_job_workspace_called_and_set_chdir_called
+        self.mock_extract_job_source.side_effect = self._set_extract_job_source_called
+        self.mock_chdir.side_effect = self._check_extract_job_source_called_and_set_chdir_called
 
         self.mock_foundations_context.pipeline_context.return_value = self.mock_pipeline_context
 
@@ -153,8 +153,8 @@ class TestPackageRunner(Spec):
         }
         self.assertEqual(expected_return, self.communicator.get_response())
     
-    def test_run_model_package_returns_error_when_create_job_workspace_for_throws_value_error(self):
-        self.mock_create_job_workspace.side_effect = ValueError('Different message')
+    def test_run_model_package_returns_error_when_extract_job_source_for_throws_value_error(self):
+        self.mock_extract_job_source.side_effect = ValueError('Different message')
 
         run_model_package(self.model_package_id, self.communicator)
 
@@ -164,8 +164,8 @@ class TestPackageRunner(Spec):
         }
         self.assertEqual(expected_return, self.communicator.get_response())
 
-    def test_run_model_package_returns_key_error_when_create_job_workspace_for_throws_file_not_found_error(self):
-        self.mock_create_job_workspace.side_effect = FileNotFoundError('Different message')
+    def test_run_model_package_returns_key_error_when_extract_job_source_for_throws_file_not_found_error(self):
+        self.mock_extract_job_source.side_effect = FileNotFoundError('Different message')
 
         run_model_package(self.model_package_id, self.communicator)
 
@@ -186,7 +186,7 @@ class TestPackageRunner(Spec):
         self.communicator.set_action_request('STOP')
         run_model_package(self.model_package_id, self.communicator)
 
-        self.mock_create_job_workspace.assert_called_with(self.model_package_id)
+        self.mock_extract_job_source.assert_called_with(self.model_package_id)
     
     def test_run_model_package_changes_directory_to_workspace_directory(self):
         self.communicator.set_action_request('STOP')
@@ -208,11 +208,11 @@ class TestPackageRunner(Spec):
 
         self.assertEqual('package_running', self.mock_pipeline_context.file_name)
 
-    def _set_create_job_workspace_called(self, *args):
-        self._create_job_workspace_called = True
+    def _set_extract_job_source_called(self, *args):
+        self._extract_job_source_called = True
     
-    def _check_create_job_workspace_called_and_set_chdir_called(self, *args):
-        if not self._create_job_workspace_called:
+    def _check_extract_job_source_called_and_set_chdir_called(self, *args):
+        if not self._extract_job_source_called:
             raise AssertionError('Job workspace needs to be created before directory changed')
         self._chdir_called = True
     
