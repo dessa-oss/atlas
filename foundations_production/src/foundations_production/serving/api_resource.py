@@ -12,22 +12,15 @@ class APIResourceBuilder(object):
         self._base_path = base_path
         self._api_actions = {}
 
-    def _load_index_route(self):
-        if hasattr(self._klass, 'index'):
-            self._api_actions['get'] = self._get_api_index()
-    
-    def _load_post_route(self):
-        if hasattr(self._klass, 'post'):
-            self._api_actions['post'] = self._post_api_create()
-    
-    def _load_put_route(self):
-        if hasattr(self._klass, 'put'):
-            self._api_actions['put'] = self._put_api_create()
+    def _load_route(self, method_name):
+        if hasattr(self._klass, method_name):
+            self._api_actions[method_name] = self._get_request_handler(method_name)
+        else:
+            self._api_actions[method_name] = self._get_default_api_response()
 
     def _create_action(self):
-        self._load_index_route()
-        self._load_post_route()
-        self._load_put_route()
+        for method_name in ['get', 'post', 'put', 'patch', 'delete']:
+            self._load_route(method_name)
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
 
@@ -48,22 +41,21 @@ class APIResourceBuilder(object):
 
             instance = self._klass()
             instance.params = self._api_params(kwargs)
-            if hasattr(instance, 'json'):
+            if getattr(request, 'json'):
                 instance.params.update(request.json)
             method = getattr(instance, method_name)
             response = method()
-            return response.as_json(), response.status()
+            response_data = self.exceptions_as_http_error_codes(response.as_json)()
+            status_code = response.status()
+            return response_data, status_code
 
         return request_handler
 
-    def _get_api_index(self):
-        return self._get_request_handler('index')
-
-    def _post_api_create(self):
-        return self._get_request_handler('post')
-
-    def _put_api_create(self):
-        return self._get_request_handler('put')
+    def _get_default_api_response(self):
+        def default_request_handler(resource, **kwargs):
+            from werkzeug.exceptions import MethodNotAllowed
+            raise MethodNotAllowed()
+        return default_request_handler
 
     def _api_params(self, kwargs):
         from flask import request
@@ -73,6 +65,25 @@ class APIResourceBuilder(object):
         for key, value in dict_args.items():
             params[key] = value if len(value) > 1 else value[0]
         return params
+
+    def exceptions_as_http_error_codes(self, method):
+        from functools import wraps
+
+        @wraps(method)
+        def method_decorator(*args, **kwargs):
+            from flask import request, abort
+            from werkzeug.exceptions import BadRequestKeyError
+
+            try:
+                return method(*args, **kwargs)
+            except KeyError as exception:
+                missing_key = exception.args[0]
+                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
+            except Exception:
+                abort(500)
+
+        return method_decorator
+
 
 def api_resource(base_path):
 

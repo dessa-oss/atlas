@@ -4,6 +4,8 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
+from foundations_production.serving.controllers import *
+
 
 def workspace_path(job_id):
     return '/tmp/foundations_workspaces/{}'.format(job_id)
@@ -25,11 +27,11 @@ def prepare_job_workspace(model_package_id):
     os.chdir(workspace_path_for_model_package)
     sys.path.append(workspace_path_for_model_package)
 
-def _retrained_model(model_package, preprocessed_features, targets):    
+def _retrained_model(model_package, preprocessed_features, targets):
     production_model = model_package.model
     return production_model.retrain(preprocessed_features, targets, None, None)
 
-def _preprocessed_features(model_package, features):    
+def _preprocessed_features(model_package, features):
     preprocessor = model_package.preprocessor
     return preprocessor(features)
 

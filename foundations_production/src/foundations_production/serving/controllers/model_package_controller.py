@@ -5,14 +5,16 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 from foundations_production.serving.api_resource import api_resource
+from foundations_rest_api.response import Response
+from foundations_rest_api.lazy_result import LazyResult
 
 @api_resource('/v1/<user_defined_model_name>/')
 class ModelPackageController(object):
 
-    def post(self):
-        from foundations_rest_api.response import Response
-        from foundations_rest_api.lazy_result import LazyResult
+    def get(self):
+        return Response.constant('response')
 
+    def post(self):
         def callback():
             from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
@@ -26,4 +28,7 @@ class ModelPackageController(object):
             model_package_mapping[user_defined_model_name] = model_id
             return {'deployed_model_id': model_id}
 
-        return Response('model_package_controller_create', LazyResult(callback))
+        return Response('create_model_package_controller', LazyResult(callback))
+
+    def delete(self):
+        return Response.constant('deleted')

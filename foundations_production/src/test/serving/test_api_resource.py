@@ -25,7 +25,7 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(APIResourceMocks.Mock)
         self.assertEqual(klass, APIResourceMocks.Mock)
 
-    def test_get_returns_index(self):
+    def test_get_returns_get(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndex)
         with self._test_client() as client:
             get_response = client.get(self.uri_path)
@@ -33,7 +33,7 @@ class TestAPIResource(Spec):
             self.assertEqual(get_response.json, 'some data')
             self.assertEqual(get_response.headers, head_response.headers)
             self.assertEqual(get_response.status_code, head_response.status_code)
-    
+
     def test_post_returns_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPost)
         with self._test_client() as client:
@@ -62,7 +62,7 @@ class TestAPIResource(Spec):
             response = client.post(self.uri_path, json={'password': 'world', 'cat': 'dog'})
             self.assertEqual(response.json, {'password': 'world', 'cat': 'dog'})
 
-    def test_get_returns_index_different_data(self):
+    def test_get_returns_get_different_data(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.DifferentMockWithIndex)
         with self._test_client() as client:
             get_response = client.get(self.uri_path)
@@ -70,8 +70,8 @@ class TestAPIResource(Spec):
             self.assertEqual(get_response.json, 'some different data')
             self.assertEqual(get_response.headers, head_response.headers)
             self.assertEqual(get_response.status_code, head_response.status_code)
-    
-    def test_get_and_post_returns_index_and_post(self):
+
+    def test_get_and_post_returns_get_and_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndexAndPost)
         with self._test_client() as client:
             post_response = client.post(self.uri_path, json={})
@@ -193,6 +193,12 @@ class TestAPIResource(Spec):
         with self._test_client() as client:
             response = client.put('/path/to/resource/with/value/params/that/uses/put/', json={'another': 'value'})
             self.assertEqual(response.json, {'project_name': 'value', 'another': 'value'})
+
+    def test_missing_put_returns_405(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithIndexAndPost)
+        with self._test_client() as client:
+            response = client.put(self.uri_path, json={})
+            self.assertEqual(response.status_code, 405)
 
     def _empty_callback(self, mock_instance):
         return ''

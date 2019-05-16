@@ -13,34 +13,27 @@ from flask import Flask
 
 class TestRestAPIServer(Spec):
     package_pool_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
-    
+
     @set_up
     def set_up(self):
         from foundations_production.serving.rest_api_server import RestAPIServer
+        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
-        self.rest_api_server = RestAPIServer()
+        RestAPIServer()
+        self.rest_api_server = get_rest_api_server()
         self.flask = self.rest_api_server.flask
         self.client = self.flask.test_client()
-    
+
     @let_now
     def mock_json_request_kwargs(self):
 
         return {'json': dict(foo='bar')}
 
-    def test_manage_model_package_route_is_added(self):
-        self.assertIn('manage_model_package', self.flask.view_functions)
-
     def test_training_all_model_packages_route_is_added(self):
         self.assertIn('train_latest_model_package', self.flask.view_functions)
 
-    def test_training_one_model_package_route_is_added(self):
-        self.assertIn('train_one_model_package', self.flask.view_functions)
-
     def test_predictions_from_model_package_route_is_added(self):
         self.assertIn('predictions_from_model_package', self.flask.view_functions)
-
-    def test_predict_with_model_package_route_is_added(self):
-        self.assertIn('predict_with_model_package', self.flask.view_functions)
 
     def test_manage_model_package_route_has_get_method(self):
         response = self.client.get('/v1/some_model/')
@@ -127,15 +120,3 @@ class TestRestAPIServer(Spec):
     def test_predict_with_model_package_route_has_head_method(self):
         response = self.client.head('/v1/some_model/predictions/some_id')
         self.assertNotIn(response.status_code, [405, 500])
-
-    def test_predict_with_model_package_route_has_no_post_method(self):
-        response = self.client.post('/v1/some_model/predictions/some_id', **self.mock_json_request_kwargs)
-        self.assertEqual(response.status_code, 405)
-
-    def test_predict_with_model_package_route_has_no_put_method(self):
-        response = self.client.put('/v1/some_model/predictions/some_id', **self.mock_json_request_kwargs)
-        self.assertEqual(response.status_code, 405)
-
-    def test_predict_with_model_package_route_has_no_delete_method(self):
-        response = self.client.delete('/v1/some_model/predictions/some_id', **self.mock_json_request_kwargs)
-        self.assertEqual(response.status_code, 405)
