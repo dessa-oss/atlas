@@ -8,11 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def run_model_package(model_package_id, communicator):
     import os
     import sys
-    from foundations_production.serving import create_job_workspace
+    from foundations_production.serving import create_job_workspace, workspace_path
 
     _set_job_id()
 
-    workspace_path = '/tmp/foundations_workspaces/{}'.format(model_package_id)
+    workspace_path = workspace_path(model_package_id)
 
     try:
         create_job_workspace(model_package_id)
