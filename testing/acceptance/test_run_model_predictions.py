@@ -11,36 +11,61 @@ import acceptance.fixtures.train_model_package as train_model_package
 
 class TestRunModelPredictions(Spec):
 
+    @let
+    def model_server_config_path(self):
+        return 'model_server.config.yaml'
+
     @set_up
     def set_up(self):
         import subprocess
+        import os
+
+        os.environ['MODEL_SERVER_CONFIG_PATH'] = self.model_server_config_path
 
         model = train_model_package.validation_predictions.run()
         model.wait_for_deployment_to_complete()
         model_id = model.job_name()
-        
+        self._create_model_server_config_file()
+
         subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'])
+
+    @tear_down
+    def tear_down(self):
+        import os
+        import subprocess
+
+        subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+        os.remove(self.model_server_config_path)
 
     @let
     def input_data(self):
-        import pandas
-        return pandas.DataFrame({
-            "Sex": [0],
-            "Cabin": [101],
-            "Fare": [10]
-        })
+        return {
+            'rows': [[0, 20, 100]], 
+            'schema': [{'name': 'Sex', 'type': 'int'}, {'name': 'Cabin', 'type': 'int'}, {'name': 'Fare', 'type': 'int'}]
+        }
 
-    @skip('not yet implemented')
     def test_run_model_predictions(self):
         import requests
-        import pandas
 
-        response = requests.post('https://ip/v1/snail/predictions', json=self.input_data.to_json())
+        response = requests.post('http://localhost:5000/v1/snail/predictions', json=self.input_data)
         self.assertEqual(200, response.status_code)
-        self.assertEqual(1, response.json['prediction_id'])
+        expected_predictions = {'rows': [[0]], 'schema': [{'name': 'Survived', 'type': 'int64'}]}
+        self.assertEqual(expected_predictions, response.json())
+    
 
-        get_response = requests.get('https://ip/v1/snail/predictions/1')
-        self.assertEqual(200, get_response.status_code)
+    def _create_model_server_config_file(self):
+        from acceptance.config import ARCHIVE_ROOT
+        import yaml
+        import os.path as path
 
-        expected_prediction = pandas.DataFrame({'predictions': [1]})
-        self.assertEqual(expected_prediction.to_json(), get_response.json)
+        config_dictionary = {
+            'job_deployment_env': 'local',
+            'results_config': {
+                'archive_end_point': 'local://' + path.dirname(ARCHIVE_ROOT)
+            },
+            'cache_config': {},
+            'obfuscate_foundations': False
+        }
+
+        with open(self.model_server_config_path, 'w') as config_file:
+            yaml.dump(config_dictionary, config_file)
