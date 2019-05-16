@@ -9,13 +9,12 @@ def workspace_path(job_id):
     return '/tmp/foundations_workspaces/{}'.format(job_id)
 
 def create_retraining_job(model_package_id, features_location, targets_location):
-    preparation_stage = _prepare_job_workspace(model_package_id)
     model_package = _model_package_for_retraining(model_package_id)
     features, targets = _data_for_retraining(features_location, targets_location)
     preprocessed_features = _preprocessed_features(model_package, features)
     return _retrained_model(model_package, preprocessed_features, targets)
 
-def _prepare_job_workspace(model_package_id):
+def prepare_job_workspace(model_package_id):
     import os
     import sys
     from foundations_production.serving import extract_job_source

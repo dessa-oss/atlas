@@ -20,3 +20,4 @@ from test.serving.test_rest_api_server_provider import TestRestAPIServerProvider
 from test.serving.test_extract_job_source import TestExtractJobSource
 from test.serving.controllers import *
 from test.serving.test_workspace_path import TestWorkspacePath
+from test.serving.test_prepare_job_workspace import TestPrepareJobWorkspace
