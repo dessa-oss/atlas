@@ -58,7 +58,7 @@ class RestAPIServer(object):
         from werkzeug.exceptions import HTTPException
         from flask import jsonify
 
-        @flask.before_request
+        @flask.before_request    
         def accept_only_json():
             from flask import request, abort
 

@@ -5,9 +5,11 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 from foundations_production.serving.api_resource import api_resource
+from foundations_rest_api.response import Response
+from foundations_rest_api.lazy_result import LazyResult
 
-@api_resource('/v1/<user_defined_model_name>/')
-class ModelPackageController(object):
+@api_resource('/v1/<user_defined_model_name>/predictions')
+class PredictionController(object):
 
     def get(self):
         if not self._model_package_exists():
@@ -15,27 +17,25 @@ class ModelPackageController(object):
         return Response.constant('response')
 
     def post(self):
-        from foundations_rest_api.response import Response
-        from foundations_rest_api.lazy_result import LazyResult
-
         def callback():
             from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
             rest_api_server = get_rest_api_server()
             model_package_mapping = rest_api_server.get_module_package_mapping()
             package_pool = rest_api_server.get_package_pool()
-            model_id = self.params['model_id']
             user_defined_model_name = self.params['user_defined_model_name']
 
-            package_pool.add_package(model_id)
-            model_package_mapping[user_defined_model_name] = model_id
-            return {'deployed_model_id': model_id}
+            model_id = model_package_mapping[user_defined_model_name]
+            communicator = package_pool.get_communicator(model_id)
+            communicator.set_action_request(self.params)
+            predictions = communicator.get_response()
+            self._raise_exception_if_available(predictions)
+            return predictions
 
-        return Response('model_package_controller_create', LazyResult(callback))
+        if not self._model_package_exists():
+            return Response.constant('model package not found', status=404)
+        return Response('predictions', LazyResult(callback))
 
-    def _model_package_exists(self):
-        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
-
-        rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_module_package_mapping()
-        return self.params['user_defined_model_name'] in model_package_mapping
+    def _raise_exception_if_available(self, predictions):
+        if predictions.get('name'):
+            raise eval(predictions['name'])
