@@ -48,6 +48,12 @@ class RestAPIServer(object):
     def run(self, host='localhost', port=5000):
         self._flask.run(host=host, port=port)
 
+    def get_module_package_mapping(self):
+        return self._model_package_mapping
+
+    def get_package_pool(self):
+        return self._package_pool
+
     def _register_routes(self, flask):
 
         @flask.before_request

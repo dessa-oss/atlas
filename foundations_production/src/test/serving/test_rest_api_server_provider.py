@@ -49,7 +49,6 @@ class TestRestAPIServerProvider(Spec):
 
         mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
 
-    
     def test_placeholder_not_used_if_api_server_is_running(self):
         mock_rest_api_server_instance = Mock()
         mock_resource = Mock()
