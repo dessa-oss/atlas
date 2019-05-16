@@ -5,9 +5,12 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
+def workspace_path(job_id):
+    return '/tmp/foundations_workspaces/{}'.format(job_id)
+
 def create_retraining_job(model_package_id, features_location, targets_location):
     preparation_stage = _prepare_job_workspace(model_package_id)
-    model_package = _model_package_for_retraining(preparation_stage, model_package_id)
+    model_package = _model_package_for_retraining(model_package_id)
     features, targets = _data_for_retraining(features_location, targets_location)
     preprocessed_features = _preprocessed_features(model_package, features)
     return _retrained_model(model_package, preprocessed_features, targets)
@@ -40,7 +43,7 @@ def _data_for_retraining(features_location, targets_location):
 
     return features, targets
 
-def _model_package_for_retraining(preparation_stage, model_package_id):
+def _model_package_for_retraining(model_package_id):
     from foundations_production import load_model_package
 
     model_package = load_model_package(model_package_id)
