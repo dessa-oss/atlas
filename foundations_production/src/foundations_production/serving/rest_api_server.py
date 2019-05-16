@@ -92,7 +92,6 @@ class RestAPIServer(object):
     @exceptions_as_http_error_codes
     def train_latest_model_package(self, user_defined_model_name):
         from flask import request, jsonify, make_response
-        from foundations_production.serving import create_retraining_job
 
         if user_defined_model_name not in self._model_package_mapping:
             return make_response('response', 404)
@@ -109,10 +108,16 @@ class RestAPIServer(object):
         return make_response(response_body, 202)
 
     def _deploy_retraining_job(self, model_package_id, targets_location, features_location):
-        from foundations_production.serving import create_retraining_job
+        import os
+        from foundations_production.serving import create_retraining_job, workspace_path
+        from foundations_internal.working_directory_stack import WorkingDirectoryStack
 
-        retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
-        return retraining_job.run()
+        with WorkingDirectoryStack():
+            os.chdir(workspace_path(model_package_id))
+            retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
+            job_deployment = retraining_job.run()
+        
+        return job_deployment
 
     def _retraining_data_locations(self, request):
         request_body = request.get_json()

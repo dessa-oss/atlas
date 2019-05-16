@@ -15,14 +15,12 @@ def create_retraining_job(model_package_id, features_location, targets_location)
     return _retrained_model(model_package, preprocessed_features, targets)
 
 def prepare_job_workspace(model_package_id):
-    import os
     import sys
     from foundations_production.serving import extract_job_source
 
     workspace_path_for_model_package = workspace_path(model_package_id)
 
     extract_job_source(model_package_id)
-    os.chdir(workspace_path_for_model_package)
     sys.path.append(workspace_path_for_model_package)
 
 def _retrained_model(model_package, preprocessed_features, targets):    
