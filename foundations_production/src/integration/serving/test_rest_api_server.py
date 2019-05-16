@@ -139,15 +139,3 @@ class TestRestAPIServer(Spec):
     def test_predict_with_model_package_route_has_no_delete_method(self):
         response = self.client.delete('/v1/some_model/predictions/some_id', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
-
-    def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
-        response = self.client.post('/v1/some_model/', data='bad data')
-        self.assertEqual(response.status_code, 400)
-
-    def test_deploy_new_model_package_happens_with_post_request(self):
-        response = self.client.post('/v1/some_model/', json={'model_id': 'some_model_id'})
-        self.assertEqual(response.json['deployed_model_id'], 'some_model_id')
-
-    def test_deploy_new_model_package_doesnt_happen_with_get_request(self):
-        response = self.client.get('/v1/some_model/', json={'model_id': 'some_model_id'})
-        self.assertNotIn('deployed_model_id', response.data.decode())

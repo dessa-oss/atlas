@@ -4,9 +4,6 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-
-from flask import request, make_response, Response
-
 class APIResourceBuilder(object):
 
     def __init__(self, app_manager, klass, base_path):
@@ -47,6 +44,8 @@ class APIResourceBuilder(object):
     def _get_request_handler(self, method_name):
 
         def request_handler(resource, **kwargs):
+            from flask import request
+
             instance = self._klass()
             instance.params = self._api_params(kwargs)
             if hasattr(instance, 'json'):

@@ -4,13 +4,13 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
+from foundations_production.serving.rest_api_server_provider import register_rest_api_server
 
 class RestAPIServer(object):
 
     def __init__(self):
         from flask import Flask
         from flask_restful import Api
-        from foundations_production.serving.rest_api_server_provider import register_rest_api_server
         from foundations_production.serving.package_pool import PackagePool
 
         self._package_pool = PackagePool(1000)
@@ -55,6 +55,8 @@ class RestAPIServer(object):
         return self._package_pool
 
     def _register_routes(self, flask):
+        from werkzeug.exceptions import HTTPException
+        from flask import jsonify
 
         @flask.before_request
         def accept_only_json():
@@ -62,6 +64,11 @@ class RestAPIServer(object):
 
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(400)
+
+        @flask.errorhandler(HTTPException)
+        def handle_exceptions(exception):
+            return jsonify({'error': str(exception)}), exception.code, {'Content-Type': 'application/json'}
+
 
         flask.add_url_rule('/v1/<user_defined_model_name>/', methods=['GET', 'POST', 'DELETE', 'HEAD'], view_func=self.manage_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_latest_model_package)

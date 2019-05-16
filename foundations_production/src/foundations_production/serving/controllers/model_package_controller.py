@@ -10,11 +10,12 @@ from foundations_production.serving.api_resource import api_resource
 class ModelPackageController(object):
 
     def post(self):
-        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
         from foundations_rest_api.response import Response
         from foundations_rest_api.lazy_result import LazyResult
 
         def callback():
+            from foundations_production.serving.rest_api_server_provider import get_rest_api_server
+
             rest_api_server = get_rest_api_server()
             model_package_mapping = rest_api_server.get_module_package_mapping()
             package_pool = rest_api_server.get_package_pool()
