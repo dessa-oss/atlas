@@ -109,10 +109,11 @@ class RestAPIServer(object):
 
     def _deploy_retraining_job(self, model_package_id, targets_location, features_location):
         import os
-        from foundations_production.serving import create_retraining_job, workspace_path
+        from foundations_production.serving import create_retraining_job, workspace_path, prepare_job_workspace
         from foundations_internal.working_directory_stack import WorkingDirectoryStack
 
         with WorkingDirectoryStack():
+            prepare_job_workspace(model_package_id)
             os.chdir(workspace_path(model_package_id))
             retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
             job_deployment = retraining_job.run()

@@ -20,6 +20,7 @@ class TestRestAPIServer(Spec):
 
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_os_getcwd = let_patch_mock('os.getcwd')
+    mock_prepare_job_workspace = let_patch_mock('foundations_production.serving.prepare_job_workspace')
 
     @let
     def retraining_job_id(self):
@@ -63,21 +64,29 @@ class TestRestAPIServer(Spec):
 
     def _chdir(self, path):
         if self._working_directory == self.initial_working_directory:
+            if not self._workspace_prepared:
+                raise AssertionError('pls do not chdir before prepping workspace dir')
+
             self._working_directory = path
             return
 
         if path != self.initial_working_directory or not self._retraining_job_run:
             raise AssertionError('need to change back to previous cwd after running retrain job')
 
+    def _prepare_job_workspace(self, job_id):
+        self._workspace_prepared = True
+
     @set_up
     def set_up(self):
         from foundations_production.serving.rest_api_server import RestAPIServer
 
+        self._workspace_prepared = False
         self._working_directory = self.initial_working_directory
         self._retraining_job_run = False
 
         self.mock_os_chdir.side_effect = self._chdir
         self.mock_os_getcwd.side_effect = lambda: self._working_directory
+        self.mock_prepare_job_workspace.side_effect = self._prepare_job_workspace
 
         self.mock_job_deployment.job_name.return_value = self.retraining_job_id
         self.mock_job.run.side_effect = self._run
@@ -270,6 +279,20 @@ class TestRestAPIServer(Spec):
             response = self.train_latest_model_package_function(self.user_defined_model_name)
 
         self.assertEqual(2, self.mock_os_chdir.call_count)
+
+    def test_train_latest_model_package_prepares_job_workspace(self):
+        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+
+        self.request_mock.method = 'PUT'
+        self.request_mock.get_json.return_value = {
+            'targets_file': 's3://path/to/targets/file.pkl',
+            'features_file': 'local:///path/to/features/file.pkl'
+        }
+
+        with self.rest_api_server.flask.app_context():
+            response = self.train_latest_model_package_function(self.user_defined_model_name)
+
+        self.mock_prepare_job_workspace.assert_called_with(self.model_package_id)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
         self.request_mock.method = 'POST'
