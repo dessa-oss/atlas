@@ -9,9 +9,7 @@ import unittest
 from mock import Mock, patch
 
 from foundations_spec import *
-from foundations_production.serving.rest_api_server import RestAPIServer
 
-@skip
 class TestRestAPIServer(Spec):
 
     package_pool_class_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
@@ -80,6 +78,7 @@ class TestRestAPIServer(Spec):
 
     @set_up
     def set_up(self):
+        from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
         self._workspace_prepared = False
@@ -177,6 +176,7 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(200, response.status_code)
 
+    @skip
     def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
         self.communicator.get_response.return_value = {}
@@ -192,6 +192,7 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(200, response.status_code)
 
+    @skip
     def test_predictions_from_model_package_returns_predicitions_in_body(self):
         import json
 
@@ -214,7 +215,7 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(expected_prediction_json, json.loads(response.get_data()))
 
-
+    @skip
     def test_predictions_from_model_package_sets_action_request_for_prediction(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
 
@@ -281,6 +282,7 @@ class TestRestAPIServer(Spec):
         self.mock_prepare_job_workspace.assert_called_with(self.model_package_id)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
+        from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.controllers.model_package_controller import ModelPackageController
 
         with patch.object(RestAPIServer, 'get_package_pool') as get_package_pool_mock:
@@ -288,3 +290,4 @@ class TestRestAPIServer(Spec):
             model_package_controller = ModelPackageController()
             model_package_controller.params = payload
             model_package_controller.params['user_defined_model_name'] = user_defined_model_name
+            model_package_controller.post().evaluate()
