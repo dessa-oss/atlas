@@ -23,11 +23,11 @@ class TestRetrainModelPackageController(Spec):
     @let
     def retrain_model_package_id(self):
         return self.faker.uuid4()
-    
+
     @let
     def user_defined_model_name(self):
         return self.faker.word()
-    
+
     @let
     def retraining_job_id(self):
         return self.faker.uuid4()
@@ -56,7 +56,7 @@ class TestRetrainModelPackageController(Spec):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
         rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_module_package_mapping()
+        model_package_mapping = rest_api_server.get_model_package_mapping()
         model_package_mapping[self.user_defined_model_name] = self.retrain_model_package_id
 
         retrain_model_package_controller = RetrainModelPackageController()

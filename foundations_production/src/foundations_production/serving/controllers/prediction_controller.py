@@ -21,7 +21,7 @@ class PredictionController(object):
             from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
             rest_api_server = get_rest_api_server()
-            model_package_mapping = rest_api_server.get_module_package_mapping()
+            model_package_mapping = rest_api_server.get_model_package_mapping()
             package_pool = rest_api_server.get_package_pool()
             user_defined_model_name = self.params['user_defined_model_name']
 

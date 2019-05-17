@@ -15,13 +15,13 @@ class RetrainModelPackageController(object):
         if not self._model_package_exists():
             return Response.constant('model package not found', status=404)
         return Response.constant('response')
-    
+
     def put(self):
         def callback():
             from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
             rest_api_server = get_rest_api_server()
-            model_package_mapping = rest_api_server.get_module_package_mapping()
+            model_package_mapping = rest_api_server.get_model_package_mapping()
             user_defined_model_name = self.params['user_defined_model_name']
             features_location = self.params['features_file']
             targets_location = self.params['targets_file']
@@ -39,7 +39,7 @@ class RetrainModelPackageController(object):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
         rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_module_package_mapping()
+        model_package_mapping = rest_api_server.get_model_package_mapping()
 
         return self.params['user_defined_model_name'] in model_package_mapping
 

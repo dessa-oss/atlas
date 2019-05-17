@@ -9,34 +9,32 @@ from foundations_production.serving.rest_api_server_provider import register_res
 class RestAPIServer(object):
 
     def __init__(self):
-        from flask import Flask
+        from flask import Flask, got_request_exception
         from flask_restful import Api
         from foundations_production.serving.package_pool import PackagePool
 
         self._package_pool = PackagePool(1000)
         self._flask = Flask(__name__)
-        self._api = Api(self._flask)
+        self._api = Api(self._flask, catch_all_404s=True) # errors=self.exceptions_as_http_error_codes(), catch_all_404s=True)
         self._register_routes(self._flask)
         self._model_package_mapping = {}
+        got_request_exception.connect(self.handle_exception, self._flask)
         register_rest_api_server(self)
 
-    def exceptions_as_http_error_codes(method):
-        from functools import wraps
+    def handle_exception(self, sender, exception, **extra):
+        from werkzeug.exceptions import BadRequestKeyError
 
-        @wraps(method)
-        def method_decorator(*args, **kwargs):
-            from flask import request, abort
-            from werkzeug.exceptions import BadRequestKeyError
+        if isinstance(exception, KeyError):
+            missing_key = exception.args[0]
+            raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
 
-            try:
-                return method(*args, **kwargs)
-            except KeyError as exception:
-                missing_key = exception.args[0]
-                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
-            except Exception:
-                abort(500)
-
-        return method_decorator
+    # def exceptions_as_http_error_codes(self):
+    #     return {
+    #         'BadRequestKeyError': {
+    #             'message': "Missing field in JSON data.",
+    #             'status': 400,
+    #         }
+    #     }
 
     @property
     def flask(self):
@@ -48,7 +46,7 @@ class RestAPIServer(object):
     def run(self, host='localhost', port=5000):
         self._flask.run(host=host, port=port)
 
-    def get_module_package_mapping(self):
+    def get_model_package_mapping(self):
         return self._model_package_mapping
 
     def get_package_pool(self):
@@ -58,7 +56,7 @@ class RestAPIServer(object):
         from werkzeug.exceptions import HTTPException
         from flask import jsonify
 
-        @flask.before_request    
+        @flask.before_request
         def accept_only_json():
             from flask import request, abort
 
@@ -68,7 +66,6 @@ class RestAPIServer(object):
         flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_latest_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
 
-    @exceptions_as_http_error_codes
     def train_latest_model_package(self, user_defined_model_name):
         from flask import request, jsonify, make_response
 
@@ -96,7 +93,7 @@ class RestAPIServer(object):
             os.chdir(workspace_path(model_package_id))
             retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
             job_deployment = retraining_job.run()
-        
+
         return job_deployment
 
     def _retraining_data_locations(self, request):
@@ -113,7 +110,6 @@ class RestAPIServer(object):
         from flask import jsonify
         return jsonify({'created_job_uuid': retraining_job_deployment.job_name()})
 
-    @exceptions_as_http_error_codes
     def predictions_from_model_package(self, user_defined_model_name):
         from flask import make_response, request
         import json
