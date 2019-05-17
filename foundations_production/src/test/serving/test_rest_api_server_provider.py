@@ -32,14 +32,14 @@ class TestRestAPIServerProvider(Spec):
 
     def test_get_rest_api_server_returns_the_server_if_server_is_running(self):
         mock_rest_api_server_instance = Mock()
-        
+
         register_rest_api_server(mock_rest_api_server_instance)
 
         rest_api_server_like_object = get_rest_api_server()
         self.assertEqual(rest_api_server_like_object, mock_rest_api_server_instance)
 
     def test_if_add_resource_called_and_server_not_running_route_and_resource_are_added_to_queue(self):
-        mock_rest_api_server_instance = Mock() 
+        mock_rest_api_server_instance = Mock()
         mock_resource = Mock()
 
         rest_api_server_provider = get_rest_api_server()
@@ -52,7 +52,7 @@ class TestRestAPIServerProvider(Spec):
     def test_placeholder_not_used_if_api_server_is_running(self):
         mock_rest_api_server_instance = Mock()
         mock_resource = Mock()
-        
+
         rest_api_server_like_object = get_rest_api_server()
         register_rest_api_server(mock_rest_api_server_instance)
 
@@ -61,8 +61,8 @@ class TestRestAPIServerProvider(Spec):
         mock_rest_api_server_instance.api().add_resource.assert_called_with(mock_resource, self.fake_path)
 
     def test_provider_checks_if_instance_exists(self):
-        mock_rest_api_server_instance_1 = Mock() 
-        mock_rest_api_server_instance_2 = Mock() 
+        mock_rest_api_server_instance_1 = Mock()
+        mock_rest_api_server_instance_2 = Mock()
 
         register_rest_api_server(mock_rest_api_server_instance_1)
         register_rest_api_server(mock_rest_api_server_instance_2)

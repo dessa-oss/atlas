@@ -9,6 +9,7 @@ import unittest
 from mock import Mock, patch
 
 from foundations_spec import *
+from foundations_production.serving.rest_api_server import RestAPIServer
 
 class TestRestAPIServer(Spec):
 
@@ -78,7 +79,6 @@ class TestRestAPIServer(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
         self._workspace_prepared = False
@@ -103,6 +103,10 @@ class TestRestAPIServer(Spec):
         self.train_latest_model_package_function = self.rest_api_server.flask.view_functions.get('train_latest_model_package')
         self.predictions_from_model_package_function = self.rest_api_server.flask.view_functions.get('predictions_from_model_package')
 
+    @tear_down
+    def tear_down(self):
+        from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
+        _RestAPIServerProvider.reset()
 
     def test_train_latest_model_package_returns_202_if_model_deployed(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
@@ -176,7 +180,6 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(200, response.status_code)
 
-    @skip
     def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
         self.communicator.get_response.return_value = {}
@@ -192,7 +195,6 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(200, response.status_code)
 
-    @skip
     def test_predictions_from_model_package_returns_predicitions_in_body(self):
         import json
 
@@ -215,7 +217,6 @@ class TestRestAPIServer(Spec):
 
         self.assertEqual(expected_prediction_json, json.loads(response.get_data()))
 
-    @skip
     def test_predictions_from_model_package_sets_action_request_for_prediction(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
 
@@ -230,7 +231,7 @@ class TestRestAPIServer(Spec):
         self.request_mock.method = 'PUT'
 
         with self.rest_api_server.flask.app_context():
-            response = self.predictions_from_model_package_function(self.user_defined_model_name)
+            self.predictions_from_model_package_function(self.user_defined_model_name)
 
         self.communicator.set_action_request.assert_called_with(prediction_input_json)
 
@@ -282,7 +283,6 @@ class TestRestAPIServer(Spec):
         self.mock_prepare_job_workspace.assert_called_with(self.model_package_id)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
-        from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.controllers.model_package_controller import ModelPackageController
 
         with patch.object(RestAPIServer, 'get_package_pool') as get_package_pool_mock:
