@@ -30,7 +30,7 @@ class ModelPackageController(object):
             model_package_mapping[user_defined_model_name] = model_id
             return {'deployed_model_id': model_id}
 
-        return Response('create_model_package_controller', LazyResult(callback))
+        return Response('create_model_package_controller', LazyResult(callback), status=201)
 
     def delete(self):
         return Response.constant('deleted')

@@ -44,7 +44,7 @@ class TestModelPackageController(Spec):
 
     def test_deploy_new_model_package_happens_with_post_request(self):
         response = self.client.post('/v1/some_model/', json={'model_id': 'some_model_id'})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json['deployed_model_id'], 'some_model_id')
 
     def test_deploy_new_model_package_doesnt_happen_with_get_request(self):
