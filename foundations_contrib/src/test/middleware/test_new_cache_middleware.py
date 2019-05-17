@@ -50,6 +50,8 @@ class TestNewCacheMiddleware(Spec, TestMiddlewareCallback):
         self._uuid = str(uuid4())
         self._stage = Stage(None, self._uuid, self._function, self._function)
 
+        self._stage_config.enable_caching()
+
         self._mock_stage_cache = None
         self._called_callback = False
         self._callback_args = None
@@ -105,7 +107,7 @@ class TestNewCacheMiddleware(Spec, TestMiddlewareCallback):
     def test_does_not_use_cache_when_disabled(self):
         from foundations_contrib.something import Something
 
-        self._stage_config.allow_caching = False
+        self._stage_config.disable_caching()
         cache = self._mock_stage_cache_method(
             self._pipeline_context, self._stage, self._stage_config, ())
         cache.cached_value = Something('some value')
