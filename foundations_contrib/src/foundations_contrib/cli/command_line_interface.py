@@ -140,11 +140,9 @@ class CommandLineInterface(object):
         import os
         import signal
 
-        try:
+        if self._is_model_server_running():
             pid = self._get_model_server_pid()
             os.kill(int(pid), signal.SIGINT)
-        except OSError:
-            pass
 
     def _start_model_server_if_not_running(self):
         import subprocess
@@ -190,11 +188,13 @@ class CommandLineInterface(object):
             sys.exit(11)
 
     def _is_model_server_running(self):
+        from psutil import NoSuchProcess
+
         try:
             pid = self._get_model_server_pid()
             command_line = self._get_model_server_command_line(pid)
             return 'foundations_production.serving.foundations_model_server' in command_line
-        except OSError:
+        except (OSError, NoSuchProcess):
             return False
 
     def _get_model_server_pid(self):
@@ -204,8 +204,10 @@ class CommandLineInterface(object):
             return pidfile.read()
 
     def _get_model_server_command_line(self, pid):
-        with open('/proc/{}/cmdline'.format(pid), 'r') as cmdline_file:
-            return cmdline_file.read()
+        import psutil
+
+        process = psutil.Process(int(pid))
+        return process.cmdline()
 
     def _run_driver_file(self, driver_name):
         import os

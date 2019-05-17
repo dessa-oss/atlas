@@ -39,6 +39,8 @@ class TestCommandLineInterface(Spec):
 
     @set_up
     def set_up(self):
+        self._server_running = False
+        self.psutil_process_mock.side_effect = self._process_constructor
         self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = '/path/to/file'
 
     @patch('argparse.ArgumentParser')
@@ -260,10 +262,6 @@ class TestCommandLineInterface(Spec):
         return self._get_mock_file()
 
     @let_now
-    def mock_proc_file(self):
-        return self._get_mock_file()
-
-    @let_now
     def sleep_mock(self):
         return self.patch('time.sleep', self.MockSleep())
 
@@ -281,9 +279,22 @@ class TestCommandLineInterface(Spec):
     print_mock = let_patch_mock('builtins.print')
     exit_mock = let_patch_mock('sys.exit')
     open_mock = let_patch_mock('builtins.open')
+    psutil_process_mock = let_patch_mock('psutil.Process')
+    server_process = let_mock()
     requests_post_mock = let_patch_mock('requests.post')
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
     find_environment_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.find_environment')
+
+    def _process_constructor(self, pid):
+        from psutil import NoSuchProcess
+
+        if pid != self.fake_model_server_pid:
+            raise AssertionError('process constructor needs to be called with model server pid {} (called with {})'.format(self.fake_model_server_pid, pid))
+
+        if not self._server_running:
+            raise NoSuchProcess(pid)
+
+        return self.server_process
 
     def test_deploy_loads_config_when_found(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
@@ -339,20 +350,14 @@ class TestCommandLineInterface(Spec):
         self.run_file.assert_called_with('passenger')
 
     def test_serving_deploy_rest_opens_pid_file(self):
+        self._create_server_pidfile()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.open_mock.assert_any_call(FoundationsModelServer.pid_file_path, 'r')
 
     def test_serving_deploy_rest_reads_pid_file(self):
-        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.open_mock.return_value = self.mock_pid_file
+        self._create_server_pidfile()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.mock_pid_file.read.assert_called()
-
-    def test_serving_deploy_rest_gets_pid_corresponding_to_model_server_if_model_server_is_running(self):
-        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.open_mock.return_value = self.mock_pid_file
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.open_mock.assert_called_with('/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')
 
     def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
         self._bring_server_up()
@@ -362,42 +367,44 @@ class TestCommandLineInterface(Spec):
     def test_serving_deploy_rest_runs_model_server_when_server_is_not_running(self):
         from subprocess import DEVNULL
 
-        self.mock_proc_file.read.return_value = '**another_process.py**'
-        self.open_mock.return_value = self.mock_proc_file
+        self._create_server_pidfile()
+        self.server_process.cmdline.return_value = ['another_process.py']
+        self._server_running = True
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
                                               
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile(self):
+    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running(self):
         from subprocess import DEVNULL
 
         self.open_mock.side_effect = OSError()
+
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
 
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_or_there_is_no_procfile_different_model_config(self):
+    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running_different_model_config(self):
         from subprocess import DEVNULL
 
+        self.open_mock.side_effect = OSError()
         self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = 'a/path/to/another/file'
 
-        self.open_mock.side_effect = OSError()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=a/path/to/another/file'], stdout=DEVNULL, stderr=DEVNULL)
 
     def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
+        self.open_mock.side_effect = OSError()
+
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_any_call('Failed to start model server.', file=sys.stderr)
         self.exit_mock.assert_any_call(10)
 
     def test_serving_deploy_rest_calls_deploy_model_rest_api_if_server_is_running(self):
-        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
-        self.open_mock.return_value = self.mock_proc_file
+        self._bring_server_up()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         url = 'http://{}/v1/{}/'.format('localhost:8000', 'snail')
         self.requests_post_mock.assert_called_with(url, json = {'model_id':'some_id'})
 
     def test_serving_deploy_rest_informs_user_if_model_package_was_deployed_successfully(self):
-        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
-        self.open_mock.return_value = self.mock_proc_file
+        self._bring_server_up()
         response_mock = Mock()
         response_mock.status_code = 200
         self.requests_post_mock.return_value = response_mock
@@ -405,8 +412,7 @@ class TestCommandLineInterface(Spec):
         self.print_mock.assert_called_with('Model package was deployed successfully to model server.')
 
     def test_serving_deploy_rest_informs_user_if_model_package_failed_to_be_deployed(self):
-        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
-        self.open_mock.return_value = self.mock_proc_file
+        self._bring_server_up()
         response_mock = Mock()
         response_mock.status_code = 500
         self.requests_post_mock.return_value = response_mock
@@ -417,16 +423,19 @@ class TestCommandLineInterface(Spec):
     def test_serving_stop_kills_model_server(self):
         import signal
 
-        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.open_mock.return_value = self.mock_pid_file
-
+        self._bring_server_up()
         CommandLineInterface(['serving', 'stop']).execute()
-        
         self.os_kill.assert_called_once_with(self.fake_model_server_pid, signal.SIGINT)
 
     def test_serving_stop_does_not_kill_server_if_it_is_not_up(self):
         self.open_mock.side_effect = OSError()
+        CommandLineInterface(['serving', 'stop']).execute()
+        self.os_kill.assert_not_called()
 
+    def test_serving_stop_does_not_kill_process_if_it_is_model_server_process(self):
+        self._create_server_pidfile()
+        self.server_process.cmdline.return_value = ['another_process.py']
+        self._server_running = True
         CommandLineInterface(['serving', 'stop']).execute()
         self.os_kill.assert_not_called()
 
@@ -443,8 +452,14 @@ class TestCommandLineInterface(Spec):
         self.exit_mock.assert_not_called()
 
     def _bring_server_up(self):
+        self._create_server_pidfile()
+        self._spawn_server_process()
+
+    def _spawn_server_process(self):
+        self.server_process.cmdline.return_value = ['foundations_production.serving.foundations_model_server']
+        self._server_running = True
+
+    def _create_server_pidfile(self):
         self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.mock_proc_file.read.return_value = '**foundations_production.serving.foundations_model_server**'
         self.open_mock = self.patch('builtins.open', ConditionalReturn())
         self.open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
-        self.open_mock.return_when(self.mock_proc_file, '/proc/{}/cmdline'.format(self.fake_model_server_pid), 'r')

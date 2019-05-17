@@ -43,7 +43,8 @@ setup(
         'PyYAML==3.13',
         'promise==2.2.1',
         'tabulate==0.8.3',
-        'slackclient==1.3.0'
+        'slackclient==1.3.0',
+        'psutil==5.6.2'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
