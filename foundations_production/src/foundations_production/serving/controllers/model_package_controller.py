@@ -4,19 +4,28 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-from foundations_production.serving.api_resource import api_resource
 from foundations_rest_api.response import Response
 from foundations_rest_api.lazy_result import LazyResult
+from foundations_production.serving.api_resource import api_resource
+from foundations_production.serving.controllers.exceptions_as_http_errors import exceptions_as_http_errors
+from foundations_production.serving.controllers.controller_mixin import ControllerMixin
+
 
 @api_resource('/v1/<user_defined_model_name>/')
-class ModelPackageController(object):
+class ModelPackageController(ControllerMixin):
 
     def get(self):
-        if not self._model_package_exists():
-            return Response.constant('model package not found', status=404)
-        return Response.constant('response')
+
+        @exceptions_as_http_errors
+        def callback():
+            model_package_id = self._get_model_id_from_model_package_mapping()
+            return {'model_id': model_package_id}
+
+        return Response('get_model_package_id', LazyResult(callback), status=200)
 
     def post(self):
+
+        @exceptions_as_http_errors
         def callback():
             from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
@@ -33,11 +42,9 @@ class ModelPackageController(object):
         return Response('create_model_package_controller', LazyResult(callback), status=201)
 
     def delete(self):
-        return Response.constant('deleted')
 
-    def _model_package_exists(self):
-        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
+        @exceptions_as_http_errors
+        def callback():
+            return 'deleted'
 
-        rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_model_package_mapping()
-        return self.params['user_defined_model_name'] in model_package_mapping
+        return Response('delete_model_package', LazyResult(callback), status=200)

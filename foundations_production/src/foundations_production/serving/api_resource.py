@@ -45,9 +45,7 @@ class APIResourceBuilder(object):
                 instance.params.update(request.json)
             method = getattr(instance, method_name)
             response = method()
-            response_data = self.exceptions_as_http_error_codes(response.as_json)()
-            status_code = response.status()
-            return response_data, status_code
+            return response.as_json(), response.status()
 
         return request_handler
 
@@ -65,24 +63,6 @@ class APIResourceBuilder(object):
         for key, value in dict_args.items():
             params[key] = value if len(value) > 1 else value[0]
         return params
-
-    def exceptions_as_http_error_codes(self, method):
-        from functools import wraps
-
-        @wraps(method)
-        def method_decorator(*args, **kwargs):
-            from flask import request, abort
-            from werkzeug.exceptions import BadRequestKeyError
-
-            try:
-                return method(*args, **kwargs)
-            except KeyError as exception:
-                missing_key = exception.args[0]
-                raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
-            except Exception:
-                abort(500)
-
-        return method_decorator
 
 
 def api_resource(base_path):

@@ -4,47 +4,48 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-from foundations_production.serving.api_resource import api_resource
 from foundations_rest_api.response import Response
 from foundations_rest_api.lazy_result import LazyResult
 
-@api_resource('/v1/<user_defined_model_name>/model')
-class RetrainModelPackageController(object):
+from foundations_production.serving.api_resource import api_resource
+from foundations_production.serving.controllers.exceptions_as_http_errors import exceptions_as_http_errors
+from foundations_production.serving.controllers.controller_mixin import ControllerMixin
+
+
+@api_resource('/v1/<user_defined_model_name>/model/')
+class RetrainModelPackageController(ControllerMixin):
 
     def get(self):
-        if not self._model_package_exists():
-            return Response.constant('model package not found', status=404)
-        return Response.constant('response')
+
+        @exceptions_as_http_errors
+        def callback():
+            self._get_model_id_from_model_package_mapping()
+            return 'response'
+
+        return Response('get_model_package_weights', LazyResult(callback), status=200)
 
     def put(self):
+
+        @exceptions_as_http_errors
         def callback():
-            from foundations_production.serving.rest_api_server_provider import get_rest_api_server
-
-            rest_api_server = get_rest_api_server()
-            model_package_mapping = rest_api_server.get_model_package_mapping()
-            user_defined_model_name = self.params['user_defined_model_name']
-            features_location = self.params['features_file']
-            targets_location = self.params['targets_file']
-
-            model_id = model_package_mapping[user_defined_model_name]
-            retraining_job_deployment = self._deploy_retraining_job(model_id, targets_location, features_location)
+            model_package_id = self._get_model_id_from_model_package_mapping()
+            retraining_job_deployment = self._deploy_retraining_job(model_package_id)
             return {'created_job_uuid': retraining_job_deployment.job_name()}
-
-        if not self._model_package_exists():
-            return Response.constant('model package not found', status=404)
 
         return Response('retrain_model_package_controller', LazyResult(callback), status=202)
 
-    def _model_package_exists(self):
-        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
+    def _deploy_retraining_job(self, model_package_id):
+        import os
+        from foundations_production.serving import create_retraining_job, workspace_path, prepare_job_workspace
+        from foundations_internal.working_directory_stack import WorkingDirectoryStack
 
-        rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_model_package_mapping()
+        features_location = self.params['features_file']
+        targets_location = self.params['targets_file']
 
-        return self.params['user_defined_model_name'] in model_package_mapping
+        with WorkingDirectoryStack():
+            prepare_job_workspace(model_package_id)
+            os.chdir(workspace_path(model_package_id))
+            retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
+            job_deployment = retraining_job.run()
 
-    def _deploy_retraining_job(self, model_package_id, targets_location, features_location):
-        from foundations_production.serving import create_retraining_job
-
-        retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
-        return retraining_job.run()
+        return job_deployment

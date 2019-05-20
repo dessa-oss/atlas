@@ -15,10 +15,16 @@ class TestRetrainModelPackageController(Spec):
 
     mock_create_retraining_job = let_patch_mock('foundations_production.serving.create_retraining_job', ConditionalReturn())
     package_pool_class_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
-    package_pool_mock = Mock()
+    create_retraining_job_mock = let_patch_mock('foundations_production.serving.create_retraining_job')
+    workspace_path_mock = let_patch_mock('foundations_production.serving.workspace_path')
+    mock_prepare_job_workspace = let_patch_mock('foundations_production.serving.prepare_job_workspace')
+
+    package_pool_mock = let_mock()
     mock_job_deployment = let_mock()
     mock_job = let_mock()
-    communicator = let_mock()
+
+    mock_os_chdir = let_patch_mock('os.chdir')
+    
 
     @let
     def retrain_model_package_id(self):
@@ -46,39 +52,30 @@ class TestRetrainModelPackageController(Spec):
         )
 
         self.package_pool_class_mock.return_value = self.package_pool_mock
-        self.package_pool_mock.get_communicator = ConditionalReturn()
-        self.package_pool_mock.get_communicator.return_when(self.communicator, self.retrain_model_package_id)
-
         self.retrain_model_package_controller = RetrainModelPackageController()
         RestAPIServer()
 
-    def test_retraining_creates_job_scuccesfully_and_returns_correct_model_id(self):
-        from foundations_production.serving.rest_api_server_provider import get_rest_api_server
-
-        rest_api_server = get_rest_api_server()
-        model_package_mapping = rest_api_server.get_model_package_mapping()
-        model_package_mapping[self.user_defined_model_name] = self.retrain_model_package_id
-
-        retrain_model_package_controller = RetrainModelPackageController()
-        retrain_model_package_controller.params = {
-            'model_id': self.retrain_model_package_id,
-            'user_defined_model_name': self.user_defined_model_name,
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        response = retrain_model_package_controller.put()
-        self.assertEqual({'created_job_uuid': self.retraining_job_id}, response.as_json())
-        self.assertEqual(202, response.status())
-
     def test_retraining_returns_404_when_model_package_not_deployed(self):
-        retrain_model_package_controller = RetrainModelPackageController()
-        retrain_model_package_controller.params = {
+        from werkzeug.exceptions import NotFound
+        self.retrain_model_package_controller.params = {
             'model_id': self.retrain_model_package_id,
             'user_defined_model_name': self.user_defined_model_name,
             'targets_file': 's3://path/to/targets/file.pkl',
             'features_file': 'local:///path/to/features/file.pkl'
         }
+        with self.assertRaises(NotFound):
+            response = self.retrain_model_package_controller.put()
+            self.assertEqual(404, response.status())
 
-        response = retrain_model_package_controller.put()
-        self.assertEqual(404, response.status())
+    @patch.object(RestAPIServer, 'get_model_package_mapping')
+    def test_retraining_returns_model_package_id_when_model_package_is_deployed(self, get_model_package_mapping_mock):
+        get_model_package_mapping_mock.return_value = {self.user_defined_model_name: self.retrain_model_package_id}
+        self.retrain_model_package_controller.params = {
+            'model_id': self.retrain_model_package_id,
+            'user_defined_model_name': self.user_defined_model_name,
+            'targets_file': 's3://path/to/targets/file.pkl',
+            'features_file': 'local:///path/to/features/file.pkl'
+        }
+        response = self.retrain_model_package_controller.put()
+        self.assertEqual(202, response.status())
+        self.assertEqual({'created_job_uuid': self.retraining_job_id}, response.as_json())

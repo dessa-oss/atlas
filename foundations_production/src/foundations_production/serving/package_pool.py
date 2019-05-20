@@ -56,6 +56,8 @@ class PackagePool(object):
         self._active_packages.append(model_id)
 
     def _check_if_predictor_created_successfully(self, communicator):
+        from foundations_production.exceptions import MissingModelPackageException
+
         process_response = communicator.get_response()
         if process_response != 'SUCCESS: predictor created':
             raise eval(process_response['name'])(process_response['value']) 

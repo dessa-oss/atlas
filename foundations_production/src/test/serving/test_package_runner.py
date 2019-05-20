@@ -170,8 +170,8 @@ class TestPackageRunner(Spec):
         run_model_package(self.model_package_id, self.communicator)
 
         expected_return = {
-            'name': 'KeyError',
-            'value': "'Model Package ID {} does not exist'".format(self.model_package_id)
+            'name': 'MissingModelPackageException',
+            'value': self.model_package_id
         }
         self.assertEqual(expected_return, self.communicator.get_response())
 

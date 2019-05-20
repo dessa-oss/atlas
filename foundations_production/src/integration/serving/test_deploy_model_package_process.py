@@ -50,12 +50,13 @@ class TestDeployModelPackageProcess(Spec):
     
     def test_exception_raised_when_model_package_does_not_exist(self):
         from foundations_production.serving.package_pool import PackagePool
+        from foundations_production.exceptions import MissingModelPackageException
         
         package_pool = PackagePool(active_package_limit=1)
-        with self.assertRaises(KeyError) as context:
+        with self.assertRaises(MissingModelPackageException) as context:
             package_pool.add_package(self.model_id)
 
-        self.assertTrue('Model Package ID {} does not exist'.format(self.model_id) in str(context.exception))
+        self.assertEqual(self.model_id, context.exception.args[0])
 
     def test_can_load_and_predict_on_a_model_package(self):
         from foundations_production.serving.package_pool import PackagePool

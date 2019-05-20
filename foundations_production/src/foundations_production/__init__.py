@@ -18,9 +18,10 @@ def load_model_package(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
     from foundations_production.production_model import ProductionModel
     from foundations_production.preprocessor_class import Preprocessor
+    from foundations_production.exceptions import MissingModelPackageException
 
     if not _model_package_exists(job_id):
-        raise KeyError('Model Package ID {} does not exist'.format(job_id))
+        raise MissingModelPackageException(job_id)
 
     pipeline_archiver = get_pipeline_archiver_for_job(job_id)
     preprocessor = Preprocessor.load_preprocessor(pipeline_archiver, 'transformer', job_id)
