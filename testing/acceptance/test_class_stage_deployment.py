@@ -13,11 +13,8 @@ class TestClassStageDeployment(Spec):
         def __init__(self):
             pass
 
-    # @skip('not implemented yet')
     def test_can_create_stage_with_class(self):
         import foundations
-        
-        foundations.set_environment('local')
 
         test_stage = foundations.create_stage(self.TestClass)()
         test_stage.run()

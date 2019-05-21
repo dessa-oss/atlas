@@ -6,8 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
+import acceptance.fixtures.train_model_package as train_model_package
 
-class TestDeployModelPackage(Spec):
+
+class TestDeployModelPackage(ModelServingConfigMixin):
     @let
     def job_id(self):
         return self.faker.uuid4()
@@ -16,13 +19,22 @@ class TestDeployModelPackage(Spec):
     def set_up(self):
         import subprocess
 
-        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(self.job_id), '--slug=snail'])
+        self.set_up_model_server_config()
+        job = train_model_package.validation_predictions.run()
+        job.wait_for_deployment_to_complete()
+        job_id = job.job_name()
+        try:
+            subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'], check=True)
+        except subprocess.CalledProcessError as ex:
+            subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+            self.fail(str(ex))
 
     @tear_down
     def tear_down(self):
         import subprocess
 
         subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+        self.tear_down_model_server_config()
 
     def test_deploy_model_package_via_cli(self):
         base_url = 'http://localhost:5000/v1/snail'

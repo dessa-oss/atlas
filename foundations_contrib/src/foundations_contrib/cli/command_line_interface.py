@@ -181,7 +181,7 @@ class CommandLineInterface(object):
         import sys
 
         response = requests.post('http://{}/v1/{}/'.format(self._arguments.domain, self._arguments.slug), json = {'model_id': self._arguments.model_id})
-        if response.status_code == 200:
+        if response.status_code == 201:
             print('Model package was deployed successfully to model server.')
         else:
             print('Failed to deploy model package to model server.', file=sys.stderr)

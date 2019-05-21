@@ -54,6 +54,9 @@ class RestAPIServer(object):
         from flask import make_response, request
         import json
 
+        if request.method in ['GET', 'HEAD']:
+            return 'response'
+
         model_id = self._model_package_mapping.get(user_defined_model_name)
         communicator = self._package_pool.get_communicator(model_id)
         communicator.set_action_request(request.get_json())
