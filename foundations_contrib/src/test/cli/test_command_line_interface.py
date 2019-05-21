@@ -406,7 +406,7 @@ class TestCommandLineInterface(Spec):
     def test_serving_deploy_rest_informs_user_if_model_package_was_deployed_successfully(self):
         self._bring_server_up()
         response_mock = Mock()
-        response_mock.status_code = 200
+        response_mock.status_code = 201
         self.requests_post_mock.return_value = response_mock
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.print_mock.assert_called_with('Model package was deployed successfully to model server.')
@@ -442,7 +442,7 @@ class TestCommandLineInterface(Spec):
     def test_cli_does_not_fail_if_model_server_starts_before_900_ms(self):
         self.open_mock.side_effect = OSError()
         response_mock = Mock()
-        response_mock.status_code = 200
+        response_mock.status_code = 201
         self.requests_post_mock.return_value = response_mock
 
         self.sleep_mock.time_to_wait = self.server_startup_time
