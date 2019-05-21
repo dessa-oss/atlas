@@ -94,8 +94,9 @@ class TestRestAPIServer(Spec):
         self.mock_create_retraining_job = self.patch('foundations_production.serving.create_retraining_job', self._create_retraining_job)
 
         self.package_pool_class_mock.return_value = self.package_pool_mock
-        self.package_pool_mock.get_communicator = ConditionalReturn()
-        self.package_pool_mock.get_communicator.return_when(self.communicator, self.model_package_id)
+        #self.package_pool_mock.get_communicator = ConditionalReturn()
+        #self.package_pool_mock.get_communicator.return_when(self.communicator, self.model_package_id)
+        self.package_pool_mock.get_communicator.return_value = self.communicator
         self.request_mock = self.patch('flask.request')
 
         RestAPIServer()
@@ -108,80 +109,10 @@ class TestRestAPIServer(Spec):
         from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
         _RestAPIServerProvider.reset()
 
-    def test_train_latest_model_package_returns_202_if_model_deployed(self):
+    @patch.object(RestAPIServer, 'get_package_pool')
+    def test_predictions_from_model_package_returns_200_if_predictions_successful(self, get_package_pool_mock):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'PUT'
-        self.request_mock.get_json.return_value = {
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.assertEqual(202, response.status_code)
-
-    def test_train_latest_model_package_returns_404_if_model_not_deployed(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'PUT'
-        self.request_mock.get_json.return_value = {
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function('other_model')
-
-        self.assertEqual(404, response.status_code)
-
-    def test_get_latest_model_package_returns_200(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'GET'
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.assertEqual(200, response.status_code)
-
-    def test_get_latest_model_package_returns_404(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'GET'
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function('other_model')
-
-        self.assertEqual(404, response.status_code)
-
-    def test_train_latest_model_package_creates_retraining_job_and_returns_new_job_id(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'PUT'
-        self.request_mock.get_json.return_value = {
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.assertEqual({'created_job_uuid': self.retraining_job_id}, response.json)
-
-    def test_head_latest_model_package_returns_200(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'HEAD'
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.assertEqual(200, response.status_code)
-
-    def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
+        get_package_pool_mock.return_value = self.package_pool_mock
         self.communicator.get_response.return_value = {}
 
         self.request_mock.method = 'PUT'
@@ -253,34 +184,6 @@ class TestRestAPIServer(Spec):
         with self.assertRaises(InternalServerError) as error_context:
             with self.rest_api_server.flask.app_context():
                 response = self.predictions_from_model_package_function(self.user_defined_model_name)
-
-    def test_train_latest_model_package_chdir_back_to_original_cwd_after_job_deployed(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'PUT'
-        self.request_mock.get_json.return_value = {
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.assertEqual(2, self.mock_os_chdir.call_count)
-
-    def test_train_latest_model_package_prepares_job_workspace(self):
-        self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-
-        self.request_mock.method = 'PUT'
-        self.request_mock.get_json.return_value = {
-            'targets_file': 's3://path/to/targets/file.pkl',
-            'features_file': 'local:///path/to/features/file.pkl'
-        }
-
-        with self.rest_api_server.flask.app_context():
-            response = self.train_latest_model_package_function(self.user_defined_model_name)
-
-        self.mock_prepare_job_workspace.assert_called_with(self.model_package_id)
 
     def _deploy_model_package(self, payload, user_defined_model_name):
         from foundations_production.serving.controllers.model_package_controller import ModelPackageController

@@ -15,26 +15,11 @@ class RestAPIServer(object):
 
         self._package_pool = PackagePool(1000)
         self._flask = Flask(__name__)
-        self._api = Api(self._flask, catch_all_404s=True) # errors=self.exceptions_as_http_error_codes(), catch_all_404s=True)
+        self._flask.config['ERROR_404_HELP'] = False
+        self._api = Api(self._flask)
         self._register_routes(self._flask)
         self._model_package_mapping = {}
-        got_request_exception.connect(self.handle_exception, self._flask)
         register_rest_api_server(self)
-
-    def handle_exception(self, sender, exception, **extra):
-        from werkzeug.exceptions import BadRequestKeyError
-
-        if isinstance(exception, KeyError):
-            missing_key = exception.args[0]
-            raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
-
-    # def exceptions_as_http_error_codes(self):
-    #     return {
-    #         'BadRequestKeyError': {
-    #             'message': "Missing field in JSON data.",
-    #             'status': 400,
-    #         }
-    #     }
 
     @property
     def flask(self):
@@ -63,52 +48,7 @@ class RestAPIServer(object):
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(400)
 
-        flask.add_url_rule('/v1/<user_defined_model_name>/model/', methods=['GET', 'PUT', 'HEAD'], view_func=self.train_latest_model_package)
         flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
-
-    def train_latest_model_package(self, user_defined_model_name):
-        from flask import request, jsonify, make_response
-
-        if user_defined_model_name not in self._model_package_mapping:
-            return make_response('response', 404)
-
-        if request.method in ['GET', 'HEAD']:
-            return make_response('response', 200)
-
-        targets_location, features_location = self._retraining_data_locations(request)
-
-        model_package_id = self._model_package_id_from_name(user_defined_model_name)
-        retraining_job_deployment = self._deploy_retraining_job(model_package_id, targets_location, features_location)
-        response_body = self._response_body_with_retraining_job_id(retraining_job_deployment)
-
-        return make_response(response_body, 202)
-
-    def _deploy_retraining_job(self, model_package_id, targets_location, features_location):
-        import os
-        from foundations_production.serving import create_retraining_job, workspace_path, prepare_job_workspace
-        from foundations_internal.working_directory_stack import WorkingDirectoryStack
-
-        with WorkingDirectoryStack():
-            prepare_job_workspace(model_package_id)
-            os.chdir(workspace_path(model_package_id))
-            retraining_job = create_retraining_job(model_package_id, targets_location=targets_location, features_location=features_location)
-            job_deployment = retraining_job.run()
-
-        return job_deployment
-
-    def _retraining_data_locations(self, request):
-        request_body = request.get_json()
-        features_location = request_body['features_file']
-        targets_location = request_body['targets_file']
-
-        return targets_location, features_location
-
-    def _model_package_id_from_name(self, user_defined_model_name):
-        return self._model_package_mapping[user_defined_model_name]
-
-    def _response_body_with_retraining_job_id(self, retraining_job_deployment):
-        from flask import jsonify
-        return jsonify({'created_job_uuid': retraining_job_deployment.job_name()})
 
     def predictions_from_model_package(self, user_defined_model_name):
         from flask import make_response, request

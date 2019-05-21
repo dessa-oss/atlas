@@ -9,7 +9,6 @@ from mock import patch
 
 from foundations_spec import *
 from foundations_production.serving.rest_api_server import RestAPIServer
-from foundations_production.serving.controllers.retrain_model_package_controller import RetrainModelPackageController
 
 class TestRetrainModelPackageController(Spec):
 

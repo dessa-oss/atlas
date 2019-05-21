@@ -29,9 +29,6 @@ class TestRestAPIServer(Spec):
 
         return {'json': dict(foo='bar')}
 
-    def test_training_all_model_packages_route_is_added(self):
-        self.assertIn('train_latest_model_package', self.flask.view_functions)
-
     def test_predictions_from_model_package_route_is_added(self):
         self.assertIn('predictions_from_model_package', self.flask.view_functions)
 
