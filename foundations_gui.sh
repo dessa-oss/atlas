@@ -13,13 +13,36 @@ get_redis_container_image () {
     docker ps --format "{{.Image}}" | grep -E '^redis:?.*$' | head -n1
 }
 
+create_redis_if_not_exists () {
+    if [[ -z "$(get_redis_container_image)" ]]; then
+        echo "Creating redis."
+        docker run -d --rm \
+            -p 6379:6379 \
+            redis:5 \
+            > /dev/null
+
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to start redis."
+            exit 1
+        fi
+    fi
+}
+
 start_ui () {
     if [[ ! -z "${REDIS_URL}" ]]; then
+        echo "Using redis at ${REDIS_URL}"
         redis_url=$REDIS_URL
         rest_api_link_option=""
     else
+        echo "Redis url not set."
+
+        create_redis_if_not_exists
+
         redis_container_image=$(get_redis_container_image)
         redis_container_name=$(docker ps -f ancestor=${redis_container_image} --format "{{.Names}}" | head -n1)
+
+        echo "Using redis container ${redis_container_name}"
+
         redis_url="redis://${redis_container_name}:6379"
         rest_api_link_option="--link ${redis_container_name}"
     fi
