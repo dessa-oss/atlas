@@ -54,11 +54,13 @@ class TestLoadModelPackage(Spec):
         self.assertEqual(self.mock_preprocessor, model_package.preprocessor)
 
     def test_load_model_package_raises_error_if_job_not_completed(self):
+        from foundations_production.exceptions import MissingModelPackageException
+
         self.mock_is_job_completed.return_value = False
-        with self.assertRaises(KeyError) as context:
+        with self.assertRaises(MissingModelPackageException) as context:
             load_model_package(self.job_id)
         
-        self.assertTrue('Model Package ID {} does not exist'.format(self.job_id) in str(context.exception))
+        self.assertEqual(self.job_id, str(context.exception))
 
     def test_load_model_package_calls_is_job_completed_with_correct_arguments(self):
         from foundations_contrib.global_state import redis_connection
