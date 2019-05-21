@@ -17,6 +17,7 @@ create_redis_if_not_exists () {
     if [[ -z "$(get_redis_container_image)" ]]; then
         echo "Creating redis."
         docker run -d --rm \
+            --name foundations-redis \
             -p 6379:6379 \
             redis:5 \
             > /dev/null
@@ -28,7 +29,15 @@ create_redis_if_not_exists () {
     fi
 }
 
+create_network_if_not_exists () {
+    if [[ -z "$(docker network ls --filter name=foundations-gui --format \"{{.ID}}\")" ]]; then
+        docker network create -d bridge foundations-gui
+    fi
+}
+
 start_ui () {
+    create_network_if_not_exists
+
     if [[ ! -z "${REDIS_URL}" ]]; then
         echo "Using redis at ${REDIS_URL}"
         redis_url=$REDIS_URL
@@ -41,10 +50,11 @@ start_ui () {
         redis_container_image=$(get_redis_container_image)
         redis_container_name=$(docker ps -f ancestor=${redis_container_image} --format "{{.Names}}" | head -n1)
 
+        docker network connect foundations-gui ${redis_container_name} 2> /dev/null
+
         echo "Using redis container ${redis_container_name}"
 
         redis_url="redis://${redis_container_name}:6379"
-        rest_api_link_option="--link ${redis_container_name}"
     fi
 
     echo "Starting Foundations UI..."
@@ -52,7 +62,7 @@ start_ui () {
     docker run -d --rm \
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
-        ${rest_api_link_option} \
+        --network foundations-gui \
         foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
@@ -60,7 +70,7 @@ start_ui () {
     docker run -d --rm \
         --name foundations-gui \
         -e FOUNDATIONS_REST_API=foundations-rest-api \
-        --link foundations-rest-api \
+        --network foundations-gui \
         -p 6443:6443 \
         foundations-gui:${image_tag} \
         > /dev/null \
