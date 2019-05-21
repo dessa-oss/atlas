@@ -11,7 +11,7 @@ class JobDeployment(object):
     def __init__(self, job_id, job, job_source_bundle):
         from foundations_contrib.global_state import config_manager
         from foundations_contrib.job_bundler import JobBundler
-        from foundations_scheduler.scheduler import Scheduler
+        from foundations_internal.scheduler import Scheduler
         from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
 
         self._config = {}

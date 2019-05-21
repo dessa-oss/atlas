@@ -26,7 +26,7 @@ class TestJobDeployment(Spec):
     @let_now
     def mock_scheduler_instance(self):
         instance = Mock()
-        klass = self.patch('foundations_scheduler.scheduler.Scheduler', ConditionalReturn())
+        klass = self.patch('foundations_internal.scheduler.Scheduler', ConditionalReturn())
         klass.return_when(instance, self.mock_api_wrapper, self.result_config)
         return instance
 
