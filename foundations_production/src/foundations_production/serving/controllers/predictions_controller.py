@@ -15,13 +15,13 @@ from foundations_production.serving.controllers.controller_mixin import Controll
 class PredictionsController(ControllerMixin):
 
     def get(self):
-        
+
         @exceptions_as_http_errors
         def callback():
             return 'response'
         return Response('get_predictions_results', LazyResult(callback), status=200)
 
-    def put(self):
+    def post(self):
 
         @exceptions_as_http_errors
         def callback():

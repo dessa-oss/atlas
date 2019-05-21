@@ -13,7 +13,7 @@ class ControllerMixin(object):
 
         rest_api_server = get_rest_api_server()
         model_package_mapping = rest_api_server.get_model_package_mapping()
-        user_defined_model_name = self.params['user_defined_model_name']
+        user_defined_model_name = self.params.pop('user_defined_model_name')
         if user_defined_model_name in model_package_mapping:
             return model_package_mapping[user_defined_model_name]
         else:
