@@ -9,12 +9,16 @@ else
     image_tag="$3"
 fi
 
+get_redis_container_image () {
+    docker ps --format "{{.Image}}" | grep -E '^redis:?.*$' | head -n1
+}
+
 start_ui () {
     if [[ ! -z "${REDIS_URL}" ]]; then
         redis_url=$REDIS_URL
         rest_api_link_option=""
     else
-        redis_container_image=$(docker ps --format "{{.Image}}" | grep -E '^redis:?.*$' | head -n1)
+        redis_container_image=$(get_redis_container_image)
         redis_container_name=$(docker ps -f ancestor=${redis_container_image} --format "{{.Names}}" | head -n1)
         redis_url="redis://${redis_container_name}:6379"
         rest_api_link_option="--link ${redis_container_name}"
