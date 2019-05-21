@@ -94,14 +94,12 @@ class TestRestAPIServer(Spec):
         self.mock_create_retraining_job = self.patch('foundations_production.serving.create_retraining_job', self._create_retraining_job)
 
         self.package_pool_class_mock.return_value = self.package_pool_mock
-        #self.package_pool_mock.get_communicator = ConditionalReturn()
-        #self.package_pool_mock.get_communicator.return_when(self.communicator, self.model_package_id)
-        self.package_pool_mock.get_communicator.return_value = self.communicator
+        self.package_pool_mock.get_communicator = ConditionalReturn()
+        self.package_pool_mock.get_communicator.return_when(self.communicator, self.model_package_id)
         self.request_mock = self.patch('flask.request')
 
         RestAPIServer()
         self.rest_api_server = get_rest_api_server()
-        self.train_latest_model_package_function = self.rest_api_server.flask.view_functions.get('train_latest_model_package')
         self.predictions_from_model_package_function = self.rest_api_server.flask.view_functions.get('predictions_from_model_package')
 
     @tear_down
@@ -109,11 +107,11 @@ class TestRestAPIServer(Spec):
         from foundations_production.serving.rest_api_server_provider import _RestAPIServerProvider
         _RestAPIServerProvider.reset()
 
-    @patch.object(RestAPIServer, 'get_package_pool')
-    def test_predictions_from_model_package_returns_200_if_predictions_successful(self, get_package_pool_mock):
+    def test_predictions_from_model_package_returns_200_if_predictions_successful(self):
         self._deploy_model_package({'model_id': self.model_package_id}, self.user_defined_model_name)
-        get_package_pool_mock.return_value = self.package_pool_mock
-        self.communicator.get_response.return_value = {}
+
+        self.rest_api_server._package_pool = self.package_pool_mock
+        self.communicator.get_response.return_value = {'rows': [['some row']], 'schema': [{'some': 'schema'}]}
 
         self.request_mock.method = 'PUT'
         self.request_mock.get_json.return_value = {
@@ -181,7 +179,7 @@ class TestRestAPIServer(Spec):
         self.request_mock.method = 'PUT'
         self.request_mock.get_json.return_value = {}
 
-        with self.assertRaises(InternalServerError) as error_context:
+        with self.assertRaises(Exception) as error_context:
             with self.rest_api_server.flask.app_context():
                 response = self.predictions_from_model_package_function(self.user_defined_model_name)
 
