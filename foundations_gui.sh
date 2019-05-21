@@ -1,11 +1,5 @@
 #!/bin/bash
 
-if [[ -z "${REDIS_URL}" ]]; then
-    redis_url="redis://10.1.8.61:6379"
-else
-    redis_url=$REDIS_URL
-fi
-
 action="$1"
 
 if [ "$3" = "" ]
@@ -16,11 +10,22 @@ else
 fi
 
 start_ui () {
+    if [[ ! -z "${REDIS_URL}" ]]; then
+        redis_url=$REDIS_URL
+        rest_api_link_option=""
+    else
+        redis_container_image=$(docker ps --format "{{.Image}}" | grep -E '^redis:?.*$' | head -n1)
+        redis_container_name=$(docker ps -f ancestor=${redis_container_image} --format "{{.Names}}" | head -n1)
+        redis_url="redis://${redis_container_name}:6379"
+        rest_api_link_option="--link ${redis_container_name}"
+    fi
+
     echo "Starting Foundations UI..."
 
     docker run -d --rm \
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
+        ${rest_api_link_option} \
         foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
