@@ -7,10 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
-import acceptance.fixtures.train_model_package as train_model_package
+from acceptance.mixins.model_package_deployment_mixin import ModelPackageDeploymentMixin
 
 
-class TestDeployModelPackage(ModelServingConfigMixin):
+class TestDeployModelPackage(ModelServingConfigMixin, ModelPackageDeploymentMixin):
     @let
     def job_id(self):
         return self.faker.uuid4()
@@ -20,9 +20,7 @@ class TestDeployModelPackage(ModelServingConfigMixin):
         import subprocess
 
         self.set_up_model_server_config()
-        job = train_model_package.validation_predictions.run()
-        job.wait_for_deployment_to_complete()
-        job_id = job.job_name()
+        job_id = self.deploy_model_package()
         try:
             subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'], check=True)
         except subprocess.CalledProcessError as ex:

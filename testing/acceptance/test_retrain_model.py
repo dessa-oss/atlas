@@ -7,11 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-import acceptance.fixtures.train_model_package as train_model_package
 from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
+from acceptance.mixins.model_package_deployment_mixin import ModelPackageDeploymentMixin
 
-class TestRetrainModel(ModelServingConfigMixin):
-    
+class TestRetrainModel(ModelServingConfigMixin, ModelPackageDeploymentMixin):
+
     @let
     def features_file_name(self):
         return '/tmp/{}.pkl'.format(self.faker.uuid4())
@@ -25,9 +25,7 @@ class TestRetrainModel(ModelServingConfigMixin):
         import subprocess
 
         self.set_up_model_server_config()
-        job = train_model_package.validation_predictions.run()
-        job.wait_for_deployment_to_complete()
-        job_id = job.job_name()
+        job_id = self.deploy_model_package()
 
         self._create_retraining_data_sets()
 
@@ -107,7 +105,7 @@ class TestRetrainModel(ModelServingConfigMixin):
 
         self._save_dataframe(features, self.features_file_name)
         self._save_dataframe(targets, self.targets_file_name)
-        
+
     def _save_dataframe(self, dataframe, file_name):
         import pickle
 
