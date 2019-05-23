@@ -21,6 +21,10 @@ class TestSetJobResources(Spec):
         return self.faker.random.random() * 256
 
     @let
+    def invalid_ram(self):
+        return self.faker.random.random() * -1
+
+    @let
     def job_resources(self):
         from foundations_internal.job_resources import JobResources
         return JobResources(self.num_gpus, self.ram)
@@ -33,3 +37,11 @@ class TestSetJobResources(Spec):
         set_job_resources(self.num_gpus, self.ram)
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(self.job_resources, job_resources)
+
+    def test_ram_set_less_than_or_equal_to_zero_throws_value_error(self):
+        with self.assertRaises(ValueError) as error_context:
+            set_job_resources(self.num_gpus, self.invalid_ram)
+        
+        error_message = 'Invalid RAM quantity. Please provide a RAM quantity greater than zero.'
+        self.assertIn(error_message, error_context.exception.args)
+

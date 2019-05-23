@@ -12,3 +12,5 @@ def set_job_resources(num_gpus, ram):
     job_resources = JobResources(num_gpus, ram)
     current_foundations_context().set_job_resources(job_resources)
 
+    if ram <= 0:
+        raise ValueError('Invalid RAM quantity. Please provide a RAM quantity greater than zero.')
