@@ -76,4 +76,4 @@ class FoundationsContext(object):
 
     def job_resources(self):
         from foundations_internal.job_resources import JobResources
-        return JobResources(0, 0)
+        return JobResources(0, None)
