@@ -9,13 +9,21 @@ import unittest
 
 from foundations_spec import *
 from foundations_internal.foundations_context import FoundationsContext
-
+from foundations_internal.job_resources import JobResources
 
 class TestFoundationsContext(Spec):
 
     @let
     def job_id(self):
         return self.faker.uuid4()
+
+    @let
+    def num_gpus(self):
+        return self.faker.random_int(0, 8)
+
+    @let
+    def ram(self):
+        return self.faker.random.random() * 256
 
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
@@ -78,3 +86,7 @@ class TestFoundationsContext(Spec):
             pickle.dumps(self._context)
 
         self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
+
+    def test_get_job_resources_has_default_gpus_zero(self):
+        job_resources = self._context.job_resources()
+        self.assertEqual(0, job_resources.num_gpus)

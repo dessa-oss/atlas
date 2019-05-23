@@ -73,3 +73,7 @@ class FoundationsContext(object):
 
     def job_id(self):
         return self.pipeline_context().file_name
+
+    def job_resources(self):
+        from foundations_internal.job_resources import JobResources
+        return JobResources(0, 0)
