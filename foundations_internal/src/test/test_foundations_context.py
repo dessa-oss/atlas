@@ -94,3 +94,8 @@ class TestFoundationsContext(Spec):
     def test_job_resources_has_default_ram_none_ie_no_limit(self):
         job_resources = self._context.job_resources()
         self.assertIsNone(job_resources.ram)
+
+    def test_set_job_resources_sets_job_resources_object(self):
+        job_resources = JobResources(self.num_gpus, self.ram)
+        self._context.set_job_resources(job_resources)
+        self.assertIs(job_resources, self._context.job_resources())

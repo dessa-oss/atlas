@@ -29,7 +29,10 @@ class FoundationsContext(object):
             self._context._pipeline = self._previous_pipeline
 
     def __init__(self, pipeline):
+        from foundations_internal.job_resources import JobResources
+
         self._pipeline = pipeline
+        self._job_resources = JobResources(0, None)
 
     def pipeline(self):
         """The current pipeline used for all staging functionality in Foundations
@@ -75,5 +78,7 @@ class FoundationsContext(object):
         return self.pipeline_context().file_name
 
     def job_resources(self):
-        from foundations_internal.job_resources import JobResources
-        return JobResources(0, None)
+        return self._job_resources
+
+    def set_job_resources(self, job_resources):
+        self._job_resources = job_resources
