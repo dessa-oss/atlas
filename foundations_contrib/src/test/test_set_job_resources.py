@@ -9,6 +9,7 @@ from foundations_spec import *
 
 from foundations_contrib.set_job_resources import set_job_resources
 from foundations_contrib.global_state import current_foundations_context
+from foundations_internal.job_resources import JobResources
 
 class TestSetJobResources(Spec):
 
@@ -26,8 +27,11 @@ class TestSetJobResources(Spec):
 
     @let
     def job_resources(self):
-        from foundations_internal.job_resources import JobResources
         return JobResources(self.num_gpus, self.ram)
+
+    @let
+    def default_job_resources(self):
+        return JobResources(0, None)
 
     @tear_down
     def tear_down(self):
@@ -45,3 +49,9 @@ class TestSetJobResources(Spec):
         error_message = 'Invalid RAM quantity. Please provide a RAM quantity greater than zero.'
         self.assertIn(error_message, error_context.exception.args)
 
+    def test_ram_set_less_than_or_equal_to_zero_does_not_actually_set_job_resources(self):
+        with self.assertRaises(ValueError) as error_context:
+            set_job_resources(self.num_gpus, self.invalid_ram)
+
+        job_resources = current_foundations_context().job_resources()
+        self.assertEqual(self.default_job_resources, job_resources)
