@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import foundations
-from foundations_contrib.global_state import current_foundations_context
 
 @skip
 class TestSetJobResources(Spec):
@@ -17,6 +16,10 @@ class TestSetJobResources(Spec):
     def set_up(self):
         from scheduler_acceptance.cleanup import cleanup
         cleanup()
+
+    @tear_down
+    def tear_down(self):
+        from foundations_contrib.global_state import current_foundations_context
         current_foundations_context().reset_job_resources()
 
     @set_up_class
