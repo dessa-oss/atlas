@@ -68,8 +68,8 @@ class TestSetJobResources(Spec):
         self.assertIn(error_message, error_context.exception.args)
 
     def test_gpu_set_to_non_integer_value_not_actually_set_job_resources(self):
-        job_resources = current_foundations_context().job_resources()
-        self.assertEqual(self.default_job_resources, job_resources)
-        
         with self.assertRaises(ValueError) as error_context:
             set_job_resources(self.non_integer_gpu, self.ram)
+
+        job_resources = current_foundations_context().job_resources()
+        self.assertEqual(self.default_job_resources, job_resources)

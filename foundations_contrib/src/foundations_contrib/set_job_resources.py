@@ -11,9 +11,9 @@ from foundations_internal.job_resources import JobResources
 def set_job_resources(num_gpus, ram):
     if ram <= 0:
         raise ValueError('Invalid RAM quantity. Please provide a RAM quantity greater than zero.')
+    
+    if not isinstance(num_gpus, int):
+        raise ValueError('Invalid GPU quantity. Please provide an integer GPU quantity.')
 
     job_resources = JobResources(num_gpus, ram)
     current_foundations_context().set_job_resources(job_resources)
-
-    if not isinstance(num_gpus, int):
-        raise ValueError('Invalid GPU quantity. Please provide an integer GPU quantity.')
