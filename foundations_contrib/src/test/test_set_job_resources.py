@@ -24,6 +24,10 @@ class TestSetJobResources(Spec):
     @let
     def invalid_ram(self):
         return self.faker.random.random() * -1
+    
+    @let
+    def non_integer_gpu(self):
+        return self.faker.random.random()
 
     @let
     def job_resources(self):
@@ -55,3 +59,10 @@ class TestSetJobResources(Spec):
 
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(self.default_job_resources, job_resources)
+
+    def test_gpu_set_to_non_integer_value_throw_value_error(self):
+        with self.assertRaises(ValueError) as error_context:
+            set_job_resources(self.non_integer_gpu, self.ram)
+        
+        error_message = 'Invalid GPU quantity. Please provide an integer GPU quantity.'
+        self.assertIn(error_message, error_context.exception.args)
