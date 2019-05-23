@@ -87,7 +87,7 @@ class TestSetJobResources(Spec):
         with self.assertRaises(RuntimeError) as error_context:
             stage.run()
         
-        error_message = 'Could not deploy job - resources requested exceeds capacity of largest node'
+        error_message = 'Could not deploy job - resources requested exceed capacity of largest node'
         self.assertIn(error_message, error_context.exception.args)
 
     @staticmethod
