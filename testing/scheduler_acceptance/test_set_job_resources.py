@@ -33,7 +33,7 @@ class TestSetJobResources(Spec):
         get_number_of_gpus = foundations.create_stage(get_number_of_gpus)
         stage_get_number_of_gpus = get_number_of_gpus()
 
-        get_ram_in_mb = foundations.create_stage(get_ram_in_gb_when_limit_set)
+        get_ram_in_gb = foundations.create_stage(get_ram_in_gb_when_limit_set)
         stage_get_ram_in_gb = get_ram_in_gb()
 
         log_metric = foundations.create_stage(self._log_resource_metrics)
