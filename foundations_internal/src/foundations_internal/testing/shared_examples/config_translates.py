@@ -14,6 +14,8 @@ class ConfigTranslates(object):
         return {
             'results_config': {
                 'archive_end_point': '',
+                'artifact_path': '',
+                'artifact_end_point': '',
             },
             'cache_config': {
                 'end_point': '',
@@ -155,3 +157,8 @@ class ConfigTranslates(object):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'DEBUG')
+
+    def test_returns_configured_artifact_path(self):
+        self._configuration['results_config']['artifact_path'] = self.fake_result_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['artifact_path'], self.fake_result_path)

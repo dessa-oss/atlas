@@ -144,3 +144,21 @@ class TestBucketFromScheme(object):
         result_config = self.translator.translate(self._configuration)
         config = result_config['cache_implementation']
         self.assertEqual(BucketCacheBackendForConfig, config['cache_type'])
+
+
+
+    def test_artifact_end_point_returns_constructor_arguments_with_s3_scheme(self):
+        from foundations_aws.aws_bucket import AWSBucket
+
+        self._configuration['results_config']['artifact_end_point'] = self.s3_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['artifact_end_point_implementation']
+        self.assertEqual([AWSBucket, self.fake_bucket_path + '/results'], config['constructor_arguments'])
+
+    def test_artifact_end_point_returns_constructor_arguments_with_gcp_scheme(self):
+        from foundations_gcp.gcp_bucket import GCPBucket
+
+        self._configuration['results_config']['artifact_end_point'] = self.gcp_bucket_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['artifact_end_point_implementation']
+        self.assertEqual([GCPBucket, self.fake_bucket_path + '/results'], config['constructor_arguments'])

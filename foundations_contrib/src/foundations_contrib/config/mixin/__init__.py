@@ -21,6 +21,9 @@ def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
     return _storage_implementation('archive_type', BucketPipelineArchive, 'archive', result_end_point, default_bucket_type)
 
+def results_artifact_implementation(result_end_point, default_bucket_type):
+    from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
+    return _storage_implementation('archive_type', BucketPipelineArchive, 'results', result_end_point, default_bucket_type)
 
 def archive_listing_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_listing import BucketPipelineListing
