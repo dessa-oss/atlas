@@ -44,6 +44,7 @@ from foundations.config import set_environment
 import foundations_internal.import_installer
 import foundations_contrib.consumers
 import foundations_events
+from foundations_contrib.set_job_resources import set_job_resources
 
 def _append_module():
     import sys

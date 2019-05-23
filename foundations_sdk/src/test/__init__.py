@@ -19,3 +19,4 @@ from test.test_stage_connector_wrapper import TestStageConnectorWrapper
 from test.test_deployment_wrapper import TestDeploymentWrapper
 from test.test_config import TestConfig
 from test.prototype import *
+from test.test_set_job_resources import TestSetJobResources
