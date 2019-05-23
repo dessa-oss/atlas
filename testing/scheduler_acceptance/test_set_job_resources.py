@@ -70,7 +70,7 @@ class TestSetJobResources(Spec):
         self.assertEqual(0, job_metrics['number_of_GPUs'].iloc[0])
         self.assertEqual(memory_capacity, job_metrics['ram_in_GB'].iloc[0])
 
-    def test_excpetion_thrown_when_job_is_run_with_too_many_resources(self):
+    def test_exception_thrown_when_job_is_run_with_too_many_resources(self):
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_number_of_gpus
 
         foundations.set_job_resources(20, 10000)
