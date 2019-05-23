@@ -99,3 +99,9 @@ class TestFoundationsContext(Spec):
         job_resources = JobResources(self.num_gpus, self.ram)
         self._context.set_job_resources(job_resources)
         self.assertIs(job_resources, self._context.job_resources())
+
+    def test_reset_job_resources_sets_job_resources_back_to_defaults(self):
+        job_resources = JobResources(self.num_gpus, self.ram)
+        self._context.set_job_resources(job_resources)
+        self._context.reset_job_resources()
+        self.assertEqual(JobResources(0, None), self._context.job_resources())

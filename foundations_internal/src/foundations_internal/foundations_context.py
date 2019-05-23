@@ -82,3 +82,7 @@ class FoundationsContext(object):
 
     def set_job_resources(self, job_resources):
         self._job_resources = job_resources
+
+    def reset_job_resources(self):
+        from foundations_internal.job_resources import JobResources
+        self._job_resources = JobResources(0, None)
