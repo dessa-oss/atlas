@@ -13,9 +13,9 @@ def translate(config):
 
     result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
-    result = {
+    result = _artifact_path_and_end_point_implementation(config)
+    result.update({
         'artifact_archive_implementation': _archive_implementation(result_end_point),
-        'artifact_end_point_implementation': _artifact_end_point_implementation(config),
         'job_source_archive_implementation': _archive_implementation(result_end_point),
         'miscellaneous_archive_implementation': _archive_implementation(result_end_point),
         'persisted_data_archive_implementation': _archive_implementation(result_end_point),
@@ -29,11 +29,10 @@ def translate(config):
         'log_level': _log_level(config),
         'shell_command': find_bash(),
         'obfuscate_foundations': _obfuscate_foundations(config),
-        'artifact_path': _artifact_path(config),
         'run_script_environment': {
             'log_level': _log_level(config)
         }
-    }
+    })
     if 'ssh_config' in config:
         result.update(ssh_configuration(config))
     return result 
@@ -95,11 +94,17 @@ def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)
 
 def _artifact_path(config):
-    return config['results_config']['artifact_path']
+    results_config = config['results_config']
+    artifact_path = results_config.get('artifact_path')
+    return artifact_path or 'results'
 
-def _artifact_end_point_implementation(config):
+def _artifact_path_and_end_point_implementation(config):
     from foundations_contrib.config.mixin import results_artifact_implementation
     from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
-    artifact_end_point = config['results_config']['artifact_end_point']
-    return results_artifact_implementation(artifact_end_point, LocalFileSystemBucket)
+    artifact_config = {'artifact_path': _artifact_path(config)}
+    artifact_config['artifact_end_point'] = config['results_config']['artifact_end_point']
+    return {
+        'artifact_path': artifact_config['artifact_path'],
+        'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
+    }
