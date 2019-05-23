@@ -9,3 +9,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobResources(object):
     def __init__(self, num_gpus, ram):
         self.num_gpus = num_gpus
+        self.ram = ram

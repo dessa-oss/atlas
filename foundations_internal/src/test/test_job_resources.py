@@ -25,3 +25,6 @@ class TestJobResources(Spec):
 
     def test_get_number_of_gpus_from_job_resources(self):
         self.assertEqual(self.num_gpus, self._job_resources.num_gpus)
+
+    def test_get_ram_from_job_resources(self):
+        self.assertEqual(self.ram, self._job_resources.ram)
