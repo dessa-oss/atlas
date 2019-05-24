@@ -19,7 +19,7 @@ class TestModelPackageController(Spec):
     @let
     def model_package_id(self):
         return self.faker.uuid4()
-    
+
     @let
     def user_defined_model_name(self):
         return self.faker.word()
@@ -37,6 +37,13 @@ class TestModelPackageController(Spec):
         self.model_package_controller.params = {'model_id': self.model_package_id, 'user_defined_model_name': 'fancy_model'}
         self.model_package_controller.post().evaluate()
         self.package_pool_mock.add_package.assert_called_with(self.model_package_id)
+
+    @patch.object(RestAPIServer, 'get_package_pool')
+    def test_add_new_model_package_returns_201_if_successful(self, get_package_pool_mock):
+        get_package_pool_mock.return_value = self.package_pool_mock
+        self.model_package_controller.params = {'model_id': self.model_package_id, 'user_defined_model_name': 'fancy_model'}
+        status_code = self.model_package_controller.post().status()
+        self.assertEqual(201, status_code)
 
     @patch.object(RestAPIServer, 'get_package_pool')
     def test_add_new_model_package_returns_meaningful_response_if_successful(self, get_package_pool_mock):
