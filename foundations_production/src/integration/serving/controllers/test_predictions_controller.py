@@ -33,6 +33,11 @@ class TestPredictionsController(Spec):
     def test_predictions_route_is_added(self):
         self.assertIn('/v1/<user_defined_model_name>/predictions/', [rule.rule for rule in self.flask.url_map.iter_rules()])
 
+    def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
+        response = self.client.post("/v1/{}/predictions/".format(self.user_defined_model_name), data='bad data')
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Invalid content type', response.json['message'])
+
     def test_predictions_get_request_returns_404_if_model_package_does_not_exist(self):
         response = self.client.get('/v1/{}/predictions/'.format(self.user_defined_model_name))
         self.assertEqual(response.status_code, 404)
@@ -51,7 +56,7 @@ class TestPredictionsController(Spec):
     def test_predictions_fails_with_bad_request_expected_field(self):
         from foundations_production.model_package import ModelPackage
         from integration.fixtures.fake_model_package import preprocessor, model
-     
+
         with patch('foundations_production.load_model_package') as load_model_package_mock:
             load_model_package_mock.return_value = ModelPackage(preprocessor=preprocessor, model=model)
             self._deploy_model_package()
