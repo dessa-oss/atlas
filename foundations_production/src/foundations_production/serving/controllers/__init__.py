@@ -6,4 +6,4 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 from foundations_production.serving.controllers.model_package_controller import ModelPackageController
 from foundations_production.serving.controllers.retrain_model_package_controller import RetrainModelPackageController
-#from foundations_production.serving.controllers.predictions_controller import PredictionsController
+from foundations_production.serving.controllers.predictions_controller import PredictionsController

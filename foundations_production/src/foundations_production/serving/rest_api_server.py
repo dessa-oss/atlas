@@ -48,7 +48,7 @@ class RestAPIServer(object):
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(make_response(jsonify(message='Invalid content type'), 400))
 
-        flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
+        #flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
 
     def predictions_from_model_package(self, user_defined_model_name):
         from flask import make_response, request

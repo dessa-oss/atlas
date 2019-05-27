@@ -18,6 +18,7 @@ class PredictionsController(ControllerMixin):
 
         @exceptions_as_http_errors
         def callback():
+            self._get_model_id_from_model_package_mapping()
             return 'response'
         return Response('get_predictions_results', LazyResult(callback), status=200)
 

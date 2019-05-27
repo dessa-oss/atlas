@@ -18,7 +18,6 @@ class TestRetrainModelPackageController(Spec):
     mock_job = let_mock()
     mock_job_deployment = let_mock()
     model_mock = let_mock()
-    package_pool_mock = let_mock()
 
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_prepare_job_workspace = let_patch_mock('foundations_production.serving.prepare_job_workspace')
@@ -165,12 +164,10 @@ class TestRetrainModelPackageController(Spec):
     def _deploy_model_package(self):
         from foundations_production.serving.controllers.model_package_controller import ModelPackageController
 
-        with patch.object(RestAPIServer, 'get_package_pool') as get_package_pool_mock:
-            get_package_pool_mock.return_value = self.package_pool_mock
-            model_package_controller = ModelPackageController()
-            model_package_controller.params = {
-                'model_id': self.retrain_model_package_id,
-                'user_defined_model_name': self.user_defined_model_name
-            }
-            response = model_package_controller.post()
-            self.assertEqual(201, response.status())
+        model_package_controller = ModelPackageController()
+        model_package_controller.params = {
+            'model_id': self.retrain_model_package_id,
+            'user_defined_model_name': self.user_defined_model_name
+        }
+        response = model_package_controller.post()
+        self.assertEqual(201, response.status())
