@@ -26,10 +26,12 @@ class PackagePool(object):
         self._active_packages.append(model_id)
 
     def get_communicator(self, model_id):
+        from foundations_production.exceptions import MissingModelPackageException
+
         model_package = self._model_packages.get(model_id, None)
 
         if not model_package:
-            return None
+            raise MissingModelPackageException(model_id)
 
         if model_id not in self._active_packages:
             self._restart_process_and_update_communicator(model_package, model_id)

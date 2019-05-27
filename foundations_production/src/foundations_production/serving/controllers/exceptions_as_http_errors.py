@@ -10,7 +10,6 @@ def exceptions_as_http_errors(method):
 
     @wraps(method)
     def method_decorator(*args, **kwargs):
-        from flask import request, abort
         from werkzeug.exceptions import NotFound, BadRequestKeyError
         from foundations_production.exceptions import MissingModelPackageException
 
@@ -19,8 +18,8 @@ def exceptions_as_http_errors(method):
         except KeyError as key_error_exception:
             missing_key = key_error_exception.args[0]
             raise BadRequestKeyError(description='Missing field in JSON data: {}'.format(missing_key))
-        except MissingModelPackageException as missing_model_packag_exception:
-            package_name = missing_model_packag_exception.args[0]
+        except MissingModelPackageException as missing_model_package_exception:
+            package_name = missing_model_package_exception.args[0]
             raise NotFound(description='Model package not found: {}'.format(package_name))
 
     return method_decorator
