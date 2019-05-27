@@ -103,7 +103,8 @@ def _artifact_path_and_end_point_implementation(config):
     from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
     artifact_config = {'artifact_path': _artifact_path(config)}
-    artifact_config['artifact_end_point'] = config['results_config']['artifact_end_point']
+    artifact_end_point_config = config['results_config'].get('artifact_end_point') or ''
+    artifact_config['artifact_end_point'] = artifact_end_point_config
     return {
         'artifact_path': artifact_config['artifact_path'],
         'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
