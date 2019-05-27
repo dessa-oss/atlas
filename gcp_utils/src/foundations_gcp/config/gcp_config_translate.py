@@ -11,8 +11,9 @@ def translate(config):
     from foundations_contrib.helpers.shell import find_bash
 
     result_end_point = config['results_config']['archive_end_point']
+    result = _artifact_path_and_end_point_implementation(config)
 
-    return {
+    result.update({
         'artifact_archive_implementation': _archive_implementation(result_end_point),
         'job_source_archive_implementation': _archive_implementation(result_end_point),
         'miscellaneous_archive_implementation': _archive_implementation(result_end_point),
@@ -36,7 +37,9 @@ def translate(config):
         'run_script_environment': {
             'log_level': _log_level(config)
         }
-    }
+    })
+
+    return result
 
 def _log_level(config):
     return config.get('log_level', 'INFO')
@@ -77,3 +80,20 @@ def _archive_implementation(result_end_point):
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)
+
+def _artifact_path(config):
+    results_config = config['results_config']
+    artifact_path = results_config.get('artifact_path')
+    return artifact_path or 'results'
+
+def _artifact_path_and_end_point_implementation(config):
+    from foundations_contrib.config.mixin import results_artifact_implementation
+    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+    artifact_config = {'artifact_path': _artifact_path(config)}
+    artifact_config['artifact_end_point'] = config['results_config']['artifact_end_point']
+    return {
+        'artifact_path': artifact_config['artifact_path'],
+        'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
+    }
+
