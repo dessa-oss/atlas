@@ -59,7 +59,7 @@ class TestRetrainModelPackageController(Spec):
         self.assertIn('/v1/<user_defined_model_name>/model/', [rule.rule for rule in self.flask.url_map.iter_rules()])
 
     def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
-        response = self.client.post("/v1/{}/model/".format(self.user_defined_model_name), data='bad data')
+        response = self.client.put("/v1/{}/model/".format(self.user_defined_model_name), data='bad data')
         self.assertEqual(400, response.status_code)
         self.assertEqual('Invalid content type', response.json['message'])
 
