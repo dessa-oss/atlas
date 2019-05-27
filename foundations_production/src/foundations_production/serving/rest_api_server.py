@@ -4,22 +4,16 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-from foundations_production.serving.rest_api_server_provider import register_rest_api_server
+
 
 class RestAPIServer(object):
 
     def __init__(self):
-        from flask import Flask, got_request_exception
-        from flask_restful import Api
         from foundations_production.serving.package_pool import PackagePool
 
+        self._setup_server()
         self._package_pool = PackagePool(1000)
-        self._flask = Flask(__name__)
-        self._flask.config['ERROR_404_HELP'] = False
-        self._api = Api(self._flask)
-        self._register_routes(self._flask)
         self._model_package_mapping = {}
-        register_rest_api_server(self)
 
     @property
     def flask(self):
@@ -37,18 +31,35 @@ class RestAPIServer(object):
     def get_package_pool(self):
         return self._package_pool
 
-    def _register_routes(self, flask):
+    def _setup_server(self):
+        from foundations_production.serving.rest_api_server_provider import register_rest_api_server
+
+        self._initialize_flask_app()
+        self._initialize_requests_handling()
+        register_rest_api_server(self)
+
+    def _initialize_flask_app(self):
+        from flask import Flask
+        from flask_restful import Api
+
+        self._flask = Flask(__name__)
+        self._flask.config['ERROR_404_HELP'] = False
+        self._api = Api(self._flask)
+
+    def _initialize_requests_handling(self):
         from werkzeug.exceptions import HTTPException
         from flask import jsonify
 
-        @flask.before_request
+        flask_app = self._flask
+
+        @flask_app.before_request
         def accept_only_json():
             from flask import request, abort, jsonify, make_response
 
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(make_response(jsonify(message='Invalid content type'), 400))
 
-        #flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
+        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
 
     def predictions_from_model_package(self, user_defined_model_name):
         from flask import make_response, request

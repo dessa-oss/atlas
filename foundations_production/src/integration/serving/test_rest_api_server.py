@@ -29,9 +29,6 @@ class TestRestAPIServer(Spec):
 
         return {'json': dict(foo='bar')}
 
-    def test_predictions_from_model_package_route_is_added(self):
-        self.assertIn('predictions_from_model_package', self.flask.view_functions)
-
     def test_manage_model_package_route_has_get_method(self):
         response = self.client.get('/v1/some_model/')
         self.assertNotIn(response.status_code, [405, 500])
@@ -92,28 +89,26 @@ class TestRestAPIServer(Spec):
         response = self.client.delete('/v1/some_model/model/', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
 
-    @skip
     def test_predictions_from_model_package_route_has_get_method(self):
-        response = self.client.get('/v1/some_model/predictions')
+        response = self.client.get('/v1/some_model/predictions/')
         self.assertNotIn(response.status_code, [405, 500])
 
-    @skip
     def test_predictions_from_model_package_route_has_post_method(self):
-        response = self.client.post('/v1/some_model/predictions', **self.mock_json_request_kwargs)
+        response = self.client.post('/v1/some_model/predictions/', **self.mock_json_request_kwargs)
         self.assertNotIn(response.status_code, [405, 500])
 
     def test_predictions_from_model_package_route_has_no_put_method(self):
-        response = self.client.put('/v1/some_model/predictions', **self.mock_json_request_kwargs)
+        response = self.client.put('/v1/some_model/predictions/', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
 
     def test_predictions_from_model_package_route_has_no_delete_method(self):
-        response = self.client.delete('/v1/some_model/predictions', **self.mock_json_request_kwargs)
+        response = self.client.delete('/v1/some_model/predictions/', **self.mock_json_request_kwargs)
         self.assertEqual(response.status_code, 405)
 
     def test_predict_with_model_package_route_has_get_method(self):
-        response = self.client.get('/v1/some_model/predictions/some_id')
+        response = self.client.get('/v1/some_model/predictions/some_id/')
         self.assertNotIn(response.status_code, [405, 500])
 
     def test_predict_with_model_package_route_has_head_method(self):
-        response = self.client.head('/v1/some_model/predictions/some_id')
+        response = self.client.head('/v1/some_model/predictions/some_id/')
         self.assertNotIn(response.status_code, [405, 500])
