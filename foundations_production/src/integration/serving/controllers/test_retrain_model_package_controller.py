@@ -58,6 +58,11 @@ class TestRetrainModelPackageController(Spec):
     def test_retrain_model_package_route_is_added(self):
         self.assertIn('/v1/<user_defined_model_name>/model/', [rule.rule for rule in self.flask.url_map.iter_rules()])
 
+    def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
+        response = self.client.post("/v1/{}/model/".format(self.user_defined_model_name), data='bad data')
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Invalid content type', response.json['message'])
+
     def test_retrain_get_request_returns_404_if_model_package_does_not_exist(self):
         response = self.client.get('/v1/{}/model/'.format(self.user_defined_model_name))
         self.assertEqual(response.status_code, 404)
@@ -149,7 +154,7 @@ class TestRetrainModelPackageController(Spec):
         response = self.client.put("/v1/{}/model/".format(self.user_defined_model_name), json=payload)
         self.assertEqual(202, response.status_code)
         self.mock_prepare_job_workspace.assert_called_with(self.retrain_model_package_id)
-    
+
     def _set_model_mapping(self):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 

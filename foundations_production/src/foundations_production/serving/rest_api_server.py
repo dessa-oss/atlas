@@ -43,10 +43,10 @@ class RestAPIServer(object):
 
         @flask.before_request
         def accept_only_json():
-            from flask import request, abort
+            from flask import request, abort, jsonify, make_response
 
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
-                abort(400)
+                abort(make_response(jsonify(message='Invalid content type'), 400))
 
         flask.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
 

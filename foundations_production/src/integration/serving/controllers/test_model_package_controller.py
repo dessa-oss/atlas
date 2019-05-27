@@ -40,7 +40,8 @@ class TestModelPackageController(Spec):
 
     def test_rest_api_endpoint_for_deploying_models_accepts_only_json(self):
         response = self.client.post("/v1/{}/".format(self.user_defined_model_name), data='bad data')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Invalid content type', response.json['message'])
 
     def test_deploy_new_model_package_happens_with_post_request(self):
         response = self.client.post("/v1/{}/".format(self.user_defined_model_name), json={'model_id': self.model_package_id})
