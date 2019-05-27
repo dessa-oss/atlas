@@ -170,7 +170,7 @@ class CommandLineInterface(object):
     def _wait_for_model_server_to_start(self):
         from time import sleep
 
-        max_attempts = 10
+        max_attempts = 30
         attempts = 1
         while attempts < max_attempts and not self._is_model_server_running():
             sleep(0.1)

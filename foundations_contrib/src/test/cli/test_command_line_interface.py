@@ -270,7 +270,7 @@ class TestCommandLineInterface(Spec):
         from random import random
 
         between_zero_and_one = random()
-        return between_zero_and_one * 0.7 + 0.2
+        return between_zero_and_one * 2.7 + 0.2
 
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
