@@ -31,7 +31,7 @@ class TestPackagePool(Spec):
     def fake_data(self):
         import pandas
         return pandas.DataFrame({self.faker.word(): self.faker.words()})
-    
+
     @let
     def fake_error_message(self):
         return self.faker.sentence()
@@ -39,7 +39,7 @@ class TestPackagePool(Spec):
     @set_up
     def set_up(self):
         self._model_1_process_terminated = False
-        
+
         self.model_1_new_communicator = self._create_and_set_success_response_on_communicator()
         self.mock_process = self.patch('foundations_production.serving.restartable_process.RestartableProcess', ConditionalReturn())
         self.model_1_process, self.model_1_communicator = self._create_new_model_process(self.model_id)
@@ -56,7 +56,7 @@ class TestPackagePool(Spec):
         model_process.start.return_value = model_communicator
 
         return model_process, model_communicator
-    
+
     def _create_and_set_success_response_on_communicator(self):
         model_communicator = Communicator()
         model_communicator.set_response('SUCCESS: predictor created')
@@ -89,9 +89,13 @@ class TestPackagePool(Spec):
         self.assertEqual(self.model_1_communicator,
                          package_pool.get_communicator(self.model_id))
 
-    def test_get_communicator_returns_none_when_model_doesnt_exist(self):
+    def test_get_communicator_raises_missing_model_package_exception_when_model_doesnt_exist(self):
+        from foundations_production.exceptions import MissingModelPackageException
+
         package_pool = PackagePool(active_package_limit=1)
-        self.assertEqual(None, package_pool.get_communicator(self.model_id))
+        with self.assertRaises(MissingModelPackageException) as exception_context:
+            package_pool.get_communicator(self.model_id)
+        self.assertEqual(self.model_id, exception_context.exception.args[0])
 
     def test_get_communicator_starts_process_if_inactive(self):
         package_pool = PackagePool(active_package_limit=1)
@@ -164,14 +168,14 @@ class TestPackagePool(Spec):
         with self.assertRaises(Exception) as context:
             package_pool.add_package(self.model_id)
         self.assertTrue(self.fake_error_message in str(context.exception))
-    
+
     def test_get_communicator_reraises_error_received_from_process(self):
         self.model_1_new_communicator.get_response()
 
         package_pool = PackagePool(active_package_limit=1)
         package_pool.add_package(self.model_id)
         package_pool.add_package(self.model_2_id)
-        
+
         self.model_1_new_communicator.set_response({
             'name': 'Exception',
             'value': self.fake_error_message
