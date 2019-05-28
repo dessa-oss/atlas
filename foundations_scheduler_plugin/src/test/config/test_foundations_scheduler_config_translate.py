@@ -13,7 +13,7 @@ from foundations_internal.testing.shared_examples.test_bucket_from_scheme import
 from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
 class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
-    
+
     @let
     def translator(self):
         import foundations_scheduler_plugin.config.foundations_scheduler_config_translate as translator
@@ -33,7 +33,7 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucket
     def cache_type(self):
         from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
         return LocalFileSystemCacheBackend
-    
+
     @let
     def bucket_type(self):
         from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
@@ -54,3 +54,18 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucket
         result_config = self.translator.translate(self._configuration)
         config = result_config['deployment_implementation']
         self.assertEqual(config['deployment_type'], JobDeployment)
+
+    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['artifact_end_point_implementation']
+        self.assertEqual([LocalFileSystemBucket, 'results'], config['constructor_arguments'])
+
+    def test_missing_artifact_end_point_returns_constructor_arguments_with_local_filesystem_bucket(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+        self._configuration['results_config']['artifact_path'] = self.fake_relative_path
+        result_config = self.translator.translate(self._configuration)
+        config = result_config['artifact_end_point_implementation']
+        self.assertEqual([LocalFileSystemBucket, self.fake_relative_path], config['constructor_arguments'])

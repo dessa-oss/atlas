@@ -6,45 +6,29 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from os.path import join
+from foundations_internal.config.common_translate import get_translate_implementation
 
-def translate(config):
-    from foundations_contrib.helpers.shell import find_bash
-    from foundations_contrib.config.mixin import ssh_configuration
 
-    result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
+def get_translator_config(config_option):
+    config_options = {
+        'get_result_end_point': _get_result_end_point,
+        'artifact_path_and_end_point_implementation': _artifact_path_and_end_point_implementation,
+        'archive_implementation': _archive_implementation,
+        'archive_listing_implementation': _archive_listing_implementation,
+        'deployment_implementation': _deployment_implementation,
+        'project_listing_implementation': _project_listing_implementation,
+        'cache_implementation': _cache_implementation,
+    }
+    return config_options[config_option]
 
-    result = _artifact_path_and_end_point_implementation(config)
-    result.update({
-        'artifact_archive_implementation': _archive_implementation(result_end_point),
-        'job_source_archive_implementation': _archive_implementation(result_end_point),
-        'miscellaneous_archive_implementation': _archive_implementation(result_end_point),
-        'persisted_data_archive_implementation': _archive_implementation(result_end_point),
-        'provenance_archive_implementation': _archive_implementation(result_end_point),
-        'stage_log_archive_implementation': _archive_implementation(result_end_point),
-        'archive_listing_implementation': _archive_listing_implementation(result_end_point),
-        'deployment_implementation': _deployment_implementation(),
-        'project_listing_implementation': _project_listing_implementation(result_end_point),
-        'redis_url': _redis_url(config),
-        'cache_implementation': _cache_implementation(config),
-        'log_level': _log_level(config),
-        'shell_command': find_bash(),
-        'obfuscate_foundations': _obfuscate_foundations(config),
-        'run_script_environment': {
-            'log_level': _log_level(config)
-        }
-    })
-    if 'ssh_config' in config:
-        result.update(ssh_configuration(config))
-    return result 
+def _get_result_end_point(config):
+    return config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
 def _get_default_archive_end_point():
     from os.path import expanduser
     from os.path import join
 
     return join(expanduser('~'), '.foundations/job_data')
-
-def _log_level(config):
-    return config.get('log_level', 'INFO')
 
 def _cache_implementation(config):
     from foundations_contrib.config.mixin import cache_implementation
@@ -55,16 +39,13 @@ def _cache_implementation(config):
     if 'end_point' in cache_config:
         cache_end_point = cache_config['end_point']
         return cache_implementation(cache_end_point, LocalFileSystemBucket)
-    
+
     cache_end_point = _get_default_archive_end_point()
     cache_path = join(cache_end_point, 'cache')
     return {
         'cache_type': LocalFileSystemCacheBackend,
         'constructor_arguments': [cache_path]
     }
-
-def _redis_url(config):
-    return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
 
 def _project_listing_implementation(result_end_point):
     from foundations_contrib.config.mixin import project_listing_implementation
@@ -90,9 +71,6 @@ def _archive_implementation(result_end_point):
 
     return archive_implementation(result_end_point, LocalFileSystemBucket)
 
-def _obfuscate_foundations(config):
-    return config.get('obfuscate_foundations', False)
-
 def _artifact_path(config):
     results_config = config['results_config']
     artifact_path = results_config.get('artifact_path')
@@ -109,3 +87,5 @@ def _artifact_path_and_end_point_implementation(config):
         'artifact_path': artifact_config['artifact_path'],
         'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
     }
+
+translate = get_translate_implementation(get_translator_config)
