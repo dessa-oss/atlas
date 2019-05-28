@@ -5,8 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from os.path import join
-
 def get_translate_implementation(get_translator_config):
 
     get_result_end_point = get_translator_config('get_result_end_point')
@@ -46,7 +44,7 @@ def get_translate_implementation(get_translator_config):
         if 'ssh_config' in config:
             result.update(ssh_configuration(config))
         return result
-    
+
     return _translate
 
 def _log_level(config):
