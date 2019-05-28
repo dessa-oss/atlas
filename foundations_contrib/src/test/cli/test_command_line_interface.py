@@ -48,6 +48,10 @@ class TestCommandLineInterface(Spec):
     @let
     def level_2_parser_mock(self):
         return Mock()
+    
+    @let
+    def level_3_parser_mock(self):
+        return Mock()
 
     @set_up
     def set_up(self):
@@ -65,8 +69,7 @@ class TestCommandLineInterface(Spec):
         self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
         self.level_2_parser_mock.add_subparsers.return_value = self.level_2_subparsers_mock
 
-        level_3_parser_mock = Mock()
-        self.level_2_subparsers_mock.add_parser.return_value = level_3_parser_mock
+        self.level_2_subparsers_mock.add_parser.return_value = self.level_3_parser_mock
 
         CommandLineInterface([])
 
@@ -104,7 +107,7 @@ class TestCommandLineInterface(Spec):
         serving_deploy_model_id_call = call('--model-id', type=str, help='Model package ID')
         serving_deploy_slug_call = call('--slug', type=str, help='Model package namespace string')
 
-        level_3_parser_mock.add_argument.assert_has_calls(
+        self.level_3_parser_mock.add_argument.assert_has_calls(
             [
                 serving_deploy_rest_call,
                 serving_deploy_domain_call,
@@ -123,6 +126,8 @@ class TestCommandLineInterface(Spec):
         self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
         self.level_2_parser_mock.add_subparsers.return_value = self.level_2_subparsers_mock
 
+        self.level_2_subparsers_mock.add_parser.return_value = self.level_3_parser_mock
+
         CommandLineInterface([])
 
         parser_class_mock.assert_called_with(prog='foundations')
@@ -130,10 +135,14 @@ class TestCommandLineInterface(Spec):
 
         retrieve_call = call('retrieve', help='Download results')
 
-        self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call], any_order=True)
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call])
         retrieve_argument_call = call('artifact', help='Specify type to retrieve as artifact')
+        job_id_call = call('--job_id', type=str, required=True, help="Specify job uuid of already deployed job")
+        save_directory_call = call('--save_dir', type=str, help="Specify local directory path for artifact to save to")
+        source_directory_call = call('--source_dir', type=str, help="Specify relative directory path for artifact to load data")
 
-        self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call], any_order=True)
+        self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call])
+        self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, save_directory_call, source_directory_call], any_order=True)
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:

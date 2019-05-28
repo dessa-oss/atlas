@@ -64,6 +64,9 @@ class CommandLineInterface(object):
     
     def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
         retrieve_artifact_parser = retrieve_subparsers.add_parser('artifact', help='Specify type to retrieve as artifact')
+        retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
+        retrieve_artifact_parser.add_argument('--save_dir', type=str, help="Specify local directory path for artifact to save to")
+        retrieve_artifact_parser.add_argument('--source_dir', type=str, help="Specify relative directory path for artifact to load data")
         retrieve_artifact_parser.set_defaults()
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
@@ -197,7 +200,7 @@ class CommandLineInterface(object):
             print('Failed to deploy model package to model server.', file=sys.stderr)
             sys.exit(11)
 
-    def _is_model_server_running(self):
+    def _is_model_server_running(self): 
         from psutil import NoSuchProcess
 
         try:
