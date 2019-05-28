@@ -16,6 +16,7 @@ class CommandLineInterface(object):
         self._initialize_deploy_parser(subparsers)
         self._initialize_info_parser(subparsers)
         self._initialize_serving_parser(subparsers)
+        self._initialize_retrieve_parser(subparsers)
       
         self._arguments = self._argument_parser.parse_args(args)
         
@@ -55,6 +56,15 @@ class CommandLineInterface(object):
         serving_deploy_parser.add_argument('--model-id', type=str, help='Model package ID')
         serving_deploy_parser.add_argument('--slug', type=str, help='Model package namespace string')
         serving_deploy_parser.set_defaults(function=self._model_serving_deploy)
+
+    def _initialize_retrieve_parser(self, subparsers):
+        retrieve_parser = subparsers.add_parser('retrieve', help='Download results')
+        retrieve_subparsers = retrieve_parser.add_subparsers()
+        self._initialize_retrieve_artifact_parser(retrieve_subparsers)
+    
+    def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
+        retrieve_artifact_parser = retrieve_subparsers.add_parser('artifact', help='Specify type to retrieve as artifact')
+        retrieve_artifact_parser.set_defaults()
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')

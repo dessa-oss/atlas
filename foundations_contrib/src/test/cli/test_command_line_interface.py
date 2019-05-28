@@ -105,6 +105,32 @@ class TestCommandLineInterface(Spec):
             ]
         )
 
+    @patch('argparse.ArgumentParser')
+    def test_retrieve_artifact_has_correct_options(self, parser_class_mock):
+        parser_mock = Mock()
+        parser_class_mock.return_value = parser_mock
+
+        level_1_subparsers_mock = Mock()
+        parser_mock.add_subparsers.return_value = level_1_subparsers_mock
+
+        level_2_parser_mock = Mock()
+        level_1_subparsers_mock.add_parser.return_value = level_2_parser_mock
+
+        level_2_subparsers_mock = Mock()
+        level_2_parser_mock.add_subparsers.return_value = level_2_subparsers_mock
+
+        CommandLineInterface([])
+
+        parser_class_mock.assert_called_with(prog='foundations')
+        parser_mock.add_argument.assert_called_with('--version', action='store_true', help='Displays the current Foundations version')
+
+        retrieve_call = call('retrieve', help='Download results')
+
+        level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call], any_order=True)
+        retrieve_argument_call = call('artifact', help='Specify type to retrieve as artifact')
+
+        level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call], any_order=True)
+
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
             CommandLineInterface([]).execute()
