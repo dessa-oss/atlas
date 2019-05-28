@@ -36,7 +36,7 @@ class JobDeployment(object):
     def deploy(self):
         try:
             self._job_bundler.bundle()
-            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive())
+            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources())
         finally:
             self._job_bundler.cleanup()
 
@@ -51,3 +51,7 @@ class JobDeployment(object):
 
     def get_job_logs(self):
         return self._scheduler.get_job_logs(self._job_id)
+
+    def _job_resources(self):
+        from foundations_contrib.global_state import current_foundations_context
+        return current_foundations_context().job_resources()

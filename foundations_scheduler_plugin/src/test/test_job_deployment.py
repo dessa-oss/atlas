@@ -13,6 +13,11 @@ from foundations_scheduler_plugin.job_deployment import JobDeployment
 class TestJobDeployment(Spec):
 
     mock_api_wrapper = let_patch_instance('foundations_scheduler_core.kubernetes_api_wrapper.KubernetesApiWrapper')
+    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+
+    @set_up
+    def set_up(self):
+        self.mock_foundations_context.job_resources.return_value = self.job_resources
 
     @let_now
     def mock_bundler_instance(self):
@@ -81,6 +86,7 @@ class TestJobDeployment(Spec):
 
     job = let_mock()
     job_source_bundle = let_mock()
+    job_resources = let_mock()
 
     def test_stores_config_with_manager_config(self):
         self.assertDictContainsSubset(
@@ -122,7 +128,7 @@ class TestJobDeployment(Spec):
 
     def test_deploy_submits_job_to_scheduler(self):
         self.deployment.deploy()
-        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar)
+        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources)
 
     def test_get_job_status_returns_status(self):
         self.assertEqual(self.job_status, self.deployment.get_job_status())
