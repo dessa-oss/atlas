@@ -37,6 +37,18 @@ class TestCommandLineInterface(Spec):
     def mock_environment(self):
         return self.patch('os.environ', {})
 
+    @let
+    def level_1_subparsers_mock(self):
+        return Mock()
+
+    @let
+    def level_2_subparsers_mock(self):
+        return Mock()
+
+    @let
+    def level_2_parser_mock(self):
+        return Mock()
+
     @set_up
     def set_up(self):
         self._server_running = False
@@ -48,17 +60,13 @@ class TestCommandLineInterface(Spec):
         parser_mock = Mock()
         parser_class_mock.return_value = parser_mock
 
-        level_1_subparsers_mock = Mock()
-        parser_mock.add_subparsers.return_value = level_1_subparsers_mock
+        parser_mock.add_subparsers.return_value = self.level_1_subparsers_mock
 
-        level_2_parser_mock = Mock()
-        level_1_subparsers_mock.add_parser.return_value = level_2_parser_mock
-
-        level_2_subparsers_mock = Mock()
-        level_2_parser_mock.add_subparsers.return_value = level_2_subparsers_mock
+        self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
+        self.level_2_parser_mock.add_subparsers.return_value = self.level_2_subparsers_mock
 
         level_3_parser_mock = Mock()
-        level_2_subparsers_mock.add_parser.return_value = level_3_parser_mock
+        self.level_2_subparsers_mock.add_parser.return_value = level_3_parser_mock
 
         CommandLineInterface([])
 
@@ -71,14 +79,14 @@ class TestCommandLineInterface(Spec):
         info_call = call('info', help='Provides information about your Foundations project')
         serving_call = call('serving', help='Start serving a model package')
 
-        level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
         deploy_argument_file_call = call('driver_file', type=str, help='Name of file to deploy')
         deploy_argument_env_call = call('--env', help='Environment to run file in')
         info_argument_env_call = call('--env', action='store_true')
 
-        level_2_parser_mock.add_argument.assert_has_calls(
+        self.level_2_parser_mock.add_argument.assert_has_calls(
             [
                 init_argument_call,
                 deploy_argument_env_call,
@@ -89,7 +97,7 @@ class TestCommandLineInterface(Spec):
         )
 
         serving_deploy_call = call('deploy', help='Deploy model package to foundations model package server')
-        level_2_subparsers_mock.add_parser.assert_has_calls([serving_deploy_call], any_order=True)
+        self.level_2_subparsers_mock.add_parser.assert_has_calls([serving_deploy_call], any_order=True)
 
         serving_deploy_rest_call = call('rest', help='Uses REST format content type')
         serving_deploy_domain_call = call('--domain', type=str, help='Domain and port of the model package server')
@@ -110,14 +118,10 @@ class TestCommandLineInterface(Spec):
         parser_mock = Mock()
         parser_class_mock.return_value = parser_mock
 
-        level_1_subparsers_mock = Mock()
-        parser_mock.add_subparsers.return_value = level_1_subparsers_mock
+        parser_mock.add_subparsers.return_value = self.level_1_subparsers_mock
 
-        level_2_parser_mock = Mock()
-        level_1_subparsers_mock.add_parser.return_value = level_2_parser_mock
-
-        level_2_subparsers_mock = Mock()
-        level_2_parser_mock.add_subparsers.return_value = level_2_subparsers_mock
+        self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
+        self.level_2_parser_mock.add_subparsers.return_value = self.level_2_subparsers_mock
 
         CommandLineInterface([])
 
@@ -126,10 +130,10 @@ class TestCommandLineInterface(Spec):
 
         retrieve_call = call('retrieve', help='Download results')
 
-        level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call], any_order=True)
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call], any_order=True)
         retrieve_argument_call = call('artifact', help='Specify type to retrieve as artifact')
 
-        level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call], any_order=True)
+        self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call], any_order=True)
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
