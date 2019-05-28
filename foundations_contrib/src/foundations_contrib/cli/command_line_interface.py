@@ -63,11 +63,13 @@ class CommandLineInterface(object):
         self._initialize_retrieve_artifact_parser(retrieve_subparsers)
 
     def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
+        from os import getcwd
+
         retrieve_artifact_parser = retrieve_subparsers.add_parser('artifacts', help='Specify type to retrieve as artifact')
         retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
-        retrieve_artifact_parser.add_argument('--save_dir', type=str, help="Specify local directory path for artifact to save to")
-        retrieve_artifact_parser.add_argument('--source_dir', type=str, help="Specify relative directory path for artifact to load data")
-        retrieve_artifact_parser.set_defaults()
+        retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifact to save to")
+        retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path for artifact to load data")
+        retrieve_artifact_parser.set_defaults(function=self._retrieve_artifacts)
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
@@ -156,6 +158,9 @@ class CommandLineInterface(object):
         if self._is_model_server_running():
             pid = self._get_model_server_pid()
             os.kill(int(pid), signal.SIGINT)
+
+    def _retrieve_artifacts(self):
+        pass
 
     def _start_model_server_if_not_running(self):
         import subprocess
