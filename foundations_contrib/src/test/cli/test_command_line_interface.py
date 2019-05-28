@@ -20,7 +20,7 @@ from foundations_spec import *
 class TestCommandLineInterface(Spec):
 
     class MockSleep(object):
-        
+
         _epsilon = 0.0001
 
         def __init__(self):
@@ -48,7 +48,7 @@ class TestCommandLineInterface(Spec):
     @let
     def level_2_parser_mock(self):
         return Mock()
-    
+
     @let
     def level_3_parser_mock(self):
         return Mock()
@@ -136,7 +136,7 @@ class TestCommandLineInterface(Spec):
         retrieve_call = call('retrieve', help='Download results')
 
         self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call])
-        retrieve_argument_call = call('artifact', help='Specify type to retrieve as artifact')
+        retrieve_argument_call = call('artifacts', help='Specify type to retrieve as artifact')
         job_id_call = call('--job_id', type=str, required=True, help="Specify job uuid of already deployed job")
         save_directory_call = call('--save_dir', type=str, help="Specify local directory path for artifact to save to")
         source_directory_call = call('--source_dir', type=str, help="Specify relative directory path for artifact to load data")
@@ -158,47 +158,47 @@ class TestCommandLineInterface(Spec):
     def test_execute_spits_out_version_different_version(self):
         CommandLineInterface(['--version']).execute()
         self.print_mock.assert_called_with('Running Foundations version 7.3.3')
-        
+
     @patch('foundations_contrib.cli.scaffold.Scaffold')
     def test_scaffold_creates_scaffold_with_project_name(self, scaffold_mock):
         CommandLineInterface(['init', 'my project']).execute()
         scaffold_mock.assert_called_with('my project')
-        
+
     @patch('foundations_contrib.cli.scaffold.Scaffold')
     def test_scaffold_creates_scaffold_with_project_name_different_project(self, scaffold_mock):
         CommandLineInterface(['init', 'my different project']).execute()
         scaffold_mock.assert_called_with('my different project')
 
     scaffold_project_mock = let_patch_mock('foundations_contrib.cli.scaffold.Scaffold.scaffold_project')
-        
+
     def test_scaffold_scaffolds_with_project_name_different_project(self):
         CommandLineInterface(['init', 'my project']).execute()
         self.scaffold_project_mock.assert_called()
-            
+
     def test_scaffold_prints_success_message(self):
         self.scaffold_project_mock.return_value = True
 
         CommandLineInterface(['init', 'my project']).execute()
         self.print_mock.assert_called_with('Success: New Foundations project `my project` created!')
-            
+
     def test_scaffold_prints_success_message_different_project(self):
         self.scaffold_project_mock.return_value = True
 
         CommandLineInterface(['init', 'your project']).execute()
         self.print_mock.assert_called_with('Success: New Foundations project `your project` created!')
-            
+
     def test_scaffold_prints_failure_message(self):
         self.scaffold_project_mock.return_value = False
 
         CommandLineInterface(['init', 'my project']).execute()
         self.print_mock.assert_called_with('Error: project directory for `my project` already exists')
-            
+
     def test_scaffold_prints_failure_message_different_project(self):
         self.scaffold_project_mock.return_value = False
 
         CommandLineInterface(['init', 'your project']).execute()
         self.print_mock.assert_called_with('Error: project directory for `your project` already exists')
-    
+
     def test_info_env_flag_returns_environment_none_available(self):
         self.environment_fetcher_mock.return_value = ([], [])
         CommandLineInterface(['info', '--env']).execute()
@@ -208,32 +208,32 @@ class TestCommandLineInterface(Spec):
         self.environment_fetcher_mock.return_value = (None, [])
         CommandLineInterface(['info', '--env']).execute()
         self.print_mock.assert_called_with('No environments available')
-    
+
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_local(self, mock_print):
         self.environment_fetcher_mock.return_value = (['/home/local.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_with([['local','/home/local.config.yaml']])
-    
+
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_local_different_environment(self, mock_print):
         self.environment_fetcher_mock.return_value = (['/home/config/uat.config.yaml'], [])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_with([['uat','/home/config/uat.config.yaml']])
-    
+
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_global(self, mock_print):
         self.environment_fetcher_mock.return_value = ([], ['/home/config/uat.config.yaml'])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_with([['uat', '/home/config/uat.config.yaml']])
-    
+
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_one_available_global_no_local(self, mock_print):
         self.environment_fetcher_mock.return_value = (None, ['/home/config/uat.config.yaml'])
         CommandLineInterface(['info', '--env']).execute()
         mock_print.assert_called_once()
         mock_print.assert_called_with([['uat', '/home/config/uat.config.yaml']])
-    
+
     @patch.object(CommandLineInterface, '_format_environment_printout')
     def test_info_env_flag_returns_environment_local_and_global_available(self, mock_print):
         self.environment_fetcher_mock.return_value = (['/home/local.config.yaml'],['~/foundations/local.config.yaml'])
@@ -269,7 +269,7 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.print_mock.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
         self.exit_mock.assert_called_with(1)
-     
+
     def test_deploys_job_when_local_config_found(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
@@ -339,19 +339,19 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.config_manager.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
-    
+
     def test_deploy_adds_file_to_py_path(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/')
-    
+
     def test_deploy_adds_file_to_py_path_different_path(self):
         self.os_cwd.return_value = 'home/foundations/hana/'
         self.find_environment_mock.return_value = ["home/foundations/hana/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/hana/')
-    
+
     def test_deploy_returns_error_if_driver_file_does_not_exist(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = False
@@ -360,7 +360,7 @@ class TestCommandLineInterface(Spec):
         self.os_file_exists.assert_called_with('home/foundations/lou/hana/driver.py')
         self.print_mock.assert_called_with('Driver file `hana/driver.py` does not exist')
         self.exit_mock.assert_called_with(1)
-    
+
     def test_deploy_returns_error_if_driver_file_does_not_have_py_extension(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = True
@@ -373,15 +373,15 @@ class TestCommandLineInterface(Spec):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.run_file.assert_called_with('driver') 
-    
+        self.run_file.assert_called_with('driver')
+
     def test_deploy_imports_driver_file_different_file(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'hippo/dingo.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/hippo')
-        self.run_file.assert_called_with('dingo') 
-    
+        self.run_file.assert_called_with('dingo')
+
     def test_deploy_imports_driver_file_different_name(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
@@ -411,7 +411,7 @@ class TestCommandLineInterface(Spec):
         self._server_running = True
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
-                                              
+
     def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running(self):
         from subprocess import DEVNULL
 

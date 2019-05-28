@@ -17,16 +17,16 @@ class CommandLineInterface(object):
         self._initialize_info_parser(subparsers)
         self._initialize_serving_parser(subparsers)
         self._initialize_retrieve_parser(subparsers)
-      
+
         self._arguments = self._argument_parser.parse_args(args)
-        
-    def _initialize_argument_parser(self): 
+
+    def _initialize_argument_parser(self):
         from argparse import ArgumentParser
         argument_parser = ArgumentParser(prog='foundations')
         argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
-    
+
     def _initialize_init_parser(self, subparsers):
         init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
         init_parser.add_argument('project_name', type=str, help='Name of the project to create')
@@ -37,7 +37,7 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('driver_file', type=str, help='Name of file to deploy')
         deploy_parser.add_argument('--env', help='Environment to run file in')
         deploy_parser.set_defaults(function=self._deploy)
-    
+
     def _initialize_info_parser(self, subparsers):
         info_parser = subparsers.add_parser('info', help='Provides information about your Foundations project')
         info_parser.add_argument('--env', action='store_true')
@@ -48,7 +48,7 @@ class CommandLineInterface(object):
         serving_subparsers = serving_parser.add_subparsers()
         self._initialize_serving_deploy_parser(serving_subparsers)
         self._initialize_serving_stop_parser(serving_subparsers)
-    
+
     def _initialize_serving_deploy_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
         serving_deploy_parser.add_argument('rest', help='Uses REST format content type')
@@ -61,9 +61,9 @@ class CommandLineInterface(object):
         retrieve_parser = subparsers.add_parser('retrieve', help='Download results')
         retrieve_subparsers = retrieve_parser.add_subparsers()
         self._initialize_retrieve_artifact_parser(retrieve_subparsers)
-    
+
     def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
-        retrieve_artifact_parser = retrieve_subparsers.add_parser('artifact', help='Specify type to retrieve as artifact')
+        retrieve_artifact_parser = retrieve_subparsers.add_parser('artifacts', help='Specify type to retrieve as artifact')
         retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
         retrieve_artifact_parser.add_argument('--save_dir', type=str, help="Specify local directory path for artifact to save to")
         retrieve_artifact_parser.add_argument('--source_dir', type=str, help="Specify relative directory path for artifact to load data")
@@ -86,19 +86,19 @@ class CommandLineInterface(object):
 
     def _init(self):
         from foundations_contrib.cli.scaffold import Scaffold
-        
+
         project_name = self._arguments.project_name
         result = Scaffold(project_name).scaffold_project()
         if result:
             print('Success: New Foundations project `{}` created!'.format(project_name))
         else:
             print('Error: project directory for `{}` already exists'.format(project_name))
-        
+
     def _info(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 
         env_name = self._arguments.env
-        
+
         if not env_name:
             print('usage: foundations info [--env ENV]')
             return
@@ -119,21 +119,21 @@ class CommandLineInterface(object):
             print('No {} environments available'.format(config_list_name))
         else:
             print(self._format_environment_printout(config_list))
-    
+
     def _format_environment_printout(self, environment_array):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
-    
+
     def _create_environment_list(self, available_environments):
         environment_names = []
         for env in available_environments:
             environment_names.append([env.split('/')[-1].split('.')[0], env])
         return environment_names
-      
+
     def _deploy(self):
         import sys
 
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
-        from foundations.global_state import config_manager     
+        from foundations.global_state import config_manager
 
         driver_name = self._arguments.driver_file
         env_name = self._arguments.env
@@ -148,7 +148,7 @@ class CommandLineInterface(object):
     def _model_serving_deploy(self):
         self._start_model_server_if_not_running()
         self._deploy_model_package()
-    
+
     def _model_serving_stop(self):
         import os
         import signal
@@ -174,7 +174,7 @@ class CommandLineInterface(object):
             ]
 
             subprocess.Popen(subprocess_command_to_run, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            
+
             self._wait_for_model_server_to_start()
             if not self._is_model_server_running():
                 print('Failed to start model server.', file=sys.stderr)
@@ -200,7 +200,7 @@ class CommandLineInterface(object):
             print('Failed to deploy model package to model server.', file=sys.stderr)
             sys.exit(11)
 
-    def _is_model_server_running(self): 
+    def _is_model_server_running(self):
         from psutil import NoSuchProcess
 
         try:
@@ -226,12 +226,12 @@ class CommandLineInterface(object):
         import os
         import sys
         from importlib import import_module
-        
+
         driver_name, path_to_add = self._get_driver_and_path(driver_name)
         sys.path.append(path_to_add)
         os.chdir(path_to_add)
         import_module(driver_name)
-               
+
     def _get_driver_and_path(self, driver_name):
         import os
         dirname = os.path.dirname(driver_name)
@@ -242,9 +242,9 @@ class CommandLineInterface(object):
         else:
             path = os.getcwd()
 
-        driver_name = driver_name.split('.')[0]               
+        driver_name = driver_name.split('.')[0]
         return driver_name, path
-    
+
     def _check_environment_valid(self, environment_file_path, environment_name):
         valid = False
         if environment_file_path == None:
@@ -254,7 +254,7 @@ class CommandLineInterface(object):
         else:
             valid = True
         return valid
-    
+
     def _check_driver_valid(self, driver_name):
         import os
         if not os.path.isfile(os.path.join(os.getcwd(), driver_name)):
@@ -263,4 +263,4 @@ class CommandLineInterface(object):
         if driver_name.split('.')[-1] != 'py':
             print('Driver file `{}` needs to be a python file with an extension `.py`'.format(driver_name))
             return False
-        return True 
+        return True
