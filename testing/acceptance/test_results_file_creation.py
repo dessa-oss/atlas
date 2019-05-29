@@ -75,11 +75,11 @@ class TestResultsFileCreation(Spec):
     @let
     def aws_uri(self):
         return 's3://' + self.faker.uri_path()
-    
+
     class EmptyClass(object):
             pass
 
-    @skip('Not yet ready, in processes')
+    @skip('Not yet ready, in process')
     def test_job_creates_downloadable_results_files_in_local_file_system(self):
         from foundations.global_state import config_manager
 
@@ -117,7 +117,6 @@ class TestResultsFileCreation(Spec):
     def _create_job_and_download_results_files(self):
         from acceptance.fixtures.stages import save_file_with_pickle
         from foundations import create_stage
-        import subprocess
         import shutil
 
         empty_class_instance_1 = self.EmptyClass()
@@ -152,7 +151,9 @@ class TestResultsFileCreation(Spec):
         return result
 
     def _run_retrieve_cli_command(self, job_id, source_dir=None):
-        cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--job-id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
+        import subprocess
+
+        cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
         if source_dir:
             cmd_line.append(' --source_dir={}'.format(source_dir))
         subprocess.run(cmd_line, check=True)
