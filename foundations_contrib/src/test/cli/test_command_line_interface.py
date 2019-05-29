@@ -133,13 +133,13 @@ class TestCommandLineInterface(Spec):
         parser_class_mock.assert_called_with(prog='foundations')
         parser_mock.add_argument.assert_called_with('--version', action='store_true', help='Displays the current Foundations version')
 
-        retrieve_call = call('retrieve', help='Download results')
+        retrieve_call = call('retrieve', help='Retrieve file types from execution environments')
 
         self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call])
         retrieve_argument_call = call('artifacts', help='Specify type to retrieve as artifact')
         job_id_call = call('--job_id', type=str, required=True, help="Specify job uuid of already deployed job")
-        save_directory_call = call('--save_dir', type=str, default=self.os_cwd(), help="Specify local directory path for artifact to save to")
-        source_directory_call = call('--source_dir', type=str, default='', help="Specify relative directory path for artifact to load data")
+        save_directory_call = call('--save_dir', type=str, default=self.os_cwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
+        source_directory_call = call('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
 
         self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call])
         self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, save_directory_call, source_directory_call], any_order=True)

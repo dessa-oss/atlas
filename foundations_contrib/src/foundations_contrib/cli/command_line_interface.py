@@ -58,7 +58,7 @@ class CommandLineInterface(object):
         serving_deploy_parser.set_defaults(function=self._model_serving_deploy)
 
     def _initialize_retrieve_parser(self, subparsers):
-        retrieve_parser = subparsers.add_parser('retrieve', help='Download results')
+        retrieve_parser = subparsers.add_parser('retrieve', help='Retrieve file types from execution environments')
         retrieve_subparsers = retrieve_parser.add_subparsers()
         self._initialize_retrieve_artifact_parser(retrieve_subparsers)
 
@@ -67,8 +67,8 @@ class CommandLineInterface(object):
 
         retrieve_artifact_parser = retrieve_subparsers.add_parser('artifacts', help='Specify type to retrieve as artifact')
         retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
-        retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifact to save to")
-        retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path for artifact to load data")
+        retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
+        retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
         retrieve_artifact_parser.set_defaults(function=self._retrieve_artifacts)
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
