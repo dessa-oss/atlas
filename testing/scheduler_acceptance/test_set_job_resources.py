@@ -39,7 +39,7 @@ class TestSetJobResources(Spec):
         get_ram_in_gb = foundations.create_stage(get_ram_in_gb_when_limit_set)
         stage_get_ram_in_gb = get_ram_in_gb()
 
-        log_metric = foundations.create_stage(self._log_resource_metrics)
+        log_metric = foundations.create_stage(_log_resource_metrics)
         stage = log_metric(stage_get_number_of_gpus, stage_get_ram_in_gb)
 
         job = stage.run()
@@ -59,7 +59,7 @@ class TestSetJobResources(Spec):
         get_ram_in_gb = foundations.create_stage(get_ram_in_gb_when_limit_not_set)
         stage_get_ram_in_gb = get_ram_in_gb()
 
-        log_metric = foundations.create_stage(self._log_resource_metrics)
+        log_metric = foundations.create_stage(_log_resource_metrics)
         stage = log_metric(stage_get_number_of_gpus, stage_get_ram_in_gb)
 
         job = stage.run()
@@ -84,7 +84,7 @@ class TestSetJobResources(Spec):
         get_ram_in_gb = foundations.create_stage(get_ram_in_gb_when_limit_set)
         stage_get_ram_in_gb = get_ram_in_gb()
 
-        log_metric = foundations.create_stage(self._log_resource_metrics)
+        log_metric = foundations.create_stage(_log_resource_metrics)
         stage = log_metric(stage_get_number_of_gpus, stage_get_ram_in_gb)
 
         with self.assertRaises(RuntimeError) as error_context:
@@ -92,11 +92,6 @@ class TestSetJobResources(Spec):
         
         error_message = 'Could not deploy job - no node exists with sufficient resources'
         self.assertIn(error_message, error_context.exception.args)
-
-    @staticmethod
-    def _log_resource_metrics(number_of_gpus, ram_in_gb):
-        foundations.log_metric('number_of_GPUs', number_of_gpus)
-        foundations.log_metric('ram_in_GB', ram_in_gb)
 
     def _get_node_for_job(self, job_id):
         list_of_pods = self._core_api.list_namespaced_pod('foundations-scheduler-test')
@@ -112,3 +107,7 @@ class TestSetJobResources(Spec):
     def _is_foundations_job_pod(pod, job_id):
         pod_name = pod.metadata.name
         return pod_name.startswith('foundations-job-{}'.format(job_id))
+
+def _log_resource_metrics(number_of_gpus, ram_in_gb):
+    foundations.log_metric('number_of_GPUs', number_of_gpus)
+    foundations.log_metric('ram_in_GB', ram_in_gb)
