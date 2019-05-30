@@ -83,9 +83,6 @@ class JobDeployment(object):
         from foundations_scheduler.kubernetes_api_wrapper import delete_options
 
         try:
-            if scheduler.get_job_status(job_id) != 'queued':
-                return False
-
             custom_objects_api.delete_namespaced_custom_object(
                 'foundations.dessa.com',
                 'v1',
@@ -95,16 +92,36 @@ class JobDeployment(object):
                 delete_options()
             )
 
-            batch_api.delete_namespaced_job(
-                'foundations-job-{}'.format(job_id),
-                'foundations-scheduler-test',
-                delete_options()
-            )
+            JobDeployment._try_to_delete_kubernetes_job(batch_api, job_id)
 
             return True
-        except:
+        except Exception as ex:
             return False
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
+
+    @staticmethod
+    def _try_to_delete_kubernetes_job(batch_api, job_id):
+        import time
+        from kubernetes.client.rest import ApiException
+        from foundations_scheduler.kubernetes_api_wrapper import delete_options
+
+        latest_exception = None
+
+        for _ in range(5):
+            try:
+                batch_api.delete_namespaced_job(
+                    'foundations-job-{}'.format(job_id),
+                    'foundations-scheduler-test',
+                    delete_options()
+                )
+
+                return
+            except ApiException as ex:
+                latest_exception = ex
+                time.sleep(0.5)
+                continue
+
+        raise latest_exception
