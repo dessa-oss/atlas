@@ -53,6 +53,9 @@ class PipelineArchiver(object):
     def append_tracker(self):
         return self._archive_listing.track_pipeline(self._pipeline_name)
 
+    def append_persisted_file(self, target_file_path, source_file_path):
+        return self._persisted_data_archive.append_file('artifacts', source_file_path, self._pipeline_name, target_file_path)
+
     def pipeline_name(self):
         return self._pipeline_name
 

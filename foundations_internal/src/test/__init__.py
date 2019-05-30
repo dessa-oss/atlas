@@ -22,6 +22,7 @@ from test.test_stage_connector_wrapper_builder import TestStageConnectorWrapperB
 from test.test_module_manager import TestModuleManager
 from test.test_foundations_serializer import TestFoundationsSerializer
 from test.test_job_resources import TestJobResources
+from test.test_pipeline_archiver import TestPipelineArchiver
 
 from test.test_stage_context import TestStageContext
 from test.test_staged_module_internal_loader import TestStagedModuleInternalLoader
