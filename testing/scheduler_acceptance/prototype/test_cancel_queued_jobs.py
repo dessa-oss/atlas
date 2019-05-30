@@ -75,21 +75,6 @@ class TestCancelQueuedJobs(Spec):
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
         self._assert_job_exists(job_id)
 
-    @skip('not ready')
-    def test_cancel_fails_if_job_fails(self):
-        import foundations
-        from scheduler_acceptance.prototype.fixtures.stages import fails_fast
-
-        fails_fast = foundations.create_stage(fails_fast)
-        deployment_object = fails_fast().run()
-        deployment_object.wait_for_deployment_to_complete()
-
-        job_id = deployment_object.job_name()
-        expected_job_cancel_status = {job_id: False}
-
-        self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
-        self._assert_job_exists(job_id)
-
     def test_cancel_fails_if_job_is_running(self):
         import foundations
         from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds
@@ -108,10 +93,11 @@ class TestCancelQueuedJobs(Spec):
     def _wait_for_job_to_be_running(self, deployment_object):
         import time
 
-        while deployment_object.get_job_status() != 'running':
-            time.sleep(0.5)
+        from foundations_contrib.global_state import redis_connection
+        from foundations.prototype.helpers.queued import list_jobs
 
-        time.sleep(0.5)
+        while deployment_object.job_name() in list_jobs(redis_connection):
+            time.sleep(0.5)
 
     def _get_worker_node_ram(self):
         node_list = self._core_api.list_node()
