@@ -70,20 +70,4 @@ def _archive_implementation(result_end_point):
 
     return archive_implementation(result_end_point, LocalFileSystemBucket)
 
-def _artifact_path(config):
-    results_config = config['results_config']
-    artifact_path = results_config.get('artifact_path')
-    return artifact_path or 'results'
-
-def _artifact_path_and_end_point_implementation(config):
-    from foundations_contrib.config.mixin import results_artifact_implementation
-    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
-    artifact_config = {'artifact_path': _artifact_path(config)}
-    artifact_end_point_config = config['results_config'].get('artifact_end_point') or ''
-    artifact_config['artifact_end_point'] = artifact_end_point_config
-    return {
-        'artifact_path': artifact_config['artifact_path'],
-    }
-
 translate = get_translate_implementation(get_translator_config)

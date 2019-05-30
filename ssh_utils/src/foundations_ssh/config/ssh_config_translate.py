@@ -12,7 +12,6 @@ from foundations_internal.config.common_translate import get_translate_implement
 def get_translator_config(config_option):
     config_options = {
         'get_result_end_point': _get_result_end_point,
-        'artifact_path_and_end_point_implementation': _artifact_path_and_end_point_implementation,
         'archive_implementation': _archive_implementation,
         'archive_listing_implementation': _archive_listing_implementation,
         'deployment_implementation': _deployment_implementation,
@@ -56,21 +55,5 @@ def _archive_implementation(result_end_point):
     from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
     return archive_implementation(result_end_point, DeploymentSSHBucket.bucket_from_single_path)
-
-def _artifact_path(config):
-    results_config = config['results_config']
-    artifact_path = results_config.get('artifact_path')
-    return artifact_path or 'results'
-
-def _artifact_path_and_end_point_implementation(config):
-    from foundations_contrib.config.mixin import results_artifact_implementation
-    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
-    artifact_config = {'artifact_path': _artifact_path(config)}
-    artifact_end_point_config = config['results_config'].get('artifact_end_point') or ''
-    artifact_config['artifact_end_point'] = artifact_end_point_config
-    return {
-        'artifact_path': artifact_config['artifact_path'],
-    }
 
 translate = get_translate_implementation(get_translator_config)
