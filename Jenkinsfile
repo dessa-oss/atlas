@@ -5,6 +5,15 @@ node {
             checkout scm
         }
         container("python3") {
+            stage('Get Foundations Scheduler') {
+                ws("${WORKSPACE}/build_tmp/foundations_scheduler") {
+                    git credentialsId: 'ja-devops-github', url: 'https://github.com/DeepLearnI/foundations-scheduler.git'
+                    sh 'git checkout master'
+                    sh 'export DO_NOT_BUILD_IMAGES=TRUE && ./build_sdk.sh'
+                }
+                sh 'rm -rf build_tmp'
+            }
+
             stage('Python3 Foundations Install Test Requirements') {
                 sh "./ci_install_requirements.sh"
                 sh "./build_dist.sh"
