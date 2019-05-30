@@ -168,3 +168,9 @@ class ConfigTranslates(object):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(self.fake_artifact_path, result_config['artifact_path'])
 
+    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual('results', result_config['artifact_path'])
+
