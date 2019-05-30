@@ -12,7 +12,6 @@ from foundations_internal.config.common_translate import get_translate_implement
 def get_translator_config(config_option):
     config_options = {
         'get_result_end_point': _get_result_end_point,
-        'artifact_path_and_end_point_implementation': _artifact_path_and_end_point_implementation,
         'archive_implementation': _archive_implementation,
         'archive_listing_implementation': _archive_listing_implementation,
         'deployment_implementation': _deployment_implementation,
@@ -85,7 +84,6 @@ def _artifact_path_and_end_point_implementation(config):
     artifact_config['artifact_end_point'] = artifact_end_point_config
     return {
         'artifact_path': artifact_config['artifact_path'],
-        'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
     }
 
 translate = get_translate_implementation(get_translator_config)

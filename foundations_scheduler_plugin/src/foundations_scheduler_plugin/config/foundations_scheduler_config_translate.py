@@ -71,7 +71,6 @@ def _artifact_path_and_end_point_implementation(config):
     artifact_config['artifact_end_point'] = artifact_end_point_config
     return {
         'artifact_path': artifact_config['artifact_path'],
-        'artifact_end_point_implementation': results_artifact_implementation(artifact_config, LocalFileSystemBucket)
     }
 
 translate = get_translate_implementation(get_translator_config)

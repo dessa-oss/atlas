@@ -62,7 +62,10 @@ class ConfigTranslates(object):
     @let
     def fake_result_path(self):
         return self.faker.uri_path()
-
+    
+    @let
+    def fake_artifact_path(self):
+        return self.faker.uri_path()
 
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)
@@ -158,11 +161,10 @@ class ConfigTranslates(object):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['log_level'], 'DEBUG')
 
-    def test_returns_default_artifact_path(self):
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['artifact_path'], 'results')
+    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
+        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
-    def test_returns_configured_artifact_path(self):
-        self._configuration['results_config']['artifact_path'] = self.fake_result_path
+        self._configuration['artifact_path'] = self.fake_artifact_path
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['artifact_path'], self.fake_result_path)
+        self.assertEqual(self.fake_artifact_path, result_config['artifact_path'])
+

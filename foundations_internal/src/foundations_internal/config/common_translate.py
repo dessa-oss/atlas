@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def get_translate_implementation(get_translator_config):
 
     get_result_end_point = get_translator_config('get_result_end_point')
-    artifact_path_and_end_point_implementation = get_translator_config('artifact_path_and_end_point_implementation')
     archive_implementation = get_translator_config('archive_implementation')
     archive_listing_implementation = get_translator_config('archive_listing_implementation')
     deployment_implementation = get_translator_config('deployment_implementation')
@@ -21,8 +20,7 @@ def get_translate_implementation(get_translator_config):
 
         result_end_point = get_result_end_point(config)
 
-        result = artifact_path_and_end_point_implementation(config)
-        result.update({
+        result = {
             'artifact_archive_implementation': archive_implementation(result_end_point),
             'job_source_archive_implementation': archive_implementation(result_end_point),
             'miscellaneous_archive_implementation': archive_implementation(result_end_point),
@@ -33,6 +31,7 @@ def get_translate_implementation(get_translator_config):
             'deployment_implementation': deployment_implementation(),
             'project_listing_implementation': project_listing_implementation(result_end_point),
             'redis_url': _redis_url(config),
+            'artifact_path': config.get('artifact_path'),
             'cache_implementation': cache_implementation(config),
             'log_level': _log_level(config),
             'shell_command': find_bash(),
@@ -40,7 +39,7 @@ def get_translate_implementation(get_translator_config):
             'run_script_environment': {
                 'log_level': _log_level(config)
             }
-        })
+        }
         if 'ssh_config' in config:
             result.update(ssh_configuration(config))
         return result

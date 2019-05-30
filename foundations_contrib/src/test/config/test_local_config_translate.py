@@ -77,18 +77,3 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         del self._configuration['ssh_config']
         with self.assert_does_not_raise():
             result_config = self.translator.translate(self._configuration)
-
-    def test_no_result_artifact_returns_constructor_arguments_with_default_artifact_path(self):
-        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['artifact_end_point_implementation']
-        self.assertEqual([LocalFileSystemBucket, 'results'], config['constructor_arguments'])
-
-    def test_missing_artifact_end_point_returns_constructor_arguments_with_local_filesystem_path(self):
-        from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
-
-        self._configuration['results_config']['artifact_path'] = self.fake_relative_path
-        result_config = self.translator.translate(self._configuration)
-        config = result_config['artifact_end_point_implementation']
-        self.assertEqual([LocalFileSystemBucket, self.fake_relative_path], config['constructor_arguments'])
