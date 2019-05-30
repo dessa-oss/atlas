@@ -88,7 +88,7 @@ def cancel_queued_jobs(list_of_job_ids):
     job_deployment_class = _job_deployment(config_manager)
 
     if hasattr(job_deployment_class, 'cancel_jobs'):
-        cancellation_result = job_deployment_class.cancel_jobs(queued_jobs_ids)
+        cancellation_result = job_deployment_class.cancel_jobs(list_of_job_ids)
     else:
         cancellation_result = _cancel_jobs(config_manager, queued_jobs_ids)
     

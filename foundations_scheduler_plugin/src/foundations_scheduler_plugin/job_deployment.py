@@ -9,19 +9,31 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobDeployment(object):
 
     def __init__(self, job_id, job, job_source_bundle):
-        from foundations_contrib.global_state import config_manager
         from foundations_contrib.job_bundler import JobBundler
-        from foundations_scheduler.scheduler import Scheduler
-        from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
 
-        self._config = {}
-        self._config.update(config_manager.config())
-        self._config['_is_deployment'] = True
+        self._config = self._get_config()
 
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
 
-        self._scheduler = Scheduler(KubernetesApiWrapper(), self._config)
+        self._scheduler = self._get_scheduler(self._config)
+
+    @staticmethod
+    def _get_config():
+        from foundations_contrib.global_state import config_manager
+
+        config = {}
+        config.update(config_manager.config())
+        config['_is_deployment'] = True
+
+        return config
+
+    @staticmethod
+    def _get_scheduler(config):
+        from foundations_scheduler.scheduler import Scheduler
+        from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
+
+        return Scheduler(KubernetesApiWrapper(), config)
 
     @staticmethod
     def scheduler_backend():
@@ -56,18 +68,24 @@ class JobDeployment(object):
     def cancel_jobs(jobs):
         from foundations_scheduler.kubernetes_api_wrapper import KubernetesApiWrapper
 
+        config = JobDeployment._get_config()
+        scheduler = JobDeployment._get_scheduler(config)
+
         api = KubernetesApiWrapper()
         custom_objects_api = api.custom_objects_api()
         batch_api = api.batch_api()
 
-        return {job: JobDeployment._cancel_job(job, custom_objects_api, batch_api) for job in jobs}
+        return {job: JobDeployment._cancel_job(job, scheduler, custom_objects_api, batch_api) for job in jobs}
 
     @staticmethod
-    def _cancel_job(job_id, custom_objects_api, batch_api):
+    def _cancel_job(job_id, scheduler, custom_objects_api, batch_api):
         from kubernetes.client.rest import ApiException
         from foundations_scheduler.kubernetes_api_wrapper import delete_options
 
         try:
+            if scheduler.get_job_status(job_id) != 'queued':
+                return False
+
             custom_objects_api.delete_namespaced_custom_object(
                 'foundations.dessa.com',
                 'v1',

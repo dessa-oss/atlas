@@ -90,7 +90,6 @@ class TestCancelQueuedJobs(Spec):
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
         self._assert_job_exists(job_id)
 
-    @skip('not ready')
     def test_cancel_fails_if_job_is_running(self):
         import foundations
         from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds
