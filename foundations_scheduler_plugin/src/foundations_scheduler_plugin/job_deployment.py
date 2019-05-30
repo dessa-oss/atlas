@@ -52,6 +52,41 @@ class JobDeployment(object):
     def get_job_logs(self):
         return self._scheduler.get_job_logs(self._job_id)
 
+    @staticmethod
+    def cancel_jobs(jobs):
+        from foundations_scheduler.kubernetes_api_wrapper import KubernetesApiWrapper
+
+        api = KubernetesApiWrapper()
+        custom_objects_api = api.custom_objects_api()
+        batch_api = api.batch_api()
+
+        return {job: JobDeployment._cancel_job(job, custom_objects_api, batch_api) for job in jobs}
+
+    @staticmethod
+    def _cancel_job(job_id, custom_objects_api, batch_api):
+        from kubernetes.client.rest import ApiException
+        from foundations_scheduler.kubernetes_api_wrapper import delete_options
+
+        try:
+            custom_objects_api.delete_namespaced_custom_object(
+                'foundations.dessa.com',
+                'v1',
+                'foundations-scheduler-test',
+                'foundations-jobs',
+                job_id,
+                delete_options()
+            )
+
+            batch_api.delete_namespaced_job(
+                'foundations-job-{}'.format(job_id),
+                'foundations-scheduler-test',
+                delete_options()
+            )
+
+            return True
+        except:
+            return False
+
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()

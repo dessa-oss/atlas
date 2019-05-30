@@ -29,12 +29,10 @@ class TestCancelQueuedJobs(Spec):
         worker_node_ram = self._get_worker_node_ram()
         foundations.set_job_resources(0, worker_node_ram * 0.51)
 
-    @skip('not ready')
     def test_cancel_no_jobs_if_job_list_is_empty(self):
         cancelled_jobs_with_status = cancel_queued_jobs([])
         self.assertEqual({}, cancelled_jobs_with_status)
 
-    @skip('not ready')
     def test_cancel_fails_if_no_jobs_queued(self):
         from uuid import uuid4
 
@@ -43,7 +41,6 @@ class TestCancelQueuedJobs(Spec):
 
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs(job_list))
 
-    @skip('not ready')
     def test_cancel_succeeds_if_job_queued(self):
         import foundations
         from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
@@ -63,7 +60,6 @@ class TestCancelQueuedJobs(Spec):
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs([job_id]))
         self._assert_job_does_not_exist(job_id)
 
-    @skip('not ready')
     def test_cancel_fails_if_job_is_completed(self):
         import foundations
 
@@ -116,13 +112,15 @@ class TestCancelQueuedJobs(Spec):
         while deployment_object.get_job_status() != 'running':
             time.sleep(0.5)
 
+        time.sleep(0.5)
+
     def _get_worker_node_ram(self):
         node_list = self._core_api.list_node()
         node = node_list.items[0]
         node_resources = node.status.allocatable
         ram_kb_string = self._kb_string_without_suffix(node_resources['memory'])
         ram_kb = int(ram_kb_string)
-        return self._ram_kb_to_gb(ram)
+        return self._ram_kb_to_gb(ram_kb)
 
     def _kb_string_without_suffix(self, kb_string):
         return kb_string.replace('Ki', '')
