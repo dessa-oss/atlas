@@ -28,18 +28,14 @@ class TestArtifactDownloader(Spec):
         return ArtifactDownloader(self.mock_archiver)
 
     def test_downloads_single_file_to_specified_directory(self):
-        file_list = ['path/to/my/file']
-        self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
-        self.mock_archiver.fetch_miscellaneous.return_when(file_list, 'job_artifact_listing.pkl')
+        self._mock_file_list(['path/to/my/file'])
         
         self.artifact_downloader.download_files('', self.download_directory)
         
         self.mock_archiver.fetch_persisted_file.assert_called_with('path/to/my/file', self.download_directory + '/path/to/my/file')
 
     def test_downloads_multiple_files_to_specified_directory(self):
-        file_list = ['different/file', 'other/different/file']
-        self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
-        self.mock_archiver.fetch_miscellaneous.return_when(file_list, 'job_artifact_listing.pkl')
+        self._mock_file_list(['different/file', 'other/different/file'])
         
         self.artifact_downloader.download_files('', self.download_directory)
         
@@ -48,21 +44,21 @@ class TestArtifactDownloader(Spec):
         self.mock_archiver.fetch_persisted_file.assert_has_calls([first_file_download, second_file_download])
 
     def test_ensures_target_directory_exists(self):
-        file_list = ['path/to/my/file']
-        self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
-        self.mock_archiver.fetch_miscellaneous.return_when(file_list, 'job_artifact_listing.pkl')
+        self._mock_file_list(['path/to/my/file'])
         
         self.artifact_downloader.download_files('', self.download_directory)
         
         self.make_directory_mock.assert_called_with(self.download_directory + '/path/to/my', exist_ok=True)
 
     def test_downloads_multiple_files_to_specified_directory(self):
-        file_list = ['different/file', 'other/different/file']
-        self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
-        self.mock_archiver.fetch_miscellaneous.return_when(file_list, 'job_artifact_listing.pkl')
+        self._mock_file_list(['different/file', 'other/different/file'])
         
         self.artifact_downloader.download_files('', self.download_directory)
         
         first_dirctory_creation = call(self.download_directory + '/different', exist_ok=True)
         second_dirctory_creation = call(self.download_directory + '/other/different', exist_ok=True)
         self.make_directory_mock.assert_has_calls([first_dirctory_creation, second_dirctory_creation])
+
+    def _mock_file_list(self, file_list):
+        self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
+        self.mock_archiver.fetch_miscellaneous.return_when(file_list, 'job_artifact_listing.pkl')        
