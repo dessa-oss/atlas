@@ -31,3 +31,7 @@ class TestPipelineArchiver(Spec):
     def test_append_persisted_file_uploads_specified_file(self):
         self.pipeline_archiver.append_persisted_file(self.target_file_name, self.source_file_name)
         self.persisted_archive.append_file.assert_called_with('artifacts', self.source_file_name, self.job_id, self.target_file_name)
+
+    def test_fetch_persisted_file_downloads_specified_file(self):
+        self.pipeline_archiver.fetch_persisted_file(self.source_file_name, self.target_file_name)
+        self.persisted_archive.fetch_to_file.assert_called_with('artifacts', self.source_file_name, self.job_id, self.target_file_name)        

@@ -85,3 +85,6 @@ class PipelineArchiver(object):
 
     def fetch_miscellaneous(self, name):
         return self._miscellaneous_archive.fetch('miscellaneous/' + name, self._pipeline_name)
+
+    def fetch_persisted_file(self, source_file_path, target_file_path):
+        return self._persisted_data_archive.fetch_to_file('artifacts', source_file_path, self._pipeline_name, target_file_path)
