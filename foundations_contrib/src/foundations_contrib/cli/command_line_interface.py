@@ -67,6 +67,7 @@ class CommandLineInterface(object):
 
         retrieve_artifact_parser = retrieve_subparsers.add_parser('artifacts', help='Specify type to retrieve as artifact')
         retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
+        retrieve_artifact_parser.add_argument('--env', help='Environment to retrieve from')
         retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
         retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
         retrieve_artifact_parser.set_defaults(function=self._retrieve_artifacts)
@@ -160,7 +161,24 @@ class CommandLineInterface(object):
             os.kill(int(pid), signal.SIGINT)
 
     def _retrieve_artifacts(self):
-        pass
+        import sys
+        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.archiving.artifact_downloader import ArtifactDownloader
+        from foundations_contrib.archiving import get_pipeline_archiver_for_job
+
+        env_name = self._arguments.env
+        env_file_path = EnvironmentFetcher().find_environment(env_name)
+
+        if env_file_path and env_file_path[0]:
+            config_manager.add_simple_config_path(env_file_path[0])
+        else:
+            print("Could not find environment: `{}`".format(env_name))
+            sys.exit(1)
+
+        pipeline_archiver = get_pipeline_archiver_for_job(self._arguments.job_id)
+        artifact_downloader = ArtifactDownloader(pipeline_archiver)
+        artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
 
     def _start_model_server_if_not_running(self):
         import subprocess

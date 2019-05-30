@@ -138,11 +138,12 @@ class TestCommandLineInterface(Spec):
         self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call])
         retrieve_argument_call = call('artifacts', help='Specify type to retrieve as artifact')
         job_id_call = call('--job_id', type=str, required=True, help="Specify job uuid of already deployed job")
+        env_call = call('--env', help='Environment to retrieve from')
         save_directory_call = call('--save_dir', type=str, default=self.os_cwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
         source_directory_call = call('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
 
         self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call])
-        self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, save_directory_call, source_directory_call], any_order=True)
+        self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, env_call, save_directory_call, source_directory_call], any_order=True)
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
@@ -284,6 +285,10 @@ class TestCommandLineInterface(Spec):
         import random
         return random.randint(1,65000)
 
+    @let
+    def mock_job_id(self):
+        return self.faker.uuid4()
+
     @let_now
     def os_cwd(self):
         mock = self.patch('os.getcwd')
@@ -305,6 +310,18 @@ class TestCommandLineInterface(Spec):
         return self.patch('time.sleep', self.MockSleep())
 
     @let
+    def fake_save_dir(self):
+        return self.faker.uri_path()
+
+    @let
+    def fake_source_dir(self):
+        return self.faker.uri_path()
+
+    @let
+    def fake_env(self):
+        return self.faker.word()
+
+    @let
     def server_startup_time(self):
         from random import random
 
@@ -321,8 +338,13 @@ class TestCommandLineInterface(Spec):
     psutil_process_mock = let_patch_mock('psutil.Process')
     server_process = let_mock()
     requests_post_mock = let_patch_mock('requests.post')
+    config_manager_mock = let_patch_mock('foundations_contrib.global_state.config_manager')  
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
     find_environment_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.find_environment')
+    artifact_downloader_class_mock = let_patch_mock('foundations_contrib.archiving.artifact_downloader.ArtifactDownloader')
+    artifact_downloader_mock = let_mock()
+    get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
+    pipeline_archiver_mock = let_mock()
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -489,6 +511,41 @@ class TestCommandLineInterface(Spec):
 
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
         self.exit_mock.assert_not_called()
+
+    def test_retrieve_artifacts_calls_environment_fetcher(self):
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.find_environment_mock.assert_called_with(self.fake_env)
+
+    def test_retrieve_artifacts_loads_environment(self):
+        fake_env_path = os.path.join(self.faker.uri_path(), self.fake_env)
+        self.find_environment_mock.return_value = [fake_env_path]
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.config_manager_mock.add_simple_config_path.assert_called_with(fake_env_path)
+
+    def test_retrieve_artifacts_fails_if_missing_environment(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.exit_mock.assert_called_with(1)
+
+    def test_retrieve_artifacts_prints_error_if_missing_environment(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.print_mock.assert_called_with("Could not find environment: `{}`".format(self.fake_env))
+
+    def test_retrieve_artifacts_gets_pipeline_archiver(self):
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
+        self.get_pipeline_archiver_for_job_mock.assert_called_with(self.mock_job_id)
+
+    def test_retrieve_artifacts_creates_archive_downloader(self):
+        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
+        self.artifact_downloader_class_mock.assert_called_with(self.pipeline_archiver_mock)
+
+    def test_retrieve_artifacts_calls_download_files(self):
+        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
+        self.artifact_downloader_class_mock.return_value = self.artifact_downloader_mock
+        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--source_dir={}'.format(self.fake_source_dir), '--save_dir={}'.format(self.fake_save_dir)]).execute()
+        self.artifact_downloader_mock.download_files.assert_called_with(self.fake_source_dir, self.fake_save_dir)
 
     def _bring_server_up(self):
         self._create_server_pidfile()
