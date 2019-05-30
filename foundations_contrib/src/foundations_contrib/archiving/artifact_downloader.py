@@ -11,15 +11,16 @@ class ArtifactDownloader(object):
         self._archiver = archiver
     
     def download_files(self, source_directory, download_directory):
-        from os import makedirs
-        from os.path import dirname
-
         file_list = self._archiver.fetch_miscellaneous('job_artifact_listing.pkl')
 
         for file_path in file_list:
-            target_path = download_directory + '/' + file_path
-            directory = dirname(target_path)
-            makedirs(directory, exist_ok=True)
-            self._archiver.fetch_persisted_file(file_path, target_path)
+            self._download_file(file_path, download_directory)
 
-        
+    def _download_file(self, file_path, download_directory):
+        from os import makedirs
+        from os.path import dirname
+
+        target_path = download_directory + '/' + file_path
+        directory = dirname(target_path)
+        makedirs(directory, exist_ok=True)
+        self._archiver.fetch_persisted_file(file_path, target_path)
