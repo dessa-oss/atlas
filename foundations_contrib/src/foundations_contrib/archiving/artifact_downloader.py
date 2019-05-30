@@ -11,9 +11,12 @@ class ArtifactDownloader(object):
         self._archiver = archiver
     
     def download_files(self, source_directory, download_directory):
-        file_list = self._archiver.fetch_miscellaneous('job_artifact_listing.pkl')
+        from fnmatch import fnmatch
 
-        for file_path in file_list:
+        file_list = self._archiver.fetch_miscellaneous('job_artifact_listing.pkl')
+        filtered_file_list = [file_path for file_path in file_list if fnmatch(file_path, source_directory + '*')]
+
+        for file_path in filtered_file_list:
             self._download_file(file_path, download_directory)
 
     def _download_file(self, file_path, download_directory):

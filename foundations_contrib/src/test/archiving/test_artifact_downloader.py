@@ -47,7 +47,6 @@ class TestArtifactDownloader(Spec):
         self._mock_file_list(['path/to/my/file'])
         
         self.artifact_downloader.download_files('', self.download_directory)
-        
         self.make_directory_mock.assert_called_with(self.download_directory + '/path/to/my', exist_ok=True)
 
     def test_downloads_multiple_files_to_specified_directory(self):
@@ -58,6 +57,18 @@ class TestArtifactDownloader(Spec):
         first_dirctory_creation = call(self.download_directory + '/different', exist_ok=True)
         second_dirctory_creation = call(self.download_directory + '/other/different', exist_ok=True)
         self.make_directory_mock.assert_has_calls([first_dirctory_creation, second_dirctory_creation])
+
+    def test_downloads_only_files_with_specified_source_directory(self):
+        self._mock_file_list(['different/file', 'other/different/file'])
+        
+        self.artifact_downloader.download_files('other/', self.download_directory)
+        self.mock_archiver.fetch_persisted_file.assert_called_once_with('other/different/file', self.download_directory + '/other/different/file')
+
+    def test_downloads_only_files_with_specified_source_directory_with_different_source_directory(self):
+        self._mock_file_list(['different/file', 'other/different/file'])
+        
+        self.artifact_downloader.download_files('different/', self.download_directory)
+        self.mock_archiver.fetch_persisted_file.assert_called_once_with('different/file', self.download_directory + '/different/file')
 
     def _mock_file_list(self, file_list):
         self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
