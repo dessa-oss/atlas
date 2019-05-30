@@ -31,7 +31,7 @@ def get_translate_implementation(get_translator_config):
             'deployment_implementation': deployment_implementation(),
             'project_listing_implementation': project_listing_implementation(result_end_point),
             'redis_url': _redis_url(config),
-            'artifact_path': config.get('artifact_path', 'results'),
+            'artifact_path': _artifact_path(config),
             'cache_implementation': cache_implementation(config),
             'log_level': _log_level(config),
             'shell_command': find_bash(),
@@ -56,3 +56,7 @@ def _redis_url(config):
 
 def _obfuscate_foundations(config):
     return config.get('obfuscate_foundations', False)
+
+
+def _artifact_path(config):
+    return config.get('artifact_path', 'results')
