@@ -50,13 +50,17 @@ class TestUploadArtifacts(Spec):
 
     @let
     def fake_list_of_files(self):
+        return ['parent_dir/' + file for file in self.fake_list_of_files_without_parent_directory]
+
+    @let
+    def fake_list_of_files_without_parent_directory(self):
         return [
-            'parent_dir/file1', 
-            'parent_dir/child_dir1/file2',
-            'parent_dir/child_dir1/file3',
-            'parent_dir/child_dir2/file4',
-            'parent_dir/child_dir2/child_dir3/file5'
-            ]
+            'file1', 
+            'child_dir1/file2',
+            'child_dir1/file3',
+            'child_dir2/file4',
+            'child_dir2/child_dir3/file5'
+        ]
 
     @set_up
     def  set_up(self):
@@ -77,7 +81,7 @@ class TestUploadArtifacts(Spec):
 
     def test_upload_artifacts_writes_files_to_listing_file(self):
         upload_artifacts(self.fake_job_id)
-        self.pipeline_archiver.append_miscellaneous.assert_called_with('job_artifact_listing.pkl', self.fake_list_of_files)        
+        self.pipeline_archiver.append_miscellaneous.assert_called_with('job_artifact_listing.pkl', self.fake_list_of_files_without_parent_directory)        
 
     def test_upload_artifacts_calls_get_pipeline_archiver_for_job(self):
         upload_artifacts(self.fake_job_id)
@@ -88,10 +92,10 @@ class TestUploadArtifacts(Spec):
 
         upload_artifacts(self.fake_job_id)
         upload_calls = [
-            call('parent_dir/file1', 'parent_dir/file1'),
-            call('parent_dir/child_dir1/file2', 'parent_dir/child_dir1/file2'),
-            call('parent_dir/child_dir1/file3', 'parent_dir/child_dir1/file3'),
-            call('parent_dir/child_dir2/file4', 'parent_dir/child_dir2/file4'),
-            call('parent_dir/child_dir2/child_dir3/file5', 'parent_dir/child_dir2/child_dir3/file5')
+            call('parent_dir/file1', 'file1'),
+            call('parent_dir/child_dir1/file2', 'child_dir1/file2'),
+            call('parent_dir/child_dir1/file3', 'child_dir1/file3'),
+            call('parent_dir/child_dir2/file4', 'child_dir2/file4'),
+            call('parent_dir/child_dir2/child_dir3/file5', 'child_dir2/child_dir3/file5')
         ]
         self.pipeline_archiver.append_persisted_file.assert_has_calls(upload_calls)
