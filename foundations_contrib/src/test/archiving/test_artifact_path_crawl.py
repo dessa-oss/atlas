@@ -34,8 +34,8 @@ class TestArtifactPathCrawl(Spec):
     @set_up
     def set_up(self):
         self.mock_config_manager.config.return_value = {'artifact_path': self.fake_path}
-        self.mock_os_walk.return_when(self.fake_list_of_tuples, self.fake_path)
-        self.mock_os_walk.return_when(self.fake_default_return_for_walk, 'results')
+        self.mock_os_walk.return_when(iter(self.fake_list_of_tuples), self.fake_path)
+        self.mock_os_walk.return_when(iter(self.fake_default_return_for_walk), 'results')
 
     def test_artifact_path_crawler_calls_os_walk_with_default_artifact_path(self):
         self.mock_config_manager.__getitem__.return_value = 'results'
