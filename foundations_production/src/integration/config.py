@@ -49,6 +49,7 @@ def _configure():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
+    config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
 
