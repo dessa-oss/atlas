@@ -63,7 +63,7 @@ class TestResultsFileCreation(Spec):
         return os.path.join(self.save_path, self.model_artifact_file_relative_path)
 
     @let
-    def metrics_local_save_artifact__file_path(self):
+    def metrics_local_save_artifact_file_path(self):
         import os
 
         return os.path.join(self.save_path, self.metrics_artifact_file_relative_path)
@@ -85,7 +85,6 @@ class TestResultsFileCreation(Spec):
 
         cleanup()
 
-    @skip('Not yet ready, in process')
     def test_job_creates_downloadable_results_files_in_local_file_system(self):
         from foundations.global_state import config_manager
 
@@ -133,14 +132,14 @@ class TestResultsFileCreation(Spec):
 
         job_id = deployment.job_name()
         self._run_retrieve_cli_command(job_id)
-        self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path, self.metrics_local_save_artifact__file_path])
-        shutil.rmtree(save_dir)
+        self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path, self.metrics_local_save_artifact_file_path])
+        shutil.rmtree(self.save_path)
         self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_model)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path])
-        shutil.rmtree(save_dir)
+        shutil.rmtree(self.save_path)
         self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_metrics)
-        self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.metrics_local_save_artifact__file_path])
-        shutil.rmtree(save_dir)
+        self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.metrics_local_save_artifact_file_path])
+        shutil.rmtree(self.save_path)
 
     def _fully_expanded_paths_for_downloads(self):
         import os
@@ -149,8 +148,6 @@ class TestResultsFileCreation(Spec):
         for root, dirs, files in os.walk(self.save_path):
             if files:
                 result += [os.path.join(root, file) for file in files]
-            elif not dirs:
-                result.append(root)
         return result
 
     def _run_retrieve_cli_command(self, job_id, source_dir=None):
@@ -158,5 +155,5 @@ class TestResultsFileCreation(Spec):
 
         cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--env=local', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
         if source_dir:
-            cmd_line.append(' --source_dir={}'.format(source_dir))
+            cmd_line.append('--source_dir={}'.format(source_dir))
         subprocess.run(cmd_line, check=True)

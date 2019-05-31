@@ -25,8 +25,6 @@ class ArtifactDownloader(object):
         from os.path import dirname
 
         target_path = download_directory + '/' + file_path
-        print('remote file >>', file_path)
-        print('target_path >>>', target_path)
         directory = dirname(target_path)
         makedirs(directory, exist_ok=True)
         self._archiver.fetch_persisted_file(file_path, target_path)
