@@ -16,6 +16,11 @@ class TestUploadArtifacts(Spec):
     mock_file_names_for_artifacts_path = let_patch_mock('foundations_contrib.archiving.file_names_for_artifacts_path.file_names_for_artifacts_path')
     mock_open = let_patch_mock('builtins.open')    
     pipeline_archiver = let_mock()
+
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
     
     @let_now
     def mock_get_pipeline_archiver_for_job(self):
@@ -40,17 +45,21 @@ class TestUploadArtifacts(Spec):
         return self.faker.uuid4()
 
     @let
+    def artifact_path(self):
+        return self.faker.uri_path()
+
+    @let
     def fake_list_of_tuples(self):
         return [
-            ('parent_dir', ['child_dir1', 'child_dir2'], ['file1']),
-            ('parent_dir/child_dir1', [], ['file2', 'file3']),
-            ('parent_dir/child_dir2', ['child_dir3'], ['file4']),
-            ('parent_dir/child_dir2/child_dir3', [], ['file5'])
+            (self.artifact_path, ['child_dir1', 'child_dir2'], ['file1']),
+            (self.artifact_path + '/child_dir1', [], ['file2', 'file3']),
+            (self.artifact_path + '/child_dir2', ['child_dir3'], ['file4']),
+            (self.artifact_path + '/child_dir2/child_dir3', [], ['file5'])
         ]
 
     @let
     def fake_list_of_files(self):
-        return ['parent_dir/' + file for file in self.fake_list_of_files_without_parent_directory]
+        return [self.artifact_path + '/' + file_name for file_name in self.fake_list_of_files_without_parent_directory]
 
     @let
     def fake_list_of_files_without_parent_directory(self):
@@ -64,6 +73,7 @@ class TestUploadArtifacts(Spec):
 
     @set_up
     def  set_up(self):
+        self.config_manager['artifact_path'] = self.artifact_path
         self.mock_os_walk.return_value = iter(self.fake_list_of_tuples)
         self.mock_listing_file = self.MockFile()
         self.mock_open.return_value = self.mock_listing_file
@@ -92,10 +102,10 @@ class TestUploadArtifacts(Spec):
 
         upload_artifacts(self.fake_job_id)
         upload_calls = [
-            call('parent_dir/file1', 'file1'),
-            call('parent_dir/child_dir1/file2', 'child_dir1/file2'),
-            call('parent_dir/child_dir1/file3', 'child_dir1/file3'),
-            call('parent_dir/child_dir2/file4', 'child_dir2/file4'),
-            call('parent_dir/child_dir2/child_dir3/file5', 'child_dir2/child_dir3/file5')
+            call(self.artifact_path + '/file1', 'file1'),
+            call(self.artifact_path + '/child_dir1/file2', 'child_dir1/file2'),
+            call(self.artifact_path + '/child_dir1/file3', 'child_dir1/file3'),
+            call(self.artifact_path + '/child_dir2/file4', 'child_dir2/file4'),
+            call(self.artifact_path + '/child_dir2/child_dir3/file5', 'child_dir2/child_dir3/file5')
         ]
         self.pipeline_archiver.append_persisted_file.assert_has_calls(upload_calls)
