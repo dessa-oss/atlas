@@ -10,8 +10,7 @@ from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
 
 class TestUploadArtifacts(Spec):
-
-    mock_os_walk = let_patch_mock('os.walk', ConditionalReturn())
+    
     mock_artifact_path_crawl = let_patch_mock('foundations_contrib.archiving.artifact_path_crawl.artifact_path_crawl')
     mock_file_names_for_artifacts_path = let_patch_mock('foundations_contrib.archiving.file_names_for_artifacts_path.file_names_for_artifacts_path')
     mock_open = let_patch_mock('builtins.open')    
@@ -48,6 +47,12 @@ class TestUploadArtifacts(Spec):
     def artifact_path(self):
         return self.faker.uri_path()
 
+    @let_now
+    def mock_os_walk(self):
+        mock = self.patch('os.walk', ConditionalReturn())
+        mock.return_when(self.fake_list_of_tuples, self.artifact_path)
+        return mock
+
     @let
     def fake_list_of_tuples(self):
         return [
@@ -78,16 +83,6 @@ class TestUploadArtifacts(Spec):
         self.mock_listing_file = self.MockFile()
         self.mock_open.return_value = self.mock_listing_file
         self.mock_file_names_for_artifacts_path.return_value = iter(self.fake_list_of_files)
-
-    def test_upload_artifacts_crawls_artifact_path(self):
-        upload_artifacts(self.fake_job_id)
-        self.mock_artifact_path_crawl.assert_called()
-
-    def test_upload_artifacts_passes_generator_from_artifact_path_crawls_to_file_names_for_artifact(self):
-        mock_generator = Mock()
-        self.mock_artifact_path_crawl.return_value = mock_generator
-        upload_artifacts(self.fake_job_id)
-        self.mock_file_names_for_artifacts_path.assert_called_with(mock_generator)
 
     def test_upload_artifacts_writes_files_to_listing_file(self):
         upload_artifacts(self.fake_job_id)
