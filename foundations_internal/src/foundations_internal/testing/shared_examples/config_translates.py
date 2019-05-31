@@ -14,8 +14,7 @@ class ConfigTranslates(object):
         return {
             'results_config': {
                 'archive_end_point': '',
-                'artifact_path': '',
-                'artifact_end_point': '',
+                'artifact_path': 'results',
             },
             'cache_config': {
                 'end_point': '',

@@ -36,7 +36,7 @@ class TestResultsFileCreation(Spec):
 
     @let
     def remote_artifacts_directory(self):
-        return self.faker.word()
+        return 'some_result_files'
 
     @let
     def model_remote_artifact_file_path(self):
@@ -79,11 +79,16 @@ class TestResultsFileCreation(Spec):
     class EmptyClass(object):
             pass
 
+    @set_up
+    def set_up(self):
+        from acceptance.cleanup import cleanup
+
+        cleanup()
+
     @skip('Not yet ready, in process')
     def test_job_creates_downloadable_results_files_in_local_file_system(self):
         from foundations.global_state import config_manager
 
-        config_manager['artifact_path'] = self.save_path
         self._create_job_and_download_results_files()
 
     @skip('Not yet ready, not a priority')
@@ -92,8 +97,6 @@ class TestResultsFileCreation(Spec):
         from foundations_gcp.gcp_bucket import GCPBucket
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
 
-
-        config_manager['artifact_path'] = self.save_path
         config_manager['artifact_end_point_implementation'] = {
             'archive_type': BucketPipelineArchive,
             'constructor_arguments': [GCPBucket, self.gcp_uri]
@@ -106,8 +109,6 @@ class TestResultsFileCreation(Spec):
         from foundations_aws.aws_bucket import AWSBucket
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
 
-
-        config_manager['artifact_path'] = self.save_path
         config_manager['artifact_end_point_implementation'] = {
             'archive_type': BucketPipelineArchive,
             'constructor_arguments': [AWSBucket, self.aws_uri]
@@ -116,10 +117,12 @@ class TestResultsFileCreation(Spec):
 
     def _create_job_and_download_results_files(self):
         from acceptance.fixtures.stages import save_file_with_pickle
+        import foundations
         from foundations import create_stage
         import shutil
 
         empty_class_instance_1 = self.EmptyClass()
+        foundations.set_environment('local')
 
         model_stage = create_stage(save_file_with_pickle)
         metrics_stage = create_stage(save_file_with_pickle)
@@ -153,7 +156,7 @@ class TestResultsFileCreation(Spec):
     def _run_retrieve_cli_command(self, job_id, source_dir=None):
         import subprocess
 
-        cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
+        cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--env=local', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
         if source_dir:
             cmd_line.append(' --source_dir={}'.format(source_dir))
         subprocess.run(cmd_line, check=True)

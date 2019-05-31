@@ -59,4 +59,4 @@ def _obfuscate_foundations(config):
 
 
 def _artifact_path(config):
-    return config.get('artifact_path', 'results')
+    return config['results_config'].get('artifact_path', 'results')

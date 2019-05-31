@@ -13,6 +13,7 @@ from foundations_contrib.job_source_bundle import JobSourceBundle
 from foundations_internal.serializer import serialize_to_file
 from foundations_internal.compat import compat_raise
 from foundations_contrib.global_state import foundations_context
+from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
 
 def main():
@@ -85,6 +86,7 @@ def main():
             return fetch_error_information(pipeline_context), True
     exception_info, was_job_error = global_stage_context.time_callback(
         execute_job)
+    upload_artifacts(job_name)
 
     def save_context(context):
         with open('results.pkl', 'w+b') as file:

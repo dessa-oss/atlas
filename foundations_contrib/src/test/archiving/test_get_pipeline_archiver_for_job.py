@@ -14,6 +14,8 @@ class TestGetPipelineArchiverForJob(Spec):
     mock_load_archive = let_patch_mock('foundations_contrib.archiving.load_archive', ConditionalReturn())
     artifact_archive = let_mock()
     job_source_archive = let_mock()
+    miscellaneous_archive = let_mock()
+    persisted_data_archive = let_mock()
 
     @let
     def job_id(self):
@@ -23,12 +25,14 @@ class TestGetPipelineArchiverForJob(Spec):
     def set_up(self):
         self.mock_load_archive.return_when(self.artifact_archive, 'artifact_archive')
         self.mock_load_archive.return_when(self.job_source_archive, 'job_source_archive')
+        self.mock_load_archive.return_when(self.miscellaneous_archive, 'miscellaneous_archive')
+        self.mock_load_archive.return_when(self.persisted_data_archive, 'persisted_data_archive')
 
     @let_now
     def pipeline_archiver(self):
         instance = Mock()
         klass = self.patch('foundations_internal.pipeline_archiver.PipelineArchiver', ConditionalReturn())
-        klass.return_when(instance, self.job_id, None, None, None, None, self.job_source_archive, self.artifact_archive, None)
+        klass.return_when(instance, self.job_id, None, None, self.persisted_data_archive, None, self.job_source_archive, self.artifact_archive, self.miscellaneous_archive)
         return instance
 
     def test_get_pipeline_archive_for_job_returns_correct_pipeline_archiver_for_job_id(self):
