@@ -12,15 +12,19 @@ def upload_artifacts(job_id):
     _upload_artifacts_to_archiver(pipeline_archiver)
 
 def _upload_artifacts_to_archiver(pipeline_archiver):
-    from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path
-    from os import walk
 
-    artifact_path_crawl = walk(_artifact_path())
-    list_of_files_to_upload = list(file_names_for_artifacts_path(artifact_path_crawl))
+    list_of_files_to_upload = _list_of_files_to_upload()
     _upload_file_listing(list_of_files_to_upload, pipeline_archiver)
 
     for file_name in list_of_files_to_upload:
         pipeline_archiver.append_persisted_file(file_name, _file_name_without_artifact_path(file_name))
+
+def _list_of_files_to_upload():
+    from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path
+    from os import walk
+
+    artifact_path_crawl = walk(_artifact_path())
+    return list(file_names_for_artifacts_path(artifact_path_crawl))
 
 def _upload_file_listing(list_of_files_to_upload, pipeline_archiver):
     target_file_names = [_file_name_without_artifact_path(file_name) for file_name in list_of_files_to_upload]
