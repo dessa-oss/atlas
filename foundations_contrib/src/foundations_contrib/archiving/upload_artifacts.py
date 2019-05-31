@@ -12,7 +12,6 @@ def upload_artifacts(job_id):
     _upload_artifacts_to_archiver(pipeline_archiver)
 
 def _upload_artifacts_to_archiver(pipeline_archiver):
-
     list_of_files_to_upload = _list_of_files_to_upload()
     _upload_file_listing(list_of_files_to_upload, pipeline_archiver)
 
