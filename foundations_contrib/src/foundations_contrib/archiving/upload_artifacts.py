@@ -13,20 +13,22 @@ def upload_artifacts(job_id):
 
 def _upload_artifacts_to_archiver(pipeline_archiver):
     from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path
-    from foundations_contrib.global_state import config_manager
     from os import walk
 
-    artifact_path = config_manager['artifact_path']
-    artifact_path_crawl = walk(artifact_path)
+    artifact_path_crawl = walk(_artifact_path())
     list_of_files_to_upload = list(file_names_for_artifacts_path(artifact_path_crawl))
-    _upload_file_listing(artifact_path, list_of_files_to_upload, pipeline_archiver)
+    _upload_file_listing(list_of_files_to_upload, pipeline_archiver)
 
     for file_name in list_of_files_to_upload:
-        pipeline_archiver.append_persisted_file(file_name, _file_name_without_artifact_path(artifact_path, file_name))
+        pipeline_archiver.append_persisted_file(file_name, _file_name_without_artifact_path(file_name))
 
-def _upload_file_listing(artifact_path, list_of_files_to_upload, pipeline_archiver):
-    target_file_names = [_file_name_without_artifact_path(artifact_path, file_name) for file_name in list_of_files_to_upload]
+def _upload_file_listing(list_of_files_to_upload, pipeline_archiver):
+    target_file_names = [_file_name_without_artifact_path(file_name) for file_name in list_of_files_to_upload]
     pipeline_archiver.append_miscellaneous('job_artifact_listing.pkl', target_file_names)
     
-def _file_name_without_artifact_path(artifact_path, file_name):
-    return file_name.split(artifact_path + '/')[1]
+def _file_name_without_artifact_path(file_name):
+    return file_name.split(_artifact_path() + '/')[1]
+
+def _artifact_path():
+    from foundations_contrib.global_state import config_manager
+    return config_manager['artifact_path']
