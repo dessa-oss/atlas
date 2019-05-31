@@ -19,7 +19,7 @@ def _upload_artifacts_to_archiver(pipeline_archiver):
 
 def _upload_artifact_files_to_archiver(list_of_files_to_upload, pipeline_archiver):
     for file_name in list_of_files_to_upload:
-        pipeline_archiver.append_persisted_file(file_name, _file_name_without_artifact_path(file_name))
+        pipeline_archiver.append_persisted_file(_file_name_without_artifact_path(file_name), file_name)
 
 def _list_of_files_to_upload():
     from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path

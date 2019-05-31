@@ -97,10 +97,10 @@ class TestUploadArtifacts(Spec):
 
         upload_artifacts(self.fake_job_id)
         upload_calls = [
-            call(self.artifact_path + '/file1', 'file1'),
-            call(self.artifact_path + '/child_dir1/file2', 'child_dir1/file2'),
-            call(self.artifact_path + '/child_dir1/file3', 'child_dir1/file3'),
-            call(self.artifact_path + '/child_dir2/file4', 'child_dir2/file4'),
-            call(self.artifact_path + '/child_dir2/child_dir3/file5', 'child_dir2/child_dir3/file5')
+            call('file1', self.artifact_path + '/file1'),
+            call('child_dir1/file2', self.artifact_path + '/child_dir1/file2'),
+            call('child_dir1/file3', self.artifact_path + '/child_dir1/file3'),
+            call('child_dir2/file4', self.artifact_path + '/child_dir2/file4'),
+            call('child_dir2/child_dir3/file5', self.artifact_path + '/child_dir2/child_dir3/file5')
         ]
         self.pipeline_archiver.append_persisted_file.assert_has_calls(upload_calls)
