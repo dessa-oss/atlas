@@ -4,7 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-
+from foundations_production.serving.controllers.exceptions_as_http_errors import exceptions_as_http_errors
 
 class RestAPIServer(object):
 
@@ -61,6 +61,7 @@ class RestAPIServer(object):
 
         flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
 
+    @exceptions_as_http_errors
     def predictions_from_model_package(self, user_defined_model_name):
         from flask import make_response, request
         import json
