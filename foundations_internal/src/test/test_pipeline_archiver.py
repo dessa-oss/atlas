@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 class TestPipelineArchiver(Spec):
-    
+
     persisted_archive = let_mock()
 
     @let
@@ -34,4 +34,4 @@ class TestPipelineArchiver(Spec):
 
     def test_fetch_persisted_file_downloads_specified_file(self):
         self.pipeline_archiver.fetch_persisted_file(self.source_file_name, self.target_file_name)
-        self.persisted_archive.fetch_to_file.assert_called_with('artifacts', self.source_file_name, self.job_id, self.target_file_name)        
+        self.persisted_archive.fetch_file_path_to_target_file_path.assert_called_with('artifacts', self.source_file_name, self.job_id, self.target_file_name)

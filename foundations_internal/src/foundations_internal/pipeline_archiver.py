@@ -75,7 +75,7 @@ class PipelineArchiver(object):
         return self._provenance_archive.fetch('provenance', self._pipeline_name)
 
     def fetch_job_source(self, target_file_path):
-        return self._job_source_archive.fetch_to_file('job_source', target_file_path, self._pipeline_name)
+        return self._job_source_archive.fetch_file_path('job_source', target_file_path, self._pipeline_name)
 
     def fetch_artifact(self, name):
         return self._artifact_archive.fetch('artifacts/' + name, self._pipeline_name)
@@ -87,4 +87,4 @@ class PipelineArchiver(object):
         return self._miscellaneous_archive.fetch('miscellaneous/' + name, self._pipeline_name)
 
     def fetch_persisted_file(self, source_file_path, target_file_path):
-        return self._persisted_data_archive.fetch_to_file('artifacts', source_file_path, self._pipeline_name, target_file_path)
+        return self._persisted_data_archive.fetch_file_path_to_target_file_path('artifacts', source_file_path, self._pipeline_name, target_file_path)

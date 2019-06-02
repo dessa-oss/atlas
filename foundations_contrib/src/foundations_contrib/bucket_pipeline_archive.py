@@ -53,16 +53,23 @@ class BucketPipelineArchive(object):
         else:
             return None
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
         from os.path import basename
 
-        name = file_path or target_name
         arcname = file_archive_name_with_additional_prefix(
-            prefix, file_prefix, name)
+            prefix, file_prefix, basename(file_path))
 
+        return self._download_file_from_archive(arcname, file_path)
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix, target_file_path):
+        arcname = file_archive_name_with_additional_prefix(
+            prefix, file_prefix, file_path)
+
+        return self._download_file_from_archive(arcname, target_file_path)
+
+    def _download_file_from_archive(self, arcname, target_file_path):
         if self._bucket.exists(arcname):
-            with open(target_name, 'w+b') as file:
-                self._bucket.download_to_file(arcname, file)
+            with open(target_file_path, 'w+b') as target_file:
+                self._bucket.download_to_file(arcname, target_file)
             return True
-
         return False

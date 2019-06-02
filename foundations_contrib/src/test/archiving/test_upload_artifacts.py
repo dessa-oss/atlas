@@ -10,28 +10,27 @@ from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
 
 class TestUploadArtifacts(Spec):
-    
-    mock_artifact_path_crawl = let_patch_mock('foundations_contrib.archiving.artifact_path_crawl.artifact_path_crawl')
+
     mock_file_names_for_artifacts_path = let_patch_mock('foundations_contrib.archiving.file_names_for_artifacts_path.file_names_for_artifacts_path')
-    mock_open = let_patch_mock('builtins.open')    
+    mock_open = let_patch_mock('builtins.open')
     pipeline_archiver = let_mock()
 
     @let_now
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
         return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
-    
+
     @let_now
     def mock_get_pipeline_archiver_for_job(self):
         mock = self.patch('foundations_contrib.archiving.get_pipeline_archiver_for_job', ConditionalReturn())
         mock.return_when(self.pipeline_archiver, self.fake_job_id)
         return mock
-    
+
     class MockFile(Mock):
 
         def __enter__(self):
             return self
-    
+
         def __exit__(self, *arg, **kwargs):
             pass
 
@@ -69,7 +68,7 @@ class TestUploadArtifacts(Spec):
     @let
     def fake_list_of_files_without_parent_directory(self):
         return [
-            'file1', 
+            'file1',
             'child_dir1/file2',
             'child_dir1/file3',
             'child_dir2/file4',
@@ -86,7 +85,7 @@ class TestUploadArtifacts(Spec):
 
     def test_upload_artifacts_writes_files_to_listing_file(self):
         upload_artifacts(self.fake_job_id)
-        self.pipeline_archiver.append_miscellaneous.assert_called_with('job_artifact_listing.pkl', self.fake_list_of_files_without_parent_directory)        
+        self.pipeline_archiver.append_miscellaneous.assert_called_with('job_artifact_listing.pkl', self.fake_list_of_files_without_parent_directory)
 
     def test_upload_artifacts_calls_get_pipeline_archiver_for_job(self):
         upload_artifacts(self.fake_job_id)

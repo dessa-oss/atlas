@@ -159,6 +159,7 @@ class CommandLineInterface(object):
         if self._is_model_server_running():
             pid = self._get_model_server_pid()
             os.kill(int(pid), signal.SIGINT)
+            self._remove_pid_file()
 
     def _retrieve_artifacts(self):
         import sys
@@ -238,6 +239,15 @@ class CommandLineInterface(object):
 
         with open(FoundationsModelServer.pid_file_path, 'r') as pidfile:
             return pidfile.read()
+
+    def _remove_pid_file(self):
+        from os import remove
+        from foundations_production.serving.foundations_model_server import FoundationsModelServer
+
+        try:
+            remove(FoundationsModelServer.pid_file_path)
+        except OSError:
+            pass
 
     def _get_model_server_command_line(self, pid):
         import psutil
