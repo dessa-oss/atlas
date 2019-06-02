@@ -32,7 +32,7 @@ class TestRunModelPredictions(ModelServingConfigMixin):
     @let
     def input_data(self):
         return {
-            'rows': [[0, 20, 100]], 
+            'rows': [[0, 20, 100]],
             'schema': [{'name': 'Sex', 'type': 'int'}, {'name': 'Cabin', 'type': 'int'}, {'name': 'Fare', 'type': 'int'}]
         }
 

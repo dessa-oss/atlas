@@ -16,7 +16,7 @@ if 'TEST_UUID' not in environ:
 TEST_UUID = environ['TEST_UUID']
 ARCHIVE_ROOT = environ['ARCHIVE_ROOT']
 
-def _config():
+def config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
     from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 
@@ -45,8 +45,9 @@ def _config():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
+    config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
 
 
-_config()
+config()

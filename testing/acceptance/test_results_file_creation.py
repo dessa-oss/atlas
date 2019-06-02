@@ -54,7 +54,7 @@ class TestResultsFileCreation(Spec):
     def save_path(self):
         import os
 
-        return os.path.join('/tmp', self.faker.uri_path())
+        return os.path.join('/tmp/save_dir_root', self.faker.uri_path())
 
     @let
     def model_local_save_artifact_file_path(self):
@@ -84,6 +84,12 @@ class TestResultsFileCreation(Spec):
         from acceptance.cleanup import cleanup
 
         cleanup()
+
+    @tear_down
+    def tear_down(self):
+        from acceptance.config import config
+
+        config()
 
     def test_job_creates_downloadable_results_files_in_local_file_system(self):
         from foundations.global_state import config_manager
@@ -133,19 +139,19 @@ class TestResultsFileCreation(Spec):
         job_id = deployment.job_name()
         self._run_retrieve_cli_command(job_id)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path, self.metrics_local_save_artifact_file_path])
-        shutil.rmtree(self.save_path)
+        shutil.rmtree('/tmp/save_dir_root')
         self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_model)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path])
-        shutil.rmtree(self.save_path)
+        shutil.rmtree('/tmp/save_dir_root')
         self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_metrics)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.metrics_local_save_artifact_file_path])
-        shutil.rmtree(self.save_path)
+        shutil.rmtree('/tmp/save_dir_root')
 
     def _fully_expanded_paths_for_downloads(self):
         import os
 
         result = []
-        for root, dirs, files in os.walk(self.save_path):
+        for root, _, files in os.walk(self.save_path):
             if files:
                 result += [os.path.join(root, file) for file in files]
         return result
