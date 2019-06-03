@@ -8,9 +8,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import foundations
+from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 
 @skip
-class TestSetJobResources(Spec):
+class TestSetJobResources(Spec, NodeAwareMixin):
+
+    @set_up_class
+    def set_up_class(klass):
+        klass.set_up_api()
 
     @set_up
     def set_up(self):
@@ -21,12 +26,6 @@ class TestSetJobResources(Spec):
     def tear_down(self):
         from foundations_contrib.global_state import current_foundations_context
         current_foundations_context().reset_job_resources()
-
-    @set_up_class
-    def set_up_class(klass):
-        from foundations_scheduler.kubernetes_api_wrapper import KubernetesApiWrapper
-        klass._api = KubernetesApiWrapper()
-        klass._core_api = klass._api.core_api()
 
     def test_set_job_resources(self):
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_number_of_gpus
@@ -92,21 +91,6 @@ class TestSetJobResources(Spec):
         
         error_message = 'Could not deploy job - no node exists with sufficient resources'
         self.assertIn(error_message, error_context.exception.args)
-
-    def _get_node_for_job(self, job_id):
-        list_of_pods = self._core_api.list_namespaced_pod('foundations-scheduler-test')
-        node_names = [pod.spec.node_name for pod in list_of_pods.items if self._is_foundations_job_pod(pod, job_id)]
-        return node_names[0]
-
-    def _get_memory_capacity_for_node(self, node_name):
-        node = self._core_api.read_node(node_name)
-        capacity_kb = node.status.capacity['memory'][:-2]
-        return int(capacity_kb) / 1024 / 1024
-
-    @staticmethod
-    def _is_foundations_job_pod(pod, job_id):
-        pod_name = pod.metadata.name
-        return pod_name.startswith('foundations-job-{}'.format(job_id))
 
 def _log_resource_metrics(number_of_gpus, ram_in_gb):
     foundations.log_metric('number_of_GPUs', number_of_gpus)
