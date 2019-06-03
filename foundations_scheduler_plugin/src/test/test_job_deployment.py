@@ -145,6 +145,22 @@ class TestJobDeployment(Spec):
 
         self.assertEqual(True, self.deployment.is_job_complete())
 
+    def test_get_job_status_returns_none_if_job_does_not_exist(self):
+        from kubernetes.client.rest import ApiException
+
+        self.mock_scheduler_instance.get_job_status.side_effect = ApiException(status=404)
+        self.assertEqual(None, self.deployment.get_job_status())
+
+    def test_get_job_status_reraises_exception_if_not_404(self):
+        from kubernetes.client.rest import ApiException
+
+        self.mock_scheduler_instance.get_job_status.side_effect = ApiException(status=400)
+
+        with self.assertRaises(ApiException) as error_context:
+            self.deployment.get_job_status()
+
+        self.assertEqual(400, error_context.exception.status)
+
     @staticmethod
     def _error_callback():
         raise Exception
