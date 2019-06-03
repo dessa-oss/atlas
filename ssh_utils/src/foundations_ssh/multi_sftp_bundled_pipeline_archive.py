@@ -40,8 +40,11 @@ class MultiSFTPBundledPipelineArchive(object):
     def fetch_binary(self, name, prefix=None):
         return self._fetch_archive(prefix).fetch_binary(name, self._modified_prefix(prefix))
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
-        return self._fetch_archive(prefix).fetch_to_file(file_prefix, file_path, self._modified_prefix(prefix), target_name)
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
+        return self._fetch_archive(prefix).fetch_file_path(file_prefix, file_path, self._modified_prefix(prefix))
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix=None, target_name=None):
+        return self._fetch_archive(prefix).fetch_file_path_to_target_file_path(file_prefix, file_path, self._modified_prefix(prefix), target_name)
 
     def _modified_prefix(self, prefix):
         return prefix + '/' + prefix

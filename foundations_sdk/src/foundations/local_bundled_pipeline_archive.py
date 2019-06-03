@@ -73,13 +73,22 @@ class LocalBundledPipelineArchive(object):
                 finally:
                     input_file.close()
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
         from os.path import basename
-        from shutil import copyfileobj
 
-        name = target_name or basename(file_path)
         arcname = file_archive_name_with_additional_prefix(
-            prefix, file_prefix, name)
+            prefix, file_prefix, basename(file_path))
+
+        return self._download_file_from_bundled_archive(arcname, file_path)
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix=None, target_name=None):
+        arcname = file_archive_name_with_additional_prefix(
+            prefix, file_prefix, file_path)
+
+        return self._download_file_from_bundled_archive(arcname, target_name)
+
+    def _download_file_from_bundled_archive(self, arcname, file_path):
+        from shutil import copyfileobj
 
         for tar_info in self._tar:
             if tar_info.name == arcname:

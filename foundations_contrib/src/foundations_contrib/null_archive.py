@@ -28,5 +28,8 @@ class NullArchive(object):
     def fetch_binary(self, name, prefix=None):
         return None
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
+        return False
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix=None, target_name=None):
         return False

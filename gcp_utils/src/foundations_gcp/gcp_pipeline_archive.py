@@ -40,5 +40,8 @@ class GCPPipelineArchive(object):
     def fetch_binary(self, name, prefix=None):
         return self._archive.fetch_binary(name, prefix)
 
-    def fetch_to_file(self, file_prefix, file_path, prefix=None, target_name=None):
-        return self._archive.fetch_to_file(file_prefix, file_path, prefix, target_name)
+    def fetch_file_path(self, file_prefix, file_path, prefix=None):
+        return self._archive.fetch_file_path(file_prefix, file_path, prefix)
+
+    def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix=None, target_name=None):
+        return self._archive.fetch_file_path_to_target_file_path(file_prefix, file_path, prefix, target_name)
