@@ -28,6 +28,7 @@ def config():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
+    config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
 
@@ -39,7 +40,7 @@ def config():
 
     if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
         config_manager['remote_user'] = 'foundations'
-        config_manager['remote_host'] = scheduler_host 
+        config_manager['remote_host'] = scheduler_host
         config_manager['shell_command'] = '/bin/bash'
         config_manager['code_path'] = '/scheduler_root/jobs'
         config_manager['result_path'] = '/scheduler_root/results'

@@ -36,6 +36,7 @@ def _config():
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
     config_manager['log_level'] = 'CRITICAL'
+    config_manager['artifact_path'] = 'results'
     config_manager['obfuscate_foundations'] = False
     config_manager['deployment_implementation'] = { 'deployment_type': JobDeployment }
 
@@ -51,7 +52,7 @@ def _config():
         exit(1)
 
     if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
-        config_manager['remote_host'] = scheduler_host 
+        config_manager['remote_host'] = scheduler_host
         config_manager['shell_command'] = '/bin/bash'
         config_manager['result_path'] = '/scheduler_root/results'
         config_manager['redis_url'] = 'redis://redis-job-data.foundations-scheduler:6379'
