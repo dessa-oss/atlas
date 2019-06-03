@@ -61,16 +61,23 @@ class CommandLineInterface(object):
         retrieve_parser = subparsers.add_parser('retrieve', help='Retrieve file types from execution environments')
         retrieve_subparsers = retrieve_parser.add_subparsers()
         self._initialize_retrieve_artifact_parser(retrieve_subparsers)
+        self._initialize_retrieve_logs_parser(retrieve_subparsers)
 
     def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
         from os import getcwd
 
         retrieve_artifact_parser = retrieve_subparsers.add_parser('artifacts', help='Specify type to retrieve as artifact')
         retrieve_artifact_parser.add_argument('--job_id', required=True, type=str, help="Specify job uuid of already deployed job")
-        retrieve_artifact_parser.add_argument('--env', help='Environment to retrieve from')
+        retrieve_artifact_parser.add_argument('--env', required=True, type=str, help='Environment to retrieve from')
         retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
         retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
         retrieve_artifact_parser.set_defaults(function=self._retrieve_artifacts)
+
+    def _initialize_retrieve_logs_parser(self, retrieve_subparsers):
+        retrieve_logs_parser = retrieve_subparsers.add_parser('logs', help='Get logs for jobs')
+        retrieve_logs_parser.add_argument('--job_id', required=True, type=str, help='Specify job uuid of already deployed job')
+        retrieve_logs_parser.add_argument('--env', required=True, type=str, help='Environment to retrieve from')
+        retrieve_logs_parser.set_defaults(function=self._retrieve_logs)
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
@@ -180,6 +187,10 @@ class CommandLineInterface(object):
         pipeline_archiver = get_pipeline_archiver_for_job(self._arguments.job_id)
         artifact_downloader = ArtifactDownloader(pipeline_archiver)
         artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
+
+    def _retrieve_logs(self):
+        env_name = self._arguments.env
+        print('Error: Could not find environment `{}`'.format(env_name))
 
     def _start_model_server_if_not_running(self):
         import subprocess
