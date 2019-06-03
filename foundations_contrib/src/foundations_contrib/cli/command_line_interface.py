@@ -194,6 +194,7 @@ class CommandLineInterface(object):
         from foundations_contrib.global_state import config_manager
 
         env_name = self._arguments.env
+        job_id = self._arguments.job_id
         env_file_path = EnvironmentFetcher().find_environment(env_name)
 
         if env_file_path and env_file_path[0]:
@@ -201,7 +202,14 @@ class CommandLineInterface(object):
         else:
             print('Error: Could not find environment `{}`'.format(env_name))
 
-        print('Error: Job `{}` does not exist for environment `{}`'.format(self._arguments.job_id, env_name))
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        if job_deployment.get_job_status() != 'queued':
+            print('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+        else:
+            print('Error: Job `{}` is queued and has not produced any logs'.format(job_id))
+
         sys.exit(1)
 
     def _start_model_server_if_not_running(self):

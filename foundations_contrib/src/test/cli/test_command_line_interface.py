@@ -341,7 +341,7 @@ class TestCommandLineInterface(Spec):
     psutil_process_mock = let_patch_mock('psutil.Process')
     server_process = let_mock()
     requests_post_mock = let_patch_mock('requests.post')
-    config_manager_mock = let_patch_mock('foundations_contrib.global_state.config_manager')  
+    config_manager_mock = let_patch_mock('foundations_contrib.global_state.config_manager')
     environment_fetcher_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.get_all_environments')
     find_environment_mock = let_patch_mock('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher.find_environment')
     artifact_downloader_class_mock = let_patch_mock('foundations_contrib.archiving.artifact_downloader.ArtifactDownloader')
@@ -588,14 +588,49 @@ class TestCommandLineInterface(Spec):
         self.exit_mock.assert_called_with(1)
 
     def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_prints_error_message(self):
+        mock_job_deployment = Mock()
+        mock_job_deployment.get_job_status.return_value = None
+
+        mock_job_deployment_class = ConditionalReturn()
+        mock_job_deployment_class.return_when(mock_job_deployment, self.mock_job_id, None, None)
+
+        mock_get_item = ConditionalReturn()
+        mock_get_item.return_when({'deployment_type': mock_job_deployment_class}, 'deployment_implementation')
+        self.config_manager_mock.__getitem__ = mock_get_item
+
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` does not exist for environment `{}`'.format(self.mock_job_id, self.fake_env))
 
     def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_exits_with_code_1(self):
+        mock_job_deployment = Mock()
+        mock_job_deployment.get_job_status.return_value = None
+
+        mock_job_deployment_class = ConditionalReturn()
+        mock_job_deployment_class.return_when(mock_job_deployment, self.mock_job_id, None, None)
+
+        mock_get_item = ConditionalReturn()
+        mock_get_item.return_when({'deployment_type': mock_job_deployment_class}, 'deployment_implementation')
+        self.config_manager_mock.__getitem__ = mock_get_item
+
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.exit_mock.assert_called_with(1)
+
+    def test_get_job_logs_for_queued_job_prints_error_message(self):
+        mock_job_deployment = Mock()
+        mock_job_deployment.get_job_status.return_value = 'queued'
+
+        mock_job_deployment_class = ConditionalReturn()
+        mock_job_deployment_class.return_when(mock_job_deployment, self.mock_job_id, None, None)
+
+        mock_get_item = ConditionalReturn()
+        mock_get_item.return_when({'deployment_type': mock_job_deployment_class}, 'deployment_implementation')
+        self.config_manager_mock.__getitem__ = mock_get_item
+
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.print_mock.assert_called_with('Error: Job `{}` is queued and has not produced any logs'.format(self.mock_job_id))
 
     def _bring_server_up(self):
         self._create_server_pidfile()
