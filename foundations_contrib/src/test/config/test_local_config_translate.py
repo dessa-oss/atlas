@@ -77,3 +77,9 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         del self._configuration['ssh_config']
         with self.assert_does_not_raise():
             result_config = self.translator.translate(self._configuration)
+    
+    def test_returns_archive_implementation_when_using_windows_paths(self):
+        result_config = self.translator.translate(self._configuration)
+        self._configuration['results_config']['archive_end_point'] = 'C://username//folder//another_folder'
+        with self.assert_does_not_raise():
+            result_config = self.translator.translate(self._configuration)

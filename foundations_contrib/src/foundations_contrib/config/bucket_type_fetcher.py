@@ -11,7 +11,7 @@ def for_scheme(scheme, default):
         'sftp': _get_sftp_bucket, 
         'gs': _get_gcp_bucket, 
         's3': _get_aws_bucket, 
-        'local': _get_local_bucket, 
+        'local': _get_local_bucket,
         None: lambda: default
     }
     bucket_callback = callback_mapping.get(scheme, _invalid_scheme_callback(scheme))
