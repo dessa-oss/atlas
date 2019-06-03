@@ -53,6 +53,9 @@ class TestCommandLineInterface(Spec):
     def level_3_parser_mock(self):
         return Mock()
 
+    def fake_config_path(self, environment):
+        return 'home/foundations/lou/config/{}.config.yaml'.format(environment)
+
     @set_up
     def set_up(self):
         self._server_running = False
@@ -577,7 +580,22 @@ class TestCommandLineInterface(Spec):
     def test_get_job_logs_for_environment_that_does_not_exist_prints_error_message(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with('Error: Could not find environment `{}`'.format(self.fake_env))
+        self.print_mock.assert_any_call('Error: Could not find environment `{}`'.format(self.fake_env))
+
+    def test_get_job_logs_for_environment_that_does_not_exist_exits_with_code_1(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.exit_mock.assert_called_with(1)
+
+    def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_prints_error_message(self):
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.print_mock.assert_called_with('Error: Job `{}` does not exist for environment `{}`'.format(self.mock_job_id, self.fake_env))
+
+    def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_exits_with_code_1(self):
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.exit_mock.assert_called_with(1)
 
     def _bring_server_up(self):
         self._create_server_pidfile()

@@ -189,8 +189,20 @@ class CommandLineInterface(object):
         artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
 
     def _retrieve_logs(self):
+        import sys
+        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+        from foundations_contrib.global_state import config_manager
+
         env_name = self._arguments.env
-        print('Error: Could not find environment `{}`'.format(env_name))
+        env_file_path = EnvironmentFetcher().find_environment(env_name)
+
+        if env_file_path and env_file_path[0]:
+            config_manager.add_simple_config_path(env_file_path[0])
+        else:
+            print('Error: Could not find environment `{}`'.format(env_name))
+
+        print('Error: Job `{}` does not exist for environment `{}`'.format(self._arguments.job_id, env_name))
+        sys.exit(1)
 
     def _start_model_server_if_not_running(self):
         import subprocess
