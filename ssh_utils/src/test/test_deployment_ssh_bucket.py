@@ -36,11 +36,11 @@ class TestDeploymentSSHBucket(Spec):
     
     @let
     def fake_path(self):
-        return self.faker.uri_path()
+        return self.faker.uri_path() + '/fake_path'
 
     @let
     def fake_path_two(self):
-        return self.faker.uri_path()
+        return self.faker.uri_path() + '/fake_path_tow'
 
     local_bucket_constructor = let_patch_mock('foundations_ssh.sftp_bucket.SFTPBucket')    
     deploy_bucket_constructor = let_patch_mock('foundations_contrib.local_file_system_bucket.LocalFileSystemBucket')
