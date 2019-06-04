@@ -48,14 +48,14 @@ class JobPersister(object):
 
     @staticmethod
     def _load_archive(name):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.null_archive import NullArchive
 
         return config_manager.reflect_instance(name, 'archive', lambda: NullArchive())
 
     @staticmethod
     def _load_archive_listing(name):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.null_pipeline_archive_listing import NullArchiveListing
 
         return config_manager.reflect_instance(name, 'archive_listing', lambda: NullArchiveListing())

@@ -6,6 +6,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
+def is_string(string):
+    return isinstance(string, str)
+
+
+def is_number(number):
+    return isinstance(number, (int, float))
+
+
 def file_archive_name(prefix, name):
     if prefix is not None:
         return prefix + '/' + name

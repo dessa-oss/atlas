@@ -49,7 +49,7 @@ class TestSession(Spec):
     def session_key(self):
         return 'session:{}'.format(self.fake_token)
 
-    mock_redis = let_patch_mock('foundations.global_state.redis_connection')
+    mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection')
     mock_token_generator = let_patch_mock('Crypto.Random._UserFriendlyRNG.RNGFile.read')
 
     @set_up

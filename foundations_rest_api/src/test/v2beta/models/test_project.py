@@ -33,7 +33,7 @@ class TestProjectV2(Spec):
 
     @tear_down
     def project_tear_down(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:
@@ -76,13 +76,13 @@ class TestProjectV2(Spec):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     def test_find_looks_for_correct_project(self):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         Project.find_by(name='my favourite project').evaluate()
         self._find_project.assert_called_with(redis_connection, 'my favourite project')
 
     def test_find_looks_for_correct_project_different_project(self):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         Project.find_by(name='my least favourite project').evaluate()
         self._find_project.assert_called_with(redis_connection, 'my least favourite project')
@@ -236,7 +236,7 @@ class TestProjectV2(Spec):
         self.assertCountEqual(expected_project.output_metric_names, project.output_metric_names)
 
 
-    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.global_state.redis_connection')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
         Project.all().evaluate()

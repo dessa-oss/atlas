@@ -50,7 +50,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _get_running_jobs(project_name):
-        from foundations.global_state import deployment_manager
+        from foundations_contrib.global_state import deployment_manager
 
         jobs = []
         for info in deployment_manager.scheduler().get_job_information('RUNNING'):

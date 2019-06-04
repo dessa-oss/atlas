@@ -73,7 +73,7 @@ class Project(PropertyModel):
     @staticmethod
     def _construct_project_listing():
         from foundations_contrib.models.project_listing import ProjectListing
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         return ProjectListing.list_projects(redis_connection)
 

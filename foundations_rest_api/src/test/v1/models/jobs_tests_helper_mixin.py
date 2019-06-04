@@ -9,8 +9,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class JobsTestsHelperMixin(object):
 
     def _setup_deployment(self, expected_status):
-        from foundations.global_state import config_manager
-        from foundations.global_state import deployment_manager
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.global_state import deployment_manager
         from .mocks.scheduler_backend import MockSchedulerBackend
         from .mocks.deployment import MockDeployment
 
@@ -26,7 +26,7 @@ class JobsTestsHelperMixin(object):
     def _setup_results_archiving(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
         from .mocks.archive_listing import MockArchiveListing
         from .mocks.memory_bucket import MemoryBucket
@@ -59,7 +59,7 @@ class JobsTestsHelperMixin(object):
         self._pipeline = Pipeline(self._pipeline_context)
 
     def _cleanup(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:

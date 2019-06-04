@@ -24,7 +24,7 @@ class TestJobListingTrimCharacters(JobsTestsHelperMixinV2, APIAcceptanceTestCase
 
     @classmethod
     def tearDownClass(klass):
-        from foundations.global_state import redis_connection as redis
+        from foundations_contrib.global_state import redis_connection as redis
 
         redis.flushall()
 

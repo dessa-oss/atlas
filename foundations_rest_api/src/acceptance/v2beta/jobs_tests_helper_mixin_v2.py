@@ -14,7 +14,7 @@ class JobsTestsHelperMixinV2(object):
 
     @classmethod
     def setUpClass(klass):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
 

@@ -37,7 +37,7 @@ class Job(PropertyModel):
     def _load_jobs(project_name):
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.input_parameter_indexer import InputParameterIndexer
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         jobs = []
         jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True))
@@ -138,7 +138,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _trim_metric_values(job_data):
-        from foundations.utils import is_string
+        from foundations_contrib.utils import is_string
         for metric in job_data['output_metrics']:
             if is_string(metric['value']):
                 metric['value'] = metric['value'][:100]

@@ -25,7 +25,7 @@ class QueuedJob(PropertyModel):
         from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
-            from foundations.global_state import deployment_manager
+            from foundations_contrib.global_state import deployment_manager
 
             jobs = []
             for info in deployment_manager.scheduler().get_job_information('QUEUED'):

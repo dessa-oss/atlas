@@ -42,7 +42,7 @@ class Session(PropertyModel):
 
     
     def save(self):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         session_key = 'session:{}'.format(self.token)
         redis_connection.set(session_key, 'valid')
@@ -64,7 +64,7 @@ class Session(PropertyModel):
 
     @staticmethod
     def _find_internal(token):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         exists = redis_connection.get('session:{}'.format(token))
         if exists is not None:

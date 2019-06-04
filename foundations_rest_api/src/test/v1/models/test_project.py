@@ -21,7 +21,7 @@ class TestProject(unittest.TestCase):
             return self.list
 
     def tearDown(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:
@@ -179,7 +179,7 @@ class TestProject(unittest.TestCase):
         )
         self.assertEqual([expected_project, expected_project_two], project)
 
-    @patch('foundations.global_state.redis_connection')
+    @patch('foundations_contrib.global_state.redis_connection')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects_using_correct_redis(self, mock_projects, mock_redis):
         Project.all().evaluate()

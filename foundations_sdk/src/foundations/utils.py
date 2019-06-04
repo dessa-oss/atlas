@@ -14,18 +14,8 @@ def using_python_2():
     return version_info[0] < 3
 
 
-if using_python_2():
-    def force_encoding(string):
-        return string.decode('utf-8').encode('utf-8', 'ignore')
-
-    def is_string(string):
-        return isinstance(string, basestring)
-else:
-    def force_encoding(string):
-        return string.encode('utf-8', 'ignore')
-
-    def is_string(string):
-        return isinstance(string, str)
+def force_encoding(string):
+    return string.encode('utf-8', 'ignore')
 
 
 def byte_string(string):
@@ -246,6 +236,3 @@ def datetime_string(time):
     date_time = datetime.fromtimestamp(time)
     return date_time.isoformat()
 
-
-def is_number(number):
-    return isinstance(number, (int, float))

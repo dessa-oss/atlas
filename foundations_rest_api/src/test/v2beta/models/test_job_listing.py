@@ -15,7 +15,7 @@ class TestJobListingV2(unittest.TestCase):
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         redis_connection.flushall()
 
@@ -214,7 +214,7 @@ class TestJobListingV2(unittest.TestCase):
         return builder.build()
 
     def _make_job(self):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from foundations_contrib.producers.jobs.run_job import RunJob
 

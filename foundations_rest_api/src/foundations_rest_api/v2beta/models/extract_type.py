@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.utils import is_string, is_number
+from foundations_contrib.utils import is_string, is_number
 import numbers
 
 def extract_type(value):

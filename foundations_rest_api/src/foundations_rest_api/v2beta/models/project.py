@@ -72,14 +72,14 @@ class Project(PropertyModel):
     @staticmethod
     def _construct_project_listing():
         from foundations_contrib.models.project_listing import ProjectListing
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         return ProjectListing.list_projects(redis_connection)
 
     @staticmethod
     def _find_by_internal(name):
         from foundations_rest_api.v2beta.models.job import Job
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
         from foundations_contrib.models.project_listing import ProjectListing
 
         project_info = ProjectListing.find_project(redis_connection, name)
