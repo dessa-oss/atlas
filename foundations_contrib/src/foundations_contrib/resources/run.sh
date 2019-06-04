@@ -34,7 +34,7 @@ cd $BASEDIR && \
   with_output_redirect $python_path -m virtualenv --system-site-packages venv
 
 with_output_redirect stat $BASEDIR/venv/bin/activate
-if [ $? -eq 0 ]; then 
+if [ $? -eq 0 ]; then
   activate_path=venv/bin/activate
 else
   activate_path=venv/Scripts/activate
@@ -42,7 +42,11 @@ fi
 
 if [[ -z "${offline_mode}" ]]; then
   with_output_redirect echo "Checking for internet connection..."
-  with_output_redirect ping -c 3 4.2.2.1
+  if [[ "$OSTYPE" == "msys" ]]; then
+    with_output_redirect ping -n 3 4.2.2.1
+  else
+    with_output_redirect ping -c 3 4.2.2.1
+  fi
 
   if [ $? -ne 0 ]; then
     offline_mode=OFFLINE
