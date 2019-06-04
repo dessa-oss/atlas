@@ -37,6 +37,10 @@ def get_number_of_gpus():
 def print_message(message):
     print(message)
 
+def wait(input):
+    from time import sleep
+    sleep(120)
+
 def _exception_thrown_because_no_gpus(exception):
     return 'libcuda.so.1: cannot open shared object file: No such file or directory' in str(exception)
 

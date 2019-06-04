@@ -86,8 +86,35 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         job = stage_print_message.run()
         job.wait_for_deployment_to_complete()
         completed_job_id = job.job_name()
+        self.assertEqual('completed', job.get_job_status())
 
         command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
+        cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        cli_stdout = cli_result.stdout
+        cli_stdout = cli_stdout.decode().rstrip('\n')
+
+        self.assertEqual(0, cli_result.returncode)
+        self.assertIn(message, cli_stdout)
+
+    def test_get_logs_for_running_job(self):
+        import subprocess
+        from scheduler_acceptance.fixtures.stages import print_message, wait
+        from time import sleep
+
+        message = 'the quick brown fox jumps over the lazy dog'
+
+        print_message = foundations.create_stage(print_message)
+        wait = foundations.create_stage(wait)
+        stage_print_message = print_message(message)
+        stage_wait = wait(stage_print_message)
+
+        job = stage_wait.run()
+        self._wait_for_job_to_run(job)
+        running_job_id = job.job_name()
+        sleep(60)
+        self.assertEqual('running', job.get_job_status())
+
+        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(running_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
