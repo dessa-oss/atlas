@@ -624,6 +624,13 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` is queued and has not produced any logs'.format(self.mock_job_id))
 
+    def test_get_job_logs_for_queued_job_exits_with_code_1(self):
+        self._set_job_status('queued')
+
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.exit_mock.assert_called_with(1)
+
     def test_get_job_logs_for_job_that_exists_and_is_not_queued_prints_logs(self):
         self._set_job_status(self.fake_job_status)
         self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
