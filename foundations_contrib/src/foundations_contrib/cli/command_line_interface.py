@@ -188,9 +188,11 @@ class CommandLineInterface(object):
         job_deployment_class = config_manager['deployment_implementation']['deployment_type']
         job_deployment = job_deployment_class(job_id, None, None)
 
-        if job_deployment.get_job_status() is None:
+        job_status = job_deployment.get_job_status()
+
+        if job_status is None:
             self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
-        elif job_deployment.get_job_status() == 'queued':
+        elif job_status == 'queued':
             self._fail_with_message('Error: Job `{}` is queued and has not produced any logs'.format(job_id))
         else:
             logs = job_deployment.get_job_logs()
