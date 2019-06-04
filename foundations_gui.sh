@@ -9,6 +9,10 @@ else
     image_tag="$3"
 fi
 
+if [ "$FOUNDATIONS_GUI_PORT" = "" ]; then
+    FOUNDATIONS_GUI_PORT=6443
+fi
+
 get_redis_container_image () {
     docker ps --format "{{.Image}}" | grep -E '^redis:?.*$' | head -n1
 }
@@ -63,7 +67,7 @@ start_ui () {
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
         --network foundations-gui \
-        foundations-rest-api:${image_tag} \
+        docker.shehanigans.net/foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
 
@@ -71,12 +75,12 @@ start_ui () {
         --name foundations-gui \
         -e FOUNDATIONS_REST_API=foundations-rest-api \
         --network foundations-gui \
-        -p 6443:6443 \
-        foundations-gui:${image_tag} \
+        -p $FOUNDATIONS_GUI_PORT:6443 \
+        docker.shehanigans.net/foundations-gui:${image_tag} \
         > /dev/null \
         && \
 
-    echo "Foundations UI listening on port 6443."
+    echo "Foundations UI listening on port $FOUNDATIONS_GUI_PORT."
 }
 
 stop_ui () {

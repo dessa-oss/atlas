@@ -4,11 +4,10 @@ RUN python -m pip install --upgrade pip==18.1 && \
     python -m pip install setuptools wheel
 
 RUN mkdir -p /var/foundations ~/.ssh
-COPY ./ /var/foundations/
+COPY ./tmp/pip_wheels /var/foundations/
 WORKDIR /var/foundations
 
-RUN bash build_dist.sh && \
-    rm -rf ./*
+RUN pip install *.whl
 
 ENV SERVER_NAME=localhost
 

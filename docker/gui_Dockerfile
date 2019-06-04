@@ -1,4 +1,4 @@
-FROM node:8.15.1-jessie
+FROM node:10.16-jessie
 
 RUN mkdir -p /var/foundations_ui
 WORKDIR /var/foundations_ui
