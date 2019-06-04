@@ -47,7 +47,6 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         self.assertEqual(1, cli_result.returncode)
         self.assertEqual(error_message, cli_stdout)
 
-    @skip('not ready')
     def test_get_logs_for_queued_job_prints_error_message(self):
         import subprocess
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_ram_in_gb_when_limit_not_set
