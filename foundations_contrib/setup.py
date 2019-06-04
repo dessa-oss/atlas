@@ -12,6 +12,7 @@ from codecs import open
 from os import path, environ
 
 here = path.abspath(path.dirname(__file__))
+build_version = environ.get('build_version', '0.0.0')
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -30,7 +31,7 @@ package_data = list(list_files_recursively('src/foundations_contrib', 'resources
 
 setup(
     name='foundations_contrib',
-    version=environ.get('build_version', '0.0.0'),
+    version=build_version,
     description='A tool for machine learning development - files for contribution',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -44,7 +45,9 @@ setup(
         'promise==2.2.1',
         'tabulate==0.8.3',
         'slackclient==1.3.0',
-        'psutil==5.6.2'
+        'psutil==5.6.2',
+        'foundations_internal=={}'.format(build_version),
+        'foundations_events=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

@@ -9,8 +9,8 @@ venv*
 **/*.tgz
 foundations_sdk/build
 foundations_sdk/dist
-foundations_sdk/foundations.egg-info
-foundations_sdk/src/foundations.egg-info
+foundations_sdk/dessa_foundations.egg-info
+foundations_sdk/src/dessa_foundations.egg-info
 foundations_rest_api/build
 foundations_rest_api/dist
 foundations_rest_api/foundations_rest_api.egg-info

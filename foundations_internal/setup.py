@@ -12,13 +12,14 @@ from codecs import open
 from os import path, environ
 
 here = path.abspath(path.dirname(__file__))
+build_version = environ.get('build_version', '0.0.0')
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='foundations_internal',
-    version=environ.get('build_version', '0.0.0'),
+    version=build_version,
     description='A tool for machine learning development - core modules',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -29,8 +30,7 @@ setup(
         'redis==2.10.6',
         'pandas==0.23.3',
         'PyYAML==3.13',
-        'promise==2.2.1',
-        'futures; python_version == "2.7"',
+        'promise==2.2.1'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

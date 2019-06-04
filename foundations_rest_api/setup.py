@@ -12,20 +12,21 @@ from codecs import open
 from os import path, environ
 
 here = path.abspath(path.dirname(__file__))
+build_version = environ.get('build_version', '0.0.0')
 
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='foundations_rest_api',
-    version=environ.get('build_version', '0.0.0'),
+    version=build_version,
     description='An API for Foundations',
     classifiers=[ 
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'foundations',
+        'dessa_foundations=={}'.format(build_version),
         'flask-restful==0.3.6',
         'Flask-Cors==3.0.6',
         'Werkzeug==0.14.1',
