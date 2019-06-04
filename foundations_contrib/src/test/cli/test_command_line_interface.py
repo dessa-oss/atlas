@@ -325,11 +325,27 @@ class TestCommandLineInterface(Spec):
         return self.faker.word()
 
     @let
+    def fake_job_status(self):
+        status = self.faker.word()
+        while status == 'queued':
+            status = self.faker.word()
+
+        return status
+
+    @let
     def server_startup_time(self):
         from random import random
 
         between_zero_and_one = random()
         return between_zero_and_one * 2.7 + 0.2
+
+    @let
+    def mock_job_deployment(self):
+        return Mock()
+
+    @let
+    def fake_job_logs(self):
+        return self.faker.sentence()
 
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
@@ -533,7 +549,7 @@ class TestCommandLineInterface(Spec):
     def test_retrieve_artifacts_prints_error_if_missing_environment(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with("Could not find environment: `{}`".format(self.fake_env))
+        self.print_mock.assert_called_with('Error: Could not find environment `{}`'.format(self.fake_env))
 
     def test_retrieve_artifacts_gets_pipeline_archiver(self):
         CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
@@ -608,12 +624,25 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.print_mock.assert_called_with('Error: Job `{}` is queued and has not produced any logs'.format(self.mock_job_id))
 
+    def test_get_job_logs_for_job_that_exists_and_is_not_queued_prints_logs(self):
+        self._set_job_status(self.fake_job_status)
+        self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.print_mock.assert_called_with(self.fake_job_logs)
+
+    def test_get_job_logs_for_job_that_exists_and_is_not_queued_does_not_call_exit(self):
+        self._set_job_status(self.fake_job_status)
+        self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
+        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
+        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
+        self.exit_mock.assert_not_called()
+
     def _set_job_status(self, status):
-        mock_job_deployment = Mock()
-        mock_job_deployment.get_job_status.return_value = status
+        self.mock_job_deployment.get_job_status.return_value = status
 
         mock_job_deployment_class = ConditionalReturn()
-        mock_job_deployment_class.return_when(mock_job_deployment, self.mock_job_id, None, None)
+        mock_job_deployment_class.return_when(self.mock_job_deployment, self.mock_job_id, None, None)
 
         mock_get_item = ConditionalReturn()
         mock_get_item.return_when({'deployment_type': mock_job_deployment_class}, 'deployment_implementation')

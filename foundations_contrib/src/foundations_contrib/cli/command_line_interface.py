@@ -169,47 +169,49 @@ class CommandLineInterface(object):
             self._remove_pid_file()
 
     def _retrieve_artifacts(self):
-        import sys
-        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
-        from foundations_contrib.global_state import config_manager
         from foundations_contrib.archiving.artifact_downloader import ArtifactDownloader
         from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
-        env_name = self._arguments.env
-        env_file_path = EnvironmentFetcher().find_environment(env_name)
-
-        if env_file_path and env_file_path[0]:
-            config_manager.add_simple_config_path(env_file_path[0])
-        else:
-            print("Could not find environment: `{}`".format(env_name))
-            sys.exit(1)
+        self._load_configuration()
 
         pipeline_archiver = get_pipeline_archiver_for_job(self._arguments.job_id)
         artifact_downloader = ArtifactDownloader(pipeline_archiver)
         artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
 
     def _retrieve_logs(self):
-        import sys
-        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
 
         env_name = self._arguments.env
         job_id = self._arguments.job_id
+        self._load_configuration()
+
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        if job_deployment.get_job_status() is None:
+            self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+        elif job_deployment.get_job_status() == 'queued':
+            self._fail_with_message('Error: Job `{}` is queued and has not produced any logs'.format(job_id))
+        else:
+            logs = job_deployment.get_job_logs()
+            print(logs)
+
+    def _load_configuration(self):
+        from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+        from foundations_contrib.global_state import config_manager
+
+        env_name = self._arguments.env
         env_file_path = EnvironmentFetcher().find_environment(env_name)
 
         if env_file_path and env_file_path[0]:
             config_manager.add_simple_config_path(env_file_path[0])
         else:
-            print('Error: Could not find environment `{}`'.format(env_name))
+            self._fail_with_message('Error: Could not find environment `{}`'.format(env_name))
 
-        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
-        job_deployment = job_deployment_class(job_id, None, None)
+    def _fail_with_message(self, message):
+        import sys
 
-        if job_deployment.get_job_status() != 'queued':
-            print('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
-        else:
-            print('Error: Job `{}` is queued and has not produced any logs'.format(job_id))
-
+        print(message)
         sys.exit(1)
 
     def _start_model_server_if_not_running(self):
