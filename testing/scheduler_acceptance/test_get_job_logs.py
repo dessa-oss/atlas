@@ -74,6 +74,27 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         self.assertEqual(1, cli_result.returncode)
         self.assertEqual(error_message, cli_stdout)
 
+    def test_get_logs_for_completed_job(self):
+        import subprocess
+        from scheduler_acceptance.fixtures.stages import print_message
+
+        message = 'the quick brown fox jumps over the lazy dog'
+
+        print_message = foundations.create_stage(print_message)
+        stage_print_message = print_message(message)
+
+        job = stage_print_message.run()
+        job.wait_for_deployment_to_complete()
+        completed_job_id = job.job_name()
+
+        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
+        cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        cli_stdout = cli_result.stdout
+        cli_stdout = cli_stdout.decode().rstrip('\n')
+
+        self.assertEqual(0, cli_result.returncode)
+        self.assertIn(message, cli_stdout)
+
     @staticmethod
     def _wait_for_job_to_run(job):
         import time
