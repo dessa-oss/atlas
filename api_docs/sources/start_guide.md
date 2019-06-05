@@ -46,15 +46,15 @@ You will need to install [git bash](https://git-scm.com/download/win) and [anaco
 
 - Open an Anaconda prompt
 - Create a new conda environment by running
-```
+```bash
 conda create --name found-env python=3.6
 ```
 - Activate the environment by running
-```
+```bash
 conda activate found-env
 ```
 - Install dependencies via pip
-```
+```bash
 pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
 ```
 <h3>2. Install Foundations WHL </h3>

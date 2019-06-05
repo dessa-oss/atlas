@@ -1,6 +1,9 @@
 <h1>Stage creation</h1>
 <a id="create_stage_example"></a>
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/staging.py#L9)</span>
+
+----
+
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/staging.py#L17)</span>
 
 ### create_stage
 

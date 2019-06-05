@@ -131,7 +131,7 @@ You will also need the following tools:
 
 ## 1. Setup Conda Environment
 
-Create a new Conda environment which we will install the Foundation packages into. To do this, open tbe Anaconda Navigator and open an Anaconda prompt. Then, create a new environment by running:
+Create a new Conda environment which we will install the Foundation packages into. To do this, open the Anaconda Navigator and open an Anaconda prompt. Then, create a new environment by running:
 ```bash
 conda create --name found-env python=3.6
 ```

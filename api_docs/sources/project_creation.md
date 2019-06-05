@@ -14,7 +14,7 @@ Creates a project, which is basically a directory named after the specified proj
 ```
 project_name
 ├── config
-│   └── default.local.yaml
+│   └── local.config.yaml
 ├── data
 ├── post_processing
 │   └── results.py
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     etc.
 ```
 ---
-#Retrieve Environment Information#
+#List Environment Information#
 
 Users can setup different deployment environments with Foundation (local, gcp, etc.) at both the project and global level. This allows users to customize their deployment environments and use a common one across multiple projects, or select specific environments per projects. Local configurations are stored in `/project_name/config`.
 
@@ -105,4 +105,40 @@ global configs:
 env_name env_path
 ---------- ----------
 local       /home/newHomeDir/.foundations/config/local.config.yaml
+```
+
+---
+#Retrieve Stored Artifacts#
+
+Users can save artifacts from a job with Foundations by defining an `artifact_path` in the deployment configuration. The Foundations CLI provides an easy way to retrieve these artifacts to the user's machine to be used for analysis.
+
+```shellscript
+$ foundations retrieve artifacts --job_id=<deployed job_id> --env=<env_name> [options]
+```
+<h3>Options</h3>
+|   Option &nbsp;&nbsp;&nbsp;&nbsp;   | Description  |
+|----|----|
+| save_dir| The directory on the machine where to download all artifacts to. Can be both relative or absolute paths. By default, Foundations will download artifacts to the present working directory|
+| source_dir| The subdirectory of artifacts from the user-defined `artifact_path` to download. By default foundations will download all stored artifacts from the root directory for a job|
+
+For example, if a user deployed a job with id 12345, and the artifact directory structure looks likes this:
+```
+artifacts
+├── models
+│   └── model.pkl
+│   └── otherFiles.txt
+├── data
+    ├── names.pkl
+```
+
+The following command will download all files to the current working directory:
+
+```shellscript
+$ foundations retrieve artifacts --job_id=12345 --env=local 
+```
+
+If the user would like to download only the models folder, the can use the `source_dir` option:
+
+```shellscript
+$ foundations retrieve artifacts --job_id=12345 --env=local --source_dir=models
 ```

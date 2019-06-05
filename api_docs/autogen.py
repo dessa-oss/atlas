@@ -16,6 +16,7 @@ if sys.version[0] == '2':
 
 import foundations
 import foundations.prototype
+import foundations_contrib
 
 
 EXCLUDE = {
@@ -59,6 +60,13 @@ PAGES = [
         'all_module_classes': [foundations.staging],
         'functions': [
             foundations.staging.create_stage,
+        ]
+    },
+    {
+        'page': 'set_resources.md',
+        'all_module_classes': [foundations.foundations_contrib.set_job_resources],
+        'functions': [
+            foundations.set_job_resources,
         ]
     },
     {
@@ -216,7 +224,7 @@ def class_to_source_link(cls):
 
 def function_to_source_link(fn):
     module_name = fn.__module__
-    assert module_name.startswith(ROOT_MODULE_NAME)
+    #assert module_name.startswith(ROOT_MODULE_NAME)
     path = module_name.replace('.', '/')
     path += '.py'
     line = inspect.getsourcelines(fn)[-1]

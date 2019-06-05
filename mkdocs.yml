@@ -16,7 +16,8 @@ pages:
   - Installation Guide: start_guide.md
   - Foundations CLI: project_creation.md
   - Foundations GUI: gui.md
-  - Deploying To Different Environments: configs.md
+  - Deployment Configurations: configs.md
+  - Artifact Management: artifacts_management.md
 - SDK REFERENCE:
   - Defining Projects: set_project_name.md
   - Setting Deployment Environment: set_deployment_env.md
@@ -29,6 +30,7 @@ pages:
 - EXPERIMENTAL FEATURES:
   - Additional Hyperparameters Types: discreteHyperparameter.md
   - Hyperparameter Searching: stage_search.md
+  - Specifying Job Resources: set_resources.md
   - Managing Jobs: manage_jobs.md
   - Tagging Jobs: tag_jobs.md
   - Tracking Job Logs: job_logs.md

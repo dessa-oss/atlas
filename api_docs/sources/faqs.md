@@ -12,6 +12,7 @@
 * [Does Foundations support hyperparameter optimizations?](../faqs/#does-foundations-support-hyperparameter-optimizations)
 * [Can I use custom libraries mentioned outside my ML project?](../faqs/#can-i-use-custom-libraries-mentioned-outside-my-ml-project)  
 * [What is caching in Foundations?](../faqs/#what-is-caching-in-foundations)
+* [How does caching work Foundations? When does a stage get resued?](../faqs/#what-is-caching-in-foundations)
 * [Is there a default project name when I run a job?](../faqs/#is-there-a-default-project-name-when-i-run-a-job-i-forgot-to-specify-a-project-when-i-deployed-a-job)
 * [Can I use stages as part of other objects or data structures and use those as inputs into other stages?](../faqs/#can-i-use-stages-as-part-of-other-objects-or-data-structures-and-use-those-as-inputs-into-other-stages)
 * [How can I filter my results returned from get_metrics_for_all_jobs?](../faqs/#how-can-i-filter-my-results-returned-from-get_metrics_for_all_jobs)
@@ -101,7 +102,15 @@ The use of custom libraries is supported. To use custom libraries, they will nee
 
 ---
 ####What is caching in Foundations? 
-Caching is a feature of Foundations where stage results are kept in a cache so they can be re-used without having to run those stages again. The path of this storage location can be configured on the deployment environment [configuration file](../configs/#cache-configurations). When running the Foundations pipeline, this can be enabled on stages with [enable_caching](../running_stages/#enable_caching)
+Caching is a feature of Foundations where stage results are kept in a cache so they can be re-used without having to run those stages again. The path of this storage location can be configured on the deployment environment [configuration file](../configs/#cache-configurations). When running the Foundations pipeline, this can be enabled on stages with [enable_caching](../running_stages/#enable_caching).
+
+---
+####How does caching work Foundations? When does a stage get resued?
+When caching is enabled for a stage, Foundations first checks if it has already run and cached the output of this stage before. If nothing is found, Foundations will run the stage and serialize/hash the source code, input parameters and output values. If the same stage is called again in a different job, Foundations will check if the stage source code and input parameters are the same as the one in the cache. If so, Foundations will automatically return the cached output values and not recompute the whole function. However, if the source code or input parameter values have changed, Foundations will rerun the stage again to recompute the output. 
+
+**Note:** Foundations only checks the source code of the function it is wrapping, as well as the input parameter values to determine if caching should be used. This means that any changes to the input values themselves will trigger caching. However, if the input value to a stage is something that is not changed between runs (such as a file or filepath), Foundations will not check if the data has changed and will use the same cached output value from before.
+
+For example, if the input to a stage is a dataframe, and between job deployments the? row values are different, Foundations will not use caching and recompute the outputs each time. But, if the input to the stage is a path to some data (ex: `staged_function('path/to/data')`), Foundations will not verify if the data itself is different between runs and will use caching.
 
 ---
 ####Is there a default project name when I run a job?

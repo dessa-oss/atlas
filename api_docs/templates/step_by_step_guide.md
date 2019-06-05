@@ -160,7 +160,54 @@ incr_value.enable_caching()
 This will enable the caching feature on `incr_value` stage_object. For every job ran, the return value from `incr_value` will be cached in Foundations.
 Therefore, if first job runs `incr_value(3)` then its return value of `13` will be cached in Foundations. When second job runs `incr_value(3)`, Foundations will directly use pre-computed cached value `13` instead of re-computing this step. You can imagine how powerful this feature can become in model training.
 
-## Step 7: Deploying to Remote Environments (optional)
+## Step 7: Tracking and Retriving Job Artifacts (optional)
+
+Now, lets say that we want to store the values of our mult function in the `model.py` file to be later used for analysis. Users can define create and specify a path where Foundations will a track during the job run. When the job is completed, any artifacts generated into that path will be persisted and stored for analysis. 
+
+First, in the `project_code` folder, lets create an empty folder called `storedFiles`. This is where we'll store any artifacts from our job, to be saved by Foundations. Our project directory should look something like this:
+```
+project_name
+├── config
+│   └── local.config.yaml
+├── data
+├── post_processing
+│   └── results.py
+├── project_code
+│   ├── artifacts
+│   ├── driver.py
+│   └── model.py
+└── README.txt
+```
+
+Next, we'll have to modify our `local.config.yaml` configuration file, located in the `config` directory of the project. By adding a relative `artifact_path`, Foundations will track that path when the job is running:
+
+```yaml
+job_deployment_env: local
+results_config:
+  artifact_path: artifacts
+cache_config: {}
+obfuscate_foundations: False
+```
+
+In our model code, let's store the values of x and y as a dataframe and serialize it for later analysis. We can do this by adding ```import pandas as pd``` to the top of the file, as well as the following lines of code in the `mult` function:
+```python
+df = pd.DataFrame([[x,y]],columns=['x','y'])
+df.to_pickle("artifacts/variables.pkl")
+```
+
+Let's deploy the job (make sure you keep track of the job_id!) with:
+```bash
+$foundations deploy project_code/driver.py --env=local
+```
+
+Once the job has completed running, we should be able to see that our files were written to disk and saved in the archives directory. By default, this can be found at: `~/.foundations/job_data/archive`. If we look under `~/.foundations/job_data/archive/<JOB_ID>`, we should see an artifacts folder, containing our `variables.pkl`! Files can be retrieved also with the Foundations CLI command `foundations retrieve artifacts`. To retrieve our pkl file, run the following:
+```bash
+$foundations retrieve artifacts --env=local --job_id=<JOB_ID>
+```
+
+Now, you should see that our variables.pkl file was downloaded to the present directory.
+
+## Step 8: Deploying to Remote Environments (optional)
 
 To run jobs on remote environments, you will need to use different configuration files and additional resources when deploying the job. This can be done via configuration file management 
 
@@ -172,7 +219,7 @@ In addition, you may need to set environment variables in your notebook first be
 
 For more information on deploying to remote environments, please refer to the documentation [here](../configs/)
 
-## Step 8: Adding additional dependencies (optional)
+## Step 9: Adding additional dependencies (optional)
 
 Be aware that installing a package locally doesn't mean it will be in the execution environment. If you want to use an external python package, you'll need to create a `requirements.txt` wherever your model code exists with the dependencies explicitly stated. The requirements file will be in the root of the model code directory. 
 

@@ -85,7 +85,8 @@ For deployments to specifc versions of the job orchestrator (scheduler), `schedu
 ```yaml
 results_config: {
     archive_end_point: /path/to/archives,
-    redis_end_point: redis://someredis
+    redis_end_point: redis://someredis,
+    artifact_path: /relative/path/to/artifact/tracking/directory
 },
 ```
 
@@ -96,6 +97,8 @@ Foundations also supports cross-environment storage for results. By specifying t
 Supported URI schemas are: `gcp://`, `s3://`, `sftp://`, `local://`
 
 **redis_end_point**: redis endpoint where we want to store results for faster reading
+
+**artifact_path**: relative path where users can define a directory for Foundations to track. Files or artifacts written to that directory during runtime will be stored in the archive endpoint once the job is completed. 
 
 ### Cache Configurations
 
@@ -142,6 +145,7 @@ job_deployment_env: local
 results_config: 
     archive_end_point: /path/to/archives
     redis_end_point: redis://someredis
+    artifact_path: files
 
 cache_config: 
     end_point: /path/to/the/cache
@@ -172,6 +176,7 @@ job_deployment_env: gcp
 results_config: 
     archive_end_point: /<gcp-bucket>/path/to/archives
     redis_end_point: redis://someredis
+    artifact_path: artifacts/models
 
 cache_config: 
     end_point: /<gcp-bucket>/path/to/cache
