@@ -23,7 +23,7 @@ build_module () {
 
 cwd=`pwd`
 
-rm dist/* && \
+rm -rf dist/* && \
     build_module foundations_spec foundations_spec $cwd && \
     build_module foundations_internal foundations_internal $cwd && \
     build_module foundations_events foundations_events $cwd && \
