@@ -34,12 +34,12 @@ class TestShell(Spec):
 
     @patch('os.name', 'nt')
     def test_find_bash_returns_bash_on_windows(self):
-        self.winreg.QueryValue.return_value = '"C:\\path to\\bash" 0 0'
-        self.assertEqual('C:\\path to\\bash', shell.find_bash())
+        self.winreg.QueryValue.return_value = '"C:\\path to\\git-bash.exe" 0 0'
+        self.assertEqual('C:\\path to\\bin\\bash.exe', shell.find_bash())
 
     @patch('os.name', 'nt')
     def test_find_bash_returns_bash_on_windows_different_path(self):
-        self.winreg.QueryValue.return_value = '"C:\\Program Files\\git\\bin\\bash" 3 2'
-        self.assertEqual('C:\\Program Files\\git\\bin\\bash', shell.find_bash())
+        self.winreg.QueryValue.return_value = '"C:\\Program Files\\git\\git-bash.exe" 3 2'
+        self.assertEqual('C:\\Program Files\\git\\bin\\bash.exe', shell.find_bash())
 
 
