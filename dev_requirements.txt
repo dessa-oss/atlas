@@ -4,13 +4,13 @@ pandas==0.23.3
 futures
 promise==2.2.1
 redis==2.10.6
-pysftp
-google-api-python-client
 google-auth-httplib2
-google-cloud-storage
 flask==1.0.2
 flask-restful==0.3.6
 Flask-Cors==3.0.6
 Werkzeug==0.14.1
 foundations_scheduler
 twine==1.13.0
+pysftp==0.2.8
+google-api-python-client==1.7.3
+google-cloud-storage==1.10.0
