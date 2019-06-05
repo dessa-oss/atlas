@@ -80,6 +80,6 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
 
     def test_support_using_windows_paths(self):
         result_config = self.translator.translate(self._configuration)
-        self._configuration['results_config']['archive_end_point'] = 'C://username//folder//another_folder'
+        self._configuration['results_config']['archive_end_point'] = 'D:\\username\\folder\\another_folder'
         with self.assert_does_not_raise():
             result_config = self.translator.translate(self._configuration)

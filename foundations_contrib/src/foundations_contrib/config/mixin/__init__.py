@@ -62,7 +62,7 @@ def _parse_bucket_type_and_uri(type_name, result_end_point, default_bucket_type)
     scheme = uri.scheme
     if scheme == '':
         scheme = None
-    elif scheme == 'c':
+    elif uri.path[:1] == '\\':
         scheme = 'local'
     bucket_type = for_scheme(scheme, default_bucket_type)
     return bucket_type, uri
