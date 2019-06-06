@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_events',
+    name='foundations-events',
     version=build_version,
     description='A testing library, inspired by ruby.',
     classifiers=[
@@ -26,7 +26,7 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'foundations_internal=={}'.format(build_version),
+        'foundations-internal=={}'.format(build_version),
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

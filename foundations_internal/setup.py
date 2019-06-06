@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_internal',
+    name='foundations-internal',
     version=build_version,
     description='A tool for machine learning development - core modules',
     classifiers=[

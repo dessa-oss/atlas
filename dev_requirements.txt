@@ -8,7 +8,7 @@ flask==1.0.2
 flask-restful==0.3.6
 Flask-Cors==3.0.6
 Werkzeug==0.14.1
-foundations_scheduler
+foundations-scheduler
 twine==1.13.0
 pysftp==0.2.8
 google-api-python-client==1.7.3

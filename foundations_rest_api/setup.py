@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_rest_api',
+    name='foundations-rest-api',
     version=build_version,
     description='An API for Foundations',
     classifiers=[ 

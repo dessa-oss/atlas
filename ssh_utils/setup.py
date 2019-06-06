@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_ssh',
+    name='foundations-ssh',
     version=build_version,
     description='A tool for machine learning development',
     classifiers=[
@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'pysftp==0.2.8',
         'paramiko==2.4.1',
-        'foundations_contrib=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

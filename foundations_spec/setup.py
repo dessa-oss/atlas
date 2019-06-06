@@ -17,7 +17,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_spec',
+    name='foundations-spec',
     version=environ.get('build_version', '0.0.0'),
     description='A testing library, inspired by ruby.',
     classifiers=[

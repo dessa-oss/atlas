@@ -30,7 +30,7 @@ def list_files_recursively(root, start_directory):
 package_data = list(list_files_recursively('src/foundations_contrib', 'resources'))
 
 setup(
-    name='foundations_contrib',
+    name='foundations-contrib',
     version=build_version,
     description='A tool for machine learning development - files for contribution',
     classifiers=[
@@ -46,8 +46,8 @@ setup(
         'tabulate==0.8.3',
         'slackclient==1.3.0',
         'psutil==5.6.2',
-        'foundations_internal=={}'.format(build_version),
-        'foundations_events=={}'.format(build_version)
+        'foundations-internal=={}'.format(build_version),
+        'foundations-events=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

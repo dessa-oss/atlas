@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='dessa_foundations',
+    name='dessa-foundations',
     version=build_version,
     description='A tool for machine learning development',
     classifiers=[
@@ -32,12 +32,12 @@ setup(
         'PyYAML==3.13',
         'promise==2.2.1',
         'pyarmor==5.2.3',
-        'foundations_contrib=={}'.format(build_version),
-        'foundations_scheduler_plugin=={}'.format(build_version),
-        'foundations_ssh=={}'.format(build_version),
-        'foundations_aws=={}'.format(build_version),
-        'foundations_gcp=={}'.format(build_version),
-        'foundations_ssh=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version),
+        'foundations-scheduler_plugin=={}'.format(build_version),
+        'foundations-ssh=={}'.format(build_version),
+        'foundations-aws=={}'.format(build_version),
+        'foundations-gcp=={}'.format(build_version),
+        'foundations-ssh=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

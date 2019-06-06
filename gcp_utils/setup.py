@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_gcp',
+    name='foundations-gcp',
     version=build_version,
     description='A tool for machine learning development',
     classifiers=[ 
@@ -29,7 +29,7 @@ setup(
         'google-api-python-client==1.7.3',
         'google-auth-httplib2==0.0.3',
         'google-cloud-storage==1.10.0',
-        'foundations_contrib=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'':'src'},

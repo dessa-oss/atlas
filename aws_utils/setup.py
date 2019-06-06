@@ -18,7 +18,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='foundations_aws',
+    name='foundations-aws',
     version=build_version,
     description='A tool for machine learning development',
     classifiers=[ 
@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'boto==2.49.0',
         'boto3==1.9.86',
-        'foundations_contrib=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'':'src'},
