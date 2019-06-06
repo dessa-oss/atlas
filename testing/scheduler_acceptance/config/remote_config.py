@@ -39,6 +39,7 @@ def _config():
     config_manager['artifact_path'] = 'results'
     config_manager['obfuscate_foundations'] = False
     config_manager['deployment_implementation'] = { 'deployment_type': JobDeployment }
+    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE'}
 
     config_manager['remote_user'] = 'job-uploader'
     config_manager['port'] = 31222
@@ -62,4 +63,12 @@ def _config():
         config_manager['result_path'] = '/tmp/foundations/results'
         config_manager['redis_url'] = 'redis://{}:6379'.format(get_network_address('docker0'))
 
+def _append_spec_module():
+    import sys
+    from foundations_internal.global_state import module_manager
+
+    module_manager.append_module(sys.modules['foundations_spec'])
+
+
 _config()
+_append_spec_module()

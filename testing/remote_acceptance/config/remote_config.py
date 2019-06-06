@@ -31,6 +31,7 @@ def config():
     config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
+    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE'}
 
     scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
 
@@ -54,3 +55,12 @@ def config():
         config_manager['result_path'] = '/tmp/foundations/results'
         config_manager['key_path'] = '~/.ssh/id_local'
         config_manager['redis_url'] = 'redis://{}:6379'.format(scheduler_host)
+
+def _append_spec_module():
+    import sys
+    from foundations_internal.global_state import module_manager
+
+    module_manager.append_module(sys.modules['foundations_spec'])
+
+
+_append_spec_module()
