@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python -m pip install setuptools_scm
+python -m pip install setuptools_scm docker
 
 build_version=`python get_version.py | sed 's/+/_/g'`
 
