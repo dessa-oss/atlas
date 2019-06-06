@@ -3,11 +3,14 @@ import os
 
 client = docker.from_env()
 build_version = os.environ['build_version']
-rest_api, rest_api_logs = client.images.build(path='.', dockerfile='docker/rest_api_Dockerfile', tag='docker.shehanigans.net/foundations-rest-api:{}'.format(build_version))
-rest_api.tag('docker.shehanigans.net/foundations-rest-api', tag='latest')
-for line in rest_api_logs:
-    print(line)
-foundations_gui, foundations_gui_logs = client.images.build(path='foundations_ui', dockerfile='gui_Dockerfile', tag='docker.shehanigans.net/foundations-gui:{}'.format(build_version))
-foundations_gui.tag('docker.shehanigans.net/foundations-gui', tag='latest')
-for line in foundations_gui_logs:
-    print(line)
+
+def build_and_tag_gui_image(path, dockerfile, repository):
+    try:
+        image, image_logs = client.images.build(path=path, dockerfile=dockerfile, tag='{}:{}'.format(repository, build_version))
+        image.tag(repository, tag='latest')
+    finally:
+        for line in image_logs:
+            print(line)
+
+build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', 'docker.shehanigans.net/foundations-rest-api')
+build_and_tag_gui_image('foundations_ui', 'gui_Dockerfile', 'docker.shehanigans.net/foundations-gui')
