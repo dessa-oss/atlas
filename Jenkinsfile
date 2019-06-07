@@ -47,6 +47,14 @@ node {
                 }
             }
         }
+        container("python3"){
+            stage('Build GUI and Rest API Images'){
+                sh "./build_gui.sh"
+            }
+            stage('Push GUI and Rest API Images'){
+                sh "./push_gui_images.sh"
+            }
+        }
         stage('Results') {
             archiveArtifacts artifacts: '**/*.whl', fingerprint: true
         }
