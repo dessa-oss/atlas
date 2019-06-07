@@ -37,7 +37,7 @@ def set_job_resources(num_gpus, ram):
         model.run()
         ```
     """
-    if ram <= 0:
+    if ram is not None and ram <= 0:
         raise ValueError('Invalid RAM quantity. Please provide a RAM quantity greater than zero.')
     
     if not isinstance(num_gpus, int) or num_gpus < 0:

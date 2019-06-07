@@ -64,6 +64,13 @@ class TestSetJobResources(Spec):
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(self.default_job_resources, job_resources)
 
+    def test_ram_set_to_none_is_valid_configuration(self):
+        set_job_resources(self.num_gpus, None)
+
+        expected_job_resources = JobResources(num_gpus=self.num_gpus, ram=None)
+        job_resources = current_foundations_context().job_resources()
+        self.assertEqual(expected_job_resources, job_resources)
+
     def test_gpu_set_to_non_integer_value_throw_value_error(self):
         with self.assertRaises(ValueError) as error_context:
             set_job_resources(self.non_integer_gpu, self.ram)
