@@ -58,6 +58,7 @@ node {
         stage('Results') {
             archiveArtifacts artifacts: '**/*.whl', fingerprint: true
         }
+        slackSend(color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '`!')
     } catch (Exception error) {
         slackSend(color: '#FF0000', message: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
         throw error
