@@ -18,11 +18,12 @@ class PackagePool(object):
         self._remove_process_from_pool_if_limit_exceeded()
 
         process = RestartableProcess(target=run_model_package, args=(model_id,))
-        communicator = process.start() 
-        
+        communicator = process.start()
+
         self._check_if_predictor_created_successfully(communicator)
 
         self._model_packages[model_id] = {'communicator': communicator, 'process': process}
+
         self._active_packages.append(model_id)
 
     def get_communicator(self, model_id):
@@ -37,7 +38,7 @@ class PackagePool(object):
             self._restart_process_and_update_communicator(model_package, model_id)
 
         return model_package['communicator']
-    
+
     def _remove_process_from_pool_if_limit_exceeded(self):
         from shutil import rmtree
         from foundations_production.serving import workspace_path
@@ -47,10 +48,10 @@ class PackagePool(object):
             self._active_packages.pop(0)
             self._model_packages[model_id_to_remove]['process'].terminate()
             rmtree(workspace_path(model_id_to_remove))
-    
+
     def _restart_process_and_update_communicator(self, model_package, model_id):
         self._remove_process_from_pool_if_limit_exceeded()
-        
+
         updated_model_communicator = model_package['process'].start()
         self._check_if_predictor_created_successfully(updated_model_communicator)
 
@@ -62,4 +63,4 @@ class PackagePool(object):
 
         process_response = communicator.get_response()
         if process_response != 'SUCCESS: predictor created':
-            raise eval(process_response['name'])(process_response['value']) 
+            raise eval(process_response['name'])(process_response['value'])

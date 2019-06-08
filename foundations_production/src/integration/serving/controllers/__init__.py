@@ -4,7 +4,14 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-
 from integration.serving.controllers.test_model_package_controller import TestModelPackageController
 from integration.serving.controllers.test_retrain_model_package_controller import TestRetrainModelPackageController
-#from integration.serving.controllers.test_predictions_controller import TestPredictionsController
+from integration.serving.controllers.test_predictions_controller import TestPredictionsController
+
+
+def _create_rest_api_server():
+    from foundations_production.serving.rest_api_server import RestAPIServer
+
+    RestAPIServer()
+
+_create_rest_api_server()

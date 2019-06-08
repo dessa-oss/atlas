@@ -29,7 +29,7 @@ def run_model_package(model_package_id, communicator):
     while True:
         json_input_data = communicator.get_action_request()
         if not _successful_run_of_json_predictions_for(model_package_id, communicator, predictor, json_input_data):
-            return 
+            return
 
 def _set_job_id():
     from foundations_contrib.global_state import current_foundations_context
@@ -38,13 +38,13 @@ def _set_job_id():
 def _send_exception(exception, communicator):
     expected_return = {
         'name': str(type(exception).__name__),
-        'value': str(exception)
+        'value': str(exception.args[0])
     }
     communicator.set_response(expected_return)
 
 def _create_predictor_for(model_package_id, communicator):
     from foundations_production.serving.inference.predictor import Predictor
-    
+
     predictor = Predictor.predictor_for(model_package_id)
     communicator.set_response('SUCCESS: predictor created')
 

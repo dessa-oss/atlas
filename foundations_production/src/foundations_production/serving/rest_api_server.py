@@ -6,6 +6,7 @@ Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 from foundations_production.serving.controllers.exceptions_as_http_errors import exceptions_as_http_errors
 
+
 class RestAPIServer(object):
 
     def __init__(self):
@@ -58,23 +59,3 @@ class RestAPIServer(object):
 
             if request.method in ['POST', 'PUT', 'PATCH'] and not request.is_json:
                 abort(make_response(jsonify(message='Invalid content type'), 400))
-
-        flask_app.add_url_rule('/v1/<user_defined_model_name>/predictions', methods=['GET', 'POST', 'HEAD'], view_func=self.predictions_from_model_package)
-
-    @exceptions_as_http_errors
-    def predictions_from_model_package(self, user_defined_model_name):
-        from flask import make_response, request
-        import json
-
-        if request.method in ['GET', 'HEAD']:
-            return 'response'
-
-        model_id = self._model_package_mapping.get(user_defined_model_name)
-        communicator = self._package_pool.get_communicator(model_id)
-        communicator.set_action_request(request.get_json())
-        predictions = communicator.get_response()
-        if predictions.get('name'):
-            raise eval(predictions['name'])
-
-        response = make_response(json.dumps(predictions), 200)
-        return response

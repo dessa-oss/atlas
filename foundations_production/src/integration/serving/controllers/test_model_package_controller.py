@@ -4,19 +4,17 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
+from mock import patch
 from foundations_spec import *
 
+from foundations_production.serving.rest_api_server import RestAPIServer
 
 class TestModelPackageController(Spec):
 
-    package_pool_mock = let_patch_mock('foundations_production.serving.package_pool.PackagePool')
-
     @set_up
     def set_up(self):
-        from foundations_production.serving.rest_api_server import RestAPIServer
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
-        RestAPIServer()
         self.rest_api_server = get_rest_api_server()
         self.flask = self.rest_api_server.flask
         self.api = self.rest_api_server.api()
@@ -43,9 +41,10 @@ class TestModelPackageController(Spec):
         self.assertEqual(400, response.status_code)
         self.assertEqual('Invalid content type', response.json['message'])
 
-    def test_deploy_new_model_package_happens_with_post_request(self):
+    @patch.object(RestAPIServer, 'get_package_pool')
+    def test_deploy_new_model_package_happens_with_post_request(self, blh):
         response = self.client.post("/v1/{}/".format(self.user_defined_model_name), json={'model_id': self.model_package_id})
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(201, response.status_code)
         self.assertEqual(response.json['deployed_model_id'], self.model_package_id)
 
     def test_deploy_new_model_package_doesnt_happen_with_get_request(self):

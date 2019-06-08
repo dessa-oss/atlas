@@ -13,6 +13,8 @@ from foundations_production.serving.package_pool import PackagePool
 
 class TestPredictionsController(Spec):
 
+    extract_job_source_mock = let_patch_mock('foundations_production.serving.extract_job_source')
+
     @let
     def model_package_id(self):
         return self.faker.uuid4()
@@ -25,7 +27,6 @@ class TestPredictionsController(Spec):
     def set_up(self):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server
 
-        RestAPIServer()
         self.rest_api_server = get_rest_api_server()
         self.flask = self.rest_api_server.flask
         self.client = self.flask.test_client()
@@ -53,36 +54,53 @@ class TestPredictionsController(Spec):
         response = self.client.head('/v1/{}/predictions/'.format(self.user_defined_model_name), json={'model_id': self.model_package_id})
         self.assertEqual(response.status_code, 200)
 
-    @skip('Not ready yet')
-    def test_predictions_fails_with_bad_request_expected_field(self):
+    @patch('os.chdir')
+    @patch('foundations_production.load_model_package')
+    def test_predictions_fails_with_bad_request_expected_field(self, load_model_package_mock, os_chdir_mock):
         from foundations_production.model_package import ModelPackage
         from integration.fixtures.fake_model_package import preprocessor, model
 
-        with patch('foundations_production.load_model_package') as load_model_package_mock:
-            load_model_package_mock.return_value = ModelPackage(preprocessor=preprocessor, model=model)
-            self._deploy_model_package()
-            payload = {
-                'rows': ''
-            }
-            response = self.client.post("/v1/{}/predictions/".format(self.user_defined_model_name), json=payload)
-            self.assertEqual(response.status_code, 400)
-            self.assertEqual("Missing field in JSON data: features_file", response.json["message"])
-
-    @skip('Not ready yet')
-    def test_predictions_returns_correct_predictions(self):
-        payload = {
-        }
-
+        self._deploy_model_package()
+        payload = {'rows': ''}
         response = self.client.post("/v1/{}/predictions/".format(self.user_defined_model_name), json=payload)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual("Missing field in JSON data: schema", response.json["message"])
 
-        self.assertEqual(202, response.status_code)
-        self.assertEqual({'created_job_uuid': self.retraining_job_id}, response.json)
+
+    @patch('os.chdir')
+    @patch('foundations_production.load_model_package')
+    def test_predictions_from_model_package_returns_200_if_predictions_successful(self, load_model_package_mock, os_chdir_mock):
+        response = self._run_prediction(load_model_package_mock)
+        self.assertEqual(200, response.status_code)
+
+    @patch('os.chdir')
+    @patch('foundations_production.load_model_package')
+    def test_predictions_returns_correct_predictions(self, load_model_package_mock, os_chdir_mock):
+        response = self._run_prediction(load_model_package_mock)
+        expected_prediction_json = {
+            'rows': [['value transformed predicted', 43667], ['spider transformed predicted', 756]],
+            'schema': [{'name': '1st column', 'type': 'object'}, {'name': '2nd column', 'type': 'int64'}]
+        }
+        self.assertEqual(expected_prediction_json, response.json)
 
     def test_predictions_returns_404_when_model_package_not_deployed(self):
         self._set_model_mapping()
         response = self.client.post("/v1/{}/predictions/".format(self.user_defined_model_name), json={})
         self.assertEqual(404, response.status_code)
         self.assertEqual('Model package not found: {}'.format(self.model_package_id), response.json['message'])
+
+    def _run_prediction(self, load_model_package_mock):
+        from integration.fixtures.fake_model_package import preprocessor, model
+        from foundations_production.model_package import ModelPackage
+
+        load_model_package_mock.return_value = ModelPackage(model=model, preprocessor=preprocessor)
+        self._deploy_model_package()
+        payload = {
+            'rows': [['value', 43234], ['spider', 323]],
+            'schema': [{'name': '1st column', 'type': 'string'}, {'name': '2nd column', 'type': 'int'}]
+        }
+        return self.client.post("/v1/{}/predictions/".format(self.user_defined_model_name), json=payload)
+
 
     def _set_model_mapping(self):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server

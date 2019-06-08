@@ -36,7 +36,7 @@ class PredictionsController(ControllerMixin):
 
     def _raise_exception_if_available(self, predictions):
         if predictions.get('name'):
-            raise eval(predictions['name'])
+            raise eval(predictions['name'])(predictions['value'])
 
     def _get_package_pool_communicator(self, model_package_id):
         from foundations_production.serving.rest_api_server_provider import get_rest_api_server

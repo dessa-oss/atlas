@@ -34,7 +34,6 @@ class ModelPackageController(ControllerMixin):
             package_pool = rest_api_server.get_package_pool()
             model_id = self.params['model_id']
             user_defined_model_name = self.params['user_defined_model_name']
-
             package_pool.add_package(model_id)
             model_package_mapping[user_defined_model_name] = model_id
             return {'deployed_model_id': model_id}

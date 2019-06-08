@@ -31,7 +31,7 @@ class _RestAPIServerProvider(object):
         if klass._rest_api_server is None:
             klass._rest_api_server = rest_api_server
             klass._update_rest_api_server()
-    
+
     @classmethod
     def get_rest_api_server(klass):
         return klass._rest_api_server

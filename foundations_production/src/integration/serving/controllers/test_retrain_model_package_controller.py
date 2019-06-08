@@ -49,9 +49,10 @@ class TestRetrainModelPackageController(Spec):
         self.model_package_mock.model = self.model_mock
         self.load_model_package_mock.return_value = self.model_package_mock
 
-        RestAPIServer()
+
         self.rest_api_server = get_rest_api_server()
         self.flask = self.rest_api_server.flask
+        self.api = self.rest_api_server.api()
         self.client = self.flask.test_client()
 
     def test_retrain_model_package_route_is_added(self):
