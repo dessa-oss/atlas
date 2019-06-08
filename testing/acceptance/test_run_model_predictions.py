@@ -19,8 +19,11 @@ class TestRunModelPredictions(ModelServingConfigMixin):
         model = train_model_package.validation_predictions.run()
         model.wait_for_deployment_to_complete()
         model_id = model.job_name()
-
-        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'])
+        try:
+            subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(model_id), '--slug=snail'], check=True)
+        except subprocess.CalledProcessError as ex:
+            subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+            self.fail(str(ex))
 
     @tear_down
     def tear_down(self):
@@ -39,7 +42,7 @@ class TestRunModelPredictions(ModelServingConfigMixin):
     def test_run_model_predictions(self):
         import requests
 
-        response = requests.post('http://localhost:5000/v1/snail/predictions', json=self.input_data)
+        response = requests.post('http://localhost:5000/v1/snail/predictions/', json=self.input_data)
         self.assertEqual(200, response.status_code)
         expected_predictions = {'rows': [[0]], 'schema': [{'name': 'Survived', 'type': 'int64'}]}
         self.assertEqual(expected_predictions, response.json())
