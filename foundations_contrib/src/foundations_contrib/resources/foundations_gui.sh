@@ -87,16 +87,11 @@ start_ui () {
 stop_ui () {
     echo "Stopping Foundations UI..."
 
-    docker stop foundations-gui > /dev/null
-    gui_stop=$?
-
-    docker stop foundations-rest-api > /dev/null
-    rest_api_stop=$?
-
-    if [ ${gui_stop} -eq 0 ] && [ ${rest_api_stop} -eq 0 ]
-    then
-        echo "Foundations UI stopped."
-    fi
+    docker stop foundations-gui 2>1 > /dev/null && \
+        docker rm foundations-gui 2>1 > /dev/null && \
+        docker stop foundations-rest-api 2>1 > /dev/null && \
+        docker rm foundations-rest-api 2>1 > /dev/null && \
+        echo "Foundations UI stopped." || echo "Unable to stop Foundations UI"
 }
 
 if [ "${action}" = "start" ]
