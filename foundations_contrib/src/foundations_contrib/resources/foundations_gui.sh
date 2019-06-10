@@ -62,7 +62,8 @@ start_ui () {
 
     echo "Starting Foundations UI..."
 
-    docker run -d --rm \
+    docker run -d \
+        --restart always \
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
         --network foundations-gui \
@@ -70,7 +71,8 @@ start_ui () {
         > /dev/null \
         && \
 
-    docker run -d --rm \
+    docker run -d \
+        --restart always \
         --name foundations-gui \
         -e FOUNDATIONS_REST_API=foundations-rest-api \
         --network foundations-gui \
