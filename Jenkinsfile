@@ -8,11 +8,11 @@ node {
             stage('Get Foundations Scheduler') {
                 sh 'python -m pip install foundations-scheduler'
             }
-
             stage('Python3 Foundations Install Test Requirements') {
                 sh "./ci_install_requirements.sh"
+            }
+            stage('Build Foundations Wheels') {
                 sh "./build_dist.sh"
-                sh "./upload_modules_to_artifactory.sh"
             }
             stage('Python3 Run Unit Tests') {
                 sh "./run_unit_tests.sh"
@@ -48,6 +48,9 @@ node {
             }
         }
         container("python3"){
+            stage('Upload Wheels to Releases') {
+                sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
+            }
             stage('Build GUI and Rest API Images'){
                 sh "./build_gui.sh"
             }
