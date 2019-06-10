@@ -148,6 +148,23 @@ class TestCommandLineInterface(Spec):
         self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call])
         self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, env_call, save_directory_call, source_directory_call], any_order=True)
 
+    @patch('argparse.ArgumentParser')
+    def test_setup_has_correct_options(self, parser_class_mock):
+        parser_mock = Mock()
+        parser_class_mock.return_value = parser_mock
+
+        parser_mock.add_subparsers.return_value = self.level_1_subparsers_mock
+
+        self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
+
+        CommandLineInterface([])
+
+        parser_class_mock.assert_called_with(prog='foundations')
+
+        setup_call = call('setup', help='Sets up Foundations for local experimentation')
+
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([setup_call])
+
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
             CommandLineInterface([]).execute()

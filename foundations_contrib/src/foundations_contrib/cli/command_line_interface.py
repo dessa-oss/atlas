@@ -12,6 +12,7 @@ class CommandLineInterface(object):
         self._argument_parser = self._initialize_argument_parser()
         subparsers = self._argument_parser.add_subparsers()
 
+        self._initialize_setup_parser(subparsers)
         self._initialize_init_parser(subparsers)
         self._initialize_deploy_parser(subparsers)
         self._initialize_info_parser(subparsers)
@@ -26,6 +27,9 @@ class CommandLineInterface(object):
         argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
+
+    def _initialize_setup_parser(self, subparsers):
+        setup_parser = subparsers.add_parser('setup', help='Sets up Foundations for local experimentation')
 
     def _initialize_init_parser(self, subparsers):
         init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
