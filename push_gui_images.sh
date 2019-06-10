@@ -2,7 +2,8 @@
 
 python -m pip install setuptools_scm docker
 
-export build_version=`python get_version.py | sed 's/+/_/g'`
+pip_version=`foundations_contrib/src/foundations_contrib/resources/get_version.sh`
+export build_version=`echo $pip_version | sed 's/+/_/g'`
 
 if [ $? -eq 0 ]
 then
