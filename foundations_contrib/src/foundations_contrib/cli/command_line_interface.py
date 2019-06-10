@@ -30,6 +30,7 @@ class CommandLineInterface(object):
 
     def _initialize_setup_parser(self, subparsers):
         setup_parser = subparsers.add_parser('setup', help='Sets up Foundations for local experimentation')
+        setup_parser.set_defaults(function=self._run_setup)
 
     def _initialize_init_parser(self, subparsers):
         init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
@@ -97,6 +98,12 @@ class CommandLineInterface(object):
             print('Running Foundations version {}'.format(foundations.__version__))
         else:
             self._argument_parser.print_help()
+
+    def _run_setup(self):
+        from subprocess import run
+        import foundations_contrib
+
+        run(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=foundations_contrib.root() / 'resources')
 
     def _init(self):
         from foundations_contrib.cli.scaffold import Scaffold

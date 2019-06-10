@@ -53,6 +53,15 @@ class TestCommandLineInterface(Spec):
     def level_3_parser_mock(self):
         return Mock()
 
+    @let_now
+    def mock_contrib_root(self):
+        from pathlib import PosixPath
+
+        path = self.faker.uri_path()
+        return PosixPath(path)
+
+    mock_subprocess_run = let_patch_mock('subprocess.run')
+
     def fake_config_path(self, environment):
         return 'home/foundations/lou/config/{}.config.yaml'.format(environment)
 
@@ -61,6 +70,7 @@ class TestCommandLineInterface(Spec):
         self._server_running = False
         self.psutil_process_mock.side_effect = self._process_constructor
         self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = '/path/to/file'
+        self.patch('foundations_contrib.root', return_value=self.mock_contrib_root)
 
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
@@ -164,6 +174,10 @@ class TestCommandLineInterface(Spec):
         setup_call = call('setup', help='Sets up Foundations for local experimentation')
 
         self.level_1_subparsers_mock.add_parser.assert_has_calls([setup_call])
+
+    def test_setup_calls_setup_script(self):
+        CommandLineInterface(['setup']).execute()
+        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=self.mock_contrib_root / 'resources')
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
