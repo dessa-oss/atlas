@@ -19,7 +19,8 @@ get_redis_container_image () {
 create_redis_if_not_exists () {
     if [[ -z "$(get_redis_container_image)" ]]; then
         echo "Creating redis."
-        docker run -d --rm \
+        docker run -d \
+            --restart always \
             --name foundations-redis \
             -p 6379:6379 \
             redis:5 \
