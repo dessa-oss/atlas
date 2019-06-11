@@ -3,7 +3,19 @@
 ##About the GUI
 Foundations provides a user interface with which one can view all information about jobs, including status (e.g. queued, running, completed) as well as logged metrics and start time.  
 
-## Installation
+## Foundations CLI
+
+To setup the GUI, users can use the Foundations CLI command:
+
+```shellscript
+$ foundations setup
+```
+
+This will automatically pull and run the Redis via Docker as well as the Foundations GUI. Once completed, the GUI can be accessed at `https://localhost:6443`
+
+**Note:** This method will require users to have access to the private Dessa docker repository. This can be accessed with `docker login <Dessa Repo URL>`. For more information on getting access, please reach out to the Dessa integrations team. 
+
+## Manual Installation
 
 The GUI images can either be built directly from the source code, or will be provided by the Dessa team. If you are building the images yourself, please refer to the instructions on [Building Images](../gui/#building-images) first, otherwise please skip ahead to [Installation with Docker](../gui/#installation-with-docker)
 

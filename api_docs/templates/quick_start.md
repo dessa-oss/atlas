@@ -2,48 +2,70 @@
 
 Welcome to the Foundations quick-start guide! The following instructions should help you get setup with Foundations as quick as possible and ready to run your first job on your local machine. For more information on any of the steps, please refer to the full [installation](../start_guide/) guide.
 
-#OSX/Linux
+#Installation Prerequisites
 
-Before getting started, you will need Python 3 installed on your machine. If you plan to use Tensorflow, we recommend using versions <= `Python 3.6` as it does not support versions greater at the moment:  
+Before getting started, you will need Python 3.x installed on your machine. If you plan to use Tensorflow, we recommend using versions <= `Python 3.6` as it does not support versions greater at the moment. 
 
-As well as the following tools:   
-[Docker](https://docs.docker.com/docker-for-mac/install/) ( Version >= 18.09 )   
-[Jupyter Notebook](https://jupyter.org/install)
+<h2>macOS/Linux</h2>
 
-## 1. Setup Virtual Environment
-To first setup Foundations, we recommend establishing a virtual environment where all packages can be installed and maintained with ease. For this tutorial, we will be using ```virtualenv``` to setup Foundations; however, other package managers such as Conda can be used as well. This can be installed using:
+To run Foundations, you will need [Docker](https://docs.docker.com/docker-for-mac/install/) ( Version >= 18.09 )   
+
+We also recommend using [Anaconda](https://www.anaconda.com/distribution/#macos) ( Python 3.x version ) to setup a virtual environment where all packages can be installed and maintained with ease.
+
+<h2>Windows</h2>
+
+Before getting started with Foundations, you will need the following tools on your machine:  
+
+* [Anaconda](https://conda.io/miniconda.html) ( Python 3.x version )  
+* [Docker](https://docs.docker.com/docker-for-windows/install/) ( Version >= 18.09 )  
+* [Git Bash](https://git-scm.com/download/win)  
+
+To run Foundations correctly, you will need to setup the environment from an Anaconda prompt, then use Git Bash to setup the GUI (optional) and deploy jobs.
+
+## 0. Setup Access to Dessa Private Repository
+To setup Foundations, you will first need access to the Dessa private pip and docker repositories. Please reach out to the Dessa team for necessary credentials.
+
+For Pip access, you will need a `pip.conf` or `pip.ini` with credentials to Dessa's private pip repository. This file should be placed in `~/.config/pip/pip.conf` (macOS/Linux) or ``~/AppData/Roaming/pip/pip.ini` (Windows).
+
+For Docker access, this can be setup with the command: `docker login`.
+
+## 1. Setup Conda Environment
+To setup Foundations, we recommend establishing a virtual environment where all packages can be installed and maintained with ease. They also isolate the dependencies of different individual projects, avoiding Python version conflicts and prevent permission issues for non-administrator users.
+
+For this tutorial, we will be using ```Anaconda``` to setup Foundations; however, other package managers such as `venv` or `pyenv` can be used as well. To create a new python environment, run the following commands in either terminal (macOS/Linux) or in a new Anaconda prompt (Windows):
 ```bash
-pip install virtualenv
+conda create --name foundations_env python=3.6
 ```
 
-To create a python environment, run the following commands:
+*Note:* We use Python 3.6 since Tensorflow only supports up to 3.6 at the moment.
+
+Next, activate the environment by running:
 ```bash
-virtualenv -p python3.6 venv
-source venv/bin/activate
+conda activate foundations_env
 ```
 
-Note: We use Python 3.6 since Tensorflow only supports up to 3.6 at the moment
-
-## 2. Install Foundations via Source
-For users who do not have access to github, Foundations can also be installed by Wheel installation. More information on installing Foundations can be found [here](../start_guide/)
-
-Download the Foundations' source code from Github:
+To deactivate the environment you are using with Foundations, you can run:
 ```bash
-git clone https://github.com/DeepLearnI/foundations
-```
-Navigate to the main root directory of the repository and build packages:
-```bash
-cd foundations
-./build_dist.sh
+conda deactivate
 ```
 
-The ```build_dist``` script will build a new ```.whl``` file of Foundations and installs it within your virtualenv environment.
+For additional information on managing Conda envionments, please refer to the documentation [here](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 
-Next, install the dependencies located in ```requirements.txt```. These are packages that Foundations' needs to run. More information can be found [here](../start_guide/#environment-and-dependencies/).
+## 2. Install Foundations
+For Windows users, please open a new git bash prompt, we will be using git bash as our primary interface for all commands for the rest of the tutorial.
+
+To install the latest version of Foundations, run:
 
 ```bash
-python -m pip install -r requirements.txt
+pip install dessa-foundations
 ```
+
+To check that Foundations is installed, you can verify that the Foundations CLI tool is available with:
+```bash
+foundations
+```
+
+For more information about getting access, please reach out to the Dessa Integrations team.
 
 ## 3. Create a new Foundations Project
 
@@ -54,57 +76,21 @@ foundations init <project_name>
 
 This will create a basic folder structure with a local ```config.yaml``` file as well as folders for your model and deployment code. More information on the CLI and ```init``` can be found [here](../project_creation/) .
 
-## 4. Setting up Redis (local deployment only)
+## 4. Setting up Redis and GUI (local deployment only)
 
-The [Redis](../start_guide/#redis-setup) acts as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis. 
-
-Navigate to the root directory of the repository and run:
+Foundations uses [Redis](https://redis.io/) as a quick and efficient way to store data for experiments. This, as well as the Foundations GUI for visualizing experiments, can be setup with a Foundations CLI command:
 
 ```bash
-docker pull redis
-docker run -d -p 6379:6379 redis
+foundations setup
 ```
 
-You can verify that the redis is up and running with where you should see a container called `redis` using port 6379:
+Once completed, you will be able to visit your running GUI at `https://localhost:6443`.
 
-```bash
-docker ps
-```
+**Note: Other instances of Redis on the same machine may interfere with the setup through Docker.** For more information please reference the Redis [guide](../start_guide/#redis-setup). In addition, you will need access to the private docker repository containing the Foundation GUI images. 
 
-**Note: Other instances of Redis on the same machine may interfere with the setup through Docker.** For more information please reference the Redis [guide](../start_guide/#redis-setup)
+## 5. (OPTIONAL) Starting Jupyter Notebook
 
-## 5. (OPTIONAL) Setting up GUI locally
-
-The Foundations [GUI](../gui/) provides a user interface where a user can view all information about jobs, simplifying experiment management. This is not mandatory to use foundations as experiments can still be retrieved through the SDK.
-
-To setup the GUI locally, first please ensure the Redis is setup as specified above. Then, navigate to the root directory of the Foundations repository and run:  
-```bash
-./build_gui.sh
-```
-The ```build_gui.sh``` script will build and tag the docker images for the GUI and REST API, which will communicate with the Redis.
-
-Next, you will need to set the location of your Redis installation by setting the ```REDIS_URL``` environment variable. This will need to be set to the IP address of your local machine, which can be found **[here](https://www.whatismybrowser.com/detect/what-is-my-local-ip-address)  .**
-
-
-```bash
-export REDIS_URL=redis://<local ip of machine>
-```
-
-For example, if your machine's IP address is ```22.23.43.22```, you will need to run the following:
-```bash
-export REDIS_URL=redis://22.23.43.22
-```
-
-You can verify that ```REDIS_URL``` is setup correctly by typing ```echo $REDIS_URL``` . Now you're ready to start the GUI! Run the following command:
-
-```bash
-./foundations_gui.sh start ui
-```  
-You will then be able to visit your running gui at ```https://localhost:6443```
-
-## 6. (OPTIONAL) Starting Jupyter Notebook
-
-Foundations integates seemlessly with Jupyter Notebook for users who prefer to use Jupyter to develop machine learning models. However, this is not a mandatory requirement with Foundations, as you can also deploy models natively.  
+Foundations integates seemlessly with Jupyter Notebook for users who prefer to use Jupyter to develop machine learning models. However, this is not a mandatory requirement with Foundations, as you can also deploy models natively. 
 
 To use Jupyter, first create a new kernel by navigating to your project directory and running the following:
 
@@ -118,143 +104,6 @@ jupyter notebook
 Then switch the Kernel to the one you just created by navigating to:  
 ```Kernel > Change kernel > <kernel-name>```
 
-## 7. Starting Your First Project
-
-That's it! Foundations should now be setup and ready to use on your local machine. For a step-by-step guide on your first project, check out our [step-by-step guide](../step_by_step_guide/).
-
-#Windows
-
-Before getting started, you will need [git bash](https://git-scm.com/download/win) and [anaconda](https://conda.io/miniconda.html). To run Foundations correctly, you will need to setup the environment from an Anaconda prompt, then use Git Bash to setup the GUI (optional) and deploy jobs.
-
-You will also need the following tools:   
-[Docker](https://docs.docker.com/docker-for-windows/install/) ( Version >= 18.09 ) 
-
-## 1. Setup Conda Environment
-
-Create a new Conda environment which we will install the Foundation packages into. To do this, open the Anaconda Navigator and open an Anaconda prompt. Then, create a new environment by running:
-```bash
-conda create --name found-env python=3.6
-```
-
-Next, activate the environment by running:
-```bash
-conda activate found-env
-```
-
-Finally, we need to install a few packages with pip:
-```bash
-pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
-```
-
-## 2. Install Foundations via Wheel
-
-The `.whl` files for Python 3 are available and will be provided by the Dessa team. In the Anaconda prompt, enter:
-
-```bash
-python -m pip install -U <absolute-path-to-downloaded-whl-file>
-```
-Or if you are already in the same directory:
-```bash
-python -m pip install -U <downloaded-whl-filename>
-```
-
-You can confirm the Wheel files have been properly installed by accessing the [Foundations CLI](../project_creation/) via:
-```
-python -m foundations
-```
-which should return a list of available options.  
-
-From here, please open a new git bash instance and activate the conda environment via:
-```bash
-source activate found-env
-```
-**Note: For the rest of this tutorial we will be using git bash as our primary interface for all commands.**
-
-## 3. Create a new Foundations Project
-
-To create a new Foundations Project, run the following command:
-```bash
-python -m foundations init <project_name>
-```
-
-This will create a basic folder structure with a local `default.local.yaml` config file as well as folders for your model and deployment code. More information on the CLI and `init` can be found [here](../project_creation/) .
-
-In order to deploy jobs locally, you may also need to update the `shell_command` path in the generated config file. This allows Foundations to understand how to deploy shell scripts which are required for running jobs by pointing to the location of git bash. The recommended value for this is `C:\\Program Files\\Git\\bin\\bash.exe`,
-but if you changed this path during installation, you will have to change this value respectively. More information can be found [here](../windows/#local-deployment)
-
-## 4. Setting up Redis (local deployment only)
-
-The [Redis](../start_guide/#redis-setup) acts as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis:
-
-```bash
-docker pull redis
-docker run -d -p 6379:6379 redis
-```
-
-You can verify that the redis is up and running with where you should see a container called `redis` using port 6379:
-
-```bash
-docker ps
-```
-
-**Note: Other instances of Redis on the same machine may interfere with the setup through Docker.** For more information please reference the Redis [guide](../start_guide/#redis-setup)
-
-## 5. (OPTIONAL) Setting up GUI locally
-
-The Foundations [GUI](../gui/) provides a user interface where a user can view all information about jobs, simplifying experiment management. This is not mandatory to use foundations as experiments can still be retrieved through the SDK.
-
-To setup the GUI locally you will need the Foundations source code repository from github. First, open a new git bash instance and before cloning the repository and enter:
-```bash
-git config --global core.autocrlf false
-```
-
-This will ensure that git clones the repository and properly handle line endings so that the git bash can run shell scripts properly. Next (still in the *git bash*), download the repository, navigate to the root directory of the repo, and run the `build_gui.sh` script which will build and tag the docker images for the GUI and REST API, which will communicate with the Redis:
-```bash
-git clone https://github.com/DeepLearnI/foundations
-cd foundations
-./build_gui.sh
-```
-
-Next, you will need to set the location of your Redis installation by setting the `REDIS_URL` environment variable. This will need to be set to the IP address of your local machine.
-
-```bash
-export REDIS_URL=redis://<local ip of machine>
-```
-
-For example, if your machine's IP address is ```22.23.43.22```, you will need to run the following:
-```bash
-export REDIS_URL=redis://22.23.43.22
-```
-
-You can find your local IP [here](https://www.whatismybrowser.com/detect/what-is-my-local-ip-address) .
-
-You can verify that ```REDIS_URL``` is setup correctly by typing ```echo $REDIS_URL``` . Now you're ready to start the GUI! Run the following:
-
-```bash
-./foundations_gui.sh start ui
-```  
-You will then be able to visit your running gui at ```https://localhost:6443```
-
-## 6. (OPTIONAL) Starting Jupyter Notebook
-
-Foundations integates seemlessly with Jupyter Notebook for users who prefer to use Jupyter to develop machine learning models. However, this is not a mandatory requirement with Foundations, as you can also deploy models natively.  
-
-To use Jupyter, navigate to your project directory and running the following:
-
-```bash
-#Start Jupyter Notebook which is available at http://localhost:8888 by default
-jupyter notebook
-```
-If you encounter issues with importing the Foundations library, try creating a new Kernel first via:
-
-```bash
-pip install ipykernel
-python -m ipykernel install --user --name=<kernel name>
-jupyter notebook
-```
-Then switch the Kernal to the one you just created by navigating to:  
-```Kernel > Change kernel > <kernel-name>```
-
-## 7. Starting Your First Project
+## 6. Starting Your First Project
 
 That's it! Foundations should now be setup and ready to use on your local machine. For a step-by-step guide on your first project, check out our [step-by-step guide](../step_by_step_guide/).

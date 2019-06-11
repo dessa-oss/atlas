@@ -2,6 +2,21 @@
 
 The Foundations Command Line Tool provides users with a simple way to interact and manage projects in Foundations. The supported functionalities are listed below.
 
+#Local Deployment Setup#
+
+The best way to setup Foundations for local deployments and get started experimenting is by using the Foundations command line tool.
+
+```shellscript
+$ foundations setup
+```
+This automatically downloads and runs both [Redis](https://redis.io/) and the Foundations GUI. Once completed, you should be able to view the GUI at `https://localhost:6443`.
+
+If there is already an existing Redis instance running on the machine, Foundations will only setup the GUI.
+
+**Note:** You will need access to the Dessa private docker repository to use this command. 
+
+---
+
 #Project creation#
 
 The best way to start using Foundations is by creating a project using the Foundations command line tool.
@@ -142,3 +157,22 @@ If the user would like to download only the models folder, the can use the `sour
 ```shellscript
 $ foundations retrieve artifacts --job_id=12345 --env=local --source_dir=models
 ```
+
+---
+#Retrieve Job Logs#
+
+Users can retrieve logs from a deployed job, regardless of status, with the following command:
+
+```shellscript
+$ foundations retrieve logs --job_id=<deployed job_id> --env=<env_name>
+```
+
+This will return the logs of the job in its current state directly to the screen. For example, if the job is still running, the logs will be of the running jobs at the current point of execution. If the job is completed, it will be all the logs of the completed jobs.
+
+Logs can also be stored to a file by piping:
+
+```bash
+$ foundations retrieve logs --job_id=12345 --env=gcp > 12345_log.txt
+```
+
+**Note:** This is only works for specific version of the Foundations Job orchestrator (scheduler), please confirm with the Dessa integrations team if this will work for your setup.

@@ -13,10 +13,19 @@ It's recommended that you use either [virtualenv](https://virtualenv.pypa.io/en/
 
 Note: if using `virtualenv` make sure to create the environment outside the project directory as the directory will be compressed, and any extra dependencies will add to size and time for job running.
 
-There are two ways to install Foundations library, either by Wheel installation or from the source directly.
+There are a few ways to install Foundations library, either by `Pip`, Wheel installation or from the source directly.
+
+<h3>Using Pip</h3>
+For Pip access, you will need a pip.conf or pip.ini with credentials to Dessa's private pip repository. This file should be placed in the `~/.config/pip` directory.
+
+Once setup, Foundations can be installed with:
+
+```bash
+pip install dessa-foundations
+```
 
 <h3>Wheel Installation</h3>
-The `.whl` files for Python 3.X are available and will be provided by the Dessa team.
+The `.whl` files for Python 3.X are available and can be provided by the Dessa team.
 There are different assets based on different job deployment strategies.
 
 You only need `foundations-<version>-py3-none-any.whl` file for initial Foundations deployment.
@@ -53,11 +62,18 @@ conda create --name found-env python=3.6
 ```bash
 conda activate found-env
 ```
-- Install dependencies via pip
+
+<h3>2a. Install Foundations via Pip </h3>
+
+For Pip access, you will need a pip.conf or pip.ini with credentials to Dessa's private pip repository. This file should be placed in the `~/AppData/Roaming/pip/pip.conf` directory.
+
+Once setup, Foundations can be installed with:
+
 ```bash
-pip install dill PyYAML pandas pysftp paramiko flask-restful Flask-Cors google-api-python-client google-auth-httplib2 google-cloud-storage futures promise
+pip install dessa-foundations
 ```
-<h3>2. Install Foundations WHL </h3>
+
+<h3>2b. Install Foundations WHL </h3>
 
 The `.whl` files for Python 3.X are available and will be provided by the Dessa team. There are different assets based on different job deployment strategies.
 
@@ -88,6 +104,19 @@ It's important to note: if you're looking to use a different version of a packag
 Keep in mind that every time a job is run, a fresh python environment is created in the execution environment and all dependencies associated with the `requirements.txt` are installed. This freshly created python environment also inherits any packages installed globally on the execution environment.
 
 ## Redis Setup
+<h3> Foundations CLI </h3>
+
+To download and setup Redis, users can use the Foundations CLI command:
+
+```shellscript
+$ foundations setup
+```
+
+This will automatically pull and run the Redis via Docker as well as the Foundations GUI. Once completed, the GUI can be accessed at `https://localhost:6443`
+
+**Note:** This method will require users to have access to the private Dessa docker repository. This can be accessed with `docker login <Dessa Repo URL>`. For more information on getting access, please reach out to the Dessa integrations team. 
+
+<h3> Manual Setup </h3>
 
 The Foundations uses Redis as a quick and efficient way to store data for experiments. In order to run Foundations with local deployment, you'll first need to install Redis. Note: The following steps will apply for local job deployments only, the Dessa team will setup the Redis for any remote deployments (GCP, AWS, etc.)
 
