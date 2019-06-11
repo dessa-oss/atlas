@@ -23,7 +23,7 @@ def set_job_resources(num_gpus, ram):
         ValueError -- If either the RAM or GPU quantity is an invalid value (ex: less than 0) or not specified.
 
     Notes:
-        Setting the resources for a job will apply to all future jobs even if the function is not present in the code as it updates the configuration on the orchestrator side. To clear specifying resources and use the default
+        Setting the resources for a job from a given notebook or driver file will cause any additional jobs (ex: hyperparameter search) deployed from the same file and using the same process to use the same resources, unless specified otherwise. To clear specifying resources and use the default
         or CPU resources, you can pass in set_job_resources(0, None).
 
     Example:

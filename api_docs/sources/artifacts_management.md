@@ -28,24 +28,24 @@ Then, in your code, you can write artifacts to those paths for easy organization
 
 ```python
 df.to_pickle("artifacts/data/variables.pkl")
-model.save('artifacts/model/my_model.h5')
+model.save('artifacts/models/my_model.h5')
 ```
 
 ## Define Artifact Path in Environment Configuration
 
-To specify to Foundations where your generated files are saved to, you can define a relative directory in your environment configuration file for Foundations to track:
+To specify to Foundations where your generated files are saved to, you can define a relative directory in your environment configuration file for Foundations to track. From the example above, since we are writing all our files to the `artifact` folder, we specify the relative path here:
 
 ```yaml
 job_deployment_env: local
 
 results_config: 
-    artifact_path: relative/path/to/artifacts/directory
+    artifact_path: artifacts
 
 cache_config: {}
 log_level: DEBUG
 ```
 
-Foundations will then save all files from the `artifact_path` for post-job retrieval. For more information on setting up configurations, please refer to the documentation [here](../configs/#results-configurations)
+Foundations will then save all files from the `artifact_path` for post-job retrieval. This parameter supports any relative path, so if you wanted to only save files in the `data` folder, you could put: `artifacts/data` as the `artifact_path`. For more information on setting up configurations, please refer to the documentation [here](../configs/#results-configurations)
 
 ## Retrieving Artifacts from Completed Jobs
 
