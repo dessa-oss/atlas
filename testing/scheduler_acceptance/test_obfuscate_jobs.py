@@ -33,7 +33,6 @@ class TestObfuscateJobs(Spec):
     def set_up(self):
         self._create_config()
 
-        
     def test_job_obfuscates_source_code_when_remote_and_obfuscate_true(self):
         import foundations
         import time 
@@ -54,7 +53,6 @@ class TestObfuscateJobs(Spec):
 
         self.assertFalse(self._check_source_code_obfuscated(job_metrics))
 
-
     def test_job_still_completes_when_obfuscated(self):
         import foundations
         import time
@@ -68,7 +66,6 @@ class TestObfuscateJobs(Spec):
         time.sleep(10)
 
         self.assertEqual(add_two_numbers_deployment_object.get_job_status(), 'completed')
-
 
     def _create_and_run_job(self):
         import foundations
@@ -88,7 +85,6 @@ class TestObfuscateJobs(Spec):
         metrics = foundations.get_metrics_for_all_jobs('default')
         return metrics[metrics['job_id'] == job.job_name()]
     
-
     def _check_source_code_obfuscated(self, job_metrics):
         return job_metrics['init_file'].iloc[0] == '__pyarmor__'
     
