@@ -35,7 +35,6 @@ class TestRetrieveLogs(Spec):
         function_that_prints = foundations.create_stage(function_that_prints)
         function_that_prints_deployment_object = function_that_prints().run()
         function_that_prints_deployment_object.wait_for_deployment_to_complete(15)
-        # time.sleep(60)
 
         job_id = function_that_prints_deployment_object.job_name()
         self.assertIn("I am a function. I print things", function_that_prints_deployment_object.get_job_logs())
