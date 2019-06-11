@@ -37,44 +37,20 @@ class TestObfuscateJobs(Spec):
     def test_job_obfuscates_source_code_when_remote_and_obfuscate_true(self):
         import foundations
         import time 
-        from scheduler_acceptance.fixtures.stages import add_two_numbers, read_init_file
         
         config_manager['obfuscate_foundations'] = True
 
-        read_init_file = foundations.create_stage(read_init_file)
-        read_init_file_stage = read_init_file()
-
-        log_metric = foundations.create_stage(self._log_a_metric)
-        log_metric_stage = log_metric(read_init_file_stage)
-
-        job = log_metric_stage.run()
-        job.wait_for_deployment_to_complete()
-        time.sleep(3)
-
-        metrics = foundations.get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == job.job_name()]
+        job_metrics = self._create_and_run_job()
 
         self.assertTrue(self._check_source_code_obfuscated(job_metrics))
     
     def test_job_does_not_obfuscates_source_code_when_remote_and_obfuscate_false(self):
         import foundations
         import time
-        from scheduler_acceptance.fixtures.stages import add_two_numbers, read_init_file
         
         config_manager['obfuscate_foundations'] = False
 
-        read_init_file = foundations.create_stage(read_init_file)
-        read_init_file_stage = read_init_file()
-
-        log_metric = foundations.create_stage(self._log_a_metric)
-        log_metric_stage = log_metric(read_init_file_stage)
-
-        job = log_metric_stage.run()
-        job.wait_for_deployment_to_complete()
-        time.sleep(3)
-
-        metrics = foundations.get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == job.job_name()]
+        job_metrics = self._create_and_run_job()
 
         self.assertFalse(self._check_source_code_obfuscated(job_metrics))
 
@@ -92,6 +68,25 @@ class TestObfuscateJobs(Spec):
         time.sleep(10)
 
         self.assertEqual(add_two_numbers_deployment_object.get_job_status(), 'completed')
+
+
+    def _create_and_run_job(self):
+        import foundations
+        from scheduler_acceptance.fixtures.stages import add_two_numbers, read_init_file
+        import time
+
+        read_init_file = foundations.create_stage(read_init_file)
+        read_init_file_stage = read_init_file()
+
+        log_metric = foundations.create_stage(self._log_a_metric)
+        log_metric_stage = log_metric(read_init_file_stage)
+
+        job = log_metric_stage.run()
+        job.wait_for_deployment_to_complete()
+        time.sleep(3)
+
+        metrics = foundations.get_metrics_for_all_jobs('default')
+        return metrics[metrics['job_id'] == job.job_name()]
     
 
     def _check_source_code_obfuscated(self, job_metrics):
