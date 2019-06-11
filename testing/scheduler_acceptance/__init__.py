@@ -10,4 +10,5 @@ from scheduler_acceptance.test_can_run_job import TestCanRunJob
 from scheduler_acceptance.test_cli_deployment import TestCliDeployment
 from scheduler_acceptance.test_set_job_resources import TestSetJobResources
 from scheduler_acceptance.test_get_job_logs import TestGetJobLogs
+from scheduler_acceptance.test_obfuscate_jobs import TestObfuscateJobs
 from scheduler_acceptance.prototype import *

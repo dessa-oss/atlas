@@ -49,3 +49,13 @@ def bytes_to_gigabytes(number_in_bytes):
 
 def kilobytes_to_gigabytes(number_in_kilobytes):
     return number_in_kilobytes / 1024 / 1024
+
+def read_init_file():
+    import os
+
+    foundations_init_file_location = os.path.join('/job', 'foundations', '__init__.py')
+
+    with open(foundations_init_file_location, 'rb') as init_file:
+        file_head = init_file.readline()[0:11]
+
+    return file_head.decode()
