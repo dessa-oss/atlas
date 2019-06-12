@@ -1,7 +1,7 @@
 node {
     def build_number = env.BUILD_URL
     try {
-            ('Preparation') { // for display purposes
+        stage('Preparation') { // for display purposes
             checkout scm
         }
         container("python3") {
@@ -19,17 +19,6 @@ node {
             }
             stage('Python3 Run Integration Tests') {
                 sh "./run_integration_tests.sh"
-            }
-            stage('Pull Foundations Scheduler'){
-                sh "git clone https://github.com/DeepLearnI/foundations-scheduler.git"
-            }
-            stage('Deploy Integration K8s Cluster') {
-                    sh 'python -m pip install botocore boto3 boto'
-                    ws("${WORKSPACE}/foundations-scheduler/devops") {
-                        sh './deploy_ci_kubernetes_cluster.sh'
-                        sh './move_k8s_credentials_to_local.sh'
-                        sh './install_scheduler_dependencies_for_ci.sh'
-                }
             }
             ws("${WORKSPACE}/testing"){
                 stage('Python3 Foundations Acceptance Tests') {
@@ -76,13 +65,5 @@ node {
     } catch (Exception error) {
         slackSend(color: '#FF0000', message: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
         throw error
-    } finally {
-        container("python3"){
-            ws("${WORKSPACE}/foundations-scheduler") {
-                stage("Destroy K8 Cluster"){
-                    sh 'cd devops && ./destroy_ci_kubernetes_cluster.sh; cd .. && rm -rf *'
-                }
-            }
-        }
     }
 }
