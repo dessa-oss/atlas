@@ -46,22 +46,23 @@ def _config():
     config_manager['code_path'] = '/jobs'
     config_manager['key_path'] = '~/.ssh/id_foundations_scheduler'
 
+
     scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
 
     if scheduler_host is None:
         print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
         exit(1)
 
+    redis_url = environ.get('FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL', 'redis://{}:6379'.format(scheduler_host))
+
+    config_manager['remote_host'] = scheduler_host
+    config_manager['shell_command'] = '/bin/bash'
+    config_manager['redis_url'] =  redis_url
+
     if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
-        config_manager['remote_host'] = scheduler_host
-        config_manager['shell_command'] = '/bin/bash'
         config_manager['result_path'] = '/scheduler_root/results'
-        config_manager['redis_url'] = 'redis://redis-job-data.foundations-scheduler:6379'
     else:
-        config_manager['remote_host'] = scheduler_host
-        config_manager['shell_command'] = '/bin/bash'
         config_manager['result_path'] = '/tmp/foundations/results'
-        config_manager['redis_url'] = 'redis://{}:6379'.format(get_network_address('docker0'))
 
 def _append_spec_module():
     import sys
