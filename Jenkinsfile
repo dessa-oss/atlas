@@ -28,8 +28,7 @@ node {
                     sh "python -Wi -m unittest remote_acceptance"
                 }
                 stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST'
-                    sh "python -Wi -m unittest scheduler_acceptance"
+                    sh 'FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST python -Wi -m unittest scheduler_acceptance'
                 }
             }
             ws("${WORKSPACE}/foundations_rest_api/src") {
