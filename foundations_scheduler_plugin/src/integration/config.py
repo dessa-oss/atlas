@@ -18,5 +18,6 @@ def _load_config():
     config_manager['port'] = 31222
     config_manager['code_path'] = '/jobs'
     config_manager['redis_url'] = redis_url
+    config_manager['artifact_path'] = 'results'
 
 _load_config()
