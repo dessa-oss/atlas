@@ -7,7 +7,7 @@ def _load_config():
     running_on_ci = os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
     if running_on_ci:
-        scheduler_host = os.environ['FOUNDATIONS_SCHEDULER_HOST']
+        scheduler_host = os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST']
         redis_url = os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL']
     else:
         scheduler_host = 'localhost'
