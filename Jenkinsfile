@@ -67,6 +67,7 @@ node {
         influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunks', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         slackSend(color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
     } catch (Exception error) {
+        influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunks', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         def output_logs = String.join('\n', currentBuild.rawBuild.getLog(100))
         def attachments = [
             [
@@ -76,7 +77,6 @@ node {
                 color: '#FF0000'
             ]
         ]
-        influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunks', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         slackSend(channel: '#foundations-builds', attachments: attachments)
         throw error
     }
