@@ -5,13 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock
+from foundations_spec import *
 
 from foundations_contrib.job_bundling.script_environment import ScriptEnvironment
 
+class TestScriptEnvironment(Spec):
 
-class TestScriptEnvironment(unittest.TestCase):
+    @let
+    def redis_password(self):
+        return self.faker.word()
 
     def setUp(self):
         self._config = {}
@@ -45,6 +47,23 @@ class TestScriptEnvironment(unittest.TestCase):
         self._environment.write_environment(self._file)
         self.assertEqual(
             ["export 'log level'='DEBUG THIS'\n"], self._written_lines)
+
+    def test_write_environment_adds_redis_password_if_any(self):
+        attributes = ConditionalReturn()
+        attributes.return_when(self.redis_password, 'FOUNDATIONS_REDIS_PASSWORD')
+        self.patch('os.environ.get', attributes)
+        self._environment.write_environment(self._file)
+        self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password)], self._written_lines)
+
+    def test_write_environment_adds_redis_password_if_any_and_any_other_run_script_environment_stuff(self):
+        self._config['run_script_environment'] = {'log level': 'DEBUG THIS'}
+
+        attributes = ConditionalReturn()
+        attributes.return_when(self.redis_password, 'FOUNDATIONS_REDIS_PASSWORD')
+        self.patch('os.environ.get', attributes)
+
+        self._environment.write_environment(self._file)
+        self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password), "export 'log level'='DEBUG THIS'\n"], self._written_lines)
 
     def test_write_environment_flushes_file(self):
         self._environment.write_environment(self._file)
