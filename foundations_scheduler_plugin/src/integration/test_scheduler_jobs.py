@@ -46,6 +46,7 @@ class TestSchedulerJobs(Spec):
     @set_up
     def set_up(self):
         self.deployment.deploy()
+        print('Deployed: ', self.job_id)
         self._wait_for_job_to_complete()
 
     def test_runs_job(self):
