@@ -64,10 +64,10 @@ node {
         stage('Results') {
             archiveArtifacts artifacts: '**/*.whl', fingerprint: true
         }
-        influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunk', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
+        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         slackSend(color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
     } catch (Exception error) {
-        influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunk', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
+        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         def output_logs = String.join('\n', currentBuild.rawBuild.getLog(100))
         def attachments = [
             [
