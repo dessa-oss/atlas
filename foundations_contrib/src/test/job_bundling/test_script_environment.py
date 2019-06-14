@@ -11,6 +11,8 @@ from foundations_contrib.job_bundling.script_environment import ScriptEnvironmen
 
 class TestScriptEnvironment(Spec):
 
+    mock_environ = let_patch_mock('os.environ', {})
+
     @let
     def redis_password(self):
         return self.faker.word()
@@ -20,6 +22,7 @@ class TestScriptEnvironment(Spec):
         self._environment = ScriptEnvironment(self._config)
         self._written_lines = []
         self._file = Mock(**{'write.side_effect': self._write})
+        self.mock_environ.clear()
 
     def test_write_environment_writes_empty_export(self):
         self._environment.write_environment(self._file)
@@ -49,18 +52,14 @@ class TestScriptEnvironment(Spec):
             ["export 'log level'='DEBUG THIS'\n"], self._written_lines)
 
     def test_write_environment_adds_redis_password_if_any(self):
-        attributes = ConditionalReturn()
-        attributes.return_when(self.redis_password, 'FOUNDATIONS_REDIS_PASSWORD')
-        self.patch('os.environ.get', attributes)
+        self.mock_environ['FOUNDATIONS_REDIS_PASSWORD'] = self.redis_password
+
         self._environment.write_environment(self._file)
         self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password)], self._written_lines)
 
     def test_write_environment_adds_redis_password_if_any_and_any_other_run_script_environment_stuff(self):
         self._config['run_script_environment'] = {'log level': 'DEBUG THIS'}
-
-        attributes = ConditionalReturn()
-        attributes.return_when(self.redis_password, 'FOUNDATIONS_REDIS_PASSWORD')
-        self.patch('os.environ.get', attributes)
+        self.mock_environ['FOUNDATIONS_REDIS_PASSWORD'] = self.redis_password
 
         self._environment.write_environment(self._file)
         self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password), "export 'log level'='DEBUG THIS'\n"], self._written_lines)
