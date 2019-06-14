@@ -22,18 +22,18 @@ node {
             }
             ws("${WORKSPACE}/testing"){
                 stage('Python3 Foundations Acceptance Tests') {
-                    sh "python -Wi -m unittest acceptance"
+                    sh "python -Wi -m unittest -v acceptance"
                 }
                 stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
-                    sh "python -Wi -m unittest remote_acceptance"
+                    sh "python -Wi -m unittest -v remote_acceptance"
                 }
                 stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-                    sh 'FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST python -Wi -m unittest scheduler_acceptance'
+                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -v scheduler_acceptance'
                 }
             }
             ws("${WORKSPACE}/foundations_rest_api/src") {
                 stage('Python3 Foundations REST API Acceptance Tests') {
-                    sh "python -Wi -m unittest acceptance"
+                    sh "python -Wi -m unittest -v acceptance"
                 }
             }
         }
