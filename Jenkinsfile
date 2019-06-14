@@ -6,7 +6,7 @@ node {
         }
         container("python3") {
             stage('Get Foundations Scheduler') {
-                sh 'python -m pip install foundations-scheduler'
+                sh 'python -m pip install -U foundations-scheduler'
             }
             stage('Python3 Foundations Install Test Requirements') {
                 sh "./ci_install_requirements.sh"
