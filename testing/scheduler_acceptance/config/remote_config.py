@@ -59,7 +59,7 @@ def _config():
     config_manager['shell_command'] = '/bin/bash'
     config_manager['redis_url'] =  redis_url
 
-    if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
+    if environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE':
         config_manager['result_path'] = '/scheduler_root/results'
     else:
         config_manager['result_path'] = '/tmp/foundations/results'

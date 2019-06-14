@@ -39,7 +39,7 @@ def config():
         print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
         exit(1)
 
-    if environ.get('RUNNING_ON_JENKINS', 'false') == 'true':
+    if environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE':
         config_manager['remote_user'] = 'foundations'
         config_manager['remote_host'] = scheduler_host
         config_manager['shell_command'] = '/bin/bash'
