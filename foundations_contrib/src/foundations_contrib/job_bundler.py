@@ -78,10 +78,14 @@ class JobBundler(object):
         self._tar_job_binary(tar)
         self._tar_config_files(tar)
         self._tar_foundations_modules(tar)
-        if 'run_script_environment' in self._config:
+        if 'run_script_environment' in self._config or self._redis_password_set():
             self._tar_env(tar)
         self._tar_resources(tar)
     
+    def _redis_password_set(self):
+        import os
+        return 'FOUNDATIONS_REDIS_PASSWORD' in os.environ
+
     def _tar_job_source_bundle_archive(self, tarfile):
         import os
 
