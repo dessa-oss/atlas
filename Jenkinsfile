@@ -76,6 +76,7 @@ node {
                 color: '#FF0000'
             ]
         ]
+        influxDbPublisher customPrefix: 'foundations_trunk', customProjectName: 'foundations_trunks', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
         slackSend(channel: '#foundations-builds', attachments: attachments)
         throw error
     }
