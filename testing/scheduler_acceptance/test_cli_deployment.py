@@ -53,8 +53,14 @@ class TestCliDeployment(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
+
         with open('test-cli-init/config/scheduler.config.yaml', 'w+') as file:
             file.write(self.yaml_cli_config)
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env scheduler"])
 
-        self.assertEqual(driver_deploy_exit_code, 0)
+        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env scheduler"])
+        self._assert_deployment_was_successful(driver_deploy_result)
+
+    def _assert_deployment_was_successful(self, driver_deploy_result):
+        if driver_deploy_result.returncode != 0:
+            error_message = 'Driver deployment failed:\n{}'.format(driver_deploy_result.stderr)
+            raise AssertionError(error_message)
