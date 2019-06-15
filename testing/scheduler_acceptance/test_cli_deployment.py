@@ -11,20 +11,37 @@ class TestCliDeployment(Spec):
     
     @let
     def cli_config(self):
-        from foundations_spec.extensions import get_network_address
-        docker_address = get_network_address('docker0')
+        import os
+
+        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
+
+        if scheduler_host is None:
+            print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
+            exit(1)
+
+        if os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE':
+            ssh_config_host = scheduler_host
+            redis_url = os.environ.get('FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL', 'redis://{}:6379'.format(scheduler_host))
+        else:
+            from foundations_spec.extensions import get_network_address
+
+            ssh_config_host = 'localhost'
+            docker_address = get_network_address('docker0')
+            redis_url = 'redis://{}:6379'.format(docker_address)
+
         return {
             'job_deployment_env': 'scheduler_plugin',
             'results_config': {
                 'archive_end_point': '/archive',
-                'redis_end_point': 'redis://{}:6379'.format(docker_address)
+                'artifacts_path': 'results'
+                'redis_end_point': redis_url
             },
             'cache_config': {
                 'end_point': '/cache'
             },
             'ssh_config': {
                 'user': 'job-uploader',
-                'host': 'localhost',
+                'host': ssh_config_host,
                 'code_path': '/jobs',
                 'result_path': '/jobs',
                 'key_path': '~/.ssh/id_foundations_scheduler',
@@ -62,5 +79,5 @@ class TestCliDeployment(Spec):
 
     def _assert_deployment_was_successful(self, driver_deploy_result):
         if driver_deploy_result.returncode != 0:
-            error_message = 'Driver deployment failed:\n{}'.format(driver_deploy_result.stderr)
+            error_message = 'Driver deployment failed:\n{}'.format(driver_deploy_result.stderr.decode())
             raise AssertionError(error_message)
