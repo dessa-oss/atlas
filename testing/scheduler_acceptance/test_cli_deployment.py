@@ -33,7 +33,7 @@ class TestCliDeployment(Spec):
             'job_deployment_env': 'scheduler_plugin',
             'results_config': {
                 'archive_end_point': '/archive',
-                'artifacts_path': 'results'
+                'artifacts_path': 'results',
                 'redis_end_point': redis_url
             },
             'cache_config': {
