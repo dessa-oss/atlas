@@ -68,8 +68,12 @@ class TestSetJobResources(Spec, NodeAwareMixin):
 
         metrics = foundations.get_metrics_for_all_jobs('default')
         job_metrics = metrics[metrics['job_id'] == job.job_name()]
+        ram_available_to_job = job_metrics['ram_in_GB'].iloc[0]
+
+        ram_error = abs(memory_capacity - ram_available_to_job) / memory_capacity
+
         self.assertEqual(0, job_metrics['number_of_GPUs'].iloc[0])
-        self.assertEqual(memory_capacity, job_metrics['ram_in_GB'].iloc[0])
+        self.assertLess(ram_error, 0.01)
 
     def test_exception_thrown_when_job_is_run_with_too_many_resources(self):
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_number_of_gpus
