@@ -1,5 +1,10 @@
 node {
     def build_number = env.BUILD_URL
+    def customMetrics = [:]
+    def customMetricsMap = [:]
+
+    customMetricsMap["jenkins_data"] = customMetrics
+
     try {
         stage('Preparation') { // for display purposes
             checkout scm
@@ -64,10 +69,19 @@ node {
         stage('Results') {
             archiveArtifacts artifacts: '**/*.whl', fingerprint: true
         }
-        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
+        stage("Calculate Recovery Metrics") {
+            def last_build = currentBuild.getPreviousBuild()
+            if(last_build.result == "FAILURE") {
+                def current_time = System.currentTimeMillis()
+                def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
+
+                customMetrics["time_to_recovery"] = time_to_recovery
+            }
+        }
+        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         slackSend(color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.')
     } catch (Exception error) {
-        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: ''
+        influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         def output_logs = String.join('\n', currentBuild.rawBuild.getLog(100))
         def attachments = [
             [
