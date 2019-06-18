@@ -6,96 +6,119 @@ pipeline {
 
     stages {
         stage('Preparation') {
-            steps {
-                script {
-                    customMetricsMap["jenkins_data"] = customMetrics
-                }
+            node {
+                customMetricsMap["jenkins_data"] = customMetrics
                 checkout scm
             }
         }
-        container("python3") {
-            stage('Get Foundations Scheduler') {
-                steps {
+        stage('Get Foundations Scheduler') {
+            steps {
+                container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
                 }
+                
             }
-            stage('Python3 Foundations Install Test Requirements') {
-                steps {
+        }
+        stage('Python3 Foundations Install Test Requirements') {
+            steps {
+                container("python3") {
                     sh "./ci_install_requirements.sh"
                 }
             }
-            stage('Build Foundations Wheels') {
-                steps {
+        }
+        stage('Build Foundations Wheels') {
+            steps {
+                container("python3") {
                     sh "./build_dist.sh"
                 }
             }
-            stage('Python3 Run Unit Tests') {
-                steps {
+        }
+        stage('Python3 Run Unit Tests') {
+            steps {
+                container("python3") {
                     sh "./run_unit_tests.sh"
                 }
             }
-            stage('Python3 Run Integration Tests') {
-                steps {
+        }
+        stage('Python3 Run Integration Tests') {
+            steps {
+                container("python3") {
                     sh "./run_integration_tests.sh"
                 }
             }
-            ws("${WORKSPACE}/testing"){
-                stage('Python3 Foundations Acceptance Tests') {
-                    steps {
+        }
+        ws("${WORKSPACE}/testing"){
+            stage('Python3 Foundations Acceptance Tests') {
+                steps {
+                    container("python3") {
                         sh "python -Wi -m unittest -v acceptance"
                     }
                 }
-                stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
-                    steps {
+            }
+            stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
+                steps {
+                    container("python3") {
                         sh "python -Wi -m unittest -v remote_acceptance"
                     }
                 }
-                stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-                    steps {
+            }
+            stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                steps {
+                    container("python3") {
                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -v scheduler_acceptance'
                     }
                 }
             }
-            ws("${WORKSPACE}/foundations_rest_api/src") {
-                stage('Python3 Foundations REST API Acceptance Tests') {
-                    steps {
+        }
+        ws("${WORKSPACE}/foundations_rest_api/src") {
+            stage('Python3 Foundations REST API Acceptance Tests') {
+                steps {
+                    container("python3") {
                         sh "python -Wi -m unittest -v acceptance"
                     }
                 }
             }
         }
-        container("yarn") {
-            ws("${WORKSPACE}/foundations_ui/") {
-                stage('Install dependencies for Foundations UI') {
-                    steps {
+        ws("${WORKSPACE}/foundations_ui/") {
+            stage('Install dependencies for Foundations UI') {
+                steps {
+                    container("yarn") {
                         sh "yarn install"
                     }
                 }
-                stage('Run Front End Unit Tests') {
-                    steps {
+            }
+            stage('Run Front End Unit Tests') {
+                steps {
+                    container("yarn") {
                         sh "yarn run test"
                     }
                 }
-                stage('Check for linting') {
-                    steps {
+            }
+            stage('Check for linting') {
+                steps {
+                    container("yarn") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
             }
         }
-        container("python3"){
-            stage('Upload Wheels to Releases') {
-                steps {
+        stage('Upload Wheels to Releases') {
+            steps {
+                container("python3"){
                     sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
                 }
             }
-            stage('Build GUI and Rest API Images'){
-                steps {
+        }
+        stage('Build GUI and Rest API Images'){
+            steps {
+                container("python3"){
                     sh "./build_gui.sh"
                 }
             }
-            stage('Push GUI and Rest API Images'){
-                steps {
+        }
+        stage('Push GUI and Rest API Images'){
+            steps {
+                container("python3"){
                     sh "./push_gui_images.sh"
                 }
             }
@@ -106,15 +129,13 @@ pipeline {
             }
         }
         stage("Calculate Recovery Metrics") {
-            steps {
-                script {
-                    def last_build = currentBuild.getPreviousBuild()
-                    if(last_build.result == "FAILURE") {
-                        def current_time = System.currentTimeMillis()
-                        def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
+            node {
+                def last_build = currentBuild.getPreviousBuild()
+                if(last_build.result == "FAILURE") {
+                    def current_time = System.currentTimeMillis()
+                    def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
 
-                        customMetrics["time_to_recovery"] = time_to_recovery
-                    }
+                    customMetrics["time_to_recovery"] = time_to_recovery
                 }
             }
         }
