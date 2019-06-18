@@ -5,11 +5,9 @@ def customMetricsMap = [:]
 pipeline {
 
     stages {
-        stage('Preparation') {
-            node {
-                customMetricsMap["jenkins_data"] = customMetrics
-                checkout scm
-            }
+        node {
+            customMetricsMap["jenkins_data"] = customMetrics
+            checkout scm
         }
         stage('Get Foundations Scheduler') {
             steps {
@@ -128,15 +126,13 @@ pipeline {
                 archiveArtifacts artifacts: '**/*.whl', fingerprint: true
             }
         }
-        stage("Calculate Recovery Metrics") {
-            node {
-                def last_build = currentBuild.getPreviousBuild()
-                if(last_build.result == "FAILURE") {
-                    def current_time = System.currentTimeMillis()
-                    def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
+        node {
+            def last_build = currentBuild.getPreviousBuild()
+            if(last_build.result == "FAILURE") {
+                def current_time = System.currentTimeMillis()
+                def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
 
-                    customMetrics["time_to_recovery"] = time_to_recovery
-                }
+                customMetrics["time_to_recovery"] = time_to_recovery
             }
         }
     }
