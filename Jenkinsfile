@@ -4,6 +4,9 @@ def customMetricsMap = [:]
 
 pipeline {
 
+    agent {
+        label 'foundations-build'
+    }
     stages {
         stage('Preparation') {
             steps {
@@ -154,7 +157,9 @@ pipeline {
     }
     post {
         always {
-            customMetricsMap["jenkins_data"] = customMetrics
+            script {
+                customMetricsMap["jenkins_data"] = customMetrics
+            }
             influxDbPublisher customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         }
         failure {
