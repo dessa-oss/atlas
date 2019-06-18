@@ -1,10 +1,10 @@
+def build_number = env.BUILD_URL
+def customMetrics = [:]
+def customMetricsMap = [:]
+
 pipeline {
-    def build_number
-    def customMetrics = [:]
-    def customMetricsMap = [:]
 
     stage('Preparation') {
-        build_number = env.BUILD_URL
         customMetricsMap["jenkins_data"] = customMetrics
         checkout scm
     }
