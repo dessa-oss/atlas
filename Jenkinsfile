@@ -49,56 +49,64 @@ pipeline {
                 }
             }
         }
-        ws("${WORKSPACE}/testing"){
-            stage('Python3 Foundations Acceptance Tests') {
-                steps {
-                    container("python3") {
+        stage('Python3 Foundations Acceptance Tests') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/testing") {
                         sh "python -Wi -m unittest -v acceptance"
                     }
                 }
             }
-            stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
-                steps {
-                    container("python3") {
+        }
+        stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/testing") {
                         sh "python -Wi -m unittest -v remote_acceptance"
                     }
                 }
             }
-            stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-                steps {
-                    container("python3") {
+        }
+        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/testing") {
                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -v scheduler_acceptance'
                     }
                 }
             }
         }
-        ws("${WORKSPACE}/foundations_rest_api/src") {
-            stage('Python3 Foundations REST API Acceptance Tests') {
-                steps {
-                    container("python3") {
+        stage('Python3 Foundations REST API Acceptance Tests') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/foundations_rest_api/src") {
                         sh "python -Wi -m unittest -v acceptance"
                     }
                 }
             }
         }
-        ws("${WORKSPACE}/foundations_ui/") {
-            stage('Install dependencies for Foundations UI') {
-                steps {
-                    container("yarn") {
+        stage('Install dependencies for Foundations UI') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui/") {
                         sh "yarn install"
                     }
                 }
             }
-            stage('Run Front End Unit Tests') {
-                steps {
-                    container("yarn") {
+        }
+        stage('Run Front End Unit Tests') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui/") {
                         sh "yarn run test"
                     }
                 }
             }
-            stage('Check for linting') {
-                steps {
-                    container("yarn") {
+        }
+        stage('Check for linting') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
