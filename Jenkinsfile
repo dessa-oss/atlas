@@ -3,9 +3,8 @@ pipeline {
     def customMetrics = [:]
     def customMetricsMap = [:]
 
-    customMetricsMap["jenkins_data"] = customMetrics
-
-    stage('Preparation') { // for display purposes
+    stage('Preparation') {
+        customMetricsMap["jenkins_data"] = customMetrics
         checkout scm
     }
     container("python3") {
