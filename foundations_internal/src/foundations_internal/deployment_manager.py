@@ -21,9 +21,9 @@ class DeploymentManager(object):
             job_name = str(uuid.uuid4())
         job = Job(stage, **job_params)
 
+        deployment = self.deploy({}, job_name, job)
         self._record_project(stage)
-
-        return self.deploy({}, job_name, job)
+        return deployment
 
     def deploy(self, deployment_config, job_name, job):
         from foundations import log_manager
