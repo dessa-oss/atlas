@@ -5,7 +5,7 @@ def customMetricsMap = [:]
 pipeline {
 
     agent {
-        label 'foundations-build'
+        label 'ci-pipeline-jenkins-slave'
     }
     stages {
         stage('Preparation') {
