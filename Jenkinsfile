@@ -6,10 +6,10 @@ pipeline {
 
     stages {
         stage('Preparation') {
-            script {
-                customMetricsMap["jenkins_data"] = customMetrics
-            }
             steps {
+                script {
+                    customMetricsMap["jenkins_data"] = customMetrics
+                }
                 checkout scm
             }
         }
@@ -106,13 +106,15 @@ pipeline {
             }
         }
         stage("Calculate Recovery Metrics") {
-            script {
-                def last_build = currentBuild.getPreviousBuild()
-                if(last_build.result == "FAILURE") {
-                    def current_time = System.currentTimeMillis()
-                    def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
+            steps {
+                script {
+                    def last_build = currentBuild.getPreviousBuild()
+                    if(last_build.result == "FAILURE") {
+                        def current_time = System.currentTimeMillis()
+                        def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
 
-                    customMetrics["time_to_recovery"] = time_to_recovery
+                        customMetrics["time_to_recovery"] = time_to_recovery
+                    }
                 }
             }
         }
