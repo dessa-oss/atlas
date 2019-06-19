@@ -10,24 +10,6 @@ from foundations_contrib.middleware.basic_stage_middleware import BasicStageMidd
 
 class MetricLogMiddleware(BasicStageMiddleware):
 
-    class MetricLogged(object):
-
-        def __init__(self, message_router, project_name, job_id, key, value):
-            self._message_router = message_router
-            self._project_name = project_name
-            self._job_id = job_id
-            self._metric_key = key
-            self._metric_value = value
-
-        def push_message(self):
-            message = {
-                'project_name': self._project_name, 
-                'job_id': self._job_id, 
-                'key': self._metric_key, 'value': self._metric_value
-            }
-
-            self._message_router.push_message('job_metrics', message)
-
     class Producer(object):
 
         def __init__(self, message_router, pipeline_context, stage_context):
@@ -40,7 +22,9 @@ class MetricLogMiddleware(BasicStageMiddleware):
                 self._push_message_to_channel(metric['key'], metric['value'])
 
         def _push_message_to_channel(self, key, value):
-            metrics_logged_producer = MetricLogMiddleware.MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)
+            from foundations_contrib.producers.metric_logged import MetricLogged
+
+            metrics_logged_producer = MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)
             metrics_logged_producer.push_message()
 
         def _project_name(self):
