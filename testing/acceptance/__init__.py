@@ -27,3 +27,4 @@ from acceptance.test_deploy_model_package import TestDeployModelPackage
 from acceptance.test_retrain_model import TestRetrainModel
 from acceptance.test_run_model_predictions import TestRunModelPredictions
 from acceptance.test_results_file_creation import TestResultsFileCreation
+from acceptance.test_log_metric_outside_stage import TestLogMetricOutsideStage

@@ -49,6 +49,7 @@ from test.test_module_obfuscation_controller import TestModuleObfuscationControl
 from test.test_obfuscation_detection_mixin import TestObfuscationDetectionMixin
 from test.test_resources_obfuscation_controller import TestResourcesObfuscationController
 from test.test_set_job_resources import TestSetJobResources
+from test.test_global_metric_logger import TestGlobalMetricLogger
 
 from test.test_log_manager import TestLogManager
 
