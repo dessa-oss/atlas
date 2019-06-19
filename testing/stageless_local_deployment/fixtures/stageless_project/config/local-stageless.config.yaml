@@ -1,0 +1,4 @@
+job_deployment_env: local-stageless
+results_config: {}
+cache_config: {}
+obfuscate_foundations: False
