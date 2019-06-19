@@ -24,29 +24,40 @@ class TestGlobalMetricLogger(Spec):
     def fake_metric_value(self):
         return self.faker.random.random()
 
+    @let
+    def fake_job_id(self):
+        return self.faker.uuid4()
+
     def setUp(self):
         from foundations_internal.stage_context import StageContext
+        from foundations.global_state import current_foundations_context
 
-        self._pipeline_context = self.MockClass()
-        self._stage = self.MockClass()
-        self._stage_config = self.MockClass()
-        self._stage_context = StageContext()
-        self._logger = GlobalMetricLogger()
+        current_context = current_foundations_context()
+        self._pipeline_context = current_context.pipeline_context()
+        self._stage_context = self._pipeline_context.global_stage_context
+
+        self._logger = GlobalMetricLogger(self._pipeline_context, self._stage_context)
         self.mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.global_metric_logger')
+        self._pipeline_context.file_name = None
+        self._stage_context.stage_log = []
+
+    def test_log_metric_stores_metric(self):
+        self._pipeline_context.file_name = self.fake_job_id
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self.assertEqual({self.fake_metric_name: self.fake_metric_value}, self._stage_log_to_dict())
+
+    # def test_log_metric_does_nothing_if_not_in_job(self):
+    #     self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+    #     self.assertEqual({}, self._stage_log_to_dict())
 
     def test_log_metric_shows_warning_if_not_in_running_job(self):
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_called_with('Cannot log metric if not deployed with foundations deploy')
 
     def _stage_log_to_dict(self):
-        from foundations.global_state import current_foundations_context
-
         log = {}
 
-        current_context = current_foundations_context()
-        pipeline_context = current_context.pipeline_context()
-
-        for log_item in pipeline_context.global_stage_context.stage_log:
+        for log_item in self._stage_context.stage_log:
             key = log_item['key']
             value = log_item['value']
             if key in log:
