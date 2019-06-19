@@ -59,7 +59,7 @@ class TestSchedulerJobs(Spec):
     def _wait_for_job_to_complete(self):
         from time import sleep
 
-        for _ in range(60):
+        for _ in range(240):
             if self.deployment_wrapper.is_job_complete():
                 return
             sleep(1)
