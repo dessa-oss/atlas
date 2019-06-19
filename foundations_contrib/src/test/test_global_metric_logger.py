@@ -10,11 +10,15 @@ from foundations_contrib.global_metric_logger import GlobalMetricLogger
 
 class TestGlobalMetricLogger(Spec):
 
-    mock_get_logger = let_patch_mock('foundations_contrib.global_state.log_manager.get_logger', ConditionalReturn())
-    mock_logger = let_mock()
+    mock_log_manager = let_patch_mock('foundations_contrib.global_state.log_manager')
 
-    class MockClass(object):
-        pass
+    class MockMessageRouter(object):
+        
+        def __init__(self):
+            self.logged_metrics = []
+
+        def push_message(self, name, message):
+            self.logged_metrics.append({name: message})
 
     @let
     def fake_metric_name(self):
@@ -28,45 +32,49 @@ class TestGlobalMetricLogger(Spec):
     def fake_job_id(self):
         return self.faker.uuid4()
 
+    @let
+    def fake_project_name(self):
+        return self.faker.word()
+
+    @let
+    def message(self):
+        return {
+            'project_name': self.fake_project_name, 
+            'job_id': self.fake_job_id, 
+            'key': self.fake_metric_name, 
+            'value': self.fake_metric_value
+        }
+
     def setUp(self):
-        from foundations_internal.stage_context import StageContext
-        from foundations.global_state import current_foundations_context
+        from foundations_internal.pipeline_context import PipelineContext
 
-        current_context = current_foundations_context()
-        self._pipeline_context = current_context.pipeline_context()
-        self._stage_context = self._pipeline_context.global_stage_context
+        self._pipeline_context = PipelineContext()
 
-        self._logger = GlobalMetricLogger(self._pipeline_context, self._stage_context)
+        self._message_router = self.MockMessageRouter()
+        self._logger = GlobalMetricLogger(self._message_router, self._pipeline_context)
+
+        self.mock_logger = Mock()
+        self.mock_get_logger = ConditionalReturn()
         self.mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.global_metric_logger')
+        self.mock_log_manager.get_logger = self.mock_get_logger
+
         self._pipeline_context.file_name = None
-        self._stage_context.stage_log = []
+        self._pipeline_context.provenance.project_name = self.fake_project_name
 
     def test_log_metric_stores_metric(self):
         self._pipeline_context.file_name = self.fake_job_id
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
-        self.assertEqual({self.fake_metric_name: self.fake_metric_value}, self._stage_log_to_dict())
-
-    # def test_log_metric_does_nothing_if_not_in_job(self):
-    #     self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
-    #     self.assertEqual({}, self._stage_log_to_dict())
+        self.assertEqual([{'job_metrics': self.message}], self._logged_metrics())
 
     def test_log_metric_shows_warning_if_not_in_running_job(self):
+        self._pipeline_context.file_name = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_called_with('Cannot log metric if not deployed with foundations deploy')
 
-    def _stage_log_to_dict(self):
-        log = {}
+    def test_log_metric_does_not_show_warning_if_in_running_job(self):
+        self._pipeline_context.file_name = self.fake_job_id
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self.mock_logger.warning.assert_not_called()
 
-        for log_item in self._stage_context.stage_log:
-            key = log_item['key']
-            value = log_item['value']
-            if key in log:
-                previous_value = log[key]
-                if isinstance(previous_value, list):
-                    log[key].append(value)
-                else:
-                    log[key] = [previous_value, value]
-            else:
-                log[key] = value
-
-        return log
+    def _logged_metrics(self):
+        return self._message_router.logged_metrics
