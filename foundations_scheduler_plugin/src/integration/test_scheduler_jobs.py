@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 
 from foundations_spec import *
 from foundations import create_stage
+import foundations_ssh
 
 class TestSchedulerJobs(Spec):
     
