@@ -12,14 +12,19 @@ class MetricLogMiddleware(BasicStageMiddleware):
 
     class MetricsLogger(object):
 
-        def push_metric(self, message_router, project_name, job_id, key, value):
+        def __init__(self, message_router, project_name, job_id):
+            self._message_router = message_router
+            self._project_name = project_name
+            self._job_id = job_id
+
+        def push_metric(self, key, value):
             message = {
-                'project_name': project_name, 
-                'job_id': job_id, 
+                'project_name': self._project_name, 
+                'job_id': self._job_id, 
                 'key': key, 'value': value
             }
 
-            message_router.push_message('job_metrics', message)
+            self._message_router.push_message('job_metrics', message)
 
     class Producer(object):
 
@@ -33,8 +38,8 @@ class MetricLogMiddleware(BasicStageMiddleware):
                 self._push_message_to_channel(metric['key'], metric['value'])
 
         def _push_message_to_channel(self, key, value):
-            metrics_logger = MetricLogMiddleware.MetricsLogger()
-            metrics_logger.push_metric(self._message_router, self._project_name(), self._job_id(), key, value)
+            metrics_logger = MetricLogMiddleware.MetricsLogger(self._message_router, self._project_name(), self._job_id())
+            metrics_logger.push_metric(key, value)
 
         def _project_name(self):
             return self._pipeline_context.provenance.project_name
