@@ -45,6 +45,23 @@ class TestGlobalMetricLogger(Spec):
             'value': self.fake_metric_value
         }
 
+    @let
+    def fake_metric_name_2(self):
+        return self.faker.word()
+
+    @let
+    def fake_metric_value_2(self):
+        return self.faker.random.random()
+
+    @let
+    def message_2(self):
+        return {
+            'project_name': self.fake_project_name, 
+            'job_id': self.fake_job_id, 
+            'key': self.fake_metric_name_2, 
+            'value': self.fake_metric_value_2
+        }
+
     def setUp(self):
         from foundations_internal.pipeline_context import PipelineContext
 
@@ -75,6 +92,17 @@ class TestGlobalMetricLogger(Spec):
         self._pipeline_context.file_name = self.fake_job_id
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.mock_logger.warning.assert_not_called()
+
+    def test_log_metric_can_log_multiple_messages(self):
+        self._pipeline_context.file_name = self.fake_job_id
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self._logger.log_metric(self.fake_metric_name_2, self.fake_metric_value_2)
+        self.assertEqual([{'job_metrics': self.message}, {'job_metrics': self.message_2}], self._logged_metrics())
+
+    def test_log_metric_does_not_log_anything_if_not_in_running_job(self):
+        self._pipeline_context.file_name = None
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self.assertEqual([], self._logged_metrics())
 
     def _logged_metrics(self):
         return self._message_router.logged_metrics
