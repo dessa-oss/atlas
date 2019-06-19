@@ -145,10 +145,16 @@ pipeline {
             steps {
                 script {
                     def last_build = currentBuild.getPreviousBuild()
-                    if(last_build.result == "FAILURE") {
-                        def current_time = System.currentTimeMillis()
-                        def time_to_recovery = current_time - currentBuild.getPreviousBuild().getTimeInMillis() 
-
+                    def last_failed_build
+                    def current_time = System.currentTimeMillis()
+                    
+                    while(last_build != null && last_build.result == "FAILURE") {
+                        last_failed_build = last_build
+                        last_build = last_build.getPreviousBuild()
+                    }
+                    
+                    if(last_failed_build != null) {
+                        time_to_recovery = current_time - last_failed_build.getTimeInMillis() 
                         customMetrics["time_to_recovery"] = time_to_recovery
                     }
                 }
