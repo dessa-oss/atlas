@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.staging.test_staging import TestStaging
-from test.staging.test_cached_stage_result import TestCachedStageResult
+def cached_stage_result(stage):
+    stage.enable_caching()
+    return stage.run_same_process()
