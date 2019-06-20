@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from test.staging.test_staging import TestStaging
 from test.staging.test_cached_stage_result import TestCachedStageResult
+from test.staging.test_cache import TestCache

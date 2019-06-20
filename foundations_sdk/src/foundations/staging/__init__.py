@@ -45,3 +45,6 @@ def create_stage(function):
     """
 
     return Stage(function)
+
+def cache(function):
+    pass
