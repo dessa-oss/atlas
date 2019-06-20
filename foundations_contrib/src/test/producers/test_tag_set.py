@@ -26,22 +26,22 @@ class TestTagSet(Spec):
         return self.faker.uuid4()
 
     @let
-    def metric_key(self):
+    def tag_name(self):
         return self.faker.word()
 
     @let
-    def metric_value(self):
+    def tag_value(self):
         return self.faker.random.random()
 
     @let
     def message(self):
         return {
             'job_id': self.job_id, 
-            'key': self.metric_key, 
-            'value': self.metric_value
+            'key': self.tag_name, 
+            'value': self.tag_value
         }
     
     def test_push_message_pushes_message_to_message_router(self):
-        tag_set_producer = TagSet(self.message_router, self.job_id, self.metric_key, self.metric_value)
+        tag_set_producer = TagSet(self.message_router, self.job_id, self.tag_name, self.tag_value)
         tag_set_producer.push_message()
         self.assertEqual({'job_tag': self.message}, self.message_router.set_tag)
