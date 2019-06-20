@@ -47,4 +47,7 @@ def create_stage(function):
     return Stage(function)
 
 def cache(function):
-    pass
+    def _callback(*args, **kwargs):
+        stage = foundations_stage(function, *args, **kwargs)
+        return cached_stage_result(stage)
+    return _callback
