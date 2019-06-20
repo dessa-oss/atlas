@@ -43,7 +43,6 @@ class TestLogMetricOutsideStage(Spec):
 
     def test_log_metric_in_job_logs_metric_and_runs_successfully(self):
         import os
-        import uuid
         import subprocess
 
         subprocess_environment = os.environ.copy()

@@ -8,9 +8,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec.helpers import *
 from foundations_spec.helpers.spec import Spec
 import foundations
+import foundations.prototype
 
 @skip
 class TestAnnotateWithoutStage(Spec):
+
+    @let
+    def annotations(self):
+        return {
+            'model type': 'simple mlp',
+            'data set': 'out of time',
+            'what I was doing,': 'drinking tea'
+        }
 
     @set_up
     def set_up(self):
@@ -27,7 +36,7 @@ class TestAnnotateWithoutStage(Spec):
         pipeline_context.file_name = self._job_id
         queue_job = QueueJob(message_router, pipeline_context)
         queue_job.push_message()
-    
+
     def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):
         import subprocess
 
@@ -42,27 +51,48 @@ class TestAnnotateWithoutStage(Spec):
         assert_frame_equal(metrics_before_script_run, metrics_after_script_run)
 
     def test_set_tag_in_job_sets_tag_and_runs_successfully(self):
-        import os
-        import uuid
-        import subprocess
-
-        subprocess_environment = os.environ.copy()
-        subprocess_environment['ACCEPTANCE_TEST_JOB_ID'] = self._job_id
-
-        completed_process = subprocess.run(['python', 'acceptance/fixtures/in_job_set_annotation_script.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=subprocess_environment)
+        completed_process = self._run_job_with_annotations()
         process_output = completed_process.stdout.decode()
 
         self.assertEqual(0, completed_process.returncode)
         self.assertNotIn('Cannot set tag if not deployed with foundations deploy', process_output)
         self.assertIn('Hello World!', process_output)
+        self._assert_tags_set()
 
-        tag = self._get_tag(self._job_id, 'model type')
-        self.assertEqual('simple mlp', tag)
+    def test_can_retrieve_metrics_in_old_format(self):
+        self._run_job_with_annotations()
+
+        metrics = foundations.get_metrics_for_all_jobs('default')
+        job_metrics = metrics[metrics['job_id'] == self.job_id].loc[[0]]
+
+        prototype_metrics = self._get_metrics_for_all_jobs()
+        prototype_metrics = prototype_metrics[list(job_metrics)]
+        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self.job_id].loc[[0]]
+
+        assert_frame_equal(job_metrics, prototype_job_metrics)
+
+    def _run_job_with_annotations(self):
+        import os
+        import subprocess
+
+        subprocess_environment = os.environ.copy()
+        subprocess_environment['ACCEPTANCE_TEST_JOB_ID'] = self._job_id
+
+        return subprocess.run(['python', 'acceptance/fixtures/in_job_set_annotation_script.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=subprocess_environment)
+
+    def _assert_tags_set(self):
+        metrics_for_job = self._get_metrics_for_job()
+
+        for tag_name, expected_tag_value in self.annotations.items():
+            actual_tag_value = self._get_tag(metrics_for_job, tag_name)
+            self.assertEqual(expected_tag_value, actual_tag_value)
 
     def _get_metrics_for_all_jobs(self):
-        return foundations.get_metrics_for_all_jobs('default')
+        return foundations.prototype.get_metrics_for_all_jobs('default')
 
-    def _get_tag(self, job_id, tag):
+    def _get_metrics_for_job(self):
         all_metrics = self._get_metrics_for_all_jobs()
-        metrics_for_job = all_metrics.loc[all_metrics['job_id'] == job_id].iloc[0]
+        return all_metrics.loc[all_metrics['job_id'] == self._job_id].iloc[0]
+
+    def _get_tag(self, metrics_for_job, tag):
         return metrics_for_job['tag_{}'.format(tag)]

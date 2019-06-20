@@ -9,4 +9,6 @@ import foundations
 import foundations.prototype
 
 foundations.prototype.set_tag('model type', 'simple mlp')
+foundations.prototype.set_tag('data set', 'out of time')
+foundations.prototype.set_tag('what I was doing,', 'drinking tea')
 print('Hello World!')
