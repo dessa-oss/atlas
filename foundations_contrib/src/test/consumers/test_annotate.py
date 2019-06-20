@@ -20,7 +20,7 @@ class TestAnnotate(Spec):
 
     @let
     def consumer(self):
-        from foundations_contrib.consumers.jobs.queued.annotate import Annotate
+        from foundations_contrib.consumers.annotate import Annotate
         return Annotate(self.redis)
 
     @let

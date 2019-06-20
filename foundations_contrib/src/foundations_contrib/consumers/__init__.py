@@ -19,6 +19,11 @@ def _add_consumers_for_stage_log_middleware(redis):
     _add_listener(JobMetricConsumer(redis), 'job_metrics')
     _add_listener(JobMetricNameConsumer(redis), 'job_metrics')
 
+def _add_consumers_for_job_annotations(redis):
+    from foundations_contrib.consumers.annotate import Annotate
+
+    annotation_consumer = Annotate(redis)
+    _add_listener(annotation_consumer, 'queue_job')
 
 def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
@@ -34,7 +39,6 @@ def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.project_tracker import ProjectTracker
     from foundations_contrib.consumers.jobs.queued.stage_time import StageTime
     from foundations_contrib.consumers.jobs.queued.job_notifier import JobNotifier
-    from foundations_contrib.consumers.jobs.queued.annotate import Annotate
     import foundations_internal.foundations_serializer as serializer
 
     import json
@@ -51,7 +55,6 @@ def _add_consumers_for_queue_job(redis):
     _add_listener(RunData(redis, json), 'queue_job')
     _add_listener(SetUser(redis), 'queue_job')
     _add_listener(ProjectTracker(redis), 'queue_job')
-    _add_listener(Annotate(redis), 'queue_job')
     _add_listener(JobNotifier(_job_notifier), 'queue_job')
 
 
@@ -104,6 +107,7 @@ def _create_redis_instance_and_add_consumers():
     _add_consumers_for_run_job(redis_connection)
     _add_consumers_for_complete_job(redis_connection)
     _add_consumers_for_fail_job(redis_connection)
+    _add_consumers_for_job_annotations(redis_connection)
 
 
 _create_redis_instance_and_add_consumers()

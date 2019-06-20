@@ -113,7 +113,7 @@ class TestPrototypeProjects(Spec):
         assert_frame_equal(self.metrics, metric_subset)
 
     def test_returns_stored_annotations(self):
-        from foundations_contrib.consumers.jobs.queued.annotate import Annotate
+        from foundations_contrib.consumers.annotate import Annotate
         
         Annotate(self.redis).call({'job_id': self.job_id, 'annotations': self.annotations}, None, {})
         
@@ -124,7 +124,7 @@ class TestPrototypeProjects(Spec):
         assert_frame_equal(self.annotations_data_frame, job_annotations)
 
     def test_returns_stored_annotations_multiple_annotations(self):
-        from foundations_contrib.consumers.jobs.queued.annotate import Annotate
+        from foundations_contrib.consumers.annotate import Annotate
         import pandas
         
         annotator = Annotate(self.redis)
