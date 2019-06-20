@@ -1,0 +1,68 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+from foundations_spec.helpers import *
+from foundations_spec.helpers.spec import Spec
+import foundations
+
+@skip
+class TestAnnotateWithoutStage(Spec):
+
+    @set_up
+    def set_up(self):
+        from scheduler_acceptance.cleanup import cleanup
+        from uuid import uuid4
+        from foundations_contrib.producers.jobs.queue_job import QueueJob
+        from foundations_contrib.global_state import message_router, current_foundations_context
+
+        cleanup()
+
+        foundations.set_project_name('default')
+        self._job_id = str(uuid4())
+        pipeline_context = current_foundations_context().pipeline_context()
+        pipeline_context.file_name = self._job_id
+        queue_job = QueueJob(message_router, pipeline_context)
+        queue_job.push_message()
+    
+    def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):
+        import subprocess
+
+        metrics_before_script_run = self._get_metrics_for_all_jobs()
+        completed_process = subprocess.run(['python', 'acceptance/fixtures/set_annotation_script.py'], stdout=subprocess.PIPE)
+        process_output = completed_process.stdout.decode()
+        metrics_after_script_run = self._get_metrics_for_all_jobs()
+
+        self.assertEqual(0, completed_process.returncode)
+        self.assertIn('Cannot set tag if not deployed with foundations deploy', process_output)
+        self.assertIn('Hello World!', process_output)
+        assert_frame_equal(metrics_before_script_run, metrics_after_script_run)
+
+    def test_set_tag_in_job_sets_tag_and_runs_successfully(self):
+        import os
+        import uuid
+        import subprocess
+
+        subprocess_environment = os.environ.copy()
+        subprocess_environment['ACCEPTANCE_TEST_JOB_ID'] = self._job_id
+
+        completed_process = subprocess.run(['python', 'acceptance/fixtures/in_job_set_annotation_script.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=subprocess_environment)
+        process_output = completed_process.stdout.decode()
+
+        self.assertEqual(0, completed_process.returncode)
+        self.assertNotIn('Cannot set tag if not deployed with foundations deploy', process_output)
+        self.assertIn('Hello World!', process_output)
+
+        tag = self._get_tag(self._job_id, 'model type')
+        self.assertEqual('simple mlp', tag)
+
+    def _get_metrics_for_all_jobs(self):
+        return foundations.get_metrics_for_all_jobs('default')
+
+    def _get_tag(self, job_id, tag):
+        all_metrics = self._get_metrics_for_all_jobs()
+        metrics_for_job = all_metrics.loc[all_metrics['job_id'] == job_id].iloc[0]
+        return metrics_for_job['tag_{}'.format(tag)]
