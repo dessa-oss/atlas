@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.global_state import foundations_context
 from foundations.staging.cached_stage_result import *
 
 class Stage(object):
@@ -13,7 +12,7 @@ class Stage(object):
         self._function = function
 
     def __call__(self, *args, **kwargs):
-        return foundations_context.pipeline().stage(self._function, *args, **kwargs)
+        return foundations_stage(self._function, *args, **kwargs)
 
 def create_stage(function):
     """
