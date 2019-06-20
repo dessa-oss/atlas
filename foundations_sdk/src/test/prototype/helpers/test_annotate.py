@@ -14,6 +14,7 @@ from uuid import uuid4
 
 from foundations.prototype.helpers.annotate import *
 
+@skip
 class TestAnnotate(Spec):
     
     @let_now

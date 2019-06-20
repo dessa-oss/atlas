@@ -124,8 +124,10 @@ class TestPrototypeProjects(Spec):
 
     def test_returns_stored_annotations(self):
         from foundations_contrib.consumers.annotate import Annotate
+
+        annotator = Annotate(self.redis)
         
-        Annotate(self.redis).call({'job_id': self.job_id, 'annotations': self.annotations}, None, {})
+        self._annotate_jobs(annotator, self.annotations, self.job_id)
         
         metrics = get_metrics_for_all_jobs(self.project_name)
         job_metrics = metrics[metrics['job_id'] == self.job_id]
@@ -138,8 +140,9 @@ class TestPrototypeProjects(Spec):
         import pandas
         
         annotator = Annotate(self.redis)
-        annotator.call({'job_id': self.job_id, 'annotations': self.annotations}, None, {})
-        annotator.call({'job_id': self.job_id_two, 'annotations': self.annotations_two}, None, {})
+
+        self._annotate_jobs(annotator, self.annotations, self.job_id)
+        self._annotate_jobs(annotator, self.annotations_two, self.job_id_two)
         
         metrics = get_metrics_for_all_jobs(self.project_name)
         job_annotations = metrics[list(self.annotations_data_frame)]
@@ -164,4 +167,8 @@ class TestPrototypeProjects(Spec):
     def test_get_metrics_for_all_jobs_is_global(self):
         import foundations.prototype
         self.assertEqual(get_metrics_for_all_jobs, foundations.prototype.get_metrics_for_all_jobs)
+
+    def _annotate_jobs(self, annotator, annotations, job_id):
+        for key, value in annotations.items():
+            annotator.call({'job_id': job_id, 'key': key, 'value': value}, None, {})
 

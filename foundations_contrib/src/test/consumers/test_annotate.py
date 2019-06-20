@@ -21,30 +21,32 @@ class TestAnnotate(Spec):
     @let
     def consumer(self):
         from foundations_contrib.consumers.annotate import Annotate
+        self.redis.flushall()
         return Annotate(self.redis)
 
     @let
     def job_id(self):
         from uuid import uuid4
-        return uuid4()
+        return str(uuid4())
 
     @let
-    def annotations(self):
-        return {self.faker.name(): self.faker.sentence() for _ in range(self.annotation_count)}
+    def key(self):
+        return self.faker.word()
 
     @let
-    def annotation_count(self):
-        import random
-        return random.randint(2, 10)
+    def value(self):
+        return self.faker.sentence()
 
-    def test_call_supports_empty_annotations(self):
-        self.consumer.call({'job_id': self.job_id, 'annotations': {}}, None, None)
+    @let
+    def key_two(self):
+        return self.faker.word()
+
+    @let
+    def value_two(self):
+        return self.faker.sentence()
+
+    def test_call_with_key_value_pair_gets_saved_to_redis(self):
+        self.consumer.call({'job_id': self.job_id, 'key': self.key, 'value': self.value}, None, None)
         result_annotations = self.redis.hgetall('jobs:{}:annotations'.format(self.job_id))
         decoded_annotations = {key.decode(): value.decode() for key, value in result_annotations.items()}
-        self.assertEqual({}, decoded_annotations)
-    
-    def test_call_saves_annotations(self):
-        self.consumer.call({'job_id': self.job_id, 'annotations': self.annotations}, None, None)
-        result_annotations = self.redis.hgetall('jobs:{}:annotations'.format(self.job_id))
-        decoded_annotations = {key.decode(): value.decode() for key, value in result_annotations.items()}
-        self.assertEqual(self.annotations, decoded_annotations)
+        self.assertEqual({self.key: self.value}, decoded_annotations)
