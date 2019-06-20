@@ -13,6 +13,9 @@ class TestStagelessCaching(Spec):
 
     @set_up
     def set_up(self):
+        from acceptance.cleanup import cleanup
+
+        cleanup()
         current_foundations_context().pipeline_context().file_name = self.faker.uuid4()
 
     @tear_down
