@@ -31,8 +31,10 @@ class TestCache(Spec):
         self.mock_cached_stage_result.return_when(self.mock_cached_value, self.mock_stage)
         self.mock_foundations_stage.return_when(self.mock_stage, self.mock_function, *self.random_args, **self.random_kwargs)
 
-
     def test_creates_function_that_returns_cached_value(self):
         cached_function = cache(self.mock_function)
         self.assertEqual(self.mock_cached_value, cached_function(*self.random_args, **self.random_kwargs))
 
+    def test_global_cache_is_cache_function(self):
+        import foundations
+        self.assertEqual(cache, foundations.cache)

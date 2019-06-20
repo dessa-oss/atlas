@@ -36,7 +36,7 @@ from foundations_contrib.change_directory import ChangeDirectory
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 from foundations.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
-from foundations.staging import create_stage
+from foundations.staging import create_stage, cache
 from foundations.projects import set_project_name, get_metrics_for_all_jobs
 from foundations_internal.scheduler import Scheduler
 from foundations_internal.versioning import __version__
