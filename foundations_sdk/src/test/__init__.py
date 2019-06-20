@@ -5,10 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-
+from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher
 from test.test_global_import_serialize import TestGlobalImportSerialization
-from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_state_changer import TestStateChanger
 from test.test_staging import TestStaging
 from test.test_scheduler_job_information import TestSchedulerJobInformation

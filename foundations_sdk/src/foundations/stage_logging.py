@@ -5,11 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_contrib.null_stage_logger import NullStageLogger
 from foundations_internal.stage_logging_context import StageLoggingContext
+from foundations_contrib.global_metric_logger import global_metric_logger_for_job
 
-stage_logging_context = StageLoggingContext(NullStageLogger())
-
+stage_logging_context = StageLoggingContext(global_metric_logger_for_job())
 
 def log_metric(key, value):
     """

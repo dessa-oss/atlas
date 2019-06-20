@@ -5,13 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import patch
+from foundations_spec import *
 
-from foundations.stage_logging import log_metric
-
-
-class TestDefaultStageLogging(unittest.TestCase):
+class TestDefaultStageLogging(Spec):
 
     class MockLoggingContext(object):
 
@@ -21,35 +17,38 @@ class TestDefaultStageLogging(unittest.TestCase):
         def log_metric(self, key, value):
             self.metric = {key: value}
 
+    @let
+    def fake_metric_name(self):
+        return self.faker.word()
+
+    @let
+    def fake_metric_value(self):
+        return self.faker.random.random()
+
+    def test_stage_logging_context_defaults_to_using_global_metric_logger(self):
+        mock_log_metric = self.patch('foundations_contrib.global_metric_logger.GlobalMetricLogger.log_metric')
+        from foundations.stage_logging import stage_logging_context
+
+        stage_logging_context.log_metric(self.fake_metric_name, self.fake_metric_value)
+        mock_log_metric.assert_called_with(self.fake_metric_name, self.fake_metric_value)
+
     def test_context_is_stage_logging_context(self):
         from foundations.stage_logging import stage_logging_context
         from foundations_internal.stage_logging_context import StageLoggingContext
 
         self.assertTrue(isinstance(stage_logging_context, StageLoggingContext))
 
-    @patch('foundations_contrib.null_stage_logger.NullStageLogger.log_metric')
-    def test_context_log_metric_uses_null_implementation(self, mock):
-        from foundations.stage_logging import stage_logging_context
-
-        stage_logging_context.log_metric('loss', 9.55)
-        mock.assert_called_with('loss', 9.55)
-
-    @patch('foundations_contrib.null_stage_logger.NullStageLogger.log_metric')
-    def test_context_log_metric_uses_null_implementation_different_metric(self, mock):
-        from foundations.stage_logging import stage_logging_context
-
-        stage_logging_context.log_metric('gain', 999999.55)
-        mock.assert_called_with('gain', 999999.55)
-
-    @patch('foundations.stage_logging.stage_logging_context', MockLoggingContext())
     def test_log_metric_forwards_to_context(self):
+        self.patch('foundations.stage_logging.stage_logging_context', self.MockLoggingContext())
+        from foundations import log_metric
         from foundations.stage_logging import stage_logging_context
 
         log_metric('loss', 9.44)
         self.assertEqual({'loss': 9.44}, stage_logging_context.metric)
 
-    @patch('foundations.stage_logging.stage_logging_context', MockLoggingContext())
     def test_log_metric_forwards_to_context_different_metric(self):
+        self.patch('foundations.stage_logging.stage_logging_context', self.MockLoggingContext())
+        from foundations import log_metric
         from foundations.stage_logging import stage_logging_context
 
         log_metric('rocauc', 343434)
@@ -57,4 +56,6 @@ class TestDefaultStageLogging(unittest.TestCase):
 
     def test_global_log_metric_uses_log_metric(self):
         import foundations
+        from foundations.stage_logging import log_metric
+
         self.assertEqual(foundations.log_metric, log_metric)
