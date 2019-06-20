@@ -33,3 +33,9 @@ class GlobalMetricLogger(object):
 
     def _job_id(self):
         return self._pipeline_context.file_name
+
+def global_metric_logger_for_job():
+    from foundations_contrib.global_state import current_foundations_context, message_router
+
+    pipeline_context = current_foundations_context().pipeline_context()
+    return GlobalMetricLogger(message_router, pipeline_context)

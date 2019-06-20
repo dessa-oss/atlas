@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations_contrib.global_metric_logger import GlobalMetricLogger
+from foundations_contrib.global_metric_logger import GlobalMetricLogger, global_metric_logger_for_job
 
 class TestGlobalMetricLogger(Spec):
 
@@ -103,6 +103,16 @@ class TestGlobalMetricLogger(Spec):
         self._pipeline_context.file_name = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.assertEqual([], self._logged_metrics())
+
+    def test_global_metric_logger_for_job_constructs_global_metric_logger_with_current_message_router_and_current_pipeline_context(self):
+        from foundations_contrib.global_state import current_foundations_context, message_router
+        
+        pipeline_context = current_foundations_context().pipeline_context()
+
+        mock_global_metric_logger_class = self.patch('foundations_contrib.global_metric_logger.GlobalMetricLogger', ConditionalReturn())
+        mock_global_metric_logger = Mock()
+        mock_global_metric_logger_class.return_when(mock_global_metric_logger, message_router, pipeline_context)
+        self.assertEqual(mock_global_metric_logger, global_metric_logger_for_job())
 
     def _logged_metrics(self):
         return self._message_router.logged_metrics
