@@ -82,9 +82,20 @@ def set_tag(key, value):
         model.run()
         ```
     """
-    from foundations_contrib.global_state import foundations_context, log_manager
+    from foundations_contrib.global_state import log_manager, current_foundations_context, message_router
+    from foundations_contrib.producers.tag_set import TagSet
 
-    annotations = foundations_context.pipeline_context().provenance.annotations
-    if key in annotations:
-        log_manager.get_logger(__name__).warn('Tag `{}` updated to `{}`'.format(key, value))
-    annotations[key] = value
+    pipeline_context = current_foundations_context().pipeline_context()
+
+    if _job_running(pipeline_context):
+        tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
+        tag_set_producer.push_message()
+
+    logger = log_manager.get_logger(__name__)
+    logger.warning('Cannot set tag if not deployed with foundations deploy')
+
+def _job_running(pipeline_context):
+    try:
+        return pipeline_context.file_name is not None
+    except:
+        return False

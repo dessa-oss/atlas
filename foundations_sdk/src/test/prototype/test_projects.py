@@ -16,6 +16,9 @@ from foundations.prototype.projects import *
 
 class TestPrototypeProjects(Spec):
 
+    foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+
     @let
     def provenance_annotations(self):
         return {}
@@ -103,9 +106,16 @@ class TestPrototypeProjects(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import foundations_context
+        from foundations_internal.pipeline_context import PipelineContext
 
-        foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
+        self._pipeline_context = PipelineContext()
+        self._pipeline_context.file_name = None
+        self._pipeline_context.provenance.project_name = self.project_name
+
+        self.foundations_context.pipeline_context.return_value = self._pipeline_context
+
+        self.foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
+        self.redis.flushall()
 
     def test_returns_metrics_data_frame(self):
         metrics = get_metrics_for_all_jobs(self.project_name)
@@ -137,14 +147,14 @@ class TestPrototypeProjects(Spec):
         expected_data_frame = pandas.concat([self.annotations_data_frame, self.annotations_data_frame_two], ignore_index=True)
         assert_frame_equal(expected_data_frame, job_annotations)
 
-    def test_set_tag_stores_tag_in_provenance(self):
+    def test_set_tag_when_not_in_job_gives_warning(self):
         set_tag(self.random_tag, self.random_tag_value)
-        self.assertEqual({self.random_tag: self.random_tag_value}, self.provenance_annotations)
+        self.mock_logger.warning.assert_called_with('Cannot set tag if not deployed with foundations deploy')
 
-    def test_set_tag_logs_warning_when_set_twice(self):
+    def test_set_tag_when_in_job_sets_tag(self):
+        self._pipeline_context.file_name = self.job_id
         set_tag(self.random_tag, self.random_tag_value)
-        set_tag(self.random_tag, self.random_tag_value)
-        self.mock_logger.warn.assert_called_with('Tag `{}` updated to `{}`'.format(self.random_tag, self.random_tag_value))
+        self.message_router.push_message.assert_called_with('job_tag', {'job_id': self.job_id, 'key': self.random_tag, 'value': self.random_tag_value})
         
     def test_get_metrics_for_all_jobs_is_global(self):
         import foundations.prototype
