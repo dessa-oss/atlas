@@ -39,6 +39,14 @@ def let_patch_mock(name, *args, **kwargs):
     
     return let_now(_callback)
 
+def let_patch_mock_with_conditional_return(name):
+    def _callback(self):
+        from foundations_spec.helpers.conditional_return import ConditionalReturn
+        return self.patch(name, ConditionalReturn())
+    
+    return let_now(_callback)
+
+
 def let_patch_instance(name):
 
     def _callback(self):

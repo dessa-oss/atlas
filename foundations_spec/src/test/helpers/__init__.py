@@ -15,3 +15,4 @@ from test.helpers.test_let_mixin_multi_inheritence import TestLetMixinMultiInher
 from test.helpers.test_spec import TestSpec
 from test.helpers.test_set_up_inheritence import TestSetUpInheritence
 from test.helpers.test_tear_down_inheritence import TestTearDownInheritence
+from test.helpers.test_let_decorators import TestLetDecorators
