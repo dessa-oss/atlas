@@ -56,7 +56,7 @@ pipeline {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/testing") {
-                        sh "python -Wi -m unittest -v acceptance"
+                        sh "python -Wi -m unittest -f -v acceptance"
                     }
                 }
             }
@@ -65,7 +65,7 @@ pipeline {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/testing") {
-                        sh "python -Wi -m unittest -v remote_acceptance"
+                        sh "python -Wi -m unittest -f -v remote_acceptance"
                     }
                 }
             }
@@ -74,7 +74,7 @@ pipeline {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/testing") {
-                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -v scheduler_acceptance'
+                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                     }
                 }
             }
@@ -83,7 +83,7 @@ pipeline {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                        sh "python -Wi -m unittest -v acceptance"
+                        sh "python -Wi -m unittest -f -v acceptance"
                     }
                 }
             }
