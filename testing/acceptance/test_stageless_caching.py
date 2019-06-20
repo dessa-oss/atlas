@@ -7,10 +7,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import foundations
+from foundations_contrib.global_state import current_foundations_context
 
 class TestStagelessCaching(Spec):
 
-    @skip
+    @set_up
+    def set_up(self):
+        current_foundations_context().pipeline_context().file_name = self.faker.uuid4()
+
+    @tear_down
+    def tear_down(self):
+        current_foundations_context().pipeline_context().file_name = None
+
     def test_function_value_is_cached_with_caching_enabled(self):
         @foundations.cache
         def my_function():
@@ -18,7 +26,6 @@ class TestStagelessCaching(Spec):
         
         self.assertEqual(my_function(), my_function())
 
-    @skip
     def test_function_value_is_returned_with_caching_enabled(self):
         @foundations.cache
         def my_function():
