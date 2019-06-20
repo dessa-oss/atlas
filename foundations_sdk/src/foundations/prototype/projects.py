@@ -90,9 +90,9 @@ def set_tag(key, value):
     if _job_running(pipeline_context):
         tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
         tag_set_producer.push_message()
-
-    logger = log_manager.get_logger(__name__)
-    logger.warning('Cannot set tag if not deployed with foundations deploy')
+    else:
+        logger = log_manager.get_logger(__name__)
+        logger.warning('Cannot set tag if not deployed with foundations deploy')
 
 def _job_running(pipeline_context):
     try:

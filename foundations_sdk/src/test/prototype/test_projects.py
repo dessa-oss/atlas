@@ -155,6 +155,16 @@ class TestPrototypeProjects(Spec):
         self._pipeline_context.file_name = self.job_id
         set_tag(self.random_tag, self.random_tag_value)
         self.message_router.push_message.assert_called_with('job_tag', {'job_id': self.job_id, 'key': self.random_tag, 'value': self.random_tag_value})
+
+    def test_set_tag_does_not_give_warning_when_in_job(self):
+        self._pipeline_context.file_name = self.job_id
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warning.assert_not_called()
+
+    # def test_set_tag_logs_warning_when_set_twice(self):
+    #     set_tag(self.random_tag, self.random_tag_value)
+    #     set_tag(self.random_tag, self.random_tag_value)
+    #     self.mock_logger.warn.assert_called_with('Tag `{}` updated to `{}`'.format(self.random_tag, self.random_tag_value))
         
     def test_get_metrics_for_all_jobs_is_global(self):
         import foundations.prototype
