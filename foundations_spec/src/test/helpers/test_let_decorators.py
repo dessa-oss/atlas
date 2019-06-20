@@ -12,8 +12,11 @@ from foundations_spec.helpers.conditional_return import ConditionalReturn
 
 class TestLetDecorators(unittest.TestCase):
 
+    class MockSpec(Spec):
+        pass
+
     def setUp(self):
-        self._spec = Spec()
+        self._spec = self.MockSpec()
         self._spec.setUpClass()
         self._spec.setUp()
 
