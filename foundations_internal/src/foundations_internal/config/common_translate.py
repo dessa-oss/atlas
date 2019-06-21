@@ -36,6 +36,7 @@ def get_translate_implementation(get_translator_config):
             'log_level': _log_level(config),
             'shell_command': find_bash(),
             'obfuscate_foundations': _obfuscate_foundations(config),
+            'enable_stages': _enable_stages(config),
             'run_script_environment': {
                 'log_level': _log_level(config)
             }
@@ -60,3 +61,6 @@ def _obfuscate_foundations(config):
 
 def _artifact_path(config):
     return config['results_config'].get('artifact_path', 'results')
+
+def _enable_stages(config):
+    return config.get('enable_stages', True)

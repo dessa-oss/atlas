@@ -103,6 +103,11 @@ class ConfigTranslates(object):
         result_config = self.translator.translate(self._configuration)
         self.assertFalse(result_config['obfuscate_foundations'])
     
+    def test_returns_enable_stages_true_if_set_true(self):
+        self._configuration['enable_stages'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertTrue(result_config['enable_stages'])
+    
     def test_returns_run_script_environment_with_log_level_same_as_local_log_level(self):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
