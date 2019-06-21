@@ -23,7 +23,7 @@ def _add_consumers_for_job_annotations(redis):
     from foundations_contrib.consumers.annotate import Annotate
 
     annotation_consumer = Annotate(redis)
-    _add_listener(annotation_consumer, 'queue_job')
+    _add_listener(annotation_consumer, 'job_tags')
 
 def _add_consumers_for_queue_job(redis):
     from foundations_contrib.consumers.jobs.queued.creation_time import CreationTime
