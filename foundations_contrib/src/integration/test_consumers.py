@@ -40,7 +40,9 @@ class TestConsumers(unittest.TestCase):
 
         self._message_router = message_router
 
+        self._check_slack_tokens_set_properly()
         self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
+
         self._testing_channel_id = config_manager['job_notification_channel_id']
 
     def test_queue_job_consumers(self):
@@ -285,3 +287,13 @@ class TestConsumers(unittest.TestCase):
             if self._job_id in message:
                 return message
         return None
+
+    def _check_slack_tokens_set_properly(self):
+        self._check_environment_variable_set('FOUNDATIONS_SLACK_TOKEN')
+        self._check_environment_variable_set('FOUNDATIONS_TESTING_SLACK_TOKEN')
+
+    def _check_environment_variable_set(self, environment_variable_name):
+        import os
+
+        if environment_variable_name not in os.environ:
+            self.fail('{} environment variable not set'.format(environment_variable_name))
