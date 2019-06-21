@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 
-foundations.set_project_name('stageless-project')
+foundations.set_project_name('stageless-projects')
 
 def print_words():
     print('Hello World!')

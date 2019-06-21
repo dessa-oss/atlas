@@ -7,4 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 
-foundations.get_metrics_for_all_jobs('stageless-project')
+foundations.get_metrics_for_all_jobs('stageless-projects')

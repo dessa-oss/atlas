@@ -9,12 +9,12 @@ from foundations_spec import *
 
 class TestLocalDeployWithoutStages(Spec):
 
-    @skip('Not implemented yet')
+    # @skip('Not implemented yet')
     def test_stageless_project_deploys_succesfully(self):
         import subprocess
 
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd stageless_local_deployment/fixtures/stageless_project && python -m foundations deploy driver.py --env=local-stageless"])
-        result_exit_code = subprocess.call(["/bin/bash", "-c", "cd stageless_local_deployment/fixtures/stageless_project && python -m foundations deploy results.py --env=local-stageless"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd stageless_local_deployment/fixtures/stageless_project && python -m foundations deploy driver.py --env=local"])
+        result_exit_code = subprocess.call(["/bin/bash", "-c", "cd stageless_local_deployment/fixtures/stageless_project && python -m foundations deploy results.py --env=local"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
         self.assertEqual(result_exit_code, 0)
