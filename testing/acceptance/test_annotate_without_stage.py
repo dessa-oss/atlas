@@ -10,7 +10,6 @@ from foundations_spec.helpers.spec import Spec
 import foundations
 import foundations.prototype
 
-@skip
 class TestAnnotateWithoutStage(Spec):
 
     @let
@@ -37,8 +36,10 @@ class TestAnnotateWithoutStage(Spec):
         queue_job = QueueJob(message_router, pipeline_context)
         queue_job.push_message()
 
+    @skip
     def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):
         import subprocess
+        from pandas.testing import assert_frame_equal
 
         metrics_before_script_run = self._get_metrics_for_all_jobs()
         completed_process = subprocess.run(['python', 'acceptance/fixtures/set_annotation_script.py'], stdout=subprocess.PIPE)
@@ -60,14 +61,16 @@ class TestAnnotateWithoutStage(Spec):
         self._assert_tags_set()
 
     def test_can_retrieve_metrics_in_old_format(self):
+        from pandas.testing import assert_frame_equal
+
         self._run_job_with_annotations()
 
         metrics = foundations.get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == self.job_id].loc[[0]]
+        job_metrics = metrics[metrics['job_id'] == self._job_id].loc[[0]]
 
         prototype_metrics = self._get_metrics_for_all_jobs()
         prototype_metrics = prototype_metrics[list(job_metrics)]
-        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self.job_id].loc[[0]]
+        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self._job_id].loc[[0]]
 
         assert_frame_equal(job_metrics, prototype_job_metrics)
 
