@@ -22,10 +22,10 @@ class TestAnnotateWithoutStage(Spec):
 
     @set_up
     def set_up(self):
-        from scheduler_acceptance.cleanup import cleanup
         from uuid import uuid4
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from foundations_contrib.global_state import message_router, current_foundations_context
+        from acceptance.cleanup import cleanup
 
         cleanup()
 
