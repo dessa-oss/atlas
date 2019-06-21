@@ -43,12 +43,6 @@ class TestConsumers(unittest.TestCase):
         self._slack_client = SlackClient(os.environ['FOUNDATIONS_TESTING_SLACK_TOKEN'])
         self._testing_channel_id = config_manager['job_notification_channel_id']
 
-        self._annotations = {
-            'model type': 'simple mlp',
-            'data set': 'out of time',
-            'what I was doing': 'drinking tea'
-        }
-
     def test_queue_job_consumers(self):
         from foundations.utils import byte_string
         from foundations_contrib.models.project_listing import ProjectListing
@@ -69,7 +63,6 @@ class TestConsumers(unittest.TestCase):
             {'argument': expected_argument, 'stage_uuid': stage.uuid()}
         ]
         self._pipeline_context.provenance.job_run_data = expected_job_parameters
-        self._pipeline_context.provenance.annotations = self._annotations
     
         QueueJob(self._message_router, self._pipeline_context).push_message()
         current_time = time()
@@ -128,10 +121,6 @@ class TestConsumers(unittest.TestCase):
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
         self.assertIn('Queued', notification)
-
-        result_annotations = self._redis.hgetall('jobs:{}:annotations'.format(self._job_id))
-        decoded_annotations = {key.decode(): value.decode() for key, value in result_annotations.items()}
-        self.assertEqual(self._annotations, decoded_annotations)
 
     def _input_parameter_key(self, project_name):
         return 'projects:{}:input_parameter_names'.format(project_name)
