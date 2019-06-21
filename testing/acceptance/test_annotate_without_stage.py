@@ -36,7 +36,6 @@ class TestAnnotateWithoutStage(Spec):
         queue_job = QueueJob(message_router, pipeline_context)
         queue_job.push_message()
 
-    @skip
     def test_set_tag_outside_of_job_throws_warning_and_does_not_set_tag_but_still_executes(self):
         import subprocess
         from pandas.testing import assert_frame_equal
@@ -91,7 +90,14 @@ class TestAnnotateWithoutStage(Spec):
             self.assertEqual(expected_tag_value, actual_tag_value)
 
     def _get_metrics_for_all_jobs(self):
-        return foundations.prototype.get_metrics_for_all_jobs('default')
+        import pandas
+
+        try:
+            return foundations.prototype.get_metrics_for_all_jobs('default')
+        except KeyError as ex:
+            if 'job_id' in ex.args:
+                return pandas.DataFrame()
+            raise
 
     def _get_metrics_for_job(self):
         all_metrics = self._get_metrics_for_all_jobs()
