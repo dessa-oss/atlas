@@ -41,7 +41,7 @@ class TestBucketCacheBackendForConfig(Spec):
 
     @let
     def cache_name(self):
-        return self.faker.uri_path()
+        return self.faker.uri_path() + '/does_exist'
 
     @let
     def cache_object_name(self):
@@ -53,7 +53,7 @@ class TestBucketCacheBackendForConfig(Spec):
 
     @let
     def cache_does_not_exist_name(self):
-        return self.faker.uri_path()
+        return self.faker.uri_path() + '/does_not_exist'
 
     @let
     def cache_object_does_not_exist_name(self):
