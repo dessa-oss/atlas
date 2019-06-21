@@ -63,4 +63,4 @@ def _artifact_path(config):
     return config['results_config'].get('artifact_path', 'results')
 
 def _enable_stages(config):
-    return config.get('enable_stages', True)
+    return config.get('enable_stages', False)
