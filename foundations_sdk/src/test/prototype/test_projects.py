@@ -102,6 +102,7 @@ class TestPrototypeProjects(Spec):
 
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
         mock.return_when(self.mock_logger, 'foundations.prototype.projects')
+        mock.return_when(Mock(), 'foundations_contrib.consumers.annotate')
         return mock
 
     @set_up

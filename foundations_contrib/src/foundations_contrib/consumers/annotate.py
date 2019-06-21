@@ -13,8 +13,25 @@ class Annotate(object):
     """
 
     def __init__(self, redis):
+        from foundations_contrib.global_state import log_manager
+
+        self._logger = log_manager.get_logger(__name__)
         self._redis = redis
     
     def call(self, message, timestamp, metadata):
-        key = 'jobs:{}:annotations'.format(message['job_id'])
-        self._redis.hmset(key, {message['key']: message['value']})
+        job_id = message['job_id']
+        tag = message['key']
+        value = message['value']
+
+        job_annotations_key = 'jobs:{}:annotations'.format(job_id)
+        
+        if self._is_tag_set(job_annotations_key, tag):
+            self._logger.warning('Tag `{}` updated to `{}`'.format(tag, value))
+
+        self._redis.hmset(job_annotations_key, {tag: value})
+
+    def _is_tag_set(self, job_annotations_key, tag):
+        annotations = self._redis.hgetall(job_annotations_key)
+        decoded_annotations = {key.decode(): value.decode() for key, value in annotations.items()}
+
+        return tag in decoded_annotations
