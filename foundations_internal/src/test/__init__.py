@@ -30,7 +30,6 @@ from test.test_staged_meta_helper import TestStagedMetaHelper
 from test.test_stage_logging_context import TestStageLoggingContext
 from test.deployment import *
 from test.config import *
-from test.test_pipeline_context_wrapper import TestPipelineContextWrapper
 
 import sys
 
