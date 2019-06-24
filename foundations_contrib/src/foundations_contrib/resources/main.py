@@ -58,10 +58,37 @@ def execute_job(job, pipeline_context):
     except Exception as error:
         return fetch_error_information(pipeline_context, job), True
 
+def get_user_script_module_and_path(user_script):
+    import os
+    dirname = os.path.dirname(user_script)
+
+    if dirname:
+        module_name = os.path.basename(user_script)
+        path = os.path.join(os.getcwd(), dirname)
+    else:
+        path = os.getcwd()
+
+    module_name = module_name.split('.')[0]
+    return module_name, path
+
+
+def run_user_script(job):
+    import os
+    from importlib import import_module
+
+    path_to_script = os.environ['script_to_run']
+    module_name, path_to_add = get_user_script_module_and_path(path_to_script)
+    sys.path.append(path_to_add)
+    os.chdir(path_to_add)
+    import_module(module_name)
+
 def run_job_variant(job):
     import os
+
     if os.environ['enable_stages'] == 'True':
         job.run()
+    else:
+        run_user_script(job)
 
 def save_context(context):
     with open('results.pkl', 'w+b') as file:
