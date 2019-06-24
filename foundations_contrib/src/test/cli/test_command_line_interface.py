@@ -100,6 +100,7 @@ class TestCommandLineInterface(Spec):
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
         deploy_argument_file_call = call('driver_file', type=str, help='Name of file to deploy')
         deploy_argument_env_call = call('--env', help='Environment to run file in')
+        deploy_argument_project_name_call = call('--project_name', help='Project name for job (optional, defaults to "default")')
         info_argument_env_call = call('--env', action='store_true')
 
         self.level_2_parser_mock.add_argument.assert_has_calls(
@@ -107,6 +108,7 @@ class TestCommandLineInterface(Spec):
                 init_argument_call,
                 deploy_argument_env_call,
                 deploy_argument_file_call,
+                deploy_argument_project_name_call,
                 info_argument_env_call,
             ],
             any_order=True
@@ -383,7 +385,7 @@ class TestCommandLineInterface(Spec):
         from foundations_internal.pipeline_context import PipelineContext
         return PipelineContext() 
 
-    @let
+    @let_now
     def current_foundations_context_instance(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.foundations_context import FoundationsContext
@@ -392,6 +394,10 @@ class TestCommandLineInterface(Spec):
         foundations_context = FoundationsContext(_pipeline)
         self.current_foundations_context.return_value = foundations_context
         return foundations_context
+
+    @let
+    def fake_project_name(self):
+        return self.faker.word()
 
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
@@ -696,6 +702,11 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.assertEqual('default', self.pipeline_context.provenance.project_name)
+
+    def test_foundations_deploy_project_name_is_set_if_provided(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', 'driver.py', '--env=uat', '--project_name={}'.format(self.fake_project_name)]).execute()
+        self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
 
     def _set_job_status(self, status):
         self.mock_job_deployment.get_job_status.return_value = status

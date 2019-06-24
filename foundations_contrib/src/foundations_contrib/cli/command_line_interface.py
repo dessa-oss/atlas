@@ -41,6 +41,7 @@ class CommandLineInterface(object):
         deploy_parser = subparsers.add_parser('deploy', help='Deploys a Foundations project to the specified environment')
         deploy_parser.add_argument('driver_file', type=str, help='Name of file to deploy')
         deploy_parser.add_argument('--env', help='Environment to run file in')
+        deploy_parser.add_argument('--project_name', help='Project name for job (optional, defaults to "default")')
         deploy_parser.set_defaults(function=self._deploy)
 
     def _initialize_info_parser(self, subparsers):
@@ -157,7 +158,10 @@ class CommandLineInterface(object):
         from foundations.global_state import config_manager
         from foundations_contrib.global_state import current_foundations_context
 
-        current_foundations_context().set_project_name('default')
+        if self._arguments.project_name:
+            current_foundations_context().set_project_name(self._arguments.project_name)
+        else:
+            current_foundations_context().set_project_name('default')
 
         driver_name = self._arguments.driver_file
         env_name = self._arguments.env
