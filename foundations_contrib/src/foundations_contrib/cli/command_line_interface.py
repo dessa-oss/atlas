@@ -155,6 +155,9 @@ class CommandLineInterface(object):
 
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations.global_state import config_manager
+        from foundations_contrib.global_state import current_foundations_context
+
+        current_foundations_context().set_project_name('default')
 
         driver_name = self._arguments.driver_file
         env_name = self._arguments.env

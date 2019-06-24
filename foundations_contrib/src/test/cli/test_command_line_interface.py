@@ -378,6 +378,21 @@ class TestCommandLineInterface(Spec):
     def fake_job_logs(self):
         return self.faker.sentence()
 
+    @let
+    def pipeline_context(self):
+        from foundations_internal.pipeline_context import PipelineContext
+        return PipelineContext() 
+
+    @let
+    def current_foundations_context_instance(self):
+        from foundations_internal.pipeline import Pipeline
+        from foundations_internal.foundations_context import FoundationsContext
+
+        _pipeline = Pipeline(self.pipeline_context)
+        foundations_context = FoundationsContext(_pipeline)
+        self.current_foundations_context.return_value = foundations_context
+        return foundations_context
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -395,6 +410,7 @@ class TestCommandLineInterface(Spec):
     artifact_downloader_mock = let_mock()
     get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
     pipeline_archiver_mock = let_mock()
+    current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -675,6 +691,11 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.exit_mock.assert_not_called()
+
+    def test_foundations_deploy_project_name_is_default_if_not_set(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        self.assertEqual('default', self.pipeline_context.provenance.project_name)
 
     def _set_job_status(self, status):
         self.mock_job_deployment.get_job_status.return_value = status
