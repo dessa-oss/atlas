@@ -117,11 +117,26 @@ class ConfigTranslates(object):
         result_config = self.translator.translate(self._configuration)
         self.assertFalse(result_config['enable_stages'])
     
+    def test_returns_run_script_environment_with_enable_stages_false_if_not_set(self):
+        self._configuration['enable_stages'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
+
+    def test_returns_run_script_environment_with_enable_stages_true_if_set_true(self):
+        self._configuration['enable_stages'] = True
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], True)
+    
+    def test_returns_run_script_environment_with_enable_stages_false_if_set_false(self):
+        self._configuration['enable_stages'] = False
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
+
     def test_returns_run_script_environment_with_log_level_same_as_local_log_level(self):
         self._configuration['log_level'] = 'DEBUG'
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['run_script_environment']['log_level'], 'DEBUG')
-    
+
     def test_returns_run_script_environment_with_log_level_same_as_local_log_level_different_level(self):
         self._configuration['log_level'] = 'INFO'
         result_config = self.translator.translate(self._configuration)

@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
 
 
 class TestRunJob(unittest.TestCase):

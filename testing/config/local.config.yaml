@@ -4,3 +4,4 @@ results_config:
   archive_end_point: /tmp/foundations_acceptance
 cache_config: {}
 obfuscate_foundations: False
+enable_stages: True
