@@ -45,11 +45,12 @@ class TestLocalDeployWithoutStages(Spec):
         return logs_parsing_regex.findall(logs)[0]
 
     def _assert_driver_completed_successfully(self, driver_deploy_completed_process):
+        driver_stdout = self._driver_stdout(driver_deploy_completed_process)
         driver_stderr = driver_deploy_completed_process.stderr.decode()
         driver_return_code = driver_deploy_completed_process.returncode
 
         if driver_return_code != 0:
-            raise AssertionError('Driver failed:\n{}'.format(driver_stderr))
+            raise AssertionError('Driver failed:\n    stdout: {}\n    stderr: {}'.format(driver_stdout, driver_stderr))
 
     def _assert_can_print(self, log_retrieve_process):
         driver_stdout = self._driver_stdout(log_retrieve_process)
