@@ -52,11 +52,16 @@ def mark_job_as_running(job):
 def execute_job(job, pipeline_context):
     try:
         mark_job_as_running(job)
-        job.run()
+        run_job_variant(job)
         mark_job_complete(job)
         return None, False
     except Exception as error:
         return fetch_error_information(pipeline_context, job), True
+
+def run_job_variant(job):
+    import os
+    if os.environ['enable_stages'] == 'True':
+        job.run()
 
 def save_context(context):
     with open('results.pkl', 'w+b') as file:
