@@ -7,6 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def deploy_job(pipeline_context_wrapper, job_name, job_params):
     from foundations import log_manager
-    
+
     logger = log_manager.get_logger(__name__)
     logger.info("Deploying job...")
