@@ -122,9 +122,7 @@ class StageConnectorWrapper(object):
             model.run(job_name='Experiment number 2', params_dict={'data1': 'value1'}, data2='value2')
             ```
         """
-        from foundations.global_state import deployment_manager
-        from foundations.deployment_wrapper import DeploymentWrapper
-        from foundations import log_manager
+        from foundations.job_deployer import deploy_job
 
         if params_dict is None:
             params_dict = {}
@@ -132,14 +130,7 @@ class StageConnectorWrapper(object):
         all_params = params_dict.copy()
         all_params.update(kw_params)
 
-        logger = log_manager.get_logger(__name__)
-
-        logger.info("Deploying job...")
-        deployment = deployment_manager.simple_deploy(
-            self, job_name, all_params)
-        deployment_wrapper = DeploymentWrapper(deployment)
-
-        return deployment_wrapper
+        return deploy_job(self, job_name, all_params)
 
     def run_same_process(self, **filler_kwargs):
         return self._stage.run(None, None, **filler_kwargs)
