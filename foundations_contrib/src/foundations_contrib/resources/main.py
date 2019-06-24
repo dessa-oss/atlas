@@ -15,6 +15,62 @@ from foundations_internal.compat import compat_raise
 from foundations_contrib.global_state import foundations_context
 from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
+def mark_job_failed(job):
+    from foundations_contrib.producers.jobs.failed_job import FailedJob
+    from foundations.global_state import message_router
+
+    job_pipeline_context = job.pipeline_context()
+    job_error_information = job_pipeline_context.global_stage_context.error_information
+    FailedJob(message_router, job_pipeline_context,
+                job_error_information).push_message()
+
+def fetch_error_information(context, job):
+    import sys
+    exception_info = sys.exc_info()
+    context.global_stage_context.add_error_information(exception_info)
+    mark_job_failed(job)
+    return exception_info
+
+def mark_job_complete(job):
+    from foundations_contrib.producers.jobs.complete_job import CompleteJob
+    from foundations.global_state import message_router
+
+    CompleteJob(message_router, job.pipeline_context()).push_message()
+
+def mark_job_as_running(job):
+    from foundations_contrib.producers.jobs.run_job import RunJob
+    from foundations.global_state import message_router
+
+    RunJob(message_router, job.pipeline_context()).push_message()
+
+def execute_job(job, pipeline_context):
+    try:
+        mark_job_as_running(job)
+        job.run()
+        mark_job_complete(job)
+        return None, False
+    except Exception as error:
+        return fetch_error_information(pipeline_context, job), True
+
+def save_context(context):
+    with open('results.pkl', 'w+b') as file:
+        serialize_to_file(context._context(), file)
+
+def serialize_job_results(exception_info, was_job_error, job, pipeline_context):
+    try:
+        JobPersister(job).persist()
+
+        save_context(pipeline_context)
+        return exception_info, was_job_error
+    except Exception as error:
+        from foundations_internal.pipeline_context import PipelineContext
+
+        error_pipeline_context = PipelineContext()
+
+        exception_info = fetch_error_information(error_pipeline_context, job)
+        save_context(error_pipeline_context)
+
+        return exception_info, False
 
 def main():
     log = log_manager.get_logger(__name__)
@@ -48,68 +104,10 @@ def main():
     pipeline_context.provenance.job_source_bundle = job_source_bundle
     foundations_context.pipeline()._pipeline_context = pipeline_context
 
-    def mark_job_failed():
-        from foundations_contrib.producers.jobs.failed_job import FailedJob
-        from foundations.global_state import message_router
-
-        job_pipeline_context = job.pipeline_context()
-        job_error_information = job_pipeline_context.global_stage_context.error_information
-        FailedJob(message_router, job_pipeline_context,
-                  job_error_information).push_message()
-
-    def fetch_error_information(context):
-        import sys
-        exception_info = sys.exc_info()
-        context.global_stage_context.add_error_information(exception_info)
-        mark_job_failed()
-        return exception_info
-
-    def mark_job_complete():
-        from foundations_contrib.producers.jobs.complete_job import CompleteJob
-        from foundations.global_state import message_router
-
-        CompleteJob(message_router, job.pipeline_context()).push_message()
-
-    def mark_job_as_running():
-        from foundations_contrib.producers.jobs.run_job import RunJob
-        from foundations.global_state import message_router
-
-        RunJob(message_router, job.pipeline_context()).push_message()
-
-    def execute_job():
-        try:
-            mark_job_as_running()
-            job.run()
-            mark_job_complete()
-            return None, False
-        except Exception as error:
-            return fetch_error_information(pipeline_context), True
-    exception_info, was_job_error = global_stage_context.time_callback(
-        execute_job)
+    exception_info, was_job_error = global_stage_context.time_callback(lambda: execute_job(job, pipeline_context))
     upload_artifacts(job_name)
 
-    def save_context(context):
-        with open('results.pkl', 'w+b') as file:
-            serialize_to_file(context._context(), file)
-
-    def serialize_job_results(exception_info, was_job_error):
-        try:
-            JobPersister(job).persist()
-
-            save_context(pipeline_context)
-            return exception_info, was_job_error
-        except Exception as error:
-            from foundations_internal.pipeline_context import PipelineContext
-
-            error_pipeline_context = PipelineContext()
-
-            exception_info = fetch_error_information(error_pipeline_context)
-            save_context(error_pipeline_context)
-
-            return exception_info, False
-
-    exception_info, was_job_error = serialize_job_results(
-        exception_info, was_job_error)
+    exception_info, was_job_error = serialize_job_results(exception_info, was_job_error, job, pipeline_context)
 
     if exception_info is not None:
         if not was_job_error:
