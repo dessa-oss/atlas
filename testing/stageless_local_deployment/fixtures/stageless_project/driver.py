@@ -10,7 +10,6 @@ from foundations.prototype import set_tag
 
 from model import *
 
-foundations.set_project_name('stageless-projects')
 set_tag('model', 'cnn')
 
 def print_words():

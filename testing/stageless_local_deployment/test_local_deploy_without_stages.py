@@ -22,7 +22,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         change_to_fixture_directory_command = 'cd stageless_local_deployment/fixtures/{}'.format(fixture_directory)
 
-        command_to_run = ["/bin/bash", "-c", "{} && python -m foundations deploy {} --env=local".format(change_to_fixture_directory_command, driver_path)]
+        command_to_run = ["/bin/bash", "-c", "{} && python -m foundations deploy {} --env=local --project_name={}".format(change_to_fixture_directory_command, driver_path, project_name)]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self._assert_driver_completed_successfully(driver_deploy_completed_process)
         
