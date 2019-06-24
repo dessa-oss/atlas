@@ -15,6 +15,12 @@ from foundations_internal.compat import compat_raise
 from foundations_contrib.global_state import foundations_context
 from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
+def set_recursion_limit_if_necessary(config, log):
+    if 'recursion_limit' in config:
+        new_limit = config['recursion_limit']
+        log.debug('Overriding recursion limit to {}'.format(new_limit))
+        sys.setrecursionlimit(new_limit)
+        
 def mark_job_failed(job):
     from foundations_contrib.producers.jobs.failed_job import FailedJob
     from foundations.global_state import message_router
@@ -72,6 +78,16 @@ def serialize_job_results(exception_info, was_job_error, job, pipeline_context):
 
         return exception_info, False
 
+def initialize_pipeline_context(job, job_name, job_source_bundle):
+    pipeline_context = job.pipeline_context()
+    pipeline_context.mark_fully_loaded()
+    pipeline_context.file_name = job_name
+    pipeline_context.fill_provenance(config_manager)
+    pipeline_context.provenance.job_source_bundle = job_source_bundle
+
+
+    return pipeline_context
+
 def main():
     log = log_manager.get_logger(__name__)
     job_source_bundle = JobSourceBundle('job', './')
@@ -79,12 +95,7 @@ def main():
     config_manager.freeze()
     config = config_manager.config()
 
-    def set_recursion_limit_if_necessary():
-        if 'recursion_limit' in config:
-            new_limit = config['recursion_limit']
-            log.debug('Overriding recursion limit to {}'.format(new_limit))
-            sys.setrecursionlimit(new_limit)
-    set_recursion_limit_if_necessary()
+    set_recursion_limit_if_necessary(config, log)
 
     job_name = config.get('job_name', 'job')
     job_binary_path = job_name + '.bin'
@@ -94,14 +105,10 @@ def main():
     with open(job_binary_path, 'rb') as file:
         job = Job.deserialize(file.read())
 
-    pipeline_context = job.pipeline_context()
-    pipeline_context.mark_fully_loaded()
-    pipeline_context.file_name = job_name
-    global_stage_context = pipeline_context.global_stage_context
-    pipeline_context.fill_provenance(config_manager)
+    pipeline_context = initialize_pipeline_context(job, job_name, job_source_bundle)
     config = pipeline_context.provenance.config
 
-    pipeline_context.provenance.job_source_bundle = job_source_bundle
+    global_stage_context = pipeline_context.global_stage_context
     foundations_context.pipeline()._pipeline_context = pipeline_context
 
     exception_info, was_job_error = global_stage_context.time_callback(lambda: execute_job(job, pipeline_context))
