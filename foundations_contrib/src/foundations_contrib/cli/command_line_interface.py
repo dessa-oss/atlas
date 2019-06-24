@@ -156,12 +156,8 @@ class CommandLineInterface(object):
 
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations.global_state import config_manager
-        from foundations_contrib.global_state import current_foundations_context
-
-        if self._arguments.project_name:
-            current_foundations_context().set_project_name(self._arguments.project_name)
-        else:
-            current_foundations_context().set_project_name('default')
+        
+        self._set_project_name()
 
         driver_name = self._arguments.driver_file
         env_name = self._arguments.env
@@ -173,6 +169,16 @@ class CommandLineInterface(object):
         else:
             sys.exit(1)
 
+    def _set_project_name(self):
+        from foundations_contrib.global_state import current_foundations_context
+
+        if self._arguments.project_name:
+            project_name = self._arguments.project_name
+        else:
+            project_name = 'default'
+
+        current_foundations_context().set_project_name(project_name)
+   
     def _model_serving_deploy(self):
         self._start_model_server_if_not_running()
         self._deploy_model_package()
