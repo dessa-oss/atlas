@@ -52,6 +52,7 @@ def _configure():
     config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
+    config_manager['run_script_environment'] = {'enable_stages': True}
 
 shutil.rmtree(_local_temp_directory, ignore_errors=True)
 _configure()

@@ -48,8 +48,6 @@ def config():
     config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
-    config_manager['run_script_environment'] = {}
-    config_manager['run_script_environment']['enable_stages'] = False
-
+    config_manager['run_script_environment'] = {'enable_stages': True}
 
 config()

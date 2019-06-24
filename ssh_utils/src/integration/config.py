@@ -45,6 +45,7 @@ def _config():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
+    config_manager['run_script_environment'] = {'enable_stages': True}
 
     # quiet logs
     config_manager['log_level'] = 'ERROR'

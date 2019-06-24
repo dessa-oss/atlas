@@ -39,7 +39,7 @@ def _config():
     config_manager['artifact_path'] = 'results'
     config_manager['obfuscate_foundations'] = False
     config_manager['deployment_implementation'] = { 'deployment_type': JobDeployment }
-    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE'}
+    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE', 'enable_stages': True}
 
     config_manager['remote_user'] = 'job-uploader'
     config_manager['port'] = 31222

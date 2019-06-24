@@ -19,5 +19,6 @@ def _load_config():
     config_manager['code_path'] = '/jobs'
     config_manager['redis_url'] = redis_url
     config_manager['artifact_path'] = 'results'
+    config_manager['run_script_environment'] = {'enable_stages': True}
 
 _load_config()

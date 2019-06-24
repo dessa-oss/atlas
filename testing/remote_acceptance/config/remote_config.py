@@ -31,7 +31,7 @@ def config():
     config_manager['artifact_path'] = 'results'
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
-    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE'}
+    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE', 'enable_stages': True}
 
     scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
 
