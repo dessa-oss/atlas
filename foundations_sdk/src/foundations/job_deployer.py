@@ -8,8 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def deploy_job(pipeline_context_wrapper, job_name, job_params):
     from foundations import log_manager
     from foundations.global_state import deployment_manager
+    from foundations.deployment_wrapper import DeploymentWrapper
 
     logger = log_manager.get_logger(__name__)
     logger.info("Deploying job...")
 
-    return deployment_manager.simple_deploy(pipeline_context_wrapper, job_name, job_params)
+    job_deployment = deployment_manager.simple_deploy(pipeline_context_wrapper, job_name, job_params)
+    return DeploymentWrapper(job_deployment)

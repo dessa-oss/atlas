@@ -44,6 +44,12 @@ class TestJobDeployer(Spec):
         deploy_job(self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
         self.mock_logger.info.assert_called_with('Deploying job...')
     
-    def test_job_deployer_returns_deployment_wrapper_with_same_job_name_as_was_passed_in(self):
+    def test_job_deployer_returns_job_deployment_with_same_job_name_as_was_passed_in(self):
         job_deployment = deploy_job(self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
         self.assertEqual(self.fake_job_name, job_deployment.job_name())
+
+    def test_job_deployer_returns_deployment_wrapper(self):
+        from foundations.deployment_wrapper import DeploymentWrapper
+
+        job_deployment = deploy_job(self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
+        self.assertIsInstance(job_deployment, DeploymentWrapper)
