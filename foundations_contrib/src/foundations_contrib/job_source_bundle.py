@@ -37,7 +37,6 @@ class JobSourceBundle(object):
         if item_name == './run.sh':
             raise Exception('Cannot add run.sh to job bundle - please rename!')
 
-
     def unbundle(self, path_to_save):
         import tarfile
         from distutils.dir_util import mkpath

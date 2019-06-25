@@ -58,29 +58,13 @@ def execute_job(job, pipeline_context):
     except Exception as error:
         return fetch_error_information(pipeline_context, job), True
 
-def get_user_script_module_and_path(user_script):
-    import os
-    dirname = os.path.dirname(user_script)
-
-    if dirname:
-        module_name = os.path.basename(user_script)
-        path = os.path.join(os.getcwd(), dirname)
-    else:
-        path = os.getcwd()
-
-    module_name = module_name.split('.')[0]
-    return module_name, path
-
-
 def run_user_script(job):
     import os
     from importlib import import_module
 
     path_to_script = os.environ['script_to_run']
-    module_name, path_to_add = get_user_script_module_and_path(path_to_script)
-    sys.path.append(path_to_add)
-    os.chdir(path_to_add)
-    import_module(module_name)
+    driver_module = path_to_script.split('.')[0]
+    import_module(driver_module)
 
 def run_job_variant(job):
     import os
@@ -117,7 +101,6 @@ def initialize_pipeline_context(job, job_name, job_source_bundle):
     pipeline_context.fill_provenance(config_manager)
     pipeline_context.provenance.job_source_bundle = job_source_bundle
 
-
     return pipeline_context
 
 def main():
@@ -153,7 +136,6 @@ def main():
             sys.excepthook = sys.__excepthook__
 
         compat_raise(exception_info[0], exception_info[1], exception_info[2])
-
 
 if __name__ == "__main__":
     main()

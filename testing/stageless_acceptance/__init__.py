@@ -7,4 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 
-from stageless_local_deployment.test_local_deploy_without_stages import TestLocalDeployWithoutStages
+from stageless_acceptance.test_local_deploy_without_stages import TestLocalDeployWithoutStages

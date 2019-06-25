@@ -5,6 +5,7 @@ _cached_function_was_run = False
 def add(x,y):
     result = x + y
     foundations.log_metric('Score', result)
+    return result
 
 @foundations.cache
 def subtract(x,y):
@@ -16,5 +17,3 @@ def subtract(x,y):
     result = x - y
     _cached_function_was_run = True
     return result
-
-

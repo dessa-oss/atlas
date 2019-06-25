@@ -61,6 +61,15 @@ pipeline {
                 }
             }
         }
+        stage('Python3 Foundations Acceptance Tests for Stageless Deploys') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/testing") {
+                        sh 'python -Wi -m unittest -f -v stageless_acceptance'
+                    }
+                }
+            }
+        }
         stage('Python3 Foundations Remote Acceptance Tests for Remote Deploys') {
             steps {
                 container("python3") {
