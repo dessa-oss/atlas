@@ -7,8 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class GlobalMetricLogger(object):
 
-    def __init__(self, message_router, pipeline_context):
-        self._pipeline_context = pipeline_context
+    def __init__(self, message_router):
         self._message_router = message_router
     
     def log_metric(self, key, value):
@@ -34,8 +33,11 @@ class GlobalMetricLogger(object):
     def _job_id(self):
         return self._pipeline_context.file_name
 
-def global_metric_logger_for_job():
-    from foundations_contrib.global_state import current_foundations_context, message_router
+    @property
+    def _pipeline_context(self):
+        from foundations_contrib.global_state import current_foundations_context
+        return current_foundations_context().pipeline_context()
 
-    pipeline_context = current_foundations_context().pipeline_context()
-    return GlobalMetricLogger(message_router, pipeline_context)
+def global_metric_logger_for_job():
+    from foundations_contrib.global_state import message_router
+    return GlobalMetricLogger(message_router)

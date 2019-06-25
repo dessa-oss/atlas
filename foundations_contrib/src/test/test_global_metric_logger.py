@@ -11,6 +11,7 @@ from foundations_contrib.global_metric_logger import GlobalMetricLogger, global_
 class TestGlobalMetricLogger(Spec):
 
     mock_log_manager = let_patch_mock('foundations_contrib.global_state.log_manager')
+    mock_current_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
 
     class MockMessageRouter(object):
         
@@ -62,13 +63,15 @@ class TestGlobalMetricLogger(Spec):
             'value': self.fake_metric_value_2
         }
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         from foundations_internal.pipeline_context import PipelineContext
 
         self._pipeline_context = PipelineContext()
+        self.mock_current_foundations_context.pipeline_context.return_value = self._pipeline_context
 
         self._message_router = self.MockMessageRouter()
-        self._logger = GlobalMetricLogger(self._message_router, self._pipeline_context)
+        self._logger = GlobalMetricLogger(self._message_router)
 
         self.mock_logger = Mock()
         self.mock_get_logger = ConditionalReturn()
@@ -104,14 +107,12 @@ class TestGlobalMetricLogger(Spec):
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
         self.assertEqual([], self._logged_metrics())
 
-    def test_global_metric_logger_for_job_constructs_global_metric_logger_with_current_message_router_and_current_pipeline_context(self):
-        from foundations_contrib.global_state import current_foundations_context, message_router
-        
-        pipeline_context = current_foundations_context().pipeline_context()
+    def test_global_metric_logger_for_job_constructs_global_metric_logger_with_current_message_router(self):
+        from foundations_contrib.global_state import message_router
 
         mock_global_metric_logger_class = self.patch('foundations_contrib.global_metric_logger.GlobalMetricLogger', ConditionalReturn())
         mock_global_metric_logger = Mock()
-        mock_global_metric_logger_class.return_when(mock_global_metric_logger, message_router, pipeline_context)
+        mock_global_metric_logger_class.return_when(mock_global_metric_logger, message_router)
         self.assertEqual(mock_global_metric_logger, global_metric_logger_for_job())
 
     def _logged_metrics(self):
