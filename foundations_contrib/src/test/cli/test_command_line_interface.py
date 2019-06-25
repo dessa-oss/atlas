@@ -424,6 +424,7 @@ class TestCommandLineInterface(Spec):
     get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
+    mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -748,6 +749,38 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
         self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
+
+    def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_False(self):
+        self._set_run_script_environment({'enable_stages': False})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.mock_deploy_job.assert_called_with(self.current_foundations_context_instance, None, {})
+
+    def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_not_set(self):
+        self._set_run_script_environment({})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.mock_deploy_job.assert_called_with(self.current_foundations_context_instance, None, {})
+
+    def test_foundations_deploy_does_not_deploy_job_with_stages_if_enable_stages_is_False(self):
+        self._set_run_script_environment({'enable_stages': False})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.run_file.assert_not_called()
+
+    def test_foundations_deploy_does_not_deploy_job_with_stages_if_enable_stages_is_not_set(self):
+        self._set_run_script_environment({})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.run_file.assert_not_called()
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()

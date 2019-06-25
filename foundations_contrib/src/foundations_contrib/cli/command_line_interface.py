@@ -317,17 +317,29 @@ class CommandLineInterface(object):
     def _run_driver_file(self, driver_name):
         import os
         import sys
-        from importlib import import_module
-        from foundations_contrib.global_state import config_manager
 
         driver_name, path_to_add = self._get_driver_and_path(driver_name)
-
-        if not self._stages_enabled():
-            config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
-
         sys.path.append(path_to_add)
         os.chdir(path_to_add)
+
+        self._execute_job_based_on_stages_enabled(driver_name)
+
+    def _execute_job_based_on_stages_enabled(self, driver_name):
+        if self._stages_enabled():
+            self._deploy_job_with_stages(driver_name)
+        else:
+            self._deploy_stageless_job(driver_name)
+
+    def _deploy_job_with_stages(self, driver_name):
+        from importlib import import_module
         import_module(driver_name)
+
+    def _deploy_stageless_job(self, driver_name):
+        from foundations.job_deployer import deploy_job
+        from foundations_contrib.global_state import config_manager, current_foundations_context
+
+        config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
+        deploy_job(current_foundations_context(), None, {})
 
     def _stages_enabled(self):
         from foundations_contrib.global_state import config_manager
