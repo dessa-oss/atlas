@@ -402,6 +402,10 @@ class TestCommandLineInterface(Spec):
     def fake_project_name(self):
         return self.faker.word()
 
+    @let
+    def fake_directory(self):
+        return self.faker.file_path()
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -715,6 +719,17 @@ class TestCommandLineInterface(Spec):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
+
+    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False_when_driver_nested(self):
+        import os.path as path
+
+        script_path = path.join(self.fake_directory, self.fake_script_file_name)
+
+        self._set_run_script_environment({'enable_stages': False})
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', script_path, '--env=uat']).execute()
+
         self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def _set_run_script_environment(self, environment_to_set):
