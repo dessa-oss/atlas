@@ -27,6 +27,12 @@ class TestRunStagelessJob(Spec):
         os.environ['enable_stages'] = 'False'
         os.environ['script_to_run'] = 'integration/fixtures/user_stageless_script.py'
 
-        sys.stdout = captured_io = StringIO()
-        run_job_variant(self.FakeJob())
-        self.assertEqual(captured_io.getvalue(), 'Hello from stageless script\n')
+        cwd = os.getcwd()
+        os.chdir('integration/fixtures')
+
+        try:
+            sys.stdout = captured_io = StringIO()
+            run_job_variant(self.FakeJob())
+            self.assertEqual(captured_io.getvalue(), 'Hello from stageless script\n')
+        finally:
+            os.chdir(cwd)
