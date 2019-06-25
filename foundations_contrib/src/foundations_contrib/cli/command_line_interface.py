@@ -155,7 +155,7 @@ class CommandLineInterface(object):
         import sys
 
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         
         self._set_project_name()
 

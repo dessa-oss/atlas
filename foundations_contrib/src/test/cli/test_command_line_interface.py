@@ -312,7 +312,6 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
         self.print_mock.assert_not_called()
 
-    config_manager = let_patch_mock('foundations.global_state.config_manager')
     sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
 
@@ -385,6 +384,10 @@ class TestCommandLineInterface(Spec):
         from foundations_internal.pipeline_context import PipelineContext
         return PipelineContext() 
 
+    @let
+    def fake_script_file_name(self):
+        return '{}.py'.format(self.faker.word())
+
     @let_now
     def current_foundations_context_instance(self):
         from foundations_internal.pipeline import Pipeline
@@ -432,7 +435,7 @@ class TestCommandLineInterface(Spec):
     def test_deploy_loads_config_when_found(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.config_manager.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
+        self.config_manager_mock.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
 
     def test_deploy_adds_file_to_py_path(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
@@ -707,6 +710,13 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat', '--project_name={}'.format(self.fake_project_name)]).execute()
         self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
+
+    @skip('Not implemented yet')
+    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False(self):
+        self.config_manager_mock['run_script_environment'] = {'enable_stages': False}
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def _set_job_status(self, status):
         self.mock_job_deployment.get_job_status.return_value = status
