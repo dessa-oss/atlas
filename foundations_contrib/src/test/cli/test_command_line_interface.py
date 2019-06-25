@@ -71,6 +71,9 @@ class TestCommandLineInterface(Spec):
         self.psutil_process_mock.side_effect = self._process_constructor
         self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = '/path/to/file'
         self.patch('foundations_contrib.root', return_value=self.mock_contrib_root)
+        self.mock_pipeline_context_wrapper = Mock()
+        self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
+        self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
@@ -756,7 +759,7 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
 
-        self.mock_deploy_job.assert_called_with(self.current_foundations_context_instance, None, {})
+        self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
 
     def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_not_set(self):
         self._set_run_script_environment({})
@@ -764,7 +767,7 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
 
-        self.mock_deploy_job.assert_called_with(self.current_foundations_context_instance, None, {})
+        self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
 
     def test_foundations_deploy_does_not_deploy_job_with_stages_if_enable_stages_is_False(self):
         self._set_run_script_environment({'enable_stages': False})

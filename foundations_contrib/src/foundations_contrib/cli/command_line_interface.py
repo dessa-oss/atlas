@@ -336,10 +336,13 @@ class CommandLineInterface(object):
 
     def _deploy_stageless_job(self, driver_name):
         from foundations.job_deployer import deploy_job
+        from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
         from foundations_contrib.global_state import config_manager, current_foundations_context
 
+        wrapped_pipeline_context = PipelineContextWrapper(current_foundations_context().pipeline_context())
+
         config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
-        deploy_job(current_foundations_context(), None, {})
+        deploy_job(wrapped_pipeline_context, None, {})
 
     def _stages_enabled(self):
         from foundations_contrib.global_state import config_manager
