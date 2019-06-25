@@ -322,7 +322,7 @@ class CommandLineInterface(object):
 
         driver_name, path_to_add = self._get_driver_and_path(driver_name)
 
-        if not config_manager['run_script_environment']['enable_stages']:
+        if not config_manager['run_script_environment'].get('enable_stages', False):
             config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
 
         sys.path.append(path_to_add)
