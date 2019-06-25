@@ -322,12 +322,16 @@ class CommandLineInterface(object):
 
         driver_name, path_to_add = self._get_driver_and_path(driver_name)
 
-        if not config_manager['run_script_environment'].get('enable_stages', False):
+        if not self._stages_enabled():
             config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
 
         sys.path.append(path_to_add)
         os.chdir(path_to_add)
         import_module(driver_name)
+
+    def _stages_enabled(self):
+        from foundations_contrib.global_state import config_manager
+        return config_manager['run_script_environment'].get('enable_stages', False)
 
     def _get_driver_and_path(self, driver_name):
         import os
