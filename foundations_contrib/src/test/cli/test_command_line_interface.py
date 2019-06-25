@@ -711,12 +711,15 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['deploy', 'driver.py', '--env=uat', '--project_name={}'.format(self.fake_project_name)]).execute()
         self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
 
-    @skip('Not implemented yet')
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False(self):
-        self.config_manager_mock['run_script_environment'] = {'enable_stages': False}
+        self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
         self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
+
+    def _set_run_script_environment(self, environment_to_set):
+        self.config_manager_mock.__getitem__ = ConditionalReturn()
+        self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')
 
     def _set_job_status(self, status):
         self.mock_job_deployment.get_job_status.return_value = status

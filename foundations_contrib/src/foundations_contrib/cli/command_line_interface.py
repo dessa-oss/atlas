@@ -318,8 +318,13 @@ class CommandLineInterface(object):
         import os
         import sys
         from importlib import import_module
+        from foundations_contrib.global_state import config_manager
 
         driver_name, path_to_add = self._get_driver_and_path(driver_name)
+
+        if not config_manager['run_script_environment']['enable_stages']:
+            config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
+
         sys.path.append(path_to_add)
         os.chdir(path_to_add)
         import_module(driver_name)
