@@ -25,7 +25,7 @@ class TestRunStagelessJob(Spec):
         from foundations_contrib.resources.main import run_job_variant
         
         os.environ['enable_stages'] = 'False'
-        os.environ['script_to_run'] = 'integration/fixtures/user_stageless_script.py'
+        os.environ['script_to_run'] = 'user_stageless_script.py'
 
         cwd = os.getcwd()
         os.chdir('integration/fixtures')
