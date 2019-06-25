@@ -12,14 +12,16 @@ from pandas.testing import assert_frame_equal
 
 class TestLogMetricOutsideStage(Spec):
 
+    @set_up_class
+    def set_up_class(klass):
+        from acceptance.cleanup import cleanup
+        cleanup()
+
     @set_up
     def set_up(self):
-        from acceptance.cleanup import cleanup
         from uuid import uuid4
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from foundations_contrib.global_state import message_router, current_foundations_context
-
-        cleanup()
 
         foundations.set_project_name('default')
         self._job_id = str(uuid4())
