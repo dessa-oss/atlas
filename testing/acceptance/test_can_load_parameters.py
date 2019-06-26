@@ -19,7 +19,6 @@ class TestCanLoadParameters(Spec):
     def script_directory(self):
         return 'acceptance/fixtures/script_parameters'
 
-    @skip
     def test_can_load_parameters_within_python(self):
         from foundations_internal.change_directory import ChangeDirectory
         import subprocess
