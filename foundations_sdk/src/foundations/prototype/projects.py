@@ -83,7 +83,6 @@ def set_tag(key, value):
         ```
     """
     from foundations_contrib.global_state import log_manager, current_foundations_context, message_router
-    import foundations_contrib.global_state as global_state
     from foundations_contrib.producers.tag_set import TagSet
 
     pipeline_context = current_foundations_context().pipeline_context()

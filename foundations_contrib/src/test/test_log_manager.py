@@ -124,3 +124,9 @@ class TestLogManager(unittest.TestCase):
         log_manager = LogManager(self.config_manager)
         log_manager.set_foundations_not_running_warning_printed()
         self.assertTrue(log_manager.foundations_not_running_warning_printed())
+
+    def test_foundations_not_running_warning_printed_false_after_flag_reset(self):
+        log_manager = LogManager(self.config_manager)
+        log_manager.set_foundations_not_running_warning_printed()
+        log_manager.set_foundations_not_running_warning_printed(False)
+        self.assertFalse(log_manager.foundations_not_running_warning_printed())

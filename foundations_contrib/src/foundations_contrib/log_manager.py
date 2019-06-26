@@ -22,8 +22,8 @@ class LogManager(object):
 
         return self._loggers[name]
 
-    def set_foundations_not_running_warning_printed(self):
-        self._foundations_not_running_warning_printed = True
+    def set_foundations_not_running_warning_printed(self, status=True):
+        self._foundations_not_running_warning_printed = status
 
     def foundations_not_running_warning_printed(self):
         return self._foundations_not_running_warning_printed
