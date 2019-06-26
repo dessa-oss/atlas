@@ -19,6 +19,7 @@ class TestLocalDeployWithoutStages(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
+    @skip('not ready')
     def test_stageless_project_deploys_succesfully(self):
         self._test_deploy_stageless_project('stageless-projects', 'stageless_project', 'driver.py')
 
@@ -42,6 +43,16 @@ class TestLocalDeployWithoutStages(Spec):
         self._assert_can_print(driver_deploy_completed_process)
         self._assert_warning_printed(driver_deploy_completed_process)
 
+    @skip('not ready')
+    def test_stageless_project_can_access_all_files_in_cwd(self):
+        import subprocess
+
+        change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format('stageless_project_nested_project_code')
+
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy {} --env=local'.format(change_to_fixture_directory_command, 'project_code/driver2.py')]
+        driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_deploy_completed_process))
+
     def _test_deploy_stageless_project(self, project_name, fixture_directory, driver_path):
         import subprocess
 
@@ -58,6 +69,8 @@ class TestLocalDeployWithoutStages(Spec):
 
         self._assert_can_log_metrics(project_name, job_id)
         self._assert_can_set_tag(project_name, job_id)
+
+        return driver_deploy_completed_process
 
     def _job_id_from_logs(self, driver_deploy_completed_process):
         import re

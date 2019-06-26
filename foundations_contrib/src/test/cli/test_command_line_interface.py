@@ -734,7 +734,7 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', script_path, '--env=uat']).execute()
 
-        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
+        self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_not_set_when_driver_nested(self):
         import os.path as path
@@ -745,7 +745,21 @@ class TestCommandLineInterface(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', script_path, '--env=uat']).execute()
 
-        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
+        self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
+
+    def test_foundations_deploy_does_not_chdir_if_enable_stages_False(self):
+        self._set_run_script_environment({'enable_stages': False})
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.os_chdir.assert_not_called()
+
+    def test_foundations_deploy_does_not_append_to_syspath_if_enable_stages_False(self):
+        self._set_run_script_environment({'enable_stages': False})
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+
+        self.sys_path.append.assert_not_called()
 
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_not_set(self):
         self._set_run_script_environment({})

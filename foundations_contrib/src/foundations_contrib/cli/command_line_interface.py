@@ -318,17 +318,19 @@ class CommandLineInterface(object):
         import os
         import sys
 
-        driver_name, path_to_add = self._get_driver_and_path(driver_name)
-        sys.path.append(path_to_add)
-        os.chdir(path_to_add)
-
-        self._execute_job_based_on_stages_enabled(driver_name)
-
-    def _execute_job_based_on_stages_enabled(self, driver_name):
         if self._stages_enabled():
+            driver_name, path_to_add = self._get_driver_and_path(driver_name)
+            self._prepare_to_deploy_job_with_stages(path_to_add)
             self._deploy_job_with_stages(driver_name)
         else:
             self._deploy_stageless_job(driver_name)
+
+    def _prepare_to_deploy_job_with_stages(self, path_to_add):
+        import os
+        import sys
+
+        os.chdir(path_to_add)
+        sys.path.append(path_to_add)
 
     def _deploy_job_with_stages(self, driver_name):
         from importlib import import_module
@@ -341,7 +343,7 @@ class CommandLineInterface(object):
 
         wrapped_pipeline_context = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
-        config_manager['run_script_environment']['script_to_run'] = driver_name + '.py'
+        config_manager['run_script_environment']['script_to_run'] = driver_name
         deploy_job(wrapped_pipeline_context, None, {})
 
     def _stages_enabled(self):
