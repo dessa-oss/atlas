@@ -39,6 +39,11 @@ class TestLoadJobParameters(Spec):
         import foundations
         self.assertEqual(load_parameters, foundations.load_parameters)
 
+    def test_returns_default_of_empty_dict_if_file_not_found(self):
+        mock_open = self.patch('builtins.open')
+        mock_open.side_effect = FileNotFoundError('beep')
+        self.assertEqual({}, load_parameters())
+
     def _mock_file_enter(self, *args, **kwargs):
         return self.mock_file
 

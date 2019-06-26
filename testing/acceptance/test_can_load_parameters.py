@@ -20,29 +20,43 @@ class TestCanLoadParameters(Spec):
         return 'acceptance/fixtures/script_parameters'
 
     @let
+    def script_directory_no_parameters(self):
+        return 'acceptance/fixtures/script_parameters_no_parameters'
+
+    @let
     def deployable_script_directory(self):
         return 'acceptance/fixtures/deployable_script_parameters'
 
+    @let
+    def deployable_script_directory_no_parameters(self):
+        return 'acceptance/fixtures/deployable_script_parameters_no_parameters'
+
     def test_can_load_parameters_within_python(self):
-        from foundations_internal.change_directory import ChangeDirectory
-        import subprocess
-        import json
-
-        with ChangeDirectory(self.script_directory):
-            completed_process = subprocess.run(['python', 'main.py'], stdout=subprocess.PIPE)
-            process_output = completed_process.stdout
-
-        result_parameters = json.loads(process_output)
-        self.assertEqual(self.job_parameters, result_parameters)
+        self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters)
 
     def test_can_load_parameters_within_foundations_deploy(self):
+        self._test_can_load_parameters_within_foundations_deploy(self.deployable_script_directory, self.job_parameters)
+
+    def test_can_load_default_parameters_within_foundations_deploy_when_parameters_json_not_found(self):
+        self._test_can_load_parameters_within_foundations_deploy(self.deployable_script_directory_no_parameters, {})
+
+    def test_can_load_default_parameters_within_python_when_parameters_json_not_found(self):
+        self._test_can_load_parameters_within_python(self.script_directory_no_parameters, {})
+
+    def _test_can_load_parameters_within_python(self, script_directory, expected_loaded_parameters):
+        self._test_command_that_loads_parameters_in_directory(['python', 'main.py'], script_directory, expected_loaded_parameters)
+
+    def _test_can_load_parameters_within_foundations_deploy(self, script_directory, expected_loaded_parameters):
+        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'deploy', '--env', 'local', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
+
+    def _test_command_that_loads_parameters_in_directory(self, command, script_directory, expected_loaded_parameters):
         from foundations_internal.change_directory import ChangeDirectory
         import subprocess
         import json
 
-        with ChangeDirectory(self.deployable_script_directory):
-            completed_process = subprocess.run(['python', '-m', 'foundations', 'deploy', '--env', 'local', 'project_code/script_to_run.py'], stdout=subprocess.PIPE)
+        with ChangeDirectory(script_directory):
+            completed_process = subprocess.run(command, stdout=subprocess.PIPE)
             process_output = completed_process.stdout
 
         result_parameters = json.loads(process_output)
-        self.assertEqual(self.job_parameters, result_parameters)
+        self.assertEqual(expected_loaded_parameters, result_parameters)
