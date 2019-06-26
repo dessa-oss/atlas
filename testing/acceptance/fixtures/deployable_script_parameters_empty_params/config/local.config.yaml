@@ -1,0 +1,5 @@
+job_deployment_env: local
+results_config: {}
+cache_config: {}
+obfuscate_foundations: False
+log_level: FATAL

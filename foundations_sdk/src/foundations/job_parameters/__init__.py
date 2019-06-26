@@ -7,12 +7,18 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def load_parameters():
     try:
-        return _read_from_parameters_file()
+        return _parsed_json(_raw_json_from_parameters_file())
     except FileNotFoundError:
         return {}
 
-def _read_from_parameters_file():
+def _raw_json_from_parameters_file():
+    with open('foundations_job_parameters.json', 'r') as parameters_file:
+        return parameters_file.read()
+
+def _parsed_json(file_contents):
     import json
 
-    with open('foundations_job_parameters.json', 'r') as parameters_file:
-        return json.load(parameters_file)
+    if file_contents == '':
+        return {}
+    else:
+        return json.loads(file_contents)

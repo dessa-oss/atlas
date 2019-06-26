@@ -31,11 +31,25 @@ class TestCanLoadParameters(Spec):
     def deployable_script_directory_no_parameters(self):
         return 'acceptance/fixtures/deployable_script_parameters_no_parameters'
 
+    @let
+    def script_directory_empty_params(self):
+        return 'acceptance/fixtures/script_parameters_empty_params'
+
+    @let
+    def deployable_script_directory_empty_params(self):
+        return 'acceptance/fixtures/deployable_script_parameters_empty_params'
+
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters)
 
     def test_can_load_parameters_within_foundations_deploy(self):
         self._test_can_load_parameters_within_foundations_deploy(self.deployable_script_directory, self.job_parameters)
+
+    def test_can_load_parameters_as_empty_dict_within_python_empty_params(self):
+        self._test_can_load_parameters_within_python(self.script_directory_empty_params, {})
+
+    def test_can_load_parameters_as_empty_dict_within_foundations_deploy_empty_params(self):
+        self._test_can_load_parameters_within_foundations_deploy(self.deployable_script_directory_empty_params, {})
 
     def test_can_load_default_parameters_within_foundations_deploy_when_parameters_json_not_found(self):
         self._test_can_load_parameters_within_foundations_deploy(self.deployable_script_directory_no_parameters, {})

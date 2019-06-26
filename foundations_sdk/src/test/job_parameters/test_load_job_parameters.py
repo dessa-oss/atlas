@@ -44,6 +44,18 @@ class TestLoadJobParameters(Spec):
         mock_open.side_effect = FileNotFoundError('beep')
         self.assertEqual({}, load_parameters())
 
+    def test_returns_default_of_empty_dict_if_file_is_empty(self):
+        self.mock_file.read.return_value = ''
+        self.assertEqual({}, load_parameters())
+
+    def test_raises_exception_if_file_is_not_valid_json(self):
+        import json
+
+        self.mock_file.read.return_value = self.faker.sentence()
+
+        with self.assertRaises(json.JSONDecodeError):
+            load_parameters()
+
     def _mock_file_enter(self, *args, **kwargs):
         return self.mock_file
 
