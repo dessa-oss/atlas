@@ -78,7 +78,6 @@ def run_user_script(job):
     path_to_script = os.environ['script_to_run']
     module_name, path_to_add = get_user_script_module_and_path(path_to_script)
     sys.path.append(path_to_add)
-    os.chdir(path_to_add)
     import_module(module_name)
 
 def run_job_variant(job):

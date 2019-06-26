@@ -5,23 +5,21 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import os
-
-def all_files():
-    for directory_name, _, files in os.walk('.'):
-        for file_name in files:
-            if not file_name.endswith('.pyc'):
-                yield os.path.join(directory_name, file_name)
+from lib.list_dir import all_files
 
 expected_files = set(
     [
-        './project_code/driver.py',
+        './config/local.config.yaml',
+        './data/nested/more_data.csv',
         './project_code/model.py',
         './project_code/driver2.py',
-        './config/local.config.yaml',
-        './data/some_data.csv',
         './data/other_data.csv',
-        './data/nested/more_data.csv'
+        './lib/list_dir.py',
+        './data/some_data.csv',
+        './lib/utils/__init__.py',
+        './lib/__init__.py',
+        './lib/utils/filtering.py',
+        './project_code/driver.py'
     ]
 )
 

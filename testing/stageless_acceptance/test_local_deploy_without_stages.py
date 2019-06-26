@@ -42,7 +42,6 @@ class TestLocalDeployWithoutStages(Spec):
         self._assert_can_print(driver_deploy_completed_process)
         self._assert_warning_printed(driver_deploy_completed_process)
 
-    @skip('not ready')
     def test_stageless_project_can_access_all_files_in_cwd(self):
         import subprocess
 
