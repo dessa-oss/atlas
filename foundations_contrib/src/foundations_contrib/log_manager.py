@@ -21,6 +21,9 @@ class LogManager(object):
 
         return self._loggers[name]
 
+    def foundations_not_running_warning_printed(self):
+        return False
+
     def _load(self):
         import logging
         from sys import stdout

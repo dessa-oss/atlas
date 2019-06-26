@@ -115,3 +115,7 @@ class TestLogManager(unittest.TestCase):
         first_logger = log_manager.get_logger('namespaced_log_levels')
         second_logger = log_manager.get_logger('namespaced_log_levels_two')
         self.assertNotEqual(first_logger, second_logger)
+
+    def test_foundations_not_running_warning_printed_false_by_default(self):
+        log_manager = LogManager(self.config_manager)
+        self.assertFalse(log_manager.foundations_not_running_warning_printed())
