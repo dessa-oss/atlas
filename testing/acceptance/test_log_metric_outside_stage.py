@@ -30,7 +30,7 @@ class TestLogMetricOutsideStage(Spec):
         queue_job = QueueJob(message_router, pipeline_context)
         queue_job.push_message()
 
-    def test_log_metric_outside_of_job_throws_warning_and_does_not_log_metric_but_still_executes(self):
+    def test_log_metric_outside_of_job_does_not_log_metric_but_still_executes(self):
         import subprocess
 
         metrics_before_script_run = self._get_metrics_for_all_jobs()
@@ -39,7 +39,6 @@ class TestLogMetricOutsideStage(Spec):
         metrics_after_script_run = self._get_metrics_for_all_jobs()
 
         self.assertEqual(0, completed_process.returncode)
-        self.assertIn('Cannot log metric if not deployed with foundations deploy', process_output)
         self.assertIn('Hello World!', process_output)
         assert_frame_equal(metrics_before_script_run, metrics_after_script_run)
 
@@ -54,7 +53,6 @@ class TestLogMetricOutsideStage(Spec):
         process_output = completed_process.stdout.decode()
 
         self.assertEqual(0, completed_process.returncode)
-        self.assertNotIn('Cannot log metric if not deployed with foundations deploy', process_output)
         self.assertIn('Hello World!', process_output)
 
         logged_metric = self._get_logged_metric(self._job_id, 'key')
