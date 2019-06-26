@@ -28,3 +28,4 @@ from acceptance.test_run_model_predictions import TestRunModelPredictions
 from acceptance.test_results_file_creation import TestResultsFileCreation
 from acceptance.test_log_metric_outside_stage import TestLogMetricOutsideStage
 from acceptance.test_annotate_without_stage import TestAnnotateWithoutStage
+from acceptance.test_can_load_parameters import TestCanLoadParameters
