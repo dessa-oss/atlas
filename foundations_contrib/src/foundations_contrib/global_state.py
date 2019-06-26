@@ -45,5 +45,3 @@ foundations_context = _create_foundations_context()
 
 def current_foundations_context():
     return foundations_context
-
-not_run_with_foundations_warning_printed = False

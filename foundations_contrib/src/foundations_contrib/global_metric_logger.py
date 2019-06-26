@@ -17,9 +17,10 @@ class GlobalMetricLogger(object):
         if self._is_job_running():
             metric_logged_producer = MetricLogged(self._message_router, self._project_name(), self._job_id(), key, value)
             metric_logged_producer.push_message()
-        else:
+        elif not log_manager.foundations_not_running_warning_printed():
             logger = log_manager.get_logger(__name__)
-            logger.warning('Cannot log metric if not deployed with foundations deploy')
+            logger.warning('Script not run with Foundations.')
+            log_manager.set_foundations_not_running_warning_printed()
 
     def _is_job_running(self):
         try:

@@ -10,8 +10,8 @@ from foundations_contrib.global_metric_logger import GlobalMetricLogger, global_
 
 class TestGlobalMetricLogger(Spec):
 
-    mock_log_manager = let_patch_mock('foundations_contrib.global_state.log_manager')
     mock_current_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    mock_logger = let_mock()
 
     class MockMessageRouter(object):
         
@@ -63,6 +63,12 @@ class TestGlobalMetricLogger(Spec):
             'value': self.fake_metric_value_2
         }
 
+    @let_now
+    def mock_get_logger(self):
+        mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
+        mock.return_when(self.mock_logger, 'foundations_contrib.global_metric_logger')
+        return mock
+
     @set_up
     def set_up(self):
         from foundations_internal.pipeline_context import PipelineContext
@@ -73,13 +79,13 @@ class TestGlobalMetricLogger(Spec):
         self._message_router = self.MockMessageRouter()
         self._logger = GlobalMetricLogger(self._message_router)
 
-        self.mock_logger = Mock()
-        self.mock_get_logger = ConditionalReturn()
-        self.mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.global_metric_logger')
-        self.mock_log_manager.get_logger = self.mock_get_logger
-
         self._pipeline_context.file_name = None
         self._pipeline_context.provenance.project_name = self.fake_project_name
+
+    @tear_down
+    def tear_down(self):
+        from foundations_contrib.global_state import log_manager
+        log_manager.set_foundations_not_running_warning_printed(False)
 
     def test_log_metric_stores_metric(self):
         self._pipeline_context.file_name = self.fake_job_id
@@ -89,7 +95,13 @@ class TestGlobalMetricLogger(Spec):
     def test_log_metric_shows_warning_if_not_in_running_job(self):
         self._pipeline_context.file_name = None
         self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
-        self.mock_logger.warning.assert_called_with('Cannot log metric if not deployed with foundations deploy')
+        self.mock_logger.warning.assert_called_with('Script not run with Foundations.')
+
+    def test_log_metric_shows_warning_only_once_if_not_in_running_job(self):
+        self._pipeline_context.file_name = None
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self._logger.log_metric(self.fake_metric_name, self.fake_metric_value)
+        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
 
     def test_log_metric_does_not_show_warning_if_in_running_job(self):
         self._pipeline_context.file_name = self.fake_job_id

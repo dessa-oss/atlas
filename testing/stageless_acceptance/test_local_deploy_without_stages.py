@@ -10,6 +10,8 @@ from foundations_spec import *
 import foundations
 import foundations.prototype
 
+from pandas.testing import assert_frame_equal
+
 class TestLocalDeployWithoutStages(Spec):
 
     @set_up_class
@@ -23,12 +25,29 @@ class TestLocalDeployWithoutStages(Spec):
     def test_stageless_project_with_nested_directory_deploys_succesfully(self):
         self._test_deploy_stageless_project('stageless-projects-nested', 'stageless_project_nested_project_code', 'project_code/driver.py')
 
+    def test_run_job_without_foundations_deploy_prints_warning_but_still_executes(self):
+        import subprocess
+
+        change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/stageless_project_nested_no_cache'
+
+        metrics_and_tags_before_script_run = self._get_tags_for_all_jobs('default', ignore_project_not_exist=True)
+
+        command_to_run = ['/bin/bash', '-c', '{} && python {}'.format(change_to_fixture_directory_command, 'project_code/driver.py')]
+        driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        self._assert_driver_completed_successfully(driver_deploy_completed_process)
+
+        assert_frame_equal(metrics_and_tags_before_script_run, self._get_tags_for_all_jobs('default', ignore_project_not_exist=True))
+
+        self._assert_can_print(driver_deploy_completed_process)
+        self._assert_warning_printed(driver_deploy_completed_process)
+
     def _test_deploy_stageless_project(self, project_name, fixture_directory, driver_path):
         import subprocess
 
         change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format(fixture_directory)
 
-        command_to_run = ["/bin/bash", "-c", "{} && python -m foundations deploy {} --env=local --project_name={}".format(change_to_fixture_directory_command, driver_path, project_name)]
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy {} --env=local --project_name={}'.format(change_to_fixture_directory_command, driver_path, project_name)]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self._assert_driver_completed_successfully(driver_deploy_completed_process)
 
@@ -59,10 +78,13 @@ class TestLocalDeployWithoutStages(Spec):
         driver_stdout = self._driver_stdout(driver_deploy_completed_process)
         self.assertIn('Hello World!', driver_stdout)
 
+    def _assert_warning_printed(self, driver_deploy_completed_process):
+        driver_stdout = self._driver_stdout(driver_deploy_completed_process)
+        self.assertEqual(1, driver_stdout.count('Script not run with Foundations.'))
+
     def _assert_no_warning_printed(self, driver_deploy_completed_process):
         driver_stdout = self._driver_stdout(driver_deploy_completed_process)
-        self.assertNotIn('Cannot log metric if not deployed with foundations deploy', driver_stdout)
-        self.assertNotIn('Cannot set tag if not deployed with foundations deploy', driver_stdout)
+        self.assertNotIn('Script not run with foundations.', driver_stdout)
 
     def _assert_can_log_metrics(self, project_name, job_id):
         self.assertEqual(84, self._get_logged_metric(project_name, job_id, 'Score'))
@@ -80,8 +102,16 @@ class TestLocalDeployWithoutStages(Spec):
         metrics_for_job = all_metrics.loc[all_metrics['job_id'] == job_id].iloc[0]
         return metrics_for_job[metric_name]
     
-    def _get_tags_for_all_jobs(self, project_name):
-        return foundations.prototype.get_metrics_for_all_jobs(project_name)
+    def _get_tags_for_all_jobs(self, project_name, ignore_project_not_exist=False):
+        import pandas
+
+        try:
+            return foundations.prototype.get_metrics_for_all_jobs(project_name)
+        except ValueError:
+            if ignore_project_not_exist:
+                return pandas.DataFrame()
+            else:
+                raise
 
     def _get_tags_for_job(self, project_name, job_id):
         all_tags = self._get_tags_for_all_jobs(project_name)
