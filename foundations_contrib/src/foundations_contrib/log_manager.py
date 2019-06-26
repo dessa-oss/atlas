@@ -11,6 +11,7 @@ class LogManager(object):
     def __init__(self, config):
         self._loggers = None
         self._config_manager = config
+        self._foundations_not_running_warning_printed = False
 
     def get_logger(self, name):
         if self._loggers is None:
@@ -21,8 +22,11 @@ class LogManager(object):
 
         return self._loggers[name]
 
+    def set_foundations_not_running_warning_printed(self):
+        self._foundations_not_running_warning_printed = True
+
     def foundations_not_running_warning_printed(self):
-        return False
+        return self._foundations_not_running_warning_printed
 
     def _load(self):
         import logging
