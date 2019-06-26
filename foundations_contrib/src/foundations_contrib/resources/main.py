@@ -63,12 +63,12 @@ def get_user_script_module_and_path(user_script):
     dirname = os.path.dirname(user_script)
 
     if dirname:
-        module_name = os.path.basename(user_script)
+        user_script = os.path.basename(user_script)
         path = os.path.join(os.getcwd(), dirname)
     else:
         path = os.getcwd()
 
-    module_name = module_name.split('.')[0]
+    module_name = user_script.split('.')[0]
     return module_name, path
 
 def run_user_script(job):

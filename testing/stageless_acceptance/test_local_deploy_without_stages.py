@@ -19,7 +19,6 @@ class TestLocalDeployWithoutStages(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
-    @skip('not ready')
     def test_stageless_project_deploys_succesfully(self):
         self._test_deploy_stageless_project('stageless-projects', 'stageless_project', 'driver.py')
 
