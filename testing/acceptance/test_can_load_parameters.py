@@ -19,6 +19,10 @@ class TestCanLoadParameters(Spec):
     def script_directory(self):
         return 'acceptance/fixtures/script_parameters'
 
+    @let
+    def deployable_script_directory(self):
+        return 'acceptance/fixtures/deployable_script_parameters'
+
     def test_can_load_parameters_within_python(self):
         from foundations_internal.change_directory import ChangeDirectory
         import subprocess
@@ -26,6 +30,18 @@ class TestCanLoadParameters(Spec):
 
         with ChangeDirectory(self.script_directory):
             completed_process = subprocess.run(['python', 'main.py'], stdout=subprocess.PIPE)
+            process_output = completed_process.stdout
+
+        result_parameters = json.loads(process_output)
+        self.assertEqual(self.job_parameters, result_parameters)
+
+    def test_can_load_parameters_within_foundations_deploy(self):
+        from foundations_internal.change_directory import ChangeDirectory
+        import subprocess
+        import json
+
+        with ChangeDirectory(self.deployable_script_directory):
+            completed_process = subprocess.run(['python', '-m', 'foundations', 'deploy', '--env', 'local', 'project_code/script_to_run.py'], stdout=subprocess.PIPE)
             process_output = completed_process.stdout
 
         result_parameters = json.loads(process_output)
