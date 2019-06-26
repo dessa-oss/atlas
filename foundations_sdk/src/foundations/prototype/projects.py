@@ -83,6 +83,7 @@ def set_tag(key, value):
         ```
     """
     from foundations_contrib.global_state import log_manager, current_foundations_context, message_router
+    import foundations_contrib.global_state as global_state
     from foundations_contrib.producers.tag_set import TagSet
 
     pipeline_context = current_foundations_context().pipeline_context()
@@ -90,9 +91,10 @@ def set_tag(key, value):
     if _job_running(pipeline_context):
         tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
         tag_set_producer.push_message()
-    else:
+    elif not global_state.not_run_with_foundations_warning_printed:
         logger = log_manager.get_logger(__name__)
-        logger.warning('Cannot set tag if not deployed with foundations deploy')
+        logger.warning('Script not run with Foundations.')
+        global_state.not_run_with_foundations_warning_printed = True
 
 def _job_running(pipeline_context):
     try:

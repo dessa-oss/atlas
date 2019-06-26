@@ -118,6 +118,11 @@ class TestPrototypeProjects(Spec):
         self.foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
         self.redis.flushall()
 
+    @tear_down
+    def tear_down(self):
+        import foundations_contrib.global_state as global_state
+        global_state.not_run_with_foundations_warning_printed = False
+
     def test_returns_metrics_data_frame(self):
         metrics = get_metrics_for_all_jobs(self.project_name)
         metric_subset = metrics[list(self.metrics)]
@@ -153,7 +158,12 @@ class TestPrototypeProjects(Spec):
 
     def test_set_tag_when_not_in_job_gives_warning(self):
         set_tag(self.random_tag, self.random_tag_value)
-        self.mock_logger.warning.assert_called_with('Cannot set tag if not deployed with foundations deploy')
+        self.mock_logger.warning.assert_called_with('Script not run with Foundations.')
+
+    def test_set_tag_twice_when_not_in_job_gives_warning_once(self):
+        set_tag(self.random_tag, self.random_tag_value)
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
 
     def test_set_tag_when_in_job_sets_tag(self):
         self._pipeline_context.file_name = self.job_id
