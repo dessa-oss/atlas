@@ -41,6 +41,7 @@ from foundations.projects import set_project_name, get_metrics_for_all_jobs
 from foundations_internal.scheduler import Scheduler
 from foundations_internal.versioning import __version__
 from foundations.config import set_environment
+from foundations.job_parameters import *
 import foundations_internal.import_installer
 import foundations_contrib.consumers
 import foundations_events

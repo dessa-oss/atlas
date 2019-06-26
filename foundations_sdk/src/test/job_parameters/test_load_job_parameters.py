@@ -35,6 +35,10 @@ class TestLoadJobParameters(Spec):
     def test_can_load_json_parameters(self):
         self.assertEqual(self.mock_parameters, load_parameters())
 
+    def test_is_accessible_globally(self):
+        import foundations
+        self.assertEqual(load_parameters, foundations.load_parameters)
+
     def _mock_file_enter(self, *args, **kwargs):
         return self.mock_file
 
