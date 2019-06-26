@@ -46,7 +46,7 @@ class TestAnnotateWithoutStage(Spec):
         metrics_after_script_run = self._get_metrics_for_all_jobs()
 
         self.assertEqual(0, completed_process.returncode)
-        self.assertIn('Cannot set tag if not deployed with foundations deploy', process_output)
+        self.assertIn('Script not run with Foundations.', process_output)
         self.assertIn('Hello World!', process_output)
         assert_frame_equal(metrics_before_script_run, metrics_after_script_run)
 
@@ -55,7 +55,7 @@ class TestAnnotateWithoutStage(Spec):
         process_output = completed_process.stdout.decode()
 
         self.assertEqual(0, completed_process.returncode)
-        self.assertNotIn('Cannot set tag if not deployed with foundations deploy', process_output)
+        self.assertNotIn('Script not run with Foundations.', process_output)
         self.assertIn('Hello World!', process_output)
         self._assert_tags_set()
 
