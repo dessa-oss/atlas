@@ -20,3 +20,4 @@ from test.test_job_deployer import TestJobDeployer
 from test.prototype import *
 from test.test_set_job_resources import TestSetJobResources
 from test.staging import *
+from test.job_parameters import *
