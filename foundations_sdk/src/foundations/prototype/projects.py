@@ -90,10 +90,10 @@ def set_tag(key, value):
     if _job_running(pipeline_context):
         tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
         tag_set_producer.push_message()
-    elif not global_state.not_run_with_foundations_warning_printed:
+    elif not log_manager.foundations_not_running_warning_printed():
         logger = log_manager.get_logger(__name__)
         logger.warning('Script not run with Foundations.')
-        global_state.not_run_with_foundations_warning_printed = True
+        log_manager.set_foundations_not_running_warning_printed()
 
 def _job_running(pipeline_context):
     try:

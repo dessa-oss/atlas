@@ -120,8 +120,8 @@ class TestPrototypeProjects(Spec):
 
     @tear_down
     def tear_down(self):
-        import foundations_contrib.global_state as global_state
-        global_state.not_run_with_foundations_warning_printed = False
+        from foundations_contrib.global_state import log_manager
+        log_manager.set_foundations_not_running_warning_printed(False)
 
     def test_returns_metrics_data_frame(self):
         metrics = get_metrics_for_all_jobs(self.project_name)
