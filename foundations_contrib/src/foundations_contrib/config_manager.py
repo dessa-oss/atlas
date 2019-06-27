@@ -36,6 +36,9 @@ class ConfigManager(object):
         new_config = config_translator.translate(config)
         self.config().update(new_config)
 
+    def config_paths(self):
+        return []
+
     def freeze(self):
         self._frozen = True
 

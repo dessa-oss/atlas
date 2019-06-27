@@ -80,6 +80,10 @@ class TestConfigManager(Spec):
         self.assertEqual(
             {'title': 'test config', 'value': 'different value'}, config)
 
+    def test_config_paths_returns_empty_list_if_no_paths_added(self):
+        config_manager = ConfigManager()
+        self.assertEqual([], config_manager.config_paths())
+
     def test_indexer(self):
         config_manager = ConfigManager()
         config_manager.config()['hello'] = 'goodbye'
