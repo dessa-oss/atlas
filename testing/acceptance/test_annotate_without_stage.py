@@ -2,15 +2,16 @@
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
-Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-from foundations_spec.helpers import *
-from foundations_spec.helpers.spec import Spec
+from foundations_spec import *
+from acceptance.mixins.metrics_fetcher import MetricsFetcher
+
 import foundations
 import foundations.prototype
 
-class TestAnnotateWithoutStage(Spec):
+class TestAnnotateWithoutStage(Spec, MetricsFetcher):
 
     @let
     def annotations(self):
@@ -40,10 +41,10 @@ class TestAnnotateWithoutStage(Spec):
         import subprocess
         from pandas.testing import assert_frame_equal
 
-        metrics_before_script_run = self._get_metrics_for_all_jobs()
+        metrics_before_script_run = self._get_metrics_and_tags_for_all_jobs('default', ignore_errors=True)
         completed_process = subprocess.run(['python', 'acceptance/fixtures/set_annotation_script.py'], stdout=subprocess.PIPE)
         process_output = completed_process.stdout.decode()
-        metrics_after_script_run = self._get_metrics_for_all_jobs()
+        metrics_after_script_run = self._get_metrics_and_tags_for_all_jobs('default', ignore_errors=True)
 
         self.assertEqual(0, completed_process.returncode)
         self.assertIn('Script not run with Foundations.', process_output)
@@ -64,10 +65,10 @@ class TestAnnotateWithoutStage(Spec):
 
         self._run_job_with_annotations()
 
-        metrics = foundations.get_metrics_for_all_jobs('default')
+        metrics = self._get_metrics_for_all_jobs('default')
         job_metrics = metrics[metrics['job_id'] == self._job_id].loc[[0]]
 
-        prototype_metrics = self._get_metrics_for_all_jobs()
+        prototype_metrics = self._get_metrics_and_tags_for_all_jobs('default')
         prototype_metrics = prototype_metrics[list(job_metrics)]
         prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self._job_id].loc[[0]]
 
@@ -83,25 +84,7 @@ class TestAnnotateWithoutStage(Spec):
         return subprocess.run(['python', 'acceptance/fixtures/in_job_set_annotation_script.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=subprocess_environment)
 
     def _assert_tags_set(self):
-        metrics_for_job = self._get_metrics_for_job()
-
         for tag_name, expected_tag_value in self.annotations.items():
-            actual_tag_value = self._get_tag(metrics_for_job, tag_name)
+            actual_tag_value = self._get_tag('default', self._job_id, tag_name)
             self.assertEqual(expected_tag_value, actual_tag_value)
 
-    def _get_metrics_for_all_jobs(self):
-        import pandas
-
-        try:
-            return foundations.prototype.get_metrics_for_all_jobs('default')
-        except KeyError as ex:
-            if 'job_id' in ex.args:
-                return pandas.DataFrame()
-            raise
-
-    def _get_metrics_for_job(self):
-        all_metrics = self._get_metrics_for_all_jobs()
-        return all_metrics.loc[all_metrics['job_id'] == self._job_id].iloc[0]
-
-    def _get_tag(self, metrics_for_job, tag):
-        return metrics_for_job['tag_{}'.format(tag)]
