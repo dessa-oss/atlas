@@ -72,10 +72,10 @@ class FoundationsContext(object):
         raise ValueError('FoundationsContexts do not support serialization')
 
     def project_name(self):
-        return self.pipeline_context().provenance.project_name
+        return self._provenance().project_name
 
     def set_project_name(self, project_name):
-        self.pipeline_context().provenance.project_name = project_name
+        self._provenance().project_name = project_name
 
     def job_id(self):
         return self.pipeline_context().file_name
@@ -89,3 +89,6 @@ class FoundationsContext(object):
     def reset_job_resources(self):
         from foundations_internal.job_resources import JobResources
         self._job_resources = JobResources(0, None)
+
+    def _provenance(self):
+        return self.pipeline_context().provenance
