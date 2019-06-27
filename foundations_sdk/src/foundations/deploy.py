@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-def deploy(project_name=None, env='local'):
+def deploy(project_name=None, env='local', entrypoint='main.py'):
     import os
     import os.path as path
 
@@ -20,7 +20,7 @@ def deploy(project_name=None, env='local'):
 
     foundations.set_project_name(project_name)
     foundations.set_environment(env)
-    foundations.config_manager['run_script_environment'] = {'script_to_run': 'main.py'}
+    foundations.config_manager['run_script_environment'] = {'script_to_run': entrypoint}
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 

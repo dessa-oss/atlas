@@ -34,6 +34,10 @@ class TestDeploy(Spec):
     def environment(self):
         return self.faker.word()
 
+    @let
+    def entrypoint(self):
+        return self.faker.file_path()
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -82,6 +86,10 @@ class TestDeploy(Spec):
     def test_deploy_with_defaults_deploys_job_with_entrypoint_set_to_main_py(self):
         deploy()
         self.assertEqual('main.py', self.config_manager['run_script_environment']['script_to_run'])
+
+    def test_deploy_with_entrypoint_set_deploys_job_with_entrypoint_set(self):
+        deploy(entrypoint=self.entrypoint)
+        self.assertEqual(self.entrypoint, self.config_manager['run_script_environment']['script_to_run'])
 
     def test_deploy_with_defaults_deploys_job(self):
         mock_pipeline_context_wrapper = Mock()
