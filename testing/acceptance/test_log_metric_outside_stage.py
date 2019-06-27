@@ -7,10 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
+from acceptance.mixins.metrics_fetcher import MetricsFetcher
+
 import foundations
 from pandas.testing import assert_frame_equal
 
-class TestLogMetricOutsideStage(Spec):
+class TestLogMetricOutsideStage(Spec, MetricsFetcher):
 
     @set_up_class
     def set_up_class(klass):
@@ -33,10 +35,10 @@ class TestLogMetricOutsideStage(Spec):
     def test_log_metric_outside_of_job_throws_warning_and_does_not_log_metric_but_still_executes(self):
         import subprocess
 
-        metrics_before_script_run = self._get_metrics_for_all_jobs()
+        metrics_before_script_run = self._get_metrics_for_all_jobs('default')
         completed_process = subprocess.run(['python', 'acceptance/fixtures/log_metric_script.py'], stdout=subprocess.PIPE)
         process_output = completed_process.stdout.decode()
-        metrics_after_script_run = self._get_metrics_for_all_jobs()
+        metrics_after_script_run = self._get_metrics_for_all_jobs('default')
 
         self.assertEqual(0, completed_process.returncode)
         self.assertIn('Script not run with Foundations.', process_output)
@@ -57,13 +59,5 @@ class TestLogMetricOutsideStage(Spec):
         self.assertNotIn('Script not run with Foundations.', process_output)
         self.assertIn('Hello World!', process_output)
 
-        logged_metric = self._get_logged_metric(self._job_id, 'key')
+        logged_metric = self._get_logged_metric('default', self._job_id, 'key')
         self.assertEqual('value', logged_metric)
-
-    def _get_metrics_for_all_jobs(self):
-        return foundations.get_metrics_for_all_jobs('default')
-
-    def _get_logged_metric(self, job_id, metric_name):
-        all_metrics = self._get_metrics_for_all_jobs()
-        metrics_for_job = all_metrics.loc[all_metrics['job_id'] == job_id].iloc[0]
-        return metrics_for_job[metric_name]
