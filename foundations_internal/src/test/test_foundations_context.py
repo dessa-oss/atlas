@@ -105,3 +105,6 @@ class TestFoundationsContext(Spec):
         self._context.set_job_resources(job_resources)
         self._context.reset_job_resources()
         self.assertEqual(JobResources(0, None), self._context.job_resources())
+
+    def test_project_name_is_default_when_project_name_not_yet_set(self):
+        self.assertEqual('default', self._context.project_name())
