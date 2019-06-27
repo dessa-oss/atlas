@@ -5,13 +5,14 @@ Proprietary and confidential
 Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-def deploy():
+def deploy(project_name=None):
     import os
     import os.path as path
 
     import foundations
 
-    cwd_path = os.getcwd()
-    cwd_name = path.basename(cwd_path)
+    if project_name is None:
+        cwd_path = os.getcwd()
+        project_name = path.basename(cwd_path)
 
-    foundations.set_project_name(cwd_name)
+    foundations.set_project_name(project_name)

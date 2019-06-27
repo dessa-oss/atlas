@@ -18,6 +18,10 @@ class TestDeploy(Spec):
         patched_os_getcwd.return_value = cwd_path
         return cwd_path
 
+    @let
+    def project_name(self):
+        return self.faker.word()
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -36,3 +40,9 @@ class TestDeploy(Spec):
 
         deploy()
         self.assertEqual(cwd_name, current_foundations_context().project_name())
+
+    def test_deploy_with_project_name_specified_sets_project_name_to_project_name(self):
+        from foundations_contrib.global_state import current_foundations_context
+
+        deploy(project_name=self.project_name)
+        self.assertEqual(self.project_name, current_foundations_context().project_name())

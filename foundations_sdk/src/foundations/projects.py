@@ -32,7 +32,6 @@ def set_project_name(project_name="default"):
         ```
     """
     from foundations.global_state import current_foundations_context
-    print('in set project name: ', current_foundations_context())
     current_foundations_context().set_project_name(project_name)
 
 
