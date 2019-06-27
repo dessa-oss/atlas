@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-def deploy(project_name=None):
+def deploy(project_name=None, env=None):
     import os
     import os.path as path
 
@@ -16,4 +16,8 @@ def deploy(project_name=None):
         project_name = path.basename(cwd_path)
 
     foundations.set_project_name(project_name)
-    foundations.config_manager.add_simple_config_path('~/.foundations/config/local.config.yaml')
+
+    if env is None:
+        foundations.config_manager.add_simple_config_path('~/.foundations/config/local.config.yaml')
+    else:
+        foundations.config_manager.add_simple_config_path('~/.foundations/config/{}.config.yaml'.format(env))

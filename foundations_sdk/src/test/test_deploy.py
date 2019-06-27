@@ -28,6 +28,10 @@ class TestDeploy(Spec):
     def project_name(self):
         return self.faker.word()
 
+    @let
+    def environment(self):
+        return self.faker.word()
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -63,6 +67,10 @@ class TestDeploy(Spec):
     def test_deploy_with_defaults_adds_local_config_path_from_global_configs(self):
         deploy()
         self.assertIn('~/.foundations/config/local.config.yaml', self.config_manager.config_paths())
+
+    def test_deploy_with_defaults_adds_path_for_specified_config(self):
+        deploy(env=self.environment)
+        self.assertIn('~/.foundations/config/{}.config.yaml'.format(self.environment), self.config_manager.config_paths())
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
