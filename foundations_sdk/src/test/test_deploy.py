@@ -34,15 +34,15 @@ class TestDeploy(Spec):
 
     def test_deploy_with_defaults_sets_project_name_to_cwd_basename(self):
         import os.path as path
-        from foundations_contrib.global_state import current_foundations_context
 
         cwd_name = path.basename(self.fake_cwd)
-
-        deploy()
-        self.assertEqual(cwd_name, current_foundations_context().project_name())
+        self._test_deploy_correctly_sets_project_name(cwd_name)
 
     def test_deploy_with_project_name_specified_sets_project_name_to_project_name(self):
+        self._test_deploy_correctly_sets_project_name(self.project_name, project_name=self.project_name)
+
+    def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 
-        deploy(project_name=self.project_name)
-        self.assertEqual(self.project_name, current_foundations_context().project_name())
+        deploy(**kwargs)
+        self.assertEqual(expected_project_name, current_foundations_context().project_name())
