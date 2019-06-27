@@ -31,8 +31,9 @@ def set_project_name(project_name="default"):
         deployment = model.run()
         ```
     """
-    from foundations.global_state import foundations_context
-    foundations_context.set_project_name(project_name)
+    from foundations.global_state import current_foundations_context
+    print('in set project name: ', current_foundations_context())
+    current_foundations_context().set_project_name(project_name)
 
 
 def get_metrics_for_all_jobs(project_name, include_input_params=False):

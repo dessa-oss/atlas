@@ -5,6 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from test.prototype import *
+from test.staging import *
+from test.job_parameters import *
+
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher
 from test.test_global_import_serialize import TestGlobalImportSerialization
@@ -17,7 +21,5 @@ from test.test_stage_connector_wrapper import TestStageConnectorWrapper
 from test.test_deployment_wrapper import TestDeploymentWrapper
 from test.test_config import TestConfig
 from test.test_job_deployer import TestJobDeployer
-from test.prototype import *
 from test.test_set_job_resources import TestSetJobResources
-from test.staging import *
-from test.job_parameters import *
+from test.test_deploy import TestDeploy
