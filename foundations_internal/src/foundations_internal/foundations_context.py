@@ -72,7 +72,7 @@ class FoundationsContext(object):
         raise ValueError('FoundationsContexts do not support serialization')
 
     def project_name(self):
-        return 'default'
+        return self.pipeline_context().provenance.project_name
 
     def set_project_name(self, project_name):
         self.pipeline_context().provenance.project_name = project_name

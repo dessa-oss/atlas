@@ -25,6 +25,10 @@ class TestFoundationsContext(Spec):
     def ram(self):
         return self.faker.random.random() * 256
 
+    @let
+    def fake_project_name(self):
+        return self.faker.word()
+
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
@@ -108,3 +112,7 @@ class TestFoundationsContext(Spec):
 
     def test_project_name_is_default_when_project_name_not_yet_set(self):
         self.assertEqual('default', self._context.project_name())
+
+    def test_project_name_is_correct_when_project_name_set(self):
+        self._context.set_project_name(self.fake_project_name)
+        self.assertEqual(self.fake_project_name, self._context.project_name())
