@@ -11,6 +11,8 @@ from mock import patch
 
 class TestConfigManager(Spec):
 
+    mock_file = let_mock()
+
     @let
     def config_manager(self):
         return ConfigManager()
@@ -18,6 +20,16 @@ class TestConfigManager(Spec):
     @let
     def config(self):
         return self.config_manager.config()    
+
+    @let
+    def config_file_path(self):
+        return self.faker.file_path()
+
+    @set_up
+    def set_up(self):
+        self.mock_file.__enter__ = lambda *args: self.mock_file
+        self.mock_file.__exit__ = lambda *args: None
+        self.mock_file.read.return_value = ''
 
     def test_config_returns_empty(self):
         config = ConfigManager().config()
@@ -83,6 +95,14 @@ class TestConfigManager(Spec):
     def test_config_paths_returns_empty_list_if_no_paths_added(self):
         config_manager = ConfigManager()
         self.assertEqual([], config_manager.config_paths())
+
+    def test_config_paths_returns_singleton_list_with_added_path(self):
+        mock_open = self.patch('builtins.open')
+        mock_open.return_value = self.mock_file
+
+        config_manager = ConfigManager()
+        config_manager.add_simple_config_path(self.config_file_path)
+        self.assertEqual([self.config_file_path], config_manager.config_paths())
 
     def test_indexer(self):
         config_manager = ConfigManager()

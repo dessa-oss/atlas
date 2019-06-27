@@ -12,6 +12,7 @@ class ConfigManager(object):
         self._config = None
         self._frozen = False
         self._config_paths = []
+        self._config_path = []
 
     def config(self):
         import copy
@@ -36,8 +37,10 @@ class ConfigManager(object):
         new_config = config_translator.translate(config)
         self.config().update(new_config)
 
+        self._config_path = [path]
+
     def config_paths(self):
-        return []
+        return self._config_path
 
     def freeze(self):
         self._frozen = True
