@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-class ModelServingConfigMixin(Spec):
+class ModelServingConfigurator(Spec):
 
     @let
     def model_server_config_path(self):

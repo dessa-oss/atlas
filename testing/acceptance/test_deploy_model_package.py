@@ -6,11 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
-from acceptance.mixins.model_package_deployment_mixin import ModelPackageDeploymentMixin
+from acceptance.mixins.model_serving_configurator import ModelServingConfigurator
+from acceptance.mixins.model_package_deployer import ModelPackageDeployer
 
 
-class TestDeployModelPackage(ModelServingConfigMixin, ModelPackageDeploymentMixin):
+class TestDeployModelPackage(ModelServingConfigurator, ModelPackageDeployer):
     @let
     def job_id(self):
         return self.faker.uuid4()

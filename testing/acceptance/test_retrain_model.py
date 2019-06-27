@@ -7,10 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
-from acceptance.mixins.model_package_deployment_mixin import ModelPackageDeploymentMixin
+from acceptance.mixins.model_serving_configurator import ModelServingConfigurator
+from acceptance.mixins.model_package_deployer import ModelPackageDeployer
 
-class TestRetrainModel(ModelServingConfigMixin, ModelPackageDeploymentMixin):
+class TestRetrainModel(ModelServingConfigurator, ModelPackageDeployer):
 
     @let
     def features_file_name(self):

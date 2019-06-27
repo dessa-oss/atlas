@@ -9,7 +9,7 @@ from foundations_spec import *
 import acceptance.fixtures.train_model_package as train_model_package
 
 
-class ModelPackageDeploymentMixin(Spec):
+class ModelPackageDeployer(Spec):
 
     def deploy_model_package(self):
         job = train_model_package.validation_predictions.run()

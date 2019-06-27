@@ -7,9 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 import acceptance.fixtures.train_model_package as train_model_package
-from acceptance.mixins.model_serving_config_mixin import ModelServingConfigMixin
+from acceptance.mixins.model_serving_configurator import ModelServingConfigurator
 
-class TestRunModelPredictions(ModelServingConfigMixin):
+class TestRunModelPredictions(ModelServingConfigurator):
 
     @set_up
     def set_up(self):
