@@ -25,6 +25,18 @@ class TestConfigManager(Spec):
     def config_file_path(self):
         return self.faker.file_path()
 
+    @let
+    def config_file_path_list(self):
+        import random
+
+        path_list_length = random.randint(2, 10)
+        path_list = []
+
+        for _ in range(path_list_length):
+            path_list.append(self.faker.file_path())
+
+        return path_list
+
     @set_up
     def set_up(self):
         self.mock_file.__enter__ = lambda *args: self.mock_file
@@ -103,6 +115,17 @@ class TestConfigManager(Spec):
         config_manager = ConfigManager()
         config_manager.add_simple_config_path(self.config_file_path)
         self.assertEqual([self.config_file_path], config_manager.config_paths())
+
+    def test_config_paths_returns_list_with_added_paths(self):
+        mock_open = self.patch('builtins.open')
+        mock_open.return_value = self.mock_file
+
+        config_manager = ConfigManager()
+
+        for config_file_path in self.config_file_path_list:
+            config_manager.add_simple_config_path(config_file_path)
+
+        self.assertEqual(self.config_file_path_list, config_manager.config_paths())
 
     def test_indexer(self):
         config_manager = ConfigManager()
