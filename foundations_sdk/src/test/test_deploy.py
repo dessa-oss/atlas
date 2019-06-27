@@ -72,6 +72,10 @@ class TestDeploy(Spec):
         deploy(env=self.environment)
         self.assertIn('~/.foundations/config/{}.config.yaml'.format(self.environment), self.config_manager.config_paths())
 
+    def test_deploy_with_defaults_deploys_job_with_entrypoint_set_to_main_py(self):
+        deploy()
+        self.assertEqual('main.py', self.config_manager['run_script_environment']['script_to_run'])
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 

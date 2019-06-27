@@ -17,3 +17,4 @@ def deploy(project_name=None, env='local'):
 
     foundations.set_project_name(project_name)
     foundations.config_manager.add_simple_config_path('~/.foundations/config/{}.config.yaml'.format(env))
+    foundations.config_manager['run_script_environment'] = {'script_to_run': 'main.py'}
