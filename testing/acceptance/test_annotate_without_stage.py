@@ -66,13 +66,16 @@ class TestAnnotateWithoutStage(Spec, MetricsFetcher):
         self._run_job_with_annotations()
 
         metrics = self._get_metrics_for_all_jobs('default')
-        job_metrics = metrics[metrics['job_id'] == self._job_id].loc[[0]]
+        job_metrics = self._metrics_for_job(metrics)
 
         prototype_metrics = self._get_metrics_and_tags_for_all_jobs('default')
         prototype_metrics = prototype_metrics[list(job_metrics)]
-        prototype_job_metrics = prototype_metrics[prototype_metrics['job_id'] == self._job_id].loc[[0]]
+        prototype_job_metrics = self._metrics_for_job(prototype_metrics)
 
         assert_frame_equal(job_metrics, prototype_job_metrics)
+
+    def _metrics_for_job(self, metrics):
+        return metrics[metrics['job_id'] == self._job_id].loc[[0]]
 
     def _run_job_with_annotations(self):
         import os
