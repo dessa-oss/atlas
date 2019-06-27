@@ -68,7 +68,7 @@ class TestDeploy(Spec):
         deploy()
         self.assertIn('~/.foundations/config/local.config.yaml', self.config_manager.config_paths())
 
-    def test_deploy_with_defaults_adds_path_for_specified_config(self):
+    def test_deploy_adds_path_for_specified_config(self):
         deploy(env=self.environment)
         self.assertIn('~/.foundations/config/{}.config.yaml'.format(self.environment), self.config_manager.config_paths())
 
