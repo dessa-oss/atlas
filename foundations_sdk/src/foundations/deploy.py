@@ -10,11 +10,18 @@ def deploy(project_name=None, env='local'):
     import os.path as path
 
     import foundations
+    from foundations.job_deployer import deploy_job
+    from foundations_contrib.global_state import current_foundations_context
+    from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
 
     if project_name is None:
         cwd_path = os.getcwd()
         project_name = path.basename(cwd_path)
 
     foundations.set_project_name(project_name)
-    foundations.config_manager.add_simple_config_path('~/.foundations/config/{}.config.yaml'.format(env))
+    foundations.set_environment(env)
     foundations.config_manager['run_script_environment'] = {'script_to_run': 'main.py'}
+    
+    pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
+
+    deploy_job(pipeline_context_wrapper, None, {})

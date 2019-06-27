@@ -17,6 +17,8 @@ class TestDeploy(Spec):
     mock_open = let_patch_mock('builtins.open')
     mock_yaml_load = let_patch_mock('yaml.load', ConditionalReturn())
 
+    mock_set_environment = let_patch_mock('foundations.set_environment')    
+
     @let_now
     def fake_cwd(self):
         cwd_path = self.faker.file_path()
@@ -50,6 +52,11 @@ class TestDeploy(Spec):
 
         self.mock_open.return_value = self.mock_file
 
+        self.mock_set_environment.side_effect = self._set_environment
+
+        self.mock_deploy_job_function = self.patch('foundations.job_deployer.deploy_job')
+        self.pipeline_context = current_foundations_context().pipeline_context()
+
     @tear_down
     def tear_down(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -64,20 +71,35 @@ class TestDeploy(Spec):
     def test_deploy_with_project_name_specified_sets_project_name_to_project_name(self):
         self._test_deploy_correctly_sets_project_name(self.project_name, project_name=self.project_name)
 
-    def test_deploy_with_defaults_adds_local_config_path_from_global_configs(self):
+    def test_deploy_with_defaults_sets_environment_to_local(self):
         deploy()
-        self.assertIn('~/.foundations/config/local.config.yaml', self.config_manager.config_paths())
+        self.mock_set_environment.assert_called_with('local')
 
     def test_deploy_adds_path_for_specified_config(self):
         deploy(env=self.environment)
-        self.assertIn('~/.foundations/config/{}.config.yaml'.format(self.environment), self.config_manager.config_paths())
+        self.mock_set_environment.assert_called_with(self.environment)
 
     def test_deploy_with_defaults_deploys_job_with_entrypoint_set_to_main_py(self):
         deploy()
         self.assertEqual('main.py', self.config_manager['run_script_environment']['script_to_run'])
+
+    def test_deploy_with_defaults_deploys_job(self):
+        mock_pipeline_context_wrapper = Mock()
+        mock_pipeline_context_wrapper.pipeline_context.return_value = self.pipeline_context
+        mock_pipeline_context_wrapper_klass = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
+        mock_pipeline_context_wrapper_klass.return_when(mock_pipeline_context_wrapper, self.pipeline_context)
+
+        deploy()
+        self.mock_deploy_job_function.assert_called_once_with(mock_pipeline_context_wrapper, None, {})
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 
         deploy(**kwargs)
         self.assertEqual(expected_project_name, current_foundations_context().project_name())
+
+    def _set_environment(self, environment_name):
+        from foundations_contrib.global_state import config_manager
+
+        path = '~/.foundations/config/{}.config.yaml'.format(environment_name)
+        config_manager.add_simple_config_path(path)
