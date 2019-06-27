@@ -16,3 +16,4 @@ def deploy(project_name=None):
         project_name = path.basename(cwd_path)
 
     foundations.set_project_name(project_name)
+    foundations.config_manager.add_simple_config_path('~/.foundations/config/local.config.yaml')
