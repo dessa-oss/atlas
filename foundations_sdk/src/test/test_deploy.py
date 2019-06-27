@@ -100,6 +100,10 @@ class TestDeploy(Spec):
         deploy()
         self.mock_deploy_job_function.assert_called_once_with(mock_pipeline_context_wrapper, None, {})
 
+    def test_deploy_sets_enable_stages_to_false(self):
+        deploy()
+        self.assertFalse(self.config_manager['run_script_environment']['enable_stages'])
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 

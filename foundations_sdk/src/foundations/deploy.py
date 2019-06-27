@@ -20,7 +20,7 @@ def deploy(project_name=None, env='local', entrypoint='main.py'):
 
     foundations.set_project_name(project_name)
     foundations.set_environment(env)
-    foundations.config_manager['run_script_environment'] = {'script_to_run': entrypoint}
+    foundations.config_manager['run_script_environment'] = {'script_to_run': entrypoint, 'enable_stages': False}
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
