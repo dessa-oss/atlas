@@ -160,6 +160,10 @@ class TestDeploy(Spec):
         deploy()
         self.mock_open.assert_called_once_with('~/.foundations/config/local.config.yaml', 'r')
 
+    def test_deploy_available_from_foundations_module(self):
+        import foundations
+        self.assertEqual(deploy, foundations.deploy)
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 
