@@ -12,9 +12,9 @@ from foundations.deploy import deploy
 
 class TestDeploy(Spec):
 
-    mock_file = let_mock()
+    mock_params_file = let_mock()
     config_manager = let_patch_mock('foundations.config_manager', ConfigManager())
-    mock_open = let_patch_mock('builtins.open')
+    mock_open = let_patch_mock('builtins.open', ConditionalReturn())
     mock_yaml_load = let_patch_mock('yaml.load', ConditionalReturn())
 
     mock_set_environment = let_patch_mock('foundations.set_environment')    
@@ -42,6 +42,20 @@ class TestDeploy(Spec):
     def job_directory(self):
         return self.faker.file_path()
 
+    @let
+    def params(self):
+        return {
+            "learning_rate": 0.125,
+            "layers": [
+                {
+                    "neurons": 5
+                },
+                {
+                    "neurons": 6
+                }
+            ]
+        }
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -53,12 +67,19 @@ class TestDeploy(Spec):
             'cache_config': {}
         }
 
+        self.mock_file = Mock()
+
         self.mock_yaml_load.return_when(config, self.mock_file)
 
         self.mock_file.__enter__ = lambda *args: self.mock_file
         self.mock_file.__exit__ = lambda *args: None
 
-        self.mock_open.return_value = self.mock_file
+        self.mock_params_file.__enter__ = lambda *args: self.mock_params_file
+        self.mock_params_file.__exit__ = lambda *args: None
+
+        self.mock_open.return_when(self.mock_file, '~/.foundations/config/local.config.yaml', 'r')
+        self.mock_open.return_when(self.mock_file, '~/.foundations/config/{}.config.yaml'.format(self.environment), 'r')
+        self.mock_open.return_when(self.mock_params_file, 'foundations_job_parameters.json', 'w')
 
         self.mock_set_environment.side_effect = self._set_environment
 
