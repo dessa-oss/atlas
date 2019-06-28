@@ -66,7 +66,7 @@ cd $BASEDIR && \
   with_output_redirect echo Running python version `python --version` located at $(which python) && \
   touch requirements.txt && \
   with_output_redirect python -m pip install ${pip_options} -U -r requirements.txt && \
-  PYTHONUNBUFFERED=TRUE python main.py
+  PYTHONUNBUFFERED=TRUE python foundations_main.py
   
 status=$?
 

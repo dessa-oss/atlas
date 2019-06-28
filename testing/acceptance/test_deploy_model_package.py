@@ -23,9 +23,8 @@ class TestDeployModelPackage(ModelServingConfigurator, ModelPackageDeployer):
         job_id = self.deploy_model_package()
         try:
             model_server_deploy_command = ['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail']
-            completed_process = subprocess.run(model_server_deploy_command, check=True, stderr=subprocess.PIPE)
+            completed_process = subprocess.run(model_server_deploy_command, check=True)
         except subprocess.CalledProcessError as ex:
-            print(completed_process.stderr)
             subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
             self.fail(str(ex))
 

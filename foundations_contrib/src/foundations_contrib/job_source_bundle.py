@@ -32,8 +32,8 @@ class JobSourceBundle(object):
                 self._protected_file_error_messages(item.name)
 
     def _protected_file_error_messages(self, item_name):
-        if item_name == './main.py':
-            raise Exception('Cannot add main.py to job bundle - please rename!')
+        if item_name == './foundations_main.py':
+            raise Exception('Cannot add foundations_main.py to job bundle - please rename!')
         if item_name == './run.sh':
             raise Exception('Cannot add run.sh to job bundle - please rename!')
 

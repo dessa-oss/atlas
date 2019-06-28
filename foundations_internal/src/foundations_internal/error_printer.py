@@ -135,7 +135,7 @@ class ErrorPrinter(object):
         foundations_root = get_foundations_root()
 
         def _is_disallowed(stack_file_name):
-            return check_is_in_dir(foundations_root, stack_file_name) or stack_file_name == "main.py"
+            return check_is_in_dir(foundations_root, stack_file_name) or stack_file_name == "foundations_main.py"
 
         def _filter_to_return(stack_info):
             stack_file_name = stack_info[0]

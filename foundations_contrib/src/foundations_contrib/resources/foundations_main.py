@@ -20,7 +20,7 @@ def set_recursion_limit_if_necessary(config, log):
         new_limit = config['recursion_limit']
         log.debug('Overriding recursion limit to {}'.format(new_limit))
         sys.setrecursionlimit(new_limit)
-        
+
 def mark_job_failed(job):
     from foundations_contrib.producers.jobs.failed_job import FailedJob
     from foundations.global_state import message_router

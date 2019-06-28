@@ -10,16 +10,17 @@ from acceptance.mixins.metrics_fetcher import MetricsFetcher
 
 import foundations
 
-@skip
 class TestDeployJobViaDeployFunction(Spec, MetricsFetcher):
     
     @let
     def foundations_global_configs_directory(self):
-        return '~/.foundations/config'
+        import os.path as path
+        return path.expanduser('~/.foundations/config')
 
     @let
     def local_config_file_path(self):
-        return '~/.foundations/config/local.config.yaml'
+        import os.path as path
+        return path.expanduser('~/.foundations/config/local.config.yaml')
 
     @let
     def local_config_file_contents(self):
@@ -83,6 +84,14 @@ class TestDeployJobViaDeployFunction(Spec, MetricsFetcher):
         import os.path as path
 
         import yaml
+        import copy
+
+        import foundations
+        from acceptance.cleanup import cleanup
+
+        cleanup()
+
+        self._config_manager_body = copy.deepcopy(foundations.config_manager.config())
 
         os.makedirs(self.foundations_global_configs_directory, exist_ok=True)
 
@@ -92,14 +101,22 @@ class TestDeployJobViaDeployFunction(Spec, MetricsFetcher):
             with open(self.local_config_file_path, 'w') as local_config_file:
                 yaml.dump(self.local_config_file_contents, local_config_file)
         else:
+            print('local config file already exists - will not remove')
             self._should_remove_local_config_file_on_cleanup = False
+
 
     @tear_down
     def tear_down(self):
         import os
 
-        if self._should_remove_local_config_file:
+        import foundations
+        from acceptance.config import config
+
+        if self._should_remove_local_config_file_on_cleanup:
             os.remove(self.local_config_file_path)
+
+        foundations.config_manager.config().clear()
+        foundations.config_manager.config().update(self._config_manager_body)
 
     def test_deploy_job_with_all_arguments_specified_deploys_job(self):
         import os
