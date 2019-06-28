@@ -22,7 +22,7 @@ class TestRunStagelessJob(Spec):
         import sys
         from importlib import import_module
         from io import StringIO
-        from foundations_contrib.resources.main import run_job_variant
+        from foundations_contrib.resources.foundations_main import run_job_variant
         
         os.environ['enable_stages'] = 'False'
         os.environ['script_to_run'] = 'integration/fixtures/user_stageless_script.py'
