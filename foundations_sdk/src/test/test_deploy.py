@@ -123,6 +123,12 @@ class TestDeploy(Spec):
         deploy()
         self.assertEqual([], self._directory_stack)
 
+    def test_deploy_with_project_name_not_set_but_with_job_directory_set_correctly_sets_project_name(self):
+        import os.path as path
+
+        project_name = path.basename(self.job_directory)
+        self._test_deploy_correctly_sets_project_name(project_name, job_directory=self.job_directory)
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 

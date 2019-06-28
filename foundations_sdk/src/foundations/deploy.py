@@ -16,8 +16,14 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
 
     cwd_path = os.getcwd()
 
+    if job_directory is not None:
+        os.chdir(job_directory)
+        target_directory = job_directory
+    else:
+        target_directory = cwd_path
+
     if project_name is None:
-        project_name = path.basename(cwd_path)
+        project_name = path.basename(target_directory)
 
     foundations.set_project_name(project_name)
     foundations.set_environment(env)
@@ -26,7 +32,6 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
     if job_directory is not None:
-        os.chdir(job_directory)
         deploy_job(pipeline_context_wrapper, None, {})
         os.chdir(cwd_path)
     else:
