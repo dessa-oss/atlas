@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-def deploy(project_name=None, env='local', entrypoint='main.py'):
+def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=None):
     import os
     import os.path as path
 
@@ -14,8 +14,9 @@ def deploy(project_name=None, env='local', entrypoint='main.py'):
     from foundations_contrib.global_state import current_foundations_context
     from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
 
+    cwd_path = os.getcwd()
+
     if project_name is None:
-        cwd_path = os.getcwd()
         project_name = path.basename(cwd_path)
 
     foundations.set_project_name(project_name)
@@ -24,4 +25,6 @@ def deploy(project_name=None, env='local', entrypoint='main.py'):
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
+    os.chdir(job_directory)
     deploy_job(pipeline_context_wrapper, None, {})
+    os.chdir(cwd_path)

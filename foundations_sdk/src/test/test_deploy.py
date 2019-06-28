@@ -38,6 +38,10 @@ class TestDeploy(Spec):
     def entrypoint(self):
         return self.faker.file_path()
 
+    @let
+    def job_directory(self):
+        return self.faker.file_path()
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -60,6 +64,9 @@ class TestDeploy(Spec):
 
         self.mock_deploy_job_function = self.patch('foundations.job_deployer.deploy_job')
         self.pipeline_context = current_foundations_context().pipeline_context()
+
+        self.mock_chdir = self.patch('os.chdir', self._mock_chdir)
+        self._directory_stack = []
 
     @tear_down
     def tear_down(self):
@@ -104,6 +111,14 @@ class TestDeploy(Spec):
         deploy()
         self.assertFalse(self.config_manager['run_script_environment']['enable_stages'])
 
+    def test_deploy_with_job_directory_set_deploys_from_that_directory(self):
+        deploy(job_directory=self.job_directory)
+        self.assertIn(self.job_directory, self._directory_stack)
+
+    def test_deploy_with_job_directory_set_changes_directory_back_after_deployment(self):
+        deploy(job_directory=self.job_directory)
+        self.assertEqual([self.job_directory, self.fake_cwd], self._directory_stack)
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 
@@ -115,3 +130,6 @@ class TestDeploy(Spec):
 
         path = '~/.foundations/config/{}.config.yaml'.format(environment_name)
         config_manager.add_simple_config_path(path)
+
+    def _mock_chdir(self, directory):
+        self._directory_stack.append(directory)
