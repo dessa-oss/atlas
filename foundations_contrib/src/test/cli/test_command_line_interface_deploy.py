@@ -287,59 +287,7 @@ class TestCommandLineInterfaceDeploy(Spec):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
         self.run_file.assert_called_with('passenger')
-
-    def test_get_job_logs_for_environment_that_does_not_exist_prints_error_message(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_any_call('Error: Could not find environment `{}`'.format(self.fake_env))
-
-    def test_get_job_logs_for_environment_that_does_not_exist_exits_with_code_1(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.exit_mock.assert_called_with(1)
-
-    def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_prints_error_message(self):
-        self._set_job_status(None)
-
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with('Error: Job `{}` does not exist for environment `{}`'.format(self.mock_job_id, self.fake_env))
-
-    def test_get_job_logs_for_environment_that_exists_for_job_that_does_not_exist_exits_with_code_1(self):
-        self._set_job_status(None)
-
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.exit_mock.assert_called_with(1)
-
-    def test_get_job_logs_for_queued_job_prints_error_message(self):
-        self._set_job_status('queued')
-
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with('Error: Job `{}` is queued and has not produced any logs'.format(self.mock_job_id))
-
-    def test_get_job_logs_for_queued_job_exits_with_code_1(self):
-        self._set_job_status('queued')
-
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.exit_mock.assert_called_with(1)
-
-    def test_get_job_logs_for_job_that_exists_and_is_not_queued_prints_logs(self):
-        self._set_job_status(self.fake_job_status)
-        self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with(self.fake_job_logs)
-
-    def test_get_job_logs_for_job_that_exists_and_is_not_queued_does_not_call_exit(self):
-        self._set_job_status(self.fake_job_status)
-        self.mock_job_deployment.get_job_logs.return_value = self.fake_job_logs
-        self.find_environment_mock.return_value = [self.fake_config_path(self.fake_env)]
-        CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.exit_mock.assert_not_called()
-
+    
     def test_foundations_deploy_project_name_is_default_if_not_set(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
         CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
