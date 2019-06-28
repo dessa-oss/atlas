@@ -75,35 +75,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
         self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
-    def test_setup_calls_setup_script(self):
-        CommandLineInterface(['setup']).execute()
-        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=self.mock_contrib_root / 'resources')
-
-    def test_execute_spits_out_help(self):
-        with patch('argparse.ArgumentParser.print_help') as mock:
-            CommandLineInterface([]).execute()
-            mock.assert_called()
-
-    @patch('foundations.__version__', '3.2.54')
-    def test_execute_spits_out_version(self):
-        CommandLineInterface(['--version']).execute()
-        self.print_mock.assert_called_with('Running Foundations version 3.2.54')
-
-    @patch('foundations.__version__', '7.3.3')
-    def test_execute_spits_out_version_different_version(self):
-        CommandLineInterface(['--version']).execute()
-        self.print_mock.assert_called_with('Running Foundations version 7.3.3')
-
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_creates_scaffold_with_project_name(self, scaffold_mock):
-        CommandLineInterface(['init', 'my project']).execute()
-        scaffold_mock.assert_called_with('my project')
-
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_creates_scaffold_with_project_name_different_project(self, scaffold_mock):
-        CommandLineInterface(['init', 'my different project']).execute()
-        scaffold_mock.assert_called_with('my different project')
-
     scaffold_project_mock = let_patch_mock('foundations_contrib.cli.scaffold.Scaffold.scaffold_project')
 
     def test_scaffold_scaffolds_with_project_name_different_project(self):
