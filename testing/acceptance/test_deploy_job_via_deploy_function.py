@@ -132,7 +132,7 @@ class TestDeployJobViaDeployFunction(Spec, MetricsFetcher):
         with open(environment_config_file_path, 'w') as environment_config_file:
             yaml.dump(self.local_config_file_contents, environment_config_file)
 
-        job_uuid = foundations.deploy(
+        job_uuid = self._deploy_job(
             job_directory=self.job_directory,
             entrypoint=self.entrypoint,
             project_name=self.project_name,
@@ -155,8 +155,12 @@ class TestDeployJobViaDeployFunction(Spec, MetricsFetcher):
         old_cwd = os.getcwd()
 
         os.chdir(self.job_directory)
-        job_uuid = foundations.deploy()
+        job_uuid = self._deploy_job()
         os.chdir(old_cwd)
 
         for metric_name, expected_metric_value in self.expected_metrics.items():
             self.assertEqual(expected_metric_value, self._get_logged_metric('deploy_job_test', job_uuid, metric_name))
+
+    def _deploy_job(self, **kwargs):
+        import foundations
+        return foundations.deploy(**kwargs)
