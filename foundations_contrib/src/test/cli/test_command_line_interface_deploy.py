@@ -288,54 +288,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
         self.run_file.assert_called_with('passenger')
 
-    def test_serving_deploy_rest_opens_pid_file(self):
-        self._create_server_pidfile()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.open_mock.assert_any_call(FoundationsModelServer.pid_file_path, 'r')
-
-    def test_serving_deploy_rest_reads_pid_file(self):
-        self._create_server_pidfile()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.mock_pid_file.read.assert_called()
-
-    def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
-        self._bring_server_up()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_any_call('Model server is already running.')
-
-    def test_serving_deploy_rest_runs_model_server_when_server_is_not_running(self):
-        from subprocess import DEVNULL
-
-        self._create_server_pidfile()
-        self.server_process.cmdline.return_value = ['another_process.py']
-        self._server_running = True
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running(self):
-        from subprocess import DEVNULL
-
-        self.open_mock.side_effect = OSError()
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running_different_model_config(self):
-        from subprocess import DEVNULL
-
-        self.open_mock.side_effect = OSError()
-        self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = 'a/path/to/another/file'
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=a/path/to/another/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
-        self.open_mock.side_effect = OSError()
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_any_call('Failed to start model server.', file=sys.stderr)
-        self.exit_mock.assert_any_call(10)
-
     def test_serving_deploy_rest_calls_deploy_model_rest_api_if_server_is_running(self):
         self._bring_server_up()
         CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
