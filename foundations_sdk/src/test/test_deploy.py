@@ -119,6 +119,10 @@ class TestDeploy(Spec):
         deploy(job_directory=self.job_directory)
         self.assertEqual([self.job_directory, self.fake_cwd], self._directory_stack)
 
+    def test_deploy_with_defaults_does_not_chdir_to_any_directory(self):
+        deploy()
+        self.assertEqual([], self._directory_stack)
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 

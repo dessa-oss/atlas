@@ -25,6 +25,9 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
-    os.chdir(job_directory)
-    deploy_job(pipeline_context_wrapper, None, {})
-    os.chdir(cwd_path)
+    if job_directory is not None:
+        os.chdir(job_directory)
+        deploy_job(pipeline_context_wrapper, None, {})
+        os.chdir(cwd_path)
+    else:
+        deploy_job(pipeline_context_wrapper, None, {})
