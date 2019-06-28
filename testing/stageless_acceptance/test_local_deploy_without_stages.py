@@ -47,7 +47,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format('stageless_project_nested_project_code')
 
-        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy {} --env=local'.format(change_to_fixture_directory_command, 'project_code/driver2.py')]
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy --entrypoint={} --env=local'.format(change_to_fixture_directory_command, 'project_code/driver2.py')]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_deploy_completed_process))
 
@@ -56,7 +56,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format(fixture_directory)
 
-        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy {} --env=local --project_name={}'.format(change_to_fixture_directory_command, driver_path, project_name)]
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy --entrypoint={} --env=local --project-name={}'.format(change_to_fixture_directory_command, driver_path, project_name)]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self._assert_driver_completed_successfully(driver_deploy_completed_process)
 

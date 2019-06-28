@@ -24,7 +24,7 @@ class TestCLIInit(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env local"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env local"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
@@ -32,7 +32,7 @@ class TestCLIInit(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy post_processing/results.py --env local"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=post_processing/results.py --env local"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
@@ -41,7 +41,7 @@ class TestCLIInit(Spec):
         import re
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy project_code/driver.py --env local"])
+        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env local"])
 
         job_id = re.search("Job\s+'([^']+)'\s+deployed", driver_deploy_output.decode(), re.MULTILINE)[1]
 

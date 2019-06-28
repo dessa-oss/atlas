@@ -61,7 +61,7 @@ class TestCanLoadParameters(Spec):
         self._test_command_that_loads_parameters_in_directory(['python', 'main.py'], script_directory, expected_loaded_parameters)
 
     def _test_can_load_parameters_within_foundations_deploy(self, script_directory, expected_loaded_parameters):
-        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'deploy', '--env', 'local', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
+        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'deploy', '--env', 'local', '--entrypoint', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
 
     def _test_command_that_loads_parameters_in_directory(self, command, script_directory, expected_loaded_parameters):
         from foundations_internal.change_directory import ChangeDirectory
