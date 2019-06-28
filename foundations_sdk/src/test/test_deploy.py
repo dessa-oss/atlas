@@ -12,10 +12,9 @@ from foundations.deploy import deploy
 
 class TestDeploy(Spec):
 
-    mock_params_file = let_mock()
     config_manager = let_patch_mock('foundations.config_manager', ConfigManager())
-    mock_open = let_patch_mock('builtins.open', ConditionalReturn())
     mock_yaml_load = let_patch_mock('yaml.load', ConditionalReturn())
+    mock_json_dump = let_patch_mock('json.dump')
 
     mock_set_environment = let_patch_mock('foundations.set_environment')    
 
@@ -67,7 +66,10 @@ class TestDeploy(Spec):
             'cache_config': {}
         }
 
+        self.mock_open = self.patch('builtins.open', ConditionalReturn())
+
         self.mock_file = Mock()
+        self.mock_params_file = Mock()
 
         self.mock_yaml_load.return_when(config, self.mock_file)
 
@@ -149,6 +151,10 @@ class TestDeploy(Spec):
 
         project_name = path.basename(self.job_directory)
         self._test_deploy_correctly_sets_project_name(project_name, job_directory=self.job_directory)
+
+    def test_deploy_with_parameters_set_but_job_directory_not_set_writes_parameters_file_to_cwd(self):
+        deploy(params=self.params)
+        self.mock_json_dump.assert_called_with(self.params, self.mock_params_file)
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context

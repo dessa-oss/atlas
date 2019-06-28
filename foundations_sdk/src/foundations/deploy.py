@@ -5,9 +5,10 @@ Proprietary and confidential
 Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
-def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=None):
+def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=None, params=None):
     import os
     import os.path as path
+    import json
 
     import foundations
     from foundations.job_deployer import deploy_job
@@ -30,6 +31,9 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     foundations.config_manager['run_script_environment'] = {'script_to_run': entrypoint, 'enable_stages': False}
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
+
+    with open('foundations_job_parameters.json', 'w') as params_file:
+        json.dump(params, params_file)
 
     if job_directory is not None:
         deploy_job(pipeline_context_wrapper, None, {})
