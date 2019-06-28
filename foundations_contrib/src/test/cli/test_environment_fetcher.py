@@ -46,7 +46,9 @@ class TestEnvironmentFetcher(unittest.TestCase):
         mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), yamls)
 
-    def test_environment_fetcher_checks_global_config_empty(self):
+    @patch('glob.glob')
+    def test_environment_fetcher_checks_global_config_empty(self, mock_glob):
+        mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), [])
 
     @patch('glob.glob')
