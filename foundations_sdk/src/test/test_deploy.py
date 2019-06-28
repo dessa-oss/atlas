@@ -16,7 +16,7 @@ class TestDeploy(Spec):
     mock_yaml_load = let_patch_mock('yaml.load', ConditionalReturn())
     mock_json_dump = let_patch_mock('json.dump')
 
-    mock_set_environment = let_patch_mock('foundations.set_environment')    
+    mock_set_environment = let_patch_mock('foundations.set_environment')
 
     @let_now
     def fake_cwd(self):
@@ -40,6 +40,10 @@ class TestDeploy(Spec):
     @let
     def job_directory(self):
         return self.faker.file_path()
+
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
 
     @let
     def params(self):
@@ -85,7 +89,11 @@ class TestDeploy(Spec):
 
         self.mock_set_environment.side_effect = self._set_environment
 
+        mock_deployment_wrapper = Mock()
+        mock_deployment_wrapper.job_name.return_value = self.job_id
         self.mock_deploy_job_function = self.patch('foundations.job_deployer.deploy_job')
+        self.mock_deploy_job_function.return_value = mock_deployment_wrapper
+
         self.pipeline_context = current_foundations_context().pipeline_context()
 
         self.mock_chdir = self.patch('os.chdir', self._mock_chdir)
@@ -163,6 +171,10 @@ class TestDeploy(Spec):
     def test_deploy_available_from_foundations_module(self):
         import foundations
         self.assertEqual(deploy, foundations.deploy)
+
+    def test_deploy_returns_job_id(self):
+        job_id = deploy()
+        self.assertEqual(self.job_id, job_id)
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context

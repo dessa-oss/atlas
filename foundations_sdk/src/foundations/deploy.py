@@ -36,8 +36,9 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
         with open('foundations_job_parameters.json', 'w') as params_file:
             json.dump(params, params_file)
 
+    job_deployment = deploy_job(pipeline_context_wrapper, None, {})
+
     if job_directory is not None:
-        deploy_job(pipeline_context_wrapper, None, {})
         os.chdir(cwd_path)
-    else:
-        deploy_job(pipeline_context_wrapper, None, {})
+
+    return job_deployment.job_name()
