@@ -235,28 +235,61 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         return self.server_process
 
+    def test_exits_the_process_with_exit_status_of_one(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=non-existant-env']).execute()
+        self.exit_mock.assert_called_with(1)
+
+    def test_does_not_exit_when_environments_exist(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
+        self.exit_mock.assert_not_called()
+
+    def test_deploy_returns_correct_error_if_wrong_directory(self):
+        self.find_environment_mock.return_value = None
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
+        self.print_mock.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
+        self.exit_mock.assert_called_with(1)
+
+    def test_deploys_job_when_local_config_found(self):
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
+        self.print_mock.assert_not_called()
+
+    def test_deploy_returns_correct_error_if_env_not_found(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=local']).execute()
+        self.print_mock.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`")
+        self.exit_mock.assert_called_with(1)
+
+    def test_deploy_returns_correct_error_if_env_not_found_different_name(self):
+        self.find_environment_mock.return_value = []
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
+        self.print_mock.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`")
+        self.exit_mock.assert_called_with(1)
+
     def test_deploy_loads_config_when_found(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
         self.config_manager_mock.add_simple_config_path.assert_called_with("home/foundations/lou/config/uat.config.yaml")
 
     def test_deploy_adds_file_to_py_path(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/')
 
     def test_deploy_adds_file_to_py_path_different_path(self):
         self.os_cwd.return_value = 'home/foundations/hana/'
         self.find_environment_mock.return_value = ["home/foundations/hana/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/hana/')
 
     def test_deploy_returns_error_if_driver_file_does_not_exist(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = False
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'hana/driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=hana/driver.py', '--env=uat']).execute()
         self.os_file_exists.assert_called_with('home/foundations/lou/hana/driver.py')
         self.print_mock.assert_called_with('Driver file `hana/driver.py` does not exist')
         self.exit_mock.assert_called_with(1)
@@ -265,43 +298,43 @@ class TestCommandLineInterfaceDeploy(Spec):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.os_file_exists.return_value = True
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'hana/driver.exe', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=hana/driver.exe', '--env=uat']).execute()
         self.print_mock.assert_called_with('Driver file `hana/driver.exe` needs to be a python file with an extension `.py`')
         self.exit_mock.assert_called_with(1)
 
     def test_deploy_imports_driver_file(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
         self.run_file.assert_called_with('driver')
 
     def test_deploy_imports_driver_file_different_file(self):
         self.os_cwd.return_value = 'home/foundations/lou'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'hippo/dingo.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=hippo/dingo.py', '--env=uat']).execute()
         self.sys_path.append.assert_called_with('home/foundations/lou/hippo')
         self.run_file.assert_called_with('dingo')
 
     def test_deploy_imports_driver_file_different_name(self):
         self.os_cwd.return_value = 'home/foundations/lou/'
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=passenger.py', '--env=uat']).execute()
         self.run_file.assert_called_with('passenger')
     
     def test_foundations_deploy_project_name_is_default_if_not_set(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat']).execute()
         self.assertEqual('default', self.pipeline_context.provenance.project_name)
 
     def test_foundations_deploy_project_name_is_set_if_provided(self):
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat', '--project_name={}'.format(self.fake_project_name)]).execute()
+        CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat', '--project-name={}'.format(self.fake_project_name)]).execute()
         self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
 
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False(self):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
         self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False_when_driver_nested(self):
@@ -311,7 +344,7 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', script_path, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(script_path), '--env=uat']).execute()
 
         self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
 
@@ -322,35 +355,35 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         self._set_run_script_environment({})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', script_path, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(script_path), '--env=uat']).execute()
 
         self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def test_foundations_deploy_does_not_chdir_if_enable_stages_False(self):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.os_chdir.assert_not_called()
 
     def test_foundations_deploy_does_not_append_to_syspath_if_enable_stages_False(self):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.sys_path.append.assert_not_called()
 
     def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_not_set(self):
         self._set_run_script_environment({})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
         self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
 
     def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_False(self):
         self._set_run_script_environment({'enable_stages': False})
 
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
 
@@ -358,7 +391,7 @@ class TestCommandLineInterfaceDeploy(Spec):
         self._set_run_script_environment({})
 
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
 
@@ -366,7 +399,7 @@ class TestCommandLineInterfaceDeploy(Spec):
         self._set_run_script_environment({'enable_stages': False})
 
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.run_file.assert_not_called()
 
@@ -374,7 +407,7 @@ class TestCommandLineInterfaceDeploy(Spec):
         self._set_run_script_environment({})
 
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', self.fake_script_file_name, '--env=uat']).execute()
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.run_file.assert_not_called()
 

@@ -39,9 +39,10 @@ class CommandLineInterface(object):
 
     def _initialize_deploy_parser(self, subparsers):
         deploy_parser = subparsers.add_parser('deploy', help='Deploys a Foundations project to the specified environment')
-        deploy_parser.add_argument('driver_file', type=str, help='Name of file to deploy')
+        deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
         deploy_parser.add_argument('--env', help='Environment to run file in')
-        deploy_parser.add_argument('--project_name', help='Project name for job (optional, defaults to "default")')
+        deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
+        deploy_parser.add_argument('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
         deploy_parser.set_defaults(function=self._deploy)
 
     def _initialize_info_parser(self, subparsers):
@@ -159,7 +160,7 @@ class CommandLineInterface(object):
         
         self._set_project_name()
 
-        driver_name = self._arguments.driver_file
+        driver_name = self._arguments.entrypoint
         env_name = self._arguments.env
         env_file_path = EnvironmentFetcher().find_environment(env_name)
 

@@ -101,9 +101,10 @@ class TestCommandLineInterface(Spec):
         self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
-        deploy_argument_file_call = call('driver_file', type=str, help='Name of file to deploy')
+        deploy_argument_file_call = call('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
+        deploy_argument_job_directory_call = call('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
         deploy_argument_env_call = call('--env', help='Environment to run file in')
-        deploy_argument_project_name_call = call('--project_name', help='Project name for job (optional, defaults to "default")')
+        deploy_argument_project_name_call = call('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
         info_argument_env_call = call('--env', action='store_true')
 
         self.level_2_parser_mock.add_argument.assert_has_calls(
@@ -111,6 +112,7 @@ class TestCommandLineInterface(Spec):
                 init_argument_call,
                 deploy_argument_env_call,
                 deploy_argument_file_call,
+                deploy_argument_job_directory_call,
                 deploy_argument_project_name_call,
                 info_argument_env_call,
             ],
@@ -281,39 +283,6 @@ class TestCommandLineInterface(Spec):
         project_call = call([['local', '/home/local.config.yaml']])
         global_call = call([['local','~/foundations/local.config.yaml']])
         mock_print.assert_has_calls([project_call, global_call], any_order = True)
-
-    def test_deploy_returns_correct_error_if_env_not_found(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['deploy', 'driver.py', '--env=local']).execute()
-        self.print_mock.assert_called_with("Could not find environment name: `local`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`")
-        self.exit_mock.assert_called_with(1)
-
-    def test_deploy_returns_correct_error_if_env_not_found_different_name(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.print_mock.assert_called_with("Could not find environment name: `uat`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`")
-        self.exit_mock.assert_called_with(1)
-
-    def test_exits_the_process_with_exit_status_of_one(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['deploy', 'driver.py', '--env=non-existant-env']).execute()
-        self.exit_mock.assert_called_with(1)
-
-    def test_does_not_exit_when_environments_exist(self):
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.exit_mock.assert_not_called()
-
-    def test_deploy_returns_correct_error_if_wrong_directory(self):
-        self.find_environment_mock.return_value = None
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.print_mock.assert_called_with("Foundations project not found. Deploy command must be run in foundations project directory")
-        self.exit_mock.assert_called_with(1)
-
-    def test_deploys_job_when_local_config_found(self):
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', 'driver.py', '--env=uat']).execute()
-        self.print_mock.assert_not_called()
 
     sys_path = let_patch_mock('sys.path')
     run_file = let_patch_mock('importlib.import_module')
