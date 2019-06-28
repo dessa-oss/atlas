@@ -288,53 +288,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', 'passenger.py', '--env=uat']).execute()
         self.run_file.assert_called_with('passenger')
 
-    def test_retrieve_artifacts_prints_error_if_missing_environment(self):
-        self.find_environment_mock.return_value = []
-        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
-        self.print_mock.assert_called_with('Error: Could not find environment `{}`'.format(self.fake_env))
-
-    def test_retrieve_artifacts_gets_pipeline_archiver(self):
-        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
-        self.get_pipeline_archiver_for_job_mock.assert_called_with(self.mock_job_id)
-
-    def test_retrieve_artifacts_creates_archive_downloader(self):
-        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
-        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id)]).execute()
-        self.artifact_downloader_class_mock.assert_called_with(self.pipeline_archiver_mock)
-
-    def test_retrieve_artifacts_calls_download_files(self):
-        self.get_pipeline_archiver_for_job_mock.return_value = self.pipeline_archiver_mock
-        self.artifact_downloader_class_mock.return_value = self.artifact_downloader_mock
-        CommandLineInterface(['retrieve', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--source_dir={}'.format(self.fake_source_dir), '--save_dir={}'.format(self.fake_save_dir)]).execute()
-        self.artifact_downloader_mock.download_files.assert_called_with(self.fake_source_dir, self.fake_save_dir)
-
-    @patch('argparse.ArgumentParser')
-    def test_retrieve_logs_has_correct_options(self, parser_class_mock):
-        parser_mock = Mock()
-        parser_class_mock.return_value = parser_mock
-
-        parser_mock.add_subparsers.return_value = self.level_1_subparsers_mock
-
-        self.level_1_subparsers_mock.add_parser.return_value = self.level_2_parser_mock
-        self.level_2_parser_mock.add_subparsers.return_value = self.level_2_subparsers_mock
-
-        self.level_2_subparsers_mock.add_parser.return_value = self.level_3_parser_mock
-
-        CommandLineInterface([])
-
-        parser_class_mock.assert_called_with(prog='foundations')
-        parser_mock.add_argument.assert_called_with('--version', action='store_true', help='Displays the current Foundations version')
-
-        retrieve_call = call('retrieve', help='Retrieve file types from execution environments')
-
-        self.level_1_subparsers_mock.add_parser.assert_has_calls([retrieve_call])
-        retrieve_argument_call = call('logs', help='Get logs for jobs')
-        job_id_call = call('--job_id', type=str, required=True, help="Specify job uuid of already deployed job")
-        env_call = call('--env', required=True, type=str, help='Environment to retrieve from')
-
-        self.level_2_subparsers_mock.add_parser.assert_has_calls([retrieve_argument_call])
-        self.level_3_parser_mock.add_argument.assert_has_calls([job_id_call, env_call], any_order=True)
-
     def test_get_job_logs_for_environment_that_does_not_exist_prints_error_message(self):
         self.find_environment_mock.return_value = []
         CommandLineInterface(['retrieve', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
