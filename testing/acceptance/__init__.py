@@ -30,3 +30,4 @@ from acceptance.test_log_metric_outside_stage import TestLogMetricOutsideStage
 from acceptance.test_annotate_without_stage import TestAnnotateWithoutStage
 from acceptance.test_can_load_parameters import TestCanLoadParameters
 from acceptance.test_deploy_job_via_deploy_function import TestDeployJobViaDeployFunction
+from acceptance.test_deploy_job_via_cli import TestDeployJobViaCLI
