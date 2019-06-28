@@ -26,7 +26,7 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
             'results_config': {},
             'cache_config': {},
             'obfuscate_foundations': False,
-            'log_level': 'FATAL'
+            'log_level': self._log_level()
         }
 
     @property

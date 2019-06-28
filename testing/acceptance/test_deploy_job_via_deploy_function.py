@@ -12,6 +12,9 @@ import foundations
 
 class TestDeployJobViaDeployFunction(Spec, JobDeployFunctionTestScaffold):
     
+    def _log_level(self):
+        return 'FATAL'
+
     @set_up
     def set_up(self):
         self._set_up()
