@@ -32,8 +32,9 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
-    with open('foundations_job_parameters.json', 'w') as params_file:
-        json.dump(params, params_file)
+    if params is not None:
+        with open('foundations_job_parameters.json', 'w') as params_file:
+            json.dump(params, params_file)
 
     if job_directory is not None:
         deploy_job(pipeline_context_wrapper, None, {})

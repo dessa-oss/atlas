@@ -156,6 +156,10 @@ class TestDeploy(Spec):
         deploy(params=self.params)
         self.mock_json_dump.assert_called_with(self.params, self.mock_params_file)
 
+    def test_deploy_with_defaults_does_not_write_any_params_file(self):
+        deploy()
+        self.mock_open.assert_called_once_with('~/.foundations/config/local.config.yaml', 'r')
+
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
 
