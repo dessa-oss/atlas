@@ -65,7 +65,7 @@ class TestDeploy(Spec):
 
         deployment = Mock()
         deployment.job_name.return_value = self.job_id
-        
+
         return DeploymentWrapper(deployment)
 
     @set_up
