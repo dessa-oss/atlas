@@ -24,12 +24,7 @@ def get_ram_in_gb_when_limit_not_set():
     return kilobytes_to_gigabytes(int(memory_in_kb))
 
 def get_number_of_gpus():
-    try:
-        from tensorflow.python.client import device_lib
-    except ImportError as ex:
-        if _exception_thrown_because_no_gpus(ex):
-            return 0
-        raise
+    from tensorflow.python.client import device_lib
 
     local_device_protos = device_lib.list_local_devices()
     return len([device for device in local_device_protos if device.device_type == 'GPU'])
@@ -40,10 +35,6 @@ def print_message(message):
 def wait(input):
     from time import sleep
     sleep(120)
-
-def _exception_thrown_because_no_gpus(exception):
-    error_string = str(exception)
-    return 'libcuda.so.1: cannot open shared object file: No such file or directory' in error_string or 'libcuda.so.1: file too short' in error_string
 
 def bytes_to_gigabytes(number_in_bytes):
     return number_in_bytes / 1024 / 1024 / 1024
