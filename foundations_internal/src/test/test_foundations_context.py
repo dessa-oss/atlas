@@ -91,9 +91,9 @@ class TestFoundationsContext(Spec):
 
         self.assertIn('FoundationsContexts do not support serialization', error_context.exception.args)
 
-    def test_job_resources_has_default_gpus_zero(self):
+    def test_job_resources_has_default_gpus_one(self):
         job_resources = self._context.job_resources()
-        self.assertEqual(0, job_resources.num_gpus)
+        self.assertEqual(1, job_resources.num_gpus)
 
     def test_job_resources_has_default_ram_none_ie_no_limit(self):
         job_resources = self._context.job_resources()
@@ -108,7 +108,7 @@ class TestFoundationsContext(Spec):
         job_resources = JobResources(self.num_gpus, self.ram)
         self._context.set_job_resources(job_resources)
         self._context.reset_job_resources()
-        self.assertEqual(JobResources(0, None), self._context.job_resources())
+        self.assertEqual(JobResources(1, None), self._context.job_resources())
 
     def test_project_name_is_default_when_project_name_not_yet_set(self):
         self.assertEqual('default', self._context.project_name())

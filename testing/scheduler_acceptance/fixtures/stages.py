@@ -42,7 +42,8 @@ def wait(input):
     sleep(120)
 
 def _exception_thrown_because_no_gpus(exception):
-    return 'libcuda.so.1: cannot open shared object file: No such file or directory' in str(exception)
+    error_string = str(exception)
+    return 'libcuda.so.1: cannot open shared object file: No such file or directory' in error_string or 'libcuda.so.1: file too short' in error_string
 
 def bytes_to_gigabytes(number_in_bytes):
     return number_in_bytes / 1024 / 1024 / 1024

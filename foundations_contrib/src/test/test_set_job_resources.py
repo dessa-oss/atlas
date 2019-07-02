@@ -39,7 +39,7 @@ class TestSetJobResources(Spec):
 
     @let
     def default_job_resources(self):
-        return JobResources(0, None)
+        return JobResources(1, None)
 
     @tear_down
     def tear_down(self):
@@ -98,3 +98,14 @@ class TestSetJobResources(Spec):
 
         job_resources = current_foundations_context().job_resources()
         self.assertEqual(self.default_job_resources, job_resources)
+
+    def test_set_job_resources_ram_defaults_to_none(self):
+        set_job_resources(num_gpus=self.num_gpus)
+
+        job_resources = current_foundations_context().job_resources()
+        self.assertEqual(JobResources(self.num_gpus, None), job_resources)
+
+    def test_set_job_resources_num_gpus_defaults_to_one(self):
+        set_job_resources(ram=self.ram)
+        job_resources = current_foundations_context().job_resources()
+        self.assertEqual(JobResources(1, self.ram), job_resources)
