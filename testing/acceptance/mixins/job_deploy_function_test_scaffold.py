@@ -126,7 +126,7 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
         with open(environment_config_file_path, 'w') as environment_config_file:
             yaml.dump(self.local_config_file_contents, environment_config_file)
 
-        job_uuid = self._deploy_job(
+        job_uuid_container = self._deploy_job(
             job_directory=self.job_directory,
             entrypoint=self.entrypoint,
             project_name=self.project_name,
@@ -135,7 +135,7 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
         )
 
         for metric_name, expected_metric_value in self.expected_metrics.items():
-            self.assertEqual(expected_metric_value, self._get_logged_metric(self.project_name, job_uuid, metric_name))
+            self.assertEqual(expected_metric_value, self._get_logged_metric(self.project_name, self._uuid(job_uuid_container), metric_name))
 
         os.remove(environment_config_file_path)
 
@@ -149,8 +149,8 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
         old_cwd = os.getcwd()
 
         os.chdir(self.job_directory)
-        job_uuid = self._deploy_job_with_defaults()
+        job_uuid_container = self._deploy_job_with_defaults()
         os.chdir(old_cwd)
 
         for metric_name, expected_metric_value in self.expected_metrics.items():
-            self.assertEqual(expected_metric_value, self._get_logged_metric('deploy_job_test', job_uuid, metric_name))
+            self.assertEqual(expected_metric_value, self._get_logged_metric('deploy_job_test', self._uuid(job_uuid_container), metric_name))

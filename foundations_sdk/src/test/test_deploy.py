@@ -59,6 +59,15 @@ class TestDeploy(Spec):
             ]
         }
 
+    @let
+    def deployment_wrapper(self):
+        from foundations.deployment_wrapper import DeploymentWrapper
+
+        deployment = Mock()
+        deployment.job_name.return_value = self.job_id
+        
+        return DeploymentWrapper(deployment)
+
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -89,10 +98,8 @@ class TestDeploy(Spec):
 
         self.mock_set_environment.side_effect = self._set_environment
 
-        mock_deployment_wrapper = Mock()
-        mock_deployment_wrapper.job_name.return_value = self.job_id
         self.mock_deploy_job_function = self.patch('foundations.job_deployer.deploy_job')
-        self.mock_deploy_job_function.return_value = mock_deployment_wrapper
+        self.mock_deploy_job_function.return_value = self.deployment_wrapper
 
         self.pipeline_context = current_foundations_context().pipeline_context()
 
@@ -172,9 +179,15 @@ class TestDeploy(Spec):
         import foundations
         self.assertEqual(deploy, foundations.deploy)
 
-    def test_deploy_returns_job_id(self):
-        job_id = deploy()
-        self.assertEqual(self.job_id, job_id)
+    def test_deploy_returns_deployment_wrapper_which_has_job_id(self):
+        deployment_wrapper = deploy()
+        self.assertEqual(self.job_id, deployment_wrapper.job_name())
+
+    def test_deploy_returns_deployment_wrapper_object(self):
+        from foundations.deployment_wrapper import DeploymentWrapper
+
+        deployment_wrapper = deploy()
+        self.assertIsInstance(deployment_wrapper, DeploymentWrapper)
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context

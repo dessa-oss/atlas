@@ -35,3 +35,6 @@ class TestDeployJobViaDeployFunction(Spec, JobDeployFunctionTestScaffold):
     def _deploy_job(self, **kwargs):
         import foundations
         return foundations.deploy(**kwargs)
+
+    def _uuid(self, uuid_container):
+        return uuid_container.job_name()

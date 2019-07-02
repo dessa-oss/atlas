@@ -41,4 +41,4 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     if job_directory is not None:
         os.chdir(cwd_path)
 
-    return job_deployment.job_name()
+    return job_deployment
