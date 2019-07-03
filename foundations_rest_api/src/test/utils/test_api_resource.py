@@ -5,16 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import patch, Mock
+from mock import patch
 from foundations_rest_api.utils.api_resource import api_resource
 from test.helpers.api_resource_mocks import APIResourceMocks
 from foundations_rest_api.lazy_result import LazyResult
 from foundations_rest_api.response import Response
 
-from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers import let, let_patch_mock
+from foundations_spec import *
 
+@skip
 class TestAPIResource(Spec):
 
     @let

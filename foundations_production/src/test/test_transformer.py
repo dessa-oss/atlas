@@ -69,7 +69,14 @@ class TestTransformer(Spec):
     @let
     def user_transformer(self):
         return self.user_transformer_class.return_value
-    
+
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        config_manager = ConfigManager()
+        config_manager['run_script_environment'] = {'enable_stages': True}
+        return self.patch('foundations.config_manager', config_manager)
+
     @set_up
     def set_up(self):
         def _base_transformer_constructor(preprocessor, user_defined_transformer_stage):

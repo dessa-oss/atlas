@@ -19,6 +19,9 @@ class ConfigManager(object):
         if self._config is None:
             self._load()
 
+        if 'run_script_environment' not in self._config:
+            self._config['run_script_environment'] = {}
+
         if self._frozen:
             return copy.deepcopy(self._config)
         else:

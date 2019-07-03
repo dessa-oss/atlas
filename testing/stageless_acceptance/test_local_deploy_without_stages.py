@@ -51,6 +51,17 @@ class TestLocalDeployWithoutStages(Spec):
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_deploy_completed_process))
 
+    def test_deploying_stageless_job_with_stage_code_fails_more_gracefully(self):
+        import subprocess
+
+        fixture_directory = 'stageless_acceptance/fixtures/stageless_project_but_not_really'
+
+        command_to_run = ['python', '-m', 'foundations', 'deploy', '--entrypoint={}'.format('project_code/driver.py'), '--job-directory={}'.format(fixture_directory), '--env=local']
+        driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        error_message = 'Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?'
+        self.assertIn(error_message, driver_deploy_completed_process.stderr.decode())
+
     def test_stageless_project_deploy_with_job_directory(self):
         self._test_deploy_stageless_project_with_job_directory('stageless-projects-nested', 'stageless_project_nested_project_code', 'project_code/driver.py')
 

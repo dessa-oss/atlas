@@ -163,7 +163,7 @@ class TestPipelineContext(Spec):
         pipeline_context = PipelineContext()
 
         self.config_manager['other_world'] = 'aliens'
-        config_return = {'other_world': 'aliens'}
+        config_return = {'other_world': 'aliens', 'run_script_environment': {}}
 
         pipeline_context.fill_provenance(self.config_manager)
         self.assertEqual(pipeline_context.provenance.config, config_return)

@@ -43,7 +43,9 @@ class TestJobDeployment(Spec):
 
     @let
     def config_manager_config(self):
-        return self.faker.pydict()
+        config = {'run_script_environment': {}}
+        config.update(self.faker.pydict())
+        return config
 
     @let_now
     def config_manager(self):

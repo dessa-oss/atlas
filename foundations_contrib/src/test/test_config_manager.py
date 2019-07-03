@@ -37,32 +37,32 @@ class TestConfigManager(Spec):
 
         return path_list
 
+    @let
+    def run_script_environment(self):
+        return self.faker.pydict()
+
     @set_up
     def set_up(self):
         self.mock_file.__enter__ = lambda *args: self.mock_file
         self.mock_file.__exit__ = lambda *args: None
         self.mock_file.read.return_value = ''
 
-    def test_config_returns_empty(self):
-        config = ConfigManager().config()
-        self.assertEqual({}, config)
-
     def test_persist_config(self):
         config_manager = ConfigManager()
         config_manager.config()['hello'] = 'goodbye'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self._assert_is_subset({'hello': 'goodbye'}, config_manager.config())
 
     def test_persist_config_with_different_values(self):
         config_manager = ConfigManager()
         config_manager.config()['foo'] = 'bar'
-        self.assertEqual({'foo': 'bar'}, config_manager.config())
+        self._assert_is_subset({'foo': 'bar'}, config_manager.config())
 
     def test_load_config_from_yaml(self):
         from foundations_contrib.change_directory import ChangeDirectory
 
         with ChangeDirectory('test/fixtures/single_config'):
             config = ConfigManager().config()
-            self.assertEqual(
+            self._assert_is_subset(
                 {'title': 'test config', 'value': 'this exists as a test'}, config)
 
     def test_load_multiple_config_from_yaml(self):
@@ -70,7 +70,7 @@ class TestConfigManager(Spec):
 
         with ChangeDirectory('test/fixtures/multiple_configs'):
             config = ConfigManager().config()
-            self.assertEqual(
+            self._assert_is_subset(
                 {'title': 'test config', 'value': 'different value'}, config)
 
     def test_add_config_path(self):
@@ -78,7 +78,7 @@ class TestConfigManager(Spec):
         config_manager.add_config_path(
             'test/fixtures/multiple_configs/second.config.yaml')
         config = config_manager.config()
-        self.assertEqual({'value': 'different value'}, config)
+        self._assert_is_subset({'value': 'different value'}, config)
 
     config_translator = let_patch_mock('foundations_internal.global_state.config_translator')
 
@@ -86,13 +86,13 @@ class TestConfigManager(Spec):
         self.config_translator.translate.return_value = {'some configuration': 'some value for the configuration'}
         self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/first.config.yaml')
         self.config_translator.translate.assert_called_with({'title': 'test config'})
-        self.assertEqual({'some configuration': 'some value for the configuration'}, self.config)
+        self._assert_is_subset({'some configuration': 'some value for the configuration'}, self.config)
 
     def test_add_simple_config_path_uses_translated_config_different_config(self):
         self.config_translator.translate.return_value = {'some different configuration': 'a value of great importance'}
         self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/second.config.yaml')
         self.config_translator.translate.assert_called_with({'value': 'different value'})
-        self.assertEqual({'some different configuration': 'a value of great importance'}, self.config)
+        self._assert_is_subset({'some different configuration': 'a value of great importance'}, self.config)
 
     def test_add_config_path_after_configured(self):
         config_manager = ConfigManager()
@@ -101,7 +101,7 @@ class TestConfigManager(Spec):
         config = config_manager.config()
         config_manager.add_config_path(
             'test/fixtures/multiple_configs/second.config.yaml')
-        self.assertEqual(
+        self._assert_is_subset(
             {'title': 'test config', 'value': 'different value'}, config)
 
     def test_config_paths_returns_empty_list_if_no_paths_added(self):
@@ -167,14 +167,14 @@ class TestConfigManager(Spec):
         config_manager['hello'] = 'goodbye'
         config_manager.freeze()
         config_manager['second'] = 'changed thing'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self.assertEqual({'hello': 'goodbye', 'run_script_environment': {}}, config_manager.config())
 
     def test_config_returns_copy_after_freeze(self):
         config_manager = ConfigManager()
         config_manager['hello'] = 'goodbye'
         config_manager.freeze()
         config_manager.config()['second'] = 'changed thing'
-        self.assertEqual({'hello': 'goodbye'}, config_manager.config())
+        self.assertEqual({'hello': 'goodbye', 'run_script_environment': {}}, config_manager.config())
 
     def test_reflect_instance_creates_default_implementation(self):
         config_manager = ConfigManager()
@@ -277,6 +277,15 @@ class TestConfigManager(Spec):
         }
         instance = config_manager.reflect_instance('box', 'cat', lambda: None)
         self.assertEqual('socks', instance)
+    
+    def test_config_manager_get_run_script_environment_defaults_to_empty_dict(self):
+        config_manager = ConfigManager()
+        self.assertEqual({}, config_manager.config()['run_script_environment'])
+
+    def test_config_manager_run_script_environment_is_not_lost_if_modified_directly(self):
+        config_manager = ConfigManager()
+        config_manager.config()['run_script_environment'].update(self.run_script_environment)
+        self.assertEqual(self.run_script_environment, config_manager.config()['run_script_environment'])
 
     def call_reflect_constructor(self, metric):
         config_manager = ConfigManager()
@@ -295,3 +304,10 @@ class TestConfigManager(Spec):
         self.call_reflect_constructor('archive')
         mock.assert_called_with(
             'Configured with {\'archive_type\': \'some_archive\'}')
+
+    def _assert_is_subset(self, subset, superset):
+        is_not_subset_exception = AssertionError('{} is not a subset of {}'.format(subset, superset))
+
+        for key in subset:
+            if key not in superset or subset[key] != superset[key]:
+                raise is_not_subset_exception

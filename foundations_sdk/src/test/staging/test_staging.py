@@ -5,16 +5,25 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 
+class TestStaging(Spec):
 
+    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
 
-class TestStaging(unittest.TestCase):
+    @let
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        config_manager = ConfigManager()
+        return self.patch('foundations.config_manager', config_manager)
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         self._called = False
         self._args = None
         self._kwargs = None
+
+        self.mock_foundations_context.is_in_running_job.return_value = False
 
     def test_create_stage_creates_stage(self):
         from foundations.staging import create_stage
@@ -52,6 +61,25 @@ class TestStaging(unittest.TestCase):
         import foundations
 
         self.assertEqual(foundations.create_stage, create_stage)
+
+    def test_create_stage_in_a_running_stageless_job_throws_exception(self):
+        self.mock_foundations_context.is_in_running_job.return_value = True
+
+        from foundations.staging import create_stage
+
+        with self.assertRaises(RuntimeError) as error_context:
+            create_stage(self._method)
+
+        self.assertIn('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?', error_context.exception.args)
+
+    def test_create_stage_does_not_throw_exception_when_enable_stages_is_true_and_job_id_is_set(self):
+        self.mock_foundations_context.is_in_running_job.return_value = True
+        self.config_manager['run_script_environment'] = {'enable_stages': True}
+
+        from foundations.staging import create_stage
+
+        with self.assert_does_not_raise():
+            create_stage(self._method)
 
     def _method(self, *args, **kwargs):
         self._called = True

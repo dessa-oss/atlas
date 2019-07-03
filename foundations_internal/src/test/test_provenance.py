@@ -88,7 +88,7 @@ class TestProvenance(unittest.TestCase):
     def test_fill_config_with_correct_value_from_config_manager(self):
         provenance = Provenance()
         self.config_manager['other_world'] = 'aliens'
-        config_return = {'other_world': 'aliens'}
+        config_return = {'other_world': 'aliens', 'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
         self.assertDictEqual(provenance.config, config_return)
@@ -97,14 +97,14 @@ class TestProvenance(unittest.TestCase):
         provenance = Provenance()
         self.config_manager['other'] = 'value'
         self.config_manager['next'] = 'one'
-        config_return = {'other': 'value', 'next': 'one'}
+        config_return = {'other': 'value', 'next': 'one', 'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
         self.assertDictEqual(provenance.config, config_return)
 
     def test_fill_config_with_correct_value_from_config_manager_with_empty_config(self):
         provenance = Provenance()
-        config_return = {}
+        config_return = {'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
         self.assertDictEqual(provenance.config, config_return)
