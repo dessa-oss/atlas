@@ -7,7 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-class TestCliDeployment(Spec):
+from acceptance.mixins.metrics_fetcher import MetricsFetcher
+from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
+
+class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     
     @let
     def cli_config(self):
@@ -61,23 +64,110 @@ class TestCliDeployment(Spec):
         import shutil
         import os
         import os.path
+        import uuid
+
+        from scheduler_acceptance.cleanup import cleanup
+
+        cleanup()
 
         shutil.rmtree("test-cli-init", ignore_errors=True)
         if os.path.isfile('~/.foundations/job_data/projects/my-foundations-project.tracker'):
             os.remove('~/.foundations/job_data/projects/my-foundations-project.tracker')
+
+        self._env_name = str(uuid.uuid4())
+        self._config_file_name = os.path.expanduser('~/.foundations/config/{}.config.yaml'.format(self._env_name))
+        self._write_config_to_path(self._config_file_name)
+
+    @set_up_class
+    def set_up_class(klass):
+        from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
+
+        klass._core_api = KubernetesApiWrapper().core_api()
+
+    @tear_down
+    def tear_down(self):
+        import os
+        import os.path
+
+        if os.path.isfile(self._config_file_name):
+            os.remove(self._config_file_name)
 
     def test_cli_can_deploy_job_created_by_init(self):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
 
-        with open('test-cli-init/config/scheduler.config.yaml', 'w+') as file:
-            file.write(self.yaml_cli_config)
+        self._write_config_to_path('test-cli-init/config/scheduler.config.yaml')
 
         driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler"], stderr=subprocess.PIPE)
         self._assert_deployment_was_successful(driver_deploy_result)
+
+    def test_cli_can_deploy_stageless_job_with_resources_set(self):
+        import subprocess
+
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=subprocess.PIPE)
+        job_id = self._job_id_from_logs(process)
+
+        self._wait_for_job_to_complete(job_id)
+
+        self.assertEqual(0, self._get_logged_metric('this-project', job_id, 'gpus'))
+        self.assertEqual(3.0, self._get_logged_metric('this-project', job_id, 'memory'))
+
+    def test_cli_can_deploy_stageless_job_with_resources_default(self):
+        import subprocess
+
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_default && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={}'.format(self._env_name)], stdout=subprocess.PIPE)
+        job_id = self._job_id_from_logs(process)
+
+        self._wait_for_job_to_complete(job_id)
+
+        node_name = self._get_node_for_job(job_id)
+        memory_capacity = self._get_memory_capacity_for_node(node_name)
+
+        ram_available_to_job = self._get_logged_metric('this-project', job_id, 'memory')
+        ram_error = abs(memory_capacity - ram_available_to_job) / memory_capacity
+
+        self.assertEqual(1, self._get_logged_metric('this-project', job_id, 'gpus'))
+        self.assertLess(ram_error, 0.01)
+
+    def _job_id_from_logs(self, driver_deploy_completed_process):
+        import re
+
+        logs_parsing_regex = re.compile("Job '(.*)' deployed")
+        logs = self._driver_stdout(driver_deploy_completed_process)
+        return logs_parsing_regex.findall(logs)[0]
+
+    def _driver_stdout(self, driver_deploy_completed_process):
+        return driver_deploy_completed_process.stdout.decode()
 
     def _assert_deployment_was_successful(self, driver_deploy_result):
         if driver_deploy_result.returncode != 0:
             error_message = 'Driver deployment failed:\n{}'.format(driver_deploy_result.stderr.decode())
             raise AssertionError(error_message)
+
+    def _write_config_to_path(self, path):
+        with open(path, 'w+') as file:
+            file.write(self.yaml_cli_config)
+
+    def _wait_for_job_to_complete(self, job_id):
+        import time
+
+        time_elapsed = 0
+        timeout = 60
+
+        while self._job_status(job_id) == 'Pending' or self._job_status(job_id) == 'Running':
+            if time_elapsed >= timeout:
+                raise AssertionError('job did not finish')
+
+            time_elapsed += 5
+            time.sleep(5)
+
+    def _job_status(self, job_id):
+        from foundations_scheduler.pod_fetcher import get_latest_for_job
+
+        pod = get_latest_for_job(self._core_api, job_id)
+
+        if pod is None:
+            return 'Pending'
+        else:
+            return pod.status.phase
