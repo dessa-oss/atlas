@@ -5,19 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_spec import *
+import unittest
 
-class TestStaging(Spec):
 
-    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
 
-    @set_up
-    def set_up(self):
+class TestStaging(unittest.TestCase):
+
+    def setUp(self):
         self._called = False
         self._args = None
         self._kwargs = None
-
-        self.mock_foundations_context.is_in_running_job.return_value = False
 
     def test_create_stage_creates_stage(self):
         from foundations.staging import create_stage
@@ -55,16 +52,6 @@ class TestStaging(Spec):
         import foundations
 
         self.assertEqual(foundations.create_stage, create_stage)
-
-    def test_create_stage_in_a_running_job_throws_exception(self):
-        from foundations.staging import create_stage
-
-        self.mock_foundations_context.is_in_running_job.return_value = True
-
-        with self.assertRaises(RuntimeError) as error_context:
-            create_stage(self._method)
-
-        self.assertIn('Cannot create stages in a running job - was code written with stages deployed in a stageless job?', error_context.exception.args)
 
     def _method(self, *args, **kwargs):
         self._called = True
