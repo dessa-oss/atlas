@@ -180,18 +180,7 @@ class CommandLineInterface(object):
             sys.exit(1)
 
         if self._stages_enabled():
-            self._set_project_name()
-
-            driver_name = self._arguments.entrypoint
-
-            if self._check_driver_valid(driver_name):
-                self._check_and_set_job_resources()
-
-                driver_name, path_to_add = self._get_driver_and_path(driver_name)
-                self._prepare_to_deploy_job_with_stages(path_to_add)
-                self._deploy_job_with_stages(driver_name)
-            else:
-                sys.exit(1)
+            self._deploy_job_with_stages()
         else:
             self._check_and_set_job_resources()
             deploy_kwargs = self._stageless_deploy_kwargs()
@@ -374,16 +363,32 @@ class CommandLineInterface(object):
         if set_resources_args:
             foundations.set_job_resources(**set_resources_args)
 
-    def _prepare_to_deploy_job_with_stages(self, path_to_add):
+    def _deploy_job_with_stages(self):
+        import sys
+
+        self._set_project_name()
+
+        driver_name = self._arguments.entrypoint
+
+        if self._check_driver_valid(driver_name):
+            self._check_and_set_job_resources()
+
+            driver_name, path_to_add = self._get_driver_and_path(driver_name)
+            self._set_up_working_dir_for_job_with_stages(path_to_add)
+            self._run_module(driver_name)
+        else:
+            sys.exit(1)
+
+    def _set_up_working_dir_for_job_with_stages(self, working_dir):
         import os
         import sys
 
-        os.chdir(path_to_add)
-        sys.path.append(path_to_add)
+        os.chdir(working_dir)
+        sys.path.append(working_dir)
 
-    def _deploy_job_with_stages(self, driver_name):
+    def _run_module(self, module_name):
         from importlib import import_module
-        import_module(driver_name)
+        import_module(module_name)
 
     def _stages_enabled(self):
         from foundations_contrib.global_state import config_manager
