@@ -204,6 +204,10 @@ class TestCommandLineInterfaceDeploy(Spec):
     def fake_directory(self):
         return self.faker.file_path()
 
+    @let
+    def ram(self):
+        return self.faker.random.random() * 8 + 0.0001
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -223,6 +227,7 @@ class TestCommandLineInterfaceDeploy(Spec):
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
     mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
+    mock_set_job_resources = let_patch_mock('foundations.set_job_resources')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -410,6 +415,16 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.run_file.assert_not_called()
+
+    def test_foundations_deploy_with_ram_set_sets_amount_of_ram(self):
+        from foundations_internal.job_resources import JobResources
+
+        self._set_run_script_environment({})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat', '--ram={}'.format(self.ram)]).execute()
+
+        self.mock_set_job_resources.assert_called_with(ram=self.ram)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()

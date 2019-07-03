@@ -321,6 +321,10 @@ class CommandLineInterface(object):
         import os
         import sys
 
+        import foundations
+
+        foundations.set_job_resources(ram=self._arguments.ram)
+
         if self._stages_enabled():
             driver_name, path_to_add = self._get_driver_and_path(driver_name)
             self._prepare_to_deploy_job_with_stages(path_to_add)
