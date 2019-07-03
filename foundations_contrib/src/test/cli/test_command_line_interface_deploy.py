@@ -440,6 +440,16 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         self.mock_set_job_resources.assert_called_with(num_gpus=self.num_gpus)
 
+    def test_foundations_deploy_with_both_ram_and_num_gpus_set_sets_both(self):
+        from foundations_internal.job_resources import JobResources
+
+        self._set_run_script_environment({})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat', '--num-gpus={}'.format(self.num_gpus), '--ram={}'.format(self.ram)]).execute()
+
+        self.mock_set_job_resources.assert_called_with(ram=self.ram, num_gpus=self.num_gpus)
+
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')

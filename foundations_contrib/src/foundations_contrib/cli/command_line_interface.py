@@ -324,7 +324,10 @@ class CommandLineInterface(object):
         import foundations
 
         if self._arguments.ram:
-            foundations.set_job_resources(ram=self._arguments.ram)
+            if self._arguments.num_gpus is not None:
+                foundations.set_job_resources(ram=self._arguments.ram, num_gpus=self._arguments.num_gpus)
+            else:
+                foundations.set_job_resources(ram=self._arguments.ram)
         else:
             foundations.set_job_resources(num_gpus=self._arguments.num_gpus)
 
