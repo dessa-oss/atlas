@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-from acceptance.mixins.metrics_fetcher import MetricsFetcher
+from scheduler_acceptance.mixins.metrics_fetcher import MetricsFetcher
 from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 
 class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):

@@ -41,7 +41,6 @@ class TestCancelQueuedJobs(Spec):
 
         self.assertEqual(expected_job_cancel_status, cancel_queued_jobs(job_list))
 
-    @skip('flakey - must fix later')
     def test_cancel_succeeds_if_job_queued(self):
         import foundations
         from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
