@@ -116,3 +116,10 @@ class TestFoundationsContext(Spec):
     def test_project_name_is_correct_when_project_name_set(self):
         self._context.set_project_name(self.fake_project_name)
         self.assertEqual(self.fake_project_name, self._context.project_name())
+
+    def test_is_in_running_job_returns_true_if_pipeline_context_has_job_id(self):
+        self._pipeline_context.file_name = self.job_id
+        self.assertTrue(self._context.is_in_running_job())
+
+    def test_is_in_running_job_returns_false_if_pipeline_context_does_not_have_job_id(self):
+        self.assertFalse(self._context.is_in_running_job())

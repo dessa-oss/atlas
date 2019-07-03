@@ -87,6 +87,12 @@ class FoundationsContext(object):
     def reset_job_resources(self):
         self._job_resources = self._default_job_resources()
 
+    def is_in_running_job(self):
+        try:
+            return self.pipeline_context().file_name is not None
+        except ValueError:
+            return False
+
     def _provenance(self):
         return self.pipeline_context().provenance
 
