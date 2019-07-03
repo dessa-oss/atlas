@@ -452,6 +452,20 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         self.mock_set_job_resources.assert_not_called()
 
+    def test_foundations_deploy_with_env_not_specified_uses_local_config_yaml_in_global_configs_if_it_exists(self):
+        from os.path import expanduser
+
+        local_config_file_path = expanduser('~/.foundations/config/local.config.yaml')
+        self.find_environment_mock.return_value = [local_config_file_path]
+        CommandLineInterface(['deploy', '--entrypoint=driver.py']).execute()
+        self.config_manager_mock.add_simple_config_path.assert_called_with(local_config_file_path)
+
+    def test_foundations_deploy_with_env_not_specified_prints_error_if_local_config_yaml_does_not_exist_in_global_configs(self):
+        from os.path import expanduser
+
+        CommandLineInterface(['deploy', '--entrypoint=driver.py']).execute()
+        self.print_mock.assert_called_with('Could not find environment name: `local`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`')
+
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')

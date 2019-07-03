@@ -166,6 +166,9 @@ class CommandLineInterface(object):
         env_name = self._arguments.env
         env_file_path = EnvironmentFetcher().find_environment(env_name)
 
+        if env_name is None:
+            env_name = 'local'
+
         if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
             config_manager.add_simple_config_path(env_file_path[0])
             self._run_driver_file(driver_name)
