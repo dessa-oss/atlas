@@ -323,7 +323,10 @@ class CommandLineInterface(object):
 
         import foundations
 
-        foundations.set_job_resources(ram=self._arguments.ram)
+        if self._arguments.ram:
+            foundations.set_job_resources(ram=self._arguments.ram)
+        else:
+            foundations.set_job_resources(num_gpus=self._arguments.num_gpus)
 
         if self._stages_enabled():
             driver_name, path_to_add = self._get_driver_and_path(driver_name)

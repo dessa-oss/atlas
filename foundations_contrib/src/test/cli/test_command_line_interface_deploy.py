@@ -208,6 +208,10 @@ class TestCommandLineInterfaceDeploy(Spec):
     def ram(self):
         return self.faker.random.random() * 8 + 0.0001
 
+    @let
+    def num_gpus(self):
+        return self.faker.random_int(0, 8)
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -425,6 +429,16 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat', '--ram={}'.format(self.ram)]).execute()
 
         self.mock_set_job_resources.assert_called_with(ram=self.ram)
+
+    def test_foundations_deploy_with_num_gpus_set_sets_amount_of_gpus(self):
+        from foundations_internal.job_resources import JobResources
+
+        self._set_run_script_environment({})
+
+        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat', '--num-gpus={}'.format(self.num_gpus)]).execute()
+
+        self.mock_set_job_resources.assert_called_with(num_gpus=self.num_gpus)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
