@@ -51,7 +51,6 @@ class TestLocalDeployWithoutStages(Spec):
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_deploy_completed_process))
 
-    @skip
     def test_stageless_project_deploy_with_job_directory(self):
         self._test_deploy_stageless_project_with_job_directory('stageless-projects-nested', 'stageless_project_nested_project_code', 'project_code/driver.py')
 

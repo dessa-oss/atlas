@@ -155,11 +155,17 @@ class CommandLineInterface(object):
         return environment_names
 
     def _deploy(self):
+        import os
         import sys
 
         import foundations
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
+
+        job_directory = self._arguments.job_directory
+        
+        if job_directory is not None:
+            os.chdir(self._arguments.job_directory)
 
         env_name = self._arguments.env
 
@@ -206,9 +212,6 @@ class CommandLineInterface(object):
 
         if entrypoint is not None:
             deploy_kwargs['entrypoint'] = entrypoint
-
-        if job_directory is not None:
-            deploy_kwargs['job_directory'] = job_directory
 
         return deploy_kwargs
 

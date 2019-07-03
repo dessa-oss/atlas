@@ -349,13 +349,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat', '--project-name={}'.format(self.fake_project_name)]).execute()
         self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
 
-    def test_foundations_deploy_does_not_chdir_if_enable_stages_False(self):
-        self._set_run_script_environment({'enable_stages': False})
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
-
-        self.os_chdir.assert_not_called()
-
     def test_foundations_deploy_does_not_append_to_syspath_if_enable_stages_False(self):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
@@ -449,13 +442,19 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint={}'.format(self.entrypoint)]).execute()
         self.mock_deploy.assert_called_with(env='local', entrypoint=self.entrypoint)
 
-    def test_foundations_deploy_with_job_directory_set_calls_deploy_with_same_job_directory(self):
+    def test_foundations_deploy_with_job_directory_chdirs_to_job_directory(self):
         self._set_run_script_environment({})
 
         CommandLineInterface(['deploy', '--job-directory={}'.format(self.fake_directory)]).execute()
-        self.mock_deploy.assert_called_with(env='local', job_directory=self.fake_directory)
+        self.os_chdir.assert_called_with(self.fake_directory)
 
-    def test_foundations_deploy_with_env_entrypoint_project_name_and_job_directory_set_calls_deploy_with_those_arguments(self):
+    def test_foundations_deploy_does_not_chdir_if_job_directory_not_specified(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy']).execute()
+        self.os_chdir.assert_not_called()
+
+    def test_foundations_deploy_with_env_entrypoint_project_name_and_job_directory_set_calls_deploy_with_those_arguments_except_for_job_directory(self):
         self._set_run_script_environment({})
 
         command_to_run = [
@@ -467,7 +466,7 @@ class TestCommandLineInterfaceDeploy(Spec):
         ]
 
         CommandLineInterface(command_to_run).execute()
-        self.mock_deploy.assert_called_with(project_name=self.fake_project_name, job_directory=self.fake_directory, entrypoint=self.entrypoint, env=self.environment)
+        self.mock_deploy.assert_called_with(project_name=self.fake_project_name, entrypoint=self.entrypoint, env=self.environment)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
