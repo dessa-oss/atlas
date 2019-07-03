@@ -321,22 +321,28 @@ class CommandLineInterface(object):
         import os
         import sys
 
-        import foundations
-
-        if self._arguments.ram is not None:
-            if self._arguments.num_gpus is not None:
-                foundations.set_job_resources(ram=self._arguments.ram, num_gpus=self._arguments.num_gpus)
-            else:
-                foundations.set_job_resources(ram=self._arguments.ram)
-        elif self._arguments.num_gpus is not None:
-            foundations.set_job_resources(num_gpus=self._arguments.num_gpus)
-
+        self._check_and_set_job_resources()
+        
         if self._stages_enabled():
             driver_name, path_to_add = self._get_driver_and_path(driver_name)
             self._prepare_to_deploy_job_with_stages(path_to_add)
             self._deploy_job_with_stages(driver_name)
         else:
             self._deploy_stageless_job(driver_name)
+
+    def _check_and_set_job_resources(self):
+        import foundations
+
+        set_resources_args = {}
+
+        if self._arguments.ram is not None:
+            set_resources_args['ram'] = self._arguments.ram
+
+        if self._arguments.num_gpus is not None:
+            set_resources_args['num_gpus'] = self._arguments.num_gpus
+
+        if set_resources_args:
+            foundations.set_job_resources(**set_resources_args)
 
     def _prepare_to_deploy_job_with_stages(self, path_to_add):
         import os
