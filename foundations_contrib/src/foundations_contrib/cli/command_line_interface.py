@@ -43,6 +43,8 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--env', help='Environment to run file in')
         deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
         deploy_parser.add_argument('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
+        deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
+        deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
         deploy_parser.set_defaults(function=self._deploy)
 
     def _initialize_info_parser(self, subparsers):

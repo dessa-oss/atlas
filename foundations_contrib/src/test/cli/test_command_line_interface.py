@@ -101,20 +101,25 @@ class TestCommandLineInterface(Spec):
         self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
+        info_argument_env_call = call('--env', action='store_true')
+        
         deploy_argument_file_call = call('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
         deploy_argument_job_directory_call = call('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
         deploy_argument_env_call = call('--env', help='Environment to run file in')
         deploy_argument_project_name_call = call('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        info_argument_env_call = call('--env', action='store_true')
+        deploy_argument_num_gpus_call = call('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
+        deploy_argument_ram_call = call('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
 
         self.level_2_parser_mock.add_argument.assert_has_calls(
             [
                 init_argument_call,
+                info_argument_env_call,
                 deploy_argument_env_call,
                 deploy_argument_file_call,
                 deploy_argument_job_directory_call,
                 deploy_argument_project_name_call,
-                info_argument_env_call,
+                deploy_argument_num_gpus_call,
+                deploy_argument_ram_call
             ],
             any_order=True
         )
