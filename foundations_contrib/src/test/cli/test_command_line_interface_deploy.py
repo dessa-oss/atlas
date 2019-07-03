@@ -205,6 +205,14 @@ class TestCommandLineInterfaceDeploy(Spec):
         return self.faker.file_path()
 
     @let
+    def environment(self):
+        return self.faker.word()
+
+    @let
+    def entrypoint(self):
+        return self.faker.file_path()
+
+    @let
     def ram(self):
         return self.faker.random.random() * 8 + 0.0001
 
@@ -232,6 +240,7 @@ class TestCommandLineInterfaceDeploy(Spec):
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
     mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
     mock_set_job_resources = let_patch_mock('foundations.set_job_resources')
+    mock_deploy = let_patch_mock('foundations.deploy')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -340,34 +349,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint=driver.py', '--env=uat', '--project-name={}'.format(self.fake_project_name)]).execute()
         self.assertEqual(self.fake_project_name, self.pipeline_context.provenance.project_name)
 
-    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False(self):
-        self._set_run_script_environment({'enable_stages': False})
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
-        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
-
-    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_False_when_driver_nested(self):
-        import os.path as path
-
-        script_path = path.join(self.fake_directory, self.fake_script_file_name)
-
-        self._set_run_script_environment({'enable_stages': False})
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(script_path), '--env=uat']).execute()
-
-        self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
-
-    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_not_set_when_driver_nested(self):
-        import os.path as path
-
-        script_path = path.join(self.fake_directory, self.fake_script_file_name)
-
-        self._set_run_script_environment({})
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(script_path), '--env=uat']).execute()
-
-        self.assertEqual(script_path, self.config_manager_mock['run_script_environment']['script_to_run'])
-
     def test_foundations_deploy_does_not_chdir_if_enable_stages_False(self):
         self._set_run_script_environment({'enable_stages': False})
         self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
@@ -381,28 +362,6 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
 
         self.sys_path.append.assert_not_called()
-
-    def test_foundations_deploy_sets_script_to_run_if_enable_stages_is_not_set(self):
-        self._set_run_script_environment({})
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
-        self.assertEqual(self.fake_script_file_name, self.config_manager_mock['run_script_environment']['script_to_run'])
-
-    def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_False(self):
-        self._set_run_script_environment({'enable_stages': False})
-
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
-
-        self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
-
-    def test_foundations_deploy_deploys_stageless_job_with_job_deployer_if_enable_stages_is_not_set(self):
-        self._set_run_script_environment({})
-
-        self.find_environment_mock.return_value = ["home/foundations/lou/config/uat.config.yaml"]
-        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.fake_script_file_name), '--env=uat']).execute()
-
-        self.mock_deploy_job.assert_called_with(self.mock_pipeline_context_wrapper, None, {})
 
     def test_foundations_deploy_does_not_deploy_job_with_stages_if_enable_stages_is_False(self):
         self._set_run_script_environment({'enable_stages': False})
@@ -465,6 +424,50 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(['deploy', '--entrypoint=driver.py']).execute()
         self.print_mock.assert_called_with('Could not find environment name: `local`. You can list all discoverable environments with `foundations info --env`\n\nExpected usage of deploy command: `usage: foundations deploy [-h] [--env ENV] driver_file`')
+
+    def test_foundations_deploy_with_defaults_calls_deploy_with_env_local_and_defaults(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy']).execute()
+        self.mock_deploy.assert_called_with(env='local')
+
+    def test_foundations_deploy_with_project_name_set_calls_deploy_with_same_project_name(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy', '--project-name={}'.format(self.fake_project_name)]).execute()
+        self.mock_deploy.assert_called_with(env='local', project_name=self.fake_project_name)
+
+    def test_foundations_deploy_with_env_set_calls_deploy_with_same_environment(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy', '--env={}'.format(self.environment)]).execute()
+        self.mock_deploy.assert_called_with(env=self.environment)
+
+    def test_foundations_deploy_with_entrypoint_set_calls_deploy_with_same_entrypoint(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy', '--entrypoint={}'.format(self.entrypoint)]).execute()
+        self.mock_deploy.assert_called_with(env='local', entrypoint=self.entrypoint)
+
+    def test_foundations_deploy_with_job_directory_set_calls_deploy_with_same_job_directory(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy', '--job-directory={}'.format(self.fake_directory)]).execute()
+        self.mock_deploy.assert_called_with(env='local', job_directory=self.fake_directory)
+
+    def test_foundations_deploy_with_env_entrypoint_project_name_and_job_directory_set_calls_deploy_with_those_arguments(self):
+        self._set_run_script_environment({})
+
+        command_to_run = [
+            'deploy',
+            '--job-directory={}'.format(self.fake_directory),
+            '--entrypoint={}'.format(self.entrypoint),
+            '--env={}'.format(self.environment),
+            '--project-name={}'.format(self.fake_project_name)
+        ]
+
+        CommandLineInterface(command_to_run).execute()
+        self.mock_deploy.assert_called_with(project_name=self.fake_project_name, job_directory=self.fake_directory, entrypoint=self.entrypoint, env=self.environment)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()

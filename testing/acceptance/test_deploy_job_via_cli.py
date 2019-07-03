@@ -10,7 +10,6 @@ from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctio
 
 import foundations
 
-@skip
 class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     def _log_level(self):
@@ -32,9 +31,9 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     def _deploy_job_with_defaults(self):
         import subprocess
-
-        cli_deploy_process = subprocess.run(['python', '-m', 'foundations', 'deploy'], stdout=subprocess.PIPE, check=True)
-        return self._job_id_from_logs(cli_deploy_process)
+        cli_deploy_process = subprocess.run(['python', '-m', 'foundations', 'deploy'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self._check_if_successful(cli_deploy_process)
+        return cli_deploy_process
 
     def _deploy_job(self, **kwargs):
         import subprocess
@@ -57,9 +56,10 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
             '--project-name={}'.format(kwargs['project_name'])
         ]
 
-        cli_deploy_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, check=True)
+        cli_deploy_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         os.remove(params_file_path)
-        return self._job_id_from_logs(cli_deploy_process)
+        self._check_if_successful(cli_deploy_process)
+        return cli_deploy_process
 
     def _job_id_from_logs(self, driver_deploy_completed_process):
         import re
@@ -70,3 +70,10 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     def _driver_stdout(self, driver_deploy_completed_process):
         return driver_deploy_completed_process.stdout.decode()
+
+    def _uuid(self, driver_process):
+        return self._job_id_from_logs(driver_process)
+
+    def _check_if_successful(self, driver_process):
+        if driver_process.returncode != 0:
+            raise AssertionError('deploy failed:\nstdout:\n{}\nstderr:\n{}'.format(driver_process.stdout, driver_process.stderr))

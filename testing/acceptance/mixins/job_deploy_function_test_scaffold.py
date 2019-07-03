@@ -97,7 +97,6 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
             with open(self.local_config_file_path, 'w') as local_config_file:
                 yaml.dump(self.local_config_file_contents, local_config_file)
         else:
-            print('local config file already exists - will not remove')
             self._should_remove_local_config_file_on_cleanup = False
 
     def _tear_down(self):

@@ -157,23 +157,60 @@ class CommandLineInterface(object):
     def _deploy(self):
         import sys
 
+        import foundations
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
-        
-        self._set_project_name()
 
-        driver_name = self._arguments.entrypoint
         env_name = self._arguments.env
-        env_file_path = EnvironmentFetcher().find_environment(env_name)
 
         if env_name is None:
             env_name = 'local'
 
-        if self._check_environment_valid(env_file_path, env_name) and self._check_driver_valid(driver_name):
+        env_file_path = EnvironmentFetcher().find_environment(env_name)
+
+        if self._check_environment_valid(env_file_path, env_name):
             config_manager.add_simple_config_path(env_file_path[0])
-            self._run_driver_file(driver_name)
         else:
             sys.exit(1)
+
+        if self._stages_enabled():
+            self._set_project_name()
+
+            driver_name = self._arguments.entrypoint
+
+            if self._check_driver_valid(driver_name):
+                self._check_and_set_job_resources()
+
+                driver_name, path_to_add = self._get_driver_and_path(driver_name)
+                self._prepare_to_deploy_job_with_stages(path_to_add)
+                self._deploy_job_with_stages(driver_name)
+            else:
+                sys.exit(1)
+        else:
+            self._check_and_set_job_resources()
+            deploy_kwargs = self._stageless_deploy_kwargs()
+            foundations.deploy(**deploy_kwargs)
+
+    def _stageless_deploy_kwargs(self):
+        entrypoint = self._arguments.entrypoint
+        env_name = self._arguments.env
+        project_name = self._arguments.project_name
+        job_directory = self._arguments.job_directory
+
+        deploy_kwargs = {}
+
+        if project_name is not None:
+            deploy_kwargs['project_name'] = project_name
+
+        deploy_kwargs['env'] = env_name if env_name is not None else 'local'
+
+        if entrypoint is not None:
+            deploy_kwargs['entrypoint'] = entrypoint
+
+        if job_directory is not None:
+            deploy_kwargs['job_directory'] = job_directory
+
+        return deploy_kwargs
 
     def _set_project_name(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -320,19 +357,6 @@ class CommandLineInterface(object):
         process = psutil.Process(int(pid))
         return process.cmdline()
 
-    def _run_driver_file(self, driver_name):
-        import os
-        import sys
-
-        self._check_and_set_job_resources()
-        
-        if self._stages_enabled():
-            driver_name, path_to_add = self._get_driver_and_path(driver_name)
-            self._prepare_to_deploy_job_with_stages(path_to_add)
-            self._deploy_job_with_stages(driver_name)
-        else:
-            self._deploy_stageless_job(driver_name)
-
     def _check_and_set_job_resources(self):
         import foundations
 
@@ -357,16 +381,6 @@ class CommandLineInterface(object):
     def _deploy_job_with_stages(self, driver_name):
         from importlib import import_module
         import_module(driver_name)
-
-    def _deploy_stageless_job(self, driver_name):
-        from foundations.job_deployer import deploy_job
-        from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
-        from foundations_contrib.global_state import config_manager, current_foundations_context
-
-        wrapped_pipeline_context = PipelineContextWrapper(current_foundations_context().pipeline_context())
-
-        config_manager['run_script_environment']['script_to_run'] = driver_name
-        deploy_job(wrapped_pipeline_context, None, {})
 
     def _stages_enabled(self):
         from foundations_contrib.global_state import config_manager
