@@ -28,7 +28,7 @@ def create_stage(function):
         stage_generator {callable} -- A callable that when executed returns a stage object.
 
     Raises:
-        - This function doesn't raise exceptions
+        - Runtime error if stage created in running job
 
     Example:
         ```python
@@ -43,6 +43,11 @@ def create_stage(function):
         model.run()
         ```
     """
+
+    from foundations_contrib.global_state import current_foundations_context
+
+    if current_foundations_context().is_in_running_job():
+        raise RuntimeError('Cannot create stages in a running job - was code written with stages deployed in a stageless job?')
 
     return Stage(function)
 
