@@ -15,7 +15,14 @@ def _append_module():
     import sys
     from foundations_internal.global_state import module_manager
     
+    import foundations_scheduler
+    import foundations_scheduler_core
+    import foundations_scheduler_deployment
+
     module_manager.append_module(sys.modules[__name__])
+    module_manager.append_module(foundations_scheduler)
+    module_manager.append_module(foundations_scheduler_core)
+    module_manager.append_module(foundations_scheduler_deployment)
 
 def root():
     from pathlib import Path
