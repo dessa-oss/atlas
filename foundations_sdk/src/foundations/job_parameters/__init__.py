@@ -15,10 +15,13 @@ def flatten_parameter_dictionary(param_dictionary):
     if param_dictionary:
         first_key = list(param_dictionary)[0]
         first_value = param_dictionary[first_key]
-        if isinstance(first_value, str) or isinstance(first_value, int):
+        if _is_scalar_value(first_value):
             return param_dictionary
         return _flatten_list_value(first_key, first_value)
     return param_dictionary
+
+def _is_scalar_value(value):
+    return isinstance(value, str) or isinstance(value, int)
 
 def _flatten_list_value(param_key, param_value):
     list_of_keys = _list_of_keys(param_key, len(param_value))
