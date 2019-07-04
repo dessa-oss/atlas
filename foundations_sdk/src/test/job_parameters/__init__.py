@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.job_parameters.test_load_job_parameters import TestLoadJobParameters
+from test.job_parameters.test_flatten_parameter_dictionary import TestFlattenParameterDictionary

@@ -11,6 +11,9 @@ def load_parameters():
     except FileNotFoundError:
         return {}
 
+def flatten_parameter_dictionary(_):
+    return {}
+
 def _raw_json_from_parameters_file():
     with open('foundations_job_parameters.json', 'r') as parameters_file:
         return parameters_file.read()
