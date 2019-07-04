@@ -124,6 +124,9 @@ class StageConnectorWrapper(object):
         """
         from foundations.job_deployer import deploy_job
 
+        if self._is_already_in_stageless_job():
+            raise RuntimeError('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?')
+
         if params_dict is None:
             params_dict = {}
 
@@ -134,6 +137,15 @@ class StageConnectorWrapper(object):
 
     def run_same_process(self, **filler_kwargs):
         return self._stage.run(None, None, **filler_kwargs)
+
+    def _is_already_in_stageless_job(self):
+        from foundations import config_manager
+        from foundations_contrib.global_state import current_foundations_context
+
+        is_in_running_job = current_foundations_context().is_in_running_job()
+        is_configured_for_stageless_job = not config_manager['run_script_environment'].get('enable_stages', False)
+
+        return is_in_running_job and is_configured_for_stageless_job
 
     def _make_builder(self):
         from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder

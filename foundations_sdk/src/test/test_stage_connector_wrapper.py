@@ -5,13 +5,21 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
+
 from foundations.stage_connector_wrapper import StageConnectorWrapper
 from foundations_internal.deployment_manager import DeploymentManager
 from mock import patch, call
 
+class TestStageConnectorWrapper(Spec):
 
-class TestStageConnectorWrapper(unittest.TestCase):
+    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+
+    @let
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        config_manager = ConfigManager()
+        return self.patch('foundations.config_manager', config_manager)
 
     class MockArgument(object):
         def __init__(self):
@@ -56,6 +64,8 @@ class TestStageConnectorWrapper(unittest.TestCase):
         self._stage_config = StageConfig()
         self._stage = StageConnectorWrapper(
             self._connector, self._pipeline_context, self._stage_context, self._stage_config)
+
+        self.mock_foundations_context.is_in_running_job.return_value = False
 
     def test_enable_caching_returns_self(self):
         self._stage.enable_caching()
@@ -104,6 +114,25 @@ class TestStageConnectorWrapper(unittest.TestCase):
 
         def job_name(self):
             return self._job_name
+
+    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch.object(DeploymentManager, 'simple_deploy')
+    def test_run_in_a_running_stageless_job_throws_exception(self, _):
+        self.mock_foundations_context.is_in_running_job.return_value = True
+
+        with self.assertRaises(RuntimeError) as error_context:
+            self._stage.run()
+
+        self.assertIn('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?', error_context.exception.args)
+
+    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch.object(DeploymentManager, 'simple_deploy')
+    def test_run_does_not_throw_exception_when_enable_stages_is_true_and_job_id_is_set(self, _):
+        self.mock_foundations_context.is_in_running_job.return_value = True
+        self.config_manager['run_script_environment'] = {'enable_stages': True}
+
+        with self.assert_does_not_raise():
+            self._stage.run()
 
     @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
     @patch.object(DeploymentManager, 'simple_deploy')

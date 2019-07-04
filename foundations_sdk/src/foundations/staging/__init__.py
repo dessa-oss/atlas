@@ -44,12 +44,6 @@ def create_stage(function):
         ```
     """
 
-    from foundations import config_manager
-    from foundations_contrib.global_state import current_foundations_context
-
-    if current_foundations_context().is_in_running_job() and not config_manager['run_script_environment'].get('enable_stages', False):
-        raise RuntimeError('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?')
-
     return Stage(function)
 
 def cache(function):
