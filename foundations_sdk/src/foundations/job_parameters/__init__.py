@@ -12,6 +12,12 @@ def load_parameters():
         return {}
 
 def flatten_parameter_dictionary(param_dictionary):
+    if param_dictionary:
+        first_key = list(param_dictionary)[0]
+        if isinstance(param_dictionary[first_key], str):
+            return param_dictionary
+        list_of_keys = map(lambda list_index: '{}_{}'.format(first_key, list_index), range(len(param_dictionary[first_key])))
+        return {key: value for key, value in zip(list_of_keys, param_dictionary[first_key])}
     return param_dictionary
 
 def _raw_json_from_parameters_file():
