@@ -21,7 +21,7 @@ def flatten_parameter_dictionary(param_dictionary):
     return param_dictionary
 
 def _is_scalar_value(value):
-    return isinstance(value, str) or isinstance(value, int)
+    return isinstance(value, str) or isinstance(value, int) or isinstance(value, float)
 
 def _flatten_list_value(param_key, param_value):
     list_of_keys = _list_of_keys(param_key, len(param_value))
