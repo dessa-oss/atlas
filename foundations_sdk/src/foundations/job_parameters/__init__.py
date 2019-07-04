@@ -38,7 +38,7 @@ def _flatten_list_value(param_key, param_value):
         return {param_key: None}
 
     list_of_keys = _list_of_keys(param_key, len(param_value))
-    return {key: value for key, value in zip(list_of_keys, param_value)}
+    return flatten_parameter_dictionary({key: value for key, value in zip(list_of_keys, param_value)})
 
 def _list_of_keys(key, length_of_list_value):
     return ['{}_{}'.format(key, list_index) for list_index in range(length_of_list_value)]

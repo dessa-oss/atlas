@@ -142,3 +142,14 @@ class TestFlattenParameterDictionary(Spec):
         expected_output.update(expected_dict_output)
 
         self.assertEqual(expected_output, flatten_parameter_dictionary(parameter_input))
+
+    def test_value_is_list_of_lists_flattens_correctly(self):
+        parameter_input = {self.random_key: [[0, 1], [2, 3]]}
+        expected_output = {
+            self.random_key + '_0_0': 0,
+            self.random_key + '_0_1': 1,
+            self.random_key + '_1_0': 2,
+            self.random_key + '_1_1': 3
+        }
+
+        self.assertEqual(expected_output, flatten_parameter_dictionary(parameter_input))
