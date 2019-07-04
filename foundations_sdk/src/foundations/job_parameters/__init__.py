@@ -17,9 +17,12 @@ def flatten_parameter_dictionary(param_dictionary):
         first_value = param_dictionary[first_key]
         if isinstance(first_value, str):
             return param_dictionary
-        list_of_keys = _list_of_keys(first_key, len(first_value))
-        return {key: value for key, value in zip(list_of_keys, first_value)}
+        return _flatten_list_value(first_key, first_value)
     return param_dictionary
+
+def _flatten_list_value(param_key, param_value):
+    list_of_keys = _list_of_keys(param_key, len(param_value))
+    return {key: value for key, value in zip(list_of_keys, param_value)}
 
 def _list_of_keys(key, length_of_list_value):
     return ['{}_{}'.format(key, list_index) for list_index in range(length_of_list_value)]
