@@ -17,6 +17,8 @@ def flatten_parameter_dictionary(param_dictionary):
         first_value = param_dictionary[first_key]
         if _is_scalar_value(first_value):
             return param_dictionary
+        if isinstance(first_value, dict):
+            return {first_key: None}
         return _flatten_list_value(first_key, first_value)
     return param_dictionary
 

@@ -75,3 +75,9 @@ class TestFlattenParameterDictionary(Spec):
         flattened_parameter_input = flatten_parameter_dictionary(parameter_input)
 
         self.assertEqual({self.random_key: None}, flattened_parameter_input)
+
+    def test_key_with_value_empty_dict_turns_value_dict_into_none(self):
+        parameter_input = {self.random_key: {}}
+        flattened_parameter_input = flatten_parameter_dictionary(parameter_input)
+
+        self.assertEqual({self.random_key: None}, flattened_parameter_input)
