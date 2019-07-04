@@ -14,11 +14,15 @@ def load_parameters():
 def flatten_parameter_dictionary(param_dictionary):
     if param_dictionary:
         first_key = list(param_dictionary)[0]
-        if isinstance(param_dictionary[first_key], str):
+        first_value = param_dictionary[first_key]
+        if isinstance(first_value, str):
             return param_dictionary
-        list_of_keys = map(lambda list_index: '{}_{}'.format(first_key, list_index), range(len(param_dictionary[first_key])))
-        return {key: value for key, value in zip(list_of_keys, param_dictionary[first_key])}
+        list_of_keys = _list_of_keys(first_key, len(first_value))
+        return {key: value for key, value in zip(list_of_keys, first_value)}
     return param_dictionary
+
+def _list_of_keys(key, length_of_list_value):
+    return map(lambda list_index: '{}_{}'.format(key, list_index), range(length_of_list_value))
 
 def _raw_json_from_parameters_file():
     with open('foundations_job_parameters.json', 'r') as parameters_file:
