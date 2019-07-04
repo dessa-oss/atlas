@@ -14,15 +14,13 @@ def load_parameters():
 def flatten_parameter_dictionary(param_dictionary):
     flattened_output = {}
 
-    if param_dictionary:
-        first_key = list(param_dictionary)[0]
-        first_value = param_dictionary[first_key]
-        if _is_scalar_value(first_value):
-            flattened_output[first_key] = first_value
-        elif isinstance(first_value, dict):
-            flattened_output.update(_flatten_dict_value(first_key, first_value))
+    for key, value in param_dictionary.items():
+        if _is_scalar_value(value):
+            flattened_output[key] = value
+        elif isinstance(value, dict):
+            flattened_output.update(_flatten_dict_value(key, value))
         else:
-            flattened_output.update(_flatten_list_value(first_key, first_value))
+            flattened_output.update(_flatten_list_value(key, value))
 
     return flattened_output
 

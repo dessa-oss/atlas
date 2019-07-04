@@ -102,7 +102,6 @@ class TestFlattenParameterDictionary(Spec):
         expected_output = {'{}_{}'.format(self.random_key, nested_key): nested_value for nested_key, nested_value in self.random_literal_dict_value.items()}
         self.assertEqual(expected_output, flattened_parameter_input)
 
-    @skip
     def test_multiple_keys_with_at_most_singly_nested_values(self):
         none_literal_key = self.faker.word()
         int_literal_key = self.faker.word()
