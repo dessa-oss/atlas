@@ -28,6 +28,10 @@ class TestFlattenParameterDictionary(Spec):
     @let
     def random_length(self):
         return self.faker.random_int(1, 10)
+    
+    @let
+    def random_int(self):
+        return self.faker.random_int(1,1000)
 
     def test_flatten_empty_dictionary_returns_empty_dictionary(self):
         parameter_input = {}
@@ -49,3 +53,9 @@ class TestFlattenParameterDictionary(Spec):
         expected_output = {key: value for key, value in zip(list_of_keys, self.random_literal_list)}
         
         self.assertEqual(expected_output, flattened_parameter_input)
+    
+    def test_key_with_value_int_returns_key_and_value(self):
+        parameter_input = {self.random_key: self.random_int}
+        flattened_parameter_input = flatten_parameter_dictionary(parameter_input)
+        
+        self.assertEqual({self.random_key: self.random_int}, flattened_parameter_input)
