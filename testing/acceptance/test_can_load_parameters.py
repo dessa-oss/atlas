@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
+@skip
 class TestCanLoadParameters(Spec):
 
     @let
@@ -65,8 +66,10 @@ class TestCanLoadParameters(Spec):
 
     def _test_command_that_loads_parameters_in_directory(self, command, script_directory, expected_loaded_parameters):
         from foundations_internal.change_directory import ChangeDirectory
+
         import subprocess
         import json
+        import os.path as path
 
         with ChangeDirectory(script_directory):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE)
@@ -74,3 +77,23 @@ class TestCanLoadParameters(Spec):
 
         result_parameters = json.loads(process_output)
         self.assertEqual(expected_loaded_parameters, result_parameters)
+        self._assert_flattened_parameter_keys_in_project_job_parameter_names_set(path.basename(script_directory), expected_loaded_parameters)
+
+    def _assert_flattened_parameter_keys_in_project_job_parameter_names_set(self, project_name, expected_loaded_parameters):
+        from foundations.job_parameters import flatten_parameter_dictionary
+        from foundations_contrib.global_state import redis_connection
+
+        flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
+        parameter_names = set(flattened_parameters)
+        logged_parameter_names = redis_connection.smembers('projects:{}:job_parameter_names'.format(project_name))
+        self.assertEqual(parameter_names, logged_parameter_names)
+
+    def _assert_flattened_parameter_values_for_job_in_job_parameters(self, job_id, expected_loaded_parameters):
+        from foundations.job_parameters import flatten_parameter_dictionary
+        from foundations_contrib.global_state import redis_connection
+
+        import json
+
+        flattened_parameters = flatten_parameter_dictionary(expected_loaded_parameters)
+        logged_parameters = redis_connection.get('jobs:{}:parameters'.format(job_id))
+        self.assertEqual(flattened_parameters, json.loads(logged_parameters))
