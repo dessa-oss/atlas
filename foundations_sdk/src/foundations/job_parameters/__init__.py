@@ -31,7 +31,7 @@ def _flatten_dict_value(param_key, param_value):
     if not param_value:
         return {param_key: None}
 
-    return {'{}_{}'.format(param_key, nested_key): nested_value for nested_key, nested_value in param_value.items()}
+    return flatten_parameter_dictionary({'{}_{}'.format(param_key, nested_key): nested_value for nested_key, nested_value in param_value.items()})
 
 def _flatten_list_value(param_key, param_value):
     if not param_value:

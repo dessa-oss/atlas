@@ -153,3 +153,22 @@ class TestFlattenParameterDictionary(Spec):
         }
 
         self.assertEqual(expected_output, flatten_parameter_dictionary(parameter_input))
+
+    def test_value_is_dict_of_dicts_flattens_correctly(self):
+        parameter_input = {
+            self.random_key: {
+                'key_zero': {
+                    'hello': 'there'
+                },
+                'key_one': {
+                    'bye': 'bye'
+                }
+            }
+        }
+        
+        expected_output = {
+            self.random_key + '_key_zero_hello': 'there',
+            self.random_key + '_key_one_bye': 'bye'
+        }
+
+        self.assertEqual(expected_output, flatten_parameter_dictionary(parameter_input))
