@@ -15,9 +15,7 @@ def flatten_parameter_dictionary(param_dictionary):
     if param_dictionary:
         first_key = list(param_dictionary)[0]
         first_value = param_dictionary[first_key]
-        if isinstance(first_value, str):
-            return param_dictionary
-        if isinstance(first_value, int):
+        if isinstance(first_value, str) or isinstance(first_value, int):
             return param_dictionary
         return _flatten_list_value(first_key, first_value)
     return param_dictionary
