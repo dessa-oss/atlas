@@ -26,6 +26,9 @@ def _is_scalar_value(value):
     return isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None
 
 def _flatten_list_value(param_key, param_value):
+    if not param_value:
+        return {param_key: None}
+
     list_of_keys = _list_of_keys(param_key, len(param_value))
     return {key: value for key, value in zip(list_of_keys, param_value)}
 
