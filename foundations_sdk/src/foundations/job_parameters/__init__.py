@@ -22,7 +22,7 @@ def flatten_parameter_dictionary(param_dictionary):
     return param_dictionary
 
 def _list_of_keys(key, length_of_list_value):
-    return map(lambda list_index: '{}_{}'.format(key, list_index), range(length_of_list_value))
+    return ['{}_{}'.format(key, list_index) for list_index in range(length_of_list_value)]
 
 def _raw_json_from_parameters_file():
     with open('foundations_job_parameters.json', 'r') as parameters_file:
