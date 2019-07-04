@@ -101,3 +101,45 @@ class TestFlattenParameterDictionary(Spec):
 
         expected_output = {'{}_{}'.format(self.random_key, nested_key): nested_value for nested_key, nested_value in self.random_literal_dict_value.items()}
         self.assertEqual(expected_output, flattened_parameter_input)
+
+    @skip
+    def test_multiple_keys_with_at_most_singly_nested_values(self):
+        none_literal_key = self.faker.word()
+        int_literal_key = self.faker.word()
+        float_literal_key = self.faker.word()
+        string_literal_key = self.faker.word()
+        non_empty_dictionary_key = self.faker.word()
+        non_empty_list_key = self.faker.word()
+        empty_dictionary_key = self.faker.word()
+        empty_list_key = self.faker.word()
+
+        parameter_input = {
+            none_literal_key: None,
+            int_literal_key: self.random_int,
+            float_literal_key: self.random_float,
+            string_literal_key: self.random_string_literal,
+            empty_dictionary_key: {},
+            empty_list_key: [],
+            non_empty_list_key: self.random_literal_list_value,
+            non_empty_dictionary_key: self.random_literal_dict_value
+        }
+
+        expected_output = {
+            none_literal_key: None,
+            int_literal_key: self.random_int,
+            float_literal_key: self.random_float,
+            string_literal_key: self.random_string_literal,
+            empty_dictionary_key: None,
+            empty_list_key: None
+        }
+
+        list_of_keys = map(lambda list_index: '{}_{}'.format(non_empty_list_key, list_index), range(self.random_length))
+        list_output = {key: value for key, value in zip(list_of_keys, self.random_literal_list_value)}
+
+        expected_output.update(list_output)
+
+        expected_dict_output = {'{}_{}'.format(non_empty_dictionary_key, nested_key): nested_value for nested_key, nested_value in self.random_literal_dict_value.items()}
+
+        expected_output.update(expected_dict_output)
+
+        self.assertEqual(expected_output, flatten_parameter_dictionary(parameter_input))
