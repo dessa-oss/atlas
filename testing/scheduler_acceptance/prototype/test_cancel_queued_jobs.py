@@ -10,6 +10,7 @@ from foundations_spec import *
 import foundations
 from foundations.prototype import cancel_queued_jobs
 
+@skip
 class TestCancelQueuedJobs(Spec):
 
     @set_up_class
