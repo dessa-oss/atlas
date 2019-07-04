@@ -18,12 +18,18 @@ def flatten_parameter_dictionary(param_dictionary):
         if _is_scalar_value(first_value):
             return param_dictionary
         if isinstance(first_value, dict):
-            return {first_key: None}
+            return _flatten_dict_value(first_key, first_value)
         return _flatten_list_value(first_key, first_value)
     return param_dictionary
 
 def _is_scalar_value(value):
     return isinstance(value, str) or isinstance(value, int) or isinstance(value, float) or value is None
+
+def _flatten_dict_value(param_key, param_value):
+    if not param_value:
+        return {param_key: None}
+
+    return {'{}_{}'.format(param_key, nested_key): nested_value for nested_key, nested_value in param_value.items()}
 
 def _flatten_list_value(param_key, param_value):
     if not param_value:

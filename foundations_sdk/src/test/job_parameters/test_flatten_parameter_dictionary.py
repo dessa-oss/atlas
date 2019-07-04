@@ -29,6 +29,10 @@ class TestFlattenParameterDictionary(Spec):
         return self.random_literal_list()
 
     @let
+    def random_literal_dict_value(self):
+        return {key: value for key, value in zip(self.random_literal_list(), self.random_literal_list())}
+
+    @let
     def random_length(self):
         return self.faker.random_int(1, 10)
     
@@ -90,3 +94,10 @@ class TestFlattenParameterDictionary(Spec):
         flattened_parameter_input = flatten_parameter_dictionary(parameter_input)
 
         self.assertEqual({self.random_key: None}, flattened_parameter_input)
+
+    def test_key_with_value_of_dict_of_literals_returns_key_concatenated_with_nested_dict_keys(self):
+        parameter_input = {self.random_key: self.random_literal_dict_value}
+        flattened_parameter_input = flatten_parameter_dictionary(parameter_input)
+
+        expected_output = {'{}_{}'.format(self.random_key, nested_key): nested_value for nested_key, nested_value in self.random_literal_dict_value.items()}
+        self.assertEqual(expected_output, flattened_parameter_input)
