@@ -11,12 +11,14 @@ TEST_UUID = uuid4()
 
 
 def _config():
-    from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing
+    from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, set_job_resources
     from foundations_scheduler_plugin.job_deployment import JobDeployment
     from foundations_spec.extensions import get_network_address
     import foundations_ssh
     import getpass
     from os import getcwd, environ
+
+    set_job_resources(0, None)
 
     if config_manager.frozen():
         return

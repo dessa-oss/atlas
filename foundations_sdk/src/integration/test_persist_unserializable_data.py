@@ -5,7 +5,9 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 10 2018
 """
 
-import unittest
+
+from foundations_spec import *
+
 from mock import patch
 
 import integration.fixtures.stages as stages
@@ -13,7 +15,20 @@ import integration.fixtures.stages as stages
 from foundations import config_manager, create_stage, JobPersister, ResultReader
 from foundations.job import Job
 
-class TestPersistUnserializableData(unittest.TestCase):
+class TestPersistUnserializableData(Spec):
+
+    @set_up
+    def set_up(self):
+        from uuid import uuid4
+        from foundations_contrib.global_state import current_foundations_context
+
+        self._context = current_foundations_context()
+        self._context.pipeline_context().file_name = str(uuid4())
+
+    @tear_down
+    def tear_down(self):
+        self._context.pipeline_context().file_name = None
+
     def test_try_persist_generator(self):
         returns_generator = create_stage(stages.returns_generator)
         stage_output = returns_generator().persist()

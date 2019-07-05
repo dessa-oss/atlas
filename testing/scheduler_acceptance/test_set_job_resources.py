@@ -23,8 +23,7 @@ class TestSetJobResources(Spec, NodeAwareMixin):
 
     @tear_down
     def tear_down(self):
-        from foundations_contrib.global_state import current_foundations_context
-        current_foundations_context().reset_job_resources()
+        foundations.set_job_resources(0, None)
 
     def test_set_job_resources(self):
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_number_of_gpus
@@ -50,6 +49,9 @@ class TestSetJobResources(Spec, NodeAwareMixin):
 
     def test_job_is_run_with_default_resources_when_resources_not_set(self):
         from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_not_set, get_number_of_gpus
+        from foundations_contrib.global_state import current_foundations_context
+
+        current_foundations_context().reset_job_resources()
 
         get_number_of_gpus = foundations.create_stage(get_number_of_gpus)
         stage_get_number_of_gpus = get_number_of_gpus()
