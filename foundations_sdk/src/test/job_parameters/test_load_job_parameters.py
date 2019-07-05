@@ -88,6 +88,16 @@ class TestLoadJobParameters(Spec):
         for param_key, param_value in flatten_parameter_dictionary(self.mock_nested_parameters).items():
             self.mock_log_param.assert_any_call(param_key, param_value)
 
+    def test_logs_nothing_if_log_params_false(self):
+        import json
+        from foundations.job_parameters import flatten_parameter_dictionary
+
+        self.mock_file.read.return_value = json.dumps(self.mock_nested_parameters)
+
+        load_parameters(log_params=False)
+
+        self.mock_log_param.assert_not_called()
+
     def _mock_file_enter(self, *args, **kwargs):
         return self.mock_file
 
