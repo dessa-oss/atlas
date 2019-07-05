@@ -13,12 +13,26 @@ class TestLoadJobParameters(Spec):
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_log_param = let_patch_mock('foundations.job_parameters.log_param')
 
+    def mock_parameters_list(self):
+        return self.faker.words()
+
+    def mock_parameters_generator(self):
+        keys = self.mock_parameters_list()
+        values = self.mock_parameters_list()
+        return {key: value for key, value in zip(keys, values)}
+
     @let
     def mock_parameters(self):
-        keys = self.faker.words()
-        values = self.faker.words()
-        return {key: value for key, value in zip(keys, values)}
-        
+        return self.mock_parameters_generator()
+
+    @let
+    def mock_nested_parameters(self):
+        return {
+            self.faker.word(): self.mock_parameters_list(),
+            self.faker.word(): self.mock_parameters_generator(),
+            self.faker.word(): self.faker.random_int(1, 100)
+        }
+
     @let
     def serialized_mock_parameters(self):
         import json
@@ -61,6 +75,17 @@ class TestLoadJobParameters(Spec):
         load_parameters()
 
         for param_key, param_value in self.mock_parameters.items():
+            self.mock_log_param.assert_any_call(param_key, param_value)
+
+    def test_logs_nested_params_from_file_after_flattening(self):
+        import json
+        from foundations.job_parameters import flatten_parameter_dictionary
+
+        self.mock_file.read.return_value = json.dumps(self.mock_nested_parameters)
+
+        load_parameters()
+
+        for param_key, param_value in flatten_parameter_dictionary(self.mock_nested_parameters).items():
             self.mock_log_param.assert_any_call(param_key, param_value)
 
     def _mock_file_enter(self, *args, **kwargs):

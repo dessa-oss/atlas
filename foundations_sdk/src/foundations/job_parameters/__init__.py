@@ -9,7 +9,7 @@ def load_parameters():
     try:
         parameters = _parsed_json(_raw_json_from_parameters_file())
 
-        for key, value in parameters.items():
+        for key, value in flatten_parameter_dictionary(parameters).items():
             log_param(key, value)
 
         return parameters
