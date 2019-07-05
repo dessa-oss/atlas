@@ -5,8 +5,21 @@ class Toolbar extends Component {
   render() {
     return (
       <div className="toolbar-container">
-        <Link to="/projects">Home</Link>
-        <p>Support and Contact</p>
+        <div className="job-header-logo-container">
+          <div className="i--icon-logo" />
+          <h2 className="font-bold">Foundations</h2>
+        </div>
+        <ul className="header-links">
+          <li>
+            <Link to="/projects">Projects</Link>
+          </li>
+          <li>
+            <Link to="/documentation">Documentation</Link>
+          </li>
+          <li>
+            <Link to="/support">Contact Support</Link>
+          </li>
+        </ul>
       </div>
     );
   }

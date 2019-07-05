@@ -421,16 +421,16 @@ class JobTableHeader extends Component {
         boolColumns = existingFilter.boolCheckboxes;
         changedBoolParams = JobListActions.boolFilterGetHidden(existingFilter.boolCheckboxes);
       }
-      booleanFilter = (
-        <BooleanFilter
-          toggleShowingFilter={this.toggleInputMetricFilter}
-          columnName={numberFilterColumn}
-          changeHiddenParams={updateBoolFilter}
-          metricClass={metricClass}
-          columns={boolColumns}
-          changedParams={changedBoolParams}
-        />
-      );
+      // booleanFilter = (
+      //   <BooleanFilter
+      //     toggleShowingFilter={this.toggleInputMetricFilter}
+      //     columnName={numberFilterColumn}
+      //     changeHiddenParams={updateBoolFilter}
+      //     metricClass={metricClass}
+      //     columns={boolColumns}
+      //     changedParams={changedBoolParams}
+      //   />
+      // );
     }
 
     let jobIDFilter = null;

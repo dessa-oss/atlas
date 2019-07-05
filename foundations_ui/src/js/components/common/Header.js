@@ -32,10 +32,6 @@ class ProjectHeader extends Component {
 
     return (
       <div className="project-header-container">
-        <div className="project-header-logo-container">
-          <div className="i--icon-logo" />
-          <h2 className="font-bold">Foundations</h2>
-        </div>
         <div className="project-header-info-container">
           <div className="project-header-total-projects-container">
             <div className="half-width inline-block">

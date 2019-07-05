@@ -8,18 +8,6 @@ exports[`Shallow Renders Job List Page 1`] = `
     className="job-header-container-left"
   >
     <div
-      className="job-header-logo-container"
-    >
-      <div
-        className="i--icon-logo"
-      />
-      <h2
-        className="font-bold"
-      >
-        Foundations
-      </h2>
-    </div>
-    <div
       className="job-header-info-container"
     >
       <div>
@@ -64,27 +52,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     </div>
     <div
       className="job-header-sorting-container"
-    >
-      <button
-        className="b--mat b--affirmative text-upper b--disabled"
-        onClick={[Function]}
-        type="button"
-      >
-        Clear Filters
-      </button>
-      <div>
-        <div />
-      </div>
-      <div>
-        <button
-          className="b--mat b--affirmative text-upper b--disabled"
-          onClick={[Function]}
-          type="button"
-        >
-          View Filters
-        </button>
-      </div>
-    </div>
+    />
   </div>
 </div>
 `;

@@ -1,6 +1,5 @@
 .toolbar-container{
   height: $toolbar-height;
-  max-height: $toolbar-height;
   background-color: $color-white;
   border-bottom: 1px solid $color-border-bottom;
   padding: $toolbar-padding $overview-content-margin-horizontal;
@@ -16,6 +15,26 @@
     width: 50%;
     max-width: 50%;
     margin: auto;
+  }
+  ul.header-links {
+    display: inline;
+    height: $toolbar-height;
+    position: fixed;
+    margin: 0;
+    margin-top: 14px;
+    margin-left: 800px;
+    li {
+      display: inline;
+      margin-right: 100px;
+      a {
+        font-size: 16px;
+        color: $color-font-black;
+        font-weight: 900;
+        &:hover {
+          color: $color-dark-blue;
+        }
+      }
+    }
   }
 
   p:nth-child(2) {

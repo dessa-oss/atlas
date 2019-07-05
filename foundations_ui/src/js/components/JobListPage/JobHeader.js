@@ -35,20 +35,18 @@ class JobHeader extends Component {
     this.setState({ filters: nextProps.filters, project: nextProps.project });
 
     const { hiddenBubbles } = this.state;
-    const { clientWidth } = this.bubbleContainer;
-
     const newRefs = this.refsInFilters(nextProps.filters);
 
     let curWidth = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
     newRefs.sort((a, b) => { return a.length - b.length; });
-    newRefs.forEach((id) => {
-      const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
-      curWidth = showHideResults.width;
-      curHiddenBubbles = showHideResults.hiddenBubbles;
-    });
-    await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
+    // newRefs.forEach((id) => {
+    //   const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
+    //   curWidth = showHideResults.width;
+    //   curHiddenBubbles = showHideResults.hiddenBubbles;
+    // });
+    // await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
   }
 
   refsInFilters(filters) {
@@ -213,10 +211,6 @@ class JobHeader extends Component {
     return (
       <div className="job-header-container">
         <div className="job-header-container-left">
-          <div className="job-header-logo-container">
-            <div className="i--icon-logo" />
-            <h2 className="font-bold">Foundations</h2>
-          </div>
           <div className="job-header-info-container">
             <div>
               <div className="half-width inline-block">
@@ -236,7 +230,7 @@ class JobHeader extends Component {
             </p>
           </div>
           <div className="job-header-sorting-container">
-            <button
+            {/* <button
               type="button"
               onClick={clearFilters}
               className={clearFiltersClass}
@@ -257,7 +251,7 @@ class JobHeader extends Component {
               >
                 {filterButtonText}
               </button>
-            </div>
+            </div> */}
           </div>
           {moreFilters}
         </div>
