@@ -70,24 +70,16 @@ def _insert_parameter_name_into_specified_projects_params_set(set_name, redis_co
     redis_connection.sadd(f'projects:{project_name}:{set_name}', key)
 
 def _insert_input_parameter_name_into_job_input_parameter_data(redis_connection, job_id, key):
-    from foundations_internal.serializer import serialize, deserialize
+    from foundations_internal.foundations_serializer import dumps, loads
 
     job_params_key = f'jobs:{job_id}:input_parameters'
 
     serialized_job_params = redis_connection.get(job_params_key)
-    job_params = _deserialized_job_params(deserialize, serialized_job_params, default_type=list)
+    job_params = _deserialized_job_params(loads, serialized_job_params, default_type=list)
 
     job_params.append({'argument': {'name': key, 'value': {'type': 'dynamic', 'name': key}}, 'stage_uuid': 'stageless'})
 
-    redis_connection.set(job_params_key, serialize(job_params))
-
-def _json_deserialized_job_params(serialized_job_params):
-    import json
-    return _deserialized_job_params(json.loads, serialized_job_params)
-
-def _dill_deserialized_job_params(serialized_job_params):
-    from foundations_internal.serializer import deserialize
-    return _deserialized_job_params(deserialize, serialized_job_params)
+    redis_connection.set(job_params_key, dumps(job_params))
 
 def _deserialized_job_params(deserialize_callback, serialized_job_params, default_type=dict):
     if serialized_job_params is None:
