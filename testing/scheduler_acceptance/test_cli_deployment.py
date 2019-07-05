@@ -130,6 +130,12 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         self.assertEqual(1, self._get_logged_metric('this-project', job_id, 'gpus'))
         self.assertLess(ram_error, 0.01)
 
+    def test_deploy_does_not_print_crypto_warning(self):
+        import subprocess
+
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
+        self.assertNotIn('CryptographyDeprecationWarning', process.stderr.decode())
+
     def _job_id_from_logs(self, driver_deploy_completed_process):
         import re
 

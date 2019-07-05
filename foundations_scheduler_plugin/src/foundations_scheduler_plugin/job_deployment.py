@@ -46,6 +46,11 @@ class JobDeployment(object):
         return self._job_id
 
     def deploy(self):
+        import warnings
+        from cryptography.utils import CryptographyDeprecationWarning
+
+        warnings.filterwarnings('ignore', category=CryptographyDeprecationWarning)
+
         try:
             self._job_bundler.bundle()
             self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources())

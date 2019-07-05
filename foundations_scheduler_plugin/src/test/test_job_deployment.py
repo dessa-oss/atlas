@@ -14,6 +14,7 @@ class TestJobDeployment(Spec):
 
     mock_api_wrapper = let_patch_instance('foundations_scheduler_core.kubernetes_api_wrapper.KubernetesApiWrapper')
     mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    mock_filterwarnings = let_patch_mock('warnings.filterwarnings')
 
     @set_up
     def set_up(self):
@@ -162,6 +163,12 @@ class TestJobDeployment(Spec):
             self.deployment.get_job_status()
 
         self.assertEqual(400, error_context.exception.status)
+
+    def test_crypto_warning_should_not_be_printed(self):
+        from cryptography.utils import CryptographyDeprecationWarning
+
+        self.deployment.deploy()
+        self.mock_filterwarnings.assert_called_with('ignore', category=CryptographyDeprecationWarning)
 
     @staticmethod
     def _error_callback():
