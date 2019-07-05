@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 11 2018
 """
 
 from foundations_spec import *
-from foundations import create_stage
+from foundations import create_stage, set_job_resources
 import foundations_ssh
 
 class TestSchedulerJobs(Spec):
@@ -46,6 +46,8 @@ class TestSchedulerJobs(Spec):
 
     @set_up
     def set_up(self):
+        set_job_resources(num_gpus=0)
+
         self.deployment.deploy()
         print('Deployed: ', self.job_id)
         self._wait_for_job_to_complete()
