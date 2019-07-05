@@ -1,0 +1,93 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+from foundations_spec import *
+
+from foundations.job_parameters import log_param
+
+class TestLogParam(Spec):
+
+    @let
+    def project_name(self):
+        return self.faker.word()
+
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+
+    @let
+    def fake_key(self):
+        return self.faker.word()
+
+    @let
+    def fake_key_two(self):
+        return self.faker.word()
+
+    def fake_literal(self):
+        case_selector = self.faker.random.random()
+
+        if case_selector < 0.33:
+            return self.faker.word()
+        elif case_selector < 0.66:
+            return self.faker.random_int(0, 100000)
+        else:
+            return self.faker.random.random()
+
+    @let
+    def fake_value(self):
+        return self.fake_literal()
+
+    @let
+    def fake_value_two(self):
+        return self.fake_literal()
+
+    @set_up
+    def set_up(self):
+        import fakeredis
+
+        foundations_context_function = self.patch('foundations_contrib.global_state.current_foundations_context')
+
+        self.foundations_context = Mock()
+        self.foundations_context.job_id.side_effect = ValueError()
+        self.foundations_context.project_name.return_value = 'default'
+        foundations_context_function.return_value = self.foundations_context
+
+        self.redis_connection = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeStrictRedis())
+
+    def test_log_param_inserts_parameter_key_into_projects_params_keys_set(self):
+        self.foundations_context.project_name.return_value = self.project_name
+        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        
+        log_param(self.fake_key, self.fake_value)
+        self.assertEqual(set([bytes(self.fake_key, 'ascii')]), self.redis_connection.smembers('projects:{}:{}'.format(self.project_name, 'job_parameter_names')))
+
+    def test_log_param_sets_job_run_data(self):
+        import json
+
+        self.foundations_context.project_name.return_value = self.project_name
+        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        
+        log_param(self.fake_key, self.fake_value)
+        expected_params = {self.fake_key: self.fake_value}
+        actual_params = json.loads(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'parameters')))
+        self.assertEqual(expected_params, actual_params)
+
+    def test_log_param_sets_job_run_data_with_multiple_params(self):
+        import json
+
+        self.foundations_context.project_name.return_value = self.project_name
+        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        
+        log_param(self.fake_key, self.fake_value)
+        log_param(self.fake_key_two, self.fake_value_two)
+        expected_params = {
+            self.fake_key: self.fake_value,
+            self.fake_key_two: self.fake_value_two
+        }
+
+        actual_params = json.loads(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'parameters')))
+        self.assertEqual(expected_params, actual_params)
