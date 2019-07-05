@@ -56,9 +56,9 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
     @property
     def expected_metrics(self):
         return {
-            'learning_rate': 0.125,
-            'layer_0_neuron': 5,
-            'layer_1_neuron': 6
+            'how_i_lern': 0.125,
+            'first_boi': 5,
+            'second_boi': 6
         }
 
     @property
