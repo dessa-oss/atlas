@@ -31,10 +31,9 @@ class ProjectSummary extends Component {
             Project owner: <span>Trial{project.owner}</span>
           </p>
           <p className="font-bold">
-            Created at: <span>2005-10-30 T 10:45 UTC{project.created_at}</span>
+            Created at: <span>2019-03-30 T 10:45 UTC{project.created_at}</span>
           </p>
           <div className="project-summary-button-container">
-            <button type="button" className="b--mat b--affirmative">view queue</button>
             <button type="button" onClick={this.viewClick} className="b--mat b--affirmative">view job list</button>
           </div>
         </div>

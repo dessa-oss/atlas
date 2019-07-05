@@ -33,7 +33,7 @@ it('Sets Required State On Button Click', () => {
   };
   const projectWrapper = shallow(<ProjectSummary project={project}/>);
   ProjectActions.redirect = jest.fn();
-  projectWrapper.find('button').at(1).simulate('click');
+  projectWrapper.find('button').at(0).simulate('click');
   expect(projectWrapper.state('redirect')).toEqual(true);
 })
 

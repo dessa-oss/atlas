@@ -26,18 +26,12 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     >
       Created at: 
       <span>
-        2005-10-30 T 10:45 UTC
+        2019-03-30 T 10:45 UTC
       </span>
     </p>
     <div
       className="project-summary-button-container"
     >
-      <button
-        className="b--mat b--affirmative"
-        type="button"
-      >
-        view queue
-      </button>
       <button
         className="b--mat b--affirmative"
         onClick={[Function]}
