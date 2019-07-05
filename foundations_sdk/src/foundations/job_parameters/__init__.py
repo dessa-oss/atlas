@@ -31,14 +31,20 @@ def flatten_parameter_dictionary(param_dictionary):
     return flattened_output
 
 def log_param(key, value):
-    from foundations_contrib.global_state import redis_connection, current_foundations_context
+    from foundations_contrib.global_state import redis_connection, current_foundations_context, log_manager
 
     foundations_context = current_foundations_context()
-    project_name = foundations_context.project_name()
-    job_id = foundations_context.job_id()
 
-    _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)
-    _insert_parameter_value_into_job_run_data(redis_connection, job_id, key, value)
+    if foundations_context.is_in_running_job():
+        project_name = foundations_context.project_name()
+        job_id = foundations_context.job_id()
+
+        _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key)
+        _insert_parameter_value_into_job_run_data(redis_connection, job_id, key, value)
+    elif not log_manager.foundations_not_running_warning_printed():
+        logger = log_manager.get_logger(__name__)
+        logger.warning('Script not run with Foundations.')
+        log_manager.set_foundations_not_running_warning_printed()
 
 def _insert_parameter_name_into_projects_params_set(redis_connection, project_name, key):
     redis_connection.sadd(f'projects:{project_name}:job_parameter_names', key)

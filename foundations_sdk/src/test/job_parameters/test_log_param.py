@@ -11,6 +11,14 @@ from foundations.job_parameters import log_param
 
 class TestLogParam(Spec):
 
+    mock_logger = let_mock()
+
+    @let_now
+    def mock_get_logger(self):
+        mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
+        mock.return_when(self.mock_logger, 'foundations.job_parameters')
+        return mock
+
     @let
     def project_name(self):
         return self.faker.word()
@@ -53,6 +61,7 @@ class TestLogParam(Spec):
 
         self.foundations_context = Mock()
         self.foundations_context.job_id.side_effect = ValueError()
+        self.foundations_context.is_in_running_job.return_value = False
         self.foundations_context.project_name.return_value = 'default'
         foundations_context_function.return_value = self.foundations_context
 
@@ -60,7 +69,7 @@ class TestLogParam(Spec):
 
     def test_log_param_inserts_parameter_key_into_projects_params_keys_set(self):
         self.foundations_context.project_name.return_value = self.project_name
-        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
         self.assertEqual(set([bytes(self.fake_key, 'ascii')]), self.redis_connection.smembers('projects:{}:{}'.format(self.project_name, 'job_parameter_names')))
@@ -69,7 +78,7 @@ class TestLogParam(Spec):
         import json
 
         self.foundations_context.project_name.return_value = self.project_name
-        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
         expected_params = {self.fake_key: self.fake_value}
@@ -80,7 +89,7 @@ class TestLogParam(Spec):
         import json
 
         self.foundations_context.project_name.return_value = self.project_name
-        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        self._set_job_running()
         
         log_param(self.fake_key, self.fake_value)
         log_param(self.fake_key_two, self.fake_value_two)
@@ -91,3 +100,13 @@ class TestLogParam(Spec):
 
         actual_params = json.loads(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'parameters')))
         self.assertEqual(expected_params, actual_params)
+
+    def test_log_param_outside_job_gives_warning_only_once(self):
+        log_param(self.fake_key, self.fake_value)
+        log_param(self.fake_key_two, self.fake_value_two)
+
+        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
+
+    def _set_job_running(self):
+        self.foundations_context.job_id.side_effect = lambda: self.job_id
+        self.foundations_context.is_in_running_job.return_value = True
