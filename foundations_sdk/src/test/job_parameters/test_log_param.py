@@ -67,6 +67,42 @@ class TestLogParam(Spec):
 
         self.redis_connection = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeStrictRedis())
 
+    def test_log_param_inserts_parameter_key_into_input_params_keys_set(self):
+        self.foundations_context.project_name.return_value = self.project_name
+        self._set_job_running()
+        
+        log_param(self.fake_key, self.fake_value)
+        self.assertEqual(set([bytes(self.fake_key, 'ascii')]), self.redis_connection.smembers('projects:{}:{}'.format(self.project_name, 'input_parameter_names')))
+
+    def test_log_param_sets_input_parameter_data(self):
+        from foundations_internal.serializer import deserialize
+
+        self.foundations_context.project_name.return_value = self.project_name
+        self._set_job_running()
+        
+        log_param(self.fake_key, self.fake_value)
+        expected_params = [{'argument': {'name': self.fake_key, 'value': {'type': 'dynamic', 'name': self.fake_key}}, 'stage_uuid': 'stageless'}]
+        actual_params = deserialize(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'input_parameters')))
+        self.assertEqual(expected_params, actual_params)
+
+    
+
+    def test_log_param_sets_input_parameter_data_with_multiple_params(self):
+        from foundations_internal.serializer import deserialize
+
+        self.foundations_context.project_name.return_value = self.project_name
+        self._set_job_running()
+        
+        log_param(self.fake_key, self.fake_value)
+        log_param(self.fake_key_two, self.fake_value_two)
+        expected_params = [
+            {'argument': {'name': self.fake_key, 'value': {'type': 'dynamic', 'name': self.fake_key}}, 'stage_uuid': 'stageless'},
+            {'argument': {'name': self.fake_key_two, 'value': {'type': 'dynamic', 'name': self.fake_key_two}}, 'stage_uuid': 'stageless'}
+        ]
+
+        actual_params = deserialize(self.redis_connection.get('jobs:{}:{}'.format(self.job_id, 'input_parameters')))
+        self.assertEqual(expected_params, actual_params)
+
     def test_log_param_inserts_parameter_key_into_projects_params_keys_set(self):
         self.foundations_context.project_name.return_value = self.project_name
         self._set_job_running()
