@@ -11,6 +11,7 @@ from foundations.job_parameters import load_parameters
 class TestLoadJobParameters(Spec):
     
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
+    mock_log_param = let_patch_mock('foundations.job_parameters.log_param')
 
     @let
     def mock_parameters(self):
@@ -55,6 +56,12 @@ class TestLoadJobParameters(Spec):
 
         with self.assertRaises(json.JSONDecodeError):
             load_parameters()
+
+    def test_logs_params_from_file(self):
+        load_parameters()
+
+        for param_key, param_value in self.mock_parameters.items():
+            self.mock_log_param.assert_any_call(param_key, param_value)
 
     def _mock_file_enter(self, *args, **kwargs):
         return self.mock_file

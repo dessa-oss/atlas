@@ -7,7 +7,13 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def load_parameters():
     try:
-        return _parsed_json(_raw_json_from_parameters_file())
+        parameters = _parsed_json(_raw_json_from_parameters_file())
+
+        for key, value in parameters.items():
+            log_param(key, value)
+
+        return parameters
+
     except FileNotFoundError:
         return {}
 
