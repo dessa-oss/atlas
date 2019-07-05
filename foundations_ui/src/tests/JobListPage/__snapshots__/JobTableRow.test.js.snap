@@ -4,6 +4,11 @@ exports[`Shallow Renders Job Table Row 1`] = `
 <div
   className="job-table-row"
 >
+  <JobIDCell
+    isError={false}
+    jobID=""
+    rowNumber={0}
+  />
   <StartTimeCell
     isError={false}
     rowNumber={0}
@@ -13,11 +18,6 @@ exports[`Shallow Renders Job Table Row 1`] = `
     isError={false}
     rowNumber={0}
     status="completed"
-  />
-  <JobIDCell
-    isError={false}
-    jobID=""
-    rowNumber={0}
   />
   <DurationCell
     duration={0}

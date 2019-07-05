@@ -24,9 +24,9 @@ class JobTableRow extends Component {
 
     return (
       <div className="job-table-row">
+        <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <StartCell startTime={job.start_time} isError={isError} rowNumber={rowNumber} />
         <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
-        <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <DurationCell
           duration={JobListActions.parseDuration(job.duration)}
           isError={isError}

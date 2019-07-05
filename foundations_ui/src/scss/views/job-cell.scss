@@ -42,10 +42,16 @@
 .job-cell-hover {
   height: $row-height;
   transition: all 0.3s ease;
-  background:#d1e4ff;
+  background-color: #404040;
   position: fixed;
+  color: #fff;
   z-index: 1;
-  margin-top: -43px;
-  margin-left: 0px;
+  margin-top: 5px;
+  margin-left: -40px;
   text-align: center;
+  padding: 0px 8px 4px 8px;
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 4px 5px 1px #c3c3c3;
+  -moz-box-shadow: 1px 4px 5px 1px #c3c3c3;
+  box-shadow: 1px 4px 5px 1px #c3c3c3;
 }

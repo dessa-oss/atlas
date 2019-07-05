@@ -52,7 +52,13 @@ class TableStaticColumns extends Component {
         <div className="full-height">
           <div className="job-column-header-container">
             <JobColumnHeader
-              title="Start Time"
+              title="Job ID"
+              className="static-header"
+              toggleFilter={toggleJobIdFilter}
+              isFiltered={isJobIdFiltered}
+            />
+            <JobColumnHeader
+              title="Launched at"
               className="static-header"
               toggleFilter={toggleStartTimeFilter}
               isFiltered={isStartTimeFiltered}
@@ -63,12 +69,6 @@ class TableStaticColumns extends Component {
               className="static-status-header"
               toggleFilter={toggleStatusFilter}
               isFiltered={isStatusFiltered}
-            />
-            <JobColumnHeader
-              title="Job ID"
-              className="static-header"
-              toggleFilter={toggleJobIdFilter}
-              isFiltered={isJobIdFiltered}
             />
             <JobColumnHeader
               title="Duration"

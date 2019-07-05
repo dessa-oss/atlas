@@ -11,19 +11,23 @@ exports[`Shallow Renders ProjectSummary 1`] = `
       className="font-bold"
     />
     <p>
-      Data Source: Unknown
+      Data Source: raw_mnist
     </p>
     <p
       className="font-bold"
     >
       Project owner: 
-      <span />
+      <span>
+        Trial
+      </span>
     </p>
     <p
       className="font-bold"
     >
       Created at: 
-      <span />
+      <span>
+        2005-10-30 T 10:45 UTC
+      </span>
     </p>
     <div
       className="project-summary-button-container"

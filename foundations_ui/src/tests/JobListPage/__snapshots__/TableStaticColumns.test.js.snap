@@ -27,7 +27,17 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
         isFiltered={false}
         isMetric={false}
         isStatus={false}
-        title="Start Time"
+        title="Job ID"
+        toggleFilter={[Function]}
+      />
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="Launched at"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
@@ -38,16 +48,6 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
         isMetric={false}
         isStatus={true}
         title="Status"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="Job ID"
         toggleFilter={[Function]}
       />
       <JobColumnHeader
