@@ -5,12 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def load_parameters(log_params=True):
+def load_parameters(log_parameters=True):
     try:
         parameters = _parsed_json(_raw_json_from_parameters_file())
 
-        if log_params:
-            _log_params(parameters)
+        if log_parameters:
+            log_params(parameters)
 
         return parameters
 
@@ -48,7 +48,7 @@ def log_param(key, value):
         logger.warning('Script not run with Foundations.')
         log_manager.set_foundations_not_running_warning_printed()
 
-def _log_params(parameters):
+def log_params(parameters):
     for key, value in flatten_parameter_dictionary(parameters).items():
         log_param(key, value)
 
