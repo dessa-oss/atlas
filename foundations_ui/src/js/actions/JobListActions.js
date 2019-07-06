@@ -81,8 +81,9 @@ class JobListActions {
       return '';
     }
     // API Format is '2018-08-23T09:30:00'
-    // Desired Format is 'HH:mm:ss'
-    return startTime.split('T')[1];
+    // Desired Format is 'HH:mm:ss AM/PM'
+    const newDate = new Date(startTime);
+    return CommonActions.formatAMPM(newDate);
   }
 
   static getDurationDays(durationTime) {

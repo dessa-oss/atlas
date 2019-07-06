@@ -48,10 +48,6 @@
     padding-right: $standard-header-padding;
     position: relative;
 
-    &:last-child {
-      border-right: 0px;
-    }
-
     div {
       h4 {
         &:hover {
