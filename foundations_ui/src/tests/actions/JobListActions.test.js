@@ -305,12 +305,12 @@ it('getStatusCircle green', () => {
 
 it('gets JobColumnHeaderH4Class', () => {
   const header = JobListActions.getJobColumnHeaderH4Class(isNotStatus);
-  expect(header).toBe('blue-border-bottom');
+  expect(header).toBe('');
 });
 
 it('gets JobColumnHeaderH4Class isStatus', () => {
   const header = JobListActions.getJobColumnHeaderH4Class(isStatus);
-  expect(header).toBe('blue-border-bottom status-header');
+  expect(header).toBe('status-header');
 });
 
 it('gets JobColumnHeaderArrowClass', () => {

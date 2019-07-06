@@ -19,13 +19,12 @@
   ul.header-links {
     display: inline;
     height: $toolbar-height;
-    position: absolute;
     margin: 0;
     margin-top: 14px;
-    margin-left: 800px;
+    float: right;
     li {
       display: inline;
-      margin-right: 100px;
+      margin-left: 80px;
       a {
         font-size: 16px;
         color: $color-font-black;

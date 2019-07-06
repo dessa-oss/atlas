@@ -195,9 +195,9 @@ class JobListActions {
 
   static getJobColumnHeaderH4Class(isStatus) {
     if (isStatus === isStatusField) {
-      return 'blue-border-bottom status-header';
+      return 'status-header';
     }
-    return 'blue-border-bottom';
+    return '';
   }
 
   static getJobColumnHeaderArrowClass(isStatus, colType, isMetric) {

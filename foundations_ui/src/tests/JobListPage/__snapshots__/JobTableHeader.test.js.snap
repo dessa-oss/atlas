@@ -11,7 +11,6 @@ exports[`Shallow Renders Job Table Header 1`] = `
     className="job-list-container"
   >
     <TableStaticColumns
-      header="Model info"
       isDurationFiltered={false}
       isJobIdFiltered={false}
       isStartTimeFiltered={false}
