@@ -2,19 +2,18 @@
     width: 100%;
     max-width: 100%;
     min-width: $minimum-site-width;
-    min-height: $header-control-height;
+    min-height: 140px;
     background-color: $color-background;
     border-bottom: 2px solid $color-border-bottom;
   }
 
   .job-header-container-left{
     display: inline-block;
-    min-width: $minimum-site-width;
-    min-height: $header-control-height;
+    height: 140px;
   }
   
     .job-header-logo-container{
-      margin-left: $overview-content-margin-horizontal;
+      margin-left: 10px;
       display: inline-block;
       vertical-align: top;
 
@@ -76,12 +75,22 @@
       display: inline-block;
       width: 430px;
       margin: 15px 50px;
+      ul {
+        width: 240px;
+        padding-left: 0;
+        p {
+          font-size: 15px;
+        }
+      }
       h2{
           color: $color-dark-blue;
           margin: 0px;
       }
       p {
           margin: 0px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          display: inline;
       }
       p:nth-of-type(2) {
           margin-top: 5px;
@@ -98,6 +107,10 @@
       max-height: 50%;
       margin: auto;
       padding: 0px;
+    }
+
+    .project-list-name {
+      margin-bottom: 20px;
     }
 
     .job-header-sorting-container {

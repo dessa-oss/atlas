@@ -8,47 +8,51 @@ exports[`Shallow Renders Job List Page 1`] = `
     className="job-header-container-left"
   >
     <div
-      className="job-header-info-container"
-    >
-      <div>
-        <div
-          className="half-width inline-block"
-        >
-          <h1
-            className="blue-border-bottom font-bold"
-          >
-            Job List
-          </h1>
-        </div>
-      </div>
-    </div>
-    <div
       className="job-summary-info-container"
     >
       <h2
-        className="font-bold"
+        className="font-bold project-list-name"
       >
         null
       </h2>
-      <p>
-        Data Source: Unknown
-      </p>
-      <p
-        className="font-bold"
-      >
-        Project owner: 
-        <span>
-          null
-        </span>
-      </p>
-      <p
-        className="font-bold"
-      >
-        Created at: 
-        <span>
-          null
-        </span>
-      </p>
+      <ul>
+        <li>
+          <p
+            className="font-bold"
+          >
+            Data Source: 
+          </p>
+          <p>
+            raw_mnist
+          </p>
+        </li>
+        <li>
+          <p
+            className="font-bold"
+          >
+            Project owner: 
+          </p>
+          <p>
+            Trial
+            <span>
+              null
+            </span>
+          </p>
+        </li>
+        <li>
+          <p
+            className="font-bold"
+          >
+            Created at: 
+          </p>
+          <p>
+            2019-03-30 T 10:45 UTC
+            <span>
+              null
+            </span>
+          </p>
+        </li>
+      </ul>
     </div>
     <div
       className="job-header-sorting-container"

@@ -9,7 +9,9 @@ exports[`Shallow Renders Start Time Cell 1`] = `
   <p
     className="font-bold"
   >
-     
+    <div
+      className="launch-date"
+    />
     <span
       className=""
     />

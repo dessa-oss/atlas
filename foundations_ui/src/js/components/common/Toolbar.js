@@ -6,7 +6,9 @@ class Toolbar extends Component {
     return (
       <div className="toolbar-container">
         <div className="job-header-logo-container">
-          <div className="i--icon-logo" />
+          <Link to="/projects">
+            <div className="i--icon-logo" />
+          </Link>
           <h2 className="font-bold">Foundations</h2>
         </div>
         <ul className="header-links">

@@ -1,8 +1,7 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  min-width: $min-metric-param-columns-container;
-  max-width: $table-section-width;
+  width: $table-section-width;
   height: 100%;
   white-space: nowrap;
   margin: 0px;

@@ -211,23 +211,23 @@ class JobHeader extends Component {
     return (
       <div className="job-header-container">
         <div className="job-header-container-left">
-          <div className="job-header-info-container">
-            <div>
-              <div className="half-width inline-block">
-                <h1 className="blue-border-bottom font-bold">Job List</h1>
-              </div>
-            </div>
-          </div>
 
           <div className="job-summary-info-container">
-            <h2 className="font-bold">{project.name}</h2>
-            <p>Data Source: Unknown</p>
-            <p className="font-bold">
-              Project owner: <span>{project.owner}</span>
-            </p>
-            <p className="font-bold">
-              Created at: <span>{project.created_at}</span>
-            </p>
+            <h2 className="font-bold project-list-name">{project.name}</h2>
+            <ul>
+              <li>
+                <p className="font-bold">Data Source: </p>
+                <p>raw_mnist</p>
+              </li>
+              <li>
+                <p className="font-bold">Project owner: </p>
+                <p>Trial<span>{project.owner}</span></p>
+              </li>
+              <li>
+                <p className="font-bold">Created at: </p>
+                <p>2019-03-30 T 10:45 UTC<span>{project.created_at}</span></p>
+              </li>
+            </ul>
           </div>
           <div className="job-header-sorting-container">
             {/* <button

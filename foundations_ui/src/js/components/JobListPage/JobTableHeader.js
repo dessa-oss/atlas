@@ -478,6 +478,7 @@ class JobTableHeader extends Component {
       <ScrollSync>
         <div className="job-list-container">
           <TableStaticColumns
+            header="Model info"
             jobRows={jobRows}
             rowNumbers={rowNumbers}
             toggleUserFilter={this.toggleUserFilter}

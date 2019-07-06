@@ -22,6 +22,7 @@ class TableStaticColumns extends Component {
       isJobIdFiltered: this.props.isJobIdFiltered,
       isDurationFiltered: this.props.isDurationFiltered,
       isUserFiltered: this.props.isUserFiltered,
+      header: this.props.header,
     };
   }
 
@@ -35,6 +36,7 @@ class TableStaticColumns extends Component {
         isJobIdFiltered: nextProps.isJobIdFiltered,
         isDurationFiltered: nextProps.isDurationFiltered,
         isUserFiltered: nextProps.isUserFiltered,
+        header: nextProps.header,
       },
     );
   }
@@ -43,12 +45,14 @@ class TableStaticColumns extends Component {
     const {
       rowNumbers, jobRows, toggleUserFilter, toggleStatusFilter, toggleDurationFilter, toggleJobIdFilter,
       toggleStartTimeFilter, isStartTimeFiltered, isStatusFiltered, isJobIdFiltered, isDurationFiltered,
-      isUserFiltered,
+      isUserFiltered, header,
     } = this.state;
 
     return (
       <div className="job-static-columns-container">
-        <TableSectionHeader />
+        <TableSectionHeader
+          header={header}
+        />
         <div className="full-height">
           <div className="job-column-header-container">
             <JobColumnHeader
@@ -112,6 +116,7 @@ TableStaticColumns.propTypes = {
   isJobIdFiltered: PropTypes.bool,
   isDurationFiltered: PropTypes.bool,
   isUserFiltered: PropTypes.bool,
+  header: PropTypes.string,
 };
 
 TableStaticColumns.defaultProps = {
@@ -127,6 +132,7 @@ TableStaticColumns.defaultProps = {
   isJobIdFiltered: false,
   isDurationFiltered: false,
   isUserFiltered: false,
+  header: '',
 };
 
 export default TableStaticColumns;
