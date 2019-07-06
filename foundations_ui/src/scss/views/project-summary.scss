@@ -2,14 +2,22 @@
   margin: auto;
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
-  border-radius: 8px;
-  margin-top: 15px;
   padding-left: 30px;
 }
 
-.project-summary-info-container{
-  border-right: 1px solid $color-border-bottom;
-  width: 75%;
+.project-summary-container.elevation-1{
+  box-shadow: none;
+  &:first-child {
+    margin-top: 15px;
+    border-radius: 6px 6px 0px 0px;
+  }
+  &:last-child {
+    border-radius: 0px 0px 6px 6px;
+  }
+}
+
+.project-summary-info-container {
+  width: 100%;
   margin: 15px 0px;
   h2{
     color: $color-dark-blue;
@@ -19,16 +27,14 @@
   p:first-of-type{
     margin-top: 5px;
     margin-bottom: 5px;
-    font-size: 12px;
     padding-bottom: 15px;
   }
   p:not(:first-of-type){
     margin-top: 5px;
     margin-bottom: 5px;
-    font-size: 14px;
   }
-  span{
-    font-size: 12px;
+  p, span{
+    font-size: 15px;
   }
 }
 
@@ -38,7 +44,14 @@
 
 .project-summary-button-container{
   button{
-    margin-left: 0px;
-    margin-bottom: 0px;
+    float: right;
+    margin-right: 50px;
+    display: inline;
+    border-radius: 2px;
+    width: 130px;
+    height: 40px;
+    margin-top: -46px;
+    font-size: 16px;
+    text-transform: none;
   }
 }

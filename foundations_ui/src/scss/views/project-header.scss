@@ -2,13 +2,10 @@
   width: 100%;
   max-width: 100%;
   height: 120px;
-  background-color: $color-background;
-  border-bottom: 2px solid $color-border-bottom;
 }
 
 .project-header-logo-container{
   height: 100%;
-  margin-left: 50px;
   position: absolute;
   text-align: center;
 
@@ -24,16 +21,16 @@
   h2 {
     font-size: 21px;
     display: inline-block;
-    margin-top: 10px;
-    margin-left: 10px;
+    margin-top: 0;
+    margin-left: 20px;
     vertical-align: top;
     color: $color-font-black;
   }
 }
 
 .project-header-info-container{
-  width: 705px;
-  max-width: 705px;
+  width: 1150x;
+  max-width: 1150px;
   margin: auto;
   vertical-align: middle;
 }
@@ -70,12 +67,14 @@
     display: inline-block;
     vertical-align: baseline;
     text-align: left;
+    color: $color-medium-blue;
   }
 
   h2 {
     text-align: center;
     display: inline-block;
     text-align: right;
+    margin-top: 0;
   }
 }
 
