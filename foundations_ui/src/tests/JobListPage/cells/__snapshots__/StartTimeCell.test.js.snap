@@ -2,7 +2,7 @@
 
 exports[`Shallow Renders Start Time Cell 1`] = `
 <div
-  className="job-cell start-cell  row-0"
+  className="job-cell start-cell row-0"
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}
 >

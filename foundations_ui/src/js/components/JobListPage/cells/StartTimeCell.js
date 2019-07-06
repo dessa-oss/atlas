@@ -30,14 +30,16 @@ class StartTimeCell extends Component {
     let hover;
 
     const errorClass = CommonActions.errorStatus(isError);
-    const pClass = `job-cell start-cell ${errorClass} row-${rowNumber}`;
     const spanClass = ''.concat(errorClass);
+
+    const pClass = isError
+      ? `job-cell start-cell error row-${rowNumber}`
+      : `job-cell start-cell row-${rowNumber}`;
 
     const dateTimeFormatted = (
       <p className="font-bold">
         <div className="launch-date">{date}</div>
-        <span className={spanClass}>{time}
-        </span>
+        <span className={spanClass}>{time}</span>
       </p>
     );
 
