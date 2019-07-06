@@ -14,16 +14,14 @@ exports[`Shallow Renders ProjectHeader 1`] = `
         className="half-width inline-block"
       >
         <h1
-          className="blue-border-bottom font-bold"
+          className="font-bold"
         >
           Projects
         </h1>
       </div>
-      <div
-        className="half-width inline-block text-right"
-      >
+      <div>
         <h2
-          className="blue-border-bottom font-bold"
+          className="font-bold"
         >
           Total Projects: 
           <span>

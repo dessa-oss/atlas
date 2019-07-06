@@ -15,6 +15,9 @@ exports[`Shallow Renders Job List Page 1`] = `
       >
         null
       </h2>
+      <h3>
+        Jobs List
+      </h3>
       <ul>
         <li>
           <p

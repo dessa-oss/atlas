@@ -10,8 +10,13 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     <h2
       className="font-bold"
     />
-    <p>
-      Data Source: raw_mnist
+    <p
+      className="font-bold"
+    >
+      Data Source:
+      <span>
+         raw_mnist
+      </span>
     </p>
     <p
       className="font-bold"
@@ -37,7 +42,7 @@ exports[`Shallow Renders ProjectSummary 1`] = `
         onClick={[Function]}
         type="button"
       >
-        view job list
+        View jobs
       </button>
     </div>
   </div>
