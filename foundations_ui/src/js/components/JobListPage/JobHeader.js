@@ -214,6 +214,7 @@ class JobHeader extends Component {
 
           <div className="job-summary-info-container">
             <h2 className="font-bold project-list-name">{project.name}</h2>
+            <h3>Jobs List</h3>
             <ul>
               <li>
                 <p className="font-bold">Data Source: </p>

@@ -2,9 +2,10 @@
     width: 100%;
     max-width: 100%;
     min-width: $minimum-site-width;
-    min-height: 140px;
+    height: 180px;
     background-color: $color-background;
-    border-bottom: 2px solid $color-border-bottom;
+    border-bottom: 1px solid $color-border-bottom;
+    background-color: $color-background-grey;
   }
 
   .job-header-container-left{

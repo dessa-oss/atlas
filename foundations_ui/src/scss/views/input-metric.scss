@@ -7,6 +7,7 @@
   margin: 0px;
   padding: 0px;
   position: relative;
+  overflow: hidden;
 
   &:first-of-type {
     width: $table-section-width;
@@ -16,11 +17,11 @@
 .input-metric-header-row-container {
   height: calc(100% - #{$metric-header-height});
   width: 100%;
-  overflow-y: scroll;
-  overflow-x: scroll;
   border-left: 4px solid $color-border-bottom;
   position: relative;
   margin-right: -6px;
+  overflow: hidden;
+  overflow-x: scroll;
 }
 
 .input-metric-column-container {

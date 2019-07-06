@@ -10,7 +10,7 @@
   //this will hide the scrollbars
   padding-right: 17px;
   box-sizing: content-box;
-  margin-left: -15px;
+  margin-left: -13px;
 
   .job-cell:first-child() {
     border-left: 1px solid $color-border-bottom;
@@ -24,6 +24,7 @@
   padding: 0px $overview-content-margin-horizontal;
   width: calc(100% - #{$overview-content-margin-horizontal} * 2);
   overflow-y: hidden;
+  margin-top: 10px;
 }
 
 .job-table-container{
