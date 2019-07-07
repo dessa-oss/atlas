@@ -49,7 +49,7 @@ class TestJobDataProducers(unittest.TestCase):
         job_data = all_job_data[0]
         self.assertEqual('default', job_data['project_name'])
         self.assertEqual('successful_job', job_data['job_id'])
-        self.assertEqual('default', job_data['user'])
+        self.assertEqual('trial', job_data['user'])
         self.assertEqual('completed', job_data['status'])
         self.assertTrue(isinstance(job_data['start_time'], float))
         self.assertTrue(isinstance(job_data['completed_time'], float))
