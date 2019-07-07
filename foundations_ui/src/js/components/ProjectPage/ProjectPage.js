@@ -47,9 +47,23 @@ class ProjectPage extends Component {
       return <ErrorMessage errorCode={queryStatus} />;
     }
     if (projects.length === 0) {
-      return <p>No projects available</p>;
+      return this.setNoProjects();
     }
     return ProjectActions.getAllProjects(projects);
+  }
+
+  setNoProjects() {
+    const messageBanner = 'No projects available';
+    const messageSubtext = 'Looks like you haven’t started an experiment yet. '
+    + 'Check out the getting started guide to add an experiment.';
+
+    return (
+      <div className="error-body-container">
+        <div className="i--icon-astronaut-probs text-center" />
+        <h1 className="blue-border-bottom font-bold">{messageBanner}</h1>
+        <p>{messageSubtext}</p>
+      </div>
+    );
   }
 
   render() {
