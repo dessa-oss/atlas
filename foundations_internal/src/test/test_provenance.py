@@ -154,7 +154,7 @@ class TestProvenance(unittest.TestCase):
         self.assertEqual(provenance.stage_hierarchy.entries, {})
         self.assertEqual(provenance.job_run_data, {})
         self.assertEqual(provenance.project_name, 'default')
-        self.assertEqual(provenance.user_name, 'default')
+        self.assertEqual(provenance.user_name, 'trial')
         self.assertEqual(provenance.annotations, {})
 
     def test_load_provenance_from_archive_with_specific_value_persists(self):
@@ -207,7 +207,7 @@ class TestProvenance(unittest.TestCase):
                                        'tags': [],
                                        'job_run_data': {},
                                        'project_name': 'default',
-                                       'user_name': 'default',
+                                       'user_name': 'trial',
                                        }, mock_archive.archive_provenance)
         self.assertEqual(
             {}, mock_archive.archive_provenance['stage_hierarchy'].entries)
@@ -281,4 +281,4 @@ class TestProvenance(unittest.TestCase):
 
     def test_provenance_default_user_name(self):
         provenance = Provenance()
-        self.assertEqual(provenance.user_name, "default")
+        self.assertEqual(provenance.user_name, "trial")
