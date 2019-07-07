@@ -17,9 +17,8 @@
 .input-metric-header-row-container {
   height: calc(100% - #{$metric-header-height});
   width: 100%;
-  border-left: 4px solid $color-border-bottom;
+  border-left: 4px solid $color-medium-blue;
   position: relative;
-  margin-right: -6px;
   overflow: hidden;
   overflow-x: scroll;
 }

@@ -6,12 +6,8 @@
   background-color: $color-background-grey;
 
   > div:nth-child(3) {
-    > div:first-child() {
-      margin-left: 4px;
-    }
-
     > div:last-child() {
-     border-right: 1px solid $color-border-bottom;
+      border-right: 4px solid #0491F6;
     }
   }
 }
