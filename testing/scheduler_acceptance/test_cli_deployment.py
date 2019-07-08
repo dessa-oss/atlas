@@ -136,25 +136,42 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
         self.assertNotIn('CryptographyDeprecationWarning', process.stderr.decode())
 
-    @skip('not implemented')
     def test_deploy_streams_to_console(self):
         import time
-        from subprocess import PIPE, Popen
+        from subprocess import DEVNULL, PIPE, Popen
 
-        process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations deploy --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=PIPE, encoding='ascii')
+        process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations deploy --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=PIPE, stderr=DEVNULL, encoding='ascii')
         process_stdout = process.stdout
 
         self._wait_for_job_to_start(process_stdout)
 
-        time.sleep(8)
-        process.terminate()
+        job_start = time.time()
 
-        rest_of_output = process_stdout.read().split('\n')
+        rest_of_output = []
+
+        line_number = 0
+
+        for line in process_stdout:
+            if line_number < 16:
+                line = line.rstrip('\n')
+                rest_of_output.append(line)
+                line_number += 1
+            else:
+                break
+
+        read_end = time.time()
+
+        process.terminate()
+        process.wait()
+
+        process_stdout.close()
+
+        self.assertLessEqual(read_end - job_start, 10)
+
+        rest_of_output = rest_of_output[:-1]
         rest_of_output = list(map(int, rest_of_output))
 
-        self.assertEqual(1, rest_of_output[0])
-        self.assertGreaterEqual(14, rest_of_output[-1])
-        self.assertLessEqual(20, rest_of_output[-1])
+        self.assertEqual(0, rest_of_output[0])
 
         for index in range(len(rest_of_output) - 1):
             self.assertEqual(rest_of_output[index] + 1, rest_of_output[index + 1])
@@ -183,6 +200,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
     def _wait_for_job_to_start(self, job_process_stdout_stream):
         for line in job_process_stdout_stream:
+            line = line.rstrip('\n')
             if line == 'JOB_STARTED_MARKER':
                 return
 
