@@ -61,8 +61,15 @@ class CommandLineInterface(object):
 
     def _initialize_model_serve_parser(self, subparsers):
         serving_parser = subparsers.add_parser('serve')
-        serving_parser.add_argument('job_id')
-        serving_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
+        serving_subparsers = serving_parser.add_subparsers()
+
+        serving_deploy_parser = serving_subparsers.add_parser('start')
+        serving_deploy_parser.add_argument('job_id')
+        serving_deploy_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
+
+        serving_destroy_parser = serving_subparsers.add_parser('stop')
+        serving_destroy_parser.add_argument('model_name')
+        serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
 
     def _initialize_serving_deploy_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
@@ -435,5 +442,8 @@ class CommandLineInterface(object):
 
     def _kubernetes_model_serving_deploy(self):
         from foundations_contrib.cli.model_package_server import deploy
-
         deploy(self._arguments.job_id)
+
+    def _kubernetes_model_serving_destroy(self):
+        from foundations_contrib.cli.model_package_server import destroy
+        destroy(self._arguments.model_name)
