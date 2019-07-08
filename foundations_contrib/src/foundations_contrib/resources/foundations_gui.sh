@@ -68,6 +68,7 @@ start_ui () {
         --name foundations-rest-api \
         -e REDIS_URL="${redis_url}" \
         --network foundations-gui \
+        -v $HOME/.kube:/root/.kube:ro \
         docker.shehanigans.net/foundations-rest-api:${image_tag} \
         > /dev/null \
         && \
