@@ -13,7 +13,6 @@ from foundations_rest_api.response import Response
 
 from foundations_spec import *
 
-@skip
 class TestAPIResource(Spec):
 
     @let
@@ -40,6 +39,10 @@ class TestAPIResource(Spec):
     def random_cookie_value(self):
         return self.faker.sha256()
 
+    @let
+    def random_data(self):
+        return {self.faker.sentence(): self.faker.sentence() for _ in range(self.faker.random.randint(3, 10))}
+
     authorization_mock = let_patch_mock('foundations_rest_api.v1.models.session.Session.is_authorized')
 
     def test_returns_class(self):
@@ -52,6 +55,23 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path)
             self.assertEqual(self._json_response(response), 'some data')
     
+    def test_delete_returns_delete(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDelete)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some data')
+        
+    def test_delete_sets_params(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('delete', _callback)
+
+        klass = api_resource(self.uri_path)(mock_klass)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path, data=self.random_data)
+            self.assertEqual(self._json_response(response), self.random_data)
+
     def test_post_returns_post(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPost)
         with self._test_client() as client:
@@ -111,6 +131,18 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(APIResourceMocks.ParamsMockWithIndexAndStatus)
         with self._test_client() as client:
             response = client.get(self.uri_path)
+            self.assertEqual(response.status_code, 403)
+
+    def test_delete_has_status_code(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDelete)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
+            self.assertEqual(response.status_code, 200)
+
+    def test_delete_has_status_code_different_code(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDeleteAndStatus)
+        with self._test_client() as client:
+            response = client.delete(self.uri_path)
             self.assertEqual(response.status_code, 403)
 
     def test_post_has_status_code(self):

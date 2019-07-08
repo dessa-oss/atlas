@@ -23,9 +23,14 @@ class APIResourceBuilder(object):
         if hasattr(self._klass, 'post'):
             self._api_actions['post'] = self._post_api_create()
     
+    def _load_delete_route(self):
+        if hasattr(self._klass, 'delete'):
+            self._api_actions['delete'] = self._delete_api_create()
+    
     def _create_action(self):
         self._load_index_route()
         self._load_post_route()
+        self._load_delete_route()
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
 
@@ -63,6 +68,15 @@ class APIResourceBuilder(object):
                 cookie = '{}={};path=/'.format(cookie_key, cookie_value)
             return response.as_json(), response.status(), {'Set-Cookie': cookie }
         return _post
+
+    def _delete_api_create(self):
+        def _delete(resource_self):
+            instance = self._klass()
+            instance.params = request.form
+
+            response = instance.delete()
+            return response.as_json(), response.status()
+        return _delete
 
     def _api_params(self, kwargs):
         from flask import request
