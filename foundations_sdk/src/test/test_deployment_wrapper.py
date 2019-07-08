@@ -136,8 +136,12 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.stream_job_logs(), 'some fancier logs')
     
-    def test_stream_job_logs_returns_error_message_if_deployment_object_does_not_have_stream_job_logs_method(self):
+    def test_stream_job_logs_raises_exception_if_deployment_object_does_not_have_stream_job_logs_method(self):
         deployment = object()
 
         deployment_wrapper = DeploymentWrapper(deployment)
-        self.assertEqual(deployment_wrapper.stream_job_logs(), 'Current deployment method does not support stream_job_logs()')
+
+        with self.assertRaises(NotImplementedError) as error_context:
+            deployment_wrapper.stream_job_logs()
+
+        self.assertIn('Current deployment method does not support stream_job_logs()', error_context.exception.args)
