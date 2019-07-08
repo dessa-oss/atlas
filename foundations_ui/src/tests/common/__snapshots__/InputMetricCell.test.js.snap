@@ -6,6 +6,9 @@ exports[`Shallow Renders InputMetricCell 1`] = `
 >
   <p
     className="type-"
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
   />
+  <div />
 </div>
 `;
