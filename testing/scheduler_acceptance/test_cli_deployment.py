@@ -136,6 +136,29 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
         self.assertNotIn('CryptographyDeprecationWarning', process.stderr.decode())
 
+    @skip('not implemented')
+    def test_deploy_streams_to_console(self):
+        import time
+        from subprocess import PIPE, Popen
+
+        process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations deploy --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=PIPE, encoding='ascii')
+        process_stdout = process.stdout
+
+        self._wait_for_job_to_start(process_stdout)
+
+        time.sleep(8)
+        process.terminate()
+
+        rest_of_output = process_stdout.read().split('\n')
+        rest_of_output = list(map(int, rest_of_output))
+
+        self.assertEqual(1, rest_of_output[0])
+        self.assertGreaterEqual(14, rest_of_output[-1])
+        self.assertLessEqual(20, rest_of_output[-1])
+
+        for index in range(len(rest_of_output) - 1):
+            self.assertEqual(rest_of_output[index] + 1, rest_of_output[index + 1])
+
     def _job_id_from_logs(self, driver_deploy_completed_process):
         import re
 
@@ -156,14 +179,24 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             file.write(self.yaml_cli_config)
 
     def _wait_for_job_to_complete(self, job_id):
+        self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
+
+    def _wait_for_job_to_start(self, job_process_stdout_stream):
+        for line in job_process_stdout_stream:
+            if line == 'JOB_STARTED_MARKER':
+                return
+
+        raise AssertionError('either job never started or job output never started streaming')
+
+    def _wait_for_statuses(self, job_id, statuses, error_message):
         import time
 
         time_elapsed = 0
         timeout = 60
 
-        while self._job_status(job_id) == 'Pending' or self._job_status(job_id) == 'Running':
+        while self._job_status(job_id) in statuses:
             if time_elapsed >= timeout:
-                raise AssertionError('job did not finish')
+                raise AssertionError(error_message)
 
             time_elapsed += 5
             time.sleep(5)
