@@ -55,3 +55,4 @@ from test.test_log_manager import TestLogManager
 
 from test.config import *
 from test.notifiers import *
+from test.jobs import *
