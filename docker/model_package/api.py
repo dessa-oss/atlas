@@ -13,7 +13,7 @@ def load_prediction_function():
     import sys
 
     job_id = environ['JOB_ID']
-    job_root = '/archive/{}/artifacts'.format(job_id)
+    job_root = '/archive/archive/{}/artifacts'.format(job_id)
     sys.path.insert(0, job_root)
     with open('{}/foundations_package_manifest.yaml'.format(job_root), 'r') as manifest_file:
         manifest = yaml.load(manifest_file.read())
