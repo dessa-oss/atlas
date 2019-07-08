@@ -2,25 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: 
-    app: foundations-model-package-<%= model_name %>
-  name: foundations-model-package-deployment-<%= model_name %>
+    app: foundations-model-package-${model_name}
+  name: foundations-model-package-deployment-${model_name}
   namespace: foundations-scheduler-test
 spec:
   replicas: 1
   selector:
     matchLabels: 
-      app: foundations-model-package-<%= model_name %>
+      app: foundations-model-package-${model_name}
   template:
     metadata:
       labels: 
-        app: foundations-model-package-<%= model_name %>
+        app: foundations-model-package-${model_name}
     spec:
       containers:
       - image: docker.shehanigans.net/foundations-scheduler-worker-scheduler
         imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
-            value: <%= job_id %>
+            value: ${job_id}
         resources:
           limits:
             nvidia.com/gpu: 1
@@ -38,11 +38,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: foundations-model-package-<%= model_name %>
+  name: foundations-model-package-${model_name}
   namespace: foundations-scheduler-test
 spec:
   selector:
-    app: foundations-model-package-<%= model_name %>
+    app: foundations-model-package-${model_name}
   ports:
   - protocol: TCP
     port: 80
