@@ -11,3 +11,9 @@ def deploy(job_id):
     import foundations_contrib
     
     run(['bash', './deploy_serving.sh', job_id], cwd=foundations_contrib.root() / 'resources/model_serving')
+
+def destroy(job_id):
+    from subprocess import run
+    import foundations_contrib
+    
+    run(['bash', './remove_deployment.sh', job_id], cwd=foundations_contrib.root() / 'resources/model_serving')
