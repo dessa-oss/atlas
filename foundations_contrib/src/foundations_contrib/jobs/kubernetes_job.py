@@ -8,6 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def cancel(job_id):
     import subprocess
     import foundations_contrib
+    from foundations_contrib.global_state import redis_connection
 
     subprocess.run(['bash', './delete_job.sh', job_id], cwd=foundations_contrib.root() / 'resources/jobs')
-    
+    project_name = redis_connection.get(f'jobs:{job_id}:project').decode()
+    redis_connection.srem(f'project:{project_name}:jobs:running', job_id)
