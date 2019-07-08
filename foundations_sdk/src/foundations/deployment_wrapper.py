@@ -244,3 +244,8 @@ class DeploymentWrapper(object):
         if not hasattr(self._deployment, 'get_job_logs'):
             return 'Current deployment method does not support get_job_logs()'
         return self._deployment.get_job_logs()
+
+    def stream_job_logs(self):
+        if not hasattr(self._deployment, 'stream_job_logs'):
+            return 'Current deployment method does not support stream_job_logs()'
+        return self._deployment.stream_job_logs()

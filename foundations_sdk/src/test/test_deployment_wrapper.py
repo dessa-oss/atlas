@@ -102,7 +102,6 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.fetch_job_results(), 'Result is checked')
 
-
     def test_get_job_logs_returns_deployment_object_get_job_logs_return_value(self):
         deployment = Mock()
         deployment.get_job_logs.return_value = 'some fancy logs'
@@ -122,3 +121,23 @@ class TestDeploymentWrapper(Spec):
 
         deployment_wrapper = DeploymentWrapper(deployment)
         self.assertEqual(deployment_wrapper.get_job_logs(), 'Current deployment method does not support get_job_logs()')
+
+    def test_stream_job_logs_returns_deployment_object_stream_job_logs_return_value(self):
+        deployment = Mock()
+        deployment.stream_job_logs.return_value = 'some fancy logs'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.stream_job_logs(), 'some fancy logs')
+    
+    def test_stream_job_logs_returns_deployment_object_stream_job_logs_different_return_value(self):
+        deployment = Mock()
+        deployment.stream_job_logs.return_value = 'some fancier logs'
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.stream_job_logs(), 'some fancier logs')
+    
+    def test_stream_job_logs_returns_error_message_if_deployment_object_does_not_have_stream_job_logs_method(self):
+        deployment = object()
+
+        deployment_wrapper = DeploymentWrapper(deployment)
+        self.assertEqual(deployment_wrapper.stream_job_logs(), 'Current deployment method does not support stream_job_logs()')
