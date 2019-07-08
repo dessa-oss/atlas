@@ -1,7 +1,9 @@
 from flask import Flask, request
+from flask_cors import CORS
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 api = Api(app)
 
 def load_prediction_function():
@@ -34,4 +36,4 @@ class ServeModel(Resource):
 api.add_resource(ServeModel, '/')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=80, host='0.0.0.0')
+    app.run(debug=False, port=80, host='0.0.0.0')
