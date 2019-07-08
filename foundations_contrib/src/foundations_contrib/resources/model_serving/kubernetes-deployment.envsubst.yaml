@@ -16,7 +16,7 @@ spec:
         app: foundations-model-package-${model_name}
     spec:
       containers:
-      - image: docker.shehanigans.net/foundations-scheduler-worker-scheduler
+      - image: docker.shehanigans.net/foundations-model-package
         imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
