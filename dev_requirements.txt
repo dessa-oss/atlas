@@ -4,7 +4,7 @@ pandas==0.23.3
 promise==2.2.1
 redis==2.10.6
 google-auth-httplib2
-flask==1.1.0
+Flask==1.1.0
 flask-restful==0.3.6
 Flask-Cors==3.0.6
 Werkzeug==0.15.4

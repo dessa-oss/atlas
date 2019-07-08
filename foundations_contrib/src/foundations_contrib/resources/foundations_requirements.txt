@@ -12,7 +12,8 @@ freezegun==0.3.8
 boto3==1.9.86
 boto==2.49.0
 flask-restful==0.3.6
-Werkzeug==0.14.1
+Flask==1.1.0
+Werkzeug==0.15.4
 Flask-Cors==3.0.6
 mkdocs==1.0.4
 promise==2.2.1
