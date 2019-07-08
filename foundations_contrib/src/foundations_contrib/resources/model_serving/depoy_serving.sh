@@ -4,3 +4,4 @@ export job_id=$1
 export model_name=model-$model_number
 
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
+echo Model $model_name successfully served
