@@ -197,7 +197,13 @@ class CommandLineInterface(object):
         else:
             self._check_and_set_job_resources()
             deploy_kwargs = self._stageless_deploy_kwargs()
-            foundations.deploy(**deploy_kwargs)
+            deployment_wrapper = foundations.deploy(**deploy_kwargs)
+
+            try:
+                for log_line in deployment_wrapper.stream_job_logs():
+                    print(log_line)
+            except NotImplementedError:
+                pass
 
     def _stageless_deploy_kwargs(self):
         entrypoint = self._arguments.entrypoint

@@ -75,6 +75,9 @@ class TestCommandLineInterfaceDeploy(Spec):
         self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
         self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
+        self.mock_deploy.return_value = self.mock_deployment_wrapper
+        self.mock_deployment_wrapper.stream_job_logs.return_value = self.pod_logs
+
     scaffold_project_mock = let_patch_mock('foundations_contrib.cli.scaffold.Scaffold.scaffold_project')
 
     def test_deploy_returns_correct_error_if_env_not_found(self):
@@ -220,6 +223,10 @@ class TestCommandLineInterfaceDeploy(Spec):
     def num_gpus(self):
         return self.faker.random_int(0, 8)
 
+    @let
+    def pod_logs(self):
+        return self.faker.words()
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -241,6 +248,7 @@ class TestCommandLineInterfaceDeploy(Spec):
     mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
     mock_set_job_resources = let_patch_mock('foundations.set_job_resources')
     mock_deploy = let_patch_mock('foundations.deploy')
+    mock_deployment_wrapper = let_mock()
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -467,6 +475,23 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(command_to_run).execute()
         self.mock_deploy.assert_called_with(project_name=self.fake_project_name, entrypoint=self.entrypoint, env=self.environment)
+
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_logs_to_screen(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy']).execute()
+        
+        calls = map(call, self.pod_logs)
+        self.print_mock.assert_has_calls(calls)
+
+    def test_foundations_deploy_with_deployment_wrapper_that_does_not_support_log_streaming_does_not_print_from_deployment_wrapper_object(self):
+        self._set_run_script_environment({})
+        self.mock_deployment_wrapper.stream_job_logs.side_effect = NotImplementedError()
+
+        CommandLineInterface(['deploy']).execute()
+
+        for log_line in self.pod_logs:
+            self.assertNotIn((log_line,), self.print_mock.mock_calls)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
