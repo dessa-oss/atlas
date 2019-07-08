@@ -17,6 +17,7 @@ class CommandLineInterface(object):
         self._initialize_deploy_parser(subparsers)
         self._initialize_info_parser(subparsers)
         self._initialize_serving_parser(subparsers)
+        self._initialize_model_serve_parser(subparsers)
         self._initialize_retrieve_parser(subparsers)
 
         self._arguments = self._argument_parser.parse_args(args)
@@ -57,6 +58,11 @@ class CommandLineInterface(object):
         serving_subparsers = serving_parser.add_subparsers()
         self._initialize_serving_deploy_parser(serving_subparsers)
         self._initialize_serving_stop_parser(serving_subparsers)
+
+    def _initialize_model_serve_parser(self, subparsers):
+        serving_parser = subparsers.add_parser('serve')
+        serving_parser.add_argument('job_id')
+        serving_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
 
     def _initialize_serving_deploy_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
@@ -426,3 +432,8 @@ class CommandLineInterface(object):
             print('Driver file `{}` needs to be a python file with an extension `.py`'.format(driver_name))
             return False
         return True
+
+    def _kubernetes_model_serving_deploy(self):
+        from foundations_contrib.cli.model_package_server import deploy
+
+        deploy(self._arguments.job_id)

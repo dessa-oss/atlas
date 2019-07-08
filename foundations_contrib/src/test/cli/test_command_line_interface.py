@@ -402,6 +402,7 @@ class TestCommandLineInterface(Spec):
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
     mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
+    mock_deploy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.deploy')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -413,6 +414,10 @@ class TestCommandLineInterface(Spec):
             raise NoSuchProcess(pid)
 
         return self.server_process
+
+    def test_server_deploys_model_server_with_specified_job_id(self):
+        CommandLineInterface(['serve', self.mock_job_id]).execute()
+        self.mock_deploy_model_package.assert_called_with(self.mock_job_id)
 
     def test_serving_deploy_rest_opens_pid_file(self):
         self._create_server_pidfile()
