@@ -170,6 +170,13 @@ class TestJobDeployment(Spec):
         self.deployment.deploy()
         self.mock_filterwarnings.assert_called_with('ignore', category=CryptographyDeprecationWarning)
 
+    def test_stream_job_logs_gets_stream_from_scheduler_object(self):
+        mock_log_stream = Mock()
+        self.mock_scheduler_instance.stream_job_logs = ConditionalReturn()
+        self.mock_scheduler_instance.stream_job_logs.return_when(mock_log_stream, self.job_id)
+
+        self.assertEqual(mock_log_stream, self.deployment.stream_job_logs())
+
     @staticmethod
     def _error_callback():
         raise Exception

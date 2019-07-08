@@ -76,6 +76,9 @@ class JobDeployment(object):
     def get_job_logs(self):
         return self._scheduler.get_job_logs(self._job_id)
 
+    def stream_job_logs(self):
+        return self._scheduler.stream_job_logs(self._job_id)
+
     @staticmethod
     def cancel_jobs(jobs):
         from foundations_scheduler.kubernetes_api_wrapper import KubernetesApiWrapper
