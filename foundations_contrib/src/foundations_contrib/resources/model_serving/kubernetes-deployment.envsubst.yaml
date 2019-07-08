@@ -20,7 +20,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
-            value: ${job_id}
+            value: "${job_id}"
         resources:
           limits:
             nvidia.com/gpu: 1
