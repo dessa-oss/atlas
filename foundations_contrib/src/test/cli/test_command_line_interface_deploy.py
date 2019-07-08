@@ -481,7 +481,7 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(['deploy']).execute()
         
-        calls = map(call, self.pod_logs)
+        calls = map(lambda line: call(line, flush=True), self.pod_logs)
         self.print_mock.assert_has_calls(calls)
 
     def test_foundations_deploy_with_deployment_wrapper_that_does_not_support_log_streaming_does_not_print_from_deployment_wrapper_object(self):
@@ -490,8 +490,10 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(['deploy']).execute()
 
-        for log_line in self.pod_logs:
-            self.assertNotIn((log_line,), self.print_mock.mock_calls)
+        bad_calls = map(lambda line: call(line, flush=True), self.pod_logs)
+
+        for bad_call in bad_calls:
+            self.assertNotIn(bad_call, self.print_mock.mock_calls)
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()

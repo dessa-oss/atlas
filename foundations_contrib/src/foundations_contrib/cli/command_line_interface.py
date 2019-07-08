@@ -201,7 +201,7 @@ class CommandLineInterface(object):
 
             try:
                 for log_line in deployment_wrapper.stream_job_logs():
-                    print(log_line)
+                    print(log_line, flush=True)
             except NotImplementedError:
                 pass
 
