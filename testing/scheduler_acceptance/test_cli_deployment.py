@@ -143,7 +143,9 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations deploy --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=PIPE, stderr=DEVNULL, encoding='ascii')
         process_stdout = process.stdout
 
+        self._assert_job_queued_message_printed(process_stdout)
         self._wait_for_job_to_start(process_stdout)
+        self._wait_for_script_output(process_stdout)
 
         job_start = time.time()
 
@@ -198,13 +200,29 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def _wait_for_job_to_complete(self, job_id):
         self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
 
+    def _assert_job_queued_message_printed(self, job_process_stdout_stream):
+        for line in job_process_stdout_stream:
+            line = line.rstrip('\n')
+            if line == 'Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled':
+                return
+
+        raise AssertionError('job queued message was never printed')
+
     def _wait_for_job_to_start(self, job_process_stdout_stream):
+        for line in job_process_stdout_stream:
+            line = line.rstrip('\n')
+            if line == 'Job is running; streaming logs:':
+                return
+
+        raise AssertionError('job never started')
+
+    def _wait_for_script_output(self, job_process_stdout_stream):
         for line in job_process_stdout_stream:
             line = line.rstrip('\n')
             if line == 'JOB_STARTED_MARKER':
                 return
 
-        raise AssertionError('either job never started or job output never started streaming')
+        raise AssertionError('script output never started')
 
     def _wait_for_statuses(self, job_id, statuses, error_message):
         import time
