@@ -4,6 +4,13 @@ exports[`Shallow Renders Job Table Row 1`] = `
 <div
   className="job-table-row"
 >
+  <CancelJobCell
+    job={
+      Object {
+        "status": "completed",
+      }
+    }
+  />
   <JobIDCell
     isError={false}
     jobID=""

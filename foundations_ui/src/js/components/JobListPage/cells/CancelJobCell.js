@@ -1,31 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class CancelJobCell extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      job: this.props.job,
-    };
+function CancelJobCell(props) {
+  function handleClick() {
   }
 
-  render() {
-    const { job } = this.state;
-
-    function handleClick() {
-    }
-
-    return (
-      <h2
-        className="job-cell"
-        type="button"
-        onClick={handleClick}
-        onKeyDown={handleClick}
-        style={{ cursor: 'pointer', width: '1em' }}
-      >🗑
-      </h2>
-    );
-  }
+  return (
+    <h2
+      className="job-cell"
+      type="button"
+      onClick={handleClick}
+      onKeyDown={handleClick}
+      style={{ cursor: 'pointer', width: '1em' }}
+    >🗑
+    </h2>
+  );
 }
 
 CancelJobCell.propTypes = {

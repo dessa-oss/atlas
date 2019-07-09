@@ -42,6 +42,25 @@ const BaseActions = {
     );
   },
 
+  deleteFromAPI(url, body) {
+    const fullURL = this.baseURL.concat(url);
+    return fetch(fullURL, {
+      method: 'DELETE',
+      body,
+      credentials: 'include',
+    }).then(
+      (res) => {
+        const status = res.status;
+        const result = res.json();
+        return Promise.all([status, result]);
+      },
+    ).catch(
+      (err) => {
+        return null;
+      },
+    );
+  },
+
   // NOTE this is the method for Beta backend only
   getBetaFromAPI(url) {
     const fullURL = this.baseBetaURL.concat(url);
