@@ -140,7 +140,7 @@ class TestGetQueuedJobs(Spec):
         self.assertEqual(get_queued_jobs, foundations.prototype.get_queued_jobs)
     
     def _track_completed_job(self, project_name, job_id):
-        from foundations_contrib.consumers.jobs.running.project_listing import ProjectListing
+        from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
         from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
 
         ProjectListing(self.redis).call({'project_name': project_name, 'job_id': job_id}, None, {})
