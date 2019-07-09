@@ -5,6 +5,7 @@ import StatusCell from './cells/StatusCell';
 import JobIDCell from './cells/JobIDCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
+import CancelJobCell from './cells/CancelJobCell';
 import JobListActions from '../../actions/JobListActions';
 import CommonActions from '../../actions/CommonActions';
 
@@ -24,6 +25,7 @@ class JobTableRow extends Component {
 
     return (
       <div className="job-table-row">
+        <CancelJobCell job={job} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <StartCell startTime={job.start_time} isError={isError} rowNumber={rowNumber} />
         <StatusCell status={job.status} isError={isError} rowNumber={rowNumber} />
