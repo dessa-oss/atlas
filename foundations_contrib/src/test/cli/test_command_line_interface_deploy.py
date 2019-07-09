@@ -495,6 +495,13 @@ class TestCommandLineInterfaceDeploy(Spec):
         for bad_call in bad_calls:
             self.assertNotIn(bad_call, self.print_mock.mock_calls)
 
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_job_is_queued_message_to_screen(self):
+        self._set_run_script_environment({})
+
+        CommandLineInterface(['deploy']).execute()
+        
+        self.print_mock.assert_any_call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
+
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')

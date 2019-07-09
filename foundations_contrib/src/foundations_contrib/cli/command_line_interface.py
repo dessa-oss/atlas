@@ -198,6 +198,7 @@ class CommandLineInterface(object):
             self._check_and_set_job_resources()
             deploy_kwargs = self._stageless_deploy_kwargs()
             deployment_wrapper = foundations.deploy(**deploy_kwargs)
+            print('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
             self._stream_logs_if_possible(deployment_wrapper)
 
     def _stream_logs_if_possible(self, deployment_wrapper):
