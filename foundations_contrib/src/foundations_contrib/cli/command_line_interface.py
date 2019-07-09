@@ -201,16 +201,20 @@ class CommandLineInterface(object):
             self._stream_logs_if_possible(deployment_wrapper)
 
     def _stream_logs_if_possible(self, deployment_wrapper):
+        from foundations_contrib.global_state import log_manager
+
+        foundations_cli_logger = log_manager.get_logger(__name__)
+
         log_stream = self._get_log_stream(deployment_wrapper)
 
         if log_stream is not None:
-            print('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
+            foundations_cli_logger.info('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled')
             is_running = False
 
             for log_line in log_stream:
                 if not is_running:
                     is_running = True
-                    print('Job is running; streaming logs:', flush=True)
+                    foundations_cli_logger.info('Job is running; streaming logs')
 
                 print(log_line, flush=True)
 

@@ -78,6 +78,10 @@ class TestCommandLineInterfaceDeploy(Spec):
         self.mock_deploy.return_value = self.mock_deployment_wrapper
         self.mock_deployment_wrapper.stream_job_logs.return_value = self.pod_logs
 
+        self.mock_logger = Mock()
+        self.mock_log_manager = self.patch('foundations_contrib.global_state.log_manager', ConditionalReturn())
+        self.mock_log_manager.get_logger.return_when(self.mock_logger, 'foundations_contrib.cli.command_line_interface')
+
     scaffold_project_mock = let_patch_mock('foundations_contrib.cli.scaffold.Scaffold.scaffold_project')
 
     def test_deploy_returns_correct_error_if_env_not_found(self):
@@ -500,7 +504,7 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(['deploy']).execute()
         
-        self.print_mock.assert_any_call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
+        self.mock_logger.info.assert_any_call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled')
 
     def test_foundations_deploy_with_deployment_wrapper_that_does_not_support_log_streaming_does_not_print_job_is_queued_message_to_screen(self):
         self._set_run_script_environment({})
@@ -508,16 +512,28 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         CommandLineInterface(['deploy']).execute()
         
-        self.assertNotIn(call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True), self.print_mock.mock_calls)
+        self.assertNotIn(call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'), self.mock_logger.info.mock_calls)
 
     def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_job_is_running_message_to_screen_once_logging_starts(self):
         self._set_run_script_environment({})
+        self._has_printed = False
+        self.mock_logger.info.side_effect = self._info_side_effect
+        self.mock_deployment_wrapper.stream_job_logs.return_value = self._pod_logs_generator()
 
         CommandLineInterface(['deploy']).execute()
-        
-        calls = list(map(lambda line: call(line, flush=True), self.pod_logs))
-        calls.insert(0, call('Job is running; streaming logs:', flush=True))
-        self.print_mock.assert_has_calls(calls)
+
+        self.mock_logger.info.assert_called_with('Job is running; streaming logs')
+
+    def _pod_logs_generator(self):
+        for log_line in map(lambda line: call(line, flush=True), self.pod_logs):
+            if not self._has_printed:
+                self._has_printed = True
+
+            yield log_line
+
+    def _info_side_effect(self, message):
+        if message == 'Job is running; streaming logs' and not self._has_printed:
+            raise AssertionError('should not be printing job is running message until we actually have logs')
 
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()

@@ -201,20 +201,21 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
 
     def _assert_job_queued_message_printed(self, job_process_stdout_stream):
-        for line in job_process_stdout_stream:
-            line = line.rstrip('\n')
-            if line == 'Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled':
-                return
-
-        raise AssertionError('job queued message was never printed')
+        queued_message = 'Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'
+        self._wait_for_message_to_be_printed(queued_message, 'job queued message was never printed', job_process_stdout_stream)
 
     def _wait_for_job_to_start(self, job_process_stdout_stream):
+        self._wait_for_message_to_be_printed('Job is running; streaming logs', 'job never started', job_process_stdout_stream)
+
+    def _wait_for_message_to_be_printed(self, message, error_message, job_process_stdout_stream):
+        message_regex = self._log_regex(message)
+
         for line in job_process_stdout_stream:
             line = line.rstrip('\n')
-            if line == 'Job is running; streaming logs:':
+            if message_regex.match(line):
                 return
 
-        raise AssertionError('job never started')
+        raise AssertionError(error_message)
 
     def _wait_for_script_output(self, job_process_stdout_stream):
         for line in job_process_stdout_stream:
@@ -246,3 +247,9 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             return 'Pending'
         else:
             return pod.status.phase
+
+    def _log_regex(self, message):
+        import re
+
+        regex_string = "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} - foundations_contrib\.cli\.command_line_interface - INFO - " + message
+        return re.compile(regex_string)
