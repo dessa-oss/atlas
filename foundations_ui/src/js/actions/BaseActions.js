@@ -42,8 +42,8 @@ const BaseActions = {
     );
   },
 
-  deleteFromAPI(url, body) {
-    const fullURL = this.baseURL.concat(url);
+  deleteBetaFromAPI(url, body) {
+    const fullURL = this.baseBetaURL.concat(url);
     return fetch(fullURL, {
       method: 'DELETE',
       body,
