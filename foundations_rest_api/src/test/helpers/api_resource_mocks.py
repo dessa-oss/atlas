@@ -72,6 +72,14 @@ class APIResourceMocks(object):
             return Response('Mock', LazyResult(_index))
 
 
+    class ParamsMockWithDelete(object):
+        def delete(self):
+            from foundations_rest_api.lazy_result import LazyResult
+            from foundations_rest_api.response import Response
+            def _delete():
+                return self.params
+            return Response('Mock', LazyResult(_delete))
+
     class ParamsMockWithIndexAndStatus(object):
         def index(self):
             from foundations_rest_api.lazy_result import LazyResult

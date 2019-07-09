@@ -167,6 +167,12 @@ class TestAPIResource(Spec):
             response = client.post(self.uri_path, data={'password': 'world'})
             self.assertEqual(self.cookie_string + ';path=/', response.headers.get('Set-Cookie'))
 
+    def test_delete_returns_path_param(self):
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithDelete)
+        with self._test_client() as client:
+            response = client.delete('/path/to/resource/with/value/params')
+            self.assertEqual(self._json_response(response), {'project_name': 'value'})
+
     def test_get_returns_path_param(self):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:

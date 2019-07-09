@@ -70,9 +70,9 @@ class APIResourceBuilder(object):
         return _post
 
     def _delete_api_create(self):
-        def _delete(resource_self):
+        def _delete(resource_self, **kwargs):
             instance = self._klass()
-            instance.params = request.form
+            instance.params = self._api_params(kwargs)
 
             response = instance.delete()
             return response.as_json(), response.status()
@@ -85,6 +85,7 @@ class APIResourceBuilder(object):
         dict_args = request.args.to_dict(flat=False)
         for key, value in dict_args.items():
             params[key] = value if len(value) > 1 else value[0]
+        params.update(request.form)
         return params
 
 def api_resource(base_path):
