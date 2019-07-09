@@ -190,9 +190,9 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(mock_klass)
 
         self.authorization_mock.return_value = False
-        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
         with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
+            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
+            response = client.get(self.uri_path)
             self.assertEqual(self._json_response(response), 'Unauthorized')
     
     def test_get_returns_unauthorized_status_when_not_authenticated(self):
@@ -200,9 +200,9 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(mock_klass)
 
         self.authorization_mock.return_value = False
-        headers = {'Cookie': 'auth_token={}'.format(self.random_cookie_value)}
         with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
+            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
+            response = client.get(self.uri_path)
             self.assertEqual(response.status_code, 401)
 
     def test_get_calls_session_is_authorized_with_correct_parameters(self):
@@ -210,7 +210,8 @@ class TestAPIResource(Spec):
         klass = api_resource(self.uri_path)(mock_klass)
 
         with self._test_client() as client:
-            response = client.get(self.uri_path, headers=self.cookie_header)
+            client.set_cookie('localhost', 'auth_token', self.random_cookie_value)
+            response = client.get(self.uri_path)
             self.authorization_mock.assert_called_with({'auth_token': self.random_cookie_value})
 
     def _empty_callback(self, mock_instance):
