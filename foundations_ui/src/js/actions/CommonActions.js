@@ -89,7 +89,7 @@ class CommonActions {
       return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
 
-    if (!isMetric && job.input_params && job.input_params.length > 0) {
+    if (!isMetric && job.input_params) {
       return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
     }
     return null;

@@ -34,7 +34,11 @@ class InputMetricCell extends Component {
     let hover;
 
     if (expand) {
-      hover = <HoverCell textToRender={value} />;
+      const maxCellCharacterLength = 13;
+      const overMaxLength = value.toString().length > maxCellCharacterLength || value.length > maxCellCharacterLength;
+      if (overMaxLength) {
+        hover = <HoverCell textToRender={value} />;
+      }
     }
 
     return (
