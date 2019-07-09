@@ -9,7 +9,7 @@ from foundations_contrib.consumers.jobs.mixins.listing import Listing
 
 
 class ProjectListing(Listing):
-    """Saves the job to a list of queued jobs for a project in redis
+    """Saves the job to a list of running jobs for a project in redis
 
     Arguments:
         redis {redis.Redis} -- A Redis connection object
@@ -19,7 +19,7 @@ class ProjectListing(Listing):
         return 'project'
 
     def _listing_name(self):
-        return 'jobs:queued'
+        return 'jobs:running'
 
     def _scope_value(self, message):
         return message['project_name']

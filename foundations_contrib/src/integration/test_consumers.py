@@ -78,6 +78,11 @@ class TestConsumers(unittest.TestCase):
         input_parameter_names = self._redis.smembers(input_parameter_key)
         self.assertEqual(set([b'random_input_data']), input_parameter_names)
         
+        running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
+        running_and_completed_jobs = self._redis.smembers(running_jobs_key)
+        expected_jobs = set([byte_string(self._job_id)])
+        self.assertEqual(expected_jobs, running_and_completed_jobs)
+
         stage_time_key = self._stage_time(self._project_name)
         stage_time = self._redis.zrange(stage_time_key, 0, -1)
         self.assertEqual(b'21aad1de62dcd003b4d28909bd2add8431fceec7', stage_time[0])
@@ -150,11 +155,6 @@ class TestConsumers(unittest.TestCase):
 
         global_queued_jobs = self._redis.smembers(global_queued_job_key)
         self.assertEqual(set(), global_queued_jobs)
-
-        running_jobs_key = 'project:{}:jobs:running'.format(self._project_name)
-        running_and_completed_jobs = self._redis.smembers(running_jobs_key)
-        expected_jobs = set([byte_string(self._job_id)])
-        self.assertEqual(expected_jobs, running_and_completed_jobs)
 
         job_state_key = 'jobs:{}:state'.format(self._job_id)
         state = self._redis.get(job_state_key)

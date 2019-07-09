@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_spec.extensions import let_fake_redis
 from foundations_contrib.jobs.kubernetes_job import cancel
-from foundations_contrib.consumers.jobs.running.project_listing import ProjectListing
+from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
 from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
 import foundations_contrib
 
