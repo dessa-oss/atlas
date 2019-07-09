@@ -201,11 +201,17 @@ class CommandLineInterface(object):
             self._stream_logs_if_possible(deployment_wrapper)
 
     def _stream_logs_if_possible(self, deployment_wrapper):
-        try:
-            for log_line in deployment_wrapper.stream_job_logs():
+        log_stream = self._get_log_stream(deployment_wrapper)
+
+        if log_stream is not None:
+            for log_line in log_stream:
                 print(log_line, flush=True)
+
+    def _get_log_stream(self, deployment_wrapper):
+        try:
+            return deployment_wrapper.stream_job_logs()
         except NotImplementedError:
-            pass
+            return None
 
     def _stageless_deploy_kwargs(self):
         entrypoint = self._arguments.entrypoint
