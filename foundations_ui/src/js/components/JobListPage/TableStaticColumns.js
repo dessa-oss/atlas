@@ -53,8 +53,8 @@ class TableStaticColumns extends Component {
           <div className="job-column-header-container">
             <JobColumnHeader
               title=""
-              className="static-header"
-              toggleFilter={toggleJobIdFilter}
+              className="static-delete-job-header "
+            //   toggleFilter={toggleJobIdFilter}
               isFiltered={isJobIdFiltered}
             />
             <JobColumnHeader

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ShowMoreFilters from '../common/filters/ShowMoreFilters';
 import CommonActions from '../../actions/CommonActions';
+import JobListActions from '../../actions/JobListActions';
 
 const borderSize = 3; // 1px per side + space between bubbles
 
@@ -20,8 +21,10 @@ class JobHeader extends Component {
     this.refsInFilters = this.refsInFilters.bind(this);
     this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
     this.removeHiddenButtonCallback = this.removeHiddenButtonCallback.bind(this);
+    this.cancelJobs = this.cancelJobs.bind(this);
     this.state = {
       project: this.props.project,
+      jobs: this.props.jobs,
       filters: this.props.filters,
       bubbleRefs: [],
       isShowingMoreFilters: false,
@@ -41,12 +44,6 @@ class JobHeader extends Component {
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
     newRefs.sort((a, b) => { return a.length - b.length; });
-    // newRefs.forEach((id) => {
-    //   const showHideResults = this.showHideBubbles(id, curWidth, clientWidth, curHiddenBubbles);
-    //   curWidth = showHideResults.width;
-    //   curHiddenBubbles = showHideResults.hiddenBubbles;
-    // });
-    // await this.setState({ bubbleRefs: [], hiddenBubbles: curHiddenBubbles });
   }
 
   refsInFilters(filters) {
@@ -158,9 +155,20 @@ class JobHeader extends Component {
     this.clickRemoveFilter(filterToRemove);
   }
 
+  async cancelJobs() {
+    if (window.confirm('Are you sure you want to cancel all running and queued jobs?')) {
+      let jobIds = this.props.jobs.map((job) => {
+        if (job.status === 'running' || job.status === 'queued') {
+          return job.job_id;
+        }
+      });
+      await JobListActions.deleteAllJobs(jobIds);
+    }
+  }
+
   render() {
     const {
-      project, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
+      project, jobs, filters, isShowingMoreFilters, clearFilters, hiddenBubbles,
     } = this.state;
 
     const filterBubbles = [];
@@ -230,32 +238,16 @@ class JobHeader extends Component {
               </li>
             </ul>
           </div>
-          <div className="job-header-sorting-container">
-            {/* <button
-              type="button"
-              onClick={clearFilters}
-              className={clearFiltersClass}
-            >
-              Clear Filters
-            </button>
-            <div>
-              <div ref={(e) => { this.bubbleContainer = e; }}>
-                {filterBubbles}
-              </div>
-              {moreBubbles}
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={this.toggleFilters}
-                className={viewFilterClass}
-              >
-                {filterButtonText}
-              </button>
-            </div> */}
-          </div>
           {moreFilters}
         </div>
+        <button
+          className="deleteButton"
+          type="button"
+          onClick={this.cancelJobs}
+          onKeyDown={this.cancelJobs}
+        >
+          Delete all jobs
+        </button>
       </div>
     );
   }
@@ -270,7 +262,7 @@ JobHeader.propTypes = {
   clearFilters: PropTypes.func,
   removeFilter: PropTypes.func,
   hiddenBubbles: PropTypes.array,
-
+  jobs: PropTypes.array,
 };
 
 JobHeader.defaultProps = {
@@ -282,6 +274,7 @@ JobHeader.defaultProps = {
   clearFilters: () => {},
   removeFilter: () => {},
   hiddenBubbles: [],
+  jobs: [],
 };
 
 export default JobHeader;

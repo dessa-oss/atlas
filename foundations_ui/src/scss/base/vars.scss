@@ -30,6 +30,8 @@ $pagination-height: 30px;
 $column-header-height: 35px;
 $metric-header-height: 36px;
 $static-status-width: 46px;
+$static-delete-job-width: 28px;
+$static-duration-width: calc( 20% - (5px * 4 + 0.25px));
 $static-column-header-text-width: 80px;
 $table-row-height: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$column-header-height} - #{$pagination-height});
 $table-row-height-with-headers: calc(100% - 2 * #{$border-thin} - #{$metric-header-height} - #{$pagination-height});

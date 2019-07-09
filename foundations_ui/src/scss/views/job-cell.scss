@@ -43,6 +43,7 @@
 
 .duration-cell{
   text-align: right;
+  width: calc( 18% - (5px * 4 + 0.25px));
 }
 
 .job-cell-hover {

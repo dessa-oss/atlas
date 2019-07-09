@@ -8,6 +8,10 @@
   padding-right: $standard-cell-padding;
   padding-right: 2px;
 
+  &:first-child {
+      width: $static-delete-job-width!important;
+  }
+
   h4 {
     min-width: $static-column-header-text-width;
     overflow: hidden;
@@ -20,6 +24,14 @@
   .status-header{
     min-width: $static-status-width;
     max-width: $static-status-width;
+    padding-left: 0px;
+    padding-right: 0px;
+    overflow: visible;
+  }
+
+  .delete-job-header {
+    min-width: $static-delete-job-width;
+    max-width: $static-delete-job-width;
     padding-left: 0px;
     padding-right: 0px;
     overflow: visible;
@@ -92,4 +104,8 @@
       left: 10px;
     }
   }
+}
+
+.Duration {
+    width: $static-duration-width!important;
 }

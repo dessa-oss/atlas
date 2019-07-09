@@ -367,6 +367,7 @@ class JobListPage extends Component {
         <Toolbar />
         <JobHeader
           project={project}
+          jobs={jobs}
           filters={filters}
           clearFilters={this.clearFilters}
           removeFilter={this.removeFilter}

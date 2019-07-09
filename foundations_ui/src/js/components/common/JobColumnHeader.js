@@ -40,20 +40,13 @@ class JobColumnHeader extends Component {
 
     return (
       <div
-        className={divClassName}
+        className={`${divClassName} ${title}`}
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
           <h4 className={`${headerClassName} font-bold`}>
             {title}
           </h4>
-          {/* {tooltip}
-          <div className="icon-container">
-            {filterIcon}
-          </div>
-          <div role="presentation" onClick={toggleFilter} onKeyPress={toggleFilter} className={presentationClassName}>
-            <div id={title} className={arrowClassName} />
-          </div> */}
         </div>
       </div>
     );

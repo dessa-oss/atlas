@@ -697,6 +697,16 @@ class JobListActions {
   static redirect(url) {
     return BaseActions.redirectRoute(url);
   }
+
+  static deleteAllJobs(jobIds) {
+    let deletedJobRequests = jobIds.map(
+      (jobId) => {
+        let uri = `projects/dummy_project_name/job_listing/${jobId}`;
+        return BaseActions.deleteBetaFromAPI(uri);
+      },
+    );
+    return Promise.all(deletedJobRequests).then(() => window.location.reload());
+  }
 }
 
 export default JobListActions;
