@@ -24,14 +24,18 @@ def module_name_and_function_name():
 
     return prediction_definition['module'], prediction_definition['function']
 
-def add_job_path_to_sys_path():
+def move_to_job_directory():
     import sys
-    sys.path.insert(0, job_root())
+    import os
+
+    root_of_the_job = job_root()
+    sys.path.insert(0, root_of_the_job)
+    os.chdir(root_of_the_job)
 
 def load_prediction_function():
     import importlib
     
-    add_job_path_to_sys_path()
+    move_to_job_directory()
     module_name, function_name = module_name_and_function_name()
 
     module = importlib.import_module(module_name)
