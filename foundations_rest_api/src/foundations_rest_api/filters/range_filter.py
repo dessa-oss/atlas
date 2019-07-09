@@ -36,8 +36,10 @@ class RangeFilter(APIFilterMixin):
             if item_parser is None:
                 return False
             start_value, end_value = self._get_parsed_range(column_name, start_param, end_param, item_parser)
-            return (self._is_valid_range(start_value, end_value) and
+            if value and start_value and end_value:
+                return (self._is_valid_range(start_value, end_value) and
                     value >= start_value and value <= end_value)
+            return False
 
         self._in_place_filter(is_in_range, result)
 

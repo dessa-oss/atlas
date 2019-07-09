@@ -67,9 +67,13 @@ class Job(PropertyModel):
 
     @staticmethod
     def _default_order(jobs):
+        infinite_date_string = 'ZZZZ'
 
         def get_sort_key(job):
-            return job.start_time
+            if job.start_time:
+                return job.start_time
+            else:
+                return infinite_date_string + job.job_id
 
         jobs.sort(key=get_sort_key, reverse=True)
 
@@ -132,9 +136,12 @@ class Job(PropertyModel):
         else:
             end_time = datetime.now()
 
-        time_delta = end_time - datetime.fromtimestamp(start_time)
-        total_seconds = time_delta.total_seconds()
-        properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+        if start_time:
+            time_delta = end_time - datetime.fromtimestamp(start_time)
+            total_seconds = time_delta.total_seconds()
+            properties['duration'] = Job._total_seconds_to_duration(total_seconds)
+        else:
+            properties['duration'] = None
 
     @staticmethod
     def _trim_metric_values(job_data):

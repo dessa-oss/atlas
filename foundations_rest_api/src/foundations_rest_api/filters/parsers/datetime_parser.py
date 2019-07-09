@@ -10,14 +10,17 @@ from datetime import datetime
 class DateTimeParser(object):
 
     def parse(self, value):
-        if isinstance(value, datetime):
-            return value
-        value = str(value)  # Avoid Python 2 unicode issues
-        if '_' in value:
-            return self._parse_input(value)
-        else:
-            return self._parse_output(value)
+        if value:
+            if isinstance(value, datetime):
+                return value
 
+            value = str(value)  # Avoid Python 2 unicode issues
+            if '_' in value:
+                return self._parse_input(value)
+            else:
+                return self._parse_output(value)
+        return None
+        
     def _parse_input(self, value):
         return datetime.strptime(value, '%m_%d_%Y_%H_%M')
 
