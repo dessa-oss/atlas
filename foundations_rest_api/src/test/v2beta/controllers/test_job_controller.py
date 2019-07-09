@@ -26,12 +26,12 @@ class TestJobControllerV2(Spec):
 
     @set_up
     def set_up(self):
-        self.controller.job_id = self.job_id
+        self.controller.params = {'job_id': self.job_id}
 
     def test_cancels_running_job(self):
         self.controller.delete()
         self.mock_cancel_job.assert_called_with(self.job_id)
 
     def test_returns_a_confirmation_message(self):
-        expected_result = f'Job {self.job_id} successfull cancelled'
+        expected_result = f'Job {self.job_id} successfully cancelled'
         self.assertEqual(expected_result, self.controller.delete().as_json())

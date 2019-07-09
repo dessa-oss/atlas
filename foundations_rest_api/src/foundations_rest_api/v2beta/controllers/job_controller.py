@@ -16,6 +16,6 @@ class JobController(object):
         from foundations_rest_api.response import Response
         from foundations_rest_api.lazy_result import LazyResult
 
-        cancel(self.job_id)
+        cancel(self.params['job_id'])
         
-        return Response('Jobs', LazyResult(lambda: f'Job {self.job_id} successfull cancelled'))
+        return Response('Jobs', LazyResult(lambda: f'Job {self.params["job_id"]} successfully cancelled'))
