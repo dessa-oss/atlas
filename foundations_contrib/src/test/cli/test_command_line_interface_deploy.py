@@ -524,12 +524,31 @@ class TestCommandLineInterfaceDeploy(Spec):
 
         self.mock_logger.info.assert_called_with('Job is running; streaming logs')
 
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_cleanly_handles_ctrl_c(self):
+        self._set_run_script_environment({})
+        self._has_printed = False
+        self.mock_logger.info.side_effect = self._info_side_effect
+        self.mock_deployment_wrapper.stream_job_logs.return_value = self._pod_logs_generator_with_fake_ctrl_c()
+
+        try:
+            CommandLineInterface(['deploy']).execute()
+        except KeyboardInterrupt:
+            self.fail('should not have propagated the KeyboardInterrupt outward')
+
     def _pod_logs_generator(self):
         for log_line in map(lambda line: call(line, flush=True), self.pod_logs):
             if not self._has_printed:
                 self._has_printed = True
 
             yield log_line
+
+    def _pod_logs_generator_with_fake_ctrl_c(self):
+        for log_line in map(lambda line: call(line, flush=True), self.pod_logs):
+            if not self._has_printed:
+                self._has_printed = True
+
+            yield log_line
+            raise KeyboardInterrupt()
 
     def _info_side_effect(self, message):
         if message == 'Job is running; streaming logs' and not self._has_printed:

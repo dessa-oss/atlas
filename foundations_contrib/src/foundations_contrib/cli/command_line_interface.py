@@ -198,7 +198,7 @@ class CommandLineInterface(object):
             self._check_and_set_job_resources()
             deploy_kwargs = self._stageless_deploy_kwargs()
             deployment_wrapper = foundations.deploy(**deploy_kwargs)
-            self._stream_logs_if_possible(deployment_wrapper)
+            self._with_clean_exit(self._stream_logs_if_possible, deployment_wrapper)
 
     def _stream_logs_if_possible(self, deployment_wrapper):
         from foundations_contrib.global_state import log_manager
@@ -223,6 +223,12 @@ class CommandLineInterface(object):
             return deployment_wrapper.stream_job_logs()
         except NotImplementedError:
             return None
+
+    def _with_clean_exit(self, callback, *callback_args, **callback_kwargs):
+        try:
+            return callback(*callback_args, **callback_kwargs)
+        except KeyboardInterrupt:
+            return
 
     def _stageless_deploy_kwargs(self):
         entrypoint = self._arguments.entrypoint
