@@ -58,6 +58,15 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def yaml_cli_config(self):
         import yaml
         return yaml.dump(self.cli_config)
+
+    @let
+    def staged_yaml_cli_config(self):
+        import yaml
+
+        config = self.cli_config.copy()
+        config['enable_stages'] = True
+
+        return yaml.dump(config)
     
     @set_up
     def set_up(self):
@@ -97,7 +106,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
 
-        self._write_config_to_path('test-cli-init/config/scheduler.config.yaml')
+        self._write_staged_config_to_path('test-cli-init/config/scheduler.config.yaml')
 
         driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler"], stderr=subprocess.PIPE)
         self._assert_deployment_was_successful(driver_deploy_result)
@@ -196,6 +205,10 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def _write_config_to_path(self, path):
         with open(path, 'w+') as file:
             file.write(self.yaml_cli_config)
+
+    def _write_staged_config_to_path(self, path):
+        with open(path, 'w+') as file:
+            file.write(self.staged_yaml_cli_config)
 
     def _wait_for_job_to_complete(self, job_id):
         self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
