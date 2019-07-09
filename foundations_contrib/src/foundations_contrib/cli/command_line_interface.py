@@ -205,8 +205,13 @@ class CommandLineInterface(object):
 
         if log_stream is not None:
             print('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
+            is_running = False
 
             for log_line in log_stream:
+                if not is_running:
+                    is_running = True
+                    print('Job is running; streaming logs:', flush=True)
+
                 print(log_line, flush=True)
 
     def _get_log_stream(self, deployment_wrapper):
