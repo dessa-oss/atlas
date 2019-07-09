@@ -502,6 +502,14 @@ class TestCommandLineInterfaceDeploy(Spec):
         
         self.print_mock.assert_any_call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True)
 
+    def test_foundations_deploy_with_deployment_wrapper_that_does_not_support_log_streaming_does_not_print_job_is_queued_message_to_screen(self):
+        self._set_run_script_environment({})
+        self.mock_deployment_wrapper.stream_job_logs.side_effect = NotImplementedError()
+
+        CommandLineInterface(['deploy']).execute()
+        
+        self.assertNotIn(call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled', flush=True), self.print_mock.mock_calls)
+
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')
