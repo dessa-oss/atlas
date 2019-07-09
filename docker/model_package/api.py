@@ -32,11 +32,22 @@ def move_to_job_directory():
     sys.path.insert(0, root_of_the_job)
     os.chdir(root_of_the_job)
 
+def add_module_to_sys_path(module_name):
+    import sys
+    import os.path
+
+    module_path = module_name.replace('.', '/')
+    module_directory = os.path.dirname(module_path)
+    if module_directory:
+        module_directory = f"{job_root()}/{module_directory}"
+        sys.path.insert(0, module_directory)
+
 def load_prediction_function():
     import importlib
-    
+
     move_to_job_directory()
     module_name, function_name = module_name_and_function_name()
+    add_module_to_sys_path(module_name)
 
     module = importlib.import_module(module_name)
     return getattr(module, function_name)
