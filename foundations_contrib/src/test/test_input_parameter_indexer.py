@@ -36,7 +36,7 @@ class TestInputParameterIndexer(unittest.TestCase):
 
         InputParameterIndexer.index_input_parameters(project_name, jobs_data)
 
-        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0})
+        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0}, handle_duplicate_param_names=True)
         self._del_from_redis(project_name)
 
     @patch.object(InputParameterFormatter, 'format_input_parameters')
@@ -51,7 +51,7 @@ class TestInputParameterIndexer(unittest.TestCase):
 
         InputParameterIndexer.index_input_parameters(project_name, jobs_data)
 
-        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0, 'happy': 1, 'merry': 2})
+        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0, 'happy': 1, 'merry': 2}, handle_duplicate_param_names=True)
         self._del_from_redis(project_name)
 
     @patch.object(InputParameterFormatter, 'format_input_parameters')
@@ -66,7 +66,7 @@ class TestInputParameterIndexer(unittest.TestCase):
 
         InputParameterIndexer.index_input_parameters(project_name, jobs_data)
 
-        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0, 'merry': 1})
+        mock_formatter.assert_called_with({'name': 'hi'}, {}, {'joyeux': 0, 'merry': 1}, handle_duplicate_param_names=True)
         self._del_from_redis(project_name)
 
     @patch.object(InputParameterFormatter, 'format_input_parameters')
@@ -80,8 +80,8 @@ class TestInputParameterIndexer(unittest.TestCase):
 
         InputParameterIndexer.index_input_parameters(project_name, jobs_data)
 
-        call_1 = call({'name': 'hi'}, {}, {'joyeux': 0})
+        call_1 = call({'name': 'hi'}, {}, {'joyeux': 0}, handle_duplicate_param_names=True)
         input_param_call = call().format_input_parameters()
-        call_2 = call({'name': 'bye'}, {}, {'joyeux': 0})
+        call_2 = call({'name': 'bye'}, {}, {'joyeux': 0}, handle_duplicate_param_names=True)
         mock_formatter.assert_has_calls([call_1, input_param_call, call_2, input_param_call])
         self._del_from_redis(project_name)

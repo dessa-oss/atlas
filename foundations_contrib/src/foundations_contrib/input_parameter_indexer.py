@@ -20,7 +20,7 @@ class InputParameterIndexer(object):
         stage_rank = InputParameterIndexer._get_stage_rank(stage_times)
 
         for job in jobs_data:
-            job['input_params'] = InputParameterFormatter(job['input_params'], job['job_parameters'], stage_rank).format_input_parameters()
+            job['input_params'] = InputParameterFormatter(job['input_params'], job['job_parameters'], stage_rank, handle_duplicate_param_names=True).format_input_parameters()
         return jobs_data
 
     @staticmethod
