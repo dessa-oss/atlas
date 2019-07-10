@@ -21,7 +21,7 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
       className="job-column-header-container"
     >
       <JobColumnHeader
-        className="static-header"
+        className="static-delete-job-header "
         colType="string"
         containerClass="job-column-header"
         isFiltered={false}

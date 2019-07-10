@@ -57,9 +57,21 @@ exports[`Shallow Renders Job List Page 1`] = `
         </li>
       </ul>
     </div>
-    <div
-      className="job-header-sorting-container"
-    />
+  </div>
+  <div
+    className="deleteJobWrapper"
+  >
+    <p>
+      Delete completed and queued jobs
+    </p>
+    <button
+      className="deleteButton"
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      type="button"
+    >
+      Delete
+    </button>
   </div>
 </div>
 `;
