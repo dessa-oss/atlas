@@ -85,3 +85,20 @@ class TestInputParameterIndexer(unittest.TestCase):
         call_2 = call({'name': 'bye'}, {}, {'joyeux': 0}, handle_duplicate_param_names=True)
         mock_formatter.assert_has_calls([call_1, input_param_call, call_2, input_param_call])
         self._del_from_redis(project_name)
+
+    @patch.object(InputParameterFormatter, 'format_input_parameters')
+    @patch('foundations_contrib.input_parameter_formatter.InputParameterFormatter')
+    def test_index_input_parameters_indexes_multiple_jobs_with_handle_duplicate_param_names_false(self, mock_formatter, mock):
+        project_name = 'noel'
+        jobs_data = [{'input_params': {'name': 'hi'}, 'job_parameters': {}},
+                     {'input_params': {'name': 'bye'}, 'job_parameters': {}}]
+        mock.return_value = {'name': 'hi-0'}
+        self._zadd_to_redis(project_name, 1234, 'joyeux')
+
+        InputParameterIndexer.index_input_parameters(project_name, jobs_data, handle_duplicate_param_names=False)
+
+        call_1 = call({'name': 'hi'}, {}, {'joyeux': 0}, handle_duplicate_param_names=False)
+        input_param_call = call().format_input_parameters()
+        call_2 = call({'name': 'bye'}, {}, {'joyeux': 0}, handle_duplicate_param_names=False)
+        mock_formatter.assert_has_calls([call_1, input_param_call, call_2, input_param_call])
+        self._del_from_redis(project_name)
