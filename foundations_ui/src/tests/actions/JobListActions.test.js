@@ -477,6 +477,72 @@ it('getInputMetricValue no metric const value null', () => {
   expect(value).toBe('not available');
 });
 
+it('getInputMetricValue rounds positive constant metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: 1.1234567
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe(1.1235);
+});
+
+it('getInputMetricValue rounds negative non-constant non metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: -3.00065456e-3
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe(-3.0007e-3);
+});
+
+it('getInputMetricValue rounds megative constant metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: -1.1234567
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe(-1.1235);
+});
+
+it('getInputMetricValue rounds positive non-constant non metric number to 5 significant figures', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 3.00065456e-3
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe(3.0007e-3);
+});
+
+it('getInputMetricValue const metric returns NaN if given NaN', () => {
+  const param = {
+    name: 'abc',
+    source: 'constant',
+    value: NaN
+  };
+
+  const value = JobListActions.getInputMetricValue(param, isMetric, columns);
+  expect(value).toBe(NaN);
+});
+
+it('getInputMetricValue non-const no metric returns NaN if given NaN', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: NaN
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe(NaN);
+});
+
 it('getBaseJobListingURL', () => {
   const URL = JobListActions.getBaseJobListingURL(projectName);
   expect(URL).toBe('projects/project name/job_listing');
