@@ -184,28 +184,28 @@ class JobListActions {
     return constantParams;
   }
 
-  static _roundToSigFigs(number, precision) {
-    return Number.parseFloat(number.toPrecision(precision))
+  static roundToSigFigs(number, precision) {
+    return Number.parseFloat(number.toPrecision(precision));
   }
 
-  static _roundToSigFigsIfNumber(value, precision) {
+  static roundToSigFigsIfNumber(value, precision) {
     if (typeof value === 'number') {
-      return this._roundToSigFigs(value, precision);
+      return this.roundToSigFigs(value, precision);
     }
     return value;
   }
 
-  static _isValidMetricValue(isMetric, inputParam) {
+  static isValidMetricValue(isMetric, inputParam) {
     return isMetric && inputParam !== null && inputParam.value !== null;
   }
 
-  static _isValidParameter(inputParam, columns) {
+  static isValidParameter(inputParam, columns) {
     return inputParam && columns.includes(inputParam.name) && inputParam.value !== null;
   }
 
   static getInputMetricValue(inputParam, isMetric, columns) {
-    if (this._isValidMetricValue(isMetric, inputParam) || this._isValidParameter(inputParam, columns)) {
-      return this._roundToSigFigsIfNumber(inputParam.value, 5);
+    if (this.isValidMetricValue(isMetric, inputParam) || this.isValidParameter(inputParam, columns)) {
+      return this.roundToSigFigsIfNumber(inputParam.value, 5);
     }
     return 'not available';
   }
