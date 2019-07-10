@@ -21,26 +21,26 @@ class Job(PropertyModel):
     duration = PropertyModel.define_property()
 
     @staticmethod
-    def all(project_name=None):
+    def all(project_name=None, handle_duplicate_param_names=True):
         from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
-            return Job._all_internal(project_name)
+            return Job._all_internal(project_name, handle_duplicate_param_names)
 
         return LazyResult(_all)
 
     @staticmethod
-    def _all_internal(project_name):
-        return list(Job._load_jobs(project_name))
+    def _all_internal(project_name, handle_duplicate_param_names):
+        return list(Job._load_jobs(project_name, handle_duplicate_param_names))
 
     @staticmethod
-    def _load_jobs(project_name):
+    def _load_jobs(project_name, handle_duplicate_param_names):
         from foundations_contrib.job_data_redis import JobDataRedis
         from foundations_contrib.input_parameter_indexer import InputParameterIndexer
         from foundations_contrib.global_state import redis_connection
 
         jobs = []
-        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True))
+        jobs_data = InputParameterIndexer.index_input_parameters(project_name, JobDataRedis.get_all_jobs_data(project_name, redis_connection, True), handle_duplicate_param_names=handle_duplicate_param_names)
 
         for job_properties in list(jobs_data):
             job_properties['input_params'] = list(Job._filter_out_non_hyper_parameter_inputs(job_properties['input_params']))

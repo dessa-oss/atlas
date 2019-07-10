@@ -204,6 +204,61 @@ class TestJobListingV2(unittest.TestCase):
         expected_jobs = [expected_job_1]
         self.assertEqual(expected_jobs, result)
 
+    @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
+    def test_all_filters_out_non_hyperparameters_and_does_not_append_suffix_if_flag_false(self, mock_get_all_jobs_data):
+        from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
+
+        fake_current_datetime(1005000000)
+
+        mock_get_all_jobs_data.return_value = [
+            {
+                'project_name': 'random test project',
+                'job_id': 'my job x',
+                'user': 'some user',
+                'job_parameters': {'hello': 'world'},
+                'input_params': [
+                    {
+                        'argument': {
+                            'name': 'hello',
+                            'value': {'name': 'hello', 'type': 'dynamic'}
+                        },
+                        'stage_uuid': '0'
+                    },
+                    {
+                        'argument': {
+                            'name': 'hello',
+                            'value': {'value': '33', 'type': 'constant'}
+                        },
+                        'stage_uuid': '0'
+                    },
+                ],
+                'output_metrics': [],
+                'status': 'completed',
+                'start_time':  123456789,
+                'completed_time': 2222222222
+            },
+        ]
+
+        expected_job_1 = Job(
+            job_id='my job x',
+            project='random test project',
+            user='some user',
+            input_params=[
+                {'name': 'hello', 'value': 'world', 'type': 'string', 'source': 'placeholder'}],
+            output_metrics=[],
+            status='completed',
+            start_time='1973-11-29T21:33:09',
+            completed_time='2040-06-02T03:57:02',
+            duration='24291d6h23m53s'
+        )
+
+        result = Job.all(project_name='random test project', handle_duplicate_param_names=False).evaluate()
+
+        restore_real_current_datetime()
+
+        expected_jobs = [expected_job_1]
+        self.assertEqual(expected_jobs, result)
+
     def _make_stage(self, uuid, function, *args, **kwargs):
         from foundations_internal.stage_connector_wrapper_builder import StageConnectorWrapperBuilder
 
