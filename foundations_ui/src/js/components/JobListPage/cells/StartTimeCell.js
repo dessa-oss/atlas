@@ -43,7 +43,7 @@ class StartTimeCell extends Component {
       </p>
     );
 
-    if (expand) {
+    if (expand && date !== '') {
       hover = <HoverCell textToRender={dateTimeFormatted} />;
     }
 

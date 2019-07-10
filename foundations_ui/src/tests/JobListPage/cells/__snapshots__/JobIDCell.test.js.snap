@@ -7,6 +7,14 @@ exports[`Shallow Renders Job ID Cell 1`] = `
   onMouseLeave={[Function]}
 >
   <p />
+  <CopyToClipboard
+    text=""
+  >
+    <div
+      className="i--icon-copy"
+      role="presentation"
+    />
+  </CopyToClipboard>
   <div />
 </div>
 `;

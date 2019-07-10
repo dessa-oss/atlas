@@ -1,3 +1,4 @@
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import HoverCell from './HoverCell';
@@ -42,6 +43,12 @@ class JobIDCell extends Component {
         onMouseLeave={() => this.toggleExpand(false)}
       >
         {jobIdFormatted}
+        <CopyToClipboard text={jobID}>
+          <div
+            className="i--icon-copy"
+            role="presentation"
+          />
+        </CopyToClipboard>
         <div>
           {hover}
         </div>
