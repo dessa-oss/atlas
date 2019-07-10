@@ -57,6 +57,20 @@ class TestInputParameterFormatter(unittest.TestCase):
             input_param, job_param, stage_rank).format_input_parameters()
         self.assertDictEqual(expected[0], result[0])
 
+    def test_format_input_parameters_one_dynamic_parameter_does_not_append_suffix_if_handling_flag_false(self):
+        stage_uuid = 'gorilla'
+        stage_rank = {'gorilla': 1}
+        input_param = [{'argument': {'name': 'ab', 'value': {
+            'name': 'hi', 'type': 'dynamic'}}, 'stage_uuid': stage_uuid}]
+        job_param = {'hi': 'bye'}
+        expected = [{'name': 'ab',
+                     'value': 'bye',
+                     'type': 'string',
+                     'source': 'placeholder'}]
+        result = InputParameterFormatter(
+            input_param, job_param, stage_rank, handle_duplicate_param_names=False).format_input_parameters()
+        self.assertDictEqual(expected[0], result[0])
+
     def test_format_input_parameters_one_stage_parameter(self):
         stage_uuid = 'gorilla'
         stage_rank = {'gorilla': 1}
