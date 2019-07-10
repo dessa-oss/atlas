@@ -18,7 +18,36 @@ class ArtifactDownloader(object):
         from fnmatch import fnmatch
 
         file_list = self._archiver.fetch_miscellaneous('job_artifact_listing.pkl')
-        return [file_path for file_path in file_list if fnmatch(file_path, source_directory + '*')]
+        return [file_path for file_path in file_list if fnmatch(file_path, source_directory + '*') and not self._foundations_artifact(file_path)]
+
+    def _foundations_artifact(self, file_path):
+        from fnmatch import fnmatch
+        from functools import reduce
+
+        matchings = [
+            'foundations/*',
+            'foundations_contrib/*',
+            'foundations_events/*',
+            'foundations_internal/*',
+            'jobs/*',
+            'model_serving/*',
+            'venv/*',
+            'docker_image_version.sh',
+            'download_gui_images.sh',
+            'foundations_gui.sh',
+            'foundations_main.py',
+            'foundations_package_manifest.yaml',
+            'foundations_requirements.txt',
+            'get_version.sh',
+            'job.tgz',
+            'run.env',
+            'run.sh',
+            '*.bin',
+            '*.config.yaml',
+        ]
+
+        file_matches = [fnmatch(file_path, match) for match in matchings]
+        return reduce(lambda lhs, rhs: lhs or rhs, file_matches)
 
     def _download_file(self, file_path, download_directory):
         from os import makedirs

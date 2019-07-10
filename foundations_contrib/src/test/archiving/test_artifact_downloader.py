@@ -27,6 +27,41 @@ class TestArtifactDownloader(Spec):
         from foundations_contrib.archiving.artifact_downloader import ArtifactDownloader
         return ArtifactDownloader(self.mock_archiver)
 
+    @let
+    def mock_foundations_files(self):
+        return [
+            'foundations/a',
+            'foundations/b',
+            'foundations_contrib/c',
+            'foundations_contrib/d',
+            'foundations_events/e',
+            'foundations_events/f',
+            'foundations_internal/g',
+            'foundations_internal/h',
+            'jobs/i',
+            'jobs/j',
+            'model_serving/k',
+            'model_serving/l',
+            'venv/m',
+            'venv/n',
+
+            'docker_image_version.sh',
+            'download_gui_images.sh',
+            'foundations_gui.sh',
+            'foundations_main.py',
+            'foundations_package_manifest.yaml',
+            'foundations_requirements.txt',
+            'get_version.sh',
+            'job.tgz',
+            'run.env',
+            'run.sh',
+
+            'p.bin',
+            'q.bin',
+            'r.config.yaml',
+            's.config.yaml',
+        ]
+
     def test_downloads_single_file_to_specified_directory(self):
         self._mock_file_list(['path/to/my/file'])
         
@@ -69,6 +104,13 @@ class TestArtifactDownloader(Spec):
         
         self.artifact_downloader.download_files('different/', self.download_directory)
         self.mock_archiver.fetch_persisted_file.assert_called_once_with('different/file', self.download_directory + '/different/file')
+
+    def test_download_does_not_include_foundations_files(self):
+        for foundations_file in self.mock_foundations_files:
+            self._mock_file_list(['path/to/some/file', foundations_file])
+            
+            self.artifact_downloader.download_files('', self.download_directory)
+            self.mock_archiver.fetch_persisted_file.assert_called_with('path/to/some/file', self.download_directory + '/path/to/some/file') 
 
     def _mock_file_list(self, file_list):
         self.mock_archiver.fetch_miscellaneous = ConditionalReturn()
