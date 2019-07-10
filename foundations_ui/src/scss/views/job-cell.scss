@@ -23,6 +23,14 @@
   }
 }
 
+button.job-cell.i--icon-delete {
+  width: 18px;
+  height: 18px;
+  border: none!important;
+  cursor: 'pointer';
+  width: '1em';
+}
+
 .job-id-cell {
   p {
     overflow: hidden;
