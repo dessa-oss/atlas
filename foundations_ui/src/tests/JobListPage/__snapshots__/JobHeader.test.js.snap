@@ -62,7 +62,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     className="deleteJobWrapper"
   >
     <p>
-      Delete completed and queued jobs
+      Delete running and queued jobs
     </p>
     <button
       className="deleteButton"

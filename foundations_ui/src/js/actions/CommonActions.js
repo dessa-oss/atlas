@@ -44,13 +44,12 @@ class CommonActions {
   }
 
   static formatAMPM(date) {
-    // time zone from API is 4 hours behind, so fix done here
     const updatedTime = new Date(date.setHours(date.getHours() - 4));
     let hours = updatedTime.getHours();
     let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'pm' : 'am';
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
-    hours = hours || 12; // the hour '0' should be '12'
+    hours = hours || 12;
     minutes = minutes < 10 ? `0${minutes}` : minutes;
     const strTime = `${hours}:${minutes} ${ampm}`;
     return strTime;

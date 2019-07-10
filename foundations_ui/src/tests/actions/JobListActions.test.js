@@ -196,7 +196,7 @@ it('getFormatedTime no date', () => {
 it('getFormatedTime has date', () => {
   const date = '2018-08-23T09:30:00';
   const formatedTime = JobListActions.getFormatedTime(date);
-  expect(formatedTime).toBe('5:30 am EST');
+  expect(formatedTime).toBe('5:30 AM EST');
 });
 
 it('getDurationDays', () => {

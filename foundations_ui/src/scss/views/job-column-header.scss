@@ -4,12 +4,10 @@
   text-align: center;
   height: $column-header-height;
   margin: auto;
-  padding-left: $standard-cell-padding;
-  padding-right: $standard-cell-padding;
   padding-right: 2px;
 
   &:first-child {
-      width: $static-delete-job-width!important;
+      width: 48px!important;
   }
 
   h4 {

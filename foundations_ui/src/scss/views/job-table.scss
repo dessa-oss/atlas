@@ -2,15 +2,12 @@
   margin: 0px;
   display: inline-block;
   vertical-align: middle;
-  border-bottom: 1px solid $color-border-bottom;
+  border-bottom: 1px solid #DCDCDC;
   width: 100%;
-  height: $table-row-height;
+  height: calc(100% - 2 * 1px - 36px - 35px - 30px);
   overflow: scroll;
-  
-  //this will hide the scrollbars
   padding-right: 17px;
   box-sizing: content-box;
-  margin-left: -13px;
 
   .job-cell:first-child() {
     border-left: 1px solid $color-border-bottom;

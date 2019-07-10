@@ -239,7 +239,7 @@ class JobHeader extends Component {
           {moreFilters}
         </div>
         <div className="deleteJobWrapper">
-          <p>Delete completed and queued jobs</p>
+          <p>Delete running and queued jobs</p>
           <button
             className="deleteButton"
             type="button"
