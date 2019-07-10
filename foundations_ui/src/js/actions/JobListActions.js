@@ -185,7 +185,17 @@ class JobListActions {
   }
 
   static roundToSigFigs(number, precision) {
-    return Number.parseFloat(number.toPrecision(precision));
+    let value = number.toString();
+
+    if (value.length >= precision + 1) {
+      value = number.toExponential(precision - 1);
+    }
+
+    if (value.endsWith('e+0')) {
+      value = value.slice(0, -3);
+    }
+
+    return value;
   }
 
   static roundToSigFigsIfNumber(value, precision) {

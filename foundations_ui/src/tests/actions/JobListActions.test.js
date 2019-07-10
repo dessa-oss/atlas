@@ -449,22 +449,22 @@ it('getInputMetricValue no metric non const', () => {
 
 it('getInputMetricValue metric const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroConstParam, isMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue no metric const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroConstParam, noMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue metric non const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroNonConstParam, isMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue no metric non const value 0', () => {
   const value = JobListActions.getInputMetricValue(zeroNonConstParam, noMetric, columns);
-  expect(value).toBe(0);
+  expect(value).toBe('0');
 });
 
 it('getInputMetricValue metric const value null', () => {
@@ -485,7 +485,7 @@ it('getInputMetricValue rounds positive constant metric number to 5 significant 
   };
 
   const value = JobListActions.getInputMetricValue(param, isMetric, columns);
-  expect(value).toBe(1.1235);
+  expect(value).toBe('1.1235');
 });
 
 it('getInputMetricValue rounds negative non-constant non metric number to 5 significant figures', () => {
@@ -496,7 +496,7 @@ it('getInputMetricValue rounds negative non-constant non metric number to 5 sign
   };
 
   const value = JobListActions.getInputMetricValue(param, noMetric, columns);
-  expect(value).toBe(-3.0007e-3);
+  expect(value).toBe('-3.0007e-3');
 });
 
 it('getInputMetricValue rounds megative constant metric number to 5 significant figures', () => {
@@ -507,7 +507,7 @@ it('getInputMetricValue rounds megative constant metric number to 5 significant 
   };
 
   const value = JobListActions.getInputMetricValue(param, isMetric, columns);
-  expect(value).toBe(-1.1235);
+  expect(value).toBe('-1.1235');
 });
 
 it('getInputMetricValue rounds positive non-constant non metric number to 5 significant figures', () => {
@@ -518,7 +518,7 @@ it('getInputMetricValue rounds positive non-constant non metric number to 5 sign
   };
 
   const value = JobListActions.getInputMetricValue(param, noMetric, columns);
-  expect(value).toBe(3.0007e-3);
+  expect(value).toBe('3.0007e-3');
 });
 
 it('getInputMetricValue const metric returns NaN if given NaN', () => {
@@ -529,7 +529,7 @@ it('getInputMetricValue const metric returns NaN if given NaN', () => {
   };
 
   const value = JobListActions.getInputMetricValue(param, isMetric, columns);
-  expect(value).toBe(NaN);
+  expect(value).toBe('NaN');
 });
 
 it('getInputMetricValue non-const no metric returns NaN if given NaN', () => {
@@ -540,7 +540,29 @@ it('getInputMetricValue non-const no metric returns NaN if given NaN', () => {
   };
 
   const value = JobListActions.getInputMetricValue(param, noMetric, columns);
-  expect(value).toBe(NaN);
+  expect(value).toBe('NaN');
+});
+
+it('getInputMetricValue large number that is slightly too small for scientific notation still renders properly', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 2090128082190128
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('2.0901e+15');
+});
+
+it('getInputMetricValue 5 digit number is not trimmed or otherwise processed', () => {
+  const param = {
+    name: 'abc',
+    source: 'non-constant',
+    value: 20198
+  };
+
+  const value = JobListActions.getInputMetricValue(param, noMetric, columns);
+  expect(value).toBe('20198');
 });
 
 it('getBaseJobListingURL', () => {
