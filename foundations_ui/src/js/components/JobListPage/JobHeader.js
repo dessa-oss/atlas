@@ -240,14 +240,17 @@ class JobHeader extends Component {
           </div>
           {moreFilters}
         </div>
-        <button
-          className="deleteButton"
-          type="button"
-          onClick={this.cancelJobs}
-          onKeyDown={this.cancelJobs}
-        >
-          Delete all jobs
-        </button>
+        <div className="deleteJobWrapper">
+          <p>Delete completed and queued jobs</p>
+          <button
+            className="deleteButton"
+            type="button"
+            onClick={this.cancelJobs}
+            onKeyDown={this.cancelJobs}
+          >
+            Delete
+          </button>
+        </div>
       </div>
     );
   }

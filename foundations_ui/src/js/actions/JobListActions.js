@@ -112,8 +112,10 @@ class JobListActions {
   static getStatusCircle(status) {
     let statusCircle = 'status-green';
 
-    if (status.toLowerCase() === 'running') {
+    if (status.toLowerCase() === 'queued') {
       statusCircle = 'status-yellow';
+    } else if (status.toLowerCase() === 'running') {
+      statusCircle = 'status-running';
     } else if (CommonActions.isError(status)) {
       statusCircle = 'status-red';
     }

@@ -34,6 +34,21 @@
   background-color: $color-status-green;
 }
 
+.status-running {
+  background-color: $color-status-green;
+  animation: blinker 1s linear infinite;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 .status-yellow {
   background-color: $color-status-yellow;
 }
