@@ -160,7 +160,7 @@ class JobHeader extends Component {
       let jobIds = this.props.jobs
         .filter(job => job.status === 'running' || job.status === 'queued')
         .map(job => job.job_id);
-      await JobListActions.deleteAllJobs(jobIds);
+      return JobListActions.deleteAllJobs(jobIds);
     }
   }
 
