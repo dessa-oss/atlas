@@ -89,7 +89,7 @@ class Project(PropertyModel):
         project = Project(name=name)
         project.created_at = None
         project.owner = None
-        project.jobs = Job.all(project_name=name)
+        project.jobs = Job.all(project_name=name, handle_duplicate_param_names=False)
 
         def _get_names_and_types(key):
             def _metric_filler_callback(jobs):

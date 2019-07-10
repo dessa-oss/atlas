@@ -98,12 +98,12 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
         self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
 
-        self.assertEqual(data['jobs'][0]['input_params'][0]['name'], 'value1-1')
-        self.assertEqual(data['jobs'][0]['input_params'][1]['name'], 'value2-1')
-        self.assertEqual(data['jobs'][0]['input_params'][2]['name'], 'value2-2')
-        self.assertEqual(data['jobs'][0]['input_params'][3]['name'], 'value3-2')
-        self.assertEqual(data['jobs'][0]['input_params'][4]['name'], 'value4-2')
-        self.assertEqual(data['jobs'][0]['input_params'][5]['name'], 'dummy_value-2')
+        self.assertEqual(data['jobs'][0]['input_params'][0]['name'], 'value1')
+        self.assertEqual(data['jobs'][0]['input_params'][1]['name'], 'value2')
+        self.assertEqual(data['jobs'][0]['input_params'][2]['name'], 'value2')
+        self.assertEqual(data['jobs'][0]['input_params'][3]['name'], 'value3')
+        self.assertEqual(data['jobs'][0]['input_params'][4]['name'], 'value4')
+        self.assertEqual(data['jobs'][0]['input_params'][5]['name'], 'dummy_value')
         self.assertEqual(data['jobs'][0]['input_params'][0]['value'], 'hello')
         self.assertEqual(data['jobs'][0]['input_params'][1]['value'], True)
         self.assertEqual(data['jobs'][0]['input_params'][2]['value'], 'hello')
@@ -118,13 +118,13 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
         self.assertEqual(data['jobs'][1]['job_id'], self._second_job_name)
 
-        self.assertEqual(data['jobs'][1]['input_params'][0]['name'], 'value1-1')
-        self.assertEqual(data['jobs'][1]['input_params'][1]['name'], 'value2-1')
+        self.assertEqual(data['jobs'][1]['input_params'][0]['name'], 'value1')
+        self.assertEqual(data['jobs'][1]['input_params'][1]['name'], 'value2')
         self.assertIsNone(data['jobs'][1]['input_params'][0]['value'])
 
         self.assertEqual(data['jobs'][2]['job_id'], self._first_job_name)
 
-        self.assertEqual(data['jobs'][2]['input_params'][0]['name'], 'value0-0')
+        self.assertEqual(data['jobs'][2]['input_params'][0]['name'], 'value0')
         self.assertFalse(data['jobs'][2]['input_params'][0]['value'])
 
     def test_filter_bool_true(self):
@@ -135,21 +135,21 @@ class TestJobListingParametrics(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         self.assertEqual(data['jobs'][0]['job_id'], self._third_job_name)
 
     def test_filter_bool_false(self):
-        query_string = '?value0-0=false'
+        query_string = '?value0=false'
         custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
         data = custom_method(self)
         self.assertEqual(len(data['jobs']), 1)
         self.assertEqual(data['jobs'][0]['job_id'], self._first_job_name)
 
     def test_filter_input_parameter_is_null(self):
-        query_string = '?value1-1_isnull=true'
+        query_string = '?value1_isnull=true'
         custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
         data = custom_method(self)
         self.assertEqual(len(data['jobs']), 1)
         self.assertEqual(data['jobs'][0]['job_id'], self._second_job_name)
 
     def test_filter_input_parameter_is_not_null(self):
-        query_string = '?value1-1_isnull=false'
+        query_string = '?value1_isnull=false'
         custom_method = super(TestJobListingParametrics, self)._get_test_route_method(query_string)
         data = custom_method(self)
         self.assertEqual(len(data['jobs']), 1)
