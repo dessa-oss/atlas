@@ -704,6 +704,7 @@ class JobListActions {
     let deletedJobRequests = jobIds.map(
       (jobId) => {
         let uri = `projects/dummy_project_name/job_listing/${jobId}`;
+        console.log(uri);
         return BaseActions.deleteBetaFromAPI(uri);
       },
     );

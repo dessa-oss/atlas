@@ -157,11 +157,9 @@ class JobHeader extends Component {
 
   async cancelJobs() {
     if (window.confirm('Are you sure you want to cancel all running and queued jobs?')) {
-      let jobIds = this.props.jobs.map((job) => {
-        if (job.status === 'running' || job.status === 'queued') {
-          return job.job_id;
-        }
-      });
+      let jobIds = this.props.jobs
+        .filter(job => job.status === 'running' || job.status === 'queued')
+        .map(job => job.job_id);
       await JobListActions.deleteAllJobs(jobIds);
     }
   }
