@@ -244,7 +244,7 @@ class JobHeader extends Component {
             className="deleteButton"
             type="button"
             onClick={this.cancelJobs}
-            onKeyDown={this.cancelJobs}
+            onKeyDown={() => {}}
           >
             Delete
           </button>
