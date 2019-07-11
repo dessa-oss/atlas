@@ -499,6 +499,18 @@ class TestCommandLineInterfaceDeploy(Spec):
         for bad_call in bad_calls:
             self.assertNotIn(bad_call, self.print_mock.mock_calls)
 
+    def test_foundations_deploy_with_deployment_wrapper_supports_log_streaming_does_not_print_from_deployment_wrapper_object_if_environment_variable_set(self):
+        mock_environment = self.patch('os.environ', {})
+        mock_environment['DISABLE_LOG_STREAMING'] = 'True'
+
+        self._set_run_script_environment({})
+        CommandLineInterface(['deploy']).execute()
+
+        bad_calls = map(lambda line: call(line, flush=True), self.pod_logs)
+
+        for bad_call in bad_calls:
+            self.assertNotIn(bad_call, self.print_mock.mock_calls)
+
     def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_job_is_queued_message_to_screen(self):
         self._set_run_script_environment({})
 

@@ -201,6 +201,7 @@ class CommandLineInterface(object):
             self._with_clean_exit(self._stream_logs_if_possible, deployment_wrapper)
 
     def _stream_logs_if_possible(self, deployment_wrapper):
+        import os
         from foundations_contrib.global_state import log_manager
 
         foundations_cli_logger = log_manager.get_logger(__name__)
@@ -216,7 +217,8 @@ class CommandLineInterface(object):
                     is_running = True
                     foundations_cli_logger.info('Job is running; streaming logs')
 
-                print(log_line, flush=True)
+                if os.environ.get('DISABLE_LOG_STREAMING', 'False') == 'False':
+                    print(log_line, flush=True)
 
     def _get_log_stream(self, deployment_wrapper):
         try:
