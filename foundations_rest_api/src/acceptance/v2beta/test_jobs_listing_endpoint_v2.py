@@ -77,29 +77,29 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
 
     def test_get_route(self):
         data = super(TestJobsListingEndpointV2, self).test_get_route()
-        self.assertEqual(data['jobs'][0]['job_id'], 'queued job 1')
-        self.assertEqual(data['jobs'][1]['job_id'], 'queued job 0')
-        self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
-        self.assertEqual(data['jobs'][3]['job_id'], 'my job 1')
-        self.assertEqual(data['jobs'][4]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+        self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][3]['job_id'], 'queued job 1')
+        self.assertEqual(data['jobs'][4]['job_id'], 'queued job 0')
 
     def test_get_tags(self):
         data = super(TestJobsListingEndpointV2, self).test_get_route()
-        self.assertEqual(data['jobs'][0]['tags'], {})
+        self.assertEqual(data['jobs'][0]['tags'], self.expected_completed_tags)
         self.assertEqual(data['jobs'][1]['tags'], {})
-        self.assertEqual(data['jobs'][2]['tags'], self.expected_completed_tags)
+        self.assertEqual(data['jobs'][2]['tags'], self.expected_running_tags)
         self.assertEqual(data['jobs'][3]['tags'], {})
-        self.assertEqual(data['jobs'][4]['tags'], self.expected_running_tags)
+        self.assertEqual(data['jobs'][4]['tags'], {})
 
     def test_duration(self):
         import re
 
         regex = re.compile(r'\d+d\d+h\d+m\d+s')
         data = super(TestJobsListingEndpointV2, self).test_get_route()
-        self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
-        self.assertIsNotNone(regex.match(data['jobs'][2]['duration']))
-        self.assertEqual(data['jobs'][0]['job_id'], 'queued job 1')
-        self.assertIsNone(data['jobs'][0]['duration'])
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
+        self.assertIsNotNone(regex.match(data['jobs'][0]['duration']))
+        self.assertEqual(data['jobs'][4]['job_id'], 'queued job 0')
+        self.assertIsNone(data['jobs'][4]['duration'])
 
 
     def test_sorted_start_time_descending(self):
@@ -137,6 +137,8 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         self.assertEqual(data['jobs'][0]['job_id'], '00000000-0000-0000-0000-000000000000')
         self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
+        self.assertEqual(data['jobs'][3]['job_id'], 'queued job 0')
+        self.assertEqual(data['jobs'][4]['job_id'], 'queued job 1')
 
     def test_all_descending(self):
         data = super(TestJobsListingEndpointV2, self).test_all_descending()
@@ -172,7 +174,7 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     def test_filter_status_range(self):
         data = super(TestJobsListingEndpointV2, self).test_filter_status_range()
         self.assertEqual(len(data['jobs']), 3)
-        self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][2]['job_id'], 'queued job 0')
 
     def test_filter_status_exact_match_one_option(self):
         data = super(TestJobsListingEndpointV2, self).test_filter_status_exact_match_one_option()
@@ -181,16 +183,16 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     def test_filter_status_exact_match_two_options(self):
         data = super(TestJobsListingEndpointV2, self).test_filter_status_exact_match_two_options()
         self.assertEqual(len(data['jobs']), 3)
-        self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][2]['job_id'], 'queued job 0')
 
     def test_filter_user_range(self):
         data = super(TestJobsListingEndpointV2, self).test_filter_user_range()
         self.assertEqual(len(data['jobs']), 5)
-        self.assertEqual(data['jobs'][0]['job_id'], 'queued job 1')
-        self.assertEqual(data['jobs'][1]['job_id'], 'queued job 0')
-        self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
-        self.assertEqual(data['jobs'][3]['job_id'], 'my job 1')
-        self.assertEqual(data['jobs'][4]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 2')
+        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+        self.assertEqual(data['jobs'][2]['job_id'], '00000000-0000-0000-0000-000000000000')
+        self.assertEqual(data['jobs'][3]['job_id'], 'queued job 1')
+        self.assertEqual(data['jobs'][4]['job_id'], 'queued job 0')
 
     def test_filter_user_exact_match_one_option(self):
         data = super(TestJobsListingEndpointV2, self).test_filter_user_exact_match_one_option()
@@ -207,7 +209,7 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         custom_test_method = super(TestJobsListingEndpointV2, self)._get_test_route_method('?job_id_contains=1')
         data = custom_test_method(self)
         self.assertEqual(len(data['jobs']), 2)
-        self.assertEqual(data['jobs'][1]['job_id'], 'my job 1')
+        self.assertEqual(data['jobs'][0]['job_id'], 'my job 1')
 
     def test_filter_user_contains(self):
         custom_test_method = super(TestJobsListingEndpointV2, self)._get_test_route_method('?user_contains=hero')

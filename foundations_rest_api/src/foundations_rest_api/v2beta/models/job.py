@@ -68,7 +68,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def _default_order(jobs):
-        infinite_date_string = 'ZZZZ'
+        infinite_date_string = '00000'
 
         def get_sort_key(job):
             if job.start_time:
