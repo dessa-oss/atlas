@@ -526,6 +526,15 @@ class TestCommandLineInterfaceDeploy(Spec):
         
         self.assertNotIn(call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'), self.mock_logger.info.mock_calls)
 
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_does_not_print_job_is_queued_message_to_screen_if_env_var_set(self):
+        mock_environment = self.patch('os.environ', {})
+        mock_environment['DISABLE_LOG_STREAMING'] = 'True'
+
+        self._set_run_script_environment({})
+        CommandLineInterface(['deploy']).execute()
+        
+        self.assertNotIn(call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'), self.mock_logger.info.mock_calls)
+
     def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_job_is_running_message_to_screen_once_logging_starts(self):
         self._set_run_script_environment({})
         self._has_printed = False
@@ -535,6 +544,32 @@ class TestCommandLineInterfaceDeploy(Spec):
         CommandLineInterface(['deploy']).execute()
 
         self.mock_logger.info.assert_called_with('Job is running; streaming logs')
+
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_does_not_print_job_is_running_message_if_env_var_set(self):
+        mock_environment = self.patch('os.environ', {})
+        mock_environment['DISABLE_LOG_STREAMING'] = 'True'
+
+        self._set_run_script_environment({})
+        self._has_printed = False
+        self.mock_logger.info.side_effect = self._info_side_effect
+        self.mock_deployment_wrapper.stream_job_logs.return_value = self._pod_logs_generator()
+
+        CommandLineInterface(['deploy']).execute()
+
+        self.assertNotIn(call('Job is running; streaming logs'), self.mock_logger.info.mock_calls)
+
+    def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_does_not_even_iterate_through_logs(self):
+        mock_environment = self.patch('os.environ', {})
+        mock_environment['DISABLE_LOG_STREAMING'] = 'True'
+
+        self._set_run_script_environment({})
+        self._has_printed = False
+        self.mock_logger.info.side_effect = self._info_side_effect
+        self.mock_deployment_wrapper.stream_job_logs.return_value = self._pod_logs_generator()
+
+        CommandLineInterface(['deploy']).execute()
+
+        self.assertFalse(self._has_printed)
 
     def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_cleanly_handles_ctrl_c(self):
         self._set_run_script_environment({})
