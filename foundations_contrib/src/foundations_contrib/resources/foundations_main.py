@@ -34,7 +34,6 @@ def fetch_error_information(context, job):
     import sys
     exception_info = sys.exc_info()
     context.global_stage_context.add_error_information(exception_info)
-    mark_job_failed(job)
     return exception_info
 
 def mark_job_complete(job):
@@ -53,7 +52,6 @@ def execute_job(job, pipeline_context):
     try:
         mark_job_as_running(job)
         run_job_variant(job)
-        mark_job_complete(job)
         return None, False
     except Exception as error:
         return fetch_error_information(pipeline_context, job), True
@@ -146,10 +144,13 @@ def main():
     exception_info, was_job_error = serialize_job_results(exception_info, was_job_error, job, pipeline_context)
 
     if exception_info is not None:
+        mark_job_failed(job)
         if not was_job_error:
             sys.excepthook = sys.__excepthook__
 
         compat_raise(exception_info[0], exception_info[1], exception_info[2])
+    else:
+        mark_job_complete(job)
 
 if __name__ == "__main__":
     main()
