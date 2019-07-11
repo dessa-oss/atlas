@@ -39,7 +39,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         import subprocess
 
         error_message = 'Error: Job `{}` does not exist for environment `local_scheduler`'.format(self.fake_job_id)
-        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(self.fake_job_id), '--env=local_scheduler']
+        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(self.fake_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n') 
@@ -66,7 +66,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         queued_job_id = queued_job.job_name()
 
         error_message = 'Error: Job `{}` is queued and has not produced any logs'.format(queued_job_id)
-        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(queued_job_id), '--env=local_scheduler']
+        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(queued_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
@@ -88,7 +88,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         completed_job_id = job.job_name()
         self.assertEqual('completed', job.get_job_status())
 
-        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
+        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
@@ -114,7 +114,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         sleep(60)
         self.assertEqual('running', job.get_job_status())
 
-        command_to_run = ['foundations', 'retrieve', 'logs', '--job_id={}'.format(running_job_id), '--env=local_scheduler']
+        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(running_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
