@@ -108,13 +108,13 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         self._write_staged_config_to_path('test-cli-init/config/scheduler.config.yaml')
 
-        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler"], stderr=subprocess.PIPE)
+        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && DISABLE_LOG_STREAMING=True python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler"], stderr=subprocess.PIPE)
         self._assert_deployment_was_successful(driver_deploy_result)
 
     def test_cli_can_deploy_stageless_job_with_resources_set(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=subprocess.PIPE)
         job_id = self._job_id_from_logs(process)
 
         self._wait_for_job_to_complete(job_id)
@@ -125,7 +125,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def test_cli_can_deploy_stageless_job_with_resources_default(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_default && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={}'.format(self._env_name)], stdout=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_default && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={}'.format(self._env_name)], stdout=subprocess.PIPE)
         job_id = self._job_id_from_logs(process)
 
         self._wait_for_job_to_complete(job_id)
@@ -142,7 +142,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def test_deploy_does_not_print_crypto_warning(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
         self.assertNotIn('CryptographyDeprecationWarning', process.stderr.decode())
 
     def test_deploy_streams_to_console(self):
