@@ -5,12 +5,16 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 
-import unittest
+from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
 
 
-class TestJobListingV2(unittest.TestCase):
+class TestJobListingV2(Spec):
+
+    @let
+    def fake_tags(self):
+        return self.faker.pydict()
 
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
@@ -86,6 +90,14 @@ class TestJobListingV2(unittest.TestCase):
     def test_has_completed_time_different_params(self):
         job = Job(completed_time=884234222323)
         self.assertEqual(884234222323, job.completed_time)
+
+    def test_job_has_empty_tags_by_default(self):
+        job = Job()
+        self.assertEqual({}, job.tags)
+
+    def test_job_has_tags(self):
+        job = Job(tags=self.fake_tags)
+        self.assertEqual(self.fake_tags, job.tags)
 
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
