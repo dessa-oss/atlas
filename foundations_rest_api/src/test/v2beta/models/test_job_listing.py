@@ -111,7 +111,8 @@ class TestJobListingV2(Spec):
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
-                'completed_time': 2222222222
+                'completed_time': 2222222222,
+                'tags': {}
             },
             {
                 'project_name': 'random test project',
@@ -122,7 +123,11 @@ class TestJobListingV2(Spec):
                 'output_metrics': [],
                 'status': 'running',
                 'start_time': 999999999,
-                'completed_time': None
+                'completed_time': None,
+                'tags': {
+                    'asdf': 'this',
+                    'cool': 'dude'
+                }
             }
         ]
 
@@ -135,7 +140,11 @@ class TestJobListingV2(Spec):
             status='running',
             start_time='2001-09-09T01:46:39',
             completed_time=None,
-            duration='58d1h53m21s'
+            duration='58d1h53m21s',
+            tags={
+                'asdf': 'this',
+                'cool': 'dude'
+            }
         )
 
         expected_job_2 = Job(
@@ -147,7 +156,8 @@ class TestJobListingV2(Spec):
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
-            duration='24291d6h23m53s'
+            duration='24291d6h23m53s',
+            tags={}
         )
 
         result = Job.all(project_name='random test project').evaluate()
@@ -188,7 +198,10 @@ class TestJobListingV2(Spec):
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
-                'completed_time': 2222222222
+                'completed_time': 2222222222,
+                'tags': {
+                    'this': '1337'
+                }
             },
         ]
 
@@ -202,7 +215,10 @@ class TestJobListingV2(Spec):
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
-            duration='24291d6h23m53s'
+            duration='24291d6h23m53s',
+            tags={
+                'this': '1337'
+            }
         )
 
         result = Job.all(project_name='random test project').evaluate()
@@ -243,7 +259,10 @@ class TestJobListingV2(Spec):
                 'output_metrics': [],
                 'status': 'completed',
                 'start_time':  123456789,
-                'completed_time': 2222222222
+                'completed_time': 2222222222,
+                'tags': {
+                    'beep': 'boop'
+                }
             },
         ]
 
@@ -257,7 +276,10 @@ class TestJobListingV2(Spec):
             status='completed',
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
-            duration='24291d6h23m53s'
+            duration='24291d6h23m53s',
+            tags={
+                'beep': 'boop'
+            }
         )
 
         result = Job.all(project_name='random test project', handle_duplicate_param_names=False).evaluate()
