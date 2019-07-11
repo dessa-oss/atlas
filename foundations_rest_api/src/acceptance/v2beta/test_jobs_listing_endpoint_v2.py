@@ -65,7 +65,7 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-        # redis.flushall()
+        redis.flushall()
 
     @classmethod
     def _setup_five_jobs(klass):

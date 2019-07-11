@@ -24,7 +24,7 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-        # redis.flushall()
+        redis.flushall()
 
     @classmethod
     def _prepare_job_input_data(klass, **kwargs):
