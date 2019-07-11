@@ -21,9 +21,8 @@ spec:
         env:
           - name: JOB_ID
             value: "${job_id}"
-        resources:
-          limits:
-            nvidia.com/gpu: 1
+          - name: CUDA_VISIBLE_DEVICES
+            value: "-1"
         name: model
         volumeMounts:
         - mountPath: /archive
