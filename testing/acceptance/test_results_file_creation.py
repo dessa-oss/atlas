@@ -137,13 +137,13 @@ class TestResultsFileCreation(Spec):
         deployment.wait_for_deployment_to_complete()
 
         job_id = deployment.job_name()
-        self._run_retrieve_cli_command(job_id)
+        self._run_get_cli_command(job_id)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path, self.metrics_local_save_artifact_file_path])
         shutil.rmtree('/tmp/save_dir_root')
-        self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_model)
+        self._run_get_cli_command(job_id, source_dir=self.random_subdirectory_for_model)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.model_local_save_artifact_file_path])
         shutil.rmtree('/tmp/save_dir_root')
-        self._run_retrieve_cli_command(job_id, source_dir=self.random_subdirectory_for_metrics)
+        self._run_get_cli_command(job_id, source_dir=self.random_subdirectory_for_metrics)
         self.assertCountEqual(self._fully_expanded_paths_for_downloads(), [self.metrics_local_save_artifact_file_path])
         shutil.rmtree('/tmp/save_dir_root')
 
@@ -156,10 +156,10 @@ class TestResultsFileCreation(Spec):
                 result += [os.path.join(root, file) for file in files]
         return result
 
-    def _run_retrieve_cli_command(self, job_id, source_dir=None):
+    def _run_get_cli_command(self, job_id, source_dir=None):
         import subprocess
 
-        cmd_line = ['python', '-m', 'foundations', 'retrieve', 'artifacts', '--env=local', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
+        cmd_line = ['python', '-m', 'foundations', 'get', 'artifacts', '--env=local', '--job_id={}'.format(job_id), '--save_dir={}'.format(self.save_path)]
         if source_dir:
             cmd_line.append('--source_dir={}'.format(source_dir))
         subprocess.run(cmd_line, check=True)
