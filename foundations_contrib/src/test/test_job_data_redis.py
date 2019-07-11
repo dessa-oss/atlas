@@ -30,16 +30,23 @@ class TestJobDataRedis(Spec):
     def _rpush_redis(self, job_id, parameter, data):
         self._redis.rpush('jobs:{}:{}'.format(job_id, parameter), data)
 
+    def _hmset_redis(self, job_id, parameter, data):
+        self._redis.hmset(f'jobs:{job_id}:{parameter}', data)
+
     def _load_data_new_job(self, job_id, data):
         set_parameter_name = ['project', 'start_time',
                               'completed_time', 'user', 'state', 'parameters', 'input_parameters']
         rpush_parameter_name = ['metrics']
+        hmset_parameter_name = ['tags']
 
         for key, value in data.items():
             if key in set_parameter_name:
                 self._set_redis(job_id, key, value)
             if key in rpush_parameter_name:
                 self._rpush_redis(job_id, key, value)
+            if key in hmset_parameter_name:
+                for hm_key, hm_value in value.items():
+                    self._hmset_redis(job_id, 'annotations', {hm_key: hm_value})
 
     def _sadd_redis_project_name(self, project_name, job_id):
         self._redis.sadd(
@@ -54,7 +61,8 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {}
         }
         job_id = 'the boy who lived'
         redis_pipe = RedisPipelineWrapper(
@@ -73,7 +81,8 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
             'start_time': float('456'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
 
@@ -86,7 +95,11 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'dead',
             'start_time': '456',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {
+                'this_tag': 123,
+                'that_tag': 'asdf'
+            }
         }
         job_id = 'the boy who lived'
         redis_pipe = RedisPipelineWrapper(
@@ -105,7 +118,11 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'dead',
             'start_time': float('456'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'this_tag': '123',
+                'that_tag': 'asdf'
+            }
         }
         self.assertDictEqual(expected_result, result.get())
 
@@ -128,7 +145,8 @@ class TestJobDataRedis(Spec):
             'output_metrics': [],
             'status': None,
             'start_time': None,
-            'completed_time': None
+            'completed_time': None,
+            'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
 
@@ -141,7 +159,10 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {
+                'bep': 'bip'
+            }
         }
         job_id = 'sushine'
         redis_pipe = RedisPipelineWrapper(
@@ -161,7 +182,10 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'bep': 'bip'
+            }
         }
 
         self.assertDictEqual(expected_result, result.get())
@@ -176,7 +200,10 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {
+                'bep': 'bip'
+            }
         }
         job_id_1 = 'sushine'
 
@@ -192,7 +219,10 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'bep': 'bip'
+            }
         }
 
         results = JobDataRedis.get_all_jobs_data(
@@ -210,7 +240,10 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {
+                'bep': 'bip'
+            }
         }
         job_id_1 = 'sushine'
 
@@ -226,7 +259,10 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'bep': 'bip'
+            }
         }
 
         results = JobDataRedis.get_all_jobs_data(
@@ -244,7 +280,10 @@ class TestJobDataRedis(Spec):
             'metrics': self._fast_serialize(('123', 'hermione', 'granger')),
             'state': 'completed',
             'start_time': '1231003123',
-            'completed_time': '123'
+            'completed_time': '123',
+            'tags': {
+                'bep': 'bip'
+            }
         }
         job_id_1 = 'sushine'
         job_id_2 = 'rain'
@@ -263,7 +302,10 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'bep': 'bip'
+            }
         }
 
         expected_result_2 = {
@@ -275,7 +317,10 @@ class TestJobDataRedis(Spec):
             'output_metrics': [('123', 'hermione', 'granger')],
             'status': 'completed',
             'start_time': float('1231003123'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {
+                'bep': 'bip'
+            }
         }
 
         results = JobDataRedis.get_all_jobs_data(
@@ -310,7 +355,8 @@ class TestJobDataRedis(Spec):
             'output_metrics': [],
             'status': 'dead',
             'start_time': float('456'),
-            'completed_time': float('123')
+            'completed_time': float('123'),
+            'tags': {}
         }
         self.assertDictEqual(expected_result, result.get())
 

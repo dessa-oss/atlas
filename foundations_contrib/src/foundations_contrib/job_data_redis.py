@@ -91,6 +91,7 @@ class JobDataRedis(object):
         start_time = self._add_decoded_get_to_pipe('start_time').then(self._make_float)
         completed_time = self._add_decoded_get_to_pipe(
             'completed_time').then(self._make_float)
+        tags = self._add_decoded_hgetall_to_pipe('annotations')
 
         list_of_properties = Promise.all(
             [
@@ -101,7 +102,8 @@ class JobDataRedis(object):
                 output_metrics,
                 status,
                 start_time,
-                completed_time
+                completed_time,
+                tags
             ]
         )
 
@@ -115,7 +117,8 @@ class JobDataRedis(object):
                                 output_metrics,
                                 status,
                                 start_time,
-                                completed_time):
+                                completed_time,
+                                tags):
             return {
                 'project_name': project_name,
                 'job_id': self._job_id,
@@ -125,7 +128,8 @@ class JobDataRedis(object):
                 'output_metrics': output_metrics,
                 'status': status,
                 'start_time': start_time,
-                'completed_time': completed_time
+                'completed_time': completed_time,
+                'tags': tags
             }
         return seperate_args_inner(*args)
 
@@ -152,10 +156,19 @@ class JobDataRedis(object):
     def _add_get_to_pipe(self, parameter):
         return self._pipe.get('jobs:{}:{}'.format(self._job_id, parameter))
 
+    def _add_decoded_hgetall_to_pipe(self, parameter):
+        return self._add_hgetall_to_pipe(parameter).then(self._decode_dict)
+
+    def _add_hgetall_to_pipe(self, parameter):
+        return self._pipe.hgetall(f'jobs:{self._job_id}:{parameter}')
+
     def _decode_bytes(self, data):
         if data is None:
             return data
         return data.decode()
+
+    def _decode_dict(self, data):
+        return {key.decode(): value.decode() for key, value in data.items()}
 
     def _deserialize_list(self, data):
         return self._deserialize_or_default(data, [])
