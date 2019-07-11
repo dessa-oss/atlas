@@ -23,7 +23,7 @@ class PropertyModel(object):
                     raise ValueError('Invalid property `{}` given'.format(property_name))
 
     @staticmethod
-    def define_property():
+    def define_property(default=None):
         """Defines an attribute on a model automatically and creates properties for it
         
         Returns:
@@ -35,7 +35,11 @@ class PropertyModel(object):
         attribute_name = '_%08x' % random.getrandbits(32)
 
         def getter(self):
-            return getattr(self, attribute_name)
+            attribute_value = getattr(self, attribute_name)
+
+            if attribute_value is None:
+                return default
+            return attribute_value
 
         def setter(self, value):
             setattr(self, attribute_name, value)
