@@ -50,6 +50,7 @@ class JobListPage extends Component {
       startTimeFilter: [],
       queryStatus: 200,
     };
+    setInterval(this.tick, 1000);
   }
 
   async componentDidMount() {
@@ -318,6 +319,11 @@ class JobListPage extends Component {
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
     this.checkStatusOk = this.checkStatusOk.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+
+  async tick() {
+    this.setState({});
   }
 
   render() {
