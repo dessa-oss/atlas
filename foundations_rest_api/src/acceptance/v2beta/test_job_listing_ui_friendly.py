@@ -13,18 +13,18 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
     filtering_columns = []
+    tags = {'this_tag': 'this_value', 'that_tag': 'that_value'}
 
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
         klass._set_project_name('lou')
-        klass._make_completed_job_with_metrics('my job 3', 'bach', arg1='life', arg2=42, kwarg1='pi', kwarg2=3.14)
+        klass._make_completed_job_with_metrics('my job 3', 'bach', arg1='life', arg2=42, kwarg1='pi', kwarg2=3.14, tags=klass.tags)
 
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-
-        redis.flushall()
+        # redis.flushall()
 
     @classmethod
     def _prepare_job_input_data(klass, **kwargs):
@@ -70,3 +70,4 @@ class TestJobsListingUIFriendly(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         self.assertEqual(job_data['output_metrics'][0]['name'], 'hello')
         self.assertEqual(job_data['output_metrics'][0]['value'], 20)
         self.assertEqual(job_data['output_metrics'][0]['type'], 'number')
+        self.assertEqual(self.tags, job_data['tags'])

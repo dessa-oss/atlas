@@ -34,6 +34,28 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         }
     ]
 
+    running_tags = {
+        'am_i_running': True,
+        'num_gpus': 20
+    }
+
+    completed_tags = {
+        'am_i_running': False,
+        'num_gpus': 0,
+        'cool': 'dude'
+    }
+
+    expected_running_tags = {
+        'am_i_running': 'True',
+        'num_gpus': '20'
+    }
+
+    expected_completed_tags = {
+        'am_i_running': 'False',
+        'num_gpus': '0',
+        'cool': 'dude'
+    }
+
     @classmethod
     def setUpClass(klass):
         JobsTestsHelperMixinV2.setUpClass()
@@ -43,14 +65,13 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
     @classmethod
     def tearDownClass(klass):
         from foundations_contrib.global_state import redis_connection as redis
-
-        redis.flushall()
+        # redis.flushall()
 
     @classmethod
     def _setup_five_jobs(klass):
-        klass._make_running_job('00000000-0000-0000-0000-000000000000', 'soju hero', 99999999)
-        klass._make_completed_job('my job 1', 'beethoven', 100000000, 100086400)
-        klass._make_completed_job('my job 2', 'mozart', 123456780, 123555555)
+        klass._make_running_job('00000000-0000-0000-0000-000000000000', 'soju hero', start_timestamp=99999999, tags=klass.running_tags)
+        klass._make_completed_job('my job 1', 'beethoven', start_timestamp=100000000, end_timestamp=100086400)
+        klass._make_completed_job('my job 2', 'mozart', start_timestamp=123456780, end_timestamp=123555555, tags=klass.completed_tags)
         klass._make_queued_job('queued job 0', 'kyle')
         klass._make_queued_job('queued job 1', 'jinnah')
 
@@ -61,6 +82,14 @@ class TestJobsListingEndpointV2(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBas
         self.assertEqual(data['jobs'][2]['job_id'], 'my job 2')
         self.assertEqual(data['jobs'][3]['job_id'], 'my job 1')
         self.assertEqual(data['jobs'][4]['job_id'], '00000000-0000-0000-0000-000000000000')
+
+    def test_get_tags(self):
+        data = super(TestJobsListingEndpointV2, self).test_get_route()
+        self.assertEqual(data['jobs'][0]['tags'], {})
+        self.assertEqual(data['jobs'][1]['tags'], {})
+        self.assertEqual(data['jobs'][2]['tags'], self.expected_completed_tags)
+        self.assertEqual(data['jobs'][3]['tags'], {})
+        self.assertEqual(data['jobs'][4]['tags'], self.expected_running_tags)
 
     def test_duration(self):
         import re

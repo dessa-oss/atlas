@@ -48,24 +48,26 @@ class JobsTestsHelperMixinV2(object):
             restore_real_current_datetime()
 
     @classmethod
-    def _make_completed_job(klass, job_name, user, start_timestamp=None, end_timestamp=None, **kwargs):
+    def _make_completed_job(klass, job_name, user, tags=None, start_timestamp=None, end_timestamp=None, **kwargs):
         klass._pipeline_context.file_name = job_name
         klass._pipeline_context.provenance.user_name = user
         klass._pipeline_context.provenance.job_run_data = kwargs
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
         klass._fake_start_time(start_timestamp)
         RunJob(klass._message_router, klass._pipeline_context).push_message()
+        klass._set_tags(job_name, tags)
         klass._fake_end_time(end_timestamp)
         CompleteJob(klass._message_router, klass._pipeline_context).push_message()
         klass._restore_time(start_timestamp, end_timestamp)
 
     @classmethod
-    def _make_running_job(klass, job_name, user, start_timestamp=None):
+    def _make_running_job(klass, job_name, user, tags=None, start_timestamp=None):
         klass._pipeline_context.file_name = job_name
         klass._pipeline_context.provenance.user_name = user
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
         klass._fake_start_time(start_timestamp)
         RunJob(klass._message_router, klass._pipeline_context).push_message()
+        klass._set_tags(job_name, tags)
         klass._restore_time(start_timestamp, None)
 
     @classmethod
@@ -73,3 +75,17 @@ class JobsTestsHelperMixinV2(object):
         klass._pipeline_context.file_name = job_name
         klass._pipeline_context.provenance.user_name = user
         QueueJob(klass._message_router, klass._pipeline_context).push_message()
+
+    @classmethod
+    def _set_tags(klass, job_name, tags):
+        from foundations_contrib.global_state import current_foundations_context
+        from foundations.prototype import set_tag
+
+        pipeline_context = current_foundations_context().pipeline_context()
+        pipeline_context.file_name = job_name
+
+        if tags is not None:
+            for key, value in tags.items():
+                set_tag(key, value)
+
+        pipeline_context.file_name = None
