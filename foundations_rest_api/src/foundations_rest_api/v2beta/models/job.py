@@ -19,7 +19,7 @@ class Job(PropertyModel):
     start_time = PropertyModel.define_property()
     completed_time = PropertyModel.define_property()
     duration = PropertyModel.define_property()
-    tags = PropertyModel.define_property(default={})
+    tags = PropertyModel.define_property()
 
     @staticmethod
     def all(project_name=None, handle_duplicate_param_names=True):

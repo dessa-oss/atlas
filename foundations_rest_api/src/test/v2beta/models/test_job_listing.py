@@ -91,10 +91,6 @@ class TestJobListingV2(Spec):
         job = Job(completed_time=884234222323)
         self.assertEqual(884234222323, job.completed_time)
 
-    def test_job_has_empty_tags_by_default(self):
-        job = Job()
-        self.assertEqual({}, job.tags)
-
     def test_job_has_tags(self):
         job = Job(tags=self.fake_tags)
         self.assertEqual(self.fake_tags, job.tags)
