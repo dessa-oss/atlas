@@ -80,6 +80,16 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
         title="User"
         toggleFilter={[Function]}
       />
+      <JobColumnHeader
+        className="static-header"
+        colType="string"
+        containerClass="job-column-header"
+        isFiltered={false}
+        isMetric={false}
+        isStatus={false}
+        title="Tags"
+        toggleFilter={[Function]}
+      />
     </div>
     <ScrollSyncPane
       enabled={true}

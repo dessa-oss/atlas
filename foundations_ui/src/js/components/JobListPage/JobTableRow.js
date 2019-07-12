@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import StartCell from './cells/StartTimeCell';
 import StatusCell from './cells/StatusCell';
 import JobIDCell from './cells/JobIDCell';
+import TagsCell from './cells/TagsCell';
 import DurationCell from './cells/DurationCell';
 import UserCell from './cells/UserCell';
 import CancelJobCell from './cells/CancelJobCell';
@@ -35,6 +36,7 @@ class JobTableRow extends Component {
           rowNumber={rowNumber}
         />
         <UserCell user={job.user} isError={isError} rowNumber={rowNumber} />
+        <TagsCell tag={job.tags} isError={isError} rowNumber={rowNumber} />
       </div>
     );
   }

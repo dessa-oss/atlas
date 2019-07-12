@@ -88,6 +88,10 @@ class TableStaticColumns extends Component {
               toggleFilter={toggleUserFilter}
               isFiltered={isUserFiltered}
             />
+            <JobColumnHeader
+              title="Tags"
+              className="static-header"
+            />
           </div>
           <ScrollSyncPane group="vertical">
             <div className="table-row-number">

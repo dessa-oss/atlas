@@ -1,7 +1,7 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: $table-section-width;
+  width: 30%;
   height: 100%;
   white-space: nowrap;
   margin: 0px;
@@ -10,7 +10,7 @@
   overflow: hidden;
 
   &:first-of-type {
-    width: $table-section-width;
+    width: 40%;
   }
 }
 

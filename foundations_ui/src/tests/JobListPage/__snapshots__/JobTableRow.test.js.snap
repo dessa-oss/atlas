@@ -36,5 +36,10 @@ exports[`Shallow Renders Job Table Row 1`] = `
     rowNumber={0}
     user=""
   />
+  <TagsCell
+    isError={false}
+    rowNumber={0}
+    tag={Object {}}
+  />
 </div>
 `;

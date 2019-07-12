@@ -3,15 +3,12 @@
   vertical-align: middle;
   padding-left: $standard-cell-padding;
   padding-right: $standard-cell-padding;
-  border-top: 1px solid $color-border-bottom;
-  border-right: 1px solid $color-border-bottom;
   margin: 0px;
   line-height: $row-height;
   height: $row-height;
   text-align: center;
   width: $standard-cell-width;
   position: relative;
-  background-color: #fff;
   p {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -20,6 +17,12 @@
   &.error {
     color: $color-status-red;
     background-color: $color-error-background;
+  }
+
+  &:not(.Tags) {
+    background-color: #fff;
+    border-top: 1px solid $color-border-bottom;
+    border-right: 1px solid $color-border-bottom;
   }
 }
 
@@ -60,6 +63,34 @@ button.job-cell.i--icon-delete {
 .duration-cell{
   text-align: right;
   width: calc( 18% - (5px * 4 + 0.25px));
+}
+
+.tagWrapper {
+  text-align: left;
+  width: -webkit-fill-available;
+}
+
+.job-cell.tag-cell {
+  width: -webkit-fill-available;
+}
+
+.full-height {
+  overflow-x: scroll;
+  width: max-content;
+}
+
+.tagBlock {
+  background-color: #0391f6;
+  color: #fff;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 3px;
+  display: inline-block;
+  margin: 2px;
+  height: 28px;
+  width: auto;
+  padding: 3px;
+  padding-top: 0;
 }
 
 .job-cell-hover {

@@ -32,7 +32,12 @@ class JobColumnHeader extends Component {
     } = this.state;
     const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
-    const divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
+    let divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
+
+    if (title === 'Tags') {
+      divClassName = 'job-column-header job-cell tag-cell';
+    }
+
     const presentationClassName = JobListActions.getJobColumnHeaderPresentationClass(colType, isMetric);
 
     const tooltip = <Tooltip message={title} />;

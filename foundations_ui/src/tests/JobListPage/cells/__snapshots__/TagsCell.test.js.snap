@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shallow Renders Tags Cell 1`] = `
+<div
+  className="job-cell tag-cell row-0"
+>
+  <div
+    className="tagWrapper"
+  />
+</div>
+`;

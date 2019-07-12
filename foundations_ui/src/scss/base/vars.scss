@@ -19,7 +19,7 @@ $standard-header-padding: 8px;
 $standard-cell-padding: 5px;
 $static-columns-border: 2px;
 $static-standard-columns: 4;
-$standard-cell-width: calc( 25% - (#{$standard-cell-padding} * #{$static-standard-columns} + 0.25px));
+$standard-cell-width: calc( 20% - (#{$standard-cell-padding} * #{$static-standard-columns} + 0.25px));
 $standard-header-width: $standard-cell-width;
 $standard-input-metric-cell-width: 125px;
 $min-metric-param-columns-container: $standard-input-metric-cell-width * 2;

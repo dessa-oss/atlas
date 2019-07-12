@@ -16,7 +16,6 @@ class StatusCell extends Component {
     const { status, isError, rowNumber } = this.state;
 
     const statusClass = JobListActions.getStatusCircle(status);
-
     const divClass = isError ? `status-cell job-cell error row-${rowNumber}` : `status-cell job-cell row-${rowNumber}`;
 
     return (
