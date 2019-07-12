@@ -1,6 +1,18 @@
+import click
+
+def break_click_echo(*args, **kwargs):
+    pass
+
+click.echo = break_click_echo
+click.secho = break_click_echo
+
 from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import Resource, Api
+import logging
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -65,4 +77,5 @@ class ServeModel(Resource):
 api.add_resource(ServeModel, '/')
 
 if __name__ == '__main__':
+    app.logger.disabled = True
     app.run(debug=False, port=80, host='0.0.0.0')

@@ -18,5 +18,5 @@ do
     sleep 2
 done
 
-echo Model $model_name entered $(model_status) state
+echo Model $model_name has started
 kubectl logs -f -n foundations-scheduler-test $model_pod
