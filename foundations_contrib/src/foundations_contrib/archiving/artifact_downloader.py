@@ -32,6 +32,7 @@ class ArtifactDownloader(object):
             'jobs/*',
             'model_serving/*',
             'venv/*',
+            'template/*',
             'docker_image_version.sh',
             'download_gui_images.sh',
             'foundations_gui.sh',

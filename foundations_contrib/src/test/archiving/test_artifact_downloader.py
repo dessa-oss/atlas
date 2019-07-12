@@ -60,6 +60,9 @@ class TestArtifactDownloader(Spec):
             'q.bin',
             'r.config.yaml',
             's.config.yaml',
+
+            'template/t',
+            'template/u',
         ]
 
     def test_downloads_single_file_to_specified_directory(self):
