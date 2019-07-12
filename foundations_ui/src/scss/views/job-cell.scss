@@ -68,10 +68,12 @@ button.job-cell.i--icon-delete {
 .tagWrapper {
   text-align: left;
   width: -webkit-fill-available;
+  width: -moz-available;
 }
 
 .job-cell.tag-cell {
   width: -webkit-fill-available;
+  width: -moz-available;
 }
 
 .full-height {

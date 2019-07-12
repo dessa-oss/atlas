@@ -33,12 +33,13 @@ exports[`Shallow Renders Toolbar Home 1`] = `
       </Link>
     </li>
     <li>
-      <Link
-        replace={false}
-        to="/documentation"
+      <a
+        href="https://dessa-foundations.readthedocs-hosted.com/en/demo_docs/"
+        rel="noopener noreferrer"
+        target="_blank"
       >
         Documentation
-      </Link>
+      </a>
     </li>
     <li>
       <Link
