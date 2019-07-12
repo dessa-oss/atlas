@@ -18,5 +18,9 @@ do
     sleep 2
 done
 
-echo Model $model_name has started
+echo ''
+echo Model $model_name has started, please run:
+echo -e '    ' foundations serve stop $model_name 
+echo if an error has occurred or you wish to stop the server
+echo ''
 kubectl logs -f -n foundations-scheduler-test $model_pod
