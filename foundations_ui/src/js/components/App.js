@@ -5,6 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import ProjectPage from './ProjectPage/ProjectPage';
 import LoginPage from './LoginPage/LoginPage';
+import ContactPage from './ContactPage/ContactPage';
 import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
 
@@ -16,6 +17,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/login" component={LoginPage} />
             <Route exact path="/projects" component={ProjectPage} />
+            <Route exact path="/contact" component={ContactPage} />
             <Redirect exact from="/" to="/projects" />
             <Route
               path="/projects/:projectName/job_listing"

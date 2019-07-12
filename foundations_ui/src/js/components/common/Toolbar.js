@@ -19,7 +19,7 @@ class Toolbar extends Component {
             <a target="_blank" rel="noopener noreferrer" href="https://dessa-foundations.readthedocs-hosted.com/en/demo_docs/">Documentation</a>
           </li>
           <li>
-            <Link to="/support">Contact Support</Link>
+            <Link to="/contact">Contact Support</Link>
           </li>
         </ul>
       </div>
