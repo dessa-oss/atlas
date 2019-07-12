@@ -25,11 +25,7 @@ class ArtifactDownloader(object):
         from functools import reduce
 
         matchings = [
-            'foundations/*',
-            'foundations_contrib/*',
-            'foundations_events/*',
-            'foundations_internal/*',
-            'foundations_scheduler*/*',
+            'foundations*/*',
             'jobs/*',
             'model_serving/*',
             'venv/*',
