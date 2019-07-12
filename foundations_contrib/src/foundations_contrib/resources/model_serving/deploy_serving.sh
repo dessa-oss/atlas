@@ -4,4 +4,19 @@ export job_id=$1
 export model_name=model-$model_number
 
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
-echo Model $model_name successfully served
+echo "Preparing $model_name for serving"
+
+model_pod=$(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $1}')
+
+model_status () {
+    echo $(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $3}')
+}
+
+echo "Waiting for $model_name to be ready"
+while [ "Pending" == $(model_status) ] || [ "" == $(model_status) ] || [ "ContainerCreating" == $(model_status) ]
+do 
+    sleep 2
+done
+
+echo Model $model_name entered $(model_status) state
+kubectl logs -f -n foundations-scheduler-test $model_pod
