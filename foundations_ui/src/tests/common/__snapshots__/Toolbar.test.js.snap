@@ -44,7 +44,7 @@ exports[`Shallow Renders Toolbar Home 1`] = `
     <li>
       <Link
         replace={false}
-        to="/support"
+        to="/contact"
       >
         Contact Support
       </Link>
