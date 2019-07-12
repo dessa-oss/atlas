@@ -63,6 +63,14 @@ class TestArtifactDownloader(Spec):
 
             'template/t',
             'template/u',
+            'foundations_scheduler/v',
+            'foundations_scheduler/w',
+            'foundations_scheduler_core/v',
+            'foundations_scheduler_core/w',
+            'foundations_scheduler_deployment/v',
+            'foundations_scheduler_deployment/w',
+            'foundations_scheduler_plugin/v',
+            'foundations_scheduler_plugin/w',
         ]
 
     def test_downloads_single_file_to_specified_directory(self):

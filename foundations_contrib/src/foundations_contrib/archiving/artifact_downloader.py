@@ -29,6 +29,7 @@ class ArtifactDownloader(object):
             'foundations_contrib/*',
             'foundations_events/*',
             'foundations_internal/*',
+            'foundations_scheduler*/*',
             'jobs/*',
             'model_serving/*',
             'venv/*',
