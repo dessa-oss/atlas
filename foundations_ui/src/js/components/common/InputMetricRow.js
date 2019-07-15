@@ -17,7 +17,12 @@ class InputMetricRow extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      isError: nextProps.isError,
+      job: nextProps.job,
+      isMetric: nextProps.isMetric,
+      allInputMetricColumn: nextProps.allInputMetricColumn,
       hiddenInputParams: nextProps.hiddenInputParams,
+      rowNumber: nextProps.rowNumber,
     });
   }
 

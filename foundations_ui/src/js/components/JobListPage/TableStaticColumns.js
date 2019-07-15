@@ -49,7 +49,7 @@ class TableStaticColumns extends Component {
     return (
       <div className="job-static-columns-container">
         <TableSectionHeader />
-        <div className="full-height">
+        <ScrollSyncPane group="horizontal">
           <div className="job-column-header-container">
             <JobColumnHeader
               title=""
@@ -93,17 +93,14 @@ class TableStaticColumns extends Component {
               className="static-header"
             />
           </div>
-          <ScrollSyncPane group="vertical">
-            <div className="table-row-number">
-              {rowNumbers}
-            </div>
-          </ScrollSyncPane>
-          <ScrollSyncPane group="vertical">
+        </ScrollSyncPane>
+        <ScrollSyncPane group={['horizontal', 'vertical']}>
+          <div className="full-height">
             <div className="job-table-row-container">
               {jobRows}
             </div>
-          </ScrollSyncPane>
-        </div>
+          </div>
+        </ScrollSyncPane>
       </div>
     );
   }

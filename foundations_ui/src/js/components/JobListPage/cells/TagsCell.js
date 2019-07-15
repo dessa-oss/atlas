@@ -11,6 +11,16 @@ class TagsCell extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.tag !== this.props.tag) {
+      this.setState({
+        tags: nextProps.tag,
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+      });
+    }
+  }
+
   render() {
     const { tags, isError, rowNumber } = this.state;
 
@@ -37,15 +47,15 @@ class TagsCell extends Component {
 }
 
 TagsCell.propTypes = {
-  tag: PropTypes.object,
   isError: PropTypes.bool,
   rowNumber: PropTypes.number,
+  tag: PropTypes.object,
 };
 
 TagsCell.defaultProps = {
-  tag: {},
   isError: false,
   rowNumber: 0,
+  tag: {},
 };
 
 export default TagsCell;

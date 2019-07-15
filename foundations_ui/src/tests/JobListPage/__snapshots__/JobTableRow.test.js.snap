@@ -27,9 +27,13 @@ exports[`Shallow Renders Job Table Row 1`] = `
     status="completed"
   />
   <DurationCell
+    days=""
     duration={0}
+    hours=""
     isError={false}
+    minutes=""
     rowNumber={0}
+    seconds=""
   />
   <UserCell
     isError={false}

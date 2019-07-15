@@ -54,6 +54,10 @@ class JobListPage extends Component {
   }
 
   async componentDidMount() {
+    this.interval = setInterval(
+      () => this.getJobs(),
+      1000,
+    );
     this.setState({ isMount: true });
     await this.getJobs();
     hoverActions.hover();
@@ -61,6 +65,7 @@ class JobListPage extends Component {
 
   componentWillUnmount() {
     this.setState({ isMount: false });
+    clearInterval(this.interval);
   }
 
   checkStatusOk() {

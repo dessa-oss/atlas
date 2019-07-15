@@ -9,6 +9,14 @@ class HoverCell extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.text !== this.props.text) {
+      this.setState({
+        text: nextProps.text,
+      });
+    }
+  }
+
   render() {
     const { text } = this.state;
     return (
@@ -21,10 +29,12 @@ class HoverCell extends Component {
 
 HoverCell.propTypes = {
   textToRender: PropTypes.object,
+  text: PropTypes.string,
 };
 
 HoverCell.defaultProps = {
   textToRender: <p />,
+  text: '',
 };
 
 export default HoverCell;

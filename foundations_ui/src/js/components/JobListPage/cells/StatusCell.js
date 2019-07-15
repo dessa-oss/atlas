@@ -12,6 +12,20 @@ class StatusCell extends Component {
     };
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({ status: nextProps.status });
+  // }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.rowNumber !== this.props.status) {
+      this.setState({
+        status: nextProps.status,
+        isError: nextProps.isError,
+        rowNumber: nextProps.rowNumber,
+      });
+    }
+  }
+
   render() {
     const { status, isError, rowNumber } = this.state;
 

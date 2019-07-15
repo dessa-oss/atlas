@@ -20,7 +20,14 @@ class InputMetricCell extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ value: nextProps.value });
+    if (nextProps.rowNumber !== this.props.rowNumber) {
+      this.setState({
+        value: nextProps.value,
+        cellType: nextProps.cellType,
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+      });
+    }
   }
 
   render() {

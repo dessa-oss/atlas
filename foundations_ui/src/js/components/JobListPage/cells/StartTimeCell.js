@@ -22,6 +22,18 @@ class StartTimeCell extends Component {
     this.setState({ expand: value });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.rowNumber !== this.props.rowNumber) {
+      this.setState({
+        time: JobListActions.getFormatedTime(nextProps.startTime),
+        date: JobListActions.getFormatedDate(nextProps.startTime),
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+      });
+    }
+  }
+
+
   render() {
     const {
       date, time, isError, rowNumber, expand,

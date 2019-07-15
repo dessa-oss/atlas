@@ -19,6 +19,17 @@ class JobTableRow extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.job !== this.props.job) {
+      this.setState(
+        {
+          job: nextProps.job,
+          rowNumber: nextProps.rowNumber,
+        },
+      );
+    }
+  }
+
   render() {
     const { job, rowNumber } = this.state;
 
