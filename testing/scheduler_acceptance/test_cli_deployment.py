@@ -264,5 +264,5 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def _log_regex(self, message):
         import re
 
-        regex_string = "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} - foundations_contrib\.cli\.command_line_interface - INFO - " + message
+        regex_string = "\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} - foundations_contrib\.cli\.command_line_job_deployer - INFO - " + message
         return re.compile(regex_string)

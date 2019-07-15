@@ -387,6 +387,14 @@ class TestCommandLineInterface(Spec):
     def fake_directory(self):
         return self.faker.file_path()
 
+    @let
+    def ram(self):
+        return self.faker.random.random() * 8 + 0.0001
+
+    @let
+    def num_gpus(self):
+        return self.faker.random_int(0, 8)
+
     os_file_exists = let_patch_mock('os.path.isfile')
     os_chdir = let_patch_mock('os.chdir')
     os_kill = let_patch_mock('os.kill')
@@ -565,6 +573,48 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--source_dir={}'.format(self.fake_source_dir), '--save_dir={}'.format(self.fake_save_dir)]).execute()
         self.artifact_downloader_mock.download_files.assert_called_with(self.fake_source_dir, self.fake_save_dir)
 
+    def test_deploy_forwards_default_arguments_to_command_line_job_deployer(self):
+        self.patch('foundations_contrib.cli.command_line_job_deployer.CommandLineJobDeployer', MockCommandLineJobDeployer)
+
+        expected_arguments = Mock()
+        expected_arguments.env = None
+        expected_arguments.job_directory = None
+        expected_arguments.entrypoint = None
+        expected_arguments.project_name = None
+        expected_arguments.ram = None
+        expected_arguments.num_gpus = None
+
+        CommandLineInterface(['deploy']).execute()
+        arguments = MockCommandLineJobDeployer.arguments
+
+        self._assert_arguments_equal(expected_arguments, arguments)
+
+    def test_deploy_forwards_specified_arguments_to_command_line_job_deployer(self):
+        self.patch('foundations_contrib.cli.command_line_job_deployer.CommandLineJobDeployer', MockCommandLineJobDeployer)
+
+        expected_arguments = Mock()
+        expected_arguments.env = self.fake_env
+        expected_arguments.job_directory = self.fake_directory
+        expected_arguments.entrypoint = self.fake_script_file_name
+        expected_arguments.project_name = self.fake_project_name
+        expected_arguments.ram = self.ram
+        expected_arguments.num_gpus = self.num_gpus
+
+        command_to_run = [
+            'deploy',
+            f'--env={self.fake_env}',
+            f'--job-directory={self.fake_directory}',
+            f'--entrypoint={self.fake_script_file_name}',
+            f'--project-name={self.fake_project_name}',
+            f'--ram={self.ram}',
+            f'--num-gpus={self.num_gpus}'
+        ]
+
+        CommandLineInterface(command_to_run).execute()
+        arguments = MockCommandLineJobDeployer.arguments
+
+        self._assert_arguments_equal(expected_arguments, arguments)
+
     @patch('argparse.ArgumentParser')
     def test_retrieve_logs_has_correct_options(self, parser_class_mock):
         parser_mock = Mock()
@@ -644,6 +694,10 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.exit_mock.assert_not_called()
 
+    def _assert_arguments_equal(self, expected_arguments, actual_arguments):
+        for attribute_name in ['env', 'job_directory', 'entrypoint', 'project_name', 'ram', 'num_gpus']:
+            self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
+
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')
@@ -670,3 +724,13 @@ class TestCommandLineInterface(Spec):
         self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
         self.open_mock = self.patch('builtins.open', ConditionalReturn())
         self.open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
+
+class MockCommandLineJobDeployer(object):
+    arguments = None
+    deploy_called = False
+
+    def __init__(self, arguments):
+        MockCommandLineJobDeployer.arguments = arguments
+
+    def deploy(self):
+        MockCommandLineJobDeployer.deploy_called = True
