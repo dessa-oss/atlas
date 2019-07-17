@@ -1,7 +1,9 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ToastContainer, toast } from 'react-toastify';
 import HoverCell from './HoverCell';
+import 'react-toastify/dist/ReactToastify.css';
 
 class JobIDCell extends Component {
   constructor(props) {
@@ -12,6 +14,13 @@ class JobIDCell extends Component {
       isError: this.props.isError,
       rowNumber: this.props.rowNumber,
     };
+  }
+
+  notifiedCopy() {
+    toast.info('Job id successfully copied', {
+      autoClose: 1500,
+      draggable: false,
+    });
   }
 
   toggleExpand(value) {
@@ -45,10 +54,12 @@ class JobIDCell extends Component {
         {jobIdFormatted}
         <CopyToClipboard text={jobID}>
           <div
+            onClick={() => this.notifiedCopy()}
             className="i--icon-copy"
             role="presentation"
           />
         </CopyToClipboard>
+        <ToastContainer />
         <div>
           {hover}
         </div>
