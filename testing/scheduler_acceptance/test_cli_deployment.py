@@ -108,7 +108,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         self._write_staged_config_to_path('test-cli-init/config/scheduler.config.yaml')
 
-        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && DISABLE_LOG_STREAMING=True python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler"], stderr=subprocess.PIPE)
+        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && DISABLE_LOG_STREAMING=True python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler --num-gpus=0 --ram=3"], stderr=subprocess.PIPE)
         self._assert_deployment_was_successful(driver_deploy_result)
 
     def test_cli_can_deploy_stageless_job_with_resources_set(self):
