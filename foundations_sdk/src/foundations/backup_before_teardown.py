@@ -11,34 +11,32 @@ class BackupBeforeTeardown(object):
 
     def upload_to_gcp(self, client_directory, bucket_name):
         from foundations_contrib.global_state import config_manager
+        from foundations_contrib.simple_tempfile import SimpleTempfile
         import os
-        from foundations_internal.change_directory import ChangeDirectory
 
-        bucket = self._gcp_bucket(bucket_name)
+        gcp_bucket = self._gcp_bucket(bucket_name)
+        archive_bucket = self.artifact_bucket()
 
-        with ChangeDirectory(self._artifact_path()):
-            list_of_backup_files = self._list_of_files_to_upload()
+        list_of_backup_files = list(archive_bucket.list_files('**/*'))
 
-            for file_name in list_of_backup_files:
-                if '/venv' in file_name or '/foundations' in file_name:
-                    continue
+        for file_name in list_of_backup_files:
+            print(file_name)
+            if '/venv' in file_name or '/foundations' in file_name:
+                continue
 
-                with open(file_name, 'rb') as file:
-                    bucket.upload_from_file(f'{client_directory}/archive/{file_name[2:]}', file) 
+            with SimpleTempfile('w+b') as tempfile:
+                archive_bucket.download_to_file(file_name, tempfile)
+                tempfile.flush()
+                with open(tempfile.path, 'r') as file:
+                    gcp_bucket.upload_from_file(f'{client_directory}/archive/{file_name}', file)
     
-    def _list_of_files_to_upload(self):
-        from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path
-        from os import walk
-
-        artifact_path_crawl = walk('.')
-        return list(file_names_for_artifacts_path(artifact_path_crawl))
-
-    def _artifact_path(self):
+    def artifact_bucket(self):
         from os.path import expanduser
         from foundations_contrib.global_state import config_manager
 
-        archive_path = config_manager['artifact_archive_implementation']['constructor_arguments'][0]
-        return expanduser(archive_path)
+        artifact_implementation = config_manager['artifact_archive_implementation']
+        archive = artifact_implementation['archive_type'](*artifact_implementation['constructor_arguments'])
+        return archive._archive._bucket
 
     @staticmethod
     def _gcp_bucket(bucket_name):
