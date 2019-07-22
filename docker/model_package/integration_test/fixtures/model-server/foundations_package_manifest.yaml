@@ -1,0 +1,4 @@
+entrypoints:
+  predict:
+    module: project_code.predictor
+    function: predict

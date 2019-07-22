@@ -102,7 +102,14 @@ def load_prediction_function():
 
     return function
 
+def indicate_model_ran_to_redis():
+    from foundations_contrib.global_state import redis_connection
+
+    job_id_to_track = job_id()
+    redis_connection.incr(f'models:{job_id_to_track}:served')
+
 prediction_function = load_prediction_function()
+indicate_model_ran_to_redis()
 
 class ServeModel(Resource):
     def get(self):

@@ -1,0 +1,5 @@
+cache_config: {}
+enable_stages: false
+job_deployment_env: local
+obfuscate_foundations: false
+results_config: {artifact_path: ., redis_end_point: 'redis://192.168.128.71:6379'}
