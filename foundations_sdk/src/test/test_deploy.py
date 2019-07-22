@@ -6,6 +6,7 @@ Written by Foundations Team <pairing@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from foundations_spec.extensions import let_fake_redis
 
 from foundations_contrib.config_manager import ConfigManager
 from foundations.deploy import deploy
@@ -17,6 +18,8 @@ class TestDeploy(Spec):
     mock_json_dump = let_patch_mock('json.dump')
 
     mock_set_environment = let_patch_mock('foundations.set_environment')
+
+    mock_redis = let_fake_redis()
 
     @let_now
     def fake_cwd(self):
@@ -78,6 +81,8 @@ class TestDeploy(Spec):
             'results_config': {},
             'cache_config': {}
         }
+
+        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
 
         self.mock_open = self.patch('builtins.open', ConditionalReturn())
 
@@ -188,6 +193,12 @@ class TestDeploy(Spec):
 
         deployment_wrapper = deploy()
         self.assertIsInstance(deployment_wrapper, DeploymentWrapper)
+
+    def test_counts_deploy_amount(self):
+        from foundations.deployment_wrapper import DeploymentWrapper
+
+        deploy()
+        self.assertEqual('1', self.mock_redis.get('foundations:sdk:deloyment_count').decode())
 
     def _test_deploy_correctly_sets_project_name(self, expected_project_name, **kwargs):
         from foundations_contrib.global_state import current_foundations_context
