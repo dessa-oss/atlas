@@ -17,3 +17,4 @@ from integration.test_placeholder_parameters import TestPlaceHolderParameters
 from integration.test_pipeline_interface import TestPipelineInterface
 from integration.test_error_printing import TestErrorPrinting
 from integration.test_log_param import TestLogParam
+from integration.test_backup_before_teardown import TestBackupBeforeTearDown
