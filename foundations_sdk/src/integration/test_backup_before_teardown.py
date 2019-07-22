@@ -9,6 +9,7 @@ from mock import Mock
 from foundations_spec import *
 from foundations import BackupBeforeTeardown
 
+@skip
 class TestBackupBeforeTearDown(Spec):
 
     @set_up
