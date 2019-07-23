@@ -39,13 +39,16 @@ class LogManager(object):
     def _load_logger_configuration(self):
         import yaml
         import logging.config
-        import foundations_contrib
 
-        with open(f'{foundations_contrib.root()}/resources/logging/handlers.yaml', 'r') as file:
+        with open(self._logging_configuration_path(), 'r') as file:
             config = yaml.load(file.read())
         config['handlers']['system'] = {'class': 'logging.FileHandler', 'formatter': 'simple', 'filename': f'{self._log_path()}/system.log', 'level': 'DEBUG'}
         config['root']['handlers'].append('system')
         logging.config.dictConfig(config)
+
+    def _logging_configuration_path(self):
+        import foundations_contrib
+        return f'{foundations_contrib.root()}/resources/logging/handlers.yaml'
 
     def _log_path(self):
         import os.path
