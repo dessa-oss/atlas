@@ -13,6 +13,8 @@ from foundations.deploy import deploy
 
 class TestDeploy(Spec):
 
+    mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+
     config_manager = let_patch_mock('foundations.config_manager', ConfigManager())
     mock_yaml_load = let_patch_mock('yaml.load', ConditionalReturn())
     mock_json_dump = let_patch_mock('json.dump')
@@ -115,6 +117,18 @@ class TestDeploy(Spec):
     def tear_down(self):
         from foundations_contrib.global_state import current_foundations_context
         current_foundations_context().set_project_name(self._old_project_name)
+
+    def test_deploy_logs_that_we_deployed_via_the_sdk(self):
+        deploy(self.project_name, self.environment, self.entrypoint, self.job_directory, self.params)
+        message = {
+            'project_name': self.project_name, 
+            'environment': self.environment, 
+            'entrypoint': self.entrypoint, 
+            'job_directory': self.job_directory, 
+            'params': self.params
+        }
+        self.mock_message_router.push_message.assert_called_with('job_deployed_with_sdk', message)
+
 
     def test_deploy_with_defaults_sets_project_name_to_cwd_basename(self):
         import os.path as path

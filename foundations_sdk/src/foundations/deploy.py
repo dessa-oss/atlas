@@ -12,8 +12,17 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
 
     import foundations
     from foundations.job_deployer import deploy_job
-    from foundations_contrib.global_state import current_foundations_context, redis_connection
+    from foundations_contrib.global_state import current_foundations_context, redis_connection, message_router
     from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
+
+    message = {
+        'project_name': project_name, 
+        'environment': env, 
+        'entrypoint': entrypoint, 
+        'job_directory': job_directory, 
+        'params': params
+    }
+    message_router.push_message('job_deployed_with_sdk', message)
 
     redis_connection.incr('foundations:sdk:deloyment_count')
 
