@@ -14,6 +14,8 @@ from foundations_events.message_route import MessageRoute
 class TestMessageRouter(Spec):
 
     mock_message_route = let_patch_mock('foundations_events.message_route.MessageRoute.push_message')
+    mock_get_logger = let_patch_mock_with_conditional_return('foundations_contrib.global_state.log_manager.get_logger')
+    mock_logger = let_mock()
 
     @let_now
     def time_mock(self):
@@ -27,9 +29,18 @@ class TestMessageRouter(Spec):
         import random
         return random.randint(2, 999999999)
 
+    @let
+    def random_message(self):
+        return self.faker.pydict()
+    
+    @let
+    def route_name(self):
+        return self.faker.name()
+
     @set_up
     def set_up(self):
         self.message_router = MessageRouter()
+        self.mock_get_logger.return_when(self.mock_logger, 'foundations_events.message_router')
 
     @tear_down
     def tear_down(self):
@@ -43,6 +54,10 @@ class TestMessageRouter(Spec):
     class MockListener(object):
         def call(self, message, time, metadata):
             return message
+
+    def test_push_message_logs_message_as_debug(self):
+        self.message_router.push_message(self.route_name, self.random_message)
+        self.mock_logger.debug.assert_called_with(f'{self.route_name} {self.random_message}')
 
     def test_add_new_listener(self):
         self.message_router.add_listener(self.MockListener(), 'event1')

@@ -48,6 +48,10 @@ class MessageRouter(object):
                 timestamp {} -- timestamp to be used for message, default to None
             """
             from time import time
+            from foundations_contrib.global_state import log_manager
+
+            logger = log_manager.get_logger(__name__)
+            logger.debug(f'{route_name} {message}')
 
             if not timestamp:
                 timestamp = time()
