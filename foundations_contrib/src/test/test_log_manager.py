@@ -14,6 +14,7 @@ class TestLogManager(Spec):
     @set_up
     def set_up(self):
         from foundations.config_manager import ConfigManager
+
         self.config_manager = ConfigManager()
 
     @let
@@ -32,6 +33,15 @@ class TestLogManager(Spec):
     def console_log_handler(self):
         return self.root_logger.handlers[0]
   
+    @let
+    def file_log_handler(self):
+        return self.root_logger.handlers[1]
+
+    @let
+    def file_log_path(self):
+        import os.path
+        return os.path.expanduser('~/.foundations/logs/system.log')
+
     def test_logger_return_logging_type(self):
         self.assertTrue(isinstance(self.result_logger, logging.Logger))
 
@@ -64,11 +74,11 @@ class TestLogManager(Spec):
 
     def test_logger_return_when_clears_default_handlers(self):
         self.log_manager.get_logger('foundations.config_manager')
-        self.assertEqual(1, len(self.root_logger.handlers))
+        self.assertEqual(2, len(self.root_logger.handlers))
 
     def test_logger_return_when_clears_default_handlers(self):
         self.log_manager.get_logger('foundations.config_manager')
-        self.assertEqual(1, len(self.root_logger.handlers))
+        self.assertEqual(2, len(self.root_logger.handlers))
 
     def test_console_log_handler_return_format(self):
         self.log_manager.get_logger('foundations.config_manager')
@@ -80,6 +90,17 @@ class TestLogManager(Spec):
 
         self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(stdout, self.console_log_handler.stream)
+
+    def test_file_log_handler_return_format(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        formatter = self.file_log_handler.formatter
+        self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
+
+    def test_file_log_handler_return_system_log(self):
+        from sys import stdout
+
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(self.file_log_path, self.file_log_handler.baseFilename)
 
     def test_logger_return_cached_logger(self):
         first_logger = self.log_manager.get_logger('namespaced_log_levels')

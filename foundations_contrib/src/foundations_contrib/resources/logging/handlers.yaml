@@ -7,5 +7,9 @@ handlers:
     class: logging.StreamHandler
     formatter: simple
     stream: ext://sys.stdout
+  system:
+    class: logging.FileHandler
+    formatter: simple
+    filename: ~/.foundations/logs/system.log
 root:
   handlers: [console]
