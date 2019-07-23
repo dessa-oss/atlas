@@ -50,9 +50,12 @@ class LogManager(object):
         return {
             'class': 'logging.FileHandler', 
             'formatter': 'simple', 
-            'filename': f'{self._log_path()}/system.log', 
+            'filename': self._system_log_path(), 
             'level': 'DEBUG'
         }
+
+    def _system_log_path(self):
+        return f'{self._log_path()}/system.log'
 
     def _logging_configuration_path(self):
         import foundations_contrib
