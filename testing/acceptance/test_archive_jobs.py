@@ -24,7 +24,7 @@ class TestArchiveJobs(Spec):
     @set_up
     def set_up(self):
         from acceptance.cleanup import cleanup
-        from foundations.prototype import archive_jobs
+        from foundations import archive_jobs
 
         cleanup()
 

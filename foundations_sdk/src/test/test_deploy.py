@@ -102,6 +102,7 @@ class TestDeploy(Spec):
         self.mock_open.return_when(self.mock_file, '~/.foundations/config/local.config.yaml', 'r')
         self.mock_open.return_when(self.mock_file, '~/.foundations/config/{}.config.yaml'.format(self.environment), 'r')
         self.mock_open.return_when(self.mock_params_file, 'foundations_job_parameters.json', 'w')
+        self.mock_open.return_when(self.mock_file, '/home/pairing/.foundations/logs/system.log', 'a', encoding=None)
 
         self.mock_set_environment.side_effect = self._set_environment
 

@@ -15,7 +15,7 @@ from pandas import DataFrame
 from pandas.util.testing import assert_frame_equal
 from uuid import uuid4
 
-from foundations.prototype.jobs import *
+from foundations.job_actions import get_queued_jobs, archive_jobs
 
 class TestGetQueuedJobs(Spec):
 
@@ -89,8 +89,8 @@ class TestGetQueuedJobs(Spec):
         self.assertEqual({self.job_id: False, self.job_id_two: True}, result)
 
     def test_archive_jobs_is_global(self):
-        import foundations.prototype
-        self.assertEqual(archive_jobs, foundations.prototype.archive_jobs)
+        import foundations
+        self.assertEqual(archive_jobs, foundations.archive_jobs)
     
     def test_get_queued_jobs_returns_empty_data_frame(self):
         self.all_queued_jobs_mock.return_value = []
@@ -136,8 +136,8 @@ class TestGetQueuedJobs(Spec):
         assert_frame_equal(expected_result, get_queued_jobs())
         
     def test_get_queued_jobs_is_global(self):
-        import foundations.prototype
-        self.assertEqual(get_queued_jobs, foundations.prototype.get_queued_jobs)
+        import foundations
+        self.assertEqual(get_queued_jobs, foundations.get_queued_jobs)
     
     def _track_completed_job(self, project_name, job_id):
         from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
