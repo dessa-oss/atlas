@@ -66,6 +66,10 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(1, len(self.root_logger.handlers))
 
+    def test_logger_return_when_clears_default_handlers(self):
+        self.log_manager.get_logger('foundations.config_manager')
+        self.assertEqual(1, len(self.root_logger.handlers))
+
     def test_log_handler_return_format(self):
         self.log_manager.get_logger('foundations.config_manager')
         formatter = self.log_handler.formatter
