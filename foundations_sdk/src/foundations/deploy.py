@@ -12,17 +12,10 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
 
     import foundations
     from foundations.job_deployer import deploy_job
-    from foundations_contrib.global_state import current_foundations_context, redis_connection, message_router
+    from foundations_contrib.global_state import current_foundations_context, redis_connection
     from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
 
-    message = {
-        'project_name': project_name, 
-        'environment': env, 
-        'entrypoint': entrypoint, 
-        'job_directory': job_directory, 
-        'params': params
-    }
-    message_router.push_message('job_deployed_with_sdk', message)
+    _log_job_deployed(project_name, env, entrypoint, job_directory, params)
 
     redis_connection.incr('foundations:sdk:deloyment_count')
 
@@ -53,3 +46,15 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
         os.chdir(cwd_path)
 
     return job_deployment
+
+def _log_job_deployed(project_name, env, entrypoint, job_directory, params):
+    from foundations_contrib.global_state import message_router
+
+    message = {
+        'project_name': project_name, 
+        'environment': env, 
+        'entrypoint': entrypoint, 
+        'job_directory': job_directory, 
+        'params': params
+    }
+    message_router.push_message('job_deployed_with_sdk', message)
