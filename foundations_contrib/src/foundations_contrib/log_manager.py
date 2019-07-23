@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import logging
 
 class LogManager(object):
 
@@ -29,18 +30,23 @@ class LogManager(object):
         return self._foundations_not_running_warning_printed
 
     def _load(self):
-        import logging
         from sys import stdout
         
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        log_handler = logging.StreamHandler(stdout)
-        log_handler.setFormatter(formatter)
         logging.basicConfig(stream=stdout)
         logger = logging.getLogger()
         del logger.handlers[:]
-        logger.addHandler(log_handler)
+        logger.addHandler(self._stdout_log_handler())
 
         self._loggers = {}
+
+    def _stdout_log_handler(self):
+        from sys import stdout
+
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        log_handler = logging.StreamHandler(stdout)
+        log_handler.setFormatter(formatter)
+
+        return log_handler
 
     def _add_logger(self, name):
         from logging import getLogger
