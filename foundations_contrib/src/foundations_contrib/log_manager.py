@@ -40,10 +40,25 @@ class LogManager(object):
         import yaml
         import logging.config
 
-        with open(self._logging_configuration_path(), 'r') as file:
-            config = yaml.load(file.read())
-        config['handlers']['system'] = self._system_log_configuration()
-        config['root']['handlers'].append('system')
+        config = {
+            'version': 1,
+            'formatters': {
+                'simple': {
+                    'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                }
+            },
+            'handlers': {
+                'console': {
+                    'class': 'logging.StreamHandler',
+                    'formatter': 'simple',
+                    'stream': 'ext://sys.stdout'
+                },
+                'system': self._system_log_configuration(),
+            },
+            'root': {
+                'handlers': ['console', 'system']
+            }
+        }
         logging.config.dictConfig(config)
 
     def _system_log_configuration(self):
