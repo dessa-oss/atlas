@@ -41,6 +41,10 @@ class TestLogManager(Spec):
         import os.path
         return os.path.expanduser('~/.foundations/logs/system.log')
 
+    def test_root_logger_has_no_level_set(self):
+        self._setup_logger()
+        self.assertEqual(logging.NOTSET, self.root_logger.level)
+
     def test_logger_return_logging_type(self):
         self.assertTrue(isinstance(self.result_logger, logging.Logger))
 

@@ -57,7 +57,8 @@ class LogManager(object):
                 'system': self._system_log_configuration(),
             },
             'root': {
-                'handlers': ['console', 'system']
+                'handlers': ['console', 'system'],
+                'level': 'NOTSET'
             }
         }
         logging.config.dictConfig(config)
