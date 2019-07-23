@@ -34,6 +34,10 @@ class TestMessageRouter(Spec):
         return self.faker.pydict()
     
     @let
+    def random_metadata(self):
+        return self.faker.pydict()
+    
+    @let
     def route_name(self):
         return self.faker.name()
 
@@ -58,6 +62,10 @@ class TestMessageRouter(Spec):
     def test_push_message_logs_message_as_debug(self):
         self.message_router.push_message(self.route_name, self.random_message)
         self.mock_logger.debug.assert_called_with(f'{self.route_name} {self.random_message}')
+
+    def test_push_message_logs_message_metadata_as_debug(self):
+        self.message_router.push_message(self.route_name, self.random_message, self.random_metadata)
+        self.mock_logger.debug.assert_called_with(f'{self.route_name} {self.random_message} {self.random_metadata}')
 
     def test_add_new_listener(self):
         self.message_router.add_listener(self.MockListener(), 'event1')

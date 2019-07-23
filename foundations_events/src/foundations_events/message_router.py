@@ -51,7 +51,10 @@ class MessageRouter(object):
             from foundations_contrib.global_state import log_manager
 
             logger = log_manager.get_logger(__name__)
-            logger.debug(f'{route_name} {message}')
+            log_message = f'{route_name} {message}'
+            if metadata is not None:
+                log_message += f' {metadata}'
+            logger.debug(log_message)
 
             if not timestamp:
                 timestamp = time()
