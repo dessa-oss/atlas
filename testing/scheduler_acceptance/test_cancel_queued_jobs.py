@@ -8,9 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 import foundations
-from foundations.prototype import cancel_queued_jobs
+from foundations import cancel_queued_jobs
 
-@skip
+# @skip
 class TestCancelQueuedJobs(Spec):
 
     @set_up_class
@@ -44,7 +44,7 @@ class TestCancelQueuedJobs(Spec):
 
     def test_cancel_succeeds_if_job_queued(self):
         import foundations
-        from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+        from scheduler_acceptance.fixtures.stages import wait_five_seconds, finishes_instantly
 
         wait_five_seconds = foundations.create_stage(wait_five_seconds)
         finishes_instantly = foundations.create_stage(finishes_instantly)
@@ -64,7 +64,7 @@ class TestCancelQueuedJobs(Spec):
     def test_cancel_fails_if_job_is_completed(self):
         import foundations
 
-        from scheduler_acceptance.prototype.fixtures.stages import finishes_instantly
+        from scheduler_acceptance.fixtures.stages import finishes_instantly
 
         finishes_instantly = foundations.create_stage(finishes_instantly)
         deployment_object = finishes_instantly().run()
@@ -78,7 +78,7 @@ class TestCancelQueuedJobs(Spec):
 
     def test_cancel_fails_if_job_is_running(self):
         import foundations
-        from scheduler_acceptance.prototype.fixtures.stages import wait_five_seconds
+        from scheduler_acceptance.fixtures.stages import wait_five_seconds
 
         wait_five_seconds = foundations.create_stage(wait_five_seconds)
         deployment_object = wait_five_seconds().run()
@@ -95,7 +95,7 @@ class TestCancelQueuedJobs(Spec):
         import time
 
         from foundations_contrib.global_state import redis_connection
-        from foundations.prototype.helpers.queued import list_jobs
+        from foundations.helpers.queued import list_jobs
 
         while deployment_object.job_name() in list_jobs(redis_connection):
             time.sleep(0.5)

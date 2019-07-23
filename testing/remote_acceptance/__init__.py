@@ -5,5 +5,6 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from remote_acceptance.prototype import *
 from remote_acceptance.test_obfuscate_jobs import TestObfuscateJobs
+from remote_acceptance.test_cancel_queued_jobs import TestCancelQueuedJobs
+from remote_acceptance.test_retrieve_logs import TestRetrieveLogs

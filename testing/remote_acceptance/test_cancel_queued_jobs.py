@@ -9,7 +9,7 @@ import unittest
 from foundations_spec.helpers import set_up, tear_down
 from foundations_spec.helpers.spec import Spec
 
-from foundations.prototype import cancel_queued_jobs
+from foundations import cancel_queued_jobs
 
 class TestCancelQueuedJobs(Spec):
 
@@ -54,7 +54,7 @@ class TestCancelQueuedJobs(Spec):
     def test_cancel_fails_if_jobs_run_locally(self):
         import foundations
 
-        from remote_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+        from remote_acceptance.fixtures.stages import wait_five_seconds, finishes_instantly
 
         wait_five_seconds = foundations.create_stage(wait_five_seconds)
         finishes_instantly = foundations.create_stage(finishes_instantly)
@@ -70,7 +70,7 @@ class TestCancelQueuedJobs(Spec):
     def test_cancel_succeeds_if_jobs_run_remotely(self):
         import foundations
 
-        from remote_acceptance.prototype.fixtures.stages import wait_five_seconds, finishes_instantly
+        from remote_acceptance.fixtures.stages import wait_five_seconds, finishes_instantly
         self._use_remote_deployment()
 
         wait_five_seconds = foundations.create_stage(wait_five_seconds)
@@ -87,7 +87,7 @@ class TestCancelQueuedJobs(Spec):
     def test_cancel_fails_if_job_is_completed(self):
         import foundations
 
-        from remote_acceptance.prototype.fixtures.stages import finishes_instantly
+        from remote_acceptance.fixtures.stages import finishes_instantly
         self._use_remote_deployment()
 
         finishes_instantly = foundations.create_stage(finishes_instantly)
@@ -104,7 +104,7 @@ class TestCancelQueuedJobs(Spec):
         from foundations import config_manager
         from foundations_ssh.sftp_bucket import SFTPBucket
 
-        from remote_acceptance.prototype.fixtures.stages import finishes_instantly, wait_five_seconds
+        from remote_acceptance.fixtures.stages import finishes_instantly, wait_five_seconds
 
         self._use_remote_deployment()
         sftp_bucket = SFTPBucket(config_manager['code_path'])

@@ -51,3 +51,16 @@ def read_init_file():
         file_head = init_file.readline()[0:11]
 
     return file_head.decode()
+
+def wait_five_seconds():
+    import time
+    time.sleep(5)
+
+def finishes_instantly():
+    pass
+
+def function_that_prints():
+    print("I am a function. I print things")
+
+def fails_fast():
+    raise RuntimeError('whoops')

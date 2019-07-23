@@ -30,7 +30,7 @@ class TestRetrieveLogs(Spec):
         import time
         import foundations
 
-        from remote_acceptance.prototype.fixtures.stages import function_that_prints
+        from remote_acceptance.fixtures.stages import function_that_prints
 
         function_that_prints = foundations.create_stage(function_that_prints)
         function_that_prints_deployment_object = function_that_prints().run()

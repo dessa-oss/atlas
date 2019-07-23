@@ -84,12 +84,12 @@ class TestQueuedJobHelpers(Spec):
         _MockConnection.remove_called_with = None
 
     def test_list_jobs_returns_all_queued_jobs(self):
-        from foundations.prototype.helpers.queued import list_jobs
+        from foundations.helpers.queued import list_jobs
         self.assertEqual(self.listing, list_jobs(self.redis))
 
     def test_job_project_names_returns_project_names(self):
         from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
-        from foundations.prototype.helpers.queued import job_project_names
+        from foundations.helpers.queued import job_project_names
 
         consumer = ProjectName(self.redis)
         consumer.call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
@@ -100,20 +100,20 @@ class TestQueuedJobHelpers(Spec):
         self.assertEqual(expected, result)
 
     def test_list_archived_jobs_returns_all_archived_jobs(self):
-        from foundations.prototype.helpers.queued import list_archived_jobs
+        from foundations.helpers.queued import list_archived_jobs
 
         for job_id in self.listing:
             self.redis.sadd('projects:global:jobs:archived', job_id)
         self.assertEqual(self.listing, list_archived_jobs(self.redis))
 
     def test_remove_jobs_removes_all_queued_jobs(self):
-        from foundations.prototype.helpers.queued import remove_jobs, list_jobs
+        from foundations.helpers.queued import remove_jobs, list_jobs
         remove_jobs(self.redis, {self.random_job_id: self.project_name})
         self.assertEqual(self.listing - {self.random_job_id}, list_jobs(self.redis))
 
     def test_remove_jobs_removes_all_queued_jobs_from_projects(self):
         from foundations_contrib.consumers.jobs.queued.project_listing_for_queued_job import ProjectListingForQueuedJob
-        from foundations.prototype.helpers.queued import remove_jobs, list_jobs
+        from foundations.helpers.queued import remove_jobs, list_jobs
 
         ProjectListingForQueuedJob(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
         ProjectListingForQueuedJob(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id_two}, None, {})
@@ -122,23 +122,23 @@ class TestQueuedJobHelpers(Spec):
         self.assertEqual(1, project_job_count)
 
     def test_remove_jobs_removes_all_queued_jobs_multiple_jobs(self):
-        from foundations.prototype.helpers.queued import remove_jobs, list_jobs
+        from foundations.helpers.queued import remove_jobs, list_jobs
         remove_jobs(self.redis, {self.random_job_id: self.project_name, self.random_job_id_two: self.project_name_two})
         self.assertEqual(self.listing - {self.random_job_id, self.random_job_id_two}, list_jobs(self.redis))
 
     def test_add_jobs_to_archive_adds_job_to_archive(self):
-        from foundations.prototype.helpers.queued import add_jobs_to_archive
+        from foundations.helpers.queued import add_jobs_to_archive
         add_jobs_to_archive(self.redis, [self.random_job_id])
         self.assertEqual({self.random_job_id.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
 
     def test_add_jobs_to_archive_adds_jobs_to_archive_multiple_jobs(self):
-        from foundations.prototype.helpers.queued import add_jobs_to_archive
+        from foundations.helpers.queued import add_jobs_to_archive
         add_jobs_to_archive(self.redis, [self.random_job_id, self.random_job_id_two])
         self.assertEqual({self.random_job_id.encode('utf-8'), self.random_job_id_two.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
 
     @patch('pysftp.Connection', _MockConnection)
     def test_remove_from_code_path_calls_remove_on_sftp_connection(self):
-        from foundations.prototype.helpers.queued import remove_job_from_code_path
+        from foundations.helpers.queued import remove_job_from_code_path
         import os.path as path
 
         config_manager = self._config_manager()
@@ -151,7 +151,7 @@ class TestQueuedJobHelpers(Spec):
 
     @patch('pysftp.Connection', _MockConnection)
     def test_remove_from_code_path_constructs_connections_with_correct_arguments(self):
-        from foundations.prototype.helpers.queued import remove_job_from_code_path
+        from foundations.helpers.queued import remove_job_from_code_path
 
         config_manager = self._config_manager()
 
@@ -169,7 +169,7 @@ class TestQueuedJobHelpers(Spec):
 
     @patch('pysftp.Connection', _MockConnection)
     def test_remove_from_code_path_constructs_connections_with_default_port_if_none_provided(self):
-        from foundations.prototype.helpers.queued import remove_job_from_code_path
+        from foundations.helpers.queued import remove_job_from_code_path
 
         config_manager = self._config_manager_no_port()
 

@@ -9,7 +9,7 @@ from foundations_spec import *
 from pandas import DataFrame
 from pandas.util.testing import assert_frame_equal
 
-from foundations.prototype.helpers.annotate import *
+from foundations.helpers.annotate import *
 
 class TestAnnotate(Spec):
     

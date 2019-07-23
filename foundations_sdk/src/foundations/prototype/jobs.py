@@ -39,66 +39,6 @@ def get_queued_jobs():
 
     return DataFrame(job_attributes)
 
-def cancel_queued_jobs(list_of_job_ids):
-    """
-    Cancels jobs which are currently in the queue, preventing them from eventually running when resources are available
-
-    Arguments:
-        list_of_job_ids {array} -- a list of job_ids as strings to cancel from the Foundations job queue
-
-    Returns:
-        cancelled_statuses {dict} -- A dictionary indicating if the cancelling of a queued job was successful or not for each input job_id
-
-    Raises:
-        - This method doesn't raise any exceptions.
-
-    Example:
-        ```python
-        import foundations
-        import foundations.prototype
-        from algorithms import train_model
-        
-        train_model = foundations.create_stage(train_model)
-        model = train_model()
-        model.run()
-
-        foundations.prototype.get_queued_jobs()
-        job_queue = foundations.prototype.cancel_queued_jobs(['209762cb-c767-4aea-bcaa-35b131982915'])
-        print(job_queue)
-        ```
-    """
-    from foundations_contrib.global_state import redis_connection
-    from foundations.prototype.helpers.queued import list_jobs, remove_jobs, add_jobs_to_archive, job_project_names, remove_job_from_code_path
-    from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
-    from foundations import config_manager
-
-    all_queued_jobs = list_jobs(redis_connection)
-
-    set_of_job_ids = set(list_of_job_ids)
-    set_of_queued_jobs = set(all_queued_jobs)
-
-    queued_jobs_ids = list(set_of_job_ids & set_of_queued_jobs)
-    ids_for_not_queued_jobs = list(set_of_job_ids - set_of_queued_jobs)
-
-    pipeline = RedisPipelineWrapper(redis_connection.pipeline())
-    job_id_project_mapping = job_project_names(redis_connection, list_of_job_ids)
-    remove_jobs(redis_connection, job_id_project_mapping)
-    add_jobs_to_archive(redis_connection, list_of_job_ids)
-
-    job_deployment_class = _job_deployment(config_manager)
-
-    if hasattr(job_deployment_class, 'cancel_jobs'):
-        cancellation_result = job_deployment_class.cancel_jobs(queued_jobs_ids)
-    else:
-        cancellation_result = _cancel_jobs(config_manager, queued_jobs_ids)
-    
-    pipeline.execute()
-
-    cancellation_result_not_queued = {job_id: False for job_id in ids_for_not_queued_jobs}
-    cancellation_result.update(cancellation_result_not_queued)
-
-    return cancellation_result
-
 def archive_jobs(list_of_job_ids):
     """
     Archives completed jobs, removing them from any project results on both the GUI and SDK. This function doesn't delete the jobs permanently, but only hides them from appearing again.

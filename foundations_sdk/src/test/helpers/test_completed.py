@@ -47,12 +47,12 @@ class TestCompletedJobHelpers(Spec):
             self.redis.sadd('projects:global:jobs:completed', job_id)
 
     def test_list_jobs_returns_all_completed_jobs(self):
-        from foundations.prototype.helpers.completed import list_jobs
+        from foundations.helpers.completed import list_jobs
         self.assertEqual(self.listing, list_jobs(self.redis))
 
     def test_job_project_names_returns_project_names(self):
         from foundations_contrib.consumers.jobs.queued.project_name import ProjectName
-        from foundations.prototype.helpers.completed import job_project_names
+        from foundations.helpers.completed import job_project_names
 
         consumer = ProjectName(self.redis)
         consumer.call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
@@ -63,20 +63,20 @@ class TestCompletedJobHelpers(Spec):
         self.assertEqual(expected, result)
 
     def test_list_archived_jobs_returns_all_archived_jobs(self):
-        from foundations.prototype.helpers.completed import list_archived_jobs
+        from foundations.helpers.completed import list_archived_jobs
 
         for job_id in self.listing:
             self.redis.sadd('projects:global:jobs:archived', job_id)
         self.assertEqual(self.listing, list_archived_jobs(self.redis))
 
     def test_remove_jobs_removes_all_completed_jobs(self):
-        from foundations.prototype.helpers.completed import remove_jobs, list_jobs
+        from foundations.helpers.completed import remove_jobs, list_jobs
         remove_jobs(self.redis, {self.random_job_id: self.project_name})
         self.assertEqual(self.listing - {self.random_job_id}, list_jobs(self.redis))
 
     def test_remove_jobs_removes_all_completed_jobs_from_projects(self):
         from foundations_contrib.consumers.jobs.queued.project_listing import ProjectListing
-        from foundations.prototype.helpers.completed import remove_jobs, list_jobs
+        from foundations.helpers.completed import remove_jobs, list_jobs
 
         ProjectListing(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id}, None, {})
         ProjectListing(self.redis).call({'project_name': self.project_name, 'job_id': self.random_job_id_two}, None, {})
@@ -85,17 +85,17 @@ class TestCompletedJobHelpers(Spec):
         self.assertEqual(1, project_job_count)
 
     def test_remove_jobs_removes_all_completed_jobs_multiple_jobs(self):
-        from foundations.prototype.helpers.completed import remove_jobs, list_jobs
+        from foundations.helpers.completed import remove_jobs, list_jobs
         remove_jobs(self.redis, {self.random_job_id: self.project_name, self.random_job_id_two: self.project_name_two})
         self.assertEqual(self.listing - {self.random_job_id, self.random_job_id_two}, list_jobs(self.redis))
 
     def test_add_jobs_to_archive_adds_job_to_archive(self):
-        from foundations.prototype.helpers.completed import add_jobs_to_archive
+        from foundations.helpers.completed import add_jobs_to_archive
         add_jobs_to_archive(self.redis, [self.random_job_id])
         self.assertEqual({self.random_job_id.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
 
     def test_add_jobs_to_archive_adds_jobs_to_archive_multiple_jobs(self):
-        from foundations.prototype.helpers.completed import add_jobs_to_archive
+        from foundations.helpers.completed import add_jobs_to_archive
         add_jobs_to_archive(self.redis, [self.random_job_id, self.random_job_id_two])
         self.assertEqual({self.random_job_id.encode('utf-8'), self.random_job_id_two.encode('utf-8')}, self.redis.smembers('projects:global:jobs:archived'))
 
