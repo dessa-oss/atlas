@@ -75,3 +75,4 @@ dist
 !**/fixtures/**/*.config.yaml
 !**/fixtures/**/*.json
 testing/test-cli-init
+test_pod.yaml
