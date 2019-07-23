@@ -29,7 +29,7 @@ class TestLogManager(Spec):
         return logging.getLogger()
 
     @let
-    def log_handler(self):
+    def console_log_handler(self):
         return self.root_logger.handlers[0]
   
     def test_logger_return_logging_type(self):
@@ -70,16 +70,16 @@ class TestLogManager(Spec):
         self.log_manager.get_logger('foundations.config_manager')
         self.assertEqual(1, len(self.root_logger.handlers))
 
-    def test_log_handler_return_format(self):
+    def test_console_log_handler_return_format(self):
         self.log_manager.get_logger('foundations.config_manager')
-        formatter = self.log_handler.formatter
+        formatter = self.console_log_handler.formatter
         self.assertEqual('%(asctime)s - %(name)s - %(levelname)s - %(message)s', formatter._fmt)
 
-    def test_log_handler_return_stdout(self):
+    def test_console_log_handler_return_stdout(self):
         from sys import stdout
 
         self.log_manager.get_logger('foundations.config_manager')
-        self.assertEqual(stdout, self.log_handler.stream)
+        self.assertEqual(stdout, self.console_log_handler.stream)
 
     def test_logger_return_cached_logger(self):
         first_logger = self.log_manager.get_logger('namespaced_log_levels')
