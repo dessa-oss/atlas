@@ -34,20 +34,25 @@ class LogManager(object):
         import foundations_contrib
         import yaml
         import logging.config
-        import os
-        import os.path
         import shutil
 
-        log_path = os.path.expanduser('~/.foundations/logs')
-        os.makedirs(log_path, exist_ok=True)
+        self._make_log_directory()
         
         with open(f'{foundations_contrib.root()}/resources/logging/handlers.yaml', 'r') as file:
             config = yaml.load(file.read())
-        config['handlers']['system'] = {'class': 'logging.FileHandler', 'formatter': 'simple', 'filename': f'{log_path}/system.log', 'level': 'DEBUG'}
+        config['handlers']['system'] = {'class': 'logging.FileHandler', 'formatter': 'simple', 'filename': f'{self._log_path()}/system.log', 'level': 'DEBUG'}
         config['root']['handlers'].append('system')
         logging.config.dictConfig(config)
 
         self._loggers = {}
+
+    def _log_path(self):
+        import os.path
+        return os.path.expanduser('~/.foundations/logs')
+    
+    def _make_log_directory(self):
+        import os
+        os.makedirs(self._log_path(), exist_ok=True)
 
     def _add_logger(self, name):
         from logging import getLogger
