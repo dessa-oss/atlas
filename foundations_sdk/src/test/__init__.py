@@ -9,6 +9,7 @@ from test.helpers import *
 from test.staging import *
 from test.job_parameters import *
 from test.parameters import *
+from test.prototype import *
 
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher

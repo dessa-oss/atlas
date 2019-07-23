@@ -22,11 +22,10 @@ def get_metrics_for_all_jobs(project_name):
     Example:
         ```python
         import foundations
-        import foundations.prototype
         from algorithms import train_model, print_metrics
 
         train_model = foundations.create_stage(train_model)
-        foundations.prototype.set_tag('model', 'CNN')
+        foundations.set_tag('model', 'CNN')
         model = train_model()
 
         all_metrics = foundations.prototype.get_metrics_for_all_jobs(job_name)
@@ -35,7 +34,7 @@ def get_metrics_for_all_jobs(project_name):
     """
     import foundations
     from foundations_contrib.global_state import redis_connection
-    from foundations.prototype.helpers.annotate import annotations_for_multiple_jobs
+    from foundations.helpers.annotate import annotations_for_multiple_jobs
     from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
     from pandas import DataFrame
 
@@ -51,52 +50,3 @@ def get_metrics_for_all_jobs(project_name):
             row[tag_key] = value
     
     return DataFrame(metric_rows)
-
-def set_tag(key, value):
-    """
-    Adds additional static, predetermined information as a tag to the job. This is a way to categorize attributes of a job that is not dynamically generated during runtime.
-
-    Arguments:
-        key {str} -- the name of the tag.
-        value {number, str, bool, array of [number|str|bool], array of array of [number|str|bool]} -- the value associated with the given tag.
-
-    Returns:
-        - This function doesn't return a value.
-
-    Raises:
-        - This method doesn't raise any exceptions.
-
-    Notes:
-        If a tag is updated multiple times, Foundations will update the tag to the newest value, but return a warning indicating that the
-        key has been updated.
-
-    Example:
-        ```python
-        import foundations
-        import foundations.prototype
-        from algorithms import train_model_xgboost
-        
-        train_model = foundations.create_stage(train_model_xgboost)
-        model = train_model()
-        foundations.prototype.set_tag('model', 'xgboost')
-        model.run()
-        ```
-    """
-    from foundations_contrib.global_state import log_manager, current_foundations_context, message_router
-    from foundations_contrib.producers.tag_set import TagSet
-
-    pipeline_context = current_foundations_context().pipeline_context()
-
-    if _job_running(pipeline_context):
-        tag_set_producer = TagSet(message_router, pipeline_context.file_name, key, value)
-        tag_set_producer.push_message()
-    elif not log_manager.foundations_not_running_warning_printed():
-        logger = log_manager.get_logger(__name__)
-        logger.warning('Script not run with Foundations.')
-        log_manager.set_foundations_not_running_warning_printed()
-
-def _job_running(pipeline_context):
-    try:
-        return pipeline_context.file_name is not None
-    except:
-        return False

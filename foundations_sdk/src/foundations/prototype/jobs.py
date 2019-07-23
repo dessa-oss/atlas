@@ -64,7 +64,7 @@ def archive_jobs(list_of_job_ids):
         ```
     """
     from foundations_contrib.global_state import redis_connection
-    from foundations.prototype.helpers.completed import list_jobs, remove_jobs, add_jobs_to_archive, job_project_names
+    from foundations.helpers.completed import list_jobs, remove_jobs, add_jobs_to_archive, job_project_names
     from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
 
     completed_jobs = list_jobs(redis_connection)
@@ -84,7 +84,7 @@ def _cancel_jobs(config_manager, job_ids):
     return {job_id: _cancel_job(config_manager, job_id) for job_id in job_ids}
 
 def _cancel_job(config_manager, job_id):
-    from foundations.prototype.helpers.queued import remove_job_from_code_path
+    from foundations.helpers.queued import remove_job_from_code_path
 
     try:
         remove_job_from_code_path(config_manager, job_id)

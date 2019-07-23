@@ -6,9 +6,8 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 """
 
 import foundations
-import foundations.prototype
 
-foundations.prototype.set_tag('model type', 'simple mlp')
-foundations.prototype.set_tag('data set', 'out of time')
-foundations.prototype.set_tag('what I was doing,', 'drinking tea')
+foundations.set_tag('model type', 'simple mlp')
+foundations.set_tag('data set', 'out of time')
+foundations.set_tag('what I was doing,', 'drinking tea')
 print('Hello World!')

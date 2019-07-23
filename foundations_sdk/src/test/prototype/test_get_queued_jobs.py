@@ -70,7 +70,7 @@ class TestGetQueuedJobs(Spec):
         self.assertEqual(0, project_job_count)
 
     def test_archive_jobs_archives_completed_jobs(self):
-        from foundations.prototype.helpers.completed import list_archived_jobs
+        from foundations.helpers.completed import list_archived_jobs
 
         self._track_completed_job(self.project_name, self.job_id)
         archive_jobs([self.job_id, self.job_id_two])

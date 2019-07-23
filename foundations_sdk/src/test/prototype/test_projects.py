@@ -12,6 +12,7 @@ from pandas import DataFrame
 from pandas.util.testing import assert_frame_equal
 from uuid import uuid4
 
+from foundations import set_tag
 from foundations.prototype.projects import *
 
 class TestPrototypeProjects(Spec):
@@ -101,8 +102,9 @@ class TestPrototypeProjects(Spec):
         from foundations_spec.helpers.conditional_return import ConditionalReturn
 
         mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
-        mock.return_when(self.mock_logger, 'foundations.prototype.projects')
+        mock.return_when(Mock(), 'foundations.prototype.projects')
         mock.return_when(Mock(), 'foundations_contrib.consumers.annotate')
+        mock.return_when(self.mock_logger, 'foundations.projects')
         return mock
 
     @set_up

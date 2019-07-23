@@ -79,7 +79,7 @@ class JobsTestsHelperMixinV2(object):
     @classmethod
     def _set_tags(klass, job_name, tags):
         from foundations_contrib.global_state import current_foundations_context
-        from foundations.prototype import set_tag
+        from foundations import set_tag
 
         pipeline_context = current_foundations_context().pipeline_context()
         pipeline_context.file_name = job_name
