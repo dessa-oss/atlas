@@ -127,5 +127,14 @@ class TestLogManager(Spec):
         self.log_manager.set_foundations_not_running_warning_printed(False)
         self.assertFalse(self.log_manager.foundations_not_running_warning_printed())
 
+    def test_silences_paramiko_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko').level)
+
+    def test_silences_paramiko_transport_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko.transport').level)
+
+    def test_silences_paramiko_sftp_logs(self):
+        self.assertEqual(logging.ERROR, self.log_manager.get_logger('paramiko.transport.sftp').level)
+
     def _setup_logger(self):
         self.log_manager.get_logger('test')
