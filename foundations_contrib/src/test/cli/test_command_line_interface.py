@@ -33,6 +33,8 @@ class TestCommandLineInterface(Spec):
             if self._time_elapsed >= self.time_to_wait - self._epsilon:
                 self.callback()
 
+    mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+
     @let_now
     def mock_environment(self):
         return self.patch('os.environ', {})
@@ -431,6 +433,10 @@ class TestCommandLineInterface(Spec):
     def test_server_deploys_model_server_with_specified_job_id(self):
         CommandLineInterface(['serve', 'start', self.mock_job_id]).execute()
         self.mock_deploy_model_package.assert_called_with(self.mock_job_id)
+
+    def test_deploy_model_serving_logs_event(self):
+        CommandLineInterface(['serve', 'start', self.mock_job_id]).execute()
+        self.mock_message_router.push_message.assert_called_with('model_served', {'job_id': self.mock_job_id})
 
     def test_server_destroys_model_server_with_specified_model_name(self):
         CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()

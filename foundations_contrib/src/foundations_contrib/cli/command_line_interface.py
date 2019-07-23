@@ -308,6 +308,9 @@ class CommandLineInterface(object):
 
     def _kubernetes_model_serving_deploy(self):
         from foundations_contrib.cli.model_package_server import deploy
+        from foundations_contrib.global_state import message_router
+
+        message_router.push_message('model_served', {'job_id': self._arguments.job_id})
         deploy(self._arguments.job_id)
 
     def _kubernetes_model_serving_destroy(self):
