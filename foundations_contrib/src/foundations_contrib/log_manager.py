@@ -51,7 +51,8 @@ class LogManager(object):
                 'console': {
                     'class': 'logging.StreamHandler',
                     'formatter': 'simple',
-                    'stream': 'ext://sys.stdout'
+                    'stream': 'ext://sys.stdout',
+                    'level': self._config_manager.config().get('log_level', 'INFO')
                 },
                 'system': self._system_log_configuration(),
             },
@@ -90,10 +91,9 @@ class LogManager(object):
 
         new_logger = getLogger(name)
         log_level = self._find_log_level(name)
-        if log_level is None:
-            log_level = self._config_manager.config().get('log_level', 'INFO')
+        if log_level is not None:
+            new_logger.level = getLevelName(log_level)
         
-        new_logger.level = getLevelName(log_level)
         self._loggers[name] = new_logger
 
     def _find_log_level(self, name):

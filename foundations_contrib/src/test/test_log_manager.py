@@ -11,11 +11,10 @@ import logging
 
 class TestLogManager(Spec):
 
-    @set_up
-    def set_up(self):
+    @let
+    def config_manager(self):
         from foundations.config_manager import ConfigManager
-
-        self.config_manager = ConfigManager()
+        return ConfigManager()
 
     @let
     def log_manager(self):
@@ -46,21 +45,17 @@ class TestLogManager(Spec):
         self.assertTrue(isinstance(self.result_logger, logging.Logger))
 
     def test_logger_returns_log_level_info(self):
-        self.assertEqual(logging.INFO, self.result_logger.level)
+        self.assertEqual(logging.INFO, self.console_log_handler.level)
 
     def test_logger_return_log_level_override(self):
         self.config_manager['log_level'] = 'DEBUG'
-        self.assertEqual(logging.DEBUG, self.result_logger.level)
+        self._setup_logger()
+        self.assertEqual(logging.DEBUG, self.console_log_handler.level)
 
     def test_logger_return_namespace_override(self):
         self.config_manager['namespaced_log_levels'] = {'a': 'DEBUG'}
         result_logger = self.log_manager.get_logger('a')
         self.assertEqual(logging.DEBUG, result_logger.level)
-
-    def test_logger_return_namespace_override_does_not_match(self):
-        self.config_manager['namespaced_log_levels'] = {'a': 'DEBUG'}
-        result_logger = self.log_manager.get_logger('b')
-        self.assertEqual(logging.INFO, result_logger.level)
 
     def test_logger_return_namespace_override_matches_with_longer_value(self):
         self.config_manager['namespaced_log_levels'] = {'foundations': 'DEBUG'}
@@ -127,3 +122,6 @@ class TestLogManager(Spec):
         self.log_manager.set_foundations_not_running_warning_printed()
         self.log_manager.set_foundations_not_running_warning_printed(False)
         self.assertFalse(self.log_manager.foundations_not_running_warning_printed())
+
+    def _setup_logger(self):
+        self.log_manager.get_logger('test')
