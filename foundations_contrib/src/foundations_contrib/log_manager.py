@@ -31,22 +31,15 @@ class LogManager(object):
 
     def _load(self):
         from sys import stdout
+        import foundations_contrib
+        import yaml
+        import logging.config
         
-        logging.basicConfig()
-        logger = logging.getLogger()
-        del logger.handlers[:]
-        logger.addHandler(self._stdout_log_handler())
+        with open(f'{foundations_contrib.root()}/resources/logging/handlers.yaml', 'r') as file:
+            config = yaml.load(file.read())
+        logging.config.dictConfig(config)
 
         self._loggers = {}
-
-    def _stdout_log_handler(self):
-        from sys import stdout
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        log_handler = logging.StreamHandler(stdout)
-        log_handler.setFormatter(formatter)
-
-        return log_handler
 
     def _add_logger(self, name):
         from logging import getLogger
@@ -61,7 +54,6 @@ class LogManager(object):
         self._loggers[name] = new_logger
 
     def _find_log_level(self, name):
-
         longest_match = 0
         log_level = None
         log_levels = self._config_manager.config().get('namespaced_log_levels', {})
