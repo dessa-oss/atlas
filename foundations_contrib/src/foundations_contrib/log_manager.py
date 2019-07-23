@@ -32,7 +32,7 @@ class LogManager(object):
     def _load(self):
         from sys import stdout
         
-        logging.basicConfig(stream=stdout)
+        logging.basicConfig()
         logger = logging.getLogger()
         del logger.handlers[:]
         logger.addHandler(self._stdout_log_handler())
