@@ -48,13 +48,8 @@ class MessageRouter(object):
                 timestamp {} -- timestamp to be used for message, default to None
             """
             from time import time
-            from foundations_contrib.global_state import log_manager
 
-            logger = log_manager.get_logger(__name__)
-            log_message = f'{route_name} {message}'
-            if metadata is not None:
-                log_message += f' {metadata}'
-            logger.debug(log_message)
+            self._log_message(route_name, message, metadata)
 
             if not timestamp:
                 timestamp = time()
@@ -62,6 +57,15 @@ class MessageRouter(object):
             for route in self.routes:
                 if route_name == route.get_name():
                     route.push_message(message, timestamp, metadata)
+
+        def _log_message(self, route_name, message, metadata):
+            from foundations_contrib.global_state import log_manager
+
+            logger = log_manager.get_logger(__name__)
+            log_message = f'{route_name} {message}'
+            if metadata is not None:
+                log_message += f' {metadata}'
+            logger.debug(log_message)
 
         def _in_route(self, route_name):
             for route in self.routes:
