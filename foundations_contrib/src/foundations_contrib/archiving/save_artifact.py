@@ -32,20 +32,23 @@ class _ArtifactSaver(object):
 
     def save_artifact(self):
         if self._artifact_exists():
-            self._logger.warning(f'Artifact "{self._key}" already exists - overwriting.')
+            self._logger.warning(f'Artifact "{self._blob_name_in_archive()}" already exists - overwriting.')
 
         self._append_artifact_to_archive()
         self._append_metadata_to_archive()
 
     def _artifact_exists(self):
-        return self._artifact_archive.exists(f'artifacts/{self._key}', prefix=self._job_id)
+        return self._artifact_archive.exists(f'artifacts/{self._blob_name_in_archive()}', prefix=self._job_id)
 
     def _append_artifact_to_archive(self):
         self._artifact_archive.append_file('artifacts', self._filepath, self._job_id, target_name=self._key)
 
     def _append_metadata_to_archive(self):
-        metadata_blob_basename = self._key or self._filename()
+        metadata_blob_basename = self._blob_name_in_archive()
         self._artifact_archive.append(f'artifacts/{metadata_blob_basename}.metadata', self._metadata(), self._job_id)
+
+    def _blob_name_in_archive(self):
+        return self._key or self._filename()
 
     def _filename(self):
         import os.path as path
