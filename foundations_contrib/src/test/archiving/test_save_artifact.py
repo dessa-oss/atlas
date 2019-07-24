@@ -72,6 +72,7 @@ class TestSaveArtifact(Spec):
 
         filename = path.basename(self.filepath)
         _, extension = path.splitext(filename)
+        extension_without_dot = extension[1:]
 
         save_artifact(self.filepath)
-        self._mock_archive.append.assert_called_with('artifacts/' + path.basename(self.filepath) + '.metadata', {'file_extension': extension}, self.job_id)
+        self._mock_archive.append.assert_called_with('artifacts/' + path.basename(self.filepath) + '.metadata', {'file_extension': extension_without_dot}, self.job_id)

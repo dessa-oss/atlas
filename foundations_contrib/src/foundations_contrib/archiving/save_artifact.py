@@ -23,4 +23,5 @@ def save_artifact(filepath):
 
         filename = path.basename(filepath)
         _, extension = path.splitext(filename)
-        artifact_archive.append('artifacts/' + filename + '.metadata', {'file_extension': extension}, job_id)
+        extension_without_dot = extension[1:]
+        artifact_archive.append('artifacts/' + filename + '.metadata', {'file_extension': extension_without_dot}, job_id)

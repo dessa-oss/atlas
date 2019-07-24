@@ -11,26 +11,38 @@ import foundations
 
 class TestSaveArtifact(Spec):
 
+    @let
+    def _artifact_archive(self):
+        from foundations_contrib.archiving import load_archive
+        return load_archive('artifact_archive')
+
     @set_up
     def set_up(self):
         import os
         import os.path as path
         import shutil
+        import copy
 
-        from foundations_contrib.archiving import load_archive
+        import foundations
 
         self._config_dir = path.expanduser('~/.foundations/config')
+        self._config_file_path = path.join(self._config_dir, 'stageless_local.config.yaml')
+        
         os.makedirs(self._config_dir, exist_ok=True)
-        shutil.copyfile('config/local.config.yaml', path.join(self._config_dir, 'local.config.yaml'))
+        shutil.copyfile('config/stageless_local.config.yaml', self._config_file_path)
 
-        self._artifact_archive = load_archive('artifact_archive')
+        self._old_config = copy.deepcopy(foundations.config_manager.config())
+        foundations.config_manager.config().clear()
 
     @tear_down
     def tear_down(self):
         import os
         import os.path as path
         
-        os.remove(path.join(self._config_dir, 'local.config.yaml'))
+        import foundations
+
+        os.remove(self._config_file_path)
+        foundations.config_manager.config().update(self._old_config)
 
     def test_save_artifact_outside_of_job_logs_warning(self):
         import subprocess
@@ -40,11 +52,10 @@ class TestSaveArtifact(Spec):
         self.assertIn('WARNING', process_output)
         self.assertIn('Cannot save artifact outside of job.', process_output)
 
-    @skip('not implemented')
     def test_save_artifact_with_filepath_only_saves_file_with_key_equal_to_basename_and_saves_metadata_file_that_contains_extension(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact')
+        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact', env='stageless_local')
         job_deployment.wait_for_deployment_to_complete()
-        
+
         job_id = job_deployment.job_name()
         artifact_contents = self._artifact_archive.fetch_binary('artifacts/cool-artifact.txt', job_id)
         artifact_metadata = self._artifact_archive.fetch('artifacts/cool-artifact.txt.metadata', job_id)
