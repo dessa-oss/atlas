@@ -10,9 +10,11 @@ def save_artifact(filepath):
     from foundations_contrib.archiving import load_archive
 
     logger = log_manager.get_logger(__name__)
-    if not current_foundations_context().is_in_running_job():
-        logger.warning('Cannot save artifact outside of job.')
+    foundations_context = current_foundations_context()
 
-    job_id = current_foundations_context().job_id()
-    artifact_archive = load_archive('artifact_archive')
-    artifact_archive.append_file('artifacts', filepath, job_id)
+    if not foundations_context.is_in_running_job():
+        logger.warning('Cannot save artifact outside of job.')
+    else:
+        job_id = foundations_context.job_id()
+        artifact_archive = load_archive('artifact_archive')
+        artifact_archive.append_file('artifacts', filepath, job_id)

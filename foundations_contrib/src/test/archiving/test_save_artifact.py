@@ -56,3 +56,10 @@ class TestSaveArtifact(Spec):
 
         save_artifact(self.filepath)
         self._mock_archive.append_file.assert_called_once_with('artifacts', self.filepath, self.job_id)
+
+    def test_save_artifact_outside_job_not_saving_artifact(self):
+        self._mock_foundations_context.is_in_running_job.return_value = False
+        load_archive = self.patch('foundations_contrib.archiving.load_archive')
+        
+        save_artifact(self.filepath)
+        load_archive.assert_not_called()
