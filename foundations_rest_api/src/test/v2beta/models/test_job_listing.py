@@ -16,7 +16,8 @@ class TestJobListingV2(Spec):
     def fake_tags(self):
         return self.faker.pydict()
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_contrib.global_state import redis_connection
