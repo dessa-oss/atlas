@@ -19,6 +19,11 @@ class TestSaveArtifact(Spec):
     def filepath(self):
         return self.faker.file_path()
 
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+
+
     @set_up
     def set_up(self):
         mock_get_logger = self.patch('foundations_contrib.global_state.log_manager.get_logger', ConditionalReturn())
@@ -29,14 +34,25 @@ class TestSaveArtifact(Spec):
 
         mock_foundations_context_function.return_value = self._mock_foundations_context
 
+        self._mock_archive = Mock()
+        load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
+        load_archive.return_when(self._mock_archive, 'artifact_archive')
+
     def test_save_artifact_outside_job_logs_warning(self):
         self._mock_foundations_context.is_in_running_job.return_value = False
 
-        save_artifact(self.faker.file_path())
+        save_artifact(self.filepath)
         self.mock_logger.warning.assert_called_once_with('Cannot save artifact outside of job.')
 
     def test_save_artifact_in_job_does_not_log_warning(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
 
-        save_artifact(self.faker.file_path())
+        save_artifact(self.filepath)
         self.mock_logger.warning.assert_not_called()
+
+    def test_save_artifact_in_job_appends_file_to_archive(self):
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        save_artifact(self.filepath)
+        self._mock_archive.append_file.assert_called_once_with('artifacts', self.filepath, self.job_id)
