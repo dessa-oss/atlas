@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def save_artifact(filepath):
+def save_artifact(filepath, key=None):
     import os.path as path
 
     from foundations_contrib.global_state import log_manager, current_foundations_context
@@ -19,9 +19,17 @@ def save_artifact(filepath):
     else:
         job_id = foundations_context.job_id()
         artifact_archive = load_archive('artifact_archive')
-        artifact_archive.append_file('artifacts', filepath, job_id)
+
+        if key is None:
+            artifact_archive.append_file('artifacts', filepath, job_id)
+        else:
+            artifact_archive.append_file('artifacts', filepath, job_id, target_name=key)
 
         filename = path.basename(filepath)
         _, extension = path.splitext(filename)
         extension_without_dot = extension[1:]
-        artifact_archive.append('artifacts/' + filename + '.metadata', {'file_extension': extension_without_dot}, job_id)
+
+        if key is None:
+            artifact_archive.append(f'artifacts/{filename}.metadata', {'file_extension': extension_without_dot}, job_id)
+        else:
+            artifact_archive.append(f'artifacts/{key}.metadata', {'file_extension': extension_without_dot}, job_id)

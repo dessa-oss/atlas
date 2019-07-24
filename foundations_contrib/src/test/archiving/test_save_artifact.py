@@ -23,6 +23,9 @@ class TestSaveArtifact(Spec):
     def job_id(self):
         return self.faker.uuid4()
 
+    @let
+    def key(self):
+        return self.faker.word()
 
     @set_up
     def set_up(self):
@@ -75,4 +78,24 @@ class TestSaveArtifact(Spec):
         extension_without_dot = extension[1:]
 
         save_artifact(self.filepath)
-        self._mock_archive.append.assert_called_with('artifacts/' + path.basename(self.filepath) + '.metadata', {'file_extension': extension_without_dot}, self.job_id)
+        self._mock_archive.append.assert_called_with(f'artifacts/{path.basename(self.filepath)}.metadata', {'file_extension': extension_without_dot}, self.job_id)
+
+    def test_save_artifact_in_job_with_key_appends_file_to_archive_using_key_as_target(self):
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        save_artifact(self.filepath, key=self.key)
+        self._mock_archive.append_file.assert_called_once_with('artifacts', self.filepath, self.job_id, target_name=self.key)
+
+    def test_save_artifact_in_job_with_key_appends_metadata_to_archive_using_key_as_filename(self):
+        import os.path as path
+
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        filename = path.basename(self.filepath)
+        _, extension = path.splitext(filename)
+        extension_without_dot = extension[1:]
+
+        save_artifact(self.filepath, key=self.key)
+        self._mock_archive.append.assert_called_with(f'artifacts/{self.key}.metadata', {'file_extension': extension_without_dot}, self.job_id)
