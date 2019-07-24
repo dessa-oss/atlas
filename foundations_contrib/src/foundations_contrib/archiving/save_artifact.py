@@ -6,10 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def save_artifact(filepath, key=None):
-    import os.path as path
-
     from foundations_contrib.global_state import log_manager, current_foundations_context
-    from foundations_contrib.archiving import load_archive
 
     logger = log_manager.get_logger(__name__)
     foundations_context = current_foundations_context()
@@ -18,12 +15,38 @@ def save_artifact(filepath, key=None):
         logger.warning('Cannot save artifact outside of job.')
     else:
         job_id = foundations_context.job_id()
-        artifact_archive = load_archive('artifact_archive')
 
-        artifact_archive.append_file('artifacts', filepath, job_id, target_name=key)
+        artifact_saver = _ArtifactSaver(filepath, job_id, key)
+        artifact_saver.save_artifact()
 
-        filename = path.basename(filepath)
-        _, extension = path.splitext(filename)
+class _ArtifactSaver(object):
+
+    def __init__(self, filepath, job_id, key):
+        from foundations_contrib.archiving import load_archive
+
+        self._artifact_archive = load_archive('artifact_archive')
+        self._filepath = filepath
+        self._job_id = job_id
+        self._key = key
+
+    def save_artifact(self):
+        self._append_artifact_to_archive()
+        self._append_metadata_to_archive()
+
+    def _append_artifact_to_archive(self):
+        self._artifact_archive.append_file('artifacts', self._filepath, self._job_id, target_name=self._key)
+
+    def _append_metadata_to_archive(self):
+        metadata_blob_basename = self._key or self._filename()
+        self._artifact_archive.append(f'artifacts/{metadata_blob_basename}.metadata', self._metadata(), self._job_id)
+
+    def _filename(self):
+        import os.path as path
+        return path.basename(self._filepath)
+
+    def _metadata(self):
+        import os.path as path
+
+        _, extension = path.splitext(self._filepath)
         extension_without_dot = extension[1:]
-
-        artifact_archive.append(f'artifacts/{key or filename}.metadata', {'file_extension': extension_without_dot}, job_id)
+        return {'file_extension': extension_without_dot}
