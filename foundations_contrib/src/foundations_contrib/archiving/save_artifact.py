@@ -20,16 +20,10 @@ def save_artifact(filepath, key=None):
         job_id = foundations_context.job_id()
         artifact_archive = load_archive('artifact_archive')
 
-        if key is None:
-            artifact_archive.append_file('artifacts', filepath, job_id)
-        else:
-            artifact_archive.append_file('artifacts', filepath, job_id, target_name=key)
+        artifact_archive.append_file('artifacts', filepath, job_id, target_name=key)
 
         filename = path.basename(filepath)
         _, extension = path.splitext(filename)
         extension_without_dot = extension[1:]
 
-        if key is None:
-            artifact_archive.append(f'artifacts/{filename}.metadata', {'file_extension': extension_without_dot}, job_id)
-        else:
-            artifact_archive.append(f'artifacts/{key}.metadata', {'file_extension': extension_without_dot}, job_id)
+        artifact_archive.append(f'artifacts/{key or filename}.metadata', {'file_extension': extension_without_dot}, job_id)

@@ -58,7 +58,7 @@ class TestSaveArtifact(Spec):
         self._mock_foundations_context.job_id.return_value = self.job_id
 
         save_artifact(self.filepath)
-        self._mock_archive.append_file.assert_called_once_with('artifacts', self.filepath, self.job_id)
+        self._mock_archive.append_file.assert_called_once_with('artifacts', self.filepath, self.job_id, target_name=None)
 
     def test_save_artifact_outside_job_not_saving_artifact(self):
         self._mock_foundations_context.is_in_running_job.return_value = False
