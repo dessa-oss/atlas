@@ -9,7 +9,6 @@ from test.helpers import *
 from test.staging import *
 from test.job_parameters import *
 from test.parameters import *
-from test.prototype import *
 
 from test.test_default_stage_logging import TestDefaultStageLogging
 from test.test_argument_hasher import TestArgumentHasher
@@ -26,3 +25,4 @@ from test.test_job_deployer import TestJobDeployer
 from test.test_set_job_resources import TestSetJobResources
 from test.test_deploy import TestDeploy
 from test.test_save_artifact import TestSaveArtifact
+from test.test_get_queued_jobs import TestGetQueuedJobs

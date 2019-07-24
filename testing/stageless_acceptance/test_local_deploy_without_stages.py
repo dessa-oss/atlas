@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 import foundations
-import foundations.prototype
+import foundations.projects
 
 from pandas.testing import assert_frame_equal
 
@@ -147,7 +147,7 @@ class TestLocalDeployWithoutStages(Spec):
         import pandas
 
         try:
-            return foundations.prototype.get_metrics_for_all_jobs(project_name)
+            return foundations.projects.get_metrics_for_all_jobs(project_name)
         except ValueError:
             if ignore_project_not_exist:
                 return pandas.DataFrame()

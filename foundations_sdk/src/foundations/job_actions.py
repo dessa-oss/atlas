@@ -80,7 +80,6 @@ def get_queued_jobs():
     Example:
         ```python
         import foundations
-        import foundations.prototype
         from algorithms import train_model
 
         train_model = foundations.create_stage(train_model)

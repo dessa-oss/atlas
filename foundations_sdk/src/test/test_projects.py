@@ -11,36 +11,152 @@ from mock import patch
 from foundations.projects import *
 from foundations_spec.helpers import *
 from foundations_spec.helpers.spec import Spec
+from foundations_spec.helpers.conditional_return import ConditionalReturn
+from pandas import DataFrame
+from pandas.util.testing import assert_frame_equal
+from uuid import uuid4
+from foundations import set_tag
+
 
 class TestProjects(Spec):
+    foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+    message_router = let_patch_mock('foundations_contrib.global_state.message_router')
 
     @let
-    def foundations_context(self):
-        from foundations.global_state import foundations_context
-        return foundations_context
+    def provenance_annotations(self):
+        return {}
+
+    @let
+    def random_boolean(self):
+        return self.faker.boolean()
+    
+    @let_now
+    def redis(self):
+        from fakeredis import FakeRedis
+        return self.patch('foundations_contrib.global_state.redis_connection', FakeRedis())
+    
+    @let
+    def get_metrics_mock(self):
+        conditional_mock = ConditionalReturn()
+        self.patch('foundations.projects._get_metrics_for_all_jobs', conditional_mock)
+        conditional_mock.return_when(self.metrics, self.project_name, self.random_boolean)
+        
+        return conditional_mock
+
+    @let
+    def project_name(self):
+        return self.faker.name()
+
+    @let
+    def job_id(self):
+        return self.faker.sha256()
+
+    @let
+    def job_id_two(self):
+        return self.faker.sha256()
+
+    @let
+    def metrics(self):
+        return DataFrame([
+            {
+                'loss': '99',
+                'job_id': self.job_id,
+            }, {
+                'loss': '34',
+                'job_id': self.job_id_two,
+            }
+        ])
+
+    @let
+    def annotations(self):
+        return {
+            'model': 'mlp',
+            'learning rate': '999999'
+        }
+
+    @let
+    def annotations_data_frame(self):
+        return DataFrame([
+            {'tag_{}'.format(key): value for key, value in self.annotations.items()}
+        ])
+
+    @let
+    def annotations_two(self):
+        return {
+            'model': 'logreg',
+            'learning rate': '5465'
+        }
+
+    @let
+    def random_tag(self):
+        return self.faker.name()
+
+    @let
+    def random_tag_value(self):
+        return self.faker.sentence()
+
+    @let
+    def annotations_data_frame_two(self):
+        return DataFrame([
+            {'tag_{}'.format(key): value for key, value in self.annotations_two.items()}
+        ])
+
+    mock_logger = let_mock()
+
+    @let_now
+    def get_logger_mock(self):
+        from foundations_spec.helpers.conditional_return import ConditionalReturn
+
+        mock = self.patch('foundations_contrib.log_manager.LogManager.get_logger', ConditionalReturn())
+        mock.return_when(Mock(), 'foundations_contrib.consumers.annotate')
+        mock.return_when(self.mock_logger, 'foundations.projects')
+        return mock
+
+    @set_up
+    def set_up(self):
+        from foundations_internal.pipeline_context import PipelineContext
+
+        self._pipeline_context = PipelineContext()
+        self._pipeline_context.file_name = None
+        self._pipeline_context.provenance.project_name = self.project_name
+
+        self.foundations_context.pipeline_context.return_value = self._pipeline_context
+
+        self.foundations_context.pipeline_context().provenance.annotations = self.provenance_annotations
+        self.redis.flushall()
+
+    @tear_down
+    def tear_down(self):
+        from foundations_contrib.global_state import log_manager
+        log_manager.set_foundations_not_running_warning_printed(False)
+
+    # @let
+    # def foundations_context(self):
+    #     from foundations.global_state import foundations_context
+    #     return foundations_context
 
     def test_set_project_name_sets_project_name(self):
-        set_project_name('some project')
+        set_project_name(self.project_name)
         self.assertEqual(
-            'some project', self.foundations_context.pipeline_context().provenance.project_name)
+            self.project_name, self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_sets_project_name_different_name(self):
-        set_project_name('some different project name')
-        self.assertEqual('some different project name',
+        set_project_name(self.project_name)
+        self.assertEqual(self.project_name,
                          self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_is_global(self):
         import foundations
 
-        foundations.set_project_name('some project')
+        foundations.set_project_name(self.project_name)
         self.assertEqual(
-            'some project', self.foundations_context.pipeline_context().provenance.project_name)
+            self.project_name, self.foundations_context.pipeline_context().provenance.project_name)
 
     def test_set_project_name_is_global(self):
         import foundations
 
-        foundations.set_project_name('some different project name')
-        self.assertEqual('some different project name',
+        foundations.set_project_name(self.project_name)
+        self.assertEqual(self.project_name,
                          self.foundations_context.pipeline_context().provenance.project_name)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
@@ -55,13 +171,13 @@ class TestProjects(Spec):
             {'name': 'd', 'value': '3', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
-        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+        listing_mock.return_value = [{'project_name': self.project_name, 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
             [
                 {
-                    'project_name': 'project1',
+                    'project_name': self.project_name,
                     'b': '1',
                     'c': '2',
                     'd': '3',
@@ -71,7 +187,7 @@ class TestProjects(Spec):
             ]
         )
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1', True), check_like=True)
+            self.project_name, True), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -85,20 +201,20 @@ class TestProjects(Spec):
             {'name': 'd', 'value': '3', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
-        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+        listing_mock.return_value = [{'project_name': self.project_name, 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
             [
                 {
-                    'project_name': 'project1',
+                    'project_name': self.project_name,
                     'loss': 100,
                     'a': 5
                 }
             ]
         )
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1', False), check_like=True)
+            self.project_name, False), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -113,7 +229,7 @@ class TestProjects(Spec):
             {'name': 'd-1', 'value': '4', 'type': 'string', 'source': 'constant'},
         ]
         output_metrics = {'loss': 100}
-        listing_mock.return_value = [{'project_name': 'project1', 'job_parameters': {
+        listing_mock.return_value = [{'project_name': self.project_name, 'job_parameters': {
             'a': 5}, 'input_params': input_params, 'output_metrics': output_metrics}]
 
         expected_result = DataFrame(
@@ -121,7 +237,7 @@ class TestProjects(Spec):
                 {
                     'd-0': '1',
                     'd-1': '4',
-                    'project_name': 'project1',
+                    'project_name': self.project_name,
                     'loss': 100,
                     'c': '2',
                     'b': '3',
@@ -130,7 +246,7 @@ class TestProjects(Spec):
             ]
         )
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
-            'project1', True), check_like=True)
+            self.project_name, True), check_like=True)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -180,7 +296,8 @@ class TestProjects(Spec):
         expected_result = DataFrame(expected_data)
         assert_frame_equal(expected_result, get_metrics_for_all_jobs(
             'project2', True), check_like=True)
-
+    
+    @skip
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
     def test_get_metrics_for_all_jobs_correct_order(self, listing_mock, find_mock):
@@ -195,13 +312,14 @@ class TestProjects(Spec):
         output_metrics = {'loss': 100}
 
         listing_mock.return_value = [
-            {'project_name': 'project1', 'job_parameters': {'a': 5},
+            {'job_id': 'aksjhdkajsdh', 'project_name': self.project_name, 'job_parameters': {'a': 5},
                 'input_params': input_params, 'output_metrics': output_metrics}
         ]
 
         expected_data = [
             {
-                'project_name': 'project1',
+                'job_id': 'aksjhdkajsdh',
+                'project_name': self.project_name,
                 'b-0': '1',
                 'c-1': '2',
                 'd-2': '3',
@@ -209,10 +327,10 @@ class TestProjects(Spec):
                 'a': 5
             },
         ]
-        expected_result = DataFrame(expected_data, columns=[
-                                    'project_name', 'a', 'b-0', 'c-1', 'd-2', 'loss'])
+        expected_result = DataFrame(expected_data, columns=['job_id', 'project_name', 'a', 'b-0', 'c-1', 'd-2', 'loss'])
+
         assert_frame_equal(
-            expected_result, get_metrics_for_all_jobs('project1', True))
+            expected_result, get_metrics_for_all_jobs(self.project_name, True))
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -220,10 +338,10 @@ class TestProjects(Spec):
         find_mock.return_value = None
 
         with self.assertRaises(ValueError) as error_context:
-            get_metrics_for_all_jobs('project1')
+            get_metrics_for_all_jobs(self.project_name)
 
-        self.assertTrue(
-            'Project `project1` does not exist!' in error_context.exception.args)
+        error_string = 'Project `{}` does not exist!'.format(self.project_name)
+        self.assertTrue(error_string in error_context.exception.args)
 
     @patch('foundations_contrib.models.project_listing.ProjectListing.find_project')
     @patch('foundations_contrib.models.completed_job_data_listing.CompletedJobDataListing.completed_job_data')
@@ -241,3 +359,67 @@ class TestProjects(Spec):
 
         self.assertEqual(get_metrics_for_all_jobs,
                          foundations.get_metrics_for_all_jobs)
+
+    def test_returns_metrics_data_frame(self):
+        self.get_metrics_mock
+        metrics = get_metrics_for_all_jobs(self.project_name, self.random_boolean)
+        metric_subset = metrics[list(self.metrics)]
+        assert_frame_equal(self.metrics, metric_subset)
+
+    def test_returns_stored_annotations(self):
+        from foundations_contrib.consumers.annotate import Annotate
+        self.get_metrics_mock
+
+        annotator = Annotate(self.redis)
+        
+        self._annotate_jobs(annotator, self.annotations, self.job_id)
+        
+        metrics = get_metrics_for_all_jobs(self.project_name, self.random_boolean)
+        job_metrics = metrics[metrics['job_id'] == self.job_id]
+        job_annotations = job_metrics[list(self.annotations_data_frame)]
+
+        assert_frame_equal(self.annotations_data_frame, job_annotations)
+    
+    def test_returns_stored_annotations_multiple_annotations(self):
+        from foundations_contrib.consumers.annotate import Annotate
+        import pandas
+        
+        self.get_metrics_mock
+        annotator = Annotate(self.redis)
+
+        self._annotate_jobs(annotator, self.annotations, self.job_id)
+        self._annotate_jobs(annotator, self.annotations_two, self.job_id_two)
+        
+        metrics = get_metrics_for_all_jobs(self.project_name, self.random_boolean)
+        job_annotations = metrics[list(self.annotations_data_frame)]
+
+        expected_data_frame = pandas.concat([self.annotations_data_frame, self.annotations_data_frame_two], ignore_index=True)
+        assert_frame_equal(expected_data_frame, job_annotations)
+
+    def test_set_tag_when_not_in_job_gives_warning(self):
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warning.assert_called_with('Script not run with Foundations.')
+
+    def test_set_tag_twice_when_not_in_job_gives_warning_once(self):
+        set_tag(self.random_tag, self.random_tag_value)
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warning.assert_called_once_with('Script not run with Foundations.')
+
+    def test_set_tag_when_in_job_sets_tag(self):
+        self._pipeline_context.file_name = self.job_id
+        set_tag(self.random_tag, self.random_tag_value)
+        self.message_router.push_message.assert_called_with('job_tag', {'job_id': self.job_id, 'key': self.random_tag, 'value': self.random_tag_value})
+
+    def test_set_tag_does_not_give_warning_when_in_job(self):
+        self._pipeline_context.file_name = self.job_id
+        set_tag(self.random_tag, self.random_tag_value)
+        self.mock_logger.warning.assert_not_called()
+
+    def test_get_metrics_for_all_jobs_is_global(self):
+        import foundations.projects
+        self.assertEqual(get_metrics_for_all_jobs, foundations.projects.get_metrics_for_all_jobs)
+
+    def _annotate_jobs(self, annotator, annotations, job_id):
+        for key, value in annotations.items():
+            annotator.call({'job_id': job_id, 'key': key, 'value': value}, None, {})
+

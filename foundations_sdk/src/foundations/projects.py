@@ -34,8 +34,7 @@ def set_project_name(project_name="default"):
     from foundations.global_state import current_foundations_context
     current_foundations_context().set_project_name(project_name)
 
-
-def get_metrics_for_all_jobs(project_name, include_input_params=False):
+def _get_metrics_for_all_jobs(project_name, include_input_params=False):
     """
     Returns metrics for all jobs for a given project.
 
@@ -72,6 +71,56 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
         raise ValueError('Project `{}` does not exist!'.format(project_name))
 
     return _flattened_job_metrics(project_name, include_input_params)
+
+def get_metrics_for_all_jobs(project_name, include_input_params=False):
+    """
+    Returns metrics and tags for all jobs for a given project. This function is an experimental feature, and is under the foundations.prototype package
+
+    Arguments:
+        project_name {string} -- Name of the project to filter by.
+        include_input_params {boolean} -- Optional way to specify if metrics should include all model input metrics
+
+    Returns:
+        metrics {DataFrame} -- A Pandas DataFrame containing all of the results.
+
+    Raises:
+        ValueError -- An exception indicating that the requested project does not exist
+
+    Example:
+        ```python
+        import foundations
+        from algorithms import train_model, print_metrics
+
+        train_model = foundations.create_stage(train_model)
+        foundations.set_tag('model', 'CNN')
+        model = train_model()
+
+        all_metrics = foundations.prototype.get_metrics_for_all_jobs(job_name)
+        print_metrics(all_metrics)
+        ```
+    """
+    import foundations
+    from foundations_contrib.global_state import redis_connection
+    from foundations.helpers.annotate import annotations_for_multiple_jobs
+    from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
+    from pandas import DataFrame
+
+    metrics = _get_metrics_for_all_jobs(project_name,include_input_params)
+
+    if 'job_id' not in metrics:
+        return metrics
+
+    metric_rows = list(metrics.T.to_dict().values())
+
+    job_annotations = annotations_for_multiple_jobs(redis_connection, metrics['job_id'])
+
+    for row in metric_rows:
+        annotations = job_annotations[row['job_id']]
+        for key, value in annotations.items():
+            tag_key = 'tag_{}'.format(key)
+            row[tag_key] = value
+    
+    return DataFrame(metric_rows)
 
 def set_tag(key, value):
     """

@@ -9,7 +9,6 @@ from foundations_spec import *
 from acceptance.mixins.metrics_fetcher import MetricsFetcher
 
 import foundations
-import foundations.prototype
 
 class TestAnnotateWithoutStage(Spec, MetricsFetcher):
 

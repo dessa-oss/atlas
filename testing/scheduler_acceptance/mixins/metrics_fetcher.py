@@ -20,10 +20,10 @@ class MetricsFetcher(object):
 
     def _get_metrics_and_tags_for_all_jobs(self, project_name, ignore_errors=False):
         import pandas
-        import foundations.prototype
+        import foundations.projects
 
         try:
-            return foundations.prototype.get_metrics_for_all_jobs(project_name)
+            return foundations.projects.get_metrics_for_all_jobs(project_name)
         except KeyError as ex:
             if ignore_errors and 'job_id' in ex.args:
                 return pandas.DataFrame()
