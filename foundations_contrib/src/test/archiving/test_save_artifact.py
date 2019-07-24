@@ -63,3 +63,15 @@ class TestSaveArtifact(Spec):
         
         save_artifact(self.filepath)
         load_archive.assert_not_called()
+
+    def test_save_artifact_in_job_appends_metadata_to_archive(self):
+        import os.path as path
+
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        filename = path.basename(self.filepath)
+        _, extension = path.splitext(filename)
+
+        save_artifact(self.filepath)
+        self._mock_archive.append.assert_called_with('artifacts/' + path.basename(self.filepath) + '.metadata', {'file_extension': extension}, self.job_id)

@@ -6,6 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def save_artifact(filepath):
+    import os.path as path
+
     from foundations_contrib.global_state import log_manager, current_foundations_context
     from foundations_contrib.archiving import load_archive
 
@@ -18,3 +20,7 @@ def save_artifact(filepath):
         job_id = foundations_context.job_id()
         artifact_archive = load_archive('artifact_archive')
         artifact_archive.append_file('artifacts', filepath, job_id)
+
+        filename = path.basename(filepath)
+        _, extension = path.splitext(filename)
+        artifact_archive.append('artifacts/' + filename + '.metadata', {'file_extension': extension}, job_id)
