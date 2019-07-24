@@ -11,3 +11,4 @@ from test.archiving.test_get_pipeline_archiver_for_job import TestGetPipelineArc
 from test.archiving.test_file_names_for_artifacts_path import TestFileNamesForArtifactsPath
 from test.archiving.test_artifact_downloader import TestArtifactDownloader
 from test.archiving.test_upload_artifacts import TestUploadArtifacts
+from test.archiving.test_save_artifact import TestSaveArtifact

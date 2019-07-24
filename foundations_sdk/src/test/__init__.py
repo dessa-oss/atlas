@@ -25,3 +25,4 @@ from test.test_config import TestConfig
 from test.test_job_deployer import TestJobDeployer
 from test.test_set_job_resources import TestSetJobResources
 from test.test_deploy import TestDeploy
+from test.test_save_artifact import TestSaveArtifact

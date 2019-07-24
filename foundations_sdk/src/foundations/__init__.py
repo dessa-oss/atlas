@@ -34,6 +34,7 @@ from foundations.floating_hyperparameter import FloatingHyperparameter
 from foundations_contrib.middleware.basic_stage_middleware import BasicStageMiddleware
 from foundations_contrib.change_directory import ChangeDirectory
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
+from foundations_contrib.archiving.save_artifact import save_artifact
 from foundations.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
 from foundations.staging import create_stage, cache

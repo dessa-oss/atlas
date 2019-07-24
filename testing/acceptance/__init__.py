@@ -32,3 +32,4 @@ from acceptance.test_can_load_parameters import TestCanLoadParameters
 from acceptance.test_deploy_job_via_deploy_function import TestDeployJobViaDeployFunction
 from acceptance.test_deploy_job_via_cli import TestDeployJobViaCLI
 from acceptance.test_generate_random_parameters import TestGenerateRandomParameters
+from acceptance.test_save_artifact import TestSaveArtifact
