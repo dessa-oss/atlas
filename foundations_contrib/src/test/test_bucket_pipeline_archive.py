@@ -38,6 +38,10 @@ class TestBucketPipelineArchive(Spec):
         return self.faker.uuid4()
 
     @let
+    def file_listing_with_prefix(self):
+        return [f'{self.random_prefix}/{file}' for file in self.faker.words()]
+
+    @let
     def archive(self):
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
         return BucketPipelineArchive(self.bucket_klass, *self.constructor_args, **self.constructor_kwargs)
@@ -45,3 +49,9 @@ class TestBucketPipelineArchive(Spec):
     def test_append_binary_uploads_string_to_bucket(self):
         self.archive.append_binary(self.object_name, self.random_data, self.random_prefix)
         self.bucket.upload_from_string.assert_called_with(f'{self.random_prefix}/{self.object_name}', self.random_data)
+
+    def test_list_files_returns_list_of_files(self):
+        self.bucket.list_files = ConditionalReturn()
+        self.bucket.list_files.return_when(self.file_listing_with_prefix, f'{self.random_prefix}/*')
+        result = self.archive.list_files('*', self.random_prefix)
+        self.assertEqual(self.file_listing_with_prefix, result)

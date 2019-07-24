@@ -67,6 +67,10 @@ class BucketPipelineArchive(object):
 
         return self._download_file_from_archive(arcname, target_file_path)
 
+    def list_files(self, pathname, prefix):
+        arcname = file_archive_name(prefix, pathname)
+        return self._bucket.list_files(arcname)
+
     def _download_file_from_archive(self, arcname, target_file_path):
         if self._bucket.exists(arcname):
             with open(target_file_path, 'w+b') as target_file:
