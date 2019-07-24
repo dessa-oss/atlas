@@ -75,6 +75,7 @@ class TestDeploy(Spec):
 
     @set_up
     def set_up(self):
+        import os.path as path
         from foundations_contrib.global_state import current_foundations_context
         self._old_project_name = current_foundations_context().project_name()
 
@@ -102,7 +103,9 @@ class TestDeploy(Spec):
         self.mock_open.return_when(self.mock_file, '~/.foundations/config/local.config.yaml', 'r')
         self.mock_open.return_when(self.mock_file, '~/.foundations/config/{}.config.yaml'.format(self.environment), 'r')
         self.mock_open.return_when(self.mock_params_file, 'foundations_job_parameters.json', 'w')
-        self.mock_open.return_when(self.mock_file, '/home/pairing/.foundations/logs/system.log', 'a', encoding=None)
+
+        log_file_path = path.expanduser('~/.foundations/logs/system.log')
+        self.mock_open.return_when(self.mock_file, log_file_path, 'a', encoding=None)
 
         self.mock_set_environment.side_effect = self._set_environment
 
