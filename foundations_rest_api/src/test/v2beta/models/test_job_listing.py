@@ -110,9 +110,7 @@ class TestJobListingV2(Spec):
     def test_job_has_artifacts(self):
         artifact = self.MockArtifact(filename="output.txt", path="output.txt", artifact_type='unknown')
         job = Job(artifacts=[artifact])
-        
         self.assertEqual(artifact, job.artifacts[0])
-
 
     @skip('timezone error temp disabled')
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
@@ -178,6 +176,91 @@ class TestJobListingV2(Spec):
             completed_time='2040-06-02T03:57:02',
             duration='24291d6h23m53s',
             tags={}
+        )
+
+        result = Job.all(project_name='random test project').evaluate()
+
+        restore_real_current_datetime()
+
+        expected_jobs = [expected_job_1, expected_job_2]
+        self.assertEqual(expected_jobs, result)
+
+    @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
+    def test_all_returns_multiple_jobs_with_artifacts(self, mock_get_all_jobs_data):
+        from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
+
+        fake_current_datetime(1005000000)
+
+        self.mock_get_all_artifacts.return_when([
+            self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')
+        ], 'my job x')
+
+        self.mock_get_all_artifacts.return_when([
+            self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
+            self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown'),
+        ], '00000000-0000-0000-0000-000000000007')
+
+        mock_get_all_jobs_data.return_value = [
+            {
+                'project_name': 'random test project',
+                'job_id': 'my job x',
+                'user': 'some user',
+                'job_parameters': {},
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'completed',
+                'start_time':  123456789,
+                'completed_time': 2222222222,
+                'tags': {},
+                'artifacts': [{'filename': 'output_x.png', 'path': 'output_x.png', 'artifact_type': 'png'}]
+            },
+            {
+                'project_name': 'random test project',
+                'job_id': '00000000-0000-0000-0000-000000000007',
+                'user': 'soju hero',
+                'job_parameters': {},
+                'input_params': [],
+                'output_metrics': [],
+                'status': 'running',
+                'start_time': 999999999,
+                'completed_time': None,
+                'tags': {
+                    'asdf': 'this',
+                    'cool': 'dude'
+                },
+                'artifacts': [{'filename': 'output_v007.wav', 'path': 'output_v007.wav', 'artifact_type': 'wav'}]
+            }
+        ]
+
+        expected_job_1 = Job(
+            job_id='00000000-0000-0000-0000-000000000007',
+            project='random test project',
+            user='soju hero',
+            input_params=[],
+            output_metrics=[],
+            status='running',
+            start_time='2001-09-09T01:46:39',
+            completed_time=None,
+            duration='58d1h53m21s',
+            tags={
+                'asdf': 'this',
+                'cool': 'dude'
+            },
+            artifacts=[]
+        )
+
+        expected_job_2 = Job(
+            job_id='my job x',
+            project='random test project',
+            user='some user',
+            input_params=[],
+            output_metrics=[],
+            status='completed',
+            start_time='1973-11-29T21:33:09',
+            completed_time='2040-06-02T03:57:02',
+            duration='24291d6h23m53s',
+            tags={},
+            artifacts=[]
         )
 
         result = Job.all(project_name='random test project').evaluate()
