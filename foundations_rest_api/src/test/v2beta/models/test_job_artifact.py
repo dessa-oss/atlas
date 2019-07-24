@@ -6,10 +6,16 @@ Written by Kyle De Freitas <k.defreitas@dessa.com>, 08 2019
 """
 
 from foundations_spec import *
+from mock import patch
 from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
 
 
 class TestJobArtifact(Spec):
+
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
+
     @let
     def filename(self):
         return self.faker.name()
@@ -17,6 +23,8 @@ class TestJobArtifact(Spec):
     @let
     def path(self):
         return self.faker.uri()
+
+    mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_contrib.models.artifact_listing.artifact_listing_for_job')
 
     def test_artifact_has_filename(self):
         job_artifact = JobArtifact(filename=self.filename)
@@ -26,6 +34,60 @@ class TestJobArtifact(Spec):
         job_artifact = JobArtifact(path=self.path)
         self.assertEqual(self.path, job_artifact.path)
 
-    def test_artifact_has_type(self):
-        job_artifact = JobArtifact(type='wav')
-        self.assertEqual('wav', job_artifact.type)
+    def test_artifact_has_artifact_type(self):
+        job_artifact = JobArtifact(artifact_type='wav')
+        self.assertEqual('wav', job_artifact.artifact_type)
+    
+    def test_artifact_has_all_attributes(self):
+        expected_artifact = JobArtifact(
+            filename=self.filename,
+            path=self.path,
+            artifact_type='wav'
+        )
+        self.assertEqual(self.filename, expected_artifact.filename)
+        self.assertEqual(self.path, expected_artifact.path)
+        self.assertEqual('wav', expected_artifact.artifact_type)
+
+    def test_retrieve_artifacts_by_job_id(self):
+
+        self.mock_artifact_listing_for_job.return_when([
+            "melspectrogram2901.png",
+            "realtalk-output21980.wav"
+        ], self.job_id)
+
+        expected_artifact_1 = JobArtifact(
+            filename='melspectrogram2901.png',
+            path=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            artifact_type='png'
+        )
+        expected_artifact_2 = JobArtifact(
+            filename='realtalk-output21980.wav',
+            path=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav",
+            artifact_type='wav'
+        )
+
+        result = JobArtifact.all(job_id=self.job_id).evaluate()
+        expected_job_artifacts = [expected_artifact_1, expected_artifact_2]
+        self.assertEqual(expected_job_artifacts, result)
+
+    def test_retrieve_artifacts_by_job_id_with_unknown_extension(self):
+
+        self.mock_artifact_listing_for_job.return_when([
+            "melspectrogram2901.png",
+            "realtalk-output21980.mp4"
+        ], self.job_id)
+
+        expected_artifact_1 = JobArtifact(
+            filename='melspectrogram2901.png',
+            path=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            artifact_type='png'
+        )
+        expected_artifact_2 = JobArtifact(
+            filename='realtalk-output21980.mp4',
+            path=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4",
+            artifact_type='unknown'
+        )
+
+        result = JobArtifact.all(job_id=self.job_id).evaluate()
+        expected_job_artifacts = [expected_artifact_1, expected_artifact_2]
+        self.assertEqual(expected_job_artifacts, result)
