@@ -73,3 +73,23 @@ class TestSaveArtifact(Spec):
 
         self.assertEqual(b'contents of artifact', artifact_contents)
         self.assertEqual({'file_extension': 'txt'}, artifact_metadata)
+
+    def test_save_artifact_twice_with_filepath_and_key_saves_file_with_specified_key_and_saves_metadata_file_that_contains_extension(self):
+        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_with_key_twice', env='stageless_local')
+        job_deployment.wait_for_deployment_to_complete()
+
+        job_id = job_deployment.job_name()
+        artifact_contents = self._artifact_archive.fetch_binary('artifacts/this-key', job_id)
+        artifact_metadata = self._artifact_archive.fetch('artifacts/this-key.metadata', job_id)
+
+        self.assertEqual(b'contents of cooler artifact', artifact_contents)
+        self.assertEqual({'file_extension': 'other'}, artifact_metadata)
+
+    @skip('not implemented')
+    def test_save_artifact_twice_with_filepath_and_key_logs_appropriate_warning(self):
+        import subprocess
+
+        completed_process = subprocess.run(['python', '-m', 'foundations', 'deploy', '--env=stageless_local', '--job-directory=acceptance/fixtures/save_artifact_with_key_twice'], stdout=subprocess.PIPE)
+        process_output = completed_process.stdout.decode()
+        self.assertIn('WARNING', process_output)
+        self.assertIn('Artifact "this-key" already exists - overwriting.', process_output)
