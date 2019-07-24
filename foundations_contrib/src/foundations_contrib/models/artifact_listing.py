@@ -10,6 +10,6 @@ def artifact_listing_for_job(job_id, archive):
     
     artifacts = []
     for file_path in raw_file_paths:
-        artifacts.append(file_path.split("/")[-1])
+        artifacts.append(file_path[len(job_id) + len('/user_artifacts/'):])
     
     return artifacts

@@ -19,7 +19,11 @@ class TestArtifactListing(Spec):
 
     @let
     def mock_listing(self):
-        return self.faker.sentences()
+        return [self.faker.uri_path() for _ in range(self.uri_count)]
+
+    @let
+    def uri_count(self):
+        return self.faker.random.randint(2, 5)
 
     @let
     def archive_listing(self):
