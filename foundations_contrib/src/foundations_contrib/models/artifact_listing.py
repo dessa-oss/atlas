@@ -9,6 +9,10 @@ def artifact_listing_for_job_in_archive(job_id, archive):
     raw_file_paths = archive.list_files('user_artifacts/*', job_id)
     return list(_artifact_listing_for_paths(raw_file_paths, job_id))
 
+def artifact_listing_for_job(job_id):
+    from foundations_contrib.archiving import load_archive
+    return artifact_listing_for_job_in_archive(job_id, load_archive('artifact_archive'))
+
 def _artifact_listing_for_paths(raw_file_paths, job_id):
     for file_path in raw_file_paths:
         yield _file_path_without_artifact_prefix(file_path, job_id)
