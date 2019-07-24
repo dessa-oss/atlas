@@ -17,7 +17,7 @@ class JobArtifact(PropertyModel):
         from foundations_rest_api.lazy_result import LazyResult
 
         def _all():
-            return JobArtifact._all_artifacts(job_id)
+            return list(JobArtifact._all_artifacts(job_id))
 
         return LazyResult(_all)
 
@@ -26,25 +26,25 @@ class JobArtifact(PropertyModel):
         from foundations_contrib.models.artifact_listing import artifact_listing_for_job
         artifact_listing = artifact_listing_for_job(job_id)
         
-        artifacts = []
         for artifact in artifact_listing:
             artifact_properities = {'artifact': artifact}
-            rec = JobArtifact._build_artifact_model(job_id, artifact_properities)
-            artifacts.append(rec)
-        
-        return artifacts
+            yield JobArtifact._build_artifact_model(job_id, artifact_properities)
 
     @staticmethod
     def _build_artifact_model(job_id, artifact_properities):
-        filename = artifact_properities['artifact']
-
-        supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg']
-        file_extension = filename.split('.')[-1].strip().lower()
-        if file_extension not in supported_file_types:
-            file_extension = 'unknown'
+        file_path = artifact_properities['artifact']
+        file_name = file_path.split("/")[-1]
 
         return JobArtifact(
-            filename=filename,
-            path=f"api/v2beta/jobs/{job_id}/artifacts/{filename}",
-            artifact_type=file_extension
+            filename=file_name,
+            path=f"api/v2beta/jobs/{job_id}/artifacts/{file_path}",
+            artifact_type=JobArtifact._extract_file_extension(file_name)
         )
+
+    @staticmethod
+    def _extract_file_extension(file_name):
+        supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg']
+        file_extension = file_name.split('.')[-1].strip().lower()
+        if file_extension not in supported_file_types:
+            file_extension = 'unknown'
+        return file_extension

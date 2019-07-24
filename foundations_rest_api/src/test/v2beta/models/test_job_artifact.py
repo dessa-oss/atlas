@@ -91,3 +91,19 @@ class TestJobArtifact(Spec):
         result = JobArtifact.all(job_id=self.job_id).evaluate()
         expected_job_artifacts = [expected_artifact_1, expected_artifact_2]
         self.assertEqual(expected_job_artifacts, result)
+
+    def test_retrieve_artifacts_by_job_id_with_artifacts_containing_subdirectories(self):
+
+        self.mock_artifact_listing_for_job.return_when([
+            "intermediaries/output/realtalk-output21980.mp3"
+        ], self.job_id)
+
+        expected_artifact = JobArtifact(
+            filename='realtalk-output21980.mp3',
+            path=f"api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980.mp3",
+            artifact_type='mp3'
+        )
+
+        result = JobArtifact.all(job_id=self.job_id).evaluate()
+        expected_job_artifacts = [expected_artifact]
+        self.assertEqual(expected_job_artifacts, result)
