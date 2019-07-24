@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Kyle De Freitas <k.defreitas@dessa.com>, 08 2019
 """
 
-def artifact_listing_for_job(job_id, archive):
+def artifact_listing_for_job_in_archive(job_id, archive):
     raw_file_paths = archive.list_files('user_artifacts/*', job_id)
     return list(_artifact_listing_for_paths(raw_file_paths, job_id))
 

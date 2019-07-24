@@ -34,8 +34,8 @@ class TestArtifactListing(Spec):
         self.mock_archive.list_files = ConditionalReturn()
         self.mock_archive.list_files.return_when(self.archive_listing, 'user_artifacts/*', self.job_id)
 
-    def test_artifact_listing_for_job(self):
-        from foundations_contrib.models.artifact_listing import artifact_listing_for_job
+    def test_artifact_listing_for_job_in_archive(self):
+        from foundations_contrib.models.artifact_listing import artifact_listing_for_job_in_archive
 
-        mock_listing = artifact_listing_for_job(self.job_id, self.mock_archive)
+        mock_listing = artifact_listing_for_job_in_archive(self.job_id, self.mock_archive)
         self.assertEqual(self.mock_listing, mock_listing)
