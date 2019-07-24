@@ -5,5 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import os
+import os.path as path
+
 import foundations
-foundations.save_artifact(filepath='cool-artifact.txt')
+
+cwd = os.getcwd()
+
+foundations.save_artifact(filepath=path.join(cwd, 'cool-artifact.txt'))
