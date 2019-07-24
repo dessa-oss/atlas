@@ -6,4 +6,10 @@ Written by Kyle De Freitas <k.defreitas@dessa.com>, 08 2019
 """
 
 def artifact_listing_for_job(job_id, archive):
-    return archive.list_files('*', job_id)
+    raw_file_paths = archive.list_files('user_artifacts/*', job_id)
+    
+    artifacts = []
+    for file_path in raw_file_paths:
+        artifacts.append(file_path.split("/")[-1])
+    
+    return artifacts
