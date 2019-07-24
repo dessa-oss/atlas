@@ -41,6 +41,8 @@ class TestSaveArtifact(Spec):
         load_archive = self.patch('foundations_contrib.archiving.load_archive', ConditionalReturn())
         load_archive.return_when(self._mock_archive, 'artifact_archive')
 
+        self._mock_archive.exists.return_value = False
+
     def test_save_artifact_outside_job_logs_warning(self):
         self._mock_foundations_context.is_in_running_job.return_value = False
 
@@ -99,3 +101,15 @@ class TestSaveArtifact(Spec):
 
         save_artifact(self.filepath, key=self.key)
         self._mock_archive.append.assert_called_with(f'artifacts/{self.key}.metadata', {'file_extension': extension_without_dot}, self.job_id)
+
+    def test_save_artifact_in_job_with_key_when_key_already_exists_for_job_logs_warning(self):
+        import os.path as path
+
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        self._mock_archive.exists = ConditionalReturn()
+        self._mock_archive.exists.return_when(True, f'artifacts/{self.key}', prefix=self.job_id)
+
+        save_artifact(self.filepath, key=self.key)
+        self.mock_logger.warning.assert_called_once_with(f'Artifact "{self.key}" already exists - overwriting.')

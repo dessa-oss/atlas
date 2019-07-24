@@ -16,22 +16,29 @@ def save_artifact(filepath, key=None):
     else:
         job_id = foundations_context.job_id()
 
-        artifact_saver = _ArtifactSaver(filepath, job_id, key)
+        artifact_saver = _ArtifactSaver(logger, filepath, job_id, key)
         artifact_saver.save_artifact()
 
 class _ArtifactSaver(object):
 
-    def __init__(self, filepath, job_id, key):
+    def __init__(self, logger, filepath, job_id, key):
         from foundations_contrib.archiving import load_archive
 
+        self._logger = logger
         self._artifact_archive = load_archive('artifact_archive')
         self._filepath = filepath
         self._job_id = job_id
         self._key = key
 
     def save_artifact(self):
+        if self._artifact_exists():
+            self._logger.warning(f'Artifact "{self._key}" already exists - overwriting.')
+
         self._append_artifact_to_archive()
         self._append_metadata_to_archive()
+
+    def _artifact_exists(self):
+        return self._artifact_archive.exists(f'artifacts/{self._key}', prefix=self._job_id)
 
     def _append_artifact_to_archive(self):
         self._artifact_archive.append_file('artifacts', self._filepath, self._job_id, target_name=self._key)
