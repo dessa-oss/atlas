@@ -42,6 +42,10 @@ class TestBucketPipelineArchive(Spec):
         return [f'{self.random_prefix}/{file}' for file in self.faker.words()]
 
     @let
+    def blob_exists(self):
+        return self.faker.boolean()
+
+    @let
     def archive(self):
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
         return BucketPipelineArchive(self.bucket_klass, *self.constructor_args, **self.constructor_kwargs)
@@ -55,3 +59,15 @@ class TestBucketPipelineArchive(Spec):
         self.bucket.list_files.return_when(self.file_listing_with_prefix, f'{self.random_prefix}/*')
         result = self.archive.list_files('*', self.random_prefix)
         self.assertEqual(self.file_listing_with_prefix, result)
+
+    def test_exists_forwards_to_underlying_bucket(self):
+        self.bucket.exists = ConditionalReturn()
+        self.bucket.exists.return_when(self.blob_exists, f'{self.object_name}')
+
+        self.assertEqual(self.blob_exists, self.archive.exists(self.object_name))
+
+    def test_exists_forwards_to_underlying_bucket_with_prefix(self):
+        self.bucket.exists = ConditionalReturn()
+        self.bucket.exists.return_when(self.blob_exists, f'{self.random_prefix}/{self.object_name}')
+
+        self.assertEqual(self.blob_exists, self.archive.exists(self.object_name, prefix=self.random_prefix))
