@@ -9,6 +9,7 @@ from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
+from foundations_rest_api.lazy_result import LazyResult
 
 class TestJobListingV2(Spec):
 
@@ -118,8 +119,8 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
-        self.mock_get_all_artifacts.return_when([], job_id='my job x')
-        self.mock_get_all_artifacts.return_when([], job_id='00000000-0000-0000-0000-000000000007')
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: []), job_id='my job x')
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: []), job_id='00000000-0000-0000-0000-000000000007')
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -197,14 +198,14 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
-        self.mock_get_all_artifacts.return_when([
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: [
             self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')
-        ], job_id='my job x')
+        ]), job_id='my job x')
 
-        self.mock_get_all_artifacts.return_when([
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: [
             self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
             self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown'),
-        ], job_id='00000000-0000-0000-0000-000000000007')
+        ]), job_id='00000000-0000-0000-0000-000000000007')
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -288,7 +289,7 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
-        self.mock_get_all_artifacts.return_when([], job_id='my job x')
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: []), job_id='my job x')
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -353,7 +354,7 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
-        self.mock_get_all_artifacts.return_when([], job_id='my job x')
+        self.mock_get_all_artifacts.return_when(LazyResult(lambda: []), job_id='my job x')
 
         mock_get_all_jobs_data.return_value = [
             {

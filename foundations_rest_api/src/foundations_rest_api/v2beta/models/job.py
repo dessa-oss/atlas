@@ -177,4 +177,4 @@ class Job(PropertyModel):
     def _retrieve_artifacts(job_data):
         from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
         job_id = job_data['job_id']
-        job_data['artifacts'] = JobArtifact.all(job_id = job_id)
+        job_data['artifacts'] = JobArtifact.all(job_id=job_id).evaluate()
