@@ -43,7 +43,7 @@ class JobArtifact(PropertyModel):
 
     @staticmethod
     def _extract_file_extension(metadata):
-        supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg']
+        supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg', 'svg', 'gif']
         file_extension = metadata['file_extension']
         if file_extension not in supported_file_types:
             file_extension = 'unknown'

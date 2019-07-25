@@ -73,14 +73,14 @@ class TestJobArtifact(Spec):
     def test_retrieve_artifacts_by_job_id_with_unknown_extension(self):
 
         self.mock_artifact_listing_for_job.return_when([
-            ('melspectrogram2901.png', {'file_extension': 'png'}),
+            ('melspectrogram2901.jpg', {'file_extension': 'jpg'}),
             ('realtalk-output21980.mp4', {'file_extension': 'mp4'})
         ], self.job_id)
 
         expected_artifact_1 = JobArtifact(
-            filename='melspectrogram2901.png',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png',
-            artifact_type='png'
+            filename='melspectrogram2901.jpg',
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.jpg',
+            artifact_type='jpg'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.mp4',
@@ -106,4 +106,30 @@ class TestJobArtifact(Spec):
 
         result = JobArtifact.all(job_id=self.job_id).evaluate()
         expected_job_artifacts = [expected_artifact]
+        self.assertEqual(expected_job_artifacts, result)
+
+    def test_retrieve_artifacts_by_job_id_with_expected_file_types(self):
+        artifact_to_type_mapper = [
+            ['output21980', 'wav'],
+            ['output21981', 'mp3'],
+            ['output21982', 'png'],
+            ['output21983', 'jpg'],
+            ['output21984', 'jpeg'],
+            ['output21985', 'svg'],
+            ['output21986', 'gif']
+        ]
+
+        self.mock_artifact_listing_for_job.return_when(
+            [(f'intermediaries/output/realtalk-{mapper[0]}-artifact',{'file_extension': mapper[1]}) for mapper in artifact_to_type_mapper], self.job_id)
+
+        expected_job_artifacts = [
+            JobArtifact(
+                filename=f'realtalk-{mapper[0]}-artifact',
+                uri=f'api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-{mapper[0]}-artifact',
+                artifact_type=mapper[1]
+            )
+            for mapper in artifact_to_type_mapper
+        ]
+
+        result = JobArtifact.all(job_id=self.job_id).evaluate()
         self.assertEqual(expected_job_artifacts, result)
