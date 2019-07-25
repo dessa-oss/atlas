@@ -40,7 +40,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         klass._old_config = deepcopy(foundations.config_manager.config())
         klass._old_context = global_state.foundations_context
 
-        foundations.config_manager.config().clear()
+        foundations.config_manager.reset()
         foundations.config_manager.add_simple_config_path('acceptance/v2beta/fixtures/stageless_local.config.yaml')
 
         global_state.foundations_context = FoundationsContext(klass._pipeline)        
@@ -84,8 +84,13 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         foundations.save_artifact(filepath=klass._artifact_fixture_path('other_file.other'))
         foundations.save_artifact(filepath=klass._artifact_fixture_path('audio_file.mp3'), key='audio_artifact')
 
-    @skip('not implemented')
     def test_get_route(self):
+        import os
+        import foundations
+
+        print(os.environ)
+        print(foundations.config_manager.config())
+
         data = super().test_get_route()
         jobs = data['jobs']
 
