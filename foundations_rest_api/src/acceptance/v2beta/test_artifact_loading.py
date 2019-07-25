@@ -84,26 +84,25 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         foundations.save_artifact(filepath=klass._artifact_fixture_path('other_file.other'))
         foundations.save_artifact(filepath=klass._artifact_fixture_path('audio_file.mp3'), key='audio_artifact')
 
+    @skip('not implemented')
     def test_get_route(self):
-        self.maxDiff = None
-
         data = super().test_get_route()
         jobs = data['jobs']
 
         some_artifacts_payload = [
             {
                 'filename': 'audio_artifact',
-                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/audio_artifact',
+                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/audio_artifact',
                 'artifact_type': 'mp3'
             },
             {
                 'filename': 'no_extension',
-                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/no_extension',
+                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/no_extension',
                 'artifact_type': 'unknown'
             },
             {
                 'filename': 'other_file.other',
-                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/other_file.other',
+                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/other_file.other',
                 'artifact_type': 'unknown'
             }
         ]
@@ -115,7 +114,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         one_artifact_payload = [
             {
                 'filename': 'image_file.png',
-                'uri': f'api/v2beta/jobs/{self._one_artifact}/artifacts/image_file.png',
+                'uri': f'https://archive.dessa.com/{self._one_artifact}/user_artifacts/image_file.png',
                 'artifact_type': 'png'
             }
         ]
