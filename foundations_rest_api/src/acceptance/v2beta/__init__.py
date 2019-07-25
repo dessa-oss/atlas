@@ -9,3 +9,4 @@ from acceptance.v2beta.test_jobs_listing_endpoint_v2 import TestJobsListingEndpo
 from acceptance.v2beta.test_job_listing_ui_friendly import TestJobsListingUIFriendly
 from acceptance.v2beta.test_job_listing_trim_characters import TestJobListingTrimCharacters
 from acceptance.v2beta.test_job_listing_parametrics import TestJobListingParametrics
+from acceptance.v2beta.test_artifact_loading import TestArtifactLoading
