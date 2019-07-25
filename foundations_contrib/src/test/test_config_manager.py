@@ -309,6 +309,13 @@ class TestConfigManager(Spec):
         config_manager.config()['run_script_environment'].update(self.run_script_environment)
         self.assertEqual(self.run_script_environment, config_manager.config()['run_script_environment'])
 
+    def test_reset_allows_for_reloading_from_environment_variables_when_config_called(self):
+        config_manager = ConfigManager()
+        config_manager['FOUNDATIONS_TEST'] = "test_string"
+        self.assertEqual('test_string', config_manager['FOUNDATIONS_TEST'])
+        config_manager.reset()
+        self.assertIsNone(config_manager.config().get('FOUNDATIONS_TEST'))
+
     def call_reflect_constructor(self, metric):
         config_manager = ConfigManager()
         config_manager[metric +

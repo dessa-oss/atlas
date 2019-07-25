@@ -50,6 +50,10 @@ class ConfigManager(object):
     def frozen(self):
         return self._frozen
 
+    def reset(self):
+        self._config = None
+        self.config()
+    
     def _load(self):
         import yaml
         import os
