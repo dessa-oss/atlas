@@ -118,6 +118,9 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
+        self.mock_get_all_artifacts.return_when([], job_id='my job x')
+        self.mock_get_all_artifacts.return_when([], job_id='00000000-0000-0000-0000-000000000007')
+
         mock_get_all_jobs_data.return_value = [
             {
                 'project_name': 'random test project',
@@ -129,7 +132,8 @@ class TestJobListingV2(Spec):
                 'status': 'completed',
                 'start_time':  123456789,
                 'completed_time': 2222222222,
-                'tags': {}
+                'tags': {},
+                'artifacts': []
             },
             {
                 'project_name': 'random test project',
@@ -144,7 +148,8 @@ class TestJobListingV2(Spec):
                 'tags': {
                     'asdf': 'this',
                     'cool': 'dude'
-                }
+                },
+                'artifacts': []
             }
         ]
 
@@ -161,7 +166,8 @@ class TestJobListingV2(Spec):
             tags={
                 'asdf': 'this',
                 'cool': 'dude'
-            }
+            },
+            artifacts=[]
         )
 
         expected_job_2 = Job(
@@ -174,7 +180,8 @@ class TestJobListingV2(Spec):
             start_time='1973-11-29T21:33:09',
             completed_time='2040-06-02T03:57:02',
             duration='24291d6h23m53s',
-            tags={}
+            tags={},
+            artifacts=[]
         )
 
         result = Job.all(project_name='random test project').evaluate()
@@ -281,6 +288,8 @@ class TestJobListingV2(Spec):
 
         fake_current_datetime(1005000000)
 
+        self.mock_get_all_artifacts.return_when([], job_id='my job x')
+
         mock_get_all_jobs_data.return_value = [
             {
                 'project_name': 'random test project',
@@ -309,7 +318,8 @@ class TestJobListingV2(Spec):
                 'completed_time': 2222222222,
                 'tags': {
                     'this': '1337'
-                }
+                },
+                'artifacts': []
             },
         ]
 
@@ -326,7 +336,8 @@ class TestJobListingV2(Spec):
             duration='24291d6h23m53s',
             tags={
                 'this': '1337'
-            }
+            },
+            artifacts=[]
         )
 
         result = Job.all(project_name='random test project').evaluate()
@@ -341,6 +352,8 @@ class TestJobListingV2(Spec):
         from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
 
         fake_current_datetime(1005000000)
+
+        self.mock_get_all_artifacts.return_when([], job_id='my job x')
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -370,7 +383,8 @@ class TestJobListingV2(Spec):
                 'completed_time': 2222222222,
                 'tags': {
                     'beep': 'boop'
-                }
+                },
+                'artifacts': []
             },
         ]
 
@@ -387,7 +401,8 @@ class TestJobListingV2(Spec):
             duration='24291d6h23m53s',
             tags={
                 'beep': 'boop'
-            }
+            },
+            artifacts=[]
         )
 
         result = Job.all(project_name='random test project', handle_duplicate_param_names=False).evaluate()
