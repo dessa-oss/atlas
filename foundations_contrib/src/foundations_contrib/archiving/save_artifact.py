@@ -38,14 +38,14 @@ class _ArtifactSaver(object):
         self._append_metadata_to_archive()
 
     def _artifact_exists(self):
-        return self._artifact_archive.exists(f'artifacts/{self._blob_name_in_archive()}', prefix=self._job_id)
+        return self._artifact_archive.exists(f'user_artifacts/{self._blob_name_in_archive()}', prefix=self._job_id)
 
     def _append_artifact_to_archive(self):
-        self._artifact_archive.append_file('artifacts', self._filepath, self._job_id, target_name=self._key)
+        self._artifact_archive.append_file('user_artifacts', self._filepath, self._job_id, target_name=self._key)
 
     def _append_metadata_to_archive(self):
         metadata_blob_basename = self._blob_name_in_archive()
-        self._artifact_archive.append(f'artifacts/{metadata_blob_basename}.metadata', self._metadata(), self._job_id)
+        self._artifact_archive.append(f'user_artifacts/{metadata_blob_basename}.metadata', self._metadata(), self._job_id)
 
     def _blob_name_in_archive(self):
         return self._key or self._filename()

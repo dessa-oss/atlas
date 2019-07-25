@@ -57,8 +57,8 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('artifacts/cool-artifact.txt', job_id)
-        artifact_metadata = self._artifact_archive.fetch('artifacts/cool-artifact.txt.metadata', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
+        artifact_metadata = self._artifact_archive.fetch('user_artifacts/cool-artifact.txt.metadata', job_id)
         
         self.assertEqual(b'contents of artifact', artifact_contents)
         self.assertEqual({'file_extension': 'txt'}, artifact_metadata)
@@ -68,8 +68,8 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('artifacts/this-key', job_id)
-        artifact_metadata = self._artifact_archive.fetch('artifacts/this-key.metadata', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
+        artifact_metadata = self._artifact_archive.fetch('user_artifacts/this-key.metadata', job_id)
 
         self.assertEqual(b'contents of artifact', artifact_contents)
         self.assertEqual({'file_extension': 'txt'}, artifact_metadata)
@@ -79,8 +79,8 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('artifacts/this-key', job_id)
-        artifact_metadata = self._artifact_archive.fetch('artifacts/this-key.metadata', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
+        artifact_metadata = self._artifact_archive.fetch('user_artifacts/this-key.metadata', job_id)
 
         self.assertEqual(b'contents of cooler artifact', artifact_contents)
         self.assertEqual({'file_extension': 'other'}, artifact_metadata)
@@ -98,8 +98,8 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('artifacts/cool-artifact.txt', job_id)
-        artifact_metadata = self._artifact_archive.fetch('artifacts/cool-artifact.txt.metadata', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
+        artifact_metadata = self._artifact_archive.fetch('user_artifacts/cool-artifact.txt.metadata', job_id)
 
         self.assertEqual(b'contents of cooler artifact', artifact_contents)
         self.assertEqual({'file_extension': 'txt'}, artifact_metadata)
