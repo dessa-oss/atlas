@@ -33,3 +33,6 @@ class NullArchive(object):
 
     def fetch_file_path_to_target_file_path(self, file_prefix, file_path, prefix=None, target_name=None):
         return False
+
+    def list_files(self, file_path, prefix=None):
+        return []

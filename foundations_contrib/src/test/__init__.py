@@ -51,6 +51,7 @@ from test.test_resources_obfuscation_controller import TestResourcesObfuscationC
 from test.test_set_job_resources import TestSetJobResources
 from test.test_global_metric_logger import TestGlobalMetricLogger
 from test.test_bucket_pipeline_archive import TestBucketPipelineArchive
+from test.test_null_archive import TestNullArchive
 
 from test.test_log_manager import TestLogManager
 
