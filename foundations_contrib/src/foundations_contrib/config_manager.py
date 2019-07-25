@@ -52,8 +52,14 @@ class ConfigManager(object):
 
     def _load(self):
         import yaml
+        import os
 
         config = {}
+
+        foundations_key_length = len('FOUNDATIONS_')
+        for key, value in os.environ.items():
+            if key.startswith('FOUNDATIONS_'):
+                config[key[foundations_key_length:]] = value
 
         for path in self._get_config_paths():
             self._load_config(config, path)

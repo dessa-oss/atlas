@@ -12,6 +12,14 @@ from mock import patch
 class TestConfigManager(Spec):
 
     mock_file = let_mock()
+    
+    @let_now
+    def mock_os_environ(self):
+        return self.patch('os.environ', self.environment)
+
+    @let
+    def environment(self):
+        return self.faker.pydict()
 
     @let
     def config_manager(self):
@@ -46,6 +54,20 @@ class TestConfigManager(Spec):
         self.mock_file.__enter__ = lambda *args: self.mock_file
         self.mock_file.__exit__ = lambda *args: None
         self.mock_file.read.return_value = ''
+
+    def test_should_include_foundations_environment(self):
+        config_manager = ConfigManager()
+        self.environment['FOUNDATIONS_hello'] = 'world'
+        self.assertEqual('world', config_manager['hello'])
+
+    def test_should_include_foundations_environment_with_different_values(self):
+        config_manager = ConfigManager()
+        self.environment['FOUNDATIONS_world'] = 'hello'
+        self.assertEqual('hello', config_manager['world'])
+
+    def test_should_be_empty_by_default(self):
+        config_manager = ConfigManager()
+        self.assertEqual({'run_script_environment': {}}, config_manager.config())
 
     def test_persist_config(self):
         config_manager = ConfigManager()
