@@ -24,7 +24,23 @@ class TestJobArtifact(Spec):
     def uri(self):
         return self.faker.uri()
 
+    @let
+    def archive_host(self):
+        return self.faker.uri().rstrip('/')
+
+    @let
+    def archive_host_with_trailing_slash(self):
+        return self.archive_host + '/'
+
     mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_contrib.models.artifact_listing.artifact_listing_for_job')
+
+    @set_up
+    def set_up(self):
+        from foundations_contrib.config_manager import ConfigManager
+
+        self.config_manager = ConfigManager()
+        self.config_manager['ARCHIVE_HOST'] = self.archive_host
+        self.patch('foundations.config_manager', self.config_manager)
 
     def test_artifact_has_filename(self):
         job_artifact = JobArtifact(filename=self.filename)
@@ -57,12 +73,12 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/melspectrogram2901.png',
             artifact_type='png'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.wav',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/realtalk-output21980.wav',
             artifact_type='wav'
         )
 
@@ -79,12 +95,12 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.jpg',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.jpg',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/melspectrogram2901.jpg',
             artifact_type='jpg'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.mp4',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/realtalk-output21980.mp4',
             artifact_type='unknown'
         )
 
@@ -100,11 +116,29 @@ class TestJobArtifact(Spec):
 
         expected_artifact = JobArtifact(
             filename='realtalk-output21980-artifact',
-            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980-artifact',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact',
             artifact_type='mp3'
         )
 
         result = JobArtifact.all(job_id=self.job_id).evaluate()
+        expected_job_artifacts = [expected_artifact]
+        self.assertEqual(expected_job_artifacts, result)
+
+    def test_retrieve_artifacts_by_job_id_with_artifacts_containing_subdirectories_when_archive_host_has_trailing_slash(self):
+        self.config_manager['ARCHIVE_HOST'] = self.archive_host_with_trailing_slash
+
+        self.mock_artifact_listing_for_job.return_when([
+            ('intermediaries/output/realtalk-output21980-artifact', {'file_extension': 'mp3'})
+        ], self.job_id)
+
+        expected_artifact = JobArtifact(
+            filename='realtalk-output21980-artifact',
+            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact',
+            artifact_type='mp3'
+        )
+
+        result = JobArtifact.all(job_id=self.job_id).evaluate()
+
         expected_job_artifacts = [expected_artifact]
         self.assertEqual(expected_job_artifacts, result)
 
@@ -125,7 +159,7 @@ class TestJobArtifact(Spec):
         expected_job_artifacts = [
             JobArtifact(
                 filename=f'realtalk-{mapper[0]}-artifact',
-                uri=f'api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-{mapper[0]}-artifact',
+                uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-{mapper[0]}-artifact',
                 artifact_type=mapper[1]
             )
             for mapper in artifact_to_type_mapper

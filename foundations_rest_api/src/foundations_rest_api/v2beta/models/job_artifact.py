@@ -32,12 +32,16 @@ class JobArtifact(PropertyModel):
 
     @staticmethod
     def _build_artifact_model(job_id, artifact_properities):
+        import os.path as path
+        import foundations
+
+        archive_host = foundations.config_manager['ARCHIVE_HOST']
         file_path, metadata = artifact_properities['artifact']
-        file_name = file_path.split("/")[-1]
+        file_name = file_path.split('/')[-1]
 
         return JobArtifact(
             filename=file_name,
-            uri=f"api/v2beta/jobs/{job_id}/artifacts/{file_path}",
+            uri=path.join(archive_host, f'{job_id}/user_artifacts/{file_path}'),
             artifact_type=JobArtifact._extract_file_extension(metadata)
         )
 
