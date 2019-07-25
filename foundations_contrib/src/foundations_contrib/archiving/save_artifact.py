@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import json
+
 def save_artifact(filepath, key=None):
     from foundations_contrib.global_state import log_manager, current_foundations_context
 
@@ -22,6 +24,7 @@ def save_artifact(filepath, key=None):
 class _ArtifactSaver(object):
 
     def __init__(self, logger, filepath, job_id, key):
+        from foundations_contrib.global_state import redis_connection
         from foundations_contrib.archiving import load_archive
 
         self._logger = logger
@@ -29,23 +32,21 @@ class _ArtifactSaver(object):
         self._filepath = filepath
         self._job_id = job_id
         self._key = key
+        self._redis = redis_connection
 
     def save_artifact(self):
         if self._artifact_exists():
             self._logger.warning(f'Artifact "{self._blob_name_in_archive()}" already exists - overwriting.')
 
         self._append_artifact_to_archive()
-        self._append_metadata_to_archive()
+        self._add_metadata_to_redis()
 
     def _artifact_exists(self):
-        return self._artifact_archive.exists(f'user_artifacts/{self._blob_name_in_archive()}', prefix=self._job_id)
+        existing_metadata = self._existing_metadata()
+        return self._blob_name_in_archive() in existing_metadata
 
     def _append_artifact_to_archive(self):
         self._artifact_archive.append_file('user_artifacts', self._filepath, self._job_id, target_name=self._key)
-
-    def _append_metadata_to_archive(self):
-        metadata_blob_basename = self._blob_name_in_archive()
-        self._artifact_archive.append(f'user_artifacts/{metadata_blob_basename}.metadata', self._metadata(), self._job_id)
 
     def _blob_name_in_archive(self):
         return self._key or self._filename()
@@ -54,9 +55,24 @@ class _ArtifactSaver(object):
         import os.path as path
         return path.basename(self._filepath)
 
-    def _metadata(self):
+    def _artifact_metadata(self):
         import os.path as path
 
         _, extension = path.splitext(self._filepath)
         extension_without_dot = extension[1:]
         return {'file_extension': extension_without_dot}
+
+    def _add_metadata_to_redis(self):
+        artifact_metadata = self._artifact_metadata()
+
+        existing_metadata = self._existing_metadata()
+        existing_metadata[self._blob_name_in_archive()] = artifact_metadata
+
+        self._write_metadata(existing_metadata)
+
+    def _existing_metadata(self):
+        existing_metadata = self._redis.get(f'jobs:{self._job_id}:user_artifact_metadata')
+        return json.loads(existing_metadata) if existing_metadata is not None else {}
+
+    def _write_metadata(self, metadata):
+        self._redis.set(f'jobs:{self._job_id}:user_artifact_metadata', json.dumps(metadata))

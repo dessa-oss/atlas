@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
+import json
 from foundations_contrib.archiving.save_artifact import save_artifact
 
 class TestSaveArtifact(Spec):
@@ -20,6 +21,10 @@ class TestSaveArtifact(Spec):
         return self.faker.file_path()
 
     @let
+    def filepath_2(self):
+        return self.faker.file_path()
+
+    @let
     def job_id(self):
         return self.faker.uuid4()
 
@@ -29,6 +34,10 @@ class TestSaveArtifact(Spec):
 
     @set_up
     def set_up(self):
+        import fakeredis
+
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeStrictRedis())
+
         mock_get_logger = self.patch('foundations_contrib.global_state.log_manager.get_logger', ConditionalReturn())
         mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.archiving.save_artifact')
 
@@ -69,7 +78,7 @@ class TestSaveArtifact(Spec):
         save_artifact(self.filepath)
         load_archive.assert_not_called()
 
-    def test_save_artifact_in_job_appends_metadata_to_archive(self):
+    def test_save_artifact_in_job_saves_metadata_in_redis(self):
         import os.path as path
 
         self._mock_foundations_context.is_in_running_job.return_value = True
@@ -80,7 +89,55 @@ class TestSaveArtifact(Spec):
         extension_without_dot = extension[1:]
 
         save_artifact(self.filepath)
-        self._mock_archive.append.assert_called_with(f'user_artifacts/{path.basename(self.filepath)}.metadata', {'file_extension': extension_without_dot}, self.job_id)
+        
+        artifact_metadata = json.loads(self._redis.get(f'jobs:{self.job_id}:user_artifact_metadata'))
+        expected_metadata = {
+            path.basename(self.filepath): {
+                'file_extension': extension_without_dot
+            }
+        }
+
+        self.assertEqual(expected_metadata, artifact_metadata)
+
+    def test_save_two_artifacts_in_job_saves_metadata_for_both_in_redis(self):
+        import os.path as path
+
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        filename = path.basename(self.filepath)
+        _, extension = path.splitext(filename)
+        extension_without_dot = extension[1:]
+
+        filename_2 = path.basename(self.filepath_2)
+        _, extension_2 = path.splitext(filename_2)
+        extension_without_dot_2 = extension_2[1:]
+
+        save_artifact(self.filepath)
+        save_artifact(self.filepath_2)
+        
+        artifact_metadata = json.loads(self._redis.get(f'jobs:{self.job_id}:user_artifact_metadata'))
+        expected_metadata = {
+            path.basename(self.filepath): {
+                'file_extension': extension_without_dot
+            },
+            path.basename(self.filepath_2): {
+                'file_extension': extension_without_dot_2
+            }
+        }
+
+        self.assertEqual(expected_metadata, artifact_metadata)
+
+    def test_save_two_artifacts_with_different_keys_in_job_does_not_print_warning(self):
+        import os.path as path
+
+        self._mock_foundations_context.is_in_running_job.return_value = True
+        self._mock_foundations_context.job_id.return_value = self.job_id
+
+        save_artifact(self.filepath)
+        save_artifact(self.filepath_2)
+        
+        self.mock_logger.warning.assert_not_called()
 
     def test_save_artifact_in_job_with_key_appends_file_to_archive_using_key_as_target(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
@@ -100,16 +157,22 @@ class TestSaveArtifact(Spec):
         extension_without_dot = extension[1:]
 
         save_artifact(self.filepath, key=self.key)
-        self._mock_archive.append.assert_called_with(f'user_artifacts/{self.key}.metadata', {'file_extension': extension_without_dot}, self.job_id)
+
+        artifact_metadata = json.loads(self._redis.get(f'jobs:{self.job_id}:user_artifact_metadata'))
+        expected_metadata = {
+            self.key: {
+                'file_extension': extension_without_dot
+            }
+        }
+
+        self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_artifact_in_job_with_key_when_key_already_exists_for_job_logs_warning(self):
         self._mock_foundations_context.is_in_running_job.return_value = True
         self._mock_foundations_context.job_id.return_value = self.job_id
 
-        self._mock_archive.exists = ConditionalReturn()
-        self._mock_archive.exists.return_when(True, f'user_artifacts/{self.key}', prefix=self.job_id)
-
         save_artifact(self.filepath, key=self.key)
+        save_artifact(self.filepath_2, key=self.key)
         self.mock_logger.warning.assert_called_once_with(f'Artifact "{self.key}" already exists - overwriting.')
 
     def test_save_artifact_in_job_without_key_when_artifact_already_exists_for_job_logs_warning(self):
@@ -120,8 +183,6 @@ class TestSaveArtifact(Spec):
 
         filename = path.basename(self.filepath)
 
-        self._mock_archive.exists = ConditionalReturn()
-        self._mock_archive.exists.return_when(True, f'user_artifacts/{filename}', prefix=self.job_id)
-
         save_artifact(self.filepath)
+        save_artifact(f'{self.filepath_2}/{self.filepath}')
         self.mock_logger.warning.assert_called_once_with(f'Artifact "{filename}" already exists - overwriting.')
