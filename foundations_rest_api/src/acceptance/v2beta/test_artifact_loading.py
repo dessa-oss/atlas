@@ -92,17 +92,17 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         some_artifacts_payload = [
             {
                 'filename': 'audio_artifact',
-                'path': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/audio_artifact',
+                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/audio_artifact',
                 'artifact_type': 'mp3'
             },
             {
                 'filename': 'no_extension',
-                'path': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/no_extension',
+                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/no_extension',
                 'artifact_type': 'unknown'
             },
             {
                 'filename': 'other_file.other',
-                'path': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/other_file.other',
+                'uri': f'api/v2beta/jobs/{self._some_artifacts}/artifacts/other_file.other',
                 'artifact_type': 'unknown'
             }
         ]
@@ -114,7 +114,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         one_artifact_payload = [
             {
                 'filename': 'image_file.png',
-                'path': f'api/v2beta/jobs/{self._one_artifact}/artifacts/image_file.png',
+                'uri': f'api/v2beta/jobs/{self._one_artifact}/artifacts/image_file.png',
                 'artifact_type': 'png'
             }
         ]

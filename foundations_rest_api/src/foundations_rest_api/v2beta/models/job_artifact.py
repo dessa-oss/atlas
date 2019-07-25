@@ -9,7 +9,7 @@ from foundations_rest_api.v2beta.models.property_model import PropertyModel
 
 class JobArtifact(PropertyModel):
     filename = PropertyModel.define_property()
-    path = PropertyModel.define_property()
+    uri = PropertyModel.define_property()
     artifact_type = PropertyModel.define_property()
 
     @staticmethod
@@ -37,7 +37,7 @@ class JobArtifact(PropertyModel):
 
         return JobArtifact(
             filename=file_name,
-            path=f"api/v2beta/jobs/{job_id}/artifacts/{file_path}",
+            uri=f"api/v2beta/jobs/{job_id}/artifacts/{file_path}",
             artifact_type=JobArtifact._extract_file_extension(file_name)
         )
 

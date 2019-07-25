@@ -21,7 +21,7 @@ class TestJobArtifact(Spec):
         return self.faker.name()
 
     @let
-    def path(self):
+    def uri(self):
         return self.faker.uri()
 
     mock_artifact_listing_for_job = let_patch_mock_with_conditional_return('foundations_contrib.models.artifact_listing.artifact_listing_for_job')
@@ -30,9 +30,9 @@ class TestJobArtifact(Spec):
         job_artifact = JobArtifact(filename=self.filename)
         self.assertEqual(self.filename, job_artifact.filename)
 
-    def test_artifact_has_path(self):
-        job_artifact = JobArtifact(path=self.path)
-        self.assertEqual(self.path, job_artifact.path)
+    def test_artifact_has_uri(self):
+        job_artifact = JobArtifact(uri=self.uri)
+        self.assertEqual(self.uri, job_artifact.uri)
 
     def test_artifact_has_artifact_type(self):
         job_artifact = JobArtifact(artifact_type='wav')
@@ -41,11 +41,11 @@ class TestJobArtifact(Spec):
     def test_artifact_has_all_attributes(self):
         expected_artifact = JobArtifact(
             filename=self.filename,
-            path=self.path,
+            uri=self.uri,
             artifact_type='wav'
         )
         self.assertEqual(self.filename, expected_artifact.filename)
-        self.assertEqual(self.path, expected_artifact.path)
+        self.assertEqual(self.uri, expected_artifact.uri)
         self.assertEqual('wav', expected_artifact.artifact_type)
 
     def test_retrieve_artifacts_by_job_id(self):
@@ -57,12 +57,12 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            path=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
             artifact_type='png'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.wav',
-            path=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav",
+            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav",
             artifact_type='wav'
         )
 
@@ -79,12 +79,12 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            path=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
             artifact_type='png'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.mp4',
-            path=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4",
+            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4",
             artifact_type='unknown'
         )
 
@@ -100,7 +100,7 @@ class TestJobArtifact(Spec):
 
         expected_artifact = JobArtifact(
             filename='realtalk-output21980.mp3',
-            path=f"api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980.mp3",
+            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980.mp3",
             artifact_type='mp3'
         )
 

@@ -11,6 +11,8 @@ from foundations_rest_api.v2beta.models.job import Job
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
 from foundations_rest_api.lazy_result import LazyResult
 
+from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
+
 class TestJobListingV2(Spec):
 
     @let
@@ -103,13 +105,8 @@ class TestJobListingV2(Spec):
         job = Job(tags=self.fake_tags)
         self.assertEqual(self.fake_tags, job.tags)
 
-    class MockArtifact(PropertyModel):
-        filename = PropertyModel.define_property()
-        path = PropertyModel.define_property()
-        artifact_type = PropertyModel.define_property()
-
     def test_job_has_artifacts(self):
-        artifact = self.MockArtifact(filename="output.txt", path="output.txt", artifact_type='unknown')
+        artifact = JobArtifact(filename="output.txt", uri="output.txt", artifact_type='unknown')
         job = Job(artifacts=[artifact])
         self.assertEqual(artifact, job.artifacts[0])
 
@@ -199,12 +196,12 @@ class TestJobListingV2(Spec):
         fake_current_datetime(1005000000)
 
         self.mock_get_all_artifacts.return_when(LazyResult(lambda: [
-            self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')
+            JobArtifact(filename='output_x.png',uri='output_x.png', artifact_type='png')
         ]), job_id='my job x')
 
         self.mock_get_all_artifacts.return_when(LazyResult(lambda: [
-            self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
-            self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown'),
+            JobArtifact(filename='output_v007.wav', uri='output_v007.wav', artifact_type='wav'),
+            JobArtifact(filename='output_v007.txt', uri='output_v007.txt', artifact_type='unknown'),
         ]), job_id='00000000-0000-0000-0000-000000000007')
 
         mock_get_all_jobs_data.return_value = [
@@ -219,7 +216,7 @@ class TestJobListingV2(Spec):
                 'start_time':  123456789,
                 'completed_time': 2222222222,
                 'tags': {},
-                'artifacts': [{'filename': 'output_x.png', 'path': 'output_x.png', 'artifact_type': 'png'}]
+                'artifacts': [{'filename': 'output_x.png', 'uri': 'output_x.png', 'artifact_type': 'png'}]
             },
             {
                 'project_name': 'random test project',
@@ -236,8 +233,8 @@ class TestJobListingV2(Spec):
                     'cool': 'dude'
                 },
                 'artifacts': [
-                    {'filename': 'output_v007.wav', 'path': 'output_v007.wav', 'artifact_type': 'wav'},
-                    {'filename': 'output_v007.txt', 'path': 'output_v007.txt', 'artifact_type': 'unknown'},
+                    {'filename': 'output_v007.wav', 'uri': 'output_v007.wav', 'artifact_type': 'wav'},
+                    {'filename': 'output_v007.txt', 'uri': 'output_v007.txt', 'artifact_type': 'unknown'},
                 ]
             }
         ]
@@ -257,8 +254,8 @@ class TestJobListingV2(Spec):
                 'cool': 'dude'
             },
             artifacts=[
-                self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
-                self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown')
+                JobArtifact(filename='output_v007.wav', uri='output_v007.wav', artifact_type='wav'),
+                JobArtifact(filename='output_v007.txt', uri='output_v007.txt', artifact_type='unknown')
             ]
         )
 
@@ -273,7 +270,7 @@ class TestJobListingV2(Spec):
             completed_time='2040-06-02T03:57:02',
             duration='24291d6h23m53s',
             tags={},
-            artifacts=[self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')]
+            artifacts=[JobArtifact(filename='output_x.png',uri='output_x.png', artifact_type='png')]
         )
 
         result = Job.all(project_name='random test project').evaluate()
