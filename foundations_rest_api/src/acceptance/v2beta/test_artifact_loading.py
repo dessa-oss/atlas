@@ -55,7 +55,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
 
         redis.flushall()
 
-        foundations.config_manager.config().clear()
+        foundations.config_manager.reset()
         foundations.config_manager.config().update(klass._old_config)
 
         global_state.foundations_context = klass._old_context
@@ -87,9 +87,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     def test_get_route(self):
         import os
         import foundations
-
-        print(os.environ)
-        print(foundations.config_manager.config())
 
         data = super().test_get_route()
         jobs = data['jobs']
