@@ -51,18 +51,18 @@ class TestJobArtifact(Spec):
     def test_retrieve_artifacts_by_job_id(self):
 
         self.mock_artifact_listing_for_job.return_when([
-            "melspectrogram2901.png",
-            "realtalk-output21980.wav"
+            ('melspectrogram2901.png', {'file_extension': 'png'}),
+            ('realtalk-output21980.wav', {'file_extension': 'wav'})
         ], self.job_id)
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png',
             artifact_type='png'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.wav',
-            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav",
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.wav',
             artifact_type='wav'
         )
 
@@ -73,18 +73,18 @@ class TestJobArtifact(Spec):
     def test_retrieve_artifacts_by_job_id_with_unknown_extension(self):
 
         self.mock_artifact_listing_for_job.return_when([
-            "melspectrogram2901.png",
-            "realtalk-output21980.mp4"
+            ('melspectrogram2901.png', {'file_extension': 'png'}),
+            ('realtalk-output21980.mp4', {'file_extension': 'mp4'})
         ], self.job_id)
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png",
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/melspectrogram2901.png',
             artifact_type='png'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.mp4',
-            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4",
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/realtalk-output21980.mp4',
             artifact_type='unknown'
         )
 
@@ -95,12 +95,12 @@ class TestJobArtifact(Spec):
     def test_retrieve_artifacts_by_job_id_with_artifacts_containing_subdirectories(self):
 
         self.mock_artifact_listing_for_job.return_when([
-            "intermediaries/output/realtalk-output21980.mp3"
+            ('intermediaries/output/realtalk-output21980-artifact', {'file_extension': 'mp3'})
         ], self.job_id)
 
         expected_artifact = JobArtifact(
-            filename='realtalk-output21980.mp3',
-            uri=f"api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980.mp3",
+            filename='realtalk-output21980-artifact',
+            uri=f'api/v2beta/jobs/{self.job_id}/artifacts/intermediaries/output/realtalk-output21980-artifact',
             artifact_type='mp3'
         )
 

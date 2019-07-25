@@ -32,19 +32,19 @@ class JobArtifact(PropertyModel):
 
     @staticmethod
     def _build_artifact_model(job_id, artifact_properities):
-        file_path = artifact_properities['artifact']
+        file_path, metadata = artifact_properities['artifact']
         file_name = file_path.split("/")[-1]
 
         return JobArtifact(
             filename=file_name,
             uri=f"api/v2beta/jobs/{job_id}/artifacts/{file_path}",
-            artifact_type=JobArtifact._extract_file_extension(file_name)
+            artifact_type=JobArtifact._extract_file_extension(metadata)
         )
 
     @staticmethod
-    def _extract_file_extension(file_name):
+    def _extract_file_extension(metadata):
         supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg']
-        file_extension = file_name.split('.')[-1].strip().lower()
+        file_extension = metadata['file_extension']
         if file_extension not in supported_file_types:
             file_extension = 'unknown'
         return file_extension
