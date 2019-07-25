@@ -85,9 +85,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         foundations.save_artifact(filepath=klass._artifact_fixture_path('audio_file.mp3'), key='audio_artifact')
 
     def test_get_route(self):
-        import os
-        import foundations
-
         data = super().test_get_route()
         jobs = data['jobs']
 
