@@ -193,12 +193,12 @@ class TestJobListingV2(Spec):
 
         self.mock_get_all_artifacts.return_when([
             self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')
-        ], 'my job x')
+        ], job_id='my job x')
 
         self.mock_get_all_artifacts.return_when([
             self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
             self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown'),
-        ], '00000000-0000-0000-0000-000000000007')
+        ], job_id='00000000-0000-0000-0000-000000000007')
 
         mock_get_all_jobs_data.return_value = [
             {
@@ -228,7 +228,10 @@ class TestJobListingV2(Spec):
                     'asdf': 'this',
                     'cool': 'dude'
                 },
-                'artifacts': [{'filename': 'output_v007.wav', 'path': 'output_v007.wav', 'artifact_type': 'wav'}]
+                'artifacts': [
+                    {'filename': 'output_v007.wav', 'path': 'output_v007.wav', 'artifact_type': 'wav'},
+                    {'filename': 'output_v007.txt', 'path': 'output_v007.txt', 'artifact_type': 'unknown'},
+                ]
             }
         ]
 
@@ -246,7 +249,10 @@ class TestJobListingV2(Spec):
                 'asdf': 'this',
                 'cool': 'dude'
             },
-            artifacts=[]
+            artifacts=[
+                self.MockArtifact(filename='output_v007.wav', path='output_v007.wav', artifact_type='wav'),
+                self.MockArtifact(filename='output_v007.txt', path='output_v007.txt', artifact_type='unknown')
+            ]
         )
 
         expected_job_2 = Job(
@@ -260,7 +266,7 @@ class TestJobListingV2(Spec):
             completed_time='2040-06-02T03:57:02',
             duration='24291d6h23m53s',
             tags={},
-            artifacts=[]
+            artifacts=[self.MockArtifact(filename='output_x.png',path='output_x.png', artifact_type='png')]
         )
 
         result = Job.all(project_name='random test project').evaluate()

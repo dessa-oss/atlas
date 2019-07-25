@@ -63,6 +63,7 @@ class Job(PropertyModel):
         Job._reshape_output_metrics(job_data)
         Job._update_job_time_properties(job_data)
         Job._trim_metric_values(job_data)
+        Job._retrieve_artifacts(job_data)
         job_data['project'] = job_data['project_name']
         del job_data['project_name']
         return Job(**job_data)
@@ -171,3 +172,9 @@ class Job(PropertyModel):
             return None
         date_time = datetime.utcfromtimestamp(time)
         return date_time.isoformat()
+
+    @staticmethod
+    def _retrieve_artifacts(job_data):
+        from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
+        job_id = job_data['job_id']
+        job_data['artifacts'] = JobArtifact.all(job_id = job_id)
