@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
+import JobSidebar from './job-sidebar/JobSidebar';
+
 
 class JobTable extends Component {
   constructor(props) {
@@ -30,6 +32,7 @@ class JobTable extends Component {
       jobIdFilters: this.props.jobIdFilters,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
+      currentJob: null,
     };
   }
 
@@ -66,6 +69,13 @@ class JobTable extends Component {
     let jobRows = [];
     let rowNum = 1;
     const rowNumbers = [];
+    const handleClick = (job) => {
+      if (this.state.currentJob === job) {
+        this.setState({ currentJob: null });
+      } else {
+        this.setState({ currentJob: job });
+      }
+    };
     if (isLoaded) {
       if (jobs.length === 0) {
         jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
@@ -73,7 +83,7 @@ class JobTable extends Component {
         jobRows = [];
         jobs.forEach((job) => {
           const key = job.job_id;
-          jobRows.push(<JobTableRow key={key} job={job} rowNumber={rowNum - 1} />);
+          jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
           rowNumbers.push(<p key={key}>{rowNum}</p>);
           rowNum += 1;
         });
@@ -85,6 +95,8 @@ class JobTable extends Component {
     return (
       <div className="job-table-content">
         <div className="job-table-container">
+          {/* <h1>{this.state.currentJob}</h1> */}
+          <JobSidebar job={this.state.currentJob} />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}

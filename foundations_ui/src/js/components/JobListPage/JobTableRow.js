@@ -36,7 +36,12 @@ class JobTableRow extends Component {
     const isError = CommonActions.isError(job.status);
 
     return (
-      <div className="job-table-row">
+      <div
+        role="presentation"
+        className="job-table-row"
+        onClick={() => this.props.handleClick(job)}
+        onKeydown={() => this.props.handleClick(job)}
+      >
         <CancelJobCell job={job} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />
         <StartCell startTime={job.start_time} isError={isError} rowNumber={rowNumber} />
@@ -56,11 +61,13 @@ class JobTableRow extends Component {
 JobTableRow.propTypes = {
   job: PropTypes.object,
   rowNumber: PropTypes.number,
+  handleClick: PropTypes.func,
 };
 
 JobTableRow.defaultProps = {
   job: {},
   rowNumber: 0,
+  handleClick: () => null,
 };
 
 export default JobTableRow;

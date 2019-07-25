@@ -332,6 +332,7 @@ class JobListPage extends Component {
       queryStatus,
     } = this.state;
     let jobList;
+    let sidebar;
     if (queryStatus === 401) {
       return JobListActions.redirect('/login');
     }
@@ -370,6 +371,7 @@ class JobListPage extends Component {
     return (
       <div className="job-list-container">
         <Toolbar />
+        {sidebar}
         <JobHeader
           project={project}
           jobs={jobs}
