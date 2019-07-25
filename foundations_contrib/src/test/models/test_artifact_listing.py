@@ -15,7 +15,7 @@ class TestArtifactListing(Spec):
 
     @let
     def mock_archive(self):
-        return ConditionalReturn()
+        return Mock()
 
     @let
     def mock_listing(self):
@@ -26,8 +26,28 @@ class TestArtifactListing(Spec):
         return self.faker.random.randint(2, 5)
 
     @let
+    def archive_files(self):
+        return [f'{self.job_id}/user_artifacts/{filepath}' for filepath in self.mock_listing]
+
+    @let
+    def metadata_files(self):
+        return [f'{filepath}.metadata' for filepath in self.archive_files]
+
+    @let
+    def metadata_map(self):
+        return {metadata_file: f'metadata blob for {metadata_file}' for metadata_file in self.metadata_files}
+
+    @let
     def archive_listing(self):
-        return [f'{self.job_id}/user_artifacts/{file}' for file in self.mock_listing]
+        return self.archive_files + self.metadata_files
+
+    @let
+    def expected_artifact_listing(self):
+        def _strip_prefix(filepath):
+            num_to_remove = len(f'{self.job_id}/user_artifacts/')
+            return filepath[num_to_remove:]
+
+        return [(_strip_prefix(filepath), f'metadata blob for {filepath}.metadata') for filepath in self.archive_files]
 
     mock_load_archive = let_patch_mock_with_conditional_return('foundations_contrib.archiving.load_archive')
 
@@ -36,6 +56,12 @@ class TestArtifactListing(Spec):
         self.mock_archive.list_files = ConditionalReturn()
         self.mock_archive.list_files.return_when(
             self.archive_listing, 'user_artifacts/*', self.job_id)
+
+        self.mock_archive.fetch = ConditionalReturn()
+
+        for filepath in self.mock_listing:
+            self.mock_archive.fetch.return_when(f'metadata blob for {self.job_id}/user_artifacts/{filepath}.metadata', f'user_artifacts/{filepath}.metadata', self.job_id)
+
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
 
     def test_artifact_listing_for_job_in_archive(self):
@@ -43,13 +69,13 @@ class TestArtifactListing(Spec):
 
         result_listing = artifact_listing_for_job_in_archive(
             self.job_id, self.mock_archive)
-        self.assertEqual(self.mock_listing, result_listing)
+        self.assertEqual(self.expected_artifact_listing, result_listing)
 
     def test_artifact_listing_for_job_returns_list_of_artifacts(self):
         from foundations_contrib.models.artifact_listing import artifact_listing_for_job
 
         mock_artifact_listing = self.patch('foundations_contrib.models.artifact_listing.artifact_listing_for_job_in_archive', ConditionalReturn())
-        mock_artifact_listing.return_when(self.mock_listing, self.job_id, self.mock_archive)
+        mock_artifact_listing.return_when(self.expected_artifact_listing, self.job_id, self.mock_archive)
 
         result_listing = artifact_listing_for_job(self.job_id)
-        self.assertEqual(self.mock_listing, result_listing)
+        self.assertEqual(self.expected_artifact_listing, result_listing)
