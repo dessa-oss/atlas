@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export TZ=EST
-
 function run_unit_test {
     module_directory_to_add="$1"
     if [ -d "${module_directory_to_add}/test" ]; then

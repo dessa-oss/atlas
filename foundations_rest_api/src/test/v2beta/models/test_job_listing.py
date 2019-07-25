@@ -112,7 +112,6 @@ class TestJobListingV2(Spec):
         job = Job(artifacts=[artifact])
         self.assertEqual(artifact, job.artifacts[0])
 
-    @skip('timezone error temp disabled')
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_returns_multiple_jobs(self, mock_get_all_jobs_data):
         from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
@@ -276,7 +275,6 @@ class TestJobListingV2(Spec):
         expected_jobs = [expected_job_1, expected_job_2]
         self.assertEqual(expected_jobs, result)
 
-    @skip('timezone error temp disabled')
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_filters_out_non_hyperparameters(self, mock_get_all_jobs_data):
         from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
@@ -338,7 +336,6 @@ class TestJobListingV2(Spec):
         expected_jobs = [expected_job_1]
         self.assertEqual(expected_jobs, result)
 
-    @skip('timezone error temp disabled')
     @patch('foundations_contrib.job_data_redis.JobDataRedis.get_all_jobs_data')
     def test_all_filters_out_non_hyperparameters_and_does_not_append_suffix_if_flag_false(self, mock_get_all_jobs_data):
         from test.datetime_faker import fake_current_datetime, restore_real_current_datetime
