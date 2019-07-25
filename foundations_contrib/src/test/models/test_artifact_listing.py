@@ -47,7 +47,9 @@ class TestArtifactListing(Spec):
             num_to_remove = len(f'{self.job_id}/user_artifacts/')
             return filepath[num_to_remove:]
 
-        return [(_strip_prefix(filepath), f'metadata blob for {filepath}.metadata') for filepath in self.archive_files]
+        expected_result = [(_strip_prefix(filepath), f'metadata blob for {filepath}.metadata') for filepath in self.archive_files]
+        expected_result.sort(key=lambda entry: entry[0])
+        return expected_result
 
     mock_load_archive = let_patch_mock_with_conditional_return('foundations_contrib.archiving.load_archive')
 

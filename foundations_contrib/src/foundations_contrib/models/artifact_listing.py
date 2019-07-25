@@ -8,7 +8,11 @@ Written by Kyle De Freitas <k.defreitas@dessa.com>, 07 2019
 def artifact_listing_for_job_in_archive(job_id, archive):
     raw_file_paths = archive.list_files('user_artifacts/*', job_id)
     archive_keys = _artifact_listing_for_paths(raw_file_paths, job_id)
-    return [_artifact_key_with_metadata(archive, key, job_id) for key in archive_keys]
+    
+    listing = [_artifact_key_with_metadata(archive, key, job_id) for key in archive_keys]
+    listing.sort(key=lambda entry: entry[0])
+    
+    return listing
 
 def artifact_listing_for_job(job_id):
     from foundations_contrib.archiving import load_archive
