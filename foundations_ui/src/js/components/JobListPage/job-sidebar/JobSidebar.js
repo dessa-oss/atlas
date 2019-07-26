@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import SidebarSection from './SidebarSection';
 import ArtifactViewer from './ArtifactViewer';
 import ImageViewer from './ImageViewer';
-import ArchiveList from './ArchiveList';
+import ArtifactList from './ArtifactList';
 
 export default function JobSidebar(props) {
   if (props.job != null) {
@@ -13,7 +13,7 @@ export default function JobSidebar(props) {
           header="JOB DETAILS"
           content={ArtifactViewer({ jobId: props.job.job_id, content: ImageViewer() })}
         />
-        <SidebarSection header="FILES" content={ArchiveList()} />
+        <SidebarSection header="FILES" content={ArtifactList()} />
       </div>
     );
   }
