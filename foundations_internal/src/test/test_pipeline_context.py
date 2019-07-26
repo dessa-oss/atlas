@@ -104,8 +104,6 @@ class TestPipelineContext(Spec):
             self.archiver = archiver
             self.load_artifact_counter += 1
 
-    mock_os_environment = let_patch_mock('os.environ', {})
-
     @let
     def job_id(self):
         return self.faker.uuid4()
@@ -165,10 +163,9 @@ class TestPipelineContext(Spec):
         pipeline_context = PipelineContext()
 
         self.config_manager['other_world'] = 'aliens'
-        config_return = {'other_world': 'aliens', 'run_script_environment': {}}
 
         pipeline_context.fill_provenance(self.config_manager)
-        self.assertEqual(pipeline_context.provenance.config, config_return)
+        self.assertEqual(pipeline_context.provenance.config['other_world'], 'aliens')
 
     def test_save_uses_save_method_on_result_saver(self):
         pipeline_context = PipelineContext()

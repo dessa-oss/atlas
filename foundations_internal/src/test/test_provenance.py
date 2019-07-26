@@ -40,8 +40,6 @@ class TestProvenance(Spec):
         def job_archive(self):
             return 'space'
 
-    mock_os_environment = let_patch_mock('os.environ', {'hello': 'world'})
-
     @let
     def config_manager(self):
         from foundations.config_manager import ConfigManager
@@ -90,21 +88,22 @@ class TestProvenance(Spec):
     def test_fill_config_with_correct_value_from_config_manager(self):
         provenance = Provenance()
         self.config_manager['other_world'] = 'aliens'
-        config_return = {'other_world': 'aliens', 'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
-        self.assertDictEqual(provenance.config, config_return)
+        self.assertEqual(provenance.config['other_world'], 'aliens')
 
     def test_fill_config_with_correct_value_from_config_manager_with_multiple_keys(self):
         provenance = Provenance()
         self.config_manager['other'] = 'value'
         self.config_manager['next'] = 'one'
-        config_return = {'other': 'value', 'next': 'one', 'run_script_environment': {}}
 
         provenance.fill_config(self.config_manager)
-        self.assertDictEqual(provenance.config, config_return)
+        self.assertEqual(provenance.config['other'], 'value')
+        self.assertEqual(provenance.config['next'], 'one')
 
     def test_fill_config_with_correct_value_from_config_manager_with_empty_config(self):
+        self.patch('os.environ', {})
+
         provenance = Provenance()
         config_return = {'run_script_environment': {}}
 
