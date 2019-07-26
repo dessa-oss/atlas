@@ -7,6 +7,7 @@ import ArtifactList from './ArtifactList';
 
 export default function JobSidebar(props) {
   const { job } = props;
+  const handleArtifactClick = () => alert('You clicked and artifact');
   if (props.job != null) {
     return (
       <div className="job-sidebar">
@@ -14,7 +15,10 @@ export default function JobSidebar(props) {
           header="JOB DETAILS"
           content={ArtifactViewer({ jobId: job.job_id, content: ImageViewer() })}
         />
-        <SidebarSection header="FILES" content={ArtifactList()} />
+        <SidebarSection
+          header="FILES"
+          content={ArtifactList({ artifacts: job.artifacts, handleClick: handleArtifactClick })}
+        />
       </div>
     );
   }
