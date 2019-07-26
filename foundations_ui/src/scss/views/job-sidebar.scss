@@ -1,6 +1,10 @@
 .sidebar-section {
     background-color: aquamarine;
     margin-top: -15px;
+    height: 40%;
+    &:nth-child(2) {
+        height: 60%;
+    }
 }
 
 .sidebar-section-header {
@@ -31,14 +35,35 @@
 .artifact-viewer {
     background: #F7F7F7;
     padding: 30px;
+    height: 100%;
+    h2 {
+        margin-top: 0;
+    }
 }
 
 .artifact-list {
     overflow-y: auto;
-    height: 400px;
+    height: 100%;
+    margin: 0;
     padding: 0;
-    ul {
+    li {
         margin: 0;
-        padding: 0;
+        padding:0;
+        height: 2em;
+        border-bottom: 1px solid #999;
+        background-color: #fff;
+        padding: 10px;
+        padding-left: 20px;
+        p {
+            font-size: 18px;
+        }
+        button {
+            float: right;
+            margin-right: 40px;
+            height: 30px;
+        }
+        p, .download-button {
+            display: inline;
+        }
     }
 }
