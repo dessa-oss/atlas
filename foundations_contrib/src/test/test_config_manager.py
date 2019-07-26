@@ -320,6 +320,17 @@ class TestConfigManager(Spec):
         config_manager.reset()
         self.assertIsNone(config_manager.config().get('FOUNDATIONS_TEST'))
 
+    def test_reset_clears_config_paths(self):
+        from foundations_contrib.change_directory import ChangeDirectory
+
+        config_manager = ConfigManager()
+
+        with ChangeDirectory('test/fixtures/single_config'):
+            config_manager.config()
+
+        config_manager.reset()
+        self.assertEqual([], config_manager.config_paths())
+
     def call_reflect_constructor(self, metric):
         config_manager = ConfigManager()
         config_manager[metric +

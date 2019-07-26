@@ -51,6 +51,7 @@ class ConfigManager(object):
         return self._frozen
 
     def reset(self):
+        self._config_paths = []
         self._config = None
         self.config()
     
