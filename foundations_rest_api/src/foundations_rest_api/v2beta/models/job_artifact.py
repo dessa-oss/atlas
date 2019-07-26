@@ -52,10 +52,14 @@ class JobArtifact(PropertyModel):
     def _type_for_extension(file_extension):
         type_map = {}
 
-        audio_formats = {extension: 'audio' for extension in ['wav', 'mp3']}
-        image_formats = {extension: 'image' for extension in ['png', 'jpg', 'jpeg', 'svg', 'gif']}
+        audio_formats = JobArtifact._type_map_for_format('audio', ['wav', 'mp3'])
+        image_formats = JobArtifact._type_map_for_format('image', ['png', 'jpg', 'jpeg', 'svg', 'gif'])
 
         type_map.update(audio_formats)
         type_map.update(image_formats)
 
         return type_map.get(file_extension, 'unknown')
+
+    @staticmethod
+    def _type_map_for_format(file_format, extensions):
+        return {extension: file_format for extension in extensions}
