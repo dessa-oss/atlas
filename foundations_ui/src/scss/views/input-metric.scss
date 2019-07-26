@@ -1,17 +1,13 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: 30%;
+  width: 33%;
   height: 100%;
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   position: relative;
   overflow: hidden;
-
-  &:first-of-type {
-    width: 40%;
-  }
 }
 
 .input-metric-header-row-container {
@@ -24,7 +20,7 @@
 }
 
 .input-metric-column-container {
-  height: calc(100% - #{$pagination-height} - #{$column-header-height});
+  height: calc(100%);
   min-width: 100%;
   overflow-y: scroll;
   width: fit-content;

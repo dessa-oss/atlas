@@ -111,12 +111,12 @@ class JobTable extends Component {
             startTimeFilters={startTimeFilters}
             filters={filters}
           />
-          <div className="pagination-controls">
-            {/* <p><span className="font-bold">Viewing:</span> 1-100/600</p>
+          {/* <div className="pagination-controls">
+            <p><span className="font-bold">Viewing:</span> 1-100/600</p>
             <div className="arrow-right" />
             <p>Page 1</p>
-            <div className="arrow-left" /> */}
-          </div>
+            <div className="arrow-left" />
+          </div> */}
         </div>
       </div>
     );
