@@ -18,6 +18,7 @@ class TestSyncableDirectory(Spec):
     )
     mock_archive = let_mock()
     mock_redis = let_fake_redis()
+    mock_mkdir = let_patch_mock('os.makedirs')
 
     @let
     def key(self):
@@ -77,6 +78,18 @@ class TestSyncableDirectory(Spec):
             expected_calls.append(download_call)
         self.syncable_directory.download()
         self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls)        
+
+    def test_download_ensures_paths_exist(self):
+        import os.path
+
+        expected_calls = []
+        for file in self.file_listing:
+            self.mock_redis.rpush(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', file)
+            basename = os.path.basename(f'{self.directory_path}/{file}')
+            mkdir_call = call(basename, exist_ok=True)
+            expected_calls.append(mkdir_call)
+        self.syncable_directory.download()
+        self.mock_mkdir.assert_has_calls(expected_calls)        
 
     def test_foundations_create_syncable_directory_defaults_to_current_job_for_remote_and_local(self):
         from foundations import create_syncable_directory

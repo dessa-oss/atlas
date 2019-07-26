@@ -25,9 +25,15 @@ class SyncableDirectory(object):
             self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id)
 
     def download(self):
+        import os
+        import os.path
+
         file_listing = self._redis().lrange(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', 0, -1)
         file_listing = [file.decode() for file in file_listing]
         for file in file_listing:
+            result_path = f'{self._directory_path}/{file}'
+            basename = os.path.basename(result_path)
+            os.makedirs(basename, exist_ok=True)
             self._archive.fetch_file_path_to_target_file_path(
                 f'synced_directories/{self._key}', 
                 file, 
