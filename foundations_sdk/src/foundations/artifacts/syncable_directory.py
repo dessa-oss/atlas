@@ -46,6 +46,8 @@ class SyncableDirectory(object):
                 self._remote_job_id,
                 f'{self._directory_path}/{file}'
             )
+    def path(self):
+        return self._directory_path
 
     def _redis(self):
         from foundations_contrib.global_state import redis_connection

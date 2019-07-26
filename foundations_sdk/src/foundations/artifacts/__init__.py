@@ -6,10 +6,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def create_syncable_directory(key, directory_path, source_job_id=None):
+def create_syncable_directory(key, directory_path=None, source_job_id=None):
     from foundations.artifacts.syncable_directory import SyncableDirectory
     from foundations_contrib.global_state import current_foundations_context
+    from tempfile import mkdtemp
     
+    if directory_path is None:
+        directory_path = mkdtemp()
+
     try:
         job_id = current_foundations_context().pipeline_context().file_name
     except ValueError:

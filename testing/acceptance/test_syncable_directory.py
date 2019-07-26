@@ -47,6 +47,10 @@ class TestSyncableDirectory(Spec):
     def second_directory(self):
         return foundations.create_syncable_directory('some metadata', self.second_directory_path, self.job_id)
 
+    @let
+    def temporary_syncable_directory(self):
+        return foundations.create_syncable_directory('some data', None, self.job_id)
+
     @set_up
     def set_up(self):
         from acceptance.cleanup import cleanup
@@ -60,4 +64,10 @@ class TestSyncableDirectory(Spec):
 
         self.second_directory.download()
         self.assertEqual(['some_metadata.txt'], os.listdir(self.second_directory_path))
+
+    def test_can_download_when_no_synced_directory_specified(self):
+        import os
+
+        self.temporary_syncable_directory.download()
+        self.assertEqual(['some_data.txt'], os.listdir(f'{self.temporary_syncable_directory.path()}'))
     

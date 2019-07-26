@@ -16,6 +16,7 @@ class TestSyncableDirectory(Spec):
     mock_load_archive = let_patch_mock_with_conditional_return(
         'foundations_contrib.archiving.load_archive'
     )
+    mock_mkdtemp = let_patch_mock('tempfile.mkdtemp')
     mock_archive = let_mock()
     mock_redis = let_fake_redis()
     mock_mkdir = let_patch_mock('os.makedirs')
@@ -141,7 +142,16 @@ class TestSyncableDirectory(Spec):
         instance = Mock()
         klass_mock.return_when(instance, self.key, self.directory_path, None, None)
 
-        self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))        
+        self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))
+
+    def test_foundations_create_syncable_directory_with_no_directory_creates_temp_directory(self):
+        from foundations import create_syncable_directory
+
+        create_syncable_directory(self.key, None, self.remote_job_id)
+        self.mock_mkdtemp.assert_called_once()
+
+    def test_path_retuns_correct_synced_directory_path(self):
+        self.assertEqual(self.directory_path, self.syncable_directory.path())
 
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
