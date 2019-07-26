@@ -90,6 +90,9 @@ class ConfigManager(object):
         return glob('*.config.yaml')
 
     def __getitem__(self, key):
+        if key == 'ARCHIVE_HOST':
+            return self.config().get(key, '')
+
         return self.config()[key]
 
     def __setitem__(self, key, value):

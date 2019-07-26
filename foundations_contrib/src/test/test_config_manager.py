@@ -65,6 +65,10 @@ class TestConfigManager(Spec):
         self.environment['FOUNDATIONS_world'] = 'hello'
         self.assertEqual('hello', config_manager['world'])
 
+    def test_archive_host_defaults_to_empty_string_if_not_set_in_environment(self):
+        config_manager = ConfigManager()
+        self.assertEqual('', config_manager['ARCHIVE_HOST'])
+
     def test_should_be_empty_by_default(self):
         config_manager = ConfigManager()
         self.assertEqual({'run_script_environment': {}}, config_manager.config())
