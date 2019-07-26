@@ -1,0 +1,23 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+class SyncableDirectory(object):
+
+    def __init__(self, key, directory_path, local_job_id, remote_job_id):
+        from foundations_contrib.archiving import load_archive
+
+        self._key = key
+        self._directory_path = directory_path
+        self._local_job_id = local_job_id
+        self._archive = load_archive('artifact_archive')
+
+    def upload(self):
+        from foundations_contrib.archiving.upload_artifacts import list_of_files_to_upload_from_artifact_path
+
+        file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
+        for file in file_listing:
+            self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id)
