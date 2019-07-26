@@ -11,6 +11,7 @@ class JobArtifact(PropertyModel):
     filename = PropertyModel.define_property()
     uri = PropertyModel.define_property()
     artifact_type = PropertyModel.define_property()
+    file_extension = PropertyModel.define_property()
 
     @staticmethod
     def all(job_id=None):
@@ -38,17 +39,23 @@ class JobArtifact(PropertyModel):
         archive_host = foundations.config_manager['ARCHIVE_HOST']
         file_path, metadata = artifact_properities['artifact']
         file_name = file_path.split('/')[-1]
+        file_extension = metadata['file_extension']
 
         return JobArtifact(
             filename=file_name,
             uri=path.join(archive_host, f'{job_id}/user_artifacts/{file_path}'),
-            artifact_type=JobArtifact._extract_file_extension(metadata)
+            artifact_type=JobArtifact._type_for_extension(file_extension),
+            file_extension=file_extension
         )
 
     @staticmethod
-    def _extract_file_extension(metadata):
-        supported_file_types=['wav', 'mp3', 'png', 'jpg', 'jpeg', 'svg', 'gif']
-        file_extension = metadata['file_extension']
-        if file_extension not in supported_file_types:
-            file_extension = 'unknown'
-        return file_extension
+    def _type_for_extension(file_extension):
+        type_map = {}
+
+        audio_formats = {extension: 'audio' for extension in ['wav', 'mp3']}
+        image_formats = {extension: 'image' for extension in ['png', 'jpg', 'jpeg', 'svg', 'gif']}
+
+        type_map.update(audio_formats)
+        type_map.update(image_formats)
+
+        return type_map.get(file_extension, 'unknown')

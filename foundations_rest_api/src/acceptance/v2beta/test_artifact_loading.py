@@ -94,17 +94,20 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
             {
                 'filename': 'audio_artifact',
                 'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/audio_artifact',
-                'artifact_type': 'mp3'
+                'artifact_type': 'audio',
+                'file_extension': 'mp3'
             },
             {
                 'filename': 'no_extension',
                 'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/no_extension',
-                'artifact_type': 'unknown'
+                'artifact_type': 'unknown',
+                'file_extension': ''
             },
             {
                 'filename': 'other_file.other',
                 'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/other_file.other',
-                'artifact_type': 'unknown'
+                'artifact_type': 'unknown',
+                'file_extension': 'other'
             }
         ]
 
@@ -116,7 +119,8 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
             {
                 'filename': 'image_file.png',
                 'uri': f'https://archive.dessa.com/{self._one_artifact}/user_artifacts/image_file.png',
-                'artifact_type': 'png'
+                'artifact_type': 'image',
+                'file_extension': 'png'
             }
         ]
 
