@@ -33,3 +33,4 @@ from acceptance.test_deploy_job_via_deploy_function import TestDeployJobViaDeplo
 from acceptance.test_deploy_job_via_cli import TestDeployJobViaCLI
 from acceptance.test_generate_random_parameters import TestGenerateRandomParameters
 from acceptance.test_save_artifact import TestSaveArtifact
+from acceptance.test_syncable_directory import TestSyncableDirectory
