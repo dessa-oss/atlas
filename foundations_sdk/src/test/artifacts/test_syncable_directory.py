@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from foundations_spec.extensions import let_fake_redis
 
 class TestSyncableDirectory(Spec):
 
@@ -16,6 +17,7 @@ class TestSyncableDirectory(Spec):
         'foundations_contrib.archiving.load_archive'
     )
     mock_archive = let_mock()
+    mock_redis = let_fake_redis()
 
     @let
     def key(self):
@@ -44,6 +46,7 @@ class TestSyncableDirectory(Spec):
 
     @set_up
     def set_up(self):
+        self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
         self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path)
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
 
@@ -53,3 +56,23 @@ class TestSyncableDirectory(Spec):
             expected_calls.append(call(f'synced_directories/{self.key}', file, self.local_job_id))
         self.syncable_directory.upload()
         self.mock_archive.append_file.assert_has_calls(expected_calls)
+
+    def test_tracks_uploaded_files_in_redis(self):
+        self.syncable_directory.upload()
+        files = self.mock_redis.lrange(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', 0, -1)
+        files = [file.decode() for file in files]
+        self.assertEqual(self.file_listing, files)
+
+    def test_download_all_files(self):
+        expected_calls = []
+        for file in self.file_listing:
+            self.mock_redis.rpush(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', file)
+            download_call = call(
+                f'synced_directories/{self.key}', 
+                file, 
+                self.local_job_id, 
+                f'{self.directory_path}/{file}'
+            )
+            expected_calls.append(download_call)
+        self.syncable_directory.download()
+        self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls)        
