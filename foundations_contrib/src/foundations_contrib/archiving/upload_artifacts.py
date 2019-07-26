@@ -25,7 +25,7 @@ def list_of_files_to_upload_from_artifact_path(artifact_path):
     from foundations_contrib.archiving.file_names_for_artifacts_path import file_names_for_artifacts_path
     from os import walk
 
-    artifact_path_crawl = walk(_artifact_path())
+    artifact_path_crawl = walk(artifact_path)
     return list(file_names_for_artifacts_path(artifact_path_crawl))
 
 def _upload_file_listing(list_of_files_to_upload, pipeline_archiver):

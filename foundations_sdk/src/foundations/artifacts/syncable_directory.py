@@ -18,12 +18,17 @@ class SyncableDirectory(object):
 
     def upload(self):
         from foundations_contrib.archiving.upload_artifacts import list_of_files_to_upload_from_artifact_path
+        from foundations_contrib.global_state import log_manager
 
-        file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
-        for file in file_listing:
-            remote_path = file[len(self._directory_path)+1:]
-            self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
-            self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id, remote_path)
+        if self._local_job_id is None:
+            foundations_syncable_directory_logger = log_manager.get_logger(__name__)
+            foundations_syncable_directory_logger.warning('local_job_id required for uploading artifacts')
+        else:
+            file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
+            for file in file_listing:
+                remote_path = file[len(self._directory_path)+1:]
+                self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
+                self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id, remote_path)
 
     def download(self):
         import os

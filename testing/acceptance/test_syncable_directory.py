@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import foundations
 
-@skip
 class TestSyncableDirectory(Spec):
 
     @let
@@ -47,6 +46,11 @@ class TestSyncableDirectory(Spec):
     @let
     def second_directory(self):
         return foundations.create_syncable_directory('some metadata', self.second_directory_path, self.job_id)
+
+    @set_up
+    def set_up(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
 
     def test_can_download_from_synced_directory(self):
         import os

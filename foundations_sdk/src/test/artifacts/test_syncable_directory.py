@@ -19,6 +19,8 @@ class TestSyncableDirectory(Spec):
     mock_archive = let_mock()
     mock_redis = let_fake_redis()
     mock_mkdir = let_patch_mock('os.makedirs')
+    mock_get_logger = let_patch_mock_with_conditional_return('foundations_contrib.global_state.log_manager.get_logger')
+    mock_logger = let_mock()
 
     @let
     def key(self):
@@ -54,6 +56,7 @@ class TestSyncableDirectory(Spec):
         self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
         self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path)
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
+        self.mock_get_logger.return_when(self.mock_logger, 'foundations.artifacts.syncable_directory')
 
     def test_uploads_all_files(self):
         expected_calls = []
@@ -69,6 +72,21 @@ class TestSyncableDirectory(Spec):
             )
         self.syncable_directory.upload()
         self.mock_archive.append_file.assert_has_calls(expected_calls)
+
+    def test_upload_should_log_warning_if_no_local_job_set(self):
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+
+        directory = SyncableDirectory(self.key, self.directory_path, None, self.remote_job_id)
+        directory.upload()
+        self.mock_logger.warning.assert_any_call('local_job_id required for uploading artifacts')
+        
+        
+    def test_upload_does_not_upload_if_no_local_job(self):
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+
+        directory = SyncableDirectory(self.key, self.directory_path, None, self.remote_job_id)
+        directory.upload()
+        self.mock_archive.append_file.assert_not_called()
 
     def test_tracks_uploaded_files_in_redis(self):
         self.syncable_directory.upload()
