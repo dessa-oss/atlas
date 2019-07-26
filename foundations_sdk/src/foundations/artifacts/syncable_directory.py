@@ -46,6 +46,7 @@ class SyncableDirectory(object):
                 self._remote_job_id,
                 f'{self._directory_path}/{file}'
             )
+
     def path(self):
         return self._directory_path
 
