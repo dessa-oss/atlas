@@ -181,7 +181,7 @@ class CommandLineInterface(object):
 
         if self._is_model_server_running():
             pid = self._get_model_server_pid()
-            os.kill(int(pid), signal.SIGINT)
+            os.kill(int(pid), signal.SIGTERM)
             self._remove_pid_file()
 
     def _retrieve_artifacts(self):

@@ -518,7 +518,7 @@ class TestCommandLineInterface(Spec):
 
         self._bring_server_up()
         CommandLineInterface(['serving', 'stop']).execute()
-        self.os_kill.assert_called_once_with(self.fake_model_server_pid, signal.SIGINT)
+        self.os_kill.assert_called_once_with(self.fake_model_server_pid, signal.SIGTERM)
 
     def test_serving_stop_does_not_kill_server_if_it_is_not_up(self):
         self.open_mock.side_effect = OSError()
