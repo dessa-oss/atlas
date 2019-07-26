@@ -6,12 +6,13 @@ import ImageViewer from './ImageViewer';
 import ArtifactList from './ArtifactList';
 
 export default function JobSidebar(props) {
+  const { job } = props;
   if (props.job != null) {
     return (
       <div className="job-sidebar">
         <SidebarSection
           header="JOB DETAILS"
-          content={ArtifactViewer({ jobId: props.job.job_id, content: ImageViewer() })}
+          content={ArtifactViewer({ jobId: job.job_id, content: ImageViewer() })}
         />
         <SidebarSection header="FILES" content={ArtifactList()} />
       </div>
