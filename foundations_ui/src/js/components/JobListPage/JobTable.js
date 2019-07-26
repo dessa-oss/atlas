@@ -95,7 +95,6 @@ class JobTable extends Component {
     return (
       <div className="job-table-content">
         <div className="job-table-container">
-          {/* <h1>{this.state.currentJob}</h1> */}
           <JobSidebar job={this.state.currentJob} />
           <JobTableHeader
             allInputParams={allInputParams}
