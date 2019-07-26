@@ -29,8 +29,12 @@ class TestSyncableDirectory(Spec):
         return self.faker.uri_path()
 
     @let
+    def file_listing_without_directory(self):
+        return self.faker.sentences()
+
+    @let
     def file_listing(self):
-        return [f'{self.directory_path}/{path}' for path in  self.faker.sentences()]
+        return [f'{self.directory_path}/{path}' for path in self.file_listing_without_directory]
 
     @let
     def remote_job_id(self):
@@ -55,7 +59,15 @@ class TestSyncableDirectory(Spec):
     def test_uploads_all_files(self):
         expected_calls = []
         for file in self.file_listing:
-            expected_calls.append(call(f'synced_directories/{self.key}', file, self.local_job_id))
+            remote_path = file[len(self.directory_path)+1:]
+            expected_calls.append(
+                call(
+                    f'synced_directories/{self.key}', 
+                    file, 
+                    self.local_job_id,
+                    remote_path
+                )
+            )
         self.syncable_directory.upload()
         self.mock_archive.append_file.assert_has_calls(expected_calls)
 
@@ -63,7 +75,7 @@ class TestSyncableDirectory(Spec):
         self.syncable_directory.upload()
         files = self.mock_redis.lrange(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', 0, -1)
         files = [file.decode() for file in files]
-        self.assertEqual(self.file_listing, files)
+        self.assertEqual(self.file_listing_without_directory, files)
 
     def test_download_all_files(self):
         expected_calls = []

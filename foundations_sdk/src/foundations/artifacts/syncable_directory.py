@@ -21,8 +21,9 @@ class SyncableDirectory(object):
 
         file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
         for file in file_listing:
-            self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', file)
-            self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id)
+            remote_path = file[len(self._directory_path)+1:]
+            self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
+            self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id, remote_path)
 
     def download(self):
         import os
