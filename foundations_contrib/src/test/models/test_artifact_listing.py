@@ -7,77 +7,60 @@ Written by Kyle De Freitas <k.defreitas@dessa.com>, 08 2019
 
 from foundations_spec import *
 
+import json
+from foundations_contrib.models.artifact_listing import artifact_listing_for_job
 
 class TestArtifactListing(Spec):
+
     @let
     def job_id(self):
         return self.faker.uuid4()
 
     @let
-    def mock_archive(self):
-        return Mock()
-
-    @let
-    def mock_listing(self):
-        return [self.faker.uri_path() for _ in range(self.uri_count)]
-
-    @let
-    def uri_count(self):
-        return self.faker.random.randint(2, 5)
-
-    @let
-    def archive_files(self):
-        return [f'{self.job_id}/user_artifacts/{filepath}' for filepath in self.mock_listing]
-
-    @let
-    def metadata_files(self):
-        return [f'{filepath}.metadata' for filepath in self.archive_files]
-
-    @let
-    def metadata_map(self):
-        return {metadata_file: f'metadata blob for {metadata_file}' for metadata_file in self.metadata_files}
-
-    @let
-    def archive_listing(self):
-        return self.archive_files + self.metadata_files
-
-    @let
-    def expected_artifact_listing(self):
-        def _strip_prefix(filepath):
-            num_to_remove = len(f'{self.job_id}/user_artifacts/')
-            return filepath[num_to_remove:]
-
-        expected_result = [(_strip_prefix(filepath), f'metadata blob for {filepath}.metadata') for filepath in self.archive_files]
-        expected_result.sort(key=lambda entry: entry[0])
-        return expected_result
-
-    mock_load_archive = let_patch_mock_with_conditional_return('foundations_contrib.archiving.load_archive')
+    def artifact_name(self):
+        return self.faker.word()
 
     @set_up
-    def setup(self):
-        self.mock_archive.list_files = ConditionalReturn()
-        self.mock_archive.list_files.return_when(
-            self.archive_listing, 'user_artifacts/*', self.job_id)
+    def set_up(self):
+        from fakeredis import FakeRedis
 
-        self.mock_archive.fetch = ConditionalReturn()
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', FakeRedis())
 
-        for filepath in self.mock_listing:
-            self.mock_archive.fetch.return_when(f'metadata blob for {self.job_id}/user_artifacts/{filepath}.metadata', f'user_artifacts/{filepath}.metadata', self.job_id)
+    @tear_down
+    def tear_down(self):
+        self._redis.flushall()
 
-        self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
+    def test_artifact_listing_returns_empty_dict_if_no_artifact_metadata_in_redis(self):
+        self.assertEqual([], artifact_listing_for_job(self.job_id))
 
-    def test_artifact_listing_for_job_in_archive(self):
-        from foundations_contrib.models.artifact_listing import artifact_listing_for_job_in_archive
+    def test_artifact_listing_returns_metadata_for_artifact_if_it_exists(self):
+        artifact_metadata = {self.faker.word(): self.faker.word()}
+        metadata_in_redis = {self.artifact_name: artifact_metadata}
 
-        result_listing = artifact_listing_for_job_in_archive(
-            self.job_id, self.mock_archive)
-        self.assertEqual(self.expected_artifact_listing, result_listing)
+        self._redis.set(f'jobs:{self.job_id}:user_artifact_metadata', json.dumps(metadata_in_redis))
 
-    def test_artifact_listing_for_job_returns_list_of_artifacts(self):
-        from foundations_contrib.models.artifact_listing import artifact_listing_for_job
+        self.assertEqual([(self.artifact_name, artifact_metadata)], artifact_listing_for_job(self.job_id))
 
-        mock_artifact_listing = self.patch('foundations_contrib.models.artifact_listing.artifact_listing_for_job_in_archive', ConditionalReturn())
-        mock_artifact_listing.return_when(self.expected_artifact_listing, self.job_id, self.mock_archive)
+    def test_artifact_listing_returns_metadata_for_all_existing_artifacts(self):
+        artifact_metadata_0 = self._artifact_metadata()
+        artifact_metadata_1 = self._artifact_metadata()
+        artifact_metadata_2 = self._artifact_metadata()
 
-        result_listing = artifact_listing_for_job(self.job_id)
-        self.assertEqual(self.expected_artifact_listing, result_listing)
+        metadata_in_redis = {
+            'artifact_name_1': artifact_metadata_1,
+            'artifact_name_0': artifact_metadata_0,
+            'artifact_name_2': artifact_metadata_2
+        }
+
+        self._redis.set(f'jobs:{self.job_id}:user_artifact_metadata', json.dumps(metadata_in_redis))
+
+        expected_metadata = [
+            ('artifact_name_0', artifact_metadata_0),
+            ('artifact_name_1', artifact_metadata_1),
+            ('artifact_name_2', artifact_metadata_2)
+        ]
+
+        self.assertEqual(expected_metadata, artifact_listing_for_job(self.job_id))
+
+    def _artifact_metadata(self):
+        return {self.faker.word(): self.faker.word()}

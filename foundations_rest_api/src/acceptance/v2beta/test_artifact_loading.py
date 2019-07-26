@@ -10,7 +10,6 @@ from foundations_spec import *
 from acceptance.api_acceptance_test_case_base import APIAcceptanceTestCaseBase
 from acceptance.v2beta.jobs_tests_helper_mixin_v2 import JobsTestsHelperMixinV2
 
-@skip
 class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
     url = '/api/v2beta/projects/{_project_name}/job_listing'
     sorting_columns = []
@@ -86,6 +85,8 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         foundations.save_artifact(filepath=klass._artifact_fixture_path('audio_file.mp3'), key='audio_artifact')
 
     def test_get_route(self):
+        self.maxDiff = None
+
         data = super().test_get_route()
         jobs = data['jobs']
 
