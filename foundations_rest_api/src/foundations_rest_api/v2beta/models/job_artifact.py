@@ -11,7 +11,7 @@ class JobArtifact(PropertyModel):
     filename = PropertyModel.define_property()
     uri = PropertyModel.define_property()
     artifact_type = PropertyModel.define_property()
-    file_extension = PropertyModel.define_property()
+    archive_key = PropertyModel.define_property()
 
     @staticmethod
     def all(job_id=None):
@@ -37,15 +37,14 @@ class JobArtifact(PropertyModel):
         import foundations
 
         archive_host = foundations.config_manager['ARCHIVE_HOST']
-        file_path, metadata = artifact_properities['artifact']
-        file_name = file_path.split('/')[-1]
-        file_extension = metadata['file_extension']
+        key, file_path, metadata = artifact_properities['artifact']
+        file_extension = JobArtifact._file_extension(file_path)
 
         return JobArtifact(
-            filename=file_name,
+            filename=file_path,
             uri=path.join(archive_host, f'{job_id}/user_artifacts/{file_path}'),
             artifact_type=JobArtifact._type_for_extension(file_extension),
-            file_extension=file_extension
+            archive_key=key
         )
 
     @staticmethod
@@ -63,3 +62,10 @@ class JobArtifact(PropertyModel):
     @staticmethod
     def _type_map_for_format(file_format, extensions):
         return {extension: file_format for extension in extensions}
+
+    @staticmethod
+    def _file_extension(file_path):
+        import os.path as path
+
+        _, extension_with_dot = path.splitext(file_path)
+        return extension_with_dot[1:]

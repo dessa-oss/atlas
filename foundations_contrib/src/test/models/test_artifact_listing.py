@@ -16,10 +16,6 @@ class TestArtifactListing(Spec):
     def job_id(self):
         return self.faker.uuid4()
 
-    @let
-    def artifact_name(self):
-        return self.faker.word()
-
     @set_up
     def set_up(self):
         from fakeredis import FakeRedis
@@ -34,30 +30,51 @@ class TestArtifactListing(Spec):
         self.assertEqual([], artifact_listing_for_job(self.job_id))
 
     def test_artifact_listing_returns_metadata_for_artifact_if_it_exists(self):
-        artifact_metadata = {self.faker.word(): self.faker.word()}
-        metadata_in_redis = {self.artifact_name: artifact_metadata}
+        key = self.faker.word()
+        artifact_name = self.faker.word()
+
+        artifact_metadata = self._artifact_metadata()
+        metadata_in_redis = {
+            'key_mapping': {
+                key: artifact_name
+            },
+            'metadata': {
+                artifact_name: artifact_metadata
+            }
+        }
 
         self._redis.set(f'jobs:{self.job_id}:user_artifact_metadata', json.dumps(metadata_in_redis))
 
-        self.assertEqual([(self.artifact_name, artifact_metadata)], artifact_listing_for_job(self.job_id))
+        self.assertEqual([(key, artifact_name, artifact_metadata)], artifact_listing_for_job(self.job_id))
 
     def test_artifact_listing_returns_metadata_for_all_existing_artifacts(self):
+        artifact_name_0 = self.faker.word()
+        artifact_name_1 = self.faker.word()
+        artifact_name_2 = self.faker.word()
+
         artifact_metadata_0 = self._artifact_metadata()
         artifact_metadata_1 = self._artifact_metadata()
         artifact_metadata_2 = self._artifact_metadata()
 
         metadata_in_redis = {
-            'artifact_name_1': artifact_metadata_1,
-            'artifact_name_0': artifact_metadata_0,
-            'artifact_name_2': artifact_metadata_2
+            'key_mapping': {
+                artifact_name_1: 'filename_1',
+                artifact_name_0: 'filename_0',
+                artifact_name_2: 'filename_2'
+            },
+            'metadata': {
+                'filename_0': artifact_metadata_0,
+                'filename_1': artifact_metadata_1,
+                'filename_2': artifact_metadata_2
+            }
         }
 
         self._redis.set(f'jobs:{self.job_id}:user_artifact_metadata', json.dumps(metadata_in_redis))
 
         expected_metadata = [
-            ('artifact_name_0', artifact_metadata_0),
-            ('artifact_name_1', artifact_metadata_1),
-            ('artifact_name_2', artifact_metadata_2)
+            (artifact_name_0, 'filename_0', artifact_metadata_0),
+            (artifact_name_1, 'filename_1', artifact_metadata_1),
+            (artifact_name_2, 'filename_2', artifact_metadata_2)
         ]
 
         self.assertEqual(expected_metadata, artifact_listing_for_job(self.job_id))

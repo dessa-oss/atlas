@@ -66,8 +66,11 @@ class TestSaveArtifact(Spec):
         artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
 
         expected_metadata = {
-            'cool-artifact.txt': {
-                'file_extension': 'txt'
+            'key_mapping': {
+                'cool-artifact.txt': 'cool-artifact.txt'
+            },
+            'metadata': {
+                'cool-artifact.txt': {}
             }
         }
 
@@ -79,12 +82,15 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
         artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
 
         expected_metadata = {
-            'this-key': {
-                'file_extension': 'txt'
+            'key_mapping': {
+                'this-key': 'cool-artifact.txt'
+            },
+            'metadata': {
+                'cool-artifact.txt': {}
             }
         }
 
@@ -96,29 +102,15 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', job_id)
         artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
 
         expected_metadata = {
-            'this-key': {
-                'file_extension': 'other'
-            }
-        }
-
-        self.assertEqual(b'contents of cooler artifact', artifact_contents)
-        self.assertEqual(expected_metadata, artifact_metadata)
-
-    def test_save_artifact_twice_with_filepath_and_key_saves_file_with_specified_key_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_with_key_twice', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
-
-        expected_metadata = {
-            'this-key': {
-                'file_extension': 'other'
+            'key_mapping': {
+                'this-key': 'cooler-artifact.other'
+            },
+            'metadata': {
+                'cooler-artifact.other': {}
             }
         }
 
@@ -142,8 +134,11 @@ class TestSaveArtifact(Spec):
         artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
 
         expected_metadata = {
-            'cool-artifact.txt': {
-                'file_extension': 'txt'
+            'key_mapping': {
+                'cool-artifact.txt': 'cool-artifact.txt'
+            },
+            'metadata': {
+                'cool-artifact.txt': {}
             }
         }
 
@@ -155,16 +150,18 @@ class TestSaveArtifact(Spec):
         job_deployment.wait_for_deployment_to_complete()
 
         job_id = job_deployment.job_name()
-        artifact_contents_0 = self._artifact_archive.fetch_binary('user_artifacts/this-key', job_id)
-        artifact_contents_1 = self._artifact_archive.fetch_binary('user_artifacts/that-key', job_id)
+        artifact_contents_0 = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
+        artifact_contents_1 = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', job_id)
         artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
 
         expected_metadata = {
-            'this-key': {
-                'file_extension': 'txt'
+            'key_mapping': {
+                'this-key': 'cool-artifact.txt',
+                'that-key': 'cooler-artifact.other'
             },
-            'that-key': {
-                'file_extension': 'other'
+            'metadata': {
+                'cool-artifact.txt': {},
+                'cooler-artifact.other': {}
             }
         }
 
