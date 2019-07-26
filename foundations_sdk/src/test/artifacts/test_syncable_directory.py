@@ -52,7 +52,6 @@ class TestSyncableDirectory(Spec):
     @set_up
     def set_up(self):
         self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
-        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
         self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path)
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
 
@@ -106,14 +105,25 @@ class TestSyncableDirectory(Spec):
     def test_foundations_create_syncable_directory_defaults_to_current_job_for_remote_and_local(self):
         from foundations import create_syncable_directory
 
+        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
         instance = self._mock_syncable_directory(self.local_job_id)
         self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))
 
     def test_foundations_create_syncable_directory_uses_source_job_for_remote(self):
         from foundations import create_syncable_directory
 
+        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
         instance = self._mock_syncable_directory(self.remote_job_id)
         self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path, self.remote_job_id))        
+
+    def test_foundations_create_syncable_directory_without_any_job_ids(self):
+        from foundations import create_syncable_directory
+
+        klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
+        instance = Mock()
+        klass_mock.return_when(instance, self.key, self.directory_path, None, None)
+
+        self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))        
 
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
