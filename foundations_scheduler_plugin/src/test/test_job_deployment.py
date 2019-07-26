@@ -52,6 +52,7 @@ class TestJobDeployment(Spec):
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
 
+        self.patch('os.environ', {})
         config_manager = ConfigManager()
         config_manager.config().update(self.config_manager_config)
         return self.patch('foundations_contrib.global_state.config_manager', config_manager)

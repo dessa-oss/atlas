@@ -5,11 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
 from foundations_internal.provenance import Provenance
+from foundations_spec import *
 
-
-class TestProvenance(unittest.TestCase):
+class TestProvenance(Spec):
 
     class MockArchive(object):
 
@@ -41,9 +40,12 @@ class TestProvenance(unittest.TestCase):
         def job_archive(self):
             return 'space'
 
-    def setUp(self):
+    mock_os_environment = let_patch_mock('os.environ', {'hello': 'world'})
+
+    @let
+    def config_manager(self):
         from foundations.config_manager import ConfigManager
-        self.config_manager = ConfigManager()
+        return ConfigManager()
 
     def test_fill_python_has_correct_values(self):
         import sys

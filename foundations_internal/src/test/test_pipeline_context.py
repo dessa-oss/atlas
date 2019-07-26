@@ -104,6 +104,8 @@ class TestPipelineContext(Spec):
             self.archiver = archiver
             self.load_artifact_counter += 1
 
+    mock_os_environment = let_patch_mock('os.environ', {})
+
     @let
     def job_id(self):
         return self.faker.uuid4()
