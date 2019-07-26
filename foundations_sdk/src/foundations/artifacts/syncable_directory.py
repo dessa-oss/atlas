@@ -32,8 +32,8 @@ class SyncableDirectory(object):
         file_listing = [file.decode() for file in file_listing]
         for file in file_listing:
             result_path = f'{self._directory_path}/{file}'
-            basename = os.path.basename(result_path)
-            os.makedirs(basename, exist_ok=True)
+            dirname = os.path.dirname(result_path)
+            os.makedirs(dirname, exist_ok=True)
             self._archive.fetch_file_path_to_target_file_path(
                 f'synced_directories/{self._key}', 
                 file, 

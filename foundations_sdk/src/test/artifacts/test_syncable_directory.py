@@ -85,8 +85,8 @@ class TestSyncableDirectory(Spec):
         expected_calls = []
         for file in self.file_listing:
             self.mock_redis.rpush(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', file)
-            basename = os.path.basename(f'{self.directory_path}/{file}')
-            mkdir_call = call(basename, exist_ok=True)
+            dirname = os.path.dirname(f'{self.directory_path}/{file}')
+            mkdir_call = call(dirname, exist_ok=True)
             expected_calls.append(mkdir_call)
         self.syncable_directory.download()
         self.mock_mkdir.assert_has_calls(expected_calls)        
