@@ -69,5 +69,5 @@ class TestSyncableDirectory(Spec):
         import os
 
         self.temporary_syncable_directory.download()
-        self.assertEqual(['some_data.txt'], os.listdir(f'{self.temporary_syncable_directory.path()}'))
+        self.assertEqual(['some_data.txt'], os.listdir(str(self.temporary_syncable_directory)))
     

@@ -151,7 +151,7 @@ class TestSyncableDirectory(Spec):
         self.mock_mkdtemp.assert_called_once()
 
     def test_path_retuns_correct_synced_directory_path(self):
-        self.assertEqual(self.directory_path, self.syncable_directory.path())
+        self.assertEqual(self.directory_path, str(self.syncable_directory))
 
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
