@@ -47,6 +47,7 @@ class TestSyncableDirectory(Spec):
     @set_up
     def set_up(self):
         self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
+        self.patch('foundations_internal.pipeline_context.PipelineContext.file_name', self.local_job_id)
         self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path)
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
 
@@ -70,9 +71,27 @@ class TestSyncableDirectory(Spec):
             download_call = call(
                 f'synced_directories/{self.key}', 
                 file, 
-                self.local_job_id, 
+                self.remote_job_id, 
                 f'{self.directory_path}/{file}'
             )
             expected_calls.append(download_call)
         self.syncable_directory.download()
         self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls)        
+
+    def test_foundations_create_syncable_directory_defaults_to_current_job_for_remote_and_local(self):
+        from foundations import create_syncable_directory
+
+        instance = self._mock_syncable_directory(self.local_job_id)
+        self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path))
+
+    def test_foundations_create_syncable_directory_uses_source_job_for_remote(self):
+        from foundations import create_syncable_directory
+
+        instance = self._mock_syncable_directory(self.remote_job_id)
+        self.assertEqual(instance, create_syncable_directory(self.key, self.directory_path, self.remote_job_id))        
+
+    def _mock_syncable_directory(self, source_job_id):
+        klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
+        instance = Mock()
+        klass_mock.return_when(instance, self.key, self.directory_path, self.local_job_id, source_job_id)
+        return instance

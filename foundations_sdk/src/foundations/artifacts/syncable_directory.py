@@ -13,6 +13,7 @@ class SyncableDirectory(object):
         self._key = key
         self._directory_path = directory_path
         self._local_job_id = local_job_id
+        self._remote_job_id = remote_job_id
         self._archive = load_archive('artifact_archive')
 
     def upload(self):
@@ -30,7 +31,7 @@ class SyncableDirectory(object):
             self._archive.fetch_file_path_to_target_file_path(
                 f'synced_directories/{self._key}', 
                 file, 
-                self._local_job_id,
+                self._remote_job_id,
                 f'{self._directory_path}/{file}'
             )
 

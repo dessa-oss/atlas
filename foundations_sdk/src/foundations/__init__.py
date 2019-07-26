@@ -50,6 +50,7 @@ from foundations_contrib.set_job_resources import set_job_resources
 from foundations.deploy import deploy
 from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.job_actions import *
+from foundations.artifacts import *
 
 def _append_module():
     import sys
