@@ -12,6 +12,8 @@ import BooleanFilter from '../common/filters/BooleanFilter';
 import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
+import CancelJobCell from './cells/CancelJobCell';
+import StatusCell from './cells/StatusCell';
 
 const isMetric = true;
 
@@ -474,10 +476,32 @@ class JobTableHeader extends Component {
       return hiddenParam !== undefined;
     });
 
+    const jobsInputParams = [
+      { name: '', type: 'string' },
+      { name: 'job_id', type: 'string' },
+      { name: 'status', type: 'string' },
+      { name: 'start_time', type: 'string' },
+      { name: 'completed_time', type: 'string' },
+      { name: 'duration', type: 'string' },
+    ];
+
+    const jobsMetaData = jobs.map((el) => {
+      const neededColums = [];
+      neededColums.push({ name: '', value: CancelJobCell({ job: el }), type: 'string' });
+      neededColums.push({ name: 'job_id', value: el.job_id, type: 'string' });
+      neededColums.push({ name: 'duration', value: el.duration, type: 'string' });
+      neededColums.push({ name: 'start_time', value: el.start_time, type: 'string' });
+      neededColums.push({ name: 'completed_time', value: el.completed_time, type: 'string' });
+      neededColums.push({ name: 'status', value: new StatusCell(el).render(), type: 'object' });
+
+      el.output_metrics = neededColums;
+      return el;
+    });
+
     return (
       <ScrollSync>
         <div className="job-list-container">
-          <TableStaticColumns
+          {/* <TableStaticColumns
             jobRows={jobRows}
             rowNumbers={rowNumbers}
             toggleUserFilter={this.toggleUserFilter}
@@ -490,6 +514,14 @@ class JobTableHeader extends Component {
             isJobIdFiltered={jobIdFilters.length > 0}
             isDurationFiltered={durationFilters.length > 0}
             isUserFiltered={hiddenUsers.length > 0}
+          /> */}
+          <InputMetric
+            header="Job Details"
+            allInputParams={jobsInputParams}
+            jobs={jobsMetaData}
+            isMetric={isMetric}
+            toggleNumberFilter={this.toggleInputMetricFilter}
+            filters={filters}
           />
           <InputMetric
             header="Parameters"

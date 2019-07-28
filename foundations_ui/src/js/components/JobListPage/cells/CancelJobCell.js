@@ -12,12 +12,12 @@ function CancelJobCell(props) {
   }
 
   return (
-    <div
-      className="job-cell cancel-cell"
+    <span
+      className="cancel-cell"
       style={{ cursor: 'pointer', width: '1em' }}
     >
-      <button type="button" className="job-cell i--icon-delete" onClick={handleClick} onKeyDown={handleClick} />
-    </div>
+      <button type="button" className="i--icon-delete" onClick={handleClick} onKeyDown={handleClick} />
+    </span>
   );
 }
 

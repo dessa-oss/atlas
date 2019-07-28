@@ -51,7 +51,7 @@ class StartTimeCell extends Component {
     const dateTimeFormatted = (
       <p className="font-bold">
         <span className={spanClass}>{time}</span>
-        <div className="launch-date">{date}</div>
+        <span className="launch-date">{date}</span>
       </p>
     );
 

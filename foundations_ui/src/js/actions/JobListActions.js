@@ -121,7 +121,7 @@ class JobListActions {
       statusCircle = 'status-red';
     }
 
-    return 'status '.concat(statusCircle);
+    return 'status-icon '.concat(statusCircle);
   }
 
   static getDurationClass(desiredTime, days, hours, minutes, seconds, isError) {

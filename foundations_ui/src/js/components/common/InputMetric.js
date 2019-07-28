@@ -55,6 +55,7 @@ class InputMetric extends Component {
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
+
     let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
