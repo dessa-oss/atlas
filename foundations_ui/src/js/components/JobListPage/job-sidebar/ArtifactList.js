@@ -4,6 +4,7 @@ import Artifact from './Artifact';
 
 export default function ArtifactList(props) {
   const { handleClick, artifacts } = props;
+  console.log(artifacts);
   // const artifactsObj = {
   //   artifact1: {
   //     filename: 'archive1.jpg',
@@ -58,11 +59,7 @@ export default function ArtifactList(props) {
   //     location: '/some/path/to/file3/',
   //   },
   // };
-<<<<<<< HEAD
   // const files = artifactsObj.map((artifact) => {
-=======
-  // const files = artifacts.map((artifact) => {
->>>>>>> [AM PL] Adding some files post conflict resolution
   //   console.log(artifact.filename);
   //   return artifact.filename;
   // });
