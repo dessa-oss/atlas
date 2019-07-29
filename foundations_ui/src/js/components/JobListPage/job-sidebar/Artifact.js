@@ -34,7 +34,7 @@ function DownloadButton(props) {
     FileDownload(response.data, 'test-data.tgz');
   };
 
-  const getImageLocally
+  // const getImageLocally
   return (
     <button type="button" onClick={getImage}> Download File </button>
   );
