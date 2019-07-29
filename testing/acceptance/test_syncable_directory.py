@@ -47,6 +47,18 @@ class TestSyncableDirectory(Spec):
         )
 
     @let
+    def deployment_multiple_files(self):
+        import foundations
+
+        return foundations.deploy(
+            project_name='test', 
+            env='local', 
+            entrypoint='main', 
+            job_directory='acceptance/fixtures/syncable_directory_job_multiple_files', 
+            params=None
+        )
+
+    @let
     def job_id(self):
         return self.deployment.job_name()
 
@@ -57,6 +69,10 @@ class TestSyncableDirectory(Spec):
     @let
     def job_id_with_diffs(self):
         return self.deployment_with_diffs.job_name()
+
+    @let
+    def job_multiple_files(self):
+        return self.deployment_multiple_files.job_name()
 
     @let
     def temp_directory(self):
@@ -132,3 +148,46 @@ class TestSyncableDirectory(Spec):
 
         for changed_file in ['new_file.txt', 'some_metadata.txt']:
             self.assertLessEqual(abs(files_with_stats[changed_file].st_mtime - (time_of_upload + 10)), 0.5)
+
+    @skip('not implemented')
+    def test_downloading_twice_upserts_if_newer_files_available_and_leaves_unchanged_files_alone(self):
+        import os
+        import shutil
+        import time
+        from tempfile import mkdtemp
+
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+
+        temp_workspace = mkdtemp()
+
+        local_syncable_directory = self.first_directory(self.job_multiple_files)
+        local_syncable_directory.download()
+
+        time_of_download = time.time()
+
+        hack_directory = SyncableDirectory('some data', temp_workspace, self.job_multiple_files, self.job_multiple_files)
+        os.remove(f'{temp_workspace}/some_data.txt')
+
+        time.sleep(5)
+
+        with open(f'{temp_workspace}/some_metadata.txt', 'w') as metadata_file:
+            metadata_file.write('some new metadata i guess')
+
+        with open(f'{temp_workspace}/new_file.txt', 'w') as new_file:
+            new_file.write('i am a new file')
+
+        hack_directory.upload()
+
+        local_syncable_directory.download()
+
+        expected_files = ['new_file.txt', 'some_data.txt', 'some_metadata.txt']
+        files_with_stats = {file_name: os.stat(f'{local_syncable_directory}/{file_name}') for file_name in expected_files}
+
+        try:
+            for unchanged_file in ['some_data.txt']:
+                self.assertLessEqual(abs(files_with_stats[unchanged_file].st_mtime - time_of_download), 0.5)
+
+            for changed_file in ['new_file.txt', 'some_metadata.txt']:
+                self.assertLessEqual(abs(files_with_stats[changed_file].st_mtime - (time_of_download + 5)), 0.5)
+        finally:
+            shutil.rmtree(temp_workspace, ignore_errors=True)
