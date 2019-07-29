@@ -47,19 +47,20 @@ class SyncableDirectory(object):
 
     def download(self):
         import os
-        import os.path
+        import os.path as path
 
         file_listing = self._redis().smembers(f'jobs:{self._remote_job_id}:synced_artifacts:{self._key}')
         file_listing = [file.decode() for file in file_listing]
         for file in file_listing:
             result_path = f'{self._directory_path}/{file}'
-            dirname = os.path.dirname(result_path)
+            dirname = path.dirname(result_path)
             os.makedirs(dirname, exist_ok=True)
+
             self._archive.fetch_file_path_to_target_file_path(
                 f'synced_directories/{self._key}', 
                 file, 
                 self._remote_job_id,
-                f'{self._directory_path}/{file}'
+                result_path
             )
 
     def _redis(self):
