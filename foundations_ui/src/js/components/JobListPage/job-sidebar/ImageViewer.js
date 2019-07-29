@@ -2,16 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function ImageViewer(props) {
+  const { image } = props;
+
   return (
     <img
-      style={{
-        background: 'green',
-        margin: 'auto',
-        padding: '20px 0px 10px 0px',
-        display: 'block',
-      }}
-      src="https://www.dummyimage.com/500x300"
+      className="image-viewer"
+      src={image}
       alt="dummyimage"
     />
   );
 }
+
+ImageViewer.propTypes = {
+  image: PropTypes.string,
+};
+
+ImageViewer.defaultProps = {
+  image: 'ImageViewer: No image prop.',
+};

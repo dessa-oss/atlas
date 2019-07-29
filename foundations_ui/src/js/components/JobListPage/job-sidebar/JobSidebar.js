@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import SidebarSection from './SidebarSection';
 import ArtifactViewer from './ArtifactViewer';
@@ -7,13 +7,20 @@ import ArtifactList from './ArtifactList';
 
 export default function JobSidebar(props) {
   const { job } = props;
-  const handleArtifactClick = () => alert('You clicked and artifact');
-  if (props.job != null) {
+  if (job != null) {
+    // job.artifacts[0].uri = 'https://cdn.pixabay.com/photo/2018/01/04/19/43/love-3061483__340.jpg';
+    const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
+    const handleArtifactClick = artifact => setArtifact(artifact);
+    console.log(selectedArtifact);
     return (
       <div className="job-sidebar">
         <SidebarSection
           header="JOB DETAILS"
-          content={ArtifactViewer({ jobId: job.job_id, content: ImageViewer() })}
+          content={ArtifactViewer({
+            jobId: job.job_id,
+            content: ImageViewer({ image: selectedArtifact.uri }),
+          })
+        }
         />
         <SidebarSection
           header="FILES"

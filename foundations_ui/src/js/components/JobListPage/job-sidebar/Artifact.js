@@ -2,25 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import FileDownload from 'js-file-download';
+import ArtifactList from './ArtifactList';
 
 export default function Artifact(props) {
-  const { filename, uri } = props;
+  const { artifact, onClick } = props;
   return (
-    <li>
-      <p>{filename}</p>
-      <DownloadButton className="download-button" uri={uri} />
+    <li onClick={() => onClick(artifact)} onKeyDown={() => onClick(artifact)}>
+      <p>{artifact.filename}</p>
+      <DownloadButton className="download-button" uri={artifact.uri} />
     </li>
   );
 }
 
 Artifact.propTypes = {
-  filename: PropTypes.string,
-  uri: PropTypes.string,
+  artifact: PropTypes.object,
+  onClick: PropTypes.func,
 };
 
+const defaultFunc = () => <p>Artifact: Missing onClick event.</p>;
 Artifact.defaultProps = {
-  filename: 'Artifact: Missing `filename` prop.',
-  uri: 'Artifact: Missing `uri` prop.',
+  artifact: { msg: 'Artifact: Missing `filename` prop.' },
+  onClick: defaultFunc,
 };
 
 // import ReactAudioPlayer from 'react-audio-player';
@@ -28,13 +30,14 @@ Artifact.defaultProps = {
 
 function DownloadButton(props) {
   const { uri } = props;
+
   const getImage = async () => {
     const response = await axios.get(uri, { responseType: 'blob' });
     console.log(response);
-    FileDownload(response.data, 'test-data.tgz');
+    FileDownload(response.data, 'artifact.jpg');
   };
 
-  // const getImageLocally
+  const getImageLocally = () => null;
   return (
     <button type="button" onClick={getImage}> Download File </button>
   );

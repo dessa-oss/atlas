@@ -1,7 +1,7 @@
 .sidebar-section {
     background-color: aquamarine;
     margin-top: -15px;
-    height: 40%;
+    // height: 40%;
     &:nth-child(2) {
         height: 60%;
     }
@@ -39,6 +39,13 @@
     h2 {
         margin-top: 0;
     }
+}
+
+.image-viewer {
+    background: green;
+    margin: auto;
+    padding: auto;
+    display: block;
 }
 
 .artifact-list {

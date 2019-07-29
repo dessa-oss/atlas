@@ -63,8 +63,16 @@ export default function ArtifactList(props) {
   //   console.log(artifact.filename);
   //   return artifact.filename;
   // });
+  // const artifactList = [{
+  //   filename: 'test1',
+  //   uri: 'https://images.pexels.com/photos/46710/pexels-photo-46710.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+  // }, {
+  //   filename: 'test2',
+  //   uri: 'https://images.pexels.com/photos/853168/pexels-photo-853168.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+  // }];
+
   const artifactComps = artifacts.map((artifact) => {
-    return <Artifact key={artifact.fname} filename={artifact.filename} uri={artifact.uri} onClick={handleClick} />;
+    return <Artifact key={artifact.filename} artifact={artifact} onClick={handleClick} />;
   });
 
   return (
