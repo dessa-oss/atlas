@@ -5,7 +5,7 @@ import FileDownload from 'js-file-download';
 
 export default function ListItem(props) {
   return (
-    <li style={{ background: 'red' }}>
+    <li>
       <p>{props.filename}</p>
       <DownloadButton />
     </li>
@@ -30,7 +30,6 @@ class DownloadButton extends React.Component {
         responseType: 'blob',
       },
     ).then((response) => {
-      console.log(response);
       FileDownload(response.data, 'test-data.tgz');
     });
   }

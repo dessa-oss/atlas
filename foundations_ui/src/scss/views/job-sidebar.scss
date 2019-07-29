@@ -1,7 +1,6 @@
 .sidebar-section {
-    background-color: aquamarine;
+    // background-color: aquamarine;
     margin-top: -15px;
-    // height: 40%;
     &:nth-child(2) {
         height: 60%;
     }
@@ -66,8 +65,10 @@
         }
         button {
             float: right;
-            margin-right: 40px;
+            margin-right: 18px;
             height: 30px;
+            border-radius: 4px;
+            border: none;
         }
         p, .download-button {
             display: inline;
