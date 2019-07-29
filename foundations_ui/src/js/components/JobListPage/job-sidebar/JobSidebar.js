@@ -4,6 +4,7 @@ import SidebarSection from './SidebarSection';
 import ArtifactViewer from './ArtifactViewer';
 import ImageViewer from './ImageViewer';
 import ArtifactList from './ArtifactList';
+import AudioPlayer from './AudioPlayer';
 
 export default function JobSidebar(props) {
   const { job } = props;
@@ -13,11 +14,23 @@ export default function JobSidebar(props) {
       // if (job.artifacts.length > 0) { }
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);
+
+      const selectViewer = (artifact) => {
+        switch (artifact.artifact_type) {
+          case 'image':
+            return <ImageViewer image={artifact.uri} />;
+          case 'audio':
+            return <AudioPlayer url={artifact.uri} />;
+          default:
+            return <p>Unknown Placeholder</p>;
+        }
+      };
+
       return (
         <div className="job-sidebar">
           <SidebarSection header="JOB DETAILS">
             <ArtifactViewer jobId={job.job_id}>
-              <ImageViewer image={selectedArtifact.uri} />
+              {selectViewer(selectedArtifact)}
             </ArtifactViewer>
           </SidebarSection>
           <SidebarSection header="FILES">
