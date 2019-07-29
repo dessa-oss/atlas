@@ -29,10 +29,17 @@ class TestRetrainModel(ModelServingConfigurator, ModelPackageDeployer):
 
         self._create_retraining_data_sets()
 
-        subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'])
+        try:
+            subprocess.run(['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail'], check=True)
+        except subprocess.CalledProcessError as ex:
+            self._tear_down()
+            self.fail(str(ex))
 
     @tear_down
     def tear_down(self):
+        self._tear_down()
+
+    def _tear_down(self):
         import os
         import subprocess
 

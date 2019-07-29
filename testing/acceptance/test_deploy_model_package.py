@@ -25,11 +25,14 @@ class TestDeployModelPackage(ModelServingConfigurator, ModelPackageDeployer):
             model_server_deploy_command = ['python', '-m', 'foundations', 'serving', 'deploy', 'rest', '--domain=localhost:5000', '--model-id={}'.format(job_id), '--slug=snail']
             completed_process = subprocess.run(model_server_deploy_command, check=True)
         except subprocess.CalledProcessError as ex:
-            subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
+            self._tear_down()
             self.fail(str(ex))
 
     @tear_down
     def tear_down(self):
+        self._tear_down()
+
+    def _tear_down(self):
         import subprocess
 
         subprocess.run(['python', '-m', 'foundations', 'serving', 'stop'])
