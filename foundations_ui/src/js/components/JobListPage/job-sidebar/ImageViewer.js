@@ -8,7 +8,7 @@ export default function ImageViewer(props) {
     <img
       className="image-viewer"
       src={image}
-      alt="No artifact exist"
+      alt="No artifacts exist"
     />
   );
 }

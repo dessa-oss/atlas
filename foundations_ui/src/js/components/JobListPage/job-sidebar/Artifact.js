@@ -9,7 +9,7 @@ export default function Artifact(props) {
   return (
     <li onClick={() => onClick(artifact)} onKeyDown={() => onClick(artifact)}>
       <p>{artifact.filename}</p>
-      <DownloadButton className="download-button" uri={artifact.uri} />
+      <DownloadButton className="download-button" uri={artifact.uri} filename={artifact.filename} />
     </li>
   );
 }
@@ -29,12 +29,12 @@ Artifact.defaultProps = {
 
 
 function DownloadButton(props) {
-  const { uri } = props;
+  const { uri, filename } = props;
 
   const getImage = async () => {
     const response = await axios.get(uri, { responseType: 'blob' });
     console.log(response);
-    FileDownload(response.data, 'artifact.jpg');
+    FileDownload(response.data, filename);
   };
 
   const getImageLocally = () => null;
@@ -45,8 +45,10 @@ function DownloadButton(props) {
 
 DownloadButton.propTypes = {
   uri: PropTypes.string,
+  filename: PropTypes.string,
 };
 
 DownloadButton.defaultProps = {
   uri: 'DownloadButton: Missing `uri` prop.',
+  filename: 'DownloadButton: Missing `filename` prop.',
 };
