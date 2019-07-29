@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SyncableDirectory(object):
 
-    def __init__(self, key, directory_path, local_job_id, remote_job_id):
+    def __init__(self, key, directory_path, local_job_id, remote_job_id, auto_download=True):
         from foundations_contrib.archiving import load_archive
 
         self._key = key
@@ -16,7 +16,8 @@ class SyncableDirectory(object):
         self._remote_job_id = remote_job_id
         self._archive = load_archive('artifact_archive')
 
-        self.download()
+        if auto_download:
+            self.download()
         
     def __str__(self):
         return self._directory_path

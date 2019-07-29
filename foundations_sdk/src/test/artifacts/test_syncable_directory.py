@@ -210,6 +210,14 @@ class TestSyncableDirectory(Spec):
         syncable_directory = create_syncable_directory(self.key, None, self.remote_job_id)
         mock_download.assert_called_once()
 
+    def test_syncable_directory_does_a_download_upon_instantiation(self):
+        mock_download = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory.download')
+
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+
+        SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id, auto_download=False)
+        mock_download.assert_not_called()
+
     def test_upload_only_changed_file(self):
         self.syncable_directory.upload()
         self.mock_os_stat.clear()
