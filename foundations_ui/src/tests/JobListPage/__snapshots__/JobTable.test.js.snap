@@ -7,6 +7,9 @@ exports[`Shallow Renders Job Table 1`] = `
   <div
     className="job-table-container"
   >
+    <JobSidebar
+      job={null}
+    />
     <JobTableHeader
       allInputParams={Array []}
       allMetrics={Array []}
@@ -37,6 +40,7 @@ exports[`Shallow Renders Job Table 1`] = `
       metricClass="not-metric"
       numberFilterColumn=""
       numberFilters={Array []}
+      onMetricRowClick={[Function]}
       rowNumbers={Array []}
       startTimeFilters={Array []}
       statuses={Array []}
@@ -48,9 +52,6 @@ exports[`Shallow Renders Job Table 1`] = `
       updateJobIdFilter={[Function]}
       updateNumberFilter={[Function]}
       updateStartTimeFilter={[Function]}
-    />
-    <div
-      className="pagination-controls"
     />
   </div>
 </div>

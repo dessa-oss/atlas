@@ -14,93 +14,73 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
     searchText=""
     updateSearchText={[Function]}
   />
-  <ScrollSyncPane
-    enabled={true}
-    group="horizontal"
+  <div
+    className="job-column-header-container"
   >
-    <div
-      className="job-column-header-container"
-    >
-      <JobColumnHeader
-        className="static-delete-job-header "
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title=""
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="Job ID"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="Launched at"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-status-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={true}
-        title="Status"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="Duration"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="User"
-        toggleFilter={[Function]}
-      />
-      <JobColumnHeader
-        className="static-header"
-        colType="string"
-        containerClass="job-column-header"
-        isFiltered={false}
-        isMetric={false}
-        isStatus={false}
-        title="Tags"
-        toggleFilter={[Function]}
-      />
-    </div>
-  </ScrollSyncPane>
+    <JobColumnHeader
+      className="static-delete-job-header "
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={false}
+      title=""
+      toggleFilter={[Function]}
+    />
+    <JobColumnHeader
+      className="static-header"
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={false}
+      title="Job ID"
+      toggleFilter={[Function]}
+    />
+    <JobColumnHeader
+      className="static-header"
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={false}
+      title="Launched at"
+      toggleFilter={[Function]}
+    />
+    <JobColumnHeader
+      className="static-status-header"
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={true}
+      title="Status"
+      toggleFilter={[Function]}
+    />
+    <JobColumnHeader
+      className="static-header"
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={false}
+      title="Duration"
+      toggleFilter={[Function]}
+    />
+    <JobColumnHeader
+      className="static-header"
+      colType="string"
+      containerClass="job-column-header"
+      isFiltered={false}
+      isMetric={false}
+      isStatus={false}
+      title="User"
+      toggleFilter={[Function]}
+    />
+  </div>
   <ScrollSyncPane
     enabled={true}
-    group={
-      Array [
-        "horizontal",
-        "vertical",
-      ]
-    }
+    group="vertical"
   >
     <div
       className="full-height"

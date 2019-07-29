@@ -10,19 +10,45 @@ exports[`Shallow Renders Job Table Header 1`] = `
   <div
     className="job-list-container"
   >
-    <TableStaticColumns
-      isDurationFiltered={false}
-      isJobIdFiltered={false}
-      isStartTimeFiltered={false}
-      isStatusFiltered={false}
-      isUserFiltered={false}
-      jobRows={Array []}
-      rowNumbers={Array []}
-      toggleDurationFilter={[Function]}
-      toggleJobIdFilter={[Function]}
-      toggleStartTimeFilter={[Function]}
-      toggleStatusFilter={[Function]}
-      toggleUserFilter={[Function]}
+    <InputMetric
+      allInputParams={
+        Array [
+          Object {
+            "name": "",
+            "type": "string",
+          },
+          Object {
+            "name": "Job ID",
+            "type": "string",
+          },
+          Object {
+            "name": "Launched At",
+            "type": "string",
+          },
+          Object {
+            "hoverable": false,
+            "name": "Status",
+            "type": "string",
+          },
+          Object {
+            "name": "Duration",
+            "type": "string",
+          },
+          Object {
+            "name": "User",
+            "type": "string",
+          },
+        ]
+      }
+      cellWidths={Array []}
+      filters={Array []}
+      header="Job Details"
+      hiddenInputParams={Array []}
+      isMetric={true}
+      jobs={Array []}
+      onMetricRowClick={[Function]}
+      searchText=""
+      toggleNumberFilter={[Function]}
     />
     <InputMetric
       allInputParams={Array []}
@@ -32,6 +58,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       hiddenInputParams={Array []}
       isMetric={false}
       jobs={Array []}
+      onMetricRowClick={[Function]}
       searchText=""
       toggleNumberFilter={[Function]}
     />
@@ -43,6 +70,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       hiddenInputParams={Array []}
       isMetric={true}
       jobs={Array []}
+      onMetricRowClick={[Function]}
       searchText=""
       toggleNumberFilter={[Function]}
     />

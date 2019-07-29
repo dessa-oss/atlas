@@ -3,6 +3,9 @@
 exports[`Shallow Renders Job Table Row 1`] = `
 <div
   className="job-table-row"
+  onClick={[Function]}
+  onKeydown={[Function]}
+  role="presentation"
 >
   <CancelJobCell
     job={
@@ -39,11 +42,6 @@ exports[`Shallow Renders Job Table Row 1`] = `
     isError={false}
     rowNumber={0}
     user=""
-  />
-  <TagsCell
-    isError={false}
-    rowNumber={0}
-    tag={Object {}}
   />
 </div>
 `;

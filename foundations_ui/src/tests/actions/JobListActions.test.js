@@ -300,7 +300,7 @@ it('checks if field hidden, is hidden', () => {
 it('getStatusCircle green', () => {
   const status = 'completed';
   const circleClass = JobListActions.getStatusCircle(status);
-  expect(circleClass).toBe('status status-green');
+  expect(circleClass).toBe('status-icon status-green');
 });
 
 it('gets JobColumnHeaderH4Class', () => {
@@ -366,7 +366,7 @@ it('gets TableSectionHeaderTextClass emptyHeader', () => {
 it('getStatusCircle red', () => {
   const status = 'Failed';
   const circleClass = JobListActions.getStatusCircle(status);
-  expect(circleClass).toBe('status status-red');
+  expect(circleClass).toBe('status-icon status-red');
 });
 
 it('getDurationClass days', () => {
