@@ -50,7 +50,7 @@ class TestSyncableDirectory(Spec):
         mapping = copy.deepcopy(self.stat_mtime_mapping)
         key_to_change = list(mapping)[0]
         mapping[key_to_change] += 10
-        
+
         return mapping
 
     @let
@@ -65,6 +65,11 @@ class TestSyncableDirectory(Spec):
     def syncable_directory(self):
         from foundations.artifacts.syncable_directory import SyncableDirectory
         return SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id)
+
+    @let
+    def syncable_directory_in_uploading_job(self):
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+        return SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.local_job_id)
 
     @set_up
     def set_up(self):
@@ -202,7 +207,14 @@ class TestSyncableDirectory(Spec):
         remote_path = list(self.stat_mtime_mapping)[0]
 
         self.mock_archive.append_file.assert_called_once_with(f'synced_directories/{self.key}', f'{self.directory_path}/{remote_path}', self.local_job_id, remote_path)
-        
+
+    def test_upload_file_with_same_name_twice_download_that_file_only_once(self):
+        self.syncable_directory_in_uploading_job.upload()
+        self.syncable_directory_in_uploading_job.upload()
+
+        self.syncable_directory_in_uploading_job.download()
+        self.assertEqual(len(self.file_listing), self.mock_archive.fetch_file_path_to_target_file_path.call_count)
+
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
         instance = Mock()

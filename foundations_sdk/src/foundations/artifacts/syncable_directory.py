@@ -38,10 +38,10 @@ class SyncableDirectory(object):
                 remote_path = file[len(self._directory_path)+1:]
                 timestamp = os.stat(file).st_mtime
 
-                self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
                 self._redis().hmset(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}:timestamps', {remote_path: timestamp})
 
                 if remote_path not in decoded_old_timestamps or timestamp > decoded_old_timestamps[remote_path]:
+                    self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
                     self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id, remote_path)
 
     def download(self):
