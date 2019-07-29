@@ -15,7 +15,7 @@ class SyncableDirectory(object):
         self._local_job_id = local_job_id
         self._remote_job_id = remote_job_id
         self._archive = load_archive('artifact_archive')
-        
+
         self.download()
         
     def __str__(self):
@@ -39,7 +39,7 @@ class SyncableDirectory(object):
         import os
         import os.path
 
-        file_listing = self._redis().lrange(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', 0, -1)
+        file_listing = self._redis().lrange(f'jobs:{self._remote_job_id}:synced_artifacts:{self._key}', 0, -1)
         file_listing = [file.decode() for file in file_listing]
         for file in file_listing:
             result_path = f'{self._directory_path}/{file}'

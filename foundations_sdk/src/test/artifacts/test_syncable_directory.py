@@ -98,7 +98,7 @@ class TestSyncableDirectory(Spec):
     def test_download_all_files(self):
         expected_calls = []
         for file in self.file_listing:
-            self.mock_redis.rpush(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', file)
+            self.mock_redis.rpush(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
             download_call = call(
                 f'synced_directories/{self.key}', 
                 file, 
@@ -114,7 +114,7 @@ class TestSyncableDirectory(Spec):
 
         expected_calls = []
         for file in self.file_listing:
-            self.mock_redis.rpush(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', file)
+            self.mock_redis.rpush(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
             dirname = os.path.dirname(f'{self.directory_path}/{file}')
             mkdir_call = call(dirname, exist_ok=True)
             expected_calls.append(mkdir_call)
