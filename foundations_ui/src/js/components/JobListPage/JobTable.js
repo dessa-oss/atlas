@@ -121,6 +121,7 @@ class JobTable extends Component {
             updateStartTimeFilter={updateStartTimeFilter}
             startTimeFilters={startTimeFilters}
             filters={filters}
+            onMetricRowClick={handleClick}
           />
           {/* <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>

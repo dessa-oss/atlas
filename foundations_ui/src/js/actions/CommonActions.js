@@ -159,7 +159,7 @@ class CommonActions {
     return newValue;
   }
 
-  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams, onMetricRowClick) {
     let rows = null;
     let rowNumber = 0;
     if (jobs.length > 0) {
@@ -175,6 +175,7 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
+          onMetricRowClick={onMetricRowClick}
         />);
         rowNumber += 1;
       });

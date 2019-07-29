@@ -5,6 +5,7 @@ import CommonActions from '../../actions/CommonActions';
 class InputMetricRow extends Component {
   constructor(props) {
     super(props);
+    this.onMetricRowClick = props.onMetricRowClick;
     this.state = {
       isError: this.props.isError,
       job: this.props.job,
@@ -38,7 +39,12 @@ class InputMetricRow extends Component {
       rowNumber);
 
     return (
-      <div className="job-table-row">
+      <div
+        role="presentation"
+        className="job-table-row"
+        onClick={this.onMetricRowClick}
+        onKeyDown={this.onMetricRowClick}
+      >
         {cells}
       </div>
     );
@@ -46,6 +52,7 @@ class InputMetricRow extends Component {
 }
 
 InputMetricRow.propTypes = {
+  onMetricRowClick: PropTypes.func,
   job: PropTypes.object,
   isError: PropTypes.bool,
   isMetric: PropTypes.bool,
@@ -53,8 +60,9 @@ InputMetricRow.propTypes = {
   hiddenInputParams: PropTypes.array,
   rowNumber: PropTypes.number,
 };
-
+const defaultFunc = () => console.log('InputMetricRow: onClick func missing.');
 InputMetricRow.defaultProps = {
+  onMetricRowClick: defaultFunc,
   job: {},
   isError: false,
   isMetric: false,

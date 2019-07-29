@@ -7,6 +7,7 @@ import CommonActions from '../../actions/CommonActions';
 class InputMetric extends Component {
   constructor(props) {
     super(props);
+    this.onMetricRowClick = props.onMetricRowClick;
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.updateSearchText = this.updateSearchText.bind(this);
     this.hasNoRows = this.hasNoRows.bind(this);
@@ -55,7 +56,7 @@ class InputMetric extends Component {
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
 
-    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams);
+    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams, this.onMetricRowClick);
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
       rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
@@ -88,6 +89,7 @@ class InputMetric extends Component {
 }
 
 InputMetric.propTypes = {
+  onMetricRowClick: PropTypes.func,
   header: PropTypes.string,
   hiddenInputParams: PropTypes.array,
   allInputParams: PropTypes.array,
@@ -98,8 +100,9 @@ InputMetric.propTypes = {
   toggleNumberFilter: PropTypes.func,
   filters: PropTypes.array,
 };
-
+const defaultFunc = () => console.log('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
+  onMetricRowClick: defaultFunc,
   header: '',
   hiddenInputParams: [],
   allInputParams: [],

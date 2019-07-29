@@ -20,6 +20,7 @@ const isMetric = true;
 class JobTableHeader extends Component {
   constructor(props) {
     super(props);
+    this.onMetricRowClick = props.onMetricRowClick.bind(this);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
@@ -545,6 +546,7 @@ class JobTableHeader extends Component {
             isMetric={isMetric}
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
           />
           <InputMetric
             header="Parameters"
@@ -576,6 +578,7 @@ class JobTableHeader extends Component {
 }
 
 JobTableHeader.propTypes = {
+  onMetricRowClick: PropTypes.func,
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
@@ -612,7 +615,9 @@ JobTableHeader.propTypes = {
   filters: PropTypes.array,
 };
 
+const defaultFunc = () => console.log('JobTableHeader: Missing onMetricRowClick prop.');
 JobTableHeader.defaultProps = {
+  onMetricRowClick: defaultFunc,
   allInputParams: [],
   jobs: [],
   allMetrics: [],
