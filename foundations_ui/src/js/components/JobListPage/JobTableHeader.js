@@ -335,9 +335,9 @@ class JobTableHeader extends Component {
         value: el.user,
         type: 'string',
       });
-
-      el.output_metrics = neededColums;
-      return el;
+      const job = Object.assign({}, el);
+      job.output_metrics = neededColums;
+      return job;
     });
   }
 
