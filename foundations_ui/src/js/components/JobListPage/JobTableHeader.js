@@ -330,6 +330,7 @@ class JobTableHeader extends Component {
           duration: JobListActions.parseDuration(el.duration),
         }).render(),
         type: 'string',
+        hoverable: false,
       });
       neededColums.push({
         name: 'User',
