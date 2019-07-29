@@ -71,3 +71,8 @@ class TestSyncableDirectory(Spec):
         self.temporary_syncable_directory.download()
         self.assertEqual(['some_data.txt'], os.listdir(str(self.temporary_syncable_directory)))
     
+    def test_downloads_upon_instantiation(self):
+        import os
+
+        syncable_directory = foundations.create_syncable_directory('some data', None, self.job_id)
+        self.assertEqual(['some_data.txt'], os.listdir(str(syncable_directory)))

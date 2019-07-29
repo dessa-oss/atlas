@@ -16,6 +16,8 @@ class SyncableDirectory(object):
         self._remote_job_id = remote_job_id
         self._archive = load_archive('artifact_archive')
         
+        self.download()
+        
     def __str__(self):
         return self._directory_path
 
@@ -49,7 +51,6 @@ class SyncableDirectory(object):
                 self._remote_job_id,
                 f'{self._directory_path}/{file}'
             )
-
 
     def _redis(self):
         from foundations_contrib.global_state import redis_connection

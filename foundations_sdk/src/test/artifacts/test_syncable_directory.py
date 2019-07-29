@@ -153,6 +153,13 @@ class TestSyncableDirectory(Spec):
     def test_path_retuns_correct_synced_directory_path(self):
         self.assertEqual(self.directory_path, str(self.syncable_directory))
 
+    def test_syncable_directory_does_a_download_upon_instantiation(self):
+        from foundations import create_syncable_directory
+
+        mock_download = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory.download')
+        syncable_directory = create_syncable_directory(self.key, None, self.remote_job_id)
+        mock_download.assert_called_once()
+
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
         instance = Mock()
