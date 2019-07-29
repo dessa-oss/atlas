@@ -30,7 +30,6 @@ class InputMetricRow extends Component {
     const {
       job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber,
     } = this.state;
-
     const cells = CommonActions.getInputMetricCells(job,
       isError,
       isMetric,

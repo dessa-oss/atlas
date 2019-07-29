@@ -44,11 +44,11 @@ class DurationCell extends Component {
     secondsUI = JobListActions.getDurationClass('seconds', days, hours, minutes, seconds, isError);
 
     const pClass = isError
-      ? `job-cell duration-cell error row-${rowNumber}`
-      : `job-cell duration-cell row-${rowNumber}`;
+      ? 'error'
+      : '';
 
     return (
-      <p className={pClass}>{daysUI}{hoursUI}{minutesUI}{secondsUI}</p>
+      <span className={pClass}>{daysUI}{hoursUI}{minutesUI}{secondsUI}</span>
     );
   }
 }
