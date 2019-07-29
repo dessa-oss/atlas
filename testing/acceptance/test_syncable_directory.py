@@ -23,8 +23,24 @@ class TestSyncableDirectory(Spec):
         )
 
     @let
+    def deployment_2(self):
+        import foundations
+
+        return foundations.deploy(
+            project_name='test', 
+            env='local', 
+            entrypoint='main', 
+            job_directory='acceptance/fixtures/syncable_directory_job_again', 
+            params={'source_job_id': self.job_id}
+        )
+
+    @let
     def job_id(self):
         return self.deployment.job_name()
+
+    @let
+    def job_id_2(self):
+        return self.deployment_2.job_name()
 
     @let
     def temp_directory(self):
@@ -36,20 +52,18 @@ class TestSyncableDirectory(Spec):
         return f'{self.temp_directory}/results'
 
     @let
-    def first_directory(self):
-        return foundations.create_syncable_directory('some data', self.first_directory_path, self.job_id)
-
-    @let
     def second_directory_path(self):
         return f'{self.temp_directory}/metadata'
 
     @let
-    def second_directory(self):
-        return foundations.create_syncable_directory('some metadata', self.second_directory_path, self.job_id)
-
-    @let
     def temporary_syncable_directory(self):
         return foundations.create_syncable_directory('some data', None, self.job_id)
+
+    def first_directory(self, job_id):
+        return foundations.create_syncable_directory('some data', self.first_directory_path, job_id)
+
+    def second_directory(self, job_id):
+        return foundations.create_syncable_directory('some metadata', self.second_directory_path, job_id)
 
     @set_up
     def set_up(self):
@@ -59,10 +73,10 @@ class TestSyncableDirectory(Spec):
     def test_can_download_from_synced_directory(self):
         import os
 
-        self.first_directory.download()
+        self.first_directory(self.job_id).download()
         self.assertEqual(['some_data.txt'], os.listdir(self.first_directory_path))
 
-        self.second_directory.download()
+        self.second_directory(self.job_id).download()
         self.assertEqual(['some_metadata.txt'], os.listdir(self.second_directory_path))
 
     def test_can_download_when_no_synced_directory_specified(self):
@@ -76,3 +90,12 @@ class TestSyncableDirectory(Spec):
 
         syncable_directory = foundations.create_syncable_directory('some data', None, self.job_id)
         self.assertEqual(['some_data.txt'], os.listdir(str(syncable_directory)))
+
+    def test_can_download_from_one_job_and_upload_same_data_to_another(self):
+        import os
+
+        self.first_directory(self.job_id_2).download()
+        self.assertEqual(['some_data.txt'], os.listdir(self.first_directory_path))
+
+        self.second_directory(self.job_id_2).download()
+        self.assertEqual(['some_metadata.txt'], os.listdir(self.second_directory_path))
