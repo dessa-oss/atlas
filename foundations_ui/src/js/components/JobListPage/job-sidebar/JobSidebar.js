@@ -15,18 +15,14 @@ export default function JobSidebar(props) {
       const handleArtifactClick = artifact => setArtifact(artifact);
       return (
         <div className="job-sidebar">
-          <SidebarSection
-            header="JOB DETAILS"
-            content={ArtifactViewer({
-              jobId: job.job_id,
-              content: ImageViewer({ image: selectedArtifact.uri }),
-            })
-          }
-          />
-          <SidebarSection
-            header="FILES"
-            content={ArtifactList({ artifacts: job.artifacts, handleClick: handleArtifactClick })}
-          />
+          <SidebarSection header="JOB DETAILS">
+            <ArtifactViewer jobId={job.job_id}>
+              <ImageViewer image={selectedArtifact.uri} />
+            </ArtifactViewer>
+          </SidebarSection>
+          <SidebarSection header="FILES">
+            <ArtifactList artifacts={job.artifacts} handleClick={handleArtifactClick} />
+          </SidebarSection>
         </div>
       );
     }
@@ -47,9 +43,5 @@ export default function JobSidebar(props) {
 }
 
 JobSidebar.propTypes = {
-  job: PropTypes.object,
-};
-
-JobSidebar.defaultProps = {
-  job: 'JobSidebar: No job prop.',
+  job: PropTypes.object.isRequired,
 };
