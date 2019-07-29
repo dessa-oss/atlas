@@ -39,7 +39,9 @@ function DownloadButton(props) {
 
   const getImageLocally = () => null;
   return (
-    <button type="button" onClick={getImage}> Download File </button>
+    <button type="button" onClick={getImage}>
+      <div className="i--icon-download" />
+    </button>
   );
 }
 
