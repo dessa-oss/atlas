@@ -44,26 +44,26 @@ class JobIDCell extends Component {
       ? `job-cell job-id-cell error row-${rowNumber}`
       : `job-cell job-id-cell row-${rowNumber}`;
 
-    const href = '/'.concat(jobID);
+    // const href = '/'.concat(jobID);
     return (
-      <div
+      <span
         className={aClass}
         onMouseEnter={() => this.toggleExpand(true)}
         onMouseLeave={() => this.toggleExpand(false)}
       >
         {jobIdFormatted}
         <CopyToClipboard text={jobID}>
-          <div
+          <span
             onClick={() => this.notifiedCopy()}
             className="i--icon-copy"
             role="presentation"
           />
         </CopyToClipboard>
         <ToastContainer />
-        <div>
+        <span>
           {hover}
-        </div>
-      </div>
+        </span>
+      </span>
     );
   }
 }
