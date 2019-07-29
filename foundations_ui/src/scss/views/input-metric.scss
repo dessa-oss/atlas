@@ -18,6 +18,10 @@
       width: 20.5%!important;
       &:first-child, &:nth-child(4) {
         width: 9%!important;
+        line-height: 25px;
+      }
+      &:nth-child(2) {
+        width: 22%!important;
       }
     }
 
@@ -30,6 +34,9 @@
       &:first-child, &:nth-child(4) {
         width: 9%!important;
         min-width: 9%!important;
+      }
+      &:nth-child(2) {
+        width: 22%!important;
       }
     }
 

@@ -11,9 +11,10 @@ See assets/svgs/README.md for further information on SVG conversion process
 //-----------------------------
 @mixin icon-helper(){
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: 13px 13px;
   background-position: center center;
   max-width: 100%;
+  background-color: white;
 }
 
 
