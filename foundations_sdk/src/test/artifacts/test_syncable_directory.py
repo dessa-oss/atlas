@@ -44,6 +44,16 @@ class TestSyncableDirectory(Spec):
         return {file_name: self.faker.random.random() * 1000000 for file_name in self.file_listing_without_directory}
 
     @let
+    def stat_mtime_mapping_after_file_change(self):
+        import copy
+
+        mapping = copy.deepcopy(self.stat_mtime_mapping)
+        key_to_change = list(mapping)[0]
+        mapping[key_to_change] += 10
+        
+        return mapping
+
+    @let
     def remote_job_id(self):
         return self.faker.uuid4()
 
@@ -177,6 +187,22 @@ class TestSyncableDirectory(Spec):
         syncable_directory = create_syncable_directory(self.key, None, self.remote_job_id)
         mock_download.assert_called_once()
 
+    def test_upload_only_changed_file(self):
+        self.syncable_directory.upload()
+        self.mock_os_stat.clear()
+        self.mock_archive.append_file.reset_mock()
+
+        for file_name, stat_mtime in self.stat_mtime_mapping_after_file_change.items():
+            mock_stat = Mock()
+            mock_stat.st_mtime = stat_mtime
+            self.mock_os_stat.return_when(mock_stat, f'{self.directory_path}/{file_name}')
+        
+        self.syncable_directory.upload()
+
+        remote_path = list(self.stat_mtime_mapping)[0]
+
+        self.mock_archive.append_file.assert_called_once_with(f'synced_directories/{self.key}', f'{self.directory_path}/{remote_path}', self.local_job_id, remote_path)
+        
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
         instance = Mock()

@@ -35,12 +35,28 @@ class TestSyncableDirectory(Spec):
         )
 
     @let
+    def deployment_with_diffs(self):
+        import foundations
+
+        return foundations.deploy(
+            project_name='test', 
+            env='local', 
+            entrypoint='main', 
+            job_directory='acceptance/fixtures/syncable_directory_job_with_diffs', 
+            params=None
+        )
+
+    @let
     def job_id(self):
         return self.deployment.job_name()
 
     @let
     def job_id_2(self):
         return self.deployment_2.job_name()
+
+    @let
+    def job_id_with_diffs(self):
+        return self.deployment_with_diffs.job_name()
 
     @let
     def temp_directory(self):
@@ -99,3 +115,20 @@ class TestSyncableDirectory(Spec):
 
         self.second_directory(self.job_id_2).download()
         self.assertEqual(['some_metadata.txt'], os.listdir(self.second_directory_path))
+    
+    def test_uploading_twice_only_uploads_changed_or_new_files(self):
+        import os
+
+        synced_directory_path = f'/tmp/foundations_acceptance/archive/{self.job_id_with_diffs}/synced_directories/some data'
+        expected_files = ['new_file.txt', 'some_data.txt', 'some_metadata.txt']
+
+        files_with_stats = {file_name: os.stat(f'{synced_directory_path}/{file_name}') for file_name in expected_files}
+
+        with open(f'{synced_directory_path}/time_of_upload.txt', 'r') as time_of_upload_file:
+            time_of_upload = float(time_of_upload_file.read())
+
+        for unchanged_file in ['some_data.txt']:
+            self.assertLessEqual(abs(files_with_stats[unchanged_file].st_mtime - time_of_upload), 0.5)
+
+        for changed_file in ['new_file.txt', 'some_metadata.txt']:
+            self.assertLessEqual(abs(files_with_stats[changed_file].st_mtime - (time_of_upload + 10)), 0.5)
