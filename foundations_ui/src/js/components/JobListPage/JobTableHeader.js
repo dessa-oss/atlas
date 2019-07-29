@@ -478,21 +478,21 @@ class JobTableHeader extends Component {
 
     const jobsInputParams = [
       { name: '', type: 'string' },
-      { name: 'job_id', type: 'string' },
-      { name: 'status', type: 'string' },
-      { name: 'start_time', type: 'string' },
-      { name: 'completed_time', type: 'string' },
-      { name: 'duration', type: 'string' },
+      { name: 'Job ID', type: 'string' },
+      { name: 'Launched at', type: 'string' },
+      { name: 'Status', type: 'string' },
+      { name: 'Duration', type: 'string' },
+      { name: 'User', type: 'string' },
     ];
 
     const jobsMetaData = jobs.map((el) => {
       const neededColums = [];
       neededColums.push({ name: '', value: CancelJobCell({ job: el }), type: 'string' });
-      neededColums.push({ name: 'job_id', value: el.job_id, type: 'string' });
-      neededColums.push({ name: 'duration', value: el.duration, type: 'string' });
-      neededColums.push({ name: 'start_time', value: el.start_time, type: 'string' });
-      neededColums.push({ name: 'completed_time', value: el.completed_time, type: 'string' });
-      neededColums.push({ name: 'status', value: new StatusCell(el).render(), type: 'object' });
+      neededColums.push({ name: 'Job ID', value: el.job_id, type: 'string' });
+      neededColums.push({ name: 'Launched at', value: el.start_time, type: 'string' });
+      neededColums.push({ name: 'Status', value: new StatusCell(el).render(), type: 'object' });
+      neededColums.push({ name: 'Duration', value: el.duration, type: 'string' });
+      neededColums.push({ name: 'User', value: el.user, type: 'string' });
 
       el.output_metrics = neededColums;
       return el;

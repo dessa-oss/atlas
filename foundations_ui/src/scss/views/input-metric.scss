@@ -1,3 +1,7 @@
+.jobDetails {
+  width: 300px;
+}
+
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
@@ -8,6 +12,41 @@
   padding: 0px;
   position: relative;
   overflow: hidden;
+  &:first-child {
+
+    .job-cell {
+      width: 20.5%!important;
+      &:first-child, &:nth-child(4) {
+        width: 9%!important;
+      }
+    }
+
+    .input-metric-column-container .job-column-header {
+      width: 20.5%;
+      min-width: 20.5%;
+      max-width: unset;
+      padding: unset;
+      margin: unset;
+      &:first-child, &:nth-child(4) {
+        width: 9%!important;
+        min-width: 9%!important;
+      }
+    }
+
+    .input-metric-column-container {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    .job-column-header h4 {
+      min-width: unset!important;
+    }
+
+  }
+}
+
+.job-static-columns-container:nth-child(3) {
+  border-right: 4px solid #0091f6;
 }
 
 .input-metric-header-row-container {
