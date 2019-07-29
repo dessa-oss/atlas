@@ -22,6 +22,7 @@ class SyncableDirectory(object):
         return self._directory_path
 
     def upload(self):
+        import os
         from foundations_contrib.archiving.upload_artifacts import list_of_files_to_upload_from_artifact_path
         from foundations_contrib.global_state import log_manager
 
@@ -32,7 +33,10 @@ class SyncableDirectory(object):
             file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
             for file in file_listing:
                 remote_path = file[len(self._directory_path)+1:]
+                timestamp = os.stat(file).st_mtime
+
                 self._redis().rpush(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}', remote_path)
+                self._redis().hmset(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}:timestamps', {remote_path: timestamp})
                 self._archive.append_file(f'synced_directories/{self._key}', file, self._local_job_id, remote_path)
 
     def download(self):

@@ -40,6 +40,10 @@ class TestSyncableDirectory(Spec):
         return [f'{self.directory_path}/{path}' for path in self.file_listing_without_directory]
 
     @let
+    def stat_mtime_mapping(self):
+        return {file_name: self.faker.random.random() * 1000000 for file_name in self.file_listing_without_directory}
+
+    @let
     def remote_job_id(self):
         return self.faker.uuid4()
 
@@ -58,6 +62,13 @@ class TestSyncableDirectory(Spec):
         self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path)
         self.mock_load_archive.return_when(self.mock_archive, 'artifact_archive')
         self.mock_get_logger.return_when(self.mock_logger, 'foundations.artifacts.syncable_directory')
+
+        self.mock_os_stat = self.patch('os.stat', ConditionalReturn())
+
+        for file_name, stat_mtime in self.stat_mtime_mapping.items():
+            mock_stat = Mock()
+            mock_stat.st_mtime = stat_mtime
+            self.mock_os_stat.return_when(mock_stat, f'{self.directory_path}/{file_name}')
 
     def test_uploads_all_files(self):
         expected_calls = []
@@ -94,6 +105,12 @@ class TestSyncableDirectory(Spec):
         files = self.mock_redis.lrange(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', 0, -1)
         files = [file.decode() for file in files]
         self.assertEqual(self.file_listing_without_directory, files)
+
+    def test_tracks_uploaded_file_timestamps_in_redis(self):
+        self.syncable_directory.upload()
+        timestamp_mapping = self.mock_redis.hgetall(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}:timestamps')
+        decoded_timestamp_mapping = {file.decode(): float(m_time_from_redis) for file, m_time_from_redis in timestamp_mapping.items()} 
+        self.assertEqual(self.stat_mtime_mapping, decoded_timestamp_mapping)
 
     def test_download_all_files(self):
         expected_calls = []
