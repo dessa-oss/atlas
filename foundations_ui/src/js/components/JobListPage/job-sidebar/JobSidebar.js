@@ -10,8 +10,6 @@ export default function JobSidebar(props) {
   const { job } = props;
   if (job !== null) {
     if (job.artifacts && job.artifacts.length > 0) {
-      // job.artifacts[0].uri = 'https://cdn.pixabay.com/photo/2018/01/04/19/43/love-3061483__340.jpg';
-      // if (job.artifacts.length > 0) { }
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);
 
@@ -41,14 +39,11 @@ export default function JobSidebar(props) {
     }
     return (
       <div className="job-sidebar">
-        <SidebarSection
-          header="JOB DETAILS"
-          content={ArtifactViewer({
-            jobId: job.job_id,
-            content: 'No artifact for this job',
-          })
-          }
-        />
+        <SidebarSection header="JOB DETAILS">
+          <ArtifactViewer jobI={job.job_id}>
+            <p>No artifacts for this job</p>
+          </ArtifactViewer>
+        </SidebarSection>
       </div>
     );
   }

@@ -8,9 +8,5 @@ export default function AudioPlayer(props) {
 }
 
 AudioPlayer.propTypes = {
-  url: PropTypes.string,
-};
-
-AudioPlayer.defaultProps = {
-  url: 'AudioPlayer: No uri prop.',
+  url: PropTypes.string.isRequired,
 };
