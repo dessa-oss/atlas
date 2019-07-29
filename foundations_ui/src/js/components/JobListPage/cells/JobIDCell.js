@@ -17,7 +17,7 @@ class JobIDCell extends Component {
   }
 
   notifiedCopy() {
-    toast.info('Job id successfully copied', {
+    toast.info('Job ID successfully copied', {
       autoClose: 1500,
       draggable: false,
     });

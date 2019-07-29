@@ -103,6 +103,8 @@ class CommonActions {
         const key = this.getInputMetricKey(input, col, isMetric);
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const cellType = this.getInputMetricCellType(input);
+        const isHoverable = this.getInputMetricIsHoverable(input);
+
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
@@ -112,6 +114,7 @@ class CommonActions {
           isError={isError}
           cellType={cellType}
           rowNumber={rowNumber}
+          hoverable={isHoverable}
         />);
       }
     });
@@ -126,6 +129,7 @@ class CommonActions {
         let inputValue = JobListActions.getInputMetricValue(input, isMetric, columns);
         const key = this.getInputMetricKey(input, col, isMetric);
         const cellType = this.getInputMetricCellType(input);
+        const isHoverable = this.getInputMetricIsHoverable(input);
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
@@ -135,6 +139,7 @@ class CommonActions {
           isError={isError}
           cellType={cellType}
           rowNumber={rowNumber}
+          hoverable={isHoverable}
         />);
       } else {
         cells.push(null);
@@ -154,7 +159,7 @@ class CommonActions {
     return newValue;
   }
 
-  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams) {
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams, onMetricRowClick) {
     let rows = null;
     let rowNumber = 0;
     if (jobs.length > 0) {
@@ -170,6 +175,7 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
+          onMetricRowClick={() => onMetricRowClick(job)}
         />);
         rowNumber += 1;
       });
@@ -240,6 +246,13 @@ class CommonActions {
       return inputMetric.type;
     }
     return 'not-available';
+  }
+
+  static getInputMetricIsHoverable(inputMetric) {
+    if (inputMetric && inputMetric.hoverable !== undefined) {
+      return inputMetric.hoverable;
+    }
+    return true;
   }
 
   static getFlatArray(array) {

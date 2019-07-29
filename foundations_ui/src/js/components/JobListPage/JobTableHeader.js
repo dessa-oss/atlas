@@ -1,23 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollSync } from 'react-scroll-sync';
-import TableStaticColumns from './TableStaticColumns';
 import InputMetric from '../common/InputMetric';
 import UserFilter from '../common/filters/UserFilter';
 import StatusFilter from '../common/filters/StatusFilter';
 import DurationFilter from '../common/filters/DurationFilter';
 import NumberFilter from '../common/filters/NumberFilter';
 import ContainsFilter from '../common/filters/ContainsFilter';
-import BooleanFilter from '../common/filters/BooleanFilter';
 import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
+import CancelJobCell from './cells/CancelJobCell';
+import StatusCell from './cells/StatusCell';
+import StartTimeCell from './cells/StartTimeCell';
+import DurationCell from './cells/DurationCell';
 
 const isMetric = true;
 
 class JobTableHeader extends Component {
   constructor(props) {
     super(props);
+    this.onMetricRowClick = props.onMetricRowClick.bind(this);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
@@ -284,6 +287,61 @@ class JobTableHeader extends Component {
     }
   }
 
+  getStaticJobsInputParams() {
+    return [
+      { name: '', type: 'string' },
+      { name: 'Job ID', type: 'string' },
+      { name: 'Launched At', type: 'string' },
+      { name: 'Status', type: 'string', hoverable: false },
+      { name: 'Duration', type: 'string' },
+      { name: 'User', type: 'string' },
+    ];
+  }
+
+  generateStaticJobs(jobs) {
+    return jobs.map((el) => {
+      const neededColums = [];
+
+      neededColums.push({
+        name: '',
+        value: CancelJobCell({ job: el }),
+        type: 'string',
+        hoverable: false,
+      });
+      neededColums.push({
+        name: 'Job ID',
+        value: el.job_id,
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'Launched At',
+        value: new StartTimeCell({ startTime: el.start_time }).render(),
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'Status',
+        value: new StatusCell(el).render(),
+        type: 'string',
+        hoverable: false,
+      });
+      neededColums.push({
+        name: 'Duration',
+        value: new DurationCell({
+          duration: JobListActions.parseDuration(el.duration),
+        }).render(),
+        type: 'string',
+      });
+      neededColums.push({
+        name: 'User',
+        value: el.user,
+        type: 'string',
+      });
+      const job = Object.assign({}, el);
+      job.output_metrics = neededColums;
+      return job;
+    });
+  }
+
   render() {
     const {
       allInputParams,
@@ -474,22 +532,21 @@ class JobTableHeader extends Component {
       return hiddenParam !== undefined;
     });
 
+    const jobsInputParams = this.getStaticJobsInputParams();
+
+    const jobsMetaData = this.generateStaticJobs(jobs);
+
     return (
       <ScrollSync>
         <div className="job-list-container">
-          <TableStaticColumns
-            jobRows={jobRows}
-            rowNumbers={rowNumbers}
-            toggleUserFilter={this.toggleUserFilter}
-            toggleStatusFilter={this.toggleStatusFilter}
-            toggleDurationFilter={this.toggleDurationFilter}
-            toggleJobIdFilter={this.toggleJobIdFilter}
-            toggleStartTimeFilter={this.toggleStartTimeFilter}
-            isStartTimeFiltered={startTimeFilters.length > 0}
-            isStatusFiltered={hiddenInputParams.length > 0}
-            isJobIdFiltered={jobIdFilters.length > 0}
-            isDurationFiltered={durationFilters.length > 0}
-            isUserFiltered={hiddenUsers.length > 0}
+          <InputMetric
+            header="Job Details"
+            allInputParams={jobsInputParams}
+            jobs={jobsMetaData}
+            isMetric={isMetric}
+            toggleNumberFilter={this.toggleInputMetricFilter}
+            filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
           />
           <InputMetric
             header="Parameters"
@@ -521,6 +578,7 @@ class JobTableHeader extends Component {
 }
 
 JobTableHeader.propTypes = {
+  onMetricRowClick: PropTypes.func,
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
@@ -557,7 +615,9 @@ JobTableHeader.propTypes = {
   filters: PropTypes.array,
 };
 
+const defaultFunc = () => console.log('JobTableHeader: Missing onMetricRowClick prop.');
 JobTableHeader.defaultProps = {
+  onMetricRowClick: defaultFunc,
   allInputParams: [],
   jobs: [],
   allMetrics: [],

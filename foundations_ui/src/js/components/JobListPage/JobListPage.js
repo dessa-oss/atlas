@@ -50,10 +50,13 @@ class JobListPage extends Component {
       startTimeFilter: [],
       queryStatus: 200,
     };
-    setInterval(this.tick, 1000);
   }
 
   async componentDidMount() {
+    this.interval = setInterval(
+      () => this.getJobs(),
+      4000,
+    );
     this.setState({ isMount: true });
     await this.getJobs();
     hoverActions.hover();
@@ -61,6 +64,7 @@ class JobListPage extends Component {
 
   componentWillUnmount() {
     this.setState({ isMount: false });
+    clearInterval(this.interval);
   }
 
   checkStatusOk() {
@@ -319,11 +323,6 @@ class JobListPage extends Component {
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
     this.checkStatusOk = this.checkStatusOk.bind(this);
-    this.tick = this.tick.bind(this);
-  }
-
-  async tick() {
-    this.setState({});
   }
 
   render() {
@@ -333,6 +332,7 @@ class JobListPage extends Component {
       queryStatus,
     } = this.state;
     let jobList;
+    let sidebar;
     if (queryStatus === 401) {
       return JobListActions.redirect('/login');
     }
@@ -371,6 +371,7 @@ class JobListPage extends Component {
     return (
       <div className="job-list-container">
         <Toolbar />
+        {sidebar}
         <JobHeader
           project={project}
           jobs={jobs}

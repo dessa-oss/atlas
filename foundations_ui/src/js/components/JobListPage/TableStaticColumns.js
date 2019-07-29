@@ -49,61 +49,56 @@ class TableStaticColumns extends Component {
     return (
       <div className="job-static-columns-container">
         <TableSectionHeader />
-        <div className="full-height">
-          <div className="job-column-header-container">
-            <JobColumnHeader
-              title=""
-              className="static-delete-job-header "
-            //   toggleFilter={toggleJobIdFilter}
-              isFiltered={isJobIdFiltered}
-            />
-            <JobColumnHeader
-              title="Job ID"
-              className="static-header"
-              toggleFilter={toggleJobIdFilter}
-              isFiltered={isJobIdFiltered}
-            />
-            <JobColumnHeader
-              title="Launched at"
-              className="static-header"
-              toggleFilter={toggleStartTimeFilter}
-              isFiltered={isStartTimeFiltered}
-            />
-            <JobColumnHeader
-              title="Status"
-              isStatus={isStatus}
-              className="static-status-header"
-              toggleFilter={toggleStatusFilter}
-              isFiltered={isStatusFiltered}
-            />
-            <JobColumnHeader
-              title="Duration"
-              className="static-header"
-              toggleFilter={toggleDurationFilter}
-              isFiltered={isDurationFiltered}
-            />
-            <JobColumnHeader
-              title="User"
-              className="static-header"
-              toggleFilter={toggleUserFilter}
-              isFiltered={isUserFiltered}
-            />
-            <JobColumnHeader
-              title="Tags"
-              className="static-header"
-            />
-          </div>
-          <ScrollSyncPane group="vertical">
-            <div className="table-row-number">
-              {rowNumbers}
-            </div>
-          </ScrollSyncPane>
-          <ScrollSyncPane group="vertical">
+        <div className="job-column-header-container">
+          <JobColumnHeader
+            title=""
+            className="static-delete-job-header "
+          //   toggleFilter={toggleJobIdFilter}
+            isFiltered={isJobIdFiltered}
+          />
+          <JobColumnHeader
+            title="Job ID"
+            className="static-header"
+            toggleFilter={toggleJobIdFilter}
+            isFiltered={isJobIdFiltered}
+          />
+          <JobColumnHeader
+            title="Launched at"
+            className="static-header"
+            toggleFilter={toggleStartTimeFilter}
+            isFiltered={isStartTimeFiltered}
+          />
+          <JobColumnHeader
+            title="Status"
+            isStatus={isStatus}
+            className="static-status-header"
+            toggleFilter={toggleStatusFilter}
+            isFiltered={isStatusFiltered}
+          />
+          <JobColumnHeader
+            title="Duration"
+            className="static-header"
+            toggleFilter={toggleDurationFilter}
+            isFiltered={isDurationFiltered}
+          />
+          <JobColumnHeader
+            title="User"
+            className="static-header"
+            toggleFilter={toggleUserFilter}
+            isFiltered={isUserFiltered}
+          />
+          {/* <JobColumnHeader
+            title="Tags"
+            className="static-header"
+          /> */}
+        </div>
+        <ScrollSyncPane group="vertical">
+          <div className="full-height">
             <div className="job-table-row-container">
               {jobRows}
             </div>
-          </ScrollSyncPane>
-        </div>
+          </div>
+        </ScrollSyncPane>
       </div>
     );
   }

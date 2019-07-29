@@ -12,16 +12,26 @@ class StatusCell extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.rowNumber !== this.props.status) {
+      this.setState({
+        status: nextProps.status,
+        isError: nextProps.isError,
+        rowNumber: nextProps.rowNumber,
+      });
+    }
+  }
+
   render() {
     const { status, isError, rowNumber } = this.state;
 
     const statusClass = JobListActions.getStatusCircle(status);
-    const divClass = isError ? `status-cell job-cell error row-${rowNumber}` : `status-cell job-cell row-${rowNumber}`;
+    const divClass = isError ? `status-cell error row-${rowNumber}` : `status-cell  row-${rowNumber}`;
 
     return (
-      <div className={divClass}>
+      <span className={divClass}>
         <span className={statusClass} />
-      </div>
+      </span>
     );
   }
 }

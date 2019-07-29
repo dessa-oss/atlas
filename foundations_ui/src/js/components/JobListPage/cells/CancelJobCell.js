@@ -5,19 +5,19 @@ import BaseActions from '../../../actions/BaseActions';
 function CancelJobCell(props) {
   function handleClick() {
     let uri = `projects/dummy_project_name/job_listing/${props.job.job_id}`;
-
+    console.log('clicked');
     if (window.confirm(`Are you sure you want to cancel job ${props.job.job_id}?`)) {
       BaseActions.deleteBetaFromAPI(uri).then(() => window.location.reload());
     }
   }
 
   return (
-    <div
-      className="job-cell cancel-cell"
+    <span
+      className="cancel-cell"
       style={{ cursor: 'pointer', width: '1em' }}
     >
-      <button type="button" className="job-cell i--icon-delete" onClick={handleClick} onKeyDown={handleClick} />
-    </div>
+      <button type="button" className="i--icon-delete" onClick={handleClick} onKeyDown={handleClick} />
+    </span>
   );
 }
 

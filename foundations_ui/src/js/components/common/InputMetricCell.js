@@ -12,6 +12,7 @@ class InputMetricCell extends Component {
       isError: this.props.isError,
       cellType: this.props.cellType,
       rowNumber: this.props.rowNumber,
+      hoverable: this.props.hoverable,
     };
   }
 
@@ -20,12 +21,20 @@ class InputMetricCell extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ value: nextProps.value });
+    if (nextProps.rowNumber !== this.props.rowNumber) {
+      this.setState({
+        value: nextProps.value,
+        cellType: nextProps.cellType,
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+        hoverable: nextProps.hoverable,
+      });
+    }
   }
 
   render() {
     const {
-      value, isError, cellType, rowNumber, expand,
+      value, isError, cellType, rowNumber, expand, hoverable,
     } = this.state;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
@@ -36,7 +45,7 @@ class InputMetricCell extends Component {
     if (expand) {
       const maxCellCharacterLength = 13;
       const overMaxLength = value.toString().length > maxCellCharacterLength || value.length > maxCellCharacterLength;
-      if (overMaxLength) {
+      if (overMaxLength && hoverable) {
         hover = <HoverCell textToRender={value} />;
       }
     }
@@ -63,6 +72,7 @@ InputMetricCell.propTypes = {
   isError: PropTypes.bool,
   cellType: PropTypes.string,
   rowNumber: PropTypes.number,
+  hoverable: PropTypes.bool,
 };
 
 InputMetricCell.defaultProps = {
@@ -70,6 +80,7 @@ InputMetricCell.defaultProps = {
   isError: false,
   cellType: '',
   rowNumber: 0,
+  hoverable: true,
 };
 
 export default InputMetricCell;

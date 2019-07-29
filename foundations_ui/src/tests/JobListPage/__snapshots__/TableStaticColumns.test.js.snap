@@ -14,8 +14,9 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
     searchText=""
     updateSearchText={[Function]}
   />
-  <div
-    className="full-height"
+  <ScrollSyncPane
+    enabled={true}
+    group="horizontal"
   >
     <div
       className="job-column-header-container"
@@ -91,22 +92,23 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
         toggleFilter={[Function]}
       />
     </div>
-    <ScrollSyncPane
-      enabled={true}
-      group="vertical"
-    >
-      <div
-        className="table-row-number"
-      />
-    </ScrollSyncPane>
-    <ScrollSyncPane
-      enabled={true}
-      group="vertical"
+  </ScrollSyncPane>
+  <ScrollSyncPane
+    enabled={true}
+    group={
+      Array [
+        "horizontal",
+        "vertical",
+      ]
+    }
+  >
+    <div
+      className="full-height"
     >
       <div
         className="job-table-row-container"
       />
-    </ScrollSyncPane>
-  </div>
+    </div>
+  </ScrollSyncPane>
 </div>
 `;

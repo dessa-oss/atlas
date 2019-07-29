@@ -26,14 +26,6 @@
   }
 }
 
-button.job-cell.i--icon-delete {
-  width: 18px;
-  height: 18px;
-  border: none!important;
-  cursor: 'pointer';
-  width: '1em';
-}
-
 .job-id-cell {
   p {
     overflow: hidden;
@@ -43,7 +35,7 @@ button.job-cell.i--icon-delete {
 }
 
 .launch-date {
-  margin-left: 5px;
+  // margin-left: 5px;
   display: inline;
 }
 
@@ -53,11 +45,6 @@ button.job-cell.i--icon-delete {
 
 .job-id-cell {
   line-height: normal;
-}
-
-.status-cell {
-  width: $status-cell-width;
-  position: relative;
 }
 
 .duration-cell{
@@ -71,28 +58,10 @@ button.job-cell.i--icon-delete {
   width: -moz-available;
 }
 
-.job-cell.tag-cell {
-  width: -webkit-fill-available;
-  width: -moz-available;
-}
-
 .full-height {
   overflow-x: scroll;
   width: max-content;
-}
-
-.tagBlock {
-  background-color: #0391f6;
-  color: #fff;
-  padding-left: 2px;
-  padding-right: 2px;
-  border-radius: 3px;
-  display: inline-block;
-  margin: 2px;
-  height: 28px;
-  width: auto;
-  padding: 3px;
-  padding-top: 0;
+  overflow-y: scroll;
 }
 
 .job-cell-hover {

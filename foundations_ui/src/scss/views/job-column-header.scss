@@ -5,10 +5,10 @@
   height: $column-header-height;
   margin: auto;
   padding-right: 2px;
-  width: calc( 13% - (5px * 4 + 0.25px));
+  width: calc( 11% - (5px * 4 + 0.25px));
 
   &:first-child {
-      width: 48px!important;
+      width: 28px!important;
   }
 
   h4 {

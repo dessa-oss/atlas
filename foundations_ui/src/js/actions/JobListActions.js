@@ -83,6 +83,7 @@ class JobListActions {
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'HH:mm:ss AM/PM'
     const newDate = new Date(startTime);
+    // console.log(`${CommonActions.formatAMPM(newDate)} EST`);
     return `${CommonActions.formatAMPM(newDate)} EST`;
   }
 
@@ -120,7 +121,7 @@ class JobListActions {
       statusCircle = 'status-red';
     }
 
-    return 'status '.concat(statusCircle);
+    return 'status-icon '.concat(statusCircle);
   }
 
   static getDurationClass(desiredTime, days, hours, minutes, seconds, isError) {

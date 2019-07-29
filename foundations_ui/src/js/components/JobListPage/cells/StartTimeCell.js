@@ -22,11 +22,22 @@ class StartTimeCell extends Component {
     this.setState({ expand: value });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.rowNumber !== this.props.rowNumber) {
+      this.setState({
+        time: JobListActions.getFormatedTime(nextProps.startTime),
+        date: JobListActions.getFormatedDate(nextProps.startTime),
+        rowNumber: nextProps.rowNumber,
+        isError: nextProps.isError,
+      });
+    }
+  }
+
+
   render() {
     const {
       date, time, isError, rowNumber, expand,
     } = this.state;
-
     let hover;
 
     const errorClass = CommonActions.errorStatus(isError);
@@ -37,10 +48,10 @@ class StartTimeCell extends Component {
       : `job-cell start-cell row-${rowNumber}`;
 
     const dateTimeFormatted = (
-      <p className="font-bold">
+      <span className="font-bold">
+        <span className="launch-date">{date} </span>
         <span className={spanClass}>{time}</span>
-        <div className="launch-date">{date}</div>
-      </p>
+      </span>
     );
 
     if (expand && date !== '') {
@@ -48,17 +59,13 @@ class StartTimeCell extends Component {
     }
 
     return (
-      <div
-        className={pClass}
+      <span
         onMouseEnter={() => this.toggleExpand(true)}
         onMouseLeave={() => this.toggleExpand(false)}
       >
         {dateTimeFormatted}
-        <div>
-          {hover}
-        </div>
-      </div>
-
+        <span>{hover}</span>
+      </span>
     );
   }
 }
