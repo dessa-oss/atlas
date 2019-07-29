@@ -54,6 +54,17 @@ class TestSyncableDirectory(Spec):
         return mapping
 
     @let
+    def stat_mtime_mapping_after_all_files_change(self):
+        import copy
+
+        mapping = copy.deepcopy(self.stat_mtime_mapping)
+        
+        for key in mapping:
+            mapping[key] += 10
+
+        return mapping
+
+    @let
     def remote_job_id(self):
         return self.faker.uuid4()
 
@@ -64,7 +75,9 @@ class TestSyncableDirectory(Spec):
     @let
     def syncable_directory(self):
         from foundations.artifacts.syncable_directory import SyncableDirectory
-        return SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id)
+        syncable_directory = SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id)
+        self.mock_archive.fetch_file_path_to_target_file_path.reset_mock()
+        return syncable_directory
 
     @let
     def syncable_directory_in_uploading_job(self):
@@ -117,9 +130,14 @@ class TestSyncableDirectory(Spec):
 
     def test_tracks_uploaded_files_in_redis(self):
         self.syncable_directory.upload()
-        files = self.mock_redis.lrange(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}', 0, -1)
+        files = self.mock_redis.smembers(f'jobs:{self.local_job_id}:synced_artifacts:{self.key}')
         files = [file.decode() for file in files]
-        self.assertEqual(self.file_listing_without_directory, files)
+
+        files.sort()
+        expected_files = self.file_listing_without_directory.copy()
+        expected_files.sort()
+
+        self.assertEqual(expected_files, files)
 
     def test_tracks_uploaded_file_timestamps_in_redis(self):
         self.syncable_directory.upload()
@@ -130,7 +148,7 @@ class TestSyncableDirectory(Spec):
     def test_download_all_files(self):
         expected_calls = []
         for file in self.file_listing:
-            self.mock_redis.rpush(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
+            self.mock_redis.sadd(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
             download_call = call(
                 f'synced_directories/{self.key}', 
                 file, 
@@ -139,14 +157,14 @@ class TestSyncableDirectory(Spec):
             )
             expected_calls.append(download_call)
         self.syncable_directory.download()
-        self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls)        
+        self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls, any_order=True)        
 
     def test_download_ensures_paths_exist(self):
         import os.path
 
         expected_calls = []
         for file in self.file_listing:
-            self.mock_redis.rpush(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
+            self.mock_redis.sadd(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
             dirname = os.path.dirname(f'{self.directory_path}/{file}')
             mkdir_call = call(dirname, exist_ok=True)
             expected_calls.append(mkdir_call)
@@ -210,6 +228,21 @@ class TestSyncableDirectory(Spec):
 
     def test_upload_file_with_same_name_twice_download_that_file_only_once(self):
         self.syncable_directory_in_uploading_job.upload()
+        self.syncable_directory_in_uploading_job.upload()
+
+        self.syncable_directory_in_uploading_job.download()
+        self.assertEqual(len(self.file_listing), self.mock_archive.fetch_file_path_to_target_file_path.call_count)
+
+    def test_upload_updated_files_with_same_name_does_not_double_track_those_files(self):
+        self.syncable_directory_in_uploading_job.upload()
+
+        self.mock_os_stat.clear()
+
+        for file_name, stat_mtime in self.stat_mtime_mapping_after_all_files_change.items():
+            mock_stat = Mock()
+            mock_stat.st_mtime = stat_mtime
+            self.mock_os_stat.return_when(mock_stat, f'{self.directory_path}/{file_name}')
+
         self.syncable_directory_in_uploading_job.upload()
 
         self.syncable_directory_in_uploading_job.download()
