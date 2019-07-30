@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
 import JobTableRow from './JobTableRow';
 import JobSidebar from './job-sidebar/JobSidebar';
+import rowSelect from '../../../scss/jquery/rowSelect';
 
 
 class JobTable extends Component {
@@ -33,6 +34,7 @@ class JobTable extends Component {
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
       currentJob: null,
+      selectedRow: null,
     };
   }
 
@@ -54,8 +56,21 @@ class JobTable extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
+        selectedRow: nextProps.selectedRow,
       },
     );
+  }
+
+  handleRowSelection(rowNumber) {
+    const { selectedRow } = this.state;
+    console.log(`previous row: ${selectedRow} current: ${rowNumber}`);
+    if (selectedRow === rowNumber) {
+      this.setState({ selectedRow: -1 });
+      rowSelect.deselect(rowNumber);
+    } else {
+      rowSelect.select(rowNumber);
+      this.setState({ selectedRow: rowNumber });
+    }
   }
 
   render() {
@@ -69,11 +84,16 @@ class JobTable extends Component {
     let jobRows = [];
     let rowNum = 1;
     const rowNumbers = [];
-    const handleClick = (job) => {
+
+    const handleClick = (job, row) => {
       if (this.state.currentJob === job) {
         this.setState({ currentJob: null });
       } else {
         this.setState({ currentJob: job });
+      }
+
+      if (row !== undefined) {
+        this.handleRowSelection(row);
       }
     };
 
@@ -162,6 +182,7 @@ JobTable.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
+  selectedRow: PropTypes.number,
 };
 
 JobTable.defaultProps = {
@@ -190,6 +211,7 @@ JobTable.defaultProps = {
   updateStartTimeFilter: () => {},
   startTimeFilters: [],
   filters: [],
+  selectedRow: -1,
 };
 
 export default JobTable;

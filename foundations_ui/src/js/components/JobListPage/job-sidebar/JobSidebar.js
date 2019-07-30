@@ -10,8 +10,6 @@ import TextViewer from './TextViewer';
 export default function JobSidebar(props) {
   const { job } = props;
   if (job !== null) {
-    console.log(job.artifacts);
-
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);

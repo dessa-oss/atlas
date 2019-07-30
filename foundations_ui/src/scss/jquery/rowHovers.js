@@ -6,18 +6,22 @@ window.$ = window.jQuery;
 
 class hoverActions {
   static onMouseEnter(rowClass, row) {
-    if ($(rowClass).hasClass('error')) {
-      $(rowClass).css({ background: '#DCDCDC', 'background-color': '#DCDCDC' });
-    } else {
-      $(rowClass).css({ background: '#DCDCDC' });
+    if (!$(rowClass).hasClass('active')) {
+      if ($(rowClass).hasClass('error')) {
+        $(rowClass).css({ background: '#DCDCDC', 'background-color': '#DCDCDC' });
+      } else {
+        $(rowClass).css({ background: '#DCDCDC' });
+      }
     }
   }
 
   static onMouseLeave(rowClass, row) {
-    if ($(rowClass).hasClass('error')) {
-      $(rowClass).css({ color: '#FB3D42', 'background-color': '#FDF6F5' });
-    } else {
-      $(rowClass).css({ background: 'white' });
+    if (!$(rowClass).hasClass('active')) {
+      if ($(rowClass).hasClass('error')) {
+        $(rowClass).css({ color: '#FB3D42', 'background-color': '#FDF6F5' });
+      } else {
+        $(rowClass).css({ background: 'white' });
+      }
     }
   }
 

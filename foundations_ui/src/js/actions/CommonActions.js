@@ -164,7 +164,7 @@ class CommonActions {
     let rowNumber = 0;
     if (jobs.length > 0) {
       rows = [];
-      jobs.forEach((job) => {
+      jobs.forEach((job, index) => {
         const key = this.getRowKey(job);
         const isError = this.isError(job.status);
         rows.push(<InputMetricRow
@@ -175,7 +175,7 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
-          onMetricRowClick={() => onMetricRowClick(job)}
+          onMetricRowClick={() => onMetricRowClick(job, index)}
         />);
         rowNumber += 1;
       });
