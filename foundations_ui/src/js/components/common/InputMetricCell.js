@@ -28,15 +28,6 @@ class InputMetricCell extends Component {
       isError: nextProps.isError,
       hoverable: nextProps.hoverable,
     });
-    // if (nextProps.rowNumber !== this.props.rowNumber) {
-    //   this.setState({
-    //     value: nextProps.value,
-    //     cellType: nextProps.cellType,
-    //     rowNumber: nextProps.rowNumber,
-    //     isError: nextProps.isError,
-    //     hoverable: nextProps.hoverable,
-    //   });
-    // }
   }
 
   render() {

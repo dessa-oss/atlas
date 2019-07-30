@@ -60,7 +60,7 @@ InputMetricRow.propTypes = {
   hiddenInputParams: PropTypes.array,
   rowNumber: PropTypes.number,
 };
-const defaultFunc = () => console.log('InputMetricRow: onClick func missing.');
+const defaultFunc = () => console.warn('InputMetricRow: onClick func missing.');
 InputMetricRow.defaultProps = {
   onMetricRowClick: defaultFunc,
   job: {},

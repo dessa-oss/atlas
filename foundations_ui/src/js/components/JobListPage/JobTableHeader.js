@@ -293,7 +293,7 @@ class JobTableHeader extends Component {
       { name: '', type: 'string' },
       { name: 'Job ID', type: 'string' },
       { name: 'Launched At', type: 'string' },
-      { name: 'Status', type: 'string', hoverable: false },
+      { name: 'Status', type: 'string' },
       { name: 'Duration', type: 'string' },
       { name: 'User', type: 'string' },
     ];
@@ -556,6 +556,7 @@ class JobTableHeader extends Component {
             jobs={jobs}
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
           />
           <InputMetric
             header="Metrics"
@@ -564,6 +565,7 @@ class JobTableHeader extends Component {
             isMetric={isMetric}
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
+            onMetricRowClick={this.onMetricRowClick}
           />
           {userFilter}
           {statusFilter}

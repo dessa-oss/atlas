@@ -101,12 +101,13 @@ class JobTable extends Component {
         jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
       } else {
         jobRows = [];
-        jobs.forEach((job) => {
-          const key = job.job_id;
-          jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
-          rowNumbers.push(<p key={key}>{rowNum}</p>);
-          rowNum += 1;
-        });
+        // [KD] No Longer used commented to reduce memory usage, but kept for reference of previous logic
+        // jobs.forEach((job) => {
+        //   const key = job.job_id;
+        //   jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
+        //   rowNumbers.push(<p key={key}>{rowNum}</p>);
+        //   rowNum += 1;
+        // });
       }
     } else {
       jobRows.push(<p key="loading-jobs">Loading Jobs</p>);

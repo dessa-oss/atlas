@@ -39,8 +39,8 @@ class JobTableRow extends Component {
       <div
         role="presentation"
         className="job-table-row"
-        onClick={() => this.props.handleClick(job)}
-        onKeydown={() => this.props.handleClick(job)}
+        onClick={() => this.props.handleClick(job, rowNumber)}
+        onKeydown={() => this.props.handleClick(job, rowNumber)}
       >
         <CancelJobCell job={job} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />

@@ -18,6 +18,7 @@ class rowSelect {
   }
 
   static select(rowNumber) {
+    console.log(`row number received ${rowNumber}`);
     rowSelect.removePreviousActiveRows();
     const rowElements = rowSelect.retrieveRowElements(rowNumber);
     rowElements.forEach((el) => {
