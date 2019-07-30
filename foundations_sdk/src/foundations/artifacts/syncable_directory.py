@@ -51,12 +51,16 @@ class SyncableDirectory(object):
 
         file_listing = self._redis().smembers(f'jobs:{self._remote_job_id}:synced_artifacts:{self._key}')
         file_listing = [file.decode() for file in file_listing]
+
+        old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:synced_artifacts:{self._key}:timestamps')
+        decoded_old_timestamps = {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
+
         for file in file_listing:
             result_path = f'{self._directory_path}/{file}'
             dirname = path.dirname(result_path)
             os.makedirs(dirname, exist_ok=True)
 
-            if not path.isfile(result_path):
+            if not path.isfile(result_path) or os.stat(result_path).st_mtime < decoded_old_timestamps[file]:
                 self._archive.fetch_file_path_to_target_file_path(
                     f'synced_directories/{self._key}', 
                     file, 
