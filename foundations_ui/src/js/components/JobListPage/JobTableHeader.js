@@ -14,6 +14,7 @@ import CancelJobCell from './cells/CancelJobCell';
 import StatusCell from './cells/StatusCell';
 import StartTimeCell from './cells/StartTimeCell';
 import DurationCell from './cells/DurationCell';
+import JobIDCell from './cells/JobIDCell';
 
 const isMetric = true;
 
@@ -310,7 +311,7 @@ class JobTableHeader extends Component {
       });
       neededColums.push({
         name: 'Job ID',
-        value: el.job_id,
+        value: new JobIDCell({ jobID: el.job_id }).render(),
         type: 'string',
       });
       neededColums.push({

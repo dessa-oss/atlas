@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 class JobIDCell extends Component {
   constructor(props) {
     super(props);
-    this.toggleExpand = this.toggleExpand.bind(this);
+
     this.state = {
       jobID: this.props.jobID,
       isError: this.props.isError,
@@ -23,46 +23,27 @@ class JobIDCell extends Component {
     });
   }
 
-  toggleExpand(value) {
-    this.setState({ expand: value });
-  }
-
   render() {
     const {
-      jobID, isError, rowNumber, expand,
+      jobID, isError, rowNumber,
     } = this.state;
 
-    const jobIdFormatted = <p>{jobID}</p>;
-
-    let hover;
-
-    if (expand) {
-      hover = <HoverCell textToRender={jobIdFormatted} />;
-    }
-
     const aClass = isError
-      ? `job-cell job-id-cell error row-${rowNumber}`
-      : `job-cell job-id-cell row-${rowNumber}`;
+      ? `job-id-cell error row-${rowNumber}`
+      : `job-id-cell row-${rowNumber}`;
 
     // const href = '/'.concat(jobID);
     return (
-      <span
-        className={aClass}
-        onMouseEnter={() => this.toggleExpand(true)}
-        onMouseLeave={() => this.toggleExpand(false)}
-      >
-        {jobIdFormatted}
-        <CopyToClipboard text={jobID}>
+      <span>
+        <span className={aClass}>{jobID}</span>
+        {/* <CopyToClipboard text={jobID}>
           <span
             onClick={() => this.notifiedCopy()}
             className="i--icon-copy"
             role="presentation"
           />
         </CopyToClipboard>
-        <ToastContainer />
-        <span>
-          {hover}
-        </span>
+        <ToastContainer /> */}
       </span>
     );
   }

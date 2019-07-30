@@ -22,6 +22,11 @@
       }
       &:nth-child(2) {
         width: 22%!important;
+
+        p { 
+          margin: 0 5px 0 5px;
+          min-width: 100%;
+        }
       }
     }
 

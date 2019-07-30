@@ -26,14 +26,6 @@
   }
 }
 
-.job-id-cell {
-  p {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 28px;
-  }
-}
-
 .launch-date {
   // margin-left: 5px;
   display: inline;
@@ -45,6 +37,7 @@
 
 .job-id-cell {
   line-height: normal;
+  // float: left;
 }
 
 .duration-cell{

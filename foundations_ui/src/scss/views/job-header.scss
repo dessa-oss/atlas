@@ -118,13 +118,17 @@
       .deleteButton {
         padding: 10px;
         padding-top: 15px;
-        background-color: #999;
-        color: #fff;
+        background-color: #fff;
+        color: #ff0000c2;
         border-radius: 4px;
-        border: none;
+        border: 1px solid #ff0000c2;
         width: 200px;
-        &:hover {
-            background-color: #777;
+        box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.08), 2px 2px 3px 0px rgba(0, 0, 0, 0.08);
+        -moz-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.08), 2px 2px 3px 0px rgba(0, 0, 0, 0.08);
+        -webkit-box-shadow: 2px 2px 3px 0px rgba(0, 0, 0, 0.08), 2px 2px 3px 0px rgba(0, 0, 0, 0.08);        &:hover {
+          background-color: #ff0000c2;
+          color: #fff;
+          border: none;
         }
       }
 
