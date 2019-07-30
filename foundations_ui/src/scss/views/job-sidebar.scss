@@ -1,5 +1,4 @@
 .job-sidebar {
-    // overflow: auto;
     border-style: solid;
     background: #F7F7F7;
     position: absolute;
@@ -15,10 +14,10 @@
     transition: transform 2s;
 }
 .sidebar-section {
-    // overflow: auto;
     position: relative;
     top: -15px;
     height: $sidebar-section-height;
+    padding-bottom: 0px;
 }
 
 .sidebar-section-header {
@@ -37,35 +36,23 @@
     overflow: auto;
     position: relative;
     height: $artifact-viewer-height;
-    padding: 20px;
+    padding: 15px;
     h2 {
         margin-top: 0;
     }
 }
 
-.image-viewer {
-    margin: auto;
-    padding: auto;
-    display: block;
-    position: static;
-    max-width: 80%;
-}
-
-.audio-player {
-    margin: auto;
-    padding: auto;
-    display: block;
+.media {
+    padding-bottom: 20px;
     max-width: 100%;
 }
 
 .artifact-list {
-    background: #33aaff;
     overflow: auto;
     margin: 0;
     padding: 0;
     height: $artifact-viewer-height;
     li {
-        // overflow: auto;
         margin: 0;
         padding:0;
         height: 2em;

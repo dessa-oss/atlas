@@ -6,7 +6,7 @@ export default function ImageViewer(props) {
 
   return (
     <img
-      className="image-viewer"
+      className="media"
       src={image}
       alt="No artifacts exist"
     />
