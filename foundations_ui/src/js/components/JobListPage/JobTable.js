@@ -97,22 +97,6 @@ class JobTable extends Component {
       }
     };
 
-    // if (isLoaded) {
-    //   if (jobs.length === 0) {
-    //     jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
-    //   } else {
-    //     jobRows = [];
-    //     jobs.forEach((job) => {
-    //       const key = job.job_id;
-    //       jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
-    //       rowNumbers.push(<p key={key}>{rowNum}</p>);
-    //       rowNum += 1;
-    //     });
-    //   }
-    // } else {
-    //   jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
-    // }
-
     return (
       <div className="job-table-content">
         <div className="job-table-container">
