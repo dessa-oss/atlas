@@ -4,7 +4,7 @@ import ReactAudioPlayer from 'react-audio-player';
 
 export default function AudioPlayer(props) {
   const { url } = props;
-  return <ReactAudioPlayer className="audio-player" src={url} controls />;
+  return <ReactAudioPlayer className="media" src={url} controls />;
 }
 
 AudioPlayer.propTypes = {

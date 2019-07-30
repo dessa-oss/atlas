@@ -6,7 +6,7 @@ export default function ImageViewer(props) {
 
   return (
     <img
-      className="image-viewer"
+      className="media"
       src={image}
       alt="No artifacts exist"
     />
@@ -14,9 +14,5 @@ export default function ImageViewer(props) {
 }
 
 ImageViewer.propTypes = {
-  image: PropTypes.string,
-};
-
-ImageViewer.defaultProps = {
-  image: 'ImageViewer: No image prop.',
+  image: PropTypes.string.isRequired,
 };
