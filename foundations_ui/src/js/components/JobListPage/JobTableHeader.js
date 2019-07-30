@@ -22,6 +22,7 @@ class JobTableHeader extends Component {
   constructor(props) {
     super(props);
     this.onMetricRowClick = props.onMetricRowClick.bind(this);
+    this.onDataUpdated = props.onDataUpdated.bind(this);
     this.toggleUserFilter = this.toggleUserFilter.bind(this);
     this.searchUserFilter = this.searchUserFilter.bind(this);
     this.toggleStatusFilter = this.toggleStatusFilter.bind(this);
@@ -305,7 +306,7 @@ class JobTableHeader extends Component {
 
       neededColums.push({
         name: '',
-        value: CancelJobCell({ job: el }),
+        value: CancelJobCell({ job: el, onSuccessfullDeletion: this.onDataUpdated }),
         type: 'string',
         hoverable: false,
       });
@@ -583,6 +584,7 @@ class JobTableHeader extends Component {
 
 JobTableHeader.propTypes = {
   onMetricRowClick: PropTypes.func,
+  onDataUpdated: PropTypes.func,
   allInputParams: PropTypes.array,
   jobs: PropTypes.array,
   allMetrics: PropTypes.array,
@@ -622,6 +624,7 @@ JobTableHeader.propTypes = {
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 JobTableHeader.defaultProps = {
   onMetricRowClick: defaultFunc,
+  onDataUpdated: () => window.location.reload(),
   allInputParams: [],
   jobs: [],
   allMetrics: [],

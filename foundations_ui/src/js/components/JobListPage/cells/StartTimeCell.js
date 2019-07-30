@@ -14,7 +14,7 @@ class StartTimeCell extends Component {
       time: JobListActions.getFormatedTime(this.props.startTime),
       isError: this.props.isError,
       rowNumber: this.props.rowNumber,
-      expand: false,
+      expand: this.props.expand,
     };
   }
 
@@ -29,6 +29,7 @@ class StartTimeCell extends Component {
         date: JobListActions.getFormatedDate(nextProps.startTime),
         rowNumber: nextProps.rowNumber,
         isError: nextProps.isError,
+        expand: nextProps.expand,
       });
     }
   }
@@ -74,12 +75,14 @@ StartTimeCell.propTypes = {
   startTime: PropTypes.string,
   isError: PropTypes.bool,
   rowNumber: PropTypes.number,
+  expand: PropTypes.bool,
 };
 
 StartTimeCell.defaultProps = {
   startTime: '',
   isError: false,
-  rowNumber: 0,
+  rowNumber: -1,
+  expand: false,
 };
 
 export default StartTimeCell;

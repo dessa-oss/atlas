@@ -9,6 +9,7 @@ import rowSelect from '../../../scss/jquery/rowSelect';
 class JobTable extends Component {
   constructor(props) {
     super(props);
+    this.onDataUpdated = props.onDataUpdated.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -143,6 +144,7 @@ class JobTable extends Component {
             startTimeFilters={startTimeFilters}
             filters={filters}
             onMetricRowClick={handleClick}
+            onDataUpdated={this.onDataUpdated}
           />
           {/* <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
@@ -183,6 +185,7 @@ JobTable.propTypes = {
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
   selectedRow: PropTypes.number,
+  onDataUpdated: PropTypes.func,
 };
 
 JobTable.defaultProps = {
@@ -212,6 +215,7 @@ JobTable.defaultProps = {
   startTimeFilters: [],
   filters: [],
   selectedRow: -1,
+  onDataUpdated: () => window.location.reload(),
 };
 
 export default JobTable;
