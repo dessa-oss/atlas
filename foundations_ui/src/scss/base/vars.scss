@@ -58,6 +58,6 @@ $job-id-filter-left: calc((#{$standard-cell-width} ) / #{$number-sections} + #{$
 $job-id-container-width: 380px;
 
 // Sidebar
-$sidebar-section-height: 50%;
+$sidebar-section-height: 49%;
 $section-header-height: 50px;
 $artifact-viewer-height: calc(100% - #{$section-header-height});

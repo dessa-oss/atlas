@@ -4,7 +4,7 @@
     position: absolute;
     z-index: 2;
     top: 0;
-    right: -3px;
+    right: 8px;
     height: 99%;
     width: 25%;
     box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
@@ -48,6 +48,7 @@
 }
 
 .artifact-list {
+    // background: purple;
     overflow: auto;
     margin: 0;
     padding: 0;
