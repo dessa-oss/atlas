@@ -10,6 +10,7 @@ import CancelJobCell from './cells/CancelJobCell';
 import JobListActions from '../../actions/JobListActions';
 import CommonActions from '../../actions/CommonActions';
 
+// [KD] Class is not Longer used, kept for reference
 class JobTableRow extends Component {
   constructor(props) {
     super(props);
@@ -39,8 +40,8 @@ class JobTableRow extends Component {
       <div
         role="presentation"
         className="job-table-row"
-        onClick={() => this.props.handleClick(job, rowNumber)}
-        onKeydown={() => this.props.handleClick(job, rowNumber)}
+        onClick={() => this.props.handleClick(job, job.job_id)}
+        onKeydown={() => this.props.handleClick(job, job.job_id)}
       >
         <CancelJobCell job={job} />
         <JobIDCell jobID={job.job_id} isError={isError} rowNumber={rowNumber} />

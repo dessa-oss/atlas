@@ -13,6 +13,7 @@ class InputMetricCell extends Component {
       cellType: this.props.cellType,
       rowNumber: this.props.rowNumber,
       hoverable: this.props.hoverable,
+      jobID: this.props.jobID,
     };
   }
 
@@ -27,16 +28,17 @@ class InputMetricCell extends Component {
       rowNumber: nextProps.rowNumber,
       isError: nextProps.isError,
       hoverable: nextProps.hoverable,
+      jobID: nextProps.jobID,
     });
   }
 
   render() {
     const {
-      value, isError, cellType, rowNumber, expand, hoverable,
+      value, isError, cellType, rowNumber, expand, hoverable, jobID,
     } = this.state;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
-    const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber);
+    const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber, jobID);
 
     let hover;
 
@@ -49,8 +51,8 @@ class InputMetricCell extends Component {
           const elementChildren = value.props.children[0];
           const isJobID = elementChildren.props.className.includes('job-id');
           if (isJobID) {
-            const jobID = elementChildren.props.children;
-            hover = <HoverCell textToRender={jobID} />;
+            const tmpJobID = elementChildren.props.children;
+            hover = <HoverCell textToRender={tmpJobID} />;
           } else {
             hover = <HoverCell textToRender={value} />;
           }
@@ -83,6 +85,7 @@ InputMetricCell.propTypes = {
   cellType: PropTypes.string,
   rowNumber: PropTypes.number,
   hoverable: PropTypes.bool,
+  jobID: PropTypes.string,
 };
 
 InputMetricCell.defaultProps = {
@@ -91,6 +94,7 @@ InputMetricCell.defaultProps = {
   cellType: '',
   rowNumber: 0,
   hoverable: true,
+  jobID: '',
 };
 
 export default InputMetricCell;

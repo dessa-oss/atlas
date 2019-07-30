@@ -115,6 +115,7 @@ class CommonActions {
           cellType={cellType}
           rowNumber={rowNumber}
           hoverable={isHoverable}
+          jobID={job.job_id}
         />);
       }
     });
@@ -140,6 +141,7 @@ class CommonActions {
           cellType={cellType}
           rowNumber={rowNumber}
           hoverable={isHoverable}
+          jobID={job.job_id}
         />);
       } else {
         cells.push(null);
@@ -164,7 +166,7 @@ class CommonActions {
     let rowNumber = 0;
     if (jobs.length > 0) {
       rows = [];
-      jobs.forEach((job, index) => {
+      jobs.forEach((job) => {
         const key = this.getRowKey(job);
         const isError = this.isError(job.status);
         rows.push(<InputMetricRow
@@ -175,7 +177,7 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
-          onMetricRowClick={() => onMetricRowClick(job, index)}
+          onMetricRowClick={() => onMetricRowClick(job, job.job_id)}
         />);
         rowNumber += 1;
       });
@@ -187,8 +189,8 @@ class CommonActions {
     return isError ? `error type-${cellType}` : `type-${cellType}`;
   }
 
-  static getInputMetricCellDivClass(isError, rowNumber) {
-    return isError ? `job-cell error row-${rowNumber}` : `job-cell row-${rowNumber}`;
+  static getInputMetricCellDivClass(isError, rowNumber, key) {
+    return isError ? `job-cell error row-${rowNumber} key-${key}` : `job-cell row-${rowNumber} key-${key}`;
   }
 
   static isError(status) {

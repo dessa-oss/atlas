@@ -5,28 +5,23 @@ window.jQuery = require('jquery');
 window.$ = window.jQuery;
 
 class rowSelect {
-  static retrieveRowElements(rowNumber) {
-    const rowClassNumber = parseInt(rowNumber, 10);
-    if (rowClassNumber >= 0) {
-      return $(`.row-${rowClassNumber}`).toArray();
-    }
-    return [];
+  static retrieveRowElements(key) {
+    return $(`.key-${key}`).toArray();
   }
 
   static removePreviousActiveRows() {
     $('.f9-active-row').removeClass('f9-active-row');
   }
 
-  static select(rowNumber) {
-    console.log(`row number received ${rowNumber}`);
+  static select(key) {
     rowSelect.removePreviousActiveRows();
-    const rowElements = rowSelect.retrieveRowElements(rowNumber);
+    const rowElements = rowSelect.retrieveRowElements(key);
     rowElements.forEach((el) => {
-      // $(el).addClass('f9-active-row');
+      $(el).addClass('f9-active-row');
     });
   }
 
-  static deselect(rowNumber) {
+  static deselect(key) {
     rowSelect.removePreviousActiveRows();
   }
 }
