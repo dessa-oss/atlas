@@ -93,19 +93,19 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         some_artifacts_payload = [
             {
                 'filename': 'audio_file.mp3',
-                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/audio_file.mp3',
+                'uri': f'https://archive.dessa.com/archive/{self._some_artifacts}/user_artifacts/audio_file.mp3',
                 'artifact_type': 'audio',
                 'archive_key': 'audio_artifact'
             },
             {
                 'filename': 'no_extension',
-                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/no_extension',
+                'uri': f'https://archive.dessa.com/archive/{self._some_artifacts}/user_artifacts/no_extension',
                 'artifact_type': 'unknown',
                 'archive_key': 'no_extension'
             },
             {
                 'filename': 'other_file.other',
-                'uri': f'https://archive.dessa.com/{self._some_artifacts}/user_artifacts/other_file.other',
+                'uri': f'https://archive.dessa.com/archive/{self._some_artifacts}/user_artifacts/other_file.other',
                 'artifact_type': 'unknown',
                 'archive_key': 'other_file.other'
             }
@@ -118,7 +118,7 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         one_artifact_payload = [
             {
                 'filename': 'image_file.png',
-                'uri': f'https://archive.dessa.com/{self._one_artifact}/user_artifacts/image_file.png',
+                'uri': f'https://archive.dessa.com/archive/{self._one_artifact}/user_artifacts/image_file.png',
                 'artifact_type': 'image',
                 'archive_key': 'image_file.png'
             }
