@@ -7,7 +7,7 @@ export default function Artifact(props) {
   const { artifact, onClick } = props;
   return (
     <li onClick={() => onClick(artifact)} onKeyDown={() => onClick(artifact)}>
-      <p style={{ 'max-width': '5px !important' }}> {artifact.filename}</p>
+      <p>{artifact.filename}</p>
       <DownloadButton className="download-button" uri={artifact.uri} filename={artifact.filename} />
     </li>
   );
