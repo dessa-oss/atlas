@@ -56,12 +56,13 @@ class SyncableDirectory(object):
             dirname = path.dirname(result_path)
             os.makedirs(dirname, exist_ok=True)
 
-            self._archive.fetch_file_path_to_target_file_path(
-                f'synced_directories/{self._key}', 
-                file, 
-                self._remote_job_id,
-                result_path
-            )
+            if not path.isfile(result_path):
+                self._archive.fetch_file_path_to_target_file_path(
+                    f'synced_directories/{self._key}', 
+                    file, 
+                    self._remote_job_id,
+                    result_path
+                )
 
     def _redis(self):
         from foundations_contrib.global_state import redis_connection

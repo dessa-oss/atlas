@@ -74,6 +74,8 @@ class TestSyncableDirectory(Spec):
 
     @let
     def syncable_directory(self):
+        self._set_up_for_download()
+
         from foundations.artifacts.syncable_directory import SyncableDirectory
         syncable_directory = SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id)
         self.mock_archive.fetch_file_path_to_target_file_path.reset_mock()
@@ -81,6 +83,8 @@ class TestSyncableDirectory(Spec):
 
     @let
     def syncable_directory_in_uploading_job(self):
+        self._set_up_for_download()
+
         from foundations.artifacts.syncable_directory import SyncableDirectory
         return SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.local_job_id)
 
@@ -92,11 +96,22 @@ class TestSyncableDirectory(Spec):
         self.mock_get_logger.return_when(self.mock_logger, 'foundations.artifacts.syncable_directory')
 
         self.mock_os_stat = self.patch('os.stat', ConditionalReturn())
+        self.mock_is_file = None
 
         for file_name, stat_mtime in self.stat_mtime_mapping.items():
             mock_stat = Mock()
             mock_stat.st_mtime = stat_mtime
-            self.mock_os_stat.return_when(mock_stat, f'{self.directory_path}/{file_name}')
+            path_on_disk = f'{self.directory_path}/{file_name}'
+            self.mock_os_stat.return_when(mock_stat, path_on_disk)
+
+    def _set_up_for_download(self):
+        if self.mock_is_file is None:
+            self.mock_is_file = self.patch('os.path.isfile', ConditionalReturn())
+        else:
+            self.mock_is_file.clear()
+        
+        for file_name in self.file_listing:
+            self.mock_is_file.return_when(False, f'{self.directory_path}/{file_name}')
 
     def test_uploads_all_files(self):
         expected_calls = []
@@ -116,14 +131,15 @@ class TestSyncableDirectory(Spec):
     def test_upload_should_log_warning_if_no_local_job_set(self):
         from foundations.artifacts.syncable_directory import SyncableDirectory
 
+        self._set_up_for_download()
         directory = SyncableDirectory(self.key, self.directory_path, None, self.remote_job_id)
         directory.upload()
         self.mock_logger.warning.assert_any_call('local_job_id required for uploading artifacts')
         
-        
     def test_upload_does_not_upload_if_no_local_job(self):
         from foundations.artifacts.syncable_directory import SyncableDirectory
 
+        self._set_up_for_download()
         directory = SyncableDirectory(self.key, self.directory_path, None, self.remote_job_id)
         directory.upload()
         self.mock_archive.append_file.assert_not_called()
@@ -146,6 +162,8 @@ class TestSyncableDirectory(Spec):
         self.assertEqual(self.stat_mtime_mapping, decoded_timestamp_mapping)
 
     def test_download_all_files(self):
+        self._set_up_for_download()
+
         expected_calls = []
         for file in self.file_listing:
             self.mock_redis.sadd(f'jobs:{self.remote_job_id}:synced_artifacts:{self.key}', file)
@@ -160,6 +178,8 @@ class TestSyncableDirectory(Spec):
         self.mock_archive.fetch_file_path_to_target_file_path.assert_has_calls(expected_calls, any_order=True)        
 
     def test_download_ensures_paths_exist(self):
+        self._set_up_for_download()
+
         import os.path
 
         expected_calls = []
@@ -238,6 +258,11 @@ class TestSyncableDirectory(Spec):
         self.syncable_directory_in_uploading_job.upload()
         self.syncable_directory_in_uploading_job.upload()
 
+        self.mock_is_file.clear()
+
+        for file in self.file_listing:
+            self.mock_is_file.return_when(False, file)
+
         self.syncable_directory_in_uploading_job.download()
         self.assertEqual(len(self.file_listing), self.mock_archive.fetch_file_path_to_target_file_path.call_count)
 
@@ -253,8 +278,29 @@ class TestSyncableDirectory(Spec):
 
         self.syncable_directory_in_uploading_job.upload()
 
+        self.mock_is_file.clear()
+
+        for file in self.file_listing:
+            self.mock_is_file.return_when(False, file)
+
         self.syncable_directory_in_uploading_job.download()
         self.assertEqual(len(self.file_listing), self.mock_archive.fetch_file_path_to_target_file_path.call_count)
+
+    def test_download_only_fetches_files_we_do_not_already_have(self):
+        self.syncable_directory_in_uploading_job.upload()
+
+        self.mock_is_file.clear()
+
+        file_we_do_not_have = self.file_listing[0]
+        self.mock_is_file.return_when(False, file_we_do_not_have)
+
+        for file in self.file_listing[1:]:
+            self.mock_is_file.return_when(True, file)
+
+        self.syncable_directory_in_uploading_job.download()
+
+        file_we_do_not_have_in_archive = file_we_do_not_have[len(self.directory_path)+1:]
+        self.mock_archive.fetch_file_path_to_target_file_path.assert_called_once_with(f'synced_directories/{self.key}', file_we_do_not_have_in_archive, self.local_job_id, file_we_do_not_have)
 
     def _mock_syncable_directory(self, source_job_id):
         klass_mock = self.patch('foundations.artifacts.syncable_directory.SyncableDirectory', ConditionalReturn())
