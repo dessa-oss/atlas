@@ -5,10 +5,13 @@ import ArtifactViewer from './ArtifactViewer';
 import ImageViewer from './ImageViewer';
 import ArtifactList from './ArtifactList';
 import AudioPlayer from './AudioPlayer';
+import TextViewer from './TextViewer';
 
 export default function JobSidebar(props) {
   const { job } = props;
   if (job !== null) {
+    console.log(job.artifacts);
+
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);
@@ -20,7 +23,7 @@ export default function JobSidebar(props) {
           case 'audio':
             return <AudioPlayer url={artifact.uri} />;
           default:
-            return <p>This filetype is not viewable.</p>;
+            return <TextViewer text="This filetype is not viewable." />;
         }
       };
 
@@ -40,8 +43,8 @@ export default function JobSidebar(props) {
     return (
       <div className="job-sidebar">
         <SidebarSection header="JOB DETAILS">
-          <ArtifactViewer jobI={job.job_id}>
-            <p>No artifacts for this job</p>
+          <ArtifactViewer jobId={job.job_id}>
+            <TextViewer text="No artifacts for this job" />
           </ArtifactViewer>
         </SidebarSection>
       </div>

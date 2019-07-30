@@ -76,6 +76,7 @@ class JobTable extends Component {
         this.setState({ currentJob: job });
       }
     };
+
     if (isLoaded) {
       if (jobs.length === 0) {
         jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
