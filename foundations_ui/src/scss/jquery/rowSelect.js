@@ -21,7 +21,7 @@ class rowSelect {
     rowSelect.removePreviousActiveRows();
     const rowElements = rowSelect.retrieveRowElements(rowNumber);
     rowElements.forEach((el) => {
-      $(el).addClass('f9-active-row');
+      // $(el).addClass('f9-active-row');
     });
   }
 
