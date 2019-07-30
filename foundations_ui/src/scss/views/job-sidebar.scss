@@ -1,5 +1,4 @@
 .sidebar-section {
-    // background-color: aquamarine;
     margin-top: -15px;
     &:nth-child(2) {
         height: 60%;
@@ -11,7 +10,8 @@
     height: 50px;
     .sidebar-section-header-text {
         padding-left: 20px;
-        padding-top: 20px;
+        padding-top: 14px;
+        font-size: 14px;
     }
 }
 
@@ -60,6 +60,10 @@
         background-color: #fff;
         padding: 10px;
         padding-left: 20px;
+        &:hover {
+            background-color: #999;
+            color: #fff;
+        }
         p {
             font-size: 18px;
         }
