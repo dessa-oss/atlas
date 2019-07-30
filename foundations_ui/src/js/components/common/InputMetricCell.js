@@ -52,8 +52,20 @@ class InputMetricCell extends Component {
     if (expand) {
       const maxCellCharacterLength = 13;
       const overMaxLength = value.toString().length > maxCellCharacterLength || value.length > maxCellCharacterLength;
+
       if (overMaxLength && hoverable) {
-        hover = <HoverCell textToRender={value} />;
+        if (value.props && value.props.children[0]) {
+          const elementChildren = value.props.children[0];
+          const isJobID = elementChildren.props.className.includes('job-id');
+          if (isJobID) {
+            const jobID = elementChildren.props.children;
+            hover = <HoverCell textToRender={jobID} />;
+          } else {
+            hover = <HoverCell textToRender={value} />;
+          }
+        } else {
+          hover = <HoverCell textToRender={value} />;
+        }
       }
     }
 

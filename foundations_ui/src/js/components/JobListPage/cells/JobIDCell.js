@@ -16,7 +16,8 @@ class JobIDCell extends Component {
     };
   }
 
-  notifiedCopy() {
+  notifiedCopy(e) {
+    e.stopPropagation();
     toast.info('Job ID successfully copied', {
       autoClose: 1500,
       draggable: false,
@@ -36,14 +37,14 @@ class JobIDCell extends Component {
     return (
       <span>
         <span className={aClass}>{jobID}</span>
-        {/* <CopyToClipboard text={jobID}>
+        <CopyToClipboard text={jobID}>
           <span
-            onClick={() => this.notifiedCopy()}
+            onClick={this.notifiedCopy}
             className="i--icon-copy"
             role="presentation"
           />
         </CopyToClipboard>
-        <ToastContainer /> */}
+        <ToastContainer />
       </span>
     );
   }

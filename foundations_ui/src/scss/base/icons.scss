@@ -43,9 +43,9 @@ See assets/svgs/README.md for further information on SVG conversion process
   @include icon-helper;
   width: 18px;
   height: 18px;
-  float: right;
-  // position: relative;
-  top: -32px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
   margin-right: 3px;
   cursor: copy;
   opacity: 0.6;

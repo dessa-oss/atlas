@@ -21,7 +21,8 @@
         line-height: 25px;
       }
       &:nth-child(2) {
-        width: 22%!important;
+        width: 12.1%!important;
+        padding-right: 9.9%;
 
         p { 
           margin: 0 5px 0 5px;
@@ -53,7 +54,6 @@
     .job-column-header h4 {
       min-width: unset!important;
     }
-
   }
 }
 
@@ -86,6 +86,7 @@
 
   .job-column-header {
     border-right: 1px solid $color-border-bottom;
+    height: 100%;
     display: inline-block;
     vertical-align: top;
     text-align: center;
@@ -97,6 +98,7 @@
 
     div {
       h4 {
+        margin-top: 10px;
         &:hover {
           + .tooltip {
             display: block;
