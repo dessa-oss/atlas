@@ -46,7 +46,6 @@ export default function ArchiveList(props) {
     },
   };
   const files = Object.values(artifacts).map((artifact) => {
-    console.log(artifact.filename);
     return artifact.filename;
   });
   const listItems = files.map(fname => <ListItem key={fname} filename={fname} />);

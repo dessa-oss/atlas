@@ -5,17 +5,8 @@ window.jQuery = require('jquery');
 window.$ = window.jQuery;
 
 class rowSelect {
-  static handleTransition(rowClass, row) {
-    if ($(rowClass).hasClass('error')) {
-      console.log('Handle the selection for row with error');
-    } else {
-      console.log('Handle the selection of a row without error');
-    }
-  }
-
   static retrieveRowElements(rowNumber) {
     const rowClassNumber = parseInt(rowNumber, 10);
-    console.log(rowClassNumber);
     if (rowClassNumber >= 0) {
       return $(`.row-${rowClassNumber}`).toArray();
     }

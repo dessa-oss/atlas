@@ -100,7 +100,7 @@ InputMetric.propTypes = {
   toggleNumberFilter: PropTypes.func,
   filters: PropTypes.array,
 };
-const defaultFunc = () => console.log('JobTableHeader: Missing onMetricRowClick prop.');
+const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
   onMetricRowClick: defaultFunc,
   header: '',

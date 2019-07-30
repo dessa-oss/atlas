@@ -63,7 +63,6 @@ class JobTable extends Component {
 
   handleRowSelection(rowNumber) {
     const { selectedRow } = this.state;
-    console.log(`previous row: ${selectedRow} current: ${rowNumber}`);
     if (selectedRow === rowNumber) {
       this.setState({ selectedRow: -1 });
       rowSelect.deselect(rowNumber);
