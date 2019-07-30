@@ -149,7 +149,6 @@ class TestSyncableDirectory(Spec):
         for changed_file in ['new_file.txt', 'some_metadata.txt']:
             self.assertLessEqual(abs(files_with_stats[changed_file].st_mtime - (time_of_upload + 10)), 0.5)
 
-    @skip('not implemented')
     def test_downloading_twice_upserts_if_newer_files_available_and_leaves_unchanged_files_alone(self):
         import os
         import shutil
