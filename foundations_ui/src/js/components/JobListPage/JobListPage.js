@@ -53,13 +53,14 @@ class JobListPage extends Component {
   }
 
   async componentDidMount() {
+    const updateTimeInMilli = 4 * 1000;
+
     this.interval = setInterval(
       () => this.getJobs(),
-      4000,
+      updateTimeInMilli,
     );
     this.setState({ isMount: true });
     await this.getJobs();
-    hoverActions.hover();
   }
 
   componentWillUnmount() {
@@ -83,7 +84,13 @@ class JobListPage extends Component {
     if (this.checkStatusOk()) {
       const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
       this.formatAndSaveParams(apiJobs, allUsers);
+      this.updateEventsOnJobs();
     }
+    this.forceUpdate();
+  }
+
+  updateEventsOnJobs() {
+    hoverActions.hover();
   }
 
   async getFilteredJobs() {
