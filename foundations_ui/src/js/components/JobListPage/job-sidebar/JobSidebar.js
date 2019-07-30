@@ -20,7 +20,7 @@ export default function JobSidebar(props) {
           case 'audio':
             return <AudioPlayer url={artifact.uri} />;
           default:
-            return <p>Unknown Placeholder</p>;
+            return <p>This filetype is not viewable.</p>;
         }
       };
 
