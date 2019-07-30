@@ -79,13 +79,13 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.png',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/melspectrogram2901.png',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/melspectrogram2901.png',
             artifact_type='image',
             archive_key='key_0'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.wav',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/realtalk-output21980.wav',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/realtalk-output21980.wav',
             artifact_type='audio',
             archive_key='key_1'
         )
@@ -103,13 +103,13 @@ class TestJobArtifact(Spec):
 
         expected_artifact_1 = JobArtifact(
             filename='melspectrogram2901.jpg',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/melspectrogram2901.jpg',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/melspectrogram2901.jpg',
             artifact_type='image',
             archive_key='key_0'
         )
         expected_artifact_2 = JobArtifact(
             filename='realtalk-output21980.mp4',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/realtalk-output21980.mp4',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/realtalk-output21980.mp4',
             artifact_type='unknown',
             archive_key='key_1'
         )
@@ -126,7 +126,7 @@ class TestJobArtifact(Spec):
 
         expected_artifact = JobArtifact(
             filename='intermediaries/output/realtalk-output21980-artifact.mp3',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact.mp3',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact.mp3',
             artifact_type='audio',
             archive_key='key_0'
         )
@@ -144,7 +144,7 @@ class TestJobArtifact(Spec):
 
         expected_artifact = JobArtifact(
             filename='intermediaries/output/realtalk-output21980-artifact.mp3',
-            uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact.mp3',
+            uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/intermediaries/output/realtalk-output21980-artifact.mp3',
             artifact_type='audio',
             archive_key='key_0'
         )
@@ -171,7 +171,7 @@ class TestJobArtifact(Spec):
         expected_job_artifacts = [
             JobArtifact(
                 filename=f'intermediaries/output/realtalk-{mapper[0]}-artifact.{mapper[2]}',
-                uri=f'{self.archive_host}/{self.job_id}/user_artifacts/intermediaries/output/realtalk-{mapper[0]}-artifact.{mapper[2]}',
+                uri=f'{self.archive_host}/archive/{self.job_id}/user_artifacts/intermediaries/output/realtalk-{mapper[0]}-artifact.{mapper[2]}',
                 artifact_type=mapper[1],
                 archive_key=mapper[0]
             )

@@ -42,7 +42,7 @@ class JobArtifact(PropertyModel):
 
         return JobArtifact(
             filename=file_path,
-            uri=path.join(archive_host, f'{job_id}/user_artifacts/{file_path}'),
+            uri=path.join(archive_host, f'archive/{job_id}/user_artifacts/{file_path}'),
             artifact_type=JobArtifact._type_for_extension(file_extension),
             archive_key=key
         )
