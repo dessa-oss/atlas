@@ -14,9 +14,5 @@ export default function ImageViewer(props) {
 }
 
 ImageViewer.propTypes = {
-  image: PropTypes.string,
-};
-
-ImageViewer.defaultProps = {
-  image: 'ImageViewer: No image prop.',
+  image: PropTypes.string.isRequired,
 };
