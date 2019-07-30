@@ -8,7 +8,7 @@ import AudioPlayer from './AudioPlayer';
 
 export default function JobSidebar(props) {
   const { job } = props;
-  if (job !== null) {
+  if (job.job_id !== null) {
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);
@@ -33,7 +33,7 @@ export default function JobSidebar(props) {
       return (
         <div className="job-sidebar">
           <SidebarSection header="JOB DETAILS">
-            <ArtifactViewer jobId={job.job_id}>
+            <ArtifactViewer jobId={currentJob.job_id}>
               {selectViewer(selectedArtifact)}
             </ArtifactViewer>
           </SidebarSection>

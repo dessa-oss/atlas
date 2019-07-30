@@ -8,7 +8,11 @@ exports[`Shallow Renders Job Table 1`] = `
     className="job-table-container"
   >
     <JobSidebar
-      job={null}
+      job={
+        Object {
+          "job_id": null,
+        }
+      }
     />
     <JobTableHeader
       allInputParams={Array []}
@@ -29,13 +33,7 @@ exports[`Shallow Renders Job Table 1`] = `
       isShowingStatusFilter={false}
       isShowingUserFilter={false}
       jobIdFilters={Array []}
-      jobRows={
-        Array [
-          <p>
-            Loading Jobs
-          </p>,
-        ]
-      }
+      jobRows={Array []}
       jobs={Array []}
       metricClass="not-metric"
       numberFilterColumn=""

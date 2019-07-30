@@ -33,7 +33,7 @@ class JobTable extends Component {
       jobIdFilters: this.props.jobIdFilters,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
-      currentJob: null,
+      currentJob: { job_id: null },
       selectedRow: null,
     };
   }
@@ -85,8 +85,9 @@ class JobTable extends Component {
     const rowNumbers = [];
 
     const handleClick = (job, row) => {
-      if (this.state.currentJob === job) {
-        this.setState({ currentJob: null });
+      console.log(job);
+      if (this.state.currentJob.job_id === job.job_id) {
+        this.setState({ currentJob: { job_id: null } });
       } else {
         this.setState({ currentJob: job });
       }
@@ -96,22 +97,21 @@ class JobTable extends Component {
       }
     };
 
-    if (isLoaded) {
-      if (jobs.length === 0) {
-        jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
-      } else {
-        jobRows = [];
-        // [KD] No Longer used commented to reduce memory usage, but kept for reference of previous logic
-        // jobs.forEach((job) => {
-        //   const key = job.job_id;
-        //   jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
-        //   rowNumbers.push(<p key={key}>{rowNum}</p>);
-        //   rowNum += 1;
-        // });
-      }
-    } else {
-      jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
-    }
+    // if (isLoaded) {
+    //   if (jobs.length === 0) {
+    //     jobRows.push(<p key="no-jobs-available">No Jobs available</p>);
+    //   } else {
+    //     jobRows = [];
+    //     jobs.forEach((job) => {
+    //       const key = job.job_id;
+    //       jobRows.push(<JobTableRow handleClick={handleClick} key={key} job={job} rowNumber={rowNum - 1} />);
+    //       rowNumbers.push(<p key={key}>{rowNum}</p>);
+    //       rowNum += 1;
+    //     });
+    //   }
+    // } else {
+    //   jobRows.push(<p key="loading-jobs">Loading Jobs</p>);
+    // }
 
     return (
       <div className="job-table-content">
