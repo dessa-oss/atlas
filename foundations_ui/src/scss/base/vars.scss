@@ -56,3 +56,8 @@ $filter-body-height: 45px;
 $duration-filter-left: calc((#{$standard-cell-width} * 2 ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin} * 4));
 $job-id-filter-left: calc((#{$standard-cell-width} ) / #{$number-sections} + #{$status-cell-width} + (#{$standard-cell-padding} * 2) - (#{$border-thin}));
 $job-id-container-width: 380px;
+
+// Sidebar
+$sidebar-section-height: 50%;
+$section-header-height: 50px;
+$artifact-viewer-height: calc(100% - #{$section-header-height});
