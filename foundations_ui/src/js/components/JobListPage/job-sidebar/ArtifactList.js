@@ -5,60 +5,37 @@ import Artifact from './Artifact';
 export default function ArtifactList(props) {
   const { handleClick, artifacts } = props;
   console.log(artifacts);
-  // const artifactsObj = {
-  //   artifact1: {
+  // const artifactsObj = [
+  //   {
   //     filename: 'archive1.jpg',
   //     location: '/some/path/to/file1/',
+  //     // uri: '1',
   //   },
-  //   artifact2: {
-  //     filename: 'archive2.wav',
-  //     location: '/some/path/to/file2/',
+  //   {
+  //     filename: 'archive3.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact3: {
-  //     filename: 'archive3.xml',
-  //     location: '/some/path/to/file3/',
+  //   {
+  //     filename: 'archive4.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact4: {
-  //     filename: 'archive4.xml',
-  //     location: '/some/path/to/file3/',
+  //   {
+  //     filename: 'archive5.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact5: {
-  //     filename: 'archive5.xml',
-  //     location: '/some/path/to/file3/',
+  //   {
+  //     filename: 'archive6.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact6: {
-  //     filename: 'archive6.xml',
-  //     location: '/some/path/to/file3/',
+  //   {
+  //     filename: 'archive7.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact7: {
-  //     filename: 'archive7.xml',
-  //     location: '/some/path/to/file3/',
+  //   {
+  //     filename: 'archive8.jpg',
+  //     location: '/some/path/to/file1/',
   //   },
-  //   artifact8: {
-  //     filename: 'archive8.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  //   artifact9: {
-  //     filename: 'archive9.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  //   artifact10: {
-  //     filename: 'archive10.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  //   artifact11: {
-  //     filename: 'archive11.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  //   artifact12: {
-  //     filename: 'archive12.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  //   artifact13: {
-  //     filename: 'archive13.xml',
-  //     location: '/some/path/to/file3/',
-  //   },
-  // };
+  // ];
   // const files = artifactsObj.map((artifact) => {
   //   console.log(artifact.filename);
   //   return artifact.filename;
@@ -71,8 +48,8 @@ export default function ArtifactList(props) {
   //   uri: 'https://images.pexels.com/photos/853168/pexels-photo-853168.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
   // }];
 
-  const artifactComps = artifacts.map((artifact) => {
-    return <Artifact key={artifact.filename} artifact={artifact} onClick={handleClick} />;
+  const artifactComps = (artifacts || []).map((artifact) => {
+    return <Artifact key={artifact.id} artifact={artifact} onClick={handleClick} />;
   });
 
   return (

@@ -1,28 +1,12 @@
-.sidebar-section {
-    margin-top: -15px;
-    &:nth-child(2) {
-        height: 60%;
-    }
-}
-
-.sidebar-section-header {
-    background-color: #585858;
-    height: 50px;
-    .sidebar-section-header-text {
-        padding-left: 20px;
-        padding-top: 14px;
-        font-size: 14px;
-    }
-}
-
 .job-sidebar {
+    // overflow: auto;
     border-style: solid;
     background: #F7F7F7;
     position: absolute;
     z-index: 2;
     top: 0;
     right: -3px;
-    height: 100%;
+    height: 99%;
     width: 25%;
     box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
     -webkit-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
@@ -30,29 +14,58 @@
     -webkit-transition: -webkit-transform 2s;
     transition: transform 2s;
 }
+.sidebar-section {
+    // overflow: auto;
+    position: relative;
+    top: -15px;
+    height: $sidebar-section-height;
+}
+
+.sidebar-section-header {
+    position: static;
+    background-color: #585858;
+    height: $section-header-height;
+    .sidebar-section-header-text {
+        padding-left: 20px;
+        padding-top: 14px;
+        font-size: 14px;
+    }
+}
 
 .artifact-viewer {
     background: #F7F7F7;
-    padding: 30px;
-    height: 100%;
+    overflow: auto;
+    position: relative;
+    height: $artifact-viewer-height;
+    padding: 20px;
     h2 {
         margin-top: 0;
     }
 }
 
 .image-viewer {
-    background: green;
     margin: auto;
     padding: auto;
     display: block;
+    position: static;
+    max-width: 80%;
+}
+
+.audio-player {
+    margin: auto;
+    padding: auto;
+    display: block;
+    max-width: 100%;
 }
 
 .artifact-list {
-    overflow-y: auto;
-    height: 100%;
+    background: #33aaff;
+    overflow: auto;
     margin: 0;
     padding: 0;
+    height: $artifact-viewer-height;
     li {
+        // overflow: auto;
         margin: 0;
         padding:0;
         height: 2em;
