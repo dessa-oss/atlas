@@ -13,6 +13,12 @@ export default function JobSidebar(props) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = artifact => setArtifact(artifact);
 
+      const [currentJob, setJob] = useState(job);
+      if (job !== currentJob) {
+        setArtifact(job.artifacts[0]);
+        setJob(job);
+      }
+
       const selectViewer = (artifact) => {
         switch (artifact.artifact_type) {
           case 'image':
@@ -40,7 +46,7 @@ export default function JobSidebar(props) {
     return (
       <div className="job-sidebar">
         <SidebarSection header="JOB DETAILS">
-          <ArtifactViewer jobI={job.job_id}>
+          <ArtifactViewer jobId={job.job_id}>
             <p>No artifacts for this job</p>
           </ArtifactViewer>
         </SidebarSection>
