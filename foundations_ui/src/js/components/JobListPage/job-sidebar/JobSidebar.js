@@ -32,7 +32,7 @@ export default function JobSidebar(props) {
 
       return (
         <div className="job-sidebar">
-          <SidebarSection header="JOB DETAILS">
+          <SidebarSection header="ARTIFACT VIEWER">
             <ArtifactViewer jobId={currentJob.job_id}>
               {selectViewer(selectedArtifact)}
             </ArtifactViewer>

@@ -6,7 +6,7 @@
     top: 0;
     right: 8px;
     height: 99%;
-    width: 25%;
+    width: 32%;
     box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
     -webkit-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
     -moz-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
@@ -36,14 +36,26 @@
     overflow: auto;
     position: relative;
     height: $artifact-viewer-height;
-    padding: 15px;
-    h2 {
-        margin-top: 0;
+    padding: 0px 15px 15px 15px; 
+    text-align: center;
+    .job {
+        position: sticky;
+        display: block;
+        top: 0px;
+        width: 100%;
+        background: #F7F7F7;
+        margin: 0px 0px 0px 0px;
+        padding: 5px 0px 5px 0px;
+        font-family: 'Roboto', monospace;
+        font-size: 13px;
+        z-index: 1;
     }
 }
 
 .media {
-    padding-bottom: 20px;
+    position: relative;
+    padding: 5px 0px 20px 0px;
+    text-align: center;
     max-width: 100%;
 }
 
