@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="72px" height="96px" viewBox="0 0 72 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="72px" height="97px" viewBox="0 0 72 97" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>noun_Trash Can_1594615</title>
+    <title>Artboard</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="noun_Trash-Can_1594615" fill="#FF6767" fill-rule="nonzero">
-            <g id="Group">
-                <path d="M5.6,86.5 C5.6,91.5 9.6,95.5 14.6,95.5 L57.3,95.5 C62.3,95.5 66.3,91.5 66.3,86.5 L66.3,26.9 L5.6,26.9 L5.6,86.5 Z M50.2,37.9 L55,37.9 L55,84.5 L50.2,84.5 L50.2,37.9 Z M33.6,37.9 L38.4,37.9 L38.4,84.5 L33.6,84.5 L33.6,37.9 Z M17.1,37.9 L21.9,37.9 L21.9,84.5 L17.1,84.5 L17.1,37.9 Z" id="Shape"></path>
-                <path d="M69.8,10.9 L49,10.9 L47.8,5.3 C47.2,2.4 44.7,0.4 41.7,0.4 L30.3,0.4 C27.4,0.4 24.9,2.4 24.2,5.3 L23,10.9 L2.2,10.9 C1.2,10.9 0.4,11.7 0.4,12.7 L0.4,20.3 C0.4,21.3 1.2,22.1 2.2,22.1 L69.9,22.1 C70.9,22.1 71.7,21.3 71.7,20.3 L71.7,12.7 C71.6,11.7 70.8,10.9 69.8,10.9 Z M28.9,6.4 C29,5.7 29.6,5.3 30.3,5.3 L41.7,5.3 C42.4,5.3 43,5.8 43.1,6.4 L44.1,10.9 L27.9,10.9 L28.9,6.4 Z" id="Shape"></path>
+        <g id="Artboard" fill="#FF6161" fill-rule="nonzero">
+            <g id="noun_Trash-Can_1594615" transform="translate(0.000000, 1.000000)">
+                <g id="Group">
+                    <path d="M5.6,86.5 C5.6,91.5 9.6,95.5 14.6,95.5 L57.3,95.5 C62.3,95.5 66.3,91.5 66.3,86.5 L66.3,26.9 L5.6,26.9 L5.6,86.5 Z M50.2,37.9 L55,37.9 L55,84.5 L50.2,84.5 L50.2,37.9 Z M33.6,37.9 L38.4,37.9 L38.4,84.5 L33.6,84.5 L33.6,37.9 Z M17.1,37.9 L21.9,37.9 L21.9,84.5 L17.1,84.5 L17.1,37.9 Z" id="Shape"></path>
+                    <path d="M69.8,10.9 L49,10.9 L47.8,5.3 C47.2,2.4 44.7,0.4 41.7,0.4 L30.3,0.4 C27.4,0.4 24.9,2.4 24.2,5.3 L23,10.9 L2.2,10.9 C1.2,10.9 0.4,11.7 0.4,12.7 L0.4,20.3 C0.4,21.3 1.2,22.1 2.2,22.1 L69.9,22.1 C70.9,22.1 71.7,21.3 71.7,20.3 L71.7,12.7 C71.6,11.7 70.8,10.9 69.8,10.9 Z M28.9,6.4 C29,5.7 29.6,5.3 30.3,5.3 L41.7,5.3 C42.4,5.3 43,5.8 43.1,6.4 L44.1,10.9 L27.9,10.9 L28.9,6.4 Z" id="Shape"></path>
+                </g>
             </g>
         </g>
     </g>
