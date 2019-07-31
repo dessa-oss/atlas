@@ -223,10 +223,6 @@ class JobHeader extends Component {
             <h3>Jobs List</h3>
             <ul>
               <li>
-                <p className="font-bold">Data Source: </p>
-                <p>raw_mnist</p>
-              </li>
-              <li>
                 <p className="font-bold">Project owner: </p>
                 <p>Trial<span>{project.owner}</span></p>
               </li>
