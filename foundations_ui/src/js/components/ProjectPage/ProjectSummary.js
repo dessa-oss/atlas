@@ -26,9 +26,6 @@ class ProjectSummary extends Component {
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
           <h2 className="font-bold">{project.name}</h2>
-          <p className="font-bold">Data Source:
-            <span> raw_mnist</span>
-          </p>
           <p className="font-bold">
             Project owner: <span>Trial{project.owner}</span>
           </p>
