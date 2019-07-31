@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import {
   BrowserRouter as Router, Route, Switch, Redirect,
 } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 import ProjectPage from './ProjectPage/ProjectPage';
 import LoginPage from './LoginPage/LoginPage';
 import ContactPage from './ContactPage/ContactPage';
 import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
+
+toast.configure(); // single instance to improve rendering of toast
 
 class App extends Component {
   render() {

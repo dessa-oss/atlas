@@ -1,8 +1,8 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ToastContainer, toast } from 'react-toastify';
-import HoverCell from './HoverCell';
+import { toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 class JobIDCell extends Component {
@@ -44,7 +44,6 @@ class JobIDCell extends Component {
             role="presentation"
           />
         </CopyToClipboard>
-        <ToastContainer />
       </span>
     );
   }

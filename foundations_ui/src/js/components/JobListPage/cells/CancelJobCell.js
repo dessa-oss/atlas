@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import BaseActions from '../../../actions/BaseActions';
 import changeIcon from '../../../../scss/jquery/changeIcon';
 
@@ -52,7 +52,6 @@ function CancelJobCell(props) {
         onClick={handleClick}
         onKeyDown={handleClick}
       />
-      <ToastContainer />
     </span>
   );
 }
