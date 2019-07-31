@@ -22,13 +22,22 @@
 
 .sidebar-section-header {
     position: static;
-    background-color: #585858;
+    background-color: $color-sidebar-header;
     height: $section-header-height;
     .sidebar-section-header-text {
         padding-left: 20px;
-        padding-top: 14px;
+        padding-top: 4px;
         font-size: 14px;
     }
+}
+
+.sidebar-section-close-button{
+    margin-right: 5px;
+}
+
+.sidebar-section-close-button-container{
+    background-color: $color-sidebar-header;
+    text-align: right;
 }
 
 .artifact-viewer {

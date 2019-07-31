@@ -62,7 +62,6 @@ class JobTable extends Component {
 
   handleRowSelection(rowNumber) {
     const { selectedRow } = this.state;
-    console.log(`selected row: ${selectedRow}, row number: ${rowNumber}`);
     if (selectedRow === rowNumber) {
       this.setState({ selectedRow: -1 });
       rowSelect.deselect(rowNumber);
@@ -72,18 +71,23 @@ class JobTable extends Component {
     }
   }
 
+  closeSideBar() {
+    this.setState({ currentJob: { job_id: null } });
+    this.setState({ selectedRow: -1 });
+    rowSelect.removePreviousActiveRows();
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters, selectedRow,
+      startTimeFilters, filters,
     } = this.state;
 
     let jobRows = [];
     let rowNum = 1;
     const rowNumbers = [];
-    console.log(selectedRow);
 
     const handleClick = (job) => {
       if (this.state.currentJob.job_id === job.job_id) {
@@ -97,7 +101,10 @@ class JobTable extends Component {
     return (
       <div className="job-table-content">
         <div className="job-table-container">
-          <JobSidebar job={this.state.currentJob} />
+          <JobSidebar
+            job={this.state.currentJob}
+            onCloseClickHandler={() => this.closeSideBar()}
+          />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}
