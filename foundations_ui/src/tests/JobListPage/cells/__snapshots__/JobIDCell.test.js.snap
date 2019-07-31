@@ -1,46 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders Job ID Cell 1`] = `
-<div
-  className="job-cell job-id-cell row-0"
-  onMouseEnter={[Function]}
-  onMouseLeave={[Function]}
->
-  <p />
-  <CopyToClipboard
-    text=""
-  >
-    <div
-      className="i--icon-copy"
-      onClick={[Function]}
-      role="presentation"
-    />
-  </CopyToClipboard>
-  <ToastContainer
-    autoClose={5000}
-    bodyClassName={null}
-    className={null}
-    closeButton={
-      <CloseButton
-        ariaLabel="close"
-      />
-    }
-    closeOnClick={true}
-    draggable={true}
-    draggablePercent={80}
-    hideProgressBar={false}
-    newestOnTop={false}
-    pauseOnFocusLoss={true}
-    pauseOnHover={true}
-    position="top-right"
-    progressClassName={null}
-    progressStyle={null}
-    role="alert"
-    rtl={false}
-    style={null}
-    toastClassName={null}
-    transition={[Function]}
+<span>
+  <span
+    className="job-id-cell row-0"
   />
-  <div />
-</div>
+</span>
 `;

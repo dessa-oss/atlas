@@ -177,7 +177,7 @@ class CommonActions {
           allInputMetricColumn={allInputMetricColumn}
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
-          onMetricRowClick={() => onMetricRowClick(job, job.job_id)}
+          onMetricRowClick={onMetricRowClick}
         />);
         rowNumber += 1;
       });

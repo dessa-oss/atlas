@@ -5,7 +5,6 @@ import CommonActions from '../../actions/CommonActions';
 class InputMetricRow extends Component {
   constructor(props) {
     super(props);
-    this.onMetricRowClick = props.onMetricRowClick;
     this.state = {
       isError: this.props.isError,
       job: this.props.job,
@@ -13,6 +12,8 @@ class InputMetricRow extends Component {
       allInputMetricColumn: this.props.allInputMetricColumn,
       hiddenInputParams: this.props.hiddenInputParams,
       rowNumber: this.props.rowNumber,
+      onMetricRowClick: this.props.onMetricRowClick,
+      key: this.props.key,
     };
   }
 
@@ -24,12 +25,14 @@ class InputMetricRow extends Component {
       allInputMetricColumn: nextProps.allInputMetricColumn,
       hiddenInputParams: nextProps.hiddenInputParams,
       rowNumber: nextProps.rowNumber,
+      onMetricRowClick: nextProps.onMetricRowClick,
+      key: nextProps.key,
     });
   }
 
   render() {
     const {
-      job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber,
+      job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber, key, onMetricRowClick,
     } = this.state;
     const cells = CommonActions.getInputMetricCells(job,
       isError,
@@ -37,13 +40,12 @@ class InputMetricRow extends Component {
       allInputMetricColumn,
       hiddenInputParams,
       rowNumber);
-
     return (
       <div
         role="presentation"
         className="job-table-row"
-        onClick={this.onMetricRowClick}
-        onKeyDown={this.onMetricRowClick}
+        onClick={() => onMetricRowClick(job, key)}
+        onKeyDown={() => onMetricRowClick(job, key)}
       >
         {cells}
       </div>
@@ -53,6 +55,7 @@ class InputMetricRow extends Component {
 
 InputMetricRow.propTypes = {
   onMetricRowClick: PropTypes.func,
+  key: PropTypes.string,
   job: PropTypes.object,
   isError: PropTypes.bool,
   isMetric: PropTypes.bool,
@@ -63,6 +66,7 @@ InputMetricRow.propTypes = {
 const defaultFunc = () => console.warn('InputMetricRow: onClick func missing.');
 InputMetricRow.defaultProps = {
   onMetricRowClick: defaultFunc,
+  key: '',
   job: {},
   isError: false,
   isMetric: false,

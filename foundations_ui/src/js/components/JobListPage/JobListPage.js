@@ -53,7 +53,7 @@ class JobListPage extends Component {
   }
 
   async componentDidMount() {
-    const updateTimeInMilli = 4 * 1000;
+    const updateTimeInMilli = 4000;
 
     this.interval = setInterval(
       () => this.getJobs(),

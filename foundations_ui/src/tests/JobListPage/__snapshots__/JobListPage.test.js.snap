@@ -43,6 +43,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     jobs={Array []}
     numberFilters={Array []}
     projectName=""
+    selectedRow={-1}
     startTimeFilters={Array []}
     statuses={
       Array [
