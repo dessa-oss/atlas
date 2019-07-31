@@ -77,7 +77,6 @@ class JobListPage extends Component {
   }
 
   async getJobs() {
-    console.log('Attempting to retrieve jobs');
     const { projectName } = this.state;
     const fetchedJobs = await JobListActions.getJobs(projectName);
     const apiJobs = fetchedJobs.result;
