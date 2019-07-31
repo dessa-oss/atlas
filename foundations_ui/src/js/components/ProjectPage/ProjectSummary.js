@@ -26,11 +26,12 @@ class ProjectSummary extends Component {
       <div className="project-summary-container elevation-1">
         <div className="project-summary-info-container">
           <h2 className="font-bold">{project.name}</h2>
+          <br />
           <p className="font-bold">
             Project owner: <span>Trial{project.owner}</span>
           </p>
           <p className="font-bold">
-            Created at: <span>2019-03-30 T 10:45 UTC{project.created_at}</span>
+            Created at: <span>Trial</span>
           </p>
           <div className="project-summary-button-container">
             <button type="button" onClick={this.viewClick} className="b--mat b--affirmative">View jobs</button>
