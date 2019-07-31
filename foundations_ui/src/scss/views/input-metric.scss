@@ -71,7 +71,7 @@
 }
 
 .input-metric-column-container {
-  height: calc(100%);
+  height: calc(100% - #{$metric-header-height});
   min-width: 100%;
   overflow-y: scroll;
   width: fit-content;
