@@ -10,6 +10,7 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     <h2
       className="font-bold"
     />
+    <br />
     <p
       className="font-bold"
     >
@@ -23,7 +24,7 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     >
       Created at: 
       <span>
-        2019-03-30 T 10:45 UTC
+        Trial
       </span>
     </p>
     <div

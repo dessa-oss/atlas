@@ -35,7 +35,7 @@ class JobTable extends Component {
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
       currentJob: { job_id: null },
-      selectedRow: null,
+      selectedRow: this.props.selectedRow,
     };
   }
 
@@ -85,17 +85,13 @@ class JobTable extends Component {
     let rowNum = 1;
     const rowNumbers = [];
 
-    const handleClick = (job, row) => {
-      console.log(job);
+    const handleClick = (job) => {
       if (this.state.currentJob.job_id === job.job_id) {
         this.setState({ currentJob: { job_id: null } });
       } else {
         this.setState({ currentJob: job });
       }
-
-      if (row !== undefined) {
-        this.handleRowSelection(row);
-      }
+      this.handleRowSelection(job.job_id);
     };
 
     return (
