@@ -35,7 +35,6 @@ class JobTable extends Component {
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
       currentJob: { job_id: null },
-      selectedRow: null,
     };
   }
 
@@ -57,7 +56,6 @@ class JobTable extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
-        selectedRow: nextProps.selectedRow,
       },
     );
   }
@@ -73,6 +71,12 @@ class JobTable extends Component {
     }
   }
 
+  closeSideBar() {
+    this.setState({ currentJob: { job_id: null } });
+    this.setState({ selectedRow: -1 });
+    rowSelect.removePreviousActiveRows();
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
@@ -85,23 +89,22 @@ class JobTable extends Component {
     let rowNum = 1;
     const rowNumbers = [];
 
-    const handleClick = (job, row) => {
-      console.log(job);
+    const handleClick = (job) => {
       if (this.state.currentJob.job_id === job.job_id) {
         this.setState({ currentJob: { job_id: null } });
       } else {
         this.setState({ currentJob: job });
       }
-
-      if (row !== undefined) {
-        this.handleRowSelection(row);
-      }
+      this.handleRowSelection(job.job_id);
     };
 
     return (
       <div className="job-table-content">
         <div className="job-table-container">
-          <JobSidebar job={this.state.currentJob} />
+          <JobSidebar
+            job={this.state.currentJob}
+            onCloseClickHandler={() => this.closeSideBar()}
+          />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}
@@ -168,7 +171,7 @@ JobTable.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
-  selectedRow: PropTypes.number,
+  selectedRow: PropTypes.string,
   onDataUpdated: PropTypes.func,
 };
 
