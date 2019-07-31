@@ -13,6 +13,7 @@ exports[`Shallow Renders Job Table 1`] = `
           "job_id": null,
         }
       }
+      onCloseClickHandler={[Function]}
     />
     <JobTableHeader
       allInputParams={Array []}

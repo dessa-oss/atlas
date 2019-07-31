@@ -5,8 +5,7 @@ export default function ArtifactViewer(props) {
   const { jobId, children } = props;
   return (
     <div className="artifact-viewer">
-      <h2>Artifact Viewer</h2>
-      <p>Job: {jobId}</p>
+      <p className="job">Job ID: {jobId}</p>
       {children}
     </div>
   );

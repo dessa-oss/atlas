@@ -6,7 +6,7 @@
     top: 0;
     right: 8px;
     height: 99%;
-    width: 25%;
+    width: 32%;
     box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
     -webkit-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
     -moz-box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
@@ -25,8 +25,8 @@
     background-color: $color-sidebar-header;
     height: $section-header-height;
     .sidebar-section-header-text {
-        padding-left: 20px;
-        padding-top: 4px;
+        padding-left: 13px;
+        padding-top: 9px;
         font-size: 14px;
     }
 }
@@ -45,14 +45,26 @@
     overflow: auto;
     position: relative;
     height: $artifact-viewer-height;
-    padding: 15px;
-    h2 {
-        margin-top: 0;
+    padding: 0px 15px 15px 15px; 
+    text-align: center;
+    .job {
+        position: sticky;
+        display: block;
+        top: 0px;
+        width: 100%;
+        background: #F7F7F7;
+        margin: 0px 0px 0px 0px;
+        padding: 5px 0px 5px 0px;
+        font-family: 'Roboto', monospace;
+        font-size: 13px;
+        z-index: 1;
     }
 }
 
 .media {
-    padding-bottom: 20px;
+    position: relative;
+    padding: 5px 0px 20px 0px;
+    text-align: center;
     max-width: 100%;
 }
 
@@ -63,12 +75,13 @@
     height: $artifact-viewer-height;
     li {
         margin: 0;
-        padding:0;
-        height: 2em;
+        height: 1.4em;
         border-bottom: 1px solid #999;
         background-color: #fff;
-        padding: 10px;
-        padding-left: 20px;
+        padding-bottom: 8px;
+        padding-top: 7px;
+        padding-left: 13px;
+        padding-right: 13px;
         &:hover {
             background-color: #999;
             color: #fff;
@@ -79,15 +92,19 @@
             text-overflow: ellipsis;
             overflow: hidden;
             max-width: 80%;
-            font-size: 18px;
+            font-size: 13px;
             margin: auto;
+            padding-top: 5px;
+            
         }
         button {
             float: right;
-            margin-right: 18px;
-            height: 30px;
+            height: 26px;
             border-radius: 4px;
             border: none;
+            &:hover {
+                background-color: #fff;
+            }
         }
         .download-button {
             display: inline;

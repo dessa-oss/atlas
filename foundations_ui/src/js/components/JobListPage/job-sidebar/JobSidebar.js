@@ -39,7 +39,7 @@ export default function JobSidebar(props) {
               type="button"
             />
           </div>
-          <SidebarSection header="JOB DETAILS">
+          <SidebarSection header="ARTIFACT VIEWER">
             <ArtifactViewer jobId={currentJob.job_id}>
               {selectViewer(selectedArtifact)}
             </ArtifactViewer>
@@ -59,7 +59,7 @@ export default function JobSidebar(props) {
             type="button"
           />
         </div>
-        <SidebarSection header="JOB DETAILS">
+        <SidebarSection header="ARTIFACT VIEWER">
           <ArtifactViewer jobId={job.job_id}>
             <p>No artifacts for this job</p>
           </ArtifactViewer>
