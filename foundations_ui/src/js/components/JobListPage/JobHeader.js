@@ -239,14 +239,13 @@ class JobHeader extends Component {
           {moreFilters}
         </div>
         <div className="deleteJobWrapper">
-          <p>Delete running and queued jobs</p>
           <button
             className="deleteButton"
             type="button"
             onClick={this.cancelJobs}
             onKeyDown={() => {}}
           >
-            Delete
+            Delete Queued and Running Jobs
           </button>
         </div>
       </div>
