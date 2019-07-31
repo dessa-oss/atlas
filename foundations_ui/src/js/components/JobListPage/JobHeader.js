@@ -228,7 +228,7 @@ class JobHeader extends Component {
               </li>
               <li>
                 <p className="font-bold">Created at: </p>
-                <p>2019-03-30 T 10:45 UTC<span>{project.created_at}</span></p>
+                <p>Trial</p>
               </li>
             </ul>
           </div>

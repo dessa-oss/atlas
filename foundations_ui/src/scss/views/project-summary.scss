@@ -24,12 +24,7 @@
     margin-bottom: 5px;
     margin-top: 0px;
   }
-  p:first-of-type{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-bottom: 15px;
-  }
-  p:not(:first-of-type){
+  p, span{
     margin-top: 5px;
     margin-bottom: 5px;
   }

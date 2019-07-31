@@ -25,8 +25,8 @@
     background-color: #585858;
     height: $section-header-height;
     .sidebar-section-header-text {
-        padding-left: 20px;
-        padding-top: 14px;
+        padding-left: 13px;
+        padding-top: 9px;
         font-size: 14px;
     }
 }
@@ -66,12 +66,13 @@
     height: $artifact-viewer-height;
     li {
         margin: 0;
-        padding:0;
-        height: 2em;
+        height: 1.4em;
         border-bottom: 1px solid #999;
         background-color: #fff;
-        padding: 10px;
-        padding-left: 20px;
+        padding-bottom: 8px;
+        padding-top: 7px;
+        padding-left: 13px;
+        padding-right: 13px;
         &:hover {
             background-color: #999;
             color: #fff;
@@ -82,15 +83,19 @@
             text-overflow: ellipsis;
             overflow: hidden;
             max-width: 80%;
-            font-size: 18px;
+            font-size: 13px;
             margin: auto;
+            padding-top: 5px;
+            
         }
         button {
             float: right;
-            margin-right: 18px;
-            height: 30px;
+            height: 26px;
             border-radius: 4px;
             border: none;
+            &:hover {
+                background-color: #fff;
+            }
         }
         .download-button {
             display: inline;

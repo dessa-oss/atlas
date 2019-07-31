@@ -23,16 +23,6 @@ exports[`Shallow Renders Job List Page 1`] = `
           <p
             className="font-bold"
           >
-            Data Source: 
-          </p>
-          <p>
-            raw_mnist
-          </p>
-        </li>
-        <li>
-          <p
-            className="font-bold"
-          >
             Project owner: 
           </p>
           <p>
@@ -49,10 +39,7 @@ exports[`Shallow Renders Job List Page 1`] = `
             Created at: 
           </p>
           <p>
-            2019-03-30 T 10:45 UTC
-            <span>
-              null
-            </span>
+            Trial
           </p>
         </li>
       </ul>
@@ -61,16 +48,13 @@ exports[`Shallow Renders Job List Page 1`] = `
   <div
     className="deleteJobWrapper"
   >
-    <p>
-      Delete running and queued jobs
-    </p>
     <button
       className="deleteButton"
       onClick={[Function]}
       onKeyDown={[Function]}
       type="button"
     >
-      Delete
+      Delete Queued and Running Jobs
     </button>
   </div>
 </div>
