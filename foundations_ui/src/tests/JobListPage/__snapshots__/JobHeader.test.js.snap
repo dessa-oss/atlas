@@ -23,16 +23,6 @@ exports[`Shallow Renders Job List Page 1`] = `
           <p
             className="font-bold"
           >
-            Data Source: 
-          </p>
-          <p>
-            raw_mnist
-          </p>
-        </li>
-        <li>
-          <p
-            className="font-bold"
-          >
             Project owner: 
           </p>
           <p>

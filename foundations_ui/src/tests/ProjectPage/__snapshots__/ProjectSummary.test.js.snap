@@ -13,14 +13,6 @@ exports[`Shallow Renders ProjectSummary 1`] = `
     <p
       className="font-bold"
     >
-      Data Source:
-      <span>
-         raw_mnist
-      </span>
-    </p>
-    <p
-      className="font-bold"
-    >
       Project owner: 
       <span>
         Trial
