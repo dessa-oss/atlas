@@ -26,7 +26,6 @@ exports[`Shallow Renders Job Table Header 1`] = `
             "type": "string",
           },
           Object {
-            "hoverable": false,
             "name": "Status",
             "type": "string",
           },

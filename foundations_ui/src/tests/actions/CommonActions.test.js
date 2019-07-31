@@ -225,12 +225,12 @@ it('get InputMetricCellPClass error', () => {
 
 it('get InputMetricCellDivClass', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(noError, rowNumber);
-  expect(metricClass).toBe('job-cell row-1');
+  expect(metricClass).toBe('job-cell row-1 key-undefined');
 });
 
 it('get InputMetricCellDivClass error', () => {
   const metricClass = CommonActions.getInputMetricCellDivClass(error, rowNumber);
-  expect(metricClass).toBe('job-cell error row-1');
+  expect(metricClass).toBe('job-cell error row-1 key-undefined');
 });
 
 it('get InputParamHeaders', () => {
