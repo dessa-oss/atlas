@@ -14,30 +14,5 @@ exports[`Shallow Renders Job ID Cell 1`] = `
       role="presentation"
     />
   </CopyToClipboard>
-  <ToastContainer
-    autoClose={5000}
-    bodyClassName={null}
-    className={null}
-    closeButton={
-      <CloseButton
-        ariaLabel="close"
-      />
-    }
-    closeOnClick={true}
-    draggable={true}
-    draggablePercent={80}
-    hideProgressBar={false}
-    newestOnTop={false}
-    pauseOnFocusLoss={true}
-    pauseOnHover={true}
-    position="top-right"
-    progressClassName={null}
-    progressStyle={null}
-    role="alert"
-    rtl={false}
-    style={null}
-    toastClassName={null}
-    transition={[Function]}
-  />
 </span>
 `;

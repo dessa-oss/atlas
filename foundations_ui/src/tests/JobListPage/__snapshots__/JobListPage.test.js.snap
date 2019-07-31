@@ -42,6 +42,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     jobIdFilters={Array []}
     jobs={Array []}
     numberFilters={Array []}
+    onDataUpdated={[Function]}
     projectName=""
     selectedRow={-1}
     startTimeFilters={Array []}

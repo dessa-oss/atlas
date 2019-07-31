@@ -38,6 +38,7 @@ exports[`Shallow Renders Job Table 1`] = `
       metricClass="not-metric"
       numberFilterColumn=""
       numberFilters={Array []}
+      onDataUpdated={[Function]}
       onMetricRowClick={[Function]}
       rowNumbers={Array []}
       startTimeFilters={Array []}

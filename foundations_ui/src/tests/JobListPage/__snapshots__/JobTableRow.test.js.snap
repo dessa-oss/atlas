@@ -13,6 +13,7 @@ exports[`Shallow Renders Job Table Row 1`] = `
         "status": "completed",
       }
     }
+    onSuccessfullDeletion={[Function]}
   />
   <JobIDCell
     isError={false}
@@ -20,6 +21,7 @@ exports[`Shallow Renders Job Table Row 1`] = `
     rowNumber={0}
   />
   <StartTimeCell
+    expand={false}
     isError={false}
     rowNumber={0}
     startTime=""
