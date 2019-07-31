@@ -35,7 +35,6 @@ class JobTable extends Component {
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
       currentJob: { job_id: null },
-      selectedRow: this.props.selectedRow,
     };
   }
 
@@ -57,13 +56,13 @@ class JobTable extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
-        selectedRow: nextProps.selectedRow,
       },
     );
   }
 
   handleRowSelection(rowNumber) {
     const { selectedRow } = this.state;
+    console.log(`selected row: ${selectedRow}, row number: ${rowNumber}`);
     if (selectedRow === rowNumber) {
       this.setState({ selectedRow: -1 });
       rowSelect.deselect(rowNumber);
@@ -78,12 +77,13 @@ class JobTable extends Component {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters,
+      startTimeFilters, filters, selectedRow,
     } = this.state;
 
     let jobRows = [];
     let rowNum = 1;
     const rowNumbers = [];
+    console.log(selectedRow);
 
     const handleClick = (job) => {
       if (this.state.currentJob.job_id === job.job_id) {
@@ -164,7 +164,7 @@ JobTable.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
-  selectedRow: PropTypes.number,
+  selectedRow: PropTypes.string,
   onDataUpdated: PropTypes.func,
 };
 
