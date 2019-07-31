@@ -21,9 +21,9 @@ Artifact.propTypes = {
 function DownloadButton(props) {
   const { uri, filename } = props;
 
-  const getImage = async () => {
-    const response = await axios.get(uri, { responseType: 'blob' });
-    FileDownload(response.data, filename);
+  const getImage = async (evnt) => {
+    evnt.preventDefault();
+    window.location = uri;
   };
 
   return (
