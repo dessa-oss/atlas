@@ -2,6 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 
+
 cd $BASEDIR && \
   stat run.env> /dev/null 2>&1 && \
   . ./run.env
@@ -40,25 +41,25 @@ else
   activate_path=venv/Scripts/activate
 fi
 
-if [[ -z "${offline_mode}" ]]; then
-  with_output_redirect echo "Checking for internet connection..."
-  if [[ "$OSTYPE" == "msys" ]]; then
-    with_output_redirect ping -n 3 4.2.2.1
-  else
-    with_output_redirect ping -c 3 4.2.2.1
-  fi
+# if [[ -z "${offline_mode}" ]]; then
+#   with_output_redirect echo "Checking for internet connection..."
+#   if [[ "$OSTYPE" == "msys" ]]; then
+#     with_output_redirect ping -n 3 4.2.2.1
+#   else
+#     with_output_redirect ping -c 3 4.2.2.1
+#   fi
 
-  if [ $? -ne 0 ]; then
-    offline_mode=OFFLINE
-  fi
-fi
+#   if [ $? -ne 0 ]; then
+#     offline_mode=OFFLINE
+#   fi
+# fi
 
-if [ "${offline_mode}" = "OFFLINE" ]; then
-  echo "No internet connection - using system packages only." >&2
-  pip_options="${pip_options} --no-index"
-else
-  echo "Internet connection detected, running in online mode." >&2
-fi
+# if [ "${offline_mode}" = "OFFLINE" ]; then
+#   echo "No internet connection - using system packages only." >&2
+#   pip_options="${pip_options} --no-index"
+# else
+#   echo "Internet connection detected, running in online mode." >&2
+# fi
 
 cd $BASEDIR && \
   . $activate_path && \

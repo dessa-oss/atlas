@@ -7,7 +7,7 @@ import ArtifactList from './ArtifactList';
 import AudioPlayer from './AudioPlayer';
 
 export default function JobSidebar(props) {
-  const { job } = props;
+  const { job, onCloseClickHandler } = props;
   if (job.job_id !== null) {
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
@@ -32,6 +32,13 @@ export default function JobSidebar(props) {
 
       return (
         <div className="job-sidebar">
+          <div className="sidebar-section-close-button-container">
+            <button
+              onClick={onCloseClickHandler}
+              className="sidebar-section-close-button i--icon-close"
+              type="button"
+            />
+          </div>
           <SidebarSection header="ARTIFACT VIEWER">
             <ArtifactViewer jobId={currentJob.job_id}>
               {selectViewer(selectedArtifact)}
@@ -45,7 +52,14 @@ export default function JobSidebar(props) {
     }
     return (
       <div className="job-sidebar">
-        <SidebarSection header="JOB DETAILS">
+        <div className="sidebar-section-close-button-container">
+          <button
+            onClick={onCloseClickHandler}
+            className="sidebar-section-close-button i--icon-close"
+            type="button"
+          />
+        </div>
+        <SidebarSection header="ARTIFACT VIEWER">
           <ArtifactViewer jobId={job.job_id}>
             <p>No artifacts for this job</p>
           </ArtifactViewer>
@@ -58,4 +72,5 @@ export default function JobSidebar(props) {
 
 JobSidebar.propTypes = {
   job: PropTypes.object.isRequired,
+  onCloseClickHandler: PropTypes.func.isRequired,
 };
