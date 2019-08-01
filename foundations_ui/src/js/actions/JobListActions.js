@@ -724,14 +724,14 @@ class JobListActions {
     return BaseActions.redirectRoute(url);
   }
 
-  static deleteAllJobs(jobIds) {
+  static deleteAllJobs(jobIds, callback) {
     let deletedJobRequests = jobIds.map(
       (jobId) => {
         let uri = `projects/dummy_project_name/job_listing/${jobId}`;
         return BaseActions.deleteBetaFromAPI(uri);
       },
     );
-    return Promise.all(deletedJobRequests).then(() => window.location.reload());
+    return Promise.all(deletedJobRequests).then(callback);
   }
 }
 

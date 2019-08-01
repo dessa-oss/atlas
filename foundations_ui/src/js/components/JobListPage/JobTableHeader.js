@@ -17,6 +17,7 @@ import DurationCell from './cells/DurationCell';
 import JobIDCell from './cells/JobIDCell';
 
 const isMetric = true;
+const isMetaData = true;
 
 class JobTableHeader extends Component {
   constructor(props) {
@@ -550,6 +551,7 @@ class JobTableHeader extends Component {
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
+            isMetaData={isMetaData}
           />
           <InputMetric
             header="Parameters"

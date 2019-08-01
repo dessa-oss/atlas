@@ -22,6 +22,7 @@ class JobHeader extends Component {
     this.getCurHiddenBubbles = this.getCurHiddenBubbles.bind(this);
     this.removeHiddenButtonCallback = this.removeHiddenButtonCallback.bind(this);
     this.cancelJobs = this.cancelJobs.bind(this);
+    this.onDeletedJobs = props.onDeletedJobs.bind(this);
     this.state = {
       project: this.props.project,
       jobs: this.props.jobs,
@@ -32,6 +33,10 @@ class JobHeader extends Component {
       removeFilter: this.props.removeFilter,
       hiddenBubbles: [],
     };
+  }
+
+  onDeletedJobs() {
+    console.log('jobs deleted');
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -160,7 +165,7 @@ class JobHeader extends Component {
       let jobIds = this.props.jobs
         .filter(job => job.status === 'running' || job.status === 'queued')
         .map(job => job.job_id);
-      return JobListActions.deleteAllJobs(jobIds);
+      return JobListActions.deleteAllJobs(jobIds, this.onDeletedJobs);
     }
   }
 
@@ -259,6 +264,7 @@ JobHeader.propTypes = {
   removeFilter: PropTypes.func,
   hiddenBubbles: PropTypes.array,
   jobs: PropTypes.array,
+  onDeletedJobs: PropTypes,
 };
 
 JobHeader.defaultProps = {
@@ -271,6 +277,7 @@ JobHeader.defaultProps = {
   removeFilter: () => {},
   hiddenBubbles: [],
   jobs: [],
+  onDeletedJobs: () => { window.location.reload(); },
 };
 
 export default JobHeader;

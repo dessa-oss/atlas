@@ -20,6 +20,7 @@ class InputMetric extends Component {
       searchText: '',
       toggleNumberFilter: this.props.toggleNumberFilter,
       filteredArray: this.props.filters,
+      isMetaData: this.props.isMetaData,
     };
   }
 
@@ -48,7 +49,8 @@ class InputMetric extends Component {
 
   render() {
     const {
-      header, hiddenInputParams, allInputParams, jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
+      header, hiddenInputParams, allInputParams, isMetaData,
+      jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
     } = this.state;
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
@@ -57,9 +59,14 @@ class InputMetric extends Component {
     );
 
     let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams, this.onMetricRowClick);
+
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
-      rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+      if (isMetaData) {
+        rows.push(<p key="no-rows-message" className="empty-columns-message">No jobs found</p>);
+      } else {
+        rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+      }
     }
 
     return (
@@ -99,6 +106,7 @@ InputMetric.propTypes = {
   searchText: PropTypes.string,
   toggleNumberFilter: PropTypes.func,
   filters: PropTypes.array,
+  isMetaData: PropTypes.bool,
 };
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
@@ -112,6 +120,7 @@ InputMetric.defaultProps = {
   searchText: '',
   toggleNumberFilter: () => {},
   filters: [],
+  isMetaData: false,
 };
 
 
