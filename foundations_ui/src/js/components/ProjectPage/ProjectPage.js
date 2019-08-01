@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Toolbar from '../common/Toolbar';
 import ProjectActions from '../../actions/ProjectActions';
@@ -20,12 +20,15 @@ class ProjectPage extends Component {
   }
 
   async componentDidMount() {
+    const updateTimeInMilli = 4000;
     await this.setState({ isMount: true });
+    this.interval = setInterval(() => this.getAllProjects(), updateTimeInMilli);
     this.getAllProjects();
   }
 
   componentWillUnmount() {
     this.setState({ isMount: false });
+    clearInterval(this.interval);
   }
 
   async getAllProjects() {

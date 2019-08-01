@@ -12,15 +12,11 @@ const BaseActions = {
     })
       .then(
         (res) => {
-          const status = res.status;
+          const { status } = res;
           const result = res.json();
           return Promise.all([status, result]);
         },
-      ).catch(
-        (err) => {
-          return null;
-        },
-      );
+      ).catch(() => { return null; });
   },
 
   postToAPI(url, body) {
@@ -31,15 +27,11 @@ const BaseActions = {
       credentials: 'include',
     }).then(
       (res) => {
-        const status = res.status;
+        const { status } = res;
         const result = res.json();
         return Promise.all([status, result]);
       },
-    ).catch(
-      (err) => {
-        return null;
-      },
-    );
+    ).catch(() => { return null; });
   },
 
   deleteBetaFromAPI(url, body) {
