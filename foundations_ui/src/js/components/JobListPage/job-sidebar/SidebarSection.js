@@ -20,7 +20,6 @@ function CloseButton(props) {
 export default function SidebarSection(props) {
   const { header, children, onCloseClickHandler } = props;
   const { enableCloseButton } = props;
-  console.log({ enableCloseButton });
   return (
     <div className="sidebar-section">
       <div className="sidebar-section-header">

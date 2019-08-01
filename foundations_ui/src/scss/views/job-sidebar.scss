@@ -33,7 +33,7 @@
 
 .sidebar-section-close-button{
     margin-right: 5px;
-    margin-top: -5px;
+    margin-bottom: 11px;
 }
 
 .sidebar-section-close-button-container{
@@ -114,9 +114,7 @@
     }
 }
 
-@media only screen and (max-width: $minimum-screen-width) {
-    .artifact-active-row {
-      background-color: $color-artifact-row-select!important;
-      background: $color-artifact-row-select!important;
-    }
+.artifact-active-row {
+    background-color: $color-artifact-row-select!important;
+    background: $color-artifact-row-select!important;
 }
