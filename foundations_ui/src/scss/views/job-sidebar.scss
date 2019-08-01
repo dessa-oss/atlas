@@ -83,7 +83,7 @@
         padding-left: 13px;
         padding-right: 13px;
         &:hover {
-            background-color: #999;
+            background-color: rgb(220, 220, 220);
         }
         p {
             display: inline-block;
@@ -113,7 +113,7 @@
 
 @media only screen and (max-width: $minimum-screen-width) {
     .artifact-active-row {
-      background-color: $color-job-row-select!important;
-      background: $color-job-row-select!important;
+      background-color: $color-artifact-row-select!important;
+      background: $color-artifact-row-select!important;
     }
 }
