@@ -6,16 +6,33 @@ import FileDownload from 'js-file-download';
 export default function Artifact(props) {
   const { artifact, onClick } = props;
   return (
-    <li id={artifact.filename} onClick={() => onClick(artifact)} onKeyDown={() => onClick(artifact)}>
-      <p>{artifact.filename}</p>
+    <li id={artifact.archive_key} onClick={() => onClick(artifact)} onKeyDown={() => onClick(artifact)}>
+      <FileNameFormatter artifact={artifact} />
       <DownloadButton className="download-button" uri={artifact.uri} filename={artifact.filename} />
     </li>
+  );
+}
+
+function FileNameFormatter(props) {
+  const { artifact } = props;
+
+  if (artifact.archive_key === artifact.filename) {
+    return (
+      <p>{artifact.filename}</p>
+    );
+  }
+  return (
+    <p>{artifact.archive_key}: {artifact.filename}</p>
   );
 }
 
 Artifact.propTypes = {
   artifact: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
+};
+
+FileNameFormatter.propTypes = {
+  artifact: PropTypes.object.isRequired,
 };
 
 function DownloadButton(props) {

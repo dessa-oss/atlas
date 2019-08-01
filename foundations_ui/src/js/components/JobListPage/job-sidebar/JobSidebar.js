@@ -13,7 +13,7 @@ export default function JobSidebar(props) {
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = (artifact) => {
-        artifactRowSelect.select(artifact.filename);
+        artifactRowSelect.select(artifact.archive_key);
         setArtifact(artifact);
       };
 
@@ -50,13 +50,6 @@ export default function JobSidebar(props) {
     }
     return (
       <div className="job-sidebar">
-        <div className="sidebar-section-close-button-container">
-          <button
-            onClick={onCloseClickHandler}
-            className="sidebar-section-close-button i--icon-close"
-            type="button"
-          />
-        </div>
         <SidebarSection header="ARTIFACT VIEWER" onCloseClickHandler={onCloseClickHandler} enableCloseButton>
           <ArtifactViewer jobId={job.job_id}>
             <p>No artifacts for this job</p>
