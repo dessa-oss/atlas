@@ -6,11 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from foundations_spec.helpers import set_up, tear_down
-from foundations_spec.helpers.spec import Spec
+from foundations_spec import *
 
 from foundations import cancel_queued_jobs
 
+@skip('completely deprecated - to be removed')
 class TestCancelQueuedJobs(Spec):
 
     @tear_down
