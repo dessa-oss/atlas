@@ -2,6 +2,7 @@
 
 exports[`Shallow Renders Start Time Cell 1`] = `
 <span
+  key="-"
   onMouseEnter={[Function]}
   onMouseLeave={[Function]}
 >

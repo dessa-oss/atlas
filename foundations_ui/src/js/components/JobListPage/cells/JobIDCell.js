@@ -35,7 +35,7 @@ class JobIDCell extends Component {
 
     // const href = '/'.concat(jobID);
     return (
-      <span>
+      <span key={jobID}>
         <span className={aClass}>{jobID}</span>
         <CopyToClipboard text={jobID}>
           <span

@@ -61,6 +61,7 @@ class StartTimeCell extends Component {
 
     return (
       <span
+        key={`${date}-${time}`}
         onMouseEnter={() => this.toggleExpand(true)}
         onMouseLeave={() => this.toggleExpand(false)}
       >

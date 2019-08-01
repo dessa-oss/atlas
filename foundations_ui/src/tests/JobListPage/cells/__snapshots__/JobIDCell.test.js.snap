@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Shallow Renders Job ID Cell 1`] = `
-<span>
+<span
+  key=""
+>
   <span
     className="job-id-cell row-0"
   />
