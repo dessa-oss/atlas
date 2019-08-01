@@ -13,6 +13,7 @@ exports[`Shallow Renders Job List Page 1`] = `
     isShowingMoreFilters={false}
     jobs={Array []}
     numProjects={0}
+    onDeletedJobs={[Function]}
     project={Object {}}
     removeFilter={[Function]}
   />
