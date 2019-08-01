@@ -98,11 +98,19 @@ class JobTable extends Component {
       this.handleRowSelection(job.job_id);
     };
 
+    const selectedJob = () => {
+      for (let i = 0; i < jobs.length; i += 1) {
+        if (jobs[i].job_id === this.state.selectedRow) {
+          return jobs[i];
+        }
+      }
+    };
+
     return (
       <div className="job-table-content">
         <div className="job-table-container">
           <JobSidebar
-            job={this.state.currentJob}
+            job={selectedJob() || { job_id: null }}
             onCloseClickHandler={() => this.closeSideBar()}
           />
           <JobTableHeader
