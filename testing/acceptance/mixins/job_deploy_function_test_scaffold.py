@@ -10,6 +10,22 @@ from subprocess import CompletedProcess
 
 from acceptance.mixins.metrics_fetcher import MetricsFetcher
 class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
+    
+    @abc.abstractmethod
+    def _deploy_job_with_defaults(self) -> CompletedProcess:
+        """Deploy a job using defaults and return the process."""
+
+    @abc.abstractmethod
+    def _deploy_job(self, job_directory: str, entrypoint: str, project_name: str, env: str, params: dict) -> CompletedProcess:
+        """Deploy a job and return the process."""
+
+    @abc.abstractmethod
+    def _uuid(self, driver_process: CompletedProcess) -> str:
+        """Extract the uuid from a deployed job."""
+
+    @abc.abstractmethod
+    def _log_level(self) -> str:
+        """Return the log level."""
 
     @property
     def foundations_global_configs_directory(self):
@@ -76,14 +92,6 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
                 }
             ]
         }
-
-    @abc.abstractmethod
-    def _deploy_job(self, job_directory: str, entrypoint: str, project_name: str, env: str, params: dict) -> CompletedProcess:
-        """Deploy a job via the CLI and return the process."""
-
-    @abc.abstractmethod
-    def _uuid(self, driver_process: CompletedProcess) -> str:
-        """Extract the uuid from a deployed job"""
 
     def _set_up(self):
         import os
