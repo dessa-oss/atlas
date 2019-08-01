@@ -17,18 +17,33 @@
 
     .job-cell {
       width: 20.5%!important;
-      &:first-child, &:nth-child(4) {
+      &:first-child { // delete 
+        width: 7%!important;
+        line-height: 25px;
+        p {
+          margin: 0 10px!important;
+        }
+      }
+      &:nth-child(2) { // job id
+        width: 10.1%!important;
+        padding-right: 9.9%;
+        p {
+          min-width: 100%;
+        }
+        
+      }
+      &:nth-child(3) { // launched at
+        width: 30%!important;
+      }
+      &:nth-child(4) { // status
         width: 9%!important;
         line-height: 25px;
       }
-      &:nth-child(2) {
-        width: 12.1%!important;
-        padding-right: 9.9%;
-
-        p { 
-          margin: 0 5px 0 5px;
-          min-width: 100%;
-        }
+      &:nth-child(5) { // duration
+        width: 20%!important;
+      }
+      &:nth-child(6) { // user
+        width: 14%!important;
       }
     }
 
@@ -38,12 +53,29 @@
       max-width: unset;
       padding: unset;
       margin: unset;
-      &:first-child, &:nth-child(4) {
+      &:first-child { // delete
+        width: 7%!important;
+        min-width: 7%!important;
+      }
+      &:nth-child(2) { // job id
+        width: 20%!important;
+        min-width: 20%!important;
+      }
+      &:nth-child(3) { // launched at
+        width: 30%!important;
+        min-width: 30%!important;
+      }
+      &:nth-child(4) { // status
         width: 9%!important;
         min-width: 9%!important;
       }
-      &:nth-child(2) {
-        width: 22%!important;
+      &:nth-child(5) { // duration
+        width: 20%!important;
+        min-width: 20%!important;
+      }
+      &:nth-child(6) { // user
+        width: 14%!important;
+        min-width: 14%!important;
       }
     }
 
