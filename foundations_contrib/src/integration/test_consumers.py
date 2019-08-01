@@ -110,7 +110,7 @@ class TestConsumers(unittest.TestCase):
         tracked_projects = ProjectListing.list_projects(self._redis)
         project_listing = tracked_projects[0]
         self.assertEqual(self._project_name, project_listing['name'])
-        self.assertTrue(current_time - project_listing['created_at'] < 0.5)
+        self.assertLess(current_time - project_listing['created_at'], 1)
 
         job_user_key = 'jobs:{}:user'.format(self._job_id)
         job_user = self._redis.get(job_user_key)
@@ -119,7 +119,7 @@ class TestConsumers(unittest.TestCase):
         creation_time_key = 'jobs:{}:creation_time'.format(self._job_id)
         string_creation_time = self._redis.get(creation_time_key)
         creation_time = float(string_creation_time.decode())
-        self.assertTrue(current_time - creation_time < 0.5)
+        self.assertLess(current_time - creation_time, 1)
 
         input_parameters_key = 'jobs:{}:input_parameters'.format(self._job_id)
         input_parameters = self._get_and_deserialize(input_parameters_key)
@@ -163,7 +163,7 @@ class TestConsumers(unittest.TestCase):
         start_time_key = 'jobs:{}:start_time'.format(self._job_id)
         string_start_time = self._redis.get(start_time_key)
         start_time = float(string_start_time.decode())
-        self.assertTrue(current_time - start_time < 0.1)
+        self.assertLess(current_time - start_time, 0.1)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
@@ -189,7 +189,7 @@ class TestConsumers(unittest.TestCase):
         completed_time_key = 'jobs:{}:completed_time'.format(self._job_id)
         string_completed_time = self._redis.get(completed_time_key)
         completed_time = float(string_completed_time.decode())
-        self.assertTrue(current_time - completed_time < 0.5)
+        self.assertLess(current_time - completed_time, 1)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
@@ -225,7 +225,7 @@ class TestConsumers(unittest.TestCase):
         completed_time_key = 'jobs:{}:completed_time'.format(self._job_id)
         string_completed_time = self._redis.get(completed_time_key)
         completed_time = float(string_completed_time.decode())
-        self.assertTrue(current_time - completed_time < 0.5)
+        self.assertLess(current_time - completed_time, 1)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
@@ -257,7 +257,7 @@ class TestConsumers(unittest.TestCase):
         job_metrics = [deserialize(data) for data in job_metrics]
         first_job_metric = list(job_metrics)[0]
 
-        self.assertTrue(current_time - first_job_metric[0] < 0.5)
+        self.assertLess(current_time - first_job_metric[0], 1)
         self.assertEqual(key, first_job_metric[1])
         self.assertEqual(value, first_job_metric[2])
 
