@@ -19,6 +19,7 @@ export default function JobSidebar(props) {
 
       const [currentJob, setJob] = useState(job);
       if (job !== currentJob) {
+        artifactRowSelect.deselect();
         setArtifact(job.artifacts[0]);
         setJob(job);
       }
