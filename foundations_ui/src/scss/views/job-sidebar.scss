@@ -4,7 +4,7 @@
     position: absolute;
     z-index: 2;
     top: 0;
-    right: 8px;
+    right: 0px;
     height: 99%;
     width: 32%;
     box-shadow: -10px 10px 5px -4px rgba(0,0,0,0.19);
@@ -37,7 +37,6 @@
 }
 
 .sidebar-section-close-button-container{
-    background-color: $color-sidebar-header;
     text-align: right;
     padding-top: 5px;
     flex: 1;
