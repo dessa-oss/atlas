@@ -5,13 +5,14 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: 33%;
-  height: 100%;
+  width: 33.22%;
+  height: 98%;
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   position: relative;
   overflow: hidden;
+  border-bottom: 4px solid #0490f6;
   &:first-child {
 
     .job-cell {
