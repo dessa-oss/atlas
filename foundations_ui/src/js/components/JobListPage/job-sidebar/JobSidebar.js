@@ -5,13 +5,17 @@ import ArtifactViewer from './ArtifactViewer';
 import ImageViewer from './ImageViewer';
 import ArtifactList from './ArtifactList';
 import AudioPlayer from './AudioPlayer';
+import artifactRowSelect from '../../../../scss/jquery/artifactRowSelect';
 
 export default function JobSidebar(props) {
   const { job, onCloseClickHandler } = props;
   if (job.job_id !== null) {
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
-      const handleArtifactClick = artifact => setArtifact(artifact);
+      const handleArtifactClick = (artifact) => {
+        artifactRowSelect.select(artifact.filename);
+        setArtifact(artifact);
+      };
 
       const [currentJob, setJob] = useState(job);
       if (job !== currentJob) {

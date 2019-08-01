@@ -84,7 +84,6 @@
         padding-right: 13px;
         &:hover {
             background-color: #999;
-            color: #fff;
         }
         p {
             display: inline-block;
@@ -109,5 +108,12 @@
         .download-button {
             display: inline;
         }
+    }
+}
+
+@media only screen and (max-width: $minimum-screen-width) {
+    .artifact-active-row {
+      background-color: $color-job-row-select!important;
+      background: $color-job-row-select!important;
     }
 }
