@@ -15,29 +15,32 @@
 }
 .sidebar-section {
     position: relative;
-    top: -15px;
     height: $sidebar-section-height;
     padding-bottom: 0px;
 }
 
 .sidebar-section-header {
+    display: flex;
     position: static;
     background-color: $color-sidebar-header;
     height: $section-header-height;
+    align-items: center;
     .sidebar-section-header-text {
         padding-left: 13px;
         font-size: 14px;
-        padding-top: 10px;
     }
 }
 
 .sidebar-section-close-button{
     margin-right: 5px;
+    margin-top: -5px;
 }
 
 .sidebar-section-close-button-container{
     background-color: $color-sidebar-header;
     text-align: right;
+    padding-top: 5px;
+    flex: 1;
 }
 
 .artifact-viewer {

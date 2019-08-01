@@ -32,19 +32,12 @@ export default function JobSidebar(props) {
 
       return (
         <div className="job-sidebar">
-          <div className="sidebar-section-close-button-container">
-            <button
-              onClick={onCloseClickHandler}
-              className="sidebar-section-close-button i--icon-close"
-              type="button"
-            />
-          </div>
-          <SidebarSection header="ARTIFACT VIEWER">
+          <SidebarSection header="ARTIFACT VIEWER" onCloseClickHandler={onCloseClickHandler} enableCloseButton>
             <ArtifactViewer jobId={currentJob.job_id}>
               {selectViewer(selectedArtifact)}
             </ArtifactViewer>
           </SidebarSection>
-          <SidebarSection header="FILES">
+          <SidebarSection header="FILES" onCloseClickHandler={onCloseClickHandler} enableCloseButton={false}>
             <ArtifactList artifacts={job.artifacts} handleClick={handleArtifactClick} />
           </SidebarSection>
         </div>
@@ -59,7 +52,7 @@ export default function JobSidebar(props) {
             type="button"
           />
         </div>
-        <SidebarSection header="ARTIFACT VIEWER">
+        <SidebarSection header="ARTIFACT VIEWER" onCloseClickHandler={onCloseClickHandler} enableCloseButton>
           <ArtifactViewer jobId={job.job_id}>
             <p>No artifacts for this job</p>
           </ArtifactViewer>
