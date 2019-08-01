@@ -13,7 +13,7 @@ export default function JobSidebar(props) {
     if (job.artifacts && job.artifacts.length > 0) {
       const [selectedArtifact, setArtifact] = useState(job.artifacts[0]);
       const handleArtifactClick = (artifact) => {
-        artifactRowSelect.select(artifact.filename);
+        artifactRowSelect.select(artifact.archive_key);
         setArtifact(artifact);
       };
 
