@@ -5,9 +5,11 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from acceptance.mixins.metrics_fetcher import MetricsFetcher
+import abc
+from subprocess import CompletedProcess
 
-class JobDeployFunctionTestScaffold(MetricsFetcher):
+from acceptance.mixins.metrics_fetcher import MetricsFetcher
+class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
 
     @property
     def foundations_global_configs_directory(self):
@@ -74,6 +76,14 @@ class JobDeployFunctionTestScaffold(MetricsFetcher):
                 }
             ]
         }
+
+    @abc.abstractmethod
+    def _deploy_job(self, job_directory: str, entrypoint: str, project_name: str, env: str, params: dict) -> CompletedProcess:
+        """Deploy a job via the CLI and return the process."""
+
+    @abc.abstractmethod
+    def _uuid(self, driver_process: CompletedProcess) -> str:
+        """Extract the uuid from a deployed job"""
 
     def _set_up(self):
         import os
