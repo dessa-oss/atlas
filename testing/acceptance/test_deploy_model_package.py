@@ -9,7 +9,7 @@ from foundations_spec import *
 from acceptance.mixins.model_serving_configurator import ModelServingConfigurator
 from acceptance.mixins.model_package_deployer import ModelPackageDeployer
 
-
+@skip('completely deprecated - to be removed along with implementation')
 class TestDeployModelPackage(ModelServingConfigurator, ModelPackageDeployer):
     @let
     def job_id(self):

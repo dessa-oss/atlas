@@ -9,6 +9,7 @@ from foundations_spec import *
 import acceptance.fixtures.train_model_package as train_model_package
 from acceptance.mixins.model_serving_configurator import ModelServingConfigurator
 
+@skip('completely deprecated - to be removed along with implementation')
 class TestRunModelPredictions(ModelServingConfigurator):
 
     @set_up
