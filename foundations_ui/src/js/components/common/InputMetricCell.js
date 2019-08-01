@@ -32,6 +32,21 @@ class InputMetricCell extends Component {
     });
   }
 
+  getDisplayText(value) {
+    if (value.key !== undefined) { // we know its a react element
+      if (value.key === null) { // the react element does not have a value set to display
+        return '';
+      }
+      return value.key;
+    }
+    return value; // typical content
+  }
+
+  isContentOverMaxLength(displayText) {
+    const maxCellCharacterLength = 13;
+    return displayText.toString().length > maxCellCharacterLength || displayText.length > maxCellCharacterLength;
+  }
+
   render() {
     const {
       value, isError, cellType, rowNumber, expand, hoverable, jobID,
@@ -39,26 +54,14 @@ class InputMetricCell extends Component {
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
     const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber, jobID);
-
     let hover;
 
     if (expand) {
-      const maxCellCharacterLength = 13;
-      const overMaxLength = value.toString().length > maxCellCharacterLength || value.length > maxCellCharacterLength;
+      const displayText = this.getDisplayText(value);
+      const overMaxLength = this.isContentOverMaxLength(displayText);
 
       if (overMaxLength && hoverable) {
-        if (value.props && value.props.children[0]) {
-          const elementChildren = value.props.children[0];
-          const isJobID = elementChildren.props.className.includes('job-id');
-          if (isJobID) {
-            const tmpJobID = elementChildren.props.children;
-            hover = <HoverCell textToRender={tmpJobID} />;
-          } else {
-            hover = <HoverCell textToRender={value} />;
-          }
-        } else {
-          hover = <HoverCell textToRender={value} />;
-        }
+        hover = <HoverCell textToRender={displayText} />;
       }
     }
 

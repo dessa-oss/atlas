@@ -8,6 +8,7 @@ import LoginPage from './LoginPage/LoginPage';
 import ContactPage from './ContactPage/ContactPage';
 import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
+import 'react-toastify/dist/ReactToastify.css';
 
 toast.configure(); // single instance to improve rendering of toast
 

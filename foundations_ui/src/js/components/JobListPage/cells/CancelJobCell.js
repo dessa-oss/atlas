@@ -9,7 +9,7 @@ function CancelJobCell(props) {
   const btnID = `del-btn-${jobID}`;
 
   function notifyDeleted() {
-    toast.success('Job successfully deleted', {
+    toast.info('Job successfully deleted', {
       autoClose: 3000,
       draggable: false,
     });
@@ -42,6 +42,7 @@ function CancelJobCell(props) {
 
   return (
     <span
+      key={btnID}
       className="cancel-cell"
       style={{ cursor: 'pointer', width: '1em' }}
     >
