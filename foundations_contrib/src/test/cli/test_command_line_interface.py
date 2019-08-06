@@ -209,11 +209,6 @@ class TestCommandLineInterface(Spec):
         self.print_mock.assert_called_with('Running Foundations version 7.3.3')
 
     @patch('foundations_contrib.cli.scaffold.Scaffold')
-    def test_scaffold_creates_scaffold_with_project_name(self, scaffold_mock):
-        CommandLineInterface(['init', 'my project']).execute()
-        scaffold_mock.assert_called_with('my project')
-
-    @patch('foundations_contrib.cli.scaffold.Scaffold')
     def test_scaffold_creates_scaffold_with_project_name_different_project(self, scaffold_mock):
         CommandLineInterface(['init', 'my different project']).execute()
         scaffold_mock.assert_called_with('my different project')
