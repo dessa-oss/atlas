@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from integration_test.test_can_deploy_model_server import TestCanDeployModelServer
+from integration.test_can_deploy_model_server import TestCanDeployModelServer

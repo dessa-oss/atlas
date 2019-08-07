@@ -14,7 +14,7 @@ class TestCanDeployModelServer(Spec):
     def set_up(self):
         import yaml
 
-        config_path = 'integration_test/fixtures/model-server/config/local.config.yaml'
+        config_path = 'integration/fixtures/model-server/config/local.config.yaml'
         config_yaml = yaml.dump({
             'job_deployment_env': 'local', 
             'results_config': {
@@ -34,7 +34,7 @@ class TestCanDeployModelServer(Spec):
     @let
     def deployment(self):
         import foundations
-        return foundations.deploy(project_name='test', env='local', entrypoint='project_code.driver', job_directory='integration_test/fixtures/model-server', params=None)
+        return foundations.deploy(project_name='test', env='local', entrypoint='project_code.driver', job_directory='integration/fixtures/model-server', params=None)
 
     @let
     def job_id(self):
@@ -49,7 +49,7 @@ class TestCanDeployModelServer(Spec):
         import subprocess
         from foundations_contrib.global_state import redis_connection
 
-        subprocess.call(['./build.sh'])
+        subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
         subprocess.call([
             'docker', 
             'run',
