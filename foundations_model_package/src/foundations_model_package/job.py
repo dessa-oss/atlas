@@ -14,12 +14,22 @@ class Job(object):
         return self._id
 
     def root(self):
-        return f'/archive/archive/{self._id}/artifacts'
+        return self._root()
 
     def manifest(self):
+        import os.path as path
         import yaml
 
-        with open(f'/archive/archive/{self._id}/artifacts/foundations_package_manifest.yaml', 'r') as manifest_file:
+        if not path.exists(self._manifest_path()):
+            raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
+
+        with open(self._manifest_path(), 'r') as manifest_file:
             manifest = yaml.load(manifest_file)
 
         return manifest
+
+    def _root(self):
+        return f'/archive/archive/{self._id}/artifacts'
+
+    def _manifest_path(self):
+        return f'{self._root()}/foundations_package_manifest.yaml'

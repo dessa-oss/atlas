@@ -14,6 +14,7 @@ class TestJob(Spec):
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file = let_mock()
     mock_yaml_load = let_patch_mock_with_conditional_return('yaml.load')
+    mock_path_exists = let_patch_mock_with_conditional_return('os.path.exists')
 
     @let
     def job_id(self):
@@ -25,8 +26,10 @@ class TestJob(Spec):
 
     @set_up
     def set_up(self):
-        manifest_path = f'{self.job_root}/foundations_package_manifest.yaml'
-        self.mock_open.return_when(self.mock_file, manifest_path, 'r')
+        self.manifest_path = f'{self.job_root}/foundations_package_manifest.yaml'
+        self.mock_open.return_when(self.mock_file, self.manifest_path, 'r')
+
+        self.mock_path_exists.return_when(True, self.manifest_path)
 
         self.mock_file.__enter__ = self._mock_enter
         self.mock_file.__exit__ = self._mock_exit
@@ -45,6 +48,17 @@ class TestJob(Spec):
 
         job = Job(self.job_id)
         self.assertEqual(loaded_yaml, job.manifest())
+
+    def test_manifest_raises_exception_if_file_does_not_exist(self):
+        self.mock_path_exists.clear()
+        self.mock_path_exists.return_when(False, self.manifest_path)
+        
+        job = Job(self.job_id)
+        
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+        
+        self.assertIn('Manifest file, foundations_package_manifest.yaml not found!', error_context.exception.args)
 
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file
