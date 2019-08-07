@@ -30,6 +30,17 @@ def _module_name_and_function_name(manifest):
 
     return prediction_definition['module'], prediction_definition['function']
 
+def _move_to_job_directory(job):
+    import sys
+    import os
+
+    root_of_the_job = job.root()
+    if not os.path.exists(root_of_the_job):
+        raise Exception(f'Job, {job.id()} not found!')
+
+    sys.path.insert(0, root_of_the_job)
+    os.chdir(root_of_the_job)
+
 def main():
     _hack_for_cleaning_up_logs()
 
@@ -38,17 +49,6 @@ def main():
     api = Api(app)
 
     job = Job(os.environ['JOB_ID'])
-
-    def move_to_job_directory():
-        import sys
-        import os
-
-        root_of_the_job = job.root()
-        if not os.path.exists(root_of_the_job):
-            raise Exception(f'Job, {job.id()} not found!')
-
-        sys.path.insert(0, root_of_the_job)
-        os.chdir(root_of_the_job)
 
     def add_module_to_sys_path(module_name):
         import sys
@@ -60,11 +60,11 @@ def main():
             module_directory = f"{job.root()}/{module_directory}"
             sys.path.insert(0, module_directory)
 
-    def load_prediction_function(manifest):
+    def _load_prediction_function(job):
         import importlib
 
-        move_to_job_directory()
-        module_name, function_name = _module_name_and_function_name(manifest)
+        _move_to_job_directory(job)
+        module_name, function_name = _module_name_and_function_name(job.manifest())
         add_module_to_sys_path(module_name)
 
         try:
@@ -87,7 +87,7 @@ def main():
         job_id_to_track = job.id()
         redis_connection.incr(f'models:{job_id_to_track}:served')
 
-    prediction_function = load_prediction_function(job.manifest())
+    prediction_function = _load_prediction_function(job)
     indicate_model_ran_to_redis()
 
     class ServeModel(Resource):
