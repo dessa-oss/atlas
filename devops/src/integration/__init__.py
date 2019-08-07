@@ -1,0 +1,3 @@
+import foundations
+
+from integration.test_can_ping_service import TestCanPingService
