@@ -19,7 +19,10 @@ class TestCanPingService(Spec):
         result = _run_command(['integration/fixtures/get_service_ip.sh'])
         ip_addr = result.stdout.decode().strip()
         time.sleep(2)
-        self.assertEqual('{"message":"Hello"}',requests.get(f'http://{ip_addr}').text.strip())
+        message = requests.get(f'http://{ip_addr}').text
+        if 'DOCTYPE' in message:
+            print(message)
+        self.assertEqual('Test Passed', message)
 
 
 def _run_command(command: List[str]) -> subprocess.CompletedProcess:
