@@ -31,6 +31,17 @@ class TestCanDeployModelServer(Spec):
         # ensure deployment set
         self.deployment
 
+    @tear_down
+    def tear_down(self):
+        import subprocess
+
+        subprocess.call(['docker', 'stop', self.integration_test_container_name])
+        subprocess.call(['docker', 'rm', self.integration_test_container_name])
+
+    @let
+    def integration_test_container_name(self):
+        return 'foundations-integration-test-model-server'
+
     @let
     def deployment(self):
         import foundations
@@ -50,34 +61,44 @@ class TestCanDeployModelServer(Spec):
         from foundations_contrib.global_state import redis_connection
 
         subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
-        subprocess.call([
+        docker_process_return_code = subprocess.call([
             'docker', 
             'run',
             '-p', '31333:80',
             '-d',
-            '--rm',
-            '--name', 'foundations-integration-test-model-server', 
+            '--name', self.integration_test_container_name, 
             '-v', f'{self.foundations_job_data_path}:/archive', 
             '-e', f'JOB_ID={self.job_id}', 
             'docker.shehanigans.net/foundations-model-package'
         ])
+
+        if docker_process_return_code != 0:
+            self.fail('docker process for model package failed')
+
         self._wait_for_server()
         result = self._try_post()
-        subprocess.call(['docker', 'stop', 'foundations-integration-test-model-server'])
 
         self.assertEqual({'a': 2, 'b': 4}, result)
         self.assertEqual('1', redis_connection.get(f'models:{self.job_id}:served').decode())
 
     def _wait_for_server(self):
+        import subprocess
         import requests
         import time
 
-        while True:
+        start_time = time.time()
+
+        while time.time() - start_time < 15:
             try:
                 requests.get('http://localhost:31333')
-                break
+                return
             except:
                 time.sleep(0.200)
+
+        container_logs_process = subprocess.run(['docker', 'logs', self.integration_test_container_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        container_logs = container_logs_process.stdout.decode()
+
+        self.fail(f'server never started:\n{container_logs}')
 
     def _try_post(self):
         import requests
