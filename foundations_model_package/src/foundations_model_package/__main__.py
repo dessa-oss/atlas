@@ -27,7 +27,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 api = Api(app)
 
-job = Job(os.environ)
+job = Job(os.environ['JOB_ID'])
 
 def job_manifest():
     import yaml
