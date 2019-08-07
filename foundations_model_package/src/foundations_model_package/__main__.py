@@ -29,33 +29,8 @@ api = Api(app)
 
 job = Job(os.environ['JOB_ID'])
 
-def job_manifest():
-    import yaml
-    import os.path
-
-    manifest_path = f'{job.root()}/foundations_package_manifest.yaml'
-
-    if not os.path.exists(manifest_path):
-        raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
-
-    with open(manifest_path, 'r') as manifest_file:
-        try: 
-            manifest = yaml.load(manifest_file.read())
-        except yaml.parser.ParserError:
-            raise Exception('Manifest file was not a valid YAML file!')
-
-    prediction_definition = manifest.get('entrypoints', {}).get('predict', {})
-
-    if not 'module' in prediction_definition:
-        raise Exception('Prediction module name missing from manifest file!')
-    
-    if not 'function' in prediction_definition:
-        raise Exception('Prediction function name missing from manifest file!')
-
-    return manifest
-
 def module_name_and_function_name():
-    manifest = job_manifest()
+    manifest = job.manifest()
     prediction_definition = manifest['entrypoints']['predict']
 
     return prediction_definition['module'], prediction_definition['function']

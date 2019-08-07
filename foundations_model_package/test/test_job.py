@@ -107,6 +107,47 @@ class TestJob(Spec):
 
         self.assertIn('Prediction module name missing from manifest file!', error_context.exception.args)
 
+    def test_manifest_raises_exception_if_prediction_function_name_missing(self):
+        loaded_yaml = {
+            'entrypoints': {
+                'predict': {
+                    'module': self.module_name
+                }
+            }
+        }
+        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
+
+        job = Job(self.job_id)
+
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+
+        self.assertIn('Prediction function name missing from manifest file!', error_context.exception.args)
+
+    def test_manifest_raises_exception_if_predict_entrypoint_is_missing(self):
+        loaded_yaml = {
+            'entrypoints': {}
+        }
+        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
+
+        job = Job(self.job_id)
+
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+
+        self.assertIn('Prediction entrypoint missing from manifest file!', error_context.exception.args)
+
+    def test_manifest_raises_exception_if_entrypoints_section_is_missing(self):
+        loaded_yaml = {}
+        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
+
+        job = Job(self.job_id)
+
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+
+        self.assertIn('Entrypoints section missing from manifest file!', error_context.exception.args)
+
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file
 
