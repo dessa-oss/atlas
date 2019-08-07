@@ -20,8 +20,6 @@ class TestCanPingService(Spec):
         ip_addr = result.stdout.decode().strip()
         time.sleep(2)
         message = requests.get(f'http://{ip_addr}').text
-        if 'DOCTYPE' in message:
-            print(message)
         self.assertEqual('Test Passed', message)
 
 
