@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def main():
     import os
     from foundations_model_package.job import Job
+    from foundations_model_package.redis_actions import indicate_model_ran_to_redis
 
     _hack_for_cleaning_up_logs()
 
@@ -17,7 +18,7 @@ def main():
 
     model_serving_resource = _model_serving_resource(prediction_function)
     app = _flask_app(model_serving_resource)
-    _indicate_model_ran_to_redis(job.id())
+    indicate_model_ran_to_redis(job.id())
 
     print('Model server running successfully')
 
@@ -109,10 +110,6 @@ def _load_prediction_function(job):
         raise Exception('Prediction function defined in manifest file could not be found!')
 
     return function
-
-def _indicate_model_ran_to_redis(job_id_to_track):
-    from foundations_contrib.global_state import redis_connection
-    redis_connection.incr(f'models:{job_id_to_track}:served')
 
 if __name__ == '__main__':
     main()
