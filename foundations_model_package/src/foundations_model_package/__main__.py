@@ -1,16 +1,24 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 import click
+from flask import Flask, request
+from flask_cors import CORS
+from flask_restful import Resource, Api
+import os
+import logging
+
+from foundations_model_package.job import Job
 
 def break_click_echo(*args, **kwargs):
     pass
 
 click.echo = break_click_echo
 click.secho = break_click_echo
-
-from flask import Flask, request
-from flask_cors import CORS
-from flask_restful import Resource, Api
-import os
-import logging
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
@@ -19,18 +27,13 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True)
 api = Api(app)
 
-def job_id(environment):
-    return environment['JOB_ID']
-
-def job_root(environment):
-    job_id = environment['JOB_ID']
-    return '/archive/archive/{}/artifacts'.format(job_id)
+job = Job(os.environ)
 
 def job_manifest():
     import yaml
     import os.path
 
-    manifest_path = f'{job_root(os.environ)}/foundations_package_manifest.yaml'
+    manifest_path = f'{job.root()}/foundations_package_manifest.yaml'
 
     if not os.path.exists(manifest_path):
         raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
@@ -61,9 +64,9 @@ def move_to_job_directory():
     import sys
     import os
 
-    root_of_the_job = job_root(os.environ)
+    root_of_the_job = job.root()
     if not os.path.exists(root_of_the_job):
-        raise Exception(f'Job, {job_id(os.environ)} not found!')
+        raise Exception(f'Job, {job.id()} not found!')
 
     sys.path.insert(0, root_of_the_job)
     os.chdir(root_of_the_job)
@@ -75,7 +78,7 @@ def add_module_to_sys_path(module_name):
     module_path = module_name.replace('.', '/')
     module_directory = os.path.dirname(module_path)
     if module_directory:
-        module_directory = f"{job_root(os.environ)}/{module_directory}"
+        module_directory = f"{job.root()}/{module_directory}"
         sys.path.insert(0, module_directory)
 
 def load_prediction_function():
@@ -102,7 +105,7 @@ def load_prediction_function():
 def indicate_model_ran_to_redis():
     from foundations_contrib.global_state import redis_connection
 
-    job_id_to_track = job_id(os.environ)
+    job_id_to_track = job.id()
     redis_connection.incr(f'models:{job_id_to_track}:served')
 
 prediction_function = load_prediction_function()

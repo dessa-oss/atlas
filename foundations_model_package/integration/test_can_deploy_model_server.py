@@ -8,6 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import foundations
 
+import threading
+
 class TestCanDeployModelServer(Spec):
 
     @set_up
@@ -28,15 +30,12 @@ class TestCanDeployModelServer(Spec):
         with open(config_path, 'w+') as file:
             file.write(config_yaml)
 
-        # ensure deployment set
-        self.deployment
-
     @tear_down
     def tear_down(self):
         import subprocess
 
-        subprocess.call(['docker', 'stop', self.integration_test_container_name])
-        subprocess.call(['docker', 'rm', self.integration_test_container_name])
+        subprocess.call(['docker', 'stop', self.integration_test_container_name], stderr=subprocess.DEVNULL)
+        subprocess.call(['docker', 'rm', self.integration_test_container_name], stderr=subprocess.DEVNULL)
 
     @let
     def integration_test_container_name(self):
@@ -57,10 +56,15 @@ class TestCanDeployModelServer(Spec):
         return os.path.expanduser('~/.foundations/job_data')
 
     def test_can_deploy_server(self):
+        import threading
         import subprocess
         from foundations_contrib.global_state import redis_connection
 
-        subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
+        return_code = self._build_image()
+        self.assertEqual(0, return_code)
+
+        self._deploy_job()
+
         docker_process_return_code = subprocess.call([
             'docker', 
             'run',
@@ -111,3 +115,10 @@ class TestCanDeployModelServer(Spec):
     def _get_current_ip(self):
         from foundations_spec.extensions import get_network_address
         return get_network_address('enp3s0')
+
+    def _deploy_job(self):
+        return self.deployment
+
+    def _build_image(self):
+        import subprocess
+        return subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
