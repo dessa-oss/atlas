@@ -23,14 +23,14 @@ class Job(object):
             raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
 
         with open(self._manifest_path(), 'r') as manifest_file:
-            manifest = self._manifest_from_file(manifest_file)
+            model_package_manifest = self._manifest_from_file(manifest_file)
 
-        predict_endpoint_information = manifest['entrypoints']['predict']
+        predict_endpoint_information = model_package_manifest['entrypoints']['predict']
 
         if 'module' not in predict_endpoint_information:
             raise Exception('Prediction module name missing from manifest file!')
 
-        return manifest
+        return model_package_manifest
 
     def _root(self):
         return f'/archive/archive/{self._id}/artifacts'
