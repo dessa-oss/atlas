@@ -14,15 +14,10 @@ class TestJob(Spec):
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file = let_mock()
     mock_yaml_load = let_patch_mock_with_conditional_return('yaml.load')
+    mock_manifest = let_mock()
     mock_path_exists = let_patch_mock_with_conditional_return('os.path.exists')
-
-    @let
-    def module_name(self):
-        return self.faker.word()
-
-    @let
-    def function_name(self):
-        return self.faker.word()
+    mock_manifest_validator_class = let_patch_mock_with_conditional_return('foundations_model_package.manifest_validator.ManifestValidator')
+    mock_manifest_validator = Mock()
 
     @let
     def job_id(self):
@@ -37,10 +32,14 @@ class TestJob(Spec):
         self.manifest_path = f'{self.job_root}/foundations_package_manifest.yaml'
         self.mock_open.return_when(self.mock_file, self.manifest_path, 'r')
 
-        self.mock_path_exists.return_when(True, self.manifest_path)
-
         self.mock_file.__enter__ = self._mock_enter
         self.mock_file.__exit__ = self._mock_exit
+
+        self.mock_path_exists.return_when(True, self.manifest_path)
+
+        self.mock_manifest_validator_class.return_when(self.mock_manifest_validator, self.mock_manifest)
+
+        self.mock_yaml_load.return_when(self.mock_manifest, self.mock_file)
 
     def test_id_returns_id_from_environment(self):
         job = Job(self.job_id)
@@ -51,19 +50,8 @@ class TestJob(Spec):
         self.assertEqual(self.job_root, job.root())
 
     def test_manifest_returns_parsed_output_from_yaml_file(self):
-        loaded_yaml = {
-            'entrypoints': {
-                'predict': {
-                    'module': self.module_name,
-                    'function': self.function_name
-                }
-            }
-        }
-
-        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
-
         job = Job(self.job_id)
-        self.assertEqual(loaded_yaml, job.manifest())
+        self.assertEqual(self.mock_manifest, job.manifest())
 
     def test_manifest_raises_exception_if_file_does_not_exist(self):
         self.mock_path_exists.clear()
@@ -90,63 +78,13 @@ class TestJob(Spec):
 
         self.assertIn('Manifest file was not a valid YAML file!', error_context.exception.args)
 
-    def test_manifest_raises_exception_if_prediction_module_name_missing(self):
-        loaded_yaml = {
-            'entrypoints': {
-                'predict': {
-                    'function': self.function_name
-                }
-            }
-        }
-        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
+    def test_manifest_validator_called_when_loading_manifest(self):
+        self.mock_manifest_validator.validate_manifest.reset_mock()
 
         job = Job(self.job_id)
+        job.manifest()
 
-        with self.assertRaises(Exception) as error_context:
-            job.manifest()
-
-        self.assertIn('Prediction module name missing from manifest file!', error_context.exception.args)
-
-    def test_manifest_raises_exception_if_prediction_function_name_missing(self):
-        loaded_yaml = {
-            'entrypoints': {
-                'predict': {
-                    'module': self.module_name
-                }
-            }
-        }
-        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
-
-        job = Job(self.job_id)
-
-        with self.assertRaises(Exception) as error_context:
-            job.manifest()
-
-        self.assertIn('Prediction function name missing from manifest file!', error_context.exception.args)
-
-    def test_manifest_raises_exception_if_predict_entrypoint_is_missing(self):
-        loaded_yaml = {
-            'entrypoints': {}
-        }
-        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
-
-        job = Job(self.job_id)
-
-        with self.assertRaises(Exception) as error_context:
-            job.manifest()
-
-        self.assertIn('Prediction entrypoint missing from manifest file!', error_context.exception.args)
-
-    def test_manifest_raises_exception_if_entrypoints_section_is_missing(self):
-        loaded_yaml = {}
-        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
-
-        job = Job(self.job_id)
-
-        with self.assertRaises(Exception) as error_context:
-            job.manifest()
-
-        self.assertIn('Entrypoints section missing from manifest file!', error_context.exception.args)
+        self.mock_manifest_validator.validate_manifest.assert_called_once()
 
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file

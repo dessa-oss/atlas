@@ -15,14 +15,15 @@ def main():
 
     prediction_function = _load_prediction_function(job)
 
-    app = _flask_app(_model_serving_resource(prediction_function))
+    model_serving_resource = _model_serving_resource(prediction_function)
+    app = _flask_app(model_serving_resource)
     _indicate_model_ran_to_redis(job.id())
 
     print('Model server running successfully')
 
     app.run(debug=False, port=80, host='0.0.0.0')
 
-def _flask_app(serving_resource):
+def _flask_app(model_serving_resource):
     from flask import Flask
     from flask_cors import CORS
     from flask_restful import Api
@@ -31,7 +32,7 @@ def _flask_app(serving_resource):
     CORS(app, supports_credentials=True)
     api = Api(app)
 
-    api.add_resource(serving_resource, '/')
+    api.add_resource(model_serving_resource, '/')
     app.logger.disabled = True
 
     return app

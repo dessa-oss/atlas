@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.test_job import TestJob
+from test.test_manifest_validator import TestManifestValidator
