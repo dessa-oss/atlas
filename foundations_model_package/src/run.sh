@@ -1,4 +1,4 @@
 #!/bin/bash
 
 . /archive/archive/$JOB_ID/artifacts/venv/bin/activate
-python api.py
+python -m foundations_model_package
