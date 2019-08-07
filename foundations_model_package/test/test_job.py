@@ -17,6 +17,14 @@ class TestJob(Spec):
     mock_path_exists = let_patch_mock_with_conditional_return('os.path.exists')
 
     @let
+    def module_name(self):
+        return self.faker.word()
+
+    @let
+    def function_name(self):
+        return self.faker.word()
+
+    @let
     def job_id(self):
         return self.faker.uuid4()
 
@@ -43,7 +51,15 @@ class TestJob(Spec):
         self.assertEqual(self.job_root, job.root())
 
     def test_manifest_returns_parsed_output_from_yaml_file(self):
-        loaded_yaml = Mock()
+        loaded_yaml = {
+            'entrypoints': {
+                'predict': {
+                    'module': self.module_name,
+                    'function': self.function_name
+                }
+            }
+        }
+
         self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
 
         job = Job(self.job_id)
@@ -73,6 +89,23 @@ class TestJob(Spec):
             job.manifest()
 
         self.assertIn('Manifest file was not a valid YAML file!', error_context.exception.args)
+
+    def test_manifest_raises_exception_if_prediction_module_name_missing(self):
+        loaded_yaml = {
+            'entrypoints': {
+                'predict': {
+                    'function': self.function_name
+                }
+            }
+        }
+        self.mock_yaml_load.return_when(loaded_yaml, self.mock_file)
+
+        job = Job(self.job_id)
+
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+
+        self.assertIn('Prediction module name missing from manifest file!', error_context.exception.args)
 
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file
