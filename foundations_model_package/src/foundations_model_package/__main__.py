@@ -5,33 +5,41 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from flask import Flask, request
-from flask_cors import CORS
-from flask_restful import Resource, Api
-import os
-
-from foundations_model_package.job import Job
-
 def main():
+    import os
+    from foundations_model_package.job import Job
+
     _hack_for_cleaning_up_logs()
+
+    job = Job(os.environ['JOB_ID'])
+
+    prediction_function = _load_prediction_function(job)
+
+    app = _flask_app(_model_serving_resource(prediction_function))
+    _indicate_model_ran_to_redis(job.id())
+
+    print('Model server running successfully')
+
+    app.run(debug=False, port=80, host='0.0.0.0')
+
+def _flask_app(serving_resource):
+    from flask import Flask
+    from flask_cors import CORS
+    from flask_restful import Api
 
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
     api = Api(app)
 
-    job = Job(os.environ['JOB_ID'])
-
-    prediction_function = _load_prediction_function(job)
-    _indicate_model_ran_to_redis(job.id())
-
-    api.add_resource(_model_serving_resource(prediction_function), '/')
-
-    print('Model server running successfully')
-
+    api.add_resource(serving_resource, '/')
     app.logger.disabled = True
-    app.run(debug=False, port=80, host='0.0.0.0')
+
+    return app
 
 def _model_serving_resource(prediction_function):
+    from flask import request
+    from flask_restful import Resource
+
     class _ServeModel(Resource):
         def get(self):
             return {'message': 'still alive'}
