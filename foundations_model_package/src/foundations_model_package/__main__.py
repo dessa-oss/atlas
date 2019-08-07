@@ -5,99 +5,105 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import click
 from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import Resource, Api
 import os
-import logging
 
 from foundations_model_package.job import Job
 
-def break_click_echo(*args, **kwargs):
-    pass
+def _hack_for_cleaning_up_logs():
+    import click
+    import logging
 
-click.echo = break_click_echo
-click.secho = break_click_echo
+    def _break_click_echo(*args, **kwargs):
+        pass
 
-log = logging.getLogger('werkzeug')
-log.disabled = True
+    click.echo = _break_click_echo
+    click.secho = _break_click_echo
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True)
-api = Api(app)
+    log = logging.getLogger('werkzeug')
+    log.disabled = True
 
-job = Job(os.environ['JOB_ID'])
-
-def module_name_and_function_name():
-    manifest = job.manifest()
+def _module_name_and_function_name(manifest):
     prediction_definition = manifest['entrypoints']['predict']
 
     return prediction_definition['module'], prediction_definition['function']
 
-def move_to_job_directory():
-    import sys
-    import os
+def main():
+    _hack_for_cleaning_up_logs()
 
-    root_of_the_job = job.root()
-    if not os.path.exists(root_of_the_job):
-        raise Exception(f'Job, {job.id()} not found!')
+    app = Flask(__name__)
+    CORS(app, supports_credentials=True)
+    api = Api(app)
 
-    sys.path.insert(0, root_of_the_job)
-    os.chdir(root_of_the_job)
+    job = Job(os.environ['JOB_ID'])
 
-def add_module_to_sys_path(module_name):
-    import sys
-    import os.path
+    def move_to_job_directory():
+        import sys
+        import os
 
-    module_path = module_name.replace('.', '/')
-    module_directory = os.path.dirname(module_path)
-    if module_directory:
-        module_directory = f"{job.root()}/{module_directory}"
-        sys.path.insert(0, module_directory)
+        root_of_the_job = job.root()
+        if not os.path.exists(root_of_the_job):
+            raise Exception(f'Job, {job.id()} not found!')
 
-def load_prediction_function():
-    import importlib
+        sys.path.insert(0, root_of_the_job)
+        os.chdir(root_of_the_job)
 
-    move_to_job_directory()
-    module_name, function_name = module_name_and_function_name()
-    add_module_to_sys_path(module_name)
+    def add_module_to_sys_path(module_name):
+        import sys
+        import os.path
 
-    try:
-        module = importlib.import_module(module_name)
-    except ModuleNotFoundError as error:
-        raise Exception('Prediction module defined in manifest file could not be found!') from error
-    except Exception as error:
-        raise Exception('Unable to load prediction module from manifest') from error
+        module_path = module_name.replace('.', '/')
+        module_directory = os.path.dirname(module_path)
+        if module_directory:
+            module_directory = f"{job.root()}/{module_directory}"
+            sys.path.insert(0, module_directory)
 
-    function = getattr(module, function_name, None)
+    def load_prediction_function(manifest):
+        import importlib
 
-    if not function:
-        raise Exception('Prediction function defined in manifest file could not be found!')
+        move_to_job_directory()
+        module_name, function_name = _module_name_and_function_name(manifest)
+        add_module_to_sys_path(module_name)
 
-    return function
+        try:
+            module = importlib.import_module(module_name)
+        except ModuleNotFoundError as error:
+            raise Exception('Prediction module defined in manifest file could not be found!') from error
+        except Exception as error:
+            raise Exception('Unable to load prediction module from manifest') from error
 
-def indicate_model_ran_to_redis():
-    from foundations_contrib.global_state import redis_connection
+        function = getattr(module, function_name, None)
 
-    job_id_to_track = job.id()
-    redis_connection.incr(f'models:{job_id_to_track}:served')
+        if not function:
+            raise Exception('Prediction function defined in manifest file could not be found!')
 
-prediction_function = load_prediction_function()
-indicate_model_ran_to_redis()
+        return function
 
-class ServeModel(Resource):
-    def get(self):
-        return {'message': 'still alive'}
+    def indicate_model_ran_to_redis():
+        from foundations_contrib.global_state import redis_connection
 
-    def post(self):
-        data = dict(request.json)
-        return prediction_function(**data)
+        job_id_to_track = job.id()
+        redis_connection.incr(f'models:{job_id_to_track}:served')
 
-api.add_resource(ServeModel, '/')
+    prediction_function = load_prediction_function(job.manifest())
+    indicate_model_ran_to_redis()
 
-print('Model server running successfully')
+    class ServeModel(Resource):
+        def get(self):
+            return {'message': 'still alive'}
 
-if __name__ == '__main__':
+        def post(self):
+            data = dict(request.json)
+            return prediction_function(**data)
+
+    api.add_resource(ServeModel, '/')
+
+    print('Model server running successfully')
+
     app.logger.disabled = True
     app.run(debug=False, port=80, host='0.0.0.0')
+
+if __name__ == '__main__':
+    main()
