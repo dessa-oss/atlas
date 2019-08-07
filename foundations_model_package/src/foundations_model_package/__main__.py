@@ -12,6 +12,39 @@ import os
 
 from foundations_model_package.job import Job
 
+def main():
+    _hack_for_cleaning_up_logs()
+
+    app = Flask(__name__)
+    CORS(app, supports_credentials=True)
+    api = Api(app)
+
+    job = Job(os.environ['JOB_ID'])
+
+    def indicate_model_ran_to_redis():
+        from foundations_contrib.global_state import redis_connection
+
+        job_id_to_track = job.id()
+        redis_connection.incr(f'models:{job_id_to_track}:served')
+
+    prediction_function = _load_prediction_function(job)
+    indicate_model_ran_to_redis()
+
+    class ServeModel(Resource):
+        def get(self):
+            return {'message': 'still alive'}
+
+        def post(self):
+            data = dict(request.json)
+            return prediction_function(**data)
+
+    api.add_resource(ServeModel, '/')
+
+    print('Model server running successfully')
+
+    app.logger.disabled = True
+    app.run(debug=False, port=80, host='0.0.0.0')
+
 def _hack_for_cleaning_up_logs():
     import click
     import logging
@@ -41,69 +74,36 @@ def _move_to_job_directory(job):
     sys.path.insert(0, root_of_the_job)
     os.chdir(root_of_the_job)
 
-def main():
-    _hack_for_cleaning_up_logs()
+def _add_module_to_sys_path(job, module_name):
+    import sys
+    import os.path
 
-    app = Flask(__name__)
-    CORS(app, supports_credentials=True)
-    api = Api(app)
+    module_path = module_name.replace('.', '/')
+    module_directory = os.path.dirname(module_path)
+    if module_directory:
+        module_directory = f"{job.root()}/{module_directory}"
+        sys.path.insert(0, module_directory)
 
-    job = Job(os.environ['JOB_ID'])
+def _load_prediction_function(job):
+    import importlib
 
-    def add_module_to_sys_path(module_name):
-        import sys
-        import os.path
+    _move_to_job_directory(job)
+    module_name, function_name = _module_name_and_function_name(job.manifest())
+    _add_module_to_sys_path(job, module_name)
 
-        module_path = module_name.replace('.', '/')
-        module_directory = os.path.dirname(module_path)
-        if module_directory:
-            module_directory = f"{job.root()}/{module_directory}"
-            sys.path.insert(0, module_directory)
+    try:
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError as error:
+        raise Exception('Prediction module defined in manifest file could not be found!') from error
+    except Exception as error:
+        raise Exception('Unable to load prediction module from manifest') from error
 
-    def _load_prediction_function(job):
-        import importlib
+    function = getattr(module, function_name, None)
 
-        _move_to_job_directory(job)
-        module_name, function_name = _module_name_and_function_name(job.manifest())
-        add_module_to_sys_path(module_name)
+    if not function:
+        raise Exception('Prediction function defined in manifest file could not be found!')
 
-        try:
-            module = importlib.import_module(module_name)
-        except ModuleNotFoundError as error:
-            raise Exception('Prediction module defined in manifest file could not be found!') from error
-        except Exception as error:
-            raise Exception('Unable to load prediction module from manifest') from error
-
-        function = getattr(module, function_name, None)
-
-        if not function:
-            raise Exception('Prediction function defined in manifest file could not be found!')
-
-        return function
-
-    def indicate_model_ran_to_redis():
-        from foundations_contrib.global_state import redis_connection
-
-        job_id_to_track = job.id()
-        redis_connection.incr(f'models:{job_id_to_track}:served')
-
-    prediction_function = _load_prediction_function(job)
-    indicate_model_ran_to_redis()
-
-    class ServeModel(Resource):
-        def get(self):
-            return {'message': 'still alive'}
-
-        def post(self):
-            data = dict(request.json)
-            return prediction_function(**data)
-
-    api.add_resource(ServeModel, '/')
-
-    print('Model server running successfully')
-
-    app.logger.disabled = True
-    app.run(debug=False, port=80, host='0.0.0.0')
+    return function
 
 if __name__ == '__main__':
     main()
