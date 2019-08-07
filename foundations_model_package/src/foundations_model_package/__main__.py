@@ -21,16 +21,18 @@ def main():
 
     job = Job(os.environ['JOB_ID'])
 
-    def indicate_model_ran_to_redis():
-        from foundations_contrib.global_state import redis_connection
-
-        job_id_to_track = job.id()
-        redis_connection.incr(f'models:{job_id_to_track}:served')
-
     prediction_function = _load_prediction_function(job)
-    indicate_model_ran_to_redis()
+    _indicate_model_ran_to_redis(job.id())
 
-    class ServeModel(Resource):
+    api.add_resource(_model_serving_resource(prediction_function), '/')
+
+    print('Model server running successfully')
+
+    app.logger.disabled = True
+    app.run(debug=False, port=80, host='0.0.0.0')
+
+def _model_serving_resource(prediction_function):
+    class _ServeModel(Resource):
         def get(self):
             return {'message': 'still alive'}
 
@@ -38,12 +40,7 @@ def main():
             data = dict(request.json)
             return prediction_function(**data)
 
-    api.add_resource(ServeModel, '/')
-
-    print('Model server running successfully')
-
-    app.logger.disabled = True
-    app.run(debug=False, port=80, host='0.0.0.0')
+    return _ServeModel
 
 def _hack_for_cleaning_up_logs():
     import click
@@ -60,7 +57,6 @@ def _hack_for_cleaning_up_logs():
 
 def _module_name_and_function_name(manifest):
     prediction_definition = manifest['entrypoints']['predict']
-
     return prediction_definition['module'], prediction_definition['function']
 
 def _move_to_job_directory(job):
@@ -104,6 +100,10 @@ def _load_prediction_function(job):
         raise Exception('Prediction function defined in manifest file could not be found!')
 
     return function
+
+def _indicate_model_ran_to_redis(job_id_to_track):
+    from foundations_contrib.global_state import redis_connection
+    redis_connection.incr(f'models:{job_id_to_track}:served')
 
 if __name__ == '__main__':
     main()
