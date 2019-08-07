@@ -60,6 +60,20 @@ class TestJob(Spec):
         
         self.assertIn('Manifest file, foundations_package_manifest.yaml not found!', error_context.exception.args)
 
+    def test_manifest_raises_exception_if_yaml_file_is_invalid(self):
+        self.mock_yaml_load = self.patch('yaml.load')
+
+        import yaml
+
+        self.mock_yaml_load.side_effect = yaml.parser.ParserError()
+
+        job = Job(self.job_id)
+
+        with self.assertRaises(Exception) as error_context:
+            job.manifest()
+
+        self.assertIn('Manifest file was not a valid YAML file!', error_context.exception.args)
+
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file
 
