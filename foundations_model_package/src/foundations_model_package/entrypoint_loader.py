@@ -11,10 +11,25 @@ class EntrypointLoader(object):
         self._job = job
 
     def entrypoint_function(self):
-        import os.path as path
+        self._change_to_job_root_dir()
+        self._add_module_to_sys_path()
+        return self._load_function_from_module()
+
+    def _module_name(self):
+        return self._predict_endpoint_information()['module']
+
+    def _function_name(self):
+        return self._predict_endpoint_information()['function']
+
+    def _load_function_from_module(self):
         from foundations_model_package.importlib_wrapper import load_function_from_module
 
-        self._change_to_job_root_dir()
+        module_name = self._module_name()
+        function_name = self._function_name()
+        return load_function_from_module(module_name, function_name)
+
+    def _add_module_to_sys_path(self):
+        import os.path as path
 
         module_name = self._module_name()
 
@@ -23,19 +38,6 @@ class EntrypointLoader(object):
 
         if module_directory:
             self._add_to_sys_path(f'{self._job_root()}/{module_directory}')
-
-        manifest = self._job.manifest()
-        function_name = manifest['entrypoints']['predict']['function']
-
-        function = load_function_from_module(module_name, function_name)
-
-        return function
-
-    def _module_name(self):
-        manifest = self._job.manifest()
-        module = manifest['entrypoints']['predict']['module']
-
-        return module
 
     def _add_to_sys_path(self, directory):
         import sys
@@ -57,3 +59,7 @@ class EntrypointLoader(object):
 
     def _job_root(self):
         return self._job.root()
+
+    def _predict_endpoint_information(self):
+        manifest = self._job.manifest()
+        return manifest['entrypoints']['predict']
