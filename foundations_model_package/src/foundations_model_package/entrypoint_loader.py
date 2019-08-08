@@ -20,17 +20,23 @@ class EntrypointLoader(object):
         if not path.exists(job_root):
             raise Exception(f'Job {self._job.id()} not found!')
 
-        sys.path.insert(0, job_root)
+        self._add_to_sys_path(job_root)
         os.chdir(job_root)
 
         module = self._module()
 
-        if '.' in module:
-            top_level = module.split('.')[0]
-            sys.path.insert(0, f'{job_root}/{top_level}')
+        module_path = module.replace('.', '/')
+        module_directory = path.dirname(module_path)
+
+        if module_directory:
+            self._add_to_sys_path(f'{job_root}/{module_directory}')
 
     def _module(self):
         manifest = self._job.manifest()
         module = manifest['entrypoints']['predict']['module']
 
         return module
+
+    def _add_to_sys_path(self, directory):
+        import sys
+        sys.path.insert(0, directory)

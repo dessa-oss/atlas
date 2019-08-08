@@ -88,3 +88,9 @@ class TestEntrypointLoader(Spec):
         sys_path_before = list(self.sys_path)
         EntrypointLoader(self.job).entrypoint_function()
         self.assertEqual([f'{self.job_root}/{self.top_level_directory}', self.job_root] + sys_path_before, self.sys_path)
+
+    def test_entrypoint_loader_adds_job_root_and_module_parent_to_sys_path_when_module_nested_further(self):
+        self.predict_entrypoint['module'] = f'{self.top_level_directory}.{self.mid_level_directory}.{self.lower_level_directory}'
+        sys_path_before = list(self.sys_path)
+        EntrypointLoader(self.job).entrypoint_function()
+        self.assertEqual([f'{self.job_root}/{self.top_level_directory}/{self.mid_level_directory}', self.job_root] + sys_path_before, self.sys_path)
