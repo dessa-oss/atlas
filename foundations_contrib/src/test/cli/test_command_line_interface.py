@@ -98,9 +98,8 @@ class TestCommandLineInterface(Spec):
         init_call = call('init', help='Creates a new Foundations project in the current directory')
         deploy_call = call('deploy', help='Deploys a Foundations project to the specified environment')
         info_call = call('info', help='Provides information about your Foundations project')
-        serving_call = call('serving', help='Start serving a model package')
 
-        self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call, serving_call], any_order=True)
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
         info_argument_env_call = call('--env', action='store_true')
@@ -124,23 +123,6 @@ class TestCommandLineInterface(Spec):
                 deploy_argument_ram_call
             ],
             any_order=True
-        )
-
-        serving_deploy_call = call('deploy', help='Deploy model package to foundations model package server')
-        self.level_2_subparsers_mock.add_parser.assert_has_calls([serving_deploy_call], any_order=True)
-
-        serving_deploy_rest_call = call('rest', help='Uses REST format content type')
-        serving_deploy_domain_call = call('--domain', type=str, help='Domain and port of the model package server')
-        serving_deploy_model_id_call = call('--model-id', type=str, help='Model package ID')
-        serving_deploy_slug_call = call('--slug', type=str, help='Model package namespace string')
-
-        self.level_3_parser_mock.add_argument.assert_has_calls(
-            [
-                serving_deploy_rest_call,
-                serving_deploy_domain_call,
-                serving_deploy_model_id_call,
-                serving_deploy_slug_call,
-            ]
         )
 
     @patch('argparse.ArgumentParser')
@@ -441,108 +423,6 @@ class TestCommandLineInterface(Spec):
     def test_server_destroys_model_server_with_specified_model_name(self):
         CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()
         self.mock_destroy_model_package.assert_called_with(self.mock_model_name)
-
-    def test_serving_deploy_rest_opens_pid_file(self):
-        self._create_server_pidfile()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.open_mock.assert_any_call(FoundationsModelServer.pid_file_path, 'r')
-
-    def test_serving_deploy_rest_reads_pid_file(self):
-        self._create_server_pidfile()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.mock_pid_file.read.assert_called()
-
-    def test_serving_deploy_rest_prints_message_if_web_server_is_already_running(self):
-        self._bring_server_up()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_any_call('Model server is already running.')
-
-    def test_serving_deploy_rest_runs_model_server_when_server_is_not_running(self):
-        from subprocess import DEVNULL
-
-        self._create_server_pidfile()
-        self.server_process.cmdline.return_value = ['another_process.py']
-        self._server_running = True
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running(self):
-        from subprocess import DEVNULL
-
-        self.open_mock.side_effect = OSError()
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=/path/to/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_starts_model_server_when_there_is_no_pidfile_and_process_not_running_different_model_config(self):
-        from subprocess import DEVNULL
-
-        self.open_mock.side_effect = OSError()
-        self.mock_environment['MODEL_SERVER_CONFIG_PATH'] = 'a/path/to/another/file'
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.subprocess_popen.assert_called_with(['python', '-m', 'foundations_production.serving.foundations_model_server', '--domain=localhost:8000', '--config-file=a/path/to/another/file'], stdout=DEVNULL, stderr=DEVNULL)
-
-    def test_serving_deploy_rest_calls_prints_failure_message_if_server_fails_to_run(self):
-        self.open_mock.side_effect = OSError()
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_any_call('Failed to start model server.', file=sys.stderr)
-        self.exit_mock.assert_any_call(10)
-
-    def test_serving_deploy_rest_calls_deploy_model_rest_api_if_server_is_running(self):
-        self._bring_server_up()
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        url = 'http://{}/v1/{}/'.format('localhost:8000', 'snail')
-        self.requests_post_mock.assert_called_with(url, json = {'model_id':'some_id'})
-
-    def test_serving_deploy_rest_informs_user_if_model_package_was_deployed_successfully(self):
-        self._bring_server_up()
-        response_mock = Mock()
-        response_mock.status_code = 201
-        self.requests_post_mock.return_value = response_mock
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_called_with('Model package was deployed successfully to model server.')
-
-    def test_serving_deploy_rest_informs_user_if_model_package_failed_to_be_deployed(self):
-        self._bring_server_up()
-        response_mock = Mock()
-        response_mock.status_code = 500
-        self.requests_post_mock.return_value = response_mock
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.print_mock.assert_called_with('Failed to deploy model package to model server.', file=sys.stderr)
-        self.exit_mock.assert_called_with(11)
-
-    def test_serving_stop_kills_model_server(self):
-        import signal
-
-        self._bring_server_up()
-        CommandLineInterface(['serving', 'stop']).execute()
-        self.os_kill.assert_called_once_with(self.fake_model_server_pid, signal.SIGTERM)
-
-    def test_serving_stop_does_not_kill_server_if_it_is_not_up(self):
-        self.open_mock.side_effect = OSError()
-        CommandLineInterface(['serving', 'stop']).execute()
-        self.os_kill.assert_not_called()
-
-    def test_serving_stop_does_not_kill_process_if_it_is_model_server_process(self):
-        self._create_server_pidfile()
-        self.server_process.cmdline.return_value = ['another_process.py']
-        self._server_running = True
-        CommandLineInterface(['serving', 'stop']).execute()
-        self.os_kill.assert_not_called()
-
-    def test_cli_does_not_fail_if_model_server_starts_before_900_ms(self):
-        self.open_mock.side_effect = OSError()
-        response_mock = Mock()
-        response_mock.status_code = 201
-        self.requests_post_mock.return_value = response_mock
-
-        self.sleep_mock.time_to_wait = self.server_startup_time
-        self.sleep_mock.callback = self._bring_server_up
-
-        CommandLineInterface(['serving', 'deploy', 'rest', '--domain=localhost:8000', '--model-id=some_id', '--slug=snail']).execute()
-        self.exit_mock.assert_not_called()
 
     def test_retrieve_artifacts_calls_environment_fetcher(self):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()

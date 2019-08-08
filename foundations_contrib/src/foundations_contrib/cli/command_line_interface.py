@@ -16,7 +16,6 @@ class CommandLineInterface(object):
         self._initialize_init_parser(subparsers)
         self._initialize_deploy_parser(subparsers)
         self._initialize_info_parser(subparsers)
-        self._initialize_serving_parser(subparsers)
         self._initialize_model_serve_parser(subparsers)
         self._initialize_retrieve_parser(subparsers)
 
@@ -53,12 +52,6 @@ class CommandLineInterface(object):
         info_parser.add_argument('--env', action='store_true')
         info_parser.set_defaults(function=self._info)
 
-    def _initialize_serving_parser(self, subparsers):
-        serving_parser = subparsers.add_parser('serving', help='Start serving a model package')
-        serving_subparsers = serving_parser.add_subparsers()
-        self._initialize_serving_deploy_parser(serving_subparsers)
-        self._initialize_serving_stop_parser(serving_subparsers)
-
     def _initialize_model_serve_parser(self, subparsers):
         serving_parser = subparsers.add_parser('serve')
         serving_subparsers = serving_parser.add_subparsers()
@@ -70,14 +63,6 @@ class CommandLineInterface(object):
         serving_destroy_parser = serving_subparsers.add_parser('stop')
         serving_destroy_parser.add_argument('model_name')
         serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
-
-    def _initialize_serving_deploy_parser(self, serving_subparsers):
-        serving_deploy_parser = serving_subparsers.add_parser('deploy', help='Deploy model package to foundations model package server')
-        serving_deploy_parser.add_argument('rest', help='Uses REST format content type')
-        serving_deploy_parser.add_argument('--domain', type=str, help='Domain and port of the model package server')
-        serving_deploy_parser.add_argument('--model-id', type=str, help='Model package ID')
-        serving_deploy_parser.add_argument('--slug', type=str, help='Model package namespace string')
-        serving_deploy_parser.set_defaults(function=self._model_serving_deploy)
 
     def _initialize_retrieve_parser(self, subparsers):
         retrieve_parser = subparsers.add_parser('get', help='Get file types from execution environments')
@@ -171,10 +156,6 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.command_line_job_deployer import CommandLineJobDeployer
         CommandLineJobDeployer(self._arguments).deploy()
    
-    def _model_serving_deploy(self):
-        self._start_model_server_if_not_running()
-        self._deploy_model_package()
-
     def _model_serving_stop(self):
         import os
         import signal
