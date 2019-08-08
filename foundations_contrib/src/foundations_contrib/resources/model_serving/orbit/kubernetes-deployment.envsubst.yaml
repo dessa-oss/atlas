@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: 
+    app: ${project_name}-${model_name}
+  name: ${project_name}-${model_name}-deployment
+  namespace: foundations-scheduler-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: ${project_name}-${model_name}
+  template:
+    metadata:
+      labels: 
+        app: ${project_name}-${model_name}
+    spec:
+      nodeSelector:
+        modelServer: "True"
+      containers:
+      - image: docker.shehanigans.net/foundations-model-package
+        imagePullPolicy: Always
+        env:
+          - name: MODEL_NAME
+            value: "${model_name}"
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        name: model
+        volumeMounts:
+        - mountPath: /archive
+          name: archive
+      volumes: 
+        - name: 'archive'
+          persistentVolumeClaim: 
+            claimName: 'archive-storage'
+      imagePullSecrets:
+      - name: dessa-registry-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${project_name}-${model_name}-service
+  namespace: foundations-scheduler-test
+spec:
+  selector:
+    app: ${project_name}-${model_name}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

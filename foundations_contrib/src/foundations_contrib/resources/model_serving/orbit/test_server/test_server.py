@@ -2,8 +2,8 @@ from flask import Flask
 import requests
 app = Flask(__name__)
 
-@app.route("/")
-def Hello():
+@app.route("/predict")
+def hello():
     return 'Test Passed'
 
 if __name__ == "__main__":

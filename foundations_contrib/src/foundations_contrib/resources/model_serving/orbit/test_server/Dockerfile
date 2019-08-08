@@ -16,4 +16,4 @@ WORKDIR /app
 ADD . /app/
 
 EXPOSE 5000
-CMD ["python", "/app/query_job.py"]
+CMD ["python", "/app/test_server.py"]
