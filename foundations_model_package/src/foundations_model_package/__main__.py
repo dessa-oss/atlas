@@ -7,8 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def main():
     import os
+
     from foundations_model_package.job import Job
     from foundations_model_package.redis_actions import indicate_model_ran_to_redis
+    from foundations_model_package.resource_factories import prediction_resource
 
     _hack_for_cleaning_up_logs()
 
@@ -16,8 +18,8 @@ def main():
 
     prediction_function = _load_prediction_function(job)
 
-    root_model_serving_resource = _model_serving_resource(prediction_function)
-    predict_model_serving_resource = _model_serving_resource(prediction_function)
+    root_model_serving_resource = prediction_resource(prediction_function)
+    predict_model_serving_resource = prediction_resource(prediction_function)
     app = _flask_app(root_model_serving_resource, predict_model_serving_resource)
     indicate_model_ran_to_redis(job.id())
 
@@ -39,24 +41,6 @@ def _flask_app(root_model_serving_resource, predict_model_serving_resource):
     app.logger.disabled = True
 
     return app
-
-def _model_serving_resource(prediction_function):
-    from flask import request
-    from flask_restful import Resource
-
-    import uuid
-
-    class _ServeModel(Resource):
-        def get(self):
-            return {'message': 'still alive'}
-
-        def post(self):
-            data = dict(request.json)
-            return prediction_function(**data)
-
-    _ServeModel.__name__ = f"_ServeModel_{uuid.uuid4()}"
-
-    return _ServeModel
 
 def _hack_for_cleaning_up_logs():
     import click
