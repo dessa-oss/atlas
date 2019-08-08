@@ -11,6 +11,7 @@ def main():
     from foundations_model_package.job import Job
     from foundations_model_package.redis_actions import indicate_model_ran_to_redis
     from foundations_model_package.resource_factories import prediction_resource
+    from foundations_model_package.flask_app import flask_app
 
     _hack_for_cleaning_up_logs()
 
@@ -20,27 +21,12 @@ def main():
 
     root_model_serving_resource = prediction_resource(prediction_function)
     predict_model_serving_resource = prediction_resource(prediction_function)
-    app = _flask_app(root_model_serving_resource, predict_model_serving_resource)
+    app = flask_app(root_model_serving_resource, predict_model_serving_resource)
     indicate_model_ran_to_redis(job.id())
 
     print('Model server running successfully')
 
     app.run(debug=False, port=80, host='0.0.0.0')
-
-def _flask_app(root_model_serving_resource, predict_model_serving_resource):
-    from flask import Flask
-    from flask_cors import CORS
-    from flask_restful import Api
-
-    app = Flask(__name__)
-    CORS(app, supports_credentials=True)
-    api = Api(app)
-
-    api.add_resource(root_model_serving_resource, '/')
-    api.add_resource(predict_model_serving_resource, '/predict')
-    app.logger.disabled = True
-
-    return app
 
 def _hack_for_cleaning_up_logs():
     import click
