@@ -12,11 +12,13 @@ def main():
     from foundations_model_package.redis_actions import indicate_model_ran_to_redis
     from foundations_model_package.resource_factories import prediction_resource
     from foundations_model_package.flask_app import flask_app
+    from foundations_model_package.entrypoint_loader import EntrypointLoader
 
     _hack_for_cleaning_up_logs()
 
     job = Job(os.environ['JOB_ID'])
 
+    EntrypointLoader(job).entrypoint_function()
     prediction_function = _load_prediction_function(job)
 
     root_model_serving_resource = prediction_resource(prediction_function)
@@ -45,17 +47,6 @@ def _module_name_and_function_name(manifest):
     prediction_definition = manifest['entrypoints']['predict']
     return prediction_definition['module'], prediction_definition['function']
 
-def _move_to_job_directory(job):
-    import sys
-    import os
-
-    root_of_the_job = job.root()
-    if not os.path.exists(root_of_the_job):
-        raise Exception(f'Job, {job.id()} not found!')
-
-    sys.path.insert(0, root_of_the_job)
-    os.chdir(root_of_the_job)
-
 def _add_module_to_sys_path(job_root, module_name):
     import sys
     import os.path
@@ -69,7 +60,6 @@ def _add_module_to_sys_path(job_root, module_name):
 def _load_prediction_function(job):
     import importlib
 
-    _move_to_job_directory(job)
     module_name, function_name = _module_name_and_function_name(job.manifest())
     _add_module_to_sys_path(job.root(), module_name)
 

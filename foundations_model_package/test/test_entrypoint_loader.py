@@ -12,6 +12,11 @@ from foundations_model_package.entrypoint_loader import EntrypointLoader
 class TestEntrypointLoader(Spec):
 
     path_exists = let_patch_mock_with_conditional_return('os.path.exists')
+    os_chdir = let_patch_mock('os.chdir')
+
+    @let
+    def sys_path(self):
+        return self.faker.pylist()
 
     @let
     def job_id(self):
@@ -32,6 +37,7 @@ class TestEntrypointLoader(Spec):
     @set_up
     def set_up(self):
         self.path_exists.return_when(True, self.job_root)
+        self.patch('sys.path', self.sys_path)
 
     def test_entrypoint_loader_checks_for_job_root_and_complains_if_it_does_not_exist(self):
         self.path_exists.clear()
@@ -41,3 +47,12 @@ class TestEntrypointLoader(Spec):
             EntrypointLoader(self.job).entrypoint_function()
 
         self.assertIn(f'Job {self.job_id} not found!', error_context.exception.args)
+
+    def test_entrypoint_loader_adds_job_root_to_sys_path(self):
+        sys_path_before = list(self.sys_path)
+        EntrypointLoader(self.job).entrypoint_function()
+        self.assertEqual([self.job_root] + sys_path_before, self.sys_path)
+
+    def test_entrypoint_loader_chdir_to_job_root(self):
+        EntrypointLoader(self.job).entrypoint_function()
+        self.os_chdir.assert_called_once_with(self.job_root)

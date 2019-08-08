@@ -11,4 +11,14 @@ class EntrypointLoader(object):
         self._job = job
 
     def entrypoint_function(self):
-        raise Exception(f'Job {self._job.id()} not found!')
+        import sys
+        import os
+        import os.path as path
+
+        job_root = self._job.root()
+
+        if not path.exists(job_root):
+            raise Exception(f'Job {self._job.id()} not found!')
+
+        sys.path.insert(0, job_root)
+        os.chdir(job_root)
