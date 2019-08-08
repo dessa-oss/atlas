@@ -5,9 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.test_job import TestJob
-from test.test_manifest_validator import TestManifestValidator
-from test.test_entrypoint_loader import TestEntrypointLoader
-from test.test_redis_actions import TestRedisActions
-
-from .resource_factories import *
+from .test_prediction_resource import TestPredictionResource
