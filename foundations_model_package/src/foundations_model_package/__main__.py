@@ -49,23 +49,12 @@ def _load_prediction_function(job):
     import importlib
 
     from foundations_model_package.entrypoint_loader import EntrypointLoader
+    from foundations_model_package.importlib_wrapper import load_function_from_module
 
     EntrypointLoader(job).entrypoint_function()
     module_name, function_name = _module_name_and_function_name(job.manifest())
 
-    try:
-        module = importlib.import_module(module_name)
-    except ModuleNotFoundError as error:
-        raise Exception('Prediction module defined in manifest file could not be found!') from error
-    except Exception as error:
-        raise Exception('Unable to load prediction module from manifest') from error
-
-    function = getattr(module, function_name, None)
-
-    if not function:
-        raise Exception('Prediction function defined in manifest file could not be found!')
-
-    return function
+    return load_function_from_module(module_name, function_name)
 
 if __name__ == '__main__':
     main()

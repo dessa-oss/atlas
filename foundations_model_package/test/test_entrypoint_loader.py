@@ -7,12 +7,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
+from collections import namedtuple
 from foundations_model_package.entrypoint_loader import EntrypointLoader
 
 class TestEntrypointLoader(Spec):
 
     path_exists = let_patch_mock_with_conditional_return('os.path.exists')
     os_chdir = let_patch_mock('os.chdir')
+    mock_function = let_mock()
+    mock_load_function_from_module = let_patch_mock_with_conditional_return('foundations_model_package.importlib_wrapper.load_function_from_module')
 
     @let
     def sys_path(self):
@@ -36,6 +39,10 @@ class TestEntrypointLoader(Spec):
 
     @let
     def lower_level_directory(self):
+        return self.faker.word()
+
+    @let
+    def function_name(self):
         return self.faker.word()
 
     @let

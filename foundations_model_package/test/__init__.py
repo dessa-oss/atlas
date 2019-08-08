@@ -10,5 +10,6 @@ from test.test_manifest_validator import TestManifestValidator
 from test.test_entrypoint_loader import TestEntrypointLoader
 from test.test_redis_actions import TestRedisActions
 from test.test_flask_app import TestFlaskApp
+from test.test_importlib_wrapper import TestImportlibWrapper
 
 from .resource_factories import *
