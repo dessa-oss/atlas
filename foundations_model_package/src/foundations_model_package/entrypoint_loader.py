@@ -22,3 +22,10 @@ class EntrypointLoader(object):
 
         sys.path.insert(0, job_root)
         os.chdir(job_root)
+
+        manifest = self._job.manifest()
+        module = manifest['entrypoints']['predict']['module']
+
+        if '.' in module:
+            top_level = module.split('.')[0]
+            sys.path.insert(0, f'{job_root}/{top_level}')
