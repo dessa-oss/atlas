@@ -3,7 +3,7 @@
 export project_name=$1
 export model_name=$2
 
-cat kubernetes-deployment-orbit.envsubst.yaml | envsubst | kubectl create -f -
+cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
 echo "Preparing $model_name for serving"
 
 model_pod=$(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $1}')

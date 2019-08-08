@@ -18,24 +18,27 @@ spec:
       nodeSelector:
         modelServer: "True"
       containers:
-      - image: docker.shehanigans.net/foundations-model-package
-        imagePullPolicy: Always
-        env:
-          - name: MODEL_NAME
-            value: "${model_name}"
-        resources:
-          limits:
-            nvidia.com/gpu: 1
+      # - image: docker.shehanigans.net/foundations-model-package
+      - image: test-server:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        # env:
+        #   - name: MODEL_NAME
+        #     value: "${model_name}"
+        # resources:
+        #   limits:
+        #     nvidia.com/gpu: 1
         name: model
-        volumeMounts:
-        - mountPath: /archive
-          name: archive
-      volumes: 
-        - name: 'archive'
-          persistentVolumeClaim: 
-            claimName: 'archive-storage'
-      imagePullSecrets:
-      - name: dessa-registry-credentials
+        # volumeMounts:
+        # - mountPath: /archive
+        #   name: archive
+      # volumes: 
+      #   - name: 'archive'
+      #     persistentVolumeClaim: 
+      #       claimName: 'archive-storage'
+      # imagePullSecrets:
+      # - name: dessa-registry-credentials
 ---
 apiVersion: v1
 kind: Service
@@ -48,4 +51,5 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 80
+    # targetPort: 80
+    targetPort: 5000
