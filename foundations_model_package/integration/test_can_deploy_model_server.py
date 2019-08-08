@@ -81,8 +81,11 @@ class TestCanDeployModelServer(Spec):
 
         self._wait_for_server()
         result = self._try_post()
+        predict_result = self._try_post_to_predict_endpoint()
 
         self.assertEqual({'a': 2, 'b': 4}, result)
+        self.assertEqual({'a': 21, 'b': 32}, predict_result)
+
         self.assertEqual('1', redis_connection.get(f'models:{self.job_id}:served').decode())
 
     def _wait_for_server(self):
@@ -109,6 +112,14 @@ class TestCanDeployModelServer(Spec):
 
         try:
             return requests.post('http://localhost:31333', json={'a': 1, 'b': 2}).json()
+        except:
+            return None
+
+    def _try_post_to_predict_endpoint(self):
+        import requests
+
+        try:
+            return requests.post('http://localhost:31333/predict', json={'a': 20, 'b': 30}).json()
         except:
             return None
 

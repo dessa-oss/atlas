@@ -16,15 +16,16 @@ def main():
 
     prediction_function = _load_prediction_function(job)
 
-    model_serving_resource = _model_serving_resource(prediction_function)
-    app = _flask_app(model_serving_resource)
+    root_model_serving_resource = _model_serving_resource(prediction_function)
+    predict_model_serving_resource = _model_serving_resource(prediction_function)
+    app = _flask_app(root_model_serving_resource, predict_model_serving_resource)
     indicate_model_ran_to_redis(job.id())
 
     print('Model server running successfully')
 
     app.run(debug=False, port=80, host='0.0.0.0')
 
-def _flask_app(model_serving_resource):
+def _flask_app(root_model_serving_resource, predict_model_serving_resource):
     from flask import Flask
     from flask_cors import CORS
     from flask_restful import Api
@@ -33,7 +34,8 @@ def _flask_app(model_serving_resource):
     CORS(app, supports_credentials=True)
     api = Api(app)
 
-    api.add_resource(model_serving_resource, '/')
+    api.add_resource(root_model_serving_resource, '/')
+    api.add_resource(predict_model_serving_resource, '/predict')
     app.logger.disabled = True
 
     return app
@@ -42,6 +44,8 @@ def _model_serving_resource(prediction_function):
     from flask import request
     from flask_restful import Resource
 
+    import uuid
+
     class _ServeModel(Resource):
         def get(self):
             return {'message': 'still alive'}
@@ -49,6 +53,8 @@ def _model_serving_resource(prediction_function):
         def post(self):
             data = dict(request.json)
             return prediction_function(**data)
+
+    _ServeModel.__name__ = f"_ServeModel_{uuid.uuid4()}"
 
     return _ServeModel
 
