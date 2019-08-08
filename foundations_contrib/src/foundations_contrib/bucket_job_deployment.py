@@ -65,9 +65,15 @@ class BucketJobDeployment(object):
     def _job_archive_name(self):
         return self._job_bundler.job_archive_name()
 
+    def upload_to_result_bucket(self):
+        self._bucket_upload_from_file(self._result_bucket)
+        
     def _run(self):
+        self._bucket_upload_from_file(self._code_bucket)
+
+    def _bucket_upload_from_file(self, bucket):
         with open(self._job_archive(), 'rb') as file:
-            self._code_bucket.upload_from_file(self._job_archive_name(), file)
+            bucket.upload_from_file(self._job_archive_name(), file)
 
     def _job_archive_name(self):
         return self._job_bundler.job_archive_name()

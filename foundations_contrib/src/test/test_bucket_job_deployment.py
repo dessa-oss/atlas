@@ -6,7 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
-from mock import Mock
+
+from mock import patch, Mock
 
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 
@@ -17,15 +18,11 @@ class TestBucketJobDeployment(Spec):
     
     @let
     def deployment(self):
-        return BucketJobDeployment(self.job_name, self.job, self.job_source_bundle, self.code_bucket, self.results_bucket)
+        return BucketJobDeployment(self.job_name, self.job, self.job_source_bundle, self.code_bucket, self.result_bucket)
 
     @let
     def job_name(self):
         return self.faker.name()
-
-    @let
-    def job(self):
-        return Mock()
 
     @let
     def job(self):
@@ -40,8 +37,13 @@ class TestBucketJobDeployment(Spec):
         return Mock()
 
     @let
-    def results_bucket(self):
+    def result_bucket(self):
         return Mock()
 
     def test_config_includes_deploy_flag(self):
         self.assertTrue(self.deployment.config()['_is_deployment'])
+
+    @patch('foundations_contrib.bucket_job_deployment.BucketJobDeployment._bucket_upload_from_file', Mock())
+    def test_upload_to_result_bucket_uses_bucket_upload_from_file_with_proper_bucket(self):
+        self.deployment.upload_to_result_bucket()
+        self.deployment._bucket_upload_from_file.assert_called_with(self.result_bucket)
