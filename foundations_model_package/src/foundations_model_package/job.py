@@ -9,6 +9,7 @@ class Job(object):
     
     def __init__(self, job_id):
         self._id = job_id
+        self._manifest = None
 
     def id(self):
         return self._id
@@ -17,18 +18,10 @@ class Job(object):
         return self._root()
 
     def manifest(self):
-        import os.path as path
-        from foundations_model_package.manifest_validator import ManifestValidator
+        if self._manifest is None:
+            self._load_manifest()
 
-        if not path.exists(self._manifest_path()):
-            raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
-
-        with open(self._manifest_path(), 'r') as manifest_file:
-            model_package_manifest = self._manifest_from_file(manifest_file)
-
-        ManifestValidator(model_package_manifest).validate_manifest()
-
-        return model_package_manifest
+        return self._manifest
 
     def _root(self):
         return f'/archive/archive/{self._id}/artifacts'
@@ -43,3 +36,17 @@ class Job(object):
             return yaml.load(manifest_file)
         except yaml.parser.ParserError:
             raise Exception('Manifest file was not a valid YAML file!')
+
+    def _load_manifest(self):
+        import os.path as path
+        from foundations_model_package.manifest_validator import ManifestValidator
+
+        if not path.exists(self._manifest_path()):
+            raise Exception('Manifest file, foundations_package_manifest.yaml not found!')
+
+        with open(self._manifest_path(), 'r') as manifest_file:
+            model_package_manifest = self._manifest_from_file(manifest_file)
+
+        ManifestValidator(model_package_manifest).validate_manifest()
+
+        self._manifest = model_package_manifest

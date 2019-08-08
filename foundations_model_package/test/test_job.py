@@ -86,6 +86,20 @@ class TestJob(Spec):
 
         self.mock_manifest_validator.validate_manifest.assert_called_once()
 
+    def test_manifest_does_not_reload_manifest_if_already_loaded(self):
+        job = Job(self.job_id)
+        job.manifest()
+        job.manifest()
+
+        self.mock_open.assert_called_once()
+
+    def test_manifest_does_not_check_whether_manifest_path_exists_if_already_loaded(self):
+        job = Job(self.job_id)
+        job.manifest()
+        job.manifest()
+
+        self.mock_path_exists.assert_called_once()
+
     def _mock_enter(self, *args, **kwargs):
         return self.mock_file
 
