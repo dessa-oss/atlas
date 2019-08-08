@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import unittest
 
-from mock import patch, Mock
+from mock import patch, Mock, mock_open
 
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 
@@ -44,6 +44,11 @@ class TestBucketJobDeployment(Spec):
         self.assertTrue(self.deployment.config()['_is_deployment'])
 
     @patch('foundations_contrib.bucket_job_deployment.BucketJobDeployment._bucket_upload_from_file', Mock())
-    def test_upload_to_result_bucket_uses_bucket_upload_from_file_with_proper_bucket(self):
+    def test_upload_to_result_bucket_uses_bucket_upload_from_file_with_result_bucket(self):
         self.deployment.upload_to_result_bucket()
         self.deployment._bucket_upload_from_file.assert_called_with(self.result_bucket)
+
+    @patch('builtins.open', mock_open())
+    def test_bucket_upload_from_file_opens_job_archive(self):
+        self.deployment._bucket_upload_from_file(self.code_bucket)
+        open.assert_called_with(self.deployment._job_archive(), 'rb')
