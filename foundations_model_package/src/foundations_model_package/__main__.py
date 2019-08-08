@@ -12,13 +12,11 @@ def main():
     from foundations_model_package.redis_actions import indicate_model_ran_to_redis
     from foundations_model_package.resource_factories import prediction_resource
     from foundations_model_package.flask_app import flask_app
-    from foundations_model_package.entrypoint_loader import EntrypointLoader
 
     _hack_for_cleaning_up_logs()
 
     job = Job(os.environ['JOB_ID'])
 
-    EntrypointLoader(job).entrypoint_function()
     prediction_function = _load_prediction_function(job)
 
     root_model_serving_resource = prediction_resource(prediction_function)
@@ -50,6 +48,9 @@ def _module_name_and_function_name(manifest):
 def _load_prediction_function(job):
     import importlib
 
+    from foundations_model_package.entrypoint_loader import EntrypointLoader
+
+    EntrypointLoader(job).entrypoint_function()
     module_name, function_name = _module_name_and_function_name(job.manifest())
 
     try:
