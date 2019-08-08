@@ -3,13 +3,15 @@
 export project_name=$1
 export model_name=$2
 
+namespace="ingress-nginx"
+
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
 echo "Preparing $model_name for serving"
 
-model_pod=$(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $1}')
+model_pod=$(kubectl -n $namespace get po | grep $model_name | awk '{print $1}')
 
 model_status () {
-    echo $(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $3}')
+    echo $(kubectl -n $namespace get po | grep $model_name | awk '{print $3}')
 }
 
 echo "Waiting for $model_name to be ready"

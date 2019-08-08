@@ -10,11 +10,7 @@ spec:
   - host: localhost
     http:
       paths:
-      - path: /{project_id}
+      - path: /${project_id}
         backend:
-          serviceName: {service_name}
-          servicePort: 80
-      - path: /{project_id}/{model_name}
-        backend:
-          serviceName: {service_name}
+          serviceName: ${service_name}
           servicePort: 80
