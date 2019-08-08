@@ -61,7 +61,6 @@ def _load_prediction_function(job):
     import importlib
 
     module_name, function_name = _module_name_and_function_name(job.manifest())
-    _add_module_to_sys_path(job.root(), module_name)
 
     try:
         module = importlib.import_module(module_name)
