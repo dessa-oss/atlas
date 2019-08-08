@@ -47,16 +47,6 @@ def _module_name_and_function_name(manifest):
     prediction_definition = manifest['entrypoints']['predict']
     return prediction_definition['module'], prediction_definition['function']
 
-def _add_module_to_sys_path(job_root, module_name):
-    import sys
-    import os.path
-
-    module_path = module_name.replace('.', '/')
-    module_directory = os.path.dirname(module_path)
-    if module_directory:
-        module_directory = f"{job_root}/{module_directory}"
-        sys.path.insert(0, module_directory)
-
 def _load_prediction_function(job):
     import importlib
 
