@@ -15,7 +15,7 @@ class TestEntrypointLoader(Spec):
     path_exists = let_patch_mock_with_conditional_return('os.path.exists')
     os_chdir = let_patch_mock('os.chdir')
     mock_function = let_mock()
-    mock_load_function_from_module = let_patch_mock_with_conditional_return('foundations_model_package.importlib_wrapper.load_function_from_module')
+    mock_load_function_from_module = let_patch_mock('foundations_model_package.importlib_wrapper.load_function_from_module')
 
     @let
     def sys_path(self):
@@ -71,6 +71,7 @@ class TestEntrypointLoader(Spec):
         self.path_exists.return_when(True, self.job_root)
         self.patch('sys.path', self.sys_path)
         self.predict_entrypoint['module'] = self.top_level_directory
+        self.predict_entrypoint['function'] = self.function_name
 
     def test_entrypoint_loader_checks_for_job_root_and_complains_if_it_does_not_exist(self):
         self.path_exists.clear()
@@ -101,3 +102,8 @@ class TestEntrypointLoader(Spec):
         sys_path_before = list(self.sys_path)
         EntrypointLoader(self.job).entrypoint_function()
         self.assertEqual([f'{self.job_root}/{self.top_level_directory}/{self.mid_level_directory}', self.job_root] + sys_path_before, self.sys_path)
+
+    def test_entrypoint_loader_returns_function_from_module_as_configured(self):
+        mock_load_function_from_module = self.patch('foundations_model_package.importlib_wrapper.load_function_from_module', ConditionalReturn())
+        mock_load_function_from_module.return_when(self.mock_function, self.top_level_directory, self.function_name)
+        self.assertEqual(self.mock_function, EntrypointLoader(self.job).entrypoint_function())
