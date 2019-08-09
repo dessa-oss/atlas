@@ -33,11 +33,13 @@ class SyncableDirectory(object):
         from foundations_contrib.archiving.upload_artifacts import list_of_files_to_upload_from_artifact_path
 
         file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
-        old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps')
-        decoded_old_timestamps = {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
         for file in file_listing:
-            self._upload_single_artifact(file, decoded_old_timestamps)
+            self._upload_single_artifact(file, self._decoded_old_timestamps())
+
+    def _decoded_old_timestamps(self):
+        old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps')
+        return {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
     def _upload_single_artifact(self, file, decoded_old_timestamps):
         import os
