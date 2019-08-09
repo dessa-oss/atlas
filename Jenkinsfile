@@ -180,7 +180,7 @@ pipeline {
                     ]
                 ]
 
-                slackSend(channel: '#foundations-builds', attachments: attachments)
+                slackSend(channel: '#f9s-builds', attachments: attachments)
             }
         }
         success {
