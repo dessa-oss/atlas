@@ -128,6 +128,25 @@ class TestSyncableDirectory(Spec):
         self.syncable_directory.upload()
         self.mock_archive.append_file.assert_has_calls(expected_calls)
 
+    def test_uploads_all_files_to_different_package(self):
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+
+        expected_calls = []
+        for file in self.file_listing:
+            remote_path = file[len(self.directory_path)+1:]
+            expected_calls.append(
+                call(
+                    f'model_package_directories/{self.key}', 
+                    file, 
+                    self.local_job_id,
+                    remote_path
+                )
+            )
+
+        syncable_directory = SyncableDirectory(self.key, self.directory_path, self.local_job_id, self.remote_job_id, package_name='model_package')
+        syncable_directory.upload()
+        self.mock_archive.append_file.assert_has_calls(expected_calls)
+
     def test_upload_should_log_warning_if_no_local_job_set(self):
         from foundations.artifacts.syncable_directory import SyncableDirectory
 
