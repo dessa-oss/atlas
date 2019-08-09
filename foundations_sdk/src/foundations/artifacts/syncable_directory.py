@@ -60,7 +60,6 @@ class SyncableDirectory(object):
         foundations_syncable_directory_logger.warning('local_job_id required for uploading artifacts')
 
     def download(self):
-
         file_listing = self._redis().smembers(self._job_redis_key(self._remote_job_id))
         file_listing = [file.decode() for file in file_listing]
 
