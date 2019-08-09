@@ -38,7 +38,7 @@ class SyncableDirectory(object):
             self._upload_single_artifact(file, self._decoded_old_timestamps())
 
     def _decoded_old_timestamps(self):
-        old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps')
+        old_timestamps = self._redis().hgetall(f'{self._job_redis_key()}:timestamps')
         return {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
     def _upload_single_artifact(self, file, decoded_old_timestamps):
@@ -47,8 +47,8 @@ class SyncableDirectory(object):
         remote_path = file[len(self._directory_path)+1:]
         timestamp = os.stat(file).st_mtime
 
-        self._redis().hmset(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps', {remote_path: timestamp})
-        self._redis().sadd(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}', remote_path)
+        self._redis().hmset(f'{self._job_redis_key()}:timestamps', {remote_path: timestamp})
+        self._redis().sadd(f'{self._job_redis_key()}', remote_path)
 
         if remote_path not in decoded_old_timestamps or timestamp > decoded_old_timestamps[remote_path]:
             self._archive.append_file(f'{self._package_name}_directories/{self._key}', file, self._local_job_id, remote_path)
@@ -66,7 +66,7 @@ class SyncableDirectory(object):
         file_listing = self._redis().smembers(f'jobs:{self._remote_job_id}:{self._package_name}_artifacts:{self._key}')
         file_listing = [file.decode() for file in file_listing]
 
-        old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps')
+        old_timestamps = self._redis().hgetall(f'{self._job_redis_key()}:timestamps')
         decoded_old_timestamps = {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
         for file in file_listing:
@@ -82,6 +82,9 @@ class SyncableDirectory(object):
                     result_path
                 )
 
+    def _job_redis_key(self):
+        return f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}'
+                
     def _redis(self):
         from foundations_contrib.global_state import redis_connection
         return redis_connection
