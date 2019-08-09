@@ -1,0 +1,23 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+
+class SetupParser(object):
+
+    def __init__(self, cli):
+        self._cli = cli
+
+    def add_sub_parser(self):
+        setup_parser = self._cli.add_sub_parser('setup', help='Sets up Foundations for local experimentation')
+        setup_parser.set_defaults(function=self._run_setup)
+
+    def _run_setup(self):
+        from subprocess import run
+        import foundations_contrib
+
+        run(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=foundations_contrib.root() / 'resources')
+

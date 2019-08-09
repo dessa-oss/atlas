@@ -4,17 +4,20 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
 from tabulate import tabulate
 
 class CommandLineInterface(object):
 
     def __init__(self, args):
+        from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
+
         self._input_arguments = args
 
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
 
-        self._initialize_setup_parser()
+        SetupParser(self).add_sub_parser()
         self._initialize_init_parser()
         self._initialize_deploy_parser()
         self._initialize_info_parser()
@@ -30,10 +33,6 @@ class CommandLineInterface(object):
         argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
-
-    def _initialize_setup_parser(self):
-        setup_parser = self.add_sub_parser('setup', help='Sets up Foundations for local experimentation')
-        setup_parser.set_defaults(function=self._run_setup)
 
     def _initialize_init_parser(self):
         init_parser = self.add_sub_parser('init', help='Creates a new Foundations project in the current directory')
@@ -104,12 +103,6 @@ class CommandLineInterface(object):
             print('Running Foundations version {}'.format(foundations.__version__))
         else:
             self._argument_parser.print_help()
-
-    def _run_setup(self):
-        from subprocess import run
-        import foundations_contrib
-
-        run(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=foundations_contrib.root() / 'resources')
 
     def _init(self):
         from foundations_contrib.cli.scaffold import Scaffold
