@@ -1,20 +1,20 @@
 FROM tiangolo/uwsgi-nginx-flask:python3.6
 
-RUN python -m pip install --upgrade pip==18.1 && \
-    python -m pip install setuptools wheel
+ARG main_file
 
-RUN mkdir -p /var/foundations ~/.ssh
+RUN python -m pip install --upgrade pip==18.1 && \
+        python -m pip install setuptools wheel && \
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl && \
+        chmod +x kubectl && \
+        mv kubectl /usr/bin/ && \
+    mkdir -p /var/foundations ~/.ssh
+
+ENV SERVER_NAME=localhost
+
 COPY ./tmp/pip_wheels /var/foundations/
 WORKDIR /var/foundations
 
 RUN pip install *.whl
 
-ENV SERVER_NAME=localhost
-
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.10.3/bin/linux/amd64/kubectl && \
-    chmod +x kubectl && \
-    mv kubectl /usr/bin/
-
 WORKDIR /app/
-COPY docker/run_api_server.py /app/main.py
-
+COPY docker/${main_file} /app/main.py
