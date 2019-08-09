@@ -60,8 +60,6 @@ class SyncableDirectory(object):
         foundations_syncable_directory_logger.warning('local_job_id required for uploading artifacts')
 
     def download(self):
-        import os
-        import os.path as path
 
         file_listing = self._redis().smembers(self._job_redis_key(self._remote_job_id))
         file_listing = [file.decode() for file in file_listing]
@@ -70,17 +68,23 @@ class SyncableDirectory(object):
         decoded_old_timestamps = {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
         for file in file_listing:
-            result_path = f'{self._directory_path}/{file}'
-            dirname = path.dirname(result_path)
-            os.makedirs(dirname, exist_ok=True)
+            self._download_single_artifact(file, decoded_old_timestamps)
 
-            if not path.isfile(result_path) or os.stat(result_path).st_mtime < decoded_old_timestamps[file]:
-                self._archive.fetch_file_path_to_target_file_path(
-                    f'{self._package_name}_directories/{self._key}', 
-                    file, 
-                    self._remote_job_id,
-                    result_path
-                )
+    def _download_single_artifact(self, file, decoded_old_timestamps):
+        import os
+        import os.path as path
+
+        result_path = f'{self._directory_path}/{file}'
+        dirname = path.dirname(result_path)
+        os.makedirs(dirname, exist_ok=True)
+
+        if not path.isfile(result_path) or os.stat(result_path).st_mtime < decoded_old_timestamps[file]:
+            self._archive.fetch_file_path_to_target_file_path(
+                f'{self._package_name}_directories/{self._key}', 
+                file, 
+                self._remote_job_id,
+                result_path
+            )
 
     def _local_job_redis_key(self,):
         return self._job_redis_key(self._local_job_id)
