@@ -2,15 +2,16 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: model-service-selection
+  namespace: ingress-nginx-test
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /predict
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: localhost
+  - host:
     http:
       paths:
-      - path: /${project_id}
+      - path: /project
         backend:
-          serviceName: ${service_name}
+          serviceName: project-model-service
           servicePort: 80

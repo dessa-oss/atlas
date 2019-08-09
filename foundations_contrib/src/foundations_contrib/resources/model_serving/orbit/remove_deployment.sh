@@ -1,3 +1,7 @@
 #!/bin/bash
-kubectl delete deployment -n ingress-nginx $1-$2-deployment && \
-    kubectl delete svc -n ingress-nginx $1-$2-service
+namespace=$1
+project=$2
+model=$3
+
+kubectl delete deployment -n $namespace $project-$model-deployment && \
+    kubectl delete svc -n $namespace $project-$model-service
