@@ -7,12 +7,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class SyncableDirectory(object):
 
-    def __init__(self, key, directory_path, local_job_id, remote_job_id, auto_download=True, package_name='synced'):
+    def __init__(self, key, directory_path, local_directory_key, remote_job_id, auto_download=True, package_name='synced'):
         from foundations_contrib.archiving import load_archive
 
         self._key = key
         self._directory_path = directory_path
-        self._local_job_id = local_job_id
+        self._local_directory_key = local_directory_key
         self._remote_job_id = remote_job_id
         self._archive = load_archive('artifact_archive')
         self._package_name = package_name
@@ -24,7 +24,7 @@ class SyncableDirectory(object):
         return self._directory_path
 
     def upload(self):
-        if self._local_job_id is None:
+        if self._local_directory_key is None:
             self._log_missing_job_id_for_upload()
         else:
             self._upload_artifacts()
@@ -51,7 +51,7 @@ class SyncableDirectory(object):
         self._redis().sadd(f'{self._local_job_redis_key()}', remote_path)
 
         if remote_path not in decoded_old_timestamps or timestamp > decoded_old_timestamps[remote_path]:
-            self._archive.append_file(f'{self._package_name}_directories/{self._key}', file, self._local_job_id, remote_path)
+            self._archive.append_file(f'{self._package_name}_directories/{self._key}', file, self._local_directory_key, remote_path)
 
     def _log_missing_job_id_for_upload(self):
         from foundations_contrib.global_state import log_manager
@@ -86,7 +86,7 @@ class SyncableDirectory(object):
             )
 
     def _local_job_redis_key(self,):
-        return self._job_redis_key(self._local_job_id)
+        return self._job_redis_key(self._local_directory_key)
 
     def _job_redis_key(self, job_id):
         return f'jobs:{job_id}:{self._package_name}_artifacts:{self._key}'
