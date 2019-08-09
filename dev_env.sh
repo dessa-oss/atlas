@@ -16,5 +16,6 @@ add_path "$cwd/foundations_spec/src" && \
     add_path "$cwd/foundations_scheduler_plugin/src" && \
     add_path "$cwd/foundations_production/src" && \
     add_path "$cwd/foundations_rest_api/src" && \
+    add_path "$cwd/foundations_rest_api_core/src" && \
     add_path "$cwd/foundations_orbit_rest_api/src" && \
     add_path "$cwd/foundations_model_package/src"
