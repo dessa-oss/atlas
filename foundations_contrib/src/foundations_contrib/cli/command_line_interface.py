@@ -14,12 +14,12 @@ class CommandLineInterface(object):
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
 
-        self._initialize_setup_parser(self._subparsers)
-        self._initialize_init_parser(self._subparsers)
-        self._initialize_deploy_parser(self._subparsers)
-        self._initialize_info_parser(self._subparsers)
-        self._initialize_model_serve_parser(self._subparsers)
-        self._initialize_retrieve_parser(self._subparsers)
+        self._initialize_setup_parser()
+        self._initialize_init_parser()
+        self._initialize_deploy_parser()
+        self._initialize_info_parser()
+        self._initialize_model_serve_parser()
+        self._initialize_retrieve_parser()
 
     def add_sub_parser(self, name):
         return self._subparsers.add_parser(name)
@@ -31,17 +31,17 @@ class CommandLineInterface(object):
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
 
-    def _initialize_setup_parser(self, subparsers):
-        setup_parser = subparsers.add_parser('setup', help='Sets up Foundations for local experimentation')
+    def _initialize_setup_parser(self):
+        setup_parser = self._subparsers.add_parser('setup', help='Sets up Foundations for local experimentation')
         setup_parser.set_defaults(function=self._run_setup)
 
-    def _initialize_init_parser(self, subparsers):
-        init_parser = subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
+    def _initialize_init_parser(self):
+        init_parser = self._subparsers.add_parser('init', help='Creates a new Foundations project in the current directory')
         init_parser.add_argument('project_name', type=str, help='Name of the project to create')
         init_parser.set_defaults(function=self._init)
 
-    def _initialize_deploy_parser(self, subparsers):
-        deploy_parser = subparsers.add_parser('deploy', help='Deploys a Foundations project to the specified environment')
+    def _initialize_deploy_parser(self):
+        deploy_parser = self._subparsers.add_parser('deploy', help='Deploys a Foundations project to the specified environment')
         deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
         deploy_parser.add_argument('--env', help='Environment to run file in')
         deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
@@ -50,13 +50,13 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
         deploy_parser.set_defaults(function=self._deploy)
 
-    def _initialize_info_parser(self, subparsers):
-        info_parser = subparsers.add_parser('info', help='Provides information about your Foundations project')
+    def _initialize_info_parser(self):
+        info_parser = self._subparsers.add_parser('info', help='Provides information about your Foundations project')
         info_parser.add_argument('--env', action='store_true')
         info_parser.set_defaults(function=self._info)
 
-    def _initialize_model_serve_parser(self, subparsers):
-        serving_parser = subparsers.add_parser('serve')
+    def _initialize_model_serve_parser(self):
+        serving_parser = self._subparsers.add_parser('serve')
         serving_subparsers = serving_parser.add_subparsers()
 
         serving_deploy_parser = serving_subparsers.add_parser('start')
@@ -67,8 +67,8 @@ class CommandLineInterface(object):
         serving_destroy_parser.add_argument('model_name')
         serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
 
-    def _initialize_retrieve_parser(self, subparsers):
-        retrieve_parser = subparsers.add_parser('get', help='Get file types from execution environments')
+    def _initialize_retrieve_parser(self):
+        retrieve_parser = self._subparsers.add_parser('get', help='Get file types from execution environments')
         retrieve_subparsers = retrieve_parser.add_subparsers()
         self._initialize_retrieve_artifact_parser(retrieve_subparsers)
         self._initialize_retrieve_logs_parser(retrieve_subparsers)
