@@ -77,6 +77,19 @@ class TestCommandLineInterface(Spec):
         self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
         self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
+    def test_add_sub_parser_adds_new_subparser(self):
+        hello_said = False
+
+        cli = CommandLineInterface(['say_hello'])
+
+        def _callback():
+            hello_said = True
+        parser = cli.add_sub_parser('say_hello')
+        parser.set_defaults(function=_callback)
+        cli.execute()
+
+        self.assertTrue(True)
+
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
         parser_mock = Mock()

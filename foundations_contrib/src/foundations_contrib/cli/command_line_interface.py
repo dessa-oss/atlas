@@ -9,17 +9,20 @@ from tabulate import tabulate
 class CommandLineInterface(object):
 
     def __init__(self, args):
+        self._input_arguments = args
+
         self._argument_parser = self._initialize_argument_parser()
-        subparsers = self._argument_parser.add_subparsers()
+        self._subparsers = self._argument_parser.add_subparsers()
 
-        self._initialize_setup_parser(subparsers)
-        self._initialize_init_parser(subparsers)
-        self._initialize_deploy_parser(subparsers)
-        self._initialize_info_parser(subparsers)
-        self._initialize_model_serve_parser(subparsers)
-        self._initialize_retrieve_parser(subparsers)
+        self._initialize_setup_parser(self._subparsers)
+        self._initialize_init_parser(self._subparsers)
+        self._initialize_deploy_parser(self._subparsers)
+        self._initialize_info_parser(self._subparsers)
+        self._initialize_model_serve_parser(self._subparsers)
+        self._initialize_retrieve_parser(self._subparsers)
 
-        self._arguments = self._argument_parser.parse_args(args)
+    def add_sub_parser(self, name):
+        return self._subparsers.add_parser(name)
 
     def _initialize_argument_parser(self):
         from argparse import ArgumentParser
@@ -91,6 +94,7 @@ class CommandLineInterface(object):
         serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
     def execute(self):
+        self._arguments = self._argument_parser.parse_args(self._input_arguments)
         self._arguments.function()
 
     def _no_command(self):
