@@ -48,6 +48,8 @@ foundations_events/build
 foundations_events/dist
 foundations_events/foundations_events.egg-info
 foundations_events/src/foundations_events.egg-info
+foundations_orbit_rest_api/foundations_orbit_rest_api.egg-info
+foundations_orbit_rest_api/src/foundations_orbit_rest_api.egg-info
 foundations_scheduler_plugin/build
 foundations_scheduler_plugin/dist
 foundations_scheduler_plugin/foundations_scheduler_plugin.egg-info
