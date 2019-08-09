@@ -26,11 +26,9 @@ class SyncableDirectory(object):
     def upload(self):
         import os
         from foundations_contrib.archiving.upload_artifacts import list_of_files_to_upload_from_artifact_path
-        from foundations_contrib.global_state import log_manager
 
         if self._local_job_id is None:
-            foundations_syncable_directory_logger = log_manager.get_logger(__name__)
-            foundations_syncable_directory_logger.warning('local_job_id required for uploading artifacts')
+            self._log_missing_job_id_for_upload()
         else:
             file_listing = list_of_files_to_upload_from_artifact_path(self._directory_path)
             old_timestamps = self._redis().hgetall(f'jobs:{self._local_job_id}:{self._package_name}_artifacts:{self._key}:timestamps')
@@ -45,6 +43,12 @@ class SyncableDirectory(object):
 
                 if remote_path not in decoded_old_timestamps or timestamp > decoded_old_timestamps[remote_path]:
                     self._archive.append_file(f'{self._package_name}_directories/{self._key}', file, self._local_job_id, remote_path)
+
+    def _log_missing_job_id_for_upload(self):
+        from foundations_contrib.global_state import log_manager
+
+        foundations_syncable_directory_logger = log_manager.get_logger(__name__)
+        foundations_syncable_directory_logger.warning('local_job_id required for uploading artifacts')
 
     def download(self):
         import os
