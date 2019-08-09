@@ -19,6 +19,7 @@ def push_image_to_repository(image_name):
 
 client.login(username=nexus_username, password=nexus_password, registry=nexus_registry)
 
+push_image_to_repository(image_name='foundations-orbit-rest-api')
 push_image_to_repository(image_name='foundations-rest-api')
 push_image_to_repository(image_name='foundations-gui')
 

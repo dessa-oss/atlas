@@ -15,4 +15,5 @@ def build_and_tag_gui_image(path, dockerfile, repository):
             print(line)
 
 build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', '{}/foundations-rest-api'.format(nexus_registry))
+build_and_tag_gui_image('.', 'docker/orbit_rest_api_Dockerfile', '{}/foundations-orbit-rest-api'.format(nexus_registry))
 build_and_tag_gui_image('foundations_ui', 'gui_Dockerfile', '{}/foundations-gui'.format(nexus_registry))
