@@ -11,3 +11,4 @@ class Model(PropertyModel):
 
     model_name = PropertyModel.define_property()
     default = PropertyModel.define_property()
+    status = PropertyModel.define_property()

@@ -19,6 +19,12 @@ class TestModel(Spec):
     def is_default(self):
         return self.faker.boolean()
 
+    @let
+    def activated_status(self):
+        if self.faker.boolean():
+            return 'activated'
+        return 'deactivated'
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -26,3 +32,7 @@ class TestModel(Spec):
     def test_has_default_status(self):
         model = Model(default=self.is_default)
         self.assertEqual(self.is_default, model.default)
+
+    def test_has_activated_status(self):
+        model = Model(status=self.activated_status)
+        self.assertEqual(self.activated_status, model.status)
