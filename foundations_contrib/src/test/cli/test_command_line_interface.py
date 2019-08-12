@@ -12,7 +12,6 @@ from mock import Mock, patch, call
 
 from foundations_contrib.cli.command_line_interface import CommandLineInterface
 from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
-# from foundations_production.serving.foundations_model_server import FoundationsModelServer
 from foundations import ConfigManager
 
 from foundations_spec import *
@@ -302,6 +301,10 @@ class TestCommandLineInterface(Spec):
     def mock_model_name(self):
         return f'model-{self.faker.random.randint(1000, 9999)}'
 
+    @let
+    def mock_user_provided_model_name(self):
+        return self.faker.word()
+
     @let_now
     def os_cwd(self):
         mock = self.patch('os.getcwd')
@@ -413,6 +416,8 @@ class TestCommandLineInterface(Spec):
     mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
     mock_deploy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.deploy')
     mock_destroy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.destroy')
+    # orbit
+    mock_orbit_deploy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -436,6 +441,18 @@ class TestCommandLineInterface(Spec):
     def test_server_destroys_model_server_with_specified_model_name(self):
         CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()
         self.mock_destroy_model_package.assert_called_with(self.mock_model_name)
+
+    def test_server_deploys_model_server_within_orbit_using_specified_project_name_and_model_name_and_project_directory(self):
+        CommandLineInterface([
+                'orbit',
+                'serve', 
+                'start',
+                '--project_name={}'.format(self.fake_project_name),
+                '--model_name={}'.format(self.mock_user_provided_model_name),
+                '--project_directory={}'.format(self.fake_directory)
+            ]).execute()
+
+        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
 
     def test_retrieve_artifacts_calls_environment_fetcher(self):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
