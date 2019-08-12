@@ -45,7 +45,7 @@ class TestModelListingEndpoint(Spec):
             'default': False,
             'created_by': 'Sam',
             'created_at': '2019-01-22T12:42:31Z',
-            'description': 'this is also a model...',
+            'description': None,
             'entrypoints': {
                 'inference': {'module': 'dev.main', 'function': 'predict_this'},
                 'recalibrate': {'module': 'dev.main', 'function': 'train_that'},
