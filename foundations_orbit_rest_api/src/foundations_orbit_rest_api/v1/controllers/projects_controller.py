@@ -5,14 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_orbit_rest_api.utils.api_resource import api_resource
+from foundations_core_rest_api_components.utils.api_resource import api_resource
+from foundations_core_rest_api_components.v1.controllers.projects_controller import ProjectsController
 
-@api_resource('/api/v1/projects')
-class ProjectsController(object):
-    
-    def index(self):
-        from foundations_orbit_rest_api.v1.models.project import Project
-        from foundations_orbit_rest_api.response import Response
-
-        projects_future = Project.all().only(['name', 'created_at', 'owner'])
-        return Response('Projects', projects_future)
+ProjectsController = api_resource('/api/v1/projects')(ProjectsController)

@@ -6,4 +6,3 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.v1.controllers.test_projects_controller import TestProjectsController
-from test.v1.controllers.test_session_controller import TestSessionController
