@@ -17,14 +17,8 @@ def _add_new_path_to_ingress_resource(ingress_resource_yaml, endpoint_path, serv
     new_ingress = dict(ingress_resource_yaml)
     new_paths = _get_paths_from_ingress_resource(new_ingress)
 
-    for project in new_paths:
-        if project['path'] == f'/{endpoint_path}':
-            project['backend']['serviceName'] = f'{service_name}'
-            break
-    else:
-        new_endpoint = {'path': f'/{endpoint_path}', 'backend': {'serviceName': f'{service_name}', 'servicePort': 80}}
-        new_paths.append(new_endpoint)
-    
+    _update_default_endpoint_if_exists(new_paths, endpoint_path, service_name)
+
     new_ingress['spec']['rules'][0]['http']['paths'] = new_paths
     return new_ingress
 
@@ -33,4 +27,15 @@ def _get_paths_from_ingress_resource(new_ingress):
     new_paths = new_paths if new_paths else []
 
     return new_paths
+
+def _update_default_endpoint_if_exists(new_paths, endpoint_path, service_name):
+
+    for project in new_paths:
+        if project['path'] == f'/{endpoint_path}':
+            project['backend']['serviceName'] = f'{service_name}'
+            break
+    else:
+        new_endpoint = {'path': f'/{endpoint_path}', 'backend': {'serviceName': f'{service_name}', 'servicePort': 80}}
+        new_paths.append(new_endpoint)
     
+    return new_paths
