@@ -35,11 +35,7 @@ class Model(PropertyModel):
 
     @staticmethod
     def _models_generator(project_name):
-        from foundations_contrib.global_state import redis_connection
-
-        models_for_project = redis_connection.hgetall(f'projects:{project_name}:model_listing')
-
-        for model_name, serialized_model_information in models_for_project.items():
+        for model_name, serialized_model_information in Model._raw_data_from_redis(project_name).items():
             yield Model._deserialized_model(model_name, serialized_model_information)
 
     @staticmethod
@@ -50,3 +46,8 @@ class Model(PropertyModel):
         model_information['model_name'] = model_name.decode()
 
         return Model(**model_information)
+
+    @staticmethod
+    def _raw_data_from_redis(project_name):
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection.hgetall(f'projects:{project_name}:model_listing')
