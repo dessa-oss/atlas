@@ -4,12 +4,10 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-import io
 
 def update_default_model_for_project(ingress_resource_yaml, project_name, default_model):
     import yaml
-    import pprint
-    pprint.pprint(ingress_resource_yaml)
+
     new_ingress = dict(ingress_resource_yaml)
     new_endpoint = {'path': f'/{project_name}', 'backend': {'serviceName': f'{project_name}-{default_model}-service', 'servicePort': 80}}
     new_paths = new_ingress['spec']['rules'][0]['http']['paths']
@@ -23,5 +21,4 @@ def update_default_model_for_project(ingress_resource_yaml, project_name, defaul
         new_paths.append(new_endpoint)
 
     new_ingress['spec']['rules'][0]['http']['paths'] = new_paths
-    pprint.pprint(new_ingress)
     return new_ingress

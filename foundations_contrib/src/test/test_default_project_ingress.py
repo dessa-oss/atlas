@@ -16,9 +16,9 @@ class TestDefaultProjectIngress(Spec):
         base_yaml = _load_yaml('test/fixtures/empty_ingress_resource.yaml')
         self.assertEqual(expected_yaml, ingress.update_default_model_for_project(base_yaml, 'project', 'model'))
 
-    def test_update_default_project_endpoint_when_project_does_exist(self):
+    def test_update_default_project_endpoint_when_project_exists(self):
         from foundations_contrib.resources.model_serving.orbit import ingress
-    
+
         expected_yaml = _load_yaml('test/fixtures/ingress_resource_with_default.yaml')
         base_yaml = _load_yaml('test/fixtures/ingress_resource_with_old_default.yaml')
         self.assertEqual(expected_yaml, ingress.update_default_model_for_project(base_yaml, 'project', 'model'))
