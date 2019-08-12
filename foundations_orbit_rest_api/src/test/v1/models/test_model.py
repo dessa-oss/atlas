@@ -25,6 +25,10 @@ class TestModel(Spec):
             return 'activated'
         return 'deactivated'
 
+    @let
+    def created_by(self):
+        return self.faker.first_name()
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -36,3 +40,7 @@ class TestModel(Spec):
     def test_has_activated_status(self):
         model = Model(status=self.activated_status)
         self.assertEqual(self.activated_status, model.status)
+
+    def test_has_created_by(self):
+        model = Model(created_by=self.created_by)
+        self.assertEqual(self.created_by, model.created_by)
