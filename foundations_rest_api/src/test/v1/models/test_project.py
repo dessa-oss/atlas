@@ -28,7 +28,7 @@ class TestProject(unittest.TestCase):
             del config_manager.config()[key]
 
     def test_new_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.new(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
@@ -46,7 +46,7 @@ class TestProject(unittest.TestCase):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     def test_find_by_name_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.find_by(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))

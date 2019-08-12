@@ -13,8 +13,8 @@ class JobController(object):
 
     def delete(self):
         from foundations_contrib.jobs.kubernetes_job import cancel
-        from foundations_rest_api.response import Response
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.response import Response
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         cancel(self.params['job_id'])
         

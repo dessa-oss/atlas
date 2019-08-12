@@ -34,7 +34,7 @@ class Project(PropertyModel):
             Project -- The new instance of the project
         """
 
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             return Project(name=name)
@@ -52,7 +52,7 @@ class Project(PropertyModel):
             Project -- The project
         """
 
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             return Project._find_by_internal(name)
@@ -61,7 +61,7 @@ class Project(PropertyModel):
 
     @staticmethod
     def all():
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def callback():
             listing = Project._construct_project_listing()

@@ -29,7 +29,7 @@ class Session(PropertyModel):
 
     @staticmethod
     def find(token):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _find():
             return Session._find_internal(token)

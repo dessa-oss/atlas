@@ -22,7 +22,7 @@ class QueuedJob(PropertyModel):
             list<QueuedJob> -- All queued jobs
         """
 
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
             from foundations_contrib.global_state import deployment_manager

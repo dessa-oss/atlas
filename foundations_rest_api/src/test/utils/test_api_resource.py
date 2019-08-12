@@ -8,8 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from mock import patch
 from foundations_rest_api.utils.api_resource import api_resource
 from test.helpers.api_resource_mocks import APIResourceMocks
-from foundations_rest_api.lazy_result import LazyResult
-from foundations_rest_api.response import Response
+from foundations_core_rest_api_components.lazy_result import LazyResult
+from foundations_core_rest_api_components.response import Response
 
 from foundations_spec import *
 
@@ -228,7 +228,7 @@ class TestAPIResource(Spec):
         return app_manager.app().test_client()
 
     def _mock_resource(self, method, callback, status=200, cookie=None):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_klass = Mock()
         mock_instance = Mock()

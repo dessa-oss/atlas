@@ -9,7 +9,7 @@ from foundations_spec import *
 from mock import patch
 from foundations_rest_api.v2beta.models.job import Job
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
-from foundations_rest_api.lazy_result import LazyResult
+from foundations_core_rest_api_components.lazy_result import LazyResult
 
 from foundations_rest_api.v2beta.models.job_artifact import JobArtifact
 

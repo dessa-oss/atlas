@@ -15,7 +15,7 @@ class JobArtifact(PropertyModel):
 
     @staticmethod
     def all(job_id=None):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
             return list(JobArtifact._all_artifacts(job_id))

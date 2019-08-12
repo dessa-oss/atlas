@@ -67,7 +67,7 @@ class TestSessionController(Spec):
         self.session_controller.post()
         self.mock_create.assert_called()
 
-    @patch('foundations_rest_api.response.Response.constant')
+    @patch('foundations_core_rest_api_components.response.Response.constant')
     def test_session_calls_response_with_token_if_password_valid(self, mock_constant_response):
 
         mock_session_instance = Mock()

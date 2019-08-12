@@ -24,7 +24,7 @@ class Job(PropertyModel):
 
     @staticmethod
     def all(project_name=None, handle_duplicate_param_names=True):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
             return Job._all_internal(project_name, handle_duplicate_param_names)

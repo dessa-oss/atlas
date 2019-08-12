@@ -40,7 +40,7 @@ class TestProjectV2(Spec):
             del config_manager.config()[key]
 
     def test_new_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.new(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
@@ -58,7 +58,7 @@ class TestProjectV2(Spec):
         self.assertEqual('my favourite project', lazy_result.evaluate().name)
 
     def test_find_by_name_project_is_response(self):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         lazy_result = Project.find_by(name='my first project')
         self.assertTrue(isinstance(lazy_result, LazyResult))
@@ -95,7 +95,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id = '123', input_params= [], output_metrics = [])])
 
@@ -116,7 +116,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_all_projects_multiple_projects(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id = '123', input_params= [], output_metrics = [])])
 
@@ -144,7 +144,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_correct_input_param_names(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
                                                                   input_params=[{'name': 'param_1', 'value': 'bye', 'type': 'string'}],
@@ -166,7 +166,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_correct_input_param_names_2_input_param(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
                                                                   input_params=[{'name': 'param_1', 'value': 'bye', 'type': 'string'},
@@ -189,7 +189,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_correct_ouput_metric_names(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
                                                                   input_params=[],
@@ -211,7 +211,7 @@ class TestProjectV2(Spec):
     @patch('foundations_rest_api.v2beta.models.job.Job.all')
     @patch('foundations_contrib.models.project_listing.ProjectListing')
     def test_all_returns_correct_ouput_metric_names_multiple_metrics(self, mock_projects, mock_jobs):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_jobs.return_value = LazyResult(lambda: [self.MockJob(job_id='123',
                                                                   input_params=[],
