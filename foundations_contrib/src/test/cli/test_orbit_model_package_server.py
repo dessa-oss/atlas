@@ -26,7 +26,37 @@ class TestOrbitModelPackageServer(Spec):
     def mock_project_directory(self):
         return self.faker.uri_path()
 
+    @let
+    def model_information(self):
+        return {
+            'status': 'activated',
+            'default': False,
+            'created_by': '',
+            'created_at': '',
+            'description': '',
+            'entrypoints': {},
+            'validation_metrics': {}
+        }
+
+    @set_up
+    def set_up(self):
+        self.maxDiff=None
+        import fakeredis
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
     def test_deploy_run_deployment_script_with_project_name_model_name_project_directory(self):
         deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
-        self.mock_subprocess_run.assert_called_with(['bash', './orbit/deploy_serving.sh', self.mock_project_name, self.mock_model_name, self.mock_project_directory], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run.assert_called_with(['bash', './orbit/deploy_serving.sh', self.mock_project_name, self.mock_model_name], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
 
+    def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
+        import pickle
+
+        deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
+
+        expected_results = {self.mock_model_name: pickle.dumps(self.model_information)}
+
+        hash_map_key = f'projects:{self.mock_project_name}:model_listing'
+        retrieved_results = self._redis.hgetall(hash_map_key)
+        decoded_results = {key.decode(): value for key, value in retrieved_results.items()}
+
+        self.assertEqual(expected_results, decoded_results)
