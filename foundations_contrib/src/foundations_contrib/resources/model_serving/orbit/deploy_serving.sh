@@ -5,7 +5,7 @@ export project_name=$2
 export model_name=$3
 no_follow=$4
 
-cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
+envsubst < kubernetes-deployment-envsubst.yaml | kubectl create -f -
 echo "Preparing $model_name for serving"
 
 model_pod=$(kubectl -n $namespace get po | grep $project_name-$model_name | awk '{print $1}')

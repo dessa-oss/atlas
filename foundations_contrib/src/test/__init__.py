@@ -53,6 +53,7 @@ from test.test_global_metric_logger import TestGlobalMetricLogger
 from test.test_bucket_pipeline_archive import TestBucketPipelineArchive
 from test.test_null_archive import TestNullArchive
 from test.test_default_project_ingress import TestDefaultProjectIngress
+from test.test_ingress_to_model_package import TestIngressToModelPackage
 
 from test.test_log_manager import TestLogManager
 
