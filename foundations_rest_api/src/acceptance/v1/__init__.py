@@ -7,3 +7,4 @@ Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 
 from acceptance.v1.test_jobs_listing_endpoint import TestJobsListingEndpoint
 from acceptance.v1.test_queued_jobs_endpoint import TestQueuedJobsEndpoint
+from acceptance.v1.test_projects_listing_endpoint import TestProjectsListingEndpoint
