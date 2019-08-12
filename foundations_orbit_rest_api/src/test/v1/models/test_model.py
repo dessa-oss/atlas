@@ -91,4 +91,4 @@ class TestModel(Spec):
         self.assertEqual(self.validation_metrics, model.validation_metrics)
 
     def test_get_all_for_project_returns_empty_list_when_nothing_in_redis(self):
-        self.assertEqual([], Model.all(project_name=self.project_name).evaluate())
+        self.assertEqual({'name': self.project_name, 'models': []}, Model.all(project_name=self.project_name).evaluate())

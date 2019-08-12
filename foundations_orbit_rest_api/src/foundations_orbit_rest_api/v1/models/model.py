@@ -19,10 +19,10 @@ class Model(PropertyModel):
     validation_metrics = PropertyModel.define_property()
 
     @staticmethod
-    def all(**kwargs):
+    def all(project_name):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return []
+            return {'name': project_name, 'models': []}
 
         return LazyResult(_all)
