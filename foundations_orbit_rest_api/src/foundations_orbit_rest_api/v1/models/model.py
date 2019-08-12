@@ -5,5 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from test.v1.controllers import *
-from test.v1.models import *
+from foundations_core_rest_api_components.common.models.property_model import PropertyModel
+
+class Model(PropertyModel):
+
+    model_name = PropertyModel.define_property()
