@@ -9,7 +9,7 @@ def update_default_model_for_project(ingress_resource_yaml, project_name, defaul
     return _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}', f'{project_name}-{default_model}-service')
 
 def set_model_endpoint(ingress_resource_yaml, project_name, model_name):
-    pass
+    return _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}/{model_name}', f'{project_name}-{model_name}-service')
 
 def _add_new_path_to_ingress_resource(ingress_resource_yaml, endpoint_path, service_name):
     import yaml

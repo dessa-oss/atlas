@@ -10,13 +10,11 @@ from foundations_spec import *
 class TestIngressToModelPackage(Spec):
 
     def test_fred(self):
-        # from foundations_contrib.resources.model_serving.orbit import ingress
+        from foundations_contrib.resources.model_serving.orbit import ingress
 
-        # expected_yaml = _load_yaml('test/fixtures/ingress_resource_with_model.yaml')
-        # base_yaml = _load_yaml('test/fixtures/empty_ingress_resource.yaml')
-        # self.assertEqual(expected_yaml, ingress.set_model_endpoint(base_yaml, 'project', 'model'))
-    
-        pass
+        expected_yaml = self._load_yaml('test/fixtures/ingress_resource_with_model.yaml')
+        base_yaml = self._load_yaml('test/fixtures/empty_ingress_resource.yaml')
+        self.assertEqual(expected_yaml, ingress.set_model_endpoint(base_yaml, 'project', 'model'))
 
     def _load_yaml(self, filepath):
         import yaml
