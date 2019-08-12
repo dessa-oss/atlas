@@ -23,7 +23,7 @@ class Model(PropertyModel):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return {'name': project_name, 'models': Model._load_models_from_redis(project_name)}
+            return Model._load_models_from_redis(project_name)
 
         return LazyResult(_all)
 

@@ -129,7 +129,7 @@ class TestModel(Spec):
         self.assertEqual(self.validation_metrics, model.validation_metrics)
 
     def test_get_all_for_project_returns_empty_list_when_nothing_in_redis(self):
-        self.assertEqual({'name': self.project_name, 'models': []}, Model.all(project_name=self.project_name).evaluate())
+        self.assertEqual([], Model.all(project_name=self.project_name).evaluate())
 
     def test_get_all_for_project_returns_model_when_in_redis(self):
         self._create_model_information(self.project_name, self.model_name, self.model_information)
@@ -139,7 +139,7 @@ class TestModel(Spec):
 
         model = Model(**expected_information)
 
-        self.assertEqual({'name': self.project_name, 'models': [model]}, Model.all(project_name=self.project_name).evaluate())
+        self.assertEqual([model], Model.all(project_name=self.project_name).evaluate())
 
     def test_get_all_for_project_returns_multiple_models_when_in_redis(self):
         self._create_model_information(self.project_name, 'cool_model', self.model_information)
@@ -154,4 +154,4 @@ class TestModel(Spec):
         model = Model(**model_information)
         model_again = Model(**model_again_information)
 
-        self.assertEqual({'name': self.project_name, 'models': [model_again, model]}, Model.all(project_name=self.project_name).evaluate())
+        self.assertEqual([model_again, model], Model.all(project_name=self.project_name).evaluate())
