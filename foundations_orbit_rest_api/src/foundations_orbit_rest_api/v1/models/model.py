@@ -35,12 +35,18 @@ class Model(PropertyModel):
 
     @staticmethod
     def _models_generator(project_name):
-        import pickle
         from foundations_contrib.global_state import redis_connection
 
         models_for_project = redis_connection.hgetall(f'projects:{project_name}:model_listing')
 
         for model_name, serialized_model_information in models_for_project.items():
-            model_information = pickle.loads(serialized_model_information)
-            model_information['model_name'] = model_name.decode()
-            yield Model(**model_information)
+            yield Model._deserialized_model(model_name, serialized_model_information)
+
+    @staticmethod
+    def _deserialized_model(model_name, serialized_model_information):
+        import pickle
+
+        model_information = pickle.loads(serialized_model_information)
+        model_information['model_name'] = model_name.decode()
+
+        return Model(**model_information)
