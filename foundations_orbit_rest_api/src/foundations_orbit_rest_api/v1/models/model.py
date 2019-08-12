@@ -29,19 +29,18 @@ class Model(PropertyModel):
 
     @staticmethod
     def _load_models_from_redis(project_name):
-        import pickle
+        models = list(Model._models_generator(project_name))
+        models.sort(key=lambda model: model.model_name)
+        return models
 
+    @staticmethod
+    def _models_generator(project_name):
+        import pickle
         from foundations_contrib.global_state import redis_connection
 
         models_for_project = redis_connection.hgetall(f'projects:{project_name}:model_listing')
 
-        models = []
-
         for model_name, serialized_model_information in models_for_project.items():
             model_information = pickle.loads(serialized_model_information)
             model_information['model_name'] = model_name.decode()
-            models.append(Model(**model_information))
-        
-        models.sort(key=lambda model: model.model_name)
-
-        return models
+            yield Model(**model_information)
