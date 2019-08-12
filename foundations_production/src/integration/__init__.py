@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
 
-import integration.config
+### COMPLETELY DEPRECATED - remove this module
 
-from integration.serving import *
+# import integration.config
+
+# from integration.serving import *
