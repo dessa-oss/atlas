@@ -1,2 +1,0 @@
-from integration.resources.test_orbit_ingress import TestOrbitIngress
-

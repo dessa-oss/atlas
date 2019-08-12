@@ -21,7 +21,7 @@ class TestOrbitIngress(Spec):
     @tear_down_class
     def tear_down(self):
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
-        command = 'bash ./remove_deployment.sh ingress-nginx-test project model'
+        command = 'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
 
     def test_first_served_model_can_be_reached_through_ingress(self):
@@ -30,10 +30,14 @@ class TestOrbitIngress(Spec):
 
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
 
-        command = 'bash ./deploy_serving.sh ingress-nginx-test project model no_follow'
-        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        command = 'bash ./deploy_serving.sh project model no_follow'
+        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit').stdout.decode()
+
+        import time
+        time.sleep(10)
+
         try:
-            result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout
+            result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout.decode()
         except Exception as e:
             if 'Failed to connect' in str(e):
                 result = 'Failed to connect'
