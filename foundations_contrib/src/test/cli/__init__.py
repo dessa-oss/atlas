@@ -13,4 +13,3 @@ from test.cli.test_command_line_interface import TestCommandLineInterface
 from test.cli.test_environment_fetcher import TestEnvironmentFetcher
 from test.cli.test_model_package_server import TestModelPackageServer
 from test.cli.test_command_line_job_deployer import TestCommandLineJobDeployer
-from test.cli.test_init_command import TestInitCommand
