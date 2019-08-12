@@ -61,6 +61,25 @@ class TestModel(Spec):
             'validation_metrics': self.validation_metrics
         }
 
+    @let
+    def model_again_information(self):
+        return {
+            'status': 'deactivated',
+            'default': False,
+            'created_by': 'Sam',
+            'created_at': '2019-01-22T12:42:31Z',
+            'description': None,
+            'entrypoints': {
+                'inference': {'module': 'dev.main', 'function': 'predict_this'},
+                'recalibrate': {'module': 'dev.main', 'function': 'train_that'},
+                'evaluation': {'module': 'dev.main', 'function': 'eval_me'}
+            },
+            'validation_metrics': {
+                'accuracy': 0.6,
+                'mse': 77
+            }
+        }
+
     @set_up
     def set_up(self):
         import fakeredis
@@ -121,3 +140,18 @@ class TestModel(Spec):
         model = Model(**expected_information)
 
         self.assertEqual({'name': self.project_name, 'models': [model]}, Model.all(project_name=self.project_name).evaluate())
+
+    def test_get_all_for_project_returns_multiple_models_when_in_redis(self):
+        self._create_model_information(self.project_name, 'cool_model', self.model_information)
+        self._create_model_information(self.project_name, 'another', self.model_again_information)
+        
+        model_information = {'model_name': 'cool_model'}
+        model_information.update(self.model_information)
+
+        model_again_information = {'model_name': 'another'}
+        model_again_information.update(self.model_again_information)
+
+        model = Model(**model_information)
+        model_again = Model(**model_again_information)
+
+        self.assertEqual({'name': self.project_name, 'models': [model_again, model]}, Model.all(project_name=self.project_name).evaluate())

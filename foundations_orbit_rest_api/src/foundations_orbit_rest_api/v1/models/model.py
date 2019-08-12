@@ -35,9 +35,13 @@ class Model(PropertyModel):
 
         models_for_project = redis_connection.hgetall(f'projects:{project_name}:model_listing')
 
-        if models_for_project:
-            model_name, serialized_model_information = list(models_for_project.items())[0]
+        models = []
+
+        for model_name, serialized_model_information in models_for_project.items():
             model_information = pickle.loads(serialized_model_information)
             model_information['model_name'] = model_name.decode()
-            return [Model(**model_information)]
-        return []
+            models.append(Model(**model_information))
+        
+        models.sort(key=lambda model: model.model_name)
+
+        return models
