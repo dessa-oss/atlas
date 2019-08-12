@@ -37,6 +37,10 @@ class TestModel(Spec):
     def description(self):
         return self.faker.sentence()
 
+    @let
+    def entrypoints(self):
+        return self.faker.pydict()
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -60,5 +64,9 @@ class TestModel(Spec):
     def test_has_description(self):
         model = Model(description=self.description)
         self.assertEqual(self.description, model.description)
+
+    def test_has_entrypoints(self):
+        model = Model(entrypoints=self.entrypoints)
+        self.assertEqual(self.entrypoints, model.entrypoints)
 
         

@@ -15,3 +15,4 @@ class Model(PropertyModel):
     created_by = PropertyModel.define_property()
     created_at = PropertyModel.define_property()
     description = PropertyModel.define_property()
+    entrypoints = PropertyModel.define_property()
