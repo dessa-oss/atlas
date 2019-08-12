@@ -17,8 +17,6 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
 
     _log_job_deployed(project_name, env, entrypoint, job_directory, params)
 
-    redis_connection.incr('foundations:sdk:deloyment_count')
-
     cwd_path = os.getcwd()
 
     if job_directory is not None:
@@ -32,6 +30,7 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
 
     foundations.set_project_name(project_name)
     foundations.set_environment(env)
+    redis_connection.incr('foundations:sdk:deloyment_count')
     foundations.config_manager['run_script_environment'] = {'script_to_run': entrypoint, 'enable_stages': False}
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())

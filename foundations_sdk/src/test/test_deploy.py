@@ -122,6 +122,21 @@ class TestDeploy(Spec):
         from foundations_contrib.global_state import current_foundations_context
         current_foundations_context().set_project_name(self._old_project_name)
 
+    def test_redis_not_used_before_environment_set(self):
+        self._environment_set = False
+
+        def _break_redis_if_no_environment_set(*args):
+            if not self._environment_set:
+                raise AssertionError('Environment not set')
+
+        def _set_environment(*args):
+            self._environment_set = True
+
+        self.mock_redis.incr = _break_redis_if_no_environment_set
+        self.mock_set_environment.side_effect = _set_environment
+
+        deploy(self.project_name, self.environment, self.entrypoint, self.job_directory, self.params)
+
     def test_deploy_logs_that_we_deployed_via_the_sdk(self):
         deploy(self.project_name, self.environment, self.entrypoint, self.job_directory, self.params)
         message = {
@@ -140,7 +155,7 @@ class TestDeploy(Spec):
         cwd_name = path.basename(self.fake_cwd)
         self._test_deploy_correctly_sets_project_name(cwd_name)
 
-    def test_deploy_with_project_name_specified_sets_project_name_to_project_name(self):
+    def test_deploy_with_project_name_specified_sets_project_name_to_specified_project_name(self):
         self._test_deploy_correctly_sets_project_name(self.project_name, project_name=self.project_name)
 
     def test_deploy_with_defaults_sets_environment_to_local(self):
