@@ -13,6 +13,7 @@ import foundations_contrib
 class TestOrbitModelPackageServer(Spec):
  
     mock_subprocess_run = let_patch_mock('subprocess.run')
+    mock_syncable_directories = let_patch_mock('foundations.artifacts.syncable_directory.SyncableDirectory')
 
     @let
     def mock_project_name(self):
@@ -60,3 +61,19 @@ class TestOrbitModelPackageServer(Spec):
         decoded_results = {key.decode(): value for key, value in retrieved_results.items()}
 
         self.assertEqual(expected_results, decoded_results)
+
+    def test_deploy_upload_user_specified_model_directory(self):
+
+        deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
+        key='projects'
+        local_directory_key = '{}-{}'.format(self.mock_project_name, self.mock_model_name)
+        package_name = 'orbit_project_model_package'
+
+        self.mock_syncable_directories.assert_called_with(
+            key,
+            self.mock_project_directory,
+            local_directory_key,
+            None,
+            False,
+            package_name
+        )

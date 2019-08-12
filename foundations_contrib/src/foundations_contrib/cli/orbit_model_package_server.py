@@ -25,10 +25,20 @@ def _save_model_to_redis(project_name, model_name):
     redis_connection.hmset(hash_map_key, {model_name: serialized_model_information})
 
 
+def _upload_model_directory(project_name, model_name, project_directory):
+    from foundations.artifacts.syncable_directory import SyncableDirectory
+    key='projects'
+    local_directory_key = '{}-{}'.format(project_name, model_name)
+    package_name = 'orbit_project_model_package'
+    syncable_directory = SyncableDirectory(key, project_directory, local_directory_key, None, False, package_name)
+    syncable_directory.upload()
+
 def deploy(project_name, model_name, project_directory):
     from subprocess import run
     import foundations_contrib
 
     _save_model_to_redis(project_name, model_name)
+
+    _upload_model_directory(project_name, model_name, project_directory)
     
     run(['bash', './orbit/deploy_serving.sh', project_name, model_name ], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
