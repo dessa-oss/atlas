@@ -14,4 +14,4 @@ from integration.test_consumers import TestConsumers
 from integration.test_consumer_compatibility import TestConsumerCompatibility
 from integration.test_run_stageless_job import TestRunStagelessJob
 from integration.test_upload_model_package_with_syncable_directory import TestUploadModelPackageWithSyncableDirectory
-# from integration.test_orbit_ingress import TestOrbitIngress
+from integration.test_orbit_ingress import TestOrbitIngress
