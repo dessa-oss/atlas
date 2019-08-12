@@ -38,4 +38,4 @@ def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProce
     return result
 
 if __name__ == '__main__':
-    ingress.add_new_model_to_ingress(sys.argv[1], sys.argv[2])
+    add_new_model_to_ingress(sys.argv[1], sys.argv[2])
