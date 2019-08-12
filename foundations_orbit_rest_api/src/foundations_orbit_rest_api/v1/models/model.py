@@ -17,3 +17,12 @@ class Model(PropertyModel):
     description = PropertyModel.define_property()
     entrypoints = PropertyModel.define_property()
     validation_metrics = PropertyModel.define_property()
+
+    @staticmethod
+    def all(**kwargs):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+
+        def _all():
+            return []
+
+        return LazyResult(_all)

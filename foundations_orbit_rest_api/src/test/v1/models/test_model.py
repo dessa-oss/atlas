@@ -45,6 +45,19 @@ class TestModel(Spec):
     def validation_metrics(self):
         return self.faker.pydict()        
 
+    @let
+    def project_name(self):
+        return self.faker.word()
+
+    @set_up
+    def set_up(self):
+        import fakeredis
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
+    @tear_down
+    def tear_down(self):
+        self._redis.flushall()
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -77,5 +90,5 @@ class TestModel(Spec):
         model = Model(validation_metrics=self.validation_metrics)
         self.assertEqual(self.validation_metrics, model.validation_metrics)
 
-
-        
+    def test_get_all_for_project_returns_empty_list_when_nothing_in_redis(self):
+        self.assertEqual([], Model.all(project_name=self.project_name).evaluate())
