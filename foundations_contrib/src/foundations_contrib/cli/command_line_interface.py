@@ -107,9 +107,9 @@ class CommandLineInterface(object):
         serving_deploy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_deploy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_deploy)
 
-        serving_destroy_parser = serving_subparsers.add_parser('stop')
-        serving_destroy_parser.add_argument('model_name')
-        serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
+        # serving_destroy_parser = serving_subparsers.add_parser('stop')
+        # serving_destroy_parser.add_argument('model_name')
+        # serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)

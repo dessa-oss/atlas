@@ -30,7 +30,3 @@ class TestOrbitModelPackageServer(Spec):
         deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
         self.mock_subprocess_run.assert_called_with(['bash', './orbit/deploy_serving.sh', self.mock_project_name, self.mock_model_name, self.mock_project_directory], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
 
-    def test_deploy_run_deployment_script_uploads_directory(self):
-        pass
-
-    
