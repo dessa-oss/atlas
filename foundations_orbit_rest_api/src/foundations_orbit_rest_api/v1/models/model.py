@@ -10,3 +10,4 @@ from foundations_core_rest_api_components.common.models.property_model import Pr
 class Model(PropertyModel):
 
     model_name = PropertyModel.define_property()
+    default = PropertyModel.define_property()
