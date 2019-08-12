@@ -33,6 +33,10 @@ class TestModel(Spec):
     def created_at(self):
         return str(self.faker.date_time_this_year())
 
+    @let 
+    def description(self):
+        return self.faker.sentence()
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -52,4 +56,9 @@ class TestModel(Spec):
     def test_has_created_at(self):
         model = Model(created_at=self.created_at)
         self.assertEqual(self.created_at, model.created_at)
+
+    def test_has_description(self):
+        model = Model(description=self.description)
+        self.assertEqual(self.description, model.description)
+
         
