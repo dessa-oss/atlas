@@ -1,0 +1,12 @@
+job_deployment_env: local
+results_config:
+  archive_end_point: /tmp/foundations_test
+  artifact_path: /tmp/foundations_test/artifact_path
+  redis_end_point: /tmp/foundations_test/redis_end_point
+ssh_config:
+  host: 11.11.11.11
+  key_path: /tmp/foundations_test/key_path
+  code_path: /tmp/foundations_test/code_path
+  result_path: integration/fixtures/model_package
+cache_config: {}
+obfuscate_foundations: False
