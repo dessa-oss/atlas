@@ -23,6 +23,21 @@ class Model(PropertyModel):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return {'name': project_name, 'models': []}
+            return {'name': project_name, 'models': Model._load_models_from_redis(project_name)}
 
         return LazyResult(_all)
+
+    @staticmethod
+    def _load_models_from_redis(project_name):
+        import pickle
+
+        from foundations_contrib.global_state import redis_connection
+
+        models_for_project = redis_connection.hgetall(f'projects:{project_name}:model_listing')
+
+        if models_for_project:
+            model_name, serialized_model_information = list(models_for_project.items())[0]
+            model_information = pickle.loads(serialized_model_information)
+            model_information['model_name'] = model_name.decode()
+            return [Model(**model_information)]
+        return []
