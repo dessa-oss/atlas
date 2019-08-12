@@ -6,7 +6,7 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
 
 class ModelsController(object):
-    
+
     def index(self):
         from functools import partial
 

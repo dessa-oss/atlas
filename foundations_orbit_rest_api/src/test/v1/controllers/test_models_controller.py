@@ -10,7 +10,7 @@ from foundations_spec import *
 from foundations_orbit_rest_api.v1.controllers.models_controller import ModelsController
 
 class TestModelsController(Spec):
-    
+
     @let
     def model_name(self):
         return self.faker.word()
@@ -33,7 +33,7 @@ class TestModelsController(Spec):
     def created_at(self):
         return str(self.faker.date_time_this_year())
 
-    @let 
+    @let
     def description(self):
         return self.faker.sentence()
 
@@ -43,7 +43,7 @@ class TestModelsController(Spec):
 
     @let
     def validation_metrics(self):
-        return self.faker.pydict()        
+        return self.faker.pydict()
 
     @let
     def project_name(self):
@@ -83,17 +83,17 @@ class TestModelsController(Spec):
     @set_up
     def set_up(self):
         import fakeredis
-        
+
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
         self._create_model_information(self.project_name, 'model', self.model_information)
         self._create_model_information(self.project_name, 'another_model', self.model_again_information)
-    
+
     def test_index_returns_payload_for_models_in_redis(self):
         controller = ModelsController()
         controller.params = {'project_name': self.project_name}
 
         expected_results = {'name': self.project_name}
-        
+
         expected_model = {'model_name': 'model'}
         expected_model.update(self.model_information)
 
