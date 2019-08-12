@@ -13,3 +13,4 @@ class Model(PropertyModel):
     default = PropertyModel.define_property()
     status = PropertyModel.define_property()
     created_by = PropertyModel.define_property()
+    created_at = PropertyModel.define_property()
