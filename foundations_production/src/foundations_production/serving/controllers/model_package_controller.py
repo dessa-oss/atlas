@@ -4,8 +4,8 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 04 2019
 """
-from foundations_rest_api.response import Response
-from foundations_rest_api.lazy_result import LazyResult
+from foundations_core_rest_api_components.response import Response
+from foundations_core_rest_api_components.lazy_result import LazyResult
 from foundations_production.serving.api_resource import api_resource
 from foundations_production.serving.controllers.exceptions_as_http_errors import exceptions_as_http_errors
 from foundations_production.serving.controllers.controller_mixin import ControllerMixin

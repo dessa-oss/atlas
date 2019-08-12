@@ -9,8 +9,8 @@ import unittest
 from mock import patch, Mock
 from foundations_production.serving.api_resource import api_resource
 from test.serving.helpers.api_resource_mocks import APIResourceMocks
-from foundations_rest_api.lazy_result import LazyResult
-from foundations_rest_api.response import Response
+from foundations_core_rest_api_components.lazy_result import LazyResult
+from foundations_core_rest_api_components.response import Response
 
 from foundations_spec.helpers.spec import Spec
 from foundations_spec.helpers import let, let_patch_mock
@@ -213,7 +213,7 @@ class TestAPIResource(Spec):
 
     @staticmethod
     def _mock_resource(method, callback, status=200):
-        from foundations_rest_api.lazy_result import LazyResult
+        from foundations_core_rest_api_components.lazy_result import LazyResult
 
         mock_klass = Mock()
         mock_instance = Mock()
