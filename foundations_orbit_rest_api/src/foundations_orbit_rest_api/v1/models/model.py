@@ -17,3 +17,37 @@ class Model(PropertyModel):
     description = PropertyModel.define_property()
     entrypoints = PropertyModel.define_property()
     validation_metrics = PropertyModel.define_property()
+
+    @staticmethod
+    def all(project_name):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+
+        def _all():
+            return Model._load_models_from_redis(project_name)
+
+        return LazyResult(_all)
+
+    @staticmethod
+    def _load_models_from_redis(project_name):
+        models = list(Model._models_generator(project_name))
+        models.sort(key=lambda model: model.model_name)
+        return models
+
+    @staticmethod
+    def _models_generator(project_name):
+        for model_name, serialized_model_information in Model._raw_data_from_redis(project_name).items():
+            yield Model._deserialized_model(model_name, serialized_model_information)
+
+    @staticmethod
+    def _deserialized_model(model_name, serialized_model_information):
+        import pickle
+
+        model_information = pickle.loads(serialized_model_information)
+        model_information['model_name'] = model_name.decode()
+
+        return Model(**model_information)
+
+    @staticmethod
+    def _raw_data_from_redis(project_name):
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection.hgetall(f'projects:{project_name}:model_listing')

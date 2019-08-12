@@ -45,6 +45,57 @@ class TestModel(Spec):
     def validation_metrics(self):
         return self.faker.pydict()        
 
+    @let
+    def project_name(self):
+        return self.faker.word()
+
+    @let
+    def model_information(self):
+        return {
+            'status': self.activated_status,
+            'default': self.is_default,
+            'created_by': self.created_by,
+            'created_at': self.created_at,
+            'description': self.description,
+            'entrypoints': self.entrypoints,
+            'validation_metrics': self.validation_metrics
+        }
+
+    @let
+    def model_again_information(self):
+        return {
+            'status': 'deactivated',
+            'default': False,
+            'created_by': 'Sam',
+            'created_at': '2019-01-22T12:42:31Z',
+            'description': None,
+            'entrypoints': {
+                'inference': {'module': 'dev.main', 'function': 'predict_this'},
+                'recalibrate': {'module': 'dev.main', 'function': 'train_that'},
+                'evaluation': {'module': 'dev.main', 'function': 'eval_me'}
+            },
+            'validation_metrics': {
+                'accuracy': 0.6,
+                'mse': 77
+            }
+        }
+
+    @set_up
+    def set_up(self):
+        import fakeredis
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
+    @tear_down
+    def tear_down(self):
+        self._redis.flushall()
+
+    def _create_model_information(self, project_name, model_name, model_information):
+        import pickle
+
+        hash_map_key = f'projects:{self.project_name}:model_listing'
+        serialized_model_information = pickle.dumps(model_information)
+        self._redis.hmset(hash_map_key, {model_name: serialized_model_information})
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -77,5 +128,30 @@ class TestModel(Spec):
         model = Model(validation_metrics=self.validation_metrics)
         self.assertEqual(self.validation_metrics, model.validation_metrics)
 
+    def test_get_all_for_project_returns_empty_list_when_nothing_in_redis(self):
+        self.assertEqual([], Model.all(project_name=self.project_name).evaluate())
 
+    def test_get_all_for_project_returns_model_when_in_redis(self):
+        self._create_model_information(self.project_name, self.model_name, self.model_information)
         
+        expected_information = {'model_name': self.model_name}
+        expected_information.update(self.model_information)
+
+        model = Model(**expected_information)
+
+        self.assertEqual([model], Model.all(project_name=self.project_name).evaluate())
+
+    def test_get_all_for_project_returns_multiple_models_when_in_redis(self):
+        self._create_model_information(self.project_name, 'cool_model', self.model_information)
+        self._create_model_information(self.project_name, 'another', self.model_again_information)
+        
+        model_information = {'model_name': 'cool_model'}
+        model_information.update(self.model_information)
+
+        model_again_information = {'model_name': 'another'}
+        model_again_information.update(self.model_again_information)
+
+        model = Model(**model_information)
+        model_again = Model(**model_again_information)
+
+        self.assertEqual([model_again, model], Model.all(project_name=self.project_name).evaluate())

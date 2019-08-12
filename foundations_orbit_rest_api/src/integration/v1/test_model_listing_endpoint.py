@@ -68,8 +68,6 @@ class TestModelListingEndpoint(Spec):
 
     def _create_project(self, project_name):
         import time
-        from foundations_contrib.global_state import redis_connection
-
         self.redis.execute_command('ZADD', 'projects', 'NX', time.time(), project_name)
 
     def _create_model_information(self, model_name, model_information):
