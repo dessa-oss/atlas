@@ -34,5 +34,6 @@ rm -rf dist/* && \
     build_module foundations_scheduler_plugin foundations_scheduler_plugin $cwd && \
     build_module foundations_sdk dessa_foundations $cwd && \
     build_module foundations_production foundations_production $cwd && \
+    build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd && \
     build_module foundations_rest_api foundations_rest_api $cwd && \
     build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd
