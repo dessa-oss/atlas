@@ -9,7 +9,6 @@ from foundations_spec import *
 
 from foundations_orbit_rest_api.global_state import app_manager
 
-@skip('not implemented')
 class TestModelListingEndpoint(Spec):
     client = app_manager.app().test_client()
     url = '/api/v1/projects/test_project/model_listing'
@@ -64,7 +63,7 @@ class TestModelListingEndpoint(Spec):
         self._create_project('test_project')
 
         self._create_model_information('model', self.model_information)
-        self._create_model_information('model_again', self.model_again_information)
+        self._create_model_information('again_model', self.model_again_information)
 
     def _create_project(self, project_name):
         import time
@@ -90,11 +89,11 @@ class TestModelListingEndpoint(Spec):
         self.assertEqual('test_project', data['name'])
 
         models = data['models']
-        model_again = models[0]
+        again_model = models[0]
         model = models[1]
 
-        self.assertEqual('model_again', model_again['model_name'])
-        self._assert_is_subset(self.model_again_information, model_again)
+        self.assertEqual('again_model', again_model['model_name'])
+        self._assert_is_subset(self.model_again_information, again_model)
 
         self.assertEqual('model', model['model_name'])
         self._assert_is_subset(self.model_information, model)
