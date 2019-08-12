@@ -48,7 +48,7 @@ pipeline {
         stage('Python3 Run Integration Tests') {
             steps {
                 container("python3") {
-                    sh "./run_integration_tests.sh"
+                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
                 }
             }
         }
