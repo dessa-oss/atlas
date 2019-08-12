@@ -122,6 +122,10 @@ class TestPipelineContext(Spec):
         self.pipeline_context.file_name = self.job_id
         self.assertEqual(self.job_id, self.pipeline_context.file_name)
 
+    def test_job_id_returns_job_id(self):
+        self.pipeline_context.file_name = self.job_id
+        self.assertEqual(self.job_id, self.pipeline_context.job_id)
+
     def test_add_stage_context(self):
         pipeline_context = PipelineContext()
 
