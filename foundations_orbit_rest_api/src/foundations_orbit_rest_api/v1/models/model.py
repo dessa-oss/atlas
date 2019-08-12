@@ -16,3 +16,4 @@ class Model(PropertyModel):
     created_at = PropertyModel.define_property()
     description = PropertyModel.define_property()
     entrypoints = PropertyModel.define_property()
+    validation_metrics = PropertyModel.define_property()

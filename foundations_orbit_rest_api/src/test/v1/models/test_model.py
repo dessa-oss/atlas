@@ -41,6 +41,10 @@ class TestModel(Spec):
     def entrypoints(self):
         return self.faker.pydict()
 
+    @let
+    def validation_metrics(self):
+        return self.faker.pydict()        
+
     def test_has_model_name(self):
         model = Model(model_name=self.model_name)
         self.assertEqual(self.model_name, model.model_name)
@@ -68,5 +72,10 @@ class TestModel(Spec):
     def test_has_entrypoints(self):
         model = Model(entrypoints=self.entrypoints)
         self.assertEqual(self.entrypoints, model.entrypoints)
+
+    def test_has_validation_metrics(self):
+        model = Model(validation_metrics=self.validation_metrics)
+        self.assertEqual(self.validation_metrics, model.validation_metrics)
+
 
         
