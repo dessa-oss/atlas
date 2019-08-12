@@ -1,5 +1,4 @@
 #!/bin/bash
-# export model_number=$(head /dev/urandom | LC_CTYPE=C tr -dc 0-9 | head -c 4 ; echo '')
 export namespace="ingress-nginx-test"
 export project_name=$1
 export model_name=$2
