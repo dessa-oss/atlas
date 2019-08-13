@@ -1,0 +1,90 @@
+/*
+Try to utilize variables as much as possible.  It's one of the best things about a CSS preprocessor like Sass and it makes updates much easier
+*/
+
+//theme defaults
+
+// base colours
+$color-text: #787878;
+$color-link-text: #ffc7aa;
+$color-background: #ffffff;
+$color-highlight: #b1df95;
+$color-border: #a3a3a3;
+$color-black: #000000;
+
+// buttons
+$color-button-background: #4d9ef4;
+$color-button-text: #ffffff;
+
+// modals
+$color-modal-background: #d48e6a;
+$color-modal-text: #ffffff;
+
+// greyed out colors
+$color-button-background-greyed: #e7e7e7;
+$color-text-greyed: #787878;
+
+// tables
+$color-table: #f5f5f5;
+
+// secondary colours, usually for a dark background
+$color-secondary-text: #ffffff;
+$color-secondary-link-text: #ffc7aa;
+$color-secondary-background: #551d00;
+
+//footer
+$color-footer-background: #551d00;
+$color-footer-text: #ffffff;
+$color-footer-link-text: #ffc7aa;
+
+// header
+$color-header-border: #b1df95;
+$color-menu-text: #551d00;
+$color-menu-background: #ffffff;
+
+//flashtext
+$color-flash-from: #d48e6a;
+$color-flash-to: #4a6b8a;
+
+//success colours
+$color-alert: #ff0000;
+$color-success: #b1df95;
+
+//color-pagination
+$color-current-page-background: #561457;
+
+//special colors
+$color-menu-active-state: #f8f8f8;
+$color-box-shadow: #888888;
+$color-input-border: #eeeeee;
+$color-secondary: #92aa64;
+
+// Dessa Colours
+$color-border-bottom: #dcdcdc;
+$color-medium-blue: #0491f6;
+$color-font-black: #443a25;
+$color-background-grey: #f7f7f7;
+$color-dark-blue: #004a9c;
+$color-white: #ffffff;
+$color-status-green: #7ec984;
+$color-status-red: #fb3d42;
+$color-status-rgba-red-half-opacity: rgba(251, 61, 66, 0.5);
+$color-status-yellow: #f5c957;
+$color-error-background: #fdf6f5;
+$color-light-blue: #4a9cf8;
+$color-lighter-blue: #79b7ff;
+$color-lightest-blue: #e9f3ff;
+$color-hover-blue: #62aafb;
+$color-active-blue: #328ff8;
+$color-negation-blue: #004a9c;
+$color-negation-blue-hover: #0253ae;
+$color-negation-blue-active: #01428a;
+$color-no-elevation: #f9f9f9;
+$color-label-text: #3e3a3d;
+$color-label-placeholder: #949494;
+$color-9c-grey: #9c9c9c;
+
+$color-orangered: #ea7317;
+$color-mossgreen: #668f69;
+$color-goldenyellow: #fbb13c;
+$color-purple: rgb(92, 0, 167);

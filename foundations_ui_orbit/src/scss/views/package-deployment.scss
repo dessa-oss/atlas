@@ -1,0 +1,33 @@
+.package-deployment-container,
+.package-deployment-table-container {
+  background-color: $color-white;
+  margin-bottom: 10px;
+
+  .scroll {
+    overflow-y: scroll;
+  }
+}
+
+.package-table-header {
+  color: $color-dark-blue;
+  padding-left: $table-padding;
+  font-size: 16px;
+  display: inline-block;
+  width: calc(50% - #{$table-padding});
+}
+
+.automation-button-container {
+  display: inline-block;
+  padding-right: $table-padding;
+  width: calc(50% - #{$table-padding});
+  margin-bottom: 15px;
+
+  button {
+    margin: 0px;
+
+    .plus-button {
+      margin-right: 15px;
+      margin-top: -3px;
+    }
+  }
+}

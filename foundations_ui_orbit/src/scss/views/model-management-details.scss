@@ -1,0 +1,58 @@
+.model-management-details-container {
+  border-top: $detail-border-width solid $color-lighter-blue;
+  border-bottom: $detail-border-width solid $color-lighter-blue;
+  background-color: $color-lightest-blue;
+  padding: 20px;
+  width: calc(100% - 40px);
+  transition: all 2s;
+}
+
+.model-management-details-header {
+  color: $color-dark-blue;
+  font-size: 14px;
+  margin: 0px;
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+
+.model-management-details-text,
+.model-management-details-text-label {
+  display: inline-block;
+  font-size: 13px;
+  text-align: left;
+}
+
+.model-management-details-entrypoints-container {
+  display: inline-table;
+  width: 25%;
+  margin: 5px;
+}
+
+.model-management-details-entrypoint {
+  font-size: 13px;
+  text-align: left;
+}
+
+.model-management-details-text-second {
+  display: block;
+  margin-left: 151px !important;
+  font-size: 13px;
+  text-align: left;
+}
+
+.model-management-details-text {
+  width: 25%;
+  margin: 5px;
+}
+
+.model-management-details-text-label {
+  width: 10%;
+  margin: 5px 0px;
+}
+
+.model-management-details-lower-container {
+  padding-left: calc(35% + 10px);
+  padding-top: 0px;
+  padding-bottom: 0px;
+  width: 100%;
+}

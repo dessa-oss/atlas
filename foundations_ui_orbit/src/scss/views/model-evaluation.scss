@@ -1,0 +1,142 @@
+.container-evaluation {
+  height: 100%;
+  width: 98%;
+  margin-left: 40px;
+  margin-right: 20px;
+  position: relative;
+
+  .container-top-section {
+    width: 100%;
+    height: 60px;
+    margin-top: 20px;
+
+    .container-num-metrics {
+      width: 30%;
+      display: inline-block;
+      span {
+        @extend .f--din-bold;
+      }
+    }
+
+    .container-filters {
+      text-align: right;
+      float: right;
+
+      .button-load-results {
+        margin-top: 5px;
+        float: right;
+        margin-right: 15px !important;
+      }
+    }
+  }
+
+  .container-eval-empty {
+    width: 358px;
+    height: 235px;
+    background-image: url("../assets/images/icons/icon-fresh-start.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+    text-align: center;
+
+    p {
+      font-family: DINProBold, Arial, sans-serif;
+    }
+
+    p:first-child {
+      margin-top: 235px;
+    }
+  }
+
+  .highcharts-title {
+    color: $color-dark-blue;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0px;
+    margin-top: 30px;
+    text-transform: uppercase;
+    @extend .f--din-bold;
+  }
+
+  .highcharts-sub {
+    @extend .f--din-bold;
+    color: $color-9c-grey;
+  }
+
+  .container-eval-content {
+    .container-preview {
+      padding: 15px;
+      height: 300px;
+      border-radius: 8px;
+      border: solid 1px $color-border-bottom;
+      background-color: white;
+      margin-bottom: 20px;
+      width: calc(33.3% - 30px - 15px - 2px);
+      display: inline-block;
+      margin-right: 15px;
+      position: relative;
+
+      .view-report {
+        position: absolute;
+        right: 15px;
+        z-index: 999;
+        top: 5px;
+        width: 15px;
+        height: 15px;
+        color: $color-dark-blue;
+        text-decoration: underline;
+        font-size: 14px;
+        background-image: url("../assets/svgs/icon-expand-grey.svg");
+        background-repeat: none;
+        background-size: contain;
+
+        &:hover {
+          background-image: url("../assets/svgs/icon-expand-blue.svg");
+        }
+      }
+    }
+
+    .container-chart {
+      width: 100%;
+      height: 100%;
+
+      div {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+.modal-evaluation-chart {
+  width: 90%;
+  height: 500px;
+  margin-top: calc(50% - 500px);
+  margin-left: 5% !important;
+  overflow-y: hidden !important;
+
+  .modal-content {
+    width: calc(100% - 40px);
+    border: none;
+  }
+
+  .highcharts-container {
+    width: 100% !important;
+  }
+
+  .highcharts-root {
+    width: 100% !important;
+  }
+
+  .highcharts-title {
+    color: $color-dark-blue !important;
+    font-size: 16px;
+    text-transform: uppercase;
+    @extend .f--din-bold;
+  }
+}

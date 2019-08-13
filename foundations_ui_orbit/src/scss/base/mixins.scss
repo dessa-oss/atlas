@@ -1,0 +1,74 @@
+/*
+these are helper functions for common tasks that are difficult to implement across different browsers and devices.
+*/
+
+
+//style html input placeholder text
+//-----------------------------
+@mixin placeholder {
+  /*example:
+  @include placeholder {
+    color: $color-black;
+    font-size: 14px;
+  }
+  */
+  &::-webkit-input-placeholder {
+    @content
+  }
+  &:-moz-placeholder {
+    @content
+  }
+  &::-moz-placeholder {
+    @content
+  }
+  &:-ms-input-placeholder {
+    @content
+  }
+}
+
+
+//transitions and animations
+//-----------------------------
+@mixin transition-with-defaults($element, $duration:300ms, $timingFunction:ease-out, $delay:0s){
+  //example:   @include transition-with-defaults(color);
+  -webkit-transition: $element $duration $timingFunction $delay;
+  -moz-transition: $element $duration $timingFunction $delay;
+  -o-transition: $element $duration $timingFunction $delay;
+  transition: $element $duration $timingFunction $delay;
+}
+
+@mixin animate-with-defaults ($animationName, $duration:2s, $timingFunction:linear, $delay:0s, $iterationCount:infinite, $direction:normal){
+  -webkit-animation: $animationName $duration $timingFunction $delay $iterationCount $direction;
+  -moz-animation: $animationName $duration $timingFunction $delay $iterationCount $direction;
+  -o-animation: $animationName $duration $timingFunction $delay $iterationCount $direction;
+  animation: $animationName $duration $timingFunction $delay $iterationCount $direction;
+}
+
+@mixin transition-raw($args) {
+  //example:    @include transition-raw("background-color 300ms ease-out 0s,color 300ms ease-out 0s,opacity 300ms ease-out 0s");
+  $args: unquote($args);
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -o-transition: $args;
+  -ms-transition: $args;
+  transition: $args;
+}
+
+
+//typography
+//-----------------------------
+@mixin tracking-to-em($value){
+  letter-spacing: #{$value/1000}em;
+}
+
+
+//make text unselectable
+//-----------------------------
+@mixin unselectable {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  /* No support for these yet, use at own risk */
+  -o-user-select: none;
+  user-select: none;
+}

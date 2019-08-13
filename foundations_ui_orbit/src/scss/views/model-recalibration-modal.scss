@@ -1,0 +1,237 @@
+.new-model-recalibration-modal-container {
+  width: 40%;
+  min-width: 480px;
+
+  margin-left: 30% !important; // important needed to override the reactstrap library
+  margin-top: 20% !important;
+
+  .recalibrate-property-container {
+    width: 100%;
+
+    .recalibrate-label-date {
+      display: inline-block;
+      width: 100px;
+    }
+
+    .recalibrate-container-date {
+      display: inline-block;
+      margin-left: 20px;
+    }
+  }
+}
+
+.model-recalibration-modal-container {
+  width: 60%;
+  min-width: 480px;
+
+  margin-left: 20% !important; // important needed to override the reactstrap library
+  margin-top: 10% !important;
+
+  .recalibrate-property-container {
+    width: 100%;
+
+    .recalibrate-label-date {
+      display: inline-block;
+      width: 100px;
+    }
+
+    .recalibrate-container-date {
+      display: inline-block;
+      margin-left: 20px;
+    }
+  }
+}
+
+.model-recalibration-modal-header {
+  color: $color-dark-blue;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.model-recalibration-model-name {
+  margin-top: 0px;
+}
+
+.checkbox-label {
+  margin-right: 10px;
+}
+
+.checkbox-div {
+  width: 33%;
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.checkbox-text {
+  white-space: normal;
+  margin-left: $checkbox-margin;
+  font-size: 12px;
+}
+
+.error-message {
+  color: $color-status-red;
+}
+
+.frequency-text {
+  margin-left: $checkbox-margin;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+
+.frequency-container {
+  display: inline-block;
+  width: 45%;
+  border: $border-thin solid $color-border-bottom;
+  vertical-align: top;
+  height: calc(25px - #{$border-thin} * 2);
+
+  &.disabled {
+    background: $color-background-grey;
+  }
+
+  .i--icon-edit-container {
+    background-color: $color-light-blue;
+    height: 25px;
+    width: 25px;
+    float: right;
+    margin-top: -$border-thin;
+    margin-right: -$border-thin;
+
+    &:hover {
+      background: $color-hover-blue;
+    }
+  }
+}
+
+.frequency-time-container {
+  display: inline-block;
+  width: 33%;
+  white-space: nowrap;
+  vertical-align: top;
+
+  .error-message {
+    margin-bottom: 0px;
+  }
+
+  .i--icon-cal-clock-container {
+    background-color: $color-light-blue;
+    width: 25px;
+    height: 25px;
+    float: right;
+    margin-top: -$border-thin;
+    margin-right: -$border-thin;
+
+    .i--icon-cal-clock {
+      height: 80%;
+      width: 80%;
+      margin: 8%;
+      margin-top: 10%;
+    }
+  }
+}
+
+.model-recalibration-upper {
+  border-bottom: $border-thin solid $color-border-bottom;
+  padding-bottom: 20px;
+  width: 100%;
+}
+
+.training-data-container {
+  width: 20%;
+  min-width: 200px;
+  max-width: 200px;
+  height: 200px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.multi-select {
+  [class^="kn-item_label"] {
+    margin-top: -20px;
+  }
+}
+
+.training-data-header {
+  background-color: $color-light-blue;
+  height: $training-data-header-height;
+  text-align: center;
+
+  p {
+    color: $color-white;
+    font-size: 14px;
+    padding-top: 5px;
+    margin-bottom: 0px;
+  }
+}
+
+.add-training-data-header {
+  background-color: $color-light-blue;
+  height: $training-data-header-height;
+  text-align: center;
+
+  p {
+    color: $color-white;
+    font-size: 14px;
+    padding-top: 5px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+
+    &.aligned {
+      line-height: 3.5;
+    }
+  }
+}
+
+.training-rows {
+  height: calc(100% - #{$training-data-header-height});
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border-left: $border-thin solid $color-border-bottom;
+  border-right: $border-thin solid $color-border-bottom;
+}
+
+.multi-select {
+  height: $multi-select-height !important; // to override library css defaults
+  overflow-y: scroll !important;
+  white-space: nowrap;
+}
+
+.ReactVirtualized__Grid {
+  height: $multi-select-height !important; // to override library css defaults
+  overflow-y: scroll !important;
+  white-space: nowrap;
+}
+
+.training-data-select-container,
+.population-select-container {
+  display: inline-block;
+  width: 20%;
+  min-width: 200px;
+  max-width: 200px;
+  height: 200px;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.population-select-container {
+  margin-top: 13px;
+  margin-left: 20px;
+  width: 600px;
+  max-width: 600px;
+  font-size: 13px;
+
+  p {
+    width: 50%;
+    display: inline-block;
+    white-space: normal;
+    margin-top: -15px;
+  }
+}
+
+.model-recalibration-lower {
+  height: 400px;
+}

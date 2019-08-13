@@ -1,0 +1,127 @@
+.manage-inference-modal-container {
+  width: 25%;
+  min-width: 480px;
+  height: 375px;
+  margin-left: 35% !important; // important needed to override the reactstrap library
+  margin-top: 20% !important;
+  white-space: nowrap;
+
+  .plus-button {
+    margin-right: 15px;
+    margin-top: -3px;
+  }
+
+  input {
+    height: 30px;
+    margin: 0px;
+    padding: 0px 15px;
+    width: calc(50% - 30px - 15px);
+    margin-bottom: 10px;
+    margin-right: 15px;
+    font-size: 13px;
+    outline: none;
+  }
+}
+
+.manage-inference-modal-header {
+  color: $color-dark-blue;
+  margin-bottom: 40px;
+}
+
+.manage-inference-modal-button-container {
+  text-align: right;
+  margin-top: 30px;
+  margin-bottom: 10px;
+
+  button {
+    margin-right: 0px;
+    margin-left: 15px;
+  }
+}
+
+.manage-interface-modal-label {
+  display: inline-block;
+  width: calc(35% - 10px);
+  margin-right: 15px;
+}
+
+.manage-interface-modal-sublabel {
+  margin: 0px 0px 10px;
+  white-space: normal;
+}
+
+.manage-interface-modal-select {
+  display: inline-block;
+  width: 65%;
+}
+
+.manage-interface-property-container {
+  margin-top: 10px;
+  width: 100%;
+  white-space: nowrap;
+
+  &.setup {
+    border-bottom: solid 1px $color-background-grey;
+    padding-bottom: 15px;
+  }
+}
+
+.manage-interface-modal-date-container {
+  //border: $border-width solid $color-border-bottom;
+  display: inline-block;
+  vertical-align: middle;
+  width: calc(65% - #{$calendar-icon-size});
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+
+  input {
+    height: $calendar-icon-size !important;
+    width: 100% !important;
+  }
+}
+
+.manage-interface-modal-clock-container {
+  background-color: $color-light-blue;
+  width: $calendar-icon-size;
+  height: $calendar-icon-size;
+  vertical-align: middle;
+  display: inline-block;
+
+  .i--icon-cal-clock {
+    height: 80%;
+    width: 80%;
+    margin: 10%;
+  }
+}
+
+.status-container {
+  margin: auto;
+  height: 30px;
+  display: inline-block;
+  width: 100%;
+}
+
+.active-dot {
+  height: 25px;
+  width: 25px;
+  background-color: #33cc33;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.retired-dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bb0000;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.active-text {
+  color: #33cc33;
+}
+
+.retired-text {
+  color: #bb0000;
+}

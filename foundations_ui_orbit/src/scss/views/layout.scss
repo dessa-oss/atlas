@@ -1,0 +1,210 @@
+.container-layout {
+  overflow-y: scroll;
+  height: calc(100% - 30px);
+}
+
+.container-sidebar-children {
+  display: inline-block;
+  width: 100%;
+  height: calc(100% - 70px);
+  margin-top: 70px;
+
+  .container-children {
+    padding-left: $sidebar-width;
+    width: calc(100% - #{$sidebar-width} - 40px);
+    height: 100%;
+  }
+}
+
+.sidebar {
+  height: 100%;
+  width: $sidebar-width;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  background-color: #004a9c;
+  margin-top: 75px;
+
+  .sidebar-item {
+    height: 80px;
+    background-repeat: no-repeat;
+    background-position: center 30%;
+    position: relative;
+
+    .label {
+      color: white;
+      font-size: 10px;
+      text-transform: uppercase;
+      text-align: center;
+      margin: auto;
+      position: absolute;
+      bottom: 0;
+      left: -200px;
+      right: 0;
+      transition: all 0.3s;
+      top: 50px;
+
+      &.model-eval {
+        top: 50px;
+      }
+
+      &.settings {
+        top: 50px;
+      }
+    }
+
+    &.active {
+      background-repeat: no-repeat;
+      background-position: center 30%;
+      background-color: #ffffff;
+      .label {
+        color: $color-dark-blue;
+        left: 0;
+      }
+
+      &:hover {
+        background-color: white;
+        .label {
+          color: $color-dark-blue;
+        }
+      }
+    }
+
+    &:hover {
+      background-color: #1a60ae;
+
+      .label {
+        transition: all 0.3s;
+        left: 0;
+      }
+    }
+  }
+
+  .icon-cloud {
+    background-image: url("../assets/images/icons/icon-cloud.svg");
+  }
+
+  .icon-cloud-blue {
+    background-image: url("../assets/images/icons/icon-cloud-blue.svg");
+  }
+
+  .icon-home {
+    background-image: url("../assets/images/icons/icon-home.svg");
+  }
+
+  .icon-home-blue {
+    background-image: url("../assets/images/icons/icon-home-blue.svg");
+  }
+
+  .icon-three-dots {
+    background-image: url("../assets/images/icons/icon-three-dots.svg");
+    background-size: 10%;
+  }
+
+  .icon-three-dots-blue {
+    background-image: url("../assets/images/icons/icon-three-dots-blue.svg");
+    background-size: 10%;
+  }
+
+  .icon-monitor {
+    background-image: url("../assets/images/icons/icon-monitor.svg");
+  }
+
+  .icon-monitor-blue {
+    background-image: url("../assets/images/icons/icon-monitor-blue.svg");
+  }
+
+  .icon-chart {
+    background-image: url("../assets/images/icons/icon-chart.svg");
+  }
+
+  .icon-chart-blue {
+    background-image: url("../assets/images/icons/icon-chart-blue.svg");
+  }
+
+  .icon-gear {
+    background-image: url("../assets/images/icons/icon-gear.svg");
+  }
+
+  .icon-gear-blue {
+    background-image: url("../assets/images/icons/icon-gear-blue.svg");
+  }
+
+  .icon-table {
+    background-image: url("../assets/images/icons/icon-table.svg");
+  }
+
+  .icon-table-blue {
+    background-image: url("../assets/images/icons/icon-table-blue.svg");
+  }
+}
+
+.layout-package-toolbar-container {
+  height: 75px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dcdcdc;
+  white-space: nowrap;
+  position: fixed;
+  width: 100%;
+  z-index: 999;
+
+  .layout-package-header-container {
+    margin-left: 90px;
+  }
+
+  .package-toolbar-item {
+    display: inline-block;
+    vertical-align: -webkit-baseline-middle;
+    margin-right: 50px;
+    cursor: pointer;
+
+    p {
+      margin-bottom: 2px;
+      margin-top: 2px;
+      font-size: 14px;
+
+      &.active {
+        border-bottom: 3px solid $color-light-blue;
+        margin-bottom: -1px;
+      }
+    }
+  }
+}
+
+.layout-package-header-container {
+  h2 {
+    margin: 0;
+    color: $color-dark-blue;
+    font-size: 25px;
+  }
+
+  h3 {
+    margin-top: 0px;
+    font-size: 14px;
+  }
+}
+
+.container-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  vertical-align: middle;
+  z-index: 999;
+
+  .container-loading-message {
+    width: 200px;
+    height: 60px;
+    background: white;
+    line-height: 4;
+    position: relative;
+    margin: auto;
+    margin-top: 20%;
+  }
+}

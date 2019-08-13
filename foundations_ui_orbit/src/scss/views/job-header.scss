@@ -1,0 +1,191 @@
+.job-header-container{
+    width: 100%;
+    max-width: 100%;
+    min-width: $minimum-site-width;
+    height: $header-control-height;
+    background-color: $color-background;
+    border-bottom: 2px solid $color-border-bottom;
+  }
+  
+  .job-header-logo-container{
+    margin: 10px;
+
+    .i--icon-logo {
+      height: $header-nav-height;
+      width: $header-nav-height;
+      min-width: $header-nav-height;
+      min-height: $header-nav-height;
+      vertical-align: middle;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 15px;
+      margin: auto;
+    }
+
+    div {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  
+    h2 {
+      font-size: 21px;
+      display: inline-block;
+      margin-top: 22px;
+      margin-left: 10px;
+      vertical-align: top;
+      color: $color-font-black;
+    }
+  }
+  
+  .job-header-info-container{
+    display: inline-block;
+    vertical-align: top;
+    width: fit-content;
+    margin: auto;
+    white-space: nowrap;
+    margin-left: 50px;
+
+    > div {
+        width: 100%;
+        max-width: 100%;
+        height: 50%;
+        max-height: 50%;
+        margin: auto;
+        padding: 0px;
+
+        display: inline-block;
+        vertical-align: middle;
+      
+        h1 {
+          text-align: center;
+          display: inline-block;
+          vertical-align: baseline;
+          text-align: left;
+          margin: 15px 0px;
+        }
+      
+        h2 {
+          text-align: center;
+          display: inline-block;
+          text-align: right;
+        }
+    }
+  }
+
+  .job-summary-info-container {
+    display: inline-block;
+    border-right: 1px solid #DCDCDC;
+    width: 430px;
+    margin: 15px 50px;
+    h2{
+        color: $color-dark-blue;
+        margin: 0px;
+    }
+    p {
+        margin: 0px;
+    }
+    p:nth-of-type(2) {
+        margin-top: 5px;
+    }
+    span{
+        font-size: 12px;
+    }
+  }
+  
+  .job-header-total-projects-container{
+    width: 100%;
+    max-width: 100%;
+    height: 50%;
+    max-height: 50%;
+    margin: auto;
+    padding: 0px;
+  }
+
+  .job-header-sorting-container {
+    vertical-align: top;
+    margin-left: $overview-content-margin-horizontal;
+
+    > div {
+      display: inline-block;
+      vertical-align: top;
+      border-bottom: $border-thin solid $color-border-bottom;
+      width: $job-header-sorting-container-width;
+
+      &:nth-of-type(2){
+        margin-left: $margin-width;
+        width: 121px;
+        border-right: $border-thin solid $color-border-bottom;
+        border-bottom: none;
+      }
+
+      > div {
+        display: inline-block;
+        vertical-align: top;
+        width: 595px;
+        height: 35px;
+        min-height: 35px;
+        margin-top: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+
+        > div:not(:first-child()) {
+          margin-left: 10px;
+        }
+      }
+    }
+
+    .bubble {
+      vertical-align: top;
+      border: 1px solid $color-medium-blue;
+      padding: 3px;
+      border-radius: 8px;
+      line-height: 16px;
+      height: 20px;
+
+      &.more-bubble {
+        margin: 0px;
+        margin-left: 10px;
+        position: relative;
+        width: 65px;
+        min-height: 23px;
+        p {
+          padding: 0px;
+          padding-left: 5px;
+        }
+      }
+
+      &.hidden {
+        display: none;
+      }
+
+      p {
+        margin: 0px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: $standard-cell-padding;
+        padding-left: $standard-cell-padding;
+      }
+    }
+
+    .more-bubble {
+      margin: 3px 0px 0px 10px;
+      position: relative;
+      width: 72px;
+      min-height: 20px;
+      text-align: center;
+      p {
+        padding: 0px;
+      }
+    }
+  }
+
+
+@media only screen and (max-width: $minimum-screen-width) {
+  .job-header-sorting-container {
+    > div {
+      width: $job-header-sorting-container-width-small-screen;
+    }
+  }
+}
+

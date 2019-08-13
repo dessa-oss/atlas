@@ -1,0 +1,110 @@
+/*
+
+We only load a certain subset of possible font file extensions because fonts are extremely hard on the browser in terms of rendering engines.  The extensions that we have chosen follow the recommendations here https://css-tricks.com/snippets/css/using-font-face/ .  It supports IE9+
+
+If you only have a font in a certain extension, there are tools online to convert it to the other types.  There is not one specific tool that is recommended at this time.
+
+Note: font file paths are relative to deployed file paths, not source paths
+*/
+
+//font declarations
+//-----------------------------
+// Reference Example:
+//@font-face {
+//  font-family: 'FuturaMedium';
+//  src: url('/fonts/FuturaPTMedium.woff2') format('woff2'), url('/fonts/FuturaPTMedium.woff') format('woff'),url('/fonts/FuturaPTMedium.ttf') format('truetype');
+//  font-weight: normal;
+//  font-style: normal
+//}
+
+@font-face {
+  font-family: 'FuturaHeavy';
+  src: url('../assets/fonts/futura/FuturaPTHeavy.woff2') format('woff2'), url('../assets/fonts/futura/FuturaPTHeavy.woff') format('woff'),url('../assets/fonts/futura/FuturaPTHeavy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'FuturaBook';
+  src: url('../assets/fonts/futura/FuturaPTBook.woff2') format('woff2'), url('../assets/fonts/futura/FuturaPTBook.woff') format('woff'),url('../assets/fonts/futura/FuturaPTBook.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DIN';
+  src: url('../assets/fonts/din/DIN Regular.woff') format('woff'),url('../assets/fonts/din/DIN Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DINBold';
+  src: url('../assets/fonts/din/DIN Bold.woff') format('woff'),url('../assets/fonts/din/DIN Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DINItalic';
+  src: url('../assets/fonts/din/DIN Italic.woff') format('woff'),url('../assets/fonts/din/DIN Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('../assets/fonts/dinPro/DINPro-Regular.woff') format('woff'),url('../assets/fonts/dinPro/DINPro-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DINProBold';
+  src: url('../assets/fonts/dinPro/DINPro-Bold.woff') format('woff'),url('../assets/fonts/dinPro/DINPro-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+@font-face {
+  font-family: 'DINIProtalic';
+  src: url('../assets/fonts/dinPro/DINPro-Italic.woff') format('woff'),url('../assets/fonts/dinPro/DINPro-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal
+}
+
+//extensible classes
+//-----------------------------
+
+.f--futura-book {
+  font-family: FuturaBook, Arial, sans-serif;
+}
+
+.f--futura-heavy {
+  font-family: FuturaHeavy, Arial, sans-serif;
+}
+
+.f--din {
+  font-family: DIN, Arial, sans-serif;
+}
+
+.f--din-bold {
+  font-family: DINBold, Arial, sans-serif;
+}
+
+.f--din-italic {
+  font-family: DINItalic, Arial, sans-serif;
+}
+
+
+.f--din-pro {
+  font-family: DINPro, Arial, sans-serif;
+}
+
+.f--din-pro-bold {
+  font-family: DINProBold, Arial, sans-serif;
+}
+
+.f--din-pro-italic {
+  font-family: DINProItalic, Arial, sans-serif;
+}

@@ -1,0 +1,217 @@
+.container-timeline {
+  width: calc(100% - 60px);
+  height: 100%;
+  margin-left: 30px;
+  margin-top: 30px;
+
+  &.less-amount {
+    .container-entry {
+      .line {
+        display: none;
+      }
+    }
+  }
+
+  .container-entry {
+    border-left: solid 1px $color-dark-blue;
+    margin-top: 30px;
+
+    &:not(:first-child) {
+      margin-top: -20px;
+      padding-top: 30px;
+    }
+
+    &:last-child {
+      border: none;
+
+      .line {
+        width: 1px;
+        height: 20px;
+        background: $color-dark-blue;
+        margin-top: -25px;
+      }
+    }
+
+    .timeline-entries-container {
+      margin-top: 5px;
+    }
+
+    .circle {
+      width: 10px;
+      height: 10px;
+      background: $color-dark-blue;
+      display: inline-block;
+      vertical-align: top;
+      border-radius: 100%;
+      margin-left: -6px;
+    }
+
+    .label-entry {
+      @extend .font-bold;
+      display: inline-block;
+      color: $color-dark-blue;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin: 0px;
+      margin-left: 20px;
+      vertical-align: top;
+      margin-top: -5px;
+      font-size: 14px;
+    }
+  }
+
+  .container-event {
+    margin-left: 15px;
+    margin-bottom: 15px;
+    height: 55px;
+
+    .label-event-time {
+      color: $color-9c-grey;
+      font-size: 14px;
+      width: 60px;
+      margin-left: 10px;
+      text-align: left;
+      height: 100%;
+      display: inline-block;
+      text-align: left;
+    }
+
+    .container-event-info {
+      width: calc(100% - 90px);
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+      border: solid 1px $color-border-bottom;
+      margin-left: 15px;
+      border-radius: 4px;
+      background: white;
+      white-space: nowrap;
+
+      .container-event-type {
+        width: 10%;
+        height: 100%;
+        vertical-align: middle;
+        border-right: solid 1px #dcdcdc;
+        float: left;
+
+        .label-event-type {
+          height: 15px;
+          border-radius: 2px;
+          color: white;
+          margin-left: 10px;
+          margin-right: 10px;
+          margin-top: 20px;
+          font-size: 11px;
+          vertical-align: middle;
+          width: auto;
+          display: inline-block;
+          padding: 2px 5px;
+          @extend .font-bold;
+
+          &.type-input {
+            background-color: $color-orangered;
+          }
+
+          &.type-feedback {
+            background-color: $color-mossgreen;
+          }
+
+          &.type-inference {
+            background-color: $color-dark-blue;
+          }
+
+          &.type-recalibration {
+            background-color: $color-purple;
+          }
+
+          &.type-project {
+            background-color: white;
+            color: $color-dark-blue;
+            border: solid 1px $color-dark-blue;
+          }
+
+          &.type-deployment {
+            background-color: $color-goldenyellow;
+          }
+        }
+      }
+
+      .label-event-status {
+        width: 10%;
+        height: 100%;
+        border-right: solid 1px #dcdcdc;
+        color: grey;
+        float: left;
+        text-align: center;
+        line-height: 55px;
+        font-size: 14px;
+        @extend .f--din-bold;
+
+        .status-circle {
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          margin-left: 5px;
+          border-radius: 100%;
+        }
+
+        &.event-status-success {
+          color: $color-status-green;
+
+          .status-circle {
+            background: $color-status-green;
+          }
+        }
+
+        &.event-status-error {
+          color: $color-status-red;
+
+          .status-circle {
+            background: $color-status-red;
+          }
+        }
+
+        &.event-status-warning {
+          color: $color-status-yellow;
+
+          .status-circle {
+            background: $color-status-yellow;
+          }
+        }
+      }
+
+      .label-event-message {
+        height: 100%;
+        color: $color-font-black;
+        float: left;
+        text-align: center;
+        line-height: 55px;
+        margin-left: 20px;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+.container-timeline-empty {
+  width: 358px;
+  height: 235px;
+  background-image: url("../assets/images/icons/icon-fresh-start.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+  text-align: center;
+
+  p {
+    font-family: DINProBold, Arial, sans-serif;
+  }
+
+  p:first-child {
+    margin-top: 235px;
+  }
+}

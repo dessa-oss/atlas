@@ -1,0 +1,490 @@
+.inference-automation-container,
+.model-management-container {
+  background-color: white;
+  height: 70%;
+  overflow-x: scroll;
+  border-bottom: $border-width solid $color-border-bottom;
+  border-left: $border-width solid $color-border-bottom;
+  border-right: $border-width solid $color-border-bottom;
+  margin-left: $inference-automation-header-margin;
+  margin-right: $inference-automation-header-margin;
+}
+
+.modal-performance-table-parent-container {
+  height: 70%;
+  overflow: scroll;
+}
+
+.modal-performance-table {
+  // height: 70%;
+  width: calc(100% - 80px);
+  overflow: scroll;
+  background: $color-dark-blue;
+  margin-left: $inference-automation-header-margin;
+  margin-right: $inference-automation-header-margin;
+  border-right: $border-width solid $color-border-bottom;
+  border-left: $border-width solid $color-border-bottom;
+  border-bottom: $border-width solid $color-border-bottom;
+
+  &.empty {
+    background: white;
+    border-right: none;
+    border-left: none;
+    height: 100%;
+  }
+}
+
+.modal-performance-header-container,
+.modal-performance-row-container {
+  white-space: nowrap;
+}
+
+.inference-automation-header-container,
+.inference-automation-row-container,
+.model-management-header-container,
+.model-management-row-container {
+  // margin-left: $inference-automation-header-margin;
+  // margin-right: $inference-automation-header-margin;
+  white-space: nowrap;
+}
+
+// .inference-automation-row,
+// .model-management-row {
+//   border-bottom: $border-width solid $color-border-bottom;
+// }
+
+.model-management-row {
+  .container-cell-buttons {
+    margin-top: 3px;
+  }
+}
+
+.inference-automation-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $inference-automation-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$inference-automation-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: $inference-automation-automation-width;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  &.populations-last-column {
+    width: $populations-last-column-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin: 0px;
+    line-height: 30px;
+  }
+
+  @for $i from 1 through 6 {
+    $width: percentage(1 / $i);
+
+    &.column-#{$i} {
+      // width: calc(#{$width} - 10px - 10px);
+      width: $width;
+    }
+  }
+}
+
+.population-splitting-rule-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $population-splitting-rule-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$population-splitting-rule-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.adaptive-learning-table-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: 31.7%;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  &:nth-of-type(6) {
+    border-right: none;
+  }
+
+  &:nth-of-type(1) {
+    width: calc(#{$population-splitting-rule-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.populations-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $populations-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &:nth-of-type(1) {
+    width: calc(#{$populations-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.inference-automation-row-container,
+.model-management-row-container {
+  height: 100%;
+  min-height: 100%;
+  // border-left: $border-width solid $color-border-bottom;
+  // border-right: $border-width solid $color-border-bottom;
+  // border-bottom: $border-width solid $color-border-bottom;
+  // overflow-y: scroll;
+  // overflow-x: hidden;
+}
+
+.inference-automation-cell {
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    #{$inference-automation-cell-width} - #{$inference-automation-cell-padding} -
+      #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &.automation-width {
+    width: calc(
+      #{$inference-automation-automation-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} + #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+
+  @for $i from 1 through 6 {
+    $width: percentage(1 / $i);
+
+    &.column-#{$i} {
+      width: calc(#{$width} - 10px - 10px);
+      // width: $width;
+    }
+  }
+}
+
+.adaptive-learning-last-cell {
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    31.7% - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &.automation-width {
+    width: calc(
+      #{$inference-automation-automation-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} + #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+}
+
+.i--icon-edit-container {
+  background-color: $color-light-blue;
+  height: 25px;
+  width: 25px;
+  margin-left: 39%;
+  margin-top: 2px;
+  position: relative;
+
+  &:hover {
+    background: $color-hover-blue;
+  }
+}
+
+.model-management-header {
+  width: $model-management-cell-width;
+  display: inline-block;
+  background-color: $color-light-blue;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  &:nth-of-type(1) {
+    width: calc(#{$model-management-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.button-width {
+    width: calc(#{$button-cell-width} + #{$border-width} * 2);
+    border-right: none;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin: 0px;
+    line-height: 30px;
+  }
+}
+
+.model-management-cell {
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    #{$model-management-cell-width} - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
+  );
+  height: 35px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  &:last-child {
+    width: calc(23%);
+  }
+
+  .container-cell-buttons {
+    .b--secondary-text {
+      margin-right: 4px;
+      padding: 0px 12px;
+    }
+  }
+
+  input {
+    width: 100%;
+    height: 50%;
+    margin-top: 10px;
+  }
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+
+    &.active {
+      color: $color-status-green;
+    }
+  }
+
+  &:nth-of-type(1) {
+    width: calc(
+      #{$model-management-cell-width} + #{$border-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding}
+    );
+  }
+
+  &.button-width {
+    border-right: none;
+    width: calc(
+      #{$button-cell-width} + #{$border-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding}
+    );
+    margin: 0px;
+    vertical-align: middle;
+    text-align: right;
+
+    div {
+      background-color: $color-light-blue;
+      display: inline-block;
+      padding: 5px;
+      padding-top: 3px;
+      margin-top: 3px;
+      margin-left: 0px;
+      margin-bottom: 0px;
+      height: 15px;
+
+      &:hover {
+        background-color: $color-hover-blue;
+      }
+
+      div {
+        padding: 0px;
+        margin: 0px;
+      }
+    }
+
+    button {
+      display: inline-block;
+      margin-left: 3px;
+      margin-right: 0px;
+      margin-top: 3px;
+      width: 100px;
+      height: 25px;
+      vertical-align: top;
+      padding: 8px 13px;
+
+      i.arrow.up {
+        margin-right: 10px;
+        vertical-align: middle;
+      }
+      i.arrow.down {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.inference-error {
+  text-align: right;
+  color: red;
+}

@@ -1,0 +1,18 @@
+.project-page-container {
+  background-color: $color-background-grey;
+  overflow: scroll;
+}
+
+.projects-body-container {
+  width: 705px;
+  max-width: 705px;
+  margin: auto;
+  padding-top: 168px;
+  padding-bottom: 30px;
+  min-height: calc(100vh - 200px);
+}
+
+.header {
+  position: fixed;
+  width: 100%;
+}

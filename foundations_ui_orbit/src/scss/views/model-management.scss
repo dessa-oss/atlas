@@ -1,0 +1,41 @@
+.container-management-top-section {
+  margin-right: 40px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+
+  .button-management-load {
+    margin-right: 0px;
+  }
+
+  .container-cell-buttons {
+    width: 100%;
+    border-bottom: solid 1px #dcdcdc;
+  }
+}
+
+.container-management-empty {
+  width: 358px;
+  height: 235px;
+  background-image: url("../assets/images/icons/icon-nothing-here.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+  text-align: center;
+
+  p {
+    font-family: DINProBold, Arial, sans-serif;
+  }
+
+  p:last-child {
+    font-family: Arial, sans-serif;
+  }
+
+  p:first-child {
+    margin-top: 235px;
+  }
+}

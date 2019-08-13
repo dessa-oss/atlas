@@ -1,0 +1,190 @@
+.model-performance-filter-container {
+  margin-top: 25px;
+  margin-right: 15px;
+  text-align: right;
+}
+
+.model-performance-filter {
+  display: inline-flex;
+
+  p {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  select {
+    display: inline-block;
+    margin-right: 25px;
+    width: 100px;
+  }
+}
+
+.model-performance-select {
+  margin-right: 25px;
+  width: 200px;
+  height: 30px;
+  font-size: 13px;
+
+  &.adaptive {
+    display: inline-block;
+    width: 228px;
+
+    input {
+      height: 20px;
+      vertical-align: middle;
+    }
+  }
+
+  > div {
+    border-radius: 0px;
+
+    &:hover {
+      outline: none;
+      border-color: $color-9c-grey;
+      box-shadow: none;
+    }
+
+    > div {
+      padding: 0px 10px;
+
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+.modal-performance-header {
+  display: inline-block;
+  background-color: $color-light-blue;
+  width: $inference-automation-cell-width;
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: $border-width solid $color-border-bottom;
+
+  &:nth-last-of-type(1) {
+    border-right: none;
+  }
+
+  &:nth-of-type(1) {
+    width: calc(#{$inference-automation-cell-width} + #{$border-width});
+  }
+
+  &.automation-width {
+    width: 50%;
+    text-align: left;
+
+    p {
+      margin-left: 100px;
+    }
+  }
+
+  &.edit-width {
+    width: $inference-automation-edit-cell-width;
+  }
+
+  p {
+    color: $color-white;
+    font-size: 13px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}
+
+.modal-performance-header-container {
+  background-color: $color-light-blue;
+}
+
+.modal-performance-first-cell {
+  background:white;
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    #{$inference-automation-cell-width} - #{$inference-automation-cell-padding} -
+      #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: left;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+  }
+
+  // &:nth-of-type(6) {
+  //   border-right: none;
+  // }
+
+  &.automation-width {
+    width: calc(
+      50% - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding} +
+        #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+}
+
+.modal-performance-cell {
+  background:white;
+  display: inline-block;
+  padding-left: $inference-automation-cell-padding;
+  padding-right: $inference-automation-cell-padding;
+  width: calc(
+    #{$inference-automation-cell-width} - #{$inference-automation-cell-padding} -
+      #{$inference-automation-cell-padding}
+  );
+  height: 30px;
+  vertical-align: middle;
+  clear: both;
+  text-align: center;
+  border-right: 1px solid $color-border-bottom;
+  border-bottom: 1px solid $color-border-bottom;
+
+  p {
+    margin: 0px;
+    margin-top: 7px;
+  }
+
+  &.automation-width {
+    width: calc(
+      50% - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding} +
+        #{$border-width} * 2
+    );
+    text-align: left;
+  }
+
+  &.edit-width {
+    width: calc(
+      #{$inference-automation-edit-cell-width} - #{$inference-automation-cell-padding} -
+        #{$inference-automation-cell-padding} * 2
+    );
+  }
+}
+
+.modal-performance-metric-container {
+  background-color: $color-dark-blue;
+  height: 30px;
+
+  p {
+    color: $color-white;
+    margin: 0px;
+    padding-top: 5px;
+    margin-left: 20px;
+    vertical-align: middle;
+  }
+}

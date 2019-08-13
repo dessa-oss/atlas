@@ -1,0 +1,150 @@
+.system-health-container {
+  margin: auto;
+  background-color: #ffffff;
+
+  .model-performance-filter-container {
+    padding: 15px 0px;
+    border-bottom: solid 1px $color-border-bottom;
+    margin: 0px;
+
+    .manage-interface-modal-select {
+      width: 230px;
+    }
+  }
+}
+
+@for $i from 1 through 1000 {
+  .table-#{$i} {
+    @if $i > 1 {
+      margin-left: 290px;
+    }
+  }
+
+  .table-#{$i} + button {
+    @if $i > 1 {
+      margin-left: 290px;
+    }
+  }
+}
+
+.system-health-table-container {
+  margin: 15px;
+  // height: 100%;
+  // overflow: scroll;
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% - 30px);
+
+  &:nth-child(2) {
+    width: inherit;
+  }
+
+  &:first-child {
+    width: inherit;
+  }
+
+  &:last-child {
+    padding-bottom: 300px;
+  }
+
+  .system-health-table {
+    min-height: 500px;
+    height: 640px;
+    overflow: scroll;
+    border: solid 1px $color-border-bottom;
+
+    &.table-1,
+    &.table-2 {
+      tr:not(:first-child) {
+        background-color: white;
+      }
+      tr:nth-child(2) {
+        background-color: $color-lighter-blue;
+        p {
+          @extend .f--din-bold;
+          color: white;
+        }
+      }
+      tr:first-child {
+        background-color: $color-light-blue;
+        td {
+          border: none;
+        }
+        p,
+        span {
+          color: white;
+        }
+
+        p {
+          width: 230px;
+        }
+      }
+    }
+
+    &.table-0 {
+      width: 260px;
+      td {
+        background-color: white;
+      }
+    }
+
+    table {
+      border-collapse: collapse;
+      padding: 15px;
+      background: $color-light-blue;
+
+      td {
+        border-top: solid 1px $color-border-bottom;
+        border-right: solid 1px $color-border-bottom;
+        border-bottom: solid 1px $color-border-bottom;
+        padding: 5px 15px;
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &:first-child {
+          border-top: none;
+          width: 230px;
+        }
+      }
+    }
+  }
+
+  button {
+    margin-top: 15px;
+  }
+}
+
+.green-column {
+  background: #c6efce;
+
+  p {
+    color: #418f44;
+  }
+}
+
+.yellow-column {
+  background: #ffeb9c;
+
+  p {
+    color: #d0a452;
+  }
+}
+
+.red-column {
+  background: #ffc7ce;
+
+  p {
+    color: #d87980;
+  }
+}
+
+.health-tables-container {
+  overflow: scroll;
+  height: 100%;
+}
+
+.empty-message {
+  text-align: center;
+}

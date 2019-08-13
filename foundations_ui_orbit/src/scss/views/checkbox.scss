@@ -1,0 +1,96 @@
+.checkbox-container {
+  margin: 30px 0px;
+  padding: 0px;
+  height: 35px;
+  }
+  
+  .custom-checkbox {
+  display: inline-block;
+  vertical-align: top;
+  }
+  
+  .checkbox-value {
+  display: inline-block;
+  vertical-align: middle;
+
+    .status {
+      display: inline-block;
+      position: inherit;
+    }
+  }
+  
+  .checkbox-value h5{
+  margin-bottom: 0px;
+  margin-top: 0px;
+  }
+  
+  .checkbox-value p{
+  margin: 0px;
+  }
+  
+  .control--checkbox {
+  display: inline-block;
+  }
+  
+  .control {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  }
+  
+  .control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  }
+  
+  .control__indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: white;
+  border: solid 1px #DCDCDC;
+  }
+  
+  .control:hover input~.control__indicator {
+  background: #F7F7F7;
+  }
+  
+  .control input:checked~.control__indicator {
+  background: white;
+  }
+  
+  .control:hover input:not([disabled]):checked~.control__indicator, .control input:checked:focus~.control__indicator {
+  background: white;
+  }
+  
+  .control input:disabled~.control__indicator {
+  background: #e6e6e6;
+  opacity: 0.6;
+  pointer-events: none;
+  }
+  
+  .control__indicator:after {
+  content: '';
+  position: absolute;
+  display: none;
+  }
+  
+  .control input:checked~.control__indicator:after {
+  display: block;
+  }
+  
+  .control--checkbox .control__indicator:after {
+  left: 8px;
+  top: 4px;
+  width: 3px;
+  height: 8px;
+  border: solid #4A9CF8;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  }
