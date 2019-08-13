@@ -13,5 +13,5 @@ def load_local_configuration_if_present():
     environment_fetcher = EnvironmentFetcher()
 
     local_environments, global_environments = environment_fetcher.get_all_environments()
-    if 'default' in local_environments or 'default' in global_environments:
+    if local_environments and 'default' in local_environments or global_environments and 'default' in global_environments:
         set_environment('default')

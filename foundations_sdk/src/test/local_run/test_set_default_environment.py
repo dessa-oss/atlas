@@ -27,3 +27,10 @@ class SetDefaultEnvironment(Spec):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
         load_local_configuration_if_present()
         self.mock_set_environment.assert_not_called()
+    
+    def test_default_environment_not_loaded_when_no_environments(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
+        load_local_configuration_if_present()
+        self.mock_set_environment.assert_not_called()
+
+    
