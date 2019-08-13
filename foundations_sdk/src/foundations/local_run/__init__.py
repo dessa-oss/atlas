@@ -22,11 +22,13 @@ def load_local_configuration_if_present():
         atexit.register(_at_exit_callback)
 
 def _at_exit_callback():
-    from foundations_contrib.global_state import current_foundations_context
+    from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
+    from foundations_contrib.producers.jobs.complete_job import CompleteJob
     
     pipeline_context = current_foundations_context().pipeline_context()
     upload_artifacts(pipeline_context.job_id)
+    CompleteJob(message_router, pipeline_context).push_message()
         
 def _set_job_state(pipeline_context):
     from uuid import uuid4

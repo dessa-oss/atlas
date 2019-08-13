@@ -18,6 +18,8 @@ class SetDefaultEnvironment(Spec):
     mock_upload_artifacts = let_patch_mock('foundations_contrib.archiving.upload_artifacts.upload_artifacts')
     mock_run_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.run_job.RunJob')
     mock_run_job = let_mock()
+    mock_complete_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.complete_job.CompleteJob')
+    mock_complete_job = let_mock()
 
     @let
     def current_directory(self):
@@ -63,6 +65,7 @@ class SetDefaultEnvironment(Spec):
         self.at_exit = None
 
         self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
+        self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.pipeline_context)
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
@@ -95,6 +98,15 @@ class SetDefaultEnvironment(Spec):
         load_local_configuration_if_present()
         self.at_exit()
         self.mock_upload_artifacts.assert_called_with(self.random_uuid)
+
+    def test_registers_job_completion_handler_at_exit(self):
+        load_local_configuration_if_present()
+        self.at_exit()
+        self.mock_complete_job.push_message.assert_called()
+
+    def test_does_not_immediately_call_complete_job(self):
+        load_local_configuration_if_present()
+        self.mock_complete_job.push_message.assert_not_called()
 
     def test_marks_job_as_running(self):
         load_local_configuration_if_present()
