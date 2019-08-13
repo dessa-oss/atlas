@@ -64,6 +64,7 @@ foundations_production/build
 foundations_production/dist
 foundations_production/foundations_production.egg-info
 foundations_production/src/foundations_production.egg-info
+foundations_ui_orbit/env.sh
 **/node_modules
 tmp
 **/*.csv
@@ -76,8 +77,11 @@ site/
 **/*.rdb
 build
 dist
+**/.eggs/
 
 !foundations_ui/package.json
+!foundations_ui_orbit/package.json
+!foundations_ui_orbit/package-lock.json
 !examples/example_configs/*.config.yaml
 !foundations_contrib/src/foundations_contrib/resources/template/config/*.config.yaml
 !**/fixtures/**/*.config.yaml
