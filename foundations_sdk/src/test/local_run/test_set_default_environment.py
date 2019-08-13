@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations.local_run import load_local_configuration_if_present
+import sys
 
 class SetDefaultEnvironment(Spec):
 
@@ -20,6 +21,16 @@ class SetDefaultEnvironment(Spec):
     mock_run_job = let_mock()
     mock_complete_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.complete_job.CompleteJob')
     mock_complete_job = let_mock()
+    mock_failed_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.failed_job.FailedJob')
+    mock_failed_job = let_mock()
+
+    @let
+    def exception_data(self):
+        return {
+            "type": Exception,
+            "exception": '',
+            "traceback": []
+        }
 
     @let
     def current_directory(self):
@@ -66,6 +77,7 @@ class SetDefaultEnvironment(Spec):
 
         self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
         self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.pipeline_context)
+        self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.pipeline_context, self.exception_data)
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
@@ -104,6 +116,22 @@ class SetDefaultEnvironment(Spec):
         self.at_exit()
         self.mock_complete_job.push_message.assert_called()
 
+    def test_registers_job_failure_handler_at_exit(self):
+        load_local_configuration_if_present()
+        sys.excepthook(None, None, None)
+        self.at_exit()
+        self.mock_failed_job.push_message.assert_called()
+
+    def test_does_not_register_failure_if_no_exception_raised(self):
+        load_local_configuration_if_present()
+        self.at_exit()
+        self.mock_failed_job.push_message.assert_not_called()
+
+    def test_does_not_register_failure_if_process_not_finished(self):
+        load_local_configuration_if_present()
+        sys.excepthook(None, None, None)
+        self.mock_failed_job.push_message.assert_not_called()
+
     def test_does_not_immediately_call_complete_job(self):
         load_local_configuration_if_present()
         self.mock_complete_job.push_message.assert_not_called()
@@ -111,6 +139,12 @@ class SetDefaultEnvironment(Spec):
     def test_marks_job_as_running(self):
         load_local_configuration_if_present()
         self.mock_run_job.push_message.assert_called()
+
+    def test_does_not_register_completion_if_exception_raised(self):
+        load_local_configuration_if_present()
+        sys.excepthook(None, None, None)
+        self.at_exit()
+        self.mock_complete_job.push_message.assert_not_called()
 
     def _register_at_exit(self, callback):
         self.at_exit = callback
