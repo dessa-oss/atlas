@@ -20,9 +20,9 @@ class TestOrbitIngress(Spec):
     
     @tear_down_class
     def tear_down(self):
-        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
         command = 'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
     def test_first_served_model_can_be_reached_through_ingress(self):
         import foundations_contrib.resources.model_serving.orbit
