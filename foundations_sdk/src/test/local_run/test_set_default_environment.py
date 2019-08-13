@@ -24,6 +24,10 @@ class SetDefaultEnvironment(Spec):
     mock_failed_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.failed_job.FailedJob')
     mock_failed_job = let_mock()
 
+    @let_now
+    def mock_os_environment(self):
+        return self.patch('os.environ', {})
+
     @let
     def exception_data(self):
         return {
@@ -38,6 +42,10 @@ class SetDefaultEnvironment(Spec):
 
     @let
     def directory_base(self):
+        return self.faker.name()
+
+    @let
+    def override_project_name(self):
         return self.faker.name()
 
     @let_now
@@ -105,6 +113,11 @@ class SetDefaultEnvironment(Spec):
     def test_pushes_queued_job_message_with_project_name_set(self):
         load_local_configuration_if_present()
         self.assertEqual(self.directory_base, self.message['project_name'])
+
+    def test_pushes_queued_job_message_with_project_name_set_using_environment_variable(self):
+        self.mock_os_environment['FOUNDATIONS_PROJECT_NAME'] = self.override_project_name
+        load_local_configuration_if_present()
+        self.assertEqual(self.override_project_name, self.message['project_name'])
 
     def test_registers_artifact_upload_handler_at_exit(self):
         load_local_configuration_if_present()
