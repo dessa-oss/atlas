@@ -18,12 +18,12 @@ def add_new_model_to_ingress(project_name, model_name):
 
     modified_ingress_resource = ingress.set_model_endpoint(ingress_resource, project_name, model_name)
 
-    with open('temp.yaml', 'w') as yaml_file:
+    with open('/tmp/temp.yaml', 'w') as yaml_file:
         yaml.dump(modified_ingress_resource, yaml_file)
 
-    _run_command(f'kubectl apply -f temp.yaml')
+    _run_command(f'kubectl apply -f /tmp/temp.yaml')
 
-    os.remove('temp.yaml')
+    os.remove(f'/tmp/temp.yaml')
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
