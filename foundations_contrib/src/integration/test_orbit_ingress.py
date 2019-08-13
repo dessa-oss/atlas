@@ -7,11 +7,12 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 
 import subprocess
 from typing import List
+import os
+import time
 
 from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
-
 class TestOrbitIngress(Spec):
     
     @set_up_class
@@ -25,10 +26,6 @@ class TestOrbitIngress(Spec):
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
     def test_first_served_model_can_be_reached_through_ingress(self):
-        import foundations_contrib.resources.model_serving.orbit
-        import os
-        import time
-
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
 
         _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model'.split())
@@ -46,6 +43,22 @@ class TestOrbitIngress(Spec):
 
         try:
             result = _run_command(f'curl http://{scheduler_host}:31998/project'.split()).stdout.decode()
+        except Exception as e:
+            if 'Failed to connect' in str(e):
+                result = 'Failed to connect'
+            else:
+                raise e
+        self.assertEqual('Test Passed', result)
+
+    def test_second_served_model_can_be_accessed(self):
+        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
+
+        _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model-two'.split())
+
+        time.sleep(10)
+
+        try:
+            result = _run_command(f'curl http://{scheduler_host}:31998/project/model-two'.split()).stdout.decode()
         except Exception as e:
             if 'Failed to connect' in str(e):
                 result = 'Failed to connect'
