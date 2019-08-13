@@ -38,7 +38,7 @@ class PipelineContext(object):
 
     @property
     def job_id(self):
-        return self._file_name
+        return self.file_name
 
     def mark_fully_loaded(self):
         self._stage_log_archive_loaded = True

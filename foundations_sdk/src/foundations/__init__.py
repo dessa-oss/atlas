@@ -51,6 +51,7 @@ from foundations.deploy import deploy
 from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.job_actions import *
 from foundations.artifacts import *
+from foundations.local_run import load_local_configuration_if_present
 
 def _append_module():
     import sys
@@ -58,3 +59,5 @@ def _append_module():
 
 
 _append_module()
+
+load_local_configuration_if_present()
