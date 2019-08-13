@@ -11,6 +11,10 @@ spec:
   - host:
     http:
       paths:
+      - path: /project
+        backend:
+          serviceName: project-model-service
+          servicePort: 80
       - path: /project/model
         backend:
           serviceName: project-model-service
