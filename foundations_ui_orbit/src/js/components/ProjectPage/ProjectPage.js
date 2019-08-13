@@ -7,88 +7,71 @@ import BaseActions from "../../actions/BaseActions";
 import ProjectSummary from "./ProjectSummary";
 import moment from "moment";
 
-class ProjectPage extends Component {
-  constructor(props) {
-    super(props);
-    this.getAllProjects = this.getAllProjects.bind(this);
-    this.state = {
-      isLoaded: false,
-      projects: this.props.projects,
-      isMount: false,
-      selectProject: this.props.selectProject,
-      changePage: this.props.changePage
-    };
-  }
+const ProjectPage = props => {
 
-  async componentDidMount() {
-    await this.setState({ isMount: true });
-    this.getAllProjects();
-  }
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [projects, setProjects] = React.useState([]);
 
-  componentWillUnmount() {
-    this.setState({ isMount: false });
-  }
+  const reload = () => {
+    setIsLoading(true);
 
-  async getAllProjects() {
-    const projects = await BaseActions.get("projects");
-
-    // use is mount for async as when it returns may have been unmounted
-    const { isMount } = this.state;
-    if (isMount) {
-      if (projects != null) {
-        projects.sort((a, b) => {
+    BaseActions.get("projects").then((result) => {
+      if (result != null) {
+        result.sort((a, b) => {
           const dateA = new Date(a.created_at);
           const dateB = new Date(a.created_at);
 
           return dateB - dateA;
         });
-        this.setState({ projects: projects, isLoaded: true });
-      } else {
-        this.setState({ projects: [], isLoaded: true });
+        setProjects(result);
       }
-    }
+      setIsLoading(false);
+    }).catch((error) => {
+      setIsLoading(false);
+    });
   }
 
-  render() {
-    const { isLoaded, projects, selectProject, changePage } = this.state;
-    let projectList = [];
-    if (isLoaded) {
+  React.useEffect(() => {
+    reload()
+  }, [])
+
+  const renderProjects = () => {
+    if (isLoading) {
+      return <Loading loadingMessage="We are currently loading your projects" />
+    } else {
       if (projects.length === 0) {
-        projectList = <p>No projects available</p>;
+        return <p>No projects available</p>;
       } else {
-        projects.forEach(project => {
+        return projects.map(project => {
           const key = project.name.concat("-").concat(project.created_at);
           const formattedDate = moment(project.created_at)
             .format("YYYY-MM-DD HH:mm")
             .toString();
           project.created_at = formattedDate;
-          projectList.push(
+          return (
             <ProjectSummary
               key={key}
               project={project}
-              selectProject={selectProject}
-              changePage={changePage}
+              selectProject={props.selectProject}
+              changePage={props.changePage}
             />
           );
         });
-      }
-    } else {
-      projectList = (
-        <Loading loadingMessage="We are currently loading your projects" />
-      );
+      } 
     }
+  }
 
-    return (
-      <div className="project-page-container">
-        <div className="header">
-          <Toolbar />
-          <ProjectHeader numProjects={projects.length} />
-        </div>
-        <div className="projects-body-container">{projectList}</div>
+  return (
+    <div className="project-page-container">
+      <div className="header">
+        <Toolbar />
+        <ProjectHeader numProjects={projects.length} />
       </div>
+      <div className="projects-body-container">{renderProjects()}</div>
+    </div>
     );
   }
-}
+
 
 ProjectPage.propTypes = {
   isMount: PropTypes.bool,
