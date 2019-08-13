@@ -27,13 +27,13 @@ class TestOrbitIngress(Spec):
     def test_first_served_model_can_be_reached_through_ingress(self):
         import foundations_contrib.resources.model_serving.orbit
         import os
+        import time
 
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
 
         command = 'bash ./deploy_serving.sh project model no_follow'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit').stdout.decode()
 
-        import time
         time.sleep(30)
 
         try:
@@ -47,7 +47,7 @@ class TestOrbitIngress(Spec):
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10, check=True, cwd=cwd)
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=True, cwd=cwd)
     except subprocess.TimeoutExpired as error:
         print('Command timed out.')
         print(error.stdout.decode())
