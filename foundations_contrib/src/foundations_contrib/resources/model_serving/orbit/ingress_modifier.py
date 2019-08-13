@@ -22,7 +22,7 @@ def add_new_model_to_ingress(project_name, model_name):
     with open(f'{temp_file_path}', 'w') as yaml_file:
         yaml.dump(modified_ingress_resource, yaml_file)
 
-    _run_command(f'kubectl apply -f {temp_file_path}')
+    _run_command(f'kubectl apply -f {temp_file_path}'.split())
 
     os.remove(f'{temp_file_path}')
 
