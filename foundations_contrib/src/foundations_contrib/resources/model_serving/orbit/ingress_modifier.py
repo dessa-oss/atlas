@@ -11,12 +11,17 @@ import subprocess
 import yaml
 import sys
 import os
+import json
 
 def add_new_model_to_ingress(project_name, model_name):
 
     ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout.decode())
-    
-    modified_ingress_resource = ingress.set_model_endpoint(ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'], project_name, model_name)
+
+    previous_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
+
+    ingress_resource_to_modify = json.loads(previous_configuration)
+
+    modified_ingress_resource = ingress.set_model_endpoint(ingress_resource_to_modify, project_name, model_name)
 
     temp_file_path = _temp_file_path()
     with open(f'{temp_file_path}', 'w') as yaml_file:
