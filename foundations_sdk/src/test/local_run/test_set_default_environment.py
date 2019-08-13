@@ -51,7 +51,7 @@ class SetDefaultEnvironment(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = (['default'], [])
+        self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
         self.mock_message_router.push_message.side_effect = self._push_message
         self.message = None
 
@@ -60,7 +60,7 @@ class SetDefaultEnvironment(Spec):
         self.mock_set_environment.assert_called_with('default')
 
     def test_default_environment_loaded_when_present_globally(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['default'])
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
         load_local_configuration_if_present()
         self.mock_set_environment.assert_called_with('default')
 

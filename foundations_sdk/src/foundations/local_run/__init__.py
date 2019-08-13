@@ -10,7 +10,7 @@ def load_local_configuration_if_present():
     from foundations.config import set_environment
     from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.producers.jobs.queue_job import QueueJob
-    
+
     if _default_environment_present():
         set_environment('default')
         pipeline_context = current_foundations_context().pipeline_context()
@@ -30,8 +30,18 @@ def _default_project_name():
     return os.path.basename(os.getcwd())
         
 def _default_environment_present():
+    from os.path import basename
+
+    environments = _environment_listing()
+    environments = [basename(path) for path in environments]
+    return 'default.config.yaml' in environments
+
+def _environment_listing():
     from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
             
     environment_fetcher = EnvironmentFetcher()
     local_environments, global_environments = environment_fetcher.get_all_environments()
-    return local_environments and 'default' in local_environments or global_environments and 'default' in global_environments
+    local_environments = local_environments or []
+    global_environments = global_environments or []
+
+    return local_environments + global_environments
