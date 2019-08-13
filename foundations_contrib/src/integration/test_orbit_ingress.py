@@ -44,6 +44,15 @@ class TestOrbitIngress(Spec):
                 raise e
         self.assertEqual('Test Passed', result)
 
+        try:
+            result = _run_command(f'curl http://{scheduler_host}:31998/project'.split()).stdout.decode()
+        except Exception as e:
+            if 'Failed to connect' in str(e):
+                result = 'Failed to connect'
+            else:
+                raise e
+        self.assertEqual('Test Passed', result)
+
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=True, cwd=cwd)

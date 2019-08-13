@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: 
-    app: project-model
-  name: project-model-deployment
+    app: ${project_name}-${model_name}
+  name: ${project_name}-${model_name}-deployment
   namespace: ingress-nginx-test
 spec:
   replicas: 1
   selector:
     matchLabels: 
-      app: project-model
+      app: ${project_name}-${model_name}
   template:
     metadata:
       labels: 
-        app: project-model
+        app: ${project_name}-${model_name}
     spec:
       nodeSelector:
         modelServer: "True"
@@ -29,11 +29,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: project-model-service
+  name: ${project_name}-${model_name}-service
   namespace: ingress-nginx-test
 spec:
   selector:
-    app: project-model
+    app: ${project_name}-${model_name}
   ports:
   - protocol: TCP
     port: 80
