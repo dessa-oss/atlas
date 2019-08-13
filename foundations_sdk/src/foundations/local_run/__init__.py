@@ -15,6 +15,9 @@ def load_local_configuration_if_present():
     environment_fetcher = EnvironmentFetcher()
 
     local_environments, global_environments = environment_fetcher.get_all_environments()
-    if local_environments and 'default' in local_environments or global_environments and 'default' in global_environments:
+    if _default_environment_present(local_environments, global_environments):
         set_environment('default')
         current_foundations_context().pipeline_context().file_name = str(uuid4())
+
+def _default_environment_present(local_environments, global_environments):
+    return local_environments and 'default' in local_environments or global_environments and 'default' in global_environments
