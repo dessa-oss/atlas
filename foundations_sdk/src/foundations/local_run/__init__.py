@@ -10,15 +10,18 @@ def load_local_configuration_if_present():
     from foundations.config import set_environment
     from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.producers.jobs.queue_job import QueueJob
-    from uuid import uuid4
     
     if _default_environment_present():
         set_environment('default')
         pipeline_context = current_foundations_context().pipeline_context()
-        pipeline_context.file_name = str(uuid4())
-
-        pipeline_context.provenance.project_name = _default_project_name()
+        _set_job_state(pipeline_context)
         QueueJob(message_router, pipeline_context).push_message()
+        
+def _set_job_state(pipeline_context):
+    from uuid import uuid4
+
+    pipeline_context.file_name = str(uuid4())
+    pipeline_context.provenance.project_name = _default_project_name()
 
 def _default_project_name():
     import os
