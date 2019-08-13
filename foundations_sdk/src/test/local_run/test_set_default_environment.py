@@ -14,6 +14,8 @@ class SetDefaultEnvironment(Spec):
     mock_set_environment = let_patch_mock('foundations.config.set_environment')
     mock_uuid4 = let_patch_mock('uuid.uuid4')
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+    mock_at_exit = let_patch_mock('atexit.register')
+    mock_upload_artifacts = let_patch_mock('foundations_contrib.archiving.upload_artifacts.upload_artifacts')
 
     @let
     def current_directory(self):
@@ -53,7 +55,9 @@ class SetDefaultEnvironment(Spec):
     def set_up(self):
         self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
         self.mock_message_router.push_message.side_effect = self._push_message
+        self.mock_at_exit.side_effect = self._register_at_exit
         self.message = None
+        self.at_exit = None
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
@@ -81,6 +85,14 @@ class SetDefaultEnvironment(Spec):
     def test_pushes_queued_job_message_with_project_name_set(self):
         load_local_configuration_if_present()
         self.assertEqual(self.directory_base, self.message['project_name'])
+
+    def test_registers_artifact_upload_handler_at_exit(self):
+        load_local_configuration_if_present()
+        self.at_exit()
+        self.mock_upload_artifacts.assert_called_with(self.random_uuid)
+
+    def _register_at_exit(self, callback):
+        self.at_exit = callback
 
     def _push_message(self, route_name, message):
         self.assertEqual('queue_job', route_name)
