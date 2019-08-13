@@ -9,7 +9,6 @@ from foundations_spec import *
 from foundations_contrib.global_state import redis_connection
 
 
-@skip
 class TestCanRunLocally(Spec):
 
     @let
@@ -35,7 +34,7 @@ class TestCanRunLocally(Spec):
             process = subprocess.Popen(['python', 'main.py'], stdout=subprocess.PIPE)
         out, err = process.communicate()
 
-        self.job_id = out.decode()
+        self.job_id = out.decode().strip()
 
     def test_project_name_is_saved(self):
         self.assertIn('run_locally', self.project_names)
@@ -56,8 +55,9 @@ class TestCanRunLocally(Spec):
         serialized_artifact = redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata')
         artifact = json.loads(serialized_artifact)
 
-        self.assertEqual('thomas_text.txt', artifact['just_some_artifact'])
+        self.assertEqual('thomas_text.txt', artifact['key_mapping']['just_some_artifact'])
 
+    @skip
     def test_job_bundle_is_saved(self):
         import os.path
 
@@ -69,10 +69,10 @@ class TestCanRunLocally(Spec):
         self.assertTrue(artifact_exists)
 
     def test_params_are_logged(self):
-        from foundations_internal.fast_serializer import deserialize
+        import json
 
         key = f'jobs:{self.job_id}:parameters'
-        serialized_metric = redis_connection.lrange(key, 0, -1)[0]
-        parameters = deserialize(serialized_metric)
+        serialized_metric = redis_connection.get(key)
+        parameters = json.loads(serialized_metric)
 
         self.assertEqual(20, parameters['blah'])
