@@ -31,6 +31,10 @@ class StageContext(object):
         self.has_stage_output = True
 
     def add_error_information(self, exception_info):
+        self.error_information = self.translate_error_information(exception_info)
+
+    @staticmethod
+    def translate_error_information(exception_info):
         import traceback
 
         from foundations_internal.serializer import serialize
@@ -45,15 +49,16 @@ class StageContext(object):
         error_printer = ErrorPrinter()
         traceback_to_send = traceback.extract_tb(exception_info[2])
 
-        transformed_traceback = self._transformed_traceback(
+        transformed_traceback = StageContext._transformed_traceback(
             error_printer, traceback_to_send)
-        self.error_information = {
+        return {
             "type": exception_info[0],
             "exception": exception_value,
             "traceback": transformed_traceback
         }
 
-    def _transformed_traceback(self, error_printer, traceback_to_send):
+    @staticmethod
+    def _transformed_traceback(error_printer, traceback_to_send):
         traceback_generator = error_printer.transform_extracted_traceback(
             traceback_to_send)
         return list(traceback_generator)
