@@ -1,6 +1,6 @@
 #!/bin/bash
 
-current_context='kubernetes-admin@kubernetes'
+current_context=`kubectl config current-context`
 namespace='ingress-nginx-test'
 
 kubectl config use-context $current_context > /dev/null
