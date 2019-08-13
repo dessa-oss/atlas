@@ -27,14 +27,14 @@ class TestOrbitIngress(Spec):
     def test_first_served_model_can_be_reached_through_ingress(self):
         import foundations_contrib.resources.model_serving.orbit
         import os
-    
+
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
 
         command = 'bash ./deploy_serving.sh project model no_follow'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit').stdout.decode()
 
         import time
-        time.sleep(10)
+        time.sleep(30)
 
         try:
             result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout.decode()
