@@ -8,16 +8,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def load_local_configuration_if_present():
     from foundations.config import set_environment
-    from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
     from foundations_contrib.global_state import current_foundations_context
     from uuid import uuid4
     
-    environment_fetcher = EnvironmentFetcher()
-
-    local_environments, global_environments = environment_fetcher.get_all_environments()
-    if _default_environment_present(local_environments, global_environments):
+    if _default_environment_present():
         set_environment('default')
         current_foundations_context().pipeline_context().file_name = str(uuid4())
-
-def _default_environment_present(local_environments, global_environments):
+        
+def _default_environment_present():
+    from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+            
+    environment_fetcher = EnvironmentFetcher()
+    local_environments, global_environments = environment_fetcher.get_all_environments()
     return local_environments and 'default' in local_environments or global_environments and 'default' in global_environments
