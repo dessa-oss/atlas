@@ -105,20 +105,20 @@ class ModelManagementDetails extends Component {
                 .toString()}
             </p>
             <p className="model-management-details-text-label font-bold">
-              Validation Metrics:
+              Created By:
             </p>
-            <div className="model-management-details-entrypoints-container">
-              {this.renderValidationMetrics()}
+            <div className="model-management-details-text">
+              {this.props.model.created_by}
             </div>
           </div>
         </div>
         <div className="model-management-details-lower-container">
           <div>
             <p className="model-management-details-text-label font-bold">
-              Created By:
+              Validation Metrics:
             </p>
-            <p className="model-management-details-text">
-              {this.props.model.created_by}
+            <p className="model-management-details-entrypoints-container">
+              {this.renderValidationMetrics()}
             </p>
           </div>
           <div>
