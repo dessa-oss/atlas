@@ -5,217 +5,164 @@ import ModelRecalibrationModal from "./ModelRecalibrationModal";
 import BaseActions from "../../../actions/BaseActions";
 import NewModelRecalibrationModal from "./NewModelRecalibrationModal";
 
-class ModelManagementRow extends Component {
-  constructor(props) {
-    super(props);
-    this.clickDetails = this.clickDetails.bind(this);
-    this.clickPromoteRetire = this.clickPromoteRetire.bind(this);
-    this.clickRecalibrate = this.clickRecalibrate.bind(this);
-    this.onChangeDefault = this.onChangeDefault.bind(this);
-    this.clickRetire = this.clickRetire.bind(this);
-    this.clickActivate = this.clickActivate.bind(this);
-    this.state = {
-      rowData: this.props.rowData,
-      isDetail: this.props.isDetail,
-      toggleDetailRow: this.props.toggleDetailRow,
-      rowNum: this.props.rowNum,
-      isRecalibrate: false
-    };
-  }
+const ModelManagementRow = props => {
+  const [recalibrateOpen, setRecalibrateOpen] = React.useState(false);
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ isDetail: nextProps.isDetail });
-  }
-
-  clickDetails() {
-    const { toggleDetailRow, rowNum, isDetail } = this.state;
-    if (isDetail) {
-      toggleDetailRow(-1);
+  const clickDetails = () => {
+    if (props.isDetail) {
+      props.toggleDetailRow(-1);
     } else {
-      toggleDetailRow(rowNum);
+      props.toggleDetailRow(props.rowNum);
     }
-  }
+  };
 
-  clickPromoteRetire() {
-    const { rowData } = this.state;
-    const newPromoteRetire =
-      rowData.status === "Active" ? "Inactive" : "Active";
-    const finalData =
-      '{"PackageName": "' +
-      rowData.model_package_name +
-      '", "PromoteRetire": "' +
-      newPromoteRetire +
-      '"}';
+  const clickRecalibrate = () => {
+    let value = !recalibrateOpen;
+    setRecalibrateOpen(value);
+  };
 
-    BaseActions.postJSONFile(
-      "files/promoteRetire",
-      "model_list.json",
-      finalData
-    );
-  }
-
-  clickRecalibrate() {
-    const { isRecalibrate } = this.state;
-    this.setState({ isRecalibrate: !isRecalibrate });
-  }
-
-  onChangeDefault(e) {
-    if (this.state.rowData.default === false) {
+  const onChangeDefault = e => {
+    if (props.rowData.default === false) {
       let body = {
-        default_model: this.state.rowData.model_name
+        default_model: props.rowData.model_name
       };
 
       BaseActions.putApiary(
-        "/projects/" + this.props.location.state.project.name,
+        "/projects/" + props.location.state.project.name,
         body
       ).then(result => {
-        this.props.reload();
+        props.reload();
       });
     }
-  }
+  };
 
-  clickActivate() {
+  const clickActivate = () => {
     let body = {
-      model_name: this.state.rowData.model_name,
+      model_name: props.rowData.model_name,
       serving: true
     };
 
     BaseActions.putApiary(
-      "/projects/" + this.props.location.state.project.name,
+      "/projects/" + props.location.state.project.name,
       body
     ).then(result => {
-      this.props.reload();
+      props.reload();
     });
-  }
+  };
 
-  clickRetire() {
+  const clickRetire = () => {
     let body = {
-      model_name: this.state.rowData.model_name,
+      model_name: props.rowData.model_name,
       serving: false
     };
 
     BaseActions.putApiary(
-      "/projects/" + this.props.location.state.project.name,
+      "/projects/" + props.location.state.project.name,
       body
     ).then(result => {
-      this.props.reload();
+      props.reload();
     });
+  };
+
+  let entrypoints = "";
+
+  for (var key in props.rowData.entrypoints) {
+    entrypoints += key + ": ";
+    for (var subkey in props.rowData.entrypoints[key]) {
+      entrypoints +=
+        subkey + ": " + props.rowData.entrypoints[key][subkey] + " ";
+    }
+    entrypoints += "; ";
   }
 
-  render() {
-    const { rowData, isDetail, isRecalibrate } = this.state;
+  let validation_metric = "";
 
-    const promoteRetireText =
-      rowData.status === "Active" ? "Retire" : "Promote";
-
-    let detailAccordion = null;
-    if (isDetail) {
-      detailAccordion = <ModelManagementDetail model={rowData} />;
+  if (props.rowData.validation_metrics) {
+    for (var key in props.rowData.validation_metrics) {
+      validation_metric +=
+        key + ": " + props.rowData.validation_metrics[key] + "; ";
     }
+  }
 
-    let recalibrateModal = null;
-    if (isRecalibrate) {
-      recalibrateModal = (
-        <NewModelRecalibrationModal
-          onClose={this.clickRecalibrate}
-          model={rowData}
-          reload={this.props.reload}
-          {...this.props}
+  return (
+    <div className="model-management-row">
+      <div className="model-management-cell">
+        <input
+          className="model-checkbox-default"
+          type="checkbox"
+          onClick={onChangeDefault}
+          checked={props.rowData.default === true}
         />
-      );
-    }
-
-    let entrypoints = "";
-
-    for (var key in rowData.entrypoints) {
-      entrypoints += key + ": ";
-      for (var subkey in rowData.entrypoints[key]) {
-        entrypoints += subkey + ": " + rowData.entrypoints[key][subkey] + " ";
-      }
-      entrypoints += "; ";
-    }
-
-    let validation_metric = "";
-
-    if (rowData.validation_metrics) {
-      for (var key in rowData.validation_metrics) {
-        validation_metric +=
-          key + ": " + rowData.validation_metrics[key] + "; ";
-      }
-    }
-
-    return (
-      <div className="model-management-row">
-        <div className="model-management-cell">
-          <input
-            className="model-checkbox-default"
-            type="checkbox"
-            onClick={this.onChangeDefault}
-            checked={rowData.default === true}
-          />
-        </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{rowData.model_name}</p>
-        </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{rowData.created_at}</p>
-        </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{rowData.created_by}</p>
-        </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{rowData.description || ""}</p>
-        </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{entrypoints}</p>
-        </div>
-        <div className="model-management-cell">
-          <p
-            className={
-              rowData.status === "Active" ? "hide-text active" : "hide-text"
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{props.rowData.model_name}</p>
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{props.rowData.created_at}</p>
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{props.rowData.created_by}</p>
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{props.rowData.description || ""}</p>
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{entrypoints}</p>
+      </div>
+      <div className="model-management-cell">
+        <p
+          className={
+            props.rowData.status === "Active" ? "hide-text active" : "hide-text"
+          }
+        >
+          {props.rowData.status}
+        </p>
+      </div>
+      <div className="model-management-cell">
+        <p className="hide-text">{validation_metric}</p>
+      </div>
+      <div className="model-management-cell">
+        <div className="container-cell-buttons">
+          <button className="b--secondary-text" onClick={clickRecalibrate}>
+            recalibrate
+          </button>
+          <button
+            className="b--secondary-text"
+            onClick={
+              props.rowData.status === "activated" ? clickRetire : clickActivate
             }
           >
-            {rowData.status}
-          </p>
+            {props.rowData.status === "activated" ? "retire" : "activate"}
+          </button>
+          <button
+            className={
+              props.isDetail ? "b--secondary-text active" : "b--secondary-text"
+            }
+            onClick={clickDetails}
+          >
+            {props.isDetail === true ? (
+              <i class="arrow up" />
+            ) : (
+              <i class="arrow down" />
+            )}
+            <span>details</span>
+          </button>
         </div>
-        <div className="model-management-cell">
-          <p className="hide-text">{validation_metric}</p>
-        </div>
-        <div className="model-management-cell">
-          <div className="container-cell-buttons">
-            <button
-              className="b--secondary-text"
-              onClick={this.clickRecalibrate}
-            >
-              recalibrate
-            </button>
-            <button
-              className="b--secondary-text"
-              onClick={
-                rowData.status === "activated"
-                  ? this.clickRetire
-                  : this.clickActivate
-              }
-            >
-              {rowData.status === "activated" ? "retire" : "activate"}
-            </button>
-            <button
-              className={
-                isDetail ? "b--secondary-text active" : "b--secondary-text"
-              }
-              onClick={this.clickDetails}
-            >
-              {isDetail ? <i class="arrow up" /> : <i class="arrow down" />}
-              <span>details</span>
-            </button>
-          </div>
-        </div>
-        {detailAccordion}
-        {recalibrateModal}
       </div>
-    );
-  }
-}
+      {props.isDetail === true && (
+        <ModelManagementDetail model={props.rowData} />
+      )}
+      {recalibrateOpen === true && (
+        <NewModelRecalibrationModal
+          onClose={clickRecalibrate}
+          model={props.rowData}
+          reload={props.reload}
+          {...props}
+        />
+      )}
+    </div>
+  );
+};
 
 ModelManagementRow.propTypes = {
   rowData: PropTypes.object,
