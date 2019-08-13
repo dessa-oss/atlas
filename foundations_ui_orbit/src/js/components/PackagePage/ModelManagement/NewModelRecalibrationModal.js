@@ -5,178 +5,144 @@ import { Modal, ModalBody } from "reactstrap";
 import moment from "moment";
 import BaseActions from "../../../actions/BaseActions";
 
-class NewModelRecalibrationModal extends React.Component {
-  constructor(props) {
-    super(props);
+const NewModelRecalibrationModal = props => {
+  const [startDate, setStartDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
+  const start_date_picker_ref = React.createRef();
+  const end_date_picker_ref = React.createRef();
+  const [modelName, setModelName] = React.useState(props.model.model_name);
+  const [error, setError] = React.useState("");
 
-    this.onClickOpenStartDate = this.onClickOpenStartDate.bind(this);
-    this.onClickOpenEndDate = this.onClickOpenEndDate.bind(this);
-    this.onChangeStartDate = this.onChangeStartDate.bind(this);
-    this.onChangeEndDate = this.onChangeEndDate.bind(this);
-    this.onChangeModelName = this.onChangeModelName.bind(this);
-    this.onClickSave = this.onClickSave.bind(this);
+  const onChangeStartDate = e => {
+    setStartDate(e[0]);
+  };
 
-    this.state = {
-      start_date: "",
-      end_date: "",
-      start_date_picker_ref: React.createRef(),
-      end_date_picker_ref: React.createRef,
-      model_name: this.props.model.model_name,
-      error: ""
-    };
-  }
+  const onChangeEndDate = e => {
+    setEndDate(e[0]);
+  };
 
-  onChangeStartDate(e) {
-    this.setState({
-      start_date: e[0]
-    });
-  }
+  const onChangeModelName = e => {
+    setModelName(e.target.value);
+  };
 
-  onChangeEndDate(e) {
-    this.setState({
-      end_date: e[0]
-    });
-  }
+  const onClickOpenStartDate = () => {
+    start_date_picker_ref.open();
+  };
 
-  onChangeModelName(e) {
-    this.setState({
-      model_name: e.target.value
-    });
-  }
+  const onClickOpenEndDate = () => {
+    end_date_picker_ref.open();
+  };
 
-  onClickOpenStartDate() {
-    this.state.start_date_picker_ref.open();
-  }
-
-  onClickOpenEndDate() {
-    this.state.end_date_picker_ref.open();
-  }
-
-  onClickSave() {
-    this.setState({
-      error: ""
-    });
+  const onClickSave = () => {
+    setError("");
 
     let errorFound = false;
 
-    if (
-      this.state.start_date === "" ||
-      this.state.end_date === "" ||
-      this.state.model_name === ""
-    ) {
+    if (startDate === "" || endDate === "" || modelName === "") {
       errorFound = true;
     }
 
     if (errorFound === true) {
-      this.setState({
-        error: "Please fill the form to run the recalibration"
-      });
+      setError("Please fill the form to run the recalibration");
     } else {
       let body = {
-        model_name: this.state.model_name,
-        start_date: moment(this.state.start_date).toString(),
-        end_date: moment(this.state.end_date).toString()
+        model_name: modelName,
+        start_date: moment(startDate).toString(),
+        end_date: moment(endDate).toString()
       };
 
       BaseActions.postApiary(
         "/projects/" +
-          this.props.location.state.project.name +
+          props.location.state.project.name +
           "/" +
-          this.state.model_name +
+          modelName +
           "/retrain",
         body
       ).then(result => {
-        console.log("RESULT: ", result);
-        this.props.reload();
-        this.props.onClose();
+        props.reload();
+        props.onClose();
       });
     }
-  }
+  };
 
-  render() {
-    return (
-      <Modal
-        isOpen={true}
-        toggle={this.props.onClose}
-        className={"new-model-recalibration-modal-container"}
-      >
-        <ModalBody>
-          <div>
-            <p className="manage-inference-modal-header font-bold text-upper">
-              Model Recalibration
-            </p>
-            <div className="recalibrate-property-container">
-              <p className="recalibrate-label-date">Start Date: </p>
-              <div className="recalibrate-container-date">
-                <Flatpickr
-                  placeholder="Select Start Date"
-                  value={this.state.start_date}
-                  ref={this.state.start_date_picker_ref}
-                  onChange={this.onChangeStartDate}
-                />
-              </div>
-              <div
-                className="container-icon-date"
-                onClick={this.onClickOpenStartDate}
-              >
-                <div className="icon-date" role="presentation" />
-              </div>
-            </div>
-            <div className="recalibrate-property-container">
-              <p className="recalibrate-label-date">End Date: </p>
-              <div className="recalibrate-container-date">
-                <Flatpickr
-                  placeholder="Select Start Date"
-                  value={this.state.end_date}
-                  ref={this.state.end_date_picker_ref}
-                  onChange={this.onChangeEndDate}
-                />
-              </div>
-              <div
-                className="container-icon-date"
-                onClick={this.onClickOpenEndDate}
-              >
-                <div className="icon-date" role="presentation" />
-              </div>
-            </div>
-
-            <div className="recalibrate-property-container">
-              <p className="recalibrate-label-date">Model Name:</p>
-              <input className="recalibrate-container-date"
-                value={this.state.model_name}
-                onChange={this.onChangeModelName}
+  return (
+    <Modal
+      isOpen={true}
+      toggle={props.onClose}
+      className={"new-model-recalibration-modal-container"}
+    >
+      <ModalBody>
+        <div>
+          <p className="manage-inference-modal-header font-bold text-upper">
+            Model Recalibration
+          </p>
+          <div className="recalibrate-property-container">
+            <p className="recalibrate-label-date">Start Date: </p>
+            <div className="recalibrate-container-date">
+              <Flatpickr
+                placeholder="Select Start Date"
+                value={startDate}
+                ref={start_date_picker_ref}
+                onChange={onChangeStartDate}
               />
             </div>
-            <div className="manage-inference-modal-button-container">
-              <button
-                type="button"
-                onClick={this.props.onClose}
-                className="b--mat b--negation text-upper"
-              >
-                cancel changes
-              </button>
-              <button
-                type="button"
-                onClick={this.onClickSave}
-                className="b--mat b--affirmative text-upper"
-              >
-                Run Recalibration
-              </button>
-              <div className="new-dep-container-button">
-                {this.state.error !== "" && <p>{this.state.error}</p>}
-              </div>
+            <div className="container-icon-date" onClick={onClickOpenStartDate}>
+              <div className="icon-date" role="presentation" />
             </div>
           </div>
-        </ModalBody>
-      </Modal>
-    );
-  }
-}
+          <div className="recalibrate-property-container">
+            <p className="recalibrate-label-date">End Date: </p>
+            <div className="recalibrate-container-date">
+              <Flatpickr
+                placeholder="Select Start Date"
+                value={endDate}
+                ref={end_date_picker_ref}
+                onChange={onChangeEndDate}
+              />
+            </div>
+            <div className="container-icon-date" onClick={onClickOpenEndDate}>
+              <div className="icon-date" role="presentation" />
+            </div>
+          </div>
+
+          <div className="recalibrate-property-container">
+            <p className="recalibrate-label-date">Model Name:</p>
+            <input
+              className="recalibrate-container-date"
+              value={modelName}
+              onChange={onChangeModelName}
+            />
+          </div>
+          <div className="manage-inference-modal-button-container">
+            <button
+              type="button"
+              onClick={props.onClose}
+              className="b--mat b--negation text-upper"
+            >
+              cancel changes
+            </button>
+            <button
+              type="button"
+              onClick={onClickSave}
+              className="b--mat b--affirmative text-upper"
+            >
+              Run Recalibration
+            </button>
+            <div className="new-dep-container-button">
+              {error !== "" && <p>{error}</p>}
+            </div>
+          </div>
+        </div>
+      </ModalBody>
+    </Modal>
+  );
+};
 
 NewModelRecalibrationModal.propTypes = {
   onClose: PropTypes.func,
   model: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  location: PropTypes.object
 };
 
 NewModelRecalibrationModal.defaultProps = {};

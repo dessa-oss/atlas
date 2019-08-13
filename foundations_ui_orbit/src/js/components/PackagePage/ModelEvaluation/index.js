@@ -19,57 +19,6 @@ const ModelEvaluation = props => {
 
   const reload = () => {
     setLoadingEval(true);
-    // BaseActions.get("dates/target").then(result => {
-    //   if (result.data) {
-    //     let values = [];
-    //     result.data.forEach(item => {
-    //       values.push({
-    //         value: item,
-    //         label: item
-    //       });
-    //     });
-    //     setDates(values);
-    //   }
-
-    //   if (firstReload === true) {
-    //     let data = {
-    //       eval_period_datetimes: result.data
-    //     };
-
-    //     const body = JSON.stringify(data);
-
-    //     BaseActions.postJSONFile("files/performance", "config.json", body)
-    //       .then(response => {
-    //         setFirstReload(false);
-    //         BaseActions.get("evaluations").then(resultEvaluations => {
-    //           setLoadingEval(false);
-    //           if (resultEvaluations.data) {
-    //             setEvaluations(resultEvaluations.data);
-    //           }
-    //         });
-    //       })
-    //       .catch(error => {
-    //         setFirstReload(false);
-    //         BaseActions.get("evaluations").then(resultEvaluations => {
-    //           setLoadingEval(false);
-    //           if (resultEvaluations.data) {
-    //             setEvaluations(resultEvaluations.data);
-    //           }
-    //         });
-    //       });
-    //   } else {
-    //     BaseActions.get("evaluations")
-    //       .then(resultEvaluations => {
-    //         setLoading(false);
-    //         if (resultEvaluations.data) {
-    //           setEvaluations(resultEvaluations.data);
-    //         }
-    //       })
-    //       .catch(error => {
-    //         setLoading(false);
-    //       });
-    //   }
-    // });
 
     BaseActions.getFromApiary(
       "projects/" + props.location.state.project.name + "/metrics"
@@ -129,35 +78,6 @@ const ModelEvaluation = props => {
                 <span>NUMBER OF DASHBOARD METRICS: {evaluations.length}</span>
               </p>
             </div>
-            {/* <div className="container-filters">
-              <div className="model-performance-filter">
-                <p>Time Period:</p>
-                <Select
-                  className="model-performance-select"
-                  value={selectedDates}
-                  onChange={onChangeDate}
-                  options={dates}
-                  closeMenuOnSelect={false}
-                />
-                {loading === true ? (
-                  <button
-                    type="button"
-                    className="b--mat b--affirmative text-upper button-load-results"
-                    disabled
-                  >
-                    loading...
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="b--mat b--affirmative text-upper button-load-results"
-                    onClick={onClickLoadResults}
-                  >
-                    load results
-                  </button>
-                )}
-              </div>
-            </div> */}
           </div>
           {evaluations.length > 0 ? (
             <div className="container-eval-content">
