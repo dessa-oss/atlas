@@ -12,9 +12,7 @@ def set_model_endpoint(ingress_resource_yaml, project_name, model_name):
     return _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}/{model_name}', f'{project_name}-{model_name}-service')
 
 def _add_new_path_to_ingress_resource(ingress_resource_yaml, endpoint_path, service_name):
-    import yaml
-
-    new_ingress = dict(ingress_resource_yaml)
+    new_ingress = ingress_resource_yaml
     new_paths = _get_paths_from_ingress_resource(new_ingress)
 
     _update_default_endpoint_if_exists(new_paths, endpoint_path, service_name)

@@ -15,12 +15,12 @@ import os
 def add_new_model_to_ingress(project_name, model_name):
 
     ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout.decode())
-
-    modified_ingress_resource = ingress.set_model_endpoint(ingress_resource, project_name, model_name)
+    
+    modified_ingress_resource = ingress.set_model_endpoint(ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'], project_name, model_name)
 
     temp_file_path = _temp_file_path()
     with open(f'{temp_file_path}', 'w') as yaml_file:
-        yaml.dump(modified_ingress_resource, yaml_file)
+        yaml.dump(modified_ingress_resource, yaml_file, default_flow_style=False)
 
     _run_command(f'kubectl apply -f {temp_file_path}'.split())
 
