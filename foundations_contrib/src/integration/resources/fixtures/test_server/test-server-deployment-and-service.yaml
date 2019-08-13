@@ -25,3 +25,16 @@ spec:
         name: model
       imagePullSecrets:
       - name: dessa-registry-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-model-service
+  namespace: ingress-nginx-test
+spec:
+  selector:
+    app: project-model
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

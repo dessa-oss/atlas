@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+_exception_happened = False
 
 def load_local_configuration_if_present():
     from foundations.config import set_environment
@@ -12,6 +13,10 @@ def load_local_configuration_if_present():
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
     import atexit
+    import sys
+
+    global _exception_happened
+    _exception_happened = False
 
     if _default_environment_present():
         set_environment('default')
@@ -20,15 +25,26 @@ def load_local_configuration_if_present():
         QueueJob(message_router, pipeline_context).push_message()
         RunJob(message_router, pipeline_context).push_message()
         atexit.register(_at_exit_callback)
+        sys.excepthook = _handle_exception
+
+def _handle_exception(_, __, ___):
+    global _exception_happened
+    _exception_happened = True
 
 def _at_exit_callback():
     from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
     from foundations_contrib.producers.jobs.complete_job import CompleteJob
+    from foundations_contrib.producers.jobs.failed_job import FailedJob
     
+    global _exception_happened
+
     pipeline_context = current_foundations_context().pipeline_context()
     upload_artifacts(pipeline_context.job_id)
-    CompleteJob(message_router, pipeline_context).push_message()
+    if _exception_happened:
+        FailedJob(message_router, pipeline_context, { "type": Exception, "exception": '', "traceback": [] }).push_message()
+    else:
+        CompleteJob(message_router, pipeline_context).push_message()
         
 def _set_job_state(pipeline_context):
     from uuid import uuid4

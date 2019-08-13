@@ -26,6 +26,7 @@ echo Model $model_name has started, please run:
 echo -e '    ' foundations serve stop $model_name 
 echo if an error has occurred or you wish to stop the server
 echo ''
-if [[ -z no_follow ]]; then
+if [[ -z $no_follow ]]; then
     kubectl logs -f -n $namespace $model_pod
 fi
+    
