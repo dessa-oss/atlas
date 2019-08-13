@@ -61,6 +61,10 @@ class SetDefaultEnvironment(Spec):
         return value
 
     @let
+    def override_job_id(self):
+        return self.faker.uuid4()
+
+    @let
     def pipeline_context(self):
         from foundations_internal.pipeline_context import PipelineContext
         return PipelineContext()
@@ -109,6 +113,11 @@ class SetDefaultEnvironment(Spec):
     def test_sets_default_job_id(self):
         load_local_configuration_if_present()
         self.assertEqual(self.random_uuid, self.pipeline_context.file_name)
+
+    def test_sets_override_job_id(self):
+        self.mock_os_environment['FOUNDATIONS_JOB_ID'] = self.override_job_id
+        load_local_configuration_if_present()
+        self.assertEqual(self.override_job_id, self.pipeline_context.file_name)
 
     def test_pushes_queued_job_message_with_project_name_set(self):
         load_local_configuration_if_present()

@@ -50,7 +50,7 @@ def _set_job_state(pipeline_context):
     from uuid import uuid4
     import os
 
-    pipeline_context.file_name = str(uuid4())
+    pipeline_context.file_name = os.environ.get('FOUNDATIONS_JOB_ID', str(uuid4()))
     pipeline_context.provenance.project_name = os.environ.get('FOUNDATIONS_PROJECT_NAME', _default_project_name())
 
 def _default_project_name():
