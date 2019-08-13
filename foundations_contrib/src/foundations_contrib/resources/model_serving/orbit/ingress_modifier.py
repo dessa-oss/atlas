@@ -14,7 +14,7 @@ import os
 
 def add_new_model_to_ingress(project_name, model_name):
 
-    ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout)
+    ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout.decode())
 
     modified_ingress_resource = ingress.set_model_endpoint(ingress_resource, project_name, model_name)
 
