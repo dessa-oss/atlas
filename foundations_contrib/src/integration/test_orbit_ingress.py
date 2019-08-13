@@ -26,39 +26,25 @@ class TestOrbitIngress(Spec):
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
-        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
-
         _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model'.split())
 
         time.sleep(10)
 
-        try:
-            result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout.decode()
-        except Exception as e:
-            if 'Failed to connect' in str(e):
-                result = 'Failed to connect'
-            else:
-                raise e
-        self.assertEqual('Test Passed', result)
+        self._assert_endpoint_accessable('/project/model')
 
-        try:
-            result = _run_command(f'curl http://{scheduler_host}:31998/project'.split()).stdout.decode()
-        except Exception as e:
-            if 'Failed to connect' in str(e):
-                result = 'Failed to connect'
-            else:
-                raise e
-        self.assertEqual('Test Passed', result)
+        self._assert_endpoint_accessable('/project')
 
     def test_second_served_model_can_be_accessed(self):
-        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
-
         _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model-two'.split())
 
         time.sleep(10)
 
+        self._assert_endpoint_accessable('/project/model-two')
+
+    def _assert_endpoint_accessable(self, endpoint):
+        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
         try:
-            result = _run_command(f'curl http://{scheduler_host}:31998/project/model-two'.split()).stdout.decode()
+            result = _run_command(f'curl http://{scheduler_host}:31998{endpoint}'.split()).stdout.decode()
         except Exception as e:
             if 'Failed to connect' in str(e):
                 result = 'Failed to connect'
