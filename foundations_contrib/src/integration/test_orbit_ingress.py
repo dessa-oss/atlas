@@ -25,7 +25,7 @@ class TestOrbitIngress(Spec):
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
-    def test_first_served_model_can_be_reached_through_ingress(self):
+    def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
 
         _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model'.split())
