@@ -13,6 +13,19 @@ class SetDefaultEnvironment(Spec):
     mock_environment_fetcher = let_patch_instance('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher')
     mock_set_environment = let_patch_mock('foundations.config.set_environment')
     mock_uuid4 = let_patch_mock('uuid.uuid4')
+    mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
+
+    @let
+    def current_directory(self):
+        return self.faker.uri_path() + '/' + self.directory_base
+
+    @let
+    def directory_base(self):
+        return self.faker.name()
+
+    @let_now
+    def mock_working_directory(self):
+        return self.patch('os.getcwd', return_value=self.current_directory)
 
     @let_now
     def random_uuid(self):
@@ -39,6 +52,8 @@ class SetDefaultEnvironment(Spec):
     @set_up
     def set_up(self):
         self.mock_environment_fetcher.get_all_environments.return_value = (['default'], [])
+        self.mock_message_router.push_message.side_effect = self._push_message
+        self.message = None
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
@@ -62,3 +77,11 @@ class SetDefaultEnvironment(Spec):
     def test_sets_default_job_id(self):
         load_local_configuration_if_present()
         self.assertEqual(self.random_uuid, self.pipeline_context.file_name)
+
+    def test_pushes_queued_job_message_with_project_name_set(self):
+        load_local_configuration_if_present()
+        self.assertEqual(self.directory_base, self.message['project_name'])
+
+    def _push_message(self, route_name, message):
+        self.assertEqual('queue_job', route_name)
+        self.message = message
