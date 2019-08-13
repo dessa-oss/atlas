@@ -16,6 +16,8 @@ class SetDefaultEnvironment(Spec):
     mock_message_router = let_patch_mock('foundations_contrib.global_state.message_router')
     mock_at_exit = let_patch_mock('atexit.register')
     mock_upload_artifacts = let_patch_mock('foundations_contrib.archiving.upload_artifacts.upload_artifacts')
+    mock_run_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.run_job.RunJob')
+    mock_run_job = let_mock()
 
     @let
     def current_directory(self):
@@ -56,8 +58,11 @@ class SetDefaultEnvironment(Spec):
         self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
         self.mock_message_router.push_message.side_effect = self._push_message
         self.mock_at_exit.side_effect = self._register_at_exit
+        
         self.message = None
         self.at_exit = None
+
+        self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
@@ -90,6 +95,10 @@ class SetDefaultEnvironment(Spec):
         load_local_configuration_if_present()
         self.at_exit()
         self.mock_upload_artifacts.assert_called_with(self.random_uuid)
+
+    def test_marks_job_as_running(self):
+        load_local_configuration_if_present()
+        self.mock_run_job.push_message.assert_called()
 
     def _register_at_exit(self, callback):
         self.at_exit = callback

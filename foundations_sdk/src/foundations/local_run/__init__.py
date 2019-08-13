@@ -10,6 +10,7 @@ def load_local_configuration_if_present():
     from foundations.config import set_environment
     from foundations_contrib.global_state import current_foundations_context, message_router
     from foundations_contrib.producers.jobs.queue_job import QueueJob
+    from foundations_contrib.producers.jobs.run_job import RunJob
     import atexit
 
     if _default_environment_present():
@@ -17,6 +18,7 @@ def load_local_configuration_if_present():
         pipeline_context = current_foundations_context().pipeline_context()
         _set_job_state(pipeline_context)
         QueueJob(message_router, pipeline_context).push_message()
+        RunJob(message_router, pipeline_context).push_message()
         atexit.register(_at_exit_callback)
 
 def _at_exit_callback():
