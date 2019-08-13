@@ -10,20 +10,21 @@ from typing import List
 import subprocess
 import yaml
 import sys
+import os
 
 def add_new_model_to_ingress(project_name, model_name):
-    import os
 
     ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout)
 
     modified_ingress_resource = ingress.set_model_endpoint(ingress_resource, project_name, model_name)
 
-    with open('/tmp/temp.yaml', 'w') as yaml_file:
+    temp_file_path = _temp_file_path()
+    with open(f'{temp_file_path}', 'w') as yaml_file:
         yaml.dump(modified_ingress_resource, yaml_file)
 
-    _run_command(f'kubectl apply -f /tmp/temp.yaml')
+    _run_command(f'kubectl apply -f {temp_file_path}')
 
-    os.remove(f'/tmp/temp.yaml')
+    os.remove(f'{temp_file_path}')
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
@@ -36,6 +37,12 @@ def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProce
         print(f'Command failed: \n\t{" ".join(command)}\n')
         raise Exception(error.stderr.decode())
     return result
+
+def _temp_file_path():
+    return f'/var/tmp/{_temp_file_name()}'
+
+def _temp_file_name():
+    return f'temp-{os.getpid()}.yaml'
 
 if __name__ == '__main__':
     add_new_model_to_ingress(sys.argv[1], sys.argv[2])
