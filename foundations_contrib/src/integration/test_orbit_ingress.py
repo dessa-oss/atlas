@@ -34,7 +34,7 @@ class TestOrbitIngress(Spec):
         command = 'bash ./deploy_serving.sh project model no_follow'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit').stdout.decode()
 
-        time.sleep(30)
+        # time.sleep(1)
 
         try:
             result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout.decode()
