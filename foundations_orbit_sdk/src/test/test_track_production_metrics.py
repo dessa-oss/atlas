@@ -41,8 +41,7 @@ class TestTrackProductionMetrics(Spec):
 
     def test_track_production_metrics_can_track_empty_metric(self):
         track_production_metrics(self.metric_name, {})
-        production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
-        production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
+        production_metrics = self._retrieve_tracked_metrics()
         self.assertEqual({self.metric_name: []}, production_metrics)
 
     def test_track_production_metrics_with_nonexistent_job_id_throws_exception(self):
@@ -55,8 +54,10 @@ class TestTrackProductionMetrics(Spec):
 
     def test_track_production_metrics_can_log_a_metric(self):
         track_production_metrics(self.metric_name, {self.column_name: self.column_value})
-        production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
-        production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
-        self.assertEqual({self.metric_name: [(self.column_name, self.column_value)]}, production_metrics)        
+        production_metrics = self._retrieve_tracked_metrics()
+        self.assertEqual({self.metric_name: [(self.column_name, self.column_value)]}, production_metrics)    
 
+    def _retrieve_tracked_metrics(self):
+        production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
+        return {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 
