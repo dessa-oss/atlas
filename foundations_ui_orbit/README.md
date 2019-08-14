@@ -1,20 +1,25 @@
 Requirements:
+
 - yarn or npm
 - node
 - libsass
 
 Install:
+
 - Download Foundations
 - UI code lives in foundations_ui folder
 - yarn or npm install
 
 Running:
+
+- npm install
 - cp env_example.sh env.sh
-- edit env.sh to point to your api
+- edit env.sh modifying REACT_APP_API_URL to point to the backend. REACT_APP_APIARY_URL is given
 - source ./env.sh
 - yarn or npm start
 
 Testing:
+
 - Tests are in /src/tests
 - Test must be in format of file.test.js
 - yarn or npm test
@@ -23,6 +28,7 @@ Testing:
   - or press u (for update) when prompted after tests run
 
 Linting:
+
 - Lint settings are in .eslintrc.js
 - Files to ignore are in .eslintignore
 - To see how many lint errors/warnings run ./check_lint.sh
