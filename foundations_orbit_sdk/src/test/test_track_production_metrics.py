@@ -19,6 +19,10 @@ class TestTrackProductionMetrics(Spec):
     def job_id(self):
         return self.faker.uuid4()
 
+    @let
+    def metric_name(self):
+        return self.faker.word()
+
     @set_up
     def set_up(self):
         self.mock_context.job_id.return_value = self.job_id
@@ -28,16 +32,16 @@ class TestTrackProductionMetrics(Spec):
         self.mock_redis.flushall()
 
     def test_track_production_metrics_can_track_empty_metric(self):
-        track_production_metrics('some_key', {})
+        track_production_metrics(self.metric_name, {})
         production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
         production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
-        self.assertEqual({'some_key': []}, production_metrics)
+        self.assertEqual({self.metric_name: []}, production_metrics)
 
     def test_track_production_metrics_with_nonexistent_job_id_throws_exception(self):
         self.mock_context.job_id.side_effect = ValueError()
     
         with self.assertRaises(RuntimeError) as error_context:
-            track_production_metrics('some_key', {})
+            track_production_metrics(self.metric_name, {})
         
         self.assertIn('Job ID not set', error_context.exception.args)
 
