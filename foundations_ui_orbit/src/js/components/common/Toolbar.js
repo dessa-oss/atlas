@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 
-const Toolbar = props => {
+const Toolbar = () => {
   return (
     <div className="toolbar-container">
       <p>Home</p>

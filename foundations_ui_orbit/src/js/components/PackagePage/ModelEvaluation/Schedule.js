@@ -1,11 +1,9 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Layout from "../Layout";
+import React from "react";
 import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions";
+import { getFromApiary, putApiary } from "../../../actions/BaseActions";
+import PropTypes from "prop-types";
 
 const Schedule = props => {
   const [scheduleData, setScheduleData] = React.useState({
@@ -13,11 +11,9 @@ const Schedule = props => {
     end_datetime: "",
     frequency: ""
   });
-  const [open, setOpen] = React.useState(false);
-  const [error, setError] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
-  const [options, setOptions] = React.useState([
+  const options = [
     {
       label: "Hourly",
       value: "Hourly"
@@ -46,44 +42,41 @@ const Schedule = props => {
       label: "Semi-Annually",
       value: "Semi-Annually"
     }
-  ]);
+  ];
   const [selectedOption, setSelectedOption] = React.useState("");
   const pickerStartDateRef = React.useRef();
   const pickerEndDateRef = React.useRef();
   const [message, setMessage] = React.useState("");
-  const [dates, setDates] = React.useState([]);
-  const [selectedDate, setSelectedDate] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
 
   const reload = () => {
-    BaseActions.getFromApiary(
-      "/projects/" + props.location.state.project.name + "/evaluation_schedule"
+    getFromApiary(
+      `/projects/${props.location.state.project.name}/evaluation_schedule`
     ).then(resultSchedule => {
       if (
-        resultSchedule &&
-        resultSchedule.schedule &&
-        resultSchedule.schedule.start_datetime &&
-        resultSchedule.schedule.end_datetime &&
-        resultSchedule.schedule.frequency
+        resultSchedule
+        && resultSchedule.schedule
+        && resultSchedule.schedule.start_datetime
+        && resultSchedule.schedule.end_datetime
+        && resultSchedule.schedule.frequency
       ) {
-        let start_datetime = resultSchedule.schedule.start_datetime
+        const startDateTime = resultSchedule.schedule.start_datetime
           ? new Date(resultSchedule.schedule.start_datetime)
           : "";
 
-        let end_datetime = resultSchedule.schedule.end_datetime
+        const endDateTime = resultSchedule.schedule.end_datetime
           ? new Date(resultSchedule.schedule.end_datetime)
           : "";
 
-        let freq = resultSchedule.schedule.frequency
+        const freq = resultSchedule.schedule.frequency
           ? {
-              label: resultSchedule.schedule.frequency,
-              value: resultSchedule.schedule.frequency
-            }
+            label: resultSchedule.schedule.frequency,
+            value: resultSchedule.schedule.frequency
+          }
           : "";
 
         setScheduleData(resultSchedule.schedule);
-        setStartDate(start_datetime);
-        setEndDate(end_datetime);
+        setStartDate(startDateTime);
+        setEndDate(endDateTime);
         setSelectedOption(freq);
       }
     });
@@ -113,13 +106,9 @@ const Schedule = props => {
     setSelectedOption(option);
   };
 
-  const onChangeInferenceDate = e => {
-    setSelectedDate(e.target.value);
-  };
-
   const onClickSaveSchedule = () => {
     setMessage("");
-    let data = {
+    const data = {
       schedule: {
         start_datetime: startDate.toString(),
         end_datetime: endDate.toString(),
@@ -127,8 +116,8 @@ const Schedule = props => {
       }
     };
 
-    BaseActions.putApiary(
-      "/projects/" + props.location.state.project.name + "/evaluation_schedule",
+    putApiary(
+      `/projects/${props.location.state.project.name}/evaluation_schedule`,
       data
     ).then(() => {
       setMessage(
@@ -139,11 +128,11 @@ const Schedule = props => {
   };
 
   const onClickCancelSchedule = () => {
-    let startValue = scheduleData.start_datetime
+    const startValue = scheduleData.start_datetime
       ? new Date(scheduleData.start_datetime)
       : "";
 
-    let endValue = scheduleData.end_datetime
+    const endValue = scheduleData.end_datetime
       ? new Date(scheduleData.end_datetime)
       : "";
 
@@ -161,37 +150,14 @@ const Schedule = props => {
     setSelectedOption(frequencyValue);
   };
 
-  const onClickOpenInferenceModal = () => {
-    setOpen(true);
-  };
-
-  const onClickCloseInferenceModal = () => {
-    setOpen(false);
-  };
-
-  const onClickAutoRunInference = () => {
-    setLoading(true);
-    setError("");
-    BaseActions.postJSONFile("files/run/auto", "config.json", {})
-      .then(() => {
-        setLoading(false);
-        setOpen(false);
-        reload();
-      })
-      .catch(error => {
-        setLoading(false);
-        setError("There was a problem running the inference. Please try again");
-      });
-  };
-
   return (
-    <div className="scheduling-container">
+    <div className="scheduling-container evaluation">
       <p className="new-dep-section font-bold">SCHEDULING</p>
       <p>{message}</p>
 
       <div className="container-scheduling">
         <div className="container-schedule-date">
-          <p class="subheader">AUTOMATED</p>
+          <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
           <div className="container-date">
             <Flatpickr
@@ -224,8 +190,8 @@ const Schedule = props => {
           <div className="container-date">
             <Select
               className={
-                selectedOption !== "" &&
-                selectedOption.value !== scheduleData.frequency
+                selectedOption !== ""
+                && selectedOption.value !== scheduleData.frequency
                   ? "select-frequency adaptive edited"
                   : "select-frequency adaptive"
               }
@@ -297,8 +263,12 @@ const Schedule = props => {
   );
 };
 
-Schedule.propTypes = {};
+Schedule.propTypes = {
+  location: PropTypes.object
+};
 
-Schedule.defaultProps = {};
+Schedule.defaultProps = {
+  location: { state: {} }
+};
 
 export default withRouter(Schedule);

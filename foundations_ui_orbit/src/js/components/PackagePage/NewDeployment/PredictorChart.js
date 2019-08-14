@@ -1,38 +1,37 @@
-import React, { Component } from "react";
+import React from "react";
 import { withRouter } from "react-router-dom";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import BaseActions from "../../../actions/BaseActions";
+import { get } from "../../../actions/BaseActions";
 
-const PredictorChart = props => {
-  const [populations, setPopulations] = React.useState([]);
+const PredictorChart = () => {
   const [categories, setCategories] = React.useState([]);
   const [xAxeTitles, setxAxeTitles] = React.useState([]);
-  const [yAxeTitles, setYAxeTitles] = React.useState([]);
 
   function getAxesValuesAndData(data) {
-    var keyNames = Object.keys(data[0]);
+    let keyNames = Object.keys(data[0]);
     keyNames = keyNames.slice(1);
     setxAxeTitles(keyNames);
-      var categoriesArray = [];
-    for (var oneLine of data) {
-      var arrayOfValues = [];
-      for (var key of keyNames) {
-        arrayOfValues.push(Array(key, parseInt(oneLine[key])));
-        }
-      var serie = {
+    const categoriesArray = [];
+    data.forEach(oneLine => {
+      const arrayOfValues = [];
+      keyNames.forEach(key => {
+        arrayOfValues.push(parseInt(oneLine[key], 10));
+      });
+      const serie = {
         name: oneLine.name,
         data: arrayOfValues
       };
       categoriesArray.push(serie);
-    }
+    });
     setCategories(categoriesArray);
   }
 
   React.useEffect(() => {
-    BaseActions.get("populations/size").then(result => {
-      setPopulations(result.data);
-      getAxesValuesAndData(result.data);
+    get("populations/size").then(result => {
+      if (result) {
+        getAxesValuesAndData(result.data);
+      }
     });
   }, []);
 

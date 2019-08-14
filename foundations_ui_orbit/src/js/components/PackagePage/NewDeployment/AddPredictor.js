@@ -1,9 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import PredictorRow from "./PredictorRow.js";
 import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions.js";
+import { get, postJSONFile } from "../../../actions/BaseActions";
 
 const AddPredictor = props => {
   const [name, setName] = React.useState("");
@@ -51,8 +50,8 @@ const AddPredictor = props => {
   ];
 
   React.useEffect(() => {
-    BaseActions.get("management").then(result => {
-      let modelsData = [];
+    get("management").then(result => {
+      const modelsData = [];
 
       result.data.forEach(item => {
         modelsData.push({
@@ -62,10 +61,10 @@ const AddPredictor = props => {
       });
       setModels(modelsData);
 
-      BaseActions.get("actions").then(result => {
-        let actionsData = [];
+      get("actions").then(resultActions => {
+        const actionsData = [];
 
-        result.data.forEach(item => {
+        resultActions.data.forEach(item => {
           actionsData.push({
             value: item.name,
             label: item.name
@@ -80,12 +79,12 @@ const AddPredictor = props => {
     setName(e.target.value);
   };
 
-  const onChangeModel = model => {
-    setModel(model);
+  const onChangeModel = value => {
+    setModel(value);
   };
 
   const onChangeActions = action => {
-    var insertValue = true;
+    let insertValue = true;
 
     selectedActions.forEach(value => {
       if (value.value === action.value) {
@@ -93,25 +92,23 @@ const AddPredictor = props => {
       }
     });
 
-    setSelectedActions(prevSelectedActions =>
-      insertValue === true
-        ? [...prevSelectedActions, action]
-        : prevSelectedActions.filter(
-            prevSelectedAction => prevSelectedAction.value !== action.value
-          )
-    );
+    setSelectedActions(prevSelectedActions => (insertValue === true
+      ? [...prevSelectedActions, action]
+      : prevSelectedActions.filter(
+        prevSelectedAction => prevSelectedAction.value !== action.value
+      )));
   };
 
   const onChangeDescription = e => {
     setDescription(e.target.value);
   };
 
-  const onChangeStrategy = strategy => {
-    setStrategy(strategy);
+  const onChangeStrategy = value => {
+    setStrategy(value);
   };
 
-  const onChangeExplorationStrategy = explorationStrategy => {
-    setExplorationStrategy(explorationStrategy);
+  const onChangeExplorationStrategy = value => {
+    setExplorationStrategy(value);
   };
 
   const onChangeExplorationPercentage = e => {
@@ -127,24 +124,23 @@ const AddPredictor = props => {
     let validated = true;
 
     if (
-      name === "" ||
-      model === "" ||
-      selectedActions.length === 0 ||
-      description === "" ||
-      strategy === "" ||
-      explorationStrategy === "" ||
-      environment === ""
+      name === ""
+      || model === ""
+      || selectedActions.length === 0
+      || description === ""
+      || strategy === ""
+      || explorationStrategy === ""
+      || environment === ""
     ) {
-      message =
-        "Error: one or more fields are left empty. Please fill the form.";
+      message = "Error: one or more fields are left empty. Please fill the form.";
       validated = false;
     } else {
-      let explorationPercentageValue = parseFloat(explorationPercentage);
+      const explorationPercentageValue = parseFloat(explorationPercentage);
 
       if (
-        isNaN(explorationPercentageValue) ||
-        explorationPercentageValue < 0 ||
-        explorationPercentageValue > 1
+        Number.isNaN(explorationPercentageValue)
+        || explorationPercentageValue < 0
+        || explorationPercentageValue > 1
       ) {
         message = "Exploration percentage must be a number between 0 and 1";
         validated = false;
@@ -159,18 +155,18 @@ const AddPredictor = props => {
     setError("");
 
     if (validateData()) {
-      let explorationPercentageValue = parseFloat(explorationPercentage);
+      const explorationPercentageValue = parseFloat(explorationPercentage);
 
-      let newActions = selectedActions.map(item => {
+      const newActions = selectedActions.map(item => {
         return item.value;
       });
 
-      let modelValue = model.value;
-      let strategyValue = strategy.value;
-      let explorationStrategyValue = explorationStrategy.value;
-      let environmentValue = environment.value;
+      const modelValue = model.value;
+      const strategyValue = strategy.value;
+      const explorationStrategyValue = explorationStrategy.value;
+      const environmentValue = environment.value;
 
-      let data = {
+      const data = {
         predictor: {
           action_space: newActions,
           description: description,
@@ -187,14 +183,16 @@ const AddPredictor = props => {
         split_mechanism: props.splitMechanism
       };
 
-      BaseActions.postJSONFile("predictors", "predictors.json", data).then(
-        result => {
+      postJSONFile("predictors", "predictors.json", data).then(
+        () => {
           props.reload();
           props.onClose();
         }
       );
     }
   };
+
+  const { onClose } = props;
 
   return (
     <div>
@@ -275,7 +273,7 @@ const AddPredictor = props => {
         </button>
         <button
           type="button"
-          onClick={props.onClose}
+          onClick={onClose}
           className="b--secondary red"
         >
           <div className="close" />
@@ -289,16 +287,15 @@ const AddPredictor = props => {
 };
 
 AddPredictor.propTypes = {
-  predictors: PropTypes.array,
-  onClickAddPredictor: PropTypes.func,
   splitMechanism: PropTypes.string,
   onClose: PropTypes.func,
   reload: PropTypes.func
 };
 
 AddPredictor.defaultProps = {
-  predictors: [],
-  splitMechanism: "Random split (specified proportion)"
+  splitMechanism: "Random split (specified proportion)",
+  onClose: () => null,
+  reload: () => null
 };
 
 export default withRouter(AddPredictor);

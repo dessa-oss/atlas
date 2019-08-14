@@ -1,46 +1,44 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 
 const ModelManagementDetails = props => {
-  const renderEntrypoints = () => {
-    let entrypoints = [];
-    let i = 0;
+  const { model } = props;
 
-    for (var key in props.model.entrypoints) {
-      let entrypointString = "";
-      entrypointString += key + ": ";
-      for (var subkey in props.model.entrypoints[key]) {
-        entrypointString +=
-          subkey + ": " + props.model.entrypoints[key][subkey] + ", ";
-      }
+  const renderEntrypoints = () => {
+    const entrypoints = [];
+
+    Object.keys(model.entrypoints).forEach(key => {
+      const entrypointString = `${key}: `;
+      Object.keys(model.entrypoints[key]).forEach(subkey => {
+        entrypointString.concat(subkey.concat(`: ${model.entrypoints[key][subkey]}, `));
+      });
       entrypoints.push(
         <p className="model-management-details-entrypoint">
           {entrypointString}
         </p>
       );
-
-      i++;
-    }
+    });
 
     return entrypoints;
   };
 
   const renderValidationMetrics = () => {
-    let validation_metrics = [];
+    const validationMetrics = [];
 
-    if (props.model.validation_metrics) {
-      for (var key in props.model.validation_metrics) {
-        validation_metrics.push(
+    if (model.validationMetrics) {
+      Object.keys(model.validationMetrics).forEach(key => {
+        validationMetrics.push(
           <p className="model-management-details-entrypoint">
-            {key + ": " + props.model.validation_metrics[key]}
+            {`${key}: ${model.validationMetrics[key]}`}
           </p>
         );
-      }
+      });
     }
 
-    return validation_metrics;
+    return validationMetrics;
   };
+
 
   return (
     <div className="model-management-details-container">
@@ -53,17 +51,17 @@ const ModelManagementDetails = props => {
             Model Name:
           </p>
           <p className="model-management-details-text">
-            {props.model.model_name}
+            {model.model_name}
           </p>
           <p className="model-management-details-text-label font-bold">
             Status:
           </p>
-          <p className="model-management-details-text">{props.model.status}</p>
+          <p className="model-management-details-text">{model.status}</p>
           <p className="model-management-details-text-label font-bold">
             Default:
           </p>
           <p className="model-management-details-text">
-            {props.model.default === true ? "true" : "false"}
+            {model.default === true ? "true" : "false"}
           </p>
         </div>
         <div>
@@ -71,13 +69,13 @@ const ModelManagementDetails = props => {
             Model Description:
           </p>
           <p className="model-management-details-text">
-            {props.model.description || ""}
+            {model.description || ""}
           </p>
           <p className="model-management-details-text-label font-bold">
             Created at:
           </p>
           <p className="model-management-details-text">
-            {moment(props.model.created_at)
+            {moment(model.created_at)
               .format("YYYY-MM-DD HH:mm")
               .toString()}
           </p>
@@ -85,7 +83,7 @@ const ModelManagementDetails = props => {
             Created By:
           </p>
           <div className="model-management-details-text">
-            {props.model.created_by}
+            {model.created_by}
           </div>
         </div>
       </div>

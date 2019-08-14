@@ -1,36 +1,36 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import { withRouter } from "react-router-dom";
-import EditPredictor from "./EditPredictor.js";
-import { Modal, ModalBody } from "reactstrap";
-import BaseActions from "../../../actions/BaseActions.js";
+import { get } from "../../../actions/BaseActions";
 
-const Metadata = props => {
+const Metadata = () => {
   const [deploymentMetadata, setDeploymentMetadata] = React.useState({});
   const [expanded, setExpanded] = React.useState(false);
 
   React.useEffect(() => {
-    BaseActions.get("metadata").then(result => {
-      setDeploymentMetadata(result.data);
+    get("metadata").then(result => {
+      if (result && result.data) {
+        setDeploymentMetadata(result.data);
+      }
     });
   }, []);
 
   const renderRows = () => {
-    let rows = [];
-    for (var key in deploymentMetadata) {
+    const rows = [];
+
+    Object.keys(deploymentMetadata).forEach(key => {
       rows.push(
         <div className="container-metadata">
           <p className="label-metadata-key">{key}: </p>
           <p className="label-metadata-value">{deploymentMetadata[key]}</p>
         </div>
       );
-    }
+    });
 
     return rows;
   };
 
   const onclickDetails = () => {
-    let prevExpanded = expanded;
+    const prevExpanded = expanded;
     setExpanded(!prevExpanded);
   };
 
@@ -42,7 +42,7 @@ const Metadata = props => {
     >
       <div>
         <p className="new-dep-section font-bold">DEPLOYMENT METADATA</p>
-        <button className="b--secondary" onClick={onclickDetails}>
+        <button type="button" className="b--secondary" onClick={onclickDetails}>
           <div className="plus-button" />
         </button>
       </div>

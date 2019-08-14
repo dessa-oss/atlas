@@ -1,13 +1,11 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Layout from "../Layout";
+import React from "react";
 import { withRouter } from "react-router-dom";
 import { Modal, ModalBody } from "reactstrap";
 import Flatpickr from "react-flatpickr";
 import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions";
+import { get, postJSONFile } from "../../../actions/BaseActions";
 
-const Schedule = props => {
+const Schedule = () => {
   const [scheduleData, setScheduleData] = React.useState({
     start_datetime: "",
     end_datetime: "",
@@ -17,7 +15,7 @@ const Schedule = props => {
   const [error, setError] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
-  const [options, setOptions] = React.useState([
+  const options = [
     {
       label: "Hourly",
       value: "Hourly"
@@ -46,7 +44,7 @@ const Schedule = props => {
       label: "Semi-Annually",
       value: "Semi-Annually"
     }
-  ]);
+  ];
   const [selectedOption, setSelectedOption] = React.useState("");
   const pickerStartDateRef = React.useRef();
   const pickerEndDateRef = React.useRef();
@@ -56,61 +54,63 @@ const Schedule = props => {
   const [loading, setLoading] = React.useState(false);
 
   const reload = () => {
-    BaseActions.get("dates/inference").then(result => {
-      let items = [];
-      let sortedItems = [];
+    get("dates/inference").then(result => {
+      if (result) {
+        const items = [];
 
-      if (result.data.length > 0) {
-        result.data.forEach(item => {
-          items.push({
-            label: item,
-            value: item
+        if (result.data.length > 0) {
+          result.data.forEach(item => {
+            items.push({
+              label: item,
+              value: item
+            });
           });
-        });
 
-        let sortedItems = items.sort((a, b) => {
-          let date1 = new Date(a.value);
-          let date2 = new Date(b.value);
-          return date2 - date1;
-        });
-        setDates(sortedItems);
-        setSelectedDate(sortedItems[0].value);
-      } else {
-        for (let value of result.meta.fields) {
-          items.push({
-            label: value,
-            value: value
+          const sortedItems = items.sort((a, b) => {
+            const date1 = new Date(a.value);
+            const date2 = new Date(b.value);
+            return date2 - date1;
           });
+          setDates(sortedItems);
+          setSelectedDate(sortedItems[0].value);
+        } else {
+          result.meta.fields.forEach(value => {
+            items.push({
+              label: value,
+              value: value
+            });
+          });
+          setDates(items);
+          setSelectedDate(items[0].value);
         }
-        setDates(items);
-        setSelectedDate(items[0].value);
       }
 
-      BaseActions.get("schedule").then(resultSchedule => {
+      get("schedule").then(resultSchedule => {
         if (
-          resultSchedule.data &&
-          resultSchedule.data.start_datetime &&
-          resultSchedule.data.end_datetime &&
-          resultSchedule.data.frequency
+          resultSchedule
+          && resultSchedule.data
+          && resultSchedule.data.start_datetime
+          && resultSchedule.data.end_datetime
+          && resultSchedule.data.frequency
         ) {
-          let start_datetime = resultSchedule.data.start_datetime
+          const startDateTime = resultSchedule.data.start_datetime
             ? new Date(resultSchedule.data.start_datetime)
             : "";
 
-          let end_datetime = resultSchedule.data.end_datetime
+          const endDateTime = resultSchedule.data.end_datetime
             ? new Date(resultSchedule.data.end_datetime)
             : "";
 
-          let freq = resultSchedule.data.frequency
+          const freq = resultSchedule.data.frequency
             ? {
-                label: resultSchedule.data.frequency,
-                value: resultSchedule.data.frequency
-              }
+              label: resultSchedule.data.frequency,
+              value: resultSchedule.data.frequency
+            }
             : "";
 
           setScheduleData(resultSchedule.data);
-          setStartDate(start_datetime);
-          setEndDate(end_datetime);
+          setStartDate(startDateTime);
+          setEndDate(endDateTime);
           setSelectedOption(freq);
         }
       });
@@ -147,28 +147,26 @@ const Schedule = props => {
 
   const onClickSaveSchedule = () => {
     setMessage("");
-    let data = {
+    const data = {
       start_datetime: startDate.toString(),
       end_datetime: endDate.toString(),
       frequency: selectedOption.value
     };
 
-    BaseActions.postJSONFile("schedule", "inference_schedule.json", data).then(
-      () => {
-        setMessage(
-          "Schedule has been saved. Inference will be executed at scheduled time"
-        );
-        reload();
-      }
-    );
+    postJSONFile("schedule", "inference_schedule.json", data).then(() => {
+      setMessage(
+        "Schedule has been saved. Inference will be executed at scheduled time"
+      );
+      reload();
+    });
   };
 
   const onClickCancelSchedule = () => {
-    let startValue = scheduleData.start_datetime
+    const startValue = scheduleData.start_datetime
       ? new Date(scheduleData.start_datetime)
       : "";
 
-    let endValue = scheduleData.end_datetime
+    const endValue = scheduleData.end_datetime
       ? new Date(scheduleData.end_datetime)
       : "";
 
@@ -197,26 +195,29 @@ const Schedule = props => {
   const onClickRunInference = () => {
     setLoading(true);
 
-    BaseActions.get("learn").then(result => {
+    get("learn").then(result => {
       if (result.data.setting && result.data.populations) {
-        BaseActions.get("predictors").then(resultPredictors => {
+        get("predictors").then(resultPredictors => {
           if (resultPredictors.data) {
             let values = resultPredictors.data;
             if (values.length === 1) {
               values[0].proportion = 1;
             } else if (values.length > 1) {
-              let newPredictors = values.map(predictor => {
+              const newPredictors = values.map(predictor => {
+                const newPredictor = predictor;
                 const filteredPopulations = result.data.populations.filter(
-                  item => item.name === predictor.name
+                  item => item.name === newPredictor.name
                 );
                 if (filteredPopulations.length >= 1) {
-                  predictor.proportion = filteredPopulations[0].proportion;
+                  newPredictor.proportion = filteredPopulations[0].proportion;
                 }
-                return predictor;
+                return newPredictor;
               });
+
+              values = newPredictors;
             }
 
-            let data = {
+            const data = {
               inference_period_datetime: selectedDate,
               population_setup_period_datetime: selectedDate,
               populations: values
@@ -224,13 +225,13 @@ const Schedule = props => {
 
             const finalData = JSON.stringify(data);
 
-            BaseActions.postJSONFile("files/run", "config.json", finalData)
+            postJSONFile("files/run", "config.json", finalData)
               .then(() => {
                 setLoading(false);
                 setOpen(false);
                 reload();
               })
-              .catch(error => {
+              .catch(() => {
                 setLoading(false);
                 setError(
                   "There was a problem running the inference. Please try again"
@@ -241,28 +242,12 @@ const Schedule = props => {
       }
     });
   };
-
-  const onClickAutoRunInference = () => {
-    setLoading(true);
-    setError("");
-    BaseActions.postJSONFile("files/run/auto", "config.json", {})
-      .then(() => {
-        setLoading(false);
-        setOpen(false);
-        reload();
-      })
-      .catch(error => {
-        setLoading(false);
-        setError("There was a problem running the inference. Please try again");
-      });
-  };
-
   return (
     <div className="scheduling-container">
       <p className="new-dep-section font-bold">SCHEDULING</p>
       <p>{message}</p>
-      <div class="manual-schedule-container">
-        <p class="subheader">Manual</p>
+      <div className="manual-schedule-container">
+        <p className="subheader">Manual</p>
         <button
           type="button"
           onClick={onClickOpenInferenceModal}
@@ -274,7 +259,7 @@ const Schedule = props => {
 
       <div className="container-scheduling">
         <div className="container-schedule-date">
-          <p class="subheader">AUTOMATED</p>
+          <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
           <div className="container-date">
             <Flatpickr
@@ -307,8 +292,8 @@ const Schedule = props => {
           <div className="container-date">
             <Select
               className={
-                selectedOption !== "" &&
-                selectedOption.value !== scheduleData.frequency
+                selectedOption !== ""
+                && selectedOption.value !== scheduleData.frequency
                   ? "select-frequency adaptive edited"
                   : "select-frequency adaptive"
               }
@@ -338,7 +323,7 @@ const Schedule = props => {
       <Modal
         isOpen={open}
         toggle={onClickCloseInferenceModal}
-        className={"manage-inference-modal-container"}
+        className="manage-inference-modal-container"
       >
         <ModalBody>
           <div>
@@ -352,7 +337,7 @@ const Schedule = props => {
                 onChange={onChangeInferenceDate}
               >
                 {dates.map(date => {
-                  return <option>{date.value}</option>;
+                  return <option key={date.value}>{date.value}</option>;
                 })}
               </select>
             </div>
@@ -380,12 +365,8 @@ const Schedule = props => {
   );
 };
 
-Schedule.propTypes = {
-  predictors: PropTypes.array
-};
+Schedule.propTypes = {};
 
-Schedule.defaultProps = {
-  predictors: []
-};
+Schedule.defaultProps = {};
 
 export default withRouter(Schedule);

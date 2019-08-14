@@ -1,14 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 const PackagePageHeader = props => {
+  const { pageName, pageSubName } = props;
+
   return (
     <div className="layout-package-header-container">
-      <h2 className="font-bold">{props.pageName}</h2>
-      <h3>{props.pageSubName}</h3>
+      <h2 className="font-bold">{pageName}</h2>
+      <h3>{pageSubName}</h3>
     </div>
   );
-}
+};
 
 PackagePageHeader.propTypes = {
   pageName: PropTypes.string,

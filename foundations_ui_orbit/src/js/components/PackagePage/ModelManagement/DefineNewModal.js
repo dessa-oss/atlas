@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { Modal, ModalBody } from "reactstrap";
 
 const DefineNewModal = props => {
   const onClickClose = () => {
@@ -26,5 +25,7 @@ DefineNewModal.propTypes = {
   onClickClose: PropTypes.func
 };
 
-DefineNewModal.defaultProps = {};
+DefineNewModal.defaultProps = {
+  onClickClose: () => null
+};
 export default DefineNewModal;

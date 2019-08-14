@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import PackagePageHeader from "./PackagePageHeader";
-import BaseActions from "../../actions/BaseActions";
+import { get } from "../../actions/BaseActions";
 import moment from "moment";
 
 const PackageToolbar = props => {
@@ -10,14 +10,14 @@ const PackageToolbar = props => {
   const [selectedDate, setSelectedDate] = React.useState("");
 
   const reload = () => {
-    BaseActions.get("dates/inference").then(result => {
+    get("dates/inference").then(result => {
       let formattedDate = "July 12, 2019";
 
       if (result) {
-        let items = result.data.length > 0 ? result.data : result.meta.fields;
-        let sortedItems = items.sort((a, b) => {
-          let date1 = new Date(a);
-          let date2 = new Date(b);
+        const items = result.data.length > 0 ? result.data : result.meta.fields;
+        const sortedItems = items.sort((a, b) => {
+          const date1 = new Date(a);
+          const date2 = new Date(b);
           return date2 - date1;
         });
         formattedDate = moment(sortedItems[0])
@@ -42,41 +42,46 @@ const PackageToolbar = props => {
   };
 
   const onClickReset = () => {
-    props.onLoading(true, "Demo resetting...");
+    const { onLoading } = props;
+    onLoading(true, "Demo resetting...");
 
-    BaseActions.get("reset")
-      .then(result => {
-        props.onLoading(false, "");
+    get("reset")
+      .then(() => {
+        onLoading(false, "");
         reload();
       })
-      .catch(error => {
-        props.onLoading(false, "");
+      .catch(() => {
+        onLoading(false, "");
       });
   };
 
   const onClickFastForward = () => {
-    props.onLoading(true, "Fast forwarding...");
+    const { onLoading } = props;
 
-    BaseActions.get("fastforward")
-      .then(result => {
-        props.onLoading(false, "");
+    onLoading(true, "Fast forwarding...");
+
+    get("fastforward")
+      .then(() => {
+        onLoading(false, "");
         reload();
       })
-      .catch(error => {
-        props.onLoading(false, "");
+      .catch(() => {
+        onLoading(false, "");
       });
   };
+
+  const { project, title } = props;
 
   return (
     <div className="layout-package-toolbar-container">
       <div className="job-header-logo-container">
         <div className="i--icon-logo" />
         <PackagePageHeader
-          pageName={props.project.name}
+          pageName={project.name}
           pageSubName={
-            props.title === ""
+            title === ""
               ? "Inference Automation and Model Management"
-              : props.title
+              : title
           }
         />
         {demoOpen === true ? (
@@ -92,10 +97,11 @@ const PackageToolbar = props => {
               <p>Demo Management</p>
               <p>{selectedDate}</p>
               <div className="container-demo-buttons">
-                <button className="b--secondary-text" onClick={onClickReset}>
+                <button type="button" className="b--secondary-text" onClick={onClickReset}>
                   RESET
                 </button>
                 <button
+                  type="button"
                   className="b--secondary-text"
                   onClick={onClickFastForward}
                 >
@@ -123,6 +129,10 @@ PackageToolbar.propTypes = {
   onLoading: PropTypes.func
 };
 
-PackageToolbar.defaultProps = {};
+PackageToolbar.defaultProps = {
+  project: {},
+  title: "",
+  onLoading: () => null
+};
 
 export default withRouter(PackageToolbar);

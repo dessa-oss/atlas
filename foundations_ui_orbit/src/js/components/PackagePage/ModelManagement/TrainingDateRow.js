@@ -5,10 +5,13 @@ class TrainingDateRow extends Component {
   constructor(props) {
     super(props);
     this.clickX = this.clickX.bind(this);
+
+    const { date, isAddRow, removeDate } = this.props;
+
     this.state = {
-      date: this.props.date,
-      isAddRow: this.props.isAddRow,
-      removeDate: this.props.removeDate
+      date: date,
+      isAddRow: isAddRow,
+      removeDate: removeDate
     };
   }
 
@@ -42,6 +45,6 @@ TrainingDateRow.propTypes = {
 TrainingDateRow.defaultProps = {
   date: "",
   isAddRow: false,
-  removeDate: () => {}
+  removeDate: () => { }
 };
 export default TrainingDateRow;

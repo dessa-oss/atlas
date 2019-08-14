@@ -1,10 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import BaseActions from "../../../actions/BaseActions";
+import { getFromApiary } from "../../../actions/BaseActions";
 
-const SystemHealth = props => {
+const SystemHealth = () => {
   const [showPopulationTab, setShowPopulationTab] = React.useState(true);
   const [showDataQualityTab, setShowDataQualityTab] = React.useState(false);
   const [listFiles, setListFiles] = React.useState([]);
@@ -23,7 +22,7 @@ const SystemHealth = props => {
 
   const loadAnotherFile = fileName => {
     setSelectedFile(fileName);
-    BaseActions.getFromApiary("files/health/" + fileName).then(result => {
+    getFromApiary(`files/health/${fileName}`).then(result => {
       if (result) {
         setData(result);
       }
@@ -31,10 +30,10 @@ const SystemHealth = props => {
   };
 
   React.useEffect(() => {
-    BaseActions.getFromApiary("files/health").then(result => {
+    getFromApiary("files/health").then(result => {
       if (result) {
         setListFiles(result);
-        if (selectedFile == null) {
+        if (selectedFile === null) {
           loadAnotherFile(result[0]);
           document.getElementById("dropdownFiles").selectedIndex = 1;
         }
@@ -42,20 +41,19 @@ const SystemHealth = props => {
     });
   }, []);
 
-  const getValidationColor = validation_value => {
-    if (validation_value == "critical") {
+  const getValidationColor = validationValue => {
+    if (validationValue === "critical") {
       return "critical";
-    } else if (validation_value == "healthy") {
+    } if (validationValue === "healthy") {
       return "healthy";
-    } else if (validation_value == "warning") {
+    } if (validationValue === "warning") {
       return "warning";
-    } else {
-      return "none";
     }
+    return "none";
   };
 
   const onChangeOption = event => {
-    if (event.target.value != "") {
+    if (event.target.value !== "") {
       loadAnotherFile(event.target.value);
     } else {
       setData(null);
@@ -64,28 +62,28 @@ const SystemHealth = props => {
 
   const renderPopulatioShiftTab = () => {
     if (showPopulationTab) {
-      if (data == undefined) {
+      if (data === undefined) {
         return (
           <div className="i--image-nothing-here health-state-zero">
-            <div class="text-no-reports-loaded">
-              You haven't loaded any reports
+            <div className="text-no-reports-loaded">
+              You haven{"'"}t loaded any reports
             </div>
           </div>
         );
       }
       return (
-        <div className={`system-health-table table-2`}>
+        <div className="system-health-table table-2">
           <table>
             <tr>
               <th>PSI</th>
               <th>Attribute Name</th>
               <th>validation outcome</th>
             </tr>
-            {data.population_shift.details_by_attribute.length > 0 &&
-              data.population_shift.details_by_attribute.map(row => {
+            {data.population_shift.details_by_attribute.length > 0
+              && data.population_shift.details_by_attribute.map(row => {
                 if (row === "") return;
                 return (
-                  <tr>
+                  <tr key={row.PSI}>
                     <td>{row.PSI}</td>
                     <td>{row.attribute_name}</td>
                     <td className={getValidationColor(row.validation_outcome)}>
@@ -98,24 +96,22 @@ const SystemHealth = props => {
           </table>
         </div>
       );
-    } else {
-      return;
     }
   };
 
   const renderDataQualityTab = () => {
     if (showDataQualityTab) {
-      if (data == undefined) {
+      if (data === undefined) {
         return (
           <div className="i--image-nothing-here">
-            <div class="text-no-reports-loaded">
-              You haven't loaded any reports
+            <div className="text-no-reports-loaded">
+              You haven{"'"}t loaded any reports
             </div>
           </div>
         );
       }
       return (
-        <div className={`system-health-table table-2`}>
+        <div className="system-health-table table-2">
           <table>
             <tr>
               <th>% non NUMERIC INFERENCE PERIOD</th>
@@ -129,11 +125,11 @@ const SystemHealth = props => {
               <th>% ATTRIBUTE NAME</th>
               <th>% VALIDATION OUTCOME</th>
             </tr>
-            {data.data_quality.details_by_attribute.length > 0 &&
-              data.data_quality.details_by_attribute.map(row => {
+            {data.data_quality.details_by_attribute.length > 0
+              && data.data_quality.details_by_attribute.map(row => {
                 if (row === "") return;
                 return (
-                  <tr>
+                  <tr key={row.pct_non_numeric_inference_period}>
                     <td>
                       {JSON.stringify(row.pct_non_numeric_inference_period)}
                     </td>
@@ -155,12 +151,10 @@ const SystemHealth = props => {
           </table>
         </div>
       );
-    } else {
-      return;
     }
   };
   // data != undefined ?
-  let mainWindow = (
+  const mainWindow = (
     <Layout tab="Health" title="Data Health">
       <div className="new-systemhealth-container-deployment">
         <label className="new-systemhealth-section font-bold">
@@ -182,8 +176,8 @@ const SystemHealth = props => {
                     className="manage-interface-modal-select"
                     onChange={onChangeOption}
                   >
-                    {listFiles.length > 0 &&
-                      listFiles.map(option => {
+                    {listFiles.length > 0
+                      && listFiles.map(option => {
                         return <option key={option}>{option}</option>;
                       })}
                   </select>
@@ -193,23 +187,23 @@ const SystemHealth = props => {
             <div className="summary-container">
               <p>Inference period:</p>
               <p>
-                {data == undefined
+                {data === undefined
                   ? "no report selected"
                   : data.inference_period}
               </p>
               <p>Reference period:</p>
               <p>
-                {data == undefined
+                {data === undefined
                   ? "no report selected"
                   : data.reference_period}
               </p>
               <p>Row count difference:</p>
               <p>
-                {data == undefined ? "no report selected" : data.row_cnt_diff}
+                {data === undefined ? "no report selected" : data.row_cnt_diff}
               </p>
               <p>Missing columns:</p>
               <p>
-                {data == undefined
+                {data === undefined
                   ? "no report selected"
                   : data.missing_columns}
               </p>
@@ -230,39 +224,39 @@ const SystemHealth = props => {
               <div className="header-summary">
                 <div
                   className={
-                    data == undefined ||
-                    data.population_shift.summary.warning === 0
+                    data === undefined
+                      || data.population_shift.summary.warning === 0
                       ? "warning none"
                       : "warning"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.population_shift.summary.warning}
                   <p>Warning</p>
                 </div>
                 <div
                   className={
-                    data == undefined ||
-                    data.population_shift.summary.healthy === 0
+                    data === undefined
+                      || data.population_shift.summary.healthy === 0
                       ? "healthy none"
                       : "healthy"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.population_shift.summary.healthy}
                   <p>Healthy</p>
                 </div>
                 <div
                   className={
-                    data == undefined ||
-                    data.population_shift.summary.critical === 0
+                    data === undefined
+                      || data.population_shift.summary.critical === 0
                       ? "critical none"
                       : "critical"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.population_shift.summary.critical}
                   <p>Critical</p>
@@ -283,37 +277,37 @@ const SystemHealth = props => {
               <div className="header-summary">
                 <div
                   className={
-                    data == undefined || data.data_quality.summary.warning === 0
+                    data === undefined || data.data_quality.summary.warning === 0
                       ? "warning none"
                       : "warning"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.data_quality.summary.warning}
                   <p>Warning</p>
                 </div>
                 <div
                   className={
-                    data == undefined || data.data_quality.summary.healthy === 0
+                    data === undefined || data.data_quality.summary.healthy === 0
                       ? "healthy none"
                       : "healthy"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.data_quality.summary.healthy}
                   <p>Healthy</p>
                 </div>
                 <div
                   className={
-                    data == undefined ||
-                    data.data_quality.summary.critical === 0
+                    data === undefined
+                      || data.data_quality.summary.critical === 0
                       ? "critical none"
                       : "critical"
                   }
                 >
-                  {data == undefined
+                  {data === undefined
                     ? "N/A"
                     : data.data_quality.summary.critical}
                   <p>Critical</p>
@@ -349,10 +343,6 @@ const SystemHealth = props => {
   );
 
   return <div>{mainWindow}</div>;
-};
-
-SystemHealth.propTypes = {
-  history: PropTypes.object
 };
 
 export default withRouter(SystemHealth);

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import ModelManagementRow from "./ModelManagementRow";
 
@@ -10,10 +10,10 @@ const ModelManagementTable = props => {
   };
 
   const renderRows = () => {
-    let rows = [];
+    const rows = [];
     let curRow = 0;
     props.tableData.forEach(row => {
-      const isDetail = curRow === detailRow ? true : false;
+      const isDetail = curRow === detailRow;
       rows.push(
         <ModelManagementRow
           key={curRow}
@@ -25,7 +25,7 @@ const ModelManagementTable = props => {
           {...props}
         />
       );
-      curRow++;
+      curRow += 1;
     });
 
     return rows;
@@ -67,13 +67,12 @@ const ModelManagementTable = props => {
 
 ModelManagementTable.propTypes = {
   tableData: PropTypes.array,
-  detailRow: PropTypes.number,
   reload: PropTypes.func
 };
 
 ModelManagementTable.defaultProps = {
   tableData: [],
-  detailRow: -1
+  reload: () => null
 };
 
 export default ModelManagementTable;

@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import BaseActions from "../../../actions/BaseActions.js";
+import { get, postJSONFile } from "../../../actions/BaseActions";
 
 const Manager = props => {
   const [testLearningConfig, setTestLearningConfig] = React.useState({
@@ -13,10 +13,10 @@ const Manager = props => {
       hold_out_period_unit: ""
     }
   });
-  const [methods, setMethods] = React.useState([
+  const methods = [
     "Define Manually",
     "Automatically Optimize"
-  ]);
+  ];
   const [method, setMethod] = React.useState("");
 
   const [splitMechanisms, setSplitMechanisms] = React.useState([
@@ -26,7 +26,7 @@ const Manager = props => {
 
   const [splitMechanism, setSplitMechanism] = React.useState("");
 
-  const [feedbackCycles, setFeedbackCycles] = React.useState([
+  const feedbackCycles = [
     "Hourly",
     "Daily",
     "Weekly",
@@ -34,22 +34,22 @@ const Manager = props => {
     "Monthly",
     "Quaterly",
     "Semy-Annually"
-  ]);
+  ];
 
   const [feedbackCycle, setFeedbackCycle] = React.useState("");
   const [periodLength, setPeriodLength] = React.useState("");
-  const [periodUnits, setPeriodUnits] = React.useState([
+  const periodUnits = [
     "Hour",
     "Day",
     "Week",
     "Month"
-  ]);
+  ];
   const [periodUnit, setPeriodUnit] = React.useState("");
 
   const [error, setError] = React.useState("");
 
   const loadLearnConfig = () => {
-    BaseActions.get("learn").then(result => {
+    get("learn").then(result => {
       if (result.data.setting && result.data.populations) {
         setTestLearningConfig(result.data);
         setMethod(result.data.setting.method);
@@ -115,9 +115,9 @@ const Manager = props => {
     let validated = true;
     let message = "";
 
-    let periodLengthValue = parseInt(periodLength);
+    const periodLengthValue = parseInt(periodLength, 10);
 
-    if (isNaN(periodLengthValue)) {
+    if (Number.isNaN(periodLengthValue)) {
       validated = false;
       message = "Period length must be an integer";
     }
@@ -150,9 +150,9 @@ const Manager = props => {
     setError("");
 
     if (validate()) {
-      let periodLengthValue = parseInt(periodLength);
+      const periodLengthValue = parseInt(periodLength, 10);
 
-      let data = {
+      const data = {
         method: method,
         split_mechanism: splitMechanism,
         feedback_cycle: feedbackCycle,
@@ -160,15 +160,13 @@ const Manager = props => {
         hold_out_period_unit: periodUnit
       };
 
-      BaseActions.postJSONFile("learn", "test_learn_config.json", data).then(
-        result => {
+      postJSONFile("learn", "test_learn_config.json", data).then(
+        () => {
           loadLearnConfig();
         }
       );
     }
   };
-
-  const onClickRunInference = () => {};
 
   return (
     <div className="container-manager">
@@ -193,7 +191,7 @@ const Manager = props => {
             }
           >
             {methods.map(item => {
-              return <option>{item}</option>;
+              return <option key={item}>{item}</option>;
             })}
           </select>
         </div>
@@ -209,7 +207,7 @@ const Manager = props => {
             }
           >
             {splitMechanisms.map(item => {
-              return <option>{item}</option>;
+              return <option key={item}>{item}</option>;
             })}
           </select>
         </div>
@@ -225,7 +223,7 @@ const Manager = props => {
             }
           >
             {feedbackCycles.map(item => {
-              return <option>{item}</option>;
+              return <option key={item}>{item}</option>;
             })}
           </select>
         </div>
@@ -242,13 +240,13 @@ const Manager = props => {
               }
             >
               {periodUnits.map(item => {
-                return <option>{item}</option>;
+                return <option key={item}>{item}</option>;
               })}
             </select>
             <input
               className={
-                periodLength !==
-                testLearningConfig.setting.hold_out_period_length
+                periodLength
+                  !== testLearningConfig.setting.hold_out_period_length
                   ? "new-dep-input edited"
                   : "new-dep-input"
               }
@@ -282,13 +280,13 @@ const Manager = props => {
 };
 
 Manager.propTypes = {
-  tab: PropTypes.string,
   onSetNewMethod: PropTypes.func,
   onSetNewSplitMechanism: PropTypes.func
 };
 
 Manager.defaultProps = {
-  tab: "Deployment"
+  onSetNewMethod: () => null,
+  onSetNewSplitMechanism: () => null
 };
 
 export default withRouter(Manager);

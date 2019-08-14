@@ -1,6 +1,9 @@
 .scheduling-container {
   white-space: nowrap;
-  margin-left: 40px;
+
+  &.evaluation {
+    margin-left: 40px;
+  }
 }
 
 .new-dep-section {
@@ -32,6 +35,7 @@
   display: inline-block;
   border-radius: 4px;
   margin-bottom: 20px;
+  margin-left: 20px;
 
   .subheader {
     display: inline-block;
@@ -203,7 +207,7 @@
   }
 
   .container-manager {
-    width: 25%;
+    width: 30%;
     display: inline-block;
     vertical-align: top;
     white-space: normal;

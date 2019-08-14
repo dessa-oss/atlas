@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 const ProjectHeader = props => {
+  const { numProjects } = props;
 
   return (
     <div className="project-header-container">
@@ -16,7 +17,7 @@ const ProjectHeader = props => {
           </div>
           <div className="half-width inline-block text-right">
             <h2 className="blue-border-bottom font-bold">
-              Total Projects: <span>{props.numProjects}</span>
+              Total Projects: <span>{numProjects}</span>
             </h2>
           </div>
         </div>
@@ -24,14 +25,14 @@ const ProjectHeader = props => {
       </div>
     </div>
   );
-}
+};
 
 ProjectHeader.propTypes = {
-  numProjects: PropTypes.number,
+  numProjects: PropTypes.number
 };
 
 ProjectHeader.defaultProps = {
-  numProjects: 0,
+  numProjects: 0
 };
 
 export default ProjectHeader;

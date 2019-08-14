@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Modal, ModalBody } from "reactstrap";
-import Papa from "papaparse";
 import TrainingDateRow from "./TrainingDateRow";
 import MultiSelect from "@kenshooui/react-multi-select";
 import "@kenshooui/react-multi-select/dist/style.css";
-import BaseActions from "../../../actions/BaseActions";
+import { getFromApiary, postJSONFile } from "../../../actions/BaseActions";
 
 class ModelRecalibrationModal extends Component {
   constructor(props) {
@@ -21,9 +20,12 @@ class ModelRecalibrationModal extends Component {
     this.formatPopulationData = this.formatPopulationData.bind(this);
     this.changePopulation = this.changePopulation.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
+
+    const { closeModal, modelName } = this.props;
+
     this.state = {
-      closeModal: this.props.closeModal,
-      modelName: this.props.modelName,
+      closeModal: closeModal,
+      modelName: modelName,
       isShowingScheduleMessage: false,
       isShowingSwapMessage: false,
       isShowingTriggeredMessage: false,
@@ -39,7 +41,7 @@ class ModelRecalibrationModal extends Component {
   }
 
   componentWillMount() {
-    BaseActions.getFromApiary("dates/target").then(result => {
+    getFromApiary("dates/target").then(result => {
       if (result) {
         this.getData(result);
         this.formatPopulationData();
@@ -73,9 +75,9 @@ class ModelRecalibrationModal extends Component {
   }
 
   getData(result) {
-    result.data.sort(function(a, b) {
-      let dateA = new Date(a),
-        dateB = new Date(b);
+    result.data.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
       return dateA - dateB;
     });
     result.data.reverse();
@@ -88,14 +90,14 @@ class ModelRecalibrationModal extends Component {
 
     const selectedDate = selectedItem[0];
     const updatedTrainingDateItems = trainingDateItems.filter(row => {
-      return row != selectedDate;
+      return row !== selectedDate;
     });
-    let updatedTrainingDates = JSON.parse(JSON.stringify(trainingDates));
+    const updatedTrainingDates = JSON.parse(JSON.stringify(trainingDates));
     updatedTrainingDates.push([selectedDate.label]);
 
-    updatedTrainingDates.sort(function(a, b) {
-      let dateA = new Date(a),
-        dateB = new Date(b);
+    updatedTrainingDates.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
       return dateA - dateB;
     });
 
@@ -111,10 +113,10 @@ class ModelRecalibrationModal extends Component {
     const { trainingDates, trainingDateItems } = this.state;
 
     const updatedTrainingDates = trainingDates.filter(row => {
-      return row != date;
+      return row !== date;
     });
 
-    let updatedTrainingDateItems = JSON.parse(
+    const updatedTrainingDateItems = JSON.parse(
       JSON.stringify(trainingDateItems)
     );
 
@@ -125,9 +127,9 @@ class ModelRecalibrationModal extends Component {
 
     updatedTrainingDateItems.push({ id: index, label: date });
 
-    updatedTrainingDateItems.sort(function(a, b) {
-      let dateA = new Date(a.label),
-        dateB = new Date(b.label);
+    updatedTrainingDateItems.sort((a, b) => {
+      const dateA = new Date(a.label);
+      const dateB = new Date(b.label);
       return dateA - dateB;
     });
 
@@ -140,14 +142,14 @@ class ModelRecalibrationModal extends Component {
   }
 
   formatPopulationData() {
-    BaseActions.getFromApiary("populations").then(result => {
-      let populationRows = [];
+    getFromApiary("populations").then(result => {
+      const populationRows = [];
       let index = 0;
       if (result) {
         result.data.forEach(pop => {
-          const label = "Name: " + pop.name + ", Status: " + pop.status;
+          const label = `Name: ${pop.name}, Status: ${pop.status}`;
           populationRows.push({ id: index, label: label });
-          index++;
+          index += 1;
         });
       }
 
@@ -164,18 +166,17 @@ class ModelRecalibrationModal extends Component {
 
     this.setState({ isLoading: true });
 
-    const finalData =
-      '{"TrainPopulations": ' +
-      JSON.stringify(selectedPopulationItems) +
-      ', "TrainDateTimes": [' +
-      trainingDates.map(item => '"' + item[0] + '"') +
-      "]}";
+    const finalData = `{"TrainPopulations": ${
+      JSON.stringify(selectedPopulationItems)
+    }, "TrainDateTimes": [${
+      trainingDates.map(item => `"${item[0]}"`)
+    }]}`;
 
-    BaseActions.postJSONFile(
+    postJSONFile(
       "files/recalibrate",
       "config.json",
       finalData
-    ).then(result => {
+    ).then(() => {
       this.setState({ isLoading: false, isComplete: true });
     });
   }
@@ -242,7 +243,7 @@ class ModelRecalibrationModal extends Component {
       );
     }
 
-    let trainingDateRows = [];
+    const trainingDateRows = [];
     trainingDates.forEach(date => {
       trainingDateRows.push(
         <TrainingDateRow key={date} date={date} removeDate={this.removeDate} />
@@ -297,9 +298,9 @@ class ModelRecalibrationModal extends Component {
 
     return (
       <Modal
-        isOpen={true}
+        isOpen
         toggle={closeModal}
-        className={"model-recalibration-modal-container"}
+        className="model-recalibration-modal-container"
       >
         <ModalBody>
           <div>
@@ -406,7 +407,7 @@ class ModelRecalibrationModal extends Component {
                     showSearch={false}
                     showSelectAll={false}
                     showSelectedItems={false}
-                    wrapperClassName={"multi-select"}
+                    wrapperClassName="multi-select"
                   />
                 </div>
               </div>
@@ -421,7 +422,7 @@ class ModelRecalibrationModal extends Component {
                   showSearch={false}
                   showSelectAll={false}
                   showSelectedItems={false}
-                  wrapperClassName={"multi-select"}
+                  wrapperClassName="multi-select"
                 />
                 <p>
                   Using default training/validation data split configuration.
@@ -438,33 +439,11 @@ class ModelRecalibrationModal extends Component {
 }
 ModelRecalibrationModal.propTypes = {
   closeModal: PropTypes.func,
-  modelName: PropTypes.string,
-  isShowingScheduleMessage: PropTypes.bool,
-  isShowingSwapMessage: PropTypes.bool,
-  isShowingTriggeredMessage: PropTypes.bool,
-  isShowingFrequencyMessage: PropTypes.bool,
-  isShowingTimeMessage: PropTypes.bool,
-  trainingDates: PropTypes.array,
-  trainingDateItems: PropTypes.array,
-  populationItems: PropTypes.array,
-  selectedPopulationItems: PropTypes.array,
-  isLoading: PropTypes.bool,
-  isComplete: PropTypes.bool
+  modelName: PropTypes.string
 };
 
 ModelRecalibrationModal.defaultProps = {
-  closeModal: () => {},
-  modelName: "",
-  isShowingScheduleMessage: false,
-  isShowingSwapMessage: false,
-  isShowingTriggeredMessage: false,
-  isShowingFrequencyMessage: false,
-  isShowingTimeMessage: false,
-  trainingDates: [],
-  trainingDateItems: [],
-  populationItems: [],
-  selectedPopulationItems: [],
-  isLoading: false,
-  isComplete: false
+  closeModal: () => { },
+  modelName: ""
 };
 export default ModelRecalibrationModal;

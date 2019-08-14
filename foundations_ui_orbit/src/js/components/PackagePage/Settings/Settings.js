@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import BaseActions from "../../../actions/BaseActions";
+import { getFromApiary } from "../../../actions/BaseActions";
 import User from "./User";
 import Notification from "./Notification";
 import { Modal, ModalBody } from "reactstrap";
@@ -12,8 +11,6 @@ class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isMount: false,
-      isLoading: true,
       users: [],
       notifications: [],
       filteredUsers: [],
@@ -30,14 +27,12 @@ class Settings extends Component {
   }
 
   async componentDidMount() {
-    await this.setState({ isMount: true });
     await this.getUsers();
     await this.getNotifications();
-    await this.setState({ isLoading: false });
   }
 
   async getUsers() {
-    const apiUsers = await BaseActions.getFromApiary("settings/users");
+    const apiUsers = await getFromApiary("settings/users");
     if (apiUsers) {
       await this.saveUsers(apiUsers);
     }
@@ -45,14 +40,10 @@ class Settings extends Component {
   }
 
   async getNotifications() {
-    const apiNotifications = await BaseActions.getFromApiary(
+    const apiNotifications = await getFromApiary(
       "settings/notifications"
     );
     if (apiNotifications) await this.saveNotifications(apiNotifications);
-  }
-
-  componentWillUnmount() {
-    this.setState({ isMount: false });
   }
 
   saveUsers(users) {
@@ -73,9 +64,9 @@ class Settings extends Component {
 
   searchUsers(event) {
     const { users } = this.state;
-    let searchText = event.target.value;
+    const searchText = event.target.value;
     let searching = true;
-    let filteredUsers = users.filter(u => {
+    const filteredUsers = users.filter(u => {
       return u.name.toLowerCase().includes(searchText.toLowerCase());
     });
 
@@ -107,7 +98,6 @@ class Settings extends Component {
   render() {
     const {
       users,
-      isLoading,
       notifications,
       filteredUsers,
       searching,
@@ -116,30 +106,32 @@ class Settings extends Component {
 
     const userRows = [];
 
-    !searching
-      ? users.forEach(user => {
-          userRows.push(
-            <User
-              key={user.id + "-" + user.permission}
-              name={user.name}
-              username={user.id}
-              email={user.email}
-              role={user.permission}
-              updateUser={this.getUsers}
-            />
-          );
-        })
-      : filteredUsers.forEach(user => {
-          userRows.push(
-            <User
-              key={user.id + "-" + user.permission}
-              name={user.name}
-              username={user.id}
-              email={user.email}
-              role={user.permission}
-            />
-          );
-        });
+    if (searching === false) {
+      users.forEach(user => {
+        userRows.push(
+          <User
+            key={`${user.id}-${user.permission}`}
+            name={user.name}
+            username={user.id}
+            email={user.email}
+            role={user.permission}
+            updateUser={this.getUsers}
+          />
+        );
+      });
+    } else {
+      filteredUsers.forEach(user => {
+        userRows.push(
+          <User
+            key={`${user.id}-${user.permission}`}
+            name={user.name}
+            username={user.id}
+            email={user.email}
+            role={user.permission}
+          />
+        );
+      });
+    }
 
     const notificationRows = [];
 
@@ -147,11 +139,11 @@ class Settings extends Component {
       notificationRows.push(
         <Notification
           key={
-            notif.category +
-            "-" +
-            notif.condition +
-            "-" +
-            notif.recipients.join("-")
+            `${notif.category
+            }-${
+              notif.condition
+            }-${
+              notif.recipients.join("-")}`
           }
           category={notif.category}
           condition={notif.condition}
@@ -161,12 +153,6 @@ class Settings extends Component {
         />
       );
     });
-
-    const userTable = isLoading ? (
-      <p className="settings-loading-users">Loading Users</p>
-    ) : (
-      userRows
-    );
 
     return (
       <Layout tab="Settings" title="Settings">
@@ -239,7 +225,7 @@ class Settings extends Component {
         <Modal
           isOpen={isShowingAddUser}
           toggle={this.toggleShowAddUser}
-          className={"settings-add-user-modal-container"}
+          className="settings-add-user-modal-container"
         >
           <ModalBody>
             <AddUserModal updateUser={this.getUsers} />
