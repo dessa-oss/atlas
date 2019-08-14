@@ -31,6 +31,14 @@ class TestTrackProductionMetrics(Spec):
     def column_value(self):
         return self.faker.random.random()
 
+    @let
+    def column_name_2(self):
+        return self.faker.word()
+
+    @let
+    def column_value_2(self):
+        return self.faker.random.random()
+
     @set_up
     def set_up(self):
         self.mock_context.job_id.return_value = self.job_id
@@ -55,7 +63,18 @@ class TestTrackProductionMetrics(Spec):
     def test_track_production_metrics_can_log_a_metric(self):
         track_production_metrics(self.metric_name, {self.column_name: self.column_value})
         production_metrics = self._retrieve_tracked_metrics()
-        self.assertEqual({self.metric_name: [(self.column_name, self.column_value)]}, production_metrics)    
+        self.assertEqual({self.metric_name: [(self.column_name, self.column_value)]}, production_metrics)   
+
+    def test_track_production_metrics_can_log_multiple_metrics_values_in_one_call(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.column_value, self.column_name_2: self.column_value_2})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        production_metrics[self.metric_name].sort(key=lambda entry: entry[0])
+        
+        expected_metrics = {self.metric_name: [(self.column_name, self.column_value), (self.column_name_2, self.column_value_2)]}
+        expected_metrics[self.metric_name].sort(key=lambda entry: entry[0])
+
+        self.assertEqual(expected_metrics, production_metrics)   
 
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')

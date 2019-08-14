@@ -12,11 +12,7 @@ def track_production_metrics(metric_name, metric_values):
     try:
         job_id = current_foundations_context().job_id()
 
-        if metric_values:
-            metrics_list = [list(metric_values.items())[0]]
-        else:
-            metrics_list = []
-
+        metrics_list = list(metric_values.items())
         redis_connection.hmset(f'models:{job_id}:production_metrics', {metric_name: pickle.dumps(metrics_list)})
     except ValueError:
         raise RuntimeError('Job ID not set')
