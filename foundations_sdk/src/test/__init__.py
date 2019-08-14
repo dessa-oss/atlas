@@ -26,5 +26,6 @@ from test.test_set_job_resources import TestSetJobResources
 from test.test_deploy import TestDeploy
 from test.test_save_artifact import TestSaveArtifact
 from test.test_get_queued_jobs import TestGetQueuedJobs
+from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *

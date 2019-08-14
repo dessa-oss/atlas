@@ -52,6 +52,7 @@ from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.job_actions import *
 from foundations.artifacts import *
 from foundations.local_run import load_local_configuration_if_present
+from foundations_orbit import track_production_metrics
 
 def _append_module():
     import sys

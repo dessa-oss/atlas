@@ -37,7 +37,8 @@ setup(
         'foundations-ssh=={}'.format(build_version),
         'foundations-aws=={}'.format(build_version),
         'foundations-gcp=={}'.format(build_version),
-        'foundations-ssh=={}'.format(build_version)
+        'foundations-ssh=={}'.format(build_version),
+        'foundations-orbit=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
