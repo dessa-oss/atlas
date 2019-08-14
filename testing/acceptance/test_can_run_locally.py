@@ -27,14 +27,9 @@ class TestCanRunLocally(Spec):
 
     @set_up
     def set_up(self):
-        import subprocess
-        from foundations_contrib.change_directory import ChangeDirectory
+        from acceptance.mixins.run_process import run_process
 
-        with ChangeDirectory('acceptance/fixtures/run_locally'):
-            process = subprocess.Popen(['python', 'main.py'], stdout=subprocess.PIPE)
-        out, err = process.communicate()
-
-        self.job_id = out.decode().strip()
+        self.job_id = run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally').strip()
 
     def test_project_name_is_saved(self):
         self.assertIn('run_locally', self.project_names)
