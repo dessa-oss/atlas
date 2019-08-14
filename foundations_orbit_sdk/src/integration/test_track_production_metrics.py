@@ -6,22 +6,28 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+import pickle
 
 class TestTrackProductionMetrics(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import redis_connection
+        from foundations_contrib.global_state import current_foundations_context, redis_connection
 
+        self.pipeline_context = current_foundations_context().pipeline_context()
+        self.pipeline_context.file_name = 'some_job_id'
         self._redis = redis_connection
         self._redis.flushall()
 
-    @skip('not implemented')
+    @tear_down
+    def tear_down(self):
+        self.pipeline_context.file_name = None
+
     def test_track_production_metrics_stores_metrics_in_redis(self):
         self._track_some_metrics('october')
         self._track_some_metrics('january')
 
-        production_metrics_from_redis = self._redis.hgetall(f'models:{self.job_id}:production_metrics')
+        production_metrics_from_redis = self._redis.hgetall('models:some_job_id:production_metrics')
         production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 
         production_metrics['MSE'].sort(key=lambda entry: entry[0])
