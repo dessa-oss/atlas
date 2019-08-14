@@ -96,7 +96,7 @@ class TestCanDeployModelServer(Spec):
         self._try_post_to_evaluate_endpoint('january')
         time.sleep(3)
 
-        production_metrics_from_redis = redis_conenction.hgetall(f'models:{self.job_id}:production_metrics')
+        production_metrics_from_redis = redis_connection.hgetall(f'models:{self.job_id}:production_metrics')
         production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 
         expected_production_metrics = {
