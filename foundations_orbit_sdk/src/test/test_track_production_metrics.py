@@ -70,6 +70,18 @@ class TestTrackProductionMetrics(Spec):
         
         production_metrics = self._retrieve_tracked_metrics()
         production_metrics[self.metric_name].sort(key=lambda entry: entry[0])
+
+        expected_metrics = {self.metric_name: [(self.column_name, self.column_value), (self.column_name_2, self.column_value_2)]}
+        expected_metrics[self.metric_name].sort(key=lambda entry: entry[0])
+
+        self.assertEqual(expected_metrics, production_metrics)   
+        
+    def test_track_production_metrics_can_log_multiple_metrics_values_in_different_calls(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.column_value})
+        track_production_metrics(self.metric_name, {self.column_name_2: self.column_value_2})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        production_metrics[self.metric_name].sort(key=lambda entry: entry[0])
         
         expected_metrics = {self.metric_name: [(self.column_name, self.column_value), (self.column_name_2, self.column_value_2)]}
         expected_metrics[self.metric_name].sort(key=lambda entry: entry[0])
