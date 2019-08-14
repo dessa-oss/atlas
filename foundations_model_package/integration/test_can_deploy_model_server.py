@@ -44,6 +44,20 @@ class TestCanDeployModelServer(Spec):
 
         self._proxy_process = None
 
+    def _set_up_in_test(self):
+        import subprocess
+
+        return_code = self._build_image()
+        self.assertEqual(0, return_code)
+
+        self._deploy_job()
+        self.deployment.wait_for_deployment_to_complete()
+
+        self._deploy_model_package('test-model-package', self.job_id)
+        self._proxy_process = subprocess.Popen(['bash', '-c', 'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-test-model-package 5000:80'])
+
+        self._wait_for_server()
+
     @tear_down
     def tear_down(self):
         if self._proxy_process is not None:
@@ -61,26 +75,40 @@ class TestCanDeployModelServer(Spec):
         return self.deployment.job_name()
 
     def test_can_deploy_server(self):
-        import subprocess
         from foundations_contrib.global_state import redis_connection
 
-        return_code = self._build_image()
-        self.assertEqual(0, return_code)
+        self._set_up_in_test()
 
-        self._deploy_job()
-        self.deployment.wait_for_deployment_to_complete()
-
-        self._deploy_model_package('test-model-package', self.job_id)
-        self._proxy_process = subprocess.Popen(['bash', '-c', 'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-test-model-package 5000:80 --pod-running-timeout=2m'])
-
-        self._wait_for_server()
-        result = self._try_post()
+        result = self._try_post_to_root_endpoint()
         predict_result = self._try_post_to_predict_endpoint()
 
         self.assertEqual({'a': 2, 'b': 4}, result)
         self.assertEqual({'a': 21, 'b': 32}, predict_result)
 
         self.assertEqual('1', redis_connection.get(f'models:{self.job_id}:served').decode())
+
+    @skip('not implemented')
+    def test_can_hit_evaluate_endpoint(self):
+        import time
+        import pickle
+
+        from foundations_contrib.global_state import redis_connection
+
+        self._set_up_in_test()
+        self._try_post_to_evaluate_endpoint('october')
+        time.sleep(3)
+        self._try_post_to_evaluate_endpoint('january')
+        time.sleep(3)
+
+        production_metrics_from_redis = redis_conenction.hgetall(f'models:{self.job_id}:production_metrics')
+        production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
+
+        expected_production_metrics = {
+            'roc_auc': [('october', 66), ('january', 66)],
+            'MSE': [('october', 1), ('january', 1)]
+        }
+
+        self.assertEqual(expected_production_metrics, production_metrics)
 
     def _wait_for_model_package_pod(self, model_name):
         import time
@@ -96,7 +124,7 @@ class TestCanDeployModelServer(Spec):
     def _model_package_pod_status(self, model_name):
         import subprocess
 
-        process = subprocess.run(['bash', '-c', f'kubectl -n foundations-scheduler-test get pod -l app=foundations-model-package-{model_name} -o go-template="{{(index .items 0).status.phase}}"'], stdout=subprocess.PIPE)
+        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{model_name}', '-o', 'go-template={{(index .items 0).status.phase}}'], stdout=subprocess.PIPE)
         return process.stdout.decode().rstrip('\n')
 
     def _wait_for_server(self):
@@ -115,19 +143,20 @@ class TestCanDeployModelServer(Spec):
 
         self.fail(f'server never started')
 
-    def _try_post(self):
-        import requests
-
-        try:
-            return requests.post('http://localhost:5000', json={'a': 1, 'b': 2}).json()
-        except:
-            return None
+    def _try_post_to_root_endpoint(self):
+        return self._try_post('/', {'a': 1, 'b': 2})
 
     def _try_post_to_predict_endpoint(self):
+        return self._try_post('/predict', {'a': 20, 'b': 30})
+
+    def _try_post_to_evaluate_endpoint(self, eval_period):
+        return self._try_post('/evaluate', {'eval_period': eval_period})
+
+    def _try_post(self, endpoint, dict_payload):
         import requests
 
         try:
-            return requests.post('http://localhost:5000/predict', json={'a': 20, 'b': 30}).json()
+            return requests.post(f'http://localhost:5000{endpoint}', json=dict_payload).json()
         except:
             return None
 
