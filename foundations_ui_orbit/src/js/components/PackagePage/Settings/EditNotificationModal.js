@@ -95,7 +95,9 @@ class EditNotification extends Component {
   }
 }
 
-EditNotification.propTypes = {};
+EditNotification.propTypes = {
+  category: PropTypes.string
+};
 
 EditNotification.defaultProps = {};
 
