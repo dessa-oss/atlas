@@ -81,7 +81,9 @@ class AddUserModal extends Component {
   }
 }
 
-AddUserModal.propTypes = {};
+AddUserModal.propTypes = {
+  updateUser: PropTypes.func
+};
 
 AddUserModal.defaultProps = {};
 

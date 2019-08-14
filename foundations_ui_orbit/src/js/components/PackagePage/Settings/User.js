@@ -85,7 +85,13 @@ class User extends Component {
   }
 }
 
-User.propTypes = {};
+User.propTypes = {
+  name: PropTypes.string,
+  username: PropTypes.string,
+  email: PropTypes.string,
+  role: PropTypes.string,
+  updateUser: PropTypes.func
+};
 
 User.defaultProps = {};
 

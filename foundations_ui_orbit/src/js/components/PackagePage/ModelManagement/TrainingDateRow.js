@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 class TrainingDateRow extends Component {
   constructor(props) {
@@ -8,11 +8,11 @@ class TrainingDateRow extends Component {
     this.state = {
       date: this.props.date,
       isAddRow: this.props.isAddRow,
-      removeDate: this.props.removeDate,
+      removeDate: this.props.removeDate
     };
   }
 
-  clickX(){
+  clickX() {
     const { removeDate, date } = this.state;
     removeDate(date);
   }
@@ -22,7 +22,7 @@ class TrainingDateRow extends Component {
 
     let closeButton = null;
     if (!isAddRow) {
-      closeButton = <div className="close-button" onClick={this.clickX} />
+      closeButton = <div className="close-button" onClick={this.clickX} />;
     }
 
     return (
@@ -36,12 +36,12 @@ class TrainingDateRow extends Component {
 TrainingDateRow.propTypes = {
   date: PropTypes.string,
   isAddRow: PropTypes.bool,
-  removeDate: PropTypes.func,
+  removeDate: PropTypes.func
 };
 
 TrainingDateRow.defaultProps = {
   date: "",
   isAddRow: false,
-  removeDate: () => {},
+  removeDate: () => {}
 };
 export default TrainingDateRow;
