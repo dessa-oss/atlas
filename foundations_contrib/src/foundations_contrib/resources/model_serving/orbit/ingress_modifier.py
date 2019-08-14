@@ -33,13 +33,10 @@ def add_new_model_to_ingress(project_name, model_name, namespace='foundations-sc
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10, check=True, cwd=cwd)
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=True, cwd=cwd)
     except subprocess.TimeoutExpired as error:
-        print('Command timed out.')
-        print(error.stdout.decode())
         raise Exception(error.stderr.decode())
     except subprocess.CalledProcessError as error:
-        print(f'Command failed: \n\t{" ".join(command)}\n')
         raise Exception(error.stderr.decode())
     return result
 

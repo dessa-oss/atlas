@@ -16,8 +16,9 @@ model_status () {
 }
 
 echo "Waiting for $model_name to be ready"
-while [ "Pending" == $(model_status) ] || [ "" == $(model_status) ] || [ "ContainerCreating" == $(model_status) ]
+while [[ "Pending" == $(model_status) ]] || [[ "" == $(model_status) ]] || [[ "ContainerCreating" == $(model_status) ]]
 do 
+    printf "*"
     sleep 2
 done
 
