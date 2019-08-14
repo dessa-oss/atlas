@@ -99,9 +99,11 @@ class TestCanDeployModelServer(Spec):
         production_metrics_from_redis = redis_connection.hgetall(f'models:{self.job_id}:production_metrics')
         production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 
+        production_metrics['MSE'].sort(key=lambda entry: entry[0])
+
         expected_production_metrics = {
             'roc_auc': [('october', 66), ('january', 66)],
-            'MSE': [('october', 1), ('january', 1)]
+            'MSE': [('january', 1), ('january_again', 2), ('october', 1), ('october_again', 2)]
         }
 
         self.assertEqual(expected_production_metrics, production_metrics)
