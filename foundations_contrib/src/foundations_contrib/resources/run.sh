@@ -2,6 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 VENV_DIRECTORY=$(mktemp -d)/venv
+export PYTHONDONTWRITEBYTECODE=1
 
 cd $BASEDIR && \
   stat run.env> /dev/null 2>&1 && \
