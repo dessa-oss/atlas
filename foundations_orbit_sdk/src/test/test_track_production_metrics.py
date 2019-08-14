@@ -23,6 +23,14 @@ class TestTrackProductionMetrics(Spec):
     def metric_name(self):
         return self.faker.word()
 
+    @let
+    def column_name(self):
+        return self.faker.word()
+
+    @let
+    def column_value(self):
+        return self.faker.random.random()
+
     @set_up
     def set_up(self):
         self.mock_context.job_id.return_value = self.job_id
@@ -44,5 +52,11 @@ class TestTrackProductionMetrics(Spec):
             track_production_metrics(self.metric_name, {})
         
         self.assertIn('Job ID not set', error_context.exception.args)
+
+    def test_track_production_metrics_can_log_a_metric(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.column_value})
+        production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
+        production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
+        self.assertEqual({self.metric_name: [(self.column_name, self.column_value)]}, production_metrics)        
 
 
