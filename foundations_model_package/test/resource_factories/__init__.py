@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from .test_prediction_resource import TestPredictionResource
+from .test_evaluate_resource import TestEvaluateResource
