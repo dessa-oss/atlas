@@ -28,6 +28,7 @@ rm -rf dist/* && \
     build_module foundations_internal foundations_internal $cwd && \
     build_module foundations_events foundations_events $cwd && \
     build_module foundations_contrib foundations_contrib $cwd && \
+    build_module foundations_orbit_sdk foundations_orbit $cwd && \
     build_module gcp_utils foundations_gcp $cwd && \
     build_module ssh_utils foundations_ssh $cwd && \
     build_module aws_utils foundations_aws $cwd && \
@@ -36,5 +37,4 @@ rm -rf dist/* && \
     build_module foundations_production foundations_production $cwd && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components $cwd && \
     build_module foundations_rest_api foundations_rest_api $cwd && \
-    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd && \
-    build_module foundations_orbit_sdk foundations_orbit $cwd
+    build_module foundations_orbit_rest_api foundations_orbit_rest_api $cwd
