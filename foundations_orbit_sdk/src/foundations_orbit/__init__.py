@@ -5,38 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def track_production_metrics(metric_name, metric_values):
-    try:
-        _track_production_metrics_for_job(_redis_key(), metric_name, metric_values)
-    except ValueError:
-        raise RuntimeError('Job ID not set')
+from foundations_orbit.production_metrics import track_production_metrics
 
-def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
-    import pickle
-    from foundations_contrib.global_state import redis_connection
+def _append_module():
+    import sys
+    from foundations_internal.global_state import module_manager
 
-    metrics_list = list(metric_values.items())
+    module_manager.append_module(sys.modules[__name__])
 
-    existing_metrics = _existing_metrics_from_redis(redis_key, metric_name)
-    metrics_to_store = existing_metrics + metrics_list
-
-    metrics = {metric_name: pickle.dumps(metrics_to_store)}
-
-    redis_connection.hmset(redis_key, metrics)
-
-def _existing_metrics_from_redis(redis_key, metric_name):
-    import pickle
-    from foundations_contrib.global_state import redis_connection
-
-    existing_metrics_from_redis = redis_connection.hmget(redis_key, metric_name)[0]
-
-    if existing_metrics_from_redis is None:
-        return []
-
-    return pickle.loads(existing_metrics_from_redis)
-
-def _redis_key():
-    from foundations_contrib.global_state import current_foundations_context
-
-    job_id = current_foundations_context().job_id()
-    return f'models:{job_id}:production_metrics'
+_append_module()
