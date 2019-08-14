@@ -46,15 +46,19 @@ class TestEntrypointLoader(Spec):
         return self.faker.word()
 
     @let
+    def entrypoint_name(self):
+        return self.faker.word()
+
+    @let
     def manifest(self):
         return {
             'entrypoints': {
-                'predict': self.predict_entrypoint
+                self.entrypoint_name: self.entrypoint
             }
         }
 
     @let
-    def predict_entrypoint(self):
+    def entrypoint(self):
         return {}
 
     @let
@@ -70,40 +74,40 @@ class TestEntrypointLoader(Spec):
     def set_up(self):
         self.path_exists.return_when(True, self.job_root)
         self.patch('sys.path', self.sys_path)
-        self.predict_entrypoint['module'] = self.top_level_directory
-        self.predict_entrypoint['function'] = self.function_name
+        self.entrypoint['module'] = self.top_level_directory
+        self.entrypoint['function'] = self.function_name
 
     def test_entrypoint_loader_checks_for_job_root_and_complains_if_it_does_not_exist(self):
         self.path_exists.clear()
         self.path_exists.return_when(False, self.job_root)
 
         with self.assertRaises(Exception) as error_context:
-            EntrypointLoader(self.job).entrypoint_function()
+            EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name)
 
         self.assertIn(f'Job {self.job_id} not found!', error_context.exception.args)
 
     def test_entrypoint_loader_adds_job_root_only_to_sys_path_when_module_is_at_top_level(self):
         sys_path_before = list(self.sys_path)
-        EntrypointLoader(self.job).entrypoint_function()
+        EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name)
         self.assertEqual([self.job_root] + sys_path_before, self.sys_path)
 
     def test_entrypoint_loader_chdir_to_job_root(self):
-        EntrypointLoader(self.job).entrypoint_function()
+        EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name)
         self.os_chdir.assert_called_once_with(self.job_root)
 
     def test_entrypoint_loader_adds_job_root_and_module_parent_to_sys_path_when_module_is_not_at_top_level(self):
-        self.predict_entrypoint['module'] = f'{self.top_level_directory}.{self.lower_level_directory}'
+        self.entrypoint['module'] = f'{self.top_level_directory}.{self.lower_level_directory}'
         sys_path_before = list(self.sys_path)
-        EntrypointLoader(self.job).entrypoint_function()
+        EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name)
         self.assertEqual([f'{self.job_root}/{self.top_level_directory}', self.job_root] + sys_path_before, self.sys_path)
 
     def test_entrypoint_loader_adds_job_root_and_module_parent_to_sys_path_when_module_nested_further(self):
-        self.predict_entrypoint['module'] = f'{self.top_level_directory}.{self.mid_level_directory}.{self.lower_level_directory}'
+        self.entrypoint['module'] = f'{self.top_level_directory}.{self.mid_level_directory}.{self.lower_level_directory}'
         sys_path_before = list(self.sys_path)
-        EntrypointLoader(self.job).entrypoint_function()
+        EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name)
         self.assertEqual([f'{self.job_root}/{self.top_level_directory}/{self.mid_level_directory}', self.job_root] + sys_path_before, self.sys_path)
 
     def test_entrypoint_loader_returns_function_from_module_as_configured(self):
         mock_load_function_from_module = self.patch('foundations_model_package.importlib_wrapper.load_function_from_module', ConditionalReturn())
         mock_load_function_from_module.return_when(self.mock_function, self.top_level_directory, self.function_name)
-        self.assertEqual(self.mock_function, EntrypointLoader(self.job).entrypoint_function())
+        self.assertEqual(self.mock_function, EntrypointLoader(self.job).entrypoint_function(self.entrypoint_name))

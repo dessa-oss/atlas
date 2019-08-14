@@ -10,28 +10,28 @@ class EntrypointLoader(object):
     def __init__(self, job):
         self._job = job
 
-    def entrypoint_function(self):
+    def entrypoint_function(self, entrypoint_name):
         self._change_to_job_root_dir()
-        self._add_module_to_sys_path()
-        return self._load_function_from_module()
+        self._add_module_to_sys_path(entrypoint_name)
+        return self._load_function_from_module(entrypoint_name)
 
-    def _module_name(self):
-        return self._predict_endpoint_information()['module']
+    def _module_name(self, entrypoint_name):
+        return self._endpoint_information(entrypoint_name)['module']
 
-    def _function_name(self):
-        return self._predict_endpoint_information()['function']
+    def _function_name(self, entrypoint_name):
+        return self._endpoint_information(entrypoint_name)['function']
 
-    def _load_function_from_module(self):
+    def _load_function_from_module(self, entrypoint_name):
         from foundations_model_package.importlib_wrapper import load_function_from_module
 
-        module_name = self._module_name()
-        function_name = self._function_name()
+        module_name = self._module_name(entrypoint_name)
+        function_name = self._function_name(entrypoint_name)
         return load_function_from_module(module_name, function_name)
 
-    def _add_module_to_sys_path(self):
+    def _add_module_to_sys_path(self, entrypoint_name):
         import os.path as path
 
-        module_name = self._module_name()
+        module_name = self._module_name(entrypoint_name)
 
         module_path = module_name.replace('.', '/')
         module_directory = path.dirname(module_path)
@@ -60,6 +60,6 @@ class EntrypointLoader(object):
     def _job_root(self):
         return self._job.root()
 
-    def _predict_endpoint_information(self):
+    def _endpoint_information(self, entrypoint_name):
         manifest = self._job.manifest()
-        return manifest['entrypoints']['predict']
+        return manifest['entrypoints'][entrypoint_name]

@@ -19,28 +19,31 @@ class TestFlaskApp(Spec):
 
     mock_root_resource = let_mock()
     mock_predict_resource = let_mock()
+    mock_evaluate_resource = let_mock()
 
     @set_up
     def set_up(self):
         self.mock_flask_class.return_when(self.mock_flask_instance, 'foundations_model_package.flask_app')
         self.mock_flask_api.return_when(self.mock_flask_api_instance, self.mock_flask_instance)
 
+        self._flask_app = flask_app(self.mock_root_resource, self.mock_predict_resource, self.mock_evaluate_resource)
+
     def test_flask_app_sets_up_cors(self):
-        flask_app(self.mock_root_resource, self.mock_predict_resource)
         self.mock_flask_cors.assert_called_once_with(self.mock_flask_instance, supports_credentials=True)
 
     def test_flask_app_returns_flask_application_instance(self):
-        app = flask_app(self.mock_root_resource, self.mock_predict_resource)
+        app = self._flask_app
         self.assertEqual(self.mock_flask_instance, app)
 
     def test_flask_app_disables_app_logger(self):
-        app = flask_app(self.mock_root_resource, self.mock_predict_resource)
+        app = self._flask_app
         self.assertEqual(True, app.logger.disabled)
 
     def test_flask_app_adds_root_resource_to_api(self):
-        flask_app(self.mock_root_resource, self.mock_predict_resource)
         self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_root_resource, '/')
 
     def test_flask_app_adds_predict_resource_to_api(self):
-        flask_app(self.mock_root_resource, self.mock_predict_resource)
         self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_predict_resource, '/predict')
+
+    def test_flask_app_adds_evaluate_resource_to_api(self):
+        self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_evaluate_resource, '/evaluate')

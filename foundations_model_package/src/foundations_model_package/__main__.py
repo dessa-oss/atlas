@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_model_package.job import Job
 from foundations_model_package.redis_actions import indicate_model_ran_to_redis
-from foundations_model_package.resource_factories import prediction_resource
+from foundations_model_package.resource_factories import prediction_resource, evaluate_resource
 from foundations_model_package.flask_app import flask_app
 from foundations_model_package.entrypoint_loader import EntrypointLoader
 
@@ -17,11 +17,17 @@ def main():
     _hack_for_cleaning_up_logs()
 
     job = Job(os.environ['JOB_ID'])
-    prediction_function = EntrypointLoader(job).entrypoint_function()
+    prediction_function = EntrypointLoader(job).entrypoint_function('predict')
+
+    try:
+        evaluate_function = EntrypointLoader(job).entrypoint_function('evaluate')
+    except Exception:
+        evaluate_function = None
 
     root_model_serving_resource = prediction_resource(prediction_function)
     predict_model_serving_resource = prediction_resource(prediction_function)
-    app = flask_app(root_model_serving_resource, predict_model_serving_resource)
+    model_evaluation_resource = evaluate_resource(evaluate_function)
+    app = flask_app(root_model_serving_resource, predict_model_serving_resource, evaluate_resource)
 
     indicate_model_ran_to_redis(job.id())
 
