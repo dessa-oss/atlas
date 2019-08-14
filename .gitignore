@@ -12,6 +12,10 @@ foundations_sdk/dist
 foundations_sdk/dessa_foundations.egg-info
 foundations_sdk/src/dessa_foundations.egg-info
 foundations_sdk/src/foundations.egg-info
+foundations_orbit_sdk/build
+foundations_orbit_sdk/dist
+foundations_orbit_sdk/foundations_orbit.egg-info
+foundations_orbit_sdk/src/foundations_orbit.egg-info
 foundations_core_rest_api_components/build
 foundations_core_rest_api_components/dist
 foundations_core_rest_api_components/foundations_core_rest_api_components.egg-info
