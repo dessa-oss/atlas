@@ -43,14 +43,15 @@ class TestCanDeployModelServer(Spec):
             file.write(config_yaml)
 
         self._proxy_process = None
+        self.deployment = None
 
-    def _set_up_in_test(self):
+    def _set_up_in_test(self, job_directory):
         import subprocess
 
         return_code = self._build_image()
         self.assertEqual(0, return_code)
 
-        self._deploy_job()
+        self._deploy_job(job_directory)
         self.deployment.wait_for_deployment_to_complete()
 
         self._deploy_model_package('test-model-package', self.job_id)
@@ -66,18 +67,13 @@ class TestCanDeployModelServer(Spec):
         self._tear_down_model_package('test-model-package', self.job_id)
 
     @let
-    def deployment(self):
-        import foundations
-        return foundations.deploy(project_name='test', env='scheduler', entrypoint='project_code.driver', job_directory='integration/fixtures/model-server', params=None)
-
-    @let
     def job_id(self):
         return self.deployment.job_name()
 
     def test_can_deploy_server(self):
         from foundations_contrib.global_state import redis_connection
 
-        self._set_up_in_test()
+        self._set_up_in_test('model-server')
 
         result = self._try_post_to_root_endpoint()
         predict_result = self._try_post_to_predict_endpoint()
@@ -94,7 +90,7 @@ class TestCanDeployModelServer(Spec):
 
         from foundations_contrib.global_state import redis_connection
 
-        self._set_up_in_test()
+        self._set_up_in_test('model-server-with-evaluate')
         self._try_post_to_evaluate_endpoint('october')
         time.sleep(3)
         self._try_post_to_evaluate_endpoint('january')
@@ -168,7 +164,11 @@ class TestCanDeployModelServer(Spec):
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
         
-    def _deploy_job(self):
+    def _deploy_job(self, job_directory):
+        import foundations
+
+        if self.deployment is None:
+            self.deployment = foundations.deploy(project_name='test', env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
     def _build_image(self):
