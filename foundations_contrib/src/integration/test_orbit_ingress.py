@@ -7,11 +7,12 @@ Written by Katherine Bancroft <k.bancroft@dessa.com>, 06 2018
 
 import subprocess
 from typing import List
+import os
+import time
 
 from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
-
 class TestOrbitIngress(Spec):
     
     @set_up_class
@@ -24,19 +25,26 @@ class TestOrbitIngress(Spec):
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
-    def test_first_served_model_can_be_reached_through_ingress(self):
-        import foundations_contrib.resources.model_serving.orbit
-        import os
-        import time
-
-        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
-
+    def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
         _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model'.split())
 
         time.sleep(10)
 
+        self._assert_endpoint_accessable('/project/model')
+
+        self._assert_endpoint_accessable('/project')
+
+    def test_second_served_model_can_be_accessed(self):
+        _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model-two'.split())
+
+        time.sleep(10)
+
+        self._assert_endpoint_accessable('/project/model-two')
+
+    def _assert_endpoint_accessable(self, endpoint):
+        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
         try:
-            result = _run_command(f'curl http://{scheduler_host}:31998/project/model'.split()).stdout.decode()
+            result = _run_command(f'curl http://{scheduler_host}:31998{endpoint}'.split()).stdout.decode()
         except Exception as e:
             if 'Failed to connect' in str(e):
                 result = 'Failed to connect'

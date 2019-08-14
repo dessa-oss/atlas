@@ -57,7 +57,6 @@ class TestCanRunLocally(Spec):
 
         self.assertEqual('thomas_text.txt', artifact['key_mapping']['just_some_artifact'])
 
-    @skip
     def test_job_bundle_is_saved(self):
         import os.path
 

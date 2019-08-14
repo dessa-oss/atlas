@@ -13,7 +13,7 @@ const ModelManagement = props => {
   const [open, setOpen] = React.useState(false);
 
   const reload = () => {
-    BaseActions.getFromApiary(
+    BaseActions.get(
       "projects/" + props.location.state.project.name + "/model_listing"
     ).then(result => {
       if (result) {
