@@ -47,7 +47,7 @@ class TestOrbitModelPackageServer(Spec):
 
     def test_deploy_run_deployment_script_with_project_name_model_name_project_directory(self):
         deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
-        self.mock_subprocess_run.assert_called_with(['bash', './orbit/deploy_serving.sh', self.mock_project_name, self.mock_model_name], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run.assert_called_with(['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name], cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
 
     def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
         import pickle
@@ -65,15 +65,10 @@ class TestOrbitModelPackageServer(Spec):
     def test_deploy_upload_user_specified_model_directory(self):
 
         deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
-        key='projects'
+        
         local_directory_key = '{}-{}'.format(self.mock_project_name, self.mock_model_name)
-        package_name = 'orbit_project_model_package'
+        directory_path = self.mock_project_directory
+        local_job_id = '{}-{}'.format(self.mock_project_name, self.mock_model_name)
+        remote_job_id = local_job_id
 
-        self.mock_syncable_directories.assert_called_with(
-            key,
-            self.mock_project_directory,
-            local_directory_key,
-            None,
-            False,
-            package_name
-        )
+        self.mock_syncable_directories.assert_called_with(local_directory_key,directory_path,local_job_id,remote_job_id)
