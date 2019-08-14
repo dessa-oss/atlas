@@ -18,6 +18,7 @@ class TestJobUsesVenvCreatedByFoundations(unittest.TestCase):
 
     def test_job_uses_virtualenv_created_by_foundations_when_running(self):
         from acceptance.fixtures.stages import get_and_log_python_path_as_metric
+        from fnmatch import fnmatch
 
         foundations.set_project_name("version-check-test")
 
@@ -31,19 +32,12 @@ class TestJobUsesVenvCreatedByFoundations(unittest.TestCase):
         metrics_containing_python_path = foundations.get_metrics_for_all_jobs("version-check-test")
 
         actual_python_path = self._get_python_path_from_metrics(metrics_containing_python_path, job_name)
-        expected_python_path = self._get_python_path(job_name)
 
-        self.assertEqual(expected_python_path, actual_python_path)
+        matches = fnmatch(actual_python_path, '/tmp/*/venv/bin/python')
+        self.assertTrue(matches)
 
     @staticmethod
     def _get_python_path_from_metrics(metrics_containing_python_path, job_name):
         row_for_job = metrics_containing_python_path.loc[metrics_containing_python_path["job_id"] == job_name]
         return row_for_job.iloc[0]["python_path"]
 
-    @staticmethod
-    def _get_python_path(job_name):
-        from os import getcwd
-        from os.path import join
-
-        parent_directory = getcwd()
-        return join(parent_directory, job_name, "venv", "bin", "python")
