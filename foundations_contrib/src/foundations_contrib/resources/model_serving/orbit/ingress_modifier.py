@@ -13,9 +13,9 @@ import sys
 import os
 import json
 
-def add_new_model_to_ingress(project_name, model_name):
+def add_new_model_to_ingress(project_name, model_name, namespace='foundations-scheduler-test'):
 
-    ingress_resource = yaml.load(_run_command('kubectl get ingress model-service-selection -n ingress-nginx-test -o yaml'.split()).stdout.decode())
+    ingress_resource = yaml.load(_run_command(f'kubectl get ingress model-service-selection -n {namespace} -o yaml'.split()).stdout.decode())
 
     previous_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
 

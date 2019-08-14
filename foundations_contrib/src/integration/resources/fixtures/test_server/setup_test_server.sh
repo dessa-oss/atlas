@@ -1,8 +1,9 @@
 #!/bin/bash
 
-export project_name=$1
-export model_name=$2
-namespace="ingress-nginx-test"
+export namespace=$1
+export project_name=$2
+export model_name=$3
+
 
 model_status () {
     echo $(kubectl -n $namespace get po | grep $project_name-$model_name | awk '{print $3}')

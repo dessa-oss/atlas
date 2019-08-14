@@ -1,5 +1,5 @@
 #!/bin/bash
-export namespace="ingress-nginx-test"
+export namespace="foundations-scheduler-test"
 export project_name=$1
 export model_name=$2
 no_follow=$3

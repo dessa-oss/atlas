@@ -15,31 +15,42 @@ from foundations_contrib.cli import model_package_server
 import foundations_contrib
 class TestOrbitIngress(Spec):
     
+    namespace = 'foundations-scheduler-test'
+
+
+    @let
+    def sleep_time(self):
+        return 10
+
     @set_up_class
     def set_up(self):
         _run_command(['./integration/resources/fixtures/test_server/spin_up.sh'])
     
     @tear_down_class
     def tear_down(self):
-        command = 'bash ./remove_deployment.sh project model'
+        command = f'bash ./remove_deployment.sh {self.namespace} project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        
+        command = f'bash ./remove_deployment.sh {self.namespace} project modeltwo'
+        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
-        _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model'.split())
+        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project model'.split())
 
-        time.sleep(10)
+        time.sleep(self.sleep_time)
 
         self._assert_endpoint_accessable('/project/model')
 
         self._assert_endpoint_accessable('/project')
 
     def test_second_served_model_can_be_accessed(self):
-        _run_command('./integration/resources/fixtures/test_server/setup_test_server.sh project model-two'.split())
+        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project modeltwo'.split())
 
-        time.sleep(10)
+        time.sleep(self.sleep_time)
 
-        self._assert_endpoint_accessable('/project/model-two')
+        self._assert_endpoint_accessable('/project/modeltwo')
 
     def _assert_endpoint_accessable(self, endpoint):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')

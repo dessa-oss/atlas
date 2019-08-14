@@ -4,7 +4,7 @@ metadata:
   labels: 
     app: ${project_name}-${model_name}
   name: ${project_name}-${model_name}-deployment
-  namespace: ingress-nginx-test
+  namespace: ${namespace}
 spec:
   replicas: 1
   selector:
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ${project_name}-${model_name}-service
-  namespace: ingress-nginx-test
+  namespace: ${namespace}
 spec:
   selector:
     app: ${project_name}-${model_name}

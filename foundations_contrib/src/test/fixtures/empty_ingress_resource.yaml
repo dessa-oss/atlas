@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: model-service-selection
-  namespace: ingress-nginx-test
+  namespace: foundations-scheduler-test
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /predict
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
