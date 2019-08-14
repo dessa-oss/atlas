@@ -22,7 +22,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: JOB_ID
-            value: "${job_id}"
+            value: "${model_name}"
         # resources:
         #   limits:
         #     nvidia.com/gpu: 1
