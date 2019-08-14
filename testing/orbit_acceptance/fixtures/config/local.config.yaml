@@ -1,0 +1,10 @@
+results_config:
+  archive_end_point: archive
+  artifact_path: archive
+  atifact_archive: archive
+ssh_config:
+  host: 127.0.0.1
+  key_path: archive
+  code_path: archive
+  result_path: archive
+cache_config: {}
