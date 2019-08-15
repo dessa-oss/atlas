@@ -22,7 +22,7 @@ def evaluate_resource(evaluate_callback):
             process = Process(target=evaluate_callback, kwargs=callback_kwargs)
             process.start()
 
-            return None, 202
+            return {}, 202
 
     _EvaluateResource.__name__ = f'_EvaluateResource_{uuid4()}'
 

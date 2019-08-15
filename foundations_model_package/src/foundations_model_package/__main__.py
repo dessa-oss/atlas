@@ -27,7 +27,7 @@ def main():
     root_model_serving_resource = prediction_resource(prediction_function)
     predict_model_serving_resource = prediction_resource(prediction_function)
     model_evaluation_resource = evaluate_resource(evaluate_function)
-    app = flask_app(root_model_serving_resource, predict_model_serving_resource, evaluate_resource)
+    app = flask_app(root_model_serving_resource, predict_model_serving_resource, model_evaluation_resource)
 
     indicate_model_ran_to_redis(job.id())
 

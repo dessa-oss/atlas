@@ -19,7 +19,7 @@ spec:
         modelServer: "True"
       containers:
       - image: docker.shehanigans.net/foundations-model-package
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
             value: "${job_id}"
