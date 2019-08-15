@@ -451,6 +451,66 @@
       }
     }
 
+    .label-select-reports {
+      display: inline-table;
+      font-family: DINBold, Arial, sans-serif;
+
+    }
+
+    .container-health-reports {
+      display: inline-table;
+      width: 55%;
+      margin-left: 70px;
+      margin-bottom: 20px;
+
+      .container-health-options {
+        border: solid 1px #dcdcdc;
+  
+        .label-option {
+          cursor: pointer;
+          font-family: DINPro, Arial, sans-serif;
+          color: #443a25;
+        }
+  
+        .container-health-model-package {
+          width: 100%;
+          border-top: solid 1px #dcdcdc;
+  
+          .label-model-package {
+            margin-left: 20px;
+            cursor: pointer;
+            font-family: DINPro, Arial, sans-serif;
+            color: #443a25;
+          }
+  
+          .container-health-data-contract {
+            width: 100%;
+            border-top: solid 1px #dcdcdc;
+            background-color: transparent;
+  
+            &.selected {
+              background-color: #004a9c;
+            }
+  
+  
+            .label-data-contract {            
+              margin-left: 40px;
+              cursor: pointer;
+              font-family: DINPro, Arial, sans-serif;
+              color: #443a25;
+  
+              &.selected {
+                color: white;
+              }
+    
+            }
+          }
+  
+          
+        }
+      }
+    }
+
     .new-systemhealth-container-options {
       width: calc(100% - 30px);
       background-color: white;
