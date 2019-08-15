@@ -107,24 +107,25 @@ const Schedule = props => {
   };
 
   const onClickSaveSchedule = () => {
-    setMessage("");
-    const data = {
-      schedule: {
-        start_datetime: startDate.toString(),
-        end_datetime: endDate.toString(),
-        frequency: selectedOption.value
-      }
-    };
+    setMessage("Schedule is not changeble for trial");
+    // setMessage("");
+    // const data = {
+    //   schedule: {
+    //     start_datetime: startDate.toString(),
+    //     end_datetime: endDate.toString(),
+    //     frequency: selectedOption.value
+    //   }
+    // };
 
-    putApiary(
-      `/projects/${props.location.state.project.name}/evaluation_schedule`,
-      data
-    ).then(() => {
-      setMessage(
-        "Schedule has been saved. Inference will be executed at scheduled time"
-      );
-      reload();
-    });
+    // putApiary(
+    //   `/projects/${props.location.state.project.name}/evaluation_schedule`,
+    //   data
+    // ).then(() => {
+    //   setMessage(
+    //     "Schedule has been saved. Inference will be executed at scheduled time"
+    //   );
+    //   reload();
+    // });
   };
 
   const onClickCancelSchedule = () => {
@@ -155,7 +156,7 @@ const Schedule = props => {
       <p className="new-dep-section font-bold">SCHEDULING</p>
       <p>{message}</p>
 
-      <div className="container-scheduling">
+      <div className="container-scheduling management">
         <div className="container-schedule-date">
           <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>

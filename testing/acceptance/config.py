@@ -11,14 +11,19 @@ from os import getcwd, environ
 
 if 'TEST_UUID' not in environ:
     environ['TEST_UUID'] = str(uuid4())
-    environ['ARCHIVE_ROOT'] = getcwd() + '/tmp/archives_{}/archive'.format(environ['TEST_UUID'])
+    environ['ARCHIVE_ROOT'] = getcwd(
+    ) + '/tmp/archives_{}/archive'.format(environ['TEST_UUID'])
 
 TEST_UUID = environ['TEST_UUID']
 ARCHIVE_ROOT = environ['ARCHIVE_ROOT']
 
+
 def config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
     from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
+    from foundations_contrib.global_state import module_manager
+    import foundations_spec
+    import sys
 
     # below is used to ensure we get a different cache for every run
     config_manager['cache_implementation'] = {
@@ -49,5 +54,8 @@ def config():
     config_manager['log_level'] = 'CRITICAL'
     config_manager['obfuscate_foundations'] = False
     config_manager['run_script_environment'] = {'enable_stages': True}
+
+    module_manager.append_module(sys.modules['foundations_spec'])
+
 
 config()

@@ -5,11 +5,11 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 09 2018
 """
 
-import unittest
-from mock import patch, Mock
+from mock import patch
 
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 from foundations_contrib.scheduler_local_backend import LocalBackend
+from foundations_spec import *
 from contextlib import contextmanager
 
 
@@ -39,7 +39,21 @@ def do_nothing(*args, **kwargs):
 @patch('foundations_contrib.job_bundler.JobBundler', MockJobBundler)
 @patch('shutil.rmtree', Mock(return_value='OK'))
 @patch('foundations_contrib.change_directory.ChangeDirectory', do_nothing)
-class TestLocalShellJobDeployment(unittest.TestCase):
+class TestLocalShellJobDeployment(Spec):
+
+    @let_now
+    def mock_os_environmet(self):
+        return self.patch('os.environ', self.environment)
+
+    @let
+    def environment(self):
+        environment = dict(self.environment_without_python_path)
+        environment['PYTHONPATH'] = '/path/to/somewhere'
+        return environment
+
+    @let
+    def environment_without_python_path(self):
+        return self.faker.pydict()
 
     class MockBundle(object):
 
@@ -57,7 +71,7 @@ class TestLocalShellJobDeployment(unittest.TestCase):
     def test_deploy_executes_script_with_correct_parameters(self, mock):
         deployment = self._create_deployment()
         deployment.deploy()
-        mock.assert_called_with(['/bin/bash', '-c', './run.sh'])
+        mock.assert_called_with(['/bin/bash', '-c', './run.sh'], env=self.environment_without_python_path)
 
     @patch('subprocess.call')
     def test_deploy_executes_script_with_correct_parameters_different_shell_command(self, mock):
@@ -66,7 +80,14 @@ class TestLocalShellJobDeployment(unittest.TestCase):
             {'shell_command': 'C:\\Program Files\\Git\\bin\\bash.exe'})
         deployment.deploy()
         mock.assert_called_with(
-            ['C:\\Program Files\\Git\\bin\\bash.exe', '-c', './run.sh'])
+            ['C:\\Program Files\\Git\\bin\\bash.exe', '-c', './run.sh'], env=self.environment_without_python_path)
+
+    @patch('subprocess.call')
+    def test_does_not_delete_python_path_if_does_not_exist(self, mock):
+        self.environment.pop('PYTHONPATH')
+        deployment = self._create_deployment()
+        deployment.deploy()
+        mock.assert_called_with(['/bin/bash', '-c', './run.sh'], env=self.environment_without_python_path)
 
     def _create_deployment(self):
         from foundations.job import Job

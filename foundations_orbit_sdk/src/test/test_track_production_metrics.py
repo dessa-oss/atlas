@@ -13,7 +13,10 @@ import pickle
 class TestTrackProductionMetrics(Spec):
 
     mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
-    mock_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
+
+    @let_now
+    def mock_environment(self):
+        return self.patch('os.environ', {})
 
     @let
     def job_id(self):
@@ -41,7 +44,7 @@ class TestTrackProductionMetrics(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_context.job_id.return_value = self.job_id
+        self.mock_environment['JOB_ID'] = self.job_id
 
     @tear_down
     def tear_down(self):
@@ -53,7 +56,7 @@ class TestTrackProductionMetrics(Spec):
         self.assertEqual({self.metric_name: []}, production_metrics)
 
     def test_track_production_metrics_with_nonexistent_job_id_throws_exception(self):
-        self.mock_context.job_id.side_effect = ValueError()
+        self.mock_environment['JOB_ID'] = ''
     
         with self.assertRaises(RuntimeError) as error_context:
             track_production_metrics(self.metric_name, {})

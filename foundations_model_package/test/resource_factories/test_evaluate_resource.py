@@ -55,7 +55,7 @@ class TestEvaluateResource(Spec):
         resource = resource_class()
         payload, _ = resource.post()
 
-        self.assertEqual(None, payload)
+        self.assertEqual({}, payload)
 
     def test_evaluate_resource_has_post_method_which_splats_request_json_into_evaluate_callback_different_payload(self):
         self.mock_flask_request.json = {'arg_3': [100, 200]}

@@ -86,6 +86,12 @@ const Timeline = props => {
           <p>There are currently no events to look at.</p>
         </div>
       )}
+      <div className="container-trial-unavailable">
+        <div className="container-trial-unavailable-message">
+          <p>This content is not available for trial.</p>
+          <p>In the actual product, you can .... here</p>
+        </div>
+      </div>
     </Layout>
   );
 };

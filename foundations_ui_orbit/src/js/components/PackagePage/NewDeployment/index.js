@@ -16,6 +16,12 @@ const NewDeploymentPage = props => {
         <Content />
         <Metadata />
       </div>
+      <div className="container-trial-unavailable">
+        <div className="container-trial-unavailable-message">
+          <p>This content is not available for trial.</p>
+          <p>In the actual product, you can .... here</p>
+        </div>
+      </div>
     </Layout>
   );
 };

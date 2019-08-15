@@ -442,14 +442,14 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()
         self.mock_destroy_model_package.assert_called_with(self.mock_model_name)
 
-    def test_server_deploys_model_server_within_orbit_using_specified_project_name_and_model_name_and_project_directory(self):
+    def _run_model_within_orbit_with_specified_project_name_model_name_project_directory(self, project_name, model_name, project_directory):
         CommandLineInterface([
                 'orbit',
                 'serve', 
                 'start',
-                '--project_name={}'.format(self.fake_project_name),
-                '--model_name={}'.format(self.mock_user_provided_model_name),
-                '--project_directory={}'.format(self.fake_directory)
+                '--project_name={}'.format(project_name),
+                '--model_name={}'.format(model_name),
+                '--project_directory={}'.format(project_directory)
             ]).execute()
         self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
 

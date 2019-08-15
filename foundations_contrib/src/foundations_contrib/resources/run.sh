@@ -4,6 +4,7 @@ BASEDIR=$(dirname "$0")
 VENV_DIRECTORY=$(mktemp -d)/venv
 export PYTHONDONTWRITEBYTECODE=1
 
+
 cd $BASEDIR && \
   stat run.env> /dev/null 2>&1 && \
   . ./run.env
@@ -31,7 +32,10 @@ fi
 pip_options="--disable-pip-version-check"
 
 cd $BASEDIR && \
-  tar -xf job.tgz && \
+  mkdir job_source && \
+  cd job_source && \
+  tar -xf ../job.tgz && \
+  cd .. && \
   with_output_redirect $python_path -m pip ${pip_options} install virtualenv && \
   with_output_redirect $python_path -m virtualenv --system-site-packages $VENV_DIRECTORY
 

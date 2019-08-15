@@ -36,7 +36,10 @@ def _existing_metrics_from_redis(redis_key, metric_name):
     return pickle.loads(existing_metrics_from_redis)
 
 def _redis_key():
-    from foundations_contrib.global_state import current_foundations_context
+    import os
 
-    job_id = current_foundations_context().job_id()
+    job_id = os.environ['JOB_ID']
+
+    if not job_id:
+        raise ValueError()
     return f'models:{job_id}:production_metrics'

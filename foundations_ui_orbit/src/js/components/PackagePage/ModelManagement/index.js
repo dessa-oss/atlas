@@ -2,7 +2,7 @@ import React from "react";
 import DefineNewModal from "./DefineNewModal";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import { get } from "../../../actions/BaseActions";
+import { get, getFromApiary } from "../../../actions/BaseActions";
 import { Modal, ModalBody } from "reactstrap";
 import ModelManagementTable from "./ModelManagementTable";
 import Schedule from "./Schedule";

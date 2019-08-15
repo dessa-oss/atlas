@@ -61,7 +61,6 @@ def _model_exists_in_project(project_name, model_name):
         return True
     return False
 
-
 def _upload_model_directory(project_name, model_name, project_directory):
     from foundations.artifacts.syncable_directory import SyncableDirectory
     local_directory_key = '{}-{}'.format(project_name, model_name)
