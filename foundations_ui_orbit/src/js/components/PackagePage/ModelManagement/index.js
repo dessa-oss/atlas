@@ -5,6 +5,7 @@ import Layout from "../Layout";
 import { get } from "../../../actions/BaseActions";
 import { Modal, ModalBody } from "reactstrap";
 import ModelManagementTable from "./ModelManagementTable";
+import Schedule from "./Schedule";
 
 const ModelManagement = props => {
   const [modelManagementData, setModelManagementData] = React.useState([]);
@@ -37,6 +38,7 @@ const ModelManagement = props => {
       <div className="package-deployment-container">
         {modelManagementData.length > 0 ? (
           <div>
+            <Schedule />
             <div className="package-deployment-table-container">
               <div className="container-management-top-section text-right">
                 <button

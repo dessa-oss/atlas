@@ -71,25 +71,7 @@ const ModelManagementRow = props => {
     });
   };
 
-  let entrypoints = "";
-
   const { rowData, isDetail, reload } = props;
-
-  Object.keys(rowData.entrypoints).forEach(key => {
-    entrypoints += `${key}: `;
-    Object.keys(rowData.entrypoints[key]).forEach(subkey => {
-      entrypoints.concat(`${subkey}: ${rowData.entrypoints[key][subkey]} `);
-    });
-    entrypoints.concat("; ");
-  });
-
-  let validationMetric = "";
-
-  if (rowData.validation_metrics) {
-    Object.keys(rowData.validation_metrics).forEach(key => {
-      validationMetric += `${key}: ${rowData.validation_metrics[key]}; `;
-    });
-  }
 
   return (
     <div className="model-management-row">
@@ -111,12 +93,6 @@ const ModelManagementRow = props => {
         <p className="hide-text">{rowData.created_by}</p>
       </div>
       <div className="model-management-cell">
-        <p className="hide-text">{rowData.description || ""}</p>
-      </div>
-      <div className="model-management-cell">
-        <p className="hide-text">{entrypoints}</p>
-      </div>
-      <div className="model-management-cell">
         <p
           className={
             rowData.status === "Active" ? "hide-text active" : "hide-text"
@@ -124,9 +100,6 @@ const ModelManagementRow = props => {
         >
           {rowData.status}
         </p>
-      </div>
-      <div className="model-management-cell">
-        <p className="hide-text">{validationMetric}</p>
       </div>
       <div className="model-management-cell">
         <div className="container-cell-buttons">

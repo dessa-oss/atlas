@@ -9,9 +9,10 @@ const ModelManagementDetails = props => {
     const entrypoints = [];
 
     Object.keys(model.entrypoints).forEach(key => {
-      const entrypointString = `${key}: `;
+      let entrypointString = `${key}: `;
       Object.keys(model.entrypoints[key]).forEach(subkey => {
-        entrypointString.concat(subkey.concat(`: ${model.entrypoints[key][subkey]}, `));
+        const entrypointStringSubkey = `${subkey}: ${model.entrypoints[key][subkey]}`;
+        entrypointString += entrypointStringSubkey;
       });
       entrypoints.push(
         <p className="model-management-details-entrypoint">
@@ -26,11 +27,11 @@ const ModelManagementDetails = props => {
   const renderValidationMetrics = () => {
     const validationMetrics = [];
 
-    if (model.validationMetrics) {
-      Object.keys(model.validationMetrics).forEach(key => {
+    if (model.validation_metrics) {
+      Object.keys(model.validation_metrics).forEach(key => {
         validationMetrics.push(
           <p className="model-management-details-entrypoint">
-            {`${key}: ${model.validationMetrics[key]}`}
+            {`${key}: ${model.validation_metrics[key]}`}
           </p>
         );
       });

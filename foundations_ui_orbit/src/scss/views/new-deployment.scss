@@ -37,6 +37,10 @@
   margin-bottom: 20px;
   margin-left: 20px;
 
+  &.management {
+    margin-left: 0px;
+  }
+
   .subheader {
     display: inline-block;
     margin: 15px;

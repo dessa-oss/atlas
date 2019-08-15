@@ -47,16 +47,7 @@ const ModelManagementTable = props => {
           <p className="font-bold">Created By</p>
         </div>
         <div className="model-management-header">
-          <p className="font-bold">Description</p>
-        </div>
-        <div className="model-management-header">
-          <p className="font-bold">Entrypoints</p>
-        </div>
-        <div className="model-management-header">
           <p className="font-bold">Status</p>
-        </div>
-        <div className="model-management-header">
-          <p className="font-bold">Validation Metric</p>
         </div>
         <div className="model-management-header button-width" />
       </div>
