@@ -76,7 +76,9 @@ class LocalShellJobDeployment(object):
         self._job_bundler.unbundle()
 
         environment = dict(os.environ)
-        del environment['PYTHONPATH']
+
+        if 'PYTHONPATH' in environment:
+            del environment['PYTHONPATH']
 
         with ChangeDirectory(self._job_name):
             script = './run.sh'

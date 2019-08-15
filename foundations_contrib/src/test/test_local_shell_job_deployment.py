@@ -82,6 +82,13 @@ class TestLocalShellJobDeployment(Spec):
         mock.assert_called_with(
             ['C:\\Program Files\\Git\\bin\\bash.exe', '-c', './run.sh'], env=self.environment_without_python_path)
 
+    @patch('subprocess.call')
+    def test_does_not_delete_python_path_if_does_not_exist(self, mock):
+        self.environment.pop('PYTHONPATH')
+        deployment = self._create_deployment()
+        deployment.deploy()
+        mock.assert_called_with(['/bin/bash', '-c', './run.sh'], env=self.environment_without_python_path)
+
     def _create_deployment(self):
         from foundations.job import Job
         from foundations import create_stage
