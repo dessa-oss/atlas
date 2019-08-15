@@ -47,7 +47,7 @@ print(job_queue)
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/prototype/jobs.py#L42)</span>
+<span style="float:right;">[[source]](https://github.com/DeepLearnI/foundations/blob/master/foundations/prototype/jobs.py#L45)</span>
 
 ### cancel_queued_jobs
 

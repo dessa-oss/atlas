@@ -20,8 +20,6 @@ pages:
   - Artifact Management: artifacts_management.md
 - SDK REFERENCE:
   - Defining Projects: set_project_name.md
-  - Setting Deployment Environment: set_deployment_env.md
-  - Defining Hyperparameters: hyperparameters.md
   - Stage Creation: stage_creation.md
   - Log Metrics: log_metrics.md
   - Running Stages: running_stages.md
