@@ -1,4 +1,0 @@
-entrypoints:
-  predict:
-    module: 'src.main'
-    function: 'predict'

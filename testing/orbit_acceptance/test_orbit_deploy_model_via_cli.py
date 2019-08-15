@@ -6,22 +6,33 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 import time
 import subprocess
+import requests
 import foundations_contrib
 from foundations_spec import *
 from typing import List
+from foundations import config_manager
 
 class TestOrbitDeployModelViaCli(Spec):
 
+    port = 31998
+    max_time_out_in_sec = 60
+
     @set_up_class
-    def set_up(self):
+    def set_up_class(self):
         from acceptance.cleanup import cleanup
         cleanup()
-
+        config_manager['log_level'] = 'INFO'
+        
         _run_command(['./integration/resources/fixtures/test_server/spin_up.sh'], foundations_contrib.root() / '..')
     
     @tear_down_class
-    def tear_down(self):
+    def tear_down_class(self):
+        pass
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'], foundations_contrib.root() / '..')
+
+    @set_up
+    def set_up(self):
+        self.base_url = f'http://{self._get_scheduler_ip()}:{self.port}/{self.mock_project_name}/{self.mock_user_provided_model_name}'
 
     @let
     def mock_project_name(self):
@@ -37,11 +48,6 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _deploy_job(self, model_name):
         import subprocess
-
-        # manually load the configuration file (hoping that it will trigger the configuration of the bucket)
-        from foundations_contrib.global_state import config_manager
-
-        config_manager.reset()
         config_manager.add_simple_config_path('./orbit_acceptance/fixtures/config/local.config.yaml')
 
         command_to_run = [
@@ -56,28 +62,63 @@ class TestOrbitDeployModelViaCli(Spec):
             '--env=local'
         ]
 
-        return subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
+        # process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
+        self._check_if_process_successful(process_result)
 
-    def __check_if_error_exists(self, cli_deploy_process):
-        return cli_deploy_process.returncode != 0 or len(cli_deploy_process.stderr) > 1
+    def _get_scheduler_ip(self):
+        import os
 
-    def _check_if_successful(self, cli_deploy_process):
-        if self.__check_if_error_exists(cli_deploy_process):
+        if 'FOUNDATIONS_SCHEDULER_HOST' not in os.environ:
+            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env var')
+
+        return os.environ['FOUNDATIONS_SCHEDULER_HOST']
+
+    def _wait_for_server(self):
+        import time
+
+        start_time = time.time()
+
+        while time.time() - start_time < self.max_time_out_in_sec:
+            try:
+                requests.get(self.base_url)
+                return
+            except:
+                time.sleep(0.200)
+
+        self.fail(f'server never started')
+
+    def _check_if_error_exists(self, cli_deploy_process):
+        # return cli_deploy_process.returncode != 0 or (cli_deploy_process is not None and len(cli_deploy_process.stderr) > 1)
+        return cli_deploy_process.returncode != 0
+
+    def _check_if_process_successful(self, cli_deploy_process):
+        if self._check_if_error_exists(cli_deploy_process):
             raise AssertionError('deploy failed:\nstdout:\n{}\nstderr:\n{}'.format(cli_deploy_process.stdout, cli_deploy_process.stderr))
     
     def _check_if_unsuccessful(self, cli_deploy_process):
-        if not self.__check_if_error_exists(cli_deploy_process):
+        if not self._check_if_error_exists(cli_deploy_process):
             raise AssertionError('deploy succeeded when it should have failed')
     
-    def test_can_successfully_run_model_serve(self):
-        cli_deploy_process = self._deploy_job(self.mock_user_provided_model_name)
-        self._check_if_successful(cli_deploy_process)
+    def _check_if_endpoint_available(self):
+        end_point_url = f'{self.base_url}/predict'
+        try:
+            return requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
+        except:
+            return None
 
-    @skip
-    def test_will_fail_if_run_same_model_in_project_twice(self):
+    def test_can_successfully_run_model_serve(self):
         self._deploy_job(self.mock_user_provided_model_name)
-        cli_deploy_process = self._deploy_job(self.mock_user_provided_model_name)
-        self._check_if_unsuccessful(cli_deploy_process)
+
+        self._wait_for_server()
+
+        result = self._check_if_endpoint_available()
+        self.assertIsNotNone(result)
+
+    # def test_will_fail_if_run_same_model_in_project_twice(self):
+    #     self._deploy_job(self.mock_user_provided_model_name)
+    #     cli_deploy_process = self._deploy_job(self.mock_user_provided_model_name)
+    #     self._check_if_unsuccessful(cli_deploy_process)
 
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:

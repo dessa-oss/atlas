@@ -326,5 +326,6 @@ class CommandLineInterface(object):
                 'model_name': self._arguments.model_name,
                 'project_directory': self._arguments.project_directory
             })
-        else:
-            self._fail_with_message(f'Error: model {self._arguments.model_name} exists in project {self.project_namename}. Aborting')
+        # else:
+        #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
+        #     self._fail_with_message(message)

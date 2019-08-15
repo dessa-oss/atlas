@@ -1,10 +1,17 @@
+job_deployment_env: scheduler_plugin
 results_config:
-  archive_end_point: archive
-  artifact_path: archive
-  atifact_archive: archive
+  archive_end_point: /archive
+  redis_end_point: redis://192.168.128.74:6379
+  artifact_path: artifacts
+  atifact_archive: '.'
 ssh_config:
-  host: 127.0.0.1
-  key_path: archive
-  code_path: archive
-  result_path: archive
-cache_config: {}
+  host: 192.168.128.74
+  port: 31222
+  user: 'job-uploader'
+  key_path: ~/.ssh/id_foundations_scheduler
+  code_path: /jobs
+  result_path: /jobs
+cache_config:
+  end_point: /cache
+obfuscate_foundations: False
+enable_stages: False
