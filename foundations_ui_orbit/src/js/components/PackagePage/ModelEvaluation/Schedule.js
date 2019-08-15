@@ -155,7 +155,7 @@ const Schedule = props => {
       <p className="new-dep-section font-bold">SCHEDULING</p>
       <p>{message}</p>
 
-      <div className="container-scheduling">
+      <div className="container-scheduling management">
         <div className="container-schedule-date">
           <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
