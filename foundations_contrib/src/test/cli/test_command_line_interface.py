@@ -462,7 +462,7 @@ class TestCommandLineInterface(Spec):
         # called a second time with same parameters
         self._run_model_within_orbit_with_specified_project_name_model_name_project_directory( self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
         # expect that the function should return an appropriate message which is displayed to the user
-        self.print_mock.assert_called_with(f'Error: model {self.mock_user_provided_model_name} already exists in project {self.fake_project_name}. Aborting')
+        self.print_mock.assert_called_with(f'Error: model {self.mock_user_provided_model_name} exists in project {self.fake_project_name}. Aborting')
 
     def test_retrieve_artifacts_calls_environment_fetcher(self):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
