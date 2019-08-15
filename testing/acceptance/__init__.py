@@ -33,6 +33,7 @@ from acceptance.test_save_artifact import TestSaveArtifact
 from acceptance.test_syncable_directory import TestSyncableDirectory
 from acceptance.test_can_run_locally import TestCanRunLocally
 from acceptance.test_result_job_bundle import TestResultJobBundle
+from foundations_contrib.global_state import module_manager
 
 def _append_module():
     import sys
