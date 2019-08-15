@@ -1,26 +1,20 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import PredictorRow from "./PredictorRow.js";
-import BaseActions from "../../../actions/BaseActions.js";
+import PredictorRow from "./PredictorRow";
+import { postJSONFile } from "../../../actions/BaseActions";
 
 const Predictors = props => {
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
 
-  const onClickAddPredictor = () => {
-    props.onClickAddPredictor();
-  };
-
-  const onClickShowChart = () => {
-    props.onClickShowChart();
-  };
-
   const onClickSaveProportions = () => {
+    const { predictors, reload } = props;
+
     setError("");
     setMessage("");
     let result = 0;
-    props.predictors.forEach(item => {
+    predictors.forEach(item => {
       result += item.proportion;
     });
 
@@ -29,56 +23,65 @@ const Predictors = props => {
         "Please make sure that the sum of all proportions is equal to 1 (100%)"
       );
     } else {
-      let data = props.predictors.map(item => {
+      const data = predictors.map(item => {
         return {
           name: item.name,
           proportion: item.proportion
         };
       });
 
-      BaseActions.postJSONFile(
+      postJSONFile(
         "files/proportions",
         "test_learn_config.json",
         data
-      ).then(result => {
-        props.reload();
+      ).then(() => {
+        reload();
         setMessage("Changes saved!");
       });
     }
   };
 
   const renderPredictors = () => {
-    let proportion = 0;
-    let predictors_count = props.predictors.length;
+    const {
+      predictors, method, splitMechanism, reload, onChangeSingleProportion, testLearningConfig
+    } = props;
 
-    return props.predictors.map(predictor => {
-      if (props.method === "Define Manually") {
-        if (predictors_count === 1) {
-          proportion = 1;
-        } else if (predictors_count > 1) {
-          const filteredPopulations = props.testLearningConfig.populations.filter(
+    let proportionValue = 0;
+    const predictorsCount = predictors.length;
+
+    return predictors.map(predictor => {
+      if (method === "Define Manually") {
+        if (predictorsCount === 1) {
+          proportionValue = 1;
+        } else if (predictorsCount > 1) {
+          const filteredPopulations = testLearningConfig.populations.filter(
             item => item.name === predictor.name
           );
+
           if (filteredPopulations.length >= 1) {
-            proportion = filteredPopulations[0].proportion;
+            proportionValue = filteredPopulations[0].proportion;
           }
         }
       }
       return (
         <PredictorRow
+          key={predictor.name}
           predictor={predictor}
-          predictors={props.predictors}
-          proportion={proportion}
-          changeProportion={value =>
-            props.onChangeSingleProportion(predictor, value)
+          predictors={predictors}
+          proportion={proportionValue}
+          changeProportion={value => onChangeSingleProportion(predictor, value)
           }
-          method={props.method}
-          splitMechanism={props.splitMechanism}
-          reload={props.reload}
+          method={method}
+          splitMechanism={splitMechanism}
+          reload={reload}
         />
       );
     });
   };
+
+  const {
+    method, predictors, onClickAddPredictor, onClickShowChart
+  } = props;
 
   return (
     <div className="container-predictors">
@@ -87,9 +90,9 @@ const Predictors = props => {
           <button
             type="button"
             onClick={onClickSaveProportions}
-            disabled={props.method !== "Define Manually"}
+            disabled={method !== "Define Manually"}
             className={
-              props.method !== "Define Manually"
+              method !== "Define Manually"
                 ? "b--secondary green disabled"
                 : "b--secondary green"
             }
@@ -105,7 +108,7 @@ const Predictors = props => {
             add predictor
           </button>
           <p className="label-pred">
-            # of predictors: {props.predictors.length}
+            # of predictors: {predictors.length}
           </p>
         </div>
 
@@ -120,7 +123,7 @@ const Predictors = props => {
       {error !== "" && <p className="error sum-error">{error}</p>}
       {message !== "" && <p>{message}</p>}
       <div>
-        {props.predictors.length === 0 ? (
+        {predictors.length === 0 ? (
           <p className="label-no-pred">
             Current you have no predictors setup to run inference on.
             <br />
@@ -139,7 +142,6 @@ Predictors.propTypes = {
   predictors: PropTypes.array,
   onClickAddPredictor: PropTypes.func,
   method: PropTypes.string,
-  onChangePredictorsProportions: PropTypes.func,
   onChangeSingleProportion: PropTypes.func,
   onClickShowChart: PropTypes.func,
   splitMechanism: PropTypes.string,
@@ -149,7 +151,13 @@ Predictors.propTypes = {
 Predictors.defaultProps = {
   predictors: [],
   method: "Define Manually",
-  splitMechanism: "spec"
+  splitMechanism: "spec",
+  testLearningConfig: {},
+  onClickAddPredictor: () => null,
+  onChangeSingleProportion: () => null,
+  onClickShowChart: () => null,
+  reload: () => null
+
 };
 
 export default withRouter(Predictors);

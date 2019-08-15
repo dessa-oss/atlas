@@ -1,50 +1,61 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
-import PredictorRow from "./PredictorRow.js";
 import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions.js";
+import { get, postJSONFile } from "../../../actions/BaseActions";
 
 const EditPredictor = props => {
-  const [name, setName] = React.useState(props.predictor.name);
   const [models, setModels] = React.useState([]);
   const [model, setModel] = React.useState(() => {
+    const { predictor } = props;
+
     return {
-      value: props.predictor.model_package_name,
-      label: props.predictor.model_package_name
+      value: predictor.model_package_name,
+      label: predictor.model_package_name
     };
   });
   const [actions, setActions] = React.useState([]);
   const [selectedActions, setSelectedActions] = React.useState(() => {
-    return props.predictor.action_space.map(item => {
+    const { predictor } = props;
+
+    return predictor.action_space.map(item => {
       return {
         value: item,
         label: item
       };
     });
   });
-  const [description, setDescription] = React.useState(
-    props.predictor.description
-  );
+  const [description, setDescription] = React.useState(() => {
+    const { predictor } = props;
+
+    return predictor.description;
+  });
   const [strategy, setStrategy] = React.useState(() => {
+    const { predictor } = props;
+
     return {
-      value: props.predictor.post_predict_selection.strategy,
-      label: props.predictor.post_predict_selection.strategy
+      value: predictor.post_predict_selection.strategy,
+      label: predictor.post_predict_selection.strategy
     };
   });
   const [explorationStrategy, setExplorationStrategy] = React.useState(() => {
+    const { predictor } = props;
+
     return {
-      value: props.predictor.post_predict_selection.exploration_strategy,
-      label: props.predictor.post_predict_selection.exploration_strategy
+      value: predictor.post_predict_selection.exploration_strategy,
+      label: predictor.post_predict_selection.exploration_strategy
     };
   });
-  const [explorationPercentage, setExplorationPercentage] = React.useState(
-    props.predictor.post_predict_selection.exploration_percentage
-  );
+  const [explorationPercentage, setExplorationPercentage] = React.useState(() => {
+    const { predictor } = props;
+
+    return predictor.post_predict_selection.exploration_percentage;
+  });
   const [environment, setEnvironment] = React.useState(() => {
+    const { predictor } = props;
     return {
-      value: props.predictor.environment,
-      label: props.predictor.environment
+      value: predictor.environment,
+      label: predictor.environment
     };
   });
 
@@ -83,8 +94,8 @@ const EditPredictor = props => {
   ];
 
   React.useEffect(() => {
-    BaseActions.get("management").then(result => {
-      let modelsData = [];
+    get("management").then(result => {
+      const modelsData = [];
 
       result.data.forEach(item => {
         modelsData.push({
@@ -94,10 +105,10 @@ const EditPredictor = props => {
       });
       setModels(modelsData);
 
-      BaseActions.get("actions").then(result => {
-        let actionsData = [];
+      get("actions").then(resultActions => {
+        const actionsData = [];
 
-        result.data.forEach(item => {
+        resultActions.data.forEach(item => {
           actionsData.push({
             value: item.name,
             label: item.name
@@ -108,16 +119,12 @@ const EditPredictor = props => {
     });
   }, []);
 
-  const onChangeName = e => {
-    setName(e.target.value);
-  };
-
-  const onChangeModel = model => {
-    setModel(model);
+  const onChangeModel = value => {
+    setModel(value);
   };
 
   const onChangeActions = action => {
-    var insertValue = true;
+    let insertValue = true;
 
     selectedActions.forEach(value => {
       if (value.value === action.value) {
@@ -125,13 +132,11 @@ const EditPredictor = props => {
       }
     });
 
-    setSelectedActions(prevSelectedActions =>
-      insertValue === true
-        ? [...prevSelectedActions, action]
-        : prevSelectedActions.filter(
-            prevSelectedAction => prevSelectedAction.value !== action.value
-          )
-    );
+    setSelectedActions(prevSelectedActions => (insertValue === true
+      ? [...prevSelectedActions, action]
+      : prevSelectedActions.filter(
+        prevSelectedAction => prevSelectedAction.value !== action.value
+      )));
   };
 
   const onChangeDescription = e => {
@@ -142,12 +147,12 @@ const EditPredictor = props => {
     setEnvironment(env);
   };
 
-  const onChangeStrategy = strategy => {
-    setStrategy(strategy);
+  const onChangeStrategy = value => {
+    setStrategy(value);
   };
 
-  const onChangeExplorationStrategy = explorationStrategy => {
-    setExplorationStrategy(explorationStrategy);
+  const onChangeExplorationStrategy = value => {
+    setExplorationStrategy(value);
   };
 
   const onChangeExplorationPercentage = e => {
@@ -158,25 +163,22 @@ const EditPredictor = props => {
     let message = "";
     let validated = true;
 
-    if (
-      name === "" ||
-      model === "" ||
-      selectedActions.length === 0 ||
-      description === "" ||
-      environment === "" ||
-      strategy === "" ||
-      explorationStrategy === ""
+    if (model === ""
+      || selectedActions.length === 0
+      || description === ""
+      || environment === ""
+      || strategy === ""
+      || explorationStrategy === ""
     ) {
-      message =
-        "Error: one or more fields are left empty. Please fill the form.";
+      message = "Error: one or more fields are left empty. Please fill the form.";
       validated = false;
     } else {
-      let explorationPercentageValue = parseFloat(explorationPercentage);
+      const explorationPercentageValue = parseFloat(explorationPercentage);
 
       if (
-        isNaN(explorationPercentageValue) ||
-        explorationPercentageValue < 0 ||
-        explorationPercentageValue > 1
+        Number.isNaN(explorationPercentageValue)
+        || explorationPercentageValue < 0
+        || explorationPercentageValue > 1
       ) {
         message = "Exploration percentage must be a number between 0 and 1";
         validated = false;
@@ -188,26 +190,30 @@ const EditPredictor = props => {
   };
 
   const onClickSave = () => {
+    const {
+      splitMechanism, reload, onClose, predictor
+    } = props;
+
     setError("");
 
     if (validateData()) {
-      let explorationPercentageValue = parseFloat(explorationPercentage);
+      const explorationPercentageValue = parseFloat(explorationPercentage);
 
-      let newActions = selectedActions.map(item => {
+      const newActions = selectedActions.map(item => {
         return item.value;
       });
 
-      let modelValue = model.value;
-      let strategyValue = strategy.value;
-      let explorationStrategyValue = explorationStrategy.value;
-      let environmentValue = environment.value;
+      const modelValue = model.value;
+      const strategyValue = strategy.value;
+      const explorationStrategyValue = explorationStrategy.value;
+      const environmentValue = environment.value;
 
-      let data = {
+      const data = {
         predictor: {
           action_space: newActions,
           description: description,
           model_package_name: modelValue,
-          name: name,
+          name: predictor.name,
           post_predict_selection: {
             exploration_percentage: explorationPercentageValue,
             exploration_strategy: explorationStrategyValue,
@@ -216,24 +222,26 @@ const EditPredictor = props => {
           status: "running",
           environment: environmentValue
         },
-        split_mechanism: props.splitMechanism
+        split_mechanism: splitMechanism
       };
 
-      BaseActions.postJSONFile(
+      postJSONFile(
         "files/predictors/edit",
         "predictors.json",
         data
-      ).then(result => {
-        props.reload();
-        props.onClose();
+      ).then(() => {
+        reload();
+        onClose();
       });
     }
   };
 
+  const { predictor, onClose } = props;
+
   return (
     <div>
       <p className="manage-inference-modal-header font-bold text-upper">
-        Edit predictor {props.predictor.name}
+        Edit predictor {predictor.name}
       </p>
       <div className="manage-interface-property-container">
         <p className="manage-interface-modal-label">Model:</p>
@@ -305,7 +313,7 @@ const EditPredictor = props => {
         </button>
         <button
           type="button"
-          onClick={props.onClose}
+          onClick={onClose}
           className="b--secondary red"
         >
           <div className="close" />
@@ -320,14 +328,17 @@ const EditPredictor = props => {
 
 EditPredictor.propTypes = {
   predictor: PropTypes.object,
-  savePredictor: PropTypes.func,
   onClose: PropTypes.func,
   reload: PropTypes.func,
   splitMechanism: PropTypes.string
 };
 
 EditPredictor.defaultProps = {
-  predictor: {}
+  predictor: {},
+  onClose: () => null,
+  reload: () => null,
+  splitMechanism: ""
+
 };
 
 export default withRouter(EditPredictor);

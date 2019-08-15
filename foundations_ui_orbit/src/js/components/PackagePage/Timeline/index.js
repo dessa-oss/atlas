@@ -1,11 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Layout from "../Layout";
 import { withRouter } from "react-router-dom";
-import { Modal, ModalBody } from "reactstrap";
-import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions";
-import EventRow from "./EventRow";
+import { get } from "../../../actions/BaseActions";
 import moment from "moment";
 import EntryRow from "./EntryRow";
 
@@ -13,58 +10,64 @@ const Timeline = props => {
   const [events, setEvents] = React.useState([]);
 
   React.useEffect(() => {
-    BaseActions.get("events").then(result => {
-      let entries = [];
-      result.data.forEach(item => {
-        let itemDate = moment(item.datetime)
-          .format("MMMM D, YYYY")
-          .toString();
-        let found = entries.find(entry => entry.date === itemDate);
+    get("events").then(result => {
+      if (result) {
+        const entries = [];
+        result.data.forEach(item => {
+          const itemDate = moment(item.datetime)
+            .format("MMMM D, YYYY")
+            .toString();
+          const found = entries.find(entry => entry.date === itemDate);
 
-        if (!found) {
-          let entry = {
-            date: itemDate,
-            data: []
-          };
-          entries.push(entry);
-        }
-      });
-
-      result.data.forEach(item => {
-        let itemDate = moment(item.datetime)
-          .format("MMMM D, YYYY")
-          .toString();
-        entries.forEach(entry => {
-          if (entry.date === itemDate) {
-            entry.data.push(item);
+          if (!found) {
+            const entry = {
+              date: itemDate,
+              data: []
+            };
+            entries.push(entry);
           }
         });
-      });
 
-      entries.forEach(entry => {
-        let sortedData = entry.data.sort((a, b) => {
-          let dateA = new Date(a.datetime);
-          let dateB = new Date(b.datetime);
+        result.data.forEach(item => {
+          const itemDate = moment(item.datetime)
+            .format("MMMM D, YYYY")
+            .toString();
+          entries.forEach(entry => {
+            if (entry.date === itemDate) {
+              entry.data.push(item);
+            }
+          });
+        });
+
+        const newEntries = entries.map(entry => {
+          const newEntry = entry;
+          const sortedData = entry.data.sort((a, b) => {
+            const dateA = new Date(a.datetime);
+            const dateB = new Date(b.datetime);
+
+            return dateB - dateA;
+          });
+
+          newEntry.data = sortedData;
+          return newEntry;
+        });
+
+        const sortedEntries = newEntries.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
 
           return dateB - dateA;
         });
 
-        entry.data = sortedData;
-      });
-
-      let sortedEntries = entries.sort((a, b) => {
-        let dateA = new Date(a.date);
-        let dateB = new Date(b.date);
-
-        return dateB - dateA;
-      });
-
-      setEvents(sortedEntries);
+        setEvents(sortedEntries);
+      }
     });
   }, []);
 
+  const { tab } = props;
+
   return (
-    <Layout tab={props.tab} title="History">
+    <Layout tab={tab} title="History">
       {events.length > 0 ? (
         <div
           className={
@@ -73,13 +76,13 @@ const Timeline = props => {
               : "container-timeline"
           }
         >
-          {events.map((item, i) => {
-            return <EntryRow entry={item} />;
+          {events.map(item => {
+            return <EntryRow key={item.date} entry={item} />;
           })}
         </div>
       ) : (
         <div className="container-timeline-empty">
-          <p>It's a fresh start.</p>
+          <p>It{"'"}s a fresh start.</p>
           <p>There are currently no events to look at.</p>
         </div>
       )}

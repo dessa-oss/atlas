@@ -1,18 +1,22 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import EditNotificationModal from './EditNotificationModal';
+import EditNotificationModal from "./EditNotificationModal";
 import { Modal, ModalBody } from "reactstrap";
+import PropTypes from "prop-types";
 
 class Notification extends Component {
   constructor(props) {
     super(props);
+
+    const {
+      category, recipients, emails, updateNotifications
+    } = this.props;
+
     this.state = {
-      category: this.props.category,
-      condition: this.props.condition,
-      recipients: this.props.recipients,
+      category: category,
+      recipients: recipients,
       isShowingEditNotification: false,
-      emails: this.props.emails,
-      updateNotifications: this.props.updateNotifications,
+      emails: emails,
+      updateNotifications: updateNotifications
     };
     this.editNotification = this.editNotification.bind(this);
     this.toggleShowEditNotification = this.toggleShowEditNotification.bind(this);
@@ -21,16 +25,18 @@ class Notification extends Component {
   editNotification() {
     const { updateNotifications } = this.state;
     updateNotifications();
-    this.setState({isShowingEditNotification: false});
+    this.setState({ isShowingEditNotification: false });
   }
 
   toggleShowEditNotification() {
-    const {isShowingEditNotification} = this.state
-    this.setState({isShowingEditNotification: !isShowingEditNotification});
+    const { isShowingEditNotification } = this.state;
+    this.setState({ isShowingEditNotification: !isShowingEditNotification });
   }
 
   render() {
-    const { category, recipients, isShowingEditNotification, emails } = this.state;
+    const {
+      category, recipients, isShowingEditNotification, emails
+    } = this.state;
 
     return (
       <div className="notification-container">
@@ -41,17 +47,22 @@ class Notification extends Component {
           <p>{recipients.join(", ")}</p>
         </div>
         <div className="notification-edit">
-          <button className="b--secondary" onClick={this.toggleShowEditNotification}>
+          <button type="button" className="b--secondary" onClick={this.toggleShowEditNotification}>
             <div className="i--icon-pencil-grey" />
           </button>
         </div>
         <Modal
           isOpen={isShowingEditNotification}
           toggle={this.toggleShowEditNotification}
-          className={"settings-add-user-modal-container notification"}
+          className="settings-add-user-modal-container notification"
         >
           <ModalBody>
-            <EditNotificationModal updateNotifications={this.editNotification} allUsers={emails} selectedUsers={recipients} category={category} />
+            <EditNotificationModal
+              updateNotifications={this.editNotification}
+              allUsers={emails}
+              selectedUsers={recipients}
+              category={category}
+            />
           </ModalBody>
         </Modal>
       </div>
@@ -60,9 +71,18 @@ class Notification extends Component {
 }
 
 Notification.propTypes = {
+  category: PropTypes.string,
+  recipients: PropTypes.array,
+  emails: PropTypes.array,
+  updateNotifications: PropTypes.func
+
 };
 
 Notification.defaultProps = {
+  category: "",
+  recipients: [],
+  emails: [],
+  updateNotifications: () => null
 };
 
 export default Notification;

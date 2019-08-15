@@ -1,18 +1,12 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Layout from "../Layout";
+import React from "react";
 import { withRouter } from "react-router-dom";
-import Manager from "./Manager";
-import Predictors from "./Predictors";
 import { Modal, ModalBody } from "reactstrap";
 import AddPredictor from "./AddPredictor";
-import Schedule from "./Schedule";
-import Metadata from "./Metadata";
 import PredictorChart from "./PredictorChart";
-import BaseActions from "../../../actions/BaseActions";
+import { get, postJSONFile } from "../../../actions/BaseActions";
 import PredictorRow from "./PredictorRow";
 
-const NewDeploymentPage = props => {
+const NewDeploymentPage = () => {
   const [testLearningConfig, setTestLearningConfig] = React.useState({
     setting: {
       method: "",
@@ -65,26 +59,29 @@ const NewDeploymentPage = props => {
   const periodUnits = ["Hour", "Day", "Week", "Month"];
 
   const reload = () => {
-    BaseActions.get("learn").then(result => {
-      if (result.data.setting && result.data.populations) {
+    get("learn").then(result => {
+      if (result && result.data && result.data.setting && result.data.populations) {
         setTestLearningConfig(result.data);
         setNewTestLearningConfig(result.data);
 
-        BaseActions.get("predictors").then(resultPredictors => {
+        get("predictors").then(resultPredictors => {
           if (resultPredictors.data) {
             let values = resultPredictors.data;
             if (values.length === 1) {
               values[0].proportion = 1;
             } else if (values.length > 1) {
-              let newPredictors = values.map(predictor => {
+              const newValues = values.map(predictor => {
+                const newPredictor = predictor;
                 const filteredPopulations = result.data.populations.filter(
-                  item => item.name === predictor.name
+                  item => item.name === newPredictor.name
                 );
                 if (filteredPopulations.length >= 1) {
-                  predictor.proportion = filteredPopulations[0].proportion;
+                  newPredictor.proportion = filteredPopulations[0].proportion;
                 }
-                return predictor;
+                return newPredictor;
               });
+
+              values = newValues;
             }
 
             setPredictors(values);
@@ -101,19 +98,19 @@ const NewDeploymentPage = props => {
   }, []);
 
   const onChangeMethod = e => {
-    let method = newTestLearnConfig.setting.method;
+    let { method } = newTestLearnConfig.setting;
 
     method = e.target.value;
-    let split_mechanism = "Multi-arm bandit";
+    let splitMechanism = "Multi-arm bandit";
 
     if (e.target.value === "Define Manually") {
-      split_mechanism = "Random split (specified proportion)";
+      splitMechanism = "Random split (specified proportion)";
     }
 
     setNewTestLearningConfig({
       setting: {
         method: method,
-        split_mechanism: split_mechanism,
+        split_mechanism: splitMechanism,
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
@@ -124,14 +121,14 @@ const NewDeploymentPage = props => {
   };
 
   const onChangeSplitMechanism = e => {
-    let split_mechanism = newTestLearnConfig.setting.split_mechanism;
+    let splitMechanism = newTestLearnConfig.setting.split_mechanism;
 
-    split_mechanism = e.target.value;
+    splitMechanism = e.target.value;
 
     setNewTestLearningConfig({
       setting: {
         method: newTestLearnConfig.setting.method,
-        split_mechanism: split_mechanism,
+        split_mechanism: splitMechanism,
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
@@ -142,15 +139,15 @@ const NewDeploymentPage = props => {
   };
 
   const onChangeFeedbackCycle = e => {
-    let feedback_cycle = newTestLearnConfig.setting.feedback_cycle;
+    let feedbackCycle = newTestLearnConfig.setting.feedback_cycle;
 
-    feedback_cycle = e.target.value;
+    feedbackCycle = e.target.value;
 
     setNewTestLearningConfig({
       setting: {
         method: newTestLearnConfig.setting.method,
         split_mechanism: newTestLearnConfig.setting.split_mechanism,
-        feedback_cycle: feedback_cycle,
+        feedback_cycle: feedbackCycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
         hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
@@ -160,9 +157,9 @@ const NewDeploymentPage = props => {
   };
 
   const onChangePeriodUnit = e => {
-    let hold_out_period_unit = newTestLearnConfig.setting.hold_out_period_unit;
+    let holdOutPeriodUnit = newTestLearnConfig.setting.hold_out_period_unit;
 
-    hold_out_period_unit = e.target.value;
+    holdOutPeriodUnit = e.target.value;
 
     setNewTestLearningConfig({
       setting: {
@@ -171,24 +168,23 @@ const NewDeploymentPage = props => {
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
         hold_out_period_length:
           newTestLearnConfig.setting.hold_out_period_length,
-        hold_out_period_unit: hold_out_period_unit
+        hold_out_period_unit: holdOutPeriodUnit
       },
       populations: newTestLearnConfig.populations
     });
   };
 
   const onChangePeriodLength = e => {
-    let hold_out_period_length =
-      newTestLearnConfig.setting.hold_out_period_length;
+    let holdOutPeriodLength = newTestLearnConfig.setting.hold_out_period_length;
 
-    hold_out_period_length = e.target.value;
+    holdOutPeriodLength = e.target.value;
 
     setNewTestLearningConfig({
       setting: {
         method: newTestLearnConfig.setting.method,
         split_mechanism: newTestLearnConfig.setting.split_mechanism,
         feedback_cycle: newTestLearnConfig.setting.feedback_cycle,
-        hold_out_period_length: hold_out_period_length,
+        hold_out_period_length: holdOutPeriodLength,
         hold_out_period_unit: newTestLearnConfig.setting.hold_out_period_unit
       },
       populations: newTestLearnConfig.populations
@@ -203,11 +199,11 @@ const NewDeploymentPage = props => {
     let validated = true;
     let message = "";
 
-    let periodLengthValue = parseInt(
-      newTestLearnConfig.setting.hold_out_period_length
+    const periodLengthValue = parseInt(
+      newTestLearnConfig.setting.hold_out_period_length, 10
     );
 
-    if (isNaN(periodLengthValue)) {
+    if (Number.isNaN(periodLengthValue)) {
       validated = false;
       message = "Period length must be an integer";
     }
@@ -220,15 +216,11 @@ const NewDeploymentPage = props => {
     setErrorManager("");
 
     if (validate()) {
-      let periodLengthValue = parseInt(
-        newTestLearnConfig.setting.hold_out_period_length
-      );
-
-      BaseActions.postJSONFile(
+      postJSONFile(
         "learn",
         "test_learn_config.json",
         newTestLearnConfig.setting
-      ).then(result => {
+      ).then(() => {
         reload();
       });
     }
@@ -247,18 +239,18 @@ const NewDeploymentPage = props => {
         "Please make sure that the sum of all proportions is equal to 1 (100%)"
       );
     } else {
-      let data = newPredictors.map(item => {
+      const data = newPredictors.map(item => {
         return {
           name: item.name,
           proportion: item.proportion
         };
       });
 
-      BaseActions.postJSONFile(
+      postJSONFile(
         "files/proportions",
         "test_learn_config.json",
         data
-      ).then(result => {
+      ).then(() => {
         reload();
         setMessageProportions("Changes saved!");
       });
@@ -281,16 +273,14 @@ const NewDeploymentPage = props => {
     setOpenChart(false);
   };
 
-  const onChangePredictorsProportions = newPredictors => {
-    setPredictors(newPredictors);
-  };
-
   const onChangeProportion = (predictor, value) => {
-    let values = newPredictors;
-    values.forEach(item => {
-      if (predictor.name === item.name) {
-        item.proportion = value;
+    const values = [];
+    newPredictors.forEach(item => {
+      const newItem = item;
+      if (predictor.name === newItem.name) {
+        newItem.proportion = value;
       }
+      values.push(newItem);
     });
     setNewPredictors(values);
   };
@@ -298,37 +288,38 @@ const NewDeploymentPage = props => {
   const renderSplitMechanisms = () => {
     if (newTestLearnConfig.setting.method === "Define Manually") {
       return manualSpliMechanisms.map(item => {
-        return <option>{item}</option>;
-      });
-    } else {
-      return autoSplitMechanisms.map(item => {
-        return <option>{item}</option>;
+        return <option key={item}>{item}</option>;
       });
     }
+    return autoSplitMechanisms.map(item => {
+      return <option key={item}>{item}</option>;
+    });
   };
 
   const renderPredictors = () => {
-    let proportion = 0;
-    let predictors_count = newPredictors.length;
+    let proportionValue = 0;
+    const predictorsCount = newPredictors.length;
 
     return newPredictors.map(predictor => {
       if (newTestLearnConfig.setting.method === "Define Manually") {
-        if (predictors_count === 1) {
-          proportion = 1;
-        } else if (predictors_count > 1) {
+        if (predictorsCount === 1) {
+          proportionValue = 1;
+        } else if (predictorsCount > 1) {
           const filteredPopulations = newTestLearnConfig.populations.filter(
             item => item.name === predictor.name
           );
           if (filteredPopulations.length >= 1) {
-            proportion = filteredPopulations[0].proportion;
+            const { proportion } = filteredPopulations[0];
+            proportionValue = proportion;
           }
         }
       }
       return (
         <PredictorRow
+          key={predictor.name}
           predictor={predictor}
           predictors={newPredictors}
-          proportion={proportion}
+          proportion={proportionValue}
           changeProportion={onChangeProportion}
           method={newTestLearnConfig.setting.method}
           splitMechanism={newTestLearnConfig.setting.split_mechanism}
@@ -337,6 +328,19 @@ const NewDeploymentPage = props => {
       );
     });
   };
+
+  let connectingLineClassName = "";
+
+  if (predictors.length <= 2) {
+    if (predictors.length <= 1) {
+      connectingLineClassName = "connecting-line just-one";
+    } else {
+      connectingLineClassName = "connecting-line less-amount";
+    }
+  } else {
+    connectingLineClassName = "connecting-line";
+  }
+
 
   return (
     <div className="container-manager-predictors">
@@ -360,14 +364,14 @@ const NewDeploymentPage = props => {
               }
               onChange={onChangeMethod}
               className={
-                newTestLearnConfig.setting.method !==
-                testLearningConfig.setting.method
+                newTestLearnConfig.setting.method
+                  !== testLearningConfig.setting.method
                   ? "new-dep-select edited"
                   : "new-dep-select"
               }
             >
               {methods.map(item => {
-                return <option>{item}</option>;
+                return <option key={item}>{item}</option>;
               })}
             </select>
           </div>
@@ -377,8 +381,8 @@ const NewDeploymentPage = props => {
               value={newTestLearnConfig.setting.split_mechanism}
               onChange={onChangeSplitMechanism}
               className={
-                newTestLearnConfig.setting.split_mechanism !==
-                testLearningConfig.setting.split_mechanism
+                newTestLearnConfig.setting.split_mechanism
+                  !== testLearningConfig.setting.split_mechanism
                   ? "new-dep-select edited"
                   : "new-dep-select"
               }
@@ -392,14 +396,14 @@ const NewDeploymentPage = props => {
               value={newTestLearnConfig.setting.feedback_cycle}
               onChange={onChangeFeedbackCycle}
               className={
-                newTestLearnConfig.setting.feedback_cycle !==
-                testLearningConfig.setting.feedback_cycle
+                newTestLearnConfig.setting.feedback_cycle
+                  !== testLearningConfig.setting.feedback_cycle
                   ? "new-dep-select edited"
                   : "new-dep-select"
               }
             >
               {feedbackCycles.map(item => {
-                return <option>{item}</option>;
+                return <option key={item}>{item}</option>;
               })}
             </select>
           </div>
@@ -410,22 +414,22 @@ const NewDeploymentPage = props => {
                 value={newTestLearnConfig.setting.hold_out_period_unit}
                 onChange={onChangePeriodUnit}
                 className={
-                  newTestLearnConfig.setting.hold_out_period_unit !==
-                  testLearningConfig.setting.hold_out_period_unit
+                  newTestLearnConfig.setting.hold_out_period_unit
+                    !== testLearningConfig.setting.hold_out_period_unit
                     ? "new-dep-select edited"
                     : "new-dep-select"
                 }
               >
                 {periodUnits.map(item => {
-                  return <option>{item}</option>;
+                  return <option key={item}>{item}</option>;
                 })}
               </select>
               <input
                 value={newTestLearnConfig.setting.hold_out_period_length}
                 onChange={onChangePeriodLength}
                 className={
-                  newTestLearnConfig.setting.hold_out_period_length !==
-                  testLearningConfig.setting.hold_out_period_length
+                  newTestLearnConfig.setting.hold_out_period_length
+                    !== testLearningConfig.setting.hold_out_period_length
                     ? "new-dep-input edited"
                     : "new-dep-input"
                 }
@@ -454,13 +458,7 @@ const NewDeploymentPage = props => {
         </div>
       </div>
       <div
-        className={
-          predictors.length <= 2
-            ? predictors.length <= 1
-              ? "connecting-line just-one"
-              : "connecting-line less-amount"
-            : "connecting-line"
-        }
+        className={connectingLineClassName}
       />
       <div className="container-predictors">
         <div className="container-buttons-pred-chart">
@@ -517,7 +515,7 @@ const NewDeploymentPage = props => {
       <Modal
         isOpen={openAddPredictor}
         toggle={onClickCloseAddPredictor}
-        className={"add-predictor-modal-container"}
+        className="add-predictor-modal-container"
       >
         <ModalBody>
           <AddPredictor
@@ -530,7 +528,7 @@ const NewDeploymentPage = props => {
       <Modal
         isOpen={openChart}
         toggle={onClickCloseChart}
-        className={"chart-modal-container"}
+        className="chart-modal-container"
       >
         <ModalBody>
           <PredictorChart />
@@ -538,14 +536,6 @@ const NewDeploymentPage = props => {
       </Modal>
     </div>
   );
-};
-
-NewDeploymentPage.propTypes = {
-  tab: PropTypes.string
-};
-
-NewDeploymentPage.defaultProps = {
-  tab: "Deployment"
 };
 
 export default withRouter(NewDeploymentPage);

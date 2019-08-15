@@ -3,14 +3,17 @@ import Flatpickr from "react-flatpickr";
 import PropTypes from "prop-types";
 import { Modal, ModalBody } from "reactstrap";
 import moment from "moment";
-import BaseActions from "../../../actions/BaseActions";
+import { postApiary } from "../../../actions/BaseActions";
 
 const NewModelRecalibrationModal = props => {
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
-  const start_date_picker_ref = React.createRef();
-  const end_date_picker_ref = React.createRef();
-  const [modelName, setModelName] = React.useState(props.model.model_name);
+  const startDatePickerRef = React.createRef();
+  const endDatePickerRef = React.createRef();
+  const [modelName, setModelName] = React.useState(() => {
+    const { model } = props;
+    return model.model_name;
+  });
   const [error, setError] = React.useState("");
 
   const onChangeStartDate = e => {
@@ -26,11 +29,11 @@ const NewModelRecalibrationModal = props => {
   };
 
   const onClickOpenStartDate = () => {
-    start_date_picker_ref.open();
+    startDatePickerRef.open();
   };
 
   const onClickOpenEndDate = () => {
-    end_date_picker_ref.open();
+    endDatePickerRef.open();
   };
 
   const onClickSave = () => {
@@ -45,31 +48,33 @@ const NewModelRecalibrationModal = props => {
     if (errorFound === true) {
       setError("Please fill the form to run the recalibration");
     } else {
-      let body = {
+      const body = {
         model_name: modelName,
         start_date: moment(startDate).toString(),
         end_date: moment(endDate).toString()
       };
 
-      BaseActions.postApiary(
-        "/projects/" +
-          props.location.state.project.name +
-          "/" +
-          modelName +
-          "/retrain",
+      postApiary(
+        `/projects/${
+          props.location.state.project.name
+        }/${
+          modelName
+        }/retrain`,
         body
-      ).then(result => {
+      ).then(() => {
         props.reload();
         props.onClose();
       });
     }
   };
 
+  const { onClose } = props;
+
   return (
     <Modal
-      isOpen={true}
-      toggle={props.onClose}
-      className={"new-model-recalibration-modal-container"}
+      isOpen
+      toggle={onClose}
+      className="new-model-recalibration-modal-container"
     >
       <ModalBody>
         <div>
@@ -82,7 +87,7 @@ const NewModelRecalibrationModal = props => {
               <Flatpickr
                 placeholder="Select Start Date"
                 value={startDate}
-                ref={start_date_picker_ref}
+                ref={startDatePickerRef}
                 onChange={onChangeStartDate}
               />
             </div>
@@ -96,7 +101,7 @@ const NewModelRecalibrationModal = props => {
               <Flatpickr
                 placeholder="Select Start Date"
                 value={endDate}
-                ref={end_date_picker_ref}
+                ref={endDatePickerRef}
                 onChange={onChangeEndDate}
               />
             </div>
@@ -116,7 +121,7 @@ const NewModelRecalibrationModal = props => {
           <div className="manage-inference-modal-button-container">
             <button
               type="button"
-              onClick={props.onClose}
+              onClick={onClose}
               className="b--mat b--negation text-upper"
             >
               cancel changes
@@ -140,11 +145,14 @@ const NewModelRecalibrationModal = props => {
 
 NewModelRecalibrationModal.propTypes = {
   onClose: PropTypes.func,
-  model: PropTypes.object,
   reload: PropTypes.func,
   location: PropTypes.object
 };
 
-NewModelRecalibrationModal.defaultProps = {};
+NewModelRecalibrationModal.defaultProps = {
+  onClose: () => null,
+  reload: () => null,
+  location: { state: {} }
+};
 
 export default NewModelRecalibrationModal;

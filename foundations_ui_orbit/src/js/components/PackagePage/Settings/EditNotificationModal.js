@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Select from "react-select";
 import MultiSelect from "@kenshooui/react-multi-select";
 import "@kenshooui/react-multi-select/dist/style.css";
-import BaseActions from "../../../actions/BaseActions";
+import { postJSONFile } from "../../../actions/BaseActions";
 
 const conditionOptions = [
   { value: "Errors Only", label: "Errors Only" },
@@ -13,10 +13,13 @@ const conditionOptions = [
 class EditNotification extends Component {
   constructor(props) {
     super(props);
+
+    const { category, updateNotifications, allUsers } = this.props;
+
     this.state = {
-      category: this.props.category,
-      updateNotifications: this.props.updateNotifications,
-      allUsers: this.props.allUsers,
+      category: category,
+      updateNotifications: updateNotifications,
+      allUsers: allUsers,
       condition: "Errors Only",
       selectedUsers: []
     };
@@ -41,7 +44,7 @@ class EditNotification extends Component {
 
     const body = JSON.stringify(data);
 
-    await BaseActions.postJSONFile(
+    await postJSONFile(
       "settings/users/notification",
       "notifications.json",
       body
@@ -78,7 +81,7 @@ class EditNotification extends Component {
           <div className="edit-notificaiton-multi-select-container">
             <MultiSelect
               items={allUsers}
-              wrapperClassName={"edit-notification-multi-select"}
+              wrapperClassName="edit-notification-multi-select"
               onChange={this.ChangeUsers}
             />
           </div>
@@ -96,9 +99,15 @@ class EditNotification extends Component {
 }
 
 EditNotification.propTypes = {
-  category: PropTypes.string
+  category: PropTypes.string,
+  updateNotifications: PropTypes.func,
+  allUsers: PropTypes.array
 };
 
-EditNotification.defaultProps = {};
+EditNotification.defaultProps = {
+  category: "",
+  updateNotifications: () => null,
+  allUsers: []
+};
 
 export default EditNotification;

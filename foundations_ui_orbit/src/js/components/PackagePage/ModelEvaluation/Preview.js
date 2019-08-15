@@ -17,39 +17,12 @@ const ModelEvaluation = props => {
   };
 
   function getPreviewyAxisData(data) {
-    var previewData = data;
+    const previewData = data;
     previewData.title.text = null;
     return previewData;
   }
 
-  function getPreviewxAxisData(data) {
-    var month_names_short = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec"
-    ];
-    var previewData = JSON.parse(JSON.stringify(data));
-    //previewData.categories.forEach(x => getMonthFromData(x));
-    var previewCategories = Array();
-
-    for (var categorie of previewData.categories) {
-      var date = new Date(categorie);
-      previewCategories.push(month_names_short[date.getMonth()]);
-    }
-
-    previewData.categories = previewCategories;
-
-    return previewData;
-  }
+  const { evaluation } = props;
 
   const options = {
     chart: {},
@@ -58,7 +31,7 @@ const ModelEvaluation = props => {
         color: "#004A9C",
         fontSize: 14
       },
-      text: props.evaluation.title.text,
+      text: evaluation.title.text,
       align: "left"
     },
     subtitle: {
@@ -66,7 +39,7 @@ const ModelEvaluation = props => {
         color: "#9c9c9c"
       },
       text: `<span class="highcharts-sub">${
-        props.evaluation.series.length
+        evaluation.series.length
       }</span> predictors`,
       useHTML: true,
       align: "left"
@@ -82,15 +55,9 @@ const ModelEvaluation = props => {
     credits: {
       enabled: false
     },
-    xAxis: props.evaluation.xAxis,
-    yAxis: getPreviewyAxisData(props.evaluation.yAxis),
-    yAxis: {
-      labels: {
-        enabled: false
-      },
-      title: false
-    },
-    series: props.evaluation.series
+    xAxis: evaluation.xAxis,
+    yAxis: getPreviewyAxisData(evaluation.yAxis),
+    series: evaluation.series
   };
 
   const optionsModal = {
@@ -98,7 +65,7 @@ const ModelEvaluation = props => {
       width: 1500
     },
     title: {
-      text: props.evaluation.title.text
+      text: evaluation.title.text
     },
     legend: {
       layout: "vertical",
@@ -111,13 +78,13 @@ const ModelEvaluation = props => {
       enabled: false
     },
     xAxis: options.xAxis,
-    yAxis: props.evaluation.yAxis,
-    series: props.evaluation.series
+    yAxis: evaluation.yAxis,
+    series: evaluation.series
   };
 
   return (
     <div className="container-preview">
-      <p class="view-report" onClick={onClickOpenChart} />
+      <p className="view-report" onClick={onClickOpenChart} />
       <div className="container-chart">
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>

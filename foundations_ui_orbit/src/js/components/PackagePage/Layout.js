@@ -1,4 +1,4 @@
-import React, { Component, Children } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import PackageToolbar from "./PackageToolbar";
@@ -13,17 +13,21 @@ const Layout = props => {
     setLoadingMessage(message);
   };
 
+  const {
+    tab, location, title, children
+  } = props;
+
   return (
     <div className="container-layout">
       <PackageToolbar
-        tab={props.tab}
-        project={props.location.state.project}
-        title={props.title}
+        tab={tab}
+        project={location.state.project}
+        title={title}
         onLoading={onLoading}
       />
       <div className="container-sidebar-children">
-        <SideBar tab={props.tab} />
-        <div className="container-children">{props.children}</div>
+        <SideBar tab={tab} />
+        <div className="container-children">{children}</div>
       </div>
       {loading === true && (
         <div className="container-loading">
@@ -36,14 +40,17 @@ const Layout = props => {
 
 Layout.propTypes = {
   tab: PropTypes.string,
-  history: PropTypes.object,
-  project: PropTypes.object,
-  title: PropTypes.string
+  title: PropTypes.string,
+  location: PropTypes.object,
+  children: PropTypes.object
 };
 
 Layout.defaultProps = {
   tab: "Deployment",
-  title: "Deployment"
+  title: "Deployment",
+  location: { state: {} },
+  children: []
+
 };
 
 export default withRouter(Layout);

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions";
+import { postJSONFile } from "../../../actions/BaseActions";
 
 const roleOptions = [
   { value: "Admin", label: "Admin" },
@@ -12,8 +12,11 @@ const roleOptions = [
 class AddUserModal extends Component {
   constructor(props) {
     super(props);
+
+    const { updateUser } = this.props;
+
     this.state = {
-      updateUser: this.props.updateUser,
+      updateUser: updateUser,
       role: null
     };
     this.AddUser = this.AddUser.bind(this);
@@ -41,7 +44,7 @@ class AddUserModal extends Component {
 
       const body = JSON.stringify(data);
 
-      await BaseActions.postJSONFile("settings/users/add", "users.json", body);
+      await postJSONFile("settings/users/add", "users.json", body);
       updateUser();
     }
   }
@@ -85,6 +88,8 @@ AddUserModal.propTypes = {
   updateUser: PropTypes.func
 };
 
-AddUserModal.defaultProps = {};
+AddUserModal.defaultProps = {
+  updateUser: () => null
+};
 
 export default AddUserModal;

@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ProjectPage from "./ProjectPage/ProjectPage";
-import NewDeployment from "./PackagePage/NewDeployment";
+import ProptTypes from "prop-types";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
-    this.props.history.push("/projects");
+    const { history } = this.props;
+
+    history.push("/projects");
   }
 
   render() {
@@ -17,8 +13,12 @@ class App extends Component {
   }
 }
 
-App.propTypes = {};
+App.propTypes = {
+  history: ProptTypes.object
+};
 
-App.defaultProps = {};
+App.defaultProps = {
+  history: {}
+};
 
 export default App;

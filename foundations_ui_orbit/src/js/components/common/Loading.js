@@ -1,7 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 const Loading = props => {
+  const { loadingMessage } = props;
+
   return (
     <div className="loading-container">
       <div id="circle-orbit-container">
@@ -16,7 +18,7 @@ const Loading = props => {
           <div className="third-orbit-circles" />
         </div>
       </div>
-      <p>{props.loadingMessage}</p>
+      <p>{loadingMessage}</p>
     </div>
   );
 };

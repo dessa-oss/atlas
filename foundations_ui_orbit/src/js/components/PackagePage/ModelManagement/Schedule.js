@@ -107,24 +107,24 @@ const Schedule = props => {
   };
 
   const onClickSaveSchedule = () => {
-    setMessage("");
-    const data = {
-      schedule: {
-        start_datetime: startDate.toString(),
-        end_datetime: endDate.toString(),
-        frequency: selectedOption.value
-      }
-    };
+    setMessage("Schedule is not changeble for trial");
+    // const data = {
+    //   schedule: {
+    //     start_datetime: startDate.toString(),
+    //     end_datetime: endDate.toString(),
+    //     frequency: selectedOption.value
+    //   }
+    // };
 
-    putApiary(
-      `/projects/${props.location.state.project.name}/evaluation_schedule`,
-      data
-    ).then(() => {
-      setMessage(
-        "Schedule has been saved. Inference will be executed at scheduled time"
-      );
-      reload();
-    });
+    // putApiary(
+    //   `/projects/${props.location.state.project.name}/evaluation_schedule`,
+    //   data
+    // ).then(() => {
+    //   setMessage(
+    //     "Schedule has been saved. Inference will be executed at scheduled time"
+    //   );
+    //   reload();
+    // });
   };
 
   const onClickCancelSchedule = () => {
@@ -154,8 +154,7 @@ const Schedule = props => {
     <div className="scheduling-container evaluation">
       <p className="new-dep-section font-bold">SCHEDULING</p>
       <p>{message}</p>
-
-      <div className="container-scheduling">
+      <div className="container-scheduling management">
         <div className="container-schedule-date">
           <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
@@ -218,47 +217,6 @@ const Schedule = props => {
           </button>
         </div>
       </div>
-      {/* <Modal
-        isOpen={open}
-        toggle={onClickCloseInferenceModal}
-        className={"manage-inference-modal-container"}
-      >
-        <ModalBody>
-          <div>
-            <p className="manage-inference-modal-header font-bold text-upper">
-              Selecting inference date
-            </p>
-            <div className="manage-interface-property-container">
-              <p className="manage-interface-modal-label">Inference Date:</p>
-              <select
-                className="manage-interface-modal-select"
-                onChange={onChangeInferenceDate}
-              >
-                {dates.map(date => {
-                  return <option>{date.value}</option>;
-                })}
-              </select>
-            </div>
-            <div className="manage-inference-modal-button-container">
-              <button
-                type="button"
-                onClick={onClickCloseInferenceModal}
-                className="b--mat b--negation text-upper"
-              >
-                cancel
-              </button>
-              <button
-                type="button"
-                onClick={onClickRunInference}
-                className="b--mat b--affirmative text-upper"
-              >
-                {loading === true ? "running" : "run"}
-              </button>
-            </div>
-            {error !== "" && <p>{error}</p>}
-          </div>
-        </ModalBody>
-      </Modal> */}
     </div>
   );
 };

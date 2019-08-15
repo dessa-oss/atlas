@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import Select from "react-select";
-import BaseActions from "../../../actions/BaseActions";
+import { postJSONFile } from "../../../actions/BaseActions";
 
 const roleOptions = [
   { value: "Admin", label: "Admin" },
@@ -9,22 +8,28 @@ const roleOptions = [
   { value: "Read", label: "Read" }
 ];
 
-class User extends Component {
+class User extends React.Component {
   constructor(props) {
     super(props);
+
+    const {
+      name, username, email, role
+    } = this.props;
+
     this.state = {
-      name: this.props.name,
-      username: this.props.username,
-      email: this.props.email,
-      role: this.props.role,
-      updateUser: this.props.updateUser
+      name: name,
+      username: username,
+      email: email,
+      role: role
     };
     this.changeRole = this.changeRole.bind(this);
     this.deleteUser = this.deleteUser.bind(this);
   }
 
   async changeRole(selectedOption) {
-    const { username, updateUser, name, email } = this.state;
+    const {
+      name, username, email, updateUser
+    } = this.state;
 
     const data = {
       name: name,
@@ -35,13 +40,14 @@ class User extends Component {
 
     const body = JSON.stringify(data);
 
-    await BaseActions.postJSONFile("settings/users/role", "users.json", body);
+    await postJSONFile("settings/users/role", "users.json", body);
     updateUser();
   }
 
   async deleteUser() {
-    const { username, updateUser } = this.state;
-    await BaseActions.postJSONFile(
+    const { updateUser } = this.props;
+    const { username } = this.state;
+    await postJSONFile(
       "settings/users/delete",
       "users.json",
       username
@@ -50,7 +56,9 @@ class User extends Component {
   }
 
   render() {
-    const { name, username, email, role } = this.state;
+    const {
+      name, username, email, role
+    } = this.state;
 
     return (
       <div className="user-container">
@@ -65,18 +73,18 @@ class User extends Component {
         </div>
         <div className="user-select-role user-role">
           <select
-            className={"select-frequency adaptive"}
+            className="select-frequency adaptive"
             options={roleOptions}
             value={role}
             onChange={this.changeRole}
           >
             {roleOptions.map(item => {
-              return <option>{item.label}</option>;
+              return <option key={item}>{item.label}</option>;
             })}
           </select>
         </div>
         <div className="user-delete">
-          <button className="b--secondary red" onClick={this.deleteUser}>
+          <button type="button" className="b--secondary red" onClick={this.deleteUser}>
             <div className="close" />
           </button>
         </div>
@@ -93,6 +101,12 @@ User.propTypes = {
   updateUser: PropTypes.func
 };
 
-User.defaultProps = {};
+User.defaultProps = {
+  name: "",
+  username: "",
+  email: "",
+  role: "",
+  updateUser: () => null
+};
 
 export default User;
