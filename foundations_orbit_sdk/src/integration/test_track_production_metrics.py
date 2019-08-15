@@ -12,16 +12,17 @@ class TestTrackProductionMetrics(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import current_foundations_context, redis_connection
+        import os
+        from foundations_contrib.global_state import redis_connection
 
-        self.pipeline_context = current_foundations_context().pipeline_context()
-        self.pipeline_context.file_name = 'some_job_id'
+        os.environ['JOB_ID'] = 'some_job_id'
         self._redis = redis_connection
         self._redis.flushall()
 
     @tear_down
     def tear_down(self):
-        self.pipeline_context.file_name = None
+        import os 
+        os.environ['JOB_ID'] = ''
 
     def test_track_production_metrics_stores_metrics_in_redis(self):
         self._track_some_metrics('october')
