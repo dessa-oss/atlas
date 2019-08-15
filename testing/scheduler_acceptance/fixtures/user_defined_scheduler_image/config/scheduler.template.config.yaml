@@ -1,0 +1,23 @@
+job_deployment_env: scheduler_plugin
+
+results_config:
+  archive_end_point: /archive
+  artifact_path: artifacts
+
+cache_config:
+  end_point: /cache
+
+ssh_config:
+  port: 31222
+  code_path: /jobs
+  result_path: /jobs
+  key_path: ~/.ssh/id_foundations_scheduler
+  user: job-uploader
+
+worker:
+  image: python:3.6
+  workingDir: /job/job_source
+  command:
+    - /bin/bash
+    - -c
+    - pip install -r requirements.txt && python custom_main.py
