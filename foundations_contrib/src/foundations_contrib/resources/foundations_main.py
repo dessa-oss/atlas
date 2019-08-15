@@ -116,6 +116,12 @@ def initialize_pipeline_context(job, job_name, job_source_bundle):
     return pipeline_context
 
 def main():
+    from foundations_contrib.change_directory import ChangeDirectory
+    import os
+    import sys
+
+    sys.path.append(os.getcwd() + '/job_source')
+
     log = log_manager.get_logger(__name__)
     job_source_bundle = JobSourceBundle('job', './')
 
@@ -138,8 +144,9 @@ def main():
     global_stage_context = pipeline_context.global_stage_context
     foundations_context.pipeline()._pipeline_context = pipeline_context
 
-    exception_info, was_job_error = global_stage_context.time_callback(lambda: execute_job(job, pipeline_context))
-    upload_artifacts(job_name)
+    with ChangeDirectory('job_source'):
+        exception_info, was_job_error = global_stage_context.time_callback(lambda: execute_job(job, pipeline_context))
+        upload_artifacts(job_name)
 
     exception_info, was_job_error = serialize_job_results(exception_info, was_job_error, job, pipeline_context)
 

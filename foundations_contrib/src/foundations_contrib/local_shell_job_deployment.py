@@ -71,13 +71,17 @@ class LocalShellJobDeployment(object):
         import glob
         from foundations_contrib.change_directory import ChangeDirectory
         from foundations_internal.serializer import deserialize_from_file
+        import os
 
         self._job_bundler.unbundle()
+
+        environment = dict(os.environ)
+        del environment['PYTHONPATH']
 
         with ChangeDirectory(self._job_name):
             script = './run.sh'
             args = self._command_in_shell_command(script)
-            subprocess.call(args)
+            subprocess.call(args, env=environment)
 
         results = glob.glob(self._job_name + '/*.pkl')
         if results:
