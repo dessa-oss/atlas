@@ -1,9 +1,13 @@
 .new-model-recalibration-modal-container {
-  width: 40%;
+  width: 60%;
   min-width: 480px;
 
-  margin-left: 30% !important; // important needed to override the reactstrap library
+  margin-left: 20% !important; // important needed to override the reactstrap library
   margin-top: 20% !important;
+
+  .container-recalibration-properties {
+    margin-top: 60px;
+  }
 
   .recalibrate-property-container {
     width: 100%;

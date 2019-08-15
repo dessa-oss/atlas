@@ -14,7 +14,26 @@ const NewModelRecalibrationModal = props => {
     const { model } = props;
     return model.model_name;
   });
+  const [scheduleMessageVisible, setScheduleMessageVisible] = React.useState(false);
+  const [swapMessageVisible, setSwapMessageVisible] = React.useState(false);
+  const [triggeredMessageVisible, setTriggeredMessageVisible] = React.useState(false);
+
   const [error, setError] = React.useState("");
+
+  const clickSchedule = () => {
+    let value = !scheduleMessageVisible;
+    setScheduleMessageVisible(value);
+  };
+
+  const clickSwap = () => {
+    let value = !swapMessageVisible;
+    setSwapMessageVisible(value);
+  };
+
+  const clickTriggered = () => {
+    let value = !triggeredMessageVisible;
+    setTriggeredMessageVisible(value);
+  };
 
   const onChangeStartDate = e => {
     setStartDate(e[0]);
@@ -81,42 +100,111 @@ const NewModelRecalibrationModal = props => {
           <p className="manage-inference-modal-header font-bold text-upper">
             Model Recalibration
           </p>
-          <div className="recalibrate-property-container">
-            <p className="recalibrate-label-date">Start Date: </p>
-            <div className="recalibrate-container-date">
-              <Flatpickr
-                placeholder="Select Start Date"
-                value={startDate}
-                ref={startDatePickerRef}
-                onChange={onChangeStartDate}
+          <p className="model-recalibration-model-name font-bold">
+            {modelName}
+          </p>
+          <p>Define the frequency at which models are re-trained:</p>
+          <div className="checkbox-div">
+            <label className="font-bold">
+              <input
+                name="Schedule"
+                type="checkbox"
+                className="checkbox-label"
+                onClick={clickSchedule}
+                defaultChecked={false}
               />
-            </div>
-            <div className="container-icon-date" onClick={onClickOpenStartDate}>
-              <div className="icon-date" role="presentation" />
-            </div>
+              Schedule
+            </label>
+            {scheduleMessageVisible === true && (
+              <p className="checkbox-text error-message">
+                Not available in this trial
+              </p>
+            )}
+            <p className="checkbox-text">
+              Unchecking this will cause your modal retraining to be
+              manually triggered
+            </p>
           </div>
-          <div className="recalibrate-property-container">
-            <p className="recalibrate-label-date">End Date: </p>
-            <div className="recalibrate-container-date">
-              <Flatpickr
-                placeholder="Select Start Date"
-                value={endDate}
-                ref={endDatePickerRef}
-                onChange={onChangeEndDate}
+          <div className="checkbox-div">
+            <label className="font-bold">
+              <input
+                name="Auto-Swap"
+                type="checkbox"
+                className="checkbox-label"
+                onClick={clickSwap}
+                defaultChecked={false}
               />
-            </div>
-            <div className="container-icon-date" onClick={onClickOpenEndDate}>
-              <div className="icon-date" role="presentation" />
-            </div>
+              Auto-Swap
+            </label>
+            {swapMessageVisible === true && (
+              <p className="checkbox-text error-message">
+                Not available in this trial
+              </p>
+            )}
+            <p className="checkbox-text">
+              Turning this on will automatically deploy model after
+              retraining and retire previously active model
+            </p>
           </div>
+          <div className="checkbox-div">
+            <label className="font-bold">
+              <input
+                name="Triggered"
+                type="checkbox"
+                className="checkbox-label"
+                onClick={clickTriggered}
+                defaultChecked={false}
+              />
+              Triggered
+            </label>
+            {triggeredMessageVisible === true && (
+              <p className="checkbox-text error-message">
+                Not available in this trial
+              </p>
+            )}
+            <p className="checkbox-text">
+              Turning this one will automatically retrain model when key
+              model performance metrics decline over 15%
+            </p>
+          </div>
+          <div className="container-recalibration-properties">
+            <div className="recalibrate-property-container">
+              <p className="recalibrate-label-date">Start Date: </p>
+              <div className="recalibrate-container-date">
+                <Flatpickr
+                  placeholder="Select Start Date"
+                  value={startDate}
+                  ref={startDatePickerRef}
+                  onChange={onChangeStartDate}
+                />
+              </div>
+              <div className="container-icon-date" onClick={onClickOpenStartDate}>
+                <div className="icon-date" role="presentation" />
+              </div>
+            </div>
+            <div className="recalibrate-property-container">
+              <p className="recalibrate-label-date">End Date: </p>
+              <div className="recalibrate-container-date">
+                <Flatpickr
+                  placeholder="Select Start Date"
+                  value={endDate}
+                  ref={endDatePickerRef}
+                  onChange={onChangeEndDate}
+                />
+              </div>
+              <div className="container-icon-date" onClick={onClickOpenEndDate}>
+                <div className="icon-date" role="presentation" />
+              </div>
+            </div>
 
-          <div className="recalibrate-property-container">
-            <p className="recalibrate-label-date">Model Name:</p>
-            <input
-              className="recalibrate-container-date"
-              value={modelName}
-              onChange={onChangeModelName}
-            />
+            <div className="recalibrate-property-container">
+              <p className="recalibrate-label-date">Model Name:</p>
+              <input
+                className="recalibrate-container-date"
+                value={modelName}
+                onChange={onChangeModelName}
+              />
+            </div>
           </div>
           <div className="manage-inference-modal-button-container">
             <button
