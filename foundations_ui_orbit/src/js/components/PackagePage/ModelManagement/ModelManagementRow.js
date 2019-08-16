@@ -103,12 +103,12 @@ const ModelManagementRow = props => {
       </div>
       <div className="model-management-cell">
         <div className="container-cell-buttons">
-          <button type="button" className="b--secondary-text" onClick={clickRecalibrate}>
+          <button type="button" className="b--secondary-text button-management" onClick={clickRecalibrate}>
             recalibrate
           </button>
           <button
             type="button"
-            className="b--secondary-text"
+            className="b--secondary-text button-management"
             onClick={
               rowData.status === "activated" ? clickRetire : clickActivate
             }
@@ -118,7 +118,7 @@ const ModelManagementRow = props => {
           <button
             type="button"
             className={
-              isDetail ? "b--secondary-text active" : "b--secondary-text"
+              isDetail ? "b--secondary-text button-management active" : "b--secondary-text button-management"
             }
             onClick={clickDetails}
           >

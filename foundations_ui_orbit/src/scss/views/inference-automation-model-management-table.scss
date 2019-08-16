@@ -55,7 +55,11 @@
 
 .model-management-row {
   .container-cell-buttons {
-    margin-top: 3px;
+    height: 100%;
+
+    .button-management {
+      margin-top: 8px;
+    }
   }
 }
 
@@ -354,12 +358,13 @@
 .model-management-header {
   width: $model-management-cell-width;
   display: inline-block;
-  background-color: $color-light-blue;
-  height: 30px;
+  background-color: #f5f5f5;
+  height: 45px;
   vertical-align: middle;
   clear: both;
   text-align: center;
-  border-right: $border-width solid $color-border-bottom;
+  border-right: $border-width solid $color-input-border;
+  border-top: $border-width solid $color-input-border;
 
   &:nth-of-type(1) {
     width: calc(#{$model-management-cell-width} + #{$border-width});
@@ -379,10 +384,10 @@
   }
 
   p {
-    color: $color-white;
+    @extend .f--din-pro;
     font-size: 13px;
     margin: 0px;
-    line-height: 30px;
+    line-height: 45px;
   }
 }
 
@@ -393,12 +398,12 @@
   width: calc(
     #{$model-management-cell-width} - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
   );
-  height: 35px;
+  height: 45px;
   vertical-align: middle;
   clear: both;
   text-align: left;
-  border-right: 1px solid $color-border-bottom;
-  border-bottom: 1px solid $color-border-bottom;
+  border-right: 1px solid $color-input-border;
+  border-bottom: 1px solid $color-input-border;
 
   &:last-child {
     width: calc(23%);
@@ -413,13 +418,15 @@
 
   input {
     width: 100%;
-    height: 50%;
-    margin-top: 10px;
+    height: 40%;
+    margin-top: 15px;
   }
 
   p {
     margin: 0px;
     margin-top: 7px;
+    line-height: 30px;
+    text-align: center;
 
     &.active {
       color: $color-status-green;
