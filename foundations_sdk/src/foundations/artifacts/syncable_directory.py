@@ -41,6 +41,11 @@ class SyncableDirectory(object):
         old_timestamps = self._redis().hgetall(f'{self._local_job_redis_key()}:timestamps')
         return {file_name.decode(): float(file_timestamp) for file_name, file_timestamp in old_timestamps.items()}
 
+    def _remote_directory_prefix(self):
+        if self._package_name == 'artifacts':
+            return self._package_name
+        return f'{self._package_name}_directories/{self._key}'
+
     def _upload_single_artifact(self, file, decoded_old_timestamps):
         import os
         
@@ -51,7 +56,7 @@ class SyncableDirectory(object):
         self._redis().sadd(f'{self._local_job_redis_key()}', remote_path)
 
         if remote_path not in decoded_old_timestamps or timestamp > decoded_old_timestamps[remote_path]:
-            self._archive.append_file(f'{self._package_name}_directories/{self._key}', file, self._local_directory_key, remote_path)
+            self._archive.append_file(self._remote_directory_prefix(), file, self._local_directory_key, remote_path)
 
     def _log_missing_job_id_for_upload(self):
         from foundations_contrib.global_state import log_manager
