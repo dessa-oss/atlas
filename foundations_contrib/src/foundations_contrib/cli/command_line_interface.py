@@ -318,11 +318,14 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         from foundations_contrib.global_state import message_router
 
-        message_router.push_message('project_served', {
-            'project_name': self._arguments.project_name,
-            'model_name': self._arguments.model_name,
-            'project_directory': self._arguments.project_directory
-        })
+        successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory)
 
-        deploy(self._arguments.project_name, self._arguments.model_name,self._arguments.project_directory)
-        
+        if successfully_added:
+            message_router.push_message('project_model_served', {
+                'project_name': self._arguments.project_name,
+                'model_name': self._arguments.model_name,
+                'project_directory': self._arguments.project_directory
+            })
+        # else:
+        #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
+        #     self._fail_with_message(message)
