@@ -2,7 +2,7 @@ job_deployment_env: scheduler_plugin
 results_config:
   archive_end_point: /archive
   redis_end_point: redis://192.168.128.74:6379
-  artifact_path: artifacts
+  artifact_path: results
   atifact_archive: '.'
 ssh_config:
   host: 192.168.128.74
@@ -14,4 +14,5 @@ ssh_config:
 cache_config:
   end_point: /cache
 obfuscate_foundations: False
+log_level: INFO
 enable_stages: False

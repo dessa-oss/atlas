@@ -4,6 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+import foundations
 import time
 import subprocess
 import requests
@@ -23,12 +24,12 @@ class TestOrbitDeployModelViaCli(Spec):
         cleanup()
         config_manager['log_level'] = 'INFO'
         
-        _run_command(['./integration/resources/fixtures/test_server/spin_up.sh'], foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], foundations_contrib.root() / '..')
     
     @tear_down_class
     def tear_down_class(self):
         pass
-        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'], foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], foundations_contrib.root() / '..')
 
     @set_up
     def set_up(self):
@@ -62,7 +63,6 @@ class TestOrbitDeployModelViaCli(Spec):
             '--env=local'
         ]
 
-        # process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
         self._check_if_process_successful(process_result)
 
@@ -89,7 +89,6 @@ class TestOrbitDeployModelViaCli(Spec):
         self.fail(f'server never started')
 
     def _check_if_error_exists(self, cli_deploy_process):
-        # return cli_deploy_process.returncode != 0 or (cli_deploy_process is not None and len(cli_deploy_process.stderr) > 1)
         return cli_deploy_process.returncode != 0
 
     def _check_if_process_successful(self, cli_deploy_process):
@@ -103,7 +102,9 @@ class TestOrbitDeployModelViaCli(Spec):
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}/predict'
         try:
-            return requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
+            result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
+            print(result)
+            return result
         except:
             return None
 
@@ -114,19 +115,3 @@ class TestOrbitDeployModelViaCli(Spec):
 
         result = self._check_if_endpoint_available()
         self.assertIsNotNone(result)
-
-    # def test_will_fail_if_run_same_model_in_project_twice(self):
-    #     self._deploy_job(self.mock_user_provided_model_name)
-    #     cli_deploy_process = self._deploy_job(self.mock_user_provided_model_name)
-    #     self._check_if_unsuccessful(cli_deploy_process)
-
-
-def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
-    result = subprocess.run(command, cwd=cwd)
-    # try:
-    #     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10, check=True, cwd=cwd)
-    # except subprocess.TimeoutExpired as error:
-    #     raise Exception(error.stderr.decode())
-    # except subprocess.CalledProcessError as error:
-    #     raise Exception(error.stderr.decode())
-    # return result

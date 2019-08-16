@@ -28,8 +28,7 @@ class SFTPBucket(object):
             config_manager['remote_host'],
             config_manager['remote_user'],
             private_key=config_manager['key_path'],
-            port=port,
-            log=1
+            port=port
         )
         
         self._log().debug('Connection successfully established')
@@ -47,13 +46,15 @@ class SFTPBucket(object):
             self.upload_from_file(name, temp_file)
 
     def upload_from_file(self, name, input_file):
+        import os.path as path
         self._log().debug('Uploading %s from %s', self._full_path(name), input_file.name)
-
         self._ensure_path_exists(name)
+        file_name = path.basename(name) 
         
         with self.change_directory_for_name(name):
-            self._connection.put(input_file.name, self._temporary_name(name))
-            self._connection.rename(self._temporary_name(name), name)
+            temp_name = self._temporary_name(file_name)
+            self._connection.put(input_file.name, temp_name)
+            self._connection.rename(temp_name, file_name)
 
         self._log().debug('successfully uploaded %s to %s', input_file.name, self._full_path(name))
 
