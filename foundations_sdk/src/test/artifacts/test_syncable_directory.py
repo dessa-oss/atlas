@@ -82,6 +82,15 @@ class TestSyncableDirectory(Spec):
         return syncable_directory
 
     @let
+    def syncable_directory_trailing_slash(self):
+        self._set_up_for_download()
+
+        from foundations.artifacts.syncable_directory import SyncableDirectory
+        syncable_directory = SyncableDirectory(self.key, self.directory_path + '/', self.local_job_id, self.remote_job_id)
+        self.mock_archive.fetch_file_path_to_target_file_path.reset_mock()
+        return syncable_directory
+        
+    @let
     def syncable_directory_in_uploading_job(self):
         self._set_up_for_download()
 
@@ -126,6 +135,23 @@ class TestSyncableDirectory(Spec):
                 )
             )
         self.syncable_directory.upload()
+        self.mock_archive.append_file.assert_has_calls(expected_calls)
+
+    def test_uploads_all_files_with_trailing_slash(self):
+        self.mock_artifact_file_listing.return_when(self.file_listing, self.directory_path + '/')
+
+        expected_calls = []
+        for file_path in self.file_listing:
+            remote_path = file_path[len(self.directory_path)+1:]
+            expected_calls.append(
+                call(
+                    f'synced_directories/{self.key}', 
+                    file_path, 
+                    self.local_job_id,
+                    remote_path
+                )
+            )
+        self.syncable_directory_trailing_slash.upload()
         self.mock_archive.append_file.assert_has_calls(expected_calls)
 
     def test_uploads_all_files_to_different_package(self):

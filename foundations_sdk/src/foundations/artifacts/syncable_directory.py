@@ -43,8 +43,8 @@ class SyncableDirectory(object):
 
     def _upload_single_artifact(self, file, decoded_old_timestamps):
         import os
-
-        remote_path = file[len(self._directory_path)+1:]
+        
+        remote_path = file[len(self._directory_path.rstrip('/'))+1:]
         timestamp = os.stat(file).st_mtime
 
         self._redis().hmset(f'{self._local_job_redis_key()}:timestamps', {remote_path: timestamp})
