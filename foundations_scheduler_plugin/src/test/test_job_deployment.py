@@ -13,12 +13,28 @@ from foundations_scheduler_plugin.job_deployment import JobDeployment
 class TestJobDeployment(Spec):
 
     mock_api_wrapper = let_patch_instance('foundations_scheduler_core.kubernetes_api_wrapper.KubernetesApiWrapper')
-    mock_foundations_context = let_patch_instance('foundations_contrib.global_state.current_foundations_context')
     mock_filterwarnings = let_patch_mock('warnings.filterwarnings')
+
+    @let
+    def pipeline_context(self):
+        from foundations_internal.pipeline_context import PipelineContext
+        return PipelineContext()
+
+    @let
+    def pipeline(self):
+        from foundations_internal.pipeline import Pipeline
+        return Pipeline(self.pipeline_context)
+
+    @let_now
+    def mock_foundations_context(self):
+        from foundations_internal.foundations_context import FoundationsContext
+
+        context = FoundationsContext(self.pipeline)
+        return self.patch('foundations_contrib.global_state.foundations_context', context)
 
     @set_up
     def set_up(self):
-        self.mock_foundations_context.job_resources.return_value = self.job_resources
+        self.mock_foundations_context.set_job_resources(self.job_resources)
 
     @let_now
     def mock_bundler_instance(self):
@@ -132,7 +148,7 @@ class TestJobDeployment(Spec):
 
     def test_deploy_submits_job_to_scheduler(self):
         self.deployment.deploy()
-        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources)
+        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources, worker_container_overrides={})
 
     def test_get_job_status_returns_status(self):
         self.assertEqual(self.job_status, self.deployment.get_job_status())
