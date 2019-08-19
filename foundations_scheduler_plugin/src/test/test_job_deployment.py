@@ -148,7 +148,7 @@ class TestJobDeployment(Spec):
 
     def test_deploy_submits_job_to_scheduler(self):
         self.deployment.deploy()
-        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources, worker_container_overrides={})
+        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources)
 
     def test_get_job_status_returns_status(self):
         self.assertEqual(self.job_status, self.deployment.get_job_status())

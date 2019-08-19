@@ -53,7 +53,7 @@ class JobDeployment(object):
 
         try:
             self._job_bundler.bundle()
-            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources(), worker_container_overrides={})
+            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources())
         finally:
             self._job_bundler.cleanup()
 
