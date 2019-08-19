@@ -24,12 +24,12 @@ class TestOrbitDeployModelViaCli(Spec):
         cleanup()
         config_manager['log_level'] = 'INFO'
         
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
     
     @tear_down_class
     def tear_down_class(self):
         pass
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
 
     @set_up
     def set_up(self):
@@ -50,6 +50,8 @@ class TestOrbitDeployModelViaCli(Spec):
     def _deploy_job(self, model_name):
         import subprocess
         config_manager.add_simple_config_path('./orbit_acceptance/fixtures/config/local.config.yaml')
+        config_manager['remote_host'] = self._get_scheduler_ip()
+        config_manager['redis_url'] = f'redis://{self._get_scheduler_ip()}:6379'
 
         command_to_run = [
             'python', '-m', 
