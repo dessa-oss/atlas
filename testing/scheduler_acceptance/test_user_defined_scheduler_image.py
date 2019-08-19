@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
-from acceptance.mixins.run_process import run_process
 
 @skip
 class TestUserDefinedSchedulerImage(Spec):
