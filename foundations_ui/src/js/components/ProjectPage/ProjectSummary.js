@@ -1,53 +1,68 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import ProjectActions from '../../actions/ProjectActions';
+import { withRouter } from 'react-router-dom';
 
-class ProjectSummary extends Component {
-  constructor(props) {
-    super(props);
-    this.viewClick = this.viewClick.bind(this);
-    this.state = {
-      project: this.props.project,
-    };
-  }
+const ProjectSummary = (props) => {
+  const packageClick = () => {
+    const { history, project } = props;
 
-  viewClick() {
-    this.setState({ redirect: true });
-  }
-
-  render() {
-    const { project } = this.state;
-    if (this.state.redirect) {
-      const jobListingPath = `/projects/${project.name}/job_listing`;
-      return ProjectActions.redirect(jobListingPath);
-    }
-    return (
-      <div className="project-summary-container elevation-1">
-        <div className="project-summary-info-container">
-          <h2 className="font-bold">{project.name}</h2>
-          <br />
-          <p className="font-bold">
-            Project owner: <span>Trial{project.owner}</span>
-          </p>
-          <p className="font-bold">
-            Created at: <span>Trial</span>
-          </p>
-          <div className="project-summary-button-container">
-            <button type="button" onClick={this.viewClick} className="b--mat b--affirmative">View jobs</button>
-          </div>
-        </div>
-        <div className="project-summary-metrics-container" />
-      </div>
+    history.push(
+      `/projects/${project.name}/management`,
+      {
+        project,
+      },
     );
-  }
-}
+  };
+
+  const { project } = props;
+
+
+  return (
+    <div
+      className="project-summary-container elevation-1"
+      onClick={packageClick}
+      role="button"
+      tabIndex={0}
+      onKeyPress={packageClick}
+    >
+      <div className="project-summary-info-container">
+        <h2 className="font-bold">{project.name}</h2>
+        <p>Data Source: Unknown</p>
+        <p className="font-bold">
+          Project owner: <span>{project.owner}</span>
+        </p>
+        <p className="font-bold">
+          Created at: <span>{project.created_at}</span>
+        </p>
+        <div className="project-summary-button-container">
+          {/* <button type="button" className="b--mat b--affirmative">
+              view queue
+            </button>
+            <button type="button" className="b--mat b--affirmative">
+              view job list
+            </button> */}
+          {/* <button
+              type="button"
+              onClick={this.packageClick}
+              className="b--mat b--affirmative"
+            >
+              Post Deploy Management
+            </button> */}
+        </div>
+      </div>
+      <div className="project-summary-metrics-container" />
+    </div>
+  );
+};
 
 ProjectSummary.propTypes = {
   project: PropTypes.object,
+  history: PropTypes.object,
 };
 
 ProjectSummary.defaultProps = {
   project: {},
+  history: {},
 };
 
-export default ProjectSummary;
+export default withRouter(ProjectSummary);

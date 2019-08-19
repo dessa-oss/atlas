@@ -55,12 +55,12 @@ class JobListActions {
     if (!duration) return 0;
 
     const oneSecond = 1000;
-    let match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
-    let secondDuration = parseInt(match[1], 10) * 86400
+    const match = duration.match(/(\d+)d(\d+)h(\d+)m(\d+)s/);
+    const secondDuration = parseInt(match[1], 10) * 86400
       + parseInt(match[2], 10) * 3600
       + parseInt(match[3], 10) * 60
       + parseInt(match[4], 10);
-    let millisecondDuration = secondDuration * oneSecond;
+    const millisecondDuration = secondDuration * oneSecond;
 
     return millisecondDuration || 1000;
   }
@@ -725,9 +725,9 @@ class JobListActions {
   }
 
   static deleteAllJobs(jobIds, callback) {
-    let deletedJobRequests = jobIds.map(
+    const deletedJobRequests = jobIds.map(
       (jobId) => {
-        let uri = `projects/dummy_project_name/job_listing/${jobId}`;
+        const uri = `projects/dummy_project_name/job_listing/${jobId}`;
         return BaseActions.deleteBetaFromAPI(uri);
       },
     );
