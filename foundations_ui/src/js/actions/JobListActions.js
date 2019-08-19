@@ -14,12 +14,9 @@ class JobListActions {
   static getJobs(projectName) {
     const url = this.getBaseJobListingURL(projectName);
     // TODO get Jobs is currently in Beta
-    return BaseActions.getBetaFromAPI(url)
-      .then(([status, result]) => {
-        return {
-          status,
-          result,
-        };
+    return BaseActions.getFromApiary(url)
+      .then((results) => {
+        return results;
       });
   }
 
@@ -41,7 +38,7 @@ class JobListActions {
     url = url.concat('?').concat(filterURL);
 
     // TODO get Jobs is currently in Beta
-    return BaseActions.getBetaFromAPI(url)
+    return BaseActions.getFromApiary(url)
       .then(([status, result]) => {
         return {
           status,
