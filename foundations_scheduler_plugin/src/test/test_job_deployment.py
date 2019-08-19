@@ -37,12 +37,15 @@ class TestJobDeployment(Spec):
         self.mock_foundations_context.set_job_resources(self.job_resources)
 
     @let_now
+    def mock_bundler_klass(self):
+        klass = self.patch('foundations_contrib.job_bundler.JobBundler', ConditionalReturn())
+        klass.return_when(self.mock_bundler_instance, self.job_id, self.result_config, self.job, self.job_source_bundle)
+        return klass
+
+    @let_now
     def mock_bundler_instance(self):
         instance = Mock()
         instance.job_archive.return_value = self.path_to_tar
-
-        klass = self.patch('foundations_contrib.job_bundler.JobBundler', ConditionalReturn())
-        klass.return_when(instance, self.job_id, self.result_config, self.job, self.job_source_bundle)
         return instance
 
     @let_now
@@ -63,6 +66,10 @@ class TestJobDeployment(Spec):
         config = {'run_script_environment': {}}
         config.update(self.faker.pydict())
         return config
+
+    @let
+    def worker_container_override_config(self):
+        return self.faker.pydict()
 
     @let_now
     def config_manager(self):
@@ -149,6 +156,12 @@ class TestJobDeployment(Spec):
     def test_deploy_submits_job_to_scheduler(self):
         self.deployment.deploy()
         self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources, worker_container_overrides={})
+
+    def test_deploy_submits_job_to_scheduler_with_container_overrides(self):
+        self.config_manager['worker_container_overrides'] = self.worker_container_override_config
+        self.result_config['worker_container_overrides'] = self.worker_container_override_config
+        self.deployment.deploy()
+        self.mock_scheduler_instance.submit_job.assert_called_with(self.job_id, self.path_to_tar, job_resources=self.job_resources, worker_container_overrides=self.worker_container_override_config)
 
     def test_get_job_status_returns_status(self):
         self.assertEqual(self.job_status, self.deployment.get_job_status())

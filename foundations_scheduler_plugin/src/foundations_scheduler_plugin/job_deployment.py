@@ -53,7 +53,7 @@ class JobDeployment(object):
 
         try:
             self._job_bundler.bundle()
-            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources(), worker_container_overrides={})
+            self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources(), worker_container_overrides=self._worker_container_override_config())
         finally:
             self._job_bundler.cleanup()
 
@@ -112,6 +112,11 @@ class JobDeployment(object):
             return True
         except Exception as ex:
             return False
+
+    def _worker_container_override_config(self):
+        from foundations_contrib.global_state import config_manager
+
+        return config_manager.config().get('worker_container_overrides', {})
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
