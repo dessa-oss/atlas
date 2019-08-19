@@ -17,6 +17,7 @@ def get_translator_config(config_option):
         'deployment_implementation': _deployment_implementation,
         'project_listing_implementation': _project_listing_implementation,
         'cache_implementation': _cache_implementation,
+        'worker': _worker_container_overrides
     }
     return config_options[config_option]
 
@@ -55,5 +56,10 @@ def _archive_implementation(result_end_point):
     from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
     return archive_implementation(result_end_point, DeploymentSSHBucket.bucket_from_single_path)
+
+def _worker_container_overrides(config):
+    return {
+        'worker_container_overrides': config['worker']
+    }
 
 translate = get_translate_implementation(get_translator_config)

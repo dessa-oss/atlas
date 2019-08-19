@@ -5,6 +5,7 @@ import { withRouter } from "react-router-dom";
 import { get } from "../../../actions/BaseActions";
 import moment from "moment";
 import EntryRow from "./EntryRow";
+import { Modal, ModalBody } from "reactstrap";
 
 const Timeline = props => {
   const [events, setEvents] = React.useState([]);
@@ -86,12 +87,14 @@ const Timeline = props => {
           <p>There are currently no events to look at.</p>
         </div>
       )}
-      <div className="container-trial-unavailable">
-        <div className="container-trial-unavailable-message">
-          <p>This content is not available for trial.</p>
-          <p>In the actual product, you can .... here</p>
-        </div>
-      </div>
+      <Modal
+        isOpen
+        className="modal-not-available"
+      >
+        <ModalBody>
+          <div className="image-not-available timeline" />
+        </ModalBody>
+      </Modal>
     </Layout>
   );
 };

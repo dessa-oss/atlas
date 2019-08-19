@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
-@skip
 class TestUserDefinedSchedulerImage(Spec):
 
     @let
@@ -20,7 +19,7 @@ class TestUserDefinedSchedulerImage(Spec):
     def config(self):
         import yaml
 
-        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/scheduler.template.config.yaml', 'r') as file:
+        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/default.template.config.yaml', 'r') as file:
             config = yaml.load(file.read())
 
         config['results_config']['redis_end_point'] = f'redis://{self.scheduler_host}:6379'
@@ -37,19 +36,18 @@ class TestUserDefinedSchedulerImage(Spec):
         import yaml
         import foundations
 
-        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/scheduler.config.yaml', 'w+') as file:
+        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/default.config.yaml', 'w+') as file:
             file.write(yaml.dump(self.config))
 
         foundations.set_job_resources(num_gpus=0)
-        job = foundations.deploy(env='scheduler', job_directory='scheduler_acceptance/fixtures/user_defined_scheduler_image/')
+        job = foundations.deploy(env='default', job_directory='scheduler_acceptance/fixtures/user_defined_scheduler_image/')
         job.wait_for_deployment_to_complete()
         self.job_id = job.job_name()
 
     def test_can_run_job_with_custom_image(self):
-        import json
+        from foundations_internal.foundations_serializer import loads
 
         key = f'jobs:{self.job_id}:parameters'
         serialized_parameters = self.redis_connection.get(key)
-        parameters = json.loads(serialized_parameters)
-
+        parameters = loads(serialized_parameters)
         self.assertEqual(self.job_id, parameters['job_id'])

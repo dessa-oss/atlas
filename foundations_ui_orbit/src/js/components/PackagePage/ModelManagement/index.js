@@ -6,10 +6,12 @@ import { get, getFromApiary } from "../../../actions/BaseActions";
 import { Modal, ModalBody } from "reactstrap";
 import ModelManagementTable from "./ModelManagementTable";
 import Schedule from "./Schedule";
+import ModalTutorial from "../../common/ModalTutorial";
 
 const ModelManagement = props => {
   const [modelManagementData, setModelManagementData] = React.useState([]);
   const [open, setOpen] = React.useState(false);
+  const [tutorialVisible, setTutorialVisible] = React.useState(false);
 
   const reload = () => {
     get(
@@ -33,8 +35,13 @@ const ModelManagement = props => {
     setOpen(false);
   };
 
+  const onToggleTutorial = () => {
+    let value = !tutorialVisible;
+    setTutorialVisible(value);
+  };
+
   return (
-    <Layout tab="Management" title="Model Management">
+    <Layout tab="Management" title="Model Management" openTutorial={onToggleTutorial}>
       <div className="package-deployment-container">
         {modelManagementData.length > 0 ? (
           <div>
@@ -75,6 +82,10 @@ const ModelManagement = props => {
             </p>
           </div>
         )}
+        <ModalTutorial
+          tutorialVisible={tutorialVisible}
+          onToggleTutorial={onToggleTutorial}
+        />
       </div>
     </Layout>
   );

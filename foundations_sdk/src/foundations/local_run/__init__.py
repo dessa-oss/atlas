@@ -9,7 +9,7 @@ _exception_happened = False
 
 def load_local_configuration_if_present():
     from foundations.config import set_environment
-    from foundations_contrib.global_state import current_foundations_context, message_router
+    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
     import atexit
@@ -20,6 +20,7 @@ def load_local_configuration_if_present():
 
     if _default_environment_present():
         set_environment('default')
+        config_manager['_is_deployment'] = True
         pipeline_context = current_foundations_context().pipeline_context()
         _set_job_state(pipeline_context)
         QueueJob(message_router, pipeline_context).push_message()

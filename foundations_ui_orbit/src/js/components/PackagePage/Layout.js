@@ -14,7 +14,7 @@ const Layout = props => {
   };
 
   const {
-    tab, location, title, children
+    tab, location, title, children, openTutorial
   } = props;
 
   return (
@@ -24,6 +24,7 @@ const Layout = props => {
         project={location.state.project}
         title={title}
         onLoading={onLoading}
+        openTutorial={openTutorial}
       />
       <div className="container-sidebar-children">
         <SideBar tab={tab} />
@@ -42,15 +43,16 @@ Layout.propTypes = {
   tab: PropTypes.string,
   title: PropTypes.string,
   location: PropTypes.object,
-  children: PropTypes.object
+  children: PropTypes.object,
+  openTutorial: PropTypes.func
 };
 
 Layout.defaultProps = {
   tab: "Deployment",
   title: "Deployment",
   location: { state: {} },
-  children: []
-
+  children: [],
+  openTutorial: () => null
 };
 
 export default withRouter(Layout);

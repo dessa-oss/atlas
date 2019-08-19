@@ -7,14 +7,26 @@ import Preview from "./Preview";
 import Loading from "../../common/Loading";
 import Schedule from "./Schedule";
 import Charts from "./Charts";
+import ModalTutorial from "../../common/ModalTutorial";
 
 const ModelEvaluation = props => {
+  const [tutorialVisible, setTutorialVisible] = React.useState(false);
+
+  const onToggleTutorial = () => {
+    let value = !tutorialVisible;
+    setTutorialVisible(value);
+  };
+
   const { tab } = props;
 
   return (
-    <Layout tab={tab} title="Model Evaluation">
+    <Layout tab={tab} title="Model Evaluation" openTutorial={onToggleTutorial}>
       <Schedule />
       <Charts {...props} />
+      <ModalTutorial
+        tutorialVisible={tutorialVisible}
+        onToggleTutorial={onToggleTutorial}
+      />
     </Layout>
   );
 };

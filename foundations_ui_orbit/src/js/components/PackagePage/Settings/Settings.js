@@ -4,8 +4,8 @@ import Layout from "../Layout";
 import { getFromApiary } from "../../../actions/BaseActions";
 import User from "./User";
 import Notification from "./Notification";
-import { Modal, ModalBody } from "reactstrap";
 import AddUserModal from "./AddUserModal";
+import { Modal, ModalBody } from "reactstrap";
 
 class Settings extends Component {
   constructor(props) {
@@ -231,12 +231,14 @@ class Settings extends Component {
             <AddUserModal updateUser={this.getUsers} />
           </ModalBody>
         </Modal>
-        <div className="container-trial-unavailable">
-          <div className="container-trial-unavailable-message">
-            <p>This content is not available for trial.</p>
-            <p>In the actual product, you can .... here</p>
-          </div>
-        </div>
+        <Modal
+          isOpen
+          className="modal-not-available"
+        >
+          <ModalBody>
+            <div className="image-not-available settings" />
+          </ModalBody>
+        </Modal>
       </Layout>
     );
   }

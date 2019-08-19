@@ -36,6 +36,23 @@
       vertical-align: top;
       color: $color-font-black;
     }
+
+    .icon-tutorial {
+      position: absolute;
+      right: 270px;
+      bottom: 10px;
+      background-color: blue;
+      border-radius: 10px;
+      width: 25px;
+      height: 20px;
+      cursor: pointer;
+
+      p {
+        color: white;
+        margin-left: 10px;
+        margin-top: 2px;
+      }
+    }
   }
   
   .job-header-info-container{

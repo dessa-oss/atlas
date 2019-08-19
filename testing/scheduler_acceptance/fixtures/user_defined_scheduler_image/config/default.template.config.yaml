@@ -20,4 +20,4 @@ worker:
   command:
     - /bin/bash
     - -c
-    - pip install -r requirements.txt && python custom_main.py
+    - ls -lah && pip install -r requirements.txt && python custom_main.py

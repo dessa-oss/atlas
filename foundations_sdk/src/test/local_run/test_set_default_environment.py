@@ -25,6 +25,11 @@ class SetDefaultEnvironment(Spec):
     mock_failed_job = let_mock()
 
     @let_now
+    def mock_config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let_now
     def mock_os_environment(self):
         return self.patch('os.environ', {})
 
@@ -90,6 +95,10 @@ class SetDefaultEnvironment(Spec):
         self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
         self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.pipeline_context)
         self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.pipeline_context, self.exception_data)
+
+    def test_treats_running_process_like_deployment(self):
+        load_local_configuration_if_present()
+        self.assertEqual(True, self.mock_config_manager['_is_deployment'])
 
     def test_default_environment_loaded_when_present_locally(self):
         load_local_configuration_if_present()
