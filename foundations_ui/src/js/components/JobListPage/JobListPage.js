@@ -79,8 +79,8 @@ class JobListPage extends Component {
   async getJobs() {
     const { projectName } = this.state;
     const fetchedJobs = await JobListActions.getJobs(projectName);
-    const apiJobs = fetchedJobs.result;
-    this.setState({ queryStatus: fetchedJobs.status });
+    const apiJobs = fetchedJobs;
+    this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
     if (this.checkStatusOk()) {
       const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
       this.formatAndSaveParams(apiJobs, allUsers);
