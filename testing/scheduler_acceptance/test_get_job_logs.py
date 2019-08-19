@@ -88,7 +88,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         completed_job_id = job.job_name()
         self.assertEqual('completed', job.get_job_status())
 
-        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
+        command_to_run = ['python', '-m', 'foundations', 'get', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
