@@ -4,6 +4,7 @@ import Layout from "../Layout";
 import { getFromApiary } from "../../../actions/BaseActions";
 import PropTypes from "prop-types";
 import moment from "moment";
+import ModalTutorial from "../../common/ModalTutorial";
 
 const SystemHealth = props => {
   const [showSchemaTab, setShowSchemaTab] = React.useState(true);
@@ -15,6 +16,12 @@ const SystemHealth = props => {
   const [selectedModelPackage, setSelectedModelPackage] = React.useState("");
   const [selectedDataContract, setSelectedDataContract] = React.useState("");
   const [rowCountDifference, setRowCountDifference] = React.useState("No Report Selected");
+  const [tutorialVisible, setTutorialVisible] = React.useState(false);
+
+  const onToggleTutorial = () => {
+    let value = !tutorialVisible;
+    setTutorialVisible(value);
+  };
 
   const switchToSchemaTab = () => {
     setShowSchemaTab(true);
@@ -335,7 +342,7 @@ const SystemHealth = props => {
 
   // data != undefined ?
   const mainWindow = (
-    <Layout tab="Health" title="Data Health">
+    <Layout tab="Health" title="Data Health" openTutorial={onToggleTutorial}>
       <div className="new-systemhealth-container-deployment">
         <label className="new-systemhealth-section font-bold">
           DATA HEALTH SUMMARY
@@ -557,6 +564,10 @@ const SystemHealth = props => {
             </div>
           </div>
         </div>
+        <ModalTutorial
+          tutorialVisible={tutorialVisible}
+          onToggleTutorial={onToggleTutorial}
+        />
       </div>
     </Layout>
   );

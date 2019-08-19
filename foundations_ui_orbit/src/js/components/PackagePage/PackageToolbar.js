@@ -70,7 +70,7 @@ const PackageToolbar = props => {
       });
   };
 
-  const { project, title } = props;
+  const { project, title, openTutorial } = props;
 
   return (
     <div className="layout-package-toolbar-container">
@@ -84,6 +84,9 @@ const PackageToolbar = props => {
               : title
           }
         />
+        <div className="icon-tutorial" onClick={openTutorial}>
+          <p>?</p>
+        </div>
         {demoOpen === true ? (
           <div className="container-layout-demo">
             <div className="container-demo-arrow">
@@ -126,13 +129,15 @@ const PackageToolbar = props => {
 PackageToolbar.propTypes = {
   project: PropTypes.object,
   title: PropTypes.string,
-  onLoading: PropTypes.func
+  onLoading: PropTypes.func,
+  openTutorial: PropTypes.func
 };
 
 PackageToolbar.defaultProps = {
   project: {},
   title: "",
-  onLoading: () => null
+  onLoading: () => null,
+  openTutorial: () => null
 };
 
 export default withRouter(PackageToolbar);
