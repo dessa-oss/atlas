@@ -18,7 +18,7 @@ class ModalTutorial extends React.Component {
   onClickNext() {
     const { imageIndex } = this.state;
 
-    if (imageIndex < 4) {
+    if (imageIndex < 5) {
       this.setState(prevState => {
         let value = prevState.imageIndex + 1;
         return {
@@ -61,6 +61,10 @@ class ModalTutorial extends React.Component {
       containerClassName = "container-tutorial image-4";
     }
 
+    if (imageIndex === 5) {
+      containerClassName = "container-tutorial image-5";
+    }
+
     return (
       <Modal
         isOpen={tutorialVisible}
@@ -94,19 +98,33 @@ class ModalTutorial extends React.Component {
                     ? "tutorial-dot-active"
                     : "tutorial-dot-inactive"}
               />
+              <div
+                className={
+                  imageIndex === 5
+                    ? "tutorial-dot-active"
+                    : "tutorial-dot-inactive"}
+              />
             </div>
-            <div
-              className="button-tutorial-next"
-              onClick={this.onClickNext}
-            >
-              NEXT
-            </div>
-            <div
-              className="button-tutorial-previous"
-              onClick={this.onClickPrevious}
-            >
-              BACK
-            </div>
+            {
+              imageIndex !== 5 && (
+                <div
+                  className="button-tutorial-next"
+                  onClick={this.onClickNext}
+                >
+                  NEXT
+                </div>
+              )
+            }
+            {
+              imageIndex !== 1 && (
+                <div
+                  className="button-tutorial-previous"
+                  onClick={this.onClickPrevious}
+                >
+                  BACK
+                </div>
+              )
+            }
             {/* <div
               className="button-tutorial-close"
               onClick={onToggleTutorial}
