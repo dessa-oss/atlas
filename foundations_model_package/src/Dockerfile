@@ -1,5 +1,9 @@
 FROM docker.shehanigans.net/foundations-scheduler-worker-scheduler
 
+RUN mkdir -p /tmp
+COPY ./tmp /tmp
+RUN pip install --no-index --find-links=/tmp/pip_wheels dessa-foundations foundations-rest-api 
+
 RUN mkdir -p /job
 RUN pip install flask-restful flask-cors
 

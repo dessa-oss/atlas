@@ -15,7 +15,6 @@ class TestCanDeployModelServer(Spec):
     @set_up
     def set_up(self):
         import yaml
-        from foundations_contrib.global_state import redis_connection
 
         config_path = 'integration/fixtures/model-server/config/scheduler.config.yaml'
         config_yaml = yaml.dump({
@@ -45,6 +44,8 @@ class TestCanDeployModelServer(Spec):
 
         self._proxy_process = None
         self.deployment = None
+
+        from foundations_contrib.global_state import redis_connection
 
         self.redis_connection = redis_connection
         self.redis_connection.flushall()
@@ -168,7 +169,7 @@ class TestCanDeployModelServer(Spec):
         import os
 
         if 'FOUNDATIONS_SCHEDULER_HOST' not in os.environ:
-            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env var')
+            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env variable')
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
         
