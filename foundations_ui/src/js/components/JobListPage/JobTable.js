@@ -85,8 +85,8 @@ class JobTable extends Component {
       startTimeFilters, filters,
     } = this.state;
 
-    let jobRows = [];
-    let rowNum = 1;
+    const jobRows = [];
+    const rowNum = 1;
     const rowNumbers = [];
 
     const handleClick = (job) => {

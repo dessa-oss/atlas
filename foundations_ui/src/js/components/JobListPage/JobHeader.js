@@ -45,7 +45,7 @@ class JobHeader extends Component {
     const { hiddenBubbles } = this.state;
     const newRefs = this.refsInFilters(nextProps.filters);
 
-    let curWidth = 0;
+    const curWidth = 0;
     let curHiddenBubbles = CommonActions.deepCopyArray(hiddenBubbles);
     curHiddenBubbles = this.getCurHiddenBubbles(newRefs, curHiddenBubbles);
     newRefs.sort((a, b) => { return a.length - b.length; });
@@ -162,7 +162,7 @@ class JobHeader extends Component {
 
   async cancelJobs() {
     if (window.confirm('Are you sure you want to cancel all running and queued jobs?')) {
-      let jobIds = this.props.jobs
+      const jobIds = this.props.jobs
         .filter(job => job.status === 'running' || job.status === 'queued')
         .map(job => job.job_id);
       return JobListActions.deleteAllJobs(jobIds, this.onDeletedJobs);

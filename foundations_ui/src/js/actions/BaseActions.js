@@ -1,79 +1,144 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-
-
 const BaseActions = {
-  baseURL: process.env.REACT_APP_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v1/',
-  baseBetaURL: process.env.REACT_APP_BETA_API_URL || 'http://private-83924-dessa.apiary-mock.com/api/v2beta/',
-  getFromAPI(url) {
-    const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL, {
-      credentials: 'include',
-    })
-      .then(
-        (res) => {
-          const { status } = res;
-          const result = res.json();
-          return Promise.all([status, result]);
-        },
-      ).catch(() => { return null; });
-  },
+  baseURL: process.env.REACT_APP_API_URL,
+  baseApiaryURL: process.env.REACT_APP_APIARY_URL,
 
-  postToAPI(url, body) {
+  get(url) {
     const fullURL = this.baseURL.concat(url);
-    return fetch(fullURL, {
-      method: 'POST',
-      body,
-      credentials: 'include',
-    }).then(
-      (res) => {
-        const { status } = res;
-        const result = res.json();
-        return Promise.all([status, result]);
-      },
-    ).catch(() => { return null; });
-  },
-
-  deleteBetaFromAPI(url, body) {
-    const fullURL = this.baseBetaURL.concat(url);
-    return fetch(fullURL, {
-      method: 'DELETE',
-      body,
-      credentials: 'include',
-    }).then(
-      (res) => {
-        const status = res.status;
-        const result = res.json();
-        return Promise.all([status, result]);
-      },
-    ).catch(
-      (err) => {
+    return fetch(fullURL)
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
         return null;
-      },
-    );
+      });
   },
 
-  // NOTE this is the method for Beta backend only
-  getBetaFromAPI(url) {
-    const fullURL = this.baseBetaURL.concat(url);
+  getFromApiary(url) {
+    const fullURL = this.baseApiaryURL.concat(url);
+    return fetch(fullURL)
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+  post(url, body) {
+    const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
-      credentials: 'include',
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
     })
-      .then(
-        (res) => {
-          const status = res.status;
-          const result = res.json();
-          return Promise.all([status, result]);
-        },
-      ).catch(
-        (err) => {
-          return null;
-        },
-      );
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
   },
 
-  redirectRoute(urlName) {
-    return <Redirect push to={urlName} />;
+  postApiary(url, body) {
+    const fullURL = this.baseApiaryURL.concat(url);
+    return fetch(fullURL, {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+  put(url, body) {
+    const fullURL = this.baseURL.concat(url);
+    return fetch(fullURL, {
+      method: 'put',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+
+  putApiary(url, body) {
+    const fullURL = this.baseApiaryURL.concat(url);
+    return fetch(fullURL, {
+      method: 'put',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+  del(url) {
+    const fullURL = this.baseURL.concat(url);
+    return fetch(fullURL, {
+      method: 'del',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+
+  postJSONFile(url, fileName, data) {
+    const fullURL = this.baseApiaryURL.concat(url);
+    return fetch(fullURL, {
+      method: 'post',
+      body: JSON.stringify({ file: fileName, data }),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
   },
 };
 

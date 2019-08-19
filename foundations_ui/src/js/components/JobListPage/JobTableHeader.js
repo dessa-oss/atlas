@@ -171,9 +171,9 @@ class JobTableHeader extends Component {
     const {
       numberFilterColumn,
     } = this.state;
-    let columnName = this.getColumnName(e);
-    let columnType = this.getColumnType(e);
-    let metricClass = this.getMetricClass(e);
+    const columnName = this.getColumnName(e);
+    const columnType = this.getColumnType(e);
+    const metricClass = this.getMetricClass(e);
 
     if (columnType === 'number') {
       this.hideOtherFilters('Number');
@@ -474,7 +474,7 @@ class JobTableHeader extends Component {
       );
     }
 
-    let booleanFilter = null;
+    const booleanFilter = null;
     let changedBoolParams = [];
     let boolColumns = CommonActions.deepCopyArray(boolCheckboxes);
     if (isShowingBooleanFilter) {
