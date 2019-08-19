@@ -44,6 +44,9 @@ def get_translate_implementation(get_translator_config):
         }
         if 'ssh_config' in config:
             result.update(ssh_configuration(config))
+        if 'worker' in config:
+            worker_config = get_translator_config('worker')
+            result.update(worker_config(config))
         return result
 
     return _translate

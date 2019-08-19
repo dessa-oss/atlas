@@ -38,15 +38,14 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucket
     def bucket_type(self):
         from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
         return DeploymentSSHBucket.bucket_from_single_path
-
+        
     @set_up
-    def ssh_set_up(self):
-        self._configuration['ssh_config'] = {
-            'host': '',
-            'key_path': '',
-            'code_path': '',
-            'result_path': '',
-        }
+    def worker_set_up(self):
+        self._configuration['worker'] = self.worker_config
+
+    @let
+    def worker_config(self):
+        return self.faker.pydict()
 
     def test_returns_deployment_with_sftp_type(self):
         from foundations_scheduler_plugin.job_deployment import JobDeployment
@@ -54,3 +53,8 @@ class TestFoundationsSchedulerConfigTranslate(Spec, ConfigTranslates, TestBucket
         result_config = self.translator.translate(self._configuration)
         config = result_config['deployment_implementation']
         self.assertEqual(config['deployment_type'], JobDeployment)
+
+    def test_config_translator_can_take_worker_config_and_return_translated_config(self):
+        result_config = self.translator.translate(self._configuration)
+        worker_overrides = result_config['worker_container_overrides']
+        self.assertEqual(self.worker_config, worker_overrides)
