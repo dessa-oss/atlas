@@ -22,7 +22,7 @@ class JobDetails extends React.Component {
     super(props);
     this.bindAllJobs();
     this.state = {
-      projectName: this.props.match.params.projectName,
+      projectName: 'demo',
       project: {},
       filters: [],
       statuses: [
@@ -50,16 +50,19 @@ class JobDetails extends React.Component {
     };
   }
 
+  async componentDidMount() {
+    await this.setState({ isMount: true });
+    this.getJobs();
+  }
+
   async getJobs() {
     const { projectName } = this.state;
     const fetchedJobs = await JobListActions.getJobs(projectName);
     const apiJobs = fetchedJobs;
     this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
-    if (this.checkStatusOk()) {
-      const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
-      this.formatAndSaveParams(apiJobs, allUsers);
-      this.updateEventsOnJobs();
-    }
+    const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
+    this.formatAndSaveParams(apiJobs, allUsers);
+    this.updateEventsOnJobs();
     this.forceUpdate();
   }
 
@@ -312,7 +315,7 @@ class JobDetails extends React.Component {
       queryStatus,
     } = this.state;
 
-    let jobList = (
+    const jobList = (
       <JobTable
         projectName={projectName}
         statuses={statuses}
@@ -338,7 +341,6 @@ class JobDetails extends React.Component {
         jobIdFilters={jobIdFilter}
         startTimeFilters={startTimeFilter}
         filters={filters}
-        onDataUpdated={() => this.getJobs()}
       />
     );
 
@@ -374,15 +376,11 @@ JobDetails.propTypes = {
   jobIdFilter: PropTypes.array,
   startTimeFilter: PropTypes.array,
   queryStatus: PropTypes.number,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      projectName: PropTypes.string,
-    }),
-  }),
+  history: PropTypes.object,
 };
 
 JobDetails.defaultProps = {
-  projectName: '',
+  projectName: 'demo',
   project: {},
   filters: [],
   statuses: [],
@@ -398,11 +396,7 @@ JobDetails.defaultProps = {
   jobIdFilter: [],
   startTimeFilter: [],
   queryStatus: 200,
-  match: {
-    params: {
-      projectName: '',
-    },
-  },
+  history: {},
 };
 
 export default JobDetails;
