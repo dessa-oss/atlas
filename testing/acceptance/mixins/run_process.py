@@ -6,12 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-def run_process(command, directory):
-    import subprocess
-    from foundations_contrib.change_directory import ChangeDirectory
-
-    with ChangeDirectory(directory):
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-    out, err = process.communicate()
-
-    return out.decode()
+from foundations_spec.extensions import run_process
