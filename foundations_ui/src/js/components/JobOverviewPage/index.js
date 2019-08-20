@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from './Header';
 import ProjectOverview from './ProjectOverview';
 import JobDetails from './JobDetails';
+import CommonHeader from '../common/CommonHeader';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class JobOverviewPage extends Component {
 
     return (
       <div className="job-overview-container">
+        <CommonHeader {...this.props} />
         <Header {...this.props} />
         <div className="job-overview-tabs-tags-container">
           <div>
