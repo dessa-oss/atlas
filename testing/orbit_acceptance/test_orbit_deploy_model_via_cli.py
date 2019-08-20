@@ -11,7 +11,6 @@ import requests
 import foundations_contrib
 from foundations_spec import *
 from typing import List
-from foundations import config_manager
 
 class TestOrbitDeployModelViaCli(Spec):
 
@@ -22,8 +21,9 @@ class TestOrbitDeployModelViaCli(Spec):
     def set_up_class(self):
         from acceptance.cleanup import cleanup
         cleanup()
+        from foundations import config_manager
         config_manager['log_level'] = 'INFO'
-        
+
         subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
     
     @tear_down_class
@@ -33,6 +33,9 @@ class TestOrbitDeployModelViaCli(Spec):
 
     @set_up
     def set_up(self):
+        self.config_file_path = './orbit_acceptance/fixtures/config/local.config.yaml'
+        self._generate_yaml_config_file()
+
         self.base_url = f'http://{self._get_scheduler_ip()}:{self.port}/{self.mock_project_name}/{self.mock_user_provided_model_name}'
 
     @let
@@ -49,10 +52,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _deploy_job(self, model_name):
         import subprocess
-        config_manager.add_simple_config_path('./orbit_acceptance/fixtures/config/local.config.yaml')
-        config_manager['remote_host'] = self._get_scheduler_ip()
-        config_manager['redis_url'] = f'redis://{self._get_scheduler_ip()}:6379'
-
+        
         command_to_run = [
             'python', '-m', 
             'foundations',
@@ -109,6 +109,35 @@ class TestOrbitDeployModelViaCli(Spec):
             return result
         except:
             return None
+
+    def _generate_yaml_config_file(self):
+        import yaml
+
+        config_yaml = yaml.dump({
+            'job_deployment_env': 'scheduler_plugin', 
+            'results_config': {
+                'archive_end_point': '/archive',
+                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
+                'artifact_path': 'artifacts',
+                'artifact_path': '.'
+            },
+            'cache_config': {
+                'end_point': '/cache'
+            },
+            'ssh_config': {
+                'host': self._get_scheduler_ip(),
+                'port': 31222,
+                'code_path': '/jobs',
+                'result_path': '/jobs',
+                'key_path': '~/.ssh/id_foundations_scheduler',
+                'user': 'job-uploader'
+            },
+            'obfuscate_foundations': False,
+            'enable_stages': False
+        })
+        with open(self.config_file_path, 'w+') as file:
+            file.write(config_yaml)
+
 
     def test_can_successfully_run_model_serve(self):
         self._deploy_job(self.mock_user_provided_model_name)

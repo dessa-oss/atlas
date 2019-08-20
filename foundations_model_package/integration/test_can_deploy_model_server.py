@@ -14,33 +14,7 @@ class TestCanDeployModelServer(Spec):
 
     @set_up
     def set_up(self):
-        import yaml
-
-        config_path = 'integration/fixtures/model-server/config/scheduler.config.yaml'
-        config_yaml = yaml.dump({
-            'job_deployment_env': 'scheduler_plugin', 
-            'results_config': {
-                'archive_end_point': '/archive',
-                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
-                'artifact_path': 'artifacts',
-                'artifact_path': '.'
-            },
-            'cache_config': {
-                'end_point': '/cache'
-            },
-            'ssh_config': {
-                'host': self._get_scheduler_ip(),
-                'port': 31222,
-                'code_path': '/jobs',
-                'result_path': '/jobs',
-                'key_path': '~/.ssh/id_foundations_scheduler',
-                'user': 'job-uploader'
-            },
-            'obfuscate_foundations': False,
-            'enable_stages': False
-        })
-        with open(config_path, 'w+') as file:
-            file.write(config_yaml)
+        
 
         self._proxy_process = None
         self.deployment = None
@@ -53,8 +27,10 @@ class TestCanDeployModelServer(Spec):
     def _set_up_in_test(self, job_directory):
         import subprocess
 
-        return_code = self._build_image()
-        self.assertEqual(0, return_code)
+        # return_code = self._build_image()
+        # self.assertEqual(0, return_code)
+
+        self._generate_yaml_config_file(job_directory)
 
         self._deploy_job(job_directory)
         self.deployment.wait_for_deployment_to_complete()
@@ -108,6 +84,36 @@ class TestCanDeployModelServer(Spec):
         }
 
         self.assertEqual(expected_production_metrics, production_metrics)
+
+    def _generate_yaml_config_file(self, job_directory):
+        import yaml
+
+        config_path = f'integration/fixtures/{job_directory}/config/scheduler.config.yaml'
+        config_yaml = yaml.dump({
+            'log_level': 'DEBUG',
+            'job_deployment_env': 'scheduler_plugin', 
+            'results_config': {
+                'archive_end_point': '/archive',
+                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
+                'artifact_path': 'artifacts',
+                'artifact_path': '.'
+            },
+            'cache_config': {
+                'end_point': '/cache'
+            },
+            'ssh_config': {
+                'host': self._get_scheduler_ip(),
+                'port': 31222,
+                'code_path': '/jobs',
+                'result_path': '/jobs',
+                'key_path': '~/.ssh/id_foundations_scheduler',
+                'user': 'job-uploader'
+            },
+            'obfuscate_foundations': False,
+            'enable_stages': False
+        })
+        with open(config_path, 'w+') as file:
+            file.write(config_yaml)
 
     def _wait_for_model_package_pod(self, model_name):
         import time
@@ -177,6 +183,7 @@ class TestCanDeployModelServer(Spec):
         import foundations
 
         if self.deployment is None:
+            foundations.set_job_resources(num_gpus=0)
             self.deployment = foundations.deploy(project_name='test', env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
