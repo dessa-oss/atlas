@@ -42,6 +42,7 @@ module.exports = {
     "import/no-extraneous-dependencies": 1,
     quotes: [2, "double", "avoid-escape"],
     "comma-dangle": ["error", "never"],
-    "arrow-parens": ["error", "as-needed"]
+    "arrow-parens": ["error", "as-needed"],
+    "linebreak-style": 0
   }
 };
