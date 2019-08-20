@@ -90,10 +90,6 @@
   margin-right: 45px;
 }
 
-.chart {
-  min-height: 430px;
-}
-
 .readme {
   textarea {
     width: calc(100% - 2px - 50px);
@@ -120,6 +116,8 @@
     color: #3D518C;
     margin: 0px;
     font-size: 17px;
+    display: inline-block;
+    min-height: 100px;
   }
 
   h2 {
@@ -127,6 +125,12 @@
     color: #3D518C;
     margin: 0px;
     font-size: 25px;
+  }
+
+  select {
+    float: right;
+    margin-right: 15px;
+    width: 100px;
   }
 }
 
