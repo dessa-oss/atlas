@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Notes from './Notes';
 import Header from './Header';
 import ProjectOverview from './ProjectOverview';
+import JobDetails from './JobDetails';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -53,6 +53,7 @@ class JobOverviewPage extends Component {
           </div>
         </div>
         {tab === 'overview' && <ProjectOverview />}
+        {tab === 'details' && <JobDetails />}
       </div>
     );
   }
