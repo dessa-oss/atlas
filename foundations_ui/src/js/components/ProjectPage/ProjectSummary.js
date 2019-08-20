@@ -19,7 +19,7 @@ const ProjectSummary = (props) => {
 
   return (
     <div
-      className="project-summary-container elevation-1"
+      className="project-summary-container"
       onClick={packageClick}
       role="button"
       tabIndex={0}
@@ -34,21 +34,7 @@ const ProjectSummary = (props) => {
         <p className="font-bold">
           Created at: <span>{project.created_at}</span>
         </p>
-        <div className="project-summary-button-container">
-          {/* <button type="button" className="b--mat b--affirmative">
-              view queue
-            </button>
-            <button type="button" className="b--mat b--affirmative">
-              view job list
-            </button> */}
-          {/* <button
-              type="button"
-              onClick={this.packageClick}
-              className="b--mat b--affirmative"
-            >
-              Post Deploy Management
-            </button> */}
-        </div>
+        <div className="project-summary-button-container" />
       </div>
       <div className="project-summary-metrics-container" />
     </div>

@@ -3,6 +3,10 @@
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
   padding-left: 30px;
+  width: calc(50% - 65px);
+  display: inline-block;
+  margin-right: 30px;
+  margin-bottom: 25px;
 }
 
 .project-summary-container.elevation-1{
