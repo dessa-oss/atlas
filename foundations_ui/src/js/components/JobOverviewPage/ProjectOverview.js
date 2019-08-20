@@ -20,9 +20,9 @@ class ProjectOverview extends React.Component {
               </option>
             </select>
           </div>
-          <Notes />
+          <Readme />
         </section>
-        <Readme />
+        <Notes />
       </div>
     );
   }

@@ -54,7 +54,7 @@ class Notes extends React.Component {
   render() {
     const { notes, message } = this.state;
     return (
-      <div className="notes section-container">
+      <div className="notes section-container col-md-4">
         <h3>Notepad</h3>
         <div className="notes-textarea">
           <textarea placeholder="Type something..." value={message} onChange={this.onChangeMessage} />

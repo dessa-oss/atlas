@@ -3,7 +3,7 @@ import React from 'react';
 class Readme extends React.Component {
   render() {
     return (
-      <div className="readme section-container col-md-4">
+      <div className="readme section-container">
         <h2>README.md</h2>
         <textarea placeholder="Type something...">
           Customer churn and engagement has become one

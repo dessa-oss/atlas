@@ -4,19 +4,15 @@
   text-align: center;
   height: $column-header-height;
   margin: auto;
-  padding-right: 2px;
-  width: calc( 11% - (5px * 4 + 0.25px));
-
-  &:first-child {
-      width: 28px!important;
-  }
+  width: 176.5px;
+  box-sizing: border-box;
 
   h4 {
     min-width: $static-column-header-text-width;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 0px;
-    margin-top: $standard-cell-padding;
+    margin-top: 0px;
     font-weight: 400;
   }
 
@@ -36,12 +32,7 @@
     overflow: visible;
   }
 
-  &:not(.status-header) {
-    width: $standard-cell-width;
-}
-
   .static-header {
-    width: $static-column-header-text-width;
     margin: auto;
     position: relative;
 
@@ -103,8 +94,4 @@
       left: 10px;
     }
   }
-}
-
-.Duration {
-    width: $static-duration-width!important;
 }

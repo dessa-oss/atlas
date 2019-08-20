@@ -335,7 +335,7 @@ it('getJobColumnHeaderPresentationClass', () => {
 
 it('gets TableSectionHeaderDivClass', () => {
   const div = JobListActions.getTableSectionHeaderDivClass(header);
-  expect(div).toBe('table-section-header blue-header');
+  expect(div).toBe('table-section-header table-header');
 });
 
 it('gets TableSectionHeaderDivClass emptyHeader', () => {
@@ -345,7 +345,7 @@ it('gets TableSectionHeaderDivClass emptyHeader', () => {
 
 it('gets TableSectionHeaderArrowClass', () => {
   const arrow = JobListActions.getTableSectionHeaderArrowClass(header);
-  expect(arrow).toBe('arrow-down blue-header-arrow');
+  expect(arrow).toBe('arrow-down table-header-arrow');
 });
 
 it('gets TableSectionHeaderArrowClass emptyHeader', () => {
@@ -355,12 +355,12 @@ it('gets TableSectionHeaderArrowClass emptyHeader', () => {
 
 it('gets TableSectionHeaderTextClass', () => {
   const text = JobListActions.getTableSectionHeaderTextClass(header);
-  expect(text).toBe('blue-header-text');
+  expect(text).toBe('table-header-text');
 });
 
 it('gets TableSectionHeaderTextClass emptyHeader', () => {
   const text = JobListActions.getTableSectionHeaderTextClass(emptyHeader);
-  expect(text).toBe('blue-header-text no-margin');
+  expect(text).toBe('table-header-text no-margin');
 });
 
 it('getStatusCircle red', () => {
