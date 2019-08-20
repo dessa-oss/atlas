@@ -135,25 +135,25 @@ it('getTableSectionHeaderArrow empty header', () => {
 it('getTableSectionHeaderText empty header', () => {
   const header = '';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text text-white no-margin');
+  expect(className).toBe('table-header-text text-white no-margin');
 });
 
 it('getTableSectionHeaderDiv with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderDiv(header);
-  expect(className).toBe('table-section-header blue-header');
+  expect(className).toBe('table-section-header table-header');
 });
 
 it('getTableSectionHeaderArrow with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderArrow(header);
-  expect(className).toBe('blue-header-arrow border-input-metric-arrow');
+  expect(className).toBe('table-header-arrow border-input-metric-arrow');
 });
 
 it('getTableSectionHeaderText with header', () => {
   const header = 'header';
   const className = CommonActions.getTableSectionHeaderText(header);
-  expect(className).toBe('blue-header-text text-white');
+  expect(className).toBe('table-header-text text-white');
 });
 
 it('get InputMetricColumnHeaders', () => {
