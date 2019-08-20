@@ -2,11 +2,30 @@
   margin: auto;
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
-  padding-left: 30px;
-  width: calc(50% - 65px);
+  padding: 25px;
+  width: calc(50% - 65px - 25px);
   display: inline-block;
   margin-right: 30px;
   margin-bottom: 25px;
+  border-radius: 7px;
+  height: 145px;
+  outline: none;
+}
+
+.project-summary-tags-container {
+  text-align: right;
+
+  span {
+    background: #09BC8A;
+    color: white;
+    border-radius: 5px;
+    margin-left: 15px;
+    padding: 2px 10px;
+  }
+
+  p {
+    color: #B1B1B1;
+  }
 }
 
 .project-summary-container.elevation-1{
@@ -22,15 +41,17 @@
 
 .project-summary-info-container {
   width: 100%;
-  margin: 15px 0px;
   h2{
     color: $color-dark-blue;
     margin-bottom: 5px;
     margin-top: 0px;
+    font-size: 30px;
   }
   p, span{
+    color: $color-dark-blue;
     margin-top: 5px;
     margin-bottom: 5px;
+    font-size: 14px;
   }
   p, span{
     font-size: 15px;

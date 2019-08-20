@@ -27,7 +27,7 @@ const ProjectSummary = (props) => {
     >
       <div className="project-summary-info-container">
         <h2 className="font-bold">{project.name}</h2>
-        <p>Data Source: Unknown</p>
+        {/* <p>Data Source: Unknown</p> */}
         <p className="font-bold">
           Project owner: <span>{project.owner}</span>
         </p>
@@ -36,7 +36,11 @@ const ProjectSummary = (props) => {
         </p>
         <div className="project-summary-button-container" />
       </div>
-      <div className="project-summary-metrics-container" />
+      <div className="project-summary-tags-container">
+        <p>tags</p>
+        <span>finance</span>
+        <span>marketing</span>
+      </div>
     </div>
   );
 };
