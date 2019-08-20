@@ -41,12 +41,18 @@ class Readme extends React.Component {
     return (
       <div className="readme section-container">
         <h2>README.md</h2>
-        <button type="button" onClick={this.onClickEdit}>EDIT</button>
+        <button
+          className="button-edit-md"
+          type="button"
+          onClick={this.onClickEdit}
+        >
+          {editMode === true ? 'DONE' : 'EDIT'}
+        </button>
         {editMode === true && (
           <textarea value={input} onChange={this.onChangeMD} placeholder="Type something..." />
         )}
         {editMode === false && (
-          <div className="col-sm-6 input-lg" dangerouslySetInnerHTML={this.renderMD()} />
+          <div dangerouslySetInnerHTML={this.renderMD()} />
         )}
       </div>
     );
