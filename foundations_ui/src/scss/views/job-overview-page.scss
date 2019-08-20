@@ -45,3 +45,110 @@
     @extend .f--din;
   }
 }
+
+.notes-textarea {
+  position: relative; 
+  border: 2px solid #D4D4D4;
+  padding: 15px; 
+  width: calc(100% - 30px);
+  height: 75px; 
+  outline: none;
+  margin-top: 15px;
+  border-radius: 3px;
+  margin-bottom: 45px;
+
+  ::placeholder {
+    color: #6B6B6B;
+  }
+
+  textarea {
+    outline: none; 
+    width: calc(100% - 2px); 
+    height: calc(100% - 30px); 
+    outline: none;
+    background: none;
+    border: none;
+    resize: none;
+  }
+
+  button {
+    position:absolute; 
+    bottom: 15px; 
+    right: 15px;
+  }
+}
+
+.notes-blocks {
+  border: 2px solid #D4D4D4;
+  border-radius: 3px;
+  padding: 15px;
+  width: calc(100% - 30px);
+  margin: 15px 0px;
+}
+
+.chart-and-notes {
+  margin-right: 45px;
+}
+
+.chart {
+  min-height: 430px;
+}
+
+.readme {
+  textarea {
+    width: calc(100% - 2px - 50px);
+    height: calc(100% - 30px);
+    outline: none;
+    background: none;
+    border: none;
+    resize: none;
+    margin: 25px;
+  }
+}
+
+.section-container {
+  border-radius: 10px;
+  padding: 25px;
+  background-color: white;
+  -webkit-box-shadow: 0px 6px 4px 0px rgba(226,226,226,1);
+  -moz-box-shadow: 0px 6px 4px 0px rgba(226,226,226,1);
+  box-shadow: 0px 6px 4px 0px rgba(226,226,226,1);
+  margin-bottom: 25px;
+
+  h3 {
+    @extend .f--din-bold;
+    color: #3D518C;
+    margin: 0px;
+    font-size: 17px;
+  }
+
+  h2 {
+    @extend .f--din-bold;
+    color: #3D518C;
+    margin: 0px;
+    font-size: 25px;
+  }
+}
+
+.dashboard-content-container {
+  $width: unquote((8/12*100)+'%');
+  $margin: 45px;
+  margin-top: 25px;
+
+  .col-md-8 {
+    flex-basis: calc(#{$width} - #{$margin});
+    max-width: calc(#{$width} - #{$margin});
+    padding: $medium-grid-padding;
+  }
+}
+
+button {
+  background: #3D518C;
+  height: 30px;
+  color: white;
+  border-radius: 3px;
+  outline: none;
+  border: none;
+}
+
+
