@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import JobOverviewGraph from './JobOverviewGraph';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -42,19 +43,7 @@ class JobOverviewPage extends Component {
         </div>
         <div className="dashboard-content-container row">
           <section className="chart-and-notes col-md-8">
-            <div className="chart section-container">
-              <h3>Recent Jobs</h3>
-              <select>
-                <option selected="selected">
-                Metrics
-                </option>
-              </select>
-              <select>
-                <option selected="selected">
-                Sort by
-                </option>
-              </select>
-            </div>
+            <JobOverviewGraph />
             <div className="notes section-container">
               <h3>Notepad</h3>
               <div className="notes-textarea">
