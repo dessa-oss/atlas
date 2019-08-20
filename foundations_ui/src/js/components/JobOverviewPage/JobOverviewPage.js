@@ -35,6 +35,14 @@ class JobOverviewPage extends Component {
 
     return (
       <div className="job-overview-container">
+        <div className="foundations-header">
+          <div className="i--icon-dessa-logo" />
+          <div className="header-link-container">
+            <a href="/project">Project</a>
+            <a href="/documentation">Documentation</a>
+            <a href="/support">Support</a>
+          </div>
+        </div>
         <div className="job-overview-header-container">
           <div>
             <h3>Project Directory</h3>
