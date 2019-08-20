@@ -1,25 +1,53 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Remarkable } from 'remarkable';
 
 class Readme extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      input: '# This is a header\n\nAnd this is a paragraph',
+      editMode: false,
+    };
+
+    this.onClickEdit = this.onClickEdit.bind(this);
+    this.onChangeMD = this.onChangeMD.bind(this);
+    this.renderMD = this.renderMD.bind(this);
+  }
+
+  onClickEdit() {
+    const { editMode } = this.state;
+    const value = !editMode;
+    this.setState({
+      editMode: value,
+    });
+  }
+
+  onChangeMD(e) {
+    this.setState({
+      input: e.target.value,
+    });
+  }
+
+  renderMD() {
+    const { input } = this.state;
+    const md = new Remarkable();
+    return { __html: md.render(input) };
+  }
+
   render() {
+    const { input, editMode } = this.state;
     return (
       <div className="readme section-container col-md-4">
         <h2>README.md</h2>
-        <textarea placeholder="Type something...">
-          Customer churn and engagement has become one
-          of the top issues for most banks.
-          It costs significantly more to acquire new customers
-          than retain existing ones, and it costs far more to
-          re-acquire defected customers. In fact, several empirical
-          studies and models have proven that churn remains one of
-          the biggest destructors of enterprise value for banks and
-          other consumer intensive companies.
-          1. Introduction
-          We aim to accomplish the following for this study:
-          Identify and visualize which factors contribute to customer churn:
-          Build a prediction model that will perform the following:
-          Classify if a customer is going to churn or not
-        </textarea>
+        <button type="button" onClick={this.onClickEdit}>EDIT</button>
+        {editMode === true && (
+          <textarea value={input} onChange={this.onChangeMD} placeholder="Type something..." />
+        )}
+        {editMode === false && (
+          <div className="col-sm-6 input-lg" dangerouslySetInnerHTML={this.renderMD()} />
+        )}
       </div>
     );
   }
