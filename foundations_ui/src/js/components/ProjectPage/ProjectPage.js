@@ -61,10 +61,7 @@ const ProjectPage = (props) => {
 
   return (
     <div className="project-page-container">
-      <div className="header">
-        <Toolbar />
-        <ProjectHeader numProjects={projects.length} />
-      </div>
+      <h1>Project Directory</h1>
       <div className="projects-body-container">{renderProjects()}</div>
     </div>
   );
