@@ -131,6 +131,12 @@
     float: right;
     margin-right: 15px;
     width: 100px;
+    background: $color-background;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    color: $color-active-blue;
+    border-color: $color-active-blue;
+    border-radius: 10px;
   }
 }
 
