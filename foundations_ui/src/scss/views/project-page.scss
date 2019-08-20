@@ -1,6 +1,11 @@
 .project-page-container{
   background-color: $color-background-grey;
   margin: 50px;
+
+  h1 {
+    color: #637081;
+    font-size: 24px;
+  }
 }
 
 .header{

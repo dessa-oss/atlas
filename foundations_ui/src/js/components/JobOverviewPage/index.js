@@ -36,26 +36,28 @@ class JobOverviewPage extends Component {
     const { tab } = this.state;
 
     return (
-      <div className="job-overview-container">
+      <div>
         <CommonHeader {...this.props} />
-        <Header {...this.props} />
-        <div className="job-overview-tabs-tags-container">
-          <div>
-            <h3 onClick={this.onClickProjectOverview} onKeyDown={this.onKeyDown}>Project Overview</h3>
-            <h3 onClick={this.onClickJobDetails} onKeyDown={this.onKeyDown}>Job Details</h3>
-          </div>
-          <div>
-            <p className="job-overview-tags-text">tags:</p>
-            <div className="job-overview-tag">
-              <p className="job-overview-tag-name">Finance</p>
+        <div className="job-overview-container">
+          <Header {...this.props} />
+          <div className="job-overview-tabs-tags-container">
+            <div>
+              <h3 onClick={this.onClickProjectOverview} onKeyDown={this.onKeyDown}>Project Overview</h3>
+              <h3 onClick={this.onClickJobDetails} onKeyDown={this.onKeyDown}>Job Details</h3>
             </div>
-            <div className="job-overview-tag">
-              <p className="job-overview-tag-name">Marketing</p>
+            <div>
+              <p className="job-overview-tags-text">tags:</p>
+              <div className="job-overview-tag">
+                <p className="job-overview-tag-name">Finance</p>
+              </div>
+              <div className="job-overview-tag">
+                <p className="job-overview-tag-name">Marketing</p>
+              </div>
             </div>
           </div>
+          {tab === 'overview' && <ProjectOverview />}
+          {tab === 'details' && <JobDetails />}
         </div>
-        {tab === 'overview' && <ProjectOverview />}
-        {tab === 'details' && <JobDetails />}
       </div>
     );
   }
