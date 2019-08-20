@@ -9,7 +9,7 @@ import ContactPage from './ContactPage/ContactPage';
 import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
 import 'react-toastify/dist/ReactToastify.css';
-import JobOverviewPage from './JobOverviewPage/JobOverviewPage';
+import JobOverviewPage from './JobOverviewPage';
 
 toast.configure(); // single instance to improve rendering of toast
 
