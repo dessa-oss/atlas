@@ -95,6 +95,20 @@
 }
 
 .readme {
+
+  h2 {
+    float: left;
+  }
+
+  button {
+    float: right;
+  }
+
+  div {
+    margin-top: 40px;
+    width: 100%;
+  }
+
   textarea {
     width: calc(100% - 2px - 50px);
     height: calc(100% - 30px);
