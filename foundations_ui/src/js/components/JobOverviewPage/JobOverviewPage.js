@@ -9,11 +9,15 @@ class JobOverviewPage extends Component {
       projectName: this.props.history.location.state.project.name,
       dateCreated: this.props.history.location.state.project.created_at,
       projectOwners: this.props.history.location.state.project.owner,
+      metric: 'Accuracy',
+      graphData: [],
     };
   }
 
   render() {
-    const { projectName, dateCreated, projectOwners } = this.state;
+    const {
+      projectName, dateCreated, projectOwners, metric, graphData,
+    } = this.state;
     return (
       <div className="job-overview-container">
         <div className="job-overview-header-container">
@@ -43,7 +47,7 @@ class JobOverviewPage extends Component {
         </div>
         <div className="dashboard-content-container row">
           <section className="chart-and-notes col-md-8">
-            <JobOverviewGraph />
+            <JobOverviewGraph metric={metric} graphData={graphData} />
             <div className="notes section-container">
               <h3>Notepad</h3>
               <div className="notes-textarea">
