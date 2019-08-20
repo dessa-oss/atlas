@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Notes from './Notes';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -63,17 +64,7 @@ class JobOverviewPage extends Component {
                 </option>
               </select>
             </div>
-            <div className="notes section-container">
-              <h3>Notepad</h3>
-              <div className="notes-textarea">
-                <textarea placeholder="Type something..." />
-                <button type="button">Add Note</button>
-              </div>
-              <div className="notes-blocks">
-                <p>Mohammed R. <span>June 25th 2019</span></p>
-                <p>This is my message to you</p>
-              </div>
-            </div>
+            <Notes />
           </section>
           <div className="readme section-container col-md-4">
             <h2>README.md</h2>
