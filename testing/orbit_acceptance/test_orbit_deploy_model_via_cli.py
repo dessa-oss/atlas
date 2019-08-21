@@ -21,8 +21,6 @@ class TestOrbitDeployModelViaCli(Spec):
     def set_up_class(self):
         from acceptance.cleanup import cleanup
         cleanup()
-        from foundations import config_manager
-        config_manager['log_level'] = 'INFO'
 
         subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
     
