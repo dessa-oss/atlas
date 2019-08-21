@@ -32,7 +32,7 @@ fi
 pip_options="--disable-pip-version-check"
 
 cd $BASEDIR && \
-  mkdir job_source && \
+  mkdir -p job_source && \
   cd job_source && \
   tar -xf ../job.tgz && \
   cd .. && \
