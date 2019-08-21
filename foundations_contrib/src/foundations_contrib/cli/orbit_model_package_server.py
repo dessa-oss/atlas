@@ -91,7 +91,6 @@ def _setup_environment(project_name, env):
     foundations.set_environment(env)
     _retrieve_configuration_secrets()
 
-
 def deploy(project_name, model_name, project_directory, env='local'):
     _setup_environment(project_name, env)
 

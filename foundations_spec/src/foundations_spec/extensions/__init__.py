@@ -30,3 +30,17 @@ def get_network_address(adapter_name):
         for ip in network_adapter.ips:
             if isinstance(ip.ip, str):
                 return ip.ip
+
+def run_process(command, directory):
+    import subprocess
+    import os
+
+    previous_directory = os.getcwd()
+    try:
+        os.chdir(directory)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        return out.decode()
+    finally:
+        os.chdir(previous_directory)
+

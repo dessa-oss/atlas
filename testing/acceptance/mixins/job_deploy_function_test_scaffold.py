@@ -30,12 +30,16 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
     @property
     def foundations_global_configs_directory(self):
         import os.path as path
-        return path.expanduser('~/.foundations/config')
+        from foundations_contrib.utils import foundations_home
+
+        return path.expanduser(foundations_home() + '/config')
 
     @property
     def local_config_file_path(self):
         import os.path as path
-        return path.expanduser('~/.foundations/config/local.config.yaml')
+        from foundations_contrib.utils import foundations_home
+
+        return path.expanduser(foundations_home() + '/config/local.config.yaml')
 
     @property
     def local_config_file_contents(self):

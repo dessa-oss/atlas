@@ -54,8 +54,9 @@ class TestCanRunLocally(Spec):
 
     def test_job_bundle_is_saved(self):
         import os.path
+        from foundations_contrib.utils import foundations_home
 
-        path = os.path.expanduser('~/.foundations/job_data/archive')
+        path = os.path.expanduser(foundations_home() + '/job_data/archive')
         main_exists = os.path.exists(f'{path}/{self.job_id}/artifacts/main.py')
         self.assertTrue(main_exists)
 
