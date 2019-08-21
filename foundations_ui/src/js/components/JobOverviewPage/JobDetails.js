@@ -5,6 +5,7 @@ import JobHeader from '../JobListPage/JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
+import ModalJobDetails from '../JobListPage/job-sidebar/ModalJobDetails';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -47,6 +48,8 @@ class JobDetails extends React.Component {
       ],
       startTimeFilter: [],
       queryStatus: 200,
+      modalJobDetailsVisible: false,
+      selectedJob: {},
     };
   }
 
@@ -289,6 +292,17 @@ class JobDetails extends React.Component {
     this.forceUpdate();
   }
 
+  onToggleModalJobDetails(job) {
+    console.log('ON TOGGLE: ', job);
+    const { modalJobDetailsVisible } = this.state;
+    const value = !modalJobDetailsVisible;
+
+    this.setState({
+      modalJobDetailsVisible: value,
+      selectedJob: job,
+    });
+  }
+
   bindAllJobs() {
     this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
     this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
@@ -306,13 +320,14 @@ class JobDetails extends React.Component {
     this.updateDurationFilter = this.updateDurationFilter.bind(this);
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
+    this.onToggleModalJobDetails = this.onToggleModalJobDetails.bind(this);
   }
 
   render() {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
-      queryStatus,
+      queryStatus, selectedJob, modalJobDetailsVisible,
     } = this.state;
 
     const jobList = (
@@ -341,20 +356,25 @@ class JobDetails extends React.Component {
         jobIdFilters={jobIdFilter}
         startTimeFilters={startTimeFilter}
         filters={filters}
+        onClickJob={this.onToggleModalJobDetails}
       />
     );
 
     return (
-      <div className="job-list-container">
-        <JobHeader
-          project={project}
-          jobs={jobs}
-          filters={filters}
-          clearFilters={this.clearFilters}
-          removeFilter={this.removeFilter}
-        />
-        {jobList}
+      <div>
+        <div className="job-list-container">
+          <JobHeader
+            project={project}
+            jobs={jobs}
+            filters={filters}
+            clearFilters={this.clearFilters}
+            removeFilter={this.removeFilter}
+          />
+          {jobList}
+        </div>
+        <ModalJobDetails job={selectedJob} visible={modalJobDetailsVisible} onToggle={this.onToggleModalJobDetails} />
       </div>
+
     );
   }
 }
