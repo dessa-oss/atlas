@@ -7,6 +7,7 @@ import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ErrorMessage from '../common/ErrorMessage';
+import ModalJobDetails from './job-sidebar/ModalJobDetails';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -53,6 +54,7 @@ class JobListPage extends Component {
   }
 
   async componentDidMount() {
+    console.log('PROPS: ', this.props);
     const updateTimeInMilli = 4000;
 
     this.interval = setInterval(
@@ -336,7 +338,7 @@ class JobListPage extends Component {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
-      queryStatus,
+      queryStatus, selectedJob, modalJobDetailsVisible,
     } = this.state;
     let jobList;
     let sidebar;
@@ -371,6 +373,9 @@ class JobListPage extends Component {
           startTimeFilters={startTimeFilter}
           filters={filters}
           onDataUpdated={() => this.getJobs()}
+          onClickJob={(job) => {
+            this.onToggleModalJobDetails(job);
+          }}
         />
       );
     } else {
@@ -388,6 +393,7 @@ class JobListPage extends Component {
           removeFilter={this.removeFilter}
         />
         {jobList}
+        <ModalJobDetails job={selectedJob} visible={modalJobDetailsVisible} onToggle={this.onToggleModalJobDetails} />
       </div>
     );
   }
