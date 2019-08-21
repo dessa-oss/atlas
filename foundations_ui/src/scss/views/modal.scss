@@ -150,8 +150,8 @@
 .modal-job-details {
     width: 80%;
     min-width: 480px;
-    margin-left: 20% !important; // important needed to override the reactstrap library
-    margin-top: 12% !important;
+    margin-left: 10% !important; // important needed to override the reactstrap library
+    margin-top: 10% !important;
     height: 50%;
   
     .contanier-main {
@@ -164,14 +164,18 @@
   
         .label-id {
           display: inline-block;
+          @extend .f--din-bold;
         }
   
         .container-id {
           display: inline-block;
           border: solid 1px #e9ecef;
+          margin-left: 10px;
   
           .text-id {
             display: inline-block;
+            margin-left: 10px;
+            margin-right: 10px;
           }
   
           .icon-copy {
@@ -188,7 +192,6 @@
   
       .container-tags {
         margin-top: 20px;
-        display: inline-block;
   
         .container-tag {
           background: green;

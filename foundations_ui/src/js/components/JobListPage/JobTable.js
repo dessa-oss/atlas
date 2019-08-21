@@ -88,7 +88,7 @@ class JobTable extends Component {
     const handleClick = (job) => {
       console.log('ON CLICK JOB: ', job);
       const { onClickJob } = this.props;
-      onClickJob();
+      onClickJob(job);
       console.log('CALLED');
       this.handleRowSelection(job.job_id);
     };

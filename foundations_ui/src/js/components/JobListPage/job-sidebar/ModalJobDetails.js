@@ -52,8 +52,7 @@ class ModalJobDetails extends React.Component {
         className="modal-job-details"
       >
         <ModalBody>
-          <div>test</div>
-          {/* <div className="contanier-main">
+          <div className="contanier-main">
             <div className="container-title">
               <p className="label-id">Details For Job</p>
               <div className="container-id">
@@ -77,7 +76,7 @@ class ModalJobDetails extends React.Component {
               })}
               <div className="icon-add">+</div>
             </div>
-          </div> */}
+          </div>
         </ModalBody>
       </Modal>
     );

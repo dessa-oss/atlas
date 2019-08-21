@@ -356,7 +356,9 @@ class JobDetails extends React.Component {
         jobIdFilters={jobIdFilter}
         startTimeFilters={startTimeFilter}
         filters={filters}
-        onClickJob={this.onToggleModalJobDetails}
+        onClickJob={(job) => {
+          this.onToggleModalJobDetails(job);
+        }}
       />
     );
 
