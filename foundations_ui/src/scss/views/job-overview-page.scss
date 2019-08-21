@@ -3,6 +3,12 @@
   p {
     margin: 0px;
   }
+
+  .project-summary-tags-container {
+    p {
+      margin: 5px 0px;
+    }
+  }
 }
 
 .job-overview-header-container {
@@ -40,10 +46,18 @@
 
   h3 {
     display: inline-block;
-    margin-left: 10px;
-    margin-right: 10px;
     color: $color-text;
+    padding: 10px 25px;
+    margin: 6px 0px;
     @extend .f--din;
+
+    &.active {
+      @extend .f--din-bold;
+      color: #00A4B2;
+      border-bottom: solid 3px #00A4B2;
+      margin: -6px 0px;
+      padding-bottom: 16px;
+    }
   }
 }
 
