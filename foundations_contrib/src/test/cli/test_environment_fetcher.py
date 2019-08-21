@@ -120,3 +120,11 @@ class TestEnvironmentFetcher(unittest.TestCase):
         global_mock.return_value = ['/local.config.yaml']
         env_name = 'local'
         self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/home/local.config.yaml', '/local.config.yaml'])
+
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_find_environment_multiple_matching_environments_returns_correct_basename(self, global_mock, local_mock):
+        local_mock.return_value = ['/home/stageless_local.config.yaml']
+        global_mock.return_value = ['/local.config.yaml']
+        env_name = 'local'
+        self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/local.config.yaml'])

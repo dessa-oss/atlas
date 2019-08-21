@@ -17,6 +17,10 @@ if 'TEST_UUID' not in environ:
 TEST_UUID = environ['TEST_UUID']
 ARCHIVE_ROOT = environ['ARCHIVE_ROOT']
 
+def set_foundations_home():
+    import os
+
+    os.environ['FOUNDATIONS_HOME'] = os.getcwd() + '/foundations_home'
 
 def config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
@@ -58,4 +62,5 @@ def config():
     module_manager.append_module(sys.modules['foundations_spec'])
 
 
+set_foundations_home()
 config()

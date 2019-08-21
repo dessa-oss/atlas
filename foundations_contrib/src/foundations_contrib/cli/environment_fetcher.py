@@ -27,8 +27,14 @@ class EnvironmentFetcher(object):
             local_environments = []
         global_environments = self._get_global_environments()
         all_environments = local_environments + global_environments
-        return [env for env in all_environments if file_name in env]
+        return list(self._environments_with_name(all_environments, file_name))
 
+    def _environments_with_name(self, environments, environment_file_name):
+        import os.path
+
+        for environment in environments:
+            if environment_file_name == os.path.basename(environment):
+                yield environment
 
     def _get_local_environments(self):
         import os

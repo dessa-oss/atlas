@@ -52,7 +52,7 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
 
     def test_ensure_expandpath_called_properly(self):
         result_config = self.translator.translate(self._configuration)
-        self.expanduser.assert_called_with('~')
+        self.expanduser.assert_called_with('~/.foundations')
 
     def test_returns_deployment_with_local_type(self):
         from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
@@ -62,16 +62,16 @@ class TestLocalConfigTranslate(Spec, ConfigTranslates, TestBucketFromScheme):
         self.assertEqual(config['deployment_type'], LocalShellJobDeployment)
 
     def test_returns_cache_with_default_path(self):
-        self.expanduser.return_value = '/home/lou'
+        self.expanduser.return_value = '/home/lou/.foundations'
         result_config = self.translator.translate(self._configuration)
         config = result_config['cache_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/home/lou/.foundations/job_data/cache'])
+        self.assertEqual(['/home/lou/.foundations/job_data/cache'], config['constructor_arguments'])
 
     def test_returns_cache_with_default_path_different_home(self):
-        self.expanduser.return_value = '/home/hana'
+        self.expanduser.return_value = '/home/hana/.foundations'
         result_config = self.translator.translate(self._configuration)
         config = result_config['cache_implementation']
-        self.assertEqual(config['constructor_arguments'], ['/home/hana/.foundations/job_data/cache'])
+        self.assertEqual(['/home/hana/.foundations/job_data/cache'], config['constructor_arguments'])
 
     def test_supports_missing_ssh_config(self):
         del self._configuration['ssh_config']

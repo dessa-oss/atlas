@@ -19,9 +19,6 @@ class TestSaveArtifact(Spec):
 
     @set_up
     def set_up(self):
-        import os
-        import os.path as path
-        import shutil
         import copy
 
         import foundations
@@ -29,23 +26,13 @@ class TestSaveArtifact(Spec):
 
         self._redis_connection = redis_connection
 
-        self._config_dir = path.expanduser('~/.foundations/config')
-        self._config_file_path = path.join(self._config_dir, 'stageless_local.config.yaml')
-        
-        os.makedirs(self._config_dir, exist_ok=True)
-        shutil.copyfile('config/stageless_local.config.yaml', self._config_file_path)
-
         self._old_config = copy.deepcopy(foundations.config_manager.config())
         foundations.config_manager.reset()
 
     @tear_down
     def tear_down(self):
-        import os
-        import os.path as path
-        
         import foundations
 
-        os.remove(self._config_file_path)
         foundations.config_manager.config().update(self._old_config)
         self._redis_connection.flushall()
 
