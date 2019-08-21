@@ -43,9 +43,14 @@ class InputMetricCell extends Component {
     return value; // typical content
   }
 
-  isContentOverMaxLength(displayText) {
+  isTagContentOverMaxLength(displayText) {
     const maxLength = 2;
-    return displayText.length > maxLength;
+    return displayText.length >= maxLength;
+  }
+
+  isContentOverMaxLength(displayText) {
+    const maxCellCharacterLength = 24;
+    return displayText.toString().length > maxCellCharacterLength || displayText.length > maxCellCharacterLength;
   }
 
   render() {
@@ -58,19 +63,35 @@ class InputMetricCell extends Component {
     let hover;
 
     let finalValue = value;
+    let expandedValue = value;
     let shouldCheckExpand = expand;
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
+      let index = 0;
       value.forEach((tag) => {
-        finalValue.push(<Tag key={tag} value={tag} />);
+        if (index === 2) {
+          expandedValue = Array.from(finalValue);
+          expandedValue.push(<Tag key={tag} value={tag} />);
+          finalValue.push(<p>...</p>);
+        } else if (index < 2) {
+          finalValue.push(<Tag key={tag} value={tag} />);
+        } else {
+          expandedValue.push(<Tag key={tag} value={tag} />);
+        }
+        index += 1;
       });
     }
 
     if (shouldCheckExpand) {
-      const overMaxLength = this.isContentOverMaxLength(finalValue);
+      let overMaxLength;
+      if (pClass.includes('tag') && value !== '') {
+        overMaxLength = this.isTagContentOverMaxLength(finalValue);
+      } else {
+        overMaxLength = this.isContentOverMaxLength(finalValue);
+      }
 
-      if (overMaxLength && hoverable) {
-        hover = <HoverCell textToRender={finalValue} />;
+      if ((overMaxLength && hoverable)) {
+        hover = <HoverCell textToRender={expandedValue} />;
       }
     }
 

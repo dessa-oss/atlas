@@ -293,7 +293,6 @@ class JobDetails extends React.Component {
   }
 
   onToggleModalJobDetails(job) {
-    console.log('ON TOGGLE: ', job);
     const { modalJobDetailsVisible } = this.state;
     const value = !modalJobDetailsVisible;
 
@@ -365,13 +364,6 @@ class JobDetails extends React.Component {
     return (
       <div>
         <div className="job-list-container">
-          <JobHeader
-            project={project}
-            jobs={jobs}
-            filters={filters}
-            clearFilters={this.clearFilters}
-            removeFilter={this.removeFilter}
-          />
           {jobList}
         </div>
         <ModalJobDetails job={selectedJob} visible={modalJobDetailsVisible} onToggle={this.onToggleModalJobDetails} />
