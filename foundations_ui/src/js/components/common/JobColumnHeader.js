@@ -51,6 +51,7 @@ class JobColumnHeader extends Component {
         <div className={offsetDivClass}>
           <h4 className={`${headerClassName}`}>
             {title}
+            <i className="arrow-down" />
           </h4>
         </div>
       </div>

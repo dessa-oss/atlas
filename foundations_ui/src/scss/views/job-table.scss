@@ -15,8 +15,8 @@
 
 .job-table-content {
   height: calc(90% - #{$header-nav-height} - #{$header-control-height});
-  padding: 0px $overview-content-margin-horizontal;
-  width: calc(100% - #{$overview-content-margin-horizontal} * 2);
+  padding: 0px;
+  width: 100%;
   overflow-y: hidden;
   margin-top: 10px;
 }
