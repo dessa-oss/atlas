@@ -33,3 +33,22 @@ div.job-tag {
     top: -5px;
   }
 }
+
+.job-cell-hover {
+  height: 500px;
+  width: 200px;
+  white-space: normal;
+  text-align: left;
+
+  span {
+    margin-top: 10px;
+  }
+
+  .job-tag {
+    display: inline;
+    max-width: 50px;
+    max-width: 120px;
+    height: 17px;
+    margin-left: 20px;
+  }
+}
