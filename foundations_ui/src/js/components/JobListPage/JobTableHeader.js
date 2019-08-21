@@ -10,7 +10,7 @@ import ContainsFilter from '../common/filters/ContainsFilter';
 import DateTimeFilter from '../common/filters/DateTimeFilter';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
-import CancelJobCell from './cells/CancelJobCell';
+import SelectJobCell from './cells/SelectJobCell';
 import StatusCell from './cells/StatusCell';
 import StartTimeCell from './cells/StartTimeCell';
 import DurationCell from './cells/DurationCell';
@@ -294,10 +294,11 @@ class JobTableHeader extends Component {
     return [
       { name: '', type: 'string' },
       { name: 'Job ID', type: 'string' },
-      { name: 'Launched At', type: 'string' },
       { name: 'Status', type: 'string' },
+      { name: 'Launched', type: 'string' },
       { name: 'Duration', type: 'string' },
       { name: 'User', type: 'string' },
+      { name: 'Tags', type: 'string' },
     ];
   }
 
@@ -307,7 +308,7 @@ class JobTableHeader extends Component {
 
       neededColums.push({
         name: '',
-        value: CancelJobCell({ job: el, onSuccessfullDeletion: this.onDataUpdated }),
+        value: SelectJobCell({ job: el, onSuccessfullDeletion: this.onDataUpdated }),
         type: 'string',
         hoverable: false,
       });
@@ -317,15 +318,15 @@ class JobTableHeader extends Component {
         type: 'string',
       });
       neededColums.push({
-        name: 'Launched At',
-        value: new StartTimeCell({ startTime: el.start_time }).render(),
-        type: 'string',
-      });
-      neededColums.push({
         name: 'Status',
         value: new StatusCell(el).render(),
         type: 'string',
         hoverable: false,
+      });
+      neededColums.push({
+        name: 'Launched',
+        value: new StartTimeCell({ startTime: el.start_time }).render(),
+        type: 'string',
       });
       neededColums.push({
         name: 'Duration',
@@ -339,6 +340,11 @@ class JobTableHeader extends Component {
         name: 'User',
         value: el.user,
         type: 'string',
+      });
+      neededColums.push({
+        name: 'Tags',
+        value: el.tags,
+        type: 'tag',
       });
       const job = Object.assign({}, el);
       job.output_metrics = neededColums;

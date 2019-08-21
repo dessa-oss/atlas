@@ -346,13 +346,6 @@ class JobDetails extends React.Component {
 
     return (
       <div className="job-list-container">
-        <JobHeader
-          project={project}
-          jobs={jobs}
-          filters={filters}
-          clearFilters={this.clearFilters}
-          removeFilter={this.removeFilter}
-        />
         {jobList}
       </div>
     );
