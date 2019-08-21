@@ -58,7 +58,7 @@ class CommonActions {
   static getTableSectionHeaderDiv(header) {
     let divClass = 'table-section-header';
     if (this.isHeaderNotEmpty(header)) {
-      divClass = 'table-section-header blue-header';
+      divClass = 'table-section-header table-header';
     }
     return divClass;
   }
@@ -66,15 +66,15 @@ class CommonActions {
   static getTableSectionHeaderArrow(header) {
     let arrowClass = '';
     if (this.isHeaderNotEmpty(header)) {
-      arrowClass = 'blue-header-arrow border-input-metric-arrow';
+      arrowClass = 'table-header-arrow border-input-metric-arrow';
     }
     return arrowClass;
   }
 
   static getTableSectionHeaderText(header) {
-    let textClass = 'blue-header-text text-white no-margin';
+    let textClass = 'table-header-text text-white no-margin';
     if (this.isHeaderNotEmpty(header)) {
-      textClass = 'blue-header-text text-white';
+      textClass = 'table-header-text text-white';
     }
     return textClass;
   }

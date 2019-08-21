@@ -71,15 +71,6 @@ class InputMetric extends Component {
 
     return (
       <div className="job-static-columns-container">
-        <TableSectionHeader
-          header={header}
-          changeHiddenParams={this.changeHiddenParams}
-          columns={allInputParams}
-          hiddenInputParams={hiddenInputParams}
-          updateSearchText={this.updateSearchText}
-          searchText={searchText}
-          isMetric={isMetric}
-        />
         <div className="input-metric-header-row-container">
           <div className="input-metric-column-container column-header">
             {inputParams}

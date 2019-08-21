@@ -49,7 +49,7 @@ class JobColumnHeader extends Component {
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
-          <h4 className={`${headerClassName} font-bold`}>
+          <h4 className={`${headerClassName}`}>
             {title}
           </h4>
         </div>

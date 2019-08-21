@@ -48,7 +48,7 @@ class TableStaticColumns extends Component {
 
     return (
       <div className="job-static-columns-container">
-        <TableSectionHeader />
+
         <div className="job-column-header-container">
           <JobColumnHeader
             title=""

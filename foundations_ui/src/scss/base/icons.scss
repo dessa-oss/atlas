@@ -24,6 +24,11 @@ See assets/svgs/README.md for further information on SVG conversion process
   @include icon-helper;
 }
 
+.i--icon-dessa-logo {
+  background-image: url('../assets/images/icons/dessa-logo.png');
+  @include icon-helper;
+}
+
 .i--icon-filtered {
   background-image: url('../assets/images/icons/icon-filtered.png');
   @include icon-helper;

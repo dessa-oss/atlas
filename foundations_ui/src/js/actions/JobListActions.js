@@ -255,23 +255,23 @@ class JobListActions {
 
   static getTableSectionHeaderDivClass(header) {
     if (header !== '') {
-      return 'table-section-header blue-header';
+      return 'table-section-header table-header';
     }
     return 'table-section-header';
   }
 
   static getTableSectionHeaderArrowClass(header) {
     if (header !== '') {
-      return 'arrow-down blue-header-arrow';
+      return 'arrow-down table-header-arrow';
     }
     return '';
   }
 
   static getTableSectionHeaderTextClass(header) {
     if (header !== '') {
-      return 'blue-header-text';
+      return 'table-header-text';
     }
-    return 'blue-header-text no-margin';
+    return 'table-header-text no-margin';
   }
 
   static getFilterURL(

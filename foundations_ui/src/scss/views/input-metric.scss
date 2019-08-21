@@ -5,106 +5,39 @@
 .job-static-columns-container{
   display: inline-block;
   vertical-align: middle;
-  width: 33.22%;
+  width: 22.5%;
   height: 98%;
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   position: relative;
   overflow: hidden;
-  border-bottom: 4px solid #0490f6;
+  border-left: solid 1px #EDEDED;
+  border-right: solid 1px #EDEDED;
+  box-sizing: border-box;
+
   &:first-child {
+    width: 55%;
 
-    .job-cell {
-      width: 20.5%!important;
-      &:first-child { // delete 
-        width: 7%!important;
-        line-height: 25px;
-        p {
-          margin: 0 10px!important;
-        }
-      }
-      &:nth-child(2) { // job id
-        width: 10.1%!important;
-        padding-right: 9.9%;
-        p {
-          min-width: 100%;
-        }
-        
-      }
-      &:nth-child(3) { // launched at
-        width: 30%!important;
-      }
-      &:nth-child(4) { // status
-        width: 9%!important;
-        line-height: 25px;
-      }
-      &:nth-child(5) { // duration
-        width: 20%!important;
-      }
-      &:nth-child(6) { // user
-        width: 14%!important;
+    .job-cell, .job-column-header {
+      &:first-child {
+        width: 50px;
       }
     }
-
-    .input-metric-column-container .job-column-header {
-      width: 20.5%;
-      min-width: 20.5%;
-      max-width: unset;
-      padding: unset;
-      margin: unset;
-      &:first-child { // delete
-        width: 7%!important;
-        min-width: 7%!important;
-      }
-      &:nth-child(2) { // job id
-        width: 20%!important;
-        min-width: 20%!important;
-      }
-      &:nth-child(3) { // launched at
-        width: 30%!important;
-        min-width: 30%!important;
-      }
-      &:nth-child(4) { // status
-        width: 9%!important;
-        min-width: 9%!important;
-      }
-      &:nth-child(5) { // duration
-        width: 20%!important;
-        min-width: 20%!important;
-      }
-      &:nth-child(6) { // user
-        width: 14%!important;
-        min-width: 14%!important;
-      }
-    }
-
     .input-metric-column-container {
       overflow-x: hidden;
-      width: 100%;
-    }
-
-    .job-column-header h4 {
-      min-width: unset!important;
     }
   }
 }
 
-.job-static-columns-container:nth-child(3) {
-  border-right: 4px solid #0091f6;
-}
-
 .input-metric-header-row-container {
-  height: calc(100% - #{$metric-header-height});
   width: 100%;
-  border-left: 4px solid $color-medium-blue;
   position: relative;
   overflow: hidden;
   overflow-x: scroll;
 }
 
 .input-metric-column-container {
-  height: calc(100% - #{$metric-header-height});
   min-width: 100%;
   overflow-y: scroll;
   width: fit-content;
@@ -113,25 +46,15 @@
     padding-left: calc(2 * #{$margin-width});
   }
 
-  &.column-header {
-    height: $column-header-height;
-  }
-
   .job-column-header {
-    border-right: 1px solid $color-border-bottom;
     height: 100%;
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    min-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
-    max-width: calc(#{$standard-input-metric-cell-width} - (#{$standard-header-padding} * 2));
-    padding-left: $standard-header-padding;
-    padding-right: $standard-header-padding;
     position: relative;
 
     div {
       h4 {
-        margin-top: 10px;
         &:hover {
           + .tooltip {
             display: block;
@@ -153,12 +76,13 @@
     text-align: center;
     padding-left: 0px;
     padding-right: 0px;
-    width: $standard-input-metric-cell-width;
+    width: 176.5px;
+    box-sizing: border-box;
     
     p{
       margin: 0px 15px;
       vertical-align: middle;
-      height: 26px;
+      height: $row-height;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
