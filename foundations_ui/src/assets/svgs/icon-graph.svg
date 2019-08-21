@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="selected-jobs" transform="translate(-96.000000, -364.000000)" fill="#656565" fill-rule="nonzero">
+            <g id="baseline-assessment-24px" transform="translate(93.000000, 361.000000)">
+                <path d="M19,3 L5,3 C3.9,3 3,3.9 3,5 L3,19 C3,20.1 3.9,21 5,21 L19,21 C20.1,21 21,20.1 21,19 L21,5 C21,3.9 20.1,3 19,3 Z M9,17 L7,17 L7,10 L9,10 L9,17 Z M13,17 L11,17 L11,7 L13,7 L13,17 Z M17,17 L15,17 L15,13 L17,13 L17,17 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>
