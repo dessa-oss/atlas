@@ -45,14 +45,10 @@ class JobOverviewPage extends Component {
               <h3 onClick={this.onClickProjectOverview} onKeyDown={this.onKeyDown}>Project Overview</h3>
               <h3 onClick={this.onClickJobDetails} onKeyDown={this.onKeyDown}>Job Details</h3>
             </div>
-            <div>
-              <p className="job-overview-tags-text">tags:</p>
-              <div className="job-overview-tag">
-                <p className="job-overview-tag-name">Finance</p>
-              </div>
-              <div className="job-overview-tag">
-                <p className="job-overview-tag-name">Marketing</p>
-              </div>
+            <div className="project-summary-tags-container">
+              <p>tags</p>
+              <span>finance</span>
+              <span>marketing</span>
             </div>
           </div>
           {tab === 'overview' && <ProjectOverview {...this.props} />}

@@ -14,6 +14,16 @@
     margin-bottom: 0px;
     margin-top: 0px;
     font-weight: 400;
+    position: relative;
+
+    .arrow-down {
+      border-top: 5px solid #595959;
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      margin: auto 10px;
+    }
+
   }
 
   .status-header{

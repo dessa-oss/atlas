@@ -18,7 +18,7 @@ class Header extends React.Component {
       <div>
         <div className="job-overview-header-container">
           <div>
-            <h3>Project Directory</h3>
+            <h3><i className="icono-arrow1-right" />Project Directory</h3>
             <h1 className="font-bold">{projectName}</h1>
           </div>
           <div>

@@ -56,8 +56,13 @@ class InputMetricCell extends Component {
     const divClass = CommonActions.getInputMetricCellDivClass(isError, rowNumber, jobID);
     let hover;
 
+    let finalValue = value;
+    if (pClass.includes('tag') && value !== '') {
+      finalValue = value.join(', '); // TODO use the tag component here later
+    }
+
     if (expand) {
-      const displayText = this.getDisplayText(value);
+      const displayText = this.getDisplayText(finalValue);
       const overMaxLength = this.isContentOverMaxLength(displayText);
 
       if (overMaxLength && hoverable) {
@@ -72,7 +77,7 @@ class InputMetricCell extends Component {
           onMouseEnter={() => this.toggleExpand(true)}
           onMouseLeave={() => this.toggleExpand(false)}
         >
-          {value}
+          {finalValue}
         </p>
         <div>
           {hover}

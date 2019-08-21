@@ -9,7 +9,7 @@ class ProjectOverview extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      projectName: this.props.location.state.project.name,
+      projectName: this.props.history.location.state.project.name,
       metric: '',
       graphData: [],
     };
@@ -46,11 +46,11 @@ class ProjectOverview extends React.Component {
 }
 
 ProjectOverview.propTypes = {
-  location: PropTypes.object,
+  history: PropTypes.object,
 };
 
 ProjectOverview.defaultProps = {
-  location: {},
+  history: {},
 };
 
 export default ProjectOverview;
