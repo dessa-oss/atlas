@@ -71,6 +71,7 @@ class InputMetricCell extends Component {
       value.forEach((tag) => {
         if (index === 2) {
           expandedValue = Array.from(finalValue);
+          expandedValue.push(<Tag key={tag} value={tag} />);
           finalValue.push(<p>...</p>);
         } else if (index < 2) {
           finalValue.push(<Tag key={tag} value={tag} />);
