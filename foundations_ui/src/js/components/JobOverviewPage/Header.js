@@ -9,7 +9,17 @@ class Header extends React.Component {
       dateCreated: this.props.history.location.state.project.created_at,
       projectOwners: this.props.history.location.state.project.owner,
     };
+
+    this.onClickBack = this.onClickBack.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
+
+  onClickBack() {
+    const { history } = this.props;
+    history.goBack();
+  }
+
+  onKeyDown() {}
 
   render() {
     const { projectName, dateCreated, projectOwners } = this.state;
@@ -18,7 +28,17 @@ class Header extends React.Component {
       <div>
         <div className="job-overview-header-container">
           <div>
-            <h3><i className="icono-arrow1-right" />Project Directory</h3>
+            <h3>
+              <i
+                className="icono-arrow1-right"
+                onClick={this.onClickBack}
+                role="button"
+                aria-label="Go Back"
+                onKeyDown={this.onKeyDown}
+                tabIndex={0}
+              />
+              Project Directory
+            </h3>
             <h1 className="font-bold">{projectName}</h1>
           </div>
           <div>

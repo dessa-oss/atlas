@@ -10,7 +10,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
     };
 
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
@@ -42,8 +42,20 @@ class JobOverviewPage extends Component {
           <Header {...this.props} />
           <div className="job-overview-tabs-tags-container">
             <div>
-              <h3 onClick={this.onClickProjectOverview} onKeyDown={this.onKeyDown}>Project Overview</h3>
-              <h3 onClick={this.onClickJobDetails} onKeyDown={this.onKeyDown}>Job Details</h3>
+              <h3
+                className={tab === 'overview' ? 'active' : ''}
+                onClick={this.onClickProjectOverview}
+                onKeyDown={this.onKeyDown}
+              >
+                Project Overview
+              </h3>
+              <h3
+                className={tab === 'details' ? 'active' : ''}
+                onClick={this.onClickJobDetails}
+                onKeyDown={this.onKeyDown}
+              >
+                Job Details
+              </h3>
             </div>
             <div className="project-summary-tags-container">
               <p>tags</p>

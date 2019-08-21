@@ -27,14 +27,12 @@ class JobTable extends Component {
       allUsers: this.props.allUsers,
       hiddenUsers: this.props.hiddenUsers,
       numberFilters: this.props.numberFilters,
-      containFilters: this.props.containFilters,
       boolFilters: this.props.boolFilters,
       boolCheckboxes: this.props.boolCheckboxes,
       durationFilters: this.props.durationFilters,
       jobIdFilters: this.props.jobIdFilters,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
-      currentJob: { job_id: null },
     };
   }
 
@@ -50,7 +48,6 @@ class JobTable extends Component {
         hiddenUsers: nextProps.hiddenUsers,
         boolCheckboxes: nextProps.boolCheckboxes,
         numberFilters: nextProps.numberFilters,
-        containFilters: nextProps.containFilters,
         boolFilters: nextProps.boolFilters,
         durationFilters: nextProps.durationFilters,
         jobIdFilters: nextProps.jobIdFilters,
@@ -72,7 +69,6 @@ class JobTable extends Component {
   }
 
   closeSideBar() {
-    this.setState({ currentJob: { job_id: null } });
     this.setState({ selectedRow: -1 });
     rowSelect.removePreviousActiveRows();
   }
@@ -80,7 +76,7 @@ class JobTable extends Component {
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
-      updateNumberFilter, numberFilters, updateContainsFilter, containFilters, updateBoolFilter, boolFilters,
+      updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
       startTimeFilters, filters,
     } = this.state;
@@ -90,11 +86,10 @@ class JobTable extends Component {
     const rowNumbers = [];
 
     const handleClick = (job) => {
-      if (this.state.currentJob.job_id === job.job_id) {
-        this.setState({ currentJob: { job_id: null } });
-      } else {
-        this.setState({ currentJob: job });
-      }
+      console.log('ON CLICK JOB: ', job);
+      const { onClickJob } = this.props;
+      onClickJob(job);
+      console.log('CALLED');
       this.handleRowSelection(job.job_id);
     };
 
@@ -109,10 +104,6 @@ class JobTable extends Component {
     return (
       <div className="job-table-content">
         <div className="job-table-container">
-          <JobSidebar
-            job={selectedJob() || { job_id: null }}
-            onCloseClickHandler={() => this.closeSideBar()}
-          />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}
@@ -128,7 +119,6 @@ class JobTable extends Component {
             updateNumberFilter={updateNumberFilter}
             numberFilters={numberFilters}
             updateContainsFilter={updateContainsFilter}
-            containFilters={containFilters}
             updateBoolFilter={updateBoolFilter}
             boolFilters={boolFilters}
             updateDurationFilter={updateDurationFilter}
@@ -181,6 +171,7 @@ JobTable.propTypes = {
   filters: PropTypes.array,
   selectedRow: PropTypes.string,
   onDataUpdated: PropTypes.func,
+  onClickJob: PropTypes.func,
 };
 
 JobTable.defaultProps = {
@@ -211,6 +202,7 @@ JobTable.defaultProps = {
   filters: [],
   selectedRow: -1,
   onDataUpdated: () => window.location.reload(),
+  onClickJob: (job) => {},
 };
 
 export default JobTable;
