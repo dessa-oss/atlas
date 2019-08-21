@@ -18,7 +18,7 @@ def load_local_configuration_if_present():
     global _exception_happened
     _exception_happened = False
 
-    if _default_environment_present():
+    if not _in_command_line() and _default_environment_present():
         set_environment('default')
         config_manager['_is_deployment'] = True
         pipeline_context = current_foundations_context().pipeline_context()
@@ -27,6 +27,10 @@ def load_local_configuration_if_present():
         RunJob(message_router, pipeline_context).push_message()
         atexit.register(_at_exit_callback)
         sys.excepthook = _handle_exception
+
+def _in_command_line():
+    import os
+    return os.environ.get('FOUNDATIONS_COMMAND_LINE', 'False') == 'True'
 
 def _handle_exception(_, __, ___):
     global _exception_happened

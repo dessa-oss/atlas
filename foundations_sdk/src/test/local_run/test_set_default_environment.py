@@ -9,7 +9,7 @@ from foundations_spec import *
 from foundations.local_run import load_local_configuration_if_present
 import sys
 
-class SetDefaultEnvironment(Spec):
+class TestSetDefaultEnvironment(Spec):
 
     mock_environment_fetcher = let_patch_instance('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher')
     mock_set_environment = let_patch_mock('foundations.config.set_environment')
@@ -111,6 +111,11 @@ class SetDefaultEnvironment(Spec):
 
     def test_default_environment_not_loaded_when_absent(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        load_local_configuration_if_present()
+        self.mock_set_environment.assert_not_called()
+
+    def test_default_environment_not_loaded_when_in_command_line(self):
+        self.mock_os_environment['FOUNDATIONS_COMMAND_LINE'] = 'True'
         load_local_configuration_if_present()
         self.mock_set_environment.assert_not_called()
     
