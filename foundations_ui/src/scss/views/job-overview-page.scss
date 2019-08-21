@@ -89,31 +89,32 @@
 
 .chart-and-notes {
   margin-right: 45px;
-}
 
-.readme {
+  .readme {
+    height: 400px;
 
-  h2 {
-    float: left;
-  }
-
-  button {
-    float: right;
-  }
-
-  div {
-    margin-top: 40px;
-    width: 100%;
-  }
-
-  textarea {
-    width: calc(100% - 2px - 50px);
-    height: calc(100% - 30px);
-    outline: none;
-    background: none;
-    border: none;
-    resize: none;
-    margin: 25px;
+    h2 {
+      float: left;
+    }
+  
+    button {
+      float: right;
+    }
+  
+    div {
+      margin-top: 40px;
+      width: 100%;
+    }
+  
+    textarea {
+      width: calc(100% - 2px - 50px);
+      height: calc(100% - 30px);
+      outline: none;
+      background: rgba(226,226,226,1);
+      border: none;
+      resize: none;
+      margin: 25px;
+    }
   }
 }
 
