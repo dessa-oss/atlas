@@ -274,10 +274,72 @@
       text-align: center;
     }
   }
+}
 
-  
+.modal-job-details {
+  width: 80%;
+  min-width: 480px;
+  margin-left: 20% !important; // important needed to override the reactstrap library
+  margin-top: 12% !important;
+  height: 50%;
 
-  
+  .contanier-main {
+    width: 100%;
+    height: 600px;
+
+    .container-title {
+      display: inline-block;
+      margin-top: 20px;
+
+      .label-id {
+        display: inline-block;
+      }
+
+      .container-id {
+        display: inline-block;
+        border: solid 1px #e9ecef;
+
+        .text-id {
+          display: inline-block;
+        }
+
+        .icon-copy {
+          display: inline-block
+        }
+      }
+
+      .icon-close {
+        position: absolute;
+        right: 20px;
+        top: 0;
+      }
+    }
+
+    .container-tags {
+      margin-top: 20px;
+      display: inline-block;
+
+      .container-tag {
+        background: green;
+        display: inline-block;
+
+        .text-tag {
+          display: inline-block;
+          color: white;
+        }
+
+        .icon-remove {
+          display: inline-block;
+        }
+      }
+
+      .icon-add {
+        display: inline-block;
+        border: solid 1px #e9ecef;
+        color: #e9ecef; 
+      }
+    }
+  }
 }
 
 
