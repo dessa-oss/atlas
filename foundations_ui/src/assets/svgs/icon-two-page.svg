@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="15px" viewBox="0 0 12 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>copy signs</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="job-details-copy" transform="translate(-179.000000, -426.000000)">
+            <g id="6-copy-signs" transform="translate(177.000000, 425.000000)">
+                <g id="copy-signs">
+                    <g id="baseline-file_copy-24px">
+                        <polygon id="Path" points="0 0 16 0 16 16 0 16"></polygon>
+                        <path d="M10.8421053,1 L3.26315789,1 C2.56842105,1 2,1.61363636 2,2.36363636 L2,11.9090909 L3.26315789,11.9090909 L3.26315789,2.36363636 L10.8421053,2.36363636 L10.8421053,1 Z M10.2105263,3.72727273 L14,7.81818182 L14,14.6363636 C14,15.3863636 13.4315789,16 12.7368421,16 L5.78315789,16 C5.08842105,16 4.52631579,15.3863636 4.52631579,14.6363636 L4.53263158,5.09090909 C4.53263158,4.34090909 5.09473684,3.72727273 5.78947368,3.72727273 L10.2105263,3.72727273 Z M9.57894737,8.5 L13.0526316,8.5 L9.57894737,4.75 L9.57894737,8.5 Z" id="Shape" fill="#919191" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
