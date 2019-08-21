@@ -28,8 +28,8 @@ class TestOrbitDeployModelViaCli(Spec):
     
     @tear_down_class
     def tear_down_class(self):
-        pass
         subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
+
 
     @set_up
     def set_up(self):
@@ -37,6 +37,11 @@ class TestOrbitDeployModelViaCli(Spec):
         self._generate_yaml_config_file()
 
         self.base_url = f'http://{self._get_scheduler_ip()}:{self.port}/{self.mock_project_name}/{self.mock_user_provided_model_name}'
+
+    @tear_down
+    def tear_down(self):
+        print(f'Tearing down deployment and service for {self.mock_project_name}-{self.mock_user_provided_model_name}')
+        self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
 
     @let
     def mock_project_name(self):
@@ -50,9 +55,21 @@ class TestOrbitDeployModelViaCli(Spec):
     def project_directory(self):
         return './project_code/'
 
+    def test_can_successfully_run_model_serve(self):
+        try:
+            self._deploy_job(self.mock_user_provided_model_name)
+
+            self._wait_for_server()
+
+            result = self._check_if_endpoint_available()
+            self.assertIsNotNone(result)
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
+
+
     def _deploy_job(self, model_name):
         import subprocess
-        
+
         command_to_run = [
             'python', '-m', 
             'foundations',
@@ -62,7 +79,7 @@ class TestOrbitDeployModelViaCli(Spec):
             '--project_name={}'.format(self.mock_project_name),
             '--model_name={}'.format(model_name),
             '--project_directory={}'.format(self.project_directory),
-            '--env=local'
+            '--env=scheduler'
         ]
 
         process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
@@ -80,15 +97,16 @@ class TestOrbitDeployModelViaCli(Spec):
         import time
 
         start_time = time.time()
-
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
-                requests.get(self.base_url)
+                print(f'Attempting to make request at url: {self.base_url}')
+                result = requests.get(self.base_url).json()
                 return
-            except:
-                time.sleep(0.200)
-
-        self.fail(f'server never started')
+            except Exception as e:
+                print('waiting for server to respond .....')
+                time.sleep(2)
+        self.fail('server never started')
+                    
 
     def _check_if_error_exists(self, cli_deploy_process):
         return cli_deploy_process.returncode != 0
@@ -103,11 +121,13 @@ class TestOrbitDeployModelViaCli(Spec):
     
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}/predict'
+        print(f'Attempting to check if the API end point is available for prediction {end_point_url}')
         try:
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             print(result)
             return result
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def _generate_yaml_config_file(self):
@@ -139,10 +159,10 @@ class TestOrbitDeployModelViaCli(Spec):
             file.write(config_yaml)
 
 
-    def test_can_successfully_run_model_serve(self):
-        self._deploy_job(self.mock_user_provided_model_name)
+    def _perform_tear_down_for_model_package(self, project_name, model_name):
+        import os.path as path
+        import subprocess
 
-        self._wait_for_server()
-
-        result = self._check_if_endpoint_available()
-        self.assertIsNotNone(result)
+        yaml_template_path = path.realpath(f'{foundations_contrib.root()}/resources/model_serving/orbit/kubernetes-deployment.envsubst.yaml')
+        command_to_run = f'project_name={project_name} model_name={model_name} envsubst < {yaml_template_path} | kubectl delete -f -'
+        subprocess.call(['bash', '-c', command_to_run])

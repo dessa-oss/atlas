@@ -22,9 +22,9 @@ spec:
         env:
           - name: JOB_ID
             value: "${project_name}-${model_name}"
-        resources:
-          limits:
-            nvidia.com/gpu: 1
+        # resources:
+        #   limits:
+        #     nvidia.com/gpu: 1
         name: model
         volumeMounts:
         - mountPath: /archive

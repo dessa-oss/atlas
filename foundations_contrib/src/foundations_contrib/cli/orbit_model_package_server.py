@@ -78,10 +78,9 @@ def _launch_model_package(project_name, model_name):
         ['bash', 
         './deploy_serving.sh', 
         project_name,
-        model_name ], 
+        model_name, 'none' ], 
         cwd=foundations_contrib.root() / 'resources/model_serving/orbit'
     )
-
     return process_result.returncode == 0
 
 

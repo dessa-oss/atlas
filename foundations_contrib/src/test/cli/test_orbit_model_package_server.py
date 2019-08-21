@@ -105,7 +105,7 @@ class TestOrbitModelPackageServer(Spec):
         import subprocess
         
         self.mock_subprocess_run_with_return.return_when(mock_subprocess_object, ['bash', '-c', 'kubectl -n foundations-scheduler-test get secret job-server-private-keys -o yaml'], stdout=subprocess.PIPE)
-        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         
 
     def test_retrieve_configuration_from_kubernetes(self):

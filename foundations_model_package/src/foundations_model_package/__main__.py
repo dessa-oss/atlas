@@ -14,7 +14,12 @@ from foundations_model_package.entrypoint_loader import EntrypointLoader
 def main():
     import os
 
-    _hack_for_cleaning_up_logs()
+    # _hack_for_cleaning_up_logs()
+
+    print('*** Attempting to configure redis')
+    from foundations import config_manager
+    configuration = config_manager.config()
+    configuration['redis_url'] = 'redis://redis'
 
     job = Job(os.environ['JOB_ID'])
     prediction_function = EntrypointLoader(job).entrypoint_function('predict')
