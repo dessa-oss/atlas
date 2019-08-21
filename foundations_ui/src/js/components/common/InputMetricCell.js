@@ -81,7 +81,7 @@ class InputMetricCell extends Component {
       });
     }
 
-    if (shouldCheckExpand) {
+    if (shouldCheckExpand || true) {
       let overMaxLength;
       if (pClass.includes('tag') && value !== '') {
         overMaxLength = this.isTagContentOverMaxLength(finalValue);

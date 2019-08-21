@@ -40,15 +40,14 @@ div.job-tag {
   white-space: normal;
   text-align: left;
 
-  span {
-    margin-top: 10px;
-  }
 
   .job-tag {
-    display: inline;
+    display: inline-block;
+    vertical-align: middle;
     max-width: 50px;
     max-width: 120px;
     height: 17px;
     margin-left: 20px;
+    line-height:normal; 
   }
 }
