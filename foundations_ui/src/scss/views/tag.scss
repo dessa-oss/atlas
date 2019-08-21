@@ -14,6 +14,7 @@ div.job-tag {
   vertical-align: middle;
   position: relative;
   top: -1px;
+  margin-left: 0px;
 }
 
 .job-tag-ellipse {
@@ -21,4 +22,14 @@ div.job-tag {
   vertical-align: middle;
   position: relative;
   top: -5px;
+}
+
+.job-cell > p.type-tag {
+  text-overflow: unset;
+  p {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    top: -5px;
+  }
 }

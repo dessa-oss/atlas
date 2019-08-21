@@ -45,7 +45,7 @@ class InputMetricCell extends Component {
 
   isContentOverMaxLength(displayText) {
     const maxLength = 2;
-    return displayText.length > maxLength;
+    return displayText.length >= maxLength;
   }
 
   render() {
@@ -58,11 +58,21 @@ class InputMetricCell extends Component {
     let hover;
 
     let finalValue = value;
+    let expandedValue = value;
     let shouldCheckExpand = expand;
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
+      let index = 0;
       value.forEach((tag) => {
-        finalValue.push(<Tag key={tag} value={tag} />);
+        if (index === 2) {
+          expandedValue = Array.from(finalValue);
+          finalValue.push(<p>...</p>);
+        } else if (index < 2) {
+          finalValue.push(<Tag key={tag} value={tag} />);
+        } else {
+          expandedValue.push(<Tag key={tag} value={tag} />);
+        }
+        index += 1;
       });
     }
 
@@ -70,7 +80,7 @@ class InputMetricCell extends Component {
       const overMaxLength = this.isContentOverMaxLength(finalValue);
 
       if (overMaxLength && hoverable) {
-        hover = <HoverCell textToRender={finalValue} />;
+        hover = <HoverCell textToRender={expandedValue} />;
       }
     }
 

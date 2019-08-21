@@ -293,7 +293,6 @@ class JobDetails extends React.Component {
   }
 
   onToggleModalJobDetails(job) {
-    console.log('ON TOGGLE: ', job);
     const { modalJobDetailsVisible } = this.state;
     const value = !modalJobDetailsVisible;
 
