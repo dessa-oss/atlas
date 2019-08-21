@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import CommonActions from '../../actions/CommonActions';
 import HoverCell from '../JobListPage/cells/HoverCell';
+import Tag from './Tag';
 
 class InputMetricCell extends Component {
   constructor(props) {
@@ -43,8 +44,8 @@ class InputMetricCell extends Component {
   }
 
   isContentOverMaxLength(displayText) {
-    const maxCellCharacterLength = 13;
-    return displayText.toString().length > maxCellCharacterLength || displayText.length > maxCellCharacterLength;
+    const maxLength = 2;
+    return displayText.length > maxLength;
   }
 
   render() {
@@ -57,16 +58,19 @@ class InputMetricCell extends Component {
     let hover;
 
     let finalValue = value;
+    let shouldCheckExpand = expand;
     if (pClass.includes('tag') && value !== '') {
-      finalValue = value.join(', '); // TODO use the tag component here later
+      finalValue = [];
+      value.forEach((tag) => {
+        finalValue.push(<Tag key={tag} value={tag} />);
+      });
     }
 
-    if (expand) {
-      const displayText = this.getDisplayText(finalValue);
-      const overMaxLength = this.isContentOverMaxLength(displayText);
+    if (shouldCheckExpand) {
+      const overMaxLength = this.isContentOverMaxLength(finalValue);
 
       if (overMaxLength && hoverable) {
-        hover = <HoverCell textToRender={displayText} />;
+        hover = <HoverCell textToRender={finalValue} />;
       }
     }
 

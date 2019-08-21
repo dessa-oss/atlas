@@ -120,3 +120,10 @@ See assets/svgs/README.md for further information on SVG conversion process
   @include icon-helper;
   height: 175px;
 }
+
+.i--icon-tf {
+  background-image: url('../assets/images/icons/tensor-flow.png');
+  @include icon-helper;
+  height: 7px;
+  width: 7px;
+}
