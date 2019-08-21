@@ -85,7 +85,9 @@ class LogManager(object):
 
     def _log_path(self):
         import os.path
-        return os.path.expanduser('~/.foundations/logs')
+        from foundations_contrib.utils import foundations_home
+
+        return os.path.expanduser(foundations_home() + '/logs')
     
     def _make_log_directory(self):
         import os

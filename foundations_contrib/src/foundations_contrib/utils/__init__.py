@@ -5,6 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+def foundations_home():
+    return '~/.foundations'
+
 
 def is_string(string):
     return isinstance(string, str)
