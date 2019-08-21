@@ -55,8 +55,8 @@ class JobOverviewPage extends Component {
               </div>
             </div>
           </div>
-          {tab === 'overview' && <ProjectOverview />}
-          {tab === 'details' && <JobDetails />}
+          {tab === 'overview' && <ProjectOverview {...this.props} />}
+          {tab === 'details' && <JobDetails {...this.props} />}
         </div>
       </div>
     );
