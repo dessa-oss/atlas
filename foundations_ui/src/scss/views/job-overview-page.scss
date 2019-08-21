@@ -1,5 +1,5 @@
 .job-overview-container {
-  margin: 30px;
+  margin: 0px 30px 30px 30px;
   p {
     margin: 0px;
   }
@@ -205,11 +205,11 @@ button {
 
 .foundations-header {
   background: #5480DC;
-  height: 70px;
+  height: 60px;
   border-bottom: solid 1px #7C9EEB;
-  -webkit-box-shadow: 0px 7px 9px 2px rgba(114,167,211,0.57);
-  -moz-box-shadow: 0px 7px 9px 2px rgba(114,167,211,0.57);
-  box-shadow: 0px 7px 9px 2px rgba(114,167,211,0.57);
+  -webkit-box-shadow: 0px 3px 9px 2px rgba(114,167,211,0.57);
+  -moz-box-shadow: 0px 3px 9px 2px rgba(114,167,211,0.57);
+  box-shadow: 0px 3px 10px 2px rgba(114,167,211,0.57);
   
   .i--icon-dessa-logo {
     width: 103px;
@@ -228,7 +228,7 @@ button {
       color: white;
       font-size: 18px;
       margin: 25px;
-      line-height: 70px;
+      line-height: 60px;
 
       &.active {
         @extend .f--din-bold;
