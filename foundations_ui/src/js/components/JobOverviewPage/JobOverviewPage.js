@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobOverviewGraph from './JobOverviewGraph';
+import BaseActions from '../../actions/BaseActions';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -9,15 +10,29 @@ class JobOverviewPage extends Component {
       projectName: this.props.history.location.state.project.name,
       dateCreated: this.props.history.location.state.project.created_at,
       projectOwners: this.props.history.location.state.project.owner,
-      metric: 'Accuracy',
+      metric: '',
       graphData: [],
     };
+
+    this.getGraphData = this.getGraphData.bind(this);
+  }
+
+  componentDidMount() {
+    this.getGraphData();
+  }
+
+  async getGraphData() {
+    const { projectName } = this.state;
+    const URL = '/projects/'.concat(projectName).concat('/graph');
+    const APIGraphData = await BaseActions.getFromApiary(URL);
+    this.setState({ graphData: APIGraphData.data, metric: APIGraphData.metric });
   }
 
   render() {
     const {
       projectName, dateCreated, projectOwners, metric, graphData,
     } = this.state;
+
     return (
       <div className="job-overview-container">
         <div className="job-overview-header-container">

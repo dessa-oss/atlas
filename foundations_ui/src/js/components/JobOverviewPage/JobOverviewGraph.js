@@ -1,3 +1,4 @@
+/* eslint-disable react/no-string-refs */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
@@ -11,6 +12,7 @@ class JobOverviewGraph extends Component {
       graphData: this.props.graphData,
       formattedGraphData: [],
     };
+
     this.formatGraphData = this.formatGraphData.bind(this);
   }
 
@@ -18,9 +20,18 @@ class JobOverviewGraph extends Component {
     this.formatGraphData();
   }
 
+  async componentWillReceiveProps(nextProps) {
+    if (nextProps.metric) {
+      await this.setState({ metric: nextProps.metric });
+    }
+    if (nextProps.graphData) {
+      await this.setState({ graphData: nextProps.graphData });
+      await this.formatGraphData();
+    }
+  }
+
   formatGraphData() {
     const { graphData } = this.state;
-
     let graphCopy = [...graphData];
     // Assumes the following format
     /*
@@ -51,11 +62,17 @@ class JobOverviewGraph extends Component {
       seriesObject.data = graph;
       seriesArray.push(seriesObject);
     });
+
+    if (seriesArray.length === 0) {
+      seriesArray = [{ showInLegend: false, data: {} }];
+    }
+
     this.setState({ formattedGraphData: seriesArray });
   }
 
   render() {
     const { metric, formattedGraphData } = this.state;
+
     const options = {
       chart: {
         type: 'spline',
@@ -70,11 +87,13 @@ class JobOverviewGraph extends Component {
           month: '%b \'%y',
           year: '%Y',
         },
+        showEmpty: true,
       },
       yAxis: {
         title: {
           text: metric,
         },
+        showEmpty: true,
       },
       title: {
         text: '',
@@ -95,7 +114,7 @@ class JobOverviewGraph extends Component {
           Sort by
           </option>
         </select>
-        <div>
+        <div className="highchart-chart">
           <HighchartsReact highcharts={Highcharts} options={options} />
         </div>
       </div>
