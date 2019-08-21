@@ -156,7 +156,7 @@
   
     .contanier-main {
       width: 100%;
-      height: 600px;
+      height: 800px;
   
       .container-title {
         display: inline-block;
@@ -171,22 +171,24 @@
           display: inline-block;
           border: solid 1px #e9ecef;
           margin-left: 10px;
+          width: 200px;
   
           .text-id {
             display: inline-block;
             margin-left: 10px;
             margin-right: 10px;
           }
-  
-          .icon-copy {
-            display: inline-block
-          }
         }
   
-        .icon-close {
+        .button-close {
           position: absolute;
           right: 20px;
-          top: 0;
+          top: 20px;
+          cursor: pointer;
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 2;
         }
       }
   
@@ -207,11 +209,94 @@
           }
         }
   
-        .icon-add {
+        .button-add {
           display: inline-block;
           border: solid 1px #e9ecef;
-          color: #e9ecef; 
+          color: grey;
+          margin-left: 20px;
+          width: 20px;
+          height: 20px;
+          text-align: center; 
         }
+      }
+
+    .container-tabs {
+
+        border-bottom: 3px solid $color-border-bottom;
+      
+        div {
+          display: inline-block;
+          width: 50%;
+        }
+      
+        h3 {
+          display: inline-block;
+          color: $color-text;
+          padding: 10px 25px;
+          margin: 6px 0px;
+          @extend .f--din;
+      
+          &.active {
+            @extend .f--din-bold;
+            color: #00A4B2;
+            border-bottom: solid 3px #00A4B2;
+            margin: -6px 0px;
+            padding-bottom: 16px;
+          }
+        }
+      }
+
+      .container-artifacts {
+          margin: 20px;
+
+          .image-artifacts {
+              width: 100%;
+              height: 300px;
+              border: solid 1px #e9ecef;
+              border-radius: 8px;
+              background-color: white;
+          }
+
+          .container-artifacts-table {
+            width: 100%;
+            height: 300px;
+            overflow-y: scroll;
+
+            .table-artifacts-header {
+                background-color: #e9ecef;
+                width: 15%;
+                display: inline-block;
+                height: 40px;
+
+                &.last {
+                    width: 55%; 
+                }
+
+                p {
+                    @extend .f--din;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+
+            .table-artifacts-row {
+                background-color: transparent;
+                width: 15%;
+                display: inline-block;
+                height: 40px;
+                border: solid 1px #e9ecef;
+
+                &.last {
+                    width: 55%; 
+                }
+
+                p {
+                    @extend .f--din;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+          }
       }
     }
   }

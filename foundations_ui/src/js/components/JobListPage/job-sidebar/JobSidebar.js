@@ -6,7 +6,6 @@ import ImageViewer from './ImageViewer';
 import ArtifactList from './ArtifactList';
 import AudioPlayer from './AudioPlayer';
 import artifactRowSelect from '../../../../scss/jquery/artifactRowSelect';
-import ModalJobDetails from './ModalJobDetails';
 
 export default function JobSidebar(props) {
   const { job, onCloseClickHandler } = props;
@@ -59,7 +58,7 @@ export default function JobSidebar(props) {
     //   </div>
     // );
 
-    return <ModalJobDetails job={job} visible onToggle={onCloseClickHandler} />;
+    return null;
   }
   return null;
 }

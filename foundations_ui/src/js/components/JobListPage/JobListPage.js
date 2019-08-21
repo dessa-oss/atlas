@@ -7,7 +7,7 @@ import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ErrorMessage from '../common/ErrorMessage';
-import ModalJobDetails from './job-sidebar/ModalJobDetails';
+import ModalJobDetails from './ModalJobDetails';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },

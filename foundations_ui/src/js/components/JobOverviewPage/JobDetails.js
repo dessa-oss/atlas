@@ -5,7 +5,7 @@ import JobHeader from '../JobListPage/JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
-import ModalJobDetails from '../JobListPage/job-sidebar/ModalJobDetails';
+import ModalJobDetails from '../JobListPage/ModalJobDetails';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
