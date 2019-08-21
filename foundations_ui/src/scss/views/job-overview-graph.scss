@@ -6,3 +6,9 @@
   min-height: 430px;
 }
 
+.highchart-chart {
+  div {
+    overflow: visible !important; // to override the highcharts library
+  }
+}
+
