@@ -35,11 +35,11 @@ div.job-tag {
 }
 
 .job-cell-hover {
-  height: 500px;
+  height: 200px;
   width: 200px;
   white-space: normal;
   text-align: left;
-
+  overflow-y: scroll;
 
   .job-tag {
     display: inline-block;
