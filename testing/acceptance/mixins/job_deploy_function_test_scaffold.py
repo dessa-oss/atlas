@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import abc
 from subprocess import CompletedProcess
+from foundations_spec import *
 
 from acceptance.mixins.metrics_fetcher import MetricsFetcher
 class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
@@ -27,19 +28,22 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
     def _log_level(self) -> str:
         """Return the log level."""
 
+    @let
+    def temp_home(self):
+        import tempfile
+        return tempfile.mkdtemp()
+
     @property
     def foundations_global_configs_directory(self):
         import os.path as path
-        from foundations_contrib.utils import foundations_home
 
-        return path.expanduser(foundations_home() + '/config')
+        return self.temp_home + '/config'
 
     @property
     def local_config_file_path(self):
         import os.path as path
-        from foundations_contrib.utils import foundations_home
 
-        return path.expanduser(foundations_home() + '/config/local.config.yaml')
+        return self.temp_home + '/config/local.config.yaml'
 
     @property
     def local_config_file_contents(self):
@@ -113,13 +117,10 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
 
         os.makedirs(self.foundations_global_configs_directory, exist_ok=True)
 
-        if not path.isfile(self.local_config_file_path):
-            self._should_remove_local_config_file_on_cleanup = True
+        self._should_remove_local_config_file_on_cleanup = True
 
-            with open(self.local_config_file_path, 'w') as local_config_file:
-                yaml.dump(self.local_config_file_contents, local_config_file)
-        else:
-            self._should_remove_local_config_file_on_cleanup = False
+        with open(self.local_config_file_path, 'w') as local_config_file:
+            yaml.dump(self.local_config_file_contents, local_config_file)
 
     def _tear_down(self):
         import os
@@ -132,6 +133,15 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
 
         foundations.config_manager.config().clear()
         foundations.config_manager.config().update(self._config_manager_body)
+
+    def _run_process(self, command):
+        import subprocess
+        import os
+
+        environment = dict(os.environ)
+        environment['FOUNDATIONS_HOME'] = self.temp_home
+
+        return subprocess.run(['python', '-m', 'foundations', 'deploy'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
 
     def _test_deploy_job_with_all_arguments_specified_deploys_job(self):
         import os
@@ -163,15 +173,13 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
     def _test_deploy_job_with_no_arguments_specified_deploys_job_with_defaults(self):
         import os
         import shutil
+        from foundations_internal.change_directory import ChangeDirectory
 
         shutil.rmtree(self.job_directory, ignore_errors=True)
         shutil.copytree(self.project_directory_default_entrypoint, self.job_directory)
 
-        old_cwd = os.getcwd()
-
-        os.chdir(self.job_directory)
-        job_uuid_container = self._deploy_job_with_defaults()
-        os.chdir(old_cwd)
+        with ChangeDirectory(self.job_directory):
+            job_uuid_container = self._deploy_job_with_defaults()
 
         for metric_name, expected_metric_value in self.expected_metrics.items():
             self.assertEqual(expected_metric_value, self._get_logged_metric('deploy_job_test', self._uuid(job_uuid_container), metric_name))

@@ -141,7 +141,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _check_if_process_successful(self, cli_deploy_process):
         if self._check_if_error_exists(cli_deploy_process):
-            raise AssertionError('deploy failed:\nstdout:\n{}\nstderr:\n{}'.format(cli_deploy_process.stdout, cli_deploy_process.stderr))
+            raise AssertionError(f'deploy failed:\nstdout:\n{cli_deploy_process.stdout.decode()}\nstderr:\n{cli_deploy_process.stderr.decode()}')
     
     def _check_if_unsuccessful(self, cli_deploy_process):
         if not self._check_if_error_exists(cli_deploy_process):

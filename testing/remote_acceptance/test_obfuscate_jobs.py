@@ -90,9 +90,9 @@ class TestObfuscateJobs(Spec):
         import os
         import tarfile
         import shutil
+        from foundations_internal.change_directory import ChangeDirectory
         
         local_job_archive = '/tmp' 
-        current_dir = os.getcwd()
 
         job_archive_location = '{}_archive'.format(config_manager['code_path'])
 
@@ -102,17 +102,16 @@ class TestObfuscateJobs(Spec):
         with open(os.path.join(local_job_archive, job_tar_name), 'w+b') as file:
             sftp_bucket.download_to_file(job_tar_name , file)
         
-        os.chdir(local_job_archive)  
+        with ChangeDirectory(local_job_archive):
 
-        foundations_init_file_location = os.path.join(job_id, 'foundations', '__init__.py')
+            foundations_init_file_location = os.path.join(job_id, 'foundations', '__init__.py')
 
-        with tarfile.open(job_tar_name, "r:gz") as tar:
-            tar.extract(foundations_init_file_location)
+            with tarfile.open(job_tar_name, "r:gz") as tar:
+                tar.extract(foundations_init_file_location)
+            
+            with open(foundations_init_file_location, 'rb') as init_file:
+                file_head = init_file.readline()[0:11]
         
-        with open(foundations_init_file_location, 'rb') as init_file:
-            file_head = init_file.readline()[0:11]
-        
-        os.chdir(current_dir)
         shutil.rmtree(os.path.join(local_job_archive, job_id))
         
         return file_head == b'__pyarmor__'
