@@ -129,21 +129,20 @@
       height: 100%;
       object-fit: cover;
       display: inline-block;
+      vertical-align: middle;
     }
 
-    .container-name-date {
+    p {
+      display: inline-block;
       margin-left: 20px;
       height: 100%;
       display: inline-block;
-  
-      p {
-        display: inline-block;
-      }
-  
-      span {
-        display: inline-block;
-        margin-left: 20px;
-      }
+      vertical-align: middle;
+    }
+
+    span {
+      display: inline-block;
+      margin-left: 20px;
     }
   }
 
@@ -170,7 +169,7 @@
       line-height: 0.5;
 
       &.save {
-        background-color: #0FA3B1;
+        background-color: #F9C80E;
       }
     }
   
@@ -183,13 +182,15 @@
     }
   
     textarea {
-      width: 90%;
+      width: 89%;
       height: calc(100% - 30px);
       outline: none;
       border: solid 1px #D4D4D4;
       resize: none;
-      margin: 15px;
-      padding: 10px;
+      margin: 25px;
+      padding-left: 10px;
+      margin-top: 0px;
+      margin-left: 0px;
     }
   }
 }

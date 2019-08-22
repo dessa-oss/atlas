@@ -1,23 +1,47 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Remarkable } from 'remarkable';
+import PropTypes from 'prop-types';
+import BaseActions from '../../actions/BaseActions';
 
 class Readme extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      input: '# This is a header\n\nAnd this is a paragraph',
+      input: '',
       editMode: false,
     };
 
     this.onClickEdit = this.onClickEdit.bind(this);
     this.onChangeMD = this.onChangeMD.bind(this);
     this.renderMD = this.renderMD.bind(this);
+    this.reload = this.reload.bind(this);
+  }
+
+  reload() {
+    const { location } = this.props;
+    BaseActions.getFromApiary(`projects/${location.state.project.name}/description`).then((result) => {
+      this.setState({
+        input: result.project_description,
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   onClickEdit() {
     const { editMode } = this.state;
+    const { location } = this.props;
+
+    if (editMode === true) {
+      BaseActions.putApiary(`projects/${location.state.project.name}/description`).then((result) => {
+        this.reload();
+      });
+    }
+
     const value = !editMode;
     this.setState({
       editMode: value,
@@ -61,5 +85,13 @@ class Readme extends React.Component {
     );
   }
 }
+
+Readme.propTypes = {
+  location: PropTypes.object,
+};
+
+Readme.defaultProps = {
+  location: {},
+};
 
 export default Readme;

@@ -28,7 +28,7 @@ class App extends Component {
               component={JobListPage}
             />
             <Route
-              path="/projects/:projectName/job_overview"
+              path="/projects/:projectName/overview"
               component={JobOverviewPage}
             />
             <Route render={() => <ErrorMessage errorCode={404} />} />

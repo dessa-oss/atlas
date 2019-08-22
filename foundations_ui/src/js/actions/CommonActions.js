@@ -83,18 +83,22 @@ class CommonActions {
     return header !== '';
   }
 
-  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams, rowNumber) {
+  static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails) {
     if (isMetric && job.output_metrics) {
-      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
+      return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
+        rowNumber, onClickOpenModalJobDetails);
     }
 
     if (!isMetric && job.input_params) {
-      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber);
+      return this.getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams,
+        rowNumber, onClickOpenModalJobDetails);
     }
     return null;
   }
 
-  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
+  static getInputCellsFromInputParams(job, isError, columns, isMetric, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails) {
     let cells = [];
     cells = [];
     columns.forEach((col) => {
@@ -108,6 +112,11 @@ class CommonActions {
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
+
+        const openModalJobDetails = (jobID) => {
+          onClickOpenModalJobDetails(job);
+        };
+
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
@@ -116,13 +125,15 @@ class CommonActions {
           rowNumber={rowNumber}
           hoverable={isHoverable}
           jobID={job.job_id}
+          onClickOpenModalJobDetails={openModalJobDetails}
         />);
       }
     });
     return cells;
   }
 
-  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams, rowNumber) {
+  static getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
+    rowNumber, onClickOpenModalJobDetails) {
     const cells = [];
     columns.forEach((col) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, col)) {
@@ -134,6 +145,11 @@ class CommonActions {
         if (cellType.match(/array*/)) {
           inputValue = this.transformArraysToString(inputValue);
         }
+
+        const openModalJobDetails = (jobID) => {
+          onClickOpenModalJobDetails(job);
+        };
+
         cells.push(<InputMetricCell
           key={key}
           value={inputValue}
@@ -142,6 +158,7 @@ class CommonActions {
           rowNumber={rowNumber}
           hoverable={isHoverable}
           jobID={job.job_id}
+          onClickOpenModalJobDetails={openModalJobDetails}
         />);
       } else {
         cells.push(null);
@@ -161,7 +178,8 @@ class CommonActions {
     return newValue;
   }
 
-  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams, onMetricRowClick) {
+  static getInputMetricRows(jobs, isMetric, allInputMetricColumn, hiddenInputParams,
+    onMetricRowClick, onClickOpenModalJobDetails) {
     let rows = null;
     let rowNumber = 0;
     if (jobs.length > 0) {
@@ -178,6 +196,7 @@ class CommonActions {
           hiddenInputParams={hiddenInputParams}
           rowNumber={rowNumber}
           onMetricRowClick={onMetricRowClick}
+          onClickOpenModalJobDetails={onClickOpenModalJobDetails}
         />);
         rowNumber += 1;
       });

@@ -67,9 +67,7 @@ class Notes extends React.Component {
               <div key={note.id} className="notes-blocks">
                 <div className="container-note-profile">
                   <img alt="" src={ProfilePlaceholder} />
-                  <div className="container-name-date">
-                    <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
-                  </div>
+                  <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
                 </div>
                 <p>{note.message}</p>
               </div>
