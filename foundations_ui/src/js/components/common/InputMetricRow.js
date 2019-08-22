@@ -34,12 +34,14 @@ class InputMetricRow extends Component {
     const {
       job, isError, isMetric, allInputMetricColumn, hiddenInputParams, rowNumber, key, onMetricRowClick,
     } = this.state;
+    const { onClickOpenModalJobDetails } = this.props;
     const cells = CommonActions.getInputMetricCells(job,
       isError,
       isMetric,
       allInputMetricColumn,
       hiddenInputParams,
-      rowNumber);
+      rowNumber,
+      onClickOpenModalJobDetails);
     return (
       <div
         role="presentation"
@@ -62,6 +64,7 @@ InputMetricRow.propTypes = {
   allInputMetricColumn: PropTypes.array,
   hiddenInputParams: PropTypes.array,
   rowNumber: PropTypes.number,
+  onClickOpenModalJobDetails: PropTypes.func,
 };
 const defaultFunc = () => console.warn('InputMetricRow: onClick func missing.');
 InputMetricRow.defaultProps = {
@@ -73,6 +76,7 @@ InputMetricRow.defaultProps = {
   allInputMetricColumn: [],
   hiddenInputParams: [],
   rowNumber: 0,
+  onClickOpenModalJobDetails: () => null,
 };
 
 export default InputMetricRow;

@@ -52,13 +52,15 @@ class InputMetric extends Component {
       header, hiddenInputParams, allInputParams, isMetaData,
       jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
     } = this.state;
+    const { onClickOpenModalJobDetails } = this.props;
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
     );
 
-    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams, this.onMetricRowClick);
+    let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams,
+      this.onMetricRowClick, onClickOpenModalJobDetails);
 
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
@@ -98,6 +100,7 @@ InputMetric.propTypes = {
   toggleNumberFilter: PropTypes.func,
   filters: PropTypes.array,
   isMetaData: PropTypes.bool,
+  onClickOpenModalJobDetails: PropTypes.func,
 };
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
@@ -112,6 +115,7 @@ InputMetric.defaultProps = {
   toggleNumberFilter: () => {},
   filters: [],
   isMetaData: false,
+  onClickOpenModalJobDetails: () => null,
 };
 
 

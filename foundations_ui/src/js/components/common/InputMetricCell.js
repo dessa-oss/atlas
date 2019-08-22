@@ -53,9 +53,14 @@ class InputMetricCell extends Component {
     return displayText.toString().length > maxCellCharacterLength || displayText.length > maxCellCharacterLength;
   }
 
+  onClick3Dots() {
+    const { onClickOpenModalJobDetails, jobID } = this.props;
+    onClickOpenModalJobDetails(jobID);
+  }
+
   render() {
     const {
-      value, isError, cellType, rowNumber, expand, hoverable, jobID,
+      value, isError, cellType, rowNumber, expand, hoverable, jobID, onClickOpenModalJobDetails,
     } = this.state;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);
@@ -72,7 +77,7 @@ class InputMetricCell extends Component {
         if (index === 2) {
           expandedValue = Array.from(finalValue);
           expandedValue.push(<Tag key={tag} value={tag} />);
-          finalValue.push(<p>...</p>);
+          finalValue.push(<p onClick={onClickOpenModalJobDetails} onKeyDown={() => {}}>...</p>);
         } else if (index < 2) {
           finalValue.push(<Tag key={tag} value={tag} />);
         } else {
@@ -119,6 +124,7 @@ InputMetricCell.propTypes = {
   rowNumber: PropTypes.number,
   hoverable: PropTypes.bool,
   jobID: PropTypes.string,
+  onClickOpenModalJobDetails: PropTypes.func,
 };
 
 InputMetricCell.defaultProps = {
@@ -128,6 +134,7 @@ InputMetricCell.defaultProps = {
   rowNumber: 0,
   hoverable: true,
   jobID: '',
+  onClickOpenModalJobDetails: () => null,
 };
 
 export default InputMetricCell;

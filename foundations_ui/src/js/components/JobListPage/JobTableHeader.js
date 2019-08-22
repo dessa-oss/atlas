@@ -391,6 +391,8 @@ class JobTableHeader extends Component {
       filters,
     } = this.state;
 
+    const { onClickOpenModalJobDetails } = this.props;
+
     let userFilter = null;
     if (isShowingUserFilter) {
       const filteredUsers = CommonActions.formatColumns(allUsers, hiddenUsers, searchText);
@@ -567,6 +569,7 @@ class JobTableHeader extends Component {
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
             isMetaData={isMetaData}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
           />
           <InputMetric
             header="Parameters"
@@ -575,6 +578,7 @@ class JobTableHeader extends Component {
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
           />
           <InputMetric
             header="Metrics"
@@ -584,6 +588,7 @@ class JobTableHeader extends Component {
             toggleNumberFilter={this.toggleInputMetricFilter}
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
+            onClickOpenModalJobDetails={onClickOpenModalJobDetails}
           />
           <PopUpRows jobs={jobs} />
           {userFilter}
@@ -637,6 +642,7 @@ JobTableHeader.propTypes = {
   updateStartTimeFilter: PropTypes.func,
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
+  onClickOpenModalJobDetails: PropTypes.func,
 };
 
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
@@ -677,6 +683,7 @@ JobTableHeader.defaultProps = {
   updateStartTimeFilter: () => {},
   startTimeFilters: [],
   filters: [],
+  onClickOpenModalJobDetails: () => null,
 };
 
 export default JobTableHeader;

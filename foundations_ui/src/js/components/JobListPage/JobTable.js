@@ -10,6 +10,7 @@ class JobTable extends Component {
   constructor(props) {
     super(props);
     this.onDataUpdated = props.onDataUpdated.bind(this);
+    this.onClickOpenModalJobDetails = this.onClickOpenModalJobDetails.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -73,6 +74,12 @@ class JobTable extends Component {
     rowSelect.removePreviousActiveRows();
   }
 
+  onClickOpenModalJobDetails(job) {
+    const { onClickJob } = this.props;
+    onClickJob(job);
+    this.handleRowSelection(job.job_id);
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
@@ -85,11 +92,7 @@ class JobTable extends Component {
     const rowNum = 1;
     const rowNumbers = [];
 
-    const handleClick = (job) => {
-      const { onClickJob } = this.props;
-      onClickJob(job);
-      this.handleRowSelection(job.job_id);
-    };
+    const handleClick = (job) => {};
 
     const selectedJob = () => {
       for (let i = 0; i < jobs.length; i += 1) {
@@ -128,6 +131,7 @@ class JobTable extends Component {
             filters={filters}
             onMetricRowClick={handleClick}
             onDataUpdated={this.onDataUpdated}
+            onClickOpenModalJobDetails={this.onClickOpenModalJobDetails}
           />
           {/* <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
