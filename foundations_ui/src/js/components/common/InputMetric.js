@@ -71,6 +71,7 @@ class InputMetric extends Component {
 
     return (
       <div className="job-static-columns-container">
+        <h2>{header}</h2>
         <div className="input-metric-header-row-container">
           <div className="input-metric-column-container column-header">
             {inputParams}
