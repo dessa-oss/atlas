@@ -65,6 +65,11 @@
   }
 }
 
+.container-notes {
+  width: calc(34.5% - 30px);
+  display: inline-block;
+}
+
 .notes-textarea {
   position: relative; 
   border: 2px solid #D4D4D4;
@@ -94,15 +99,57 @@
     position:absolute; 
     bottom: 15px; 
     right: 15px;
+    background-color: #0FA3B1;
+    font-size: 80%;
+    padding: 10px;
+    line-height: 0.5;
   }
 }
 
 .notes-blocks {
-  border: 2px solid #D4D4D4;
+  border-top: 2px solid #D4D4D4;
+  border-bottom: 0px;
   border-radius: 3px;
   padding: 15px;
   width: calc(100% - 30px);
   margin: 15px 0px;
+
+  &:last-child {
+    border-bottom: 2px solid #D4D4D4;
+
+  }
+
+  .container-note-profile {
+    width: 100%;
+    height: 30px;
+    border-radius: 30px;
+
+    img {
+      width: 30px;
+      height: 100%;
+      object-fit: cover;
+      display: inline-block;
+    }
+
+    .container-name-date {
+      margin-left: 20px;
+      height: 100%;
+      display: inline-block;
+  
+      p {
+        display: inline-block;
+      }
+  
+      span {
+        display: inline-block;
+        margin-left: 20px;
+      }
+    }
+  }
+
+  p {
+    margin-top: 20px;
+  }
 }
 
 .chart-and-notes {
@@ -117,23 +164,42 @@
   
     button {
       float: right;
+      background-color: #0FA3B1;
+      font-size: 80%;
+      padding: 10px;
+      line-height: 0.5;
+
+      &.save {
+        background-color: #0FA3B1;
+      }
     }
   
     div {
-      margin-top: 40px;
-      width: 100%;
+      width: 90%;
+
+      h1 {
+        margin-top: 0px;
+      }
     }
   
     textarea {
-      width: calc(100% - 2px - 50px);
+      width: 90%;
       height: calc(100% - 30px);
       outline: none;
-      background: rgba(226,226,226,1);
-      border: none;
+      border: solid 1px #D4D4D4;
       resize: none;
-      margin: 25px;
+      margin: 15px;
+      padding: 10px;
     }
   }
+}
+
+.section-title {
+  @extend .f--din-bold;
+  color: #3D518C;
+  margin: 0px;
+  font-size: 17px;
+  display: inline-block;
 }
 
 .section-container {
@@ -144,14 +210,8 @@
   -moz-box-shadow: 0px 6px 4px 0px rgba(226,226,226,1);
   box-shadow: 0px 6px 4px 0px rgba(226,226,226,1);
   margin-bottom: 25px;
-
-  h3 {
-    @extend .f--din-bold;
-    color: #3D518C;
-    margin: 0px;
-    font-size: 17px;
-    display: inline-block;
-  }
+  margin-top: 20px;
+  height: 100%;
 
   h2 {
     @extend .f--din-bold;
@@ -185,6 +245,8 @@
     background-repeat: no-repeat;
   }
 }
+
+
 
 .dashboard-content-container {
   $width: unquote((8/12*100)+'%');

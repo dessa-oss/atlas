@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import ProfilePlaceholder from '../../../assets/images/icons/profile-placeholder.png';
 
 class Notes extends React.Component {
   constructor(props) {
@@ -54,21 +55,29 @@ class Notes extends React.Component {
   render() {
     const { notes, message } = this.state;
     return (
-      <div className="notes section-container col-md-4">
-        <h3>Notepad</h3>
-        <div className="notes-textarea">
-          <textarea placeholder="Type something..." value={message} onChange={this.onChangeMessage} />
-          <button type="button" onClick={this.onClickAddNote}>Add Note</button>
+      <div className="container-notes">
+        <h3 className="section-title">Comments</h3>
+        <div className="notes section-container">
+          <div className="notes-textarea">
+            <textarea placeholder="Add a comment..." value={message} onChange={this.onChangeMessage} />
+            <button type="button" onClick={this.onClickAddNote}>Add Note</button>
+          </div>
+          {notes.map((note) => {
+            return (
+              <div key={note.id} className="notes-blocks">
+                <div className="container-note-profile">
+                  <img alt="" src={ProfilePlaceholder} />
+                  <div className="container-name-date">
+                    <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
+                  </div>
+                </div>
+                <p>{note.message}</p>
+              </div>
+            );
+          })}
         </div>
-        {notes.map((note) => {
-          return (
-            <div key={note.id} className="notes-blocks">
-              <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
-              <p>{note.message}</p>
-            </div>
-          );
-        })}
       </div>
+
     );
   }
 }

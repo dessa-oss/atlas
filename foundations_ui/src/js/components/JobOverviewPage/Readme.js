@@ -39,22 +39,25 @@ class Readme extends React.Component {
   render() {
     const { input, editMode } = this.state;
     return (
-      <div className="readme section-container">
-        <h2>README.md</h2>
-        <button
-          className="button-edit-md"
-          type="button"
-          onClick={this.onClickEdit}
-        >
-          {editMode === true ? 'DONE' : 'EDIT'}
-        </button>
-        {editMode === true && (
-          <textarea value={input} onChange={this.onChangeMD} placeholder="Type something..." />
-        )}
-        {editMode === false && (
-          <div dangerouslySetInnerHTML={this.renderMD()} />
-        )}
+      <div>
+        <h3 className="section-title">Project overview</h3>
+        <div className="readme section-container">
+          <button
+            className={editMode === true ? 'button-edit-md save' : 'button-edit-md'}
+            type="button"
+            onClick={this.onClickEdit}
+          >
+            {editMode === true ? 'Save' : 'Edit'}
+          </button>
+          {editMode === true && (
+            <textarea value={input} onChange={this.onChangeMD} placeholder="Type something..." />
+          )}
+          {editMode === false && (
+            <div dangerouslySetInnerHTML={this.renderMD()} />
+          )}
+        </div>
       </div>
+
     );
   }
 }
