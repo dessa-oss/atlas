@@ -102,20 +102,22 @@ class JobOverviewGraph extends Component {
     };
 
     return (
-      <div className="chart section-container">
-        <h3>Recent Jobs</h3>
-        <select>
-          <option selected="selected">
-          Metrics
-          </option>
-        </select>
-        <select>
-          <option selected="selected">
-          Sort by
-          </option>
-        </select>
-        <div className="highchart-chart">
-          <HighchartsReact highcharts={Highcharts} options={options} />
+      <div>
+        <h3 className="section-title">Recent Jobs</h3>
+        <div className="chart section-container">
+          <select>
+            <option selected="selected">
+              Metrics
+            </option>
+          </select>
+          <select>
+            <option selected="selected">
+              Sort by
+            </option>
+          </select>
+          <div className="highchart-chart">
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          </div>
         </div>
       </div>
     );
