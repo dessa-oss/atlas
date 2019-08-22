@@ -1,0 +1,40 @@
+.job-details-header {
+
+  margin-top: 50px;
+  margin-bottom: 30px;
+
+  span {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+    vertical-align: top;
+    margin-left: 0px;
+  }
+
+  p {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 15px;
+    margin-left: 15px;
+    width: 150px;
+    word-wrap: break-word;
+    text-align: left;
+  }
+
+  button {
+    height: 50px;
+    vertical-align: middle;
+    border-radius: 4px;
+  }
+
+  button:first-of-type {
+    width: 220px;
+    background: $color-text-greyed;
+  }
+
+  button:nth-of-type(2) {
+    background: $color-delete-red;
+    margin-left: 50px;
+  }
+
+}

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTable from './JobTable';
-import Toolbar from '../common/Toolbar';
 import JobHeader from './JobHeader';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ErrorMessage from '../common/ErrorMessage';
 import ModalJobDetails from './ModalJobDetails';
+
+// THIS FILE IS NOT USED
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -54,7 +55,6 @@ class JobListPage extends Component {
   }
 
   async componentDidMount() {
-    console.log('PROPS: ', this.props);
     const updateTimeInMilli = 4000;
 
     this.interval = setInterval(
@@ -383,8 +383,6 @@ class JobListPage extends Component {
     }
     return (
       <div className="job-list-container">
-        <Toolbar />
-        {sidebar}
         <JobHeader
           project={project}
           jobs={jobs}
