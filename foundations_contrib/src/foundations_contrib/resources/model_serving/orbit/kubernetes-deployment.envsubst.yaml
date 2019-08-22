@@ -16,7 +16,7 @@ spec:
         app: ${project_name}-${model_name}
     spec:
       nodeSelector:
-        modelServer: "True"
+        jobRunner: "True"
       containers:
       - image: docker.shehanigans.net/foundations-model-package
         env:
