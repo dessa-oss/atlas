@@ -55,7 +55,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def test_can_successfully_run_model_serve(self):
         try:
-            self._deploy_job(self.mock_user_provided_model_name)
+            self._deploy_job(self.mock_project_name,self.mock_user_provided_model_name)
 
             self._wait_for_server()
 
@@ -64,8 +64,23 @@ class TestOrbitDeployModelViaCli(Spec):
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
+    def test_can_successfully_stop_model_serve(self):
+        try:
+            import time
+            # ensure deployed
+            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
+            self._wait_for_server()
+            self.assertIsNotNone(self._check_if_endpoint_available())
+            
+            # stop and ensure that its unavailable
+            self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
+            time.sleep(1)
+            self.assertIsNone(self._check_if_endpoint_available())
 
-    def _deploy_job(self, model_name):
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
+
+    def _deploy_job(self, project_name, model_name):
         import subprocess
 
         command_to_run = [
@@ -74,10 +89,25 @@ class TestOrbitDeployModelViaCli(Spec):
             'orbit',
             'serve', 
             'start',
-            '--project_name={}'.format(self.mock_project_name),
+            '--project_name={}'.format(project_name),
             '--model_name={}'.format(model_name),
-            '--project_directory={}'.format(self.project_directory),
-            '--env=scheduler'
+            '--project_directory={}'.format(self.project_directory)
+        ]
+
+        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
+        self._check_if_process_successful(process_result)
+
+    def _stop_job(self, project_name, model_name):
+        import subprocess
+
+        command_to_run = [
+            'python', '-m', 
+            'foundations',
+            'orbit',
+            'serve', 
+            'stop',
+            '--project_name={}'.format(project_name),
+            '--model_name={}'.format(model_name),
         ]
 
         process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
@@ -102,7 +132,7 @@ class TestOrbitDeployModelViaCli(Spec):
                 return
             except Exception as e:
                 print('waiting for server to respond .....')
-                time.sleep(2)
+                time.sleep(1)
         self.fail('server never started')
                     
 
@@ -119,10 +149,8 @@ class TestOrbitDeployModelViaCli(Spec):
     
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}/predict'
-        print(f'Attempting to check if the API end point is available for prediction {end_point_url}')
         try:
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
-            print(result)
             return result
         except Exception as e:
             print(e)
@@ -158,9 +186,8 @@ class TestOrbitDeployModelViaCli(Spec):
 
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
-        import os.path as path
         import subprocess
-
-        yaml_template_path = path.realpath(f'{foundations_contrib.root()}/resources/model_serving/orbit/kubernetes-deployment.envsubst.yaml')
-        command_to_run = f'project_name={project_name} model_name={model_name} envsubst < {yaml_template_path} | kubectl delete -f -'
-        subprocess.call(['bash', '-c', command_to_run])
+        command = f'kubectl -n foundations-scheduler-test delete deployment {project_name}-{model_name}-deployment'
+        subprocess.run(command.split())
+        command = f'kubectl -n foundations-scheduler-test delete svc {project_name}-{model_name}-service'
+        subprocess.run(command.split())

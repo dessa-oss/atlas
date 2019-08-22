@@ -19,7 +19,15 @@ class TestOrbitModelPackageServer(Spec):
         return self.faker.word()
 
     @let
+    def mock_2nd_project_name(self):
+        return self.faker.word()
+
+    @let
     def mock_model_name(self):
+        return self.faker.word()
+
+    @let
+    def mock_2nd_model_name(self):
         return self.faker.word()
 
     @let
@@ -93,6 +101,9 @@ class TestOrbitModelPackageServer(Spec):
         self.mock_subprocess_object_for_deploy = Mock()
         self.mock_subprocess_object_for_deploy.returncode = 0
 
+        self.mock_subprocess_object_for_destroy = Mock()
+        self.mock_subprocess_object_for_destroy.returncode = 0
+
         mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
         mock_path_exists.return_when(True, self.ssh_key_path)
 
@@ -106,6 +117,9 @@ class TestOrbitModelPackageServer(Spec):
         
         self.mock_subprocess_run_with_return.return_when(mock_subprocess_object, ['bash', '-c', 'kubectl -n foundations-scheduler-test get secret job-server-private-keys -o yaml'], stdout=subprocess.PIPE)
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_2nd_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_2nd_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_destroy, ['bash', './remove_deployment.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         
 
     def test_retrieve_configuration_from_kubernetes(self):
@@ -154,16 +168,28 @@ class TestOrbitModelPackageServer(Spec):
         result = self._deploy()
         self.assertFalse(result)
 
+    def _retrieve_results_from_redis(self, project_name):
+        hash_map_key = f'projects:{project_name}:model_listing'
+        retrieved_results = self._redis.hgetall(hash_map_key)
+        return {key.decode(): value for key, value in retrieved_results.items()}
+
     def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
         self._deploy()
  
         expected_results = { self.mock_model_name: pickle.dumps(self.model_information) }
-
-        hash_map_key = f'projects:{self.mock_project_name}:model_listing'
-        retrieved_results = self._redis.hgetall(hash_map_key)
-        decoded_results = {key.decode(): value for key, value in retrieved_results.items()}
-
+        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
+        
         self.assertEqual(expected_results, decoded_results)
+
+    def test_deploy_sends_information_to_redis_for_multiple_models(self):
+        self._deploy()
+        self._deploy_second()
+
+        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
+
+        self.assertIsNotNone(decoded_results.get(self.mock_model_name))
+        self.assertIsNotNone(decoded_results.get(self.mock_2nd_model_name))
+        
 
     def test_deploy_upload_user_specified_model_directory(self):
         self._deploy()
@@ -182,3 +208,47 @@ class TestOrbitModelPackageServer(Spec):
     def _deploy(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         return deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
+
+    def _deploy_second(self):
+        from foundations_contrib.cli.orbit_model_package_server import deploy
+        return deploy(self.mock_project_name, self.mock_2nd_model_name, self.mock_project_directory)
+
+
+    def _stop(self):
+        from foundations_contrib.cli.orbit_model_package_server import stop
+        return stop(self.mock_project_name, self.mock_model_name)
+
+    def _destroy(self):
+        from foundations_contrib.cli.orbit_model_package_server import destroy
+        return destroy(self.mock_project_name, self.mock_model_name)
+
+    def test_stop_returns_true_if_successful(self):
+        result = self._stop()
+        self.assertTrue(result)
+
+    def test_stop_marks_model_as_deactivated(self):
+        self._deploy()
+        previous_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(previous_status, 'activated')
+
+        self._stop()
+        after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(after_status, 'deactivated')
+
+    def _get_model_status(self, project_name, model_name):
+        import pickle
+        decoded_results = self._retrieve_results_from_redis(project_name)
+        model_details = decoded_results.get(model_name)
+        deserialised_details = pickle.loads(model_details)
+        return deserialised_details['status']
+
+    def test_destroy_returns_true_if_successful(self):
+        result = self._destroy()
+        self.assertTrue(result)
+
+    def test_destroy_removes_the_model_in_redis(self):
+        self._deploy()
+        self._destroy()
+
+        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
+        self.assertIsNone(decoded_results.get(self.mock_model_name))

@@ -107,9 +107,16 @@ class CommandLineInterface(object):
         serving_deploy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_deploy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_deploy)
 
-        # serving_destroy_parser = serving_subparsers.add_parser('stop')
-        # serving_destroy_parser.add_argument('model_name')
-        # serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
+        serving_stop_parser = serving_subparsers.add_parser('stop')
+        serving_stop_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
+        serving_stop_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
+        serving_stop_parser.set_defaults(function=self._kubernetes_orbit_model_serving_stop)
+
+        serving_destroy_parser = serving_subparsers.add_parser('destroy')
+        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
+        serving_destroy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
+        serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
+
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -329,3 +336,11 @@ class CommandLineInterface(object):
         # else:
         #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
         #     self._fail_with_message(message)
+
+    def _kubernetes_orbit_model_serving_stop(self):
+        from foundations_contrib.cli.orbit_model_package_server import stop
+        successfully_stopped = stop(self._arguments.project_name, self._arguments.model_name)
+
+    def _kubernetes_orbit_model_serving_destroy(self):
+        from foundations_contrib.cli.orbit_model_package_server import destroy
+        successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name)
