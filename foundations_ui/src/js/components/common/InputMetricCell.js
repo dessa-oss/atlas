@@ -8,6 +8,7 @@ class InputMetricCell extends Component {
   constructor(props) {
     super(props);
     this.toggleExpand = this.toggleExpand.bind(this);
+    this.onClick3Dots = this.onClick3Dots.bind(this);
     this.state = {
       value: this.props.value,
       isError: this.props.isError,
@@ -77,7 +78,7 @@ class InputMetricCell extends Component {
         if (index === 2) {
           expandedValue = Array.from(finalValue);
           expandedValue.push(<Tag key={tag} value={tag} />);
-          finalValue.push(<p onClick={onClickOpenModalJobDetails} onKeyDown={() => {}}>...</p>);
+          finalValue.push(<p onClick={this.onClick3Dots} onKeyDown={() => {}}>...</p>);
         } else if (index < 2) {
           finalValue.push(<Tag key={tag} value={tag} />);
         } else {

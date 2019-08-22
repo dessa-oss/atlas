@@ -582,7 +582,7 @@ class JobTableHeader extends Component {
             onMetricRowClick={this.onMetricRowClick}
             onClickOpenModalJobDetails={onClickOpenModalJobDetails}
           />
-          <PopUpRows jobs={jobs} />
+          <PopUpRows jobs={jobs} onClickOpenModalJobDetails={onClickOpenModalJobDetails} />
           {userFilter}
           {statusFilter}
           {durationFilter}
