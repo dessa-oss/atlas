@@ -35,6 +35,15 @@
   button:nth-of-type(2) {
     background: $color-delete-red;
     margin-left: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  select {
+    float: right;
+    margin-right: 20px;
+    height: 50px;
+    vertical-align: middle;
   }
 
 }
