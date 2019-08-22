@@ -70,6 +70,7 @@
 
   .column-filter-header {
     margin: 10px;
+    height: 80px;
     input, button {
       display: inline-block;
       vertical-align: middle;
@@ -96,7 +97,14 @@
   }
 
   .column-filter-list {
-    height: 470px;
+    height: 420px;
+    margin-left: 10px;
+    overflow-y: scroll;
+
+    div {
+      margin: 0px;
+    }
+
   }
 
   .column-filter-buttons {

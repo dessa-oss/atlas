@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import SelectColumnFilter from '../common/filters/SelectColumnFilter';
 
 class JobTableButtons extends Component {
@@ -6,8 +7,17 @@ class JobTableButtons extends Component {
     super(props);
     this.state = {
       isShowingFilter: false,
+      columns: this.props.columns,
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState(
+      {
+        columns: nextProps.columns,
+      },
+    );
   }
 
   toggleShowingFilter() {
@@ -16,13 +26,13 @@ class JobTableButtons extends Component {
   }
 
   render() {
-    const { isShowingFilter } = this.state;
+    const { isShowingFilter, columns } = this.state;
     let filter = null;
     if (isShowingFilter) {
       filter = (
         <SelectColumnFilter
           // changeHiddenParams={changeHiddenParams}
-          // columns={columns}
+          columns={columns}
           toggleShowingFilter={this.toggleShowingFilter}
           // hiddenInputParams={hiddenInputParams}
           // updateSearchText={updateSearchText}
@@ -50,5 +60,13 @@ class JobTableButtons extends Component {
     );
   }
 }
+
+JobTableButtons.propTypes = {
+  columns: PropTypes.array,
+};
+
+JobTableButtons.defaultProps = {
+  columns: [],
+};
 
 export default JobTableButtons;
