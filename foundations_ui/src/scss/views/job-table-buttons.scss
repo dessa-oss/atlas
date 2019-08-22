@@ -38,12 +38,82 @@
     padding-left: 15px;
     padding-right: 15px;
   }
+}
 
-  select {
-    float: right;
-    margin-right: 20px;
-    height: 50px;
-    vertical-align: middle;
+.job-details-filter-button {
+  float: right;
+  margin-right: 20px;
+  height: 50px;
+  vertical-align: middle;
+  border: 2px solid $color-border-bottom;
+  border-radius: 4px;
+  width: 170px;
+
+  p {
+    padding-top: 18px;
+    font-size: 13px;
+  }
+}
+
+.job-details-filter-container {
+  text-align: left;
+  padding: 15px 15px 5px 15px;
+  width: 500px;
+  height: 600px;
+  position: absolute;
+  left: calc(100% - 550px);
+
+  .filter-container {
+    background: $color-white;
+    height: 100%;
   }
 
+  .column-filter-header {
+    margin: 10px;
+    height: 80px;
+    input, button {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    input {
+      width: 86%;
+      margin-right: 20px;
+    }
+    button {
+      width: 30px;
+      height: 30px;
+    }
+
+    .column-control-buttons {
+      button {
+        float: right;
+        margin-left: 10px;
+        width: 150px;
+        height: 35px;
+        padding: 10px;
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .column-filter-list {
+    height: 420px;
+    margin-left: 10px;
+    overflow-y: scroll;
+
+    div {
+      margin: 0px;
+    }
+
+  }
+
+  .column-filter-buttons {
+    button {
+      float: right;
+      margin-left: 10px;
+      width: 150px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  }
 }

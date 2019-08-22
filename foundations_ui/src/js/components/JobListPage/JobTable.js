@@ -101,10 +101,14 @@ class JobTable extends Component {
       }
     };
 
+    const allFilterableColumns = allMetrics.concat(allInputParams);
+
     return (
       <div className="job-table-content">
         <div className="job-table-container">
-          <JobTableButtons />
+          <JobTableButtons
+            columns={allFilterableColumns}
+          />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}
