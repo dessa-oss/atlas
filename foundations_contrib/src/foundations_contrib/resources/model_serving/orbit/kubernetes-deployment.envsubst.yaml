@@ -15,8 +15,6 @@ spec:
       labels: 
         app: ${project_name}-${model_name}
     spec:
-      nodeSelector:
-        modelServer: "True"
       containers:
       - image: docker.shehanigans.net/foundations-model-package
         env:
