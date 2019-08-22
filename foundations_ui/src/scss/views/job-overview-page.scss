@@ -164,21 +164,32 @@
   
     button {
       float: right;
+      background-color: #0FA3B1;
+      font-size: 80%;
+      padding: 10px;
+      line-height: 0.5;
+
+      &.save {
+        background-color: #0FA3B1;
+      }
     }
   
     div {
-      margin-top: 40px;
-      width: 100%;
+      width: 90%;
+
+      h1 {
+        margin-top: 0px;
+      }
     }
   
     textarea {
-      width: calc(100% - 2px - 50px);
+      width: 90%;
       height: calc(100% - 30px);
       outline: none;
-      background: rgba(226,226,226,1);
-      border: none;
+      border: solid 1px #D4D4D4;
       resize: none;
-      margin: 25px;
+      margin: 15px;
+      padding: 10px;
     }
   }
 }
