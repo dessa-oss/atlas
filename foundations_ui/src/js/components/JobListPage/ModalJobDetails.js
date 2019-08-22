@@ -99,15 +99,13 @@ class ModalJobDetails extends React.Component {
                 </CopyToClipboard>
               </div>
               <div
-                className="button-close"
+                className="close"
                 onClick={onToggle}
                 role="button"
                 aria-label="Close"
                 onKeyDown={this.onKeyDown}
                 tabIndex={0}
-              >
-                X
-              </div>
+              />
             </div>
             <div className="container-tags">
               {tags.map((tag) => {
