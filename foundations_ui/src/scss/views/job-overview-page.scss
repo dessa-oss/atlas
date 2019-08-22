@@ -12,9 +12,9 @@
 }
 
 .job-overview-header-container {
+  margin-top: 40px;
 
   div {
-    display: inline-block;
     width: 50%;
   }
 
@@ -30,7 +30,6 @@
 
   p {
     color: $color-dark-blue;
-    text-align: right;
     font-size: 16px;
   } 
 }

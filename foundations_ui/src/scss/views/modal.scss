@@ -246,6 +246,16 @@
         }
       }
 
+      .container-logs {
+        height: 300px;
+        border: solid 1px #e9ecef;
+        border-radius: 8px;
+        margin-top: 20px;
+        overflow-y: scroll;
+        white-space: pre-wrap;
+        @extend .f--din-bold;
+      }
+
       .container-artifacts {
           margin: 20px;
 
@@ -269,7 +279,7 @@
                 height: 40px;
 
                 &.last {
-                    width: 55%; 
+                    width: 85%; 
                 }
 
                 p {
@@ -281,20 +291,39 @@
 
             .table-artifacts-row {
                 background-color: transparent;
-                width: 15%;
-                display: inline-block;
                 height: 40px;
                 border: solid 1px #e9ecef;
 
-                &.last {
-                    width: 55%; 
+                .table-artifacts-row-cell {
+                    width: 15%;
+                    display: inline-block;
+                    height: 100%;
+
+                    &.last {
+                        width: 85%; 
+                    }
+    
+                    p {
+                        @extend .f--din;
+                        width: 100%;
+                        text-align: center;
+                        float: left;
+                    }
+
+                    .button-download {
+                      width: 30px;
+                      height: 30px;
+                      float: right;
+
+                      div {
+                        width: 20px;
+                        height: 20px;
+                        margin-top: 10px;
+                      }
+                    }
                 }
 
-                p {
-                    @extend .f--din;
-                    width: 100%;
-                    text-align: center;
-                }
+                
             }
           }
       }

@@ -47,12 +47,6 @@ class ArtifactsTable extends React.Component {
         <div className="table-artifacts-header">
           <p>Artifact Name</p>
         </div>
-        <div className="table-artifacts-header">
-          <p>Date Created</p>
-        </div>
-        <div className="table-artifacts-header">
-          <p>File Size</p>
-        </div>
         <div className="table-artifacts-header last" />
         {artifacts.map((artifact) => {
           return <ArtifactRow key={artifact.id} artifact={artifact} />;
