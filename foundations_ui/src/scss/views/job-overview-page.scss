@@ -14,10 +14,6 @@
 .job-overview-header-container {
   margin-top: 40px;
 
-  div {
-    width: 50%;
-  }
-
   h1 {
     color: $color-dark-blue;
     margin-top: 20px;
@@ -31,7 +27,16 @@
   p {
     color: $color-dark-blue;
     font-size: 16px;
-  } 
+  }
+
+  .container-label-date {
+    display: inline-block;
+  }
+
+  .container-text-date {
+    display: inline-block;
+    margin-left: 5px;
+  }
 }
 
 .job-overview-tabs-tags-container {
