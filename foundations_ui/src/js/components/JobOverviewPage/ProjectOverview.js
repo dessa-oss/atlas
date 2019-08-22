@@ -39,7 +39,7 @@ class ProjectOverview extends React.Component {
           <JobOverviewGraph metric={metric} graphData={graphData} />
           <Readme {...this.props} />
         </section>
-        <Notes />
+        <Notes {...this.props} />
       </div>
     );
   }

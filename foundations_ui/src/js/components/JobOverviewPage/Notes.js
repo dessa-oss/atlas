@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import ProfilePlaceholder from '../../../assets/images/icons/profile-placeholder.png';
+import BaseActions from '../../actions/BaseActions';
 
 class Notes extends React.Component {
   constructor(props) {
@@ -8,16 +10,34 @@ class Notes extends React.Component {
 
     this.onChangeMessage = this.onChangeMessage.bind(this);
     this.onClickAddNote = this.onClickAddNote.bind(this);
+    this.reload = this.reload.bind(this);
 
     this.state = {
-      notes: [{
-        id: 1,
-        date: '2019-06-25',
-        author: 'Mohammed R.',
-        message: 'This is my message to you',
-      }],
+      notes: [],
       message: '',
     };
+  }
+
+  reload() {
+    const { location } = this.props;
+    BaseActions.getFromApiary(`projects/${location.state.project.name}/note_listing`).then((result) => {
+      console.log('RELOAD');
+      if (result) {
+        result.sort((a, b) => {
+          let dateA = new Date(a.date);
+          let dateB = new Date(b.date);
+          return dateB - dateA;
+        });
+        this.setState({
+          notes: result,
+          message: '',
+        });
+      }
+    });
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   onChangeMessage(e) {
@@ -27,28 +47,16 @@ class Notes extends React.Component {
   }
 
   onClickAddNote() {
-    const { message, notes } = this.state;
+    const { message } = this.state;
+    const { location } = this.props;
 
-    const newNote = {
-      id: notes[notes.length - 1].id + 1,
-      date: moment().toString(),
-      author: 'Mohammed R.',
+    const body = {
       message,
+      author: 'Mohammed R.',
     };
 
-    const newNotes = notes;
-    newNotes.push(newNote);
-
-    newNotes.sort((a, b) => {
-      let dateA = new Date(a.date);
-      let dateB = new Date(b.date);
-
-      return dateB - dateA;
-    });
-
-    this.setState({
-      notes: newNotes,
-      message: '',
+    BaseActions.postApiary(`projects/${location.state.project.name}/note_listing`, body).then(() => {
+      this.reload();
     });
   }
 
@@ -60,11 +68,18 @@ class Notes extends React.Component {
         <div className="notes section-container">
           <div className="notes-textarea">
             <textarea placeholder="Add a comment..." value={message} onChange={this.onChangeMessage} />
-            <button type="button" onClick={this.onClickAddNote}>Add Note</button>
+            <button
+              disabled={message === ''}
+              className={message === '' ? 'disabled' : ''}
+              type="button"
+              onClick={this.onClickAddNote}
+            >
+              Add Note
+            </button>
           </div>
           {notes.map((note) => {
             return (
-              <div key={note.id} className="notes-blocks">
+              <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">
                   <img alt="" src={ProfilePlaceholder} />
                   <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
@@ -79,5 +94,13 @@ class Notes extends React.Component {
     );
   }
 }
+
+Notes.propTypes = {
+  location: PropTypes.object,
+};
+
+Notes.defaultProps = {
+  location: { state: {} },
+};
 
 export default Notes;
