@@ -141,7 +141,7 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
         environment = dict(os.environ)
         environment['FOUNDATIONS_HOME'] = self.temp_home
 
-        return subprocess.run(['python', '-m', 'foundations', 'deploy'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
+        return subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
 
     def _test_deploy_job_with_all_arguments_specified_deploys_job(self):
         import os

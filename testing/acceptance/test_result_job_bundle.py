@@ -7,9 +7,20 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
-
+from contextlib import contextmanager
 
 class TestResultJobBundle(Spec):
+
+    @contextmanager
+    def change_config(self):
+        from foundations_contrib.config_manager import ConfigManager
+        from foundations_contrib.global_state import config_manager
+
+        config_manager.push_config()
+        try:
+            yield
+        finally:
+            config_manager.pop_config()
     
     @set_up
     def set_up(self):
@@ -17,12 +28,15 @@ class TestResultJobBundle(Spec):
         import foundations
                     
         self.local_job_id = run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally').strip()
-        self.remote_job_id = foundations.deploy(env='default', job_directory='acceptance/fixtures/run_locally').job_name()
+        with self.change_config():
+            self.remote_job_id = foundations.deploy(env='default', job_directory='acceptance/fixtures/run_locally').job_name()
 
     @let
     def root_archive_directory(self):
         import os.path
-        return os.path.expanduser('~/.foundations/job_data/archive')
+        from foundations_contrib.utils import foundations_home
+
+        return os.path.expanduser(foundations_home() + '/job_data/archive')
 
     @let
     def local_archive_directory(self):

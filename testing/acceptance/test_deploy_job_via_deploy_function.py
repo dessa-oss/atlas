@@ -15,12 +15,26 @@ class TestDeployJobViaDeployFunction(Spec, JobDeployFunctionTestScaffold):
     def _log_level(self):
         return 'FATAL'
 
+    def _change_foundations_home(self, new_home):
+        from foundations_contrib.utils import foundations_home
+        import os
+
+        self._old_home = foundations_home()
+        os.environ['FOUNDATIONS_HOME'] = new_home
+
+    def _reset_foundations_home(self):
+        import os
+        os.environ['FOUNDATIONS_HOME'] = self._old_home
+
     @set_up
     def set_up(self):
+        self._old_home = None
         self._set_up()
+        self._change_foundations_home(self.temp_home)
 
     @tear_down
     def tear_down(self):
+        self._reset_foundations_home()
         self._tear_down()
 
     def test_deploy_job_with_all_arguments_specified_deploys_job(self):

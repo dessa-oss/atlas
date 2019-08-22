@@ -9,7 +9,6 @@ import unittest
 
 from foundations_spec.helpers import set_up, tear_down
 from foundations_spec import *
-from foundations_ssh.sftp_job_deployment import SFTPJobDeployment
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 from foundations import config_manager
 from foundations_ssh.sftp_bucket import SFTPBucket
