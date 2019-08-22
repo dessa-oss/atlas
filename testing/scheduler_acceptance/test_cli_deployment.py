@@ -16,7 +16,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def cli_config(self):
         import os
 
-        scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
+        scheduler_host = os.environ['FOUNDATIONS_SCHEDULER_HOST']
 
         if scheduler_host is None:
             print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
@@ -28,7 +28,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         else:
             from foundations_spec.extensions import get_network_address
 
-            ssh_config_host = 'localhost'
+            ssh_config_host = scheduler_host
             docker_address = get_network_address('docker0')
             redis_url = 'redis://{}:6379'.format(docker_address)
 
