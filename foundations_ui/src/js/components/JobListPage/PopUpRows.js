@@ -37,6 +37,7 @@ class PopUpRows extends React.Component {
 
     return (
       <div className="job-static-columns-container-popup">
+        <div className="job-pop-up-no-title" />
         <div className="input-metric-header-row-container">
           <div className="input-metric-column-container-popup column-header">
             {inputParams}

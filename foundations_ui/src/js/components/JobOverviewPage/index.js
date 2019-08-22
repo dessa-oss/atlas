@@ -10,7 +10,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
     };
 
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);

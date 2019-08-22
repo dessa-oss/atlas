@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import JobTableHeader from './JobTableHeader';
-import JobTableRow from './JobTableRow';
-import JobSidebar from './job-sidebar/JobSidebar';
+import JobTableButtons from './JobTableButtons';
 import rowSelect from '../../../scss/jquery/rowSelect';
 
 
@@ -105,6 +104,7 @@ class JobTable extends Component {
     return (
       <div className="job-table-content">
         <div className="job-table-container">
+          <JobTableButtons />
           <JobTableHeader
             allInputParams={allInputParams}
             allMetrics={allMetrics}

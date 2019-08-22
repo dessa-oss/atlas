@@ -549,14 +549,6 @@ class JobTableHeader extends Component {
 
     const jobsMetaData = this.generateStaticJobs(jobs);
 
-    let hasPopUp = allMetrics.filter((element) => {
-      return element.name === '';
-    });
-
-    if (hasPopUp.length === 0) {
-      // allMetrics.push({ name: '', type: 'string' });
-    }
-
     return (
       <ScrollSync>
         <div className="job-list-container">

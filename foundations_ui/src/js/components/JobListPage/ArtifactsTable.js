@@ -41,7 +41,6 @@ class ArtifactsTable extends React.Component {
 
   render() {
     const { artifacts } = this.state;
-    console.log(artifacts);
     return (
       <div className="container-artifacts-table">
         <div className="table-artifacts-header">
