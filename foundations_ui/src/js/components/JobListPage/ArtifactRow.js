@@ -17,25 +17,23 @@ class ArtifactRow extends React.Component {
     const { artifact } = this.props;
 
     return (
-      <div>
-        <div className="table-artifacts-row">
+      <div className="table-artifacts-row">
+        <div className="table-artifacts-row-cell">
           <p>{artifact.name}</p>
         </div>
-        <div className="table-artifacts-row">
-          <p>{artifact.date}</p>
-        </div>
-        <div className="table-artifacts-row">
-          <p>{artifact.size}</p>
-        </div>
-        <div className="table-artifacts-row">
-          <div
-            className="button-download"
-            onClick={this.onClickDownload}
-            role="button"
-            aria-label="Close"
-            onKeyDown={this.onKeyDown}
-            tabIndex={0}
-          />
+        <div className="table-artifacts-row-cell last">
+          <div className="table-artifacts-row">
+            <div
+              className="button-download"
+              onClick={this.onClickDownload}
+              role="button"
+              aria-label="Close"
+              onKeyDown={this.onKeyDown}
+              tabIndex={0}
+            >
+              <div className="i--icon-download" />
+            </div>
+          </div>
         </div>
       </div>
     );

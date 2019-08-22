@@ -12,6 +12,12 @@
     display: none;
     overflow: hidden;
     outline: 0;
+
+    .close {
+      position: absolute;
+      right: 25px;
+      top: 15px;
+    }
   }
   
   .modal-open .modal {
@@ -57,9 +63,8 @@
     flex-direction: column;
     width: 100%;
     pointer-events: auto;
-    background-color: #fff;
     background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #F9F9F9;
     border-radius: 0.3rem;
     outline: 0;
     padding: 20px;
@@ -156,26 +161,39 @@
   
     .contanier-main {
       width: 100%;
-      height: 800px;
+      height: 770px;
   
       .container-title {
         display: inline-block;
-        margin-top: 20px;
   
         .label-id {
           display: inline-block;
+          font-size: 18px;
           @extend .f--din-bold;
         }
   
         .container-id {
           display: inline-block;
-          border: solid 1px #e9ecef;
+          border: solid 1px #BEBEBE;
           margin-left: 10px;
-          width: 200px;
-  
+          position: relative;
+          border-radius: 3px;
+          background: white;
+
           .text-id {
             display: inline-block;
             margin-left: 10px;
+            margin-right: 10px;
+            padding-right: 25px;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+          }
+
+          .i--icon-copy {
+            top: 10px;
+            right: 0px;
             margin-right: 10px;
           }
         }
@@ -246,6 +264,18 @@
         }
       }
 
+      .container-logs {
+        height: 450px;
+        border: solid 1px #e9ecef;
+        border-radius: 8px;
+        margin-top: 20px;
+        overflow-y: scroll;
+        white-space: pre-wrap;
+        padding: 15px;
+        background: white;
+        font-family: 'Inconsolata', monospace;
+      }
+
       .container-artifacts {
           margin: 20px;
 
@@ -261,15 +291,19 @@
             width: 100%;
             height: 300px;
             overflow-y: scroll;
+            margin-top: 25px;
 
             .table-artifacts-header {
-                background-color: #e9ecef;
+                background-color: #EDEDED;
                 width: 15%;
                 display: inline-block;
                 height: 40px;
+                vertical-align: middle;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
 
                 &.last {
-                    width: 55%; 
+                    width: 85%; 
                 }
 
                 p {
@@ -280,21 +314,40 @@
             }
 
             .table-artifacts-row {
-                background-color: transparent;
-                width: 15%;
-                display: inline-block;
+                background-color: white;
                 height: 40px;
-                border: solid 1px #e9ecef;
+                border-bottom: solid 3px #f9f9f9;
 
-                &.last {
-                    width: 55%; 
+                .table-artifacts-row-cell {
+                    width: 15%;
+                    display: inline-block;
+                    height: 100%;
+
+                    &.last {
+                        width: 85%; 
+                    }
+    
+                    p {
+                        @extend .f--din;
+                        width: 100%;
+                        text-align: center;
+                        float: left;
+                    }
+
+                    .button-download {
+                      width: 30px;
+                      height: 30px;
+                      float: right;
+
+                      div {
+                        width: 20px;
+                        height: 20px;
+                        margin-top: 10px;
+                      }
+                    }
                 }
 
-                p {
-                    @extend .f--din;
-                    width: 100%;
-                    text-align: center;
-                }
+                
             }
           }
       }

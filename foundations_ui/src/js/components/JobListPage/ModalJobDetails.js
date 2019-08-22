@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import BaseActions from '../../actions/BaseActions';
 import Tag from '../common/Tag';
 import ArtifactsTable from './ArtifactsTable';
+import Logs from './Logs';
 
 class ModalJobDetails extends React.Component {
   constructor(props) {
@@ -41,6 +42,10 @@ class ModalJobDetails extends React.Component {
   onToggleModal() {
     const { onToggle, job } = this.props;
     onToggle(job);
+  }
+
+  onClickAddTag() {
+    console.log('add tag');
   }
 
   onClickRemoveTag() {
@@ -85,24 +90,22 @@ class ModalJobDetails extends React.Component {
               <p className="label-id">Details For Job</p>
               <div className="container-id">
                 <p className="text-id">{job.job_id}</p>
-                {/* <CopyToClipboard text={job.job_id}>
+                <CopyToClipboard text={job.job_id}>
                   <span
                     onClick={this.notifiedCopy}
                     className="i--icon-copy"
                     role="presentation"
                   />
-                </CopyToClipboard> */}
+                </CopyToClipboard>
               </div>
               <div
-                className="button-close"
+                className="close"
                 onClick={onToggle}
                 role="button"
                 aria-label="Close"
                 onKeyDown={this.onKeyDown}
                 tabIndex={0}
-              >
-                X
-              </div>
+              />
             </div>
             <div className="container-tags">
               {tags.map((tag) => {
@@ -110,7 +113,7 @@ class ModalJobDetails extends React.Component {
               })}
               <div
                 className="button-add"
-                onClick={onToggle}
+                onClick={this.onClickAddTag}
                 role="button"
                 aria-label="Add Tag"
                 onKeyDown={this.onKeyDown}
@@ -137,7 +140,7 @@ class ModalJobDetails extends React.Component {
                 </h3>
               </div>
             </div>
-            {tab === 'logs' && <div />}
+            {tab === 'logs' && <Logs job={job} {...this.props} />}
             {tab === 'artifacts' && (
               <div className="container-artifacts">
                 <div className="image-artifacts" />

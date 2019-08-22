@@ -42,8 +42,12 @@ class Header extends React.Component {
             <h1 className="font-bold">{projectName}</h1>
           </div>
           <div>
-            <p>Date Created: {dateCreated}</p>
-            <p>Project Owners: {projectOwners}</p>
+            <div className="container-label-date">Date Created: </div>
+            <div className="container-text-date">{dateCreated}</div>
+          </div>
+          <div>
+            <div className="container-label-date">Project Owners: </div>
+            <div className="container-text-date">{projectOwners}</div>
           </div>
         </div>
       </div>

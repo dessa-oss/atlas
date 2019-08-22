@@ -12,11 +12,7 @@
 }
 
 .job-overview-header-container {
-
-  div {
-    display: inline-block;
-    width: 50%;
-  }
+  margin-top: 40px;
 
   h1 {
     color: $color-dark-blue;
@@ -30,9 +26,17 @@
 
   p {
     color: $color-dark-blue;
-    text-align: right;
     font-size: 16px;
-  } 
+  }
+
+  .container-label-date {
+    display: inline-block;
+  }
+
+  .container-text-date {
+    display: inline-block;
+    margin-left: 5px;
+  }
 }
 
 .job-overview-tabs-tags-container {

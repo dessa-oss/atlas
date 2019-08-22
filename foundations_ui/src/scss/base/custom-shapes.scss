@@ -299,3 +299,30 @@
     transform: rotate(135deg);
   }
 }
+
+.close {
+
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+.close:before, .close:after {
+  position: absolute;
+  content: ' ';
+  top: 6px;
+  height: 17px;
+  width: 2px;
+  background-color: $color-border-bottom;
+}
+
+.close:before {
+  transform: rotate(45deg);
+}
+
+.close:after {
+  transform: rotate(-45deg);
+}
+
+
