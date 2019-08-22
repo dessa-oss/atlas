@@ -28,10 +28,10 @@ class TestOrbitIngress(Spec):
     
     @tear_down_class
     def tear_down(self):
-        command = f'bash ./remove_deployment.sh {self.namespace} project model'
+        command = f'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         
-        command = f'bash ./remove_deployment.sh {self.namespace} project modeltwo'
+        command = f'bash ./remove_deployment.sh project modeltwo'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
 
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
@@ -54,6 +54,7 @@ class TestOrbitIngress(Spec):
 
     def _assert_endpoint_accessable(self, endpoint):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
+        
         try:
             result = _run_command(f'curl http://{scheduler_host}:31998{endpoint}'.split()).stdout.decode()
         except Exception as e:
