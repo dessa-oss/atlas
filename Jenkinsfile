@@ -70,15 +70,6 @@ pipeline {
                 }
             }
         }
-        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-            steps {
-                container("python3") {
-                    ws("${WORKSPACE}/testing") {
-                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
-                    }
-                }
-            }
-        }
         stage('Python3 Foundations REST API Acceptance Tests') {
             steps {
                 container("python3") {
