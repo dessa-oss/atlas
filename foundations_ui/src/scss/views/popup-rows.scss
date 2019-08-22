@@ -1,0 +1,26 @@
+.job-static-columns-container-popup {
+  display: inline-block;
+  vertical-align: top;
+  height: 98%;
+  width: calc(4% - 2px);
+  white-space: nowrap;
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  overflow: hidden;
+  border-left: solid 1px #EDEDED;
+  border-right: solid 1px #EDEDED;
+  box-sizing: border-box;
+}
+
+.pop-up-cell {
+  width: 100%;
+  display: block;
+  background-size: 17px 17px; 
+  margin-left: -5px;
+}
+
+.input-metric-column-container-popup {
+  width: 100%;
+  overflow: hidden;
+}

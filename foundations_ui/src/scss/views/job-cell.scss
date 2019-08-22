@@ -59,9 +59,9 @@
 .job-cell-hover {
   height: $row-height;
   transition: all 0.3s ease;
-  background-color: #404040;
+  background-color: $color-background;
   position: absolute;
-  color: #fff;
+  color: $color-black;
   z-index: 1;
   margin-top: -5px;
   margin-left: -80px;

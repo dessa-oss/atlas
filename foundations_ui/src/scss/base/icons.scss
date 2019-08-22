@@ -127,3 +127,16 @@ See assets/svgs/README.md for further information on SVG conversion process
   height: 7px;
   width: 7px;
 }
+
+.i--icon-open-link {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2216%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M13.333%2014.222H1.667V1.778H7.5V0H1.667C.742%200%200%20.8%200%201.778v12.444C0%2015.2.742%2016%201.667%2016h11.666C14.25%2016%2015%2015.2%2015%2014.222V8h-1.667v6.222zM9.167%200v1.778h2.991l-8.191%208.738%201.175%201.253%208.191-8.738v3.191H15V0H9.167z%22%20fill%3D%22%23838383%22%20fill-rule%3D%22nonzero%22/%3E%3C/svg%3E');
+	@include icon-helper;
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  border: none;
+  &:hover {
+    opacity: 1;
+  }
+}
