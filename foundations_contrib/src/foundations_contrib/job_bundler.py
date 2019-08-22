@@ -12,6 +12,7 @@ class JobBundler(object):
 
     def __init__(self, job_name, config, job, job_source_bundle):
         import os
+        from tempfile import mkdtemp
 
         self._config = config
         self._config['job_name'] = job_name
@@ -19,6 +20,7 @@ class JobBundler(object):
         self._job_name = job_name
         self._job = job
         self._job_source_bundle = job_source_bundle
+        self._path = mkdtemp()
 
     def job_name(self):
         return self._job_name
@@ -46,7 +48,7 @@ class JobBundler(object):
         return self._job_name + ".tgz"
 
     def job_archive(self):
-        return "../" + self.job_archive_name()
+        return self._path + "/" + self.job_archive_name()
 
     def _job_binary(self):
         return self._job_name + ".bin"
