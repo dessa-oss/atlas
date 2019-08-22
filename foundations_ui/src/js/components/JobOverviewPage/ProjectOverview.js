@@ -37,7 +37,7 @@ class ProjectOverview extends React.Component {
       <div className="dashboard-content-container row">
         <section className="chart-and-notes col-md-8">
           <JobOverviewGraph metric={metric} graphData={graphData} />
-          <Readme />
+          <Readme {...this.props} />
         </section>
         <Notes />
       </div>
