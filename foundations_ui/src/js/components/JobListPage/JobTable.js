@@ -140,6 +140,14 @@ class JobTable extends Component {
     const curVisibleColumns = filteredColumns !== null && filteredColumns.length < allFilterableColumns.length
       ? filteredColumns : allFilterableColumns;
 
+    curVisibleColumns.forEach((col) => {
+      if (hiddenColumns.includes(col.name)) {
+        col.hidden = true;
+      } else {
+        col.hidden = false;
+      }
+    });
+
     return (
       <div className="job-table-content">
         <div className="job-table-container">
