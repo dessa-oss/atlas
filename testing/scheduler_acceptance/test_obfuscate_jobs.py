@@ -26,7 +26,9 @@ class TestObfuscateJobs(Spec):
     @let
     def config_path(self):
         import os.path as path
-        return path.join('config', 'local_scheduler.config.yaml')
+        from foundations_contrib.utils import foundations_home
+
+        return path.join(foundations_home(), 'config', 'local_scheduler.config.yaml')
     
     @set_up
     def set_up(self):

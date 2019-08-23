@@ -41,7 +41,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         import subprocess
 
         error_message = 'Error: Job `{}` does not exist for environment `local_scheduler`'.format(self.fake_job_id)
-        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(self.fake_job_id), '--env=local_scheduler']
+        command_to_run = self._command_to_run_job(self.fake_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n') 
@@ -68,7 +68,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         queued_job_id = queued_job.job_name()
 
         error_message = 'Error: Job `{}` is queued and has not produced any logs'.format(queued_job_id)
-        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(queued_job_id), '--env=local_scheduler']
+        command_to_run = self._command_to_run_job(queued_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
@@ -90,7 +90,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         completed_job_id = job.job_name()
         self.assertEqual('completed', job.get_job_status())
 
-        command_to_run = ['python', '-m', 'foundations', 'get', 'logs', '--job_id={}'.format(completed_job_id), '--env=local_scheduler']
+        command_to_run = self._command_to_run_job(completed_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
@@ -116,13 +116,16 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         sleep(60)
         self.assertEqual('running', job.get_job_status())
 
-        command_to_run = ['foundations', 'get', 'logs', '--job_id={}'.format(running_job_id), '--env=local_scheduler']
+        command_to_run = self._command_to_run_job(running_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
         cli_stdout = cli_stdout.decode().rstrip('\n')
 
         self.assertEqual(0, cli_result.returncode)
         self.assertIn(message, cli_stdout)
+
+    def _command_to_run_job(self, job_id):
+        return ['python', '-m' 'foundations', 'get', 'logs', '--job_id', job_id, '--env', 'local_scheduler']
 
     @staticmethod
     def _wait_for_job_to_run(job):
