@@ -4,6 +4,8 @@ def _load_config():
     import os
     from foundations_contrib.global_state import config_manager
     
+    del os.environ['FOUNDATIONS_REDIS_PASSWORD']
+
     running_on_ci = os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
     if running_on_ci:
