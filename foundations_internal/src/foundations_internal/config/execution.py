@@ -21,12 +21,10 @@ def translate(config):
         'provenance_archive_implementation': _archive_implementation(result_end_point),
         'stage_log_archive_implementation': _archive_implementation(result_end_point),
         'archive_listing_implementation': _archive_listing_implementation(result_end_point),
-        'deployment_implementation': _deployment_implementation(),
         'project_listing_implementation': _project_listing_implementation(result_end_point),
         'redis_url': _redis_url(config),
         'cache_implementation': _cache_implementation(config),
         'log_level': _log_level(config),
-        'shell_command': find_bash(),
         'obfuscate_foundations': _obfuscate_foundations(config),
         'run_script_environment': {
             'log_level': _log_level(config),

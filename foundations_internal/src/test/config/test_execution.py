@@ -71,20 +71,6 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://11.22.33.44:9738')
 
-    @let
-    def shell_command(self):
-        return self.patch('foundations_contrib.helpers.shell.find_bash')
-
-    def test_returns_shell_command(self):
-        self.shell_command.return_value = '/path/to/bash'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['shell_command'], '/path/to/bash')
-
-    def test_returns_shell_command_different_command(self):
-        self.shell_command.return_value = 'C:\\path\\to\\bash'
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['shell_command'], 'C:\\path\\to\\bash')
-
     def test_returns_obfuscate_false_if_not_set(self):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['obfuscate_foundations'], False)
