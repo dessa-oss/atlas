@@ -25,9 +25,20 @@ class TestSetDefaultEnvironment(Spec):
     mock_failed_job = let_mock()
 
     @let_now
+    def mock_logger(self):
+        return Mock()
+
+    @let_now
     def mock_config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
         return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let_now
+    def mock_get_logger(self):
+        mock = self.patch('foundations_contrib.global_state.log_manager.get_logger', ConditionalReturn())
+        mock.return_when(self.mock_logger, 'foundations.local_run')
+        mock.return_when(self.mock_logger, 'foundations_contrib.config_manager')
+        return mock
 
     @let_now
     def mock_os_environment(self):
@@ -119,6 +130,14 @@ class TestSetDefaultEnvironment(Spec):
         load_local_configuration_if_present()
         self.mock_set_environment.assert_not_called()
     
+    def test_warns_when_default_environment_not_present_and_not_in_command_line(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        load_local_configuration_if_present()
+        self.mock_logger.warn.assert_called_with(
+            'Foundations has been imported, but no default configuration file has been found.'
+            'Refer to the documentation here [PLACEHOLDER] for more information. Without a default'
+            'configuration file, no foundations code will be executed.')
+
     def test_default_environment_not_loaded_when_no_environments(self):
         self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
         load_local_configuration_if_present()

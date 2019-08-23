@@ -9,7 +9,7 @@ _exception_happened = False
 
 def load_local_configuration_if_present():
     from foundations.config import set_environment
-    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager
+    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
     import atexit
@@ -27,6 +27,13 @@ def load_local_configuration_if_present():
         RunJob(message_router, pipeline_context).push_message()
         atexit.register(_at_exit_callback)
         sys.excepthook = _handle_exception
+
+    elif not _in_command_line() and not _default_environment_present():
+        logger = log_manager.get_logger(__name__)
+        logger.warn(
+            'Foundations has been imported, but no default configuration file has been found.'
+            'Refer to the documentation here [PLACEHOLDER] for more information. Without a default'
+            'configuration file, no foundations code will be executed.')
 
 def _in_command_line():
     import os
