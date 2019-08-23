@@ -23,6 +23,8 @@ def _config():
     import getpass
     from os import getcwd, environ
 
+    del environ['FOUNDATIONS_REDIS_PASSWORD']
+
     set_job_resources(0, None)
 
     if config_manager.frozen():
