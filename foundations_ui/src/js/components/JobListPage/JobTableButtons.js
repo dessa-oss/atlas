@@ -8,6 +8,7 @@ class JobTableButtons extends Component {
     this.state = {
       isShowingFilter: false,
       columns: this.props.columns,
+      updateSearchText: this.props.updateSearchText,
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
   }
@@ -26,7 +27,7 @@ class JobTableButtons extends Component {
   }
 
   render() {
-    const { isShowingFilter, columns } = this.state;
+    const { isShowingFilter, columns, updateSearchText } = this.state;
     let filter = null;
     if (isShowingFilter) {
       filter = (
@@ -35,7 +36,7 @@ class JobTableButtons extends Component {
           columns={columns}
           toggleShowingFilter={this.toggleShowingFilter}
           // hiddenInputParams={hiddenInputParams}
-          // updateSearchText={updateSearchText}
+          updateSearchText={updateSearchText}
         />
       );
     }
@@ -63,10 +64,12 @@ class JobTableButtons extends Component {
 
 JobTableButtons.propTypes = {
   columns: PropTypes.array,
+  updateSearchText: PropTypes.func,
 };
 
 JobTableButtons.defaultProps = {
   columns: [],
+  updateSearchText: () => {},
 };
 
 export default JobTableButtons;

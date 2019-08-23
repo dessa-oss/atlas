@@ -10,6 +10,8 @@ class JobTable extends Component {
     super(props);
     this.onDataUpdated = props.onDataUpdated.bind(this);
     this.onClickOpenModalJobDetails = this.onClickOpenModalJobDetails.bind(this);
+    this.updateFilterSearchText = this.updateFilterSearchText.bind(this);
+    this.filterColumns = this.filterColumns.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -33,6 +35,8 @@ class JobTable extends Component {
       jobIdFilters: this.props.jobIdFilters,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
+      filterSearchText: '',
+      filteredColumns: null,
     };
   }
 
@@ -79,12 +83,30 @@ class JobTable extends Component {
     this.handleRowSelection(job.job_id);
   }
 
+  async updateFilterSearchText(newText) {
+    await this.setState({ filterSearchText: newText });
+    this.filterColumns();
+  }
+
+  filterColumns() {
+    const { filterSearchText, allMetrics, allInputParams } = this.state;
+    const allFilterableColumns = allMetrics.concat(allInputParams);
+    if (filterSearchText.trim().length > 0) {
+      const filteredColumns = allFilterableColumns.filter((col) => {
+        return col.name.includes(filterSearchText);
+      });
+      this.setState({ filteredColumns });
+    } else {
+      this.setState({ filteredColumns: allFilterableColumns });
+    }
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters,
+      startTimeFilters, filters, filteredColumns,
     } = this.state;
 
     const jobRows = [];
@@ -103,11 +125,15 @@ class JobTable extends Component {
 
     const allFilterableColumns = allMetrics.concat(allInputParams);
 
+    const curVisibleColumns = filteredColumns !== null && filteredColumns.length < allFilterableColumns.length
+      ? filteredColumns : allFilterableColumns;
+
     return (
       <div className="job-table-content">
         <div className="job-table-container">
           <JobTableButtons
-            columns={allFilterableColumns}
+            columns={curVisibleColumns}
+            updateSearchText={this.updateFilterSearchText}
           />
           <JobTableHeader
             allInputParams={allInputParams}
