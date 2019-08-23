@@ -1,4 +1,4 @@
-FROM docker.shehanigans.net/foundations-scheduler-worker-scheduler
+FROM docker.shehanigans.net/foundations-scheduler-worker-scheduler-no-gpu
 
 RUN mkdir -p /tmp
 COPY ./tmp /tmp
