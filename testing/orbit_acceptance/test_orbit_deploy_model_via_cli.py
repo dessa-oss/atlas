@@ -94,7 +94,7 @@ class TestOrbitDeployModelViaCli(Spec):
             '--project_directory={}'.format(self.project_directory)
         ]
 
-        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
+        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self._check_if_process_successful(process_result)
 
     def _stop_job(self, project_name, model_name):
@@ -110,7 +110,7 @@ class TestOrbitDeployModelViaCli(Spec):
             '--model_name={}'.format(model_name),
         ]
 
-        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/')
+        process_result = subprocess.run(command_to_run, cwd='./orbit_acceptance/fixtures/', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self._check_if_process_successful(process_result)
 
     def _get_scheduler_ip(self):
