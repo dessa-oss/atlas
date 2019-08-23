@@ -4,6 +4,23 @@
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid $color-dark-blue;
+
+  &.unselected {
+      position: absolute;
+      margin: auto;
+      top: -70px;
+      left: 0;
+      right: 0;
+      width: 137px;
+      height: 137px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      border-right: 5px solid $color-dark-blue;
+      border-bottom: 5px solid $color-dark-blue;
+  }
 }
 
 .arrow-up {
@@ -12,6 +29,24 @@
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 5px solid $color-dark-blue;
+
+  &.unselected {
+      position: absolute;
+      margin: auto;
+      top: -70px;
+      left: 0;
+      right: 0;
+      width: 137px;
+      height: 137px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      border-right: 5px solid $color-dark-blue;
+      border-bottom: 5px solid $color-dark-blue;
+  }
+
 }
 
 .arrow-left {

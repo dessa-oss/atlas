@@ -6,6 +6,8 @@ import Tooltip from './Tooltip';
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
+    this.onClickSortAsc = this.onClickSortAsc.bind(this);
+    this.onClickSortDesc = this.onClickSortDesc.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
@@ -15,6 +17,9 @@ class JobColumnHeader extends Component {
       colType: this.props.colType,
       isMetric: this.props.isMetric,
       isFiltered: this.props.isFiltered,
+      isSortedColumn: this.props.isSortedColumn,
+      isAscending: this.props.isAscending,
+      sortTable: this.props.sortTable,
     };
   }
 
@@ -22,13 +27,28 @@ class JobColumnHeader extends Component {
     this.setState(
       {
         isFiltered: nextProps.isFiltered,
+        isSortedColumn: nextProps.isSortedColumn,
+        isAscending: nextProps.isAscending,
       },
     );
   }
 
+  onClickSortAsc() {
+    const { sortTable, title } = this.state;
+
+    sortTable(title, true);
+  }
+
+  onClickSortDesc() {
+    const { sortTable, title } = this.state;
+
+    sortTable(title, false);
+  }
+
   render() {
     const {
-      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered,
+      title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered, isSortedColumn,
+      isAscending,
     } = this.state;
     const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
@@ -46,8 +66,26 @@ class JobColumnHeader extends Component {
     let arrowUp = null;
     let arrowDown = null;
     if (title !== '' && title.toLowerCase() !== 'job id' && title.toLowerCase() !== 'tags') {
-      arrowUp = <i className="arrow-up" />;
-      arrowDown = <i className="arrow-down" />;
+      arrowUp = (
+        <i
+          onKeyPress={this.onClickSortAsc}
+          tabIndex={0}
+          role="button"
+          onClick={this.onClickSortAsc}
+          className={isSortedColumn && (isAscending === null || isAscending)
+            ? 'i--icon-arrow-up' : 'i--icon-arrow-up-unfilled'}
+        />
+      );
+      arrowDown = (
+        <i
+          onKeyPress={this.onClickSortDesc}
+          tabIndex={0}
+          role="button"
+          onClick={this.onClickSortDesc}
+          className={isSortedColumn && (isAscending === null || !isAscending)
+            ? 'i--icon-arrow-down' : 'i--icon-arrow-down-unfilled'}
+        />
+      );
     }
 
     return (
@@ -76,6 +114,9 @@ JobColumnHeader.propTypes = {
   colType: PropTypes.string,
   isMetric: PropTypes.bool,
   isFiltered: PropTypes.bool,
+  isSortedColumn: PropTypes.bool,
+  isAscending: PropTypes.bool,
+  sortTable: PropTypes.func,
 };
 
 JobColumnHeader.defaultProps = {
@@ -87,6 +128,9 @@ JobColumnHeader.defaultProps = {
   colType: 'string',
   isMetric: false,
   isFiltered: false,
+  isSortedColumn: false,
+  isAscending: false,
+  sortTable: () => {},
 };
 
 export default JobColumnHeader;

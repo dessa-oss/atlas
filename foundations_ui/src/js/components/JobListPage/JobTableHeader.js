@@ -73,6 +73,8 @@ class JobTableHeader extends Component {
       updateStartTimeFilter: this.props.updateStartTimeFilter,
       startTimeFilters: this.props.startTimeFilters,
       filters: this.props.filters,
+      sortedColumn: this.props.sortedColumn,
+      sortTable: this.props.sortTable,
     };
   }
 
@@ -94,6 +96,7 @@ class JobTableHeader extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
+        sortedColumn: nextProps.sortedColumn,
       },
     );
   }
@@ -389,6 +392,8 @@ class JobTableHeader extends Component {
       updateStartTimeFilter,
       startTimeFilters,
       filters,
+      sortedColumn,
+      sortTable,
     } = this.state;
 
     const { onClickOpenModalJobDetails } = this.props;
@@ -562,6 +567,8 @@ class JobTableHeader extends Component {
             onMetricRowClick={this.onMetricRowClick}
             isMetaData={isMetaData}
             onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
           />
           <InputMetric
             header="Parameters"
@@ -571,6 +578,8 @@ class JobTableHeader extends Component {
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
             onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
           />
           <InputMetric
             header="Metrics"
@@ -581,6 +590,8 @@ class JobTableHeader extends Component {
             filters={filters}
             onMetricRowClick={this.onMetricRowClick}
             onClickOpenModalJobDetails={onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={sortTable}
           />
           <PopUpRows jobs={jobs} onClickOpenModalJobDetails={onClickOpenModalJobDetails} />
           {userFilter}
@@ -635,6 +646,8 @@ JobTableHeader.propTypes = {
   startTimeFilters: PropTypes.array,
   filters: PropTypes.array,
   onClickOpenModalJobDetails: PropTypes.func,
+  sortedColumn: PropTypes.object,
+  sortTable: PropTypes.func,
 };
 
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
@@ -676,6 +689,8 @@ JobTableHeader.defaultProps = {
   startTimeFilters: [],
   filters: [],
   onClickOpenModalJobDetails: () => null,
+  sortedColumn: {},
+  sortTable: () => {},
 };
 
 export default JobTableHeader;

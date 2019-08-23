@@ -33,7 +33,7 @@ class PopUpRows extends React.Component {
     const allInputParams = [{ name: '', type: 'string' }];
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, [], () => { }, true, [],
+      allInputParams, [], () => { }, true, [], { column: '', isAscending: true },
     );
 
     const rows = [];

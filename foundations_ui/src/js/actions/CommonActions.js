@@ -11,23 +11,27 @@ const oneElement = 1;
 class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
-    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
-        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
       );
     }
     return null;
   }
 
-  static getInputParamHeaders(allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray) {
+  static getInputParamHeaders(
+    allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+  ) {
     const inputParams = [];
     allInputParams.forEach((input) => {
       if (this.arrayDoesNotInclude(hiddenInputParams, input.name)) {
         const key = input.name;
         const colType = input.type;
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
+        const isSorted = sortedColumn.column === key || sortedColumn.column === '';
+        const isAscending = sortedColumn.column === '' ? null : sortedColumn.isAscending;
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
@@ -37,6 +41,9 @@ class CommonActions {
           colType={colType}
           isMetric={isMetric}
           isFiltered={isFiltered}
+          isSortedColumn={isSorted}
+          isAscending={isAscending}
+          sortTable={sortTable}
         />);
       }
     });

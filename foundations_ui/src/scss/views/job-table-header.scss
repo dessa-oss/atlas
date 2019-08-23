@@ -11,21 +11,27 @@
 }
 
 .job-column-header {
+  overflow-y: hidden;
   h4 {
     display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
   }
 
   i {
     display: inline-block;
     position: relative;
+    outline: none;
   }
 
-  i.arrow-up {
-    bottom: 28px;
+  i.i--icon-arrow-up, i.i--icon-arrow-up-unfilled {
+    bottom: 26px;
     left: 10px;
   }
 
-  i.arrow-down {
+  i.i--icon-arrow-down, i.i--icon-arrow-down-unfilled {
     bottom: 18px;
+    right: 2px;
   }
 }

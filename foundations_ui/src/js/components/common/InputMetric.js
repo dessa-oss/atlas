@@ -21,6 +21,8 @@ class InputMetric extends Component {
       toggleNumberFilter: this.props.toggleNumberFilter,
       filteredArray: this.props.filters,
       isMetaData: this.props.isMetaData,
+      sortedColumn: this.props.sortedColumn,
+      sortTable: this.props.sortTable,
     };
   }
 
@@ -29,6 +31,7 @@ class InputMetric extends Component {
       allInputParams: nextProps.allInputParams,
       jobs: nextProps.jobs,
       filteredArray: nextProps.filters,
+      sortedColumn: nextProps.sortedColumn,
     });
   }
 
@@ -50,13 +53,13 @@ class InputMetric extends Component {
   render() {
     const {
       header, hiddenInputParams, allInputParams, isMetaData,
-      jobs, isMetric, searchText, toggleNumberFilter, filteredArray,
+      jobs, isMetric, searchText, toggleNumberFilter, filteredArray, sortedColumn, sortTable,
     } = this.state;
     const { onClickOpenModalJobDetails } = this.props;
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
-      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray,
+      allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
     );
 
     let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams,
@@ -102,6 +105,8 @@ InputMetric.propTypes = {
   filters: PropTypes.array,
   isMetaData: PropTypes.bool,
   onClickOpenModalJobDetails: PropTypes.func,
+  sortedColumn: PropTypes.object,
+  sortTable: PropTypes.func,
 };
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
@@ -117,6 +122,8 @@ InputMetric.defaultProps = {
   filters: [],
   isMetaData: false,
   onClickOpenModalJobDetails: () => null,
+  sortedColumn: { column: '', isAscending: true },
+  sortTable: () => {},
 };
 
 

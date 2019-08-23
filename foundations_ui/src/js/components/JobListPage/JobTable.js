@@ -13,6 +13,7 @@ class JobTable extends Component {
     this.updateFilterSearchText = this.updateFilterSearchText.bind(this);
     this.filterColumns = this.filterColumns.bind(this);
     this.updateHiddenColumns = this.updateHiddenColumns.bind(this);
+    this.sortTable = this.sortTable.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -39,6 +40,7 @@ class JobTable extends Component {
       filterSearchText: '',
       filteredColumns: null,
       hiddenColumns: [],
+      sortedColumn: { column: '', isAscending: true },
     };
   }
 
@@ -107,12 +109,21 @@ class JobTable extends Component {
     this.setState({ hiddenColumns: newHidden });
   }
 
+  sortTable(clickedColumn, isAscending) {
+    const { sortedColumn } = this.state;
+    if (sortedColumn.column === clickedColumn && sortedColumn.isAscending === isAscending) {
+      this.setState({ sortedColumn: { column: '', isAscending: true } });
+    } else {
+      this.setState({ sortedColumn: { column: clickedColumn, isAscending } });
+    }
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters, filteredColumns, hiddenColumns,
+      startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn,
     } = this.state;
 
     const jobRows = [];
@@ -184,6 +195,8 @@ class JobTable extends Component {
             onMetricRowClick={handleClick}
             onDataUpdated={this.onDataUpdated}
             onClickOpenModalJobDetails={this.onClickOpenModalJobDetails}
+            sortedColumn={sortedColumn}
+            sortTable={this.sortTable}
           />
           {/* <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
