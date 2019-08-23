@@ -225,7 +225,7 @@ class TestConsumers(unittest.TestCase):
         completed_time_key = 'jobs:{}:completed_time'.format(self._job_id)
         string_completed_time = self._redis.get(completed_time_key)
         completed_time = float(string_completed_time.decode())
-        self.assertLess(current_time - completed_time, 1)
+        self.assertLess(current_time - completed_time, 2)
 
         notification = self._slack_message_for_job()
         self.assertIsNotNone(notification)
