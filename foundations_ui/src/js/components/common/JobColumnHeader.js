@@ -43,6 +43,13 @@ class JobColumnHeader extends Component {
     const tooltip = <Tooltip message={title} />;
     const filterIcon = isFiltered ? <div className="i--icon-filtered" /> : null;
 
+    let arrowUp = null;
+    let arrowDown = null;
+    if (title !== '' && title.toLowerCase() !== 'job id' && title.toLowerCase() !== 'tags') {
+      arrowUp = <i className="arrow-up" />;
+      arrowDown = <i className="arrow-down" />;
+    }
+
     return (
       <div
         className={`${divClassName} ${title}`}
@@ -51,8 +58,9 @@ class JobColumnHeader extends Component {
         <div className={offsetDivClass}>
           <h4 className={`${headerClassName}`}>
             {title}
-            <i className="arrow-down" />
           </h4>
+          {arrowUp}
+          {arrowDown}
         </div>
       </div>
     );

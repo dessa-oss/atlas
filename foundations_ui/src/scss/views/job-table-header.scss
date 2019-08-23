@@ -6,6 +6,26 @@
   background-color: $color-background-grey;
 }
 
-.job-column-header-container{
+.job-column-header-container {
   width: 100%;
+}
+
+.job-column-header {
+  h4 {
+    display: inline-block;
+  }
+
+  i {
+    display: inline-block;
+    position: relative;
+  }
+
+  i.arrow-up {
+    bottom: 28px;
+    left: 10px;
+  }
+
+  i.arrow-down {
+    bottom: 18px;
+  }
 }
