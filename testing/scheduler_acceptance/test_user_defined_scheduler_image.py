@@ -14,6 +14,11 @@ class TestUserDefinedSchedulerImage(Spec):
     def scheduler_host(self):
         from foundations_contrib.global_state import config_manager
         return config_manager['remote_host']
+
+    @let
+    def redis_url(self):
+        from foundations_contrib.global_state import config_manager
+        return config_manager['redis_url']
     
     @let
     def config(self):
@@ -22,7 +27,7 @@ class TestUserDefinedSchedulerImage(Spec):
         with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/scheduler.template.config.yaml', 'r') as file:
             config = yaml.load(file.read())
 
-        config['results_config']['redis_end_point'] = f'redis://{self.scheduler_host}:6379'
+        config['results_config']['redis_end_point'] = self.redis_url
         config['ssh_config']['host'] = self.scheduler_host
         return config
 
