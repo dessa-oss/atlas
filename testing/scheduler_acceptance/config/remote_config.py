@@ -10,6 +10,11 @@ from uuid import uuid4
 TEST_UUID = uuid4()
 
 
+def set_foundations_home():
+    import os
+
+    os.environ['FOUNDATIONS_HOME'] = os.getcwd() + '/foundations_home'
+
 def _config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, set_job_resources
     from foundations_scheduler_plugin.job_deployment import JobDeployment
@@ -37,7 +42,7 @@ def _config():
     config_manager['job_source_archive_implementation'] = archive_implementation
     config_manager['artifact_archive_implementation'] = archive_implementation
     config_manager['miscellaneous_archive_implementation'] = archive_implementation
-    config_manager['log_level'] = 'CRITICAL'
+    config_manager['log_level'] = 'DEBUG'
     config_manager['artifact_path'] = 'results'
     config_manager['obfuscate_foundations'] = False
     config_manager['deployment_implementation'] = { 'deployment_type': JobDeployment }
@@ -72,6 +77,6 @@ def _append_spec_module():
 
     module_manager.append_module(sys.modules['foundations_spec'])
 
-
+set_foundations_home()
 _config()
 _append_spec_module()

@@ -29,8 +29,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             from foundations_spec.extensions import get_network_address
 
             ssh_config_host = scheduler_host
-            docker_address = get_network_address('docker0')
-            redis_url = 'redis://{}:6379'.format(docker_address)
+            redis_url = 'redis://{}:6379'.format(scheduler_host)
 
         return {
             'job_deployment_env': 'scheduler_plugin',
@@ -76,15 +75,17 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         import uuid
 
         from scheduler_acceptance.cleanup import cleanup
+        from foundations_contrib.utils import foundations_home
 
         cleanup()
 
         shutil.rmtree("test-cli-init", ignore_errors=True)
-        if os.path.isfile('~/.foundations/job_data/projects/my-foundations-project.tracker'):
-            os.remove('~/.foundations/job_data/projects/my-foundations-project.tracker')
+        tracker_path = foundations_home() + '/job_data/projects/my-foundations-project.tracker'
+        if os.path.isfile(tracker_path):
+            os.remove(tracker_path)
 
         self._env_name = str(uuid.uuid4())
-        self._config_file_name = os.path.expanduser('~/.foundations/config/{}.config.yaml'.format(self._env_name))
+        self._config_file_name = os.path.expanduser(foundations_home() + '/config/{}.config.yaml'.format(self._env_name))
         self._write_config_to_path(self._config_file_name)
 
     @set_up_class
@@ -122,6 +123,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         self.assertEqual(0, self._get_logged_metric('this-project', job_id, 'gpus'))
         self.assertEqual(3.0, self._get_logged_metric('this-project', job_id, 'memory'))
 
+    @skip
     def test_cli_can_deploy_stageless_job_with_resources_default(self):
         import subprocess
 
