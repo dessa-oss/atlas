@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.config.test_config_translator import TestConfigTranslator
+from test.config.test_execution import TestExecution

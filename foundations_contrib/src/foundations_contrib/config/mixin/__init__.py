@@ -7,15 +7,17 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def ssh_configuration(config):
-    return {
+    result = {
         'remote_user': config['ssh_config'].get('user', 'foundations'),
-        'code_path': config['ssh_config']['code_path'],
         'port': config['ssh_config'].get('port', 22),
-        'result_path': config['ssh_config']['result_path'],
         'key_path': config['ssh_config']['key_path'],
         'remote_host': config['ssh_config']['host'],
     }
 
+    if 'code_path' in config:
+        result['code_path'] = result['ssh_config']['code_path']
+        result['result_path'] = result['ssh_config']['result_path']
+    return result
 
 def archive_implementation(result_end_point, default_bucket_type):
     from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
