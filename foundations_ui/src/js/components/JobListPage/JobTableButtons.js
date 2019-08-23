@@ -9,6 +9,8 @@ class JobTableButtons extends Component {
       isShowingFilter: false,
       columns: this.props.columns,
       updateSearchText: this.props.updateSearchText,
+      hiddenColumns: this.props.hiddenColumns,
+      updateHiddenColumns: this.props.updateHiddenColumns,
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
   }
@@ -17,6 +19,7 @@ class JobTableButtons extends Component {
     this.setState(
       {
         columns: nextProps.columns,
+        hiddenColumns: nextProps.hiddenColumns,
       },
     );
   }
@@ -27,15 +30,17 @@ class JobTableButtons extends Component {
   }
 
   render() {
-    const { isShowingFilter, columns, updateSearchText } = this.state;
+    const {
+      isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns,
+    } = this.state;
     let filter = null;
     if (isShowingFilter) {
       filter = (
         <SelectColumnFilter
-          // changeHiddenParams={changeHiddenParams}
+          changeHiddenParams={updateHiddenColumns}
           columns={columns}
           toggleShowingFilter={this.toggleShowingFilter}
-          // hiddenInputParams={hiddenInputParams}
+          hiddenInputParams={hiddenColumns}
           updateSearchText={updateSearchText}
         />
       );
@@ -65,11 +70,15 @@ class JobTableButtons extends Component {
 JobTableButtons.propTypes = {
   columns: PropTypes.array,
   updateSearchText: PropTypes.func,
+  hiddenColumns: PropTypes.array,
+  updateHiddenColumns: PropTypes.func,
 };
 
 JobTableButtons.defaultProps = {
   columns: [],
   updateSearchText: () => {},
+  hiddenColumns: [],
+  updateHiddenColumns: () => {},
 };
 
 export default JobTableButtons;

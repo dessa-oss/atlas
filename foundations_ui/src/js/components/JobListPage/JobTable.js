@@ -12,6 +12,7 @@ class JobTable extends Component {
     this.onClickOpenModalJobDetails = this.onClickOpenModalJobDetails.bind(this);
     this.updateFilterSearchText = this.updateFilterSearchText.bind(this);
     this.filterColumns = this.filterColumns.bind(this);
+    this.updateHiddenColumns = this.updateHiddenColumns.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -37,6 +38,7 @@ class JobTable extends Component {
       filters: this.props.filters,
       filterSearchText: '',
       filteredColumns: null,
+      hiddenColumns: [],
     };
   }
 
@@ -101,12 +103,16 @@ class JobTable extends Component {
     }
   }
 
+  updateHiddenColumns(newHidden) {
+    this.setState({ hiddenColumns: newHidden });
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters, filteredColumns,
+      startTimeFilters, filters, filteredColumns, hiddenColumns,
     } = this.state;
 
     const jobRows = [];
@@ -124,6 +130,12 @@ class JobTable extends Component {
     };
 
     const allFilterableColumns = allMetrics.concat(allInputParams);
+    const visibleMetrics = allMetrics.filter((col) => {
+      return !hiddenColumns.includes(col.name);
+    });
+    const visibleParams = allInputParams.filter((col) => {
+      return !hiddenColumns.includes(col.name);
+    });
 
     const curVisibleColumns = filteredColumns !== null && filteredColumns.length < allFilterableColumns.length
       ? filteredColumns : allFilterableColumns;
@@ -134,10 +146,12 @@ class JobTable extends Component {
           <JobTableButtons
             columns={curVisibleColumns}
             updateSearchText={this.updateFilterSearchText}
+            hiddenColumns={hiddenColumns}
+            updateHiddenColumns={this.updateHiddenColumns}
           />
           <JobTableHeader
-            allInputParams={allInputParams}
-            allMetrics={allMetrics}
+            allInputParams={visibleParams}
+            allMetrics={visibleMetrics}
             jobs={jobs}
             statuses={statuses}
             updateHiddenStatus={updateHiddenStatus}
