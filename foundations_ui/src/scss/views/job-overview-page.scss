@@ -103,6 +103,10 @@
     font-size: 80%;
     padding: 10px;
     line-height: 0.5;
+
+    &.disabled {
+      background-color: #D4D4D4;
+    }
   }
 }
 
