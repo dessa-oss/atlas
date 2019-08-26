@@ -38,7 +38,7 @@ const ModelManagementTable = props => {
           <p className="font-bold">Default</p>
         </div>
         <div className="model-management-header">
-          <p className="font-bold">Model Deployed</p>
+          <p className="font-bold">Model Package Name</p>
         </div>
         <div className="model-management-header">
           <p className="font-bold">Created On</p>
