@@ -96,3 +96,4 @@ test_pod.yaml
 testing/foundations_home/job_data
 testing/foundations_home/logs
 !testing/foundations_home/config/*.config.yaml
+yarn.lock

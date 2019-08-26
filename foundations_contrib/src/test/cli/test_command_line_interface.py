@@ -183,9 +183,13 @@ class TestCommandLineInterface(Spec):
 
         self.level_1_subparsers_mock.add_parser.assert_has_calls([setup_call])
 
-    def test_setup_calls_setup_script(self):
-        CommandLineInterface(['setup']).execute()
-        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=self.mock_contrib_root / 'resources')
+    def test_setup_atlas_calls_setup_atlas_script(self):
+        CommandLineInterface(['setup', 'atlas']).execute()
+        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations'], cwd=self.mock_contrib_root / 'resources')
+
+    def test_setup_orbit_calls_setup_orbit_script(self):
+        CommandLineInterface(['setup', 'orbit']).execute()
+        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations-orbit'], cwd=self.mock_contrib_root / 'resources')
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:

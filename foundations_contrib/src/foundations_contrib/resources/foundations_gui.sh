@@ -2,11 +2,13 @@
 
 action="$1"
 
-if [ "$3" = "" ]; then
+if [ "$4" = "" ]; then
     image_tag=`./docker_image_version.sh`
 else
-    image_tag="$3"
+    image_tag="$4"
 fi
+
+image_name="$3"
 
 if [ "$FOUNDATIONS_GUI_PORT" = "" ]; then
     FOUNDATIONS_GUI_PORT=6443
@@ -61,39 +63,40 @@ start_ui () {
         redis_url="redis://${redis_container_name}:6379"
     fi
 
-    echo "Starting Foundations UI..."
+    echo "Starting ${image_name} UI..."
 
     docker run -d \
         --restart always \
-        --name foundations-rest-api \
+        --name ${image_name}-rest-api \
         -e REDIS_URL="${redis_url}" \
         -e FOUNDATIONS_ARCHIVE_HOST="${FOUNDATIONS_ARCHIVE_HOST}" \
         --network foundations-gui \
         -v $HOME/.kube:/root/.kube:ro \
-        docker.shehanigans.net/foundations-rest-api:${image_tag} \
+        docker.shehanigans.net/${image_name}-rest-api:${image_tag} \
         > /dev/null \
         && \
 
     docker run -d \
         --restart always \
-        --name foundations-gui \
-        -e FOUNDATIONS_REST_API=foundations-rest-api \
+        --name ${image_name}-gui \
+        -e FOUNDATIONS_REST_API=${image_name}-rest-api \
         --network foundations-gui \
         -p $FOUNDATIONS_GUI_PORT:6443 \
-        docker.shehanigans.net/foundations-gui:${image_tag} \
+        docker.shehanigans.net/${image_name}-gui:${image_tag} \
         > /dev/null \
         && \
 
-    echo "Foundations UI listening on port $FOUNDATIONS_GUI_PORT."
+    echo "${image_name} UI listening on port $FOUNDATIONS_GUI_PORT."
 }
 
 stop_ui () {
-    echo "Stopping Foundations UI..." && \
-        docker stop foundations-gui 2>&1 > /dev/null && \
-        docker rm foundations-gui 2>&1 > /dev/null && \
-        docker stop foundations-rest-api 2>&1 > /dev/null && \
-        docker rm foundations-rest-api 2>&1 > /dev/null && \
-        echo "Foundations UI stopped." || echo "Unable to stop Foundations UI"
+    echo "Stopping ${image_name} UI..." && \
+        docker stop ${image_name}-gui 2>&1 > /dev/null && \
+        docker rm ${image_name}-gui 2>&1 > /dev/null && \
+        echo "${image_name} UI stopped." || echo "Unable to stop ${image_name} UI"
+        docker stop ${image_name}-rest-api 2>&1 > /dev/null && \
+        docker rm ${image_name}-rest-api 2>&1 > /dev/null && \
+        echo "${image_name} REST API stopped." || echo "Unable to stop ${image_name} REST API"
 }
 
 if [ "${action}" = "start" ]
@@ -103,7 +106,7 @@ elif [ "${action}" = "stop" ]
 then
     stop_ui
 else
-    echo "USAGE: $0 <start|stop> ui [image_tag]"
+    echo "USAGE: $0 <start|stop> ui <foundations|foundations-orbit> [image_tag]"
     echo "image_tag is optional; omit to use 'latest'"
     exit 1
 fi
