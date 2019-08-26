@@ -62,7 +62,7 @@ class InputMetricCell extends Component {
 
   render() {
     const {
-      value, isError, cellType, rowNumber, expand, hoverable, jobID, onClickOpenModalJobDetails, isSelected,
+      value, isError, cellType, rowNumber, expand, hoverable, jobID,
 
     } = this.state;
 
@@ -97,18 +97,16 @@ class InputMetricCell extends Component {
       } else {
         overMaxLength = this.isContentOverMaxLength(finalValue);
       }
-
       if ((overMaxLength && hoverable)) {
-        hover = <HoverCell textToRender={expandedValue} />;
+        hover = <HoverCell onMouseLeave={this.toggleExpand} textToRender={expandedValue} />;
       }
     }
 
     return (
-      <div className={divClass}>
+      <div className={divClass} onMouseLeave={() => this.toggleExpand(false)}>
         <p
           className={pClass}
           onMouseEnter={() => this.toggleExpand(true)}
-          onMouseLeave={() => this.toggleExpand(false)}
         >
           {finalValue}
         </p>
