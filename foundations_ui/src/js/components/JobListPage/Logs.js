@@ -8,10 +8,11 @@ class Logs extends React.Component {
 
     this.state = {
       message: '',
+      timerId: -1,
     };
   }
 
-  componentDidMount() {
+  reload() {
     const { job, location } = this.props;
     BaseActions.getFromApiary(`projects/${location.state.project.name}/job_listing/${job.job_id}/logs`)
       .then((result) => {
@@ -19,6 +20,21 @@ class Logs extends React.Component {
           message: result.log,
         });
       });
+  }
+
+  componentDidMount() {
+    this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 2000);
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   render() {

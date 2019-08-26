@@ -12,20 +12,30 @@ class ProjectOverview extends React.Component {
       projectName: this.props.history.location.state.project.name,
       metric: '',
       graphData: [],
+      timerId: -1,
     };
-
-    this.getGraphData = this.getGraphData.bind(this);
   }
 
-  componentDidMount() {
-    this.getGraphData();
-  }
-
-  async getGraphData() {
+  async reload() {
     const { projectName } = this.state;
     const URL = '/projects/'.concat(projectName).concat('/graph');
     const APIGraphData = await BaseActions.getFromApiary(URL);
     this.setState({ graphData: APIGraphData.data, metric: APIGraphData.metric });
+  }
+
+  componentDidMount() {
+    this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 20000);
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   render() {

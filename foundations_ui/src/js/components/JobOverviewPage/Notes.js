@@ -15,6 +15,7 @@ class Notes extends React.Component {
     this.state = {
       notes: [],
       message: '',
+      timerId: -1,
     };
   }
 
@@ -29,7 +30,6 @@ class Notes extends React.Component {
         });
         this.setState({
           notes: result,
-          message: '',
         });
       }
     });
@@ -37,6 +37,18 @@ class Notes extends React.Component {
 
   componentDidMount() {
     this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 4000);
+
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   onChangeMessage(e) {
@@ -55,7 +67,11 @@ class Notes extends React.Component {
     };
 
     BaseActions.postApiary(`projects/${location.state.project.name}/note_listing`, body).then(() => {
-      this.reload();
+      this.setState({
+        message: '',
+      }, () => {
+        this.reload();
+      });
     });
   }
 
