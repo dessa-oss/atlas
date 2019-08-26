@@ -454,11 +454,11 @@ class TestCommandLineInterface(Spec):
 
     def test_orbit_serve_stop_with_specificed_project_and_model(self):
         self._launch_orbit_with_specified_command_using_project_name_model_name('stop', self.fake_project_name, self.mock_user_provided_model_name)
-        self.mock_orbit_stop_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name)
+        self.mock_orbit_stop_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
 
     def test_orbit_serve_destroy_with_specified_project_and_model(self):
         self._launch_orbit_with_specified_command_using_project_name_model_name('destroy', self.fake_project_name, self.mock_user_provided_model_name)
-        self.mock_orbit_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name)
+        self.mock_orbit_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
 
     def _run_model_within_orbit_with_specified_project_name_model_name_project_directory(self, project_name, model_name, project_directory):
         CommandLineInterface([

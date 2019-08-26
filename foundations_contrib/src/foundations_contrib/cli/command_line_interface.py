@@ -110,11 +110,13 @@ class CommandLineInterface(object):
         serving_stop_parser = serving_subparsers.add_parser('stop')
         serving_stop_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
         serving_stop_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
+        serving_stop_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_stop_parser.set_defaults(function=self._kubernetes_orbit_model_serving_stop)
 
         serving_destroy_parser = serving_subparsers.add_parser('destroy')
         serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
         serving_destroy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
+        serving_destroy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
 
 
@@ -341,8 +343,10 @@ class CommandLineInterface(object):
 
     def _kubernetes_orbit_model_serving_stop(self):
         from foundations_contrib.cli.orbit_model_package_server import stop
-        successfully_stopped = stop(self._arguments.project_name, self._arguments.model_name)
+        env = self._arguments.env if self._arguments.env is not None else 'local'
+        successfully_stopped = stop(self._arguments.project_name, self._arguments.model_name, env)
 
     def _kubernetes_orbit_model_serving_destroy(self):
         from foundations_contrib.cli.orbit_model_package_server import destroy
-        successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name)
+        env = self._arguments.env if self._arguments.env is not None else 'local'
+        successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name, env)
