@@ -450,7 +450,7 @@ class TestCommandLineInterface(Spec):
 
     def test_orbit_serve_start_with_specificed_project_model_and_directory(self):
         self._run_model_within_orbit_with_specified_project_name_model_name_project_directory(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
-        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
+        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory, 'local')
 
     def test_orbit_serve_stop_with_specificed_project_and_model(self):
         self._launch_orbit_with_specified_command_using_project_name_model_name('stop', self.fake_project_name, self.mock_user_provided_model_name)
