@@ -62,7 +62,8 @@ class InputMetricCell extends Component {
 
   render() {
     const {
-      value, isError, cellType, rowNumber, expand, hoverable, jobID, onClickOpenModalJobDetails,
+      value, isError, cellType, rowNumber, expand, hoverable, jobID, onClickOpenModalJobDetails, isSelected,
+
     } = this.state;
 
     const pClass = CommonActions.getInputMetricCellPClass(isError, cellType);

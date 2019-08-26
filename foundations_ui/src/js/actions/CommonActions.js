@@ -12,10 +12,12 @@ class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+    selectAllJobs, allJobsSelected,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
         allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+        selectAllJobs, allJobsSelected,
       );
     }
     return null;
@@ -23,6 +25,7 @@ class CommonActions {
 
   static getInputParamHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+    selectAllJobs, allJobsSelected,
   ) {
     const inputParams = [];
     allInputParams.forEach((input) => {
@@ -44,6 +47,8 @@ class CommonActions {
           isSortedColumn={isSorted}
           isAscending={isAscending}
           sortTable={sortTable}
+          selectAllJobs={selectAllJobs}
+          allJobsSelected={allJobsSelected}
         />);
       }
     });
@@ -91,10 +96,10 @@ class CommonActions {
   }
 
   static getInputMetricCells(job, isError, isMetric, columns, hiddenInputParams,
-    rowNumber, onClickOpenModalJobDetails) {
+    rowNumber, onClickOpenModalJobDetails, isSelected) {
     if (isMetric && job.output_metrics) {
       return this.getMetricCellsFromOutputMetrics(job, isError, columns, isMetric, hiddenInputParams,
-        rowNumber, onClickOpenModalJobDetails);
+        rowNumber, onClickOpenModalJobDetails, isSelected);
     }
 
     if (!isMetric && job.input_params) {

@@ -78,6 +78,12 @@
         display: block;
       }
     }
+
+    input{
+      width: 42px;
+      height: 20px;
+      vertical-align: middle;
+    }
     
   }
 
@@ -88,7 +94,7 @@
     width: $column-width;
     box-sizing: border-box;
     
-    p{
+    p {
       margin: 0px 10px;
       vertical-align: middle;
       height: $row-height;

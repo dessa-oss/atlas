@@ -22,7 +22,6 @@ class Notes extends React.Component {
   reload() {
     const { location } = this.props;
     BaseActions.getFromApiary(`projects/${location.state.project.name}/note_listing`).then((result) => {
-      console.log('RELOAD NOTES');
       if (result) {
         result.sort((a, b) => {
           let dateA = new Date(a.date);

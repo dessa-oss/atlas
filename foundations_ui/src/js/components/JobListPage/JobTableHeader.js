@@ -75,6 +75,10 @@ class JobTableHeader extends Component {
       filters: this.props.filters,
       sortedColumn: this.props.sortedColumn,
       sortTable: this.props.sortTable,
+      selectJob: this.props.selectJob,
+      selectAllJobs: this.props.selectAllJobs,
+      selectedJobs: this.props.selectedJobs,
+      allJobsSelected: this.props.allJobsSelected,
     };
   }
 
@@ -97,6 +101,8 @@ class JobTableHeader extends Component {
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
         sortedColumn: nextProps.sortedColumn,
+        selectedJobs: nextProps.selectedJobs,
+        allJobsSelected: nextProps.allJobsSelected,
       },
     );
   }
@@ -296,7 +302,7 @@ class JobTableHeader extends Component {
 
   getStaticJobsInputParams() {
     return [
-      { name: '', type: 'string' },
+      { name: 'SelectAllCheckboxes', type: 'string' },
       { name: 'Job ID', type: 'string' },
       { name: 'Status', type: 'string' },
       { name: 'Launched', type: 'string' },
@@ -307,12 +313,15 @@ class JobTableHeader extends Component {
   }
 
   generateStaticJobs(jobs) {
+    const { selectJob, selectedJobs } = this.state;
     return jobs.map((el) => {
       const neededColums = [];
-
+      const isSelectedJob = selectedJobs.includes(el.job_id);
       neededColums.push({
-        name: '',
-        value: SelectJobCell({ job: el, onSuccessfullDeletion: this.onDataUpdated }),
+        name: 'SelectAllCheckboxes',
+        value: SelectJobCell({
+          job: el, onSuccessfullDeletion: this.onDataUpdated, selectJob, isSelectedJob,
+        }),
         type: 'string',
         hoverable: false,
       });
@@ -394,6 +403,9 @@ class JobTableHeader extends Component {
       filters,
       sortedColumn,
       sortTable,
+      selectAllJobs,
+      selectedJobs,
+      allJobsSelected,
     } = this.state;
 
     const { onClickOpenModalJobDetails } = this.props;
@@ -569,6 +581,9 @@ class JobTableHeader extends Component {
             onClickOpenModalJobDetails={onClickOpenModalJobDetails}
             sortedColumn={sortedColumn}
             sortTable={sortTable}
+            selectAllJobs={selectAllJobs}
+            selectedJobs={selectedJobs}
+            allJobsSelected={allJobsSelected}
           />
           <InputMetric
             header="Parameters"
@@ -648,6 +663,10 @@ JobTableHeader.propTypes = {
   onClickOpenModalJobDetails: PropTypes.func,
   sortedColumn: PropTypes.object,
   sortTable: PropTypes.func,
+  selectJob: PropTypes.func,
+  selectAllJobs: PropTypes.func,
+  selectedJobs: PropTypes.array,
+  allJobsSelected: PropTypes.bool,
 };
 
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
@@ -691,6 +710,10 @@ JobTableHeader.defaultProps = {
   onClickOpenModalJobDetails: () => null,
   sortedColumn: {},
   sortTable: () => {},
+  selectJob: () => {},
+  selectAllJobs: () => {},
+  selectedJobs: [],
+  allJobsSelected: false,
 };
 
 export default JobTableHeader;

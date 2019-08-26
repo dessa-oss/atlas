@@ -14,6 +14,8 @@ class JobTable extends Component {
     this.filterColumns = this.filterColumns.bind(this);
     this.updateHiddenColumns = this.updateHiddenColumns.bind(this);
     this.sortTable = this.sortTable.bind(this);
+    this.selectJob = this.selectJob.bind(this);
+    this.selectAllJobs = this.selectAllJobs.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -41,6 +43,8 @@ class JobTable extends Component {
       filteredColumns: null,
       hiddenColumns: [],
       sortedColumn: { column: '', isAscending: true },
+      selectedJobs: [],
+      allJobsSelected: false,
     };
   }
 
@@ -118,12 +122,43 @@ class JobTable extends Component {
     }
   }
 
+  selectJob(jobID) {
+    const { selectedJobs, jobs } = this.state;
+    let newSelectedJobs = Array.from(selectedJobs);
+    if (selectedJobs.includes(jobID)) {
+      newSelectedJobs = newSelectedJobs.filter((job) => {
+        return job !== jobID;
+      });
+    } else {
+      newSelectedJobs.push(jobID);
+    }
+    let newAllJobsSelected = false;
+    if (jobs.length === newSelectedJobs.length) {
+      newAllJobsSelected = true;
+    }
+
+    this.setState({ selectedJobs: newSelectedJobs, allJobsSelected: newAllJobsSelected });
+  }
+
+  selectAllJobs() {
+    const { jobs, selectedJobs, allJobsSelected } = this.state;
+    let jobIds = [];
+    let areAllSelected = false;
+    if (selectedJobs.length !== jobs.length) {
+      jobIds = jobs.map((job) => {
+        return job.job_id;
+      });
+      areAllSelected = true;
+    }
+    this.setState({ selectedJobs: jobIds, allJobsSelected: areAllSelected });
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
-      startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn,
+      startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn, selectedJobs, allJobsSelected,
     } = this.state;
 
     const jobRows = [];
@@ -167,6 +202,7 @@ class JobTable extends Component {
             updateSearchText={this.updateFilterSearchText}
             hiddenColumns={hiddenColumns}
             updateHiddenColumns={this.updateHiddenColumns}
+            selectAllJobs={this.selectAllJobs}
           />
           <JobTableHeader
             allInputParams={visibleParams}
@@ -197,6 +233,10 @@ class JobTable extends Component {
             onClickOpenModalJobDetails={this.onClickOpenModalJobDetails}
             sortedColumn={sortedColumn}
             sortTable={this.sortTable}
+            selectJob={this.selectJob}
+            selectAllJobs={this.selectAllJobs}
+            selectedJobs={selectedJobs}
+            allJobsSelected={allJobsSelected}
           />
           {/* <div className="pagination-controls">
             <p><span className="font-bold">Viewing:</span> 1-100/600</p>
