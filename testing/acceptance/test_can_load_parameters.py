@@ -101,8 +101,10 @@ class TestCanLoadParameters(Spec):
             process_output = completed_process.stdout.decode()
 
         if check_for_warning:
-            warning, params_json = process_output.split('\n', 1)
-            self.assertIn('Script not run with Foundations.', warning)
+            print(process_output)
+            warnings, _, params_json = process_output.rpartition('\n')
+            print(warnings)
+            self.assertIn('Script not run with Foundations.', warnings)
         else:
             params_json = process_output
 
