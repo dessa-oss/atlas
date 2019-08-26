@@ -22,8 +22,6 @@ def load_local_configuration_if_present():
     _exception_happened = False
 
     if not _in_command_line() and _default_environment_present():
-        logger.info(f'Foundations has been run with the following configuration:\n'
-                    f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
         set_environment('default')
         config_manager['_is_deployment'] = True
         pipeline_context = current_foundations_context().pipeline_context()
