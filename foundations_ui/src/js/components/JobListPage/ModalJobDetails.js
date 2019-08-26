@@ -21,6 +21,7 @@ class ModalJobDetails extends React.Component {
         'probably won\'t work',
       ],
       tab: 'logs',
+      timerId: -1,
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
@@ -28,7 +29,7 @@ class ModalJobDetails extends React.Component {
     this.onClickArtifacts = this.onClickArtifacts.bind(this);
   }
 
-  componentDidMount() {
+  reload() {
     const { job, location } = this.props;
     BaseActions.getFromApiary(`projects/${location.state.project.name}/jobs/${job.id}/tags`).then((result) => {
       if (result) {
@@ -37,6 +38,21 @@ class ModalJobDetails extends React.Component {
         });
       }
     });
+  }
+
+  componentDidMount() {
+    this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 4000);
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   onToggleModal() {

@@ -11,6 +11,7 @@ class Readme extends React.Component {
     this.state = {
       input: '',
       editMode: false,
+      timerId: -1,
     };
 
     this.onClickEdit = this.onClickEdit.bind(this);
@@ -22,6 +23,7 @@ class Readme extends React.Component {
   reload() {
     const { location } = this.props;
     BaseActions.getFromApiary(`projects/${location.state.project.name}/description`).then((result) => {
+      console.log('RELOAD README');
       this.setState({
         input: result.project_description,
       });
@@ -30,6 +32,17 @@ class Readme extends React.Component {
 
   componentDidMount() {
     this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 10000);
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   onClickEdit() {

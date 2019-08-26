@@ -36,7 +36,27 @@ class ArtifactsTable extends React.Component {
           url: 'http://www.pdf995.com/samples/pdf.pdf',
         },
       ],
+      timerId: -1,
     };
+  }
+
+  reload() {
+
+  }
+
+  componentDidMount() {
+    this.reload();
+    const value = setInterval(() => {
+      this.reload();
+    }, 2000);
+    this.setState({
+      timerId: value,
+    });
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
   }
 
   render() {
