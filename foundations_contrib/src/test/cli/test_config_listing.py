@@ -52,18 +52,18 @@ class TestConfigListing(Spec):
         listing = self.config_listing.config_list()
         self.assertEqual(self.path_listing, listing)
 
-    def test_has_config_returns_true_if_config_in_path(self):
+    def test_config_path_returns_true_if_config_in_path(self):
         self.path_listing.clear()
         self.path_listing.append('/path/to/my/file.config.yaml')
-        self.assertEqual('/path/to/my/file.config.yaml', self.config_listing.has_config('file'))
+        self.assertEqual('/path/to/my/file.config.yaml', self.config_listing.config_path('file'))
 
-    def test_has_config_returns_false_if_config_not_in_path(self):
-        self.assertEqual(None, self.config_listing.has_config('file'))
+    def test_config_path_returns_false_if_config_not_in_path(self):
+        self.assertEqual(None, self.config_listing.config_path('file'))
 
-    def test_has_config_returns_false_if_config_only_partially_in_path(self):
+    def test_config_path_returns_false_if_config_only_partially_in_path(self):
         self.path_listing.clear()
         self.path_listing.append('/path/to/not/my_file.config.yaml')
-        self.assertEqual(None, self.config_listing.has_config('file'))
+        self.assertEqual(None, self.config_listing.config_path('file'))
 
     def test_config_data_returns_yaml_deserialized_config(self):
         self.path_listing.clear()

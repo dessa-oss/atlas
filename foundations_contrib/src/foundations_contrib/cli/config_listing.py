@@ -15,7 +15,7 @@ class ConfigListing(object):
         import os
         return os.listdir(f'{self._config_root}/*.config.yaml')
 
-    def has_config(self, name):
+    def config_path(self, name):
         import os.path
 
         file_name = f'{name}.config.yaml'
@@ -28,9 +28,9 @@ class ConfigListing(object):
     def config_data(self, name):
         import yaml
 
-        config_path = self.has_config(name)
+        config_path = self.config_path(name)
         if config_path is None:
             raise ValueError(f'No environment {name} found, please set a valid deployment environment with foundations.set_environment')
 
-        with open(self.has_config(name), 'r') as file:
+        with open(config_path, 'r') as file:
             return yaml.load(file.read())
