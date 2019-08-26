@@ -7,6 +7,7 @@ import { Modal, ModalBody } from "reactstrap";
 import ModelManagementTable from "./ModelManagementTable";
 import Schedule from "./Schedule";
 import ModalTutorial from "../../common/ModalTutorial";
+import PropTypes from "prop-types";
 
 const ModelManagement = props => {
   const [modelManagementData, setModelManagementData] = React.useState([]);
@@ -91,8 +92,12 @@ const ModelManagement = props => {
   );
 };
 
-ModelManagement.propTypes = {};
+ModelManagement.propTypes = {
+  location: PropTypes.object
+};
 
-ModelManagement.defaultProps = {};
+ModelManagement.defaultProps = {
+  location: { state: {} }
+};
 
 export default withRouter(ModelManagement);
