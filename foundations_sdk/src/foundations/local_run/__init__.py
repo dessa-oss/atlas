@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 _exception_happened = False
+import yaml
 
 def load_local_configuration_if_present():
     from foundations.config import set_environment
@@ -14,6 +15,8 @@ def load_local_configuration_if_present():
     from foundations_contrib.producers.jobs.run_job import RunJob
     import atexit
     import sys
+    
+    logger = log_manager.get_logger(__name__)
 
     global _exception_happened
     _exception_happened = False
@@ -29,9 +32,8 @@ def load_local_configuration_if_present():
         sys.excepthook = _handle_exception
 
     elif not _in_command_line() and not _default_environment_present():
-        logger = log_manager.get_logger(__name__)
         logger.warn(
-            'Foundations has been imported, but no default configuration file has been found.'
+            'Foundations has been imported, but no default configuration file has been found. '
             'Refer to the documentation here [PLACEHOLDER] for more information. Without a default'
             'configuration file, no foundations code will be executed.')
 
