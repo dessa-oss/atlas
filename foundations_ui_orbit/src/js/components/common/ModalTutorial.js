@@ -2,6 +2,12 @@ import React from "react";
 import { Modal, ModalBody } from "reactstrap";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
+import ImageTutorial1 from "../../../assets/images/tutorial_1.png";
+import ImageTutorial2 from "../../../assets/images/tutorial_2.png";
+import ImageTutorial3 from "../../../assets/images/tutorial_3.png";
+import ImageTutorial4 from "../../../assets/images/tutorial_4.png";
+import ImageTutorial5 from "../../../assets/images/tutorial_5.png";
+
 
 class ModalTutorial extends React.Component {
   constructor(props) {
@@ -43,27 +49,31 @@ class ModalTutorial extends React.Component {
     }
   }
 
-  render() {
-    const { tutorialVisible, onToggleTutorial } = this.props;
+  renderImageTutorial() {
     const { imageIndex } = this.state;
 
-    let containerClassName = "container-tutorial image-1";
-
     if (imageIndex === 2) {
-      containerClassName = "container-tutorial image-2";
+      return <img alt="" src={ImageTutorial2} />;
     }
 
     if (imageIndex === 3) {
-      containerClassName = "container-tutorial image-3";
+      return <img alt="" src={ImageTutorial3} />;
     }
 
     if (imageIndex === 4) {
-      containerClassName = "container-tutorial image-4";
+      return <img alt="" src={ImageTutorial4} />;
     }
 
     if (imageIndex === 5) {
-      containerClassName = "container-tutorial image-5";
+      return <img alt="" src={ImageTutorial5} />;
     }
+
+    return <img alt="" src={ImageTutorial1} />;
+  }
+
+  render() {
+    const { tutorialVisible, onToggleTutorial } = this.props;
+    const { imageIndex } = this.state;
 
     return (
       <Modal
@@ -72,7 +82,8 @@ class ModalTutorial extends React.Component {
         className="modal-tutorial"
       >
         <ModalBody>
-          <div className={containerClassName}>
+          <div className="container-tutorial">
+            {this.renderImageTutorial()}
             <div className="container-tutorial-dots">
               <div
                 className={
