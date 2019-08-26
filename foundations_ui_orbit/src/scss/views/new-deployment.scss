@@ -64,6 +64,10 @@
 
     .label-date {
       display: inline-block;
+
+      &:first-child {
+        margin-left: 20px;
+      }
     }
 
     .container-date {

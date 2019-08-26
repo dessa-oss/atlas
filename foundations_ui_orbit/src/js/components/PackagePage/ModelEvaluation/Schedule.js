@@ -7,12 +7,12 @@ import PropTypes from "prop-types";
 
 const Schedule = props => {
   const [scheduleData, setScheduleData] = React.useState({
-    start_datetime: "",
-    end_datetime: "",
-    frequency: ""
+    start_datetime: new Date().toString(),
+    end_datetime: new Date("2025-01-02").toString(),
+    frequency: "Monthly"
   });
-  const [startDate, setStartDate] = React.useState("");
-  const [endDate, setEndDate] = React.useState("");
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState(new Date("2025-01-02"));
   const options = [
     {
       label: "Hourly",
@@ -43,7 +43,10 @@ const Schedule = props => {
       value: "Semi-Annually"
     }
   ];
-  const [selectedOption, setSelectedOption] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState({
+    label: "Monthly",
+    value: "Monthly"
+  });
   const pickerStartDateRef = React.useRef();
   const pickerEndDateRef = React.useRef();
   const [message, setMessage] = React.useState("");
@@ -52,33 +55,33 @@ const Schedule = props => {
     getFromApiary(
       `/projects/${props.location.state.project.name}/evaluation_schedule`
     ).then(resultSchedule => {
-      if (
-        resultSchedule
-        && resultSchedule.schedule
-        && resultSchedule.schedule.start_datetime
-        && resultSchedule.schedule.end_datetime
-        && resultSchedule.schedule.frequency
-      ) {
-        const startDateTime = resultSchedule.schedule.start_datetime
-          ? new Date(resultSchedule.schedule.start_datetime)
-          : "";
+      //   if (
+      //     resultSchedule
+      //     && resultSchedule.schedule
+      //     && resultSchedule.schedule.start_datetime
+      //     && resultSchedule.schedule.end_datetime
+      //     && resultSchedule.schedule.frequency
+      //   ) {
+      //     const startDateTime = resultSchedule.schedule.start_datetime
+      //       ? new Date(resultSchedule.schedule.start_datetime)
+      //       : "";
 
-        const endDateTime = resultSchedule.schedule.end_datetime
-          ? new Date(resultSchedule.schedule.end_datetime)
-          : "";
+      //     const endDateTime = resultSchedule.schedule.end_datetime
+      //       ? new Date(resultSchedule.schedule.end_datetime)
+      //       : "";
 
-        const freq = resultSchedule.schedule.frequency
-          ? {
-            label: resultSchedule.schedule.frequency,
-            value: resultSchedule.schedule.frequency
-          }
-          : "";
+      //     const freq = resultSchedule.schedule.frequency
+      //       ? {
+      //         label: resultSchedule.schedule.frequency,
+      //         value: resultSchedule.schedule.frequency
+      //       }
+      //       : "";
 
-        setScheduleData(resultSchedule.schedule);
-        setStartDate(startDateTime);
-        setEndDate(endDateTime);
-        setSelectedOption(freq);
-      }
+      //     setScheduleData(resultSchedule.schedule);
+      //     setStartDate(startDateTime);
+      //     setEndDate(endDateTime);
+      //     setSelectedOption(freq);
+      //   }
     });
   };
 
@@ -158,7 +161,6 @@ const Schedule = props => {
 
       <div className="container-scheduling management">
         <div className="container-schedule-date">
-          <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
           <div className="container-date">
             <Flatpickr
@@ -192,7 +194,7 @@ const Schedule = props => {
             <Select
               className={
                 selectedOption !== ""
-                && selectedOption.value !== scheduleData.frequency
+                  && selectedOption.value !== scheduleData.frequency
                   ? "select-frequency adaptive edited"
                   : "select-frequency adaptive"
               }

@@ -160,7 +160,6 @@ const Schedule = props => {
       <p>{message}</p>
       <div className="container-scheduling management">
         <div className="container-schedule-date">
-          <p className="subheader">AUTOMATED</p>
           <p className="label-date">Start: </p>
           <div className="container-date">
             <Flatpickr
