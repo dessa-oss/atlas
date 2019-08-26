@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from foundations_contrib.cli.config_listing import ConfigListing
 
 from contextlib import contextmanager
 
@@ -21,7 +22,6 @@ class TestConfigListing(Spec):
     
     @let
     def config_listing(self):
-        from foundations_contrib.cli.config_listing import ConfigListing
         return ConfigListing(self.config_root)
 
     @let
@@ -34,23 +34,31 @@ class TestConfigListing(Spec):
         return yaml.dump(self.config_data)
 
     @let
-    def mock_listdir(self):
+    def mock_glob(self):
         return ConditionalReturn()
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file = let_mock()
+    mock_file_exists = let_patch_mock_with_conditional_return('os.path.exists')
 
     @set_up
     def set_up(self):
-        self.mock_listdir.return_when(self.path_listing, f'{self.config_root}/*.config.yaml')
-        self.patch('os.listdir', self.mock_listdir)
+        self.mock_glob.return_when(self.path_listing, f'{self.config_root}/*.config.yaml')
+        self.patch('glob.glob', self.mock_glob)
         self.mock_file.__enter__ = lambda *args: self.mock_file
         self.mock_file.__exit__ = lambda *args: None
         self.mock_file.read.return_value = self.yaml_config_data
+        self.mock_file_exists.return_when(True, self.config_root)
 
     def test_config_list_returns_file_listing_in_config_directory(self):
         listing = self.config_listing.config_list()
         self.assertEqual(self.path_listing, listing)
+
+    def test_config_list_returns_empty_listing_when_root_missing(self):
+        alternate_root = self.faker.uri_path()
+        self.mock_file_exists.return_when(False, alternate_root)
+        listing = ConfigListing(alternate_root).config_list()
+        self.assertEqual([], listing)
 
     def test_config_path_returns_true_if_config_in_path(self):
         self.path_listing.clear()

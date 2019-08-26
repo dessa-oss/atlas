@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
+from foundations_contrib.utils import foundations_home
 
 class TestTypeConfigListing(Spec):
 
@@ -20,8 +21,7 @@ class TestTypeConfigListing(Spec):
 
     @let
     def foundations_config_root(self):
-        from foundations_contrib.utils import foundations_home
-        return f'{foundations_home()}/config/{self.config_type}'
+        return f'{self.expanded_foundations_home}/config/{self.config_type}'
 
     local_config_listing = let_mock()
     foundations_config_listing = let_mock()
@@ -32,6 +32,12 @@ class TestTypeConfigListing(Spec):
     local_mock_config = let_mock()
     foundations_mock_config = let_mock()
 
+    mock_expand_home = let_patch_mock_with_conditional_return('os.path.expanduser')
+
+    @let
+    def expanded_foundations_home(self):
+        return self.faker.uri_path()
+
     @let
     def typed_listing(self):
         from foundations_contrib.cli.typed_config_listing import TypedConfigListing
@@ -39,6 +45,7 @@ class TestTypeConfigListing(Spec):
 
     @set_up
     def set_up(self):
+        self.mock_expand_home.return_when(self.expanded_foundations_home, foundations_home())
         self.mock_listing_constructor.return_when(self.local_config_listing, self.local_config_root)
         self.mock_listing_constructor.return_when(self.foundations_config_listing, self.foundations_config_root)
         self.local_config_listing.config_path.return_value = None

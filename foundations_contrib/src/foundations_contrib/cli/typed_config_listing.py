@@ -10,9 +10,10 @@ class TypedConfigListing(object):
     def __init__(self, config_type):
         from foundations_contrib.cli.config_listing import ConfigListing
         from foundations_contrib.utils import foundations_home
+        import os.path
 
         self._local_listing = ConfigListing(f'config/{config_type}')
-        self._foundations_listing = ConfigListing(f'{foundations_home()}/config/{config_type}')
+        self._foundations_listing = ConfigListing(f'{os.path.expanduser(foundations_home())}/config/{config_type}')
 
     def config_path(self, name):
         return self._local_listing.config_path(name) or self._foundations_listing.config_path(name)

@@ -13,7 +13,12 @@ class ConfigListing(object):
 
     def config_list(self):
         import os
-        return os.listdir(f'{self._config_root}/*.config.yaml')
+        import glob
+
+        if os.path.exists(self._config_root):
+            return glob.glob(f'{self._config_root}/*.config.yaml')
+        else:
+            return []
 
     def config_path(self, name):
         import os.path
