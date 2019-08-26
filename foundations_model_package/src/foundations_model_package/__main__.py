@@ -19,7 +19,11 @@ def main():
     print('*** Attempting to configure redis')
     from foundations import config_manager
     configuration = config_manager.config()
-    configuration['redis_url'] = 'redis://redis'
+    
+    if 'REDIS_URL' in os.environ:
+        configuration['redis_url'] = os.environ['REDIS_URL']
+    else:
+        configuration['redis_url'] = 'redis://redis'
 
     job = Job(os.environ['JOB_ID'])
     prediction_function = EntrypointLoader(job).entrypoint_function('predict')

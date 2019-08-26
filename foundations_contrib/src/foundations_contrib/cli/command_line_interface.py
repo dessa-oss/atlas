@@ -325,7 +325,9 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         from foundations_contrib.global_state import message_router
 
-        successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory)
+        env = self._arguments.env if self._arguments.env is not None else 'local'
+
+        successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
 
         if successfully_added:
             message_router.push_message('project_model_served', {
