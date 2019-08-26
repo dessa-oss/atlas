@@ -10,10 +10,8 @@ const NewModelRecalibrationModal = props => {
   const [endDate, setEndDate] = React.useState("");
   const startDatePickerRef = React.createRef();
   const endDatePickerRef = React.createRef();
-  const [modelName, setModelName] = React.useState(() => {
-    const { model } = props;
-    return model.model_name;
-  });
+  const [modelName, setModelName] = React.useState("");
+  const [description, setDescription] = React.useState("");
   const [scheduleMessageVisible, setScheduleMessageVisible] = React.useState(false);
   const [swapMessageVisible, setSwapMessageVisible] = React.useState(false);
   const [triggeredMessageVisible, setTriggeredMessageVisible] = React.useState(false);
@@ -45,6 +43,10 @@ const NewModelRecalibrationModal = props => {
 
   const onChangeModelName = e => {
     setModelName(e.target.value);
+  };
+
+  const onChangeDescription = e => {
+    setDescription(e.target.value);
   };
 
   const onClickOpenStartDate = () => {
@@ -87,7 +89,7 @@ const NewModelRecalibrationModal = props => {
     }
   };
 
-  const { onClose } = props;
+  const { onClose, model } = props;
 
   return (
     <Modal
@@ -101,7 +103,7 @@ const NewModelRecalibrationModal = props => {
             Model Recalibration
           </p>
           <p className="model-recalibration-model-name font-bold">
-            {modelName}
+            {model.model_name}
           </p>
           <p>Define the frequency at which models are re-trained:</p>
           <div className="checkbox-div">
@@ -200,9 +202,19 @@ const NewModelRecalibrationModal = props => {
             <div className="recalibrate-property-container">
               <p className="recalibrate-label-date">Model Name:</p>
               <input
-                className="recalibrate-container-date"
+                className="recalibrate-container-date input"
                 value={modelName}
                 onChange={onChangeModelName}
+                placeholder="Insert Model Name"
+              />
+            </div>
+            <div className="recalibrate-property-container">
+              <p className="recalibrate-label-date">Description:</p>
+              <input
+                className="recalibrate-container-date input"
+                value={description}
+                onChange={onChangeDescription}
+                placeholder="Insert Description"
               />
             </div>
           </div>
@@ -234,13 +246,15 @@ const NewModelRecalibrationModal = props => {
 NewModelRecalibrationModal.propTypes = {
   onClose: PropTypes.func,
   reload: PropTypes.func,
-  location: PropTypes.object
+  location: PropTypes.object,
+  model: PropTypes.object
 };
 
 NewModelRecalibrationModal.defaultProps = {
   onClose: () => null,
   reload: () => null,
-  location: { state: {} }
+  location: { state: {} },
+  model: {}
 };
 
 export default NewModelRecalibrationModal;
