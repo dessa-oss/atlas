@@ -168,10 +168,6 @@ class TestOrbitModelPackageServer(Spec):
         result = self._deploy()
         self.assertFalse(result)
 
-    def _retrieve_results_from_redis(self, project_name):
-        hash_map_key = f'projects:{project_name}:model_listing'
-        retrieved_results = self._redis.hgetall(hash_map_key)
-        return {key.decode(): value for key, value in retrieved_results.items()}
 
     def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
         self._deploy()
@@ -205,6 +201,39 @@ class TestOrbitModelPackageServer(Spec):
             None,
             package_name='artifacts')
 
+
+    def test_stop_returns_true_if_successful(self):
+        result = self._stop()
+        self.assertTrue(result)
+
+    def test_stop_marks_model_as_deactivated(self):
+        self._deploy()
+        previous_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(previous_status, 'activated')
+
+        self._stop()
+        after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(after_status, 'deactivated')
+
+    def test_starting_previously_stopped_model_is_reactivated(self):
+        self._deploy()
+        self._stop()
+        
+        self._deploy()
+        after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(after_status, 'activated')
+
+    def test_destroy_returns_true_if_successful(self):
+        result = self._destroy()
+        self.assertTrue(result)
+
+    def test_destroy_removes_the_model_in_redis(self):
+        self._deploy()
+        self._destroy()
+
+        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
+        self.assertIsNone(decoded_results.get(self.mock_model_name))
+
     def _deploy(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         return deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
@@ -222,19 +251,6 @@ class TestOrbitModelPackageServer(Spec):
         from foundations_contrib.cli.orbit_model_package_server import destroy
         return destroy(self.mock_project_name, self.mock_model_name)
 
-    def test_stop_returns_true_if_successful(self):
-        result = self._stop()
-        self.assertTrue(result)
-
-    def test_stop_marks_model_as_deactivated(self):
-        self._deploy()
-        previous_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
-        self.assertEqual(previous_status, 'activated')
-
-        self._stop()
-        after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
-        self.assertEqual(after_status, 'deactivated')
-
     def _get_model_status(self, project_name, model_name):
         import pickle
         decoded_results = self._retrieve_results_from_redis(project_name)
@@ -242,13 +258,7 @@ class TestOrbitModelPackageServer(Spec):
         deserialised_details = pickle.loads(model_details)
         return deserialised_details['status']
 
-    def test_destroy_returns_true_if_successful(self):
-        result = self._destroy()
-        self.assertTrue(result)
-
-    def test_destroy_removes_the_model_in_redis(self):
-        self._deploy()
-        self._destroy()
-
-        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
-        self.assertIsNone(decoded_results.get(self.mock_model_name))
+    def _retrieve_results_from_redis(self, project_name):
+        hash_map_key = f'projects:{project_name}:model_listing'
+        retrieved_results = self._redis.hgetall(hash_map_key)
+        return {key.decode(): value for key, value in retrieved_results.items()}

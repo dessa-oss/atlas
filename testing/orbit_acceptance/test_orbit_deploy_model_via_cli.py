@@ -80,6 +80,26 @@ class TestOrbitDeployModelViaCli(Spec):
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
+    def test_can_successfully_resume_model_serve(self):
+        try:
+            import time
+            # ensure deployed
+            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
+            self._wait_for_server()
+            self.assertIsNotNone(self._check_if_endpoint_available())
+            
+            # stop and ensure that its unavailable
+            self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
+            time.sleep(2)
+            self.assertIsNone(self._check_if_endpoint_available())
+
+            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
+            self._wait_for_server()
+            self.assertIsNotNone(self._check_if_endpoint_available())
+
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
+
     def _deploy_job(self, project_name, model_name):
         import subprocess
 
@@ -150,6 +170,7 @@ class TestOrbitDeployModelViaCli(Spec):
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}/predict'
         try:
+            print(f'Checking if endpoint available: {end_point_url}')
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:

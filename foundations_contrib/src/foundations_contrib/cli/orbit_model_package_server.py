@@ -76,6 +76,9 @@ def _update_model_in_redis(project_name, model_name, dict_of_updates = {}):
     project_model_listings.update({model_name: serialized_model_information})
     redis_connection.hmset(f'projects:{project_name}:model_listing', project_model_listings)
 
+def _is_model_activated(project_name, model_name):
+    details = _retrieve_model_details_from_redis(project_name, model_name)
+    return details['status'] == 'activated'
 
 def _model_exists_in_project(project_name, model_name):
     project_model_listings = _retrieve_project_from_redis(project_name)
@@ -127,7 +130,8 @@ def deploy(project_name, model_name, project_directory, env='local'):
     _setup_environment(project_name, env)
 
     if _model_exists_in_project(project_name, model_name):
-        return False
+        if _is_model_activated(project_name, model_name):
+            return False
     
     _save_model_to_redis(project_name, model_name, _get_default_model_information())
     _upload_model_directory(project_name, model_name, project_directory)
