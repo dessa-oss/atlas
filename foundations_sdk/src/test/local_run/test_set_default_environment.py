@@ -120,6 +120,12 @@ class TestSetDefaultEnvironment(Spec):
         load_local_configuration_if_present()
         self.mock_set_environment.assert_called_with('default')
 
+    def test_default_config_file_contents_are_logged(self):        
+        self.mock_environment_fetcher.get_all_environments.return_value = (['/path3/to/default.config.yaml'], [])
+        load_local_configuration_if_present()
+        self.mock_logger.info.assert_called_with('Foundations has been run with the following configuration:\n'
+                                                 'run_script_environment: {}\n')
+
     def test_default_environment_not_loaded_when_absent(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
         load_local_configuration_if_present()
