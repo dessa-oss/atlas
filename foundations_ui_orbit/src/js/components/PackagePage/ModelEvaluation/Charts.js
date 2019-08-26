@@ -78,7 +78,7 @@ class Charts extends React.Component {
 
     return (
       <div className="container-evaluation">
-        <p className="new-dep-section font-bold">MODEL REGISTRY</p>
+        <p className="new-dep-section font-bold">MODEL METRICS</p>
         <div className="container-top-section">
           <div className="container-num-metrics">
             <p>
