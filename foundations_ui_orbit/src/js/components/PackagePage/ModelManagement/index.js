@@ -48,6 +48,7 @@ const ModelManagement = props => {
           <div>
             <Schedule />
             <div className="package-deployment-table-container">
+              <p className="new-dep-section font-bold management">MODEL REGISTRY</p>
               <div className="container-management-top-section text-right">
                 <button
                   type="button"
