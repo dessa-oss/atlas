@@ -22,5 +22,15 @@ class ConfigListing(object):
 
         for config in self.config_list():
             if file_name == os.path.basename(config):
-                return True
-        return False
+                return config
+        return None
+
+    def config_data(self, name):
+        import yaml
+
+        config_path = self.has_config(name)
+        if config_path is None:
+            raise ValueError(f'No environment {name} found, please set a valid deployment environment with foundations.set_environment')
+
+        with open(self.has_config(name), 'r') as file:
+            return yaml.load(file.read())
