@@ -78,7 +78,6 @@ class TestCanLoadParameters(Spec):
         with ChangeDirectory(script_directory):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE)
             process_output = completed_process.stdout.decode().strip().split('\n')
-        # output, _, params_json = process_output.strip().split('\n')
         params_json = process_output[-1]
         job_id = process_output[-2]
         project_name = path.basename(script_directory)
