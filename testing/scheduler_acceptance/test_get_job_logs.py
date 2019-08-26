@@ -44,7 +44,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         command_to_run = self._command_to_run_job(self.fake_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
-        cli_stdout = cli_stdout.decode().rstrip('\n') 
+        cli_stdout = cli_stdout.decode().rstrip('\n').split('\n')[-1]
 
         self.assertEqual(1, cli_result.returncode)
         self.assertEqual(error_message, cli_stdout)
@@ -71,7 +71,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         command_to_run = self._command_to_run_job(queued_job_id)
         cli_result = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cli_stdout = cli_result.stdout
-        cli_stdout = cli_stdout.decode().rstrip('\n')
+        cli_stdout = cli_stdout.decode().rstrip('\n').split('\n')[-1]
 
         self.assertEqual(1, cli_result.returncode)
         self.assertEqual(error_message, cli_stdout)
