@@ -12,8 +12,9 @@ class TypedConfigListing(object):
         from foundations_contrib.utils import foundations_home
         import os.path
 
-        self._local_listing = ConfigListing(f'config/{config_type}')
-        self._foundations_listing = ConfigListing(f'{os.path.expanduser(foundations_home())}/config/{config_type}')
+        self._config_type = config_type
+        self._local_listing = ConfigListing(f'config/{self._config_type}')
+        self._foundations_listing = ConfigListing(f'{os.path.expanduser(foundations_home())}/config/{self._config_type}')
 
     def config_path(self, name):
         return self._local_listing.config_path(name) or self._foundations_listing.config_path(name)
@@ -21,6 +22,6 @@ class TypedConfigListing(object):
     def config_data(self, name):
         result = self._local_listing.config_data(name) or self._foundations_listing.config_data(name)
         if result is None:
-            raise ValueError(f'No environment {name} found, please set a valid deployment environment with foundations.set_environment')
+            raise ValueError(f'No {self._config_type} config {name} found')
         return result
 

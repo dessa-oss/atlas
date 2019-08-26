@@ -76,7 +76,7 @@ class TestTypeConfigListing(Spec):
     def test_config_data_raises_error_when_not_present(self):
         with self.assertRaises(ValueError) as error_context:
             self.typed_listing.config_data(self.config_name)
-        self.assertIn(f'No environment {self.config_name} found, please set a valid deployment environment with foundations.set_environment', error_context.exception.args[0])
+        self.assertIn(f'No {self.config_type} config {self.config_name} found', error_context.exception.args[0])
 
     def test_config_data_returns_config_data_when_present_in_local_listing(self):
         self.local_config_listing.config_data = ConditionalReturn()
