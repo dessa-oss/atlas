@@ -43,6 +43,8 @@ class TestTypeConfigListing(Spec):
         self.mock_listing_constructor.return_when(self.foundations_config_listing, self.foundations_config_root)
         self.local_config_listing.config_path.return_value = None
         self.foundations_config_listing.config_path.return_value = None
+        self.local_config_listing.config_data.return_value = None
+        self.foundations_config_listing.config_data.return_value = None
 
     def test_config_path_returns_none_when_not_present(self):
         self.assertIsNone(self.typed_listing.config_path(self.config_name))
@@ -63,6 +65,30 @@ class TestTypeConfigListing(Spec):
         self.foundations_config_listing.config_path = ConditionalReturn()
         self.foundations_config_listing.config_path.return_when(self.foundations_mock_config, self.config_name)
         self.assertEqual(self.local_mock_config, self.typed_listing.config_path(self.config_name))
+
+    def test_config_data_raises_error_when_not_present(self):
+        with self.assertRaises(ValueError) as error_context:
+            self.typed_listing.config_data(self.config_name)
+        self.assertIn(f'No environment {self.config_name} found, please set a valid deployment environment with foundations.set_environment', error_context.exception.args[0])
+
+    def test_config_data_returns_config_data_when_present_in_local_listing(self):
+        self.local_config_listing.config_data = ConditionalReturn()
+        self.local_config_listing.config_data.return_when(self.local_mock_config, self.config_name)
+        self.assertEqual(self.local_mock_config, self.typed_listing.config_data(self.config_name))
+
+    def test_config_data_returns_config_data_when_present_in_foundations_listing(self):
+        self.foundations_config_listing.config_data = ConditionalReturn()
+        self.foundations_config_listing.config_data.return_when(self.foundations_mock_config, self.config_name)
+        self.assertEqual(self.foundations_mock_config, self.typed_listing.config_data(self.config_name))
+
+    def test_config_data_returns_local_config_data_when_present_in_both_listings(self):
+        self.local_config_listing.config_data = ConditionalReturn()
+        self.local_config_listing.config_data.return_when(self.local_mock_config, self.config_name)
+        self.foundations_config_listing.config_data = ConditionalReturn()
+        self.foundations_config_listing.config_data.return_when(self.foundations_mock_config, self.config_name)
+        self.assertEqual(self.local_mock_config, self.typed_listing.config_data(self.config_name))
+
+
 
 
 

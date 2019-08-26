@@ -16,3 +16,10 @@ class TypedConfigListing(object):
 
     def config_path(self, name):
         return self._local_listing.config_path(name) or self._foundations_listing.config_path(name)
+
+    def config_data(self, name):
+        result = self._local_listing.config_data(name) or self._foundations_listing.config_data(name)
+        if result is None:
+            raise ValueError(f'No environment {name} found, please set a valid deployment environment with foundations.set_environment')
+        return result
+

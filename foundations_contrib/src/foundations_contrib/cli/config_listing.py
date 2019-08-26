@@ -30,7 +30,7 @@ class ConfigListing(object):
 
         config_path = self.config_path(name)
         if config_path is None:
-            raise ValueError(f'No environment {name} found, please set a valid deployment environment with foundations.set_environment')
+            return None
 
         with open(config_path, 'r') as file:
             return yaml.load(file.read())

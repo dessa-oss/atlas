@@ -73,6 +73,5 @@ class TestConfigListing(Spec):
 
     def test_config_data_raises_error_when_config_missing(self):
         error_environment = self.faker.sentence()
-        with self.assertRaises(ValueError) as error_context:
-            self.config_listing.config_data(error_environment)
-        self.assertIn(f'No environment {error_environment} found, please set a valid deployment environment with foundations.set_environment', error_context.exception.args[0])
+        self.assertIsNone(self.config_listing.config_data(error_environment))
+
