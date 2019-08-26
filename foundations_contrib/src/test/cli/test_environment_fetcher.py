@@ -14,6 +14,7 @@ from pathlib import Path
 class TestEnvironmentFetcher(Spec):
 
     mock_glob = let_patch_mock('glob.glob')
+    mock_list = let_patch_mock('os.listdir')
     
     def test_environment_fetcher_checks_local_config_wrong_directory(self):
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), None)
@@ -24,23 +25,21 @@ class TestEnvironmentFetcher(Spec):
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
     
     @patch('os.getcwd', lambda: 'home/some/project')
-    @patch('os.listdir')
-    def test_environment_fetcher_checks_local_config_one_yaml(self, mock_list):
+    def test_environment_fetcher_checks_local_config_one_yaml(self):
         self.mock_glob.return_value = ['home/some/project/config/local.config.yaml']
-        mock_list.return_value = ['config']
+        self.mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), ['home/some/project/config/local.config.yaml'])
         self.mock_glob.assert_called_with('home/some/project/config/*.config.yaml')
 
     @patch('os.getcwd', lambda: 'home/some/project')
-    @patch('os.listdir')
-    def test_environment_fetcher_checks_local_config_multiple_yaml(self, mock_list):
+    def test_environment_fetcher_checks_local_config_multiple_yaml(self):
         yamls = [
             'home/some/project/config/local.config.yaml',
             'home/some/project/config/uat.config.yaml',
             'home/some/project/config/some.config.yaml',
             ]
         self.mock_glob.return_value = yamls
-        mock_list.return_value = ['config']
+        self.mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), yamls)
 
     def test_environment_fetcher_checks_global_config_empty(self):
