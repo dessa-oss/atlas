@@ -16,14 +16,15 @@ def load_local_configuration_if_present():
     global _exception_happened
     _exception_happened = False
 
-    if not _in_command_line() and _default_environment_present():
-        _load_local_configuration(logger)
+    if not _in_command_line():
+        if _default_environment_present():
+            _load_local_configuration(logger)
 
-    elif not _in_command_line() and not _default_environment_present():
-        logger.warn(
-            'Foundations has been imported, but no default configuration file has been found. '
-            'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
-            'configuration file, no foundations code will be executed.')
+        elif not _default_environment_present():
+            logger.warn(
+                'Foundations has been imported, but no default configuration file has been found. '
+                'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
+                'configuration file, no foundations code will be executed.')
 
 def _load_local_configuration(logger):
     from foundations.config import set_environment
