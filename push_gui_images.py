@@ -22,4 +22,6 @@ client.login(username=nexus_username, password=nexus_password, registry=nexus_re
 push_image_to_repository(image_name='foundations-orbit-rest-api')
 push_image_to_repository(image_name='foundations-rest-api')
 push_image_to_repository(image_name='foundations-gui')
+push_image_to_repository(image_name='foundations-orbit-gui')
+
 
