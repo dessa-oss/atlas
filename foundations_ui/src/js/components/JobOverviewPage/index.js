@@ -12,7 +12,11 @@ class JobOverviewPage extends Component {
 
     this.state = {
       tab: 'details',
-      tags: ['finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression'],
+      tags: ['finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance',
+        'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance', 'marketing', 'buck',
+        'hana',
+        'lou', 'mama', 'DL', 'banking', 'regression', 'finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL',
+        'banking', 'regression'],
     };
 
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);

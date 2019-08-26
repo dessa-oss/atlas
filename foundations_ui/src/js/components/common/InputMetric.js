@@ -23,6 +23,9 @@ class InputMetric extends Component {
       isMetaData: this.props.isMetaData,
       sortedColumn: this.props.sortedColumn,
       sortTable: this.props.sortTable,
+      selectAllJobs: this.props.selectAllJobs,
+      selectedJobs: this.props.selectedJobs,
+      allJobsSelected: this.props.allJobsSelected,
     };
   }
 
@@ -32,6 +35,7 @@ class InputMetric extends Component {
       jobs: nextProps.jobs,
       filteredArray: nextProps.filters,
       sortedColumn: nextProps.sortedColumn,
+      allJobsSelected: nextProps.allJobsSelected,
     });
   }
 
@@ -53,17 +57,19 @@ class InputMetric extends Component {
   render() {
     const {
       header, hiddenInputParams, allInputParams, isMetaData,
-      jobs, isMetric, searchText, toggleNumberFilter, filteredArray, sortedColumn, sortTable,
+      jobs, isMetric, searchText, toggleNumberFilter, filteredArray, sortedColumn, sortTable, selectAllJobs,
+      selectedJobs, allJobsSelected,
     } = this.state;
     const { onClickOpenModalJobDetails } = this.props;
     const flatParams = CommonActions.getFlatArray(allInputParams);
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
+      selectAllJobs, allJobsSelected,
     );
 
     let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams,
-      this.onMetricRowClick, onClickOpenModalJobDetails);
+      this.onMetricRowClick, onClickOpenModalJobDetails, selectedJobs);
 
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
@@ -107,6 +113,9 @@ InputMetric.propTypes = {
   onClickOpenModalJobDetails: PropTypes.func,
   sortedColumn: PropTypes.object,
   sortTable: PropTypes.func,
+  selectAllJobs: PropTypes.func,
+  selectedJobs: PropTypes.array,
+  allJobsSelected: PropTypes.bool,
 };
 const defaultFunc = () => console.warn('JobTableHeader: Missing onMetricRowClick prop.');
 InputMetric.defaultProps = {
@@ -124,6 +133,9 @@ InputMetric.defaultProps = {
   onClickOpenModalJobDetails: () => null,
   sortedColumn: { column: '', isAscending: true },
   sortTable: () => {},
+  selectAllJobs: () => {},
+  selectedJobs: [],
+  allJobsSelected: false,
 };
 
 

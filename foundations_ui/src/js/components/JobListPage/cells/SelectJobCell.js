@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { toast } from 'react-toastify';
-import BaseActions from '../../../actions/BaseActions';
-import changeIcon from '../../../../scss/jquery/changeIcon';
 
 function SelectJobCell(props) {
   const jobID = props.job.job_id;
   const btnID = `select-job-${jobID}`;
+  const isSelectedJob = props.isSelectedJob;
 
   function handleClick(e) {
     e.stopPropagation();
-    // todo functionality here
+    props.selectJob(e.target.value);
   }
 
   return (
@@ -18,7 +16,7 @@ function SelectJobCell(props) {
       key={btnID}
       className="select-cell"
     >
-      <input type="checkbox" name={btnID} value={jobID} onChange={handleClick} />
+      <input type="checkbox" name={btnID} value={jobID} onChange={handleClick} checked={isSelectedJob} />
     </span>
   );
 }
@@ -26,11 +24,15 @@ function SelectJobCell(props) {
 SelectJobCell.propTypes = {
   job: PropTypes.object,
   onSuccessfullDeletion: PropTypes.func,
+  selectJob: PropTypes.func,
+  isSelectedJob: PropTypes.bool,
 };
 
 SelectJobCell.defaultProps = {
   job: {},
   onSuccessfullDeletion: () => window.location.reload(),
+  selectJob: () => {},
+  isSelectedJob: false,
 };
 
 export default SelectJobCell;

@@ -20,6 +20,8 @@ class JobColumnHeader extends Component {
       isSortedColumn: this.props.isSortedColumn,
       isAscending: this.props.isAscending,
       sortTable: this.props.sortTable,
+      selectAllJobs: this.props.selectAllJobs,
+      allJobsSelected: this.props.allJobsSelected,
     };
   }
 
@@ -29,6 +31,7 @@ class JobColumnHeader extends Component {
         isFiltered: nextProps.isFiltered,
         isSortedColumn: nextProps.isSortedColumn,
         isAscending: nextProps.isAscending,
+        allJobsSelected: nextProps.allJobsSelected,
       },
     );
   }
@@ -48,14 +51,20 @@ class JobColumnHeader extends Component {
   render() {
     const {
       title, isStatus, offsetDivClass, containerDivClass, toggleFilter, colType, isMetric, isFiltered, isSortedColumn,
-      isAscending,
+      isAscending, selectAllJobs, allJobsSelected,
     } = this.state;
     const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
     const arrowClassName = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
     let divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
 
+    let headerName = title;
+
     if (title === 'Tags') {
       divClassName = 'job-column-header job-cell tag-cell';
+    }
+
+    if (title === 'SelectAllCheckboxes') {
+      headerName = <input type="checkbox" checked={allJobsSelected} onClick={() => { selectAllJobs(); }} />;
     }
 
     const presentationClassName = JobListActions.getJobColumnHeaderPresentationClass(colType, isMetric);
@@ -95,7 +104,7 @@ class JobColumnHeader extends Component {
       >
         <div className={offsetDivClass}>
           <h4 className={`${headerClassName}`}>
-            {title}
+            {headerName}
           </h4>
           {arrowUp}
           {arrowDown}
@@ -117,6 +126,8 @@ JobColumnHeader.propTypes = {
   isSortedColumn: PropTypes.bool,
   isAscending: PropTypes.bool,
   sortTable: PropTypes.func,
+  selectAllJobs: PropTypes.func,
+  allJobsSelected: PropTypes.bool,
 };
 
 JobColumnHeader.defaultProps = {
@@ -131,6 +142,8 @@ JobColumnHeader.defaultProps = {
   isSortedColumn: false,
   isAscending: false,
   sortTable: () => {},
+  selectAllJobs: () => {},
+  allJobsSelected: false,
 };
 
 export default JobColumnHeader;
