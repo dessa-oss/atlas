@@ -113,7 +113,7 @@ const ModelManagementRow = props => {
               rowData.status === "activated" ? clickRetire : clickActivate
             }
           >
-            {rowData.status === "activated" ? "retire" : "activate"}
+            {rowData.status === "activated" ? "deactivate" : "activate"}
           </button>
           <button
             type="button"
