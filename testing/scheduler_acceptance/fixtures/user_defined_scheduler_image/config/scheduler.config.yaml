@@ -1,9 +1,0 @@
-cache_config: {end_point: /cache}
-job_deployment_env: scheduler_plugin
-results_config: {archive_end_point: /archive, artifact_path: artifacts, redis_end_point: 'redis://peach:6379'}
-ssh_config: {code_path: /jobs, host: peach, key_path: ~/.ssh/id_foundations_scheduler,
-  port: 31222, result_path: /jobs, user: job-uploader}
-worker:
-  command: [/bin/bash, -c, pip install -r requirements.txt && python custom_main.py]
-  image: python:3.6
-  workingDir: /job/job_source
