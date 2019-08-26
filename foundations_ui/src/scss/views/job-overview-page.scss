@@ -309,6 +309,33 @@ button {
       }
     }
   }
+
+  .header-container-profile {
+    vertical-align: middle;
+    float: right;
+    margin-right: 30px;
+    margin-top: 10px;
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    p {
+      @extend .f--din-bold;
+      display: inline-block;
+      color: white;
+      margin-left: 20px;
+    }
+
+    i {
+      display: inline-block;
+      margin-left: 20px;
+    }
+  }
 }
 
 
