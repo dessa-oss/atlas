@@ -2,7 +2,7 @@
 name: 'Atlas feature request '
 about: "Suggest an \U0001F4A1 for Atlas"
 title: "[Request] Title"
-labels: request, Atlas
+labels: Atlas, request
 assignees: ''
 
 ---
