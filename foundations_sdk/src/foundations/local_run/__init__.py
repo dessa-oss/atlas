@@ -9,33 +9,40 @@ _exception_happened = False
 import yaml
 
 def load_local_configuration_if_present():
-    from foundations.config import set_environment
-    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
-    from foundations_contrib.producers.jobs.queue_job import QueueJob
-    from foundations_contrib.producers.jobs.run_job import RunJob
-    import atexit
-    import sys
-    
+    from foundations_contrib.global_state import log_manager
+
     logger = log_manager.get_logger(__name__)
 
     global _exception_happened
     _exception_happened = False
 
     if not _in_command_line() and _default_environment_present():
-        set_environment('default')
-        config_manager['_is_deployment'] = True
-        pipeline_context = current_foundations_context().pipeline_context()
-        _set_job_state(pipeline_context)
-        QueueJob(message_router, pipeline_context).push_message()
-        RunJob(message_router, pipeline_context).push_message()
-        atexit.register(_at_exit_callback)
-        sys.excepthook = _handle_exception
+        _load_local_configuration(logger)
 
     elif not _in_command_line() and not _default_environment_present():
         logger.warn(
             'Foundations has been imported, but no default configuration file has been found. '
             'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
             'configuration file, no foundations code will be executed.')
+
+def _load_local_configuration(logger):
+    from foundations.config import set_environment
+    from foundations_contrib.producers.jobs.queue_job import QueueJob
+    from foundations_contrib.producers.jobs.run_job import RunJob
+    from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
+    import atexit
+    import sys
+
+    logger.info(f'Foundations has been run with the following configuration:\n'
+                f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
+    set_environment('default')
+    config_manager['_is_deployment'] = True
+    pipeline_context = current_foundations_context().pipeline_context()
+    _set_job_state(pipeline_context)
+    QueueJob(message_router, pipeline_context).push_message()
+    RunJob(message_router, pipeline_context).push_message()
+    atexit.register(_at_exit_callback)
+    sys.excepthook = _handle_exception
 
 def _in_command_line():
     import os
