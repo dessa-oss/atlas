@@ -19,8 +19,8 @@ class TestEnvironmentFetcher(Spec):
     def test_environment_fetcher_checks_local_config_wrong_directory(self):
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), None)
 
-    @patch('os.listdir', lambda: ['config'])
     def test_environment_fetcher_checks_local_config_empty(self):
+        self.mock_list.return_value = ['config']
         self.mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
     
