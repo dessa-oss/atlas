@@ -4,6 +4,8 @@ import CommonActions from '../../actions/CommonActions';
 import HoverCell from '../JobListPage/cells/HoverCell';
 import Tag from './Tag';
 
+const maxLength = 2;
+
 class InputMetricCell extends Component {
   constructor(props) {
     super(props);
@@ -45,7 +47,6 @@ class InputMetricCell extends Component {
   }
 
   isTagContentOverMaxLength(displayText) {
-    const maxLength = 2;
     return displayText.length >= maxLength;
   }
 
@@ -75,11 +76,11 @@ class InputMetricCell extends Component {
       finalValue = [];
       let index = 0;
       value.forEach((tag) => {
-        if (index === 2) {
+        if (index === maxLength) {
           expandedValue = Array.from(finalValue);
           expandedValue.push(<Tag key={tag} value={tag} />);
           finalValue.push(<p onClick={this.onClick3Dots} onKeyDown={() => {}}>...</p>);
-        } else if (index < 2) {
+        } else if (index < maxLength) {
           finalValue.push(<Tag key={tag} value={tag} />);
         } else {
           expandedValue.push(<Tag key={tag} value={tag} />);

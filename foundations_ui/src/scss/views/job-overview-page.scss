@@ -45,6 +45,9 @@
 
   div {
     display: inline-block;
+  }
+
+  div:first-child() {
     width: 50%;
   }
 
@@ -254,13 +257,13 @@
 
 
 .dashboard-content-container {
-  $width: unquote((8/12*100)+'%');
+  $col-width: unquote((8/12*100)+'%');
   $margin: 45px;
   margin-top: 25px;
-
+  width: 100%;
   .col-md-8 {
-    flex-basis: calc(#{$width} - #{$margin});
-    max-width: calc(#{$width} - #{$margin});
+    flex-basis: calc(#{$col-width} - #{$margin});
+    max-width: calc(#{$col-width} - #{$margin});
     padding: $medium-grid-padding;
   }
 }

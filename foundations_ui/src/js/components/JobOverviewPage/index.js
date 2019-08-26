@@ -4,6 +4,7 @@ import Header from './Header';
 import ProjectOverview from './ProjectOverview';
 import JobDetails from './JobDetails';
 import CommonHeader from '../common/CommonHeader';
+import TagContainer from './TagContainer';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class JobOverviewPage extends Component {
 
     this.state = {
       tab: 'details',
+      tags: ['finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression'],
     };
 
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
@@ -33,7 +35,7 @@ class JobOverviewPage extends Component {
   onKeyDown() {}
 
   render() {
-    const { tab } = this.state;
+    const { tab, tags } = this.state;
 
     return (
       <div>
@@ -57,11 +59,7 @@ class JobOverviewPage extends Component {
                 Job Details
               </h3>
             </div>
-            <div className="project-summary-tags-container">
-              <p>tags</p>
-              <span>finance</span>
-              <span>marketing</span>
-            </div>
+            <TagContainer tags={tags} />
           </div>
           {tab === 'overview' && <ProjectOverview {...this.props} />}
           {tab === 'details' && <JobDetails {...this.props} />}

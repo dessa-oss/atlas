@@ -14,18 +14,51 @@
 
 .project-summary-tags-container {
   text-align: right;
+  float: right;
+  width: 200px;
+  position: relative;
+  bottom: 100px;
+  
+  div {
+    white-space: normal;
+    text-align: right;
+    height: 120px;
+    width: 200px;
+    float: right;
+
+    &.job-cell-hover{
+      position: relative;
+      height: 200px;
+      overflow-y: scroll;
+      text-align: left;
+    }
+
+  }
 
   span {
     background: #09BC8A;
     color: white;
     border-radius: 5px;
-    margin-left: 15px;
+    margin-left: 5px;
     padding: 2px 10px;
+    display: inline-block;
+    margin-top: 10px;
+
+    &.view-all-tags {
+      background: none;
+      color: $color-active-blue;
+      display: block;
+      width: 73px;
+      position: relative;
+      left: 102px;
+    }
+
   }
 
   p {
     color: #B1B1B1;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
+    text-align: right;
   }
 }
 

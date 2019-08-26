@@ -6,6 +6,7 @@ class HoverCell extends Component {
     super(props);
     this.state = {
       text: this.props.textToRender,
+      onMouseLeave: this.props.onMouseLeave,
     };
   }
 
@@ -18,9 +19,9 @@ class HoverCell extends Component {
   }
 
   render() {
-    const { text } = this.state;
+    const { text, onMouseLeave } = this.state;
     return (
-      <div className="job-cell-hover">
+      <div onMouseLeave={onMouseLeave} className="job-cell-hover">
         {text}
       </div>
     );
@@ -30,11 +31,13 @@ class HoverCell extends Component {
 HoverCell.propTypes = {
   textToRender: PropTypes.object,
   text: PropTypes.string,
+  onMouseLeave: PropTypes.func,
 };
 
 HoverCell.defaultProps = {
   textToRender: <p />,
   text: '',
+  onMouseLeave: () => {},
 };
 
 export default HoverCell;
