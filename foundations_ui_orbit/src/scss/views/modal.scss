@@ -221,18 +221,18 @@
       margin-left: 40%;
 
       .tutorial-dot-active {
-        width: 15px;
-        height: 15px;
-        border-radius: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
         background-color: #4a9cf8;
         display: inline-block;
         margin-left: 10px;
       }
 
       .tutorial-dot-inactive {
-        width: 15px;
-        height: 15px;
-        border-radius: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
         border-color: #4a9cf8;
         border-width: 1px;
         border-style: solid;
@@ -254,6 +254,9 @@
       line-height: 2;
       text-align: center;
       cursor: pointer;
+      font-size: 12px;
+      line-height: 2.5;
+      bottom: 5px;
   
     }
   
@@ -269,6 +272,9 @@
       line-height: 2;
       text-align: center;
       cursor: pointer;
+      font-size: 12px;
+      line-height: 2.5;
+      bottom: 5px;
     }
 
     .button-tutorial-close {
