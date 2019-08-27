@@ -45,6 +45,14 @@ def _save_model_to_redis(project_name, model_name, model_details):
     project_model_listings.update({model_name: serialized_model_information})
     redis_connection.hmset(f'projects:{project_name}:model_listing', project_model_listings)
 
+def _save_project_to_redis(project_name):
+    from time import time
+    from foundations_contrib.global_state import redis_connection
+    
+    timestamp = time()
+    redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
+
+
 def _retrieve_project_from_redis(project_name):
     from foundations_contrib.global_state import redis_connection
     return redis_connection.hgetall(f'projects:{project_name}:model_listing')
@@ -133,6 +141,8 @@ def deploy(project_name, model_name, project_directory, env='local'):
         if _is_model_activated(project_name, model_name):
             return False
     
+    _save_project_to_redis(project_name)
+
     _save_model_to_redis(project_name, model_name, _get_default_model_information())
     _upload_model_directory(project_name, model_name, project_directory)
     return _launch_model_package(project_name, model_name)

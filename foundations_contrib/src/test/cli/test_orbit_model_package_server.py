@@ -72,10 +72,11 @@ class TestOrbitModelPackageServer(Spec):
         self.maxDiff=None
         
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self._redis.execute_command = lambda x: x 
         
 
         self.ssh_key_path = path.expanduser('~/.ssh/id_foundations_scheduler')
-        
+        self.mock_redis_execute_command = self.patch('foundations_contrib.global_state.redis_connection.execute_command')
         self._setup_mocks_for_config_retrival()
 
     def _mock_enter(self, *args):
@@ -148,7 +149,6 @@ class TestOrbitModelPackageServer(Spec):
         mock_remove.assert_called_with(self.ssh_key_path)
 
     def test_not_removing_if_configuration_does_not_exists(self):
-        # self._setup_mocks_for_config_retrival()
         mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
         mock_path_exists.return_when(False, self.ssh_key_path)
 
@@ -168,6 +168,10 @@ class TestOrbitModelPackageServer(Spec):
         result = self._deploy()
         self.assertFalse(result)
 
+    def test_deploy_create_new_project_in_redis(self):
+        
+        self._deploy()
+        self.mock_redis_execute_command.assert_called_once()
 
     def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
         self._deploy()
