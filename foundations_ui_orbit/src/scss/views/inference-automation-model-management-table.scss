@@ -414,15 +414,17 @@
     border-radius: 100%;
     z-index: 989;
     display: inline-block;
-    /* margin-left: -58px; */
     vertical-align: middle;
     background: #9c9c9c;
     margin-top: 6px;
-    /* display: inline-block; */
-    /* position: relative; */
-    /* left: -58px; */
-    /* top: -12px; */
-    /* line-height: 20px; */
+    margin-left: 0px;
+
+    @media
+        (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+          margin-top: 8px;
+          margin-left: 2px;
+        }
 
     &.active {
       background: $color-status-green;
