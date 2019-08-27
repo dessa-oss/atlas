@@ -30,8 +30,8 @@ class TestOrbitIngress(Spec):
         command = f'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         
-        command = f'bash ./remove_deployment.sh project modeltwo'
-        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        # command = f'bash ./remove_deployment.sh project modeltwo'
+        # _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
 
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
@@ -50,8 +50,6 @@ class TestOrbitIngress(Spec):
 
     @skip('not yet ready ... working local but failing on jenkins')
     def test_second_served_model_can_be_accessed(self):
-        time.sleep(self.sleep_time)
-
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project modeltwo'.split())
 
         time.sleep(self.sleep_time)
