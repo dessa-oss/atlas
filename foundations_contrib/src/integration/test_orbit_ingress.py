@@ -31,8 +31,8 @@ class TestOrbitIngress(Spec):
         command = f'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         
-        command = f'bash ./remove_deployment.sh project modeltwo'
-        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        # command = f'bash ./remove_deployment.sh project modeltwo'
+        # _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
 
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
