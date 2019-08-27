@@ -34,7 +34,7 @@ class TestOrbitDeployModelViaCli(Spec):
         self.config_file_path = './orbit_acceptance/fixtures/config/local.config.yaml'
         self._generate_yaml_config_file()
 
-        self.base_url = f'http://{self._get_scheduler_ip()}:{self.port}/{self.mock_project_name}/{self.mock_user_provided_model_name}'
+        self.base_url = f'http://{self._get_scheduler_ip()}:{self.port}/projects/{self.mock_project_name}/{self.mock_user_provided_model_name}/'
 
     @tear_down
     def tear_down(self):
@@ -147,11 +147,11 @@ class TestOrbitDeployModelViaCli(Spec):
         start_time = time.time()
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
-                print(f'Attempting to make request at url: {self.base_url}')
+                # print(f'Attempting to make request at url: {self.base_url}')
                 requests.get(self.base_url, timeout=0.1).json()
                 return
             except Exception as e:
-                print('waiting for server to respond .....')
+                # print('waiting for server to respond .....')
                 time.sleep(1)
         self.fail('server never started')
 
@@ -161,7 +161,7 @@ class TestOrbitDeployModelViaCli(Spec):
         start_time = time.time()
         while time.time() - start_time < 6:
             try:
-                print(f'Checking if {self.base_url} is alive')
+                # print(f'Checking if {self.base_url} is alive')
                 requests.get(self.base_url,  timeout=0.01).json()
                 time.sleep(1)
             except:
@@ -180,9 +180,9 @@ class TestOrbitDeployModelViaCli(Spec):
             raise AssertionError('deploy succeeded when it should have failed')
     
     def _check_if_endpoint_available(self):
-        end_point_url = f'{self.base_url}/predict'
+        end_point_url = f'{self.base_url}predict'
         try:
-            print(f'Checking if endpoint available: {end_point_url}')
+            # print(f'Checking if endpoint available: {end_point_url}')
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:
