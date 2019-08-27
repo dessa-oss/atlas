@@ -417,7 +417,7 @@ class TestCommandLineInterface(Spec):
     get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
-    mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
+    mock_deploy_job = let_patch_mock('foundations_contrib.job_deployer.deploy_job')
     mock_deploy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.deploy')
     mock_destroy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.destroy')
     # orbit

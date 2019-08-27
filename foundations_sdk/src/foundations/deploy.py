@@ -11,7 +11,7 @@ def deploy(project_name=None, env='local', entrypoint='main.py', job_directory=N
     import json
 
     import foundations
-    from foundations.job_deployer import deploy_job
+    from foundations_contrib.job_deployer import deploy_job
     from foundations_contrib.global_state import current_foundations_context, redis_connection
     from foundations_internal.pipeline_context_wrapper import PipelineContextWrapper
 
