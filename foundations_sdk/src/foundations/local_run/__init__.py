@@ -27,20 +27,20 @@ def set_up_default_environment_if_present():
                 'configuration file, no foundations code will be executed.')
 
 def load_execution_environment():
-    pass
+    from foundations.config import set_environment
+    set_environment('default')
 
 def default_execution_environment_present():
     return _default_environment_present()
 
 def _set_up_environment(logger):
-    from foundations.config import set_environment
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
     from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
     import atexit
     import sys
 
-    set_environment('default')
+    load_execution_environment()
     config_manager['_is_deployment'] = True
     logger.debug(f'Foundations has been run with the following configuration:\n'
                 f'{yaml.dump(config_manager.config(), default_flow_style=False)}')

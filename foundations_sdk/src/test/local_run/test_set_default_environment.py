@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations.local_run import set_up_default_environment_if_present, default_execution_environment_present
+from foundations.local_run import set_up_default_environment_if_present, default_execution_environment_present, load_execution_environment
 import sys
 
 class TestSetDefaultEnvironment(Spec):
@@ -113,6 +113,10 @@ class TestSetDefaultEnvironment(Spec):
 
     def test_default_environment_loaded_when_present_locally(self):
         set_up_default_environment_if_present()
+        self.mock_set_environment.assert_called_with('default')
+
+    def test_load_execution_environment_calls_set_environment_with_default(self):
+        load_execution_environment()
         self.mock_set_environment.assert_called_with('default')
 
     def test_default_environment_loaded_when_present_globally(self):
