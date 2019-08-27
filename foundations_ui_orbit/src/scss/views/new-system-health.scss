@@ -458,7 +458,8 @@
 
     .label-select-reports {
       display: inline-table;
-      font-family: DINBold, Arial, sans-serif;
+      @extend .f--din;
+      // font-family: DINBold, Arial, sans-serif;
 
     }
 
@@ -490,8 +491,10 @@
   
         .label-option {
           cursor: pointer;
-          font-family: DINPro, Arial, sans-serif;
+          // font-family: DINPro, Arial, sans-serif;
           color: #443a25;
+          @extend .f--din;
+          font-size: 13px;
         }
   
         .container-health-model-package {
@@ -501,8 +504,10 @@
           .label-model-package {
             margin-left: 20px;
             cursor: pointer;
-            font-family: DINPro, Arial, sans-serif;
+            // font-family: DINPro, Arial, sans-serif;
+            @extend .f--din;
             color: #443a25;
+            font-size: 13px;
           }
   
           .container-health-data-contract {
@@ -518,7 +523,9 @@
             .label-data-contract {            
               margin-left: 40px;
               cursor: pointer;
-              font-family: DINPro, Arial, sans-serif;
+              // font-family: DINPro, Arial, sans-serif;
+              @extend .f--din;
+              font-size: 13px;
               color: #443a25;
   
               &.selected {
