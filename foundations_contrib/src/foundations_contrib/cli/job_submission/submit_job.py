@@ -11,6 +11,7 @@ def submit(arguments):
     from foundations_contrib.cli.job_submission.logs import stream_job_logs
     from foundations_contrib.change_directory import ChangeDirectory
     from foundations_contrib.global_state import config_manager
+    from foundations_contrib.set_job_resources import set_job_resources
     import os
     import os.path
     import yaml
@@ -28,6 +29,13 @@ def submit(arguments):
             config_manager['log_level'] = job_config['log_level']
         if 'worker' in job_config:
             config_manager['worker_container_overrides'] = job_config['worker']
+
+        job_resource_args = {}
+        if arguments.num_gpus is not None:
+            job_resource_args['num_gpus'] = arguments.num_gpus
+        if arguments.ram is not None:
+            job_resource_args['ram'] = arguments.ram
+        set_job_resources(**job_resource_args)
 
         deployment = deploy(
             arguments.project_name or job_config.get('project_name'), 
