@@ -49,9 +49,11 @@ class TestJobSubmissionConfig(Spec):
         self.print_mock.assert_not_called()
 
     def test_loads_config_into_config_manager_when_config_present(self):
+        from foundations_scheduler_plugin.config.scheduler import translate
+
         self._set_up_config()
         load(self.config_name)
-        self.mock_config_listing.update_config_manager_with_config.assert_called_with(self.config_name)
+        self.mock_config_listing.update_config_manager_with_config.assert_called_with(self.config_name, translate)
 
     def _set_up_config(self):
         self.mock_config_listing.config_path.clear()
