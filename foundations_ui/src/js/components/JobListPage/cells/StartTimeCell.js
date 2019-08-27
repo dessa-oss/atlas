@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import HoverCell from './HoverCell';
 import JobListActions from '../../../actions/JobListActions';
 import CommonActions from '../../../actions/CommonActions';
@@ -50,7 +51,7 @@ class StartTimeCell extends Component {
 
     const dateTimeFormatted = (
       <span className="font-bold">
-        <span className="launch-date">{date} </span>
+        <span className="launch-date">{moment(date).format('MMM DD').toString()} </span>
         <span className={spanClass}>{time}</span>
       </span>
     );
