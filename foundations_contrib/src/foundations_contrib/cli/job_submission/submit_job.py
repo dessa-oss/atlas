@@ -25,12 +25,17 @@ def submit(arguments):
             with open('job.config.yaml') as file:
                 job_config = yaml.load(file.read())
 
+        job_resource_args = {}
+
         if 'log_level' in job_config:
             config_manager['log_level'] = job_config['log_level']
         if 'worker' in job_config:
             config_manager['worker_container_overrides'] = job_config['worker']
+        if 'num_gpus' in job_config:
+            job_resource_args['num_gpus'] = job_config['num_gpus']
+        if 'ram' in job_config:
+            job_resource_args['ram'] = job_config['ram']
 
-        job_resource_args = {}
         if arguments.num_gpus is not None:
             job_resource_args['num_gpus'] = arguments.num_gpus
         if arguments.ram is not None:

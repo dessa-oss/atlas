@@ -45,6 +45,8 @@ class TestJobSubmissionSubmit(Spec):
             'entrypoint': self.faker.uri_path(),
             'worker': self.faker.pydict(),
             'params': self.faker.pydict(),
+            'num_gpus': self.faker.random.randint(1, 10),
+            'ram': self.faker.random.randint(1, 10),
         }
 
     @let
@@ -156,6 +158,11 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_deploy_config()
         submit(self.mock_arguments)
         self.mock_set_resources.assert_called_with(ram=self.ram)
+
+    def test_sets_specified_resources_from_job_config(self):
+        self._set_up_job_config()
+        submit(self.mock_arguments)
+        self.mock_set_resources.assert_called_with(num_gpus=self.job_config['num_gpus'], ram=self.job_config['ram'])
 
     def _set_up_deploy_config(self):
         self.mock_arguments.project_name = self.project_name
