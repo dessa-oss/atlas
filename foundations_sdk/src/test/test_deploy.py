@@ -109,7 +109,7 @@ class TestDeploy(Spec):
 
         self.mock_set_environment.side_effect = self._set_environment
 
-        self.mock_deploy_job_function = self.patch('foundations.job_deployer.deploy_job')
+        self.mock_deploy_job_function = self.patch('foundations_contrib.job_deployer.deploy_job')
         self.mock_deploy_job_function.return_value = self.deployment_wrapper
 
         self.pipeline_context = current_foundations_context().pipeline_context()

@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations.job_deployer import deploy_job
+from foundations_contrib.job_deployer import deploy_job
 
 class TestJobDeployer(Spec):
 
@@ -19,7 +19,7 @@ class TestJobDeployer(Spec):
     @set_up
     def set_up(self):
         mock_get_logger = ConditionalReturn()
-        mock_get_logger.return_when(self.mock_logger, 'foundations.job_deployer')
+        mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.job_deployer')
         self.mock_log_manager.get_logger = mock_get_logger
 
         mock_simple_deploy = ConditionalReturn()
