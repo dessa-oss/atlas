@@ -6,10 +6,7 @@ function run_integration_test {
     module_directory_to_add="$1"
     if [ -d "${module_directory_to_add}/integration" ]; then
         cd ${module_directory_to_add}
-
-        if [ "${module_directory_to_add}" != "foundations_model_package" ]; then
-            python -m unittest -f -v integration || exit -1
-        fi
+        python -m unittest -f -v integration || exit -1
     fi
 }
 
