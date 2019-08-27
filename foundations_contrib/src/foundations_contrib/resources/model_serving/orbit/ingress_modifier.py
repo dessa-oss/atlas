@@ -29,7 +29,7 @@ def add_new_model_to_ingress(project_name, model_name, namespace='foundations-sc
 
     _run_command(f'kubectl apply -f {temp_file_path}'.split())
 
-    # os.remove(f'{temp_file_path}')
+    os.remove(f'{temp_file_path}')
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:

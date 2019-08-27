@@ -41,18 +41,22 @@ class TestOrbitIngress(Spec):
 
         time.sleep(self.sleep_time)
 
-        self._assert_endpoint_accessable('/project/model')
+        self._assert_endpoint_accessable('/projects/project/model/', 'Test Passed')
+        self._assert_endpoint_accessable('/projects/project/model/predict', 'get on predict')
+        self._assert_endpoint_accessable('/projects/project/model/evaluate', 'get on evaluate')
 
-        self._assert_endpoint_accessable('/project')
+        self._assert_endpoint_accessable('/projects/project/', 'Test Passed')
+        self._assert_endpoint_accessable('/projects/project/predict', 'get on predict')
+        self._assert_endpoint_accessable('/projects/project/evaluate', 'get on evaluate')
 
     def test_second_served_model_can_be_accessed(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project modeltwo'.split())
 
         time.sleep(self.sleep_time)
 
-        self._assert_endpoint_accessable('/project/modeltwo')
+        self._assert_endpoint_accessable('/projects/project/modeltwo/predict', 'get on predict')
 
-    def _assert_endpoint_accessable(self, endpoint):
+    def _assert_endpoint_accessable(self, endpoint, expected_text):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
         
         try:
@@ -62,7 +66,7 @@ class TestOrbitIngress(Spec):
                 result = 'Failed to connect'
             else:
                 raise e
-        self.assertEqual('Test Passed', result)
+        self.assertEqual(expected_text, result)
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
