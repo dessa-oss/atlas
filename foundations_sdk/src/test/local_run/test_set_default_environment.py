@@ -94,6 +94,15 @@ class TestSetDefaultEnvironment(Spec):
         context = FoundationsContext(pipeline)
         return self.patch('foundations_contrib.global_state.foundations_context', context)
 
+    mock_config_listing_klass = let_patch_mock_with_conditional_return('foundations_contrib.cli.typed_config_listing.TypedConfigListing')
+
+    @let
+    def mock_config_listing(self):
+        mock = ConditionalReturn()
+        mock.config_path.return_when(None, 'default')
+        mock.update_config_manager_with_config = Mock()
+        return mock
+
     @set_up
     def set_up(self):
         self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
@@ -106,6 +115,8 @@ class TestSetDefaultEnvironment(Spec):
         self.mock_run_job_klass.return_when(self.mock_run_job, self.mock_message_router, self.pipeline_context)
         self.mock_complete_job_klass.return_when(self.mock_complete_job, self.mock_message_router, self.pipeline_context)
         self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.pipeline_context, self.exception_data)
+
+        self.mock_config_listing_klass.return_when(self.mock_config_listing, 'execution')
 
         sys.excepthook = sys.__excepthook__
 
@@ -141,6 +152,17 @@ class TestSetDefaultEnvironment(Spec):
         self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
         set_up_default_environment_if_present()
         self.mock_set_environment.assert_not_called()
+
+    def test_load_execution_environment_returns_true_when_execution_default_present(self):
+        self._set_up_config_listing_mock()
+        self.assertEqual(True, load_execution_environment())
+
+    def test_load_execution_environment_updates_global_config_with_default_execution_config(self):
+        from foundations_internal.config.execution import translate
+
+        self._set_up_config_listing_mock()
+        load_execution_environment()
+        self.mock_config_listing.update_config_manager_with_config.assert_called_with('default', translate)
 
     def test_load_execution_environment_returns_true_when_present_locally(self):
         self.assertEqual(True, load_execution_environment())
@@ -239,6 +261,11 @@ class TestSetDefaultEnvironment(Spec):
         sys.excepthook(None, None, None)
         self.at_exit()
         self.mock_complete_job.push_message.assert_not_called()
+
+    def _set_up_config_listing_mock(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        self.mock_config_listing.config_path.clear()
+        self.mock_config_listing.config_path.return_when(self.faker.uri_path(), 'default')
 
     def _register_at_exit(self, callback):
         self.at_exit = callback

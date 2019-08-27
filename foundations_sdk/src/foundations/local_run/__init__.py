@@ -20,9 +20,16 @@ def set_up_default_environment_if_present():
 
 def load_execution_environment():
     from foundations.config import set_environment
+    from foundations_contrib.cli.typed_config_listing import TypedConfigListing
+    from foundations_internal.config.execution import translate
 
     if _default_environment_present():
         set_environment('default')
+        return True
+
+    listing = TypedConfigListing('execution')
+    if listing.config_path('default'):
+        listing.update_config_manager_with_config('default', translate)
         return True
 
     return False
