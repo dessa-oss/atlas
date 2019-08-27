@@ -30,9 +30,9 @@ def submit(arguments):
             config_manager['worker_container_overrides'] = job_config['worker']
 
         deployment = deploy(
-            job_config.get('project_name', arguments.project_name), 
-            job_config.get('entrypoint', arguments.entrypoint), 
-            job_config.get('params', arguments.params)
+            arguments.project_name or job_config.get('project_name'), 
+            arguments.entrypoint or job_config.get('entrypoint'), 
+            arguments.params or job_config.get('params')
         )
         try:
             stream_job_logs(deployment)
