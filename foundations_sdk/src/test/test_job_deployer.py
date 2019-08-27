@@ -10,8 +10,8 @@ from foundations.job_deployer import deploy_job
 
 class TestJobDeployer(Spec):
 
-    mock_log_manager = let_patch_mock('foundations.log_manager')
-    mock_deployment_manager = let_patch_mock('foundations.global_state.deployment_manager')
+    mock_log_manager = let_patch_mock('foundations_contrib.global_state.log_manager')
+    mock_deployment_manager = let_patch_mock('foundations_contrib.global_state.deployment_manager')
 
     mock_logger = Mock()
     mock_deployment = Mock()
