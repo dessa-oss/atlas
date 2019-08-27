@@ -51,3 +51,4 @@ def submit(arguments):
             stream_job_logs(deployment)
         except KeyboardInterrupt:
             pass
+        return deployment

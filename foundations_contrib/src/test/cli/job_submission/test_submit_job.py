@@ -121,6 +121,10 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.mock_stream_logs.assert_called_with(self.mock_deployment)
 
+    def test_returns_deployment(self):
+        self._set_up_deploy_config()
+        self.assertEqual(self.mock_deployment, submit(self.mock_arguments))
+
     def test_does_not_break_when_interrupt_happens(self):
         self._set_up_deploy_config()
         self.mock_stream_logs.side_effect = self._send_interrupt
