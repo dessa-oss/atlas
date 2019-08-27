@@ -90,6 +90,7 @@ class TestJobSubmissionSubmit(Spec):
         self.mock_arguments.params = None
         self.mock_arguments.ram = None
         self.mock_arguments.num_gpus = None
+        self.mock_arguments.stream_job_logs = True
         
         self.mock_os_getcwd.return_value = self.current_directory
         self.mock_os_path_exists.return_when(False, 'job.config.yaml')
@@ -120,6 +121,12 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_deploy_config()
         submit(self.mock_arguments)
         self.mock_stream_logs.assert_called_with(self.mock_deployment)
+
+    def test_does_not_stream_logs_if_disabled(self):
+        self._set_up_deploy_config()
+        self.mock_arguments.stream_job_logs = False
+        submit(self.mock_arguments)
+        self.mock_stream_logs.assert_not_called()
 
     def test_returns_deployment(self):
         self._set_up_deploy_config()

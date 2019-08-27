@@ -47,8 +47,9 @@ def submit(arguments):
             arguments.entrypoint or job_config.get('entrypoint'), 
             arguments.params or job_config.get('params')
         )
-        try:
-            stream_job_logs(deployment)
-        except KeyboardInterrupt:
-            pass
+        if arguments.stream_job_logs:
+            try:
+                stream_job_logs(deployment)
+            except KeyboardInterrupt:
+                pass
         return deployment
