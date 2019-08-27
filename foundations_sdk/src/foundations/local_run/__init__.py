@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 _exception_happened = False
 import yaml
 
-def load_local_configuration_if_present():
+def set_up_default_environment_if_present():
     from foundations_contrib.global_state import log_manager
 
     logger = log_manager.get_logger(__name__)
@@ -18,7 +18,7 @@ def load_local_configuration_if_present():
 
     if not _in_command_line():
         if _default_environment_present():
-            _load_local_configuration(logger)
+            _set_up_environment(logger)
 
         elif not _default_environment_present():
             logger.warn(
@@ -26,7 +26,7 @@ def load_local_configuration_if_present():
                 'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
                 'configuration file, no foundations code will be executed.')
 
-def _load_local_configuration(logger):
+def _set_up_environment(logger):
     from foundations.config import set_environment
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
