@@ -407,9 +407,15 @@ class CommonActions {
     statusCheckbox = false, unsetHideFilters = () => {},
   ) {
     let checkboxes = null;
+    let hasSeenParams = false;
     if (columns.length > 0) {
       checkboxes = [];
+      checkboxes.push(<h3 className="column-filter-divider">Metrics</h3>);
       columns.forEach((col) => {
+        if (col.header === 'parameter' && !hasSeenParams) {
+          checkboxes.push(<h3 className="column-filter-divider">Parameters</h3>);
+          hasSeenParams = true;
+        }
         let statusCircle = null;
         if (statusCheckbox) {
           statusCircle = JobListActions.getStatusCircle(col.name);

@@ -60,6 +60,7 @@ class JobDetails extends React.Component {
 
   async getJobs() {
     const { projectName } = this.state;
+
     const fetchedJobs = await JobListActions.getJobs(projectName);
     const apiJobs = fetchedJobs;
     this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
@@ -223,6 +224,14 @@ class JobDetails extends React.Component {
   saveAPIJobs(apiJobs) {
     const getAllInputParams = apiJobs.input_parameter_names;
     const getAllMetrics = apiJobs.output_metric_names;
+
+    getAllInputParams.forEach((ip) => {
+      ip.header = 'parameter';
+    });
+    getAllMetrics.forEach((metric) => {
+      metric.header = 'metric';
+    });
+
     this.setState({
       jobs: apiJobs.jobs, isLoaded: true, allInputParams: getAllInputParams, allMetrics: getAllMetrics,
     });
