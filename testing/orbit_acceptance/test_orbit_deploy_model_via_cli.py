@@ -57,7 +57,7 @@ class TestOrbitDeployModelViaCli(Spec):
         try:
             self._deploy_job(self.mock_project_name,self.mock_user_provided_model_name)
 
-            self._wait_for_server()
+            self._wait_for_server_to_be_available()
 
             result = self._check_if_endpoint_available()
             self.assertIsNotNone(result)
@@ -69,12 +69,12 @@ class TestOrbitDeployModelViaCli(Spec):
             import time
             # ensure deployed
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server()
+            self._wait_for_server_to_be_available()
             self.assertIsNotNone(self._check_if_endpoint_available())
             
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
-            time.sleep(1)
+            self._wait_for_server_to_be_unavailable()
             self.assertIsNone(self._check_if_endpoint_available())
 
         except KeyboardInterrupt:
@@ -85,16 +85,16 @@ class TestOrbitDeployModelViaCli(Spec):
             import time
             # ensure deployed
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server()
+            self._wait_for_server_to_be_available()
             self.assertIsNotNone(self._check_if_endpoint_available())
             
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
-            time.sleep(2)
+            self._wait_for_server_to_be_unavailable()
             self.assertIsNone(self._check_if_endpoint_available())
 
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server()
+            self._wait_for_server_to_be_available()
             self.assertIsNotNone(self._check_if_endpoint_available())
 
         except KeyboardInterrupt:
@@ -141,20 +141,32 @@ class TestOrbitDeployModelViaCli(Spec):
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
 
-    def _wait_for_server(self):
+    def _wait_for_server_to_be_available(self):
         import time
 
         start_time = time.time()
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
                 print(f'Attempting to make request at url: {self.base_url}')
-                result = requests.get(self.base_url).json()
+                requests.get(self.base_url, timeout=0.1).json()
                 return
             except Exception as e:
                 print('waiting for server to respond .....')
                 time.sleep(1)
         self.fail('server never started')
-                    
+
+    def _wait_for_server_to_be_unavailable(self):
+        import time
+
+        start_time = time.time()
+        while time.time() - start_time < 6:
+            try:
+                print(f'Checking if {self.base_url} is alive')
+                requests.get(self.base_url,  timeout=0.01).json()
+                time.sleep(1)
+            except:
+                return
+        self.fail('server failed to stop')
 
     def _check_if_error_exists(self, cli_deploy_process):
         return cli_deploy_process.returncode != 0

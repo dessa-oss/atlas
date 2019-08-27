@@ -7,7 +7,7 @@ no_follow=$3
 envsubst < kubernetes-deployment.envsubst.yaml | kubectl create -f -
 echo "Preparing $model_name for serving"
 
-python ingress_modifier.py $project_name $model_name
+python ingress_modifier.py $project_name $model_name > /dev/null 2>&1
 
 model_pod=$(kubectl -n $namespace get po | grep $project_name-$model_name | awk '{print $1}')
 
