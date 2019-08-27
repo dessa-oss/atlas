@@ -12,14 +12,17 @@ import threading
 
 class TestCanDeployModelServer(Spec):
 
+    @staticmethod
+    def _is_running_on_jenkins():
+        import os
+        return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
+
     @set_up_class
     def set_up_class(klass):
         import os
         import subprocess
 
-        running_on_jenkins = os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
-
-        if not running_on_jenkins:
+        if not klass._is_running_on_jenkins():
             return_code = subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
 
             if return_code != 0:
@@ -27,10 +30,13 @@ class TestCanDeployModelServer(Spec):
 
     @set_up
     def set_up(self):
+        from foundations_contrib.global_state import config_manager, redis_connection
+
         self._proxy_process = None
         self.deployment = None
 
-        from foundations_contrib.global_state import redis_connection
+        if self._is_running_on_jenkins():
+            config_manager.config()['redis_url'] = self._get_redis_url()
 
         self.redis_connection = redis_connection
         self.redis_connection.flushall()
@@ -50,10 +56,14 @@ class TestCanDeployModelServer(Spec):
 
     @tear_down
     def tear_down(self):
+        from foundations_contrib.global_state import config_manager
+
         if self._proxy_process is not None:
             self._proxy_process.terminate()
 
         self._tear_down_model_package('test-model-package', self.job_id)
+
+        config_manager.reset()
 
     @let
     def job_id(self):
@@ -102,7 +112,7 @@ class TestCanDeployModelServer(Spec):
             'job_deployment_env': 'scheduler_plugin', 
             'results_config': {
                 'archive_end_point': '/archive',
-                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
+                'redis_end_point': self._get_redis_url(),
                 'artifact_path': 'artifacts',
                 'artifact_path': '.'
             },
@@ -186,6 +196,14 @@ class TestCanDeployModelServer(Spec):
             raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env variable')
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
+
+    def _get_redis_url(self):
+        import os
+
+        if self._is_running_on_jenkins():
+            return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL']
+        else:
+            return f'redis://{self._get_scheduler_ip()}:6379'
         
     def _deploy_job(self, job_directory):
         import foundations

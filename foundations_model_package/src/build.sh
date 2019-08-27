@@ -8,6 +8,8 @@ rm -rf tmp/pip_wheels && \
     mkdir -p tmp/pip_wheels && \
     pip download --dest tmp/pip_wheels foundations-rest-api==$pip_version
 
-docker build --tag docker.shehanigans.net/foundations-model-package .
+image_name=docker.shehanigans.net/foundations-model-package
 
-# rm -rf tmp/pip_wheels
+docker build --tag ${image_name}:${build_version} .
+docker tag ${image_name}:${build_version} ${image_name}:latest
+docker tag ${image_name}:${build_version} docker-staging.shehanigans.net/foundations-model-package:latest
