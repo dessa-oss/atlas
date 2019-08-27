@@ -474,6 +474,15 @@
       background-repeat: no-repeat;
       background-position: 270px 15px;
 
+      @media
+        (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+          background-position: 340px 15px;
+        }
+
+      @media only screen and (max-width: 1500px) {
+      }
+
       .container-health-options {
         border: solid 1px #dcdcdc;
         line-height: 30px;
