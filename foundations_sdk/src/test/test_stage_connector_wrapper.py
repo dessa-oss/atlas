@@ -115,7 +115,7 @@ class TestStageConnectorWrapper(Spec):
         def job_name(self):
             return self._job_name
 
-    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch('foundations_contrib.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
     @patch.object(DeploymentManager, 'simple_deploy')
     def test_run_in_a_running_stageless_job_throws_exception(self, _):
         self.mock_foundations_context.is_in_running_job.return_value = True
@@ -125,7 +125,7 @@ class TestStageConnectorWrapper(Spec):
 
         self.assertIn('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?', error_context.exception.args)
 
-    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch('foundations_contrib.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
     @patch.object(DeploymentManager, 'simple_deploy')
     def test_run_does_not_throw_exception_when_enable_stages_is_true_and_job_id_is_set(self, _):
         self.mock_foundations_context.is_in_running_job.return_value = True
@@ -134,7 +134,7 @@ class TestStageConnectorWrapper(Spec):
         with self.assert_does_not_raise():
             self._stage.run()
 
-    @patch('foundations.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
+    @patch('foundations_contrib.deployment_wrapper.DeploymentWrapper', MockDeploymentWrapper)
     @patch.object(DeploymentManager, 'simple_deploy')
     @patch('logging.Logger.info')
     def test_run_logging(self, logger_mock, deployment_mock):

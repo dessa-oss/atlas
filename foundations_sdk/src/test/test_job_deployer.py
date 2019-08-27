@@ -49,7 +49,7 @@ class TestJobDeployer(Spec):
         self.assertEqual(self.fake_job_name, job_deployment.job_name())
 
     def test_job_deployer_returns_deployment_wrapper(self):
-        from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations_contrib.deployment_wrapper import DeploymentWrapper
 
         job_deployment = deploy_job(self.fake_pipeline_context_wrapper, self.fake_job_name, self.fake_job_params)
         self.assertIsInstance(job_deployment, DeploymentWrapper)

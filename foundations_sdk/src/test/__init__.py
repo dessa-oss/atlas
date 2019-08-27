@@ -19,7 +19,6 @@ from test.test_job import TestJob
 from test.test_utils import TestUtils
 from test.test_projects import TestProjects
 from test.test_stage_connector_wrapper import TestStageConnectorWrapper
-from test.test_deployment_wrapper import TestDeploymentWrapper
 from test.test_config import TestConfig
 from test.test_job_deployer import TestJobDeployer
 from test.test_set_job_resources import TestSetJobResources

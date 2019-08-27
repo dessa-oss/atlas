@@ -177,7 +177,7 @@ class DeploymentWrapper(object):
         """
 
         import time
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
 
         log = log_manager.get_logger(__name__)
 

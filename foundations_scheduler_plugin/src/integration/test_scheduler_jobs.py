@@ -41,7 +41,7 @@ class TestSchedulerJobs(Spec):
 
     @let
     def deployment_wrapper(self):
-        from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations_contrib.deployment_wrapper import DeploymentWrapper
         return DeploymentWrapper(self.deployment)
 
     @set_up
