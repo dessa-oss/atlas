@@ -25,3 +25,6 @@ class TypedConfigListing(object):
             raise ValueError(f'No {self._config_type} config {name} found')
         return result
 
+    def update_config_manager_with_config(self, name):
+        from foundations_contrib.global_state import config_manager
+        config_manager.config().update(self.config_data(name))
