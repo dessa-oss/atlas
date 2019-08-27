@@ -1,6 +1,4 @@
-job_deployment_env: local
 results_config:
   archive_endpoint: sftp://localhost:31222
   artifact_path: '.'
 cache_config: {}
-obfuscate_foundations: False
