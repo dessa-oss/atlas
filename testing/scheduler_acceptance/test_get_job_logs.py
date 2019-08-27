@@ -47,7 +47,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         cli_stdout = cli_stdout.decode().rstrip('\n').split('\n')[-1]
 
         self.assertEqual(1, cli_result.returncode)
-        self.assertEqual(error_message, cli_stdout)
+        self.assertIn(error_message, cli_stdout)
 
     def test_get_logs_for_queued_job_prints_error_message(self):
         import subprocess
@@ -74,7 +74,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         cli_stdout = cli_stdout.decode().rstrip('\n').split('\n')[-1]
 
         self.assertEqual(1, cli_result.returncode)
-        self.assertEqual(error_message, cli_stdout)
+        self.assertIn(error_message, cli_stdout)
 
     def test_get_logs_for_completed_job(self):
         import subprocess
