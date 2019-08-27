@@ -113,6 +113,12 @@ class TestSetDefaultEnvironment(Spec):
     def tear_down(self):
         sys.excepthook = sys.__excepthook__
 
+    def test_job_environment_set_up_when_default_environment_present(self):
+        self.patch('foundations.local_run.load_execution_environment', return_value=True)
+        mock_set_up_environment = self.patch('foundations.local_run.set_up_job_environment')
+        set_up_default_environment_if_present()
+        mock_set_up_environment.assert_called()
+
     def test_default_environment_loaded_when_present_locally(self):
         set_up_default_environment_if_present()
         self.mock_set_environment.assert_called_with('default')
