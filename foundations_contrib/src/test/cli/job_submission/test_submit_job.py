@@ -22,6 +22,8 @@ class TestJobSubmissionSubmit(Spec):
     mock_os_path_exists = let_patch_mock_with_conditional_return('os.path.exists')
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
 
+    mock_set_resources = let_patch_mock('foundations_contrib.set_job_resources.set_job_resources')
+
     @let_now
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
@@ -74,6 +76,9 @@ class TestJobSubmissionSubmit(Spec):
     def params(self):
         return self.faker.pydict()
 
+    ram = let_mock()
+    num_gpus = let_mock()
+
     @set_up
     def set_up(self):
         self.mock_arguments.scheduler_config = None
@@ -81,6 +86,8 @@ class TestJobSubmissionSubmit(Spec):
         self.mock_arguments.project_name = None
         self.mock_arguments.entrypoint = None
         self.mock_arguments.params = None
+        self.mock_arguments.ram = None
+        self.mock_arguments.num_gpus = None
         
         self.mock_os_getcwd.return_value = self.current_directory
         self.mock_os_path_exists.return_when(False, 'job.config.yaml')
@@ -132,6 +139,23 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_job_config()
         submit(self.mock_arguments)
         self.mock_stream_logs.assert_called_with(self.mock_deployment)
+
+    def test_sets_default_job_resources(self):
+        self._set_up_deploy_config()
+        submit(self.mock_arguments)
+        self.mock_set_resources.assert_called_with()
+
+    def test_sets_specified_gpu_resources(self):
+        self.mock_arguments.num_gpus = self.num_gpus
+        self._set_up_deploy_config()
+        submit(self.mock_arguments)
+        self.mock_set_resources.assert_called_with(num_gpus=self.num_gpus)
+
+    def test_sets_specified_memory_resources(self):
+        self.mock_arguments.ram = self.ram
+        self._set_up_deploy_config()
+        submit(self.mock_arguments)
+        self.mock_set_resources.assert_called_with(ram=self.ram)
 
     def _set_up_deploy_config(self):
         self.mock_arguments.project_name = self.project_name
