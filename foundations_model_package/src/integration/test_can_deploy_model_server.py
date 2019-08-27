@@ -23,7 +23,7 @@ class TestCanDeployModelServer(Spec):
         import subprocess
 
         if not klass._is_running_on_jenkins():
-            return_code = subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
+            return_code = subprocess.call(['bash', '-c', './build.sh'])
 
             if return_code != 0:
                 raise AssertionError('docker build for model package failed :(')
@@ -225,7 +225,7 @@ class TestCanDeployModelServer(Spec):
         import os.path as path
         import subprocess
 
-        yaml_template_path = path.realpath('../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
         command_to_run = f'job_id={job_id} model_name={model_name} envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
