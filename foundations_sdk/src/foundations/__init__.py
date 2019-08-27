@@ -35,7 +35,7 @@ from foundations_contrib.middleware.basic_stage_middleware import BasicStageMidd
 from foundations_contrib.change_directory import ChangeDirectory
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 from foundations_contrib.archiving.save_artifact import save_artifact
-from foundations.deployment_wrapper import DeploymentWrapper
+from foundations_contrib.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
 from foundations.staging import create_stage, cache
 from foundations.projects import set_project_name, set_tag, get_metrics_for_all_jobs

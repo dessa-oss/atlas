@@ -66,7 +66,7 @@ class TestDeploy(Spec):
 
     @let
     def deployment_wrapper(self):
-        from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations_contrib.deployment_wrapper import DeploymentWrapper
 
         deployment = Mock()
         deployment.job_name.return_value = self.job_id
@@ -222,13 +222,13 @@ class TestDeploy(Spec):
         self.assertEqual(self.job_id, deployment_wrapper.job_name())
 
     def test_deploy_returns_deployment_wrapper_object(self):
-        from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations_contrib.deployment_wrapper import DeploymentWrapper
 
         deployment_wrapper = deploy()
         self.assertIsInstance(deployment_wrapper, DeploymentWrapper)
 
     def test_counts_deploy_amount(self):
-        from foundations.deployment_wrapper import DeploymentWrapper
+        from foundations_contrib.deployment_wrapper import DeploymentWrapper
 
         deploy()
         self.assertEqual('1', self.mock_redis.get('foundations:sdk:deloyment_count').decode())

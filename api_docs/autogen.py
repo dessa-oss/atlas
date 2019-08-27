@@ -97,20 +97,20 @@ PAGES = [
     },
     {
         'page': 'tracking_deployment.md',
-        'all_module_classes': [foundations.deployment_wrapper],
+        'all_module_classes': [foundations_contrib.deployment_wrapper],
         'functions': [
-            foundations.deployment_wrapper.DeploymentWrapper.job_name,
-            foundations.deployment_wrapper.DeploymentWrapper.is_job_complete,
-            foundations.deployment_wrapper.DeploymentWrapper.fetch_job_results,
-            foundations.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
-            foundations.deployment_wrapper.DeploymentWrapper.get_job_status,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.job_name,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.is_job_complete,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.fetch_job_results,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.wait_for_deployment_to_complete,
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.get_job_status,
         ]
     },
     {
         'page': 'job_logs.md',
-        'all_module_classes': [foundations.deployment_wrapper],
+        'all_module_classes': [foundations_contrib.deployment_wrapper],
         'functions': [
-            foundations.deployment_wrapper.DeploymentWrapper.get_job_logs
+            foundations_contrib.deployment_wrapper.DeploymentWrapper.get_job_logs
         ]
     },
     {
