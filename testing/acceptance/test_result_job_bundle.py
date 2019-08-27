@@ -25,9 +25,12 @@ class TestResultJobBundle(Spec):
     @set_up
     def set_up(self):
         from acceptance.mixins.run_process import run_process
+        from foundations_contrib.global_state import redis_connection
         import foundations
                     
-        self.local_job_id = run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally').strip()
+        run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally')
+        self.local_job_id = redis_connection.get('foundations_testing_job_id').decode()
+        
         with self.change_config():
             self.remote_job_id = foundations.deploy(env='default', job_directory='acceptance/fixtures/run_locally').job_name()
 
