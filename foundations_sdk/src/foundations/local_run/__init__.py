@@ -9,47 +9,51 @@ _exception_happened = False
 import yaml
 
 def set_up_default_environment_if_present():
-    from foundations_contrib.global_state import log_manager
-
-    logger = log_manager.get_logger(__name__)
-
-    global _exception_happened
-    _exception_happened = False
-
     if not _in_command_line():
-        if _default_environment_present():
-            _set_up_environment(logger)
+        if load_execution_environment():
+            load_execution_environment()
 
-        elif not _default_environment_present():
-            logger.warn(
+        else:
+            _get_logger().warn(
                 'Foundations has been imported, but no default configuration file has been found. '
                 'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
                 'configuration file, no foundations code will be executed.')
 
 def load_execution_environment():
     from foundations.config import set_environment
-    set_environment('default')
 
-def default_execution_environment_present():
-    return _default_environment_present()
+    if _default_environment_present():
+        set_environment('default')
+        return True
 
-def _set_up_environment(logger):
+    return False
+
+def set_up_job_environment():
     from foundations_contrib.producers.jobs.queue_job import QueueJob
     from foundations_contrib.producers.jobs.run_job import RunJob
     from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
     import atexit
-    import sys
 
-    load_execution_environment()
     config_manager['_is_deployment'] = True
-    logger.debug(f'Foundations has been run with the following configuration:\n'
+    _get_logger().debug(f'Foundations has been run with the following configuration:\n'
                 f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
     pipeline_context = current_foundations_context().pipeline_context()
     _set_job_state(pipeline_context)
     QueueJob(message_router, pipeline_context).push_message()
     RunJob(message_router, pipeline_context).push_message()
     atexit.register(_at_exit_callback)
+    _set_up_exception_handling()
+
+def _set_up_exception_handling():
+    import sys
+    
+    global _exception_happened
+    _exception_happened = False
     sys.excepthook = _handle_exception
+
+def _get_logger():
+    from foundations_contrib.global_state import log_manager
+    return log_manager.get_logger(__name__)
 
 def _in_command_line():
     import os
