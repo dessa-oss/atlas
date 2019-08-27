@@ -15,6 +15,10 @@ class TestJobSubmissionLogs(Spec):
     mock_get_logger = let_patch_mock_with_conditional_return('foundations_contrib.global_state.log_manager.get_logger')
     mock_logger = let_mock()
     print_mock = let_patch_mock('builtins.print')
+    
+    @let
+    def mock_environment(self):
+        return self.patch('os.environ', self.faker.pydict())
 
     @let
     def log_stream(self):
@@ -46,3 +50,8 @@ class TestJobSubmissionLogs(Spec):
     def test_does_not_log_job_running_multiple_times(self):
         stream_job_logs(self.deployment)
         self.assertEqual(2, len(self.mock_logger.info.mock_calls))
+
+    def test_does_not_log_if_streaming_disabled(self):
+        self.mock_environment['DISABLE_LOG_STREAMING'] = 'True'
+        stream_job_logs(self.deployment)
+        self.mock_logger.info.assert_not_called()
