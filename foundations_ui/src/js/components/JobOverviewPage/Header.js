@@ -28,14 +28,14 @@ class Header extends React.Component {
       <div>
         <div className="job-overview-header-container">
           <div>
-            <h3>
+            <h3
+              className="text-project-directory"
+              onClick={this.onClickBack}
+              aria-label="Go Back"
+              onKeyDown={this.onKeyDown}
+            >
               <i
                 className="icono-arrow1-right"
-                onClick={this.onClickBack}
-                role="button"
-                aria-label="Go Back"
-                onKeyDown={this.onKeyDown}
-                tabIndex={0}
               />
               Project Directory
             </h3>

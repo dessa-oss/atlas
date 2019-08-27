@@ -22,6 +22,8 @@
   h3 {
     color: $color-text;
     @extend .f--din;
+    cursor: pointer;
+    width: 200px;
   }
 
   p {
