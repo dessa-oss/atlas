@@ -19,15 +19,21 @@ echo "Waiting for $model_name to be ready"
 while [[ "Pending" == $(model_status) ]] || [[ "" == $(model_status) ]] || [[ "ContainerCreating" == $(model_status) ]]
 do 
     printf "*"
-    sleep 2
+    sleep 1
 done
 
-echo ''
-echo Model $model_name has started, please run:
-echo -e '    ' foundations serve stop $model_name 
-echo if an error has occurred or you wish to stop the server
-echo ''
-if [[ -z $no_follow ]]; then
-    kubectl logs -f -n $namespace $model_pod
+if [[ "Running" == $(model_status) ]] then
+    echo ''
+    echo Model $model_name in the project $project_name has started, please run:
+    echo -e '    ' foundations orbit serve stop --project_name=$project_name --model_image=$model_name
+    echo if an error has occurred or you wish to stop the server
+    echo ''
+    if [[ -z $no_follow ]]; then
+        kubectl logs -f -n $namespace $model_pod
+    else
+        exit 0
+    fi
+else
+    echo Failed to successfully start serving model $model_name in $project_name
+    exit 1
 fi
-    
