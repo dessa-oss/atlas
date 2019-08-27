@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ReactTooltip from 'react-tooltip';
 import JobListActions from '../../actions/JobListActions';
-import Tooltip from './Tooltip';
 
 class JobColumnHeader extends Component {
   constructor(props) {
@@ -28,6 +28,7 @@ class JobColumnHeader extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState(
       {
+        title: nextProps.title,
         isFiltered: nextProps.isFiltered,
         isSortedColumn: nextProps.isSortedColumn,
         isAscending: nextProps.isAscending,
@@ -54,7 +55,6 @@ class JobColumnHeader extends Component {
       isAscending, selectAllJobs, allJobsSelected,
     } = this.state;
     const headerClassName = JobListActions.getJobColumnHeaderH4Class(isStatus);
-    const arrowClassName = JobListActions.getJobColumnHeaderArrowClass(isStatus, colType, isMetric);
     let divClassName = JobListActions.getJobColumnHeaderDivClass(containerDivClass, isStatus);
 
     let headerName = title;
@@ -66,11 +66,6 @@ class JobColumnHeader extends Component {
     if (title === 'SelectAllCheckboxes') {
       headerName = <input type="checkbox" checked={allJobsSelected} onClick={() => { selectAllJobs(); }} />;
     }
-
-    const presentationClassName = JobListActions.getJobColumnHeaderPresentationClass(colType, isMetric);
-
-    const tooltip = <Tooltip message={title} />;
-    const filterIcon = isFiltered ? <div className="i--icon-filtered" /> : null;
 
     let arrowUp = null;
     let arrowDown = null;
@@ -103,8 +98,9 @@ class JobColumnHeader extends Component {
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
-          <h4 className={`${headerClassName}`}>
+          <h4 className={`${headerClassName}`} data-tip={title.length > 15 ? headerName : ''}>
             {headerName}
+            <ReactTooltip place="top" type="dark" effect="solid" />
           </h4>
           {arrowUp}
           {arrowDown}

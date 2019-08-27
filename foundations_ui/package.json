@@ -60,6 +60,7 @@
     "react-test-renderer": "^16.6.1",
     "react-testing-library": "^5.2.3",
     "react-toastify": "^5.3.2",
+    "react-tooltip": "^3.10.0",
     "reactstrap": "^8.0.0",
     "remarkable": "^2.0.0",
     "resolve": "1.8.1",
