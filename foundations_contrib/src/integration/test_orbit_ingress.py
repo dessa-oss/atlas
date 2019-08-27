@@ -17,7 +17,6 @@ class TestOrbitIngress(Spec):
     
     namespace = 'foundations-scheduler-test'
 
-
     @let
     def sleep_time(self):
         return 10
@@ -41,11 +40,11 @@ class TestOrbitIngress(Spec):
 
         time.sleep(self.sleep_time)
 
-        # self._assert_endpoint_accessable('/projects/project/model/', 'Test Passed')
+        self._assert_endpoint_accessable('/projects/project/model/', 'Test Passed')
         self._assert_endpoint_accessable('/projects/project/model/predict', 'get on predict')
         self._assert_endpoint_accessable('/projects/project/model/evaluate', 'get on evaluate')
 
-        # self._assert_endpoint_accessable('/projects/project/', 'Test Passed')
+        self._assert_endpoint_accessable('/projects/project/', 'Test Passed')
         self._assert_endpoint_accessable('/projects/project/predict', 'get on predict')
         self._assert_endpoint_accessable('/projects/project/evaluate', 'get on evaluate')
 
