@@ -45,6 +45,12 @@ class TestTypeConfigListing(Spec):
         from foundations_contrib.cli.typed_config_listing import TypedConfigListing
         return TypedConfigListing(self.config_type)
 
+    @let
+    def mock_translate(self):
+        return ConditionalReturn()
+
+    translated_config = let_mock()
+
     @set_up
     def set_up(self):
         self.mock_expand_home.return_when(self.expanded_foundations_home, foundations_home())
@@ -54,6 +60,8 @@ class TestTypeConfigListing(Spec):
         self.foundations_config_listing.config_path.return_value = None
         self.local_config_listing.config_data.return_value = None
         self.foundations_config_listing.config_data.return_value = None
+
+        self.mock_translate.return_when(self.translated_config, self.foundations_mock_config)
 
     def test_config_path_returns_none_when_not_present(self):
         self.assertIsNone(self.typed_listing.config_path(self.config_name))
@@ -100,6 +108,6 @@ class TestTypeConfigListing(Spec):
     def test_update_config_manager_with_config_calls_update_with_specified_config(self):
         self.foundations_config_listing.config_data = ConditionalReturn()
         self.foundations_config_listing.config_data.return_when(self.foundations_mock_config, self.config_name)
-        self.typed_listing.update_config_manager_with_config(self.config_name)
-        self.mock_config_manager.config().update.assert_called_with(self.foundations_mock_config)
+        self.typed_listing.update_config_manager_with_config(self.config_name, self.mock_translate)
+        self.mock_config_manager.config().update.assert_called_with(self.translated_config)
 
