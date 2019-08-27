@@ -28,8 +28,11 @@ class TestCanRunLocally(Spec):
     @set_up
     def set_up(self):
         from acceptance.mixins.run_process import run_process
+        from foundations_contrib.global_state import redis_connection
 
-        self.job_id = run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally').strip()
+        redis_connection.delete('foundations_testing_job_id')
+        run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally')
+        self.job_id = redis_connection.get('foundations_testing_job_id').decode()
 
     def test_project_name_is_saved(self):
         self.assertIn('run_locally', self.project_names)

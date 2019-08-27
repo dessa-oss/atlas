@@ -34,10 +34,10 @@ def _load_local_configuration(logger):
     import atexit
     import sys
 
-    logger.info(f'Foundations has been run with the following configuration:\n'
-                f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
     set_environment('default')
     config_manager['_is_deployment'] = True
+    logger.debug(f'Foundations has been run with the following configuration:\n'
+                f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
     pipeline_context = current_foundations_context().pipeline_context()
     _set_job_state(pipeline_context)
     QueueJob(message_router, pipeline_context).push_message()
