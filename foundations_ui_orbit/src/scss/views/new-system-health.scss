@@ -464,8 +464,7 @@
 
     .container-health-reports {
       display: inline-table;
-      width: 55%;
-      margin-left: 70px;
+      width: 100%;
       margin-bottom: 20px;
 
       -webkit-appearance: none !important;
@@ -473,7 +472,7 @@
       background-color: white;
       background-image: url("data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==");
       background-repeat: no-repeat;
-      background-position: 195px 15px;
+      background-position: 270px 15px;
 
       .container-health-options {
         border: solid 1px #dcdcdc;
