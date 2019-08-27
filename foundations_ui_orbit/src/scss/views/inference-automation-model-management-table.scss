@@ -404,7 +404,7 @@
   height: 45px;
   vertical-align: middle;
   clear: both;
-  text-align: left;
+  text-align: center;
   border-right: 1px solid $color-input-border;
   border-bottom: 1px solid $color-input-border;
 
@@ -414,10 +414,15 @@
     border-radius: 100%;
     z-index: 989;
     display: inline-block;
-    margin-left: -71px;
+    /* margin-left: -58px; */
     vertical-align: middle;
-    background: $color-9c-grey;
-    margin-top: -20px;
+    background: #9c9c9c;
+    margin-top: 6px;
+    /* display: inline-block; */
+    /* position: relative; */
+    /* left: -58px; */
+    /* top: -12px; */
+    /* line-height: 20px; */
 
     &.active {
       background: $color-status-green;
@@ -425,6 +430,10 @@
   }
 
   &:last-child {
+    width: calc(23%);
+  }
+
+  &.last-child-details-open {
     width: calc(23%);
   }
 
@@ -448,6 +457,8 @@
     line-height: 30px;
     text-align: center;
     display: inline-block;
+    width: 70px;
+    vertical-align: middle;
 
     &.active {
       color: $color-status-green;

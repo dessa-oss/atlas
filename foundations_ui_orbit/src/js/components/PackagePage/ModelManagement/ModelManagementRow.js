@@ -105,7 +105,10 @@ const ModelManagementRow = props => {
           : "model-status-circle"}
         />
       </div>
-      <div className="model-management-cell">
+      <div
+        className={isDetail === true ? "model-management-cell last-child-details-open"
+          : "model-management-cell"}
+      >
         <div className="container-cell-buttons">
           <button type="button" className="b--secondary-text button-management" onClick={clickRecalibrate}>
             recalibrate
