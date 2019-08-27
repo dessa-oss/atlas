@@ -78,37 +78,42 @@ class TestJobSubmissionSubmit(Spec):
     def set_up(self):
         self.mock_arguments.scheduler_config = None
         self.mock_arguments.job_dir = None
-        self.mock_arguments.project_name = self.project_name
-        self.mock_arguments.entrypoint = self.entrypoint
-        self.mock_arguments.params = self.params
+        self.mock_arguments.project_name = None
+        self.mock_arguments.entrypoint = None
+        self.mock_arguments.params = None
         
         self.mock_os_getcwd.return_value = self.current_directory
-        self.mock_deploy_deployment.return_when(self.mock_deployment, self.project_name, self.entrypoint, self.params)
         self.mock_os_path_exists.return_when(False, 'job.config.yaml')
 
     def test_loads_default_scheduler_config(self):
+        self._set_up_deploy_config()
         submit(self.mock_arguments)
         self.mock_load_config.assert_called_with('scheduler')
 
     def test_loads_specific_scheduler_config(self):
+        self._set_up_deploy_config()
         self.mock_arguments.scheduler_config = self.scheduler_config
         submit(self.mock_arguments)
         self.mock_load_config.assert_called_with(self.scheduler_config)
 
     def test_runs_in_job_directory_when_specified(self):
+        self._set_up_deploy_config()
         self.mock_arguments.job_dir = self.job_directory
         submit(self.mock_arguments)
         self.mock_os_chdir.assert_has_calls([call(self.job_directory), call(self.current_directory)])
 
     def test_runs_in_current_directory_when_no_job_dir_specified(self):
+        self._set_up_deploy_config()
         submit(self.mock_arguments)
         self.mock_os_chdir.assert_has_calls([call(self.current_directory), call(self.current_directory)])
 
     def test_streams_log_from_created_deployment(self):
+        self._set_up_deploy_config()
         submit(self.mock_arguments)
         self.mock_stream_logs.assert_called_with(self.mock_deployment)
 
     def test_does_not_break_when_interrupt_happens(self):
+        self._set_up_deploy_config()
         self.mock_stream_logs.side_effect = self._send_interrupt
         with self.assert_does_not_raise():
             submit(self.mock_arguments)
@@ -127,6 +132,12 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_job_config()
         submit(self.mock_arguments)
         self.mock_stream_logs.assert_called_with(self.mock_deployment)
+
+    def _set_up_deploy_config(self):
+        self.mock_arguments.project_name = self.project_name
+        self.mock_arguments.entrypoint = self.entrypoint
+        self.mock_arguments.params = self.params
+        self.mock_deploy_deployment.return_when(self.mock_deployment, self.project_name, self.entrypoint, self.params)
         
     def _set_up_job_config(self):
         self.mock_deploy_deployment.clear()
