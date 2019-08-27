@@ -23,7 +23,11 @@ def submit(arguments):
         if os.path.exists('job.config.yaml'):
             with open('job.config.yaml') as file:
                 job_config = yaml.load(file.read())
-                config_manager['log_level'] = job_config['log_level']
+
+        if 'log_level' in job_config:
+            config_manager['log_level'] = job_config['log_level']
+        if 'worker' in job_config:
+            config_manager['worker_container_overrides'] = job_config['worker']
 
         deployment = deploy(
             job_config.get('project_name', arguments.project_name), 

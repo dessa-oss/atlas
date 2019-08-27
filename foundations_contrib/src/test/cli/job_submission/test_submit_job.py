@@ -118,6 +118,11 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.assertEqual(self.job_config['log_level'], self.config_manager['log_level'])
 
+    def test_sets_override_worker_container_config(self):
+        self._set_up_job_config()
+        submit(self.mock_arguments)
+        self.assertEqual(self.job_config['worker'], self.config_manager['worker_container_overrides'])
+
     def test_streams_log_from_deployment_using_override_config(self):
         self._set_up_job_config()
         submit(self.mock_arguments)
