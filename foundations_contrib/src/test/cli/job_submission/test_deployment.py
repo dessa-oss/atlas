@@ -52,9 +52,7 @@ class TestJobSubmissionDeployment(Spec):
     def params(self):
         return {key: self.faker.sentence() for key in self.faker.words()}
 
-    @let_now
-    def mock_open(self):
-        return self.patch('builtins.open', ConditionalReturn())
+    mock_open = let_patch_mock_with_conditional_return('builtins.open')
 
     @let
     def mock_file(self):

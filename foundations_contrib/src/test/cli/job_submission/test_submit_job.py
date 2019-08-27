@@ -19,6 +19,37 @@ class TestJobSubmissionSubmit(Spec):
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_os_getcwd = let_patch_mock('os.getcwd')
 
+    mock_os_path_exists = let_patch_mock_with_conditional_return('os.path.exists')
+    mock_open = let_patch_mock_with_conditional_return('builtins.open')
+
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let
+    def mock_file(self):
+        mock = Mock()
+        mock.__enter__ = lambda *args: mock
+        mock.__exit__ = lambda *args: None
+        mock.read.return_value = self.yaml_job_config
+        return mock
+
+    @let
+    def job_config(self):
+        return {
+            'project_name': self.faker.name(),
+            'log_level': self.faker.word(),
+            'entrypoint': self.faker.uri_path(),
+            'worker': self.faker.pydict(),
+            'params': self.faker.pydict(),
+        }
+
+    @let
+    def yaml_job_config(self):
+        import yaml
+        return yaml.dump(self.job_config)
+
     @let
     def scheduler_config(self):
         return self.faker.name()
@@ -53,6 +84,7 @@ class TestJobSubmissionSubmit(Spec):
         
         self.mock_os_getcwd.return_value = self.current_directory
         self.mock_deploy_deployment.return_when(self.mock_deployment, self.project_name, self.entrypoint, self.params)
+        self.mock_os_path_exists.return_when(False, 'job.config.yaml')
 
     def test_loads_default_scheduler_config(self):
         submit(self.mock_arguments)
@@ -80,6 +112,29 @@ class TestJobSubmissionSubmit(Spec):
         self.mock_stream_logs.side_effect = self._send_interrupt
         with self.assert_does_not_raise():
             submit(self.mock_arguments)
+
+    def test_sets_override_log_level_from_job_config(self):
+        self._set_up_job_config()
+        submit(self.mock_arguments)
+        self.assertEqual(self.job_config['log_level'], self.config_manager['log_level'])
+
+    def test_streams_log_from_deployment_using_override_config(self):
+        self._set_up_job_config()
+        submit(self.mock_arguments)
+        self.mock_stream_logs.assert_called_with(self.mock_deployment)
+        
+    def _set_up_job_config(self):
+        self.mock_deploy_deployment.clear()
+        self.mock_deploy_deployment.return_when(
+            self.mock_deployment, 
+            self.job_config['project_name'], 
+            self.job_config['entrypoint'], 
+            self.job_config['params']
+        )
+
+        self.mock_os_path_exists.clear()
+        self.mock_os_path_exists.return_when(True, 'job.config.yaml')
+        self.mock_open.return_when(self.mock_file, 'job.config.yaml')
 
     def _send_interrupt(self, deployment):
         raise KeyboardInterrupt()
