@@ -59,6 +59,7 @@
 .model-management-row {
   .container-cell-buttons {
     height: 100%;
+    margin-left: -10px;
 
     .button-management {
       margin-top: 8px;
@@ -396,10 +397,8 @@
 
 .model-management-cell {
   display: inline-block;
-  padding-left: $inference-automation-cell-padding;
-  padding-right: $inference-automation-cell-padding;
   width: calc(
-    #{$model-management-cell-width} - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
+    #{$model-management-cell-width}
   );
   height: 45px;
   vertical-align: middle;
@@ -442,8 +441,8 @@
   .container-cell-buttons {
     .b--secondary-text {
       margin-right: 4px;
-      padding: 0px 12px;
-      width: 30%;
+      padding: 0px 0px;
+      width: 28%;
     }
   }
 
@@ -459,7 +458,7 @@
     line-height: 30px;
     text-align: center;
     display: inline-block;
-    width: 70px;
+    width: 80px;
     vertical-align: middle;
 
     &.active {
@@ -467,12 +466,11 @@
     }
   }
 
-  &:nth-of-type(1) {
-    width: calc(
-      #{$model-management-cell-width} + #{$border-width} - #{$inference-automation-cell-padding} -
-        #{$inference-automation-cell-padding}
-    );
-  }
+  // &:nth-of-type(1) {
+  //   width: calc(
+  //     #{$model-management-cell-width}
+  //   );
+  // }
 
   &.button-width {
     border-right: none;
