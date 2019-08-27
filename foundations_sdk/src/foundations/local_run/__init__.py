@@ -10,10 +10,7 @@ import yaml
 
 def set_up_default_environment_if_present():
     if not _in_command_line():
-        if load_execution_environment():
-            load_execution_environment()
-
-        else:
+        if not load_execution_environment():
             _get_logger().warn(
                 'Foundations has been imported, but no default configuration file has been found. '
                 'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
