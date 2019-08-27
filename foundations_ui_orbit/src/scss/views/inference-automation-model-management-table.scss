@@ -408,6 +408,22 @@
   border-right: 1px solid $color-input-border;
   border-bottom: 1px solid $color-input-border;
 
+  .model-status-circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    z-index: 989;
+    display: inline-block;
+    margin-left: -71px;
+    vertical-align: middle;
+    background: $color-9c-grey;
+    margin-top: -20px;
+
+    &.active {
+      background: $color-status-green;
+    }
+  }
+
   &:last-child {
     width: calc(23%);
   }
@@ -431,6 +447,7 @@
     margin-top: 7px;
     line-height: 30px;
     text-align: center;
+    display: inline-block;
 
     &.active {
       color: $color-status-green;

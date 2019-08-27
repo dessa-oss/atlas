@@ -95,11 +95,15 @@ const ModelManagementRow = props => {
       <div className="model-management-cell">
         <p
           className={
-            rowData.status === "Active" ? "hide-text active" : "hide-text"
+            rowData.status === "activated" ? "hide-text active" : "hide-text"
           }
         >
           {rowData.status}
         </p>
+        <div className={rowData.status === "activated"
+          ? "model-status-circle active"
+          : "model-status-circle"}
+        />
       </div>
       <div className="model-management-cell">
         <div className="container-cell-buttons">
