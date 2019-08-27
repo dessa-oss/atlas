@@ -30,8 +30,8 @@ class TestOrbitIngress(Spec):
         command = f'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         
-        # command = f'bash ./remove_deployment.sh project modeltwo'
-        # _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        command = f'bash ./remove_deployment.sh project modeltwo'
+        _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
 
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
@@ -49,6 +49,8 @@ class TestOrbitIngress(Spec):
         self._assert_endpoint_accessable('/projects/project/evaluate', 'get on evaluate')
 
     def test_second_served_model_can_be_accessed(self):
+        time.sleep(self.sleep_time)
+
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project modeltwo'.split())
 
         time.sleep(self.sleep_time)
@@ -59,7 +61,7 @@ class TestOrbitIngress(Spec):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
         
         try:
-            result = _run_command(f'curl http://{scheduler_host}:31998{endpoint}'.split()).stdout.decode()
+            result = _run_command(f'curl http://{scheduler_host}:31998{endpoint} --connect-timeout 1'.split()).stdout.decode()
         except Exception as e:
             if 'Failed to connect' in str(e):
                 result = 'Failed to connect'
