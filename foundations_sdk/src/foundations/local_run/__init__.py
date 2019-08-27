@@ -26,6 +26,12 @@ def set_up_default_environment_if_present():
                 'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
                 'configuration file, no foundations code will be executed.')
 
+def load_execution_environment():
+    pass
+
+def default_execution_environment_present():
+    return _default_environment_present()
+
 def _set_up_environment(logger):
     from foundations.config import set_environment
     from foundations_contrib.producers.jobs.queue_job import QueueJob

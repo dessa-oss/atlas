@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations.local_run import set_up_default_environment_if_present
+from foundations.local_run import set_up_default_environment_if_present, default_execution_environment_present
 import sys
 
 class TestSetDefaultEnvironment(Spec):
@@ -119,7 +119,32 @@ class TestSetDefaultEnvironment(Spec):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
         set_up_default_environment_if_present()
         self.mock_set_environment.assert_called_with('default')
-    
+
+    def test_default_environment_not_loaded_when_absent(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        set_up_default_environment_if_present()
+        self.mock_set_environment.assert_not_called()
+
+    def test_default_environment_not_loaded_when_no_environments(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
+        set_up_default_environment_if_present()
+        self.mock_set_environment.assert_not_called()
+
+    def test_default_execution_environment_present_returns_true_when_present_locally(self):
+        self.assertEqual(True, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_true_when_present_globally(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
+        self.assertEqual(True, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_false_when_absent(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        self.assertEqual(False, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_false_when_no_environments(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
+        self.assertEqual(False, default_execution_environment_present())
+
     def test_default_config_file_contents_are_logged(self):        
         self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
         set_up_default_environment_if_present()
@@ -127,11 +152,6 @@ class TestSetDefaultEnvironment(Spec):
             'Foundations has been run with the following configuration:\n'
             '_is_deployment: true\nrun_script_environment: {}\n'
         )
-
-    def test_default_environment_not_loaded_when_absent(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_not_called()
 
     def test_default_environment_not_loaded_when_in_command_line(self):
         self.mock_os_environment['FOUNDATIONS_COMMAND_LINE'] = 'True'
@@ -145,11 +165,6 @@ class TestSetDefaultEnvironment(Spec):
             'Foundations has been imported, but no default configuration file has been found. '
             'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
             'configuration file, no foundations code will be executed.')
-
-    def test_default_environment_not_loaded_when_no_environments(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_not_called()
 
     def test_sets_default_job_id(self):
         set_up_default_environment_if_present()
