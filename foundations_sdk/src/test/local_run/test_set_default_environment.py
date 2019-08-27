@@ -120,7 +120,6 @@ class TestSetDefaultEnvironment(Spec):
         set_up_default_environment_if_present()
         self.mock_set_environment.assert_called_with('default')
     
-    @skip("This feature unexpectedly breaks a lot of stuff. Need to investigate the coupling")
     def test_default_config_file_contents_are_logged(self):        
         self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
         set_up_default_environment_if_present()
