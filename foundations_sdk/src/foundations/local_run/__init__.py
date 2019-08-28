@@ -65,9 +65,12 @@ def _in_command_line():
     import os
     return os.environ.get('FOUNDATIONS_COMMAND_LINE', 'False') == 'True'
 
-def _handle_exception(_, __, ___):
+def _handle_exception(exception_type, value, traceback):
+    import sys
+
     global _exception_happened
     _exception_happened = True
+    sys.__excepthook__(exception_type, value, traceback)
 
 def _at_exit_callback():
     from foundations_contrib.global_state import current_foundations_context, message_router

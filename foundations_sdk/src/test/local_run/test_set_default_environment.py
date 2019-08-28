@@ -23,6 +23,7 @@ class TestSetDefaultEnvironment(Spec):
     mock_complete_job = let_mock()
     mock_failed_job_klass = let_patch_mock_with_conditional_return('foundations_contrib.producers.jobs.failed_job.FailedJob')
     mock_failed_job = let_mock()
+    mock_original_exception_hook = let_patch_mock('sys.__excepthook__')
 
     @let_now
     def mock_logger(self):
@@ -247,6 +248,15 @@ class TestSetDefaultEnvironment(Spec):
         set_up_job_environment()
         sys.excepthook(None, None, None)
         self.mock_failed_job.push_message.assert_not_called()
+
+    def test_calls_original_exception_hook(self):
+        set_up_job_environment()
+
+        error_type = Mock()
+        error_value = Mock()
+        traceback = Mock()
+        sys.excepthook(error_type, error_value, traceback)
+        self.mock_original_exception_hook.assert_called_with(error_type, error_value, traceback)
 
     def test_does_not_immediately_call_complete_job(self):
         set_up_job_environment()
