@@ -10,8 +10,12 @@ if [ $? -eq 0 ]
 then
     rm -rf tmp/pip_wheels && \
         mkdir -p tmp/pip_wheels && \
+        pip download --dest tmp/pip_wheels dessa_foundations==$pip_version && \
+        pip download --dest tmp/pip_wheels foundations-core_rest_api_components==$pip_version && \
         pip download --dest tmp/pip_wheels foundations-rest-api==$pip_version && \
         pip download --dest tmp/pip_wheels foundations-orbit-rest-api==$pip_version && \
+        pip download --dest tmp/pip_wheels foundations_orbit==$pip_version && \
+        pip download --dest tmp/pip_wheels foundations_production==$pip_version && \
         cp docker/gui_Dockerfile foundations_ui && \
         python build_gui.py && \
         rm -rf foundations_ui/gui_Dockerfile
