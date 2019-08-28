@@ -5,6 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+def _check_if_in_cli():
+    import traceback
+    import os
+    import os.path
+
+    for line in traceback.format_stack():
+        if 'runpy.py' in line:
+            os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+
+_check_if_in_cli()
+
 from foundations.hyperparameter import Hyperparameter
 from foundations.job import Job
 from foundations.result_reader import ResultReader
