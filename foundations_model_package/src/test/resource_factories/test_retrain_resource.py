@@ -5,6 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_prediction_resource import TestPredictionResource
-from .test_evaluate_resource import TestEvaluateResource
-from .test_retrain_resource import TestRetrainResource
+from foundations_spec import *
+
+from foundations_model_package.resource_factories import retrain_resource
+
+class TestRetrainResource(Spec):
+    pass

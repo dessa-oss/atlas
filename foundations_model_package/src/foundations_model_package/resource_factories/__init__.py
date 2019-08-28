@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from .prediction_resource import prediction_resource
 from .evaluate_resource import evaluate_resource
+from .retrain_resource import retrain_resource
