@@ -7,6 +7,7 @@ import { Modal, ModalBody } from "reactstrap";
 import ModelManagementTable from "./ModelManagementTable";
 import Schedule from "./Schedule";
 import ModalTutorial from "../../common/ModalTutorial";
+import PropTypes from "prop-types";
 
 const ModelManagement = props => {
   const [modelManagementData, setModelManagementData] = React.useState([]);
@@ -47,6 +48,7 @@ const ModelManagement = props => {
           <div>
             <Schedule />
             <div className="package-deployment-table-container">
+              <p className="new-dep-section font-bold management">MODEL REGISTRY</p>
               <div className="container-management-top-section text-right">
                 <button
                   type="button"
@@ -91,8 +93,12 @@ const ModelManagement = props => {
   );
 };
 
-ModelManagement.propTypes = {};
+ModelManagement.propTypes = {
+  location: PropTypes.object
+};
 
-ModelManagement.defaultProps = {};
+ModelManagement.defaultProps = {
+  location: { state: {} }
+};
 
 export default withRouter(ModelManagement);

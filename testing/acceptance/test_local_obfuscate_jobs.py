@@ -74,23 +74,20 @@ class TestLocalObfuscateJobs(Spec):
         import os
         import tarfile
         import shutil
-
-        current_dir = os.getcwd()
+        from foundations_internal.change_directory import ChangeDirectory
 
         job_archive_location = os.path.join(config_manager['archive_listing_implementation']['constructor_arguments'][0], job_id, 'job_source')
-        os.chdir(job_archive_location)  
+        with ChangeDirectory(job_archive_location):
 
-        job_tar_name = '{}.tgz'.format(job_id)
+            job_tar_name = '{}.tgz'.format(job_id)
 
-        foundations_init_file_location = os.path.join(job_id, 'foundations', '__init__.py')
+            foundations_init_file_location = os.path.join(job_id, 'foundations', '__init__.py')
 
-        with tarfile.open(job_tar_name, "r:gz") as tar:
-            tar.extract(foundations_init_file_location)
-        
-        with open(foundations_init_file_location, 'rb') as init_file:
-            file_head = init_file.readline()[0:11]
-        
-        os.chdir(current_dir)
+            with tarfile.open(job_tar_name, "r:gz") as tar:
+                tar.extract(foundations_init_file_location)
+            
+            with open(foundations_init_file_location, 'rb') as init_file:
+                file_head = init_file.readline()[0:11]
         shutil.rmtree(os.path.join(job_archive_location, job_id))
         
         return file_head == b'__pyarmor__'

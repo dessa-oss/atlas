@@ -5,68 +5,61 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
-from mock import Mock
-from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
+from foundations_spec import *
 from mock import patch
+
+from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
 from pathlib import Path
-class TestEnvironmentFetcher(unittest.TestCase):
+
+class TestEnvironmentFetcher(Spec):
+
+    mock_glob = let_patch_mock('glob.glob')
+    mock_list = let_patch_mock('os.listdir')
     
-    def setUp(self):
-        pass
-        
     def test_environment_fetcher_checks_local_config_wrong_directory(self):
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), None)
 
-    @patch('os.listdir', lambda: ['config'])
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_local_config_empty(self, mock_glob):
-        mock_glob.return_value = []
+    def test_environment_fetcher_checks_local_config_empty(self):
+        self.mock_list.return_value = ['config']
+        self.mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), [])
     
     @patch('os.getcwd', lambda: 'home/some/project')
-    @patch('os.listdir')
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_local_config_one_yaml(self, mock_glob, mock_list):
-        mock_glob.return_value = ['home/some/project/config/local.config.yaml']
-        mock_list.return_value = ['config']
+    def test_environment_fetcher_checks_local_config_one_yaml(self):
+        self.mock_glob.return_value = ['home/some/project/config/local.config.yaml']
+        self.mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), ['home/some/project/config/local.config.yaml'])
-        mock_glob.assert_called_with('home/some/project/config/*.config.yaml')
+        self.mock_glob.assert_called_with('home/some/project/config/*.config.yaml')
 
     @patch('os.getcwd', lambda: 'home/some/project')
-    @patch('os.listdir')
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_local_config_multiple_yaml(self, mock_glob, mock_list):
+    def test_environment_fetcher_checks_local_config_multiple_yaml(self):
         yamls = [
             'home/some/project/config/local.config.yaml',
             'home/some/project/config/uat.config.yaml',
             'home/some/project/config/some.config.yaml',
             ]
-        mock_glob.return_value = yamls
-        mock_list.return_value = ['config']
+        self.mock_glob.return_value = yamls
+        self.mock_list.return_value = ['config']
         self.assertEqual(EnvironmentFetcher()._get_local_environments(), yamls)
 
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_global_config_empty(self, mock_glob):
-        mock_glob.return_value = []
+    def test_environment_fetcher_checks_global_config_empty(self):
+        self.mock_glob.return_value = []
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), [])
 
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_global_config_one_yaml(self, mock_glob):
-        mock_glob.return_value = ['~/.foundations/config/local.config.yaml']
+    def test_environment_fetcher_checks_global_config_one_yaml(self):
+        self.mock_glob.return_value = ['~/.foundations/config/local.config.yaml']
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), ['~/.foundations/config/local.config.yaml'])
     
     @patch('os.path.expanduser')
-    @patch('glob.glob')
-    def test_environment_fetcher_checks_global_config_multiple_yaml(self, mock_glob, mock_user):
+    def test_environment_fetcher_checks_global_config_multiple_yaml(self, mock_user):
         yamls = [
             '~/.foundations/config/local.config.yaml',
             '~/.foundations/config/hippo.config.yaml'
             ]
-        mock_glob.return_value = yamls
+        self.mock_glob.return_value = yamls
         mock_user.return_value = '/home/.foundations/config'
         self.assertEqual(EnvironmentFetcher()._get_global_environments(), yamls)
-        mock_glob.assert_called_with('/home/.foundations/config/*.config.yaml')
+        self.mock_glob.assert_called_with('/home/.foundations/config/*.config.yaml')
 
     
     @patch.object(EnvironmentFetcher, '_get_local_environments')
@@ -120,3 +113,11 @@ class TestEnvironmentFetcher(unittest.TestCase):
         global_mock.return_value = ['/local.config.yaml']
         env_name = 'local'
         self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/home/local.config.yaml', '/local.config.yaml'])
+
+    @patch.object(EnvironmentFetcher, '_get_local_environments')
+    @patch.object(EnvironmentFetcher, '_get_global_environments')
+    def test_find_environment_multiple_matching_environments_returns_correct_basename(self, global_mock, local_mock):
+        local_mock.return_value = ['/home/stageless_local.config.yaml']
+        global_mock.return_value = ['/local.config.yaml']
+        env_name = 'local'
+        self.assertListEqual(EnvironmentFetcher().find_environment(env_name), ['/local.config.yaml'])

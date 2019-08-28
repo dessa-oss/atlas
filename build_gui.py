@@ -25,3 +25,4 @@ def print_logs(logs):
 build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', '{}/foundations-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_api_server.py'})
 build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', '{}/foundations-orbit-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_orbit_api_server.py'})
 build_and_tag_gui_image('foundations_ui', 'gui_Dockerfile', '{}/foundations-gui'.format(nexus_registry))
+build_and_tag_gui_image('foundations_ui_orbit', 'orbit_gui_Dockerfile', '{}/foundations-orbit-gui'.format(nexus_registry))

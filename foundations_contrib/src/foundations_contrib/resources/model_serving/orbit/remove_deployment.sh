@@ -1,7 +1,7 @@
 #!/bin/bash
-namespace=$1
-project=$2
-model=$3
+namespace='foundations-scheduler-test'
+export project_name=$1
+export model_name=$2
 
-kubectl delete deployment -n $namespace $project-$model-deployment
-kubectl delete svc -n $namespace $project-$model-service
+kubectl -n $namespace delete deployment  $project_name-$model_name-deployment
+kubectl -n $namespace delete svc $project_name-$model_name-service

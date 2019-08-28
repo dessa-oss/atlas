@@ -6,10 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from foundations.local_run import load_local_configuration_if_present
+from foundations.local_run import set_up_default_environment_if_present, default_execution_environment_present, load_execution_environment
 import sys
 
-class SetDefaultEnvironment(Spec):
+class TestSetDefaultEnvironment(Spec):
 
     mock_environment_fetcher = let_patch_instance('foundations_contrib.cli.environment_fetcher.EnvironmentFetcher')
     mock_set_environment = let_patch_mock('foundations.config.set_environment')
@@ -25,9 +25,20 @@ class SetDefaultEnvironment(Spec):
     mock_failed_job = let_mock()
 
     @let_now
+    def mock_logger(self):
+        return Mock()
+
+    @let_now
     def mock_config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
         return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let_now
+    def mock_get_logger(self):
+        mock = self.patch('foundations_contrib.global_state.log_manager.get_logger', ConditionalReturn())
+        mock.return_when(self.mock_logger, 'foundations.local_run')
+        mock.return_when(self.mock_logger, 'foundations_contrib.config_manager')
+        return mock
 
     @let_now
     def mock_os_environment(self):
@@ -97,82 +108,122 @@ class SetDefaultEnvironment(Spec):
         self.mock_failed_job_klass.return_when(self.mock_failed_job, self.mock_message_router, self.pipeline_context, self.exception_data)
 
     def test_treats_running_process_like_deployment(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.assertEqual(True, self.mock_config_manager['_is_deployment'])
 
     def test_default_environment_loaded_when_present_locally(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
+        self.mock_set_environment.assert_called_with('default')
+
+    def test_load_execution_environment_calls_set_environment_with_default(self):
+        load_execution_environment()
         self.mock_set_environment.assert_called_with('default')
 
     def test_default_environment_loaded_when_present_globally(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.mock_set_environment.assert_called_with('default')
 
     def test_default_environment_not_loaded_when_absent(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
-        load_local_configuration_if_present()
-        self.mock_set_environment.assert_not_called()
-    
-    def test_default_environment_not_loaded_when_no_environments(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.mock_set_environment.assert_not_called()
 
+    def test_default_environment_not_loaded_when_no_environments(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
+        set_up_default_environment_if_present()
+        self.mock_set_environment.assert_not_called()
+
+    def test_default_execution_environment_present_returns_true_when_present_locally(self):
+        self.assertEqual(True, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_true_when_present_globally(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
+        self.assertEqual(True, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_false_when_absent(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        self.assertEqual(False, default_execution_environment_present())
+
+    def test_default_execution_environment_present_returns_false_when_no_environments(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = (None, None)
+        self.assertEqual(False, default_execution_environment_present())
+
+    def test_default_config_file_contents_are_logged(self):        
+        self.mock_environment_fetcher.get_all_environments.return_value = (['/path/to/default.config.yaml'], [])
+        set_up_default_environment_if_present()
+        self.mock_logger.debug.assert_called_with(
+            'Foundations has been run with the following configuration:\n'
+            '_is_deployment: true\nrun_script_environment: {}\n'
+        )
+
+    def test_default_environment_not_loaded_when_in_command_line(self):
+        self.mock_os_environment['FOUNDATIONS_COMMAND_LINE'] = 'True'
+        set_up_default_environment_if_present()
+        self.mock_set_environment.assert_not_called()
+    
+    def test_warns_when_default_environment_not_present_and_not_in_command_line(self):
+        self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
+        set_up_default_environment_if_present()
+        self.mock_logger.warn.assert_called_with(
+            'Foundations has been imported, but no default configuration file has been found. '
+            'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
+            'configuration file, no foundations code will be executed.')
+
     def test_sets_default_job_id(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.assertEqual(self.random_uuid, self.pipeline_context.file_name)
 
     def test_sets_override_job_id(self):
         self.mock_os_environment['FOUNDATIONS_JOB_ID'] = self.override_job_id
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.assertEqual(self.override_job_id, self.pipeline_context.file_name)
 
     def test_pushes_queued_job_message_with_project_name_set(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.assertEqual(self.directory_base, self.message['project_name'])
 
     def test_pushes_queued_job_message_with_project_name_set_using_environment_variable(self):
         self.mock_os_environment['FOUNDATIONS_PROJECT_NAME'] = self.override_project_name
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.assertEqual(self.override_project_name, self.message['project_name'])
 
     def test_registers_artifact_upload_handler_at_exit(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.at_exit()
         self.mock_upload_artifacts.assert_called_with(self.random_uuid)
 
     def test_registers_job_completion_handler_at_exit(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.at_exit()
         self.mock_complete_job.push_message.assert_called()
 
     def test_registers_job_failure_handler_at_exit(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         sys.excepthook(None, None, None)
         self.at_exit()
         self.mock_failed_job.push_message.assert_called()
 
     def test_does_not_register_failure_if_no_exception_raised(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.at_exit()
         self.mock_failed_job.push_message.assert_not_called()
 
     def test_does_not_register_failure_if_process_not_finished(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         sys.excepthook(None, None, None)
         self.mock_failed_job.push_message.assert_not_called()
 
     def test_does_not_immediately_call_complete_job(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.mock_complete_job.push_message.assert_not_called()
 
     def test_marks_job_as_running(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         self.mock_run_job.push_message.assert_called()
 
     def test_does_not_register_completion_if_exception_raised(self):
-        load_local_configuration_if_present()
+        set_up_default_environment_if_present()
         sys.excepthook(None, None, None)
         self.at_exit()
         self.mock_complete_job.push_message.assert_not_called()

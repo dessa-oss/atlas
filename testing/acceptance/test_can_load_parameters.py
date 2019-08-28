@@ -77,9 +77,9 @@ class TestCanLoadParameters(Spec):
 
         with ChangeDirectory(script_directory):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE)
-            process_output = completed_process.stdout.decode()
-
-        job_id, params_json = process_output.split('\n', 1)
+            process_output = completed_process.stdout.decode().strip().split('\n')
+        params_json = process_output[-1]
+        job_id = process_output[-2]
         project_name = path.basename(script_directory)
 
         result_parameters = json.loads(params_json)
@@ -100,11 +100,10 @@ class TestCanLoadParameters(Spec):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE)
             process_output = completed_process.stdout.decode()
 
+        
+        warnings, _, params_json = process_output.strip().rpartition('\n')
         if check_for_warning:
-            warning, params_json = process_output.split('\n', 1)
-            self.assertIn('Script not run with Foundations.', warning)
-        else:
-            params_json = process_output
+            self.assertIn('Script not run with Foundations.', warnings)
 
         result_parameters = json.loads(params_json)
         self.assertEqual(expected_loaded_parameters, result_parameters)

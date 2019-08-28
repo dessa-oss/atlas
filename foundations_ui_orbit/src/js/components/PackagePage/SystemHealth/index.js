@@ -137,10 +137,10 @@ const SystemHealth = props => {
         <div className="system-health-table table-2">
           <table>
             <tr>
-              <th>ATTRIBUTE NAME</th>
-              <th>DATA TYPE</th>
-              <th>ISSUE TYPE</th>
-              <th>VALIDATION OUTCOME</th>
+              <th>Attribute Name</th>
+              <th>Data Type</th>
+              <th>Issue Type</th>
+              <th>Validation Outcome</th>
             </tr>
             {data.schema.details_by_attribute.length > 0
               && data.schema.details_by_attribute.map(row => {
@@ -179,9 +179,9 @@ const SystemHealth = props => {
         <div className="system-health-table table-2">
           <table>
             <tr>
-              <th>ATTRIBUTE NAME</th>
-              <th>POPULATION SHIFT INDEX</th>
-              <th>VALIDATION OUTCOME</th>
+              <th>Attribute Name</th>
+              <th>Population Shift Index</th>
+              <th>Validation Outcome</th>
             </tr>
             {data.population_shift.details_by_attribute.length > 0
               && data.population_shift.details_by_attribute.map(row => {
@@ -218,12 +218,12 @@ const SystemHealth = props => {
         <div className="system-health-table table-2">
           <table>
             <tr>
-              <th>ATTRIBUTE NAME</th>
-              <th>VALUE</th>
-              <th>% IN REFERENCE DATA</th>
-              <th>% IN PRODUCTION DATA</th>
-              <th>DIFFERENCE</th>
-              <th>VALIDATION OUTCOME</th>
+              <th>Attribute Name</th>
+              <th>Value</th>
+              <th>% In Reference Data</th>
+              <th>% In Production Data</th>
+              <th>Difference</th>
+              <th>Validation Outcome</th>
             </tr>
             {data.data_quality.details_by_attribute.length > 0
               && data.data_quality.details_by_attribute.map(row => {

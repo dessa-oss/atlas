@@ -13,11 +13,22 @@ class SetupParser(object):
 
     def add_sub_parser(self):
         setup_parser = self._cli.add_sub_parser('setup', help='Sets up Foundations for local experimentation')
-        setup_parser.set_defaults(function=self._run_setup)
+        setup_subparsers = setup_parser.add_subparsers()
+        setup_atlas_parser = setup_subparsers.add_parser('atlas')
+        setup_orbit_parser = setup_subparsers.add_parser('orbit')
+        
+        setup_atlas_parser.set_defaults(function=self._run_atlas_setup)
+        setup_orbit_parser.set_defaults(function=self._run_orbit_setup)
 
-    def _run_setup(self):
+    def _run_atlas_setup(self):
         from subprocess import run
         import foundations_contrib
 
-        run(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=foundations_contrib.root() / 'resources')
+        run(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations'], cwd=foundations_contrib.root() / 'resources')
+
+    def _run_orbit_setup(self):
+        from subprocess import run
+        import foundations_contrib
+
+        run(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations-orbit'], cwd=foundations_contrib.root() / 'resources')
 

@@ -30,12 +30,12 @@ def _get_paths_from_ingress_resource(new_ingress):
 def _update_default_endpoint_if_exists(new_paths, endpoint_path, service_name, update_if_exists=True):
 
     for project in new_paths:
-        if project['path'] == f'/{endpoint_path}':
+        if project['path'] == f'/projects/{endpoint_path}/(.*)':
             if update_if_exists:
                 project['backend']['serviceName'] = f'{service_name}'
             break
     else:
-        new_endpoint = {'path': f'/{endpoint_path}', 'backend': {'serviceName': f'{service_name}', 'servicePort': 80}}
+        new_endpoint = {'path': f'/projects/{endpoint_path}/(.*)', 'backend': {'serviceName': f'{service_name}', 'servicePort': 80}}
         new_paths.append(new_endpoint)
     
     return new_paths

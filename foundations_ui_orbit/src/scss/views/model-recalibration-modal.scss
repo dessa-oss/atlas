@@ -20,6 +20,22 @@
     .recalibrate-container-date {
       display: inline-block;
       margin-left: 20px;
+      font-size: 12px;
+
+      input {
+        width: 200px;
+      }
+
+      input::placeholder {
+        font-size: 12px;
+        margin-left: 10px;
+      }
+
+      &.input {
+        width: 185px;
+        height: 22px;
+        padding-left: 9px;
+      }
     }
   }
 }

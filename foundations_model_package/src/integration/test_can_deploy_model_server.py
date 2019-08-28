@@ -12,23 +12,37 @@ import threading
 
 class TestCanDeployModelServer(Spec):
 
+    @staticmethod
+    def _is_running_on_jenkins():
+        import os
+        return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
+
+    @set_up_class
+    def set_up_class(klass):
+        import os
+        import subprocess
+
+        if not klass._is_running_on_jenkins():
+            return_code = subprocess.call(['bash', '-c', './build.sh'])
+
+            if return_code != 0:
+                raise AssertionError('docker build for model package failed :(')
+
     @set_up
     def set_up(self):
-        
+        from foundations_contrib.global_state import config_manager, redis_connection
 
         self._proxy_process = None
         self.deployment = None
 
-        from foundations_contrib.global_state import redis_connection
+        if self._is_running_on_jenkins():
+            config_manager.config()['redis_url'] = self._get_redis_url()
 
         self.redis_connection = redis_connection
         self.redis_connection.flushall()
 
     def _set_up_in_test(self, job_directory):
         import subprocess
-
-        # return_code = self._build_image()
-        # self.assertEqual(0, return_code)
 
         self._generate_yaml_config_file(job_directory)
 
@@ -42,10 +56,14 @@ class TestCanDeployModelServer(Spec):
 
     @tear_down
     def tear_down(self):
+        from foundations_contrib.global_state import config_manager
+
         if self._proxy_process is not None:
             self._proxy_process.terminate()
 
         self._tear_down_model_package('test-model-package', self.job_id)
+
+        config_manager.reset()
 
     @let
     def job_id(self):
@@ -94,7 +112,7 @@ class TestCanDeployModelServer(Spec):
             'job_deployment_env': 'scheduler_plugin', 
             'results_config': {
                 'archive_end_point': '/archive',
-                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
+                'redis_end_point': self._get_redis_url(),
                 'artifact_path': 'artifacts',
                 'artifact_path': '.'
             },
@@ -178,6 +196,14 @@ class TestCanDeployModelServer(Spec):
             raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env variable')
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
+
+    def _get_redis_url(self):
+        import os
+
+        if self._is_running_on_jenkins():
+            return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL']
+        else:
+            return f'redis://{self._get_scheduler_ip()}:6379'
         
     def _deploy_job(self, job_directory):
         import foundations
@@ -187,21 +213,37 @@ class TestCanDeployModelServer(Spec):
             self.deployment = foundations.deploy(project_name='test', env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
-    def _build_image(self):
-        import subprocess
-        return subprocess.call(['bash', '-c', 'cd src && ./build.sh'])
-
     def _deploy_model_package(self, model_name, job_id):
         self._perform_action_for_model_package(model_name, job_id, 'create')
         self._wait_for_model_package_pod(model_name)
 
     def _tear_down_model_package(self, model_name, job_id):
         self._perform_action_for_model_package(model_name, job_id, 'delete')
+        self._wait_for_serving_pod_to_die(model_name)
 
     def _perform_action_for_model_package(self, model_name, job_id, action):
         import os.path as path
         import subprocess
 
-        yaml_template_path = path.realpath('../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
         command_to_run = f'job_id={job_id} model_name={model_name} envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
+
+    def _wait_for_serving_pod_to_die(self, model_name):
+        import time
+
+        current_time = time.time()
+
+        while self._pod_exists(model_name):
+            if time.time() - current_time > 60:
+                raise AssertionError('model package pod took too long to go down (> 60 sec)')
+
+            time.sleep(3)
+
+    def _pod_exists(self, model_name):
+        import subprocess
+        import yaml
+
+        process = subprocess.run(['bash', '-c', f'kubectl -n foundations-scheduler-test get pod -l app=foundations-model-package-{model_name} -o yaml'], stdout=subprocess.PIPE)
+        pod_list_payload = yaml.load(process.stdout)
+        return pod_list_payload['items'] != []

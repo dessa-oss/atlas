@@ -9,6 +9,7 @@ from foundations_spec import *
 from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctionTestScaffold
 
 import foundations
+from contextlib import contextmanager
 
 class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
@@ -23,6 +24,24 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
     def tear_down(self):
         self._tear_down()
 
+    @contextmanager
+    def _change_config(self, key, value):
+        from foundations_contrib.global_state import config_manager
+
+        config = config_manager.config()
+        has_previous = key in config
+        if has_previous:
+            previous = config[key]
+
+        try:
+            config[key] = value
+            yield
+        finally:
+            if has_previous:
+                config[key] = previous
+            else:
+                del config[key]
+
     def test_deploy_job_with_all_arguments_specified_deploys_job(self):
         self._test_deploy_job_with_all_arguments_specified_deploys_job()
 
@@ -30,13 +49,11 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
         self._test_deploy_job_with_no_arguments_specified_deploys_job_with_defaults()
 
     def _deploy_job_with_defaults(self):
-        import subprocess
-        cli_deploy_process = subprocess.run(['python', '-m', 'foundations', 'deploy'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cli_deploy_process = self._run_process(['python', '-m', 'foundations', 'deploy'])
         self._check_if_successful(cli_deploy_process)
         return cli_deploy_process
 
     def _deploy_job(self, **kwargs):
-        import subprocess
         import json
         import os
         import os.path as path
@@ -56,7 +73,7 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
             '--project-name={}'.format(kwargs['project_name'])
         ]
 
-        cli_deploy_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cli_deploy_process = self._run_process(command_to_run)
         os.remove(params_file_path)
         self._check_if_successful(cli_deploy_process)
         return cli_deploy_process
@@ -76,4 +93,5 @@ class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     def _check_if_successful(self, driver_process):
         if driver_process.returncode != 0:
-            raise AssertionError('deploy failed:\nstdout:\n{}\nstderr:\n{}'.format(driver_process.stdout, driver_process.stderr))
+            raise AssertionError(f'deploy failed:\nstdout:\n{driver_process.stdout.decode()}\nstderr:\n{driver_process.stderr.decode()}')
+                

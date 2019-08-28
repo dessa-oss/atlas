@@ -4,22 +4,24 @@ metadata:
   name: model-service-selection
   namespace: foundations-scheduler-test
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /predict
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   rules:
   - host:
     http:
       paths:
-      - path: /project
+      - path: /projects/project/(.*)
         backend:
           serviceName: project-model-service
           servicePort: 80
-      - path: /project/model
+      - path: /projects/project/model/(.*)
         backend:
           serviceName: project-model-service
           servicePort: 80
-      - path: /project/model-two
+      - path: /projects/project/model-two/(.*)
         backend:
           serviceName: project-model-two-service
           servicePort: 80

@@ -150,7 +150,7 @@ class TestJobDataProducers(unittest.TestCase):
             'jobs:successful_job:creation_time').decode()
         creation_time = float(creation_time)
         self.assertTrue(current_time - creation_time > 0.01)
-        self.assertTrue(current_time - creation_time < 35)
+        self.assertTrue(current_time - creation_time < 120)
 
         running_jobs = self._redis.smembers(
             'project:project_with_successful_jobs:jobs:running')

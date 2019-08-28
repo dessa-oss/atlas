@@ -60,6 +60,7 @@
     height: 640px;
     overflow: scroll;
     border: solid 1px $color-input-border;
+    border-radius: 4px;
 
     &.table-1,
     &.table-2 {
@@ -457,23 +458,43 @@
 
     .label-select-reports {
       display: inline-table;
-      font-family: DINBold, Arial, sans-serif;
+      @extend .f--din;
+      // font-family: DINBold, Arial, sans-serif;
 
     }
 
     .container-health-reports {
       display: inline-table;
-      width: 55%;
-      margin-left: 70px;
+      width: 100%;
       margin-bottom: 20px;
+
+      -webkit-appearance: none !important;
+      border-radius: 0;
+      background-color: white;
+      background-image: url("data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iM3B4IiB2aWV3Qm94PSIwIDAgNiAzIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA2IDMiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwb2x5Z29uIHBvaW50cz0iNS45OTIsMCAyLjk5MiwzIC0wLjAwOCwwICIvPjwvc3ZnPg==");
+      background-repeat: no-repeat;
+      background-position: 270px 15px;
+
+      @media
+        (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+          background-position: 340px 15px;
+        }
+
+      @media only screen and (max-width: 1500px) {
+      }
 
       .container-health-options {
         border: solid 1px #dcdcdc;
+        line-height: 30px;
+        padding-left: 15px;
   
         .label-option {
           cursor: pointer;
-          font-family: DINPro, Arial, sans-serif;
+          // font-family: DINPro, Arial, sans-serif;
           color: #443a25;
+          @extend .f--din;
+          font-size: 13px;
         }
   
         .container-health-model-package {
@@ -483,8 +504,10 @@
           .label-model-package {
             margin-left: 20px;
             cursor: pointer;
-            font-family: DINPro, Arial, sans-serif;
+            // font-family: DINPro, Arial, sans-serif;
+            @extend .f--din;
             color: #443a25;
+            font-size: 13px;
           }
   
           .container-health-data-contract {
@@ -500,7 +523,9 @@
             .label-data-contract {            
               margin-left: 40px;
               cursor: pointer;
-              font-family: DINPro, Arial, sans-serif;
+              // font-family: DINPro, Arial, sans-serif;
+              @extend .f--din;
+              font-size: 13px;
               color: #443a25;
   
               &.selected {

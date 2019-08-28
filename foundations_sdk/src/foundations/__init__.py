@@ -51,7 +51,7 @@ from foundations.deploy import deploy
 from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.job_actions import *
 from foundations.artifacts import *
-from foundations.local_run import load_local_configuration_if_present
+from foundations.local_run import set_up_default_environment_if_present
 from foundations_orbit import track_production_metrics
 
 def _append_module():
@@ -61,4 +61,4 @@ def _append_module():
 
 _append_module()
 
-load_local_configuration_if_present()
+set_up_default_environment_if_present()

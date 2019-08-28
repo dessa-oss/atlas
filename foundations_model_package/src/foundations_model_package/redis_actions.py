@@ -6,11 +6,5 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def indicate_model_ran_to_redis(job_id):
-    from foundations import config_manager
-    print('*********** HERE *************')
-    print(config_manager.config())
-
     from foundations_contrib.global_state import redis_connection
-    
-    
     redis_connection.incr(f'models:{job_id}:served')

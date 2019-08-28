@@ -184,10 +184,23 @@
 
   .container-tutorial {
     width: 100%;
-    height: 600px;
+    height: 500px;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
+    position: relative;
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
+    }
   
     &.image-1 {
       background-image: url("../assets/images/tutorial_1.png");
@@ -215,18 +228,18 @@
       margin-left: 40%;
 
       .tutorial-dot-active {
-        width: 15px;
-        height: 15px;
-        border-radius: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
         background-color: #4a9cf8;
         display: inline-block;
         margin-left: 10px;
       }
 
       .tutorial-dot-inactive {
-        width: 15px;
-        height: 15px;
-        border-radius: 15px;
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
         border-color: #4a9cf8;
         border-width: 1px;
         border-style: solid;
@@ -247,6 +260,10 @@
       color: white;
       line-height: 2;
       text-align: center;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 2.5;
+      bottom: 5px;
   
     }
   
@@ -261,6 +278,10 @@
       color: white;
       line-height: 2;
       text-align: center;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 2.5;
+      bottom: 5px;
     }
 
     .button-tutorial-close {

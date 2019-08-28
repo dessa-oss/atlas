@@ -9,6 +9,9 @@ from foundations_contrib.cli.command_line_interface import CommandLineInterface
 
 def main():
     import sys
+    import os
+
+    os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
     CommandLineInterface(sys.argv[1:]).execute()
 
 if __name__ == '__main__':

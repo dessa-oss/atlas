@@ -5,10 +5,16 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 02 2019
 """
 
-from foundations_spec.helpers import set_up
-from foundations_spec.helpers.spec import Spec
+from foundations_spec import *
 
 class TestCLIInit(Spec):
+
+    @let
+    def job_root(self):
+        from foundations_contrib.utils import foundations_home
+        from os.path import expanduser
+
+        return expanduser(foundations_home() + '/job_data')
 
     @set_up
     def set_up(self):
@@ -17,8 +23,8 @@ class TestCLIInit(Spec):
         import os.path
 
         shutil.rmtree("test-cli-init", ignore_errors=True)
-        if os.path.isfile('~/.foundations/job_data/projects/my-foundations-project.tracker'):
-            os.remove('~/.foundations/job_data/projects/my-foundations-project.tracker')
+        if os.path.isfile(self.job_root + '/projects/my-foundations-project.tracker'):
+            os.remove(self.job_root + '/projects/my-foundations-project.tracker')
 
     def test_cli_can_deploy_job_created_by_init(self):
         import subprocess
@@ -65,7 +71,7 @@ class TestCLIInit(Spec):
         from os.path import join
         from os.path import expanduser
 
-        foundations_root = expanduser('~/.foundations/job_data/archive')
+        foundations_root = expanduser(self.job_root + '/archive')
         path = join(foundations_root, relative_path)
         if not exists(path):
             raise AssertionError('Expected file, `{}` to exist'.format(path))

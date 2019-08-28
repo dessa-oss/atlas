@@ -18,8 +18,10 @@ class JobSourceBundle(object):
     @staticmethod
     def for_deployment():
         from uuid import uuid4
+        from tempfile import mkdtemp
+
         bundle_name = str(uuid4())
-        return JobSourceBundle(bundle_name, '../')
+        return JobSourceBundle(bundle_name, mkdtemp() + '/')
 
     def bundle(self):
         import tarfile

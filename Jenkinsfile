@@ -45,6 +45,19 @@ pipeline {
                 }
             }
         }
+        stage('Build Model Package Image and Push to Testing Env') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/foundations_model_package/src"){
+                        sh 'docker login docker.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                        sh 'docker login docker-staging.shehanigans.net -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                        sh './build.sh'
+                        sh 'docker push docker-staging.shehanigans.net/foundations-model-package:latest'
+                        sh './pull_staging_image_onto_scheduler.sh'
+                    }
+                }
+            }
+        }
         stage('Python3 Run Integration Tests') {
             steps {
                 container("python3") {
@@ -133,6 +146,15 @@ pipeline {
             steps {
                 container("python3"){
                     sh "./push_gui_images.sh"
+                }
+            }
+        }
+        stage('Push Model Package Images') {
+            steps {
+                container("python3"){
+                    ws("${WORKSPACE}/foundations_model_package/src"){
+                        sh './push_green_images.sh'
+                    }
                 }
             }
         }

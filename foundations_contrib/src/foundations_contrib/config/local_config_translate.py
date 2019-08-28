@@ -26,8 +26,9 @@ def _get_result_end_point(config):
 def _get_default_archive_end_point():
     from os.path import expanduser
     from os.path import join
+    from foundations_contrib.utils import foundations_home
 
-    return join(expanduser('~'), '.foundations/job_data')
+    return join(expanduser(foundations_home()), 'job_data')
 
 def _cache_implementation(config):
     from foundations_contrib.config.mixin import cache_implementation

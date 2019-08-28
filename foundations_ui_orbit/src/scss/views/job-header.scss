@@ -41,7 +41,7 @@
       position: absolute;
       right: 270px;
       bottom: 10px;
-      background-color: #4a9cf8;
+      background-color: #C4D7FC;
       border-radius: 100%;
       width: 25px;
       height: 25px;
@@ -52,9 +52,15 @@
       p {
         color: black;
         margin-left: 9px;
-        margin-top: 2px;
+        margin-top: 4px;
         font-size: 15px;
         font-weight: bold;
+
+        @media
+          (-webkit-min-device-pixel-ratio: 2),
+          (min-resolution: 192dpi) {
+            margin-top: 2px;
+          }
       }
     }
   }

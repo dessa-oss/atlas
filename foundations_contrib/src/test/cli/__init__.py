@@ -14,3 +14,4 @@ from test.cli.test_environment_fetcher import TestEnvironmentFetcher
 from test.cli.test_model_package_server import TestModelPackageServer
 from test.cli.test_command_line_job_deployer import TestCommandLineJobDeployer
 from test.cli.test_orbit_model_package_server import TestOrbitModelPackageServer
+from test.cli.test_config_listing import TestConfigListing

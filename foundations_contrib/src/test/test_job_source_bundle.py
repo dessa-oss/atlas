@@ -9,8 +9,7 @@ import unittest
 from mock import Mock, patch, call
 
 from foundations_contrib.job_source_bundle import JobSourceBundle
-from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec import *
 
 class TestJobSourceBundle(Spec):
 
@@ -20,6 +19,7 @@ class TestJobSourceBundle(Spec):
     mock_tarfile_open = let_patch_mock('tarfile.open')
     mock_change_directory = let_patch_mock('foundations_contrib.change_directory.ChangeDirectory')
     mock_mkpath = let_patch_mock('distutils.dir_util.mkpath')
+    mock_mkdtemp = let_patch_mock('tempfile.mkdtemp')
 
     @let
     def fake_bundle_name(self):
@@ -36,6 +36,15 @@ class TestJobSourceBundle(Spec):
         from faker import Faker
         return Faker().sha1()
     
+    @let
+    def temp_directory(self):
+        from faker import Faker
+        return Faker().uri_path()
+
+    @set_up
+    def set_up(self):
+        self.mock_mkdtemp.return_value = self.temp_directory
+
     class MockFileContextManager(Mock):
 
         def __enter__(self):
@@ -84,7 +93,7 @@ class TestJobSourceBundle(Spec):
     def test_for_deployment_creates_job_source_bundle_with_correct_arguments(self, mock_job_source_bundle):
         self.mock_uuid4.return_value = self.fake_uuid
         JobSourceBundle.for_deployment()
-        mock_job_source_bundle.assert_called_with(self.fake_uuid, '../')
+        mock_job_source_bundle.assert_called_with(self.fake_uuid, self.temp_directory + '/')
     
     def test_for_deployment_returns_job_source_bundle(self):
         self.assertIsInstance(JobSourceBundle.for_deployment(), JobSourceBundle)

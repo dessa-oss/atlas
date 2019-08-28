@@ -10,8 +10,18 @@ class ConfigManager(object):
 
     def __init__(self):
         self._config = None
+        self._old_configs = []
         self._frozen = False
         self._config_paths = []
+    
+    def push_config(self):
+        import copy
+
+        self._old_configs.append(self._config)
+        self._config = copy.deepcopy(self._config)
+
+    def pop_config(self):
+        self._config = self._old_configs.pop()
 
     def config(self):
         import copy
@@ -56,7 +66,6 @@ class ConfigManager(object):
         self.config()
     
     def _load(self):
-        import yaml
         import os
 
         config = {}

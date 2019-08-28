@@ -95,13 +95,20 @@ const ModelManagementRow = props => {
       <div className="model-management-cell">
         <p
           className={
-            rowData.status === "Active" ? "hide-text active" : "hide-text"
+            rowData.status === "activated" ? "hide-text active" : "hide-text"
           }
         >
           {rowData.status}
         </p>
+        <div className={rowData.status === "activated"
+          ? "model-status-circle active"
+          : "model-status-circle"}
+        />
       </div>
-      <div className="model-management-cell">
+      <div
+        className={isDetail === true ? "model-management-cell last-child-details-open"
+          : "model-management-cell"}
+      >
         <div className="container-cell-buttons">
           <button type="button" className="b--secondary-text button-management" onClick={clickRecalibrate}>
             recalibrate
@@ -113,7 +120,7 @@ const ModelManagementRow = props => {
               rowData.status === "activated" ? clickRetire : clickActivate
             }
           >
-            {rowData.status === "activated" ? "retire" : "activate"}
+            {rowData.status === "activated" ? "deactivate" : "activate"}
           </button>
           <button
             type="button"

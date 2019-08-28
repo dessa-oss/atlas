@@ -8,6 +8,8 @@
   border-right: $border-width solid $color-border-bottom;
   margin-left: $inference-automation-header-margin;
   margin-right: $inference-automation-header-margin;
+  border: solid 1px #dcdcdc;;
+  border-radius: 4px;
 }
 
 .modal-performance-table-parent-container {
@@ -25,6 +27,7 @@
   border-right: $border-width solid $color-border-bottom;
   border-left: $border-width solid $color-border-bottom;
   border-bottom: $border-width solid $color-border-bottom;
+  border-radius: 8px;
 
   &.empty {
     background: white;
@@ -56,6 +59,7 @@
 .model-management-row {
   .container-cell-buttons {
     height: 100%;
+    margin-left: -10px;
 
     .button-management {
       margin-top: 8px;
@@ -393,26 +397,52 @@
 
 .model-management-cell {
   display: inline-block;
-  padding-left: $inference-automation-cell-padding;
-  padding-right: $inference-automation-cell-padding;
   width: calc(
-    #{$model-management-cell-width} - #{$inference-automation-cell-padding} - #{$inference-automation-cell-padding}
+    #{$model-management-cell-width}
   );
   height: 45px;
   vertical-align: middle;
   clear: both;
-  text-align: left;
+  text-align: center;
   border-right: 1px solid $color-input-border;
   border-bottom: 1px solid $color-input-border;
 
+  .model-status-circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    z-index: 989;
+    display: inline-block;
+    vertical-align: middle;
+    background: #9c9c9c;
+    margin-top: 6px;
+    margin-left: 0px;
+
+    @media
+        (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi) {
+          margin-top: 8px;
+          margin-left: 2px;
+        }
+
+    &.active {
+      background: $color-status-green;
+    }
+  }
+
   &:last-child {
+    width: calc(23%);
+  }
+
+  &.last-child-details-open {
     width: calc(23%);
   }
 
   .container-cell-buttons {
     .b--secondary-text {
       margin-right: 4px;
-      padding: 0px 12px;
+      padding: 0px 0px;
+      width: 28%;
     }
   }
 
@@ -427,18 +457,20 @@
     margin-top: 7px;
     line-height: 30px;
     text-align: center;
+    display: inline-block;
+    width: 80px;
+    vertical-align: middle;
 
     &.active {
       color: $color-status-green;
     }
   }
 
-  &:nth-of-type(1) {
-    width: calc(
-      #{$model-management-cell-width} + #{$border-width} - #{$inference-automation-cell-padding} -
-        #{$inference-automation-cell-padding}
-    );
-  }
+  // &:nth-of-type(1) {
+  //   width: calc(
+  //     #{$model-management-cell-width}
+  //   );
+  // }
 
   &.button-width {
     border-right: none;

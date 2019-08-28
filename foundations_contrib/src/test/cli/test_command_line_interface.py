@@ -183,9 +183,13 @@ class TestCommandLineInterface(Spec):
 
         self.level_1_subparsers_mock.add_parser.assert_has_calls([setup_call])
 
-    def test_setup_calls_setup_script(self):
-        CommandLineInterface(['setup']).execute()
-        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui'], cwd=self.mock_contrib_root / 'resources')
+    def test_setup_atlas_calls_setup_atlas_script(self):
+        CommandLineInterface(['setup', 'atlas']).execute()
+        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations'], cwd=self.mock_contrib_root / 'resources')
+
+    def test_setup_orbit_calls_setup_orbit_script(self):
+        CommandLineInterface(['setup', 'orbit']).execute()
+        self.mock_subprocess_run.assert_called_with(['bash', './foundations_gui.sh', 'start', 'ui', 'foundations-orbit'], cwd=self.mock_contrib_root / 'resources')
 
     def test_execute_spits_out_help(self):
         with patch('argparse.ArgumentParser.print_help') as mock:
@@ -418,6 +422,8 @@ class TestCommandLineInterface(Spec):
     mock_destroy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.destroy')
     # orbit
     mock_orbit_deploy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy')
+    mock_orbit_stop_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.stop')
+    mock_orbit_destroy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.destroy')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -442,6 +448,18 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()
         self.mock_destroy_model_package.assert_called_with(self.mock_model_name)
 
+    def test_orbit_serve_start_with_specificed_project_model_and_directory(self):
+        self._run_model_within_orbit_with_specified_project_name_model_name_project_directory(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
+        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory, 'local')
+
+    def test_orbit_serve_stop_with_specificed_project_and_model(self):
+        self._launch_orbit_with_specified_command_using_project_name_model_name('stop', self.fake_project_name, self.mock_user_provided_model_name)
+        self.mock_orbit_stop_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
+
+    def test_orbit_serve_destroy_with_specified_project_and_model(self):
+        self._launch_orbit_with_specified_command_using_project_name_model_name('destroy', self.fake_project_name, self.mock_user_provided_model_name)
+        self.mock_orbit_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
+
     def _run_model_within_orbit_with_specified_project_name_model_name_project_directory(self, project_name, model_name, project_directory):
         CommandLineInterface([
                 'orbit',
@@ -451,8 +469,15 @@ class TestCommandLineInterface(Spec):
                 '--model_name={}'.format(model_name),
                 '--project_directory={}'.format(project_directory)
             ]).execute()
-        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
 
+    def _launch_orbit_with_specified_command_using_project_name_model_name(self, command, project_name, model_name):
+        CommandLineInterface([
+                'orbit',
+                'serve', 
+                command,
+                '--project_name={}'.format(project_name),
+                '--model_name={}'.format(model_name)
+            ]).execute()
 
     def test_retrieve_artifacts_calls_environment_fetcher(self):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()

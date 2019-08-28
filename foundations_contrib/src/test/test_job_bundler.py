@@ -12,8 +12,7 @@ from foundations_contrib.job_bundler import JobBundler
 from foundations_contrib.obfuscator import Obfuscator
 from foundations_contrib.module_obfuscation_controller import ModuleObfuscationController
 from foundations_contrib.resources_obfuscation_controller import ResourcesObfuscationController
-from foundations_spec.helpers.spec import Spec
-from foundations_spec.helpers import let, let_mock, set_up, let_patch_mock
+from foundations_spec import *
 
 
 class TestJobBundler(Spec):
@@ -25,6 +24,7 @@ class TestJobBundler(Spec):
     mock_glob_glob = let_patch_mock('glob.glob')
     mock_os_chdir = let_patch_mock('os.chdir')
     mock_simple_temp_file_class = let_patch_mock('foundations_contrib.simple_tempfile.SimpleTempfile')
+    mock_mkdtemp = let_patch_mock('tempfile.mkdtemp')
 
     @let
     def _default_config(self):
@@ -38,6 +38,14 @@ class TestJobBundler(Spec):
     @let
     def redis_password(self):
         return self.faker.word()
+
+    @let
+    def temp_directory(self):
+        return self.faker.uri_path()
+
+    @set_up
+    def set_up(self):
+        self.mock_mkdtemp.return_value = self.temp_directory
 
     @staticmethod
     def _return_generator(input):
@@ -109,12 +117,12 @@ class TestJobBundler(Spec):
 
     def test_job_archive_method_returns_job_archive(self):
        job_bundler = JobBundler('fake_name', {}, None, None)
-       self.assertEqual(job_bundler.job_archive(), '../fake_name.tgz')
+       self.assertEqual(job_bundler.job_archive(), self.temp_directory + '/fake_name.tgz')
 
     def test_cleanup_removes_correct_files(self):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.cleanup()
-        remove_archive = call('../fake_name.tgz')
+        remove_archive = call(self.temp_directory + '/fake_name.tgz')
         remove_bin = call('fake_name.bin')
         remove_config = call('fake_name.config.yaml')
         self.mock_os_remove.assert_has_calls([remove_archive, remove_bin, remove_config])
@@ -122,7 +130,7 @@ class TestJobBundler(Spec):
     def test_unbundle_opens_correct_file(self):
         job_bundler = JobBundler('fake_name', {}, None, None)
         job_bundler.unbundle()
-        self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'r:gz')
+        self.mock_tarfile_open.assert_called_with(self.temp_directory + '/fake_name.tgz', 'r:gz')
 
     def test_unbundle_extracts_from_tarfile(self):
         return_object = self.MockContextManager()
@@ -164,7 +172,7 @@ class TestJobBundler(Spec):
 
         job_bundler = JobBundler('fake_name', self._default_config, None, mock_job_source_bundle)
         job_bundler._bundle_job()
-        self.mock_tarfile_open.assert_called_with('../fake_name.tgz', 'w:gz')
+        self.mock_tarfile_open.assert_called_with(self.temp_directory + '/fake_name.tgz', 'w:gz')
 
     def test_bundle_job_adds_archive_and_binary_to_tarball(self):
         mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()

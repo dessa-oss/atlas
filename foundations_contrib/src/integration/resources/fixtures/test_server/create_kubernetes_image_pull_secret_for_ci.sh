@@ -19,6 +19,4 @@ if [[ $exists -ne 0 ]]; then
         --docker-username=$user \
         --docker-password=$password \
         --docker-email=devops@dessa.com
-else
-    echo "Image pull secret already created"
 fi

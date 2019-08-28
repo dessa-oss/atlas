@@ -49,11 +49,59 @@ class TestConfigManager(Spec):
     def run_script_environment(self):
         return self.faker.pydict()
 
+    @let
+    def random_key(self):
+        return self.faker.sentence()
+
+    @let
+    def random_value(self):
+        return self.faker.sentence()
+
     @set_up
     def set_up(self):
         self.mock_file.__enter__ = lambda *args: self.mock_file
         self.mock_file.__exit__ = lambda *args: None
         self.mock_file.read.return_value = ''
+
+    def test_push_config_stores_current_config_and_resets_when_popped(self):
+        new_value = self.faker.sentence()
+
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_maintains_previous_values(self):
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_supports_multiple_levels(self):
+        new_value = self.faker.sentence()
+        new_value2 = self.faker.sentence()
+
+        self.config_manager[self.random_key] = self.random_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value
+        self.config_manager.push_config()
+        self.config_manager[self.random_key] = new_value2
+        self.config_manager.pop_config()
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key])
+
+    def test_push_config_supports_nested_values(self):
+        new_value = self.faker.sentence()
+
+        self.config_manager[self.random_key] = {'key': self.random_value}
+        self.config_manager.push_config()
+        self.config_manager[self.random_key]['key'] = new_value
+        self.config_manager.pop_config()
+
+        self.assertEqual(self.random_value, self.config_manager[self.random_key]['key'])
 
     def test_should_include_foundations_environment(self):
         config_manager = ConfigManager()
