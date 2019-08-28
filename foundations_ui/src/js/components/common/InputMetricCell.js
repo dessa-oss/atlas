@@ -76,18 +76,33 @@ class InputMetricCell extends Component {
     if (pClass.includes('tag') && value !== '') {
       finalValue = [];
       let index = 0;
-      value.forEach((tag) => {
-        if (index === maxLength) {
-          expandedValue = Array.from(finalValue);
-          expandedValue.push(<Tag key={tag} value={tag} />);
-          finalValue.push(<p onClick={this.onClick3Dots} onKeyDown={() => {}}>...</p>);
-        } else if (index < maxLength) {
-          finalValue.push(<Tag key={tag} value={tag} />);
-        } else {
-          expandedValue.push(<Tag key={tag} value={tag} />);
-        }
-        index += 1;
-      });
+      if (Array.isArray(value)) {
+        value.forEach((tag) => {
+          if (index === maxLength) {
+            expandedValue = Array.from(finalValue);
+            expandedValue.push(<Tag key={tag} value={tag} />);
+            finalValue.push(<p onClick={this.onClick3Dots} onKeyDown={() => {}}>...</p>);
+          } else if (index < maxLength) {
+            finalValue.push(<Tag key={tag} value={tag} />);
+          } else {
+            expandedValue.push(<Tag key={tag} value={tag} />);
+          }
+          index += 1;
+        });
+      } else {
+        Object.keys(value).forEach((tag) => {
+          if (index === maxLength) {
+            expandedValue = Array.from(finalValue);
+            expandedValue.push(<Tag key={tag} value={tag} />);
+            finalValue.push(<p onClick={this.onClick3Dots} onKeyDown={() => {}}>...</p>);
+          } else if (index < maxLength) {
+            finalValue.push(<Tag key={tag} value={tag} />);
+          } else {
+            expandedValue.push(<Tag key={tag} value={tag} />);
+          }
+          index += 1;
+        });
+      }
     }
 
     if (shouldCheckExpand) {
