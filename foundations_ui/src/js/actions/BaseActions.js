@@ -1,9 +1,22 @@
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL,
+  baseStagingURL: process.env.REACT_APP_API_STAGING_URL,
   baseApiaryURL: process.env.REACT_APP_APIARY_URL,
 
   get(url) {
     const fullURL = this.baseURL.concat(url);
+    return fetch(fullURL)
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+  getFromStaging(url) {
+    const fullURL = this.baseStagingURL.concat(url);
     return fetch(fullURL)
       .then(res => res.json())
       .then((result) => {

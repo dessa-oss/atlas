@@ -14,7 +14,7 @@ class JobListActions {
   static getJobs(projectName) {
     const url = this.getBaseJobListingURL(projectName);
     // TODO get Jobs is currently in Beta
-    return BaseActions.getFromApiary(url)
+    return BaseActions.getFromStaging(url)
       .then((results) => {
         return results;
       });

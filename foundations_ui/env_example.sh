@@ -1,4 +1,6 @@
-export REACT_APP_API_URL="http://private-83924-dessa.apiary-mock.com/api/v1/"
+export REACT_APP_API_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
+export REACT_APP_API_STAGING_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v2beta/"
+export REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
 FOUNDATION_DIR="/var/foundations"
 if [ ! -d "$FOUNDATION_DIR" ]; then
     echo "Creating Foundation directory at: $FOUNDATION_DIR"
