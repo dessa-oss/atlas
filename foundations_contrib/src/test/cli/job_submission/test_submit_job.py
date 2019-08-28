@@ -91,6 +91,7 @@ class TestJobSubmissionSubmit(Spec):
         self.mock_arguments.ram = None
         self.mock_arguments.num_gpus = None
         self.mock_arguments.stream_job_logs = True
+        self.mock_arguments.command = None
         
         self.mock_os_getcwd.return_value = self.current_directory
         self.mock_os_path_exists.return_when(False, 'job.config.yaml')
@@ -147,6 +148,13 @@ class TestJobSubmissionSubmit(Spec):
         self._set_up_job_config()
         submit(self.mock_arguments)
         self.assertEqual(self.job_config['worker'], self.config_manager['worker_container_overrides'])
+
+    def test_sets_override_worker_container_config_with_docker_command_provided(self):
+        self._set_up_deploy_config()
+        command = self.faker.words()
+        self.mock_arguments.command = ' '.join(command)
+        submit(self.mock_arguments)
+        self.assertEqual({'args': command}, self.config_manager['worker_container_overrides'])
 
     def test_streams_log_from_deployment_using_override_config(self):
         self._set_up_job_config()

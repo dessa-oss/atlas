@@ -61,6 +61,10 @@ class TestCommandLineInterface(Spec):
         path = self.faker.uri_path()
         return PosixPath(path)
 
+    @let
+    def command(self):
+        return self.faker.sentence()
+
     mock_subprocess_run = let_patch_mock('subprocess.run')
 
     def fake_config_path(self, environment):
@@ -567,6 +571,7 @@ class TestCommandLineInterface(Spec):
         expected_arguments.ram = None
         expected_arguments.num_gpus = None
         expected_arguments.stream_job_logs = True
+        expected_arguments.command = None
 
         CommandLineInterface(['submit']).execute()
         arguments = MockCommandLineJobDeployer.arguments
@@ -584,6 +589,7 @@ class TestCommandLineInterface(Spec):
         expected_arguments.ram = self.ram
         expected_arguments.num_gpus = self.num_gpus
         expected_arguments.stream_job_logs = False
+        expected_arguments.command = self.command
 
         command_to_run = [
             'submit',
@@ -593,7 +599,8 @@ class TestCommandLineInterface(Spec):
             f'--project-name={self.fake_project_name}',
             f'--ram={self.ram}',
             f'--num-gpus={self.num_gpus}',
-            f'--stream-job-logs=False'
+            f'--stream-job-logs=False',
+            f'--command={self.command}'
         ]
 
         CommandLineInterface(command_to_run).execute()
@@ -685,7 +692,7 @@ class TestCommandLineInterface(Spec):
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _assert_submit_arguments_equal(self, expected_arguments, actual_arguments):
-        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs']:
+        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs', 'command']:
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _set_run_script_environment(self, environment_to_set):
