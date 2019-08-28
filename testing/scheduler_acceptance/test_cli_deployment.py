@@ -32,25 +32,17 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             redis_url = 'redis://{}:6379'.format(scheduler_host)
 
         return {
-            'job_deployment_env': 'scheduler_plugin',
             'results_config': {
-                'archive_end_point': '/archive',
-                'artifacts_path': 'results',
                 'redis_end_point': redis_url
-            },
-            'cache_config': {
-                'end_point': '/cache'
             },
             'ssh_config': {
                 'user': 'job-uploader',
                 'host': ssh_config_host,
                 'code_path': '/jobs',
-                'result_path': '/jobs',
                 'key_path': '~/.ssh/id_foundations_scheduler',
                 'port': 31222
             },
             'log_level': 'INFO',
-            'obfuscate_foundations': False
         }
 
     @let
@@ -85,7 +77,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             os.remove(tracker_path)
 
         self._env_name = str(uuid.uuid4())
-        self._config_file_name = os.path.expanduser(foundations_home() + '/config/{}.config.yaml'.format(self._env_name))
+        self._config_file_name = os.path.expanduser(foundations_home() + '/config/submission/{}.config.yaml'.format(self._env_name))
         self._write_config_to_path(self._config_file_name)
 
     @set_up_class
@@ -107,15 +99,15 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
 
-        self._write_staged_config_to_path('test-cli-init/config/scheduler.config.yaml')
+        self._write_staged_config_to_path('test-cli-init/config/submission/scheduler.config.yaml')
 
-        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && DISABLE_LOG_STREAMING=True python -m foundations deploy --entrypoint=project_code/driver.py --env=scheduler --num-gpus=0 --ram=3"], stderr=subprocess.PIPE)
+        driver_deploy_result = subprocess.run(["/bin/bash", "-c", "cd test-cli-init && DISABLE_LOG_STREAMING=True python -m foundations submit --entrypoint=project_code/driver.py --scheduler-config=scheduler --num-gpus=0 --ram=3"], stderr=subprocess.PIPE)
         self._assert_deployment_was_successful(driver_deploy_result)
 
     def test_cli_can_deploy_stageless_job_with_resources_set(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations submit --project-name=this-project --entrypoint=stages.py --scheduler-config={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=subprocess.PIPE)
         job_id = self._job_id_from_logs(process)
 
         self._wait_for_job_to_complete(job_id)
@@ -127,7 +119,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def test_cli_can_deploy_stageless_job_with_resources_default(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_default && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={}'.format(self._env_name)], stdout=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_default && DISABLE_LOG_STREAMING=True python -m foundations submit --project-name=this-project --entrypoint=stages.py --scheduler-config={}'.format(self._env_name)], stdout=subprocess.PIPE)
         job_id = self._job_id_from_logs(process)
 
         self._wait_for_job_to_complete(job_id)
@@ -144,14 +136,14 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     def test_deploy_does_not_print_crypto_warning(self):
         import subprocess
 
-        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations deploy --project-name=this-project --entrypoint=stages.py --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
+        process = subprocess.run(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/logging_resources_set && DISABLE_LOG_STREAMING=True python -m foundations submit --project-name=this-project --entrypoint=stages.py --scheduler-config={} --num-gpus=0 --ram=3'.format(self._env_name)], stderr=subprocess.PIPE)
         self.assertNotIn('CryptographyDeprecationWarning', process.stderr.decode())
 
     def test_deploy_streams_to_console(self):
         import time
         from subprocess import DEVNULL, PIPE, Popen
 
-        process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations deploy --env={} --num-gpus=0 --ram=3'.format(self._env_name)], stdout=PIPE, stderr=DEVNULL, encoding='ascii')
+        process = Popen(['/bin/bash', '-c', 'cd scheduler_acceptance/fixtures/streaming_test && python -m foundations submit --scheduler-config={} --num-gpus=0 --ram=3 --entrypoint=streaming_test.py'.format(self._env_name)], stdout=PIPE, stderr=DEVNULL, encoding='ascii')
         process_stdout = process.stdout
 
         self._assert_job_queued_message_printed(process_stdout)
@@ -223,11 +215,9 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         self._wait_for_message_to_be_printed('Job is running; streaming logs', 'job never started', job_process_stdout_stream)
 
     def _wait_for_message_to_be_printed(self, message, error_message, job_process_stdout_stream):
-        message_regex = self._log_regex(message)
-
         for line in job_process_stdout_stream:
             line = line.rstrip('\n')
-            if message_regex.match(line):
+            if message in line:
                 return
 
         raise AssertionError(error_message)
