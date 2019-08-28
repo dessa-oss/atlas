@@ -12,6 +12,55 @@ const ProjectPage = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
 
+  const getTagsFromJob = (jobs) => {
+    let set = new Set();
+    let MaxTagsReacedException = {};
+    try {
+      jobs.forEach((job) => {
+        if (job.tags) {
+          if (Array.isArray(job.tags)) {
+            let maxNumberTags = job.tags.length < 5 ? job.tags.length : 5;
+            job.tags.slice(0, maxNumberTags).forEach((tag) => {
+              set.add(tag);
+            });
+          } else {
+            const keys = Object.keys(job.tags);
+            let maxNumberTags = keys.length < 5 ? keys.length : 5;
+            keys.slice(0, maxNumberTags).forEach((tag) => {
+              set.add(tag);
+            });
+          }
+          if (set.length === 5) {
+            throw MaxTagsReacedException;
+          }
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    const tags = Array.from(set);
+    return tags;
+  };
+
+  const addTagsToProjects = (fetchedProjects) => {
+    let newProjects = [];
+    const promises = fetchedProjects.map((fetchedProject) => {
+      let newProject = fetchedProject;
+      return BaseActions.getFromStaging(`projects/${fetchedProject.name}/job_listing`)
+        .then((result) => {
+          if (result && result.jobs) {
+            const tags = getTagsFromJob(result.jobs);
+            newProject.tags = tags;
+            return newProject;
+          }
+        });
+    });
+
+    return Promise.all(promises).then((result) => {
+      return result;
+    });
+  };
+
   const reload = () => {
     setIsLoading(true);
 
@@ -23,9 +72,11 @@ const ProjectPage = (props) => {
 
           return dateB - dateA;
         });
-        setProjects(result);
+        addTagsToProjects(result).then((updatedProjects) => {
+          setProjects(updatedProjects);
+          setIsLoading(false);
+        });
       }
-      setIsLoading(false);
     }).catch(() => {
       setIsLoading(false);
     });
