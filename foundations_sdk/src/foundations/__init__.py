@@ -5,6 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+def _check_if_in_cli():
+    import traceback
+    import os
+    import os.path
+
+    for line in traceback.format_stack():
+        if 'runpy.py' in line:
+            os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+
+_check_if_in_cli()
+
 from foundations.hyperparameter import Hyperparameter
 from foundations.job import Job
 from foundations.result_reader import ResultReader
@@ -35,7 +46,7 @@ from foundations_contrib.middleware.basic_stage_middleware import BasicStageMidd
 from foundations_contrib.change_directory import ChangeDirectory
 from foundations_contrib.bucket_job_deployment import BucketJobDeployment
 from foundations_contrib.archiving.save_artifact import save_artifact
-from foundations.deployment_wrapper import DeploymentWrapper
+from foundations_contrib.deployment_wrapper import DeploymentWrapper
 from foundations.stage_logging import log_metric
 from foundations.staging import create_stage, cache
 from foundations.projects import set_project_name, set_tag, get_metrics_for_all_jobs
@@ -47,7 +58,8 @@ import foundations_internal.import_installer
 import foundations_contrib.consumers
 import foundations_events
 from foundations_contrib.set_job_resources import set_job_resources
-from foundations.deploy import deploy
+from foundations.deploy import *
+from foundations.submission import *
 from foundations.backup_before_teardown import BackupBeforeTeardown
 from foundations.job_actions import *
 from foundations.artifacts import *

@@ -3,13 +3,20 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
+    from jsonschema import validate
+    import foundations_contrib
+    import yaml
+
+    with open(f'{foundations_contrib.root()}/resources/config_validation/submission.yaml') as file:
+        schema = yaml.load(file.read())
+    validate(instance=config, schema=schema)
 
     result = {
         'deployment_implementation': _deployment_implementation(),
         'redis_url': _redis_url(config),
         'shell_command': find_bash(),
         'obfuscate_foundations': _obfuscate_foundations(config),
-        'worker_container_overrides': config['worker']
+        'worker_container_overrides': config.get('worker', {})
     }
     result.update(ssh_configuration(config))
 

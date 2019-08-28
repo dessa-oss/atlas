@@ -16,6 +16,11 @@ class TestCLIInit(Spec):
 
         return expanduser(foundations_home() + '/job_data')
 
+    @let
+    def redis(self):
+        from foundations_contrib.global_state import redis_connection
+        return redis_connection
+
     @set_up
     def set_up(self):
         import shutil
@@ -30,15 +35,7 @@ class TestCLIInit(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env local"])
-
-        self.assertEqual(driver_deploy_exit_code, 0)
-
-    def test_cli_can_execute_results_created_by_init(self):
-        import subprocess
-
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=post_processing/results.py --env local"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
@@ -47,19 +44,20 @@ class TestCLIInit(Spec):
         import re
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python -m foundations deploy --entrypoint=project_code/driver.py --env local"])
+        self._append_redis_job_id_log_to_driver_file()
+        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
+        job_id = self.redis.get('foundations_testing_job_id').decode()
 
-        job_id = re.search("Job\s+'([^']+)'\s+deployed", driver_deploy_output.decode(), re.MULTILINE)[1]
+        self._assert_job_file_exists(job_id, 'miscellaneous/job_artifact_listing.pkl')
 
-        self._assert_file_exists('{}.tracker'.format(job_id))
-        self._assert_job_file_exists(job_id, 'job_source/{}.tgz'.format(job_id))
-        self._assert_job_file_exists(job_id, 'miscellaneous/stage_listing')
-        self._assert_job_file_exists(job_id, 'miscellaneous/stages/158903c052e1917e04b4de080ebb9ff636b37566/stage_context')
-        self._assert_job_file_exists(job_id, 'miscellaneous/stages/global/stage_context')
-        self._assert_job_file_exists(job_id, 'provenance')
-        self._assert_job_file_exists(job_id, 'stage_contexts/158903c052e1917e04b4de080ebb9ff636b37566/stage_log')
-        self._assert_job_file_exists(job_id, 'stage_contexts/global/stage_log')
-
+    def _append_redis_job_id_log_to_driver_file(self):
+        self.redis.delete('foundations_testing_job_id')
+        with open('test-cli-init/project_code/driver.py', 'a') as file:
+            file.write(
+                '\nfrom foundations_contrib.global_state import redis_connection, current_foundations_context\n'
+                'redis_connection.set("foundations_testing_job_id", current_foundations_context().pipeline_context().job_id)\n'
+            )
+        
     def _assert_job_file_exists(self, job_id, relative_path):
         from os.path import join
 

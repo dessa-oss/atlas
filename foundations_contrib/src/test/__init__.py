@@ -54,6 +54,8 @@ from test.test_bucket_pipeline_archive import TestBucketPipelineArchive
 from test.test_null_archive import TestNullArchive
 from test.test_default_project_ingress import TestDefaultProjectIngress
 from test.test_ingress_to_model_package import TestIngressToModelPackage
+from test.test_deployment_wrapper import TestDeploymentWrapper
+from test.test_job_deployer import TestJobDeployer
 
 from test.test_log_manager import TestLogManager
 

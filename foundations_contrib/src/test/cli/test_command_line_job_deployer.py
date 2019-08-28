@@ -234,7 +234,7 @@ class TestCommandLineJobDeployer(Spec):
     get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
-    mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
+    mock_deploy_job = let_patch_mock('foundations_contrib.job_deployer.deploy_job')
     mock_set_job_resources = let_patch_mock('foundations.set_job_resources')
     mock_deploy = let_patch_mock('foundations.deploy')
     mock_deployment_wrapper = let_mock()

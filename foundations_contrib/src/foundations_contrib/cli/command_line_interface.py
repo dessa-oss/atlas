@@ -20,6 +20,7 @@ class CommandLineInterface(object):
         SetupParser(self).add_sub_parser()
         self._initialize_init_parser()
         self._initialize_deploy_parser()
+        self._initialize_submit_parser()
         self._initialize_info_parser()
         self._initialize_model_serve_parser()
         self._initialize_retrieve_parser()
@@ -49,6 +50,22 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
         deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
         deploy_parser.set_defaults(function=self._deploy)
+
+    def _initialize_submit_parser(self):
+        deploy_parser = self.add_sub_parser('submit', help='Deploys a Foundations project to the specified environment')
+        deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
+        deploy_parser.add_argument('--scheduler-config', help='Environment to run file in')
+        deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
+        deploy_parser.add_argument('--job-dir', type=str, help='Directory from which to deploy (defaults to cwd)')
+        deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
+        deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
+        deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs')
+        deploy_parser.add_argument('--command', type=str, help='Command to run in docker image')
+        deploy_parser.set_defaults(function=self._submit)
+        deploy_parser.set_defaults(params={})
+
+    def _str_to_bool(self, string_value):
+        return string_value == 'True'
 
     def _initialize_info_parser(self):
         info_parser = self.add_sub_parser('info', help='Provides information about your Foundations project')
@@ -180,6 +197,10 @@ class CommandLineInterface(object):
     def _deploy(self):
         from foundations_contrib.cli.command_line_job_deployer import CommandLineJobDeployer
         CommandLineJobDeployer(self._arguments).deploy()
+   
+    def _submit(self):
+        from foundations_contrib.cli.job_submission.submit_job import submit
+        submit(self._arguments)
    
     def _model_serving_stop(self):
         import os

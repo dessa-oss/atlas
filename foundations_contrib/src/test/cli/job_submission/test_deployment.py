@@ -1,0 +1,94 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
+from foundations_spec import *
+
+from foundations_contrib.cli.job_submission.deployment import deploy
+
+class TestJobSubmissionDeployment(Spec):
+
+    mock_os_getcwd = let_patch_mock('os.getcwd')
+    mock_deploy_job = let_patch_mock_with_conditional_return('foundations_contrib.job_deployer.deploy_job')
+    mock_deployment = let_mock()
+    mock_json_dump = let_patch_mock('json.dump')
+
+    @let
+    def project_name(self):
+        return self.faker.sentence()
+
+    @let
+    def current_directory(self):
+        return f'{self.faker.uri_path()}/{self.project_name}'
+
+    @let
+    def pipeline_context(self):
+        from foundations_internal.pipeline_context import PipelineContext
+        return PipelineContext()
+
+    @let
+    def pipeline(self):
+        from foundations_internal.pipeline import Pipeline
+        return Pipeline(self.pipeline_context)
+    
+    @let_now
+    def foundations_context(self):
+        from foundations_internal.foundations_context import FoundationsContext
+        return self.patch('foundations_contrib.global_state.foundations_context', FoundationsContext(self.pipeline))
+
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+    @let
+    def entrypoint(self):
+        return self.faker.uri_path()
+
+    @let
+    def params(self):
+        return {key: self.faker.sentence() for key in self.faker.words()}
+
+    mock_open = let_patch_mock_with_conditional_return('builtins.open')
+
+    @let
+    def mock_file(self):
+        mock = Mock()
+        mock.__enter__ = lambda *args: mock
+        mock.__exit__ = lambda *args: None
+        return mock
+
+    mock_context_wrapper_klass = let_patch_mock_with_conditional_return('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper')
+    mock_context_wrapper = let_mock()
+
+    @set_up
+    def set_up(self):
+        self.mock_os_getcwd.return_value = self.current_directory
+        self.mock_context_wrapper_klass.return_when(self.mock_context_wrapper, self.pipeline_context)
+        self.mock_open.return_when(self.mock_file, 'foundations_job_parameters.json', 'w+')
+        self.mock_deploy_job.return_when(self.mock_deployment, self.mock_context_wrapper, None, {})
+
+    def test_sets_project_name_from_parameter(self):
+        deploy(self.project_name, self.entrypoint, self.params)
+        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+
+    def test_sets_project_name_from_current_directory_when_not_specified(self):
+        deploy(None, self.entrypoint, self.params)
+        self.assertEqual(self.project_name, self.pipeline_context.provenance.project_name)
+
+    def test_sets_run_script_environment_to_include_entrypoint(self):
+        deploy(self.project_name, self.entrypoint, self.params)
+        self.assertEqual({'script_to_run': self.entrypoint, 'enable_stages': False}, self.config_manager['run_script_environment'])
+
+    def test_writes_params_as_json_to_file(self):
+        import json
+
+        deploy(self.project_name, self.entrypoint, self.params)
+        self.mock_json_dump.assert_called_with(self.params, self.mock_file)
+
+    def test_deploy_returns_created_deployment(self):
+        deployment = deploy(self.project_name, self.entrypoint, self.params)
+        self.assertEqual(self.mock_deployment, deployment)

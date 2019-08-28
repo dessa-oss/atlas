@@ -122,7 +122,7 @@ class StageConnectorWrapper(object):
             model.run(job_name='Experiment number 2', params_dict={'data1': 'value1'}, data2='value2')
             ```
         """
-        from foundations.job_deployer import deploy_job
+        from foundations_contrib.job_deployer import deploy_job
 
         if self._is_already_in_stageless_job():
             raise RuntimeError('Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?')

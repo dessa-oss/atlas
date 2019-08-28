@@ -1,0 +1,46 @@
+type: object
+additionalProperties: false
+properties:
+  project_name: {type: string}
+  log_level: {type: string}
+  entrypoint: {type: string}
+  ram: {type: integer}
+  num_gpus: {type: integer}
+  params:
+    type: object
+  worker:
+    type: object
+    additionalProperties: false
+    properties:
+      args:
+        type: array
+        items: {type: string}
+      command:
+        type: array
+        items: {type: string}
+      image: {type: string}
+      imagePullPolicy: {type: string}
+      resources:
+        type: object
+        additionalProperties: false
+        properties:
+          limits:
+            type: object
+      workingDir: {type: string}
+      volumes:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            hostPath:
+              type: object
+              additionalProperties: false
+              properties:
+                path: {type: string}
+                type: {type: string}
+            persistentVolumeClaim:
+              type: object
+              additionalProperties: false
+              properties:
+                claimName: {type: string}

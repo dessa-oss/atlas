@@ -10,6 +10,13 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
+    from jsonschema import validate
+    import foundations_contrib
+    import yaml
+
+    with open(f'{foundations_contrib.root()}/resources/config_validation/execution.yaml') as file:
+        schema = yaml.load(file.read())
+    validate(instance=config, schema=schema)
 
     result_end_point = config['results_config'].get('archive_end_point', _get_default_archive_end_point())
 
@@ -28,7 +35,7 @@ def translate(config):
         'obfuscate_foundations': _obfuscate_foundations(config),
         'run_script_environment': {
             'log_level': _log_level(config),
-            'enable_stages': config.get('enable_stages', False)
+            'enable_stages': False
         },
         'enable_stages': config.get('enable_stages', False),
         'artifact_path': config.get('artifact_path', 'results'),
@@ -38,10 +45,11 @@ def translate(config):
     return result 
 
 def _get_default_archive_end_point():
+    from foundations_contrib.utils import foundations_home
     from os.path import expanduser
     from os.path import join
 
-    return join(expanduser('~'), '.foundations/job_data')
+    return join(expanduser(foundations_home()), 'job_data')
 
 def _log_level(config):
     return config.get('log_level', 'INFO')

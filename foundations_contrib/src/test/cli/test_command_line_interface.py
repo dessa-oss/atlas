@@ -61,6 +61,10 @@ class TestCommandLineInterface(Spec):
         path = self.faker.uri_path()
         return PosixPath(path)
 
+    @let
+    def command(self):
+        return self.faker.sentence()
+
     mock_subprocess_run = let_patch_mock('subprocess.run')
 
     def fake_config_path(self, environment):
@@ -417,7 +421,7 @@ class TestCommandLineInterface(Spec):
     get_pipeline_archiver_for_job_mock = let_patch_mock('foundations_contrib.archiving.get_pipeline_archiver_for_job')
     pipeline_archiver_mock = let_mock()
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
-    mock_deploy_job = let_patch_mock('foundations.job_deployer.deploy_job')
+    mock_deploy_job = let_patch_mock('foundations_contrib.job_deployer.deploy_job')
     mock_deploy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.deploy')
     mock_destroy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.destroy')
     # orbit
@@ -528,7 +532,7 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['deploy']).execute()
         arguments = MockCommandLineJobDeployer.arguments
 
-        self._assert_arguments_equal(expected_arguments, arguments)
+        self._assert_deploy_arguments_equal(expected_arguments, arguments)
 
     def test_deploy_forwards_specified_arguments_to_command_line_job_deployer(self):
         self.patch('foundations_contrib.cli.command_line_job_deployer.CommandLineJobDeployer', MockCommandLineJobDeployer)
@@ -554,7 +558,55 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(command_to_run).execute()
         arguments = MockCommandLineJobDeployer.arguments
 
-        self._assert_arguments_equal(expected_arguments, arguments)
+        self._assert_deploy_arguments_equal(expected_arguments, arguments)
+
+    def test_submit_forwards_default_arguments_to_command_line_job_submission(self):
+        self.patch('foundations_contrib.cli.job_submission.submit_job.submit', MockCommandLineJobDeployer)
+
+        expected_arguments = Mock()
+        expected_arguments.scheduler_config = None
+        expected_arguments.job_dir = None
+        expected_arguments.entrypoint = None
+        expected_arguments.project_name = None
+        expected_arguments.ram = None
+        expected_arguments.num_gpus = None
+        expected_arguments.stream_job_logs = True
+        expected_arguments.command = None
+
+        CommandLineInterface(['submit']).execute()
+        arguments = MockCommandLineJobDeployer.arguments
+
+        self._assert_submit_arguments_equal(expected_arguments, arguments)
+
+    def test_submit_forwards_specified_arguments_to_command_line_job_submission(self):
+        self.patch('foundations_contrib.cli.job_submission.submit_job.submit', MockCommandLineJobDeployer)
+
+        expected_arguments = Mock()
+        expected_arguments.scheduler_config = self.fake_env
+        expected_arguments.job_dir = self.fake_directory
+        expected_arguments.entrypoint = self.fake_script_file_name
+        expected_arguments.project_name = self.fake_project_name
+        expected_arguments.ram = self.ram
+        expected_arguments.num_gpus = self.num_gpus
+        expected_arguments.stream_job_logs = False
+        expected_arguments.command = self.command
+
+        command_to_run = [
+            'submit',
+            f'--scheduler-config={self.fake_env}',
+            f'--job-dir={self.fake_directory}',
+            f'--entrypoint={self.fake_script_file_name}',
+            f'--project-name={self.fake_project_name}',
+            f'--ram={self.ram}',
+            f'--num-gpus={self.num_gpus}',
+            f'--stream-job-logs=False',
+            f'--command={self.command}'
+        ]
+
+        CommandLineInterface(command_to_run).execute()
+        arguments = MockCommandLineJobDeployer.arguments
+
+        self._assert_submit_arguments_equal(expected_arguments, arguments)
 
     @patch('argparse.ArgumentParser')
     def test_retrieve_logs_has_correct_options(self, parser_class_mock):
@@ -635,8 +687,12 @@ class TestCommandLineInterface(Spec):
         CommandLineInterface(['get', 'logs', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()
         self.exit_mock.assert_not_called()
 
-    def _assert_arguments_equal(self, expected_arguments, actual_arguments):
+    def _assert_deploy_arguments_equal(self, expected_arguments, actual_arguments):
         for attribute_name in ['env', 'job_directory', 'entrypoint', 'project_name', 'ram', 'num_gpus']:
+            self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
+
+    def _assert_submit_arguments_equal(self, expected_arguments, actual_arguments):
+        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs', 'command']:
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _set_run_script_environment(self, environment_to_set):

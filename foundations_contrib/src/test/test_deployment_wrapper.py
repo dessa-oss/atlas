@@ -4,13 +4,11 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
-import unittest
 
-from mock import Mock, patch
+from mock import patch
 
-from foundations_spec.helpers import set_up, tear_down
-from foundations_spec.helpers.spec import Spec
-from foundations.deployment_wrapper import DeploymentWrapper
+from foundations_spec import *
+from foundations_contrib.deployment_wrapper import DeploymentWrapper
 
 class TestDeploymentWrapper(Spec):
 

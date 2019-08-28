@@ -1,0 +1,25 @@
+type: object
+additionalProperties: false
+properties:
+  results_config:
+    type: object
+    additionalProperties: false
+    properties:
+      redis_end_point: {type: string}
+      archive_end_point: {type: string}
+      artifact_path: {type: string}
+  cache_config:
+    type: object
+    additionalProperties: false
+    properties:
+      end_point: {type: string}
+  ssh_config:
+    type: object
+    additionalProperties: false
+    properties:
+      host: {type: string}
+      port: {type: integer}
+      user: {type: string}
+      key_path: {type: string}
+  log_level: {type: string}
+  obfuscate_foundations: {type: boolean}

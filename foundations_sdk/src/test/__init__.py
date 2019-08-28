@@ -19,9 +19,7 @@ from test.test_job import TestJob
 from test.test_utils import TestUtils
 from test.test_projects import TestProjects
 from test.test_stage_connector_wrapper import TestStageConnectorWrapper
-from test.test_deployment_wrapper import TestDeploymentWrapper
 from test.test_config import TestConfig
-from test.test_job_deployer import TestJobDeployer
 from test.test_set_job_resources import TestSetJobResources
 from test.test_deploy import TestDeploy
 from test.test_save_artifact import TestSaveArtifact
@@ -29,3 +27,4 @@ from test.test_get_queued_jobs import TestGetQueuedJobs
 from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *
+from test.submission import *
