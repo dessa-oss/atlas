@@ -9,7 +9,7 @@ from foundations_spec import *
 from foundations_model_package.retrain_driver import RetrainDriver
 
 class TestRetrainDriver(Spec):
-    
+
     @let
     def module_name(self):
         return self.faker.word()
@@ -30,3 +30,12 @@ class TestRetrainDriver(Spec):
         
         with RetrainDriver(self.module_name, self.function_name, self.function_kwargs) as entrypoint_name:
             self.assertIsNotNone(entrypoint_name_regex.match(entrypoint_name))
+
+    def test_retrain_driver_generates_entrypoint_name_randomly(self):
+        with RetrainDriver(self.module_name, self.function_name, self.function_kwargs) as entrypoint_name:
+            entrypoint_name_0 = entrypoint_name
+
+        with RetrainDriver(self.module_name, self.function_name, self.function_kwargs) as entrypoint_name:
+            entrypoint_name_1 = entrypoint_name
+
+        self.assertNotEqual(entrypoint_name_0, entrypoint_name_1)
