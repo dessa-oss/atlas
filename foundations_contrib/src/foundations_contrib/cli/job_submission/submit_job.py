@@ -36,7 +36,6 @@ def submit(arguments):
 
         job_resource_args = {}
 
-        config_manager['worker_container_overrides'] = {}
         if 'log_level' in job_config:
             config_manager['log_level'] = job_config['log_level']
         if 'worker' in job_config:
