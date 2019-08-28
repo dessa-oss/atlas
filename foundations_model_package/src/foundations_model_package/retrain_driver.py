@@ -27,4 +27,13 @@ class RetrainDriver(object):
         os.remove(self._retrain_driver_file_name)
 
     def _file_contents(self):
-        return f'import foundations\nfrom {self._module_name} import {self._function_name}\n\nparams = foundations.load_parameters()\n{self._function_name}(**params)\n'
+        file_contents = ''
+
+        file_contents += 'import os\n\n'
+        file_contents += 'import foundations\n'
+        file_contents += f'from {self._module_name} import {self._function_name}\n\n'
+        file_contents += 'params = foundations.load_parameters()\n'
+        file_contents += f'{self._function_name}(**params)\n'
+        file_contents += f'os.remove({self._retrain_driver_file_name})\n'
+
+        return file_contents
