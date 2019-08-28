@@ -35,15 +35,7 @@ class TestCLIInit(Spec):
         import subprocess
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python -m project_code/driver.py"])
-
-        self.assertEqual(driver_deploy_exit_code, 0)
-
-    def test_cli_can_execute_results_created_by_init(self):
-        import subprocess
-
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
-        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python post_processing/results.py"])
+        driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
