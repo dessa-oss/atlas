@@ -79,10 +79,6 @@ class TestScheduler(Spec):
     def shell_command(self):
         return self.patch('foundations_contrib.helpers.shell.find_bash')
 
-    @set_up
-    def worker_set_up(self):
-        self._configuration['worker'] = self.worker_config
-
     @let
     def worker_config(self):
         return self.faker.pydict()
@@ -166,6 +162,12 @@ class TestScheduler(Spec):
         self.assertEqual(config['deployment_type'], JobDeployment)
 
     def test_config_translator_can_take_worker_config_and_return_translated_config(self):
+        self._configuration['worker'] = self.worker_config
         result_config = self.translator.translate(self._configuration)
         worker_overrides = result_config['worker_container_overrides']
         self.assertEqual(self.worker_config, worker_overrides)
+
+    def test_config_translator_has_empty_worker_config(self):
+        result_config = self.translator.translate(self._configuration)
+        worker_overrides = result_config['worker_container_overrides']
+        self.assertEqual({}, worker_overrides)

@@ -9,7 +9,7 @@ def translate(config):
         'redis_url': _redis_url(config),
         'shell_command': find_bash(),
         'obfuscate_foundations': _obfuscate_foundations(config),
-        'worker_container_overrides': config['worker']
+        'worker_container_overrides': config.get('worker', {})
     }
     result.update(ssh_configuration(config))
 
