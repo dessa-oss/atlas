@@ -60,6 +60,7 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
         deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
         deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs')
+        deploy_parser.add_argument('--command', type=str, help='Command to run in docker image')
         deploy_parser.set_defaults(function=self._submit)
         deploy_parser.set_defaults(params={})
 

@@ -27,14 +27,18 @@ def submit(arguments):
 
         job_resource_args = {}
 
+        config_manager['worker_container_overrides'] = {}
         if 'log_level' in job_config:
             config_manager['log_level'] = job_config['log_level']
         if 'worker' in job_config:
-            config_manager['worker_container_overrides'] = job_config['worker']
+            config_manager['worker_container_overrides'].update(job_config['worker'])
         if 'num_gpus' in job_config:
             job_resource_args['num_gpus'] = job_config['num_gpus']
         if 'ram' in job_config:
             job_resource_args['ram'] = job_config['ram']
+
+        if arguments.command is not None:
+            config_manager['worker_container_overrides']['args'] = arguments.command.split()
 
         if arguments.num_gpus is not None:
             job_resource_args['num_gpus'] = arguments.num_gpus
