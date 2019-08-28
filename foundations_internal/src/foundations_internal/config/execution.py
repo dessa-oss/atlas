@@ -10,8 +10,8 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
-    import foundations_contrib
     from jsonschema import validate
+    import foundations_contrib
     import yaml
 
     with open(f'{foundations_contrib.root()}/resources/config_validation/execution.yaml') as file:

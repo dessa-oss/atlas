@@ -5,6 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
+import foundations_contrib
+import yaml
+
+with open(f'{foundations_contrib.root()}/resources/config_validation/job.yaml') as file:
+    _job_schema = yaml.load(file.read())
+
 def submit(arguments):
     from foundations_contrib.cli.job_submission.config import load
     from foundations_contrib.cli.job_submission.deployment import deploy
@@ -12,9 +19,9 @@ def submit(arguments):
     from foundations_contrib.change_directory import ChangeDirectory
     from foundations_contrib.global_state import config_manager
     from foundations_contrib.set_job_resources import set_job_resources
+    from jsonschema import validate
     import os
     import os.path
-    import yaml
 
     current_directory = os.getcwd()
     with ChangeDirectory(arguments.job_dir or current_directory):
@@ -24,6 +31,8 @@ def submit(arguments):
         if os.path.exists('job.config.yaml'):
             with open('job.config.yaml') as file:
                 job_config = yaml.load(file.read())
+
+        validate(instance=job_config, schema=_job_schema)
 
         job_resource_args = {}
 

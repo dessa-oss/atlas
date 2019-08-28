@@ -38,12 +38,25 @@ class TestJobSubmissionSubmit(Spec):
         return mock
 
     @let
+    def worker_config(self):
+        return {
+            'args': self.faker.words(),
+            'command': self.faker.words(),
+            'image': self.faker.uri_path(),
+            'imagePullPolicy': self.faker.word(),
+            'resources': {
+                'limits': self.faker.pydict(),
+            },
+            'workingDir': self.faker.uri_path()
+        }
+
+    @let
     def job_config(self):
         return {
             'project_name': self.faker.name(),
             'log_level': self.faker.word(),
             'entrypoint': self.faker.uri_path(),
-            'worker': self.faker.pydict(),
+            'worker': self.worker_config,
             'params': self.faker.pydict(),
             'num_gpus': self.faker.random.randint(1, 10),
             'ram': self.faker.random.randint(1, 10),
@@ -183,6 +196,17 @@ class TestJobSubmissionSubmit(Spec):
         submit(self.mock_arguments)
         self.mock_set_resources.assert_called_with(num_gpus=self.job_config['num_gpus'], ram=self.job_config['ram'])
 
+    def test_validates_job_schema(self):
+        import jsonschema
+
+        self.job_config.clear()
+        self.job_config.update(self.faker.pydict())
+        self._set_up_deploy_config()
+        self._load_job_config_file()
+ 
+        with self.assertRaises(jsonschema.ValidationError) as error_context:
+            submit(self.mock_arguments)
+
     def _set_up_deploy_config(self):
         self.mock_arguments.project_name = self.project_name
         self.mock_arguments.entrypoint = self.entrypoint
@@ -198,6 +222,9 @@ class TestJobSubmissionSubmit(Spec):
             self.job_config['params']
         )
 
+        self._load_job_config_file()
+
+    def _load_job_config_file(self):
         self.mock_os_path_exists.clear()
         self.mock_os_path_exists.return_when(True, 'job.config.yaml')
         self.mock_open.return_when(self.mock_file, 'job.config.yaml')
