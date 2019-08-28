@@ -10,4 +10,18 @@ from foundations_spec import *
 from foundations_model_package.resource_factories import retrain_resource
 
 class TestRetrainResource(Spec):
-    pass
+    
+    @let
+    def module_name(self):
+        return self.faker.word()
+
+    @let
+    def function_name(self):
+        return self.faker.word()
+
+    def test_retrain_resource_is_instance_of_flask_restful_resource(self):
+        from flask_restful import Resource
+
+        resource_class = retrain_resource(self.module_name, self.function_name)
+        resource = resource_class()
+        self.assertIsInstance(resource, Resource)
