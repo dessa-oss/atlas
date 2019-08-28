@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from test.v2beta.controllers.test_jobs_controller import TestJobsControllerV2
 from test.v2beta.controllers.test_job_controller import TestJobControllerV2
+from test.v2beta.controllers.test_job_tags_controller import TestJobTagsController
