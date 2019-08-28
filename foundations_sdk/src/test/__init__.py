@@ -27,3 +27,4 @@ from test.test_get_queued_jobs import TestGetQueuedJobs
 from test.test_track_production_metrics import TestTrackProductionMetrics
 from test.artifacts import *
 from test.local_run import *
+from test.submission import *
