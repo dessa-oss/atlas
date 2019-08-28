@@ -59,7 +59,12 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--job-dir', type=str, help='Directory from which to deploy (defaults to cwd)')
         deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
         deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
+        deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs')
         deploy_parser.set_defaults(function=self._submit)
+        deploy_parser.set_defaults(params={})
+
+    def _str_to_bool(self, string_value):
+        return string_value == 'True'
 
     def _initialize_info_parser(self):
         info_parser = self.add_sub_parser('info', help='Provides information about your Foundations project')
