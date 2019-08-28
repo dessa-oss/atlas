@@ -17,13 +17,8 @@ from model import dummy_function
 
 foundations.set_project_name('my-foundations-project')
 
-dummy_function = foundations.create_stage(dummy_function)
-
 # input to model
 x = 20
 
 # build step1 of model
-result = dummy_function(x)
-
-# run the model
-result.run()
+dummy_function(x)

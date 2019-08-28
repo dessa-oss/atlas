@@ -16,6 +16,7 @@ def ssh_configuration(config):
 
     if 'code_path' in config['ssh_config']:
         result['code_path'] = config['ssh_config']['code_path']
+    if 'result_path' in config['ssh_config']:
         result['result_path'] = config['ssh_config']['result_path']
     return result
 

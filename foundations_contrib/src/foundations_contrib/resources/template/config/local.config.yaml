@@ -2,4 +2,4 @@ job_deployment_env: local
 results_config: {}
 cache_config: {}
 obfuscate_foundations: False
-enable_stages: True
+enable_stages: False
