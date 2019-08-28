@@ -7,4 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 def retrain_resource(*args):
     from flask_restful import Resource
-    return Resource
+    from uuid import uuid4
+
+    class _RetrainResource(Resource):
+        pass
+
+    _RetrainResource.__name__ = f'_RetrainResource_{uuid4()}'
+
+    return _RetrainResource
