@@ -566,6 +566,7 @@ class TestCommandLineInterface(Spec):
         expected_arguments.project_name = None
         expected_arguments.ram = None
         expected_arguments.num_gpus = None
+        expected_arguments.stream_job_logs = True
 
         CommandLineInterface(['submit']).execute()
         arguments = MockCommandLineJobDeployer.arguments
@@ -582,6 +583,7 @@ class TestCommandLineInterface(Spec):
         expected_arguments.project_name = self.fake_project_name
         expected_arguments.ram = self.ram
         expected_arguments.num_gpus = self.num_gpus
+        expected_arguments.stream_job_logs = False
 
         command_to_run = [
             'submit',
@@ -590,7 +592,8 @@ class TestCommandLineInterface(Spec):
             f'--entrypoint={self.fake_script_file_name}',
             f'--project-name={self.fake_project_name}',
             f'--ram={self.ram}',
-            f'--num-gpus={self.num_gpus}'
+            f'--num-gpus={self.num_gpus}',
+            f'--stream-job-logs=False'
         ]
 
         CommandLineInterface(command_to_run).execute()
@@ -682,7 +685,7 @@ class TestCommandLineInterface(Spec):
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _assert_submit_arguments_equal(self, expected_arguments, actual_arguments):
-        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus']:
+        for attribute_name in ['scheduler_config', 'job_dir', 'entrypoint', 'project_name', 'ram', 'num_gpus', 'stream_job_logs']:
             self.assertEqual(getattr(expected_arguments, attribute_name), getattr(actual_arguments, attribute_name))
 
     def _set_run_script_environment(self, environment_to_set):
