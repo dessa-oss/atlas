@@ -3,6 +3,13 @@ from os.path import join
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
+    from jsonschema import validate
+    import foundations_contrib
+    import yaml
+
+    with open(f'{foundations_contrib.root()}/resources/config_validation/submission.yaml') as file:
+        schema = yaml.load(file.read())
+    validate(instance=config, schema=schema)
 
     result = {
         'deployment_implementation': _deployment_implementation(),
