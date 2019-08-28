@@ -59,9 +59,9 @@ class JobDetails extends React.Component {
   }
 
   async getJobs() {
-    const { projectName } = this.state;
+    const { location } = this.props;
 
-    const fetchedJobs = await JobListActions.getJobs(projectName);
+    const fetchedJobs = await JobListActions.getJobs(location.state.project.name);
     const apiJobs = fetchedJobs;
     this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
     const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
@@ -402,6 +402,7 @@ JobDetails.propTypes = {
   startTimeFilter: PropTypes.array,
   queryStatus: PropTypes.number,
   history: PropTypes.object,
+  location: PropTypes.object,
 };
 
 JobDetails.defaultProps = {
@@ -422,6 +423,7 @@ JobDetails.defaultProps = {
   startTimeFilter: [],
   queryStatus: 200,
   history: {},
+  location: { state: {} },
 };
 
 export default JobDetails;
