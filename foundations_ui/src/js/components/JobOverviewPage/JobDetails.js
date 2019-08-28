@@ -329,6 +329,7 @@ class JobDetails extends React.Component {
     this.updateJobIdFilter = this.updateJobIdFilter.bind(this);
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
     this.onToggleModalJobDetails = this.onToggleModalJobDetails.bind(this);
+    this.getJobs = this.getJobs.bind(this);
   }
 
   render() {
@@ -367,6 +368,7 @@ class JobDetails extends React.Component {
         onClickJob={(job) => {
           this.onToggleModalJobDetails(job);
         }}
+        getJobs={this.getJobs}
       />
     );
 

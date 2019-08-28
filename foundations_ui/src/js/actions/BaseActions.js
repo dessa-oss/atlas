@@ -106,7 +106,7 @@ const BaseActions = {
   del(url) {
     const fullURL = this.baseURL.concat(url);
     return fetch(fullURL, {
-      method: 'del',
+      method: 'delete',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -121,6 +121,23 @@ const BaseActions = {
       });
   },
 
+  delAPIary(url) {
+    const fullURL = this.baseApiaryURL.concat(url);
+    return fetch(fullURL, {
+      method: 'delete',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
 
   postJSONFile(url, fileName, data) {
     const fullURL = this.baseApiaryURL.concat(url);
