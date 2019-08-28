@@ -21,6 +21,8 @@ class TestRetrainDriver(Spec):
     @set_up
     def set_up(self):
         self.patch('builtins.open', self._mock_open)
+        self.patch('os.path.isfile', self._mock_isfile)
+        self.patch('os.remove', self._mock_remove)
         self._mock_files = {}
 
     def test_retrain_driver_generates_entrypoint_name(self):
@@ -46,8 +48,16 @@ class TestRetrainDriver(Spec):
             with open(entrypoint_name, 'r') as retrain_driver:
                 self.assertEqual(self._expected_file_contents(), retrain_driver.read())
 
+    def test_retrain_driver_deletes_driver_file_on_exit(self):
+        import os.path as path
+
+        with RetrainDriver(self.module_name, self.function_name) as entrypoint_name:
+            entrypoint_script_name = entrypoint_name
+
+        self.assertFalse(path.isfile(entrypoint_script_name))
+
     def _expected_file_contents(self):
-        return f'import foundations\nfrom {self.module_name} import {self.function_name}\n\nparams = foundations.load_parameters()\n{self.function_name}(**kwargs)\n'
+        return f'import foundations\nfrom {self.module_name} import {self.function_name}\n\nparams = foundations.load_parameters()\n{self.function_name}(**params)\n'
 
     def _mock_open(self, file_name, mode):
         if mode == 'r':
@@ -74,3 +84,9 @@ class TestRetrainDriver(Spec):
             self._mock_files[file_name] += contents
 
         return _mock_write_callback
+
+    def _mock_isfile(self, file_name):
+        return file_name in self._mock_files
+
+    def _mock_remove(self, file_name):
+        self._mock_files.pop(file_name)
