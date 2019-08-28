@@ -89,28 +89,7 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertFalse(result_config['enable_stages'])
     
-    def test_returns_enable_stages_true_if_set_true(self):
-        self._configuration['enable_stages'] = True
-        result_config = self.translator.translate(self._configuration)
-        self.assertTrue(result_config['enable_stages'])
-    
-    def test_returns_enable_stages_false_if_set_false(self):
-        self._configuration['enable_stages'] = False
-        result_config = self.translator.translate(self._configuration)
-        self.assertFalse(result_config['enable_stages'])
-    
     def test_returns_run_script_environment_with_enable_stages_false_if_not_set(self):
-        self._configuration['enable_stages'] = False
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
-
-    def test_returns_run_script_environment_with_enable_stages_true_if_set_true(self):
-        self._configuration['enable_stages'] = True
-        result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['run_script_environment']['enable_stages'], True)
-    
-    def test_returns_run_script_environment_with_enable_stages_false_if_set_false(self):
-        self._configuration['enable_stages'] = False
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['run_script_environment']['enable_stages'], False)
 
@@ -174,3 +153,9 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual('results', result_config['artifact_path'])
 
+    def test_validates_schema(self):
+        import jsonschema
+
+        bad_config = self.faker.pydict()
+        with self.assertRaises(jsonschema.ValidationError) as error_context:
+            self.translator.translate(bad_config)
