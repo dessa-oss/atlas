@@ -52,19 +52,19 @@ class TestCLIInit(Spec):
         import re
 
         subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
+        self._append_redis_job_id_log_to_driver_file()
+        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
+        job_id = self.redis.get('foundations_testing_job_id').decode()
 
+        self._assert_job_file_exists(job_id, 'miscellaneous/job_artifact_listing.pkl')
+
+    def _append_redis_job_id_log_to_driver_file(self):
         self.redis.delete('foundations_testing_job_id')
         with open('test-cli-init/project_code/driver.py', 'a') as file:
             file.write(
                 '\nfrom foundations_contrib.global_state import redis_connection, current_foundations_context\n'
                 'redis_connection.set("foundations_testing_job_id", current_foundations_context().pipeline_context().job_id)\n'
             )
-
-        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
-        print(driver_deploy_output)
-        job_id = self.redis.get('foundations_testing_job_id').decode()
-
-        self._assert_job_file_exists(job_id, 'miscellaneous/job_artifact_listing.pkl')
         
     def _assert_job_file_exists(self, job_id, relative_path):
         from os.path import join
