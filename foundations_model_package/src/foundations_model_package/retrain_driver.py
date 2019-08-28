@@ -11,7 +11,8 @@ class RetrainDriver(object):
         pass
 
     def __enter__(self):
-        return 'retrain_driver_0.py'
+        import random
+        return f'retrain_driver_{random.randint(0, 1000000)}.py'
 
     def __exit__(self, *args):
         pass
