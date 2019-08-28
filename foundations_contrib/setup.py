@@ -46,7 +46,7 @@ setup(
         'tabulate==0.8.3',
         'slackclient==1.3.0',
         'psutil==5.6.2',
-        'jsonschema==3.0.2'
+        'jsonschema==3.0.2',
         'foundations-internal=={}'.format(build_version),
         'foundations-events=={}'.format(build_version)
     ],
