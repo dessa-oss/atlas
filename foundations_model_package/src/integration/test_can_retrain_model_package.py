@@ -100,6 +100,7 @@ class TestCanRetrainModelPackage(Spec):
 
         new_predict_result = self._try_post_to_predict_endpoint()
 
+        self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
         self.assertEqual({'a': 20 + 24 * 3600 - 60}, new_predict_result)
 
     def _generate_yaml_config_file(self, job_directory):
