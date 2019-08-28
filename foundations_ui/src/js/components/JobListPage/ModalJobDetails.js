@@ -31,13 +31,29 @@ class ModalJobDetails extends React.Component {
 
   reload() {
     const { job, location } = this.props;
-    BaseActions.getFromApiary(`projects/${location.state.project.name}/jobs/${job.id}/tags`).then((result) => {
-      if (result) {
-        this.setState({
-          tags: result,
-        });
-      }
-    });
+    console.log(job);
+
+    if (Array.isArray(job.tags)) {
+      this.setState({
+        tags: job.tags,
+      });
+    } else {
+      const tags = Object.keys(job.tags);
+      this.setState({
+        tags,
+      });
+    }
+
+    // this.setState({
+    //   tags: job.tags,
+    // });
+    // BaseActions.getFromApiary(`projects/${location.state.project.name}/jobs/${job.id}/tags`).then((result) => {
+    //   if (result) {
+    //     this.setState({
+    //       tags: job.tags,
+    //     });
+    //   }
+    // });
   }
 
   componentDidMount() {

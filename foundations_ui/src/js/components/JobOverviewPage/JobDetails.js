@@ -372,12 +372,21 @@ class JobDetails extends React.Component {
       />
     );
 
+    console.log('SELECTED JOB: ', selectedJob);
+
     return (
       <div>
         <div className="job-list-container">
           {jobList}
         </div>
-        <ModalJobDetails job={selectedJob} visible={modalJobDetailsVisible} onToggle={this.onToggleModalJobDetails} />
+        {modalJobDetailsVisible === true
+        && (
+          <ModalJobDetails
+            job={selectedJob}
+            visible={modalJobDetailsVisible}
+            onToggle={this.onToggleModalJobDetails}
+          />
+        )}
       </div>
 
     );
