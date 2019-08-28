@@ -45,10 +45,11 @@ def translate(config):
     return result 
 
 def _get_default_archive_end_point():
+    from foundations_contrib.utils import foundations_home
     from os.path import expanduser
     from os.path import join
 
-    return join(expanduser('~'), '.foundations/job_data')
+    return join(expanduser(foundations_home()), 'job_data')
 
 def _log_level(config):
     return config.get('log_level', 'INFO')
