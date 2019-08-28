@@ -372,8 +372,6 @@ class JobDetails extends React.Component {
       />
     );
 
-    console.log('SELECTED JOB: ', selectedJob);
-
     return (
       <div>
         <div className="job-list-container">
