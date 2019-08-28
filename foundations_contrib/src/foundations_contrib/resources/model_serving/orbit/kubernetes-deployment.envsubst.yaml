@@ -19,6 +19,7 @@ spec:
         jobRunner: "True"
       containers:
       - image: docker.shehanigans.net/foundations-model-package
+        imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
             value: "${project_name}-${model_name}"
