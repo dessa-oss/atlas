@@ -36,7 +36,7 @@ class TestCanDeployModelServer(Spec):
         self.deployment = None
 
         if self._is_running_on_jenkins():
-            config_manager.config()['redis_url'] = self._get_redis_url()
+            config_manager.config()['redis_url'] = self._get_proxy_url()
 
         self.redis_connection = redis_connection
         self.redis_connection.flushall()
@@ -204,7 +204,11 @@ class TestCanDeployModelServer(Spec):
             return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL']
         else:
             return f'redis://{self._get_scheduler_ip()}:6379'
-        
+
+    def _get_proxy_url(self):
+        import os
+        return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
+
     def _deploy_job(self, job_directory):
         import foundations
 
