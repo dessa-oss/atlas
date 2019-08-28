@@ -16,6 +16,7 @@ class JobTable extends Component {
     this.sortTable = this.sortTable.bind(this);
     this.selectJob = this.selectJob.bind(this);
     this.selectAllJobs = this.selectAllJobs.bind(this);
+    this.selectNoJobs = this.selectNoJobs.bind(this);
     this.state = {
       jobs: this.props.jobs,
       isLoaded: this.props.isLoaded,
@@ -45,6 +46,8 @@ class JobTable extends Component {
       sortedColumn: { column: '', isAscending: true },
       selectedJobs: [],
       allJobsSelected: false,
+      projectName: this.props.projectName,
+      getJobs: this.props.getJobs,
     };
   }
 
@@ -153,12 +156,17 @@ class JobTable extends Component {
     this.setState({ selectedJobs: jobIds, allJobsSelected: areAllSelected });
   }
 
+  selectNoJobs() {
+    this.setState({ selectedJobs: [], allJobsSelected: false });
+  }
+
   render() {
     const {
       jobs, isLoaded, allInputParams, allMetrics, statuses, updateHiddenStatus, updateHiddenUser, allUsers, hiddenUsers,
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
       startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn, selectedJobs, allJobsSelected,
+      projectName, getJobs,
     } = this.state;
 
     const jobRows = [];
@@ -203,6 +211,10 @@ class JobTable extends Component {
             hiddenColumns={hiddenColumns}
             updateHiddenColumns={this.updateHiddenColumns}
             selectAllJobs={this.selectAllJobs}
+            selectedJobs={selectedJobs}
+            projectName={projectName}
+            getJobs={getJobs}
+            selectNoJobs={this.selectNoJobs}
           />
           <JobTableHeader
             allInputParams={visibleParams}
@@ -279,6 +291,7 @@ JobTable.propTypes = {
   selectedRow: PropTypes.string,
   onDataUpdated: PropTypes.func,
   onClickJob: PropTypes.func,
+  getJobs: PropTypes.func,
 };
 
 JobTable.defaultProps = {
@@ -310,6 +323,7 @@ JobTable.defaultProps = {
   selectedRow: -1,
   onDataUpdated: () => window.location.reload(),
   onClickJob: (job) => {},
+  getJobs: () => {},
 };
 
 export default JobTable;
