@@ -27,7 +27,11 @@ class TestJobSubmissionSubmit(Spec):
     @let_now
     def config_manager(self):
         from foundations_contrib.config_manager import ConfigManager
-        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
+        config_manager = ConfigManager()
+        config_manager['worker_container_overrides'] = {}
+
+        return self.patch('foundations_contrib.global_state.config_manager', config_manager)
 
     @let
     def mock_file(self):
