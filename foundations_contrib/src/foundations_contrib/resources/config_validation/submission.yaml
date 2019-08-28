@@ -36,4 +36,21 @@ properties:
           limits:
             type: object
       workingDir: {type: string}
+      volumes:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            hostPath:
+              type: object
+              additionalProperties: false
+              properties:
+                path: {type: string}
+                type: {type: string}
+            persistentVolumeClaim:
+              type: object
+              additionalProperties: false
+              properties:
+                claimName: {type: string}
               
