@@ -8,3 +8,5 @@ RUN pip install flask-restful flask-cors
 RUN mkdir -p /job
 COPY ./foundations_model_package /job/foundations_model_package
 COPY ./run.sh /job
+
+ENV PYTHONPATH /job
