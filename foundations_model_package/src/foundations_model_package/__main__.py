@@ -38,7 +38,7 @@ def main():
     indicate_model_ran_to_redis(job.id())
 
     print('Model server running successfully')
-    app.run(debug=True, port=80, host='0.0.0.0')
+    app.run(use_reloader=False, debug=True, port=80, host='0.0.0.0')
 
 def _hack_for_cleaning_up_logs():
     import click
