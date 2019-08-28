@@ -23,7 +23,6 @@ class Readme extends React.Component {
   reload() {
     const { location } = this.props;
     BaseActions.getFromApiary(`projects/${location.state.project.name}/description`).then((result) => {
-      console.log('RELOAD README');
       this.setState({
         input: result.project_description,
       });
