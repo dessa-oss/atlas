@@ -3,7 +3,6 @@ results_config: {}
 ssh_config:
   port: 31222
   code_path: /jobs
-  result_path: /jobs
   key_path: ~/.ssh/id_foundations_scheduler
   user: job-uploader
 
