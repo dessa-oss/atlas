@@ -17,6 +17,6 @@ def flask_app(root_resource, predict_resource, evaluate_resource):
     api.add_resource(root_resource, '/')
     api.add_resource(predict_resource, '/predict')
     api.add_resource(evaluate_resource, '/evaluate')
-    # app.logger.disabled = True
+    app.logger.disabled = True
 
     return app
