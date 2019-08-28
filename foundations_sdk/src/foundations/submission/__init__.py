@@ -8,18 +8,19 @@ Written by Foundations Team <pairing@dessa.com>, 06 2018
 
 from collections import namedtuple
 
-_deployment_arguments = namedtuple('_deployment_arguments',
-                                   [
-                                       'scheduler_config',
-                                       'job_dir',
-                                       'project_name',
-                                       'entrypoint',
-                                       'params',
-                                       'ram',
-                                       'num_gpus',
-                                       'stream_job_logs',
-                                   ])
-_deployment_arguments.__new__.__defaults__ = (None,) * 8
+_attribute_list = [
+    'scheduler_config',
+    'job_dir',
+    'project_name',
+    'entrypoint',
+    'params',
+    'ram',
+    'num_gpus',
+    'stream_job_logs',
+    'command',
+]
+_deployment_arguments = namedtuple('_deployment_arguments', _attribute_list)
+_deployment_arguments.__new__.__defaults__ = (None,) * len(_attribute_list)
 
 
 def submit(**kwargs):
