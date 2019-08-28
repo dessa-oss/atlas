@@ -6,4 +6,5 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def retrain_resource(*args):
-    pass
+    from flask_restful import Resource
+    return Resource
