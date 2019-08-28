@@ -23,7 +23,8 @@ class RetrainDriver(object):
         return self._retrain_driver_file_name
 
     def __exit__(self, *args):
-        pass
+        import os
+        os.remove(self._retrain_driver_file_name)
 
     def _file_contents(self):
-        return f'import foundations\nfrom {self._module_name} import {self._function_name}\n\nparams = foundations.load_parameters()\n{self._function_name}(**kwargs)\n'
+        return f'import foundations\nfrom {self._module_name} import {self._function_name}\n\nparams = foundations.load_parameters()\n{self._function_name}(**params)\n'
