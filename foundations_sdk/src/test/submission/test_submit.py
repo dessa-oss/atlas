@@ -52,6 +52,10 @@ class TestSubmit(Spec):
         submit(stream_job_logs=self.random_parameter)
         self.assertEqual(self.random_parameter, self._arguments.stream_job_logs)
 
+    def test_submit_passes_command_option(self):
+        submit(command=self.random_parameter)
+        self.assertEqual(self.random_parameter, self._arguments.command)
+
     def test_submit_is_accessible_globally(self):
         import foundations
         self.assertEqual(submit, foundations.submit)
