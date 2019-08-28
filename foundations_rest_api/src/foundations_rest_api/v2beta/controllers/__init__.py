@@ -7,3 +7,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_rest_api.v2beta.controllers.jobs_controller import JobsController
 from foundations_rest_api.v2beta.controllers.job_controller import JobController
+from foundations_rest_api.v2beta.controllers.job_tags_controller import JobTagsController
