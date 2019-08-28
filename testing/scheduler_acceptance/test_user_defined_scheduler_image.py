@@ -24,7 +24,7 @@ class TestUserDefinedSchedulerImage(Spec):
     def config(self):
         import yaml
 
-        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/scheduler.template.config.yaml', 'r') as file:
+        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/submission/scheduler.template.config.yaml', 'r') as file:
             config = yaml.load(file.read())
 
         config['results_config']['redis_end_point'] = self.redis_url
@@ -41,11 +41,11 @@ class TestUserDefinedSchedulerImage(Spec):
         import yaml
         import foundations
 
-        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/scheduler.config.yaml', 'w+') as file:
+        with open('scheduler_acceptance/fixtures/user_defined_scheduler_image/config/submission/scheduler.config.yaml', 'w+') as file:
             file.write(yaml.dump(self.config))
 
         foundations.set_job_resources(num_gpus=0)
-        job = foundations.deploy(env='scheduler', job_directory='scheduler_acceptance/fixtures/user_defined_scheduler_image/')
+        job = foundations.submit(scheduler_config='scheduler', job_dir='scheduler_acceptance/fixtures/user_defined_scheduler_image/', num_gpus=0)
         job.wait_for_deployment_to_complete()
         self.job_id = job.job_name()
 

@@ -1,11 +1,4 @@
-job_deployment_env: scheduler_plugin
-
-results_config:
-  archive_end_point: /archive
-  artifact_path: artifacts
-
-cache_config:
-  end_point: /cache
+results_config: {}
 
 ssh_config:
   port: 31222
