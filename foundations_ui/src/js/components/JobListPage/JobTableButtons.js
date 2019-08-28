@@ -19,6 +19,7 @@ class JobTableButtons extends Component {
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
     this.onDeleteJobs = this.onDeleteJobs.bind(this);
+    this.onClickTensor = this.onClickTensor.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,6 +52,15 @@ class JobTableButtons extends Component {
     }
   }
 
+  async onClickTensor() {
+    const {
+      selectedJobs,
+    } = this.state;
+    const URL = 'generate_tensorboard';
+    const res = await BaseActions.postApiary(URL, { job_ids: selectedJobs });
+    window.open('https://www.google.ca', '_blank');
+  }
+
   render() {
     const {
       isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns,
@@ -70,7 +80,12 @@ class JobTableButtons extends Component {
 
     return (
       <div className="job-details-header">
-        <button type="button"><span className="i--icon-tf" /> <p className="text-upper">Send to tensorboard</p></button>
+        <button
+          onClick={this.onClickTensor}
+          type="button"
+        >
+          <span className="i--icon-tf" /> <p className="text-upper">Send to tensorboard</p>
+        </button>
         <button onClick={this.onDeleteJobs} type="button" className="text-upper">Delete</button>
         <div
           className="job-details-filter-button"
