@@ -5,5 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def all_production_metrics():
-    pass
+def all_production_metrics(_):
+    return {}
