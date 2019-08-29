@@ -80,3 +80,16 @@ class TestProductionMetrics(Spec):
 
         expected_tracked_metrics = {self.metric_name: [(self.metric_column, self.metric_value), (self.metric_column_2, self.metric_value_2)]}
         self.assertEqual(expected_tracked_metrics, all_production_metrics(self.job_id))
+
+    def test_all_production_metrics_returns_dictionary_with_all_entries_when_multiple_metrics_tracked(self):
+        from foundations_orbit import track_production_metrics
+
+        track_production_metrics(self.metric_name, {self.metric_column: self.metric_value})
+        track_production_metrics(self.metric_name_2, {self.metric_column_2: self.metric_value_2})
+
+        expected_tracked_metrics = {
+            self.metric_name: [(self.metric_column, self.metric_value)],
+            self.metric_name_2: [(self.metric_column_2, self.metric_value_2)]
+        }
+
+        self.assertEqual(expected_tracked_metrics, all_production_metrics(self.job_id))
