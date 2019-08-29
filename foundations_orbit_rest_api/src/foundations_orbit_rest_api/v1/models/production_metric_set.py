@@ -28,12 +28,7 @@ class ProductionMetricSet(PropertyModel):
             model_metrics = all_production_metrics(project_name, model_name)
             metric_name, metric_pairs = list(model_metrics.items())[0]
 
-            metric_columns = []
-            metric_values = []
-            
-            for metric_column, metric_value in metric_pairs:
-                metric_columns.append(metric_column)
-                metric_values.append(metric_value)
+            metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
 
             metric_set = ProductionMetricSet._metric_set_from_simple_metric_information(
                 model_name,
@@ -63,3 +58,14 @@ class ProductionMetricSet(PropertyModel):
             xAxis={'categories': metric_columns},
             series=[{'data': metric_values, 'name': model_name}]
         )
+
+    @staticmethod
+    def _unzip_list_of_pairs(list_of_pairs):
+        first_elements = []
+        second_elements = []
+
+        for first_element, second_element in list_of_pairs:
+            first_elements.append(first_element)
+            second_elements.append(second_element)
+
+        return first_elements, second_elements
