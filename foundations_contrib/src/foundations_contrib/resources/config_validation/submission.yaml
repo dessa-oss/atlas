@@ -35,6 +35,8 @@ properties:
         properties:
           limits:
             type: object
+          requests:
+            type: object
       workingDir: {type: string}
       volumes:
         type: array
