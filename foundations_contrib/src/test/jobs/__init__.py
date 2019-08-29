@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.jobs.test_kubernetes_job import TestKubernetesJob
+from test.jobs.test_logs import TestLogs
