@@ -15,55 +15,50 @@ class ModalJobDetails extends React.Component {
 
     const { job } = this.props;
 
+    console.log('JOB: ', job);
+
     this.state = {
-      tags: [
-        'LSTM',
-        'probably won\'t work',
-      ],
+      tags: [],
       tab: 'logs',
+      newTag: '',
       timerId: -1,
+      addNewTagVisible: false,
+      job,
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
     this.onClickLogs = this.onClickLogs.bind(this);
     this.onClickArtifacts = this.onClickArtifacts.bind(this);
+    this.onChangeTagName = this.onChangeTagName.bind(this);
+    this.onClickShowAddTag = this.onClickShowAddTag.bind(this);
+    this.onClickAddNewTag = this.onClickAddNewTag.bind(this);
+    this.onClickCancelAddNewTag = this.onClickCancelAddNewTag.bind(this);
   }
 
   reload() {
-    const { job, location } = this.props;
-    console.log(job);
-
-    if (Array.isArray(job.tags)) {
-      this.setState({
-        tags: job.tags,
+    const { location } = this.props;
+    const { job } = this.state;
+    BaseActions.getFromStaging(`projects/${location.state.project.name}/job_listing`)
+      .then((result) => {
+        const filteredJob = result.jobs.find(item => item.job_id === job.job_id);
+        let newTags = [];
+        if (filteredJob.tags) {
+          if (Array.isArray(filteredJob.tags)) {
+            newTags = filteredJob.tags;
+          } else {
+            newTags = Object.keys(filteredJob.tags);
+          }
+        }
+        this.setState({
+          addNewTagVisible: false,
+          tags: newTags,
+          job: filteredJob,
+        });
       });
-    } else {
-      const tags = Object.keys(job.tags);
-      this.setState({
-        tags,
-      });
-    }
-
-    // this.setState({
-    //   tags: job.tags,
-    // });
-    // BaseActions.getFromApiary(`projects/${location.state.project.name}/jobs/${job.id}/tags`).then((result) => {
-    //   if (result) {
-    //     this.setState({
-    //       tags: job.tags,
-    //     });
-    //   }
-    // });
   }
 
   componentDidMount() {
     this.reload();
-    const value = setInterval(() => {
-      this.reload();
-    }, 4000);
-    this.setState({
-      timerId: value,
-    });
   }
 
   componentWillUnmount() {
@@ -72,12 +67,15 @@ class ModalJobDetails extends React.Component {
   }
 
   onToggleModal() {
-    const { onToggle, job } = this.props;
+    const { onToggle } = this.props;
+    const { job } = this.state;
     onToggle(job);
   }
 
-  onClickAddTag() {
-    console.log('add tag');
+  onClickShowAddTag() {
+    this.setState({
+      addNewTagVisible: true,
+    });
   }
 
   onClickRemoveTag() {
@@ -92,7 +90,7 @@ class ModalJobDetails extends React.Component {
     });
   }
 
-  onKeyDown() {}
+  onKeyDown() { }
 
   onClickLogs() {
     this.setState({
@@ -106,9 +104,35 @@ class ModalJobDetails extends React.Component {
     });
   }
 
+  onChangeTagName(e) {
+    this.setState({
+      newTag: e.target.value,
+    });
+  }
+
+  onClickAddNewTag() {
+    const { newTag, job } = this.state;
+    const { location } = this.props;
+    BaseActions.postApiary(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags`)
+      .then((result) => {
+        this.reload();
+      });
+  }
+
+  onClickCancelAddNewTag() {
+    this.setState({
+      addNewTagVisible: false,
+    });
+  }
+
   render() {
-    const { job, visible, onToggle } = this.props;
-    const { tags, tab } = this.state;
+    const { visible, onToggle } = this.props;
+    const {
+      tags,
+      tab,
+      addNewTagVisible,
+      job,
+    } = this.state;
 
     return (
       <Modal
@@ -145,7 +169,7 @@ class ModalJobDetails extends React.Component {
               })}
               <div
                 className="button-add"
-                onClick={this.onClickAddTag}
+                onClick={this.onClickShowAddTag}
                 role="button"
                 aria-label="Add Tag"
                 onKeyDown={this.onKeyDown}
@@ -153,6 +177,14 @@ class ModalJobDetails extends React.Component {
               >
                 +
               </div>
+              {addNewTagVisible === true
+                && (
+                  <div className="container-add-new-tag">
+                    <input onChange={this.onChangeTagName} placeholder="Insert tag" />
+                    <button type="button" onClick={this.onClickAddNewTag}>SAVE</button>
+                    <button type="button" onClick={this.onClickCancelAddNewTag}>CANCEL</button>
+                  </div>
+                )}
             </div>
             <div className="container-tabs">
               <div>
