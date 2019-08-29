@@ -25,27 +25,13 @@ class ProductionMetricSet(PropertyModel):
 
         model_names = ProductionMetricSet._models_from_project(project_name)
         
-        intermediate_data_hierarchy = {}
+        intermediate_data_hierarchy = _IntermediateDataHierarchy()
 
         for model_name in model_names:                
             model_metrics = all_production_metrics(project_name, model_name)
-            ProductionMetricSet._process_model_metrics_with_model_name(intermediate_data_hierarchy, model_name, model_metrics)
+            intermediate_data_hierarchy.process_model_metrics_with_model_name(model_name, model_metrics)
 
-        return list(intermediate_data_hierarchy.values())
-
-    @staticmethod
-    def _process_model_metrics_with_model_name(intermediate_data_hierarchy, model_name, model_metrics):
-        for metric_name, metric_pairs in model_metrics.items():
-            ProductionMetricSet._append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs)
-
-    @staticmethod
-    def _append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs):
-        metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
-
-        if metric_name not in intermediate_data_hierarchy:
-            intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
-
-        intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
+        return intermediate_data_hierarchy.metric_sets()
 
     @staticmethod
     def _models_from_project(project_name):
@@ -58,22 +44,40 @@ class ProductionMetricSet(PropertyModel):
     def _model_name_from_redis_key(key):
         return key.decode().split(':')[3]
 
-    @staticmethod
-    def _metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series):
-        return ProductionMetricSet(
-            title={'text': f'{metric_name} over time'},
-            yAxis={'title': {'text': metric_name}},
-            xAxis={'categories': metric_columns},
-            series=metric_series
-        )
+class _IntermediateDataHierarchy(object):
 
-    @staticmethod
-    def _unzip_list_of_pairs(list_of_pairs):
-        first_elements = []
-        second_elements = []
+    def __init__(self):
+        self._hierarchy = {}
 
-        for first_element, second_element in list_of_pairs:
-            first_elements.append(first_element)
-            second_elements.append(second_element)
+    def process_model_metrics_with_model_name(self, model_name, model_metrics):
+        for metric_name, metric_pairs in model_metrics.items():
+            self._append_to_metric_set_series(metric_name, model_name, metric_pairs)
 
-        return first_elements, second_elements
+    def metric_sets(self):
+        return list(self._hierarchy.values())
+
+    def _append_to_metric_set_series(self, metric_name, model_name, metric_pairs):
+        metric_columns, metric_values = _unzip_list_of_pairs(metric_pairs)
+
+        if metric_name not in self._hierarchy:
+            self._hierarchy[metric_name] = _metric_set_from_simple_metric_information(metric_name, metric_columns, [])
+
+        self._hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
+
+def _unzip_list_of_pairs(list_of_pairs):
+    first_elements = []
+    second_elements = []
+
+    for first_element, second_element in list_of_pairs:
+        first_elements.append(first_element)
+        second_elements.append(second_element)
+
+    return first_elements, second_elements
+
+def _metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series):
+    return ProductionMetricSet(
+        title={'text': f'{metric_name} over time'},
+        yAxis={'title': {'text': metric_name}},
+        xAxis={'categories': metric_columns},
+        series=metric_series
+    )
