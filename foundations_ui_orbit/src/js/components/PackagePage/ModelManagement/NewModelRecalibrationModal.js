@@ -15,6 +15,30 @@ const NewModelRecalibrationModal = props => {
   const [scheduleMessageVisible, setScheduleMessageVisible] = React.useState(false);
   const [swapMessageVisible, setSwapMessageVisible] = React.useState(false);
   const [triggeredMessageVisible, setTriggeredMessageVisible] = React.useState(false);
+  const [parameters, setParameters] = React.useState([
+    {
+      key: "",
+      value: "",
+      placeholder_key: "start_date",
+      placeholder_value: "yyyy-mm-dd"
+    },
+    {
+      key: "",
+      value: "",
+      placeholder_key: "end_date",
+      placeholder_value: "yyyy-mm-dd"
+    }
+  ]);
+  const [updatedParameters, setUpdatedParameters] = React.useState([
+    {
+      key: "",
+      value: ""
+    },
+    {
+      key: "",
+      value: ""
+    }
+  ]);
 
   const [error, setError] = React.useState("");
 
@@ -57,35 +81,80 @@ const NewModelRecalibrationModal = props => {
     endDatePickerRef.open();
   };
 
+  const onChangeParameterKey = (e, i) => {
+    const newParameters = updatedParameters.map((parameter, index) => {
+      if (index === i) {
+        parameter.key = e.target.value;
+      }
+      return parameter;
+    });
+
+    setUpdatedParameters(updatedParameters);
+  };
+
+  const onChangeParameterValue = (e, i) => {
+    const newParameters = updatedParameters.map((parameter, index) => {
+      if (index === i) {
+        parameter.value = e.target.value;
+      }
+      return parameter;
+    });
+
+    setUpdatedParameters(updatedParameters);
+  };
+
+  const onClickAddNewParameter = () => {
+    const newParameter = {
+      key: "",
+      value: "",
+      placeholder_key: "",
+      placeholder_value: ""
+    };
+
+    const newUpdatedParameter = {
+      key: "",
+      value: ""
+    };
+
+    setParameters(prevParameters => [...prevParameters, newParameter]);
+    setUpdatedParameters(prevUpdatedParameters => [...prevUpdatedParameters, newUpdatedParameter]);
+  };
+
+
   const onClickSave = () => {
     setError("");
 
     let errorFound = false;
 
-    if (startDate === "" || endDate === "" || modelName === "") {
+    if (modelName === "") {
       errorFound = true;
     }
+
+    updatedParameters.forEach(parameter => {
+      if (parameter.key === "" || parameter.value === "") {
+        errorFound = true;
+      }
+    });
 
     if (errorFound === true) {
       setError("Please fill the form to run the recalibration");
     } else {
-      const body = {
-        model_name: modelName,
-        start_date: moment(startDate).toString(),
-        end_date: moment(endDate).toString()
+      let body = {
+        model_name: modelName
       };
 
-      postApiary(
-        `/projects/${
-          props.location.state.project.name
-        }/${
-          modelName
-        }/retrain`,
-        body
-      ).then(() => {
-        props.reload();
-        props.onClose();
+      parameters.forEach(parameter => {
+        body[parameter.key] = parameter.value;
       });
+
+      console.log("BODY: ", body);
+
+      postApiary(`/projects/${props.location.state.project.name}/${modelName}/retrain`,
+        body)
+        .then(() => {
+          props.reload();
+          props.onClose();
+        });
     }
   };
 
@@ -170,7 +239,7 @@ const NewModelRecalibrationModal = props => {
             </p>
           </div>
           <div className="container-recalibration-properties">
-            <div className="recalibrate-property-container">
+            {/* <div className="recalibrate-property-container">
               <p className="recalibrate-label-date">Start Date: </p>
               <div className="recalibrate-container-date">
                 <Flatpickr
@@ -197,7 +266,7 @@ const NewModelRecalibrationModal = props => {
               <div className="container-icon-date" onClick={onClickOpenEndDate}>
                 <div className="icon-date" role="presentation" />
               </div>
-            </div>
+            </div> */}
 
             <div className="recalibrate-property-container">
               <p className="recalibrate-label-date">Model Name:</p>
@@ -205,7 +274,7 @@ const NewModelRecalibrationModal = props => {
                 className="recalibrate-container-date input"
                 value={modelName}
                 onChange={onChangeModelName}
-                placeholder="Insert Model Name"
+                placeholder="Enter the name of the new model package (must be unique)"
               />
             </div>
             <div className="recalibrate-property-container">
@@ -214,8 +283,51 @@ const NewModelRecalibrationModal = props => {
                 className="recalibrate-container-date input"
                 value={description}
                 onChange={onChangeDescription}
-                placeholder="Insert Description"
+                placeholder="Enter description (optional)"
               />
+            </div>
+            <div className="recalibrate-property-container">
+              <p className="recalibrate-label-date label-parameters">Parameters:</p>
+              <div className="table-parameters">
+                <div className="container-parameter-row">
+                  <div className="parameter"><p className="parameter-header">KEY</p></div>
+                  <div className="parameter"><p className="parameter-header">VALUE</p></div>
+                </div>
+                {
+                  parameters.map((parameter, i) => {
+                    return (
+                      <div key={parameter.key} className="container-parameter-row">
+                        <div className="parameter">
+                          <input
+                            placeholder={parameter.placeholder_key === ""
+                              ? "Specify Parameter Key"
+                              : parameter.placeholder_key}
+                            onChange={e => onChangeParameterKey(e, i)}
+                          />
+                        </div>
+                        <div className="parameter">
+                          <input
+                            placeholder={parameter.placeholder_value === ""
+                              ? "Specify Parameter Value"
+                              : parameter.placeholder_value}
+                            onChange={e => onChangeParameterValue(e, i)}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })
+                }
+                <div className="container-parameter-row">
+                  <div className="container-add">
+                    <button
+                      type="button"
+                      onClick={onClickAddNewParameter}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="manage-inference-modal-button-container">
