@@ -157,7 +157,8 @@ it('getTableSectionHeaderText with header', () => {
 });
 
 it('get InputMetricColumnHeaders', () => {
-  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray);
+  const headers = CommonActions.getInputMetricColumnHeaders(inputParams, hiddenParams, emptyFunc, noMetric, emptyArray,
+    emptyFunc, emptyFunc, emptyFunc);
   expect(headers.length).toBe(2);
 });
 
@@ -234,7 +235,8 @@ it('get InputMetricCellDivClass error', () => {
 });
 
 it('get InputParamHeaders', () => {
-  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray);
+  const headers = CommonActions.getInputParamHeaders(inputParams, hidden, emptyFunc, noMetric, emptyArray,
+    emptyFunc, emptyFunc, emptyFunc);
   expect(headers.length).toBe(2);
 });
 

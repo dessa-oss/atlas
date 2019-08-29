@@ -19,9 +19,5 @@ class ProjectActions {
     });
     return projectList;
   }
-
-  static redirect(urlName) {
-    return BaseActions.redirectRoute(urlName);
-  }
 }
 export default ProjectActions;

@@ -717,10 +717,6 @@ class JobListActions {
     return filteredArrayMapped.includes(columnName);
   }
 
-  static redirect(url) {
-    return BaseActions.redirectRoute(url);
-  }
-
   static deleteAllJobs(jobIds, callback) {
     const deletedJobRequests = jobIds.map(
       (jobId) => {

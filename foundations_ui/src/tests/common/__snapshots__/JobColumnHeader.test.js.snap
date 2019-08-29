@@ -8,8 +8,19 @@ exports[`Shallow Renders Job Column Header 1`] = `
     className=""
   >
     <h4
-      className=" font-bold"
-    />
+      className=""
+      data-tip=""
+    >
+      <ReactTooltip
+        clickable={false}
+        effect="solid"
+        insecure={true}
+        place="top"
+        resizeHide={true}
+        type="dark"
+        wrapper="div"
+      />
+    </h4>
   </div>
 </div>
 `;

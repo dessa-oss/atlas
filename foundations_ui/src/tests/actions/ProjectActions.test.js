@@ -23,8 +23,3 @@ it('get AllProjects', () => {
   const allProjects = ProjectActions.getAllProjects(projects, funcStub);
   expect(allProjects.length).toBe(2);
 });
-
-it('Redirect returns Redirect', () => {
-  const redirectOutput = ProjectActions.redirect("/projects");
-  expect(redirectOutput).toEqual(<Redirect push to="/projects" />);
-})

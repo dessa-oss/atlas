@@ -4,9 +4,6 @@ exports[`Shallow Renders TableSectionHeader 1`] = `
 <div
   className="table-section-header"
 >
-  <p
-    className="table-header-text text-white no-margin"
-  />
   <div
     className="arrow-container"
     onClick={[Function]}

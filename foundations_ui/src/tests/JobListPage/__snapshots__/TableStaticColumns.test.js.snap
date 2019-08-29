@@ -4,76 +4,96 @@ exports[`Shallow Renders TableStaticColumns 1`] = `
 <div
   className="job-static-columns-container"
 >
-  <TableSectionHeader
-    changeHiddenParams={[Function]}
-    columns={Array []}
-    header=""
-    hiddenInputParams={Array []}
-    isMetric={false}
-    isShowingFilter={false}
-    searchText=""
-    updateSearchText={[Function]}
-  />
   <div
     className="job-column-header-container"
   >
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-delete-job-header "
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={false}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title=""
       toggleFilter={[Function]}
     />
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-header"
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={false}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title="Job ID"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-header"
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={false}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title="Launched at"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-status-header"
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={true}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title="Status"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-header"
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={false}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title="Duration"
       toggleFilter={[Function]}
     />
     <JobColumnHeader
+      allJobsSelected={false}
       className="static-header"
       colType="string"
       containerClass="job-column-header"
+      isAscending={false}
       isFiltered={false}
       isMetric={false}
+      isSortedColumn={false}
       isStatus={false}
+      selectAllJobs={[Function]}
+      sortTable={[Function]}
       title="User"
       toggleFilter={[Function]}
     />

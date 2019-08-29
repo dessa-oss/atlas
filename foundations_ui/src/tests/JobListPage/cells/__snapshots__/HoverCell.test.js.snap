@@ -3,6 +3,7 @@
 exports[`Shallow Renders HoverCell 1`] = `
 <div
   className="job-cell-hover"
+  onMouseLeave={[Function]}
 >
   <p />
 </div>

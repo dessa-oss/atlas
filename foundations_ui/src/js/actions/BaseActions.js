@@ -1,7 +1,7 @@
 const BaseActions = {
   baseURL: process.env.REACT_APP_API_URL,
   baseStagingURL: process.env.REACT_APP_API_STAGING_URL,
-  baseApiaryURL: process.env.REACT_APP_APIARY_URL,
+  baseApiaryURL: process.env.REACT_APP_APIARY_URL || 'http://private-d03986-iannelladessa.apiary-mock.com/api/v1/',
 
   get(url) {
     const fullURL = this.baseURL.concat(url);

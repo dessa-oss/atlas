@@ -7,16 +7,20 @@ exports[`Shallow Renders Job Table 1`] = `
   <div
     className="job-table-container"
   >
-    <JobSidebar
-      job={
-        Object {
-          "job_id": null,
-        }
-      }
-      onCloseClickHandler={[Function]}
+    <JobTableButtons
+      columns={Array []}
+      getJobs={[Function]}
+      hiddenColumns={Array []}
+      projectName=""
+      selectAllJobs={[Function]}
+      selectNoJobs={[Function]}
+      selectedJobs={Array []}
+      updateHiddenColumns={[Function]}
+      updateSearchText={[Function]}
     />
     <JobTableHeader
       allInputParams={Array []}
+      allJobsSelected={false}
       allMetrics={Array []}
       allUsers={Array []}
       boolCheckboxes={Array []}
@@ -39,9 +43,20 @@ exports[`Shallow Renders Job Table 1`] = `
       metricClass="not-metric"
       numberFilterColumn=""
       numberFilters={Array []}
+      onClickOpenModalJobDetails={[Function]}
       onDataUpdated={[Function]}
       onMetricRowClick={[Function]}
       rowNumbers={Array []}
+      selectAllJobs={[Function]}
+      selectJob={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={
+        Object {
+          "column": "",
+          "isAscending": true,
+        }
+      }
       startTimeFilters={Array []}
       statuses={Array []}
       updateBoolFilter={[Function]}

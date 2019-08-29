@@ -12,6 +12,7 @@ exports[`Shallow Renders Start Time Cell 1`] = `
     <span
       className="launch-date"
     >
+      Invalid date
        
     </span>
     <span

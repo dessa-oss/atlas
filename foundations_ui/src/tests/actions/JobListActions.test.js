@@ -829,8 +829,3 @@ it('isColumnFiltered, not filter', () => {
   const isFiltered = JobListActions.isColumnFiltered(columnFilter, nonExistingColumn);
   expect(isFiltered).toBe(false);
 });
-
-it('Redirect returns Redirect', () => {
-  const redirectOutput = JobListActions.redirect("/login");
-  expect(redirectOutput).toEqual(<Redirect push to="/login" />);
-})

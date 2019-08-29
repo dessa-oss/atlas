@@ -3,11 +3,11 @@
 exports[`Shallow Renders InputMetricCell 1`] = `
 <div
   className="job-cell row-0 key-"
+  onMouseLeave={[Function]}
 >
   <p
     className="type-"
     onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
   />
   <div />
 </div>
