@@ -19,6 +19,31 @@ class ProductionMetricSet(PropertyModel):
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _all():
-            return []
+            from foundations_orbit_rest_api.production_metrics import all_production_metrics
+
+            model_name = ProductionMetricSet.models_from_project(project_name)
+            if model_name is None:
+                return []
+
+            model_metrics = all_production_metrics(project_name, model_name)
+            metric_name = list(model_metrics.keys())[0]
+
+            metric_set = ProductionMetricSet(
+                title={'text': f'{metric_name} over time'},
+                yAxis={'title': {'text': metric_name}},
+                xAxis={'categories': []},
+                series={'data': [], 'name': model_name}
+            )
+            
+            return [metric_set]
 
         return LazyResult(_all)
+    
+    @staticmethod
+    def models_from_project(project_name):
+        from foundations_contrib.global_state import redis_connection
+        model_names = redis_connection.keys(f'projects:{project_name}:models:*:production_metrics')
+
+        if not model_names:
+            return None
+        return model_names[0].decode().split(':')[3]
