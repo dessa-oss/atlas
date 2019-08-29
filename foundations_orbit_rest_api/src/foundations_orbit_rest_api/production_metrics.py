@@ -14,7 +14,12 @@ def all_production_metrics(job_id):
     metric_name, metric_values = all_items[0]
     deserialized_metric_values = _deserialized_metric_values(metric_values)
 
-    return {metric_name.decode(): deserialized_metric_values}
+    decoded_metric_name = _decoded_metric_name(metric_name)
+
+    return {decoded_metric_name: deserialized_metric_values}
+
+def _decoded_metric_name(metric_name):
+    return metric_name.decode()
 
 def _deserialized_metric_values(metric_values):
     import pickle
