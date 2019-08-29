@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def flask_app(root_resource, predict_resource, evaluate_resource):
+def flask_app(root_resource, predict_resource, evaluate_resource, retrain_resource):
     from flask import Flask
     from flask_cors import CORS
     from flask_restful import Api
@@ -17,6 +17,7 @@ def flask_app(root_resource, predict_resource, evaluate_resource):
     api.add_resource(root_resource, '/')
     api.add_resource(predict_resource, '/predict')
     api.add_resource(evaluate_resource, '/evaluate')
+    api.add_resource(retrain_resource, '/retrain')
     # app.logger.disabled = True
 
     return app
