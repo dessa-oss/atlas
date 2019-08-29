@@ -14,9 +14,6 @@ def all_production_metrics(job_id):
     metric_name, metric_values = all_items[0]
     deserialized_metric_values = _deserialized_metric_values(metric_values)
 
-    if deserialized_metric_values:
-        deserialized_metric_values = [deserialized_metric_values[0]]
-
     return {metric_name.decode(): deserialized_metric_values}
 
 def _deserialized_metric_values(metric_values):
