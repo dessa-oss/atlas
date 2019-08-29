@@ -228,13 +228,44 @@
         }
   
         .button-add {
-          display: inline-block;
           border: solid 1px #e9ecef;
           color: grey;
-          margin-left: 20px;
           width: 20px;
           height: 20px;
           text-align: center; 
+          cursor: pointer;
+          display: inline-block;
+          margin-left: 20px;
+        }
+
+        .container-add-new-tag {
+          margin-top: 20px;
+
+          input {
+            width: 100px;
+            display: inline-block;
+            height: 20px;
+            margin-left: 10px;
+
+            &:first-child {
+              margin-left: 0px;
+            }
+
+          }
+
+          button {
+            width: 80px;
+            display: inline-block;
+            background-color: #0FA3B1;
+            font-size: 80%;
+            padding: 10px;
+            line-height: 0.5;
+            margin-left: 10px;
+
+            &:last-child {
+              background: #d84247;
+            }
+          }
         }
       }
 

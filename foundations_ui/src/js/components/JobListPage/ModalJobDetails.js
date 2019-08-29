@@ -15,54 +15,53 @@ class ModalJobDetails extends React.Component {
 
     const { job } = this.props;
 
+    console.log('JOB: ', job);
+
     this.state = {
-      tags: [
-        'LSTM',
-        'probably won\'t work',
-      ],
+      tags: [],
       tab: 'logs',
+      newTagKey: '',
+      newTagValue: '',
       timerId: -1,
+      addNewTagVisible: false,
+      job,
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
     this.onClickLogs = this.onClickLogs.bind(this);
     this.onClickArtifacts = this.onClickArtifacts.bind(this);
+    this.onChangeTagKey = this.onChangeTagKey.bind(this);
+    this.onChangeTagValue = this.onChangeTagValue.bind(this);
+    this.onClickShowAddTag = this.onClickShowAddTag.bind(this);
+    this.onClickAddNewTag = this.onClickAddNewTag.bind(this);
+    this.onClickCancelAddNewTag = this.onClickCancelAddNewTag.bind(this);
+    this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
   }
 
   reload() {
-    const { job, location } = this.props;
-
-    if (Array.isArray(job.tags)) {
-      this.setState({
-        tags: job.tags,
+    const { location } = this.props;
+    const { job } = this.state;
+    BaseActions.getFromStaging(`projects/${location.state.project.name}/job_listing`)
+      .then((result) => {
+        const filteredJob = result.jobs.find(item => item.job_id === job.job_id);
+        let newTags = [];
+        if (filteredJob.tags) {
+          if (Array.isArray(filteredJob.tags)) {
+            newTags = filteredJob.tags;
+          } else {
+            newTags = Object.keys(filteredJob.tags);
+          }
+        }
+        this.setState({
+          addNewTagVisible: false,
+          tags: newTags,
+          job: filteredJob,
+        });
       });
-    } else {
-      const tags = Object.keys(job.tags);
-      this.setState({
-        tags,
-      });
-    }
-
-    // this.setState({
-    //   tags: job.tags,
-    // });
-    // BaseActions.getFromApiary(`projects/${location.state.project.name}/jobs/${job.id}/tags`).then((result) => {
-    //   if (result) {
-    //     this.setState({
-    //       tags: job.tags,
-    //     });
-    //   }
-    // });
   }
 
   componentDidMount() {
     this.reload();
-    const value = setInterval(() => {
-      this.reload();
-    }, 4000);
-    this.setState({
-      timerId: value,
-    });
   }
 
   componentWillUnmount() {
@@ -71,16 +70,24 @@ class ModalJobDetails extends React.Component {
   }
 
   onToggleModal() {
-    const { onToggle, job } = this.props;
+    const { onToggle } = this.props;
+    const { job } = this.state;
     onToggle(job);
   }
 
-  onClickAddTag() {
-    console.log('add tag');
+  onClickShowAddTag() {
+    this.setState({
+      addNewTagVisible: true,
+    });
   }
 
-  onClickRemoveTag() {
-    console.log('remove tag');
+  onClickRemoveTag(tag) {
+    const { job } = this.state;
+    const { location } = this.props;
+    BaseActions.delStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags/${tag}`)
+      .then((result) => {
+        this.reload();
+      });
   }
 
   notifiedCopy(e) {
@@ -91,7 +98,7 @@ class ModalJobDetails extends React.Component {
     });
   }
 
-  onKeyDown() {}
+  onKeyDown() { }
 
   onClickLogs() {
     this.setState({
@@ -105,9 +112,49 @@ class ModalJobDetails extends React.Component {
     });
   }
 
+  onChangeTagKey(e) {
+    this.setState({
+      newTagKey: e.target.value,
+    });
+  }
+
+  onChangeTagValue(e) {
+    this.setState({
+      newTagValue: e.target.value,
+    });
+  }
+
+  onClickAddNewTag() {
+    const { newTagKey, newTagValue, job } = this.state;
+    const { location } = this.props;
+
+    const body = {
+      tag: {
+        key: newTagKey,
+        value: newTagValue,
+      },
+    };
+
+    BaseActions.postStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags`, body)
+      .then((result) => {
+        this.reload();
+      });
+  }
+
+  onClickCancelAddNewTag() {
+    this.setState({
+      addNewTagVisible: false,
+    });
+  }
+
   render() {
-    const { job, visible, onToggle } = this.props;
-    const { tags, tab } = this.state;
+    const { visible, onToggle } = this.props;
+    const {
+      tags,
+      tab,
+      addNewTagVisible,
+      job,
+    } = this.state;
 
     return (
       <Modal
@@ -140,11 +187,11 @@ class ModalJobDetails extends React.Component {
             </div>
             <div className="container-tags">
               {tags.map((tag) => {
-                return <Tag key={tag} value={tag} />;
+                return <Tag key={tag} value={tag} removeVisible removeTag={() => this.onClickRemoveTag(tag)} />;
               })}
               <div
                 className="button-add"
-                onClick={this.onClickAddTag}
+                onClick={this.onClickShowAddTag}
                 role="button"
                 aria-label="Add Tag"
                 onKeyDown={this.onKeyDown}
@@ -152,6 +199,15 @@ class ModalJobDetails extends React.Component {
               >
                 +
               </div>
+              {addNewTagVisible === true
+                && (
+                  <div className="container-add-new-tag">
+                    <input onChange={this.onChangeTagKey} placeholder="Tag Key" />
+                    <input onChange={this.onChangeTagValue} placeholder="Tag Value" />
+                    <button type="button" onClick={this.onClickAddNewTag}>SAVE</button>
+                    <button type="button" onClick={this.onClickCancelAddNewTag}>CANCEL</button>
+                  </div>
+                )}
             </div>
             <div className="container-tabs">
               <div>

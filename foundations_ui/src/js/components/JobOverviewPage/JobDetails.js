@@ -6,6 +6,7 @@ import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ModalJobDetails from '../JobListPage/ModalJobDetails';
+import BaseActions from '../../actions/BaseActions';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -383,6 +384,7 @@ class JobDetails extends React.Component {
             job={selectedJob}
             visible={modalJobDetailsVisible}
             onToggle={this.onToggleModalJobDetails}
+            reloadJo
           />
         )}
       </div>

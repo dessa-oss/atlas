@@ -1,20 +1,48 @@
+// .job-tag {
+  // background-color: rgb(13, 171, 126);
+  // color: white;
+  // border-radius: 3px;
+  // margin-left: 15px;
+  // padding: 5px 10px;
+  // background-size: 15px 15px;
+  // vertical-align: middle;
+// }
+
+// div.job-tag {
+//   display: inline-block;
+//   height: 17px;
+//   vertical-align: middle;
+//   position: relative;
+//   top: -1px;
+//   margin-left: 0px;
+// }
+
 .job-tag {
   background-color: rgb(13, 171, 126);
   color: white;
   border-radius: 3px;
-  margin-left: 15px;
-  padding: 5px 10px;
+  margin-left: 10px;
+  padding: 3px 10px;
   background-size: 15px 15px;
   vertical-align: middle;
-}
-
-div.job-tag {
   display: inline-block;
-  height: 17px;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-  margin-left: 0px;
+  margin-bottom: 5px;
+  line-height: normal;
+
+  &.i--icon-tf {
+    background-color: rgb(13, 171, 126);
+    padding: 8px 10px;
+  }
+  .close-button {
+    background-color: rgb(13, 171, 126);
+    border-radius: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-left: 15px;
+    margin-right: -5px;
+    margin-top: -3px;
+  }
+
 }
 
 .job-tag-ellipse {

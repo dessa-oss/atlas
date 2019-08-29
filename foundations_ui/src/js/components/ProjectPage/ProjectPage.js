@@ -12,6 +12,45 @@ const ProjectPage = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
 
+  const getTagsFromJob = (jobs) => {
+    let set = new Set();
+    jobs.forEach((job) => {
+      if (job.tags) {
+        if (Array.isArray(job.tags)) {
+          job.tags.forEach((tag) => {
+            set.add(tag);
+          });
+        } else {
+          const keys = Object.keys(job.tags);
+          keys.forEach((tag) => {
+            set.add(tag);
+          });
+        }
+      }
+    });
+    const tags = Array.from(set);
+    return tags;
+  };
+
+  const setTagsForProjects = (fetchedProjects) => {
+    let newProjects = [];
+    const promises = fetchedProjects.map((fetchedProject) => {
+      let newProject = fetchedProject;
+      return BaseActions.getFromStaging(`projects/${fetchedProject.name}/job_listing`)
+        .then((result) => {
+          if (result && result.jobs) {
+            const tags = getTagsFromJob(result.jobs);
+            newProject.tags = tags;
+            return newProject;
+          }
+        });
+    });
+
+    return Promise.all(promises).then((result) => {
+      return result;
+    });
+  };
+
   const reload = () => {
     setIsLoading(true);
 
@@ -23,9 +62,11 @@ const ProjectPage = (props) => {
 
           return dateB - dateA;
         });
-        setProjects(result);
+        setTagsForProjects(result).then((updatedProjects) => {
+          setProjects(updatedProjects);
+          setIsLoading(false);
+        });
       }
-      setIsLoading(false);
     }).catch(() => {
       setIsLoading(false);
     });

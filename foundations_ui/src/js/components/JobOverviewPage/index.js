@@ -11,7 +11,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
       tags: ['finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance',
         'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance', 'marketing', 'buck',
         'hana',
@@ -40,6 +40,7 @@ class JobOverviewPage extends Component {
 
   render() {
     const { tab, tags } = this.state;
+    const { location } = this.props;
 
     return (
       <div>
@@ -63,7 +64,7 @@ class JobOverviewPage extends Component {
                 Job Details
               </h3>
             </div>
-            <TagContainer tags={tags} />
+            <TagContainer tags={location.state.project.tags} />
           </div>
           {tab === 'overview' && <ProjectOverview {...this.props} />}
           {tab === 'details' && <JobDetails {...this.props} />}
@@ -75,11 +76,12 @@ class JobOverviewPage extends Component {
 
 JobOverviewPage.propTypes = {
   history: PropTypes.object,
-
+  location: PropTypes.object,
 };
 
 JobOverviewPage.defaultProps = {
   history: {},
+  location: { state: {} },
 };
 
 export default JobOverviewPage;
