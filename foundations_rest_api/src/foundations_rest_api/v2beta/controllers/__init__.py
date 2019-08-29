@@ -9,3 +9,4 @@ from foundations_rest_api.v2beta.controllers.jobs_controller import JobsControll
 from foundations_rest_api.v2beta.controllers.job_controller import JobController
 from foundations_rest_api.v2beta.controllers.job_tags_controller import JobTagsController
 from foundations_rest_api.v2beta.controllers.job_tag_controller import JobTagController
+from foundations_rest_api.v2beta.controllers.job_logs_controller import JobLogsController
