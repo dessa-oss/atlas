@@ -29,11 +29,14 @@ class ProductionMetricSet(PropertyModel):
 
         for model_name in model_names:                
             model_metrics = all_production_metrics(project_name, model_name)
-            
-            for metric_name, metric_pairs in model_metrics.items():
-                ProductionMetricSet._append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs)
+            ProductionMetricSet._process_model_metrics_with_model_name(intermediate_data_hierarchy, model_name, model_metrics)
 
         return list(intermediate_data_hierarchy.values())
+
+    @staticmethod
+    def _process_model_metrics_with_model_name(intermediate_data_hierarchy, model_name, model_metrics):
+        for metric_name, metric_pairs in model_metrics.items():
+            ProductionMetricSet._append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs)
 
     @staticmethod
     def _append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs):
