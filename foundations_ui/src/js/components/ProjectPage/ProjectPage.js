@@ -14,35 +14,25 @@ const ProjectPage = (props) => {
 
   const getTagsFromJob = (jobs) => {
     let set = new Set();
-    let MaxTagsReacedException = {};
-    try {
-      jobs.forEach((job) => {
-        if (job.tags) {
-          if (Array.isArray(job.tags)) {
-            let maxNumberTags = job.tags.length < 5 ? job.tags.length : 5;
-            job.tags.slice(0, maxNumberTags).forEach((tag) => {
-              set.add(tag);
-            });
-          } else {
-            const keys = Object.keys(job.tags);
-            let maxNumberTags = keys.length < 5 ? keys.length : 5;
-            keys.slice(0, maxNumberTags).forEach((tag) => {
-              set.add(tag);
-            });
-          }
-          if (set.length === 5) {
-            throw MaxTagsReacedException;
-          }
+    jobs.forEach((job) => {
+      if (job.tags) {
+        if (Array.isArray(job.tags)) {
+          job.tags.forEach((tag) => {
+            set.add(tag);
+          });
+        } else {
+          const keys = Object.keys(job.tags);
+          keys.forEach((tag) => {
+            set.add(tag);
+          });
         }
-      });
-    } catch (e) {
-      console.log(e);
-    }
+      }
+    });
     const tags = Array.from(set);
     return tags;
   };
 
-  const addTagsToProjects = (fetchedProjects) => {
+  const setTagsForProjects = (fetchedProjects) => {
     let newProjects = [];
     const promises = fetchedProjects.map((fetchedProject) => {
       let newProject = fetchedProject;
@@ -72,7 +62,7 @@ const ProjectPage = (props) => {
 
           return dateB - dateA;
         });
-        addTagsToProjects(result).then((updatedProjects) => {
+        setTagsForProjects(result).then((updatedProjects) => {
           setProjects(updatedProjects);
           setIsLoading(false);
         });
