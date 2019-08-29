@@ -18,7 +18,7 @@ def deploy(project_name, entrypoint, params):
         project_name = path.basename(os.getcwd())
 
     current_foundations_context().set_project_name(project_name)
-    config_manager['run_script_environment'] = {'script_to_run': entrypoint, 'enable_stages': False}
+    config_manager['run_script_environment'] = {'script_to_run': entrypoint or 'main.py', 'enable_stages': False}
     
     pipeline_context_wrapper = PipelineContextWrapper(current_foundations_context().pipeline_context())
 
