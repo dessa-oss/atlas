@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec.extensions import let_fake_redis
 from foundations_spec import *
 
-from foundations_rest_api.v2beta.controllers.job_tags_controller import JobTagsController
+from foundations_rest_api.v2beta.controllers.job_tag_controller import JobTagController
 
 class TestJobTagsController(Spec):
 
@@ -27,12 +27,8 @@ class TestJobTagsController(Spec):
         return self.faker.word()
 
     @let
-    def value(self):
-        return self.faker.sentence()
-
-    @let
     def controller(self):
-        return JobTagsController()
+        return JobTagController()
 
     @let
     def random_tags(self):
@@ -43,13 +39,15 @@ class TestJobTagsController(Spec):
     @set_up
     def set_up(self):
         self.patch('foundations_contrib.global_state.redis_connection', self.mock_redis)
-        self.controller.params = {'job_id': self.job_id, 'tag': {'key': self.key, 'value': self.value}}
+        self.controller.params = {'job_id': self.job_id, 'key': self.key}
         self.mock_tag_set_klass.return_when(self.mock_tag_set, self.mock_message_router, self.job_id, self.key, self.value)
 
-    def test_post_adds_a_new_tag_to_an_existing_job(self):
-        self.controller.post()
-        self.mock_tag_set.push_message.assert_called()
+    def test_delete_removes_an_existing_tag_from_the_job(self):
+        job_annotations_key = f'jobs:{self.job_id}:annotations'
+        self.mock_redis.hmset(job_annotations_key, self.random_tags)
+        self.controller.delete()
+        self.assertNotIn(self.key.encode(), self.mock_redis.hgetall(job_annotations_key))
 
-    def test_post_returns_a_confirmation_message(self):
-        expected_result = f'Tag key: {self.key}, value: {self.value} created for job {self.job_id}'
-        self.assertEqual(expected_result, self.controller.post().as_json())
+    def test_delete_returns_a_confirmation_message(self):
+        expected_result = f'Tag key: {self.key} deleted from job {self.job_id}'
+        self.assertEqual(expected_result, self.controller.delete().as_json())

@@ -90,6 +90,17 @@ class TestAPIResource(Spec):
             response = client.post(self.uri_path, data={'password': 'world'})
             self.assertEqual(self._json_response(response), {'password': 'world'})
 
+    def test_post_sets_json(self):
+        def _callback(mock_instance):
+            return mock_instance.params
+
+        mock_klass = self._mock_resource('post', _callback)
+
+        klass = api_resource(self.uri_path)(mock_klass)
+        with self._test_client() as client:
+            response = client.post(self.uri_path, json={'password': 'world'})
+            self.assertEqual(self._json_response(response), {'password': 'world'})
+
     def test_post_sets_params_different_params(self):
         def _callback(mock_instance):
             return mock_instance.params
@@ -177,6 +188,12 @@ class TestAPIResource(Spec):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:
             response = client.get('/path/to/resource/with/value/params')
+            self.assertEqual(self._json_response(response), {'project_name': 'value'})
+
+    def test_post_returns_path_param(self):
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithPost)
+        with self._test_client() as client:
+            response = client.post('/path/to/resource/with/value/params')
             self.assertEqual(self._json_response(response), {'project_name': 'value'})
 
     def test_get_returns_path_with_query_params(self):
