@@ -11,9 +11,12 @@ class JobOverviewGraph extends Component {
       metric: this.props.metric,
       graphData: this.props.graphData,
       formattedGraphData: [],
+      allMetrics: this.props.allMetrics,
+      setMetric: this.props.setMetric,
     };
 
     this.formatGraphData = this.formatGraphData.bind(this);
+    this.onChangeMetric = this.onChangeMetric.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +31,7 @@ class JobOverviewGraph extends Component {
       await this.setState({ graphData: nextProps.graphData });
       await this.formatGraphData();
     }
+    this.setState({ allMetrics: nextProps.allMetrics });
   }
 
   formatGraphData() {
@@ -47,21 +51,19 @@ class JobOverviewGraph extends Component {
     ]
     */
     let seriesArray = [];
-    graphCopy.forEach((graph) => {
-      let seriesObject = {};
-      seriesObject.showInLegend = false;
-      graph.forEach((dataPoint) => {
-        // Make sure the types are as we expect
-        if (Array.isArray(dataPoint) && dataPoint.length > 1) {
-          let curDate = dataPoint[0];
-          if (typeof (curDate.GetYear) === 'function') {
-            dataPoint[0] = Date.UTC(curDate.GetYear(), curDate.GetMonth(), curDate.GetDay());
-          }
+    let seriesObject = {};
+    seriesObject.showInLegend = false;
+    graphCopy.forEach((dataPoint) => {
+      // Make sure the types are as we expect
+      if (Array.isArray(dataPoint) && dataPoint.length > 1) {
+        let curDate = dataPoint[0];
+        if (typeof (curDate.GetYear) === 'function') {
+          dataPoint[0] = Date.UTC(curDate.GetYear(), curDate.GetMonth(), curDate.GetDay());
         }
-      });
-      seriesObject.data = graph;
-      seriesArray.push(seriesObject);
+      }
     });
+    seriesObject.data = graphCopy;
+    seriesArray.push(seriesObject);
 
     if (seriesArray.length === 0) {
       seriesArray = [{ showInLegend: false, data: {} }];
@@ -70,8 +72,14 @@ class JobOverviewGraph extends Component {
     this.setState({ formattedGraphData: seriesArray });
   }
 
+  onChangeMetric(e) {
+    const { setMetric } = this.state;
+    const metric = e.target.value;
+    setMetric(metric);
+  }
+
   render() {
-    const { metric, formattedGraphData } = this.state;
+    const { metric, formattedGraphData, allMetrics } = this.state;
 
     const options = {
       chart: {
@@ -101,19 +109,18 @@ class JobOverviewGraph extends Component {
       series: formattedGraphData,
     };
 
+    const metrics = [];
+    metrics.push(<option key="Metrics" selected disabled hidden>Metrics</option>);
+    allMetrics.forEach((metricName) => {
+      metrics.push(<option key={metricName}>{metricName}</option>);
+    });
+
     return (
       <div>
         <h3 className="section-title">Recent Jobs</h3>
         <div className="chart section-container">
-          <select>
-            <option selected="selected">
-              Metrics
-            </option>
-          </select>
-          <select>
-            <option selected="selected">
-              Sort by
-            </option>
+          <select onChange={this.onChangeMetric}>
+            {metrics}
           </select>
           <div className="highchart-chart">
             <HighchartsReact highcharts={Highcharts} options={options} />
@@ -127,10 +134,12 @@ class JobOverviewGraph extends Component {
 JobOverviewGraph.propTypes = {
   metric: PropTypes.string,
   graphData: PropTypes.array,
+  allMetrics: PropTypes.array,
+  setMetric: PropTypes.func,
 };
 
 JobOverviewGraph.defaultProps = {
-  metric: 'metric',
+  metric: '',
   graphData: [
     [
       [Date.UTC(2019, 1, 1), 9], [Date.UTC(2019, 2, 1), 7], [Date.UTC(2019, 4, 1), 7],
@@ -151,6 +160,8 @@ JobOverviewGraph.defaultProps = {
       [Date.UTC(2019, 10, 1), 9], [Date.UTC(2019, 11, 1), 4], [Date.UTC(2019, 12, 1), 1],
     ],
   ],
+  allMetrics: [],
+  setMetric: () => {},
 };
 
 export default JobOverviewGraph;

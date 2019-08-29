@@ -61,6 +61,7 @@ class JobTableButtons extends Component {
     window.open('https://www.google.ca', '_blank');
   }
 
+
   render() {
     const {
       isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns,

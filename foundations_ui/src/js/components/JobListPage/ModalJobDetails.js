@@ -31,7 +31,6 @@ class ModalJobDetails extends React.Component {
 
   reload() {
     const { job, location } = this.props;
-    console.log(job);
 
     if (Array.isArray(job.tags)) {
       this.setState({
