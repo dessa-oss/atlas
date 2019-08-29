@@ -5,10 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import os
+from foundations_spec import *
 
-os.environ['TZ'] = 'EST'
+from foundations_orbit_rest_api.production_metrics import all_production_metrics
 
-from test.test_global_state import TestGlobalState
-from test.test_production_metrics import TestProductionMetrics
-from test.v1 import *
+class TestProductionMetrics(Spec):
+    pass
