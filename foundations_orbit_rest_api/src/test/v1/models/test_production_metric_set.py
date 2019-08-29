@@ -70,6 +70,30 @@ class TestProductionMetricSet(Spec):
 
         return series
 
+    @let
+    def metric_name(self):
+        return self.faker.word()
+
+    @let
+    def metric_column(self):
+        return self.faker.word()
+
+    @let
+    def metric_value(self):
+        return self.faker.random.random()
+
+    @let
+    def metric_name_2(self):
+        return self.faker.word()
+
+    @let
+    def metric_column_2(self):
+        return self.faker.word()
+
+    @let
+    def metric_value_2(self):
+        return self.faker.random.random()
+
     def test_has_title(self):
         model = ProductionMetricSet(title=self.title)
         self.assertEqual(self.title, model.title)
@@ -89,3 +113,24 @@ class TestProductionMetricSet(Spec):
     def test_all_returns_promise_with_empty_list_if_no_metrics_logged(self):
         promise = ProductionMetricSet.all(self.project_name)
         self.assertEqual([], promise.evaluate())
+
+    def test_all_returns_promise_with_singleton_list_containing_one_empty_metric_set_if_metric_logged_with_no_values(self):
+        from foundations_orbit import track_production_metrics
+
+        self.maxDiff = None
+
+        self.environ['PROJECT_NAME'] = self.project_name
+        self.environ['MODEL_NAME'] = self.model_name
+
+        track_production_metrics(self.metric_name, {})
+
+        promise = ProductionMetricSet.all(self.project_name)
+
+        expected_metric_set = ProductionMetricSet(
+            title={'text': f'{self.metric_name} over time'},
+            yAxis={'title': {'text': self.metric_name}},
+            xAxis={'categories': []},
+            series={'data': [], 'name': self.model_name}
+        )
+
+        self.assertEqual([expected_metric_set], promise.evaluate())
