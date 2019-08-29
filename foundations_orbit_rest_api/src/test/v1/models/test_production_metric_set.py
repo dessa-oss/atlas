@@ -151,3 +151,22 @@ class TestProductionMetricSet(Spec):
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
+
+    def test_all_returns_promise_with_singleton_list_containing_metric_set_if_metric_logged_with_multiple_key_value_pairs(self):
+        from foundations_orbit import track_production_metrics
+
+        self.environ['PROJECT_NAME'] = self.project_name
+        self.environ['MODEL_NAME'] = self.model_name
+
+        track_production_metrics(self.metric_name, {self.metric_column: self.metric_value, self.metric_column_2: self.metric_value_2})
+
+        promise = ProductionMetricSet.all(self.project_name)
+
+        expected_metric_set = ProductionMetricSet(
+            title={'text': f'{self.metric_name} over time'},
+            yAxis={'title': {'text': self.metric_name}},
+            xAxis={'categories': [self.metric_column, self.metric_column_2]},
+            series=[{'data': [self.metric_value, self.metric_value_2], 'name': self.model_name}]
+        )
+
+        self.assertEqual([expected_metric_set], promise.evaluate())

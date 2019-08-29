@@ -31,8 +31,7 @@ class ProductionMetricSet(PropertyModel):
             metric_columns = []
             metric_values = []
             
-            if metric_pairs:
-                metric_column, metric_value = metric_pairs[0]
+            for metric_column, metric_value in metric_pairs:
                 metric_columns.append(metric_column)
                 metric_values.append(metric_value)
 
