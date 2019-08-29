@@ -83,6 +83,10 @@ class TestJobSubmissionDeployment(Spec):
         deploy(self.project_name, self.entrypoint, self.params)
         self.assertEqual({'script_to_run': self.entrypoint, 'enable_stages': False}, self.config_manager['run_script_environment'])
 
+    def test_defaults_entrypoint_to_main(self):
+        deploy(self.project_name, None, self.params)
+        self.assertEqual({'script_to_run': 'main.py', 'enable_stages': False}, self.config_manager['run_script_environment'])
+
     def test_writes_params_as_json_to_file(self):
         import json
 
