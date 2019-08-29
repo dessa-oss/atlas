@@ -111,18 +111,23 @@
         text-align: right;
   
         button {
-          @extend .f--din-pro-bold;
-          border-width: 0;
-          outline: none;
           width: 20px;
           height: 20px;
-          line-height: 10px;
-          letter-spacing: normal;
-          text-transform: uppercase;
-          text-align: center;
-          font-size: 12px;
-          color: white;
           background-color: $color-negation-blue;
+          position: relative;
+
+          span {
+            font-size: 21px;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            righT: 0;
+            bottom: 0;
+            margin: auto;
+            line-height: 15px;
+          }
         }
       }
     }
