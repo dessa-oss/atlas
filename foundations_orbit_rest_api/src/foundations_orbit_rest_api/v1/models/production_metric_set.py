@@ -17,29 +17,29 @@ class ProductionMetricSet(PropertyModel):
     @staticmethod
     def all(project_name):
         from foundations_core_rest_api_components.lazy_result import LazyResult
-
-        def _all():
-            from foundations_orbit_rest_api.production_metrics import all_production_metrics
-
-            model_names = ProductionMetricSet._models_from_project(project_name)
-            
-            intermediate_data_hierarchy = {}
-
-            for model_name in model_names:                
-                model_metrics = all_production_metrics(project_name, model_name)
-                
-                for metric_name, metric_pairs in model_metrics.items():
-                    metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
-
-                    if metric_name not in intermediate_data_hierarchy:
-                        intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
-
-                    intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
-
-            return list(intermediate_data_hierarchy.values())
-
-        return LazyResult(_all)
+        return LazyResult(lambda: ProductionMetricSet._all_internal(project_name))
     
+    @staticmethod
+    def _all_internal(project_name):
+        from foundations_orbit_rest_api.production_metrics import all_production_metrics
+
+        model_names = ProductionMetricSet._models_from_project(project_name)
+        
+        intermediate_data_hierarchy = {}
+
+        for model_name in model_names:                
+            model_metrics = all_production_metrics(project_name, model_name)
+            
+            for metric_name, metric_pairs in model_metrics.items():
+                metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
+
+                if metric_name not in intermediate_data_hierarchy:
+                    intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
+
+                intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
+
+        return list(intermediate_data_hierarchy.values())
+
     @staticmethod
     def _models_from_project(project_name):
         from foundations_contrib.global_state import redis_connection
