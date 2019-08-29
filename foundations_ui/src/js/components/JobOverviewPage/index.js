@@ -11,7 +11,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
       tags: ['finance', 'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance',
         'marketing', 'buck', 'hana', 'lou', 'mama', 'DL', 'banking', 'regression', 'finance', 'marketing', 'buck',
         'hana',

@@ -20,7 +20,8 @@ class ModalJobDetails extends React.Component {
     this.state = {
       tags: [],
       tab: 'logs',
-      newTag: '',
+      newTagKey: '',
+      newTagValue: '',
       timerId: -1,
       addNewTagVisible: false,
       job,
@@ -29,10 +30,12 @@ class ModalJobDetails extends React.Component {
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
     this.onClickLogs = this.onClickLogs.bind(this);
     this.onClickArtifacts = this.onClickArtifacts.bind(this);
-    this.onChangeTagName = this.onChangeTagName.bind(this);
+    this.onChangeTagKey = this.onChangeTagKey.bind(this);
+    this.onChangeTagValue = this.onChangeTagValue.bind(this);
     this.onClickShowAddTag = this.onClickShowAddTag.bind(this);
     this.onClickAddNewTag = this.onClickAddNewTag.bind(this);
     this.onClickCancelAddNewTag = this.onClickCancelAddNewTag.bind(this);
+    this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
   }
 
   reload() {
@@ -78,8 +81,13 @@ class ModalJobDetails extends React.Component {
     });
   }
 
-  onClickRemoveTag() {
-    console.log('remove tag');
+  onClickRemoveTag(tag) {
+    const { job } = this.state;
+    const { location } = this.props;
+    BaseActions.delStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags/${tag}`)
+      .then((result) => {
+        this.reload();
+      });
   }
 
   notifiedCopy(e) {
@@ -104,16 +112,30 @@ class ModalJobDetails extends React.Component {
     });
   }
 
-  onChangeTagName(e) {
+  onChangeTagKey(e) {
     this.setState({
-      newTag: e.target.value,
+      newTagKey: e.target.value,
+    });
+  }
+
+  onChangeTagValue(e) {
+    this.setState({
+      newTagValue: e.target.value,
     });
   }
 
   onClickAddNewTag() {
-    const { newTag, job } = this.state;
+    const { newTagKey, newTagValue, job } = this.state;
     const { location } = this.props;
-    BaseActions.postApiary(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags`)
+
+    const body = {
+      tag: {
+        key: newTagKey,
+        value: newTagValue,
+      },
+    };
+
+    BaseActions.postStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags`, body)
       .then((result) => {
         this.reload();
       });
@@ -165,7 +187,7 @@ class ModalJobDetails extends React.Component {
             </div>
             <div className="container-tags">
               {tags.map((tag) => {
-                return <Tag key={tag} value={tag} />;
+                return <Tag key={tag} value={tag} removeVisible removeTag={() => this.onClickRemoveTag(tag)} />;
               })}
               <div
                 className="button-add"
@@ -180,7 +202,8 @@ class ModalJobDetails extends React.Component {
               {addNewTagVisible === true
                 && (
                   <div className="container-add-new-tag">
-                    <input onChange={this.onChangeTagName} placeholder="Insert tag" />
+                    <input onChange={this.onChangeTagKey} placeholder="Tag Key" />
+                    <input onChange={this.onChangeTagValue} placeholder="Tag Value" />
                     <button type="button" onClick={this.onClickAddNewTag}>SAVE</button>
                     <button type="button" onClick={this.onClickCancelAddNewTag}>CANCEL</button>
                   </div>

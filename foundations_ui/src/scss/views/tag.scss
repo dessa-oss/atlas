@@ -22,7 +22,7 @@
   color: white;
   border-radius: 3px;
   margin-left: 10px;
-  padding: 3px 0px 3px 10px;
+  padding: 3px 10px;
   background-size: 15px 15px;
   vertical-align: middle;
   display: inline-block;
@@ -33,13 +33,13 @@
     background-color: rgb(13, 171, 126);
     padding: 8px 10px;
   }
-
   .close-button {
     background-color: rgb(13, 171, 126);
     border-radius: 0px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
     margin-left: 15px;
+    margin-right: -5px;
     margin-top: -3px;
   }
 
