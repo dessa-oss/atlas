@@ -10,9 +10,16 @@ def _check_if_in_cli():
     import os
     import os.path
 
+    in_run_py = False
+    in_unit_test = False
     for line in traceback.format_stack():
         if 'runpy.py' in line:
-            os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+            in_run_py = True
+        elif 'unittest' in line:
+            in_unit_test = True
+
+    if in_run_py and not in_unit_test:
+        os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
 _check_if_in_cli()
 
