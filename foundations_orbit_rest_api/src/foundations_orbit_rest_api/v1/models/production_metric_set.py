@@ -34,10 +34,9 @@ class ProductionMetricSet(PropertyModel):
             for metric_name, metric_pairs in model_metrics.items():
                 metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
                 metric_set = ProductionMetricSet._metric_set_from_simple_metric_information(
-                    model_name,
                     metric_name,
                     metric_columns,
-                    metric_values
+                    [{'data': metric_values, 'name': model_name}]
                 )
 
                 metric_sets.append(metric_set)
@@ -58,12 +57,12 @@ class ProductionMetricSet(PropertyModel):
         return key.decode().split(':')[3]
 
     @staticmethod
-    def _metric_set_from_simple_metric_information(model_name, metric_name, metric_columns, metric_values):
+    def _metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series):
         return ProductionMetricSet(
             title={'text': f'{metric_name} over time'},
             yAxis={'title': {'text': metric_name}},
             xAxis={'categories': metric_columns},
-            series=[{'data': metric_values, 'name': model_name}]
+            series=metric_series
         )
 
     @staticmethod
