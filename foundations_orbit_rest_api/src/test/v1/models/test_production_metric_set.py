@@ -128,7 +128,7 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'categories': []},
-            series={'data': [], 'name': self.model_name}
+            series=[{'data': [], 'name': self.model_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -147,7 +147,7 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'categories': [self.metric_column]},
-            series={'data': [self.metric_value], 'name': self.model_name}
+            series=[{'data': [self.metric_value], 'name': self.model_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
