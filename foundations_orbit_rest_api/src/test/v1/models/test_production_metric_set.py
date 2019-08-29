@@ -50,4 +50,14 @@ class TestProductionMetricSet(Spec):
         model = ProductionMetricSet(title=self.title)
         self.assertEqual(self.title, model.title)
 
+    def test_has_y_axis(self):
+        model = ProductionMetricSet(yAxis=self.yAxis)
+        self.assertEqual(self.yAxis, model.yAxis)
     
+    def test_has_x_axis(self):
+        model = ProductionMetricSet(xAxis=self.xAxis)
+        self.assertEqual(self.xAxis, model.xAxis)
+    
+    def test_has_series(self):
+        model = ProductionMetricSet(series=self.series)
+        self.assertEqual(self.series, model.series)

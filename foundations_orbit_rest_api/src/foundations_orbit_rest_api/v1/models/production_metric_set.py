@@ -9,3 +9,6 @@ from foundations_core_rest_api_components.common.models.property_model import Pr
 
 class ProductionMetricSet(PropertyModel):
     title = PropertyModel.define_property()
+    yAxis = PropertyModel.define_property()
+    xAxis = PropertyModel.define_property()
+    series = PropertyModel.define_property()
