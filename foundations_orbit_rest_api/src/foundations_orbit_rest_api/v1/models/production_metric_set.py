@@ -5,5 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_model import TestModel
-from .test_production_metric_set import TestProductionMetricSet
+from foundations_core_rest_api_components.common.models.property_model import PropertyModel
+
+class ProductionMetricSet(PropertyModel):
+    title = PropertyModel.define_property()
