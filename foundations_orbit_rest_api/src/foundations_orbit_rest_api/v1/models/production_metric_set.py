@@ -21,9 +21,11 @@ class ProductionMetricSet(PropertyModel):
         def _all():
             from foundations_orbit_rest_api.production_metrics import all_production_metrics
 
-            model_name = ProductionMetricSet._models_from_project(project_name)
-            if model_name is None:
+            model_names = ProductionMetricSet._models_from_project(project_name)
+            if not model_names:
                 return []
+
+            model_name = model_names[0]
 
             model_metrics = all_production_metrics(project_name, model_name)
 
@@ -47,11 +49,13 @@ class ProductionMetricSet(PropertyModel):
     @staticmethod
     def _models_from_project(project_name):
         from foundations_contrib.global_state import redis_connection
+        
         model_names = redis_connection.keys(f'projects:{project_name}:models:*:production_metrics')
+        return list(map(ProductionMetricSet._model_name_from_redis_key, model_names))
 
-        if not model_names:
-            return None
-        return model_names[0].decode().split(':')[3]
+    @staticmethod
+    def _model_name_from_redis_key(key):
+        return key.decode().split(':')[3]
 
     @staticmethod
     def _metric_set_from_simple_metric_information(model_name, metric_name, metric_columns, metric_values):
