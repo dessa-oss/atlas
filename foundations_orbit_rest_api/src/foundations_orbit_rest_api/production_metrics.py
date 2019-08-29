@@ -5,18 +5,9 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-def all_production_metrics(job_id):
-    all_items = _serialized_items_from_redis(_redis_key())
-    
-    if not all_items:
-        return {}
-    
-    metric_name, metric_values = all_items[0]
-    deserialized_metric_values = _deserialized_metric_values(metric_values)
-
-    decoded_metric_name = _decoded_metric_name(metric_name)
-
-    return {decoded_metric_name: deserialized_metric_values}
+def all_production_metrics(project_name, model_name):
+    all_items = _serialized_items_from_redis(_redis_key(project_name, model_name))
+    return {_decoded_metric_name(metric_name): _deserialized_metric_values(metric_values) for metric_name, metric_values in all_items}
 
 def _decoded_metric_name(metric_name):
     return metric_name.decode()
@@ -30,7 +21,5 @@ def _serialized_items_from_redis(key):
     items_iterator = redis_connection.hgetall(key).items()
     return list(items_iterator)
 
-def _redis_key():
-    import os
-    job_id = os.environ['JOB_ID']
-    return f'models:{job_id}:production_metrics'
+def _redis_key(project_name, model_name):
+    return f'projects:{project_name}:models:{model_name}:production_metrics'

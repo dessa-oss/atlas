@@ -7,36 +7,127 @@
 
   .container-recalibration-properties {
     margin-top: 60px;
+    background: #D3D3D3;
+    border-radius: 4px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .recalibrate-property-container {
     width: 100%;
 
+    &:last-child {
+      margin-top: 10px;
+    }
+
     .recalibrate-label-date {
       display: inline-block;
       width: 100px;
+      font-family: DINProBold, Arial, sans-serif;
+      margin-left: 20px;
+
+      &.label-parameters {
+        vertical-align: top;
+        margin-top: 0px;
+      }
     }
 
     .recalibrate-container-date {
       display: inline-block;
-      margin-left: 20px;
       font-size: 12px;
+      width: 70%;
 
       input {
-        width: 200px;
+        width: 100%;
       }
 
       input::placeholder {
         font-size: 12px;
         margin-left: 10px;
+        @extend .f--din-pro;
+        font-style: oblique;
       }
 
       &.input {
-        width: 185px;
+        width: 68.5%;
         height: 22px;
         padding-left: 9px;
       }
     }
+
+    .table-parameters {
+      display: inline-block;
+      background: white;
+      width: 70%;
+
+      .container-parameter-row {
+        width: 100%;
+        border-bottom: solid 1px #d3d3d3;
+
+        &:last-child {
+          border-bottom: 0px;
+        }
+
+        .parameter {
+          display: inline-block;
+          width: 46%;
+          padding: 10px;
+
+          &:last-child {
+            border-left: solid 1px #d3d3d3;
+          }
+  
+          p {
+            margin-left: 10px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+  
+            &.parameter-header {
+              font-family: DINProBold, Arial, sans-serif;
+            }
+          }
+
+          input {
+            margin-left: 10px;
+            border: none;
+            @extend .f--din-pro;
+            font-size: 12px;
+          }
+
+          input::placeholder {
+            font-size: 12px;
+            margin-left: 20px;
+            @extend .f--din-pro;
+            font-style: oblique;
+          }
+        }
+      }
+
+      .container-add {
+        width: 100%;
+        display: inline-block;
+        background: #D3D3D3;
+        padding-top: 10px;
+        text-align: right;
+  
+        button {
+          @extend .f--din-pro-bold;
+          border-width: 0;
+          outline: none;
+          width: 20px;
+          height: 20px;
+          line-height: 10px;
+          letter-spacing: normal;
+          text-transform: uppercase;
+          text-align: center;
+          font-size: 12px;
+          color: white;
+          background-color: $color-negation-blue;
+        }
+      }
+    }
+
+    
   }
 }
 

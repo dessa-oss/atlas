@@ -19,8 +19,12 @@ class TestTrackProductionMetrics(Spec):
         return self.patch('os.environ', {})
 
     @let
-    def job_id(self):
+    def model_name(self):
         return self.faker.uuid4()
+
+    @let
+    def project_name(self):
+        return self.faker.word()
 
     @let
     def metric_name(self):
@@ -44,7 +48,8 @@ class TestTrackProductionMetrics(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_environment['JOB_ID'] = self.job_id
+        self.mock_environment['MODEL_NAME'] = self.model_name
+        self.mock_environment['PROJECT_NAME'] = self.project_name
 
     @tear_down
     def tear_down(self):
@@ -55,13 +60,21 @@ class TestTrackProductionMetrics(Spec):
         production_metrics = self._retrieve_tracked_metrics()
         self.assertEqual({self.metric_name: []}, production_metrics)
 
-    def test_track_production_metrics_with_nonexistent_job_id_throws_exception(self):
-        self.mock_environment['JOB_ID'] = ''
+    def test_track_production_metrics_with_nonexistent_model_name_throws_exception(self):
+        self.mock_environment['MODEL_NAME'] = ''
     
         with self.assertRaises(RuntimeError) as error_context:
             track_production_metrics(self.metric_name, {})
         
-        self.assertIn('Job ID not set', error_context.exception.args)
+        self.assertIn('Model name not set', error_context.exception.args)
+
+    def test_track_production_metrics_with_nonexistent_project_name_throws_exception(self):
+        self.mock_environment['PROJECT_NAME'] = ''
+    
+        with self.assertRaises(RuntimeError) as error_context:
+            track_production_metrics(self.metric_name, {})
+        
+        self.assertIn('Project name not set', error_context.exception.args)
 
     def test_track_production_metrics_can_log_a_metric(self):
         track_production_metrics(self.metric_name, {self.column_name: self.column_value})
@@ -92,6 +105,6 @@ class TestTrackProductionMetrics(Spec):
         self.assertEqual(expected_metrics, production_metrics)   
 
     def _retrieve_tracked_metrics(self):
-        production_metrics_from_redis = self.mock_redis.hgetall(f'models:{self.job_id}:production_metrics')
+        production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
         return {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 

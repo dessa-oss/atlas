@@ -23,6 +23,8 @@ spec:
         env:
           - name: JOB_ID
             value: "${project_name}-${model_name}"
+          - name: MODEL_NAME
+            value: "${model_name}"
           - name: PROJECT_NAME
             value: "${project_name}"
         # resources:
