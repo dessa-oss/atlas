@@ -14,7 +14,8 @@ class Tag extends React.Component {
     const { value } = this.state;
 
     return (
-      value === 'tf' ? <div className="job-tag i--icon-tf" /> : <span className="job-tag">{value}</span>
+      value === 'tf' ? <div className="job-tag i--icon-tf" />
+        : <div className="job-tag">{value}<div className="close-button" /></div>
     );
   }
 }
