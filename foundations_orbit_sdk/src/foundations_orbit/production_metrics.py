@@ -6,10 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def track_production_metrics(metric_name, metric_values):
-    try:
-        _track_production_metrics_for_job(_redis_key(), metric_name, metric_values)
-    except ValueError:
-        raise RuntimeError('Job ID not set')
+    _track_production_metrics_for_job(_redis_key(), metric_name, metric_values)
 
 def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
     import pickle
@@ -38,8 +35,12 @@ def _existing_metrics_from_redis(redis_key, metric_name):
 def _redis_key():
     import os
 
-    job_id = os.environ['JOB_ID']
+    model_name = os.environ['MODEL_NAME']
+    project_name = os.environ['PROJECT_NAME']
 
-    if not job_id:
-        raise ValueError()
-    return f'models:{job_id}:production_metrics'
+    if not model_name:
+        raise RuntimeError('Model name not set')
+    if not project_name:
+        raise RuntimeError('Project name not set')
+    
+    return f'projects:{project_name}:models:{model_name}:production_metrics'
