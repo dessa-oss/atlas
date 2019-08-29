@@ -31,14 +31,18 @@ class ProductionMetricSet(PropertyModel):
             model_metrics = all_production_metrics(project_name, model_name)
             
             for metric_name, metric_pairs in model_metrics.items():
-                metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
-
-                if metric_name not in intermediate_data_hierarchy:
-                    intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
-
-                intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
+                ProductionMetricSet._append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs)
 
         return list(intermediate_data_hierarchy.values())
+
+    @staticmethod
+    def _append_to_metric_set_series(intermediate_data_hierarchy, metric_name, model_name, metric_pairs):
+        metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
+
+        if metric_name not in intermediate_data_hierarchy:
+            intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
+
+        intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
 
     @staticmethod
     def _models_from_project(project_name):
