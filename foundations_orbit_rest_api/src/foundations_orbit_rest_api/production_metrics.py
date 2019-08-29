@@ -11,9 +11,15 @@ def _redis_key():
     return f'models:{job_id}:production_metrics'
 
 def all_production_metrics(job_id):
+    import pickle
     from foundations_contrib.global_state import redis_connection
     all_items = list(redis_connection.hgetall(_redis_key()).items())
     if not all_items:
         return {}
     metric_name, metric_values = all_items[0]
-    return {metric_name.decode(): []}
+    deserialized_metric_values = pickle.loads(metric_values)
+
+    if deserialized_metric_values:
+        deserialized_metric_values = [deserialized_metric_values[0]]
+
+    return {metric_name.decode(): deserialized_metric_values}
