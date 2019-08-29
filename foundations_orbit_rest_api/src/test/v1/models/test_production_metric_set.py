@@ -11,6 +11,30 @@ from foundations_orbit_rest_api.v1.models.production_metric_set import Productio
 
 class TestProductionMetricSet(Spec):
 
+    @let_now
+    def redis_connection(self):
+        import fakeredis
+        return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
+    @let_now
+    def environ(self):
+        fake_environ = {}
+        fake_environ['MODEL_NAME'] = self.model_name
+        fake_environ['PROJECT_NAME'] = self.project_name
+        return self.patch('os.environ', fake_environ)
+
+    @tear_down
+    def tear_down(self):
+        self.redis_connection.flushall()
+
+    @let
+    def model_name(self):
+        return self.faker.uuid4()
+
+    @let
+    def project_name(self):
+        return self.faker.word()
+
     @let
     def yAxisName(self):
         return self.faker.word()
@@ -61,3 +85,7 @@ class TestProductionMetricSet(Spec):
     def test_has_series(self):
         model = ProductionMetricSet(series=self.series)
         self.assertEqual(self.series, model.series)
+
+    def test_all_returns_promise_with_empty_list_if_no_metrics_logged(self):
+        promise = ProductionMetricSet.all(self.project_name)
+        self.assertEqual([], promise.evaluate())
