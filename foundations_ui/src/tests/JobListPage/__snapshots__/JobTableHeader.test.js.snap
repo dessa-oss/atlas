@@ -14,7 +14,7 @@ exports[`Shallow Renders Job Table Header 1`] = `
       allInputParams={
         Array [
           Object {
-            "name": "",
+            "name": "SelectAllCheckboxes",
             "type": "string",
           },
           Object {
@@ -22,11 +22,11 @@ exports[`Shallow Renders Job Table Header 1`] = `
             "type": "string",
           },
           Object {
-            "name": "Launched At",
+            "name": "Status",
             "type": "string",
           },
           Object {
-            "name": "Status",
+            "name": "Launched",
             "type": "string",
           },
           Object {
@@ -37,8 +37,13 @@ exports[`Shallow Renders Job Table Header 1`] = `
             "name": "User",
             "type": "string",
           },
+          Object {
+            "name": "Tags",
+            "type": "string",
+          },
         ]
       }
+      allJobsSelected={false}
       cellWidths={Array []}
       filters={Array []}
       header="Job Details"
@@ -46,12 +51,18 @@ exports[`Shallow Renders Job Table Header 1`] = `
       isMetaData={true}
       isMetric={true}
       jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
       onMetricRowClick={[Function]}
       searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
       toggleNumberFilter={[Function]}
     />
     <InputMetric
       allInputParams={Array []}
+      allJobsSelected={false}
       cellWidths={Array []}
       filters={Array []}
       header="Parameters"
@@ -59,12 +70,18 @@ exports[`Shallow Renders Job Table Header 1`] = `
       isMetaData={false}
       isMetric={false}
       jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
       onMetricRowClick={[Function]}
       searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
       toggleNumberFilter={[Function]}
     />
     <InputMetric
       allInputParams={Array []}
+      allJobsSelected={false}
       cellWidths={Array []}
       filters={Array []}
       header="Metrics"
@@ -72,9 +89,18 @@ exports[`Shallow Renders Job Table Header 1`] = `
       isMetaData={false}
       isMetric={true}
       jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
       onMetricRowClick={[Function]}
       searchText=""
+      selectAllJobs={[Function]}
+      selectedJobs={Array []}
+      sortTable={[Function]}
+      sortedColumn={Object {}}
       toggleNumberFilter={[Function]}
+    />
+    <PopUpRows
+      jobs={Array []}
+      onClickOpenModalJobDetails={[Function]}
     />
   </div>
 </ScrollSync>
