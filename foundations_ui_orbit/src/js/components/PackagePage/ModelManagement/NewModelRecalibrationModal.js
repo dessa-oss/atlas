@@ -18,15 +18,11 @@ const NewModelRecalibrationModal = props => {
   const [parameters, setParameters] = React.useState([
     {
       key: "",
-      value: "",
-      placeholder_key: "start_date",
-      placeholder_value: "yyyy-mm-dd"
+      value: ""
     },
     {
       key: "",
-      value: "",
-      placeholder_key: "end_date",
-      placeholder_value: "yyyy-mm-dd"
+      value: ""
     }
   ]);
   const [updatedParameters, setUpdatedParameters] = React.useState([
@@ -106,18 +102,11 @@ const NewModelRecalibrationModal = props => {
   const onClickAddNewParameter = () => {
     const newParameter = {
       key: "",
-      value: "",
-      placeholder_key: "",
-      placeholder_value: ""
-    };
-
-    const newUpdatedParameter = {
-      key: "",
       value: ""
     };
 
     setParameters(prevParameters => [...prevParameters, newParameter]);
-    setUpdatedParameters(prevUpdatedParameters => [...prevUpdatedParameters, newUpdatedParameter]);
+    setUpdatedParameters(prevUpdatedParameters => [...prevUpdatedParameters, newParameter]);
   };
 
 
@@ -299,17 +288,13 @@ const NewModelRecalibrationModal = props => {
                       <div key={parameter.key} className="container-parameter-row">
                         <div className="parameter">
                           <input
-                            placeholder={parameter.placeholder_key === ""
-                              ? "Specify Parameter Key"
-                              : parameter.placeholder_key}
+                            placeholder="Specify Parameter Key"
                             onChange={e => onChangeParameterKey(e, i)}
                           />
                         </div>
                         <div className="parameter">
                           <input
-                            placeholder={parameter.placeholder_value === ""
-                              ? "Specify Parameter Value"
-                              : parameter.placeholder_value}
+                            placeholder="Specify Parameter Value"
                             onChange={e => onChangeParameterValue(e, i)}
                           />
                         </div>
