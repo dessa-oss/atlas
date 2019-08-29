@@ -26,18 +26,21 @@ class ProductionMetricSet(PropertyModel):
                 return []
 
             model_metrics = all_production_metrics(project_name, model_name)
-            metric_name, metric_pairs = list(model_metrics.items())[0]
 
-            metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
+            metric_sets = []
 
-            metric_set = ProductionMetricSet._metric_set_from_simple_metric_information(
-                model_name,
-                metric_name,
-                metric_columns,
-                metric_values
-            )
-            
-            return [metric_set]
+            for metric_name, metric_pairs in model_metrics.items():
+                metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
+                metric_set = ProductionMetricSet._metric_set_from_simple_metric_information(
+                    model_name,
+                    metric_name,
+                    metric_columns,
+                    metric_values
+                )
+
+                metric_sets.append(metric_set)
+
+            return metric_sets
 
         return LazyResult(_all)
     
