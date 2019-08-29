@@ -16,8 +16,6 @@ const ProjectSummary = (props) => {
 
   const { project } = props;
 
-  console.log('PROJECT: ', project);
-
   return (
     <div
       className="project-summary-container"
@@ -39,7 +37,7 @@ const ProjectSummary = (props) => {
       </div>
       <div className="project-summary-tags-container">
         <p>tags</p>
-        {project.tags.map((tag) => {
+        {project.tags.slice(0, 5).map((tag) => {
           return <span key={tag}>{tag}</span>;
         })}
       </div>
