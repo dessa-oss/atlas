@@ -40,7 +40,7 @@ class ProductionMetricSet(PropertyModel):
                 title={'text': f'{metric_name} over time'},
                 yAxis={'title': {'text': metric_name}},
                 xAxis={'categories': metric_columns},
-                series={'data': metric_values, 'name': model_name}
+                series=[{'data': metric_values, 'name': model_name}]
             )
             
             return [metric_set]
