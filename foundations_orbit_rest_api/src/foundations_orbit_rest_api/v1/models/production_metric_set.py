@@ -32,17 +32,11 @@ class ProductionMetricSet(PropertyModel):
                     metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
 
                     if metric_name not in intermediate_data_hierarchy:
-                        intermediate_data_hierarchy[metric_name] = (metric_columns, [])
+                        intermediate_data_hierarchy[metric_name] = ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, [])
 
-                    intermediate_data_hierarchy[metric_name][1].append({'data': metric_values, 'name': model_name})
+                    intermediate_data_hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
 
-            metric_sets = []
-
-            for metric_name in intermediate_data_hierarchy:
-                metric_columns, metric_series = intermediate_data_hierarchy[metric_name]
-                metric_sets.append(ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series))
-
-            return metric_sets
+            return list(intermediate_data_hierarchy.values())
 
         return LazyResult(_all)
     
