@@ -58,6 +58,25 @@ const BaseActions = {
       });
   },
 
+  postStaging(url, body) {
+    const fullURL = this.baseStagingURL.concat(url);
+    return fetch(fullURL, {
+      method: 'post',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
   postApiary(url, body) {
     const fullURL = this.baseApiaryURL.concat(url);
     return fetch(fullURL, {
@@ -118,6 +137,24 @@ const BaseActions = {
 
   del(url) {
     const fullURL = this.baseURL.concat(url);
+    return fetch(fullURL, {
+      method: 'delete',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch(() => {
+        return null;
+      });
+  },
+
+  delStaging(url) {
+    const fullURL = this.baseStagingURL.concat(url);
     return fetch(fullURL, {
       method: 'delete',
       headers: {
