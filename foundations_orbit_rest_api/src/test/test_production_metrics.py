@@ -52,3 +52,11 @@ class TestProductionMetrics(Spec):
 
         expected_tracked_metrics = {self.metric_name: []}
         self.assertEqual(expected_tracked_metrics, all_production_metrics(self.job_id))
+
+    def test_all_production_metrics_returns_dictionary_with_one_entry_whose_value_is_singleton_list_with_key_value_pair_when_metric_logged_with_one_value(self):
+        from foundations_orbit import track_production_metrics
+
+        track_production_metrics(self.metric_name, {self.metric_column: self.metric_value})
+
+        expected_tracked_metrics = {self.metric_name: [(self.metric_column, self.metric_value)]}
+        self.assertEqual(expected_tracked_metrics, all_production_metrics(self.job_id))
