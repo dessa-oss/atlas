@@ -235,6 +235,33 @@
           width: 20px;
           height: 20px;
           text-align: center; 
+          cursor: pointer;
+        }
+
+        .container-add-new-tag {
+          display: inline-block;
+
+          input {
+            width: 100px;
+            display: inline-block;
+            margin-left: 10px;
+            height: 20px;
+
+          }
+
+          button {
+            width: 80px;
+            display: inline-block;
+            background-color: #0FA3B1;
+            font-size: 80%;
+            padding: 10px;
+            line-height: 0.5;
+            margin-left: 10px;
+
+            &:last-child {
+              background: #d84247;
+            }
+          }
         }
       }
 
