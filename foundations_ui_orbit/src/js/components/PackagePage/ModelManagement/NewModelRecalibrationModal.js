@@ -143,7 +143,7 @@ const NewModelRecalibrationModal = props => {
         model_name: modelName
       };
 
-      parameters.forEach(parameter => {
+      updatedParameters.forEach(parameter => {
         body[parameter.key] = parameter.value;
       });
 

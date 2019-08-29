@@ -231,7 +231,7 @@ class ModalJobDetails extends React.Component {
             {tab === 'artifacts' && (
               <div className="container-artifacts">
                 <div className="image-artifacts" />
-                <ArtifactsTable />
+                <ArtifactsTable job={job} {...this.props} />
               </div>
             )}
           </div>

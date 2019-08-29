@@ -1,78 +1,32 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ArtifactRow from './ArtifactRow';
 
 class ArtifactsTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      artifacts: [
-        {
-          id: '1',
-          name: 'temp.jpg',
-          date: '2019-05-01',
-          size: '450 MB',
-          url: 'http://www.pdf995.com/samples/pdf.pdf',
-        },
-        {
-          id: '2',
-          name: 'text.txt',
-          date: '2019-05-02',
-          size: '450 MB',
-          url: 'http://www.pdf995.com/samples/pdf.pdf',
-        },
-        {
-          id: '3',
-          name: 'temp.jpg',
-          date: '2019-05-03',
-          size: '450 MB',
-          url: 'http://www.pdf995.com/samples/pdf.pdf',
-        },
-        {
-          id: '4',
-          name: 'text.txt',
-          date: '2019-05-04',
-          size: '450 MB',
-          url: 'http://www.pdf995.com/samples/pdf.pdf',
-        },
-      ],
-      timerId: -1,
-    };
-  }
-
-  reload() {
-
-  }
-
-  componentDidMount() {
-    this.reload();
-    const value = setInterval(() => {
-      this.reload();
-    }, 2000);
-    this.setState({
-      timerId: value,
-    });
-  }
-
-  componentWillUnmount() {
-    const { timerId } = this.state;
-    clearInterval(timerId);
-  }
-
   render() {
-    const { artifacts } = this.state;
+    const { job } = this.props;
     return (
       <div className="container-artifacts-table">
         <div className="table-artifacts-header">
           <p>Artifact Name</p>
         </div>
         <div className="table-artifacts-header last" />
-        {artifacts.map((artifact) => {
+        {job.artifacts.map((artifact) => {
           return <ArtifactRow key={artifact.id} artifact={artifact} />;
         })}
       </div>
     );
   }
 }
+
+ArtifactsTable.propTypes = {
+  job: PropTypes.object,
+  location: PropTypes.object,
+};
+
+ArtifactsTable.defaultProps = {
+  job: {},
+  location: { state: {} },
+};
 
 export default ArtifactsTable;

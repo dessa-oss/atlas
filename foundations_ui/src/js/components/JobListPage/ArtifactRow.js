@@ -10,7 +10,7 @@ class ArtifactRow extends React.Component {
 
   onClickDownload() {
     const { artifact } = this.props;
-    window.open(artifact.url);
+    window.open(artifact.uri);
   }
 
   render() {
@@ -19,7 +19,7 @@ class ArtifactRow extends React.Component {
     return (
       <div className="table-artifacts-row">
         <div className="table-artifacts-row-cell">
-          <p>{artifact.name}</p>
+          <p>{artifact.filename}</p>
         </div>
         <div className="table-artifacts-row-cell last">
           <div className="table-artifacts-row">
