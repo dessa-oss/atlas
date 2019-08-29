@@ -53,15 +53,6 @@ class JobOverviewGraph extends Component {
     let seriesArray = [];
     let seriesObject = {};
     seriesObject.showInLegend = false;
-    graphCopy.forEach((dataPoint) => {
-      // Make sure the types are as we expect
-      if (Array.isArray(dataPoint) && dataPoint.length > 1) {
-        let curDate = dataPoint[0];
-        if (typeof (curDate.GetYear) === 'function') {
-          dataPoint[0] = Date.UTC(curDate.GetYear(), curDate.GetMonth(), curDate.GetDay());
-        }
-      }
-    });
     seriesObject.data = graphCopy;
     seriesArray.push(seriesObject);
 
@@ -86,14 +77,9 @@ class JobOverviewGraph extends Component {
         type: 'spline',
       },
       xAxis: {
-        type: 'datetime',
+        type: 'category',
         title: {
-          text: 'Date',
-        },
-        dateTimeLabelFormats: {
-          day: '%e. %b',
-          month: '%b \'%y',
-          year: '%Y',
+          text: 'Job Id',
         },
         showEmpty: true,
       },
