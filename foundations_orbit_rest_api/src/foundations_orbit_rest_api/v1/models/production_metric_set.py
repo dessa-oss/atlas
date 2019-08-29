@@ -26,13 +26,21 @@ class ProductionMetricSet(PropertyModel):
                 return []
 
             model_metrics = all_production_metrics(project_name, model_name)
-            metric_name = list(model_metrics.keys())[0]
+            metric_name, metric_pairs = list(model_metrics.items())[0]
+
+            metric_columns = []
+            metric_values = []
+            
+            if metric_pairs:
+                metric_column, metric_value = metric_pairs[0]
+                metric_columns.append(metric_column)
+                metric_values.append(metric_value)
 
             metric_set = ProductionMetricSet(
                 title={'text': f'{metric_name} over time'},
                 yAxis={'title': {'text': metric_name}},
-                xAxis={'categories': []},
-                series={'data': [], 'name': model_name}
+                xAxis={'categories': metric_columns},
+                series={'data': metric_values, 'name': model_name}
             )
             
             return [metric_set]
