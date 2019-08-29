@@ -57,9 +57,12 @@ class APIResourceBuilder(object):
         return _get
     
     def _post_api_create(self):
-        def _post(resource_self):
+        def _post(resource_self, **kwargs):
             instance = self._klass()
-            instance.params = request.form
+            instance.params = dict(request.form)
+            if request.json is not None:
+                instance.params.update(request.json)
+            instance.params.update(kwargs)
 
             response = instance.post()
             cookie = None

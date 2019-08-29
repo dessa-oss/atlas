@@ -1,6 +1,8 @@
 import logging
 import os
 
+os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
+
 from foundations import config_manager
 from foundations_rest_api.global_state import app_manager
 
