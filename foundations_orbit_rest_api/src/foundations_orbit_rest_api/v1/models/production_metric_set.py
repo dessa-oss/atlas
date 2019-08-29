@@ -22,24 +22,25 @@ class ProductionMetricSet(PropertyModel):
             from foundations_orbit_rest_api.production_metrics import all_production_metrics
 
             model_names = ProductionMetricSet._models_from_project(project_name)
-            if not model_names:
-                return []
+            
+            intermediate_data_hierarchy = {}
 
-            model_name = model_names[0]
+            for model_name in model_names:                
+                model_metrics = all_production_metrics(project_name, model_name)
+                
+                for metric_name, metric_pairs in model_metrics.items():
+                    metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
 
-            model_metrics = all_production_metrics(project_name, model_name)
+                    if metric_name not in intermediate_data_hierarchy:
+                        intermediate_data_hierarchy[metric_name] = (metric_columns, [])
+
+                    intermediate_data_hierarchy[metric_name][1].append({'data': metric_values, 'name': model_name})
 
             metric_sets = []
 
-            for metric_name, metric_pairs in model_metrics.items():
-                metric_columns, metric_values = ProductionMetricSet._unzip_list_of_pairs(metric_pairs)
-                metric_set = ProductionMetricSet._metric_set_from_simple_metric_information(
-                    metric_name,
-                    metric_columns,
-                    [{'data': metric_values, 'name': model_name}]
-                )
-
-                metric_sets.append(metric_set)
+            for metric_name in intermediate_data_hierarchy:
+                metric_columns, metric_series = intermediate_data_hierarchy[metric_name]
+                metric_sets.append(ProductionMetricSet._metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series))
 
             return metric_sets
 
