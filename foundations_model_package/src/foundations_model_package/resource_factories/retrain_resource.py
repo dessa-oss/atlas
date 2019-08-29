@@ -13,6 +13,9 @@ def retrain_resource(retrain_driver):
     class _RetrainResource(Resource):
         
         def post(self):
+            if retrain_driver is None:
+                return {'error': 'retrain not set in manifest'}, 404
+
             import os
             import foundations
 

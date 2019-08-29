@@ -3,7 +3,12 @@
 }
 
 .chart {
-  min-height: 430px;
+  min-height: 475px;
+
+  .highchart-chart {
+    position: relative;
+    top: 50px;
+  }
 }
 
 .highchart-chart {

@@ -11,16 +11,24 @@ class ProjectOverview extends React.Component {
     this.state = {
       projectName: this.props.history.location.state.project.name,
       metric: '',
+      allMetrics: [],
       graphData: [],
       timerId: -1,
     };
+    this.setMetric = this.setMetric.bind(this);
   }
 
   async reload() {
-    const { projectName } = this.state;
-    const URL = 'projects/'.concat(projectName).concat('/overview_metrics');
+    const { projectName, metric } = this.state;
+    const URL = metric === '' ? '/projects/'.concat(projectName).concat('/overview_metrics')
+      : '/projects/'.concat(projectName).concat('/overview_metrics').concat('?y_axis=').concat(metric);
     const APIGraphData = await BaseActions.getFromApiary(URL);
-    this.setState({ graphData: APIGraphData.data, metric: APIGraphData.metric });
+    if (APIGraphData.length > 0) {
+      const allMetrics = APIGraphData.map((graphMetric) => {
+        return graphMetric.metric_name;
+      });
+      this.setState({ graphData: APIGraphData[0].values, metric: APIGraphData[0].metric_name, allMetrics });
+    }
   }
 
   componentDidMount() {
@@ -38,15 +46,20 @@ class ProjectOverview extends React.Component {
     clearInterval(timerId);
   }
 
+  async setMetric(newMetric) {
+    await this.setState({ metric: newMetric });
+    this.reload();
+  }
+
   render() {
     const {
-      metric, graphData,
+      metric, graphData, allMetrics,
     } = this.state;
 
     return (
       <div className="dashboard-content-container row">
         <section className="chart-and-notes col-md-8">
-          <JobOverviewGraph metric={metric} graphData={graphData} />
+          <JobOverviewGraph metric={metric} graphData={graphData} allMetrics={allMetrics} setMetric={this.setMetric} />
           <Readme {...this.props} />
         </section>
         <Notes {...this.props} />

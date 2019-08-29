@@ -69,7 +69,8 @@ class JobColumnHeader extends Component {
 
     let arrowUp = null;
     let arrowDown = null;
-    if (title !== '' && title.toLowerCase() !== 'job id' && title.toLowerCase() !== 'tags') {
+    if (title !== '' && title.toLowerCase() !== 'job id' && title.toLowerCase() !== 'tags'
+      && title !== 'SelectAllCheckboxes') {
       arrowUp = (
         <i
           onKeyPress={this.onClickSortAsc}
@@ -98,7 +99,10 @@ class JobColumnHeader extends Component {
         ref={(c) => { this.headerContainer = c; }}
       >
         <div className={offsetDivClass}>
-          <h4 className={`${headerClassName}`} data-tip={title.length > 15 ? headerName : ''}>
+          <h4
+            className={`${headerClassName}`}
+            data-tip={typeof (headerName) === 'string' && headerName.length > 15 ? headerName : ''}
+          >
             {headerName}
             <ReactTooltip place="top" type="dark" effect="solid" />
           </h4>
