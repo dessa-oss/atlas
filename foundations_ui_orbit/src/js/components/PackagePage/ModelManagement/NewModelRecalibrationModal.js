@@ -323,7 +323,7 @@ const NewModelRecalibrationModal = props => {
                       type="button"
                       onClick={onClickAddNewParameter}
                     >
-                      +
+                      <span>+</span>
                     </button>
                   </div>
                 </div>
