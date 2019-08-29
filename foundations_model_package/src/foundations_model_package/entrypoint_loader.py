@@ -15,23 +15,23 @@ class EntrypointLoader(object):
         self._add_module_to_sys_path(entrypoint_name)
         return self._load_function_from_module(entrypoint_name)
 
-    def _module_name(self, entrypoint_name):
+    def module_name(self, entrypoint_name):
         return self._endpoint_information(entrypoint_name)['module']
 
-    def _function_name(self, entrypoint_name):
+    def function_name(self, entrypoint_name):
         return self._endpoint_information(entrypoint_name)['function']
 
     def _load_function_from_module(self, entrypoint_name):
         from foundations_model_package.importlib_wrapper import load_function_from_module
 
-        module_name = self._module_name(entrypoint_name)
-        function_name = self._function_name(entrypoint_name)
+        module_name = self.module_name(entrypoint_name)
+        function_name = self.function_name(entrypoint_name)
         return load_function_from_module(module_name, function_name)
 
     def _add_module_to_sys_path(self, entrypoint_name):
         import os.path as path
 
-        module_name = self._module_name(entrypoint_name)
+        module_name = self.module_name(entrypoint_name)
 
         module_path = module_name.replace('.', '/')
         module_directory = path.dirname(module_path)

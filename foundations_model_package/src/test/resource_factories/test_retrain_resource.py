@@ -79,3 +79,15 @@ class TestRetrainResource(Spec):
 
         self.assertEqual(202, code)
 
+    def test_retrain_resource_returns_404_if_driver_is_none(self):
+        resource_class = retrain_resource(None)
+        resource = resource_class()
+        _, code = resource.post()
+        self.assertEqual(404, code)
+
+    def test_retrain_resource_returns_error_message_if_callback_is_none(self):
+        resource_class = retrain_resource(None)
+        resource = resource_class()
+        error_message, _ = resource.post()
+        self.assertEqual({'error': 'retrain not set in manifest'}, error_message)
+
