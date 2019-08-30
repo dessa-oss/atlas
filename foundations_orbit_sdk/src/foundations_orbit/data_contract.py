@@ -12,7 +12,8 @@ class DataContract(object):
         from foundations_orbit.data_contract_options import DataContractOptions
 
         default_distribution = {
-            'distance_metric': 'l_infinity'
+            'distance_metric': 'l_infinity',
+            'default_threshold': 0.1
         }
 
         self.options = DataContractOptions(
