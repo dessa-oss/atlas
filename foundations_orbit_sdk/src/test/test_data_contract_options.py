@@ -27,7 +27,7 @@ class TestDataContractOptions(Spec):
         self._test_data_contract_options_has_attribute('check_distribution')
     
     def test_data_contract_options_has_distribution_check(self):
-        self._test_data_contract_options_has_attribute('distribution_check')
+        self._test_data_contract_options_has_attribute('distribution')
 
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
