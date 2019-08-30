@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import foundations
 
-@skip('not implemented')
+@skip('Not implemented')
 class TestCanRetrainModelPackage(Spec):
 
     @staticmethod
@@ -223,7 +223,7 @@ class TestCanRetrainModelPackage(Spec):
         import os.path as path
         import subprocess
 
-        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/orbit/kubernetes-deployment.envsubst.yaml')
         command_to_run = f'job_id={job_id} model_name={model_name} envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 

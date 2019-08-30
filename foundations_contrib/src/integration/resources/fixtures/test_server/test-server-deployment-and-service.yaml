@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: 
-    app: ${project_name}-${model_name}
-  name: ${project_name}-${model_name}-deployment
+    app: foundations-model-package-${project_name}-${model_name}
+  name: foundations-model-package-${project_name}-${model_name}-deployment
   namespace: ${namespace}
 spec:
   replicas: 1
   selector:
     matchLabels: 
-      app: ${project_name}-${model_name}
+      app: foundations-model-package-${project_name}-${model_name}
   template:
     metadata:
       labels: 
-        app: ${project_name}-${model_name}
+        app: foundations-model-package-${project_name}-${model_name}
     spec:
       nodeSelector:
         modelServer: "True"
@@ -29,11 +29,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${project_name}-${model_name}-service
+  name: foundations-model-package-${project_name}-${model_name}-service
   namespace: ${namespace}
 spec:
   selector:
-    app: ${project_name}-${model_name}
+    app: foundations-model-package-${project_name}-${model_name}
   ports:
   - protocol: TCP
     port: 80

@@ -3,8 +3,9 @@ export namespace="foundations-scheduler-test"
 export project_name=$1
 export model_name=$2
 no_follow=$3
+export job_id=$project_name-$model_name
 
-envsubst < kubernetes-deployment.envsubst.yaml | kubectl create -f -
+envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl create -f -
 echo "Preparing $model_name for serving"
 
 python ingress_modifier.py $project_name $model_name > /dev/null 2>&1

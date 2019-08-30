@@ -15,5 +15,5 @@ spec:
       paths:
       - path: /projects/project/model/(.*)
         backend:
-          serviceName: project-model-service
+          serviceName: foundations-model-package-project-model-service
           servicePort: 80

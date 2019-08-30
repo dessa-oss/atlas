@@ -10,6 +10,14 @@ import foundations
 
 class TestCanDeployModelServer(Spec):
 
+
+    @let
+    def model_name(self):
+        return 'model'
+    @let
+    def project_name(self):
+        return 'test'
+
     @staticmethod
     def _is_running_on_jenkins():
         import os
@@ -50,10 +58,10 @@ class TestCanDeployModelServer(Spec):
         self._deploy_job(job_directory)
         self.deployment.wait_for_deployment_to_complete()
 
-        self._deploy_model_package('test-model-package', self.job_id)
-        self._proxy_process = subprocess.Popen(['bash', '-c', 'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-test-model-package 5000:80'])
+        self._deploy_model_package(self.project_name, self.model_name, self.job_id)
+        self._proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.model_name}-service 5000:80'])
 
-        self._wait_for_server('test-model-package')
+        self._wait_for_server(self.project_name, self.model_name)
 
     @tear_down
     def tear_down(self):
@@ -62,7 +70,7 @@ class TestCanDeployModelServer(Spec):
         if self._proxy_process is not None:
             self._proxy_process.terminate()
 
-        self._tear_down_model_package('test-model-package', self.job_id)
+        self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
 
         config_manager.reset()
 
@@ -71,38 +79,44 @@ class TestCanDeployModelServer(Spec):
         return self.deployment.job_name()
 
     def test_can_deploy_server(self):
-        self._set_up_in_test('model-server')
+        try:
+            self._set_up_in_test('model-server')
 
-        result = self._try_post_to_root_endpoint()
-        predict_result = self._try_post_to_predict_endpoint()
+            result = self._try_post_to_root_endpoint()
+            predict_result = self._try_post_to_predict_endpoint()
 
-        self.assertEqual({'a': 2, 'b': 4}, result)
-        self.assertEqual({'a': 21, 'b': 32}, predict_result)
+            self.assertEqual({'a': 2, 'b': 4}, result)
+            self.assertEqual({'a': 21, 'b': 32}, predict_result)
 
-        self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
+            self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
 
     def test_can_hit_evaluate_endpoint(self):
-        import time
-        import pickle
-        import os
+        try:
+            import time
+            import pickle
+            import os
 
-        self._set_up_in_test('model-server-with-evaluate')
+            self._set_up_in_test('model-server-with-evaluate')
 
-        self._try_post_to_evaluate_endpoint('october')
-        time.sleep(5)
-        self._try_post_to_evaluate_endpoint('january')
-        time.sleep(5)
+            self._try_post_to_evaluate_endpoint('october')
+            time.sleep(5)
+            self._try_post_to_evaluate_endpoint('january')
+            time.sleep(5)
 
-        production_metrics_from_redis = self.redis_connection.hgetall(f'models:{self.job_id}:production_metrics')
-        production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
-        production_metrics['MSE'].sort(key=lambda entry: entry[0])
+            production_metrics_from_redis = self.redis_connection.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
+            production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
+            production_metrics['MSE'].sort(key=lambda entry: entry[0])
 
-        expected_production_metrics = {
-            'roc_auc': [('october', 66), ('january', 66)],
-            'MSE': [('january', 1), ('january_again', 2), ('october', 1), ('october_again', 2)]
-        }
+            expected_production_metrics = {
+                'roc_auc': [('october', 66), ('january', 66)],
+                'MSE': [('january', 1), ('january_again', 2), ('october', 1), ('october_again', 2)]
+            }
 
-        self.assertEqual(expected_production_metrics, production_metrics)
+            self.assertEqual(expected_production_metrics, production_metrics)
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
 
     def _generate_yaml_config_file(self, job_directory):
         import yaml
@@ -134,24 +148,24 @@ class TestCanDeployModelServer(Spec):
         with open(config_path, 'w+') as file:
             file.write(config_yaml)
 
-    def _wait_for_model_package_pod(self, model_name):
+    def _wait_for_model_package_pod(self, project_name, model_name):
         import time
 
         current_time = time.time()
 
-        while self._model_package_pod_status(model_name) != 'Running':
+        while self._model_package_pod_status(project_name, model_name) != 'Running':
             if time.time() - current_time > 30:
                 raise AssertionError('model package pod took too long to come up (> 30 sec)')
 
             time.sleep(3)
 
-    def _model_package_pod_status(self, model_name):
+    def _model_package_pod_status(self, project_name, model_name):
         import subprocess
 
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{model_name}', '-o', 'go-template={{(index .items 0).status.phase}}'], stdout=subprocess.PIPE)
+        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template={{(index .items 0).status.phase}}'], stdout=subprocess.PIPE)
         return process.stdout.decode().rstrip('\n')
 
-    def _wait_for_server(self, model_name):
+    def _wait_for_server(self, project_name, model_name):
         import subprocess
         import requests
         import time
@@ -166,7 +180,7 @@ class TestCanDeployModelServer(Spec):
                 time.sleep(0.200)
 
 
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'logs', '-l', f'app=foundations-model-package-{model_name}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'logs', '-l', f'app=foundations-model-package-{project_name}-{model_name}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         process_logs = process.stdout.decode().rstrip('\n')
         self.fail(f'server never started:\n{process_logs}')
 
@@ -215,40 +229,40 @@ class TestCanDeployModelServer(Spec):
 
         if self.deployment is None:
             foundations.set_job_resources(num_gpus=0)
-            self.deployment = foundations.deploy(project_name='test', env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
+            self.deployment = foundations.deploy(project_name=self.project_name, env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
-    def _deploy_model_package(self, model_name, job_id):
-        self._perform_action_for_model_package(model_name, job_id, 'create')
-        self._wait_for_model_package_pod(model_name)
+    def _deploy_model_package(self, project_name, model_name, job_id):
+        self._perform_action_for_model_package(project_name, model_name, job_id, 'create')
+        self._wait_for_model_package_pod(project_name, model_name)
 
-    def _tear_down_model_package(self, model_name, job_id):
-        self._perform_action_for_model_package(model_name, job_id, 'delete')
-        self._wait_for_serving_pod_to_die(model_name)
+    def _tear_down_model_package(self, project_name, model_name, job_id):
+        self._perform_action_for_model_package(project_name, model_name, job_id, 'delete')
+        self._wait_for_serving_pod_to_die(project_name, model_name)
 
-    def _perform_action_for_model_package(self, model_name, job_id, action):
+    def _perform_action_for_model_package(self, project_name, model_name, job_id, action):
         import os.path as path
         import subprocess
 
         yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
-        command_to_run = f'job_id={job_id} model_name={model_name} envsubst < {yaml_template_path} | kubectl {action} -f -'
+        command_to_run = f'job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
-    def _wait_for_serving_pod_to_die(self, model_name):
+    def _wait_for_serving_pod_to_die(self, project_name, model_name):
         import time
 
         current_time = time.time()
 
-        while self._pod_exists(model_name):
+        while self._pod_exists(project_name, model_name):
             if time.time() - current_time > 60:
                 raise AssertionError('model package pod took too long to go down (> 60 sec)')
 
             time.sleep(3)
 
-    def _pod_exists(self, model_name):
+    def _pod_exists(self, project_name, model_name):
         import subprocess
         import yaml
 
-        process = subprocess.run(['bash', '-c', f'kubectl -n foundations-scheduler-test get pod -l app=foundations-model-package-{model_name} -o yaml'], stdout=subprocess.PIPE)
+        process = subprocess.run(['bash', '-c', f'kubectl -n foundations-scheduler-test get pod -l app=foundations-model-package-{project_name}-{model_name} -o yaml'], stdout=subprocess.PIPE)
         pod_list_payload = yaml.load(process.stdout)
         return pod_list_payload['items'] != []

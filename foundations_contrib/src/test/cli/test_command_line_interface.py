@@ -441,16 +441,16 @@ class TestCommandLineInterface(Spec):
         return self.server_process
 
     def test_server_deploys_model_server_with_specified_job_id(self):
-        CommandLineInterface(['serve', 'start', self.mock_job_id]).execute()
-        self.mock_deploy_model_package.assert_called_with(self.mock_job_id)
+        CommandLineInterface(['serve', 'start', f'--project_name={self.fake_project_name}', self.mock_job_id]).execute()
+        self.mock_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_job_id)
 
     def test_deploy_model_serving_logs_event(self):
-        CommandLineInterface(['serve', 'start', self.mock_job_id]).execute()
-        self.mock_message_router.push_message.assert_called_with('model_served', {'job_id': self.mock_job_id})
+        CommandLineInterface(['serve', 'start', f'--project_name={self.fake_project_name}',self.mock_job_id]).execute()
+        self.mock_message_router.push_message.assert_called_with('model_served', {'job_id': self.mock_job_id, 'project_name': self.fake_project_name })
 
     def test_server_destroys_model_server_with_specified_model_name(self):
-        CommandLineInterface(['serve', 'stop', self.mock_model_name]).execute()
-        self.mock_destroy_model_package.assert_called_with(self.mock_model_name)
+        CommandLineInterface(['serve', 'stop', f'--project_name={self.fake_project_name}', self.mock_model_name]).execute()
+        self.mock_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_model_name)
 
     def test_orbit_serve_start_with_specificed_project_model_and_directory(self):
         self._run_model_within_orbit_with_specified_project_name_model_name_project_directory(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)

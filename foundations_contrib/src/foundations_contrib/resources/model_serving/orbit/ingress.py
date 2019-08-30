@@ -6,11 +6,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 def update_default_model_for_project(ingress_resource_yaml, project_name, default_model):
-    return _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}', f'{project_name}-{default_model}-service')
+    return _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}', f'foundations-model-package-{project_name}-{default_model}-service')
 
 def set_model_endpoint(ingress_resource_yaml, project_name, model_name):
-    resource_with_default_model_endpoint = _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}', f'{project_name}-{model_name}-service', update_if_exists=False)
-    return _add_new_path_to_ingress_resource(resource_with_default_model_endpoint, f'{project_name}/{model_name}', f'{project_name}-{model_name}-service')
+    resource_with_default_model_endpoint = _add_new_path_to_ingress_resource(ingress_resource_yaml, f'{project_name}', f'foundations-model-package-{project_name}-{model_name}-service', update_if_exists=False)
+    return _add_new_path_to_ingress_resource(resource_with_default_model_endpoint, f'{project_name}/{model_name}', f'foundations-model-package-{project_name}-{model_name}-service')
 
 def _add_new_path_to_ingress_resource(ingress_resource_yaml, endpoint_path, service_name, update_if_exists=True):
     new_ingress = ingress_resource_yaml

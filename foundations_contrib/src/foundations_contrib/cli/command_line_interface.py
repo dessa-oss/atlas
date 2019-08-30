@@ -77,10 +77,12 @@ class CommandLineInterface(object):
         serving_subparsers = serving_parser.add_subparsers()
 
         serving_deploy_parser = serving_subparsers.add_parser('start')
+        serving_deploy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
         serving_deploy_parser.add_argument('job_id')
         serving_deploy_parser.set_defaults(function=self._kubernetes_model_serving_deploy)
 
         serving_destroy_parser = serving_subparsers.add_parser('stop')
+        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
         serving_destroy_parser.add_argument('model_name')
         serving_destroy_parser.set_defaults(function=self._kubernetes_model_serving_destroy)
 
@@ -337,12 +339,12 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.model_package_server import deploy
         from foundations_contrib.global_state import message_router
 
-        message_router.push_message('model_served', {'job_id': self._arguments.job_id})
-        deploy(self._arguments.job_id)
+        message_router.push_message('model_served', {'job_id': self._arguments.job_id, 'project_name': self._arguments.project_name})
+        deploy(self._arguments.project_name, self._arguments.job_id)
 
     def _kubernetes_model_serving_destroy(self):
         from foundations_contrib.cli.model_package_server import destroy
-        destroy(self._arguments.model_name)
+        destroy(self._arguments.project_name, self._arguments.model_name)
 
     def _kubernetes_orbit_model_serving_deploy(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy
