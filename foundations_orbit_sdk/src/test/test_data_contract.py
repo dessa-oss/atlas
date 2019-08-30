@@ -19,6 +19,8 @@ class TestDataContract(Spec):
         import foundations_orbit
         self.assertEqual(DataContract, foundations_orbit.DataContract)
 
-    def test_data_contract_has_contract_name(self):
-        contract = DataContract(self.contract_name)
-        self.assertEqual(self.contract_name, contract.contract_name)
+    def test_data_contract_takes_contract_name(self):
+        try:
+            DataContract(self.contract_name)
+        except TypeError as ex:
+            raise AssertionError('data contract class takes contract name as argument') from ex
