@@ -40,6 +40,7 @@ root_logger.addHandler(file_handler)
 root_logger.info("Running with configuration {}".format(configuration))
 
 app = app_manager.app()
+app.run(host="127.0.0.1", port=37722)
 
 @app.after_request
 def apply_caching(response):
