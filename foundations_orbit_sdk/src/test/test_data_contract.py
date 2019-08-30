@@ -38,6 +38,9 @@ class TestDataContract(Spec):
         import numpy
         self._test_data_contract_has_default_option('special_values', [numpy.nan])
 
+    def test_data_contract_has_options_with_default_check_distribution_True(self):
+        self._test_data_contract_has_default_option('check_distribution', True)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
