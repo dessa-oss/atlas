@@ -15,5 +15,6 @@ class DataContract(object):
             max_bins=50,
             check_schema=True,
             check_row_count=False,
-            special_values=[numpy.nan]
+            special_values=[numpy.nan],
+            check_distribution=True
         )
