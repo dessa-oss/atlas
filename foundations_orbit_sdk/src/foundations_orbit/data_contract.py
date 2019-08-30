@@ -12,5 +12,6 @@ class DataContract(object):
 
         self.options = DataContractOptions(
             max_bins=50,
-            check_schema=True
+            check_schema=True,
+            check_row_count=False
         )
