@@ -11,10 +11,15 @@ class DataContract(object):
         import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
+        default_distribution = {
+            'distance_metric': 'l_infinity'
+        }
+
         self.options = DataContractOptions(
             max_bins=50,
             check_schema=True,
             check_row_count=False,
             special_values=[numpy.nan],
-            check_distribution=True
+            check_distribution=True,
+            distribution=default_distribution
         )
