@@ -9,7 +9,6 @@ from foundations_spec import *
 
 from foundations_orbit_rest_api.global_state import app_manager
 
-@skip('not implemented')
 class TestRetrieveEvaluationMetricsEndpoint(Spec):
     client = app_manager.app().test_client()
     url = '/api/v1/projects/test_project/metrics'
@@ -83,12 +82,12 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [17.56, 17.57, 17.53, 17.43],
-                        'name': 'this_job'
-                    },
-                    {
                         'data': [27.56, 27.57, 27.53, 27.43],
                         'name': 'that_job'
+                    },
+                    {
+                        'data': [17.56, 17.57, 17.53, 17.43],
+                        'name': 'this_job'
                     }
                 ]
             },
@@ -100,12 +99,12 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [1.077, 1.074, 1.09, 1.086],
-                        'name': 'this_job'
-                    },
-                    {
                         'data': [2.077, 2.074, 2.09, 2.086],
                         'name': 'that_job'
+                    },
+                    {
+                        'data': [1.077, 1.074, 1.09, 1.086],
+                        'name': 'this_job'
                     }
                 ]
             }
