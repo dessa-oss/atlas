@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_orbit.production_metrics import track_production_metrics
+from foundations_orbit.data_contract import DataContract
 
 def _append_module():
     import sys
@@ -14,6 +15,3 @@ def _append_module():
     module_manager.append_module(sys.modules[__name__])
 
 _append_module()
-
-class DataContract(object):
-    pass
