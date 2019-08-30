@@ -31,7 +31,6 @@ class TestRetrainDeployer(Spec):
     def message(self):
         return {'job_id': self.job_id}
 
-    # @skip('Not implemented')
     def test_calls_orbit_serve_start_with_correct_params(self):
         from foundations_model_package.retrain_deployer import RetrainDeployer
         

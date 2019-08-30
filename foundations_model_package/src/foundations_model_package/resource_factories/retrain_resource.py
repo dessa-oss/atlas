@@ -13,13 +13,17 @@ def retrain_resource(retrain_driver):
     class _RetrainResource(Resource):
         
         def post(self):
+            import os
+            import foundations
+            from foundations.global_state import message_router
+            from foundations_model_package.retrain_deployer import RetrainDeployer
+
             if retrain_driver is None:
                 return {'error': 'retrain not set in manifest'}, 404
 
-            import os
-            import foundations
-
             project_name = os.environ['PROJECT_NAME']
+            model_name = os.environ['MODEL_NAME']
+            project_directory = os.getcwd()
 
             with retrain_driver as driver_file:
                 entrypoint = driver_file
@@ -28,6 +32,9 @@ def retrain_resource(retrain_driver):
 
             job_deployment = foundations.submit(project_name=project_name, entrypoint=entrypoint, params=params)
             job_id = job_deployment.job_name()
+
+            retrain_deployer = RetrainDeployer(job_id, project_name, model_name, project_directory)
+            message_router.add_listener(retrain_deployer, 'complete_job')
 
             return {'job_id': job_id}, 202
 
