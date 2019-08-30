@@ -11,5 +11,6 @@ class DataContract(object):
         from foundations_orbit.data_contract_options import DataContractOptions
 
         self.options = DataContractOptions(
-            max_bins=50
+            max_bins=50,
+            check_schema=True
         )
