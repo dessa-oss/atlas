@@ -202,8 +202,8 @@ class TestSetDefaultEnvironment(Spec):
         set_up_default_environment_if_present()
         self.mock_logger.warn.assert_called_with(
             'Foundations has been imported, but no default configuration file has been found. '
-            'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
-            'configuration file, no foundations code will be executed.')
+            'Refer to the documentation for more information. '
+            'Without a default configuration file, no foundations code will be executed.')
 
     def test_sets_default_job_id(self):
         set_up_job_environment()
