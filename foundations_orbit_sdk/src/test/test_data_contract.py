@@ -24,3 +24,7 @@ class TestDataContract(Spec):
             DataContract(self.contract_name)
         except TypeError as ex:
             raise AssertionError('data contract class takes contract name as argument') from ex
+
+    def test_data_contract_has_options_with_default_max_bins_50(self):
+        contract = DataContract(self.contract_name)
+        self.assertEqual(50, contract.options.max_bins)
