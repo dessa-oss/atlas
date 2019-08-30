@@ -23,6 +23,9 @@ class TestDataContractOptions(Spec):
     def test_data_contract_options_has_special_values(self):
         self._test_data_contract_options_has_attribute('special_values')
 
+    def test_data_contract_options_has_check_distribution(self):
+        self._test_data_contract_options_has_attribute('check_distribution')
+
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
 
