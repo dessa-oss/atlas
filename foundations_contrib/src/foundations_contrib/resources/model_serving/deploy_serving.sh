@@ -1,7 +1,9 @@
 #!/bin/bash
 export model_number=$(head /dev/urandom | LC_CTYPE=C tr -dc 0-9 | head -c 4 ; echo '')
-export job_id=$1
+export project_name=$1
+export job_id=$2
 export model_name=model-$model_number
+export namespace="foundations-scheduler-test"
 
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
 echo "Preparing $model_name for serving"
@@ -19,8 +21,8 @@ do
 done
 
 echo ''
-echo Model $model_name has started, please run:
-echo -e '    ' foundations serve stop $model_name 
+echo Model $model_name in $project_name has started, please run:
+echo -e '    ' foundations serve stop --project_name=$project_name $model_name 
 echo if an error has occurred or you wish to stop the server
 echo ''
 kubectl logs -f -n foundations-scheduler-test $model_pod

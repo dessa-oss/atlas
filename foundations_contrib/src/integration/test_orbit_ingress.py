@@ -24,19 +24,33 @@ class TestOrbitIngress(Spec):
     @set_up_class
     def set_up(self):
         _run_command(['./integration/resources/fixtures/test_server/spin_up.sh'])
+
+    @let
+    def model_name(self):
+        return 'model'
+
+    @let
+    def second_model_name(self):
+        return 'modeltwo'
+
+    @let
+    def project_name(self):
+        return 'project'
     
     @tear_down_class
     def tear_down(self):
         command = f'bash ./remove_deployment.sh project model'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
-        
-        # command = f'bash ./remove_deployment.sh project modeltwo'
-        # _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        try:
+            command = f'bash ./remove_deployment.sh project modeltwo'
+            _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        except:
+            print('Second test may not have created the pod')
 
         _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
 
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
-        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project model'.split())
+        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.model_name}'.split())
 
         time.sleep(self.sleep_time)
 
@@ -50,7 +64,7 @@ class TestOrbitIngress(Spec):
 
     @skip('not yet ready ... working local but failing on jenkins')
     def test_second_served_model_can_be_accessed(self):
-        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} project modeltwo'.split())
+        _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.second_model_name}'.split())
 
         time.sleep(self.sleep_time)
 
