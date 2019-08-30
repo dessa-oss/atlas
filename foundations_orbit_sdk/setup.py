@@ -26,7 +26,10 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'foundations-contrib=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version),
+        'pandas<=0.23.3',
+        'scipy<=1.3.1',
+        'numpy<=1.16.3'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
