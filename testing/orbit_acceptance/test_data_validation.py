@@ -105,7 +105,8 @@ class TestDataValidation(Spec):
                 'binned_l_infinity': 0.0,
                 'binned_passed': True,
                 'special_values': {
-                    numpy.nan: {'current_percentage': 0.0,
+                    numpy.nan: {
+                        'current_percentage': 0.0,
                         'passed': True,
                         'percentage_diff': 0.0,
                         'ref_percentage': 0.0

@@ -7,7 +7,6 @@ properties:
     properties:
       redis_end_point: {type: string}
       archive_end_point: {type: string}
-      artifact_path: {type: string}
   cache_config:
     type: object
     additionalProperties: false
