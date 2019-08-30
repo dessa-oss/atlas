@@ -20,7 +20,6 @@ class TestExecution(Spec):
         return {
             'results_config': {
                 'archive_end_point': '',
-                'artifact_path': 'results',
             },
             'cache_config': {
                 'end_point': '',
@@ -151,7 +150,7 @@ class TestExecution(Spec):
         from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual('results', result_config['artifact_path'])
+        self.assertEqual('.', result_config['artifact_path'])
 
     def test_validates_schema(self):
         import jsonschema
