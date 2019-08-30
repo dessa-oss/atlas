@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-package-server-configuration
+  namespace: foundations-scheduler-test
+data:
+  default.config.yaml: |
+    job_deployment_env: scheduler_plugin
+    results_config:
+      archive_end_point: /archive
+      redis_end_point: redis://redis:6379
+      artifact_path: .
+    cache_config:
+      end_point: /cache
+    ssh_config:
+      host: ${FOUNDATIONS_SCHEDULER_HOST}
+      port: 31222
+      code_path: /jobs
+      result_path: /jobs
+      key_path: ~/.ssh/id_foundations_scheduler
+      user: job-uploader

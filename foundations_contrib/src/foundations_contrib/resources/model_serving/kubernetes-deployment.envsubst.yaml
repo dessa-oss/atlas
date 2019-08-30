@@ -38,6 +38,9 @@ spec:
         - name: 'archive'
           persistentVolumeClaim: 
             claimName: 'archive-storage'
+        - name: scheduler-config
+          configMap:
+            name: model-package-server-configuration
       imagePullSecrets:
       - name: dessa-registry-credentials
 ---
