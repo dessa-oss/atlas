@@ -1,7 +1,7 @@
 .job-details-header {
   margin-bottom: 30px;
 
-  div {
+  div.job-details-filter-button {
     height: 30px;
   }
 
@@ -34,11 +34,11 @@
 
   button:first-of-type {
     width: 220px;
-    background: $color-text-greyed;
+    background: #7B7B7B;
   }
 
   button:nth-of-type(2) {
-    background: $color-delete-red;
+    background: #DC5454;
     margin-left: 50px;
     padding-left: 15px;
     padding-right: 15px;
@@ -84,6 +84,7 @@
   .filter-container {
     background: $color-white;
     height: 100%;
+    padding: 20px;
   }
 
   .column-filter-header {
@@ -105,11 +106,19 @@
     .column-control-buttons {
       button {
         float: right;
-        margin-left: 10px;
+        margin-left: 20px;
         width: 150px;
         height: 35px;
         padding: 10px;
-        margin-top: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-right: 0px;
+      }
+    }
+
+    .column-filter-buttons {
+      button {
+        margin-bottom: 0px;
       }
     }
   }
@@ -118,6 +127,7 @@
     height: 420px;
     margin-left: 10px;
     overflow-y: scroll;
+    width: 100%;
 
     div {
       margin: 0px;
@@ -131,7 +141,7 @@
       margin-left: 10px;
       width: 150px;
       padding: 10px;
-      margin-top: 10px;
+      margin-top: 25px;
     }
   }
 }
