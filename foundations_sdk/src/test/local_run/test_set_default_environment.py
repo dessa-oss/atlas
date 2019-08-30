@@ -131,19 +131,6 @@ class TestSetDefaultEnvironment(Spec):
         set_up_default_environment_if_present()
         mock_set_up_environment.assert_called()
 
-    def test_default_environment_loaded_when_present_locally(self):
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_called_with('default')
-
-    def test_load_execution_environment_calls_set_environment_with_default(self):
-        load_execution_environment()
-        self.mock_set_environment.assert_called_with('default')
-
-    def test_default_environment_loaded_when_present_globally(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
-        set_up_default_environment_if_present()
-        self.mock_set_environment.assert_called_with('default')
-
     def test_default_environment_not_loaded_when_absent(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
         set_up_default_environment_if_present()
@@ -164,13 +151,6 @@ class TestSetDefaultEnvironment(Spec):
         self._set_up_config_listing_mock()
         load_execution_environment()
         self.mock_config_listing.update_config_manager_with_config.assert_called_with('default', translate)
-
-    def test_load_execution_environment_returns_true_when_present_locally(self):
-        self.assertEqual(True, load_execution_environment())
-
-    def test_load_execution_environment_returns_true_when_present_globally(self):
-        self.mock_environment_fetcher.get_all_environments.return_value = ([], ['/different/path/to/config/default.config.yaml'])
-        self.assertEqual(True, load_execution_environment())
 
     def test_load_execution_environment_returns_false_when_absent(self):
         self.mock_environment_fetcher.get_all_environments.return_value = ([], [])
