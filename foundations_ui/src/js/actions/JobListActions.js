@@ -107,7 +107,7 @@ class JobListActions {
   }
 
   static getStatusCircle(status) {
-    let statusCircle = 'status-green';
+    let statusCircle = 'i--icon-status-completed';
 
     if (status.toLowerCase() === 'queued') {
       statusCircle = 'status-yellow';
