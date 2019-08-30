@@ -23,6 +23,7 @@
 
 .job-table-container{
   height: 100%;
+  min-height: 700px;
   min-width: $minimum-table-width;
   position: relative;
 }
