@@ -218,3 +218,13 @@ See assets/svgs/README.md for further information on SVG conversion process
     opacity: 1;
   }
 }
+
+.i--icon-status-completed {
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20version%3D%221.1%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%0A%20%20%20%20%3C%21--%20Generator%3A%20Sketch%2057.1%20%2883088%29%20-%20https%3A//sketch.com%20--%3E%0A%20%20%20%20%3Ctitle%3EUntitled%3C/title%3E%0A%20%20%20%20%3Cdesc%3ECreated%20with%20Sketch.%3C/desc%3E%0A%20%20%20%20%3Cg%20id%3D%22Page-1%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20id%3D%22Oval-Copy-2%22%20fill%3D%22%232CAB88%22%20cx%3D%227%22%20cy%3D%227%22%20r%3D%227%22%3E%3C/circle%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M4.5%2C6.5%20L6.5%2C8.5%22%20id%3D%22Line-6%22%20stroke%3D%22%23FFFFFF%22%20stroke-linecap%3D%22square%22%3E%3C/path%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M10.5%2C4.5%20L6.5%2C8.5%22%20id%3D%22Line-6%22%20stroke%3D%22%23FFFFFF%22%20stroke-linecap%3D%22square%22%3E%3C/path%3E%0A%20%20%20%20%3C/g%3E%0A%3C/svg%3E');
+	@include icon-helper;
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  opacity: 1;
+  border: none;
+}
