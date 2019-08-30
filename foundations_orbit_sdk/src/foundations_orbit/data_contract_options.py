@@ -10,3 +10,5 @@ from foundations_contrib.models.property_model import PropertyModel
 class DataContractOptions(PropertyModel):
     
     max_bins = PropertyModel.define_property()
+    check_schema = PropertyModel.define_property()
+    check_row_count = PropertyModel.define_property()
