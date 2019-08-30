@@ -119,18 +119,29 @@
           height: 20px;
           background-color: $color-negation-blue;
           position: relative;
+          outline: none;
+          -webkit-appearance: none;
+          border: none;
 
           span {
             font-size: 21px;
             font-weight: bold;
             color: white;
             position: absolute;
-            top: 0;
-            left: 0;
             righT: 0;
             bottom: 0;
             margin: auto;
             line-height: 15px;
+            top: 3px;
+            left: 1px;
+
+            @media
+            (-webkit-min-device-pixel-ratio: 1.25),
+            (min-resolution: 120dpi) {
+              top: 0;
+              left: 0;
+            }
+
           }
         }
       }
