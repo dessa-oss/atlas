@@ -18,13 +18,17 @@ class TestModelPackageServer(Spec):
         return self.faker.uuid4()
 
     @let
+    def project_name(self):
+        return self.faker.word()
+
+    @let
     def model_name(self):
         return f'model-{self.faker.random.randint(1000, 9999)}'
 
     def test_deploy_runs_deployment_script_with_job_id(self):
-        deploy(self.job_id)
-        self.mock_subprocess_run.assert_called_with(['bash', './deploy_serving.sh', self.job_id], cwd=foundations_contrib.root() / 'resources/model_serving')
+        deploy(self.project_name, self.job_id)
+        self.mock_subprocess_run.assert_called_with(['bash', './deploy_serving.sh', self.project_name, self.job_id], cwd=foundations_contrib.root() / 'resources/model_serving')
 
     def test_destroy_removes_deployment_with_model_name(self):
-        destroy(self.model_name)
-        self.mock_subprocess_run.assert_called_with(['bash', './remove_deployment.sh', self.model_name], cwd=foundations_contrib.root() / 'resources/model_serving')
+        destroy(self.project_name, self.model_name)
+        self.mock_subprocess_run.assert_called_with(['bash', './remove_deployment.sh', self.project_name, self.model_name], cwd=foundations_contrib.root() / 'resources/model_serving')

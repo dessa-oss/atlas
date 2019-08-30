@@ -12,5 +12,6 @@ from test.test_redis_actions import TestRedisActions
 from test.test_flask_app import TestFlaskApp
 from test.test_importlib_wrapper import TestImportlibWrapper
 from test.test_retrain_driver import TestRetrainDriver
+from test.test_retrain_deployer import TestRetrainDeployer
 
 from .resource_factories import *
