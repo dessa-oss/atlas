@@ -12,3 +12,4 @@ class DataContractOptions(PropertyModel):
     max_bins = PropertyModel.define_property()
     check_schema = PropertyModel.define_property()
     check_row_count = PropertyModel.define_property()
+    special_values = PropertyModel.define_property()
