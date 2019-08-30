@@ -26,5 +26,11 @@ class TestDataContract(Spec):
             raise AssertionError('data contract class takes contract name as argument') from ex
 
     def test_data_contract_has_options_with_default_max_bins_50(self):
+        self._test_data_contract_has_default_option('max_bins', 50)
+
+    def test_data_contract_has_options_with_default_check_schema_True(self):
+        self._test_data_contract_has_default_option('check_schema', True)
+
+    def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
-        self.assertEqual(50, contract.options.max_bins)
+        self.assertEqual(default_value, getattr(contract.options, option_name))
