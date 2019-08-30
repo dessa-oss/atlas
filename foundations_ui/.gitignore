@@ -21,6 +21,8 @@ gui_Dockerfile
 .vscode
 apiary.env.sh
 env.sh
+local_env.sh
+apiary_env.sh
 
 npm-debug.log*
 yarn-debug.log*

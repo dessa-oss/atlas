@@ -3,13 +3,21 @@
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
   padding: 25px;
-  width: calc(50% - 65px - 25px);
+  width: calc(20% - 65px - 25px);
   display: inline-block;
   margin-right: 30px;
   margin-bottom: 25px;
   border-radius: 7px;
-  height: 145px;
+  height: 230px;
   outline: none;
+  vertical-align: top;
+
+  .project-summary-tags-container {
+    float: left;
+    bottom: 0px;
+    right: 10px;
+  }
+
 }
 
 .project-summary-tags-container {
@@ -78,7 +86,7 @@
   width: 100%;
   h2{
     color: $color-dark-blue;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     margin-top: 0px;
     font-size: 30px;
   }
