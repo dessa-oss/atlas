@@ -7,7 +7,7 @@
 
   .container-recalibration-properties {
     margin-top: 60px;
-    background: #D3D3D3;
+    background: #eeeeee;
     border-radius: 4px;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -49,9 +49,12 @@
       }
 
       &.input {
-        width: 68.5%;
-        height: 22px;
+        width: 69%;
         padding-left: 9px;
+        height: 30px;
+        outline: none;
+        -webkit-appearance: none;
+        border: none;
       }
     }
 
@@ -107,7 +110,7 @@
       .container-add {
         width: 100%;
         display: inline-block;
-        background: #D3D3D3;
+        background: #eeeeee;
         padding-top: 10px;
         text-align: right;
   
