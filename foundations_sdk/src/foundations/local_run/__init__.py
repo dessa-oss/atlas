@@ -15,8 +15,8 @@ def set_up_default_environment_if_present():
         else:
             _get_logger().warn(
                 'Foundations has been imported, but no default configuration file has been found. '
-                'Refer to the documentation here [PLACEHOLDER] for more information. Without a default '
-                'configuration file, no foundations code will be executed.')
+                'Refer to the documentation for more information. '
+                'Without a default configuration file, no foundations code will be executed.')
 
 def load_execution_environment():
     from foundations.config import set_environment
