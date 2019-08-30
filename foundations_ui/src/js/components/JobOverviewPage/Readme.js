@@ -31,12 +31,12 @@ class Readme extends React.Component {
 
   componentDidMount() {
     this.reload();
-    const value = setInterval(() => {
+    /* const value = setInterval(() => {
       this.reload();
     }, 10000);
     this.setState({
       timerId: value,
-    });
+    }); */
   }
 
   componentWillUnmount() {

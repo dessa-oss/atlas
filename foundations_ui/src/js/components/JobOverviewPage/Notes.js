@@ -37,13 +37,13 @@ class Notes extends React.Component {
 
   componentDidMount() {
     this.reload();
-    const value = setInterval(() => {
+    /* const value = setInterval(() => {
       this.reload();
     }, 4000);
 
     this.setState({
       timerId: value,
-    });
+    }); */
   }
 
   componentWillUnmount() {
