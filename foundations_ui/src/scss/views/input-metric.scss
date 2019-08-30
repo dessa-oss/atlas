@@ -37,6 +37,10 @@
     .input-metric-column-container {
       overflow-x: hidden;
     }
+
+    .job-column-header, .job-cell {
+      width: calc(100% / 6 - 42px / 5);
+    }
   }
 }
 
