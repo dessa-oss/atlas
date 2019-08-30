@@ -15,9 +15,11 @@ _job_notifier = JobNotifier(config_manager, SlackNotifier())
 def _add_consumers_for_stage_log_middleware(redis):
     from foundations_contrib.consumers.job_metric_consumer import JobMetricConsumer
     from foundations_contrib.consumers.job_metric_name_consumer import JobMetricNameConsumer
+    from foundations_contrib.consumers.project_metrics import ProjectMetrics
 
     _add_listener(JobMetricConsumer(redis), 'job_metrics')
     _add_listener(JobMetricNameConsumer(redis), 'job_metrics')
+    _add_listener(ProjectMetrics(redis), 'job_metrics')
 
 def _add_consumers_for_job_annotations(redis):
     from foundations_contrib.consumers.annotate import Annotate
