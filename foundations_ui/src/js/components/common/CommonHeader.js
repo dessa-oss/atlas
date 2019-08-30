@@ -3,17 +3,25 @@ import PropTypes from 'prop-types';
 import ProfilePlaceholder from '../../../assets/images/icons/profile-placeholder.png';
 
 class CommonHeader extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isProject: this.props.isProject,
+    };
+  }
+
   onKeyPress() {}
 
   onClickArrowDown() {}
 
   render() {
+    const { isProject } = this.state;
     return (
       <div>
         <div className="foundations-header">
           <div className="i--icon-dessa-logo" />
           <div className="header-link-container">
-            <a href="/project">Project</a>
+            { isProject ? <a className="font-bold" href="/projects">Project</a> : <a href="/projects">Project</a> }
             <a href="/documentation">Documentation</a>
             <a href="/support">Support</a>
           </div>
@@ -33,5 +41,13 @@ class CommonHeader extends React.Component {
     );
   }
 }
+
+CommonHeader.propTypes = {
+  isProject: PropTypes.bool,
+};
+
+CommonHeader.defaultProps = {
+  isProject: false,
+};
 
 export default CommonHeader;

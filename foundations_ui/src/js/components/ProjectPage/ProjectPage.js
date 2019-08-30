@@ -103,7 +103,7 @@ const ProjectPage = (props) => {
 
   return (
     <div>
-      <CommonHeader />
+      <CommonHeader isProject />
       <div className="project-page-container">
         <h1>Project Directory</h1>
         <div className="projects-body-container">{renderProjects()}</div>

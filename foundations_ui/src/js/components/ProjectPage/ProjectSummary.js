@@ -19,13 +19,18 @@ const ProjectSummary = (props) => {
   return (
     <div
       className="project-summary-container"
-      onClick={packageClick}
-      role="button"
-      tabIndex={0}
-      onKeyPress={packageClick}
     >
       <div className="project-summary-info-container">
-        <h2 className="font-bold">{project.name}</h2>
+        <h2
+          onClick={packageClick}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+          role="button"
+          tabIndex={0}
+          onKeyPress={packageClick}
+          className="font-bold"
+        >
+          {project.name}
+        </h2>
         {/* <p>Data Source: Unknown</p> */}
         <p className="font-bold">
           Project owner: <span>{project.owner}</span>
