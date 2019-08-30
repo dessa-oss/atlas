@@ -1,7 +1,9 @@
 .job-details-header {
-
-  margin-top: 50px;
   margin-bottom: 30px;
+
+  div {
+    height: 30px;
+  }
 
   span {
     display: inline-block;
@@ -14,17 +16,20 @@
   p {
     display: inline-block;
     vertical-align: middle;
-    font-size: 15px;
+    font-size: 12px;
     margin-left: 15px;
     width: 150px;
     word-wrap: break-word;
     text-align: left;
+    position: relative;
+    top: 5px;
   }
 
   button {
-    height: 50px;
+    height: 30px;
     vertical-align: middle;
     border-radius: 4px;
+    font-size: 12px;
   }
 
   button:first-of-type {
@@ -50,15 +55,14 @@
   width: 170px;
 
   p {
-    padding-top: 18px;
     font-size: 13px;
 
     background-image:
     linear-gradient(45deg, transparent 50%, $color-border-bottom 50%),
     linear-gradient(135deg, $color-border-bottom 50%, transparent 50%);
     background-position:
-      calc(100% - 20px) calc(1em + 10px),
-      calc(100% - 16px) calc(1em + 10px),
+      calc(100% - 20px) calc(1em - 10px),
+      calc(100% - 16px) calc(1em - 10px),
       calc(100% - 2.5em) 0.5em;
     background-size:
       5px 5px,

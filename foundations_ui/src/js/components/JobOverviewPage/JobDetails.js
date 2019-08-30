@@ -374,7 +374,7 @@ class JobDetails extends React.Component {
     );
 
     return (
-      <div>
+      <div className="job-detail-table-container">
         <div className="job-list-container">
           {jobList}
         </div>
