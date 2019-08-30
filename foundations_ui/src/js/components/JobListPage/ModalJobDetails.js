@@ -8,14 +8,15 @@ import BaseActions from '../../actions/BaseActions';
 import Tag from '../common/Tag';
 import ArtifactsTable from './ArtifactsTable';
 import Logs from './Logs';
+import ImageViewer from './job-sidebar/ImageViewer';
+import AudioPlayer from './job-sidebar/AudioPlayer';
+import ArtifactViewer from './job-sidebar/ArtifactViewer';
 
 class ModalJobDetails extends React.Component {
   constructor(props) {
     super(props);
 
     const { job } = this.props;
-
-    console.log('JOB: ', job);
 
     this.state = {
       tags: [],
@@ -25,6 +26,7 @@ class ModalJobDetails extends React.Component {
       timerId: -1,
       addNewTagVisible: false,
       job,
+      selectedArtifact: {},
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
@@ -36,6 +38,7 @@ class ModalJobDetails extends React.Component {
     this.onClickAddNewTag = this.onClickAddNewTag.bind(this);
     this.onClickCancelAddNewTag = this.onClickCancelAddNewTag.bind(this);
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
+    this.onClickArtifact = this.onClickArtifact.bind(this);
   }
 
   reload() {
@@ -147,6 +150,10 @@ class ModalJobDetails extends React.Component {
     });
   }
 
+  onClickArtifact(newArtifact) {
+    this.setState({ selectedArtifact: newArtifact });
+  }
+
   render() {
     const { visible, onToggle } = this.props;
     const {
@@ -154,7 +161,19 @@ class ModalJobDetails extends React.Component {
       tab,
       addNewTagVisible,
       job,
+      selectedArtifact,
     } = this.state;
+
+    const selectViewer = (artifact) => {
+      switch (artifact.artifact_type) {
+        case 'image':
+          return <ImageViewer image={artifact.uri} />;
+        case 'audio':
+          return <AudioPlayer url={artifact.uri} />;
+        default:
+          return <p className="media">This filetype is not viewable.</p>;
+      }
+    };
 
     return (
       <Modal
@@ -230,8 +249,12 @@ class ModalJobDetails extends React.Component {
             {tab === 'logs' && <Logs job={job} {...this.props} />}
             {tab === 'artifacts' && (
               <div className="container-artifacts">
-                <div className="image-artifacts" />
-                <ArtifactsTable job={job} {...this.props} />
+                <div className="image-artifacts">
+                  <ArtifactViewer jobId={job.job_id}>
+                    {selectViewer(selectedArtifact)}
+                  </ArtifactViewer>
+                </div>
+                <ArtifactsTable onClickArtifact={this.onClickArtifact} job={job} {...this.props} />
               </div>
             )}
           </div>

@@ -6,6 +6,7 @@ class ArtifactRow extends React.Component {
     super(props);
 
     this.onClickDownload = this.onClickDownload.bind(this);
+    this.onClickThisArtifact = this.onClickThisArtifact.bind(this);
   }
 
   onClickDownload() {
@@ -13,11 +14,22 @@ class ArtifactRow extends React.Component {
     window.open(artifact.uri);
   }
 
+  onClickThisArtifact() {
+    const { onClickArtifact, artifact } = this.props;
+    onClickArtifact(artifact);
+  }
+
   render() {
     const { artifact } = this.props;
 
     return (
-      <div className="table-artifacts-row">
+      <div
+        tabIndex="0"
+        onKeyPress={this.onClickThisArtifact}
+        role="button"
+        onClick={this.onClickThisArtifact}
+        className="table-artifacts-row"
+      >
         <div className="table-artifacts-row-cell">
           <p>{artifact.filename}</p>
         </div>
@@ -42,10 +54,12 @@ class ArtifactRow extends React.Component {
 
 ArtifactRow.propTypes = {
   artifact: PropTypes.object,
+  onClickArtifact: PropTypes.func,
 };
 
 ArtifactRow.defaultProps = {
   artifact: {},
+  onClickArtifact: () => {},
 };
 
 export default ArtifactRow;
