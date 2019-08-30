@@ -5,6 +5,10 @@ export model_name=$2
 no_follow=$3
 export job_id=$project_name-$model_name
 
+echo 'configuring config map for model package server'
+envsubst < ../scheduler_config_map.yaml | kubectl apply -f -
+echo 'Successfully configured config map for $job_id'
+
 envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl create -f -
 echo "Preparing $model_name for serving"
 
