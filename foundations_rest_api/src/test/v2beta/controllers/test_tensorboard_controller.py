@@ -13,20 +13,32 @@ from mock import patch
 from foundations.artifacts.syncable_directory import SyncableDirectory
 from foundations_rest_api.v2beta.controllers.tensorboard_controller import TensorboardController
 from foundations_rest_api.v2beta.models.property_model import PropertyModel
-from foundations_spec import Spec, let
+from foundations_spec import Spec, let, let_now, set_up, Mock
 
 class TestTensorboardController(Spec):
 
-    _namespace = 'foundations-scheduler-test'
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
 
-    @let
-    def syncable_directory(self):
-        SyncableDirectory()
+        config_manager = ConfigManager()
+        config_manager['TENSORBOARD_HOST'] = '10.103.113.163'
+        return self.patch('foundations_contrib.global_state.config_manager', config_manager)
+
     @let
     def controller(self):
         return TensorboardController()
     
     @let
-    def job_ids(self):
+    def job_id(self):
         return [self.faker.uuid4()]
 
+    @set_up
+    def set_up(self):
+        self.controller.params = {'tensorboard_locations': [{'job_id': self.job_id, 'synced_directory': 'tb_data'}]}
+
+    @patch('requests.post', Mock(return_value=('Sucess', 200)))
+    def test_tensorboard_controller_post(self):
+        import requests
+        self.controller.post()
+        requests.post.assert_called_with(f'http://10.103.113.163/create_sym_links', json=self.controller.params)

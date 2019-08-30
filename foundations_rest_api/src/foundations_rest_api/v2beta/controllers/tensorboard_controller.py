@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import subprocess as sp
 
 from flask_restful import reqparse, inputs
-import requests
 
 from foundations_rest_api.utils.api_resource import api_resource
 from foundations_core_rest_api_components.response import Response
@@ -25,5 +24,7 @@ class TensorboardController:
     _cluster_ip = _get_cluster_ip('foundations-scheduler-test', 'tensorboard')
 
     def post(self):
+        import requests
+        
         response = requests.post(f'http://{self._cluster_ip}/create_sym_links', json=self.params)
         return Response('Tensorboard', LazyResult(lambda: response.text))
