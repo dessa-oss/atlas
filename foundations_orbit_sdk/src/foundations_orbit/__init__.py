@@ -14,3 +14,6 @@ def _append_module():
     module_manager.append_module(sys.modules[__name__])
 
 _append_module()
+
+class DataContract(object):
+    pass
