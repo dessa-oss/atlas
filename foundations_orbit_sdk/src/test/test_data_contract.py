@@ -11,6 +11,14 @@ from foundations_orbit.data_contract import DataContract
 
 class TestDataContract(Spec):
 
+    @let
+    def contract_name(self):
+        return self.faker.word()
+
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
         self.assertEqual(DataContract, foundations_orbit.DataContract)
+
+    def test_data_contract_has_contract_name(self):
+        contract = DataContract(self.contract_name)
+        self.assertEqual(self.contract_name, contract.contract_name)
