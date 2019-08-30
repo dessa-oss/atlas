@@ -111,4 +111,10 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         ]
 
         data = self._get_from_route()
+        self._sort_series_entries(data)
+
         self.assertEqual(expected_data, data)
+
+    def _sort_series_entries(self, data_from_route):
+        for metric_set in data_from_route:
+            metric_set['series'].sort(key=lambda series_entry: series_entry['name'])
