@@ -22,12 +22,8 @@ def _get_cluster_ip(namespace, service_to_grep):
 @api_resource('/api/v2beta/upload_to_tensorboard')
 class TensorboardController:
 
-    parser = reqparse.RequestParser()
-    parser.add_argument('job_ids', action='append')
-    
     _cluster_ip = _get_cluster_ip('foundations-scheduler-test', 'tensorboard')
 
     def post(self):
-        job_ids = self.parser.parse_args()
-        response = requests.post(f'http://{self._cluster_ip}/create_sym_links', json=job_ids)
+        response = requests.post(f'http://{self._cluster_ip}/create_sym_links', json=self.params)
         return Response('Tensorboard', LazyResult(lambda: response.text))
