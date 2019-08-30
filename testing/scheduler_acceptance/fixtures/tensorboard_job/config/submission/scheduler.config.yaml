@@ -1,0 +1,3 @@
+results_config: {redis_end_point: 'redis://192.168.128.11:6379'}
+ssh_config: {code_path: /jobs, host: 192.168.128.11, key_path: ~/.ssh/id_foundations_scheduler,
+  port: 31222, user: job-uploader}

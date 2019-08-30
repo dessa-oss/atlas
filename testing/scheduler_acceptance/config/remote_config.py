@@ -74,6 +74,15 @@ def _config():
     else:
         config_manager['result_path'] = '/tmp/foundations/results'
 
+    _set_tensorboard_hosts(scheduler_host)
+
+def _set_tensorboard_hosts(scheduler_host):
+    from foundations import config_manager
+
+    tensorboard_host = f'http://{scheduler_host}'
+    config_manager['TENSORBOARD_API_HOST'] = f'{tensorboard_host}:32767'
+    config_manager['TENSORBOARD_HOST'] = f'{tensorboard_host}:32766'
+
 def _append_spec_module():
     import sys
     from foundations_internal.global_state import module_manager

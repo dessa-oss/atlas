@@ -5,3 +5,4 @@ Faker==1.0.0
 fakeredis==0.15.0
 ifaddr==0.1.6
 twine==1.13.0
+beautifulsoup4==4.8.0

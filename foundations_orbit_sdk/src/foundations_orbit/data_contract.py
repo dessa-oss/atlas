@@ -5,7 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import foundations
-
-from orbit_acceptance.test_orbit_deploy_model_via_cli import TestOrbitDeployModelViaCli
-from orbit_acceptance.test_data_validation import TestDataValidation
+class DataContract(object):
+    pass

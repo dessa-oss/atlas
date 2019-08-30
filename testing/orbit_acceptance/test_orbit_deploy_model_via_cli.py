@@ -4,6 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
 import foundations
 import time
 import subprocess
@@ -220,7 +221,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
-        command = f'kubectl -n foundations-scheduler-test delete deployment {project_name}-{model_name}-deployment'
+        command = f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'
         subprocess.run(command.split())
-        command = f'kubectl -n foundations-scheduler-test delete svc {project_name}-{model_name}-service'
+        command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
         subprocess.run(command.split())
