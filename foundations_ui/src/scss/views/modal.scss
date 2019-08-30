@@ -213,6 +213,11 @@
       .container-tags {
         margin-top: 20px;
   
+        .job-tag:first-child() {
+          height: 11px;
+          vertical-align: middle
+        }
+
         .container-tag {
           background: green;
           display: inline-block;
@@ -246,6 +251,8 @@
             display: inline-block;
             height: 20px;
             margin-left: 10px;
+            padding: 10px;
+            vertical-align: middle;
 
             &:first-child {
               margin-left: 0px;
@@ -255,12 +262,15 @@
 
           button {
             width: 80px;
+            height: 45px;
             display: inline-block;
             background-color: #0FA3B1;
             font-size: 80%;
             padding: 10px;
             line-height: 0.5;
             margin-left: 10px;
+            border-radius: 5px;
+            vertical-align: middle;
 
             &:last-child {
               background: #d84247;
