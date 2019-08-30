@@ -5,5 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class DataContractOptions(object):
-    pass
+from foundations_contrib.models.property_model import PropertyModel
+
+class DataContractOptions(PropertyModel):
+    
+    max_bins = PropertyModel.define_property()

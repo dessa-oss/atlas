@@ -10,4 +10,11 @@ from foundations_spec import *
 from foundations_orbit.data_contract_options import DataContractOptions
 
 class TestDataContractOptions(Spec):
-    pass
+    
+    @let
+    def max_bins(self):
+        return self.faker.random.randint(1, 100)
+
+    def test_data_contract_options_has_max_bins(self):
+        options = DataContractOptions(max_bins=self.max_bins)
+        self.assertEqual(self.max_bins, options.max_bins)
