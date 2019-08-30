@@ -14,4 +14,4 @@ class DataContractOptions(PropertyModel):
     check_row_count = PropertyModel.define_property()
     special_values = PropertyModel.define_property()
     check_distribution = PropertyModel.define_property()
-    distribution_check = PropertyModel.define_property()
+    distribution = PropertyModel.define_property()
