@@ -69,6 +69,9 @@ class TestTensorboardEndpoint(Spec):
         self.deployment.wait_for_deployment_to_complete()
 
     def test_upload_to_tensorflow(self):
+        from foundations_contrib.global_state import config_manager
+
         data = self.client.post(self.url, json={'tensorboard_locations': [{'job_id': self.job_id, 'synced_directory': 'tb_data'}]})
-        self.assertEqual(data.get_json(), f'Success! the specified jobs: [{self.job_id}] have been sent to tensorboard')
+        url = data.get_json()['url']
+        self.assertEqual(f'{config_manager["TENSORBOARD_HOST"]}', url)
 
