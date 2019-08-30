@@ -31,6 +31,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_check_schema_True(self):
         self._test_data_contract_has_default_option('check_schema', True)
 
+    def test_data_contract_has_options_with_default_check_row_count_False(self):
+        self._test_data_contract_has_default_option('check_row_count', False)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
