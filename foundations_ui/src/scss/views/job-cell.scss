@@ -36,7 +36,10 @@
 
 .job-id-cell {
   line-height: normal;
-  // float: left;
+  width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }
 
 .duration-cell{
