@@ -34,6 +34,8 @@ spec:
         volumeMounts:
         - mountPath: /archive
           name: archive
+        - mountPath: /root/.foundations/config
+          name: scheduler-config
       volumes: 
         - name: 'archive'
           persistentVolumeClaim: 

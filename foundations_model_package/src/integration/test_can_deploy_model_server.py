@@ -233,12 +233,22 @@ class TestCanDeployModelServer(Spec):
         return self.deployment
 
     def _deploy_model_package(self, project_name, model_name, job_id):
+        self._peform_action_for_creating_config_map('apply')
         self._perform_action_for_model_package(project_name, model_name, job_id, 'create')
         self._wait_for_model_package_pod(project_name, model_name)
 
     def _tear_down_model_package(self, project_name, model_name, job_id):
         self._perform_action_for_model_package(project_name, model_name, job_id, 'delete')
+        self._peform_action_for_creating_config_map('delete')
         self._wait_for_serving_pod_to_die(project_name, model_name)
+
+    def _peform_action_for_creating_config_map(self, action):
+        import os.path as path
+        import subprocess
+
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/scheduler_config_map.yaml')
+        command_to_run = f'FOUNDATIONS_SCHEDULER_HOST={self._get_scheduler_ip()} envsubst < {yaml_template_path} | kubectl {action} -f -'
+        subprocess.call(['bash', '-c', command_to_run])
 
     def _perform_action_for_model_package(self, project_name, model_name, job_id, action):
         import os.path as path

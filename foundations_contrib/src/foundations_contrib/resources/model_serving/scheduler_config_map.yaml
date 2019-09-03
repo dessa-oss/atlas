@@ -4,7 +4,7 @@ metadata:
   name: model-package-server-configuration
   namespace: foundations-scheduler-test
 data:
-  default.config.yaml: |
+  scheduler.config.yaml: |
     job_deployment_env: scheduler_plugin
     results_config:
       archive_end_point: /archive
