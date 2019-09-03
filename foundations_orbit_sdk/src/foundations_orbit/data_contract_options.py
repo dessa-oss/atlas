@@ -25,8 +25,8 @@ class DataContractOptions(PropertyModel):
         if len(self.special_values) != len(other.special_values):
             return False
 
-        for index in range(len(self.special_values)):
-            if not _equality_check(self.special_values[index], other.special_values[index]):
+        for value, other_value in zip(self.special_values, other.special_values):
+            if not _equality_check(value, other_value):
                 return False
 
         return True
