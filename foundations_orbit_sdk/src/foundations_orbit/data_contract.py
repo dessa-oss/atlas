@@ -36,14 +36,21 @@ class DataContract(object):
 
     @staticmethod
     def load(model_package_directory, contract_name):
-        with open(f'{model_package_directory}/{contract_name}.pkl', 'rb') as contract_file:
-            return DataContract(contract_name)
+        import pickle
+
+        data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(model_package_directory, contract_name)
+        with open(data_contract_file_name, 'rb') as contract_file:
+            return DataContract._deserialized_contract(contract_file.read())
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
 
     def _data_contract_file_path(self, model_package_directory):
-        return f'{model_package_directory}/{self._contract_name}.pkl'
+        return self._data_contract_file_path_with_contract_name(model_package_directory, self._contract_name)
+
+    @staticmethod
+    def _data_contract_file_path_with_contract_name(model_package_directory, contract_name):
+        return f'{model_package_directory}/{contract_name}.pkl'
 
     def _serialized_contract(self):
         import pickle
@@ -52,3 +59,8 @@ class DataContract(object):
         contract.options = self.options
 
         return pickle.dumps(contract)
+
+    @staticmethod
+    def _deserialized_contract(serialized_contract):
+        import pickle
+        return pickle.loads(serialized_contract)
