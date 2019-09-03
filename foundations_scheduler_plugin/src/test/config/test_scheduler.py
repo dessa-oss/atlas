@@ -92,7 +92,7 @@ class TestScheduler(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['key_path'], '~/.ssh/id_foundations_scheduler')
 
-    def test_returns_default_redis_url(self):
+    def test_returns_redis_url(self):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://localhost:6379')
 
