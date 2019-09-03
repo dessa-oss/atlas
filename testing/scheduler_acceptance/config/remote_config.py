@@ -18,6 +18,7 @@ def set_foundations_home():
 def _config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, set_job_resources
     from foundations_scheduler_plugin.job_deployment import JobDeployment
+    from foundations_scheduler_plugin.config.kubernetes import kubernetes_master_ip
     from foundations_spec.extensions import get_network_address
     import foundations_ssh
     import getpass
@@ -58,10 +59,8 @@ def _config():
 
 
     scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
-
     if scheduler_host is None:
-        print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
-        exit(1)
+        scheduler_host = kubernetes_master_ip()
 
     redis_url = environ.get('FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL', 'redis://{}:6379'.format(scheduler_host))
 

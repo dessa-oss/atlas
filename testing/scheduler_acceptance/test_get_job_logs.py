@@ -8,6 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from scheduler_acceptance.mixins.node_aware_mixin import NodeAwareMixin
 import foundations
+from foundations_contrib.global_state import config_manager
 
 class TestGetJobLogs(Spec, NodeAwareMixin):
 
@@ -28,14 +29,16 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
 
     @set_up
     def set_up(self):
+        config_manager.push_config()
         self._create_config()
 
     @tear_down
     def tear_down(self):
         from foundations_contrib.global_state import current_foundations_context
 
-        current_foundations_context().reset_job_resources()
+        foundations.set_job_resources(num_gpus=0)
         self._delete_config()
+        config_manager.pop_config()
 
     def test_get_logs_for_job_that_does_not_exist_prints_error_message(self):
         import subprocess

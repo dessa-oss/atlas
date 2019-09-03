@@ -9,12 +9,19 @@ import typing
 
 import foundations
 from foundations_spec import Spec, let, set_up
-from foundations_rest_api.global_state import app_manager
 
 
 class TestTensorboardEndpoint(Spec):
     url = '/api/v2beta/upload_to_tensorboard'
-    client = app_manager.app().test_client()
+
+    @let
+    def app_manager(self):
+        from foundations_rest_api.global_state import app_manager
+        return app_manager
+
+    @let
+    def client(self):
+        return self.app_manager.app().test_client()
 
     @let
     def scheduler_host(self):
