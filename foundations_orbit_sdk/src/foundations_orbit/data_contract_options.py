@@ -17,19 +17,9 @@ class DataContractOptions(PropertyModel):
     distribution = PropertyModel.define_property()
 
     def __eq__(self, other):
-        import math
-
-        if not isinstance(other, DataContractOptions):
-            return False
-
-        if len(self.special_values) != len(other.special_values):
-            return False
-
-        for value, other_value in zip(self.special_values, other.special_values):
-            if not _equality_check(value, other_value):
-                return False
-
-        return True
+        return isinstance(other, DataContractOptions) \
+            and len(self.special_values) == len(other.special_values) \
+            and _zipped_elements_equal(self.special_values, other.special_values)
 
 def _equality_check(value, other_value):
     import math
@@ -38,3 +28,10 @@ def _equality_check(value, other_value):
         return math.isnan(other_value)
 
     return value == other_value
+
+def _zipped_elements_equal(values, other_values):
+    for value, other_value in zip(values, other_values):
+        if not _equality_check(value, other_value):
+            return False
+
+    return True
