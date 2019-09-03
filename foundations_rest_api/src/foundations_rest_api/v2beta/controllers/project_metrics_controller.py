@@ -19,14 +19,11 @@ class ProjectMetricsController(object):
         return Response('Jobs', LazyResult(self._get_metrics))
 
     def _get_metrics(self):
-        from foundations_contrib.global_state import redis_connection
         from foundations_internal.fast_serializer import deserialize
         from collections import defaultdict
 
-        project_key = f'projects:{self._project_name()}:metrics'
-        serialized_project_metrics = redis_connection.hgetall(project_key)
         project_metrics = []
-        for metric_key, serialized_metric in serialized_project_metrics.items():
+        for metric_key, serialized_metric in self._serialized_project_metrics().items():
             job_id, metric_name = metric_key.decode().split(':')
             timestamp, value = deserialize(serialized_metric)
             project_metrics.append({
@@ -46,6 +43,12 @@ class ProjectMetricsController(object):
                 'values': metrics
             })
         return result
+
+    def _serialized_project_metrics(self):
+        from foundations_contrib.global_state import redis_connection
+
+        project_key = f'projects:{self._project_name()}:metrics'
+        return redis_connection.hgetall(project_key)        
 
     def _project_name(self):
         return self.params['project_name']
