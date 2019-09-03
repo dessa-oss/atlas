@@ -10,14 +10,13 @@ class DataContract(object):
     def __init__(self, contract_name, df=None):
         import pandas
 
+        self.options = self._default_options()
         self._contract_name = contract_name
 
         if df is None:
             dataframe = pandas.DataFrame()
         else:
             dataframe = df
-
-        self.options = self._default_options()
 
         self._number_of_columns = len(dataframe.columns)
 
