@@ -103,6 +103,15 @@ class TestDataContractOptions(Spec):
 
         self.assertNotEqual(options, other_options)
 
+    def test_data_contract_options_equal_by_default(self):
+        self.assertEqual(DataContractOptions(), DataContractOptions())
+
+    def test_data_contract_options_are_not_equal_if_max_bins_are_not_equal(self):
+        options = DataContractOptions(max_bins=50)
+        other_options = DataContractOptions(max_bins=60)
+
+        self.assertNotEqual(options, other_options)
+
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
 
