@@ -45,29 +45,28 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, *args):
         import numpy
 
-        if not list(dataframe_to_validate.columns):
-            return {
-                'schema_check_passed': True,
-                'dist_check_results': {}
-            }
-
-        return {
+        validation_report = {
             'schema_check_passed': True,
-            'dist_check_results': {
-                list(dataframe_to_validate.columns)[0]: {
-                    'binned_l_infinity': 0.0,
-                    'binned_passed': True,
-                    'special_values': {
-                        numpy.nan: {
-                            'current_percentage': 0.0,
-                            'passed': True,
-                            'percentage_diff': 0.0,
-                            'ref_percentage': 0.0
-                        }
-                    }
+            'dist_check_results': {}
+        }
+
+        results_for_same_distribution = {
+            'binned_l_infinity': 0.0,
+            'binned_passed': True,
+            'special_values': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
+
+        for column_name in dataframe_to_validate.columns:
+            validation_report['dist_check_results'][column_name] = results_for_same_distribution
+
+        return validation_report
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
