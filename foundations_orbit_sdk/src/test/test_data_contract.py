@@ -82,6 +82,16 @@ class TestDataContract(Spec):
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
+    def test_data_contract_preserves_options(self):
+        import pickle
+        
+        contract = DataContract(self.contract_name)
+        contract.options = {'asdf': 'value'}
+
+        contract.save(self.model_package_directory)
+
+        self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))

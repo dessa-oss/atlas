@@ -39,4 +39,8 @@ class DataContract(object):
 
     def _serialized_contract(self):
         import pickle
-        return pickle.dumps(DataContract(self._contract_name))
+
+        contract = DataContract(self._contract_name)
+        contract.options = self.options
+
+        return pickle.dumps(contract)
