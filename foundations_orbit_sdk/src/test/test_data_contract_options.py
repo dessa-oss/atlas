@@ -80,6 +80,15 @@ class TestDataContractOptions(Spec):
 
         self.assertNotEqual(options, other_options)
 
+    def test_data_contract_options_are_equal_if_second_special_values_are_both_nans_and_values_are_otherwise_equal(self):
+        import numpy
+        import pickle
+
+        options = DataContractOptions(special_values=[self.random_int, numpy.nan])
+        other_options = DataContractOptions(special_values=[self.random_int, numpy.nan])
+
+        self.assertEqual(options, pickle.loads(pickle.dumps(other_options)))
+
     def test_data_contract_options_are_not_equal_0_and_nan(self):
         import numpy
 

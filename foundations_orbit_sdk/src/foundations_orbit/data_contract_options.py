@@ -22,7 +22,16 @@ class DataContractOptions(PropertyModel):
         if not isinstance(other, DataContractOptions):
             return False
 
-        if self.special_values == other.special_values:
-            return True
+        for index in range(len(self.special_values)):
+            if not _equality_check(self.special_values[index], other.special_values[index]):
+                return False
 
-        return math.isnan(self.special_values[0]) and math.isnan(other.special_values[0])
+        return True
+
+def _equality_check(value, other_value):
+    import math
+
+    if math.isnan(value):
+        return math.isnan(other_value)
+
+    return value == other_value
