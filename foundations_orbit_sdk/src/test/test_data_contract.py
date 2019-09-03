@@ -13,6 +13,7 @@ class TestDataContract(Spec):
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_file_for_write = let_mock()
+    mock_file_for_read = let_mock()
 
     @let
     def contract_name(self):
@@ -31,7 +32,11 @@ class TestDataContract(Spec):
         self.mock_file_for_write.__enter__ = lambda *args: self.mock_file_for_write
         self.mock_file_for_write.__exit__ = lambda *args: None
 
+        self.mock_file_for_read.__enter__ = lambda *args: self.mock_file_for_read
+        self.mock_file_for_read.__exit__ = lambda *args: None
+
         self.mock_open.return_when(self.mock_file_for_write, self.data_contract_file_path, 'wb')
+        self.mock_open.return_when(self.mock_file_for_read, self.data_contract_file_path, 'rb')
 
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
@@ -82,7 +87,7 @@ class TestDataContract(Spec):
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
-    def test_data_contract_preserves_options(self):
+    def test_data_contract_save_preserves_options(self):
         import pickle
         
         contract = DataContract(self.contract_name)
@@ -91,6 +96,17 @@ class TestDataContract(Spec):
         contract.save(self.model_package_directory)
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
+
+    def test_data_contract_has_equality(self):
+        self.assertEqual(DataContract(self.contract_name), DataContract(self.contract_name))
+
+    def test_data_contract_load_uses_pickle_to_deserialize(self):
+        import pickle
+
+        contract = DataContract(self.contract_name)
+        self.mock_file_for_read.read.return_value = pickle.dumps(contract)
+
+        self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
