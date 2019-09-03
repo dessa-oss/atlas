@@ -45,10 +45,19 @@ class TestDataContract(Spec):
     def column_name(self):
         return self.faker.word()
 
+    @let
+    def column_name_2(self):
+        return self.faker.word()
+
     @let_now
     def one_column_dataframe_no_rows(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name])
+
+    @let_now
+    def two_column_dataframe_no_rows(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
 
     @set_up
     def set_up(self):
@@ -169,6 +178,43 @@ class TestDataContract(Spec):
         
         expected_dist_check_result = {
             self.column_name: {
+                'binned_l_infinity': 0.0,
+                'binned_passed': True,
+                'special_values': {
+                    numpy.nan: {
+                        'current_percentage': 0.0,
+                        'passed': True,
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(expected_dist_check_result, validation_report['dist_check_results'])
+
+    def test_data_contract_validate_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
+        import numpy
+
+        self.maxDiff = None
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
+        validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
+        
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 0.0,
+                'binned_passed': True,
+                'special_values': {
+                    numpy.nan: {
+                        'current_percentage': 0.0,
+                        'passed': True,
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0
+                    }
+                }
+            },
+            self.column_name_2: {
                 'binned_l_infinity': 0.0,
                 'binned_passed': True,
                 'special_values': {
