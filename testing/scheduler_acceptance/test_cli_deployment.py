@@ -14,22 +14,10 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
     
     @let
     def cli_config(self):
-        import os
+        from foundations_contrib.global_state import config_manager
 
-        scheduler_host = os.environ['FOUNDATIONS_SCHEDULER_HOST']
-
-        if scheduler_host is None:
-            print("Please set the FOUNDATIONS_SCHEDULER_HOST environment variable to your LAN ip!")
-            exit(1)
-
-        if os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE':
-            ssh_config_host = scheduler_host
-            redis_url = os.environ.get('FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL', 'redis://{}:6379'.format(scheduler_host))
-        else:
-            from foundations_spec.extensions import get_network_address
-
-            ssh_config_host = scheduler_host
-            redis_url = 'redis://{}:6379'.format(scheduler_host)
+        scheduler_host = config_manager['remote_host']
+        redis_url = config_manager['redis_url']
 
         return {
             'results_config': {
@@ -37,7 +25,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
             },
             'ssh_config': {
                 'user': 'job-uploader',
-                'host': ssh_config_host,
+                'host': scheduler_host,
                 'code_path': '/jobs',
                 'key_path': '~/.ssh/id_foundations_scheduler',
                 'port': 31222
@@ -102,6 +90,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         self._wait_for_job_to_complete(job_id)
 
+        print(self._get_metrics_for_all_jobs('this-project'))
         self.assertEqual(0, self._get_logged_metric('this-project', job_id, 'gpus'))
         self.assertEqual(3.0, self._get_logged_metric('this-project', job_id, 'memory'))
 

@@ -6,6 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import foundations
+from foundations_contrib.global_state import redis_connection
 
 def get_ram_in_gb_when_limit_set():
     with open('/sys/fs/cgroup/memory/memory.limit_in_bytes', 'r') as memory_limit_file:

@@ -10,18 +10,11 @@ import unittest
 from foundations_spec.helpers import set_up, tear_down
 from foundations_spec import *
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
-from foundations import config_manager
+from foundations_contrib.global_state import config_manager
 from foundations_ssh.sftp_bucket import SFTPBucket
 from foundations import log_metric
 
 class TestObfuscateJobs(Spec):
-
-    @tear_down
-    def tear_down(self):
-        from scheduler_acceptance.cleanup import cleanup
-        config_manager['obfuscate_foundations'] = False
-        cleanup()
-        self._delete_config()
 
     @let
     def config_path(self):
@@ -30,8 +23,17 @@ class TestObfuscateJobs(Spec):
 
         return path.join(foundations_home(), 'config', 'local_scheduler.config.yaml')
     
+    @tear_down
+    def tear_down(self):
+        from scheduler_acceptance.cleanup import cleanup
+
+        config_manager.pop_config()
+        cleanup()
+        self._delete_config()
+
     @set_up
     def set_up(self):
+        config_manager.push_config()
         self._create_config()
 
     def test_job_obfuscates_source_code_when_remote_and_obfuscate_true(self):
@@ -70,7 +72,7 @@ class TestObfuscateJobs(Spec):
 
     def _create_and_run_job(self):
         import foundations
-        from scheduler_acceptance.fixtures.stages import add_two_numbers, read_init_file
+        from scheduler_acceptance.fixtures.stages import read_init_file
         import time
 
         read_init_file = foundations.create_stage(read_init_file)
