@@ -18,9 +18,19 @@ def translate(config):
         'obfuscate_foundations': _obfuscate_foundations(config),
         'worker_container_overrides': config.get('worker', {})
     }
+    if not 'host' in config['ssh_config']:
+        config['ssh_config']['host'] = _kubernetes_master_ip()
     result.update(ssh_configuration(config))
 
     return result 
+
+def _kubernetes_master_ip():
+    import subprocess
+    import yaml
+
+    node_yaml = subprocess.check_output(['kubectl', 'get', 'node', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
+    node = yaml.load(node_yaml)
+    return node['items'][0]['status']['addresses'][0]['address']
 
 def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
