@@ -41,6 +41,15 @@ class TestDataContract(Spec):
         import pandas
         return pandas.DataFrame()
 
+    @let
+    def column_name(self):
+        return self.faker.word()
+
+    @let_now
+    def one_column_dataframe_no_rows(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name])
+
     @set_up
     def set_up(self):
         self.mock_file_for_write.__enter__ = lambda *args: self.mock_file_for_write
@@ -146,6 +155,34 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
         self.assertTrue(validation_report['schema_check_passed'])
+
+    def test_data_contract_validate_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
+        validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
+        self.assertEqual({}, validation_report['dist_check_results'])
+
+    def test_data_contract_validate_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
+        import numpy
+
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
+        validation_report = contract.validate(self.one_column_dataframe_no_rows, self.datetime_today)
+        
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 0.0,
+                'binned_passed': True,
+                'special_values': {
+                    numpy.nan: {
+                        'current_percentage': 0.0,
+                        'passed': True,
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(expected_dist_check_result, validation_report['dist_check_results'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
