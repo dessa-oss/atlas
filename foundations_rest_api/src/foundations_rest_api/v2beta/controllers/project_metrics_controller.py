@@ -26,17 +26,18 @@ class ProjectMetricsController(object):
 
     def _single_metric(self):
         metric_name = self.params['metric_name']
-        return {
-            'metric_name': metric_name,
-            'values': self._grouped_metrics()[metric_name]
-        }
+        metrics = self._grouped_metrics()[metric_name]
+        return self._metric(metric_name, metrics)
 
     def _get_metrics(self):
-        for metric_key, metrics in self._grouped_metrics().items():
-            yield {
-                'metric_name': metric_key,
-                'values': metrics
-            }
+        for metric_name, metrics in self._grouped_metrics().items():
+            yield self._metric(metric_name, metrics)
+    
+    def _metric(self, metric_name, metrics):
+        return {
+            'metric_name': metric_name,
+            'values': metrics
+        }
 
     def _grouped_metrics(self):
         from collections import defaultdict
