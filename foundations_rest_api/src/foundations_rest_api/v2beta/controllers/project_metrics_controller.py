@@ -20,14 +20,16 @@ class ProjectMetricsController(object):
 
     def _project_metrics_or_single_metric(self):
         if 'metric_name' in self.params:
-            metric_name = self.params['metric_name']
-            metric = {
-                'metric_name': metric_name,
-                'values': self._grouped_metrics()[metric_name]
-            }
-            return [metric]
+            return [self._single_metric()]
         else:
             return list(self._get_metrics())
+
+    def _single_metric(self):
+        metric_name = self.params['metric_name']
+        return {
+            'metric_name': metric_name,
+            'values': self._grouped_metrics()[metric_name]
+        }
 
     def _get_metrics(self):
         for metric_key, metrics in self._grouped_metrics().items():
