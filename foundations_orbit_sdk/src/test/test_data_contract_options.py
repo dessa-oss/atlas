@@ -29,6 +29,15 @@ class TestDataContractOptions(Spec):
     def test_data_contract_options_has_distribution_check(self):
         self._test_data_contract_options_has_attribute('distribution')
 
+    def test_data_contract_options_are_equal_if_special_values_consists_of_a_numpy_nan_and_was_loaded_from_pickle(self):
+        import numpy
+        import pickle
+
+        options = DataContractOptions(special_values=[numpy.nan])
+        other_options = DataContractOptions(special_values=[numpy.nan])
+
+        self.assertEqual(options, pickle.loads(pickle.dumps(other_options)))
+
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
 
