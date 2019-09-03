@@ -31,6 +31,16 @@ class TestDataContract(Spec):
     def data_contract_file_path(self):
         return f'{self.model_package_directory}/{self.contract_name}.pkl'
 
+    @let_now
+    def datetime_today(self):
+        import datetime
+        return datetime.datetime.today()
+
+    @let_now
+    def empty_dataframe(self):
+        import pandas
+        return pandas.DataFrame()
+
     @set_up
     def set_up(self):
         self.mock_file_for_write.__enter__ = lambda *args: self.mock_file_for_write
@@ -131,7 +141,12 @@ class TestDataContract(Spec):
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
         self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
-        
+
+    def test_data_contract_validate_empty_dataframe_against_itself_passes_schema_check(self):
+        contract = DataContract(self.contract_name, df=self.empty_dataframe)
+        validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
+        self.assertTrue(validation_report['schema_check_passed'])
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))

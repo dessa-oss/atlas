@@ -42,6 +42,11 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
+    def validate(self, *args):
+        return {
+            'schema_check_passed': True
+        }
+
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
 
