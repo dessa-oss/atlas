@@ -20,9 +20,13 @@ class ProjectOverview extends React.Component {
 
   async reload() {
     const { projectName, metric } = this.state;
-    const URL = metric === '' ? '/projects/'.concat(projectName).concat('/overview_metrics')
-      : '/projects/'.concat(projectName).concat('/overview_metrics').concat('?y_axis=').concat(metric);
-    const APIGraphData = await BaseActions.getFromApiary(URL);
+    let URL = `projects/${projectName}/overview_metrics`;
+    if (metric) {
+      URL = `${URL}?metric_name=${metric}`;
+    }
+
+    const APIGraphData = await BaseActions.getFromStaging(URL);
+
     if (APIGraphData.length > 0) {
       const allMetrics = APIGraphData.map((graphMetric) => {
         return graphMetric.metric_name;
