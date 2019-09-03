@@ -9,9 +9,16 @@ class DataContract(object):
     
     def __init__(self, contract_name, df=None):
         import numpy
+        import pandas
+
         from foundations_orbit.data_contract_options import DataContractOptions
 
         self._contract_name = contract_name
+
+        if df is None:
+            dataframe = pandas.DataFrame()
+        else:
+            dataframe = df
 
         default_distribution = {
             'distance_metric': 'l_infinity',
@@ -30,6 +37,8 @@ class DataContract(object):
             distribution=default_distribution
         )
 
+        self._number_of_columns = len(dataframe.columns)
+
     def save(self, model_package_directory):
         with open(self._data_contract_file_path(model_package_directory), 'wb') as contract_file:
             contract_file.write(self._serialized_contract())
@@ -46,7 +55,7 @@ class DataContract(object):
         import numpy
 
         validation_report = {
-            'schema_check_passed': True,
+            'schema_check_passed': len(dataframe_to_validate.columns) != 0 or self._number_of_columns == 0,
             'dist_check_results': {}
         }
 
