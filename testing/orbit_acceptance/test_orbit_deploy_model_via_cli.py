@@ -42,6 +42,11 @@ class TestOrbitDeployModelViaCli(Spec):
         print(f'Tearing down deployment and service for {self.mock_project_name}-{self.mock_user_provided_model_name}')
         self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
 
+    @staticmethod
+    def _is_running_on_jenkins():
+        import os
+        return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
+
     @let
     def mock_project_name(self):
         return self.faker.word().lower()
@@ -142,6 +147,14 @@ class TestOrbitDeployModelViaCli(Spec):
 
         return os.environ['FOUNDATIONS_SCHEDULER_HOST']
 
+    def _get_redis_ip(self):
+        import os
+
+        if not klass._is_running_on_jenkins():
+            return f'redis://{self._get_scheduler_ip()}:6379'
+        
+        return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
+    
     def _wait_for_server_to_be_available(self):
         import time
 
@@ -197,7 +210,7 @@ class TestOrbitDeployModelViaCli(Spec):
             'job_deployment_env': 'scheduler_plugin', 
             'results_config': {
                 'archive_end_point': '/archive',
-                'redis_end_point': f'redis://{self._get_scheduler_ip()}:6379',
+                'redis_end_point': self._get_redis_ip(),
                 'artifact_path': 'artifacts',
                 'artifact_path': '.'
             },
