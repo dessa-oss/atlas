@@ -80,7 +80,6 @@ class TestDataValidation(Spec):
         loaded_data_contract = DataContract.load(self.model_package_dirpath, self.contract_name)
         self.assertEqual(data_contract, loaded_data_contract)
 
-    @skip
     def test_validate_dataframe_against_own_schema_passes_all_tests(self):
         import datetime
         import numpy
