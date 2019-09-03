@@ -18,7 +18,9 @@ class DataContract(object):
         else:
             dataframe = df
 
-        if len(dataframe.columns) != 0:
+        self._number_of_columns = len(dataframe.columns)
+
+        if self._number_of_columns != 0:
             self._first_column_name = dataframe.columns[0]
         else:
             self._first_column_name = None
@@ -63,15 +65,10 @@ class DataContract(object):
         if len(dataframe_to_validate.columns) == 0:
             first_column_name = None
         else:
-            first_column_name = dataframe_to_validate.columns[0]
-
-        if self._first_column_name is not None:
-            schema_check_passed = len(dataframe_to_validate.columns) == 1
-        else:
-            schema_check_passed = True
+            first_column_name = dataframe_to_validate.columns[0] 
 
         validation_report = {
-            'schema_check_passed': schema_check_passed and self._first_column_name == first_column_name,
+            'schema_check_passed': self._number_of_columns == len(dataframe_to_validate.columns) and self._first_column_name == first_column_name,
             'dist_check_results': {}
         }
 
