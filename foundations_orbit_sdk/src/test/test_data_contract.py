@@ -20,6 +20,10 @@ class TestDataContract(Spec):
         return self.faker.word()
 
     @let
+    def other_contract_name(self):
+        return self.faker.word()
+
+    @let
     def model_package_directory(self):
         return self.faker.file_path()
 
@@ -99,6 +103,9 @@ class TestDataContract(Spec):
 
     def test_data_contract_has_equality(self):
         self.assertEqual(DataContract(self.contract_name), DataContract(self.contract_name))
+
+    def test_data_contract_with_different_name_is_not_equal(self):
+        self.assertNotEqual(DataContract(self.contract_name), DataContract(self.other_contract_name))
 
     def test_data_contract_load_uses_pickle_to_deserialize(self):
         import pickle
