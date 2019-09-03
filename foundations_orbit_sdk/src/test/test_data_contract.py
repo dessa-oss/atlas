@@ -49,6 +49,10 @@ class TestDataContract(Spec):
     def column_name_2(self):
         return self.faker.word()
 
+    @let
+    def column_name_3(self):
+        return self.faker.word()
+
     @let_now
     def one_column_dataframe_no_rows(self):
         import pandas
@@ -63,6 +67,11 @@ class TestDataContract(Spec):
     def two_column_dataframe_no_rows(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
+
+    @let_now
+    def two_column_dataframe_no_rows_different_second_column(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_3])
 
     @set_up
     def set_up(self):
@@ -249,6 +258,16 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
         self.assertFalse(validation_report['schema_check_passed'])
+
+    def test_data_contract_validate_dataframe_with_one_column_against_itself_passes_schema_check(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
+        validation_report = contract.validate(self.one_column_dataframe_no_rows, self.datetime_today)
+        self.assertTrue(validation_report['schema_check_passed'])
+
+    def test_data_contract_validate_dataframe_with_multiple_columns_against_itself_passes_schema_check(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
+        validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
+        self.assertTrue(validation_report['schema_check_passed'])        
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
