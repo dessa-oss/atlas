@@ -104,7 +104,7 @@ class TestExecution(Spec):
 
     def test_returns_ssh_user_default_user(self):
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_user'], 'foundations')
+        self.assertEqual(result_config['remote_user'], 'job-uploader')
 
     def test_returns_ssh_user(self):
         self._configuration['ssh_config']['user'] = self.fake_user
@@ -118,7 +118,7 @@ class TestExecution(Spec):
     
     def test_returns_port_default_port(self):
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['port'], 22)
+        self.assertEqual(result_config['port'], 31222)
     
     def test_returns_port(self):
         self._configuration['ssh_config']['port'] = self.fake_port
