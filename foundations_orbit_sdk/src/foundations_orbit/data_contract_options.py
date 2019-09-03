@@ -22,7 +22,7 @@ class DataContractOptions(PropertyModel):
         if not isinstance(other, DataContractOptions):
             return False
 
-        if math.isnan(other.special_values[0]):
+        if self.special_values == other.special_values:
             return True
 
-        return self.special_values == other.special_values
+        return math.isnan(self.special_values[0]) and math.isnan(other.special_values[0])
