@@ -6,7 +6,7 @@ export model_name=model-$model_number
 export namespace="foundations-scheduler-test"
 
 echo 'configuring config map for model package server'
-envsubst < ../scheduler_config_map.yaml | kubectl apply -f -
+envsubst < scheduler_config_map.yaml | kubectl apply -f -
 echo 'Successfully configured config map for $job_id'
 
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -

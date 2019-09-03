@@ -225,3 +225,5 @@ class TestOrbitDeployModelViaCli(Spec):
         subprocess.run(command.split())
         command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
         subprocess.run(command.split())
+        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-server-configuration'
+        subprocess.run(command.split())
