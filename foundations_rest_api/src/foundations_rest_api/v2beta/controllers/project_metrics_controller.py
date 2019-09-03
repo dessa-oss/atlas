@@ -16,16 +16,25 @@ from collections import namedtuple
 class ProjectMetricsController(object):
 
     def index(self):
-        return Response('Jobs', LazyResult(self._get_metrics))
+        return Response('Jobs', LazyResult(self._project_metrics_or_single_metric))
+
+    def _project_metrics_or_single_metric(self):
+        if 'metric_name' in self.params:
+            metric_name = self.params['metric_name']
+            metric = {
+                'metric_name': metric_name,
+                'values': self._grouped_metrics()[metric_name]
+            }
+            return [metric]
+        else:
+            return list(self._get_metrics())
 
     def _get_metrics(self):
-        result = []
         for metric_key, metrics in self._grouped_metrics().items():
-            result.append({
+            yield {
                 'metric_name': metric_key,
                 'values': metrics
-            })
-        return result
+            }
 
     def _grouped_metrics(self):
         from collections import defaultdict

@@ -74,6 +74,21 @@ class TestProjectMetricsController(Spec):
         ]
         self.assertEqual(expected_output, self.controller.index().as_json())
 
+    def test_index_returns_timestamp_ordered_metrics_metric_filter(self):
+        metric_name = self.faker.name()
+        self.controller.params = {'project_name': self.project_name, 'metric_name': metric_name}
+        self._log_metric(321, 'job1', metric_name, 432)
+        self._log_metric(123, 'job2', metric_name, 843)
+        self._log_metric(123, 'job1', 'metric2', 221)
+
+        expected_output = [
+            {
+                'metric_name': metric_name,
+                'values': [['job2', 843], ['job1', 432]]
+            }
+        ]
+        self.assertEqual(expected_output, self.controller.index().as_json())
+
     def _log_metric(self, timestamp, job_id, key, value):
         from foundations_contrib.consumers.single_project_metric import SingleProjectMetric
 
