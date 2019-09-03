@@ -17,4 +17,12 @@ class DataContractOptions(PropertyModel):
     distribution = PropertyModel.define_property()
 
     def __eq__(self, other):
-        return isinstance(other, DataContractOptions)
+        import numpy
+
+        if not isinstance(other, DataContractOptions):
+            return False
+
+        if self.special_values[0] is numpy.nan:
+            return True
+
+        return False
