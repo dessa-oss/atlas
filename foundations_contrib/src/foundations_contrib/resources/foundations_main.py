@@ -21,41 +21,6 @@ def set_recursion_limit_if_necessary(config, log):
         log.debug('Overriding recursion limit to {}'.format(new_limit))
         sys.setrecursionlimit(new_limit)
 
-def mark_job_failed(job):
-    from foundations_contrib.producers.jobs.failed_job import FailedJob
-    from foundations.global_state import message_router
-
-    job_pipeline_context = job.pipeline_context()
-    job_error_information = job_pipeline_context.global_stage_context.error_information
-    FailedJob(message_router, job_pipeline_context,
-                job_error_information).push_message()
-
-def fetch_error_information(context, job):
-    import sys
-    exception_info = sys.exc_info()
-    context.global_stage_context.add_error_information(exception_info)
-    return exception_info
-
-def mark_job_complete(job):
-    from foundations_contrib.producers.jobs.complete_job import CompleteJob
-    from foundations.global_state import message_router
-
-    CompleteJob(message_router, job.pipeline_context()).push_message()
-
-def mark_job_as_running(job):
-    from foundations_contrib.producers.jobs.run_job import RunJob
-    from foundations.global_state import message_router
-
-    RunJob(message_router, job.pipeline_context()).push_message()
-
-def execute_job(job, pipeline_context):
-    try:
-        mark_job_as_running(job)
-        run_job_variant(job)
-        return None, False
-    except Exception as error:
-        return fetch_error_information(pipeline_context, job), True
-
 def get_user_script_module_and_path(user_script):
     import os
     dirname = os.path.dirname(user_script)
@@ -85,26 +50,6 @@ def run_job_variant(job):
         job.run()
     else:
         run_user_script(job)
-
-def save_context(context):
-    with open('results.pkl', 'w+b') as file:
-        serialize_to_file(context._context(), file)
-
-def serialize_job_results(exception_info, was_job_error, job, pipeline_context):
-    try:
-        JobPersister(job).persist()
-
-        save_context(pipeline_context)
-        return exception_info, was_job_error
-    except Exception as error:
-        from foundations_internal.pipeline_context import PipelineContext
-
-        error_pipeline_context = PipelineContext()
-
-        exception_info = fetch_error_information(error_pipeline_context, job)
-        save_context(error_pipeline_context)
-
-        return exception_info, False
 
 def initialize_pipeline_context(job, job_name, job_source_bundle):
     pipeline_context = job.pipeline_context()
@@ -144,20 +89,8 @@ def main():
     global_stage_context = pipeline_context.global_stage_context
     foundations_context.pipeline()._pipeline_context = pipeline_context
 
-    with ChangeDirectory('job_source'):
-        exception_info, was_job_error = global_stage_context.time_callback(lambda: execute_job(job, pipeline_context))
-        upload_artifacts(job_name)
-
-    exception_info, was_job_error = serialize_job_results(exception_info, was_job_error, job, pipeline_context)
-
-    if exception_info is not None:
-        mark_job_failed(job)
-        if not was_job_error:
-            sys.excepthook = sys.__excepthook__
-
-        compat_raise(exception_info[0], exception_info[1], exception_info[2])
-    else:
-        mark_job_complete(job)
+    os.chdir('job_source')
+    global_stage_context.time_callback(lambda: run_job_variant(job))
 
 if __name__ == "__main__":
     main()
