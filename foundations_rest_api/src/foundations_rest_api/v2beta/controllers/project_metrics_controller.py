@@ -19,19 +19,24 @@ class ProjectMetricsController(object):
         return Response('Jobs', LazyResult(self._get_metrics))
 
     def _get_metrics(self):
-        from collections import defaultdict
-
-        project_metrics = sorted(self._project_metrics(), key=lambda item: item['timestamp'])
-        grouped_metrics = defaultdict(list)
-        for metric in project_metrics:
-            grouped_metrics[metric['metric_name']].append([metric['job_id'], metric['value']])
         result = []
-        for metric_key, metrics in grouped_metrics.items():
+        for metric_key, metrics in self._grouped_metrics().items():
             result.append({
                 'metric_name': metric_key,
                 'values': metrics
             })
         return result
+
+    def _grouped_metrics(self):
+        from collections import defaultdict
+
+        grouped_metrics = defaultdict(list)
+        for metric in self._sorted_project_metrics():
+            grouped_metrics[metric['metric_name']].append([metric['job_id'], metric['value']])
+        return grouped_metrics
+
+    def _sorted_project_metrics(self):
+        return sorted(self._project_metrics(), key=lambda item: item['timestamp'])
 
     def _project_metrics(self):
         from foundations_internal.fast_serializer import deserialize
