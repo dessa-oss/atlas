@@ -9,9 +9,15 @@ from foundations_spec import *
 
 from foundations_orbit.data_contract import DataContract
 
+class _NaN(object):
+
+    def __eq__(self, other):
+        return isinstance(other, _NaN)
+
 class TestDataContract(Spec):
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
+    mock_nan = let_patch_mock('numpy.nan', _NaN())
     mock_file_for_write = let_mock()
     mock_file_for_read = let_mock()
 
@@ -115,7 +121,7 @@ class TestDataContract(Spec):
 
         self.assertNotEqual(contract, contract_different_options)
 
-    def test_data_contract_load_uses_pickle_to_deserialize(self):
+    def test_data_contract_load_loads_data_contract_from_file(self):
         import pickle
 
         contract = DataContract(self.contract_name)
@@ -123,6 +129,15 @@ class TestDataContract(Spec):
 
         self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
 
+    def test_data_contract_load_actually_loads(self):
+        import pickle
+
+        contract = DataContract(self.contract_name)
+        contract.options = {'some_option': 'with_value'}
+        self.mock_file_for_read.read.return_value = pickle.dumps(contract)
+
+        self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
+        
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
