@@ -18,7 +18,10 @@ class DataContract(object):
         else:
             dataframe = df
 
-        self._number_of_columns = len(dataframe.columns)
+        if len(dataframe.columns) != 0:
+            self._first_column_name = dataframe.columns[0]
+        else:
+            self._first_column_name = None
 
     @staticmethod
     def _default_options():
@@ -57,8 +60,13 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, *args):
         import numpy
 
+        if len(dataframe_to_validate.columns) == 0:
+            first_column_name = None
+        else:
+            first_column_name = dataframe_to_validate.columns[0]
+
         validation_report = {
-            'schema_check_passed': len(dataframe_to_validate.columns) != 0 or self._number_of_columns == 0,
+            'schema_check_passed': self._first_column_name == first_column_name,
             'dist_check_results': {}
         }
 

@@ -55,6 +55,11 @@ class TestDataContract(Spec):
         return pandas.DataFrame(columns=[self.column_name])
 
     @let_now
+    def one_column_dataframe_no_rows_different_column_name(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name_2])
+
+    @let_now
     def two_column_dataframe_no_rows(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
@@ -233,6 +238,11 @@ class TestDataContract(Spec):
     def test_data_contract_validate_dataframe_with_zero_columns_against_dataframe_with_one_column_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
+        self.assertFalse(validation_report['schema_check_passed'])
+
+    def test_data_contract_validate_dataframe_with_one_column_against_another_dataframe_with_one_column_but_different_name_fails_schema_check(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
+        validation_report = contract.validate(self.one_column_dataframe_no_rows_different_column_name, self.datetime_today)
         self.assertFalse(validation_report['schema_check_passed'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
