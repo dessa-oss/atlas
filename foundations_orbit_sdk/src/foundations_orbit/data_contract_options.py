@@ -23,7 +23,7 @@ class DataContractOptions(PropertyModel):
 
 def _special_values_equal(values, other_values):
     if values is None:
-        return True
+        return other_values is None
 
     return len(values) == len(other_values) and _zipped_elements_equal(values, other_values)
 

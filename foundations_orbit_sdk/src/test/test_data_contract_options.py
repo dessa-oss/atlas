@@ -112,6 +112,12 @@ class TestDataContractOptions(Spec):
 
         self.assertNotEqual(options, other_options)
 
+    def test_data_special_values_not_equal_if_only_one_is_none(self):
+        options = DataContractOptions()
+        other_options = DataContractOptions(special_values=[])
+
+        self.assertNotEqual(options, other_options)
+
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
 
