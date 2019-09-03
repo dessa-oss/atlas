@@ -13,7 +13,8 @@ class DataContract(object):
 
         default_distribution = {
             'distance_metric': 'l_infinity',
-            'default_threshold': 0.1
+            'default_threshold': 0.1,
+            'cols_to_include': None
         }
 
         self.options = DataContractOptions(
