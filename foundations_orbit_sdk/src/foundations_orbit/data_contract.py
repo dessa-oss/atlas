@@ -65,8 +65,13 @@ class DataContract(object):
         else:
             first_column_name = dataframe_to_validate.columns[0]
 
+        if self._first_column_name is not None:
+            schema_check_passed = len(dataframe_to_validate.columns) == 1
+        else:
+            schema_check_passed = True
+
         validation_report = {
-            'schema_check_passed': self._first_column_name == first_column_name,
+            'schema_check_passed': schema_check_passed and self._first_column_name == first_column_name,
             'dist_check_results': {}
         }
 
