@@ -53,6 +53,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_distribution_option_default_cols_to_ignore(self):
         self._test_distribution_check_has_default_option('cols_to_ignore', None)
 
+    def test_data_contract_has_distribution_option_default_custom_thresholds(self):
+        self._test_distribution_check_has_default_option('custom_thresholds', {})
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
