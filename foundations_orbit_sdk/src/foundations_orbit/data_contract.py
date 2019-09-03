@@ -36,13 +36,11 @@ class DataContract(object):
 
     @staticmethod
     def load(model_package_directory, contract_name):
-        import pickle
-
         with open(f'{model_package_directory}/{contract_name}.pkl', 'rb') as contract_file:
-            return pickle.loads(contract_file.read())
+            return DataContract(contract_name)
 
     def __eq__(self, other):
-        return self._contract_name == other._contract_name
+        return self._contract_name == other._contract_name and self.options == other.options
 
     def _data_contract_file_path(self, model_package_directory):
         return f'{model_package_directory}/{self._contract_name}.pkl'
