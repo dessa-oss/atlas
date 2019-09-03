@@ -10,6 +10,8 @@ from foundations_rest_api.utils.api_resource import api_resource
 from foundations_core_rest_api_components.lazy_result import LazyResult
 from foundations_core_rest_api_components.response import Response
 
+from collections import namedtuple
+
 @api_resource('/api/v2beta/projects/<string:project_name>/overview_metrics')
 class ProjectMetricsController(object):
 
@@ -19,8 +21,31 @@ class ProjectMetricsController(object):
     def _get_metrics(self):
         from foundations_contrib.global_state import redis_connection
         from foundations_internal.fast_serializer import deserialize
+        from collections import defaultdict
 
-        project_key = f'projects:{self.project_name}:metrics'
-        project_metrics = redis_connection.hgetall(project_key)
+        project_key = f'projects:{self._project_name()}:metrics'
+        serialized_project_metrics = redis_connection.hgetall(project_key)
+        project_metrics = []
+        for metric_key, serialized_metric in serialized_project_metrics.items():
+            job_id, metric_name = metric_key.decode().split(':')
+            timestamp, value = deserialize(serialized_metric)
+            project_metrics.append({
+                'job_id': job_id,
+                'metric_name': metric_name,
+                'timestamp': timestamp,
+                'value': value
+            })
+        project_metrics = sorted(project_metrics, key=lambda item: item['timestamp'])
+        grouped_metrics = defaultdict(list)
+        for metric in project_metrics:
+            grouped_metrics[metric['metric_name']].append([metric['job_id'], metric['value']])
         result = []
-        # for encoded_key, serialized_value in project_metrics.items():
+        for metric_key, metrics in grouped_metrics.items():
+            result.append({
+                'metric_name': metric_key,
+                'values': metrics
+            })
+        return result
+
+    def _project_name(self):
+        return self.params['project_name']
