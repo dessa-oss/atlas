@@ -18,14 +18,21 @@ class DataContractOptions(PropertyModel):
 
     def __eq__(self, other):
         return isinstance(other, DataContractOptions) \
-            and _special_values_equal(self.special_values, other.special_values) \
-            and self.max_bins == other.max_bins
+            and self._special_values_equal(other) \
+            and self._other_attributes_equal(other)
 
-def _special_values_equal(values, other_values):
-    if values is None:
-        return other_values is None
+    def _other_attributes_equal(self, other):
+        return self.max_bins == other.max_bins \
+            and self.check_schema == other.check_schema \
+            and self.check_row_count == other.check_row_count \
+            and self.check_distribution == other.check_distribution \
+            and self.distribution == other.distribution
 
-    return len(values) == len(other_values) and _zipped_elements_equal(values, other_values)
+    def _special_values_equal(self, other):
+        if self.special_values is None:
+            return other.special_values is None
+
+        return len(self.special_values) == len(other.special_values) and _zipped_elements_equal(self.special_values, other.special_values)
 
 def _equality_check(value, other_value):
     import math
