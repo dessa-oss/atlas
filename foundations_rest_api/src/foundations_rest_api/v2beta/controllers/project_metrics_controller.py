@@ -19,20 +19,9 @@ class ProjectMetricsController(object):
         return Response('Jobs', LazyResult(self._get_metrics))
 
     def _get_metrics(self):
-        from foundations_internal.fast_serializer import deserialize
         from collections import defaultdict
 
-        project_metrics = []
-        for metric_key, serialized_metric in self._serialized_project_metrics().items():
-            job_id, metric_name = metric_key.decode().split(':')
-            timestamp, value = deserialize(serialized_metric)
-            project_metrics.append({
-                'job_id': job_id,
-                'metric_name': metric_name,
-                'timestamp': timestamp,
-                'value': value
-            })
-        project_metrics = sorted(project_metrics, key=lambda item: item['timestamp'])
+        project_metrics = sorted(self._project_metrics(), key=lambda item: item['timestamp'])
         grouped_metrics = defaultdict(list)
         for metric in project_metrics:
             grouped_metrics[metric['metric_name']].append([metric['job_id'], metric['value']])
@@ -43,6 +32,19 @@ class ProjectMetricsController(object):
                 'values': metrics
             })
         return result
+
+    def _project_metrics(self):
+        from foundations_internal.fast_serializer import deserialize
+
+        for metric_key, serialized_metric in self._serialized_project_metrics().items():
+            job_id, metric_name = metric_key.decode().split(':')
+            timestamp, value = deserialize(serialized_metric)
+            yield {
+                'job_id': job_id,
+                'metric_name': metric_name,
+                'timestamp': timestamp,
+                'value': value
+            }
 
     def _serialized_project_metrics(self):
         from foundations_contrib.global_state import redis_connection
