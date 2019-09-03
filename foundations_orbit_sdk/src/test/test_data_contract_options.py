@@ -112,9 +112,33 @@ class TestDataContractOptions(Spec):
 
         self.assertNotEqual(options, other_options)
 
-    def test_data_special_values_not_equal_if_only_one_is_none(self):
+    def test_data_contract_special_values_not_equal_if_only_one_is_none(self):
         options = DataContractOptions()
         other_options = DataContractOptions(special_values=[])
+
+        self.assertNotEqual(options, other_options)
+
+    def test_data_contract_special_values_not_equal_if_check_schema_not_equal(self):
+        options = DataContractOptions(check_schema=False)
+        other_options = DataContractOptions(check_schema=True)
+
+        self.assertNotEqual(options, other_options)
+
+    def test_data_contract_special_values_not_equal_if_check_row_count_not_equal(self):
+        options = DataContractOptions(check_row_count=False)
+        other_options = DataContractOptions(check_row_count=True)
+
+        self.assertNotEqual(options, other_options)
+
+    def test_data_contract_special_values_not_equal_if_check_distribution_not_equal(self):
+        options = DataContractOptions(check_distribution=False)
+        other_options = DataContractOptions(check_distribution=True)
+
+        self.assertNotEqual(options, other_options)
+
+    def test_data_contract_special_values_not_equal_if_distribution_not_equal(self):
+        options = DataContractOptions(distribution={'b': 'a'})
+        other_options = DataContractOptions(distribution={'b': 'c'})
 
         self.assertNotEqual(options, other_options)
 
