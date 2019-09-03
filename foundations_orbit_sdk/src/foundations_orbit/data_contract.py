@@ -15,7 +15,8 @@ class DataContract(object):
             'distance_metric': 'l_infinity',
             'default_threshold': 0.1,
             'cols_to_include': None,
-            'cols_to_ignore': None
+            'cols_to_ignore': None,
+            'custom_thresholds': {}
         }
 
         self.options = DataContractOptions(
