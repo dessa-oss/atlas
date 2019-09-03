@@ -10,3 +10,4 @@ from test.v2beta.controllers.test_job_controller import TestJobControllerV2
 from test.v2beta.controllers.test_job_tags_controller import TestJobTagsController
 from test.v2beta.controllers.test_job_tag_controller import TestJobTagController
 from test.v2beta.controllers.test_job_logs_controller import TestJobLogsController
+from test.v2beta.controllers.test_project_metrics_controller import TestProjectMetricsController
