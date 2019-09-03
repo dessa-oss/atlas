@@ -8,10 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class DataContract(object):
     
     def __init__(self, contract_name, df=None):
-        import numpy
         import pandas
-
-        from foundations_orbit.data_contract_options import DataContractOptions
 
         self._contract_name = contract_name
 
@@ -19,6 +16,15 @@ class DataContract(object):
             dataframe = pandas.DataFrame()
         else:
             dataframe = df
+
+        self.options = self._default_options()
+
+        self._number_of_columns = len(dataframe.columns)
+
+    @staticmethod
+    def _default_options():
+        import numpy
+        from foundations_orbit.data_contract_options import DataContractOptions
 
         default_distribution = {
             'distance_metric': 'l_infinity',
@@ -28,7 +34,7 @@ class DataContract(object):
             'custom_thresholds': {}
         }
 
-        self.options = DataContractOptions(
+        return DataContractOptions(
             max_bins=50,
             check_schema=True,
             check_row_count=False,
@@ -36,8 +42,6 @@ class DataContract(object):
             check_distribution=True,
             distribution=default_distribution
         )
-
-        self._number_of_columns = len(dataframe.columns)
 
     def save(self, model_package_directory):
         with open(self._data_contract_file_path(model_package_directory), 'wb') as contract_file:
