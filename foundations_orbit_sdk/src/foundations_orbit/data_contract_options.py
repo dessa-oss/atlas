@@ -15,3 +15,6 @@ class DataContractOptions(PropertyModel):
     special_values = PropertyModel.define_property()
     check_distribution = PropertyModel.define_property()
     distribution = PropertyModel.define_property()
+
+    def __eq__(self, other):
+        return isinstance(other, DataContractOptions)

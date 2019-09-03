@@ -7,7 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DataContract(object):
     
-    def __init__(self, contract_name):
+    def __init__(self, contract_name, df=None):
         import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
