@@ -50,9 +50,8 @@ class TestDataValidation(Spec):
         return 'models/test_model'
 
     @let
-    def contract_dirpath(self):
-        import os.path as path
-        return path.join(self.model_package_dirpath, self.contract_name)
+    def contract_filepath(self):
+        return f'{self.model_package_dirpath}/{self.contract_name}.pkl'
 
     @set_up_class
     def set_up_class(klass):
@@ -69,16 +68,14 @@ class TestDataValidation(Spec):
             shutil.rmtree(self.model_package_dirpath)
         os.makedirs(self.model_package_dirpath, exist_ok=True)
 
-    @skip
     def test_can_load_saved_data_contract(self):
         import os.path as path
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
         data_contract.options.schema_check = False
-        data_contract.save(self.model_package_dirpath, self.contract_name)
+        data_contract.save(self.model_package_dirpath)
 
-        contract_filepath = path.join(self.contract_dirpath, f'{self.contract_name}.pkl')
-        self.assertTrue(path.isfile(contract_filepath))
+        self.assertTrue(path.isfile(self.contract_filepath))
 
         loaded_data_contract = DataContract.load(self.model_package_dirpath, self.contract_name)
         self.assertEqual(data_contract, loaded_data_contract)
