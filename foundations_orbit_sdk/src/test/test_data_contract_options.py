@@ -44,6 +44,14 @@ class TestDataContractOptions(Spec):
 
         self.assertNotEqual(options, other_options)
 
+    def test_data_contract_options_nan_is_not_equal_to_0(self):
+        import numpy
+        
+        options = DataContractOptions(special_values=[numpy.nan])
+        other_options = DataContractOptions(special_values=[0])
+
+        self.assertNotEqual(options, other_options)
+
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()
 

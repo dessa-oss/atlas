@@ -9,15 +9,9 @@ from foundations_spec import *
 
 from foundations_orbit.data_contract import DataContract
 
-class _NaN(object):
-
-    def __eq__(self, other):
-        return isinstance(other, _NaN)
-
 class TestDataContract(Spec):
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
-    mock_nan = let_patch_mock('numpy.nan', _NaN())
     mock_file_for_write = let_mock()
     mock_file_for_read = let_mock()
 
