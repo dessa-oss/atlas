@@ -78,7 +78,7 @@ class DataContract(object):
             }
         }
 
-        for column_name in dataframe_to_validate.columns:
+        for column_name in columns_to_validate:
             validation_report['dist_check_results'][column_name] = results_for_same_distribution
 
         return validation_report
