@@ -6,8 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import unittest
+from unittest import skip
 
 
+@skip('Waiting to remove this, since I do not believe we support the ResultReader anymore')
 class TestDuplicateJobSource(unittest.TestCase):
 
     def setUp(self):

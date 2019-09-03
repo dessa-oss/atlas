@@ -12,6 +12,7 @@ import acceptance.fixtures.train_model_package as train_model_package
 import acceptance.fixtures.production_model_package as production_model_package
 import pandas
 
+@skip('Currently assuming this way of doing model packages will be removed')
 class TestModelPackage(Spec):
 
     @set_up

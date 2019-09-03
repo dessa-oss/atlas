@@ -31,14 +31,19 @@ def get_network_address(adapter_name):
             if isinstance(ip.ip, str):
                 return ip.ip
 
-def run_process(command, directory):
+def run_process(command, directory, environment=None):
     import subprocess
     import os
+
+    env = None
+    if environment is not None:
+        env = dict(os.environ)
+        env.update(environment)
 
     previous_directory = os.getcwd()
     try:
         os.chdir(directory)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open('/dev/null'), env=env)
         out, err = process.communicate()
         return out.decode()
     finally:
