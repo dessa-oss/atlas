@@ -11,9 +11,27 @@ from foundations_orbit.data_contract import DataContract
 
 class TestDataContract(Spec):
 
+    mock_open = let_patch_mock_with_conditional_return('builtins.open')
+    mock_file_for_write = let_mock()
+
     @let
     def contract_name(self):
         return self.faker.word()
+
+    @let
+    def model_package_directory(self):
+        return self.faker.file_path()
+
+    @let
+    def data_contract_file_path(self):
+        return f'{self.model_package_directory}/{self.contract_name}.pkl'
+
+    @set_up
+    def set_up(self):
+        self.mock_file_for_write.__enter__ = lambda *args: self.mock_file_for_write
+        self.mock_file_for_write.__exit__ = lambda *args: None
+
+        self.mock_open.return_when(self.mock_file_for_write, self.data_contract_file_path, 'wb')
 
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
@@ -55,6 +73,14 @@ class TestDataContract(Spec):
 
     def test_data_contract_has_distribution_option_default_custom_thresholds(self):
         self._test_distribution_check_has_default_option('custom_thresholds', {})
+
+    def test_data_contract_can_save_to_file(self):
+        import pickle
+        
+        contract = DataContract(self.contract_name)
+        contract.save(self.model_package_directory)
+
+        self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)

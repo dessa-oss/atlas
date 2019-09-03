@@ -11,6 +11,8 @@ class DataContract(object):
         import numpy
         from foundations_orbit.data_contract_options import DataContractOptions
 
+        self._contract_name = contract_name
+
         default_distribution = {
             'distance_metric': 'l_infinity',
             'default_threshold': 0.1,
@@ -27,3 +29,14 @@ class DataContract(object):
             check_distribution=True,
             distribution=default_distribution
         )
+
+    def save(self, model_package_directory):
+        with open(self._data_contract_file_path(model_package_directory), 'wb') as contract_file:
+            contract_file.write(self._serialized_contract())
+
+    def _data_contract_file_path(self, model_package_directory):
+        return f'{model_package_directory}/{self._contract_name}.pkl'
+
+    def _serialized_contract(self):
+        import pickle
+        return pickle.dumps(DataContract(self._contract_name))
