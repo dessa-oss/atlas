@@ -107,6 +107,14 @@ class TestDataContract(Spec):
     def test_data_contract_with_different_name_is_not_equal(self):
         self.assertNotEqual(DataContract(self.contract_name), DataContract(self.other_contract_name))
 
+    def test_data_contract_with_different_options_are_not_equal(self):
+        contract = DataContract(self.contract_name)
+
+        contract_different_options = DataContract(self.contract_name)
+        contract_different_options.options = {'whoops': 'hey'}
+
+        self.assertNotEqual(contract, contract_different_options)
+
     def test_data_contract_load_uses_pickle_to_deserialize(self):
         import pickle
 
