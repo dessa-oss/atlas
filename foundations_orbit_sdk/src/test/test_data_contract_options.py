@@ -19,6 +19,14 @@ class TestDataContractOptions(Spec):
     def random_int_2(self):
         return self.faker.random.randint(0, 100)
 
+    @let
+    def random_int_3(self):
+        return self.faker.random.randint(0, 100)
+
+    @let
+    def random_int_4(self):
+        return self.faker.random.randint(0, 100)
+
     def test_data_contract_options_has_max_bins(self):
         self._test_data_contract_options_has_attribute('max_bins')
 
@@ -65,6 +73,12 @@ class TestDataContractOptions(Spec):
         other_options = DataContractOptions(special_values=[self.random_int])
 
         self.assertEqual(options, other_options)
+
+    def test_data_contract_options_are_not_equal_if_special_values_are_not_equal_multiple_values(self):
+        options = DataContractOptions(special_values=[self.random_int, self.random_int_2])
+        other_options = DataContractOptions(special_values=[self.random_int, self.random_int_3])
+
+        self.assertNotEqual(options, other_options)
 
     def _test_data_contract_options_has_attribute(self, attribute_name):
         attribute_value = Mock()

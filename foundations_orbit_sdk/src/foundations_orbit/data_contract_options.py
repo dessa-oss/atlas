@@ -25,4 +25,4 @@ class DataContractOptions(PropertyModel):
         if math.isnan(other.special_values[0]):
             return True
 
-        return self.special_values[0] == other.special_values[0]
+        return self.special_values == other.special_values
