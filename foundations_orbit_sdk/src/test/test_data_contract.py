@@ -47,6 +47,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_distribution_option_default_threshold_0_1(self):
         self._test_distribution_check_has_default_option('default_threshold', 0.1)
 
+    def test_data_contract_has_distribution_option_default_cols_to_include(self):
+        self._test_distribution_check_has_default_option('cols_to_include', None)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
