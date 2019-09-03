@@ -1,8 +1,16 @@
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+"""
+
 from os.path import join
 
 def translate(config):
     from foundations_contrib.helpers.shell import find_bash
     from foundations_contrib.config.mixin import ssh_configuration
+    from foundations_scheduler_plugin.config.kubernetes import kubernetes_master_ip
     from jsonschema import validate
     import foundations_contrib
     import yaml
@@ -19,18 +27,10 @@ def translate(config):
         'worker_container_overrides': config.get('worker', {})
     }
     if not 'host' in config['ssh_config']:
-        config['ssh_config']['host'] = _kubernetes_master_ip()
+        config['ssh_config']['host'] = kubernetes_master_ip()
     result.update(ssh_configuration(config))
 
     return result 
-
-def _kubernetes_master_ip():
-    import subprocess
-    import yaml
-
-    node_yaml = subprocess.check_output(['kubectl', 'get', 'node', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
-    node = yaml.load(node_yaml)
-    return node['items'][0]['status']['addresses'][0]['address']
 
 def _redis_url(config):
     return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
