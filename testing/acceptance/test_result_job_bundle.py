@@ -32,7 +32,7 @@ class TestResultJobBundle(Spec):
         self.local_job_id = redis_connection.get('foundations_testing_job_id').decode()
         
         with self.change_config():
-            self.remote_job_id = foundations.deploy(env='default', job_directory='acceptance/fixtures/run_locally').job_name()
+            self.remote_job_id = foundations.submit(job_dir='acceptance/fixtures/run_locally', num_gpus=0).job_name()
 
     @let
     def root_archive_directory(self):

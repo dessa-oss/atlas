@@ -87,6 +87,11 @@ class TestScheduler(Spec):
             'workingDir': self.faker.uri_path()
         }
 
+    def test_uses_default_key_path_when_missing(self):
+        del self._configuration['ssh_config']['key_path']
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['key_path'], '~/.ssh/id_foundations_scheduler')
+
     def test_returns_default_redis_url(self):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['redis_url'], 'redis://localhost:6379')
@@ -122,7 +127,7 @@ class TestScheduler(Spec):
 
     def test_returns_ssh_user_default_user(self):
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_user'], 'foundations')
+        self.assertEqual(result_config['remote_user'], 'job-uploader')
 
     def test_returns_ssh_user(self):
         self._configuration['ssh_config']['user'] = self.fake_user
@@ -136,7 +141,7 @@ class TestScheduler(Spec):
     
     def test_returns_port_default_port(self):
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['port'], 22)
+        self.assertEqual(result_config['port'], 31222)
     
     def test_returns_port(self):
         self._configuration['ssh_config']['port'] = self.fake_port
@@ -147,6 +152,23 @@ class TestScheduler(Spec):
         self._configuration['ssh_config']['key_path'] = self.fake_key_path
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['key_path'], self.fake_key_path)
+
+    def test_returns_default_code_path_when_not_specified(self):
+        del self._configuration['ssh_config']['code_path']
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['code_path'], '/jobs')
+
+    def test_returns_kubernetes_node_host_when_none_present(self):
+        import yaml
+
+        run_process_mock = self.patch('subprocess.check_output', ConditionalReturn())
+        master_address = self.faker.ipv4_private()
+        node_yaml = {'items': [{'status': {'addresses': [{'address': master_address}]}}]}
+        run_process_mock.return_when(yaml.dump(node_yaml).encode(), ['kubectl', 'get', 'node', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
+
+        del self._configuration['ssh_config']['host']
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(result_config['remote_host'], master_address)
 
     def test_returns_code_path(self):
         self._configuration['ssh_config']['code_path'] = self.fake_code_path

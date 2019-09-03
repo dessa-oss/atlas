@@ -7,17 +7,17 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 def ssh_configuration(config):
+    ssh_config = config['ssh_config']
     result = {
-        'remote_user': config['ssh_config'].get('user', 'foundations'),
-        'port': config['ssh_config'].get('port', 22),
-        'key_path': config['ssh_config']['key_path'],
-        'remote_host': config['ssh_config']['host'],
+        'remote_user': ssh_config.get('user', 'job-uploader'),
+        'port': ssh_config.get('port', 31222),
+        'key_path': ssh_config.get('key_path', '~/.ssh/id_foundations_scheduler'),
+        'remote_host': ssh_config['host'],
     }
 
-    if 'code_path' in config['ssh_config']:
-        result['code_path'] = config['ssh_config']['code_path']
-    if 'result_path' in config['ssh_config']:
-        result['result_path'] = config['ssh_config']['result_path']
+    result['code_path'] = ssh_config.get('code_path', '/jobs')
+    if 'result_path' in ssh_config:
+        result['result_path'] = ssh_config['result_path']
     return result
 
 def archive_implementation(result_end_point, default_bucket_type):
