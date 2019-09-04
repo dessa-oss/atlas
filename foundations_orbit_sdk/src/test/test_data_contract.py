@@ -182,7 +182,7 @@ class TestDataContract(Spec):
     def test_data_contract_validate_empty_dataframe_against_itself_passes_schema_check(self):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
         validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
-        self.assertTrue(validation_report['schema_check_passed'])
+        self.assertTrue(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
         contract = DataContract(self.contract_name, df=self.empty_dataframe)
@@ -252,43 +252,43 @@ class TestDataContract(Spec):
     def test_data_contract_validate_dataframe_with_zero_columns_against_dataframe_with_one_column_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
-        self.assertFalse(validation_report['schema_check_passed'])
+        self.assertFalse(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_dataframe_with_one_column_against_another_dataframe_with_one_column_but_different_name_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.one_column_dataframe_no_rows_different_column_name, self.datetime_today)
-        self.assertFalse(validation_report['schema_check_passed'])
+        self.assertFalse(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_dataframe_with_one_column_against_another_dataframe_with_two_columns_first_column_the_same_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
-        self.assertFalse(validation_report['schema_check_passed'])
+        self.assertFalse(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_dataframe_with_one_column_against_itself_passes_schema_check(self):
         contract = DataContract(self.contract_name, df=self.one_column_dataframe_no_rows)
         validation_report = contract.validate(self.one_column_dataframe_no_rows, self.datetime_today)
-        self.assertTrue(validation_report['schema_check_passed'])
+        self.assertTrue(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_dataframe_with_multiple_columns_against_itself_passes_schema_check(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
-        self.assertTrue(validation_report['schema_check_passed'])
+        self.assertTrue(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_dataframe_with_two_columns_against_different_dataframe_with_two_columns_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-        self.assertFalse(validation_report['schema_check_passed'])
+        self.assertFalse(validation_report['schema_check_results']['passed'])
 
     def test_data_contract_validate_does_not_perform_schema_check_if_check_schema_option_is_false(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
         contract.options.check_schema = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-        self.assertNotIn('schema_check_passed', validation_report)
+        self.assertNotIn('schema_check_results', validation_report)
 
     def test_data_contract_validate_column_names_wrong_order_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_columns_wrong_order)
-        self.assertFalse(validation_report['schema_check_passed'])
+        self.assertFalse(validation_report['schema_check_results']['passed'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
