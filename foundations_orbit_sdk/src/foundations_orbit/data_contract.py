@@ -87,25 +87,37 @@ class DataContract(object):
     def _schema_check_results(self, columns_to_validate):
         import pandas
 
-        schema_check_passed = self._column_names == columns_to_validate
-
-        if schema_check_passed:
+        if self._schema_check_passes(columns_to_validate):
             return {'passed': True}
 
         ref_column_names = set(self._column_names)
         current_column_names = set(columns_to_validate)
 
-        if ref_column_names != current_column_names:
-            missing_in_ref = current_column_names - ref_column_names
-            missing_in_current = ref_column_names - current_column_names
-
-            return {'passed': False, 'error_message': 'column sets not equal', 'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
+        if self._column_sets_not_equal(ref_column_names, current_column_names):
+            return self._column_sets_not_equal_error_information(ref_column_names, current_column_names)
 
         ref_column_series = pandas.Series(self._column_names)
         current_column_series = pandas.Series(columns_to_validate)
 
-        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
+        return self._column_sets_in_wrong_order_information(ref_column_series, current_column_series)
 
+    def _schema_check_passes(self, columns_to_validate):
+        return self._column_names == columns_to_validate
+
+    @staticmethod
+    def _column_sets_not_equal(ref_column_names, current_column_names):
+        return ref_column_names != current_column_names
+
+    @staticmethod
+    def _column_sets_not_equal_error_information(ref_column_names, current_column_names):
+        missing_in_ref = current_column_names - ref_column_names
+        missing_in_current = ref_column_names - current_column_names
+
+        return {'passed': False, 'error_message': 'column sets not equal', 'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
+
+    @staticmethod
+    def _column_sets_in_wrong_order_information(ref_column_series, current_column_series):
+        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
         return {'passed': False, 'error_message': 'columns not in order', 'columns_out_of_order': list(columns_out_of_order)}
 
     def __eq__(self, other):
