@@ -19,6 +19,7 @@ class DataContract(object):
             dataframe = df
 
         self._column_names = list(dataframe.columns)
+        self._column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in self._column_names}
 
     @staticmethod
     def _default_options():
@@ -64,7 +65,7 @@ class DataContract(object):
         columns_to_validate = list(dataframe_to_validate.columns)
 
         if self.options.check_schema:
-            validation_report['schema_check_results'] = self._schema_check_results(columns_to_validate)
+            validation_report['schema_check_results'] = self._schema_check_results(dataframe_to_validate)
 
         results_for_same_distribution = {
             'binned_l_infinity': 0.0,
@@ -84,11 +85,18 @@ class DataContract(object):
 
         return validation_report
 
-    def _schema_check_results(self, columns_to_validate):
+    def _schema_check_results(self, dataframe_to_validate):
         import pandas
 
-        if self._schema_check_passes(columns_to_validate):
-            return {'passed': True}
+        columns_to_validate = list(dataframe_to_validate.columns)
+
+        if self._column_names_match(columns_to_validate):
+            types_to_validate = {column_name: str(dataframe_to_validate.dtypes[column_name]) for column_name in columns_to_validate}
+            
+            if self._data_types_match(types_to_validate):
+                return {'passed': True}
+            
+            return self._type_mismatch_error_information(self._column_types, types_to_validate)
 
         ref_column_names = set(self._column_names)
         current_column_names = set(columns_to_validate)
@@ -101,8 +109,27 @@ class DataContract(object):
 
         return self._column_sets_in_wrong_order_information(ref_column_series, current_column_series)
 
-    def _schema_check_passes(self, columns_to_validate):
+    def _column_names_match(self, columns_to_validate):
         return self._column_names == columns_to_validate
+
+    def _data_types_match(self, types_to_validate):
+        return self._column_types == types_to_validate
+
+    @staticmethod
+    def _type_mismatch_error_information(ref_column_types, types_to_validate):
+        mismatched_columns = {}
+
+        for column_name in ref_column_types.keys():
+            ref_type = ref_column_types[column_name]
+            current_type = types_to_validate[column_name]
+
+            if ref_type != current_type:
+                mismatched_columns[column_name] = {
+                    'ref_type': ref_type,
+                    'current_type': current_type
+                }
+
+        return {'passed': False, 'error_message': 'column datatype mismatches', 'cols': mismatched_columns}
 
     @staticmethod
     def _column_sets_not_equal(ref_column_names, current_column_names):

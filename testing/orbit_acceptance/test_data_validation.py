@@ -181,8 +181,9 @@ class TestDataValidation(Spec):
         self.assertEqual('columns not in order', schema_failure_reason)
         self.assertEqual(['feat_3', 'feat_1'], columns_not_in_order)
 
-    @skip
     def test_get_schema_validation_error_when_there_is_a_data_type_mismatch_(self):
+        import datetime
+
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema_and_type)
 
         dataframe_different_data_type = self.reference_dataframe_different_schema_and_type.copy()
@@ -196,13 +197,13 @@ class TestDataValidation(Spec):
 
         expected_mismatch_information = {
             'feat_2': {
-                'ref_type': 'float',
-                'current_type': 'int'
+                'ref_type': 'float64',
+                'current_type': 'int64'
             }
         }
 
         self.assertFalse(schema_check_passed)
-        self.assertEqual('column data type mismatches', schema_failure_reason)
+        self.assertEqual('column datatype mismatches', schema_failure_reason)
         self.assertEqual(expected_mismatch_information, datatype_mismatch_information)
 
     @skip
