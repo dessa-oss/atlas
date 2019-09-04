@@ -7,6 +7,9 @@ import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
 import ModalJobDetails from '../JobListPage/ModalJobDetails';
 import BaseActions from '../../actions/BaseActions';
+import CommonHeader from '../common/CommonHeader';
+import TagContainer from './TagContainer';
+import Header from './Header';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -312,6 +315,26 @@ class JobDetails extends React.Component {
     });
   }
 
+  onClickProjectOverview() {
+    const { history, location } = this.props;
+    history.push(
+      `/projects/${location.state.project.name}/overview`,
+      {
+        project: location.state.project,
+      },
+    );
+  }
+
+  onClickJobDetails() {
+    const { history, location } = this.props;
+    history.push(
+      `/projects/${location.state.project.name}/details`,
+      {
+        project: location.state.project,
+      },
+    );
+  }
+
   bindAllJobs() {
     this.updateHiddenStatus = this.updateHiddenStatus.bind(this);
     this.formatAndSaveParams = this.formatAndSaveParams.bind(this);
@@ -331,6 +354,8 @@ class JobDetails extends React.Component {
     this.updateStartTimeFilter = this.updateStartTimeFilter.bind(this);
     this.onToggleModalJobDetails = this.onToggleModalJobDetails.bind(this);
     this.getJobs = this.getJobs.bind(this);
+    this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
+    this.onClickJobDetails = this.onClickJobDetails.bind(this);
   }
 
   render() {
@@ -339,6 +364,7 @@ class JobDetails extends React.Component {
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
       queryStatus, selectedJob, modalJobDetailsVisible,
     } = this.state;
+    const { location } = this.props;
 
     const jobList = (
       <JobTable
@@ -374,20 +400,44 @@ class JobDetails extends React.Component {
     );
 
     return (
-      <div className="job-detail-table-container">
-        <div className="job-list-container">
-          {jobList}
+      <div>
+        <CommonHeader {...this.props} />
+        <div className="job-overview-container">
+          <Header {...this.props} />
+          <div className="job-overview-tabs-tags-container">
+            <div>
+              <h3
+                className=""
+                onClick={this.onClickProjectOverview}
+                onKeyDown={this.onKeyDown}
+              >
+                Project Overview
+              </h3>
+              <h3
+                className="active"
+                onClick={this.onClickJobDetails}
+                onKeyDown={this.onKeyDown}
+              >
+                Job Details
+              </h3>
+            </div>
+            <TagContainer tags={location.state.project.tags} />
+          </div>
+          <div className="job-detail-table-container">
+            <div className="job-list-container">
+              {jobList}
+            </div>
+            {modalJobDetailsVisible === true
+            && (
+              <ModalJobDetails
+                job={selectedJob}
+                visible={modalJobDetailsVisible}
+                onToggle={this.onToggleModalJobDetails}
+              />
+            )}
+          </div>
         </div>
-        {modalJobDetailsVisible === true
-        && (
-          <ModalJobDetails
-            job={selectedJob}
-            visible={modalJobDetailsVisible}
-            onToggle={this.onToggleModalJobDetails}
-          />
-        )}
       </div>
-
     );
   }
 }
