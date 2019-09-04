@@ -10,6 +10,7 @@ import JobListPage from './JobListPage/JobListPage';
 import ErrorMessage from './common/ErrorMessage';
 import 'react-toastify/dist/ReactToastify.css';
 import JobOverviewPage from './JobOverviewPage';
+import JobDetails from './JobOverviewPage/JobDetails';
 
 toast.configure(); // single instance to improve rendering of toast
 
@@ -30,6 +31,10 @@ class App extends Component {
             <Route
               path="/projects/:projectName/overview"
               component={JobOverviewPage}
+            />
+            <Route
+              path="/projects/:projectName/details"
+              component={JobDetails}
             />
             <Route render={() => <ErrorMessage errorCode={404} />} />
           </Switch>

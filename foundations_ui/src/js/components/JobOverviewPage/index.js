@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import Header from './Header';
 import ProjectOverview from './ProjectOverview';
 import JobDetails from './JobDetails';
@@ -24,16 +25,30 @@ class JobOverviewPage extends Component {
     this.onKeyDown = this.onKeyDown.bind(this);
   }
 
-  onClickProjectOverview() {
-    this.setState({
+  async onClickProjectOverview() {
+    const { history, location } = this.props;
+    await this.setState({
       tab: 'overview',
     });
+    history.push(
+      `/projects/${location.state.project.name}/overview`,
+      {
+        project: location.state.project,
+      },
+    );
   }
 
-  onClickJobDetails() {
-    this.setState({
+  async onClickJobDetails() {
+    const { history, location } = this.props;
+    await this.setState({
       tab: 'details',
     });
+    history.push(
+      `/projects/${location.state.project.name}/details`,
+      {
+        project: location.state.project,
+      },
+    );
   }
 
   onKeyDown() {}
@@ -84,4 +99,4 @@ JobOverviewPage.defaultProps = {
   location: { state: {} },
 };
 
-export default JobOverviewPage;
+export default withRouter(JobOverviewPage);
