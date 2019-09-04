@@ -274,6 +274,12 @@ class TestDataContract(Spec):
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertFalse(validation_report['schema_check_passed'])
 
+    def test_data_contract_validate_does_not_perform_schema_check_if_check_schema_option_is_false(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
+        contract.options.check_schema = False
+        validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
+        self.assertNotIn('schema_check_passed', validation_report)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
