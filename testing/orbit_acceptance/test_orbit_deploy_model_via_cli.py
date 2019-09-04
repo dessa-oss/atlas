@@ -29,7 +29,6 @@ class TestOrbitDeployModelViaCli(Spec):
     def tear_down_class(self):
         subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
 
-
     @set_up
     def set_up(self):
         self.config_file_path = './orbit_acceptance/fixtures/config/local.config.yaml'
@@ -150,7 +149,7 @@ class TestOrbitDeployModelViaCli(Spec):
     def _get_redis_ip(self):
         import os
 
-        if not klass._is_running_on_jenkins():
+        if not self._is_running_on_jenkins():
             return f'redis://{self._get_scheduler_ip()}:6379'
         
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
@@ -211,8 +210,7 @@ class TestOrbitDeployModelViaCli(Spec):
             'results_config': {
                 'archive_end_point': '/archive',
                 'redis_end_point': self._get_redis_ip(),
-                'artifact_path': 'artifacts',
-                'artifact_path': '.'
+                'artifact_path': 'artifacts'
             },
             'cache_config': {
                 'end_point': '/cache'
