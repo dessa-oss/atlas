@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class DataContract(object):
-    
+
     def __init__(self, contract_name, df=None):
         import pandas
 
@@ -85,8 +85,28 @@ class DataContract(object):
         return validation_report
 
     def _schema_check_results(self, columns_to_validate):
+        import pandas
+
         schema_check_passed = self._column_names == columns_to_validate
-        return {'passed': schema_check_passed}
+
+        if schema_check_passed:
+            return {'passed': True}
+
+        ref_column_names = set(self._column_names)
+        current_column_names = set(columns_to_validate)
+
+        if ref_column_names != current_column_names:
+            missing_in_ref = current_column_names - ref_column_names
+            missing_in_current = ref_column_names - current_column_names
+
+            return {'passed': False, 'error_message': 'column sets not equal', 'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
+
+        ref_column_series = pandas.Series(self._column_names)
+        current_column_series = pandas.Series(columns_to_validate)
+
+        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
+
+        return {'passed': False, 'error_message': 'columns not in order', 'columns_out_of_order': list(columns_out_of_order)}
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options

@@ -120,12 +120,13 @@ class TestDataValidation(Spec):
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
 
-    @skip
     def test_get_schema_validation_failure_when_column_missing(self):
+        import datetime
+
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
 
-        dataframe_with_different_column_names = self.reference_dataframe_different_schema.copy().rename({'feat_1': 'feat_x'}, axis=1)
-        validation_report = dataframe_with_different_column_names.validate(wrong_reference_dataframe_different_schema, datetime.datetime.today())
+        wrong_reference_dataframe_different_schema = self.reference_dataframe_different_schema.copy().rename({'feat_1': 'feat_x'}, axis=1)
+        validation_report = data_contract.validate(wrong_reference_dataframe_different_schema, datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         schema_failure_reason = validation_report['schema_check_results']['error_message']
@@ -134,11 +135,12 @@ class TestDataValidation(Spec):
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column sets not equal', schema_failure_reason)
-        self.assertEqual(set(['feat_x']), missing_in_ref)
-        self.assertEqual(set(['feat_1']), missing_in_current)
+        self.assertEqual(['feat_x'], missing_in_ref)
+        self.assertEqual(['feat_1'], missing_in_current)
 
-    @skip
     def test_get_schema_validation_error_when_new_column_added(self):
+        import datetime
+
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
 
         dataframe_different_column_sets = self.reference_dataframe_different_schema.copy()
@@ -153,21 +155,24 @@ class TestDataValidation(Spec):
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column sets not equal', schema_failure_reason)
-        self.assertEqual(set(['feat_x']), missing_in_ref)
-        self.assertEqual(set(), missing_in_current)
+        self.assertEqual(['feat_x'], missing_in_ref)
+        self.assertEqual([], missing_in_current)
 
-    @skip
     def test_get_schema_validation_error_when_columns_in_wrong_order(self):
+        import datetime
+
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
 
-        dataframe_columns_wrong_order = self.reference_dataframe_different_schema.copy()[['feat_2', 'feat_1', 'feat_3', 'feat_0']]
+        dataframe_columns_wrong_order = self.reference_dataframe_different_schema.copy()[['feat_0', 'feat_3', 'feat_2', 'feat_1']]
         validation_report = data_contract.validate(dataframe_columns_wrong_order, datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         schema_failure_reason = validation_report['schema_check_results']['error_message']
+        columns_not_in_order = validation_report['schema_check_results']['columns_out_of_order']
 
         self.assertFalse(schema_check_passed)
-        self.assertEqual('column not in order', schema_failure_reason)
+        self.assertEqual('columns not in order', schema_failure_reason)
+        self.assertEqual(['feat_3', 'feat_1'], columns_not_in_order)
 
     @skip
     def test_get_schema_validation_error_when_there_is_a_data_type_mismatch_(self):
