@@ -21,7 +21,7 @@ class TestDataContract(Spec):
 
     @let
     def other_contract_name(self):
-        return self.faker.word()
+        return self._generate_distinct([self.contract_name], self.faker.word)
 
     @let
     def model_package_directory(self):
@@ -47,15 +47,15 @@ class TestDataContract(Spec):
 
     @let
     def column_name_2(self):
-        return self.faker.word()
+        return self._generate_distinct([self.column_name], self.faker.word)
 
     @let
     def column_name_3(self):
-        return self.faker.word()
+        return self._generate_distinct([self.column_name, self.column_name_2], self.faker.word)
 
     @let
     def column_name_4(self):
-        return self.faker.word()
+        return self._generate_distinct([self.column_name, self.column_name_2, self.column_name_3], self.faker.word)
 
     @let_now
     def one_column_dataframe(self):
@@ -110,6 +110,10 @@ class TestDataContract(Spec):
     def four_column_dataframe_no_rows_different_order(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name_4, self.column_name_2, self.column_name_3, self.column_name])
+
+    def _generate_distinct(self, reference_values, generating_callback):
+        candidate_value = generating_callback()
+        return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
 
     @set_up
     def set_up(self):
@@ -407,6 +411,25 @@ class TestDataContract(Spec):
         }
 
         self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
+
+    def test_data_contract_validate_does_not_check_distribution_if_option_set_to_false(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.options.check_distribution = False
+
+        self.assertNotIn('dist_check_results', contract.validate(self.two_column_dataframe))
+
+    def test_data_contract_validate_number_of_rows_if_option_set(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
+        contract.options.check_row_count = True
+        contract.options.check_distribution = False
+        validation_report = contract.validate(self.one_column_dataframe)
+
+        expected_validation_report = {
+            'schema_check_results': {'passed': True},
+            'row_cnt_diff': 0.0
+        }
+
+        self.assertEqual(expected_validation_report, validation_report)
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)

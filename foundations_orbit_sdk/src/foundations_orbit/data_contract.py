@@ -20,6 +20,7 @@ class DataContract(object):
 
         self._column_names = list(dataframe.columns)
         self._column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in self._column_names}
+        self._row_count = len(dataframe)
 
     @staticmethod
     def _default_options():
@@ -56,32 +57,16 @@ class DataContract(object):
             return DataContract._deserialized_contract(contract_file.read())
 
     def validate(self, dataframe_to_validate, *args):
-        import numpy
-
-        validation_report = {
-            'dist_check_results': {}
-        }
-
-        columns_to_validate = list(dataframe_to_validate.columns)
+        validation_report = {}
 
         if self.options.check_schema:
             validation_report['schema_check_results'] = self._schema_check_results(dataframe_to_validate)
 
-        results_for_same_distribution = {
-            'binned_l_infinity': 0.0,
-            'binned_passed': True,
-            'special_values': {
-                numpy.nan: {
-                    'current_percentage': 0.0,
-                    'passed': True,
-                    'percentage_diff': 0.0,
-                    'ref_percentage': 0.0
-                }
-            }
-        }
+        if self.options.check_row_count:
+            validation_report['row_cnt_diff'] = self._row_count_difference(dataframe_to_validate)
 
-        for column_name in columns_to_validate:
-            validation_report['dist_check_results'][column_name] = results_for_same_distribution
+        if self.options.check_distribution:
+            validation_report['dist_check_results'] = self._distribution_check_results(dataframe_to_validate)
 
         return validation_report
 
@@ -146,6 +131,34 @@ class DataContract(object):
     def _column_sets_in_wrong_order_information(ref_column_series, current_column_series):
         columns_out_of_order = current_column_series[current_column_series != ref_column_series]
         return {'passed': False, 'error_message': 'columns not in order', 'columns_out_of_order': list(columns_out_of_order)}
+
+    def _row_count_difference(self, dataframe_to_validate):
+        return 0.0
+
+    def _distribution_check_results(self, dataframe_to_validate):
+        import numpy
+
+        columns_to_validate = list(dataframe_to_validate.columns)
+
+        dist_check_results = {}
+
+        results_for_same_distribution = {
+            'binned_l_infinity': 0.0,
+            'binned_passed': True,
+            'special_values': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            }
+        }
+
+        for column_name in columns_to_validate:
+            dist_check_results[column_name] = results_for_same_distribution
+
+        return dist_check_results
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
