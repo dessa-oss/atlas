@@ -471,6 +471,19 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_validation_report, validation_report)
 
+    def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again_again(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe_two_rows)
+        contract.options.check_row_count = True
+        contract.options.check_distribution = False
+        validation_report = contract.validate(self.one_column_dataframe)
+
+        expected_validation_report = {
+            'schema_check_results': {'passed': True},
+            'row_cnt_diff': 0.5
+        }
+
+        self.assertEqual(expected_validation_report, validation_report)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
