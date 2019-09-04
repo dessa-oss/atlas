@@ -15,6 +15,13 @@ from foundations_internal.compat import compat_raise
 from foundations_contrib.global_state import foundations_context
 from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
+def ensure_configured():
+    from foundations.local_run.initialize_default_environment import create_config_file
+    from foundations.local_run import set_up_default_environment_if_present
+
+    create_config_file()
+    set_up_default_environment_if_present()
+
 def set_recursion_limit_if_necessary(config, log):
     if 'recursion_limit' in config:
         new_limit = config['recursion_limit']
@@ -64,6 +71,8 @@ def main():
     from foundations_contrib.change_directory import ChangeDirectory
     import os
     import sys
+
+    ensure_configured()
 
     sys.path.append(os.getcwd() + '/job_source')
 
