@@ -114,7 +114,7 @@ class TestDataValidation(Spec):
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
         validation_report = data_contract.validate(self.reference_dataframe, datetime.datetime.today())
 
-        schema_check_passed = validation_report['schema_check_passed']
+        schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
 
         self.assertTrue(schema_check_passed)
@@ -127,9 +127,15 @@ class TestDataValidation(Spec):
         dataframe_with_different_column_names = self.reference_dataframe_different_schema.copy().rename({'feat_1': 'feat_x'}, axis=1)
         validation_report = dataframe_with_different_column_names.validate(wrong_reference_dataframe_different_schema, datetime.datetime.today())
 
-        schema_check_passed = validation_report['schema_check_passed']
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        schema_failure_reason = validation_report['schema_check_results']['error_message']
+        missing_in_ref = validation_report['schema_check_results']['missing_in_ref']
+        missing_in_current = validation_report['schema_check_results']['missing_in_current']
 
         self.assertFalse(schema_check_passed)
+        self.assertEqual('column sets not equal', schema_failure_reason)
+        self.assertEqual(set(['feat_x']), missing_in_ref)
+        self.assertEqual(set(['feat_1']), missing_in_current)
 
     @skip
     def test_get_schema_validation_error_when_new_column_added(self):
@@ -140,11 +146,15 @@ class TestDataValidation(Spec):
 
         validation_report = data_contract.validate(dataframe_different_column_sets, datetime.datetime.today())
 
-        schema_check_passed = validation_report['schema_check_passed']
-        schema_failure_reason = validation_report['schema_check_failure_information']['error_message']
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        schema_failure_reason = validation_report['schema_check_results']['error_message']
+        missing_in_ref = validation_report['schema_check_results']['missing_in_ref']
+        missing_in_current = validation_report['schema_check_results']['missing_in_current']
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column sets not equal', schema_failure_reason)
+        self.assertEqual(set(['feat_x']), missing_in_ref)
+        self.assertEqual(set(), missing_in_current)
 
     @skip
     def test_get_schema_validation_error_when_columns_in_wrong_order(self):
@@ -153,8 +163,8 @@ class TestDataValidation(Spec):
         dataframe_columns_wrong_order = self.reference_dataframe_different_schema.copy()[['feat_2', 'feat_1', 'feat_3', 'feat_0']]
         validation_report = data_contract.validate(dataframe_columns_wrong_order, datetime.datetime.today())
 
-        schema_check_passed = validation_report['schema_check_passed']
-        schema_failure_reason = validation_report['schema_check_failure_information']['error_message']
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        schema_failure_reason = validation_report['schema_check_results']['error_message']
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column not in order', schema_failure_reason)
@@ -168,8 +178,8 @@ class TestDataValidation(Spec):
 
         validation_report = data_contract.validate(dataframe_different_data_type, datetime.datetime.today())
 
-        schema_check_passed = validation_report['schema_check_passed']
-        schema_failure_reason = validation_report['schema_check_failure_information']['error_message']
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        schema_failure_reason = validation_report['schema_check_results']['error_message']
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column data type mismatches', schema_failure_reason)
@@ -208,7 +218,7 @@ class TestDataValidation(Spec):
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
         validation_report = data_contract.validate(self.dataframe_with_nans)
 
-        schema_check_passed = validation_report['schema_check_passed']
+        schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
 
         self.assertTrue(schema_check_passed)
@@ -248,7 +258,7 @@ class TestDataValidation(Spec):
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
         validation_report = data_contract.validate(self.dataframe_with_shifted_distribution)
 
-        schema_check_passed = validation_report['schema_check_passed']
+        schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
 
         self.assertTrue(schema_check_passed)
