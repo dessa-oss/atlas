@@ -79,7 +79,7 @@ class JobOverviewGraph extends Component {
       xAxis: {
         type: 'category',
         title: {
-          text: 'Job Id',
+          text: '',
         },
         showEmpty: true,
       },
