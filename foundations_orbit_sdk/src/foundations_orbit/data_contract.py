@@ -64,7 +64,7 @@ class DataContract(object):
         columns_to_validate = list(dataframe_to_validate.columns)
 
         if self.options.check_schema:
-            validation_report['schema_check_passed'] = self._passes_schema_check(columns_to_validate)
+            validation_report['schema_check_results'] = self._schema_check_results(columns_to_validate)
 
         results_for_same_distribution = {
             'binned_l_infinity': 0.0,
@@ -84,9 +84,9 @@ class DataContract(object):
 
         return validation_report
 
-    def _passes_schema_check(self, columns_to_validate):
+    def _schema_check_results(self, columns_to_validate):
         schema_check_passed = self._column_names == columns_to_validate
-        return schema_check_passed
+        return {'passed': schema_check_passed}
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
