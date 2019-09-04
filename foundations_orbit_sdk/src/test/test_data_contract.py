@@ -65,6 +65,20 @@ class TestDataContract(Spec):
         return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
 
     @let_now
+    def one_column_dataframe_two_rows(self):
+        import numpy
+        import pandas
+
+        return pandas.DataFrame(columns=[self.column_name], data=[4, 5], dtype=numpy.int8)
+
+    @let_now
+    def one_column_dataframe_four_rows(self):
+        import numpy
+        import pandas
+
+        return pandas.DataFrame(columns=[self.column_name], data=[4, 5, 6, 7], dtype=numpy.int8)
+
+    @let_now
     def one_column_dataframe_different_data_type(self):
         import numpy
         import pandas
@@ -427,6 +441,32 @@ class TestDataContract(Spec):
         expected_validation_report = {
             'schema_check_results': {'passed': True},
             'row_cnt_diff': 0.0
+        }
+
+        self.assertEqual(expected_validation_report, validation_report)
+
+    def test_data_contract_validate_number_of_rows_different_dataframe_lengths(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
+        contract.options.check_row_count = True
+        contract.options.check_distribution = False
+        validation_report = contract.validate(self.one_column_dataframe_two_rows)
+
+        expected_validation_report = {
+            'schema_check_results': {'passed': True},
+            'row_cnt_diff': 1.0
+        }
+
+        self.assertEqual(expected_validation_report, validation_report)
+
+    def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
+        contract.options.check_row_count = True
+        contract.options.check_distribution = False
+        validation_report = contract.validate(self.one_column_dataframe_four_rows)
+
+        expected_validation_report = {
+            'schema_check_results': {'passed': True},
+            'row_cnt_diff': 3.0
         }
 
         self.assertEqual(expected_validation_report, validation_report)

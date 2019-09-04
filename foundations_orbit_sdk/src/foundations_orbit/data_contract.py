@@ -20,7 +20,6 @@ class DataContract(object):
 
         self._column_names = list(dataframe.columns)
         self._column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in self._column_names}
-        self._row_count = len(dataframe)
 
     @staticmethod
     def _default_options():
@@ -133,7 +132,7 @@ class DataContract(object):
         return {'passed': False, 'error_message': 'columns not in order', 'columns_out_of_order': list(columns_out_of_order)}
 
     def _row_count_difference(self, dataframe_to_validate):
-        return 0.0
+        return len(dataframe_to_validate) - 1
 
     def _distribution_check_results(self, dataframe_to_validate):
         import numpy
