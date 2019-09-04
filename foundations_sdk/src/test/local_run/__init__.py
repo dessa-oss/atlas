@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from test.local_run.test_set_default_environment import TestSetDefaultEnvironment
+from test.local_run.test_initialize_default_environment import TestInitializeDefaultEnvironment
