@@ -18,9 +18,7 @@ class DataContract(object):
         else:
             dataframe = df
 
-        self._column_names = list(dataframe.columns)
-        self._column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in self._column_names}
-        self._number_of_rows = len(dataframe)
+        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(dataframe)
 
     @staticmethod
     def _default_options():
@@ -59,25 +57,23 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, *args):
         validation_report = {}
 
+        columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
+
         if self.options.check_schema:
-            validation_report['schema_check_results'] = self._schema_check_results(dataframe_to_validate)
+            validation_report['schema_check_results'] = self._schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = self._row_count_difference(dataframe_to_validate)
+            validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
 
         if self.options.check_distribution:
-            validation_report['dist_check_results'] = self._distribution_check_results(dataframe_to_validate)
+            validation_report['dist_check_results'] = self._distribution_check_results(columns_to_validate)
 
         return validation_report
 
-    def _schema_check_results(self, dataframe_to_validate):
+    def _schema_check_results(self, columns_to_validate, types_to_validate):
         import pandas
 
-        columns_to_validate = list(dataframe_to_validate.columns)
-
         if self._column_names_match(columns_to_validate):
-            types_to_validate = {column_name: str(dataframe_to_validate.dtypes[column_name]) for column_name in columns_to_validate}
-            
             if self._data_types_match(types_to_validate):
                 return {'passed': True}
             
@@ -132,13 +128,11 @@ class DataContract(object):
         columns_out_of_order = current_column_series[current_column_series != ref_column_series]
         return {'passed': False, 'error_message': 'columns not in order', 'columns_out_of_order': list(columns_out_of_order)}
 
-    def _row_count_difference(self, dataframe_to_validate):
-        return abs(len(dataframe_to_validate) - self._number_of_rows) / self._number_of_rows
+    def _row_count_difference(self, row_count_to_check):
+        return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
 
-    def _distribution_check_results(self, dataframe_to_validate):
+    def _distribution_check_results(self, columns_to_validate):
         import numpy
-
-        columns_to_validate = list(dataframe_to_validate.columns)
 
         dist_check_results = {}
 
@@ -182,3 +176,11 @@ class DataContract(object):
     def _deserialized_contract(serialized_contract):
         import pickle
         return pickle.loads(serialized_contract)
+
+    @staticmethod
+    def _dataframe_statistics(dataframe):
+        column_names = list(dataframe.columns)
+        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
+        number_of_rows = len(dataframe)
+
+        return column_names, column_types, number_of_rows
