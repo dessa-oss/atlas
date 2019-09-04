@@ -50,35 +50,41 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
+        from foundations_contrib.global_state import config_manager
+
+        config = config_manager.config()
 
         try:
             self._job_bundler.bundle()
 
-            bundle_store_path = Path("/Users/el/working/temp/bundle_store/")
-            archive_store_path = Path("/Users/el/working/temp/archive_store/")
+            # bundle_store_path = Path("/Users/el/working/temp/bundle_store/")
+            # working_dir_path = Path("/Users/el/working/temp/working_dir/")
+            job_store_root_path = Path(config['job_store_root'])
+            working_dir_root_path = Path(config['working_dir_root'])
             bundle_path = Path(self._job_bundler.job_archive())
-            job_mount_path = archive_store_path / bundle_path.stem
-            job_working_directory = archive_store_path / bundle_path.stem / "job_source"
+            job_mount_path = working_dir_root_path / bundle_path.stem
+            job_working_directory = working_dir_root_path / bundle_path.stem / "job_source"
 
-            # put job bundle to job_bundle_path and job_archive
-            copy(bundle_path, bundle_store_path)
+            # put job bundle to job_bundle_path and working_dir
+            copy(bundle_path, job_store_root_path)
 
             with tarfile.open(bundle_path) as tar:
-                tar.extractall(path=archive_store_path)
+                tar.extractall(path=working_dir_root_path)
 
             with tarfile.open(job_mount_path / "job.tgz") as tar:
                 tar.extractall(path=job_working_directory)
 
-            job_spec = self._create_job_spec(str(job_mount_path), self._job_id)
+            job_spec = self._create_job_spec(job_mount_path.absolute(),
+                                             config['job_results_root'],
+                                             self._job_id,
+                                             self._worker_container_override_config())
 
             print(job_spec)
 
-            myurl = "http://127.0.0.1:5000/queued_jobs"
+            myurl = f"{config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json=job_spec)
             print(r.status_code)
             print(r.json())
-
-            #self._scheduler.submit_job(self._job_id, self._job_bundler.job_archive(), job_resources=self._job_resources(), worker_container_overrides=self._worker_container_override_config())
         finally:
             self._job_bundler.cleanup()
 
@@ -105,7 +111,7 @@ class JobDeployment(object):
 
     def stream_job_logs(self):
         # return self._scheduler.stream_job_logs(self._job_id)
-        pass
+        return []
 
     @staticmethod
     def cancel_jobs(jobs):
@@ -176,26 +182,101 @@ class JobDeployment(object):
     #
     #     raise latest_exception
 
-    def _create_job_spec(self, job_mount_path, job_id):
-        return \
-{
+    def _create_job_spec(self, job_mount_path, job_archive_path, job_id, worker_container_overrides):
 
-    "image": "python:3.6-alpine",
-    "volumes":
-    {
-        job_mount_path:
-        {
-            "bind": "/job",
-            "mode": "rw"
+        from foundations_contrib.utils import foundations_home
+        from os.path import expanduser
+        from os.path import join
+
+        config_home = join(expanduser("~/.foundations-local-docker-scheduler"), 'config')
+
+        worker_container = {
+            'image': "f9s-worker-base:0.1",
+            'volumes':
+                {
+                    str(job_mount_path):
+                        {
+                            "bind": "/job",
+                            "mode": "rw"
+                        },
+                    str(job_archive_path):
+                        {
+                            "bind": "/job_data",
+                            "mode": "rw"
+                        },
+                    config_home:
+                        {
+                            "bind": "/root/.foundations/config",
+                            "mode": "rw"
+                        }
+                },
+             "working_dir": "/job/job_source",
+                # [
+                # {
+                #     'name': 'logging',
+                #     'mountPath': '/root/.foundations/logs',
+                # },
+                # {
+                #     'name': 'execution-config',
+                #     'mountPath': '/root/.foundations/config/execution'
+                # }
+                # ]
+            'environment':
+                {
+                    "FOUNDATIONS_JOB_ID": job_id,
+                    "PYTHONPATH": "/job/",
+                    "FOUNDATIONS_HOME": "/root/.foundations/"
+                },
+            "network": "foundations-atlas",
+            "entrypoint": ["python"],
+            # "command": ["no-foundations.py"]
+            # [
+            #     {'name': 'PYTHONPATH', 'value': '/job/'},
+            #     {'name': 'FOUNDATIONS_JOB_ID', 'value': job_id}
+            # ]
         }
-    },
-    "working_dir": "/job/job_source",
-    "environment":
-    {
-        "JOB_ID": job_id,
-        "ENTRYPOINT": "test.py",
-        "PYTHONPATH": "/job"
-    },
-    "entrypoint": ["/bin/sh", "-c"],
-    "command": ["python ${ENTRYPOINT}"]
-}
+
+        for override_key in ['args', 'command', 'image', 'imagePullPolicy', 'workingDir']:
+            if override_key in worker_container_overrides:
+                worker_container[override_key] = worker_container_overrides[override_key]
+        #
+        # if not has_gpus:
+        #     worker_container['env'] += [{'name': 'NVIDIA_VISIBLE_DEVICES', 'value': ''}]
+
+        for override_key in ['env', 'volumes']:
+            if override_key in worker_container_overrides:
+                worker_container[override_key] += worker_container_overrides[override_key]
+
+        if 'resources' in worker_container_overrides:
+            for override_key in ['limits', 'requests']:
+                if override_key in worker_container_overrides['resources']:
+                    worker_container['resources'][override_key].update(
+                        worker_container_overrides['resources'][override_key])
+
+        return worker_container
+# {
+#     "image": "f9s-worker-base:0.1",
+#     "volumes":
+#         {
+#             str(job_mount_path):
+#                 {
+#                     "bind": "/job",
+#                     "mode": "rw"
+#                 },
+#             str(job_archive_path):
+#                 {
+#                     "bind": "/job_data",
+#                     "mode": "rw"
+#                 }
+#         },
+#     "working_dir": "/job/job_source",
+#     "environment":
+#         {
+#             "JOB_ID": job_id,
+#             "PYTHONPATH": "/job/",
+#             "FOUNDATIONS_HOME": "/job/.foundations/"
+#         },
+#     "network": "foundations-atlas",
+#     "entrypoint": ["python"],
+#     "command": ["no-foundations.py"]
+# }
