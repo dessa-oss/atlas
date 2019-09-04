@@ -61,7 +61,7 @@ class DataContract(object):
             'dist_check_results': {}
         }
 
-        columns_to_validate = dataframe_to_validate.columns
+        columns_to_validate = list(dataframe_to_validate.columns)
 
         if self.options.check_schema:
             validation_report['schema_check_passed'] = self._passes_schema_check(columns_to_validate)
@@ -85,7 +85,7 @@ class DataContract(object):
         return validation_report
 
     def _passes_schema_check(self, columns_to_validate):
-        schema_check_passed = set(self._column_names) == set(columns_to_validate)
+        schema_check_passed = self._column_names == columns_to_validate
         return schema_check_passed
 
     def __eq__(self, other):

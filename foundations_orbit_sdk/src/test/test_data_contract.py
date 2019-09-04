@@ -73,6 +73,11 @@ class TestDataContract(Spec):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_3])
 
+    @let_now
+    def two_column_dataframe_columns_wrong_order(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name_2, self.column_name])
+
     @set_up
     def set_up(self):
         self.mock_file_for_write.__enter__ = lambda *args: self.mock_file_for_write
@@ -279,6 +284,11 @@ class TestDataContract(Spec):
         contract.options.check_schema = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertNotIn('schema_check_passed', validation_report)
+
+    def test_data_contract_validate_column_names_wrong_order_fails_schema_check(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
+        validation_report = contract.validate(self.two_column_dataframe_columns_wrong_order)
+        self.assertFalse(validation_report['schema_check_passed'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
