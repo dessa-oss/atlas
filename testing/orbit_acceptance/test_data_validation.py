@@ -26,6 +26,13 @@ class TestDataValidation(Spec):
         return pandas.DataFrame(numpy.random.uniform(-1, 1, size=(100, 4)), columns=[f'feat_{i}' for i in range(4)])
 
     @let
+    def reference_dataframe_different_schema_and_type(self):
+        import numpy
+        import pandas
+
+        return pandas.DataFrame(numpy.random.uniform(-1, 1, size=(100, 4)), columns=[f'feat_{i}' for i in range(4)], dtype=float)
+
+    @let
     def dataframe_with_nans(self):
         import numpy
 
@@ -176,18 +183,27 @@ class TestDataValidation(Spec):
 
     @skip
     def test_get_schema_validation_error_when_there_is_a_data_type_mismatch_(self):
-        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
+        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema_and_type)
 
-        dataframe_different_data_type = self.reference_dataframe_different_schema.copy()
+        dataframe_different_data_type = self.reference_dataframe_different_schema_and_type.copy()
         dataframe_different_data_type['feat_2'] = dataframe_different_data_type['feat_2'].astype(int)
 
         validation_report = data_contract.validate(dataframe_different_data_type, datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         schema_failure_reason = validation_report['schema_check_results']['error_message']
+        datatype_mismatch_information = validation_report['schema_check_results']['cols']
+
+        expected_mismatch_information = {
+            'feat_2': {
+                'ref_type': 'float',
+                'current_type': 'int'
+            }
+        }
 
         self.assertFalse(schema_check_passed)
         self.assertEqual('column data type mismatches', schema_failure_reason)
+        self.assertEqual(expected_mismatch_information, datatype_mismatch_information)
 
     @skip
     def test_dataframe_with_nans_passes_schema_validation_and_gives_different_distribution_report(self):
