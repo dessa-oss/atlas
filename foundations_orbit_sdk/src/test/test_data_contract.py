@@ -484,6 +484,16 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_validation_report, validation_report)
 
+    def test_data_contract_cannot_validate_if_checking_distribution_if_both_column_whitelist_and_column_blacklist_are_set(self):
+        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
+        contract.options.distribution['cols_to_ignore'] = []
+        contract.options.distribution['cols_to_include'] = []
+
+        with self.assertRaises(ValueError) as ex:
+            contract.validate(self.one_column_dataframe)
+
+        self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))

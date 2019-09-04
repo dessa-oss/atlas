@@ -147,6 +147,9 @@ class DataContract(object):
     def _distribution_check_results(self, columns_to_validate):
         import numpy
 
+        if self._distribution_option('cols_to_include') is not None and self._distribution_option('cols_to_ignore') is not None:
+            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
+
         dist_check_results = {}
 
         results_for_same_distribution = {
@@ -166,6 +169,10 @@ class DataContract(object):
             dist_check_results[column_name] = results_for_same_distribution
 
         return dist_check_results
+
+    def _distribution_option(self, option_name):
+        distribution_options = self.options.distribution
+        return distribution_options[option_name]
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
