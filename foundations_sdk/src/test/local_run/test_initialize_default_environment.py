@@ -12,6 +12,8 @@ class TestInitializeDefaultEnvironment(Spec):
 
     mock_open = let_patch_mock_with_conditional_return('builtins.open')
     mock_mkdirs = let_patch_mock('os.makedirs')
+    mock_typed_config_klass = let_patch_mock_with_conditional_return('foundations_contrib.cli.typed_config_listing.TypedConfigListing')
+    mock_typed_config = let_mock()
 
     @let
     def mock_file(self):
@@ -24,6 +26,9 @@ class TestInitializeDefaultEnvironment(Spec):
     @set_up
     def set_up(self):
         self.mock_open.return_when(self.mock_file, 'config/execution/default.config.yaml', 'w+')
+        self.mock_typed_config_klass.return_when(self.mock_typed_config, 'execution')
+        self.mock_typed_config.config_path = ConditionalReturn()
+        self.mock_typed_config.config_path.return_when(None, 'default')
         self._file_data = None
 
     def test_create_default_config_creates_default_execution_config(self):
@@ -32,6 +37,17 @@ class TestInitializeDefaultEnvironment(Spec):
         create_config_file()
         config = yaml.load(self._file_data)
         self.assertEqual({'results_config': {}, 'cache_config': {}}, config)
+
+    def test_create_default_does_not_create_config_if_already_existing(self):
+        import yaml
+
+        self.mock_typed_config.config_path.clear()
+        self.mock_typed_config.config_path.return_when('config/execution/default.config.yaml', 'default')
+        self._file_data = "---\nhello: world\n"
+
+        create_config_file()
+        config = yaml.load(self._file_data)
+        self.assertEqual({'hello': 'world'}, config)
 
     def test_ensure_directory_exists(self):
         create_config_file()
