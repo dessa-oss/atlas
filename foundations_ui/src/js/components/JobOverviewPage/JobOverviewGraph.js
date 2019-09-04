@@ -78,8 +78,11 @@ class JobOverviewGraph extends Component {
       },
       xAxis: {
         type: 'category',
+        labels: {
+          enabled: false,
+        },
         title: {
-          text: '',
+          text: 'Job Id',
         },
         showEmpty: true,
       },
@@ -93,6 +96,16 @@ class JobOverviewGraph extends Component {
         text: '',
       },
       series: formattedGraphData,
+      tooltip: {
+        formatter() {
+          let tooltip = '';
+          this.points.forEach((point) => {
+            tooltip += `Job ID: ${point.key}<br/>${metric}: ${point.y}`;
+          });
+          return tooltip;
+        },
+        shared: true,
+      },
     };
 
     const metrics = [];
