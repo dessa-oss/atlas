@@ -32,10 +32,6 @@ class TestValidationReportListing(Spec):
     def inference_period(self):
         return self.faker.date()
 
-    @let
-    def key_to_write(self):
-        return f'projects:{self.project_name}:models:{self.model_package}:validation:{self.data_contract}'
-
     @set_up
     def set_up(self):
         self.redis_connection.flushall()
@@ -53,8 +49,27 @@ class TestValidationReportListing(Spec):
         promise = ValidationReportListing.all(project_name=self.project_name)
         self.assertEqual([], promise.evaluate())
 
+    def test_validation_report_listing_get_all_returns_singleton_when_one_report_exists_in_redis(self):
+        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period)
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        expected_result = [
+            ValidationReportListing(data_contract=self.data_contract, model_package=self.model_package, inference_period=self.inference_period)
+        ]
+
+        self.assertEqual(expected_result, promise.evaluate())
+
     def _test_validation_report_listing_has_property(self, property_name):
         property_value = getattr(self, property_name)
         kwargs = {property_name: property_value}
         listing_entry = ValidationReportListing(**kwargs)
         self.assertEqual(property_value, getattr(listing_entry, property_name))
+
+    @staticmethod
+    def _key_to_write(project_name, model_package, data_contract):
+        return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+
+    def _register_report(self, project_name, model_package, data_contract, inference_period):
+        key_to_write = self._key_to_write(project_name, model_package, data_contract)
+        self.redis_connection.hset(key_to_write, inference_period, 'dummy_report')
