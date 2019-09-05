@@ -217,9 +217,12 @@ class JobDeployment(object):
             "entrypoint": ["python"]
         }
 
-        for override_key in ['args', 'command', 'image', 'imagePullPolicy', 'workingDir']:
+        for override_key in ['command', 'image', 'imagePullPolicy', 'workingDir']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
+
+        if 'args' in worker_container_overrides:
+            worker_container['command'] = worker_container_overrides['args']
         #
         # if not has_gpus:
         #     worker_container['env'] += [{'name': 'NVIDIA_VISIBLE_DEVICES', 'value': ''}]
