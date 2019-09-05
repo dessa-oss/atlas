@@ -69,7 +69,7 @@ class JobDeployment(object):
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
-            r = requests.post(myurl, json=job_spec)
+            r = requests.post(myurl, json={'job_id': self._job_id, 'spec': job_spec})
         finally:
             self._job_bundler.cleanup()
 
@@ -91,8 +91,10 @@ class JobDeployment(object):
         pass
 
     def get_job_logs(self):
-        # return self._scheduler.get_job_logs(self._job_id)
-        pass
+        import requests
+
+        r = requests.get(f"{self._config['scheduler_url']}/completed_jobs/{self._job_id}/logs")
+        return r
 
     def stream_job_logs(self):
         # return self._scheduler.stream_job_logs(self._job_id)
