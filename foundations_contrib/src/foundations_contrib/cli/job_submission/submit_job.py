@@ -55,11 +55,21 @@ def submit(arguments):
             job_resource_args['ram'] = arguments.ram
         set_job_resources(**job_resource_args)
 
+        from foundations.global_state import current_foundations_context
+        try:
+            cur_job_id = current_foundations_context().pipeline_context().file_name
+        except ValueError:
+            cur_job_id = None
+
         deployment = deploy(
-            arguments.project_name or job_config.get('project_name'), 
-            arguments.entrypoint or job_config.get('entrypoint'), 
+            arguments.project_name or job_config.get('project_name'),
+            arguments.entrypoint or job_config.get('entrypoint'),
             arguments.params or job_config.get('params')
         )
+
+        if cur_job_id is not None:
+            current_foundations_context().pipeline_context().file_name = cur_job_id
+            
         if arguments.stream_job_logs:
             try:
                 stream_job_logs(deployment)
