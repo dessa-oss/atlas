@@ -16,7 +16,9 @@ class Header extends React.Component {
 
   onClickBack() {
     const { history } = this.props;
-    history.goBack();
+    history.push(
+      '/projects',
+    );
   }
 
   onKeyDown() {}

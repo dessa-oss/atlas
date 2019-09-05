@@ -11,6 +11,7 @@
     width: 25px;
     vertical-align: top;
     margin-left: 0px;
+    cursor: pointer;
   }
 
   p {
@@ -30,6 +31,7 @@
     vertical-align: middle;
     border-radius: 4px;
     font-size: 12px;
+    cursor: pointer;
   }
 
   button:first-of-type {
@@ -47,7 +49,6 @@
 
 .job-details-filter-button {
   float: right;
-  margin-right: 20px;
   height: 50px;
   vertical-align: middle;
   border: 2px solid $color-border-bottom;
