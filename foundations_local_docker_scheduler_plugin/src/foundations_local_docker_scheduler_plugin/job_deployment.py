@@ -36,7 +36,6 @@ class JobDeployment(object):
         return self._job_id
 
     def deploy(self):
-        from shutil import copy
         import tarfile
         from pathlib import Path
         import requests
@@ -47,16 +46,17 @@ class JobDeployment(object):
         try:
             self._job_bundler.bundle()
 
-            # bundle_store_path = Path("/Users/el/working/temp/bundle_store/")
-            # working_dir_path = Path("/Users/el/working/temp/working_dir/")
-            job_store_root_path = Path(config['job_store_root'])
+            #TODO feature request on local docker scheduler to support copying instead of mounting the working dir
             working_dir_root_path = Path(config['working_dir_root'])
             bundle_path = Path(self._job_bundler.job_archive())
             job_mount_path = working_dir_root_path / bundle_path.stem
             job_working_directory = working_dir_root_path / bundle_path.stem / "job_source"
 
-            # put job bundle to job_bundle_path and working_dir
-            copy(bundle_path, job_store_root_path)
+            # # If we need to capture and persist the starting state of the job bundle
+            # # put job bundle to job_bundle_path
+            # job_store_root_path = Path(config['job_store_root'])
+            # from shutil import copy
+            # copy(bundle_path, job_store_root_path)
 
             with tarfile.open(bundle_path) as tar:
                 tar.extractall(path=working_dir_root_path)
