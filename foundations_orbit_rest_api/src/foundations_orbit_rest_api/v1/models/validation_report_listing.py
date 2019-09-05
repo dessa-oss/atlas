@@ -11,6 +11,7 @@ class ValidationReportListing(PropertyModel):
     
     inference_period = PropertyModel.define_property()
     model_package = PropertyModel.define_property()
+    data_contract = PropertyModel.define_property()
 
     @staticmethod
     def all(**kwargs):

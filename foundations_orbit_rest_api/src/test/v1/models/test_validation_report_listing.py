@@ -25,7 +25,7 @@ class TestValidationReportListing(Spec):
         return self.faker.word()
 
     @let
-    def data_contract_name(self):
+    def data_contract(self):
         return self.faker.word()
 
     @let
@@ -34,7 +34,7 @@ class TestValidationReportListing(Spec):
 
     @let
     def key_to_write(self):
-        return f'projects:{self.project_name}:models:{self.model_package}:validation:{self.data_contract_name}'
+        return f'projects:{self.project_name}:models:{self.model_package}:validation:{self.data_contract}'
 
     @set_up
     def set_up(self):
@@ -45,6 +45,9 @@ class TestValidationReportListing(Spec):
 
     def test_validation_report_listing_has_model_package(self):
         self._test_validation_report_listing_has_property('model_package')
+
+    def test_validation_report_listing_has_data_contract(self):
+        self._test_validation_report_listing_has_property('data_contract')
 
     def test_validation_report_listing_get_all_returns_empty_list_for_empty_redis(self):
         promise = ValidationReportListing.all(project_name=self.project_name)
