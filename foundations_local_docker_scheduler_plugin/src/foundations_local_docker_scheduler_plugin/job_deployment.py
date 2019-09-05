@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 class JobDeployment(object):
-
     def __init__(self, job_id, job, job_source_bundle):
         from foundations_contrib.job_bundler import JobBundler
 
@@ -15,8 +14,6 @@ class JobDeployment(object):
 
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
-        #
-        # self._scheduler = self._get_scheduler(self._config)
 
     @staticmethod
     def _get_config():
@@ -27,13 +24,6 @@ class JobDeployment(object):
         config['_is_deployment'] = True
 
         return config
-    #
-    # @staticmethod
-    # def _get_scheduler(config):
-    #     from foundations_scheduler.scheduler import Scheduler
-    #     from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
-    #
-    #     return Scheduler(KubernetesApiWrapper(), config)
 
     @staticmethod
     def scheduler_backend():
@@ -83,8 +73,6 @@ class JobDeployment(object):
 
             myurl = f"{config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json=job_spec)
-            print(r.status_code)
-            print(r.json())
         finally:
             self._job_bundler.cleanup()
 
@@ -228,12 +216,7 @@ class JobDeployment(object):
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
             "network": "foundations-atlas",
-            "entrypoint": ["python"],
-            # "command": ["no-foundations.py"]
-            # [
-            #     {'name': 'PYTHONPATH', 'value': '/job/'},
-            #     {'name': 'FOUNDATIONS_JOB_ID', 'value': job_id}
-            # ]
+            "entrypoint": ["python"]
         }
 
         for override_key in ['args', 'command', 'image', 'imagePullPolicy', 'workingDir']:
@@ -254,29 +237,3 @@ class JobDeployment(object):
                         worker_container_overrides['resources'][override_key])
 
         return worker_container
-# {
-#     "image": "f9s-worker-base:0.1",
-#     "volumes":
-#         {
-#             str(job_mount_path):
-#                 {
-#                     "bind": "/job",
-#                     "mode": "rw"
-#                 },
-#             str(job_archive_path):
-#                 {
-#                     "bind": "/job_data",
-#                     "mode": "rw"
-#                 }
-#         },
-#     "working_dir": "/job/job_source",
-#     "environment":
-#         {
-#             "JOB_ID": job_id,
-#             "PYTHONPATH": "/job/",
-#             "FOUNDATIONS_HOME": "/job/.foundations/"
-#         },
-#     "network": "foundations-atlas",
-#     "entrypoint": ["python"],
-#     "command": ["no-foundations.py"]
-# }
