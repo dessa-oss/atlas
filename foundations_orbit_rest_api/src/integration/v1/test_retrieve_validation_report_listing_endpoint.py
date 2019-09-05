@@ -68,7 +68,7 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
             contract_name = listing_entry['data_contract']
             inference_period = listing_entry['inference_period']
             model_name = listing_entry['model_package']
-            self.redis.hmset(f'projects:test_project:models:{model_name}:validation:{contract_name}', {inference_period: 'dummy'})
+            self.redis.hset(f'projects:test_project:models:{model_name}:validation:{contract_name}', inference_period, 'dummy')
 
         data = self._get_from_route()
         self._sort_series_entries(data)
