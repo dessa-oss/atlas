@@ -39,15 +39,12 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
-        from foundations_contrib.global_state import config_manager
-
-        config = config_manager.config()
 
         try:
             self._job_bundler.bundle()
 
             #TODO feature request on local docker scheduler to support copying instead of mounting the working dir
-            working_dir_root_path = Path(config['working_dir_root'])
+            working_dir_root_path = Path(self._config['working_dir_root'])
             bundle_path = Path(self._job_bundler.job_archive())
             job_mount_path = working_dir_root_path / bundle_path.stem
             job_working_dir_path = working_dir_root_path / bundle_path.stem / "job_source"
@@ -66,12 +63,12 @@ class JobDeployment(object):
 
             job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
                                              working_dir_root_path=str(working_dir_root_path.absolute()),
-                                             job_results_root_path=config['job_results_root'],
-                                             container_config_root_path=config['container_config_root'],
+                                             job_results_root_path=self._config['job_results_root'],
+                                             container_config_root_path=self._config['container_config_root'],
                                              job_id=self._job_id,
-                                             worker_container_overrides=self._worker_container_override_config())
+                                             worker_container_overrides=self._config['worker_container_overrides'])
 
-            myurl = f"{config['scheduler_url']}/queued_jobs"
+            myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json=job_spec)
         finally:
             self._job_bundler.cleanup()
@@ -136,11 +133,6 @@ class JobDeployment(object):
         #     return True
         # except Exception as ex:
         #     return False
-
-    def _worker_container_override_config(self):
-        from foundations_contrib.global_state import config_manager
-
-        return config_manager.config().get('worker_container_overrides', {})
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
