@@ -185,7 +185,7 @@ class TestOrbitModelPackageServer(Spec):
         
         self.assertEqual(expected_results, decoded_results)
 
-    def test_deploy_sends_information_to_redis_fo   r_multiple_models(self):
+    def test_deploy_sends_information_to_redis_for_multiple_models(self):
         self._deploy()
         self._deploy_second()
 
