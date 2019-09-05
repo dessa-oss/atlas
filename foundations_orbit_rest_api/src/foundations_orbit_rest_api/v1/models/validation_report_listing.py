@@ -5,6 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_model import TestModel
-from .test_production_metric_set import TestProductionMetricSet
-from .test_validation_report_listing import TestValidationReportListing
+class ValidationReportListing(object):
+    pass
