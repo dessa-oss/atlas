@@ -45,7 +45,8 @@ def submit(arguments):
         if 'ram' in job_config:
             job_resource_args['ram'] = job_config['ram']
 
-        if arguments.command is not None:
+        #TODO should clean up consistency of use of k8s language command and args vs docker language entrypoint and command
+        if arguments.command:
             config_manager['worker_container_overrides']['args'] = arguments.command
 
         if arguments.num_gpus is not None:
