@@ -64,12 +64,12 @@ class JobDeployment(object):
             with tarfile.open(job_mount_path / "job.tgz") as tar:
                 tar.extractall(path=job_working_dir_path)
 
-            job_spec = self._create_job_spec(job_mount_path.absolute(),
-                                             config['job_results_root'],
-                                             self._job_id,
-                                             self._worker_container_override_config())
-
-            print(job_spec)
+            job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
+                                             working_dir_root_path=str(working_dir_root_path.absolute()),
+                                             job_results_root_path=config['job_results_root'],
+                                             container_config_root_path=config['container_config_root'],
+                                             job_id=self._job_id,
+                                             worker_container_overrides=self._worker_container_override_config())
 
             myurl = f"{config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json=job_spec)
@@ -170,31 +170,29 @@ class JobDeployment(object):
     #
     #     raise latest_exception
 
-    def _create_job_spec(self, job_mount_path, job_archive_path, job_id, worker_container_overrides):
-
-        from foundations_contrib.utils import foundations_home
-        from os.path import expanduser
-        from os.path import join
-
-        config_home = join(expanduser("~/.foundations-local-docker-scheduler"), 'config')
-
+    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, worker_container_overrides):
         worker_container = {
             'image': "f9s-worker-base:0.1",
             'volumes':
                 {
-                    str(job_mount_path):
+                    job_mount_path:
                         {
                             "bind": "/job",
                             "mode": "rw"
                         },
-                    str(job_archive_path):
+                    job_results_root_path:
                         {
-                            "bind": "/job_data",
+                            "bind": job_results_root_path,
                             "mode": "rw"
                         },
-                    config_home:
+                    container_config_root_path:
                         {
                             "bind": "/root/.foundations/config",
+                            "mode": "rw"
+                        },
+                    working_dir_root_path:
+                        {
+                            "bind": working_dir_root_path,
                             "mode": "rw"
                         }
                 },
