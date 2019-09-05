@@ -5,11 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 def _get_default_model_information():
+    import time
+
     return {
         'status': 'activated',
         'default': False,
         'created_by': '',
-        'created_at': '',
+        'created_at': time.time(),
         'description': '',
         'entrypoints': {},
         'validation_metrics': {}
@@ -39,7 +41,8 @@ def _retrieve_configuration_secrets():
 def _save_model_to_redis(project_name, model_name, model_details):
     import pickle
     from foundations_contrib.global_state import redis_connection
-    project_model_listings = _retrieve_project_from_redis(project_name)
+    project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
+    model_details['default'] = True if not project_model_listings else False
     serialized_model_information = pickle.dumps(model_details)
     
     project_model_listings.update({model_name: serialized_model_information})
@@ -53,7 +56,7 @@ def _save_project_to_redis(project_name):
     redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
 
 
-def _retrieve_project_from_redis(project_name):
+def _retrieve_project_model_listings_from_redis(project_name):
     from foundations_contrib.global_state import redis_connection
     return redis_connection.hgetall(f'projects:{project_name}:model_listing')
 
@@ -61,7 +64,7 @@ def _retrieve_model_details_from_redis(project_name, model_name):
     import pickle
     from foundations_contrib.global_state import redis_connection
 
-    project_model_listings = _retrieve_project_from_redis(project_name)
+    project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
     deserialised = {key.decode(): value for key, value in project_model_listings.items()}
     model_details = deserialised.get(model_name, None)
     if model_details:
@@ -77,7 +80,7 @@ def _update_model_in_redis(project_name, model_name, dict_of_updates = {}):
         model_details[key] = value
     serialized_model_information = pickle.dumps(model_details) 
     
-    project_model_listings = _retrieve_project_from_redis(project_name)
+    project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
     if model_name in project_model_listings:
         project_model_listings.pop(model_name)
 
@@ -89,7 +92,7 @@ def _is_model_activated(project_name, model_name):
     return details['status'] == 'activated'
 
 def _model_exists_in_project(project_name, model_name):
-    project_model_listings = _retrieve_project_from_redis(project_name)
+    project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
     decoded_results = {key.decode(): value for key, value in project_model_listings.items()}
 
     if model_name in decoded_results:

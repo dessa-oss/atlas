@@ -14,6 +14,8 @@ import fakeredis
 
 class TestOrbitModelPackageServer(Spec):
 
+    mock_time = let_patch_mock('time.time')
+
     @let
     def mock_project_name(self):
         return self.faker.word()
@@ -38,9 +40,9 @@ class TestOrbitModelPackageServer(Spec):
     def model_information(self):
         return {
             'status': 'activated',
-            'default': False,
+            'default': True,
             'created_by': '',
-            'created_at': '',
+            'created_at': self.mock_time(),
             'description': '',
             'entrypoints': {},
             'validation_metrics': {}
@@ -78,6 +80,9 @@ class TestOrbitModelPackageServer(Spec):
         self.ssh_key_path = path.expanduser('~/.ssh/id_foundations_scheduler')
         self.mock_redis_execute_command = self.patch('foundations_contrib.global_state.redis_connection.execute_command')
         self._setup_mocks_for_config_retrival()
+
+        self.mock_time.return_value = 10
+
 
     def _mock_enter(self, *args):
         return self.mock_ssh_file
@@ -175,13 +180,12 @@ class TestOrbitModelPackageServer(Spec):
 
     def test_deploy_sends_information_to_redis_about_new_model_in_project(self):
         self._deploy()
- 
         expected_results = { self.mock_model_name: pickle.dumps(self.model_information) }
         decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
         
         self.assertEqual(expected_results, decoded_results)
 
-    def test_deploy_sends_information_to_redis_for_multiple_models(self):
+    def test_deploy_sends_information_to_redis_fo   r_multiple_models(self):
         self._deploy()
         self._deploy_second()
 
@@ -213,11 +217,11 @@ class TestOrbitModelPackageServer(Spec):
     def test_stop_marks_model_as_deactivated(self):
         self._deploy()
         previous_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
-        self.assertEqual(previous_status, 'activated')
+        self.assertEqual('activated', previous_status)
 
         self._stop()
         after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
-        self.assertEqual(after_status, 'deactivated')
+        self.assertEqual('deactivated', after_status)
 
     def test_starting_previously_stopped_model_is_reactivated(self):
         self._deploy()
@@ -225,7 +229,7 @@ class TestOrbitModelPackageServer(Spec):
         
         self._deploy()
         after_status = self._get_model_status(self.mock_project_name, self.mock_model_name)
-        self.assertEqual(after_status, 'activated')
+        self.assertEqual('activated', after_status)
 
     def test_destroy_returns_true_if_successful(self):
         result = self._destroy()
@@ -237,6 +241,26 @@ class TestOrbitModelPackageServer(Spec):
 
         decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
         self.assertIsNone(decoded_results.get(self.mock_model_name))
+
+    def test_model_first_is_set_to_default(self):
+        self._deploy()
+        model_status = self._get_model_default(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(True, model_status)
+
+    def test_only_the_first_model_is_default(self):
+        self._deploy()
+        self._deploy_second()
+
+        model_status = self._get_model_default(self.mock_project_name, self.mock_model_name)
+        self.assertEqual(True, model_status)
+
+        second_model_status = self._get_model_default(self.mock_project_name, self.mock_2nd_model_name)
+        self.assertEqual(False, second_model_status)
+
+    def test_created_at_for_model_is_set_correctly(self):
+        self._deploy()
+        model_created_at = self._get_model_param(self.mock_project_name, self.mock_model_name, 'created_at')
+        self.assertEqual(self.mock_time(), model_created_at)
 
     def _deploy(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy
@@ -255,12 +279,18 @@ class TestOrbitModelPackageServer(Spec):
         from foundations_contrib.cli.orbit_model_package_server import destroy
         return destroy(self.mock_project_name, self.mock_model_name)
 
-    def _get_model_status(self, project_name, model_name):
+    def _get_model_param(self, project_name, model_name, param):
         import pickle
         decoded_results = self._retrieve_results_from_redis(project_name)
         model_details = decoded_results.get(model_name)
         deserialised_details = pickle.loads(model_details)
-        return deserialised_details['status']
+        return deserialised_details[param]
+
+    def _get_model_status(self, project_name, model_name):
+        return self._get_model_param(project_name, model_name, 'status')
+
+    def _get_model_default(self, project_name, model_name):
+        return self._get_model_param(project_name, model_name, 'default')
 
     def _retrieve_results_from_redis(self, project_name):
         hash_map_key = f'projects:{project_name}:model_listing'

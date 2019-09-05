@@ -355,7 +355,7 @@ class CommandLineInterface(object):
         successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
 
         if successfully_added:
-            message_router.push_message('project_model_served', {
+            message_router.push_message('orbit_project_model_served', {
                 'project_name': self._arguments.project_name,
                 'model_name': self._arguments.model_name,
                 'project_directory': self._arguments.project_directory
