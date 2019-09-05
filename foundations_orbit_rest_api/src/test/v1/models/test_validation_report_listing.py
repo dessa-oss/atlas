@@ -21,7 +21,7 @@ class TestValidationReportListing(Spec):
         return self.faker.word()
 
     @let
-    def model_name(self):
+    def model_package(self):
         return self.faker.word()
 
     @let
@@ -34,7 +34,7 @@ class TestValidationReportListing(Spec):
 
     @let
     def key_to_write(self):
-        return f'projects:{self.project_name}:models:{self.model_name}:validation:{self.data_contract_name}'
+        return f'projects:{self.project_name}:models:{self.model_package}:validation:{self.data_contract_name}'
 
     @set_up
     def set_up(self):
@@ -42,6 +42,9 @@ class TestValidationReportListing(Spec):
 
     def test_validation_report_listing_has_inference_period(self):
         self._test_validation_report_listing_has_property('inference_period')
+
+    def test_validation_report_listing_has_model_package(self):
+        self._test_validation_report_listing_has_property('model_package')
 
     def test_validation_report_listing_get_all_returns_empty_list_for_empty_redis(self):
         promise = ValidationReportListing.all(project_name=self.project_name)

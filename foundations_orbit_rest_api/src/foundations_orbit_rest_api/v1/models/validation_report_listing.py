@@ -10,6 +10,7 @@ from foundations_core_rest_api_components.common.models.property_model import Pr
 class ValidationReportListing(PropertyModel):
     
     inference_period = PropertyModel.define_property()
+    model_package = PropertyModel.define_property()
 
     @staticmethod
     def all(**kwargs):
