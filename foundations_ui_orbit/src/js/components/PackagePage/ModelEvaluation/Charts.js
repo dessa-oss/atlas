@@ -1,5 +1,5 @@
 import React from "react";
-import { getFromApiary } from "../../../actions/BaseActions";
+import { get } from "../../../actions/BaseActions";
 import Loading from "../../common/Loading";
 import PropTypes from "prop-types";
 import Preview from "./Preview";
@@ -17,7 +17,7 @@ class Charts extends React.Component {
 
   setTimer() {
     const value = setInterval(() => {
-      getFromApiary(
+      get(
         `projects/${this.props.location.state.project.name}/metrics`
       ).then(result => {
         if (result) {
@@ -43,7 +43,7 @@ class Charts extends React.Component {
       loading: true
     });
 
-    getFromApiary(
+    get(
       `projects/${this.props.location.state.project.name}/metrics`
     ).then(result => {
       let newEvaluations = [];

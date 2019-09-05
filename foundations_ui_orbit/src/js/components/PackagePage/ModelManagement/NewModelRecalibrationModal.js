@@ -3,7 +3,7 @@ import Flatpickr from "react-flatpickr";
 import PropTypes from "prop-types";
 import { Modal, ModalBody } from "reactstrap";
 import moment from "moment";
-import { postApiary } from "../../../actions/BaseActions";
+import { post } from "../../../actions/BaseActions";
 
 const NewModelRecalibrationModal = props => {
   const [startDate, setStartDate] = React.useState("");
@@ -136,9 +136,7 @@ const NewModelRecalibrationModal = props => {
         body[parameter.key] = parameter.value;
       });
 
-      console.log("BODY: ", body);
-
-      postApiary(`/projects/${props.location.state.project.name}/${modelName}/retrain`,
+      post(`/projects/${props.location.state.project.name}/${modelName}/retrain`,
         body)
         .then(() => {
           props.reload();

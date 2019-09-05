@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ModelManagementDetail from "./ModelManagementDetails";
-import { putApiary } from "../../../actions/BaseActions";
+import { put } from "../../../actions/BaseActions";
 import NewModelRecalibrationModal from "./NewModelRecalibrationModal";
 
 const ModelManagementRow = props => {
@@ -30,7 +30,7 @@ const ModelManagementRow = props => {
         default_model: rowData.model_name
       };
 
-      putApiary(
+      put(
         `/projects/${location.state.project.name}`,
         body
       ).then(() => {
@@ -47,7 +47,7 @@ const ModelManagementRow = props => {
       serving: true
     };
 
-    putApiary(
+    put(
       `/projects/${location.state.project.name}`,
       body
     ).then(() => {
@@ -63,7 +63,7 @@ const ModelManagementRow = props => {
       serving: false
     };
 
-    putApiary(
+    put(
       `/projects/${location.state.project.name}`,
       body
     ).then(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import { getFromApiary } from "../../../actions/BaseActions";
+import { get } from "../../../actions/BaseActions";
 import PropTypes from "prop-types";
 import moment from "moment";
 import ModalTutorial from "../../common/ModalTutorial";
@@ -44,7 +44,7 @@ const SystemHealth = props => {
   const reload = () => {
     const { location } = props;
 
-    getFromApiary(`projects/${location.state.project.name}/validation_report_list`).then(result => {
+    get(`projects/${location.state.project.name}/validation_report_list`).then(result => {
       if (result) {
         let entries = [];
         result.forEach(resultItem => {
@@ -271,7 +271,7 @@ const SystemHealth = props => {
 
     const { location } = props;
 
-    getFromApiary(`projects/${location.state.project.name}/validation_results`).then(result => {
+    get(`projects/${location.state.project.name}/validation_results`).then(result => {
       if (result) {
         setData(result);
       }
