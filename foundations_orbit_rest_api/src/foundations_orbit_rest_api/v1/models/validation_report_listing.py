@@ -5,8 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-class ValidationReportListing(object):
+from foundations_core_rest_api_components.common.models.property_model import PropertyModel
+
+class ValidationReportListing(PropertyModel):
     
+    inference_period = PropertyModel.define_property()
+
     @staticmethod
     def all(**kwargs):
         from foundations_core_rest_api_components.lazy_result import LazyResult
