@@ -46,7 +46,7 @@ def submit(arguments):
             job_resource_args['ram'] = job_config['ram']
 
         if arguments.command is not None:
-            config_manager['worker_container_overrides']['args'] = arguments.command.split()
+            config_manager['worker_container_overrides']['args'] = arguments.command
 
         if arguments.num_gpus is not None:
             job_resource_args['num_gpus'] = arguments.num_gpus
