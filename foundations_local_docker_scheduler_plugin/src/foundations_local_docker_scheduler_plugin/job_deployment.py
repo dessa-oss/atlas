@@ -50,7 +50,7 @@ class JobDeployment(object):
             working_dir_root_path = Path(config['working_dir_root'])
             bundle_path = Path(self._job_bundler.job_archive())
             job_mount_path = working_dir_root_path / bundle_path.stem
-            job_working_directory = working_dir_root_path / bundle_path.stem / "job_source"
+            job_working_dir_path = working_dir_root_path / bundle_path.stem / "job_source"
 
             # # If we need to capture and persist the starting state of the job bundle
             # # put job bundle to job_bundle_path
@@ -62,7 +62,7 @@ class JobDeployment(object):
                 tar.extractall(path=working_dir_root_path)
 
             with tarfile.open(job_mount_path / "job.tgz") as tar:
-                tar.extractall(path=job_working_directory)
+                tar.extractall(path=job_working_dir_path)
 
             job_spec = self._create_job_spec(job_mount_path.absolute(),
                                              config['job_results_root'],
