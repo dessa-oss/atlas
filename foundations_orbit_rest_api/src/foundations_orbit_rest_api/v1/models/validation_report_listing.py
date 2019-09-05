@@ -6,4 +6,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 class ValidationReportListing(object):
-    pass
+    
+    @staticmethod
+    def all(**kwargs):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        return LazyResult(lambda: ValidationReportListing._all_internal())
+
+    @staticmethod
+    def _all_internal():
+        return []
