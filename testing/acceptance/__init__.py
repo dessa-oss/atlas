@@ -11,7 +11,6 @@ from acceptance.test_duplicate_job_source import TestDuplicateJobSource
 from acceptance.test_recursion_limit import TestRecursionLimit
 from acceptance.test_job_data_producers import TestJobDataProducers
 from acceptance.test_cli_init import TestCLIInit
-from acceptance.test_job_uses_venv_created_by_foundations import TestJobUsesVenvCreatedByFoundations
 from acceptance.test_archive_jobs import TestArchiveJobs
 from acceptance.test_local_obfuscate_jobs import TestLocalObfuscateJobs
 from acceptance.test_set_environment import TestSetEnvironment

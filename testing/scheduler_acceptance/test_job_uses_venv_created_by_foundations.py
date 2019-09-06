@@ -14,7 +14,7 @@ class TestJobUsesVenvCreatedByFoundations(Spec):
 
     @set_up
     def set_up(self):
-        from acceptance.cleanup import cleanup
+        from scheduler_acceptance.cleanup import cleanup
         from foundations_contrib.cli.typed_config_listing import TypedConfigListing
         from foundations_scheduler_plugin.config.scheduler import translate
 
@@ -27,7 +27,6 @@ class TestJobUsesVenvCreatedByFoundations(Spec):
         config_manager.pop_config()
 
     def test_job_uses_virtualenv_created_by_foundations_when_running(self):
-        from acceptance.fixtures.stages import get_and_log_python_path_as_metric
         from fnmatch import fnmatch
 
         job = foundations.submit(job_dir='acceptance/fixtures/virtual_environment')
