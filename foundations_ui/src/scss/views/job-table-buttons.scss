@@ -7,23 +7,21 @@
 
   span {
     display: inline-block;
-    height: 25px;
-    width: 25px;
-    vertical-align: top;
+    height: 11px;
+    width: 11px;
     margin-left: 0px;
     cursor: pointer;
+    vertical-align: middle;
   }
 
   p {
     display: inline-block;
-    vertical-align: middle;
     font-size: 12px;
-    margin-left: 15px;
+    margin-left: 5px;
     width: 150px;
     word-wrap: break-word;
     text-align: left;
-    position: relative;
-    top: 5px;
+    vertical-align: middle;
   }
 
   button {
