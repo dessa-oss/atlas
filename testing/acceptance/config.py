@@ -21,6 +21,7 @@ def set_foundations_home():
     import os
 
     os.environ['FOUNDATIONS_HOME'] = os.getcwd() + '/foundations_home'
+    os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
 def config():
     from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, LocalFileSystemCacheBackend
@@ -29,35 +30,10 @@ def config():
     import foundations_spec
     import sys
 
-    # below is used to ensure we get a different cache for every run
-    config_manager['cache_implementation'] = {
-        'cache_type': LocalFileSystemCacheBackend,
-        'constructor_arguments': ['/tmp/foundations_example_{}'.format(TEST_UUID)],
-    }
+    from foundations_contrib.cli.typed_config_listing import TypedConfigListing
+    from foundations_internal.config.execution import translate
 
-    # below is used to create archives for all different types
-
-    archive_implementation = {
-        'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': [ARCHIVE_ROOT],
-    }
-    config_manager['archive_listing_implementation'] = {
-        'archive_listing_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': [ARCHIVE_ROOT],
-    }
-    config_manager['deployment_implementation'] = {
-        'deployment_type': LocalShellJobDeployment
-    }
-    config_manager['stage_log_archive_implementation'] = archive_implementation
-    config_manager['persisted_data_archive_implementation'] = archive_implementation
-    config_manager['provenance_archive_implementation'] = archive_implementation
-    config_manager['job_source_archive_implementation'] = archive_implementation
-    config_manager['artifact_archive_implementation'] = archive_implementation
-    config_manager['miscellaneous_archive_implementation'] = archive_implementation
-    config_manager['artifact_path'] = 'results'
-    config_manager['log_level'] = 'CRITICAL'
-    config_manager['obfuscate_foundations'] = False
-    config_manager['run_script_environment'] = {'enable_stages': True}
+    TypedConfigListing('execution').update_config_manager_with_config('default', translate)
 
     module_manager.append_module(sys.modules['foundations_spec'])
 

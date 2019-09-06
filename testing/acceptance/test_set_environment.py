@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 02 2019
 
 from foundations_spec import *
 
+@skip('Removing this is pending removal of old configuration style `foundations.set_environment`')
 class TestSetEnvironment(Spec):
 
     def test_missing_environment_raises_correct_error(self):

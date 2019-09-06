@@ -5,14 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import unittest
+from foundations_spec import *
 from mock import Mock
-from foundations_spec.extensions import run_process
+from acceptance.mixins.run_local_job import RunLocalJob
 
 
-class TestJobDataProducers(unittest.TestCase):
+class TestJobDataProducers(Spec, RunLocalJob):
 
-    def setUp(self):
+    @set_up
+    def set_up(self):
         from acceptance.cleanup import cleanup
         from foundations.global_state import redis_connection
 
@@ -23,7 +24,7 @@ class TestJobDataProducers(unittest.TestCase):
     def test_produces_proper_data(self):
         from foundations_contrib.job_data_redis import JobDataRedis
 
-        run_process(['python', 'success.py'], 'acceptance/fixtures/job_data_production', {'FOUNDATIONS_JOB_ID': 'successful_job'})
+        self._deploy_job_file('acceptance/fixtures/job_data_production', entrypoint='success.py', job_id='successful_job')
         all_job_data = JobDataRedis.get_all_jobs_data('job_data_production', self._redis, True)
 
         job_data = all_job_data[0]
@@ -39,7 +40,7 @@ class TestJobDataProducers(unittest.TestCase):
         from foundations_internal.fast_serializer import deserialize
         from time import time
 
-        run_process(['python', 'success.py'], 'acceptance/fixtures/job_data_production', {'FOUNDATIONS_JOB_ID': 'successful_job'})
+        self._deploy_job_file('acceptance/fixtures/job_data_production', entrypoint='success.py', job_id='successful_job')
         current_time = time()
 
         serialized_metrics = self._redis.lrange(
@@ -95,7 +96,7 @@ class TestJobDataProducers(unittest.TestCase):
         self.assertEqual(set(['successful_job']), running_jobs)
         
     def test_produces_failed_job_data(self):
-        run_process(['python', 'fail.py'], 'acceptance/fixtures/job_data_production', {'FOUNDATIONS_JOB_ID': 'failed_job'})
+        self._deploy_job_file('acceptance/fixtures/job_data_production', entrypoint='fail.py', job_id='failed_job')
 
         state = self._redis.get('jobs:failed_job:state').decode()
         self.assertEqual('failed', state)

@@ -43,7 +43,8 @@ def run_process(command, directory, environment=None):
     previous_directory = os.getcwd()
     try:
         os.chdir(directory)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=open('/dev/null'), env=env)
+        with open('/dev/null') as null_file:
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=null_file, env=env)
         out, err = process.communicate()
         return out.decode()
     finally:
