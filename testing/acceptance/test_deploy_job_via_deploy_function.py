@@ -10,6 +10,7 @@ from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctio
 
 import foundations
 
+@skip('We no longer support deploy; pending deletion')
 class TestDeployJobViaDeployFunction(Spec, JobDeployFunctionTestScaffold):
     
     def _log_level(self):

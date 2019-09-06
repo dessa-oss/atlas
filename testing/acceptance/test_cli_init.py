@@ -6,8 +6,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 02 2019
 """
 
 from foundations_spec import *
+from foundations_spec.extensions import run_process
+from acceptance.mixins.run_local_job import RunLocalJob
 
-class TestCLIInit(Spec):
+class TestCLIInit(Spec, RunLocalJob):
 
     @let
     def job_root(self):
@@ -34,18 +36,15 @@ class TestCLIInit(Spec):
     def test_cli_can_deploy_job_created_by_init(self):
         import subprocess
 
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
+        run_process(["python", "-m", "foundations", "init", "test-cli-init"], '.')
         driver_deploy_exit_code = subprocess.call(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
 
         self.assertEqual(driver_deploy_exit_code, 0)
 
     def test_cli_deployment_with_default_configuration_can_produce_results(self):
-        import subprocess
-        import re
-
-        subprocess.call(["python", "-m", "foundations", "init", "test-cli-init"])
+        run_process(["python", "-m", "foundations", "init", "test-cli-init"], '.')
         self._append_redis_job_id_log_to_driver_file()
-        driver_deploy_output = subprocess.check_output(["/bin/bash", "-c", "cd test-cli-init && python project_code/driver.py"])
+        driver_deploy_output = self._deploy_job_file('test-cli-init', entrypoint='project_code/driver.py')
         job_id = self.redis.get('foundations_testing_job_id').decode()
 
         self._assert_job_file_exists(job_id, 'miscellaneous/job_artifact_listing.pkl')
