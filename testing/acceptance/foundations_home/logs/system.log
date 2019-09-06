@@ -1,4 +1,0 @@
-2019-09-06 11:19:17,016 - foundations.local_run - WARNING - Foundations has been imported, but no default configuration file has been found. Refer to the documentation for more information. Without a default configuration file, no foundations code will be executed.
-2019-09-06 11:19:17,017 - foundations_contrib.archiving.save_artifact - WARNING - Cannot save artifact outside of job.
-2019-09-06 11:19:44,875 - foundations.local_run - WARNING - Foundations has been imported, but no default configuration file has been found. Refer to the documentation for more information. Without a default configuration file, no foundations code will be executed.
-2019-09-06 11:19:44,875 - foundations_contrib.archiving.save_artifact - WARNING - Cannot save artifact outside of job.

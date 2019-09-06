@@ -11,6 +11,7 @@ from mock import Mock
 from foundations.utils import using_python_2
 
 
+@unittest.skip('Removal of this is pending on the removal of all stage related features')
 class TestRecursionLimit(unittest.TestCase):
 
     def setUp(self):

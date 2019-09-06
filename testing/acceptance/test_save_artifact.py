@@ -11,8 +11,9 @@ import json
 import foundations
 
 from foundations_contrib.global_state import config_manager
+from acceptance.mixins.run_local_job import RunLocalJob
 
-class TestSaveArtifact(Spec):
+class TestSaveArtifact(Spec, RunLocalJob):
 
     @let
     def _artifact_archive(self):
@@ -24,21 +25,9 @@ class TestSaveArtifact(Spec):
         from foundations_contrib.global_state import redis_connection
         return redis_connection
 
-    @let
-    def job_id(self):
-        return self.faker.uuid4()
-
     @tear_down
     def tear_down(self):
         self._redis_connection.flushall()
-
-    def _deploy_job_file(self, path):
-        from foundations_spec.extensions import run_process
-        import os
-
-        working_directory = os.getcwd()
-        foundations_home = f'{working_directory}/foundations_home'
-        return run_process(['python', 'main.py'], path, environment={'FOUNDATIONS_HOME': foundations_home, 'FOUNDATIONS_JOB_ID': self.job_id, 'FOUNDATIONS_COMMAND_LINE': 'False'})
 
     def test_save_artifact_outside_of_job_logs_warning(self):
         from foundations_spec.extensions import run_process
