@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 import foundations
 
-@skip('Error caused by configuration refactoring - currently being investigated')
 class TestCanDeployModelServer(Spec):
 
 
