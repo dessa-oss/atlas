@@ -104,9 +104,45 @@ class JobDeployment(object):
         else:
             return ""
 
-    def stream_job_logs(self):
-        # return self._scheduler.stream_job_logs(self._job_id)
-        return []
+    def stream_job_logs(self, strip_new_line=True):
+        import requests
+        import time
+
+        status = self.get_job_status()
+
+        while status == "queued" or status is None:
+            time.sleep(0.1)
+            status = self.get_job_status()
+
+        if status == "running":
+            r = requests.get(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}/container_id")
+            if r.status_code == requests.codes.ok:
+                import docker
+                client = docker.from_env()
+
+                container = client.containers.get(r.json())
+
+                log_stream = container.logs(stream=True)
+
+                for line in log_stream:
+                    if strip_new_line:
+                        line = line.decode().strip('\n')
+                    else:
+                        line = line.decode()
+                    yield line
+            else:
+                # try and see if it completed in between requests
+                status = "completed"
+
+        if status == "completed":
+            from io import StringIO
+            log_stream = StringIO(self.get_job_logs())
+
+            for line in log_stream:
+                if strip_new_line:
+                    line = line.strip('\n')
+                yield line
+
 
     @staticmethod
     def cancel_jobs(jobs):
