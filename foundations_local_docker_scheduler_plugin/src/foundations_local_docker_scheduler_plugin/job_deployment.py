@@ -80,15 +80,20 @@ class JobDeployment(object):
         raise NotImplementedError
 
     def get_job_status(self):
-        # from kubernetes.client.rest import ApiException
-        #
-        # try:
-        #     return self._scheduler.get_job_status(self._job_id)
-        # except ApiException as exception:
-        #     if exception.status == 404:
-        #         return None
-        #     raise
-        pass
+        import requests
+
+        responses = {
+            "queued": "queued",
+            "running": "running",
+            "failed": "completed",
+            "completed": "completed"
+        }
+
+        r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
+        if r.status_code == requests.codes.ok:
+            return responses[r.json()['status']]
+        else:
+            return None
 
     def get_job_logs(self):
         import requests
