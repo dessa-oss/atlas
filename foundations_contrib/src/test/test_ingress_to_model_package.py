@@ -28,6 +28,12 @@ class TestIngressToModelPackage(Spec):
 
         self.assertEqual(expected_yaml, ingress.set_model_endpoint(base_yaml, 'project', 'model-two'))
 
+    def test_updating_default_model(self):
+        expected_yaml = self._load_yaml('test/fixtures/ingress_resource_with_two_models_updated_default_project.yaml')
+        base_yaml = self._load_yaml('test/fixtures/ingress_resource_with_two_models_and_default_project.yaml')
+
+        self.assertEqual(expected_yaml, ingress.update_default_model_for_project(base_yaml, 'project', 'model-two'))
+
     def _load_yaml(self, filepath):
         import yaml
 
