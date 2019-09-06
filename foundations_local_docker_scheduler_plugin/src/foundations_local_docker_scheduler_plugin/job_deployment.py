@@ -98,8 +98,11 @@ class JobDeployment(object):
     def get_job_logs(self):
         import requests
 
-        r = requests.get(f"{self._config['scheduler_url']}/completed_jobs/{self._job_id}/logs")
-        return r
+        r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
+        if r.status_code == requests.codes.ok:
+            return r.json()['logs']
+        else:
+            return ""
 
     def stream_job_logs(self):
         # return self._scheduler.stream_job_logs(self._job_id)
@@ -144,30 +147,6 @@ class JobDeployment(object):
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
-    #
-    # @staticmethod
-    # def _try_to_delete_kubernetes_job(batch_api, job_id):
-    #     import time
-    #     from kubernetes.client.rest import ApiException
-    #     from foundations_scheduler.kubernetes_api_wrapper import delete_options
-    #
-    #     latest_exception = None
-    #
-    #     for _ in range(5):
-    #         try:
-    #             batch_api.delete_namespaced_job(
-    #                 'foundations-job-{}'.format(job_id),
-    #                 'foundations-scheduler-test',
-    #                 delete_options()
-    #             )
-    #
-    #             return
-    #         except ApiException as ex:
-    #             latest_exception = ex
-    #             time.sleep(0.5)
-    #             continue
-    #
-    #     raise latest_exception
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, worker_container_overrides):
         worker_container = {
