@@ -8,9 +8,9 @@ import os
 import typing
 
 import foundations
-from foundations_spec import Spec, let, set_up
+from foundations_spec import *
 
-
+@skip('pending image building and others - ask austin')
 class TestTensorboardEndpoint(Spec):
     url = '/api/v2beta/upload_to_tensorboard'
 
