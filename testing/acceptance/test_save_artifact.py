@@ -10,6 +10,8 @@ from foundations_spec import *
 import json
 import foundations
 
+from foundations_contrib.global_state import config_manager
+
 class TestSaveArtifact(Spec):
 
     @let
@@ -17,40 +19,38 @@ class TestSaveArtifact(Spec):
         from foundations_contrib.archiving import load_archive
         return load_archive('artifact_archive')
 
-    @set_up
-    def set_up(self):
-        import copy
-
-        import foundations
+    @let
+    def _redis_connection(self):
         from foundations_contrib.global_state import redis_connection
+        return redis_connection
 
-        self._redis_connection = redis_connection
-
-        self._old_config = copy.deepcopy(foundations.config_manager.config())
-        foundations.config_manager.reset()
+    @let
+    def job_id(self):
+        return self.faker.uuid4()
 
     @tear_down
     def tear_down(self):
-        import foundations
-
-        foundations.config_manager.config().update(self._old_config)
         self._redis_connection.flushall()
 
-    def test_save_artifact_outside_of_job_logs_warning(self):
-        import subprocess
+    def _deploy_job_file(self, path):
+        from foundations_spec.extensions import run_process
+        import os
 
-        completed_process = subprocess.run(['bash', '-c', 'cd acceptance/fixtures/save_artifact && python main.py'], stdout=subprocess.PIPE)
-        process_output = completed_process.stdout.decode()
+        working_directory = os.getcwd()
+        foundations_home = f'{working_directory}/foundations_home'
+        return run_process(['python', 'main.py'], path, environment={'FOUNDATIONS_HOME': foundations_home, 'FOUNDATIONS_JOB_ID': self.job_id, 'FOUNDATIONS_COMMAND_LINE': 'False'})
+
+    def test_save_artifact_outside_of_job_logs_warning(self):
+        from foundations_spec.extensions import run_process
+        
+        process_output = run_process(['python', 'main.py'], 'acceptance/fixtures/save_artifact')
         self.assertIn('WARNING', process_output)
         self.assertIn('Cannot save artifact outside of job.', process_output)
 
     def test_save_artifact_with_filepath_only_saves_file_with_key_equal_to_basename_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
+        self._deploy_job_file('acceptance/fixtures/save_artifact')
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', self.job_id)
+        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata'))
 
         expected_metadata = {
             'key_mapping': {
@@ -65,12 +65,9 @@ class TestSaveArtifact(Spec):
         self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_artifact_with_filepath_and_key_saves_file_with_specified_key_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_with_key', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
+        self._deploy_job_file('acceptance/fixtures/save_artifact_with_key')
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', self.job_id)
+        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata'))
 
         expected_metadata = {
             'key_mapping': {
@@ -85,12 +82,9 @@ class TestSaveArtifact(Spec):
         self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_artifact_twice_with_filepath_and_key_saves_file_with_specified_key_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_with_key_twice', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
+        self._deploy_job_file('acceptance/fixtures/save_artifact_with_key_twice')
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', self.job_id)
+        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata'))
 
         expected_metadata = {
             'key_mapping': {
@@ -105,20 +99,14 @@ class TestSaveArtifact(Spec):
         self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_artifact_twice_with_filepath_and_key_logs_appropriate_warning(self):
-        import subprocess
-
-        completed_process = subprocess.run(['python', '-m', 'foundations', 'deploy', '--env=stageless_local', '--job-directory=acceptance/fixtures/save_artifact_with_key_twice'], stdout=subprocess.PIPE)
-        process_output = completed_process.stdout.decode()
+        process_output = self._deploy_job_file('acceptance/fixtures/save_artifact_with_key_twice')
         self.assertIn('WARNING', process_output)
         self.assertIn('Artifact "this-key" already exists - overwriting.', process_output)
 
     def test_save_artifact_twice_with_filepath_only_saves_file_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_twice', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
+        self._deploy_job_file('acceptance/fixtures/save_artifact_twice')
+        artifact_contents = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', self.job_id)
+        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata'))
 
         expected_metadata = {
             'key_mapping': {
@@ -133,13 +121,10 @@ class TestSaveArtifact(Spec):
         self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_two_artifacts_with_different_keys_saves_files_in_archive_and_saves_metadata_with_extension_in_redis(self):
-        job_deployment = foundations.deploy(job_directory='acceptance/fixtures/save_artifact_with_two_different_keys', env='stageless_local')
-        job_deployment.wait_for_deployment_to_complete()
-
-        job_id = job_deployment.job_name()
-        artifact_contents_0 = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', job_id)
-        artifact_contents_1 = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', job_id)
-        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{job_id}:user_artifact_metadata'))
+        self._deploy_job_file('acceptance/fixtures/save_artifact_with_two_different_keys')
+        artifact_contents_0 = self._artifact_archive.fetch_binary('user_artifacts/cool-artifact.txt', self.job_id)
+        artifact_contents_1 = self._artifact_archive.fetch_binary('user_artifacts/cooler-artifact.other', self.job_id)
+        artifact_metadata = json.loads(self._redis_connection.get(f'jobs:{self.job_id}:user_artifact_metadata'))
 
         expected_metadata = {
             'key_mapping': {
@@ -157,9 +142,6 @@ class TestSaveArtifact(Spec):
         self.assertEqual(expected_metadata, artifact_metadata)
 
     def test_save_artifact_twice_with_filepath_only_logs_appropriate_warning(self):
-        import subprocess
-
-        completed_process = subprocess.run(['python', '-m', 'foundations', 'deploy', '--env=stageless_local', '--job-directory=acceptance/fixtures/save_artifact_twice'], stdout=subprocess.PIPE)
-        process_output = completed_process.stdout.decode()
+        process_output = self._deploy_job_file('acceptance/fixtures/save_artifact_twice')
         self.assertIn('WARNING', process_output)
         self.assertIn('Artifact "cool-artifact.txt" already exists - overwriting.', process_output)
