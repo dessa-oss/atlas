@@ -96,6 +96,7 @@ class JobTableButtons extends Component {
           onClick={this.toggleShowingFilter}
         >
           <p>Filter Columns</p>
+          <i className="i--icon-arrow-down" />
         </div>
         <div className="job-details-filter-container">
           {filter}

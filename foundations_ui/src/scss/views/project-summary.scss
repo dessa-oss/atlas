@@ -1,4 +1,4 @@
-.project-summary-container{
+.project-summary-container {
   margin: auto;
   background-color: $color-background;
   border: 1px solid $color-border-bottom;
@@ -85,30 +85,35 @@
 
 .project-summary-info-container {
   width: 100%;
-  h2{
+  word-break: break-all;
+  h2 {
     color: $color-dark-blue;
     margin-bottom: 10px;
     margin-top: 0px;
     font-size: 30px;
     cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
-  p, span{
+  p, span {
     color: $color-dark-blue;
     margin-top: 5px;
     margin-bottom: 5px;
     font-size: 14px;
   }
-  p, span{
+  p, span {
     font-size: 15px;
   }
 }
 
-.project-summary-metrics-container{
+.project-summary-metrics-container {
   width: 25%;
 }
 
-.project-summary-button-container{
-  button{
+.project-summary-button-container {
+  button {
     float: right;
     margin-right: 50px;
     display: inline;

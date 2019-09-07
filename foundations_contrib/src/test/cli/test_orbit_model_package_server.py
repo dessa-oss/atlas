@@ -74,6 +74,7 @@ class TestOrbitModelPackageServer(Spec):
         self.maxDiff=None
         
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self._redis.flushall()
         self._redis.execute_command = lambda x: x 
         
 

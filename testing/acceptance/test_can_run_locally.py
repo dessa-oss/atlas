@@ -7,9 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from foundations_contrib.global_state import redis_connection
+from acceptance.mixins.run_local_job import RunLocalJob
 
-
-class TestCanRunLocally(Spec):
+class TestCanRunLocally(Spec, RunLocalJob):
 
     @let
     def project_listing(self):
@@ -31,7 +31,7 @@ class TestCanRunLocally(Spec):
         from foundations_contrib.global_state import redis_connection
 
         redis_connection.delete('foundations_testing_job_id')
-        run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally')
+        self._deploy_job_file('acceptance/fixtures/run_locally')
         self.job_id = redis_connection.get('foundations_testing_job_id').decode()
 
     def test_project_name_is_saved(self):

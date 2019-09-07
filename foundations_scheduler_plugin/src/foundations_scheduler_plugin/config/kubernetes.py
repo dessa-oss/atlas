@@ -8,8 +8,12 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def kubernetes_master_ip():
     import subprocess
     import yaml
+    from urllib.parse import urlparse
 
-    node_yaml = subprocess.check_output(['kubectl', 'get', 'node', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
-    node = yaml.load(node_yaml)
-    return node['items'][0]['status']['addresses'][0]['address']
+    config_yaml = subprocess.check_output(['kubectl', 'config', 'view'])
+    config = yaml.load(config_yaml)
+    current_context = config['current-context']
+    cluster_name = [item for item in config['contexts'] if item['name'] == current_context][0]['context']['cluster']
+    cluster_server = [item for item in config['clusters'] if item['name'] == cluster_name][0]['cluster']['server']
+    return urlparse(cluster_server).hostname
 

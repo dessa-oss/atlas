@@ -8,8 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 from contextlib import contextmanager
+from acceptance.mixins.run_local_job import RunLocalJob
 
-class TestResultJobBundle(Spec):
+class TestResultJobBundle(Spec, RunLocalJob):
 
     @contextmanager
     def change_config(self):
@@ -27,8 +28,8 @@ class TestResultJobBundle(Spec):
         from acceptance.mixins.run_process import run_process
         from foundations_contrib.global_state import redis_connection
         import foundations
-                    
-        run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally')
+
+        self._deploy_job_file('acceptance/fixtures/run_locally')            
         self.local_job_id = redis_connection.get('foundations_testing_job_id').decode()
         
         with self.change_config():

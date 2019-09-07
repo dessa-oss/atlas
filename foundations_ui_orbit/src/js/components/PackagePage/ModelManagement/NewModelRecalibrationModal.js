@@ -136,7 +136,7 @@ const NewModelRecalibrationModal = props => {
         body[parameter.key] = parameter.value;
       });
 
-      post(`/projects/${props.location.state.project.name}/${modelName}/retrain`,
+      post(`/projects/${props.location.state.project.name}/${modelName}/recalibrate`,
         body)
         .then(() => {
           props.reload();

@@ -6,12 +6,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
+from acceptance.mixins.run_local_job import RunLocalJob
 
-class TestArchiveJobs(Spec):
-
-    @let
-    def job_id(self):
-        return self.faker.uuid4()
+class TestArchiveJobs(Spec, RunLocalJob):
 
     @let
     def job_id_to_archive(self):
@@ -53,5 +50,5 @@ class TestArchiveJobs(Spec):
 
     def _run_job(self, job_id):
         from foundations_spec.extensions import run_process
-        run_process(['python', 'main.py'], 'acceptance/fixtures/run_locally', {'FOUNDATIONS_JOB_ID': job_id})
+        self._deploy_job_file('acceptance/fixtures/run_locally', job_id=job_id)
 
