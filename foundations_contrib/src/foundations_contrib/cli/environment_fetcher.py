@@ -46,7 +46,7 @@ class EnvironmentFetcher(object):
         if 'config' not in directories:
             return None
 
-        config_directory = os.path.join(cwd, 'config', '*.config.yaml')
+        config_directory = os.path.join(cwd, 'config', 'execution', '*.config.yaml')
         return glob(config_directory)
         
     
@@ -54,7 +54,7 @@ class EnvironmentFetcher(object):
         from glob import glob
         from os.path import expanduser, join
         from foundations_contrib.utils import foundations_home
-
-        global_config_directory = expanduser(foundations_home() + '/config')
+        # TODO: Add /submission to global_config_directory
+        global_config_directory = expanduser(foundations_home() + '/config/submission')
         search_path = join(global_config_directory, '*.config.yaml')
         return glob(search_path)
