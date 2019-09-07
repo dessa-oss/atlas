@@ -14,6 +14,7 @@ class JobDeployment(object):
 
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
+        self._job = job
 
     @staticmethod
     def _get_config():
@@ -39,6 +40,7 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
+        from getpass import getuser
 
         try:
             self._job_bundler.bundle()
@@ -61,15 +63,24 @@ class JobDeployment(object):
             with tarfile.open(job_mount_path / "job.tgz") as tar:
                 tar.extractall(path=job_working_dir_path)
 
+            project_name = self._job.pipeline_context().provenance.project_name
+            username = getuser()
+
             job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
                                              working_dir_root_path=str(working_dir_root_path.absolute()),
                                              job_results_root_path=self._config['job_results_root'],
                                              container_config_root_path=self._config['container_config_root'],
                                              job_id=self._job_id,
+                                             project_name=project_name,
+                                             username=username,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
-            r = requests.post(myurl, json={'job_id': self._job_id, 'spec': job_spec})
+            r = requests.post(myurl, json={'job_id': self._job_id,
+                                           'spec': job_spec,
+                                           'metadata': {'project_name': project_name,
+                                                        'username': username}
+                                           })
         finally:
             self._job_bundler.cleanup()
 
@@ -184,7 +195,7 @@ class JobDeployment(object):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
 
-    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, worker_container_overrides):
+    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
         worker_container = {
             'image': "f9s-worker-base:0.1",
             'volumes':
@@ -223,7 +234,9 @@ class JobDeployment(object):
                 # ]
             'environment':
                 {
+                    "FOUNDATIONS_USER": username,
                     "FOUNDATIONS_JOB_ID": job_id,
+                    "FOUNDATIONS_PROJECT_NAME": project_name,
                     "PYTHONPATH": "/job/",
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
