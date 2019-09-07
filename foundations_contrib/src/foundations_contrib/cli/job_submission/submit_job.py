@@ -66,12 +66,13 @@ def submit(arguments):
             arguments.params or job_config.get('params')
         )
 
-        if cur_job_id is not None:
-            current_foundations_context().pipeline_context().file_name = cur_job_id
-
         if arguments.stream_job_logs:
             try:
                 stream_job_logs(deployment)
             except KeyboardInterrupt:
                 pass
+
+        if cur_job_id is not None:
+            current_foundations_context().pipeline_context().file_name = cur_job_id
+
         return deployment
