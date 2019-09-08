@@ -57,7 +57,7 @@ class JobBundler(object):
         return self._job_name + ".results.tgz"
 
     def _job_config_yaml(self):
-        return self._job_name + ".config.yaml"
+        return self._path + "/" + self._job_name + ".config.yaml"
 
     def _save_job(self):
         with open(self._job_binary(), "w+b") as file:
@@ -77,7 +77,7 @@ class JobBundler(object):
 
     def _add_files_to_tarball(self, tar):
         self._tar_job_source_bundle_archive(tar)
-        self._tar_job_binary(tar)
+        # self._tar_job_binary(tar)
         self._tar_config_files(tar)
         self._tar_foundations_modules(tar)
         if 'run_script_environment' in self._config or self._redis_password_set():
