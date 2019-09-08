@@ -12,6 +12,7 @@ from foundations_spec.helpers.spec import Spec
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 from foundations import config_manager
 
+@unittest.skip('Gonna remove this pending on the removal of the obfuscation feature')
 class TestLocalObfuscateJobs(Spec):
 
     def setUp(self):

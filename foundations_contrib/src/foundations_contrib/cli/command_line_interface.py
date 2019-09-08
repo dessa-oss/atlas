@@ -176,9 +176,9 @@ class CommandLineInterface(object):
         if len(global_environment) == 0 and (project_environment == None or len(project_environment) == 0):
             print('No environments available')
         else:
-            self._print_configs('global', global_environment)
+            self._print_configs('submission', global_environment)
             if project_environment != None:
-                self._print_configs('project', project_environment)
+                self._print_configs('execution', project_environment)
 
     def _print_configs(self, config_list_name, config_list):
         config_list = self._create_environment_list(config_list)

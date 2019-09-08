@@ -5,6 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
 class EnvironmentFetcher(object):
     """
     Checks the local and global config locations for environments
@@ -37,24 +38,19 @@ class EnvironmentFetcher(object):
                 yield environment
 
     def _get_local_environments(self):
-        import os
         from glob import glob
+        from os.path import expanduser, join
+        from foundations_contrib.utils import foundations_home
 
-        cwd = os.getcwd()
-        directories = os.listdir()
+        config_directory = expanduser(foundations_home() + '/config/execution')
+        search_path = join(config_directory, 'default.config.yaml')
+        return glob(search_path)
 
-        if 'config' not in directories:
-            return None
-
-        config_directory = os.path.join(cwd, 'config', '*.config.yaml')
-        return glob(config_directory)
-        
-    
     def _get_global_environments(self):
         from glob import glob
         from os.path import expanduser, join
         from foundations_contrib.utils import foundations_home
 
-        global_config_directory = expanduser(foundations_home() + '/config')
+        global_config_directory = expanduser(foundations_home() + '/config/submission')
         search_path = join(global_config_directory, '*.config.yaml')
         return glob(search_path)

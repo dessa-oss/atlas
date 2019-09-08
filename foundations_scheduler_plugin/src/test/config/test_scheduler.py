@@ -163,8 +163,24 @@ class TestScheduler(Spec):
 
         run_process_mock = self.patch('subprocess.check_output', ConditionalReturn())
         master_address = self.faker.ipv4_private()
-        node_yaml = {'items': [{'status': {'addresses': [{'address': master_address}]}}]}
-        run_process_mock.return_when(yaml.dump(node_yaml).encode(), ['kubectl', 'get', 'node', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
+        cluster_name = self.faker.name()
+        context_name = self.faker.name()
+        kube_config = {
+            'clusters': [{
+                'name': cluster_name,
+                'cluster': {
+                    'server': f'http://{master_address}:6443'
+                }
+            }],
+            'contexts': [{
+                'name': context_name,
+                'context': {
+                    'cluster': cluster_name
+                }
+            }],
+            'current-context': context_name
+        }
+        run_process_mock.return_when(yaml.dump(kube_config).encode(), ['kubectl', 'config', 'view'])
 
         del self._configuration['ssh_config']['host']
         result_config = self.translator.translate(self._configuration)

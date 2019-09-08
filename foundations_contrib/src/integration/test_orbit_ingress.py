@@ -19,7 +19,7 @@ class TestOrbitIngress(Spec):
 
     @let
     def sleep_time(self):
-        return 10
+        return 60
 
     @set_up_class
     def set_up(self):
@@ -52,8 +52,6 @@ class TestOrbitIngress(Spec):
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.model_name}'.split())
 
-        time.sleep(self.sleep_time)
-
         self._assert_endpoint_accessable('/projects/project/model/', 'Test Passed')
         self._assert_endpoint_accessable('/projects/project/model/predict', 'get on predict')
         self._assert_endpoint_accessable('/projects/project/model/evaluate', 'get on evaluate')
@@ -66,30 +64,23 @@ class TestOrbitIngress(Spec):
     def test_second_served_model_can_be_accessed(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.second_model_name}'.split())
 
-        time.sleep(self.sleep_time)
-
         self._assert_endpoint_accessable('/projects/project/modeltwo/predict', 'get on predict')
 
     def _assert_endpoint_accessable(self, endpoint, expected_text):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')
         
-        try:
-            result = _run_command(f'curl http://{scheduler_host}:31998{endpoint} --connect-timeout 1'.split()).stdout.decode()
-        except Exception as e:
-            if 'Failed to connect' in str(e):
+        for _ in range(self.sleep_time):
+            try:
+                result = _run_command(f'curl http://{scheduler_host}:31998{endpoint} --connect-timeout 1'.split()).stdout.decode()
+            except Exception as e:
                 result = 'Failed to connect'
-            else:
-                raise e
         self.assertEqual(expected_text, result)
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=True, cwd=cwd)
     except subprocess.TimeoutExpired as error:
-        print('Command timed out.')
-        print(error.stdout.decode())
         raise Exception(error.stderr.decode())
     except subprocess.CalledProcessError as error:
-        print(f'Command failed: \n\t{" ".join(command)}\n')
         raise Exception(error.stderr.decode())
     return result

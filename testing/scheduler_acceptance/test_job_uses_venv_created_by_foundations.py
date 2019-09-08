@@ -5,32 +5,35 @@ Proprietary and confidential
 Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 02 2019
 """
 
-import unittest
+from foundations_spec import *
 
 import foundations
+from foundations_contrib.global_state import config_manager
 
-class TestJobUsesVenvCreatedByFoundations(unittest.TestCase):
+class TestJobUsesVenvCreatedByFoundations(Spec):
 
-    def setUp(self):
-        from acceptance.cleanup import cleanup
+    @set_up
+    def set_up(self):
+        from scheduler_acceptance.cleanup import cleanup
+        from foundations_contrib.cli.typed_config_listing import TypedConfigListing
+        from foundations_scheduler_plugin.config.scheduler import translate
 
         cleanup()
+        config_manager.push_config()
+        TypedConfigListing('submission').update_config_manager_with_config('scheduler', translate)
+
+    @tear_down
+    def tear_down(self):
+        config_manager.pop_config()
 
     def test_job_uses_virtualenv_created_by_foundations_when_running(self):
-        from acceptance.fixtures.stages import get_and_log_python_path_as_metric
         from fnmatch import fnmatch
 
-        foundations.set_project_name("version-check-test")
+        job = foundations.submit(job_dir='acceptance/fixtures/virtual_environment')
+        job.wait_for_deployment_to_complete()
+        job_name = job.job_name()
 
-        get_and_log_python_path_as_metric_stage = foundations.create_stage(get_and_log_python_path_as_metric)
-
-        get_and_log_python_path_as_metric_job = get_and_log_python_path_as_metric_stage().run()
-        job_name = get_and_log_python_path_as_metric_job.job_name()
-
-        get_and_log_python_path_as_metric_job.wait_for_deployment_to_complete()
-
-        metrics_containing_python_path = foundations.get_metrics_for_all_jobs("version-check-test")
-
+        metrics_containing_python_path = foundations.get_metrics_for_all_jobs("virtual_environment")
         actual_python_path = self._get_python_path_from_metrics(metrics_containing_python_path, job_name)
 
         matches = fnmatch(actual_python_path, '/tmp/*/venv/bin/python')
