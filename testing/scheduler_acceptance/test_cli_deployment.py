@@ -90,7 +90,6 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
 
         self._wait_for_job_to_complete(job_id)
 
-        print(self._get_metrics_for_all_jobs('this-project'))
         self.assertEqual(0, self._get_logged_metric('this-project', job_id, 'gpus'))
         self.assertEqual(3.0, self._get_logged_metric('this-project', job_id, 'memory'))
 

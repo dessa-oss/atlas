@@ -16,14 +16,12 @@ def cleanup():
     from foundations_internal.pipeline_context import PipelineContext
     from foundations_internal.pipeline import Pipeline
 
-    tmp_dir = getcwd() + '/tmp'
+    tmp_dir = getcwd() + '/foundations_home/job_data'
     if isdir(tmp_dir):
         shutil.rmtree(tmp_dir)
 
     for file in glob('*.tgz'):
         remove(file)
-
-    redis_connection.flushall()
 
     pipeline_context = PipelineContext()
     pipeline = Pipeline(pipeline_context)

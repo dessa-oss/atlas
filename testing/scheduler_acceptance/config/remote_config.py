@@ -14,70 +14,40 @@ def set_foundations_home():
     import os
 
     os.environ['FOUNDATIONS_HOME'] = os.getcwd() + '/foundations_home'
+    os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
 def _config():
-    from foundations import config_manager, LocalFileSystemPipelineArchive, LocalFileSystemPipelineListing, set_job_resources
+    from foundations_contrib.global_state import config_manager, foundations_context, redis_connection
+    from foundations_contrib.cli.typed_config_listing import TypedConfigListing
+    from foundations_scheduler_plugin.config.scheduler import translate
     from foundations_scheduler_plugin.job_deployment import JobDeployment
     from foundations_scheduler_plugin.config.kubernetes import kubernetes_master_ip
     from foundations_spec.extensions import get_network_address
+    from foundations_internal.job_resources import JobResources
     import foundations_ssh
     import getpass
     from os import getcwd, environ
 
-    set_job_resources(0, None)
+    foundations_context.set_job_resources(JobResources(0, None))
 
     if config_manager.frozen():
         return
 
-    archive_implementation = {
-        'archive_type': LocalFileSystemPipelineArchive,
-        'constructor_arguments': ['/archive']
-    }
-    config_manager['archive_listing_implementation'] = {
-        'archive_listing_type': LocalFileSystemPipelineListing,
-        'constructor_arguments': ['/archive']
-    }
-    config_manager['stage_log_archive_implementation'] = archive_implementation
-    config_manager['persisted_data_archive_implementation'] = archive_implementation
-    config_manager['provenance_archive_implementation'] = archive_implementation
-    config_manager['job_source_archive_implementation'] = archive_implementation
-    config_manager['artifact_archive_implementation'] = archive_implementation
-    config_manager['miscellaneous_archive_implementation'] = archive_implementation
-    config_manager['log_level'] = 'DEBUG'
-    config_manager['artifact_path'] = 'results'
-    config_manager['obfuscate_foundations'] = False
-    config_manager['deployment_implementation'] = { 'deployment_type': JobDeployment }
-    config_manager['run_script_environment'] = {'offline_mode': 'ONLINE', 'enable_stages': True}
+    TypedConfigListing('submission').update_config_manager_with_config('scheduler', translate)
 
-    config_manager['remote_user'] = 'job-uploader'
-    config_manager['port'] = 31222
-    config_manager['code_path'] = '/jobs'
-    config_manager['key_path'] = '~/.ssh/id_foundations_scheduler'
-
-
-    scheduler_host = environ.get('FOUNDATIONS_SCHEDULER_HOST', None)
-    if scheduler_host is None:
-        scheduler_host = kubernetes_master_ip()
+    config = config_manager.config()
+    config['run_script_environment'] = {'offline_mode': 'ONLINE', 'enable_stages': True}
+    scheduler_host = config['remote_host']
 
     redis_url = environ.get('FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL', 'redis://{}:6379'.format(scheduler_host))
+    config['redis_url'] =  redis_url
 
-    config_manager['remote_host'] = scheduler_host
-    config_manager['shell_command'] = '/bin/bash'
-    config_manager['redis_url'] =  redis_url
+    _set_tensorboard_hosts(config, scheduler_host)
 
-    if environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE':
-        config_manager['result_path'] = '/scheduler_root/results'
-    else:
-        config_manager['result_path'] = '/tmp/foundations/results'
-
-    _set_tensorboard_hosts(scheduler_host)
-
-def _set_tensorboard_hosts(scheduler_host):
-    from foundations import config_manager
-
+def _set_tensorboard_hosts(config, scheduler_host):
     tensorboard_host = f'http://{scheduler_host}'
-    config_manager['TENSORBOARD_API_HOST'] = f'{tensorboard_host}:32767'
-    config_manager['TENSORBOARD_HOST'] = f'{tensorboard_host}:32766'
+    config['TENSORBOARD_API_HOST'] = f'{tensorboard_host}:32767'
+    config['TENSORBOARD_HOST'] = f'{tensorboard_host}:32766'
 
 def _append_spec_module():
     import sys
