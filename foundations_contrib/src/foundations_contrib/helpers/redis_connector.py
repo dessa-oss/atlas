@@ -52,11 +52,8 @@ class RedisConnector(object):
     def _get_connection_string(self):
         return self._config.get('redis_url', 'redis://localhost:6379')
 
-    def _get_password(self):
-        return self._environment.get('FOUNDATIONS_REDIS_PASSWORD', '')
-
     def _build_connection_string(self):
         split_connection_string = self._get_connection_string().split('//')
         scheme = split_connection_string[0]
         host_with_port = split_connection_string[1]
-        return scheme + '//:' + self._get_password() + '@' + host_with_port
+        return scheme + '//:@' + host_with_port
