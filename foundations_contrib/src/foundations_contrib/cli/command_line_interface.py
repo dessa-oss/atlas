@@ -105,8 +105,8 @@ class CommandLineInterface(object):
 
     def _initialize_retrieve_logs_parser(self, retrieve_subparsers):
         retrieve_logs_parser = retrieve_subparsers.add_parser('logs', help='Get logs for jobs')
-        retrieve_logs_parser.add_argument('--job_id', required=True, type=str, help='Specify job uuid of already deployed job')
-        retrieve_logs_parser.add_argument('--env', required=True, type=str, help='Environment to get from')
+        retrieve_logs_parser.add_argument('scheduler_config', type=str, help='Environment to get from')
+        retrieve_logs_parser.add_argument('job_id', type=str, help='Specify job uuid of already deployed job')
         retrieve_logs_parser.set_defaults(function=self._retrieve_logs)
 
     def _initialize_serving_stop_parser(self, serving_subparsers):
@@ -226,10 +226,16 @@ class CommandLineInterface(object):
 
     def _retrieve_logs(self):
         from foundations_contrib.global_state import config_manager
+        from foundations_contrib.cli.job_submission.config import load
+        from foundations_contrib.change_directory import ChangeDirectory
+        import os
 
-        env_name = self._arguments.env
+        env_name = self._arguments.scheduler_config
         job_id = self._arguments.job_id
-        self._load_configuration()
+        current_directory = os.getcwd()
+
+        with ChangeDirectory(current_directory):
+            load(self._arguments.scheduler_config or 'scheduler')
 
         job_deployment_class = config_manager['deployment_implementation']['deployment_type']
         job_deployment = job_deployment_class(job_id, None, None)
