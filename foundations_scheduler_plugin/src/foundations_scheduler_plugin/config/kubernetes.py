@@ -17,3 +17,14 @@ def kubernetes_master_ip():
     cluster_server = [item for item in config['clusters'] if item['name'] == cluster_name][0]['cluster']['server']
     return urlparse(cluster_server).hostname
 
+def kubernetes_redis_url():
+    import subprocess
+    import yaml
+
+    endpoint_yaml = subprocess.check_output(['kubectl', 'get', 'endpoints', '-n', 'foundations-scheduler-test', 'redis', '-o', 'yaml'])
+    endpoint = yaml.load(endpoint_yaml)
+    subset = endpoint['subsets'][0]
+    address = subset['addresses'][0]['ip']
+    port = subset['ports'][0]['port']
+    return f'redis://{address}:{port}'
+
