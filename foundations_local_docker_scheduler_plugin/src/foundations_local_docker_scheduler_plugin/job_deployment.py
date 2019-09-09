@@ -97,7 +97,8 @@ class JobDeployment(object):
             "queued": "queued",
             "running": "running",
             "failed": "completed",
-            "completed": "completed"
+            "completed": "completed",
+            "pending": "queued"
         }
 
         r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
