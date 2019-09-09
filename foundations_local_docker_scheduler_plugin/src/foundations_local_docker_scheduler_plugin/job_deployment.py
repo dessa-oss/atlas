@@ -122,7 +122,7 @@ class JobDeployment(object):
         status = self.get_job_status()
 
         while status == "queued" or status is None:
-            time.sleep(0.1)
+            time.sleep(1)
             status = self.get_job_status()
 
         if status == "running":
