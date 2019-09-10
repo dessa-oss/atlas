@@ -188,7 +188,7 @@ pipeline {
             script {
                 customMetricsMap["jenkins_data"] = customMetrics
             }
-            influxDbPublisher selectedTarget: 'foundations', target: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+            influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
         }
         failure {
             script {
