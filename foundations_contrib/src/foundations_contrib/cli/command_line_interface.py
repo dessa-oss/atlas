@@ -221,6 +221,8 @@ class CommandLineInterface(object):
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
+        current_directory = os.getcwd()
+
         with ChangeDirectory(current_directory):
             load(self._arguments.scheduler_config or 'scheduler')
 
