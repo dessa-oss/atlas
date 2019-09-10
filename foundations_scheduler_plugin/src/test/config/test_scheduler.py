@@ -92,9 +92,13 @@ class TestScheduler(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(result_config['key_path'], '~/.ssh/id_foundations_scheduler')
 
-    def test_returns_redis_url(self):
+    def test_returns_kubernetes_redis_url_when_none_present(self):
+        mock_kubernetes_redis_url = self.patch('foundations_scheduler_plugin.config.kubernetes.kubernetes_redis_url')
+        redis_url = self.faker.uri()
+        mock_kubernetes_redis_url.return_value = redis_url
+
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['redis_url'], 'redis://localhost:6379')
+        self.assertEqual(redis_url, result_config['redis_url'])
 
     def test_returns_configured_redis_url(self):
         self._configuration['results_config']['redis_end_point'] = 'redis://11.22.33.44:9738'
@@ -159,32 +163,13 @@ class TestScheduler(Spec):
         self.assertEqual(result_config['code_path'], '/jobs')
 
     def test_returns_kubernetes_node_host_when_none_present(self):
-        import yaml
-
-        run_process_mock = self.patch('subprocess.check_output', ConditionalReturn())
+        mock_kubernetes_address = self.patch('foundations_scheduler_plugin.config.kubernetes.kubernetes_master_ip')
         master_address = self.faker.ipv4_private()
-        cluster_name = self.faker.name()
-        context_name = self.faker.name()
-        kube_config = {
-            'clusters': [{
-                'name': cluster_name,
-                'cluster': {
-                    'server': f'http://{master_address}:6443'
-                }
-            }],
-            'contexts': [{
-                'name': context_name,
-                'context': {
-                    'cluster': cluster_name
-                }
-            }],
-            'current-context': context_name
-        }
-        run_process_mock.return_when(yaml.dump(kube_config).encode(), ['kubectl', 'config', 'view'])
+        mock_kubernetes_address.return_value = master_address
 
         del self._configuration['ssh_config']['host']
         result_config = self.translator.translate(self._configuration)
-        self.assertEqual(result_config['remote_host'], master_address)
+        self.assertEqual(master_address, result_config['remote_host'])
 
     def test_returns_code_path(self):
         self._configuration['ssh_config']['code_path'] = self.fake_code_path
