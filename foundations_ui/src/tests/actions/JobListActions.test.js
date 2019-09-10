@@ -300,7 +300,7 @@ it('checks if field hidden, is hidden', () => {
 it('getStatusCircle green', () => {
   const status = 'completed';
   const circleClass = JobListActions.getStatusCircle(status);
-  expect(circleClass).toBe('status-icon status-green');
+  expect(circleClass).toBe('status-icon i--icon-status-completed');
 });
 
 it('gets JobColumnHeaderH4Class', () => {
