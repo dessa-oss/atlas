@@ -32,7 +32,6 @@ rm -rf dist/* && \
     build_module gcp_utils foundations_gcp $cwd && \
     build_module ssh_utils foundations_ssh $cwd && \
     build_module aws_utils foundations_aws $cwd && \
-    build_module foundations_scheduler_plugin foundations_scheduler_plugin $cwd && \
     build_module foundations_local_docker_scheduler_plugin foundations_local_docker_scheduler_plugin $cwd && \
     build_module foundations_sdk dessa_foundations $cwd && \
     build_module foundations_production foundations_production $cwd && \

@@ -32,13 +32,7 @@ setup(
         'PyYAML==3.13',
         'promise==2.2.1',
         'pyarmor==5.2.3',
-        'foundations-contrib=={}'.format(build_version),
-        'foundations-scheduler_plugin=={}'.format(build_version),
-        'foundations-ssh=={}'.format(build_version),
-        'foundations-aws=={}'.format(build_version),
-        'foundations-gcp=={}'.format(build_version),
-        'foundations-ssh=={}'.format(build_version),
-        'foundations-orbit=={}'.format(build_version)
+        'foundations-contrib=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
