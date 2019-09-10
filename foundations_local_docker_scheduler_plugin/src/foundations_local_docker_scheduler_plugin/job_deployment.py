@@ -40,7 +40,6 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
-        from getpass import getuser
 
         try:
             self._job_bundler.bundle()
@@ -64,7 +63,7 @@ class JobDeployment(object):
                 tar.extractall(path=job_working_dir_path)
 
             project_name = self._job.pipeline_context().provenance.project_name
-            username = getuser()
+            username = self._job.pipeline_context().provenance.user_name
 
             job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
                                              working_dir_root_path=str(working_dir_root_path.absolute()),
