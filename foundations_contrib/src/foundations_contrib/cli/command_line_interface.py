@@ -94,12 +94,10 @@ class CommandLineInterface(object):
         self._initialize_retrieve_logs_parser(retrieve_subparsers)
 
     def _initialize_retrieve_artifact_parser(self, retrieve_subparsers):
-        from os import getcwd
-
         retrieve_artifact_parser = retrieve_subparsers.add_parser('job', help='Specify job to retrieve artifacts from')
         retrieve_artifact_parser.add_argument('scheduler_config', type=str, help='Environment to get from')
         retrieve_artifact_parser.add_argument('job_id', type=str, help="Specify job uuid of already deployed job")
-        retrieve_artifact_parser.add_argument('--save_dir', type=str, default=getcwd(), help="Specify local directory path for artifacts to save to. Defaults to current working directory")
+        retrieve_artifact_parser.add_argument('--save_dir', type=str, default=None, help="Specify local directory path for artifacts to save to. Defaults to directory within current working directory")
         retrieve_artifact_parser.add_argument('--source_dir', type=str, default='', help="Specify relative directory path to download artifacts from. Default will download all artifacts from job")
         retrieve_artifact_parser.set_defaults(function=self._retrieve_artifacts)
 
@@ -222,6 +220,9 @@ class CommandLineInterface(object):
         import os
 
         current_directory = os.getcwd()
+
+        if self._arguments.save_dir is None:
+            self._arguments.save_dir = os.path.join(current_directory, str(self._arguments.job_id))
 
         with ChangeDirectory(current_directory):
             load(self._arguments.scheduler_config or 'scheduler')

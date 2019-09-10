@@ -41,7 +41,6 @@ class ArtifactDownloader(object):
             'run.env',
             'run.sh',
             '*.bin',
-            '*.config.yaml',
         ]
 
         file_matches = [fnmatch(file_path, match) for match in matchings]

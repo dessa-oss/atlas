@@ -40,7 +40,6 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
-        from getpass import getuser
 
         try:
             self._job_bundler.bundle()
@@ -64,7 +63,7 @@ class JobDeployment(object):
                 tar.extractall(path=job_working_dir_path)
 
             project_name = self._job.pipeline_context().provenance.project_name
-            username = getuser()
+            username = self._job.pipeline_context().provenance.user_name
 
             job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
                                              working_dir_root_path=str(working_dir_root_path.absolute()),
@@ -197,6 +196,7 @@ class JobDeployment(object):
         return current_foundations_context().job_resources()
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
+        from foundations_contrib.global_state import current_foundations_context
         worker_container = {
             'image': "f9s-worker-base:0.1",
             'volumes':
@@ -244,6 +244,9 @@ class JobDeployment(object):
             "network": "foundations-atlas",
             "entrypoint": ["python"]
         }
+
+        if current_foundations_context().job_resources().ram is not None:
+            worker_container['mem_limit'] = int(current_foundations_context().job_resources().ram)
 
         for override_key in ['command', 'image', 'imagePullPolicy', 'workingDir']:
             if override_key in worker_container_overrides:
