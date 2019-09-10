@@ -4,33 +4,33 @@ log_level: INFO
 
 # Worker config
 
-ram: # Enter an integer in GB
-num_gpus: # Defaults to 1
+#ram: # Enter an integer in GB
+#num_gpus: # Defaults to 1
 
 worker:
   image:  # The worker image will be pulled if it doesn't exist. :latest will be pulled if no tag is specified.
-  imagePullPolicy: # Defaults to IfNotPresent, [Always, IfNotPresent, Never]
-  command: # Will override the entrypoint defined in the worker image
-  args:  # Arguments to be passed to the command above
-  workingDir: /job/job_source # Atlas mounts your code to this location in the worker.
-
-  resources:
-    requests:
-      memory: 64Mi # Specify power of 2 equivalents and one of [Ki, Mi, Gi]
-      cpu: 250m # Specifies the # of thousandths of a core to use in units of 1m (i.e. 250m = 1/4 CPU)
-    limits:
-      memory: 128Mi # Specify power of 2 equivalents and one of [Ki, Mi, Gi]
-      cpu: 500m
-
-  volumeMounts:
-    - mountPath: /host-mount # Mount path inside container
-      name: test-host-mount  # Name of volume mount described in volumes:
-    - mountPath: /pvc-mount
-      name: test-pvc-mount
-  volumes:
-    - name: test-host-mount
-      hostPath:
-        path: /shaz_cole_test_mounts # Specify a location on the host machine where the worker is running
-    - name: test-pvc-mount
-      persistentVolumeClaim:
-        claimName: data-storage # Specify an existing Kubernetes claim that is bound to Kubernetes volume
+#  imagePullPolicy: # Defaults to IfNotPresent, [Always, IfNotPresent, Never]
+#  command: # Will override the entrypoint defined in the worker image
+#  args:  # Arguments to be passed to the command above
+#  workingDir: /job/job_source # Atlas mounts your code to this location in the worker.
+#
+#  resources:
+#    requests:
+#      memory: 64Mi # Specify power of 2 equivalents and one of [Ki, Mi, Gi]
+#      cpu: 250m # Specifies the # of thousandths of a core to use in units of 1m (i.e. 250m = 1/4 CPU)
+#    limits:
+#      memory: 128Mi # Specify power of 2 equivalents and one of [Ki, Mi, Gi]
+#      cpu: 500m
+#
+#  volumeMounts:
+#    - mountPath: /host-mount # Mount path inside container
+#      name: test-host-mount  # Name of volume mount described in volumes:
+#    - mountPath: /pvc-mount
+#      name: test-pvc-mount
+#  volumes:
+#    - name: test-host-mount
+#      hostPath:
+#        path: /host/path # Specify a location on the host machine where the worker is running
+#    - name: test-pvc-mount
+#      persistentVolumeClaim:
+#        claimName: data-storage # Specify an existing Kubernetes claim that is bound to Kubernetes volume
