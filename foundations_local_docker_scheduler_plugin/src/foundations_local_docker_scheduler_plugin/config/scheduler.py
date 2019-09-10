@@ -11,6 +11,11 @@ def translate(config):
         'scheduler_url': config['scheduler_url'],
         'container_config_root': config['container_config_root']
     }
+    result.update({
+        'artifact_archive_implementation': _archive_implementation(result['job_results_root']),
+        'miscellaneous_archive_implementation': _archive_implementation(result['job_results_root']),
+        'persisted_data_archive_implementation': _archive_implementation(result['job_results_root']),
+    })
 
     return result
 
@@ -19,3 +24,9 @@ def _deployment_implementation():
     return {
         'deployment_type': JobDeployment
     }
+
+def _archive_implementation(result_end_point):
+    from foundations_contrib.config.mixin import archive_implementation
+    from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
+
+    return archive_implementation(result_end_point, LocalFileSystemBucket)
