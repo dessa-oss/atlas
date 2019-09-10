@@ -87,7 +87,7 @@ dist
 !foundations_ui_orbit/package.json
 !foundations_ui_orbit/package-lock.json
 !examples/example_configs/*.config.yaml
-!foundations_contrib/src/foundations_contrib/resources/template/config/*.config.yaml
+!foundations_contrib/src/foundations_contrib/resources/template/*.config.yaml
 !**/fixtures/**/*.config.yaml
 !**/fixtures/**/*.json
 testing/test-cli-init
