@@ -26,6 +26,7 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
+        'docker==4.0.2',
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
