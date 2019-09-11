@@ -6,9 +6,9 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
 import json
 import foundations_contrib
+import subprocess
 from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
-from foundations_spec.extensions import run_process
 from os.path import abspath
 
 class TestSwitchDefaultModel(Spec):
@@ -18,13 +18,13 @@ class TestSwitchDefaultModel(Spec):
     
     @set_up_class
     def set_up_class(self):
-        run_process(['./integration/resources/fixtures/test_server/spin_up.sh'], abspath(foundations_contrib.root() / '..'))
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=abspath(foundations_contrib.root() / '..'))
 
     @tear_down_class
     def tear_down_class(self):
-        run_process(['./integration/resources/fixtures/test_server/tear_down.sh'], abspath(foundations_contrib.root() / '..'))
-        run_process(f'./remove_deployment.sh {self.project_name} model'.split(), abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
-        run_process(f'./remove_deployment.sh {self.project_name} again-model'.split(), abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=abspath(foundations_contrib.root() / '..'))
+        subprocess.run(f'./remove_deployment.sh {self.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(f'./remove_deployment.sh {self.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
     @let
     def redis(self):
@@ -115,7 +115,7 @@ class TestSwitchDefaultModel(Spec):
 
         self._create_two_models_and_change_default()
 
-        ingress_resource = yaml.load(run_process(f'kubectl get ingress model-service-selection -n {self.namespace} -o yaml'.split(), '.'))
+        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress model-service-selection -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
         ingress_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
         ingress_resource = json.loads(ingress_configuration)
         ingress_resource_paths = ingress_resource['spec']['rules'][0]['http']['paths']
@@ -141,7 +141,7 @@ class TestSwitchDefaultModel(Spec):
         self._deploy_model(project_name, model_name)
 
     def _deploy_model(self, project_name, model_name):
-        run_process(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), abspath(foundations_contrib.root() / '..'))
+        subprocess.run(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), cwd=abspath(foundations_contrib.root() / '..'))
 
     def _put_to_route(self, body):
         response = self.client.put(self.project_url, json=body)
