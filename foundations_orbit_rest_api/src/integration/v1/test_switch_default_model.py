@@ -11,6 +11,7 @@ from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
 from os.path import abspath
 
+@skip
 class TestSwitchDefaultModel(Spec):
     _contrib_source_root = abspath('../../foundations_contrib/src')
     client = app_manager.app().test_client()
