@@ -52,3 +52,27 @@ class TestRetrieveValidationReportEndpoint(Spec):
 
         self.assertEqual(404, self._post_status_code_from_response(response))
         self.assertEqual(expected_response_data, self._post_data_from_response(response))
+
+    @skip('not implemented')
+    def test_retrieve_validation_report_returns_report_if_exists_in_redis(self):
+        import pickle
+
+        post_data = {
+            'inference_period': '2019-05-01',
+            'model_package': 'model_abcdefg',
+            'data_contract': 'data_contract_1'
+        }
+
+        expected_response_data = {
+            'schema_check': True,
+            'schema_information': {
+                'rows': 10
+            }
+        }
+
+        self.redis.hset(f'projects:test_project:models:model_abcdefg:validation:data_contract_1', '2019-05-01', pickle.dumps(expected_response_data))
+
+        response = self._post_response_from_route(data=post_data)
+
+        self.assertEqual(200, self._post_status_code_from_response(response))
+        self.assertEqual(expected_response_data, self._post_data_from_response(response))
