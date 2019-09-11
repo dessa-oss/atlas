@@ -122,6 +122,26 @@ const BaseActions = {
       });
   },
 
+  putStaging(url, body) {
+    const fullURL = this.baseStagingURL.concat(url);
+    return fetch(fullURL, {
+      method: 'put',
+      body: JSON.stringify(body),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        console.log(error);
+        return null;
+      });
+  },
+
 
   putApiary(url, body) {
     const fullURL = this.baseApiaryURL.concat(url);
