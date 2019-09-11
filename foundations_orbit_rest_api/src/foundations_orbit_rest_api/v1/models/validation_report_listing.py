@@ -45,6 +45,7 @@ class ValidationReportListing(PropertyModel):
         from foundations_contrib.global_state import redis_connection
 
         for key in keys:
-            date = redis_connection.hkeys(key)[0]
-            key_information = key.decode().split(':')
-            yield key_information[3], key_information[5], date.decode()
+            dates = redis_connection.hkeys(key)
+            for date in dates:
+                key_information = key.decode().split(':')
+                yield key_information[3], key_information[5], date.decode()

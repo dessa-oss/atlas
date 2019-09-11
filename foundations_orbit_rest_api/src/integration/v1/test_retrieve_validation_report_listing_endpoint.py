@@ -29,7 +29,6 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
         response_data = response.data.decode()
         return json.loads(response_data)
 
-    @skip
     def test_retrieve_validation_report_listing_gets_stored_metrics_from_redis(self):
         expected_data = [
             {

@@ -154,6 +154,20 @@ class TestValidationReportListing(Spec):
 
         self.assertEqual(expected_result, promise.evaluate())
 
+    def test_validation_report_listing_get_all_returns_all_listings_when_there_is_a_single_report_and_contract_with_multiple_dates(self):
+        self._register_report(self.project_name, 'cat_meow', 'data_contract', '2019-10-13')
+        self._register_report(self.project_name, 'cat_meow', 'data_contract', '2019-03-04')
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        expected_result = [
+            ValidationReportListing(data_contract='data_contract', model_package='cat_meow', inference_period='2019-03-04'),
+            ValidationReportListing(data_contract='data_contract', model_package='cat_meow', inference_period='2019-10-13')
+        ]
+
+
+        self.assertEqual(expected_result, promise.evaluate())
+
     def _test_validation_report_listing_has_property(self, property_name):
         property_value = getattr(self, property_name)
         kwargs = {property_name: property_value}
