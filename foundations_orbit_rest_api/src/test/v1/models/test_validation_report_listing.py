@@ -92,6 +92,14 @@ class TestValidationReportListing(Spec):
 
         self.assertEqual([], promise.evaluate())
 
+    def test_validation_report_listing_get_all_returns_empty_list_if_no_key_matching_pattern_exists_in_redis_contract_name_missing(self):
+        key_to_write = f'projects:{self.project_name}:models:{self.model_package}:validation'
+        self.redis_connection.hset(key_to_write, 'whut', 'woop')
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        self.assertEqual([], promise.evaluate())
+
     def _test_validation_report_listing_has_property(self, property_name):
         property_value = getattr(self, property_name)
         kwargs = {property_name: property_value}
