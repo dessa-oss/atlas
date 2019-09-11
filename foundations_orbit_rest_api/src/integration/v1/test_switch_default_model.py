@@ -11,7 +11,7 @@ from foundations_orbit_rest_api.global_state import app_manager
 @skip('not implemented')
 class TestSwitchDefaultModel(Spec):
     client = app_manager.app().test_client()
-    base_url = '/api/v1/projects/'
+    base_url = '/api/v1/projects'
 
     @let
     def redis(self):
