@@ -60,7 +60,7 @@ class TestValidationReportListing(Spec):
 
         self.assertEqual(expected_result, promise.evaluate())
 
-    def test_validation_report_listing_get_all_returns_empty_list_if_no_key_matching_pattern_exists_in_redis(self):
+    def test_validation_report_listing_get_all_returns_empty_list_if_no_key_matching_pattern_exists_in_redis_project_prefix_wrong(self):
         key_to_write = f'bep:{self.project_name}:models:{self.model_package}:validation:{self.data_contract}'
         self.redis_connection.hset(key_to_write, 'whut', 'woop')
 
@@ -70,6 +70,14 @@ class TestValidationReportListing(Spec):
 
     def test_validation_report_listing_get_all_returns_empty_list_if_project_name_does_not_match(self):
         key_to_write = f'projects:bad_project_name:models:{self.model_package}:validation:{self.data_contract}'
+        self.redis_connection.hset(key_to_write, 'whut', 'woop')
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        self.assertEqual([], promise.evaluate())
+
+    def test_validation_report_listing_get_all_returns_empty_list_if_no_key_matching_pattern_exists_in_redis_project_models_token_wrong(self):
+        key_to_write = f'projects:{self.project_name}:beetles:{self.model_package}:validation:{self.data_contract}'
         self.redis_connection.hset(key_to_write, 'whut', 'woop')
 
         promise = ValidationReportListing.all(project_name=self.project_name)
