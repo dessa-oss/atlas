@@ -57,8 +57,8 @@ class JobTableButtons extends Component {
       selectedJobs,
     } = this.state;
     const URL = 'upload_to_tensorboard';
-    const res = await BaseActions.postApiary(URL, { job_ids: selectedJobs });
-    window.open('https://www.google.ca', '_blank');
+    const resp = await BaseActions.postStaging(URL, { job_ids: selectedJobs });
+    window.open(resp.url, '_blank');
   }
 
 
