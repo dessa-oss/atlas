@@ -12,19 +12,20 @@ from foundations_orbit_rest_api.global_state import app_manager
 from os.path import abspath
 
 class TestSwitchDefaultModel(Spec):
+    _contrib_source_root = abspath('../../foundations_contrib/src')
     client = app_manager.app().test_client()
     base_url = '/api/v1/projects'
     project_name = 'test-project'
     
     @set_up_class
-    def set_up_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=abspath(foundations_contrib.root() / '..'))
+    def set_up_class(klass):
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=klass._contrib_source_root)
 
     @tear_down_class
-    def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=abspath(foundations_contrib.root() / '..'))
-        subprocess.run(f'./remove_deployment.sh {self.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
-        subprocess.run(f'./remove_deployment.sh {self.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+    def tear_down_class(klass):
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=klass._contrib_source_root)
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
     @let
     def redis(self):
@@ -141,7 +142,7 @@ class TestSwitchDefaultModel(Spec):
         self._deploy_model(project_name, model_name)
 
     def _deploy_model(self, project_name, model_name):
-        subprocess.run(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), cwd=abspath(foundations_contrib.root() / '..'))
+        subprocess.run(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), cwd=self._contrib_source_root)
 
     def _put_to_route(self, body):
         response = self.client.put(self.project_url, json=body)
