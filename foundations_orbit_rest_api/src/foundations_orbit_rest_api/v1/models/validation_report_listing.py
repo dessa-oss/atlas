@@ -14,13 +14,13 @@ class ValidationReportListing(PropertyModel):
     data_contract = PropertyModel.define_property()
 
     @staticmethod
-    def all(**kwargs):
+    def all(project_name):
         from foundations_core_rest_api_components.lazy_result import LazyResult
-        return LazyResult(lambda: ValidationReportListing._all_internal())
+        return LazyResult(lambda: ValidationReportListing._all_internal(project_name))
 
     @staticmethod
-    def _all_internal():
-        keys = ValidationReportListing._all_keys()
+    def _all_internal(project_name):
+        keys = ValidationReportListing._all_keys(project_name)
 
         if not keys:
             return []
@@ -29,9 +29,9 @@ class ValidationReportListing(PropertyModel):
         return [ValidationReportListing(model_package=model_package, data_contract=data_contract, inference_period=inference_period)]
 
     @staticmethod
-    def _all_keys():
+    def _all_keys(project_name):
         from foundations_contrib.global_state import redis_connection
-        return redis_connection.keys('projects:*')
+        return redis_connection.keys(f'projects:{project_name}*')
 
     @staticmethod
     def _parsed_information(keys):
