@@ -19,6 +19,10 @@ class TensorboardController:
         import requests
         
         response = requests.post(f'{self._tensorboard_api_host()}/create_sym_links', json=self.params)
+        if response.status_code == 400:
+            return Response('Bad Request', LazyResult(lambda: response.text), status=400)
+        elif response.status_code == 500:
+            return Response('Tensorboard Rest API Error', LazyResult(lambda: 'Internal Server Error', status=500)) 
         return Response('Jobs', LazyResult(lambda: {'url': f'{self._tensorboard_host()}'}))
 
     @staticmethod

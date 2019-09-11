@@ -5,7 +5,6 @@ Proprietary and confidential
 Written by Dariem Perez <d.perez@dessa.com>, 11 2018
 """
 import os
-import typing
 
 import foundations
 from foundations_spec import *
@@ -33,15 +32,15 @@ class TestTensorboardEndpoint(Spec):
         return config_manager['redis_url']
     
     @let
-    def deployment(self) -> foundations.DeploymentWrapper:
+    def deployment(self):
         return foundations.submit(
-            project_name='test', 
-            entrypoint='tensorboard_job', 
+            project_name='tensorboard',
+            entrypoint='tensorboard_job',
             job_dir='scheduler_acceptance/fixtures/tensorboard_job'
         )
 
     @let
-    def job_id(self) -> let:
+    def job_id(self):
         return self.deployment.job_name()
 
     @let
