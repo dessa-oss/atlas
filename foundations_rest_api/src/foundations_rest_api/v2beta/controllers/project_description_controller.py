@@ -19,5 +19,6 @@ class ProjectDescriptionController(object):
     def _project_description(self):
         from foundations_contrib.global_state import redis_connection
 
-        description = (redis_connection.get(f'projects:{self.params["project_name"]}:description') or b'').decode()
+        description_key = f'projects:{self.params["project_name"]}:description'
+        description = (redis_connection.get(description_key) or b'').decode()
         return {'project_description': description}
