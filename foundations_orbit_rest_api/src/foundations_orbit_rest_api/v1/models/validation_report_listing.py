@@ -20,13 +20,16 @@ class ValidationReportListing(PropertyModel):
 
     @staticmethod
     def _all_internal(project_name):
+        listing = list(ValidationReportListing._listing_stream(project_name))
+        listing.sort(key=lambda entry: entry.inference_period)
+        return listing
+
+    @staticmethod
+    def _listing_stream(project_name):
         keys = ValidationReportListing._all_keys(project_name)
 
-        if not keys:
-            return []
-
-        model_package, data_contract, inference_period = ValidationReportListing._parsed_information(keys)
-        return [ValidationReportListing(model_package=model_package, data_contract=data_contract, inference_period=inference_period)]
+        for model_package, data_contract, inference_period in ValidationReportListing._parsed_information(keys):
+            yield ValidationReportListing(model_package=model_package, data_contract=data_contract, inference_period=inference_period)
 
     @staticmethod
     def _all_keys(project_name):
@@ -37,7 +40,7 @@ class ValidationReportListing(PropertyModel):
     def _parsed_information(keys):
         from foundations_contrib.global_state import redis_connection
 
-        key = keys[0]
-        date = redis_connection.hkeys(key)[0]
-        key_information = key.decode().split(':')
-        return key_information[3], key_information[5], date.decode()
+        for key in keys:
+            date = redis_connection.hkeys(key)[0]
+            key_information = key.decode().split(':')
+            yield key_information[3], key_information[5], date.decode()

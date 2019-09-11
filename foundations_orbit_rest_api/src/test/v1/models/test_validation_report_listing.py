@@ -32,6 +32,18 @@ class TestValidationReportListing(Spec):
     def inference_period(self):
         return self.faker.date()
 
+    @let
+    def model_package_2(self):
+        return self.faker.word()
+
+    @let
+    def data_contract_2(self):
+        return self.faker.word()
+
+    @let
+    def inference_period_2(self):
+        return self.faker.date()
+
     @set_up
     def set_up(self):
         self.redis_connection.flushall()
@@ -99,6 +111,21 @@ class TestValidationReportListing(Spec):
         promise = ValidationReportListing.all(project_name=self.project_name)
 
         self.assertEqual([], promise.evaluate())
+
+    def test_validation_report_listing_get_all_returns_all_listings_when_multiple_reports_exist_in_redis(self):
+        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period)
+        self._register_report(self.project_name, self.model_package_2, self.data_contract_2, self.inference_period_2)
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        expected_result = [
+            ValidationReportListing(data_contract=self.data_contract, model_package=self.model_package, inference_period=self.inference_period),
+            ValidationReportListing(data_contract=self.data_contract_2, model_package=self.model_package_2, inference_period=self.inference_period_2)
+        ]
+
+        expected_result.sort(key=lambda listing: listing.inference_period)
+
+        self.assertEqual(expected_result, promise.evaluate())
 
     def _test_validation_report_listing_has_property(self, property_name):
         property_value = getattr(self, property_name)
