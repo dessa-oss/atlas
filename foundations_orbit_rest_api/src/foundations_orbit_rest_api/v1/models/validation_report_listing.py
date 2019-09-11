@@ -31,7 +31,7 @@ class ValidationReportListing(PropertyModel):
     @staticmethod
     def _all_keys():
         from foundations_contrib.global_state import redis_connection
-        return redis_connection.keys()
+        return redis_connection.keys('projects:*')
 
     @staticmethod
     def _parsed_information(keys):
