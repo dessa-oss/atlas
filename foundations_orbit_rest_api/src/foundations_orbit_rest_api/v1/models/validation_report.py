@@ -5,8 +5,13 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_model import TestModel
-from .test_production_metric_set import TestProductionMetricSet
-from .test_validation_report_listing import TestValidationReportListing
-from .test_project import TestProject
-from .test_validation_report import TestValidationReport
+class ValidationReport(object):
+    
+    @staticmethod
+    def get(**kwargs):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        return LazyResult(ValidationReport._get_internal)
+
+    @staticmethod
+    def _get_internal():
+        return None
