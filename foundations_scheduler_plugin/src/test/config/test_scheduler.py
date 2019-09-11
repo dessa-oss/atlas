@@ -14,6 +14,9 @@ from foundations_ssh.deployment_ssh_bucket import DeploymentSSHBucket
 
 class TestScheduler(Spec):
 
+    mock_kubernetes_address = let_patch_mock('foundations_scheduler_plugin.config.kubernetes.kubernetes_master_ip')
+    mock_kubernetes_redis_url = let_patch_mock('foundations_scheduler_plugin.config.kubernetes.kubernetes_redis_url')
+
     @let
     def _configuration(self):
         return {
@@ -93,9 +96,8 @@ class TestScheduler(Spec):
         self.assertEqual(result_config['key_path'], '~/.ssh/id_foundations_scheduler')
 
     def test_returns_kubernetes_redis_url_when_none_present(self):
-        mock_kubernetes_redis_url = self.patch('foundations_scheduler_plugin.config.kubernetes.kubernetes_redis_url')
         redis_url = self.faker.uri()
-        mock_kubernetes_redis_url.return_value = redis_url
+        self.mock_kubernetes_redis_url.return_value = redis_url
 
         result_config = self.translator.translate(self._configuration)
         self.assertEqual(redis_url, result_config['redis_url'])
@@ -163,9 +165,8 @@ class TestScheduler(Spec):
         self.assertEqual(result_config['code_path'], '/jobs')
 
     def test_returns_kubernetes_node_host_when_none_present(self):
-        mock_kubernetes_address = self.patch('foundations_scheduler_plugin.config.kubernetes.kubernetes_master_ip')
         master_address = self.faker.ipv4_private()
-        mock_kubernetes_address.return_value = master_address
+        self.mock_kubernetes_address.return_value = master_address
 
         del self._configuration['ssh_config']['host']
         result_config = self.translator.translate(self._configuration)
