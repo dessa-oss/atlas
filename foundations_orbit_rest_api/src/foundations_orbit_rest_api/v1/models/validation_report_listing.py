@@ -26,7 +26,7 @@ class ValidationReportListing(PropertyModel):
 
     @staticmethod
     def _sort_key(listing_entry):
-        return (listing_entry.inference_period, listing_entry.model_package)
+        return (listing_entry.inference_period, listing_entry.model_package, listing_entry.data_contract)
 
     @staticmethod
     def _listing_stream(project_name):

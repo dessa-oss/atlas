@@ -114,6 +114,26 @@ class TestValidationReportListingsController(Spec):
 
         self.assertEqual(expected_result, result.as_json())
 
+    def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_model_package_followed_by_data_contract(self):
+        self._register_report(self.project_name, 'cat_meow', 'data_contract_2', '2019-10-13')
+        self._register_report(self.project_name, 'cat_meow', 'data_contract', '2019-10-13')
+        result = self.controller.index()
+
+        expected_result = [
+            {
+                'data_contract': 'data_contract',
+                'model_package': 'cat_meow',
+                'inference_period': '2019-10-13'
+            },
+            {
+                'data_contract': 'data_contract_2',
+                'model_package': 'cat_meow',
+                'inference_period': '2019-10-13'
+            }
+        ]
+
+        self.assertEqual(expected_result, result.as_json())
+
     @staticmethod
     def _key_to_write(project_name, model_package, data_contract):
         return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
