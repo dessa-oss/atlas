@@ -38,7 +38,6 @@ class TestCanRetrainModelPackage(Spec):
             config_manager.config()['redis_url'] = self._get_proxy_url()
 
         self.redis_connection = redis_connection
-        self.redis_connection.flushall()
 
     def _set_up_in_test(self, job_directory):
         import subprocess

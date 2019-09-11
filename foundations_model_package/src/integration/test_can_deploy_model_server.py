@@ -13,10 +13,10 @@ class TestCanDeployModelServer(Spec):
 
     @let
     def model_name(self):
-        return 'model'
+        return self.faker.word()
     @let
     def project_name(self):
-        return 'test'
+        return self.faker.word()
 
     @staticmethod
     def _is_running_on_jenkins():
@@ -45,7 +45,6 @@ class TestCanDeployModelServer(Spec):
             config_manager.config()['redis_url'] = self._get_proxy_url()
 
         self.redis_connection = redis_connection
-        self.redis_connection.flushall()
 
     def _set_up_in_test(self, job_directory):
         import subprocess
