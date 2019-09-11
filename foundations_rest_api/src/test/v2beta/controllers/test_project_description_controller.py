@@ -40,6 +40,10 @@ class TestProjectDescriptionController(Spec):
         self.assertEqual({'project_description': self.description}, self.controller.show().as_json())
 
     def test_update_changes_the_description(self):
-        self.controller.update()
+        self.controller.update().evaluate()
         description = self.mock_redis.get(f'projects:{self.project_name}:description').decode()
         self.assertEqual(self.description, description)
+
+    def test_update_returns_a_success_message(self):
+        self.controller.update()
+        self.assertEqual(f'Updated description for {self.project_name}', self.controller.update().as_json())
