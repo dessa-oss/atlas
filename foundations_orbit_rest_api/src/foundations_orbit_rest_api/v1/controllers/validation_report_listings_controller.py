@@ -15,11 +15,4 @@ class ValidationReportListingsController(object):
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
 
         project_name = self.params.pop('project_name')
-        promise = ValidationReportListing.all(project_name=project_name).map(self._first_if_any)
-        return Response('ValidationReportListings', promise)
-
-    def _first_if_any(self, listings):
-        if listings:
-            return listings[0:1]
-
-        return []
+        return Response('ValidationReportListings', ValidationReportListing.all(project_name=project_name))

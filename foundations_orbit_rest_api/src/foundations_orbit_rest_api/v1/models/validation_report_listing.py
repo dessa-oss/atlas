@@ -21,8 +21,12 @@ class ValidationReportListing(PropertyModel):
     @staticmethod
     def _all_internal(project_name):
         listing = list(ValidationReportListing._listing_stream(project_name))
-        listing.sort(key=lambda entry: entry.inference_period)
+        listing.sort(key=ValidationReportListing._sort_key)
         return listing
+
+    @staticmethod
+    def _sort_key(listing_entry):
+        return (listing_entry.inference_period, listing_entry.model_package)
 
     @staticmethod
     def _listing_stream(project_name):

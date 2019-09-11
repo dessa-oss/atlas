@@ -112,18 +112,31 @@ class TestValidationReportListing(Spec):
 
         self.assertEqual([], promise.evaluate())
 
-    def test_validation_report_listing_get_all_returns_all_listings_when_multiple_reports_exist_in_redis(self):
-        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period)
-        self._register_report(self.project_name, self.model_package_2, self.data_contract_2, self.inference_period_2)
+    def test_validation_report_listing_get_all_returns_all_listings_when_multiple_reports_exist_in_redis_sorted_by_inference_period(self):
+        self._register_report(self.project_name, self.model_package, self.data_contract, '2019-10-13')
+        self._register_report(self.project_name, self.model_package_2, self.data_contract_2, '2019-03-04')
 
         promise = ValidationReportListing.all(project_name=self.project_name)
 
         expected_result = [
-            ValidationReportListing(data_contract=self.data_contract, model_package=self.model_package, inference_period=self.inference_period),
-            ValidationReportListing(data_contract=self.data_contract_2, model_package=self.model_package_2, inference_period=self.inference_period_2)
+            ValidationReportListing(data_contract=self.data_contract_2, model_package=self.model_package_2, inference_period='2019-03-04'),
+            ValidationReportListing(data_contract=self.data_contract, model_package=self.model_package, inference_period='2019-10-13')
         ]
 
-        expected_result.sort(key=lambda listing: listing.inference_period)
+
+        self.assertEqual(expected_result, promise.evaluate())
+
+    def test_validation_report_listing_get_all_returns_all_listings_when_multiple_reports_exist_in_redis_sorted_by_inference_period_then_by_model_package(self):
+        self._register_report(self.project_name, 'dog_bark', self.data_contract_2, '2019-10-13')
+        self._register_report(self.project_name, 'cat_meow', self.data_contract, '2019-10-13')
+
+        promise = ValidationReportListing.all(project_name=self.project_name)
+
+        expected_result = [
+            ValidationReportListing(data_contract=self.data_contract, model_package='cat_meow', inference_period='2019-10-13'),
+            ValidationReportListing(data_contract=self.data_contract_2, model_package='dog_bark', inference_period='2019-10-13')
+        ]
+
 
         self.assertEqual(expected_result, promise.evaluate())
 
