@@ -16,6 +16,12 @@ class ProjectDescriptionController(object):
     def show(self):
         return Response('Jobs', LazyResult(self._project_description))
 
+    def update(self):
+        from foundations_contrib.global_state import redis_connection
+        
+        description_key = f'projects:{self.params["project_name"]}:description'
+        redis_connection.set(description_key, self.params['project_description'])
+
     def _project_description(self):
         from foundations_contrib.global_state import redis_connection
 

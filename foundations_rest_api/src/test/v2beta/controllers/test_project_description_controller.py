@@ -38,3 +38,8 @@ class TestProjectDescriptionController(Spec):
     def test_get_returns_project_description_when_specified(self):
         self.mock_redis.set(f'projects:{self.project_name}:description', self.description)
         self.assertEqual({'project_description': self.description}, self.controller.show().as_json())
+
+    def test_update_changes_the_description(self):
+        self.controller.update()
+        description = self.mock_redis.get(f'projects:{self.project_name}:description').decode()
+        self.assertEqual(self.description, description)
