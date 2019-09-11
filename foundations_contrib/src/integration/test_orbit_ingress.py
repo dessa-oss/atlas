@@ -13,6 +13,8 @@ import time
 from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
+
+@skip
 class TestOrbitIngress(Spec):
     
     namespace = 'foundations-scheduler-test'
