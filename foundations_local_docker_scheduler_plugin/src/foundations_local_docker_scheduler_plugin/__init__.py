@@ -19,7 +19,7 @@ def _append_module():
     # import foundations_scheduler_core
     # import foundations_scheduler_deployment
     #
-    # module_manager.append_module(sys.modules[__name__])
+    module_manager.append_module(sys.modules[__name__])
     # module_manager.append_module(foundations_scheduler)
     # module_manager.append_module(foundations_scheduler_core)
     # module_manager.append_module(foundations_scheduler_deployment)
