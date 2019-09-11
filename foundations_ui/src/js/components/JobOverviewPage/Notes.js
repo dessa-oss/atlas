@@ -23,7 +23,7 @@ class Notes extends React.Component {
     const { location } = this.props;
     const { projectName } = this.props.match.params;
     let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
-    BaseActions.getFromApiary(`projects/${selectedProjectName}/note_listing`).then((result) => {
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/note_listing`).then((result) => {
       if (result) {
         result.sort((a, b) => {
           let dateA = new Date(a.date);
@@ -70,7 +70,7 @@ class Notes extends React.Component {
       author: 'Mohammed R.',
     };
 
-    BaseActions.postApiary(`projects/${projectName}/note_listing`, body).then(() => {
+    BaseActions.postStaging(`projects/${projectName}/note_listing`, body).then(() => {
       this.setState({
         message: '',
       }, () => {
