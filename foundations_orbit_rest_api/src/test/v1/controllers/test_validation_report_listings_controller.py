@@ -26,3 +26,7 @@ class TestValidationReportListingsController(Spec):
 
     def test_validation_report_listings_controller_gives_empty_list_as_response_if_no_reports_in_redis(self):
         self.assertEqual([], self.controller.index().as_json())
+
+    def test_index_returns_resource_with_resource_name_validation_report_listings(self):
+        result = self.controller.index()
+        self.assertEqual('ValidationReportListings', result.resource_name())

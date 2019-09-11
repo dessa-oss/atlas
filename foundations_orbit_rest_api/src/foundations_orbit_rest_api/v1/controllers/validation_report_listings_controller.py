@@ -10,4 +10,4 @@ class ValidationReportListingsController(object):
     def index(self):
         from foundations_core_rest_api_components.lazy_result import LazyResult
         from foundations_core_rest_api_components.response import Response
-        return Response('asdf', LazyResult(lambda: []))
+        return Response('ValidationReportListings', LazyResult(lambda: []))
