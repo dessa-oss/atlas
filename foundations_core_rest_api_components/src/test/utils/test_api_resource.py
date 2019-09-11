@@ -220,6 +220,12 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path)
             self.authorization_mock.assert_called_with({'auth_token': self.random_cookie_value})
 
+    def test_put_request_returns_return_value_of_resource_put_method(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithPut)
+        with self._test_client() as client:
+            response = client.put(self.uri_path, json={})
+            self.assertEqual(response.json, 'some put data')
+
     def _empty_callback(self, mock_instance):
         return ''
 

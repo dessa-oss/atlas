@@ -26,11 +26,16 @@ class APIResourceBuilder(object):
     def _load_delete_route(self):
         if hasattr(self._klass, 'delete'):
             self._api_actions['delete'] = self._delete_api_create()
+
+    def _load_put_route(self):
+        if hasattr(self._klass, 'put'):
+            self._api_actions['put'] = self._put_api_create()
     
     def _create_action(self):
         self._load_index_route()
         self._load_post_route()
         self._load_delete_route()
+        self._load_put_route()
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
 
@@ -77,6 +82,16 @@ class APIResourceBuilder(object):
             response = instance.delete()
             return response.as_json(), response.status()
         return _delete
+
+    def _put_api_create(self):
+        def _put(resource_self, **kwargs):
+            instance = self._klass()
+            instance.params = self._api_params(kwargs)
+
+            response = instance.put()
+            return response.as_json(), response.status()
+        return _put
+
 
     def _api_params(self, kwargs):
         from flask import request

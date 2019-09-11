@@ -4,7 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
-
+import json
 from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
 
@@ -87,10 +87,10 @@ class TestSwitchDefaultModel(Spec):
 
     def test_put_request_changes_default_model(self):
         # create at least two models (manually)
-        self._create_project('test_project')
+        self._create_project(self.project_name)
 
-        self._create_model_information('model', self.model_information)
-        self._create_model_information('again_model', self.model_again_information)
+        self._create_model_information(self.project_name, 'model', self.model_information)
+        self._create_model_information(self.project_name, 'again_model', self.model_again_information)
 
         # perform the put request with the details of the change
         request_body = {'default_model': 'again_model'}
@@ -110,25 +110,20 @@ class TestSwitchDefaultModel(Spec):
         import time
         self.redis.execute_command('ZADD', 'projects', 'NX', time.time(), project_name)
 
-    def _create_model_information(self, model_name, model_information):
+    def _create_model_information(self, project_name, model_name, model_information):
         import pickle
 
-        hash_map_key = 'projects:test_project:model_listing'
+        hash_map_key = f'projects:{project_name}:model_listing'
         serialized_model_information = pickle.dumps(model_information)
         self.redis.hmset(hash_map_key, {model_name: serialized_model_information})
 
     def _put_to_route(self, body):
-        import json
-
         response = self.client.put(self.project_url, json=body)
         response_data = response.data.decode()
         return json.loads(response_data)
 
     def _get_from_route(self):
-        import json
-
         url = f'{self.project_url}/model_listing'
-
         response = self.client.get(url)
         response_data = response.data.decode()
         return json.loads(response_data)
