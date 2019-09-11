@@ -101,6 +101,8 @@ class APIResourceBuilder(object):
         for key, value in dict_args.items():
             params[key] = value if len(value) > 1 else value[0]
         params.update(request.form)
+        if request.json:
+            params.update(request.json)
         return params
 
 def api_resource(base_path):

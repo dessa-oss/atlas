@@ -143,7 +143,7 @@ class TestSwitchDefaultModel(Spec):
         run_process(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), foundations_contrib.root() / '..')
 
     def _put_to_route(self, body):
-        response = self.client.put(self.project_url, data=body) # TODO NEED TO GET JSON=BODY TO WORK AS WELL
+        response = self.client.put(self.project_url, json=body)
         response_data = response.data.decode()
         return json.loads(response_data)
 
