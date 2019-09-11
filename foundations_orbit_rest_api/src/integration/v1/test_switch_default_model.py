@@ -9,6 +9,7 @@ import foundations_contrib
 from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
 from foundations_spec.extensions import run_process
+from os.path import abspath
 
 class TestSwitchDefaultModel(Spec):
     client = app_manager.app().test_client()
@@ -17,13 +18,13 @@ class TestSwitchDefaultModel(Spec):
     
     @set_up_class
     def set_up_class(self):
-        run_process(['./integration/resources/fixtures/test_server/spin_up.sh'], foundations_contrib.root() / '..')
+        run_process(['./integration/resources/fixtures/test_server/spin_up.sh'], abspath(foundations_contrib.root() / '..'))
 
     @tear_down_class
     def tear_down_class(self):
-        run_process(['./integration/resources/fixtures/test_server/tear_down.sh'], foundations_contrib.root() / '..')
-        run_process(f'./remove_deployment.sh {self.project_name} model'.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
-        run_process(f'./remove_deployment.sh {self.project_name} again-model'.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
+        run_process(['./integration/resources/fixtures/test_server/tear_down.sh'], abspath(foundations_contrib.root() / '..'))
+        run_process(f'./remove_deployment.sh {self.project_name} model'.split(), abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        run_process(f'./remove_deployment.sh {self.project_name} again-model'.split(), abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
     @let
     def redis(self):
@@ -140,7 +141,7 @@ class TestSwitchDefaultModel(Spec):
         self._deploy_model(project_name, model_name)
 
     def _deploy_model(self, project_name, model_name):
-        run_process(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), foundations_contrib.root() / '..')
+        run_process(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), abspath(foundations_contrib.root() / '..'))
 
     def _put_to_route(self, body):
         response = self.client.put(self.project_url, json=body)
