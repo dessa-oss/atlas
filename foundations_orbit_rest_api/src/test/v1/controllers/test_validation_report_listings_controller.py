@@ -16,7 +16,13 @@ class TestValidationReportListingsController(Spec):
         import fakeredis
         return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
+    @let
+    def controller(self):
+        return ValidationReportListingsController()
+
     @set_up
     def set_up(self):
         self.redis_connection.flushall()
 
+    def test_validation_report_listings_controller_gives_empty_list_as_response_if_no_reports_in_redis(self):
+        self.assertEqual([], self.controller.index().as_json())

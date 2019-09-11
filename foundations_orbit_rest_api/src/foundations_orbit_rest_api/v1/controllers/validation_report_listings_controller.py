@@ -6,4 +6,8 @@ Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
 
 class ValidationReportListingsController(object):
-    pass
+    
+    def index(self):
+        from foundations_core_rest_api_components.lazy_result import LazyResult
+        from foundations_core_rest_api_components.response import Response
+        return Response('asdf', LazyResult(lambda: []))
