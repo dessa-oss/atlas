@@ -58,7 +58,7 @@ class JobTableButtons extends Component {
     } = this.state;
     const URL = 'upload_to_tensorboard';
     const resp = await BaseActions.postStaging(URL, { job_ids: selectedJobs });
-    window.open(resp.url, '_blank');
+    window.open(resp.url, resp.url);
   }
 
 
