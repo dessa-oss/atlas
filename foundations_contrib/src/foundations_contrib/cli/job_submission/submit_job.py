@@ -32,7 +32,7 @@ def submit(arguments):
             with open('job.config.yaml') as file:
                 job_config = yaml.load(file.read())
 
-        validate(instance=job_config, schema=_job_schema)
+        # validate(instance=job_config, schema=_job_schema)
 
         job_resource_args = {}
 
