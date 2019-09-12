@@ -115,7 +115,6 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
 
         self.assertEqual(expected_data, data)
 
-    @skip('not implemented')
     def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis_numpy_data_types(self):
         import os
         import numpy
@@ -164,11 +163,11 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [27.56, 27.57, 27.53, 27.43],
+                        'data': _recasted_numpy_floats(27.56, 27.57, 27.53, 27.43),
                         'name': 'that_job'
                     },
                     {
-                        'data': [17.56, 17.57, 17.53, 17.43],
+                        'data': _recasted_numpy_floats(17.56, 17.57, 17.53, 17.43),
                         'name': 'this_job'
                     }
                 ]
@@ -200,3 +199,16 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
     def _sort_series_entries(self, data_from_route):
         for metric_set in data_from_route:
             metric_set['series'].sort(key=lambda series_entry: series_entry['name'])
+
+def _recasted_numpy_floats(entry_0, entry_1, entry_2, entry_3):
+    import numpy
+
+    return [
+        _cast_to_float_like_and_then_back(entry_0, numpy.float16),
+        _cast_to_float_like_and_then_back(entry_1, numpy.float16),
+        _cast_to_float_like_and_then_back(entry_2, numpy.float32),
+        _cast_to_float_like_and_then_back(entry_3, numpy.float64)
+    ]
+
+def _cast_to_float_like_and_then_back(value, float_like_class):
+    return float(float_like_class(value))
