@@ -68,42 +68,12 @@ class DataContract(object):
             validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
 
         if self.options.check_distribution:
-            validation_report['dist_check_results'] = self._distribution_check_results(columns_to_validate)
+            validation_report['dist_check_results'] = _DistributionChecker(self.options.distribution).distribution_check_results(columns_to_validate)
 
         return validation_report
 
     def _row_count_difference(self, row_count_to_check):
         return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
-
-    def _distribution_check_results(self, columns_to_validate):
-        import numpy
-
-        if self._distribution_option('cols_to_include') is not None and self._distribution_option('cols_to_ignore') is not None:
-            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
-
-        dist_check_results = {}
-
-        results_for_same_distribution = {
-            'binned_l_infinity': 0.0,
-            'binned_passed': True,
-            'special_values': {
-                numpy.nan: {
-                    'current_percentage': 0.0,
-                    'passed': True,
-                    'percentage_diff': 0.0,
-                    'ref_percentage': 0.0
-                }
-            }
-        }
-
-        for column_name in columns_to_validate:
-            dist_check_results[column_name] = results_for_same_distribution
-
-        return dist_check_results
-
-    def _distribution_option(self, option_name):
-        distribution_options = self.options.distribution
-        return distribution_options[option_name]
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
@@ -135,3 +105,34 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
+
+class _DistributionChecker(object):
+
+    def __init__(self, distribution_options):
+        self._distribution_options = distribution_options
+
+    def distribution_check_results(self, columns_to_validate):
+        import numpy
+
+        if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
+            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
+
+        dist_check_results = {}
+
+        results_for_same_distribution = {
+            'binned_l_infinity': 0.0,
+            'binned_passed': True,
+            'special_values': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            }
+        }
+
+        for column_name in columns_to_validate:
+            dist_check_results[column_name] = results_for_same_distribution
+
+        return dist_check_results
