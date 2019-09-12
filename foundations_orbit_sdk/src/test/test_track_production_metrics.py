@@ -145,6 +145,22 @@ class TestTrackProductionMetrics(Spec):
 
         self.assertEqual(metric_value, int(self.numpy_int32))
 
+    def test_track_production_metrics_logs_numpy_int64_as_python_int(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, int)
+
+    def test_track_production_metrics_logs_numpy_int64_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, int(self.numpy_int64))
+
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
         return {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}

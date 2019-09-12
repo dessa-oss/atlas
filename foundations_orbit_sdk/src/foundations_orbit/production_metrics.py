@@ -28,7 +28,7 @@ def _metric_pair_with_normalized_type(key_value_pair):
 def _with_normalized_type(value):
     import numpy
 
-    if isinstance(value, numpy.int32):
+    if isinstance(value, numpy.int32) or isinstance(value, numpy.int64):
         return int(value)
 
     return value
