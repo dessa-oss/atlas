@@ -46,6 +46,31 @@ class TestTrackProductionMetrics(Spec):
     def column_value_2(self):
         return self.faker.random.random()
 
+    @let
+    def numpy_int32(self):
+        import numpy
+        return numpy.int32(self.faker.random.randint(0, 100))
+
+    @let
+    def numpy_int64(self):
+        import numpy
+        return numpy.int64(self.faker.random.randint(0, 100))
+
+    @let
+    def numpy_float32(self):
+        import numpy
+        return numpy.float32(self.faker.random.random())
+
+    @let
+    def numpy_float64(self):
+        import numpy
+        return numpy.float64(self.faker.random.random())
+
+    @let
+    def dataframe(self):
+        import pandas
+        return pandas.DataFrame()
+
     @set_up
     def set_up(self):
         self.mock_environment['MODEL_NAME'] = self.model_name
@@ -103,6 +128,22 @@ class TestTrackProductionMetrics(Spec):
         expected_metrics[self.metric_name].sort(key=lambda entry: entry[0])
 
         self.assertEqual(expected_metrics, production_metrics)   
+
+    def test_track_production_metrics_logs_numpy_int32_as_python_int(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, int)
+
+    def test_track_production_metrics_logs_numpy_int32_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, int(self.numpy_int32))
 
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')

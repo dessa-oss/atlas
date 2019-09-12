@@ -9,10 +9,17 @@ def track_production_metrics(metric_name, metric_values):
     _track_production_metrics_for_job(_redis_key(), metric_name, metric_values)
 
 def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
+    import numpy
     import pickle
     from foundations_contrib.global_state import redis_connection
 
-    metrics_list = list(metric_values.items())
+    metrics_list = []
+
+    for column_name, column_value in metric_values.items():
+        if isinstance(column_value, numpy.int32):
+            column_value = int(column_value)
+
+        metrics_list.append((column_name, column_value))
 
     existing_metrics = _existing_metrics_from_redis(redis_key, metric_name)
     metrics_to_store = existing_metrics + metrics_list
