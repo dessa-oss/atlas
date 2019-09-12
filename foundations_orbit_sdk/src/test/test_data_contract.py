@@ -230,137 +230,18 @@ class TestDataContract(Spec):
 
         self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
 
-    def test_data_contract_validate_empty_dataframe_against_itself_passes_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.empty_dataframe)
-        validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
-        self.assertEqual({'passed': True}, validation_report['schema_check_results'])
+    def test_data_contract_validate_performs_schema_check_by_default(self):
+        mock_schema_check_results = Mock()
+        mock_schema_checker_class = self.patch('foundations_orbit.contract_validators.schema_checker.SchemaChecker', ConditionalReturn())
+        mock_schema_checker = Mock()
 
-    def test_data_contract_validate_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
-        contract = DataContract(self.contract_name, df=self.empty_dataframe)
-        validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
-        self.assertEqual({}, validation_report['dist_check_results'])
+        mock_schema_checker_class.return_when(mock_schema_checker, [self.column_name, self.column_name_2], {self.column_name: 'object', self.column_name_2: 'object'})
+        mock_schema_checker.schema_check_results = ConditionalReturn()
+        mock_schema_checker.schema_check_results.return_when(mock_schema_check_results, [self.column_name, self.column_name_3], {self.column_name: 'object', self.column_name_3: 'object'})
 
-    def test_data_contract_validate_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
-        import numpy
-
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe, self.datetime_today)
-
-        expected_dist_check_result = {
-            self.column_name: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
-            }
-        }
-
-        self.assertEqual(expected_dist_check_result, validation_report['dist_check_results'])
-
-    def test_data_contract_validate_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
-        import numpy
-
-        self.maxDiff = None
-
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
-        validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
-
-        expected_dist_check_result = {
-            self.column_name: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
-            },
-            self.column_name_2: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
-            }
-        }
-
-        self.assertEqual(expected_dist_check_result, validation_report['dist_check_results'])
-
-    def test_data_contract_validate_dataframe_with_zero_columns_against_dataframe_with_one_column_fails_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.empty_dataframe, self.datetime_today)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column sets not equal',
-            'missing_in_ref': [],
-            'missing_in_current': [self.column_name]
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_dataframe_with_one_column_against_another_dataframe_with_one_column_but_different_name_fails_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe_different_column_name, self.datetime_today)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column sets not equal',
-            'missing_in_ref': [self.column_name_2],
-            'missing_in_current': [self.column_name]
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_dataframe_with_one_column_against_another_dataframe_with_two_columns_first_column_the_same_fails_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column sets not equal',
-            'missing_in_ref': [self.column_name_2],
-            'missing_in_current': []
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_dataframe_with_one_column_against_itself_passes_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe, self.datetime_today)
-        self.assertEqual({'passed': True}, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_dataframe_with_multiple_columns_against_itself_passes_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
-        validation_report = contract.validate(self.two_column_dataframe_no_rows, self.datetime_today)
-        self.assertEqual({'passed': True}, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_dataframe_with_two_columns_against_different_dataframe_with_two_columns_fails_schema_check(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column sets not equal',
-            'missing_in_ref': [self.column_name_3],
-            'missing_in_current': [self.column_name_2]
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
+        self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
     def test_data_contract_validate_does_not_perform_schema_check_if_check_schema_option_is_false(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
@@ -368,63 +249,20 @@ class TestDataContract(Spec):
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertNotIn('schema_check_results', validation_report)
 
-    def test_data_contract_validate_column_names_wrong_order_fails_schema_check(self):
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe_no_rows)
-        validation_report = contract.validate(self.two_column_dataframe_columns_wrong_order)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'columns not in order',
-            'columns_out_of_order': [self.column_name_2, self.column_name]
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_column_names_wrong_order_fails_schema_check_more_rows(self):
-        contract = DataContract(self.contract_name, df=self.four_column_dataframe_no_rows)
-        validation_report = contract.validate(self.four_column_dataframe_no_rows_different_order)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'columns not in order',
-            'columns_out_of_order': [self.column_name_4, self.column_name]
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_single_column_dataframe_column_types_fails_when_column_type_does_not_match(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe_different_data_type)
-
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column datatype mismatches',
-            'cols': {
-                self.column_name: {
-                    'ref_type': 'int8',
-                    'current_type': 'int16'
-                }
-            }
-        }
-
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
-
-    def test_data_contract_validate_two_column_dataframe_column_types_fails_when_column_type_does_not_match(self):
+    def test_data_contract_validate_check_distributions_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        validation_report = contract.validate(self.two_column_dataframe_different_types)
 
-        expected_schema_check_results = {
-            'passed': False,
-            'error_message': 'column datatype mismatches',
-            'cols': {
-                self.column_name_2: {
-                    'ref_type': 'float64',
-                    'current_type': 'int64'
-                }
-            }
-        }
+        mock_distribution_check_results = Mock()
+        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
+        mock_distribution_checker = Mock()
 
-        self.assertEqual(expected_schema_check_results, validation_report['schema_check_results'])
+        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution)
+        mock_distribution_checker.distribution_check_results = ConditionalReturn()
+        mock_distribution_checker.distribution_check_results.return_when(mock_distribution_check_results, [self.column_name, self.column_name_2])
+
+        validation_report = contract.validate(self.two_column_dataframe)
+
+        self.assertEqual(mock_distribution_check_results, validation_report['dist_check_results'])
 
     def test_data_contract_validate_does_not_check_distribution_if_option_set_to_false(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -483,16 +321,6 @@ class TestDataContract(Spec):
         }
 
         self.assertEqual(expected_validation_report, validation_report)
-
-    def test_data_contract_cannot_validate_if_checking_distribution_if_both_column_whitelist_and_column_blacklist_are_set(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        contract.options.distribution['cols_to_ignore'] = []
-        contract.options.distribution['cols_to_include'] = []
-
-        with self.assertRaises(ValueError) as ex:
-            contract.validate(self.one_column_dataframe)
-
-        self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
