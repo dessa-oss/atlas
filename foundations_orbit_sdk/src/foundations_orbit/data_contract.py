@@ -60,7 +60,7 @@ class DataContract(object):
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
         if self.options.check_schema:
-            validation_report['schema_check_results'] = self._schema_check_results(columns_to_validate, types_to_validate)
+            validation_report['schema_check_results'] = _SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
             validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
@@ -70,76 +70,6 @@ class DataContract(object):
 
         return validation_report
 
-    def _schema_check_results(self, columns_to_validate, types_to_validate):
-        import pandas
-
-        schema_check_results = {}
-
-        if self._column_names_match(columns_to_validate):
-            if self._data_types_match(types_to_validate):
-                schema_check_results['passed'] = True
-                return schema_check_results
-
-            schema_check_results['passed'] = False
-            schema_check_results['error_message'] = 'column datatype mismatches'
-            schema_check_results.update(self._type_mismatch_error_information(self._column_types, types_to_validate))
-            return schema_check_results
-
-        schema_check_results['passed'] = False
-
-        ref_column_names = set(self._column_names)
-        current_column_names = set(columns_to_validate)
-
-        if self._column_sets_not_equal(ref_column_names, current_column_names):
-            schema_check_results['error_message'] = 'column sets not equal'
-            schema_check_results.update(self._column_sets_not_equal_error_information(ref_column_names, current_column_names))
-            return schema_check_results
-
-        schema_check_results['error_message'] = 'columns not in order'
-
-        ref_column_series = pandas.Series(self._column_names)
-        current_column_series = pandas.Series(columns_to_validate)
-
-        schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
-        return schema_check_results
-
-    def _column_names_match(self, columns_to_validate):
-        return self._column_names == columns_to_validate
-
-    def _data_types_match(self, types_to_validate):
-        return self._column_types == types_to_validate
-
-    @staticmethod
-    def _type_mismatch_error_information(ref_column_types, types_to_validate):
-        mismatched_columns = {}
-
-        for column_name in ref_column_types.keys():
-            ref_type = ref_column_types[column_name]
-            current_type = types_to_validate[column_name]
-
-            if ref_type != current_type:
-                mismatched_columns[column_name] = {
-                    'ref_type': ref_type,
-                    'current_type': current_type
-                }
-
-        return {'cols': mismatched_columns}
-
-    @staticmethod
-    def _column_sets_not_equal(ref_column_names, current_column_names):
-        return ref_column_names != current_column_names
-
-    @staticmethod
-    def _column_sets_not_equal_error_information(ref_column_names, current_column_names):
-        missing_in_ref = current_column_names - ref_column_names
-        missing_in_current = ref_column_names - current_column_names
-
-        return {'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
-
-    @staticmethod
-    def _column_sets_in_wrong_order_information(ref_column_series, current_column_series):
-        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
-        return {'columns_out_of_order': list(columns_out_of_order)}
 
     def _row_count_difference(self, row_count_to_check):
         return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
@@ -204,3 +134,78 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
+
+class _SchemaChecker(object):
+
+    def __init__(self, column_names, column_types):
+        self._column_names = column_names
+        self._column_names_set = set(column_names)
+
+        self._column_types = column_types
+
+    def schema_check_results(self, columns_to_validate, types_to_validate):
+        import pandas
+
+        schema_check_results = {}
+
+        if self._column_names_match(columns_to_validate):
+            if self._data_types_match(types_to_validate):
+                schema_check_results['passed'] = True
+                return schema_check_results
+
+            schema_check_results['passed'] = False
+            schema_check_results['error_message'] = 'column datatype mismatches'
+            schema_check_results.update(self._type_mismatch_error_information(types_to_validate))
+            return schema_check_results
+
+        schema_check_results['passed'] = False
+
+        current_column_names = set(columns_to_validate)
+
+        if self._column_sets_not_equal(current_column_names):
+            schema_check_results['error_message'] = 'column sets not equal'
+            schema_check_results.update(self._column_sets_not_equal_error_information(current_column_names))
+            return schema_check_results
+
+        schema_check_results['error_message'] = 'columns not in order'
+
+        ref_column_series = pandas.Series(self._column_names)
+        current_column_series = pandas.Series(columns_to_validate)
+
+        schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
+        return schema_check_results
+
+    def _column_names_match(self, columns_to_validate):
+        return self._column_names == columns_to_validate
+
+    def _data_types_match(self, types_to_validate):
+        return self._column_types == types_to_validate
+
+    def _column_sets_not_equal(self, current_column_names):
+        return self._column_names_set != current_column_names
+
+    def _column_sets_not_equal_error_information(self, current_column_names):
+        missing_in_ref = current_column_names - self._column_names_set
+        missing_in_current = self._column_names_set - current_column_names
+
+        return {'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
+
+    @staticmethod
+    def _column_sets_in_wrong_order_information(ref_column_series, current_column_series):
+        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
+        return {'columns_out_of_order': list(columns_out_of_order)}
+
+    def _type_mismatch_error_information(self, types_to_validate):
+        mismatched_columns = {}
+
+        for column_name in self._column_types.keys():
+            ref_type = self._column_types[column_name]
+            current_type = types_to_validate[column_name]
+
+            if ref_type != current_type:
+                mismatched_columns[column_name] = {
+                    'ref_type': ref_type,
+                    'current_type': current_type
+                }
+
+        return {'cols': mismatched_columns}
