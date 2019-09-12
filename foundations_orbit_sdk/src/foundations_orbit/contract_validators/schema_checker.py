@@ -5,8 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .contract_validators import *
+class SchemaChecker(object):
+    
+    def __init__(self, ref_column_names, ref_column_types):
+        pass
 
-from .test_track_production_metrics import TestTrackProductionMetrics
-from .test_data_contract import TestDataContract
-from .test_data_contract_options import TestDataContractOptions
+    def schema_check_results(self, column_names, column_types):
+        return {'passed': True}
