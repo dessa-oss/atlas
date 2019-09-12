@@ -11,14 +11,15 @@ from foundations_spec import *
 import foundations
 from integration.mixins.deploy_model_mixin import DeployModelMixin
 
-class TestCanRetrainModelPackage(Spec, DeployModelMixin):
+@skip('not implemented')
+class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
     @let
     def model_name(self):
         return self.faker.word().lower()
 
     @let
-    def retrained_model_name(self):
+    def recalibrated_model_name(self):
         return self.faker.word().lower()
     @let
     def project_name(self):
@@ -43,31 +44,40 @@ class TestCanRetrainModelPackage(Spec, DeployModelMixin):
 
     @set_up
     def set_up(self):
+        from foundations_contrib.global_state import config_manager
         self._set_up_environment()
 
     @tear_down
     def tear_down(self):
-        self._tear_down_environment()
+        self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
-    def test_can_retrain_and_redeploy_server(self):
+    def test_can_recalibrate_and_redeploy_server(self):
         import time
         try:
-            self._set_up_in_test('model-server-with-retrain')
+            self._set_up_in_test('model-server-with-recalibrate')
             
+            # similar to orbit (serve)
             predict_result = self._try_post_to_predict_endpoint()
             self.assertEqual({'a': 21, 'b': 32}, predict_result)
 
-            # send post request to perform the retrain operatoin
-            # retrain_response = self._try_post_to_retrain_endpoint()
-            # retrain_job_id = retrain_response['job_id']
-            # self.job_id = retrain_job_id
-            # self._wait_for_job_to_complete(retrain_job_id)
+            # send post request to perform the recalibrate operatoin
+            recalibrate_response = self._try_post_to_recalibrate_endpoint()
+
+            import pprint
+            pprint.pprint(recalibrate_response)
+
+            recalibrate_job_id = recalibrate_response['job_id']
+            self.job_id = recalibrate_job_id
+            self._wait_for_job_to_complete(recalibrate_job_id)
             
-            # # attempting to replace default model by ensuring only one model package exists 
-            # self._tear_down_model_package(self.project_name, self.model_name)
-            # self._spin_up_model_package_and_proxy(self.project_name, self.retrained_model_name)
+            # attempting to replace default model by ensuring only one model package exists 
+            # self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
+            # self._tear_down_proxy()
+            # self._spin_up_model_package_and_proxy(self.project_name, self.recalibrated_model_name)
 
             # new_predict_result = self._try_post_to_predict_endpoint()
+
+            # print(new_predict_result) # Temporary for now
 
             # self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
             # self.assertEqual({'a': 20 + 24 * 3600 - 60}, new_predict_result)
@@ -75,15 +85,15 @@ class TestCanRetrainModelPackage(Spec, DeployModelMixin):
             self.fail('Interrupted by user')
 
     def _try_post_to_predict_endpoint(self):
-        return self._try_post('/predict', {'a': 20, 'b': 30})
+        return self._try_post('predict', {'a': 20, 'b': 30})
 
-    def _try_post_to_retrain_endpoint(self):
-        return self._try_post('/retrain', {'model-name': self.retrained_model_name, 'start_date': '2017-07-29T00:01:00', 'end_date': '2017-07-30T00:00:00'})
+    def _try_post_to_recalibrate_endpoint(self):
+        return self._try_post('recalibrate', {'model-name': self.recalibrated_model_name, 'start_date': '2017-07-29T00:01:00', 'end_date': '2017-07-30T00:00:00'})
 
     def _try_post(self, endpoint, dict_payload):
         import requests
 
         try:
-            return requests.post(f'http://localhost:5000{endpoint}', json=dict_payload).json()
+            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
         except:
             return None

@@ -33,7 +33,6 @@ def main():
 
     try:
         entrypoint_loader = EntrypointLoader(job)
-        retrain_function = entrypoint_loader.entrypoint_function('retrain')
         retrain_function_name = entrypoint_loader.function_name('retrain')
         retrain_module_name = entrypoint_loader.module_name('retrain')
 

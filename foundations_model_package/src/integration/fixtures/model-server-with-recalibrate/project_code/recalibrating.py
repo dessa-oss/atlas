@@ -1,7 +1,7 @@
 import pickle
 from datetime import datetime
 
-def retrain(start_date, end_date):
+def recalibrate(start_date, end_date):
     format_string = '%Y-%m-%dT%H:%M:%S'
 
     start_date = datetime.strptime(start_date, format_string)
