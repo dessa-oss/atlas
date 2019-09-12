@@ -12,10 +12,7 @@ def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
     import pickle
     from foundations_contrib.global_state import redis_connection
 
-    metrics_list = []
-
-    for key_value_pair in metric_values.items():
-        metrics_list.append(_metric_pair_with_normalized_type(key_value_pair))
+    metrics_list = list(map(_metric_pair_with_normalized_type, metric_values.items()))
 
     existing_metrics = _existing_metrics_from_redis(redis_key, metric_name)
     metrics_to_store = existing_metrics + metrics_list
