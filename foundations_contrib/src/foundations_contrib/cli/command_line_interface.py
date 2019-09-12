@@ -56,7 +56,7 @@ class CommandLineInterface(object):
         deploy_parser = self.add_sub_parser('submit', help='Deploys a Foundations project to the specified environment')
         deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
         deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
+        deploy_parser.add_argument('--num-gpus', type=int, help='A non-zero value will run a GPU-enabled job with all available GPUs. Does not currently allocate GPU quantity')
         deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
         deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs')
         deploy_parser.add_argument('scheduler_config', metavar="scheduler-config", help='Environment to run file in')

@@ -248,6 +248,12 @@ class JobDeployment(object):
         if current_foundations_context().job_resources().ram is not None:
             worker_container['mem_limit'] = int(current_foundations_context().job_resources().ram)
 
+        if (current_foundations_context().job_resources().num_gpus is not None
+                and current_foundations_context().job_resources().num_gpus > 0):
+            worker_container['runtime'] = 'nvidia'
+        else:
+            worker_container['runtime'] = 'runc'
+
         for override_key in ['command', 'image', 'imagePullPolicy', 'workingDir']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
