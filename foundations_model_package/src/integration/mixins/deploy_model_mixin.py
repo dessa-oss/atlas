@@ -14,7 +14,7 @@ class DeployModelMixin(object):
 
     sleep_time = 2
     max_sleep_time = 60
-    
+
     def _set_up_environment(self):
         from foundations_contrib.global_state import config_manager, redis_connection
 
@@ -41,7 +41,6 @@ class DeployModelMixin(object):
 
         self._deploy_job(job_directory)
         self.deployment.wait_for_deployment_to_complete()
-
         self._spin_up_model_package_and_proxy(self.project_name, self.model_name)
         
     def _spin_up_model_package_and_proxy(self, project_name, model_name):
@@ -55,7 +54,7 @@ class DeployModelMixin(object):
 
         if self.deployment is None:
             foundations.set_job_resources(num_gpus=0)
-            self.deployment = foundations.deploy(project_name=self.project_name, env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
+            self.deployment = foundations.submit(project_name=self.project_name, entrypoint='project_code.driver', job_dir=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
     def _deploy_model_package(self, project_name, model_name, job_id):
