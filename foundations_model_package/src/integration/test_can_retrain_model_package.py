@@ -27,9 +27,6 @@ class TestCanRetrainModelPackage(Spec):
             if return_code != 0:
                 raise AssertionError('docker build for model package failed :(')
 
-        if klass._is_running_on_jenkins():
-            os.environ.pop('FOUNDATIONS_REDIS_PASSWORD')
-
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import config_manager, redis_connection
@@ -41,7 +38,6 @@ class TestCanRetrainModelPackage(Spec):
             config_manager.config()['redis_url'] = self._get_proxy_url()
 
         self.redis_connection = redis_connection
-        self.redis_connection.flushall()
 
     def _set_up_in_test(self, job_directory):
         import subprocess

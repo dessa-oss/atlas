@@ -5,4 +5,4 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from common.cleanup import cleanup
+print('the quick brown fox jumps over the lazy dog')

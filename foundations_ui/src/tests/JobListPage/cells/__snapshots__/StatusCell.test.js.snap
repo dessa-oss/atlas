@@ -5,7 +5,7 @@ exports[`Shallow Renders Status Cell 1`] = `
   className="status-cell  row-0"
 >
   <span
-    className="status-icon status-green"
+    className="status-icon i--icon-status-completed"
   />
 </span>
 `;

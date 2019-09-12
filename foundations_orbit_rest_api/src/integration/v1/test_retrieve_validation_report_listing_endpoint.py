@@ -29,7 +29,6 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
         response_data = response.data.decode()
         return json.loads(response_data)
 
-    @skip
     def test_retrieve_validation_report_listing_gets_stored_metrics_from_redis(self):
         expected_data = [
             {
@@ -43,23 +42,23 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
                 'data_contract': 'data_contract_2'
             },
             {
-                'inference_period': '2019-02-05',
+                'inference_period': '2019-02-02',
                 'model_package': 'model_one',
                 'data_contract': 'data_contract_1'
             },
             {
-                'inference_period': '2019-02-05',
-                'model_package': 'model_one',
+                'inference_period': '2019-02-02',
+                'model_package': 'model_two',
+                'data_contract': 'data_contract_1'
+            },
+            {
+                'inference_period': '2019-02-02',
+                'model_package': 'model_two',
                 'data_contract': 'data_contract_2'
             },
             {
-                'inference_period': '2019-02-02',
-                'model_package': 'model_two',
-                'data_contract': 'data_contract_1'
-            },
-            {
-                'inference_period': '2019-02-02',
-                'model_package': 'model_two',
+                'inference_period': '2019-02-05',
+                'model_package': 'model_one',
                 'data_contract': 'data_contract_2'
             }
         ]
@@ -71,10 +70,5 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
             self.redis.hset(f'projects:test_project:models:{model_name}:validation:{contract_name}', inference_period, 'dummy')
 
         data = self._get_from_route()
-        self._sort_series_entries(data)
 
         self.assertEqual(expected_data, data)
-
-    def _sort_series_entries(self, data_from_route):
-        for metric_set in data_from_route:
-            metric_set['series'].sort(key=lambda series_entry: series_entry['name'])

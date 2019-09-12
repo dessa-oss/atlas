@@ -5,4 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from common.cleanup import cleanup
+import main
+import time
+
+time.sleep(120)

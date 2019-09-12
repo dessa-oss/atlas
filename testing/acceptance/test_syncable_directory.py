@@ -165,7 +165,7 @@ class TestSyncableDirectory(Spec):
         time_of_download = time.time()
 
         hack_directory = SyncableDirectory('some data', temp_workspace, self.job_multiple_files, self.job_multiple_files)
-        os.remove(f'{temp_workspace}/some_data.txt')
+        os.remove(f'{temp_workspace}/some_data_for_multiple_files.txt')
 
         time.sleep(5)
 
@@ -179,11 +179,11 @@ class TestSyncableDirectory(Spec):
 
         local_syncable_directory.download()
 
-        expected_files = ['new_file.txt', 'some_data.txt', 'some_metadata.txt']
+        expected_files = ['new_file.txt', 'some_data_for_multiple_files.txt', 'some_metadata.txt']
         files_with_stats = {file_name: os.stat(f'{local_syncable_directory}/{file_name}') for file_name in expected_files}
 
         try:
-            for unchanged_file in ['some_data.txt']:
+            for unchanged_file in ['some_data_for_multiple_files.txt']:
                 self.assertLessEqual(abs(files_with_stats[unchanged_file].st_mtime - time_of_download), 0.5)
 
             for changed_file in ['new_file.txt', 'some_metadata.txt']:

@@ -13,6 +13,7 @@ import time
 from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
+
 class TestOrbitIngress(Spec):
     
     namespace = 'foundations-scheduler-test'
@@ -72,9 +73,15 @@ class TestOrbitIngress(Spec):
         for _ in range(self.sleep_time):
             try:
                 result = _run_command(f'curl http://{scheduler_host}:31998{endpoint} --connect-timeout 1'.split()).stdout.decode()
+                if result:
+                    self.assertEqual(expected_text, result)
+                    return
+            except AssertionError as ae:
+                result = f'invalid result retrieved from request {ae}'
             except Exception as e:
-                result = 'Failed to connect'
-        self.assertEqual(expected_text, result)
+                result = f'Failed to connect: {e}'
+            time.sleep(1)
+        self.fail(result)
 
 def _run_command(command: List[str], cwd: str=None) -> subprocess.CompletedProcess:
     try:

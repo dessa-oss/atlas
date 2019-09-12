@@ -25,10 +25,6 @@ class TestSaveArtifact(Spec, RunLocalJob):
         from foundations_contrib.global_state import redis_connection
         return redis_connection
 
-    @tear_down
-    def tear_down(self):
-        self._redis_connection.flushall()
-
     def test_save_artifact_outside_of_job_logs_warning(self):
         from foundations_spec.extensions import run_process
         

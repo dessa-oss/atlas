@@ -7,7 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_spec import *
-from foundations import log_metric
 
 class TestCanRunJob(Spec):
 
@@ -18,18 +17,14 @@ class TestCanRunJob(Spec):
 
     def test_can_run_job(self):
         from scheduler_acceptance.fixtures.stages import add_two_numbers
+        from foundations_contrib.global_state import redis_connection
         import foundations
 
-        add_two_numbers = foundations.create_stage(add_two_numbers)
-        stage = add_two_numbers(3, 17)
-
-        log_metric = foundations.create_stage(self._log_a_metric)
-        stage2 = log_metric(stage)
-
-        job = stage2.run()
+        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/boring_job')
+        job_id = job.job_name()
         job.wait_for_deployment_to_complete()
 
-        metrics = foundations.get_metrics_for_all_jobs('default')
+        metrics = foundations.get_metrics_for_all_jobs('boring_job')
         job_metrics = metrics[metrics['job_id'] == job.job_name()]
         self.assertEqual(20, job_metrics['my_metric'].iloc[0])
 

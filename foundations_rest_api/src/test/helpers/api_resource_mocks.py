@@ -24,6 +24,22 @@ class APIResourceMocks(object):
                 return 'some data'
             return Response('Mock', LazyResult(_index))
 
+    class MockWithShow(object):
+        def show(self):
+            from foundations_core_rest_api_components.lazy_result import LazyResult
+            from foundations_core_rest_api_components.response import Response
+            def _show():
+                return 'some specific data'
+            return Response('Mock', LazyResult(_show))
+
+    class MockWithUpdate(object):
+        def update(self):
+            from foundations_core_rest_api_components.lazy_result import LazyResult
+            from foundations_core_rest_api_components.response import Response
+            def _update():
+                return 'some updated data'
+            return Response('Mock', LazyResult(_update))
+
     class MockWithPost(object):
         def post(self):
             from foundations_core_rest_api_components.lazy_result import LazyResult

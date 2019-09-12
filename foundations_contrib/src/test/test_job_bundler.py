@@ -247,20 +247,6 @@ class TestJobBundler(Spec):
 
         mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
 
-    def test_bundle_job_adds_redis_password_if_set(self):
-        import foundations_contrib
-        import foundations_contrib.job_bundling.script_environment
-
-        mock_job_source_bundle, mock_tar = self._setup_archive_and_tar()
-
-        self.mock_simple_temp_file_class.return_value = self.MockSimpleTempfile('fake_temp_file_name')
-        environ = {'FOUNDATIONS_REDIS_PASSWORD': self.redis_password}
-        with patch.object(foundations_contrib.job_bundling.script_environment.ScriptEnvironment, 'write_environment'), patch('os.environ', environ):
-            job_bundler = JobBundler('fake_name', {}, self.MockJob(), mock_job_source_bundle)
-            job_bundler.bundle()
-
-        mock_tar.add.assert_has_calls([call('fake_temp_file_name', arcname='fake_name/run.env')])
-
     @patch.object(ResourcesObfuscationController, '__enter__')
     def test_bundle_enters_resource_obfuscation_controller_context_manager(self, mock_resources_obfuscation_controller_enter):
 
