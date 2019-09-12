@@ -13,6 +13,8 @@ import pickle
 class TestTrackProductionMetrics(Spec):
 
     mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+    mock_int_like = let_mock()
+    mock_float_like = let_mock()
 
     @let_now
     def mock_environment(self):
@@ -67,6 +69,10 @@ class TestTrackProductionMetrics(Spec):
         return numpy.float64(self.faker.random.random())
 
     @let
+    def int_value(self):
+        return self.faker.random.randint(1, 100)
+
+    @let
     def dataframe(self):
         import pandas
         return pandas.DataFrame()
@@ -75,6 +81,10 @@ class TestTrackProductionMetrics(Spec):
     def set_up(self):
         self.mock_environment['MODEL_NAME'] = self.model_name
         self.mock_environment['PROJECT_NAME'] = self.project_name
+        
+        self.mock_int_like.__int__ = lambda *args: self.int_value
+        self.mock_float_like.__float__ = lambda *args: self.column_value
+
 
     @tear_down
     def tear_down(self):
@@ -192,6 +202,22 @@ class TestTrackProductionMetrics(Spec):
         metric_value = production_metrics[self.metric_name][0][1]
 
         self.assertEqual(metric_value, float(self.numpy_float64))
+
+    def test_track_production_metrics_logs_int_like_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.mock_int_like})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, self.int_value)
+
+    def test_track_production_metrics_logs_float_like_as_python_float_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.mock_float_like})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, self.column_value)
 
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
