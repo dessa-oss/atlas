@@ -14,3 +14,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from test.config.test_foundations_scheduler_config_translate import TestFoundationsSchedulerConfigTranslate
 from test.config.test_scheduler import TestScheduler
+from test.config.test_kubernetes import TestKubernetes

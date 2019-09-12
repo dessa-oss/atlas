@@ -5,4 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from common.cleanup import cleanup
+
+import foundations
+
+foundations.log_metric('my_metric', 20)

@@ -12,3 +12,4 @@ from foundations_rest_api.v2beta.controllers.job_tag_controller import JobTagCon
 from foundations_rest_api.v2beta.controllers.job_logs_controller import JobLogsController
 from foundations_rest_api.v2beta.controllers.tensorboard_controller import TensorboardController
 from foundations_rest_api.v2beta.controllers.project_metrics_controller import ProjectMetricsController
+from foundations_rest_api.v2beta.controllers.project_description_controller import ProjectDescriptionController

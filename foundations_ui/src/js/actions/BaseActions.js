@@ -10,7 +10,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -22,7 +23,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log('getFromStaging error: ', error);
         return null;
       });
   },
@@ -34,7 +36,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log('getFromApiary error: ', error);
         return null;
       });
   },
@@ -53,7 +56,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -72,7 +76,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -91,7 +96,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -110,7 +116,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -130,7 +137,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -148,7 +156,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -166,7 +175,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -184,7 +194,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },
@@ -203,7 +214,8 @@ const BaseActions = {
       .then((result) => {
         return result;
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         return null;
       });
   },

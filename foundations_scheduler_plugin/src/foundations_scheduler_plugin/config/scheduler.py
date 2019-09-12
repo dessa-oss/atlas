@@ -33,7 +33,8 @@ def translate(config):
     return result 
 
 def _redis_url(config):
-    return config['results_config'].get('redis_end_point', 'redis://localhost:6379')
+    from foundations_scheduler_plugin.config.kubernetes import kubernetes_redis_url
+    return config['results_config'].get('redis_end_point', kubernetes_redis_url())
 
 def _deployment_implementation():
     from foundations_scheduler_plugin.job_deployment import JobDeployment

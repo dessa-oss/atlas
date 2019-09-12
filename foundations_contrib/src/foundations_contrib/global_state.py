@@ -31,6 +31,19 @@ message_router = MessageRouter()
 redis_connection = LazyRedis(RedisConnector(
     config_manager, redis.Redis.from_url, os.environ))
 
+def push_state():
+    config_manager.push_config()
+    _clear_state()
+
+def pop_state():
+    config_manager.pop_config()
+    _clear_state()
+
+def _clear_state():
+    cache_manager._cache = None
+    log_manager._loggers = None
+    redis_connection._redis_connection = None
+
 def _create_foundations_context():
     from foundations_internal.pipeline_context import PipelineContext
     from foundations_internal.pipeline import Pipeline

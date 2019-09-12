@@ -164,17 +164,11 @@ def directory_path(path, name):
 
 
 def ensure_path_exists(path, name):
-    from distutils.dir_util import mkpath
-    from os.path import isdir
+    import os
 
     directory = directory_path(path, name)
     _log().debug('Ensuring that {} exists'.format(directory))
-    if not isdir(directory):
-        _log().debug('Creating {}'.format(directory))
-        result = mkpath(directory)
-        _log().debug('{} created'.format(result))
-    else:
-        _log().debug('{} Already exists'.format(directory))
+    os.makedirs(directory, exist_ok=True)
 
 
 def _log():

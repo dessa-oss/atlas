@@ -13,10 +13,6 @@ class TestScriptEnvironment(Spec):
 
     mock_environ = let_patch_mock('os.environ', {})
 
-    @let
-    def redis_password(self):
-        return self.faker.word()
-
     def setUp(self):
         self._config = {}
         self._environment = ScriptEnvironment(self._config)
@@ -50,19 +46,6 @@ class TestScriptEnvironment(Spec):
         self._environment.write_environment(self._file)
         self.assertEqual(
             ["export 'log level'='DEBUG THIS'\n"], self._written_lines)
-
-    def test_write_environment_adds_redis_password_if_any(self):
-        self.mock_environ['FOUNDATIONS_REDIS_PASSWORD'] = self.redis_password
-
-        self._environment.write_environment(self._file)
-        self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password)], self._written_lines)
-
-    def test_write_environment_adds_redis_password_if_any_and_any_other_run_script_environment_stuff(self):
-        self._config['run_script_environment'] = {'log level': 'DEBUG THIS'}
-        self.mock_environ['FOUNDATIONS_REDIS_PASSWORD'] = self.redis_password
-
-        self._environment.write_environment(self._file)
-        self.assertEqual(['export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self.redis_password), "export 'log level'='DEBUG THIS'\n"], self._written_lines)
 
     def test_write_environment_flushes_file(self):
         self._environment.write_environment(self._file)

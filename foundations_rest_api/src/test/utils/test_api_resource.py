@@ -55,6 +55,12 @@ class TestAPIResource(Spec):
             response = client.get(self.uri_path)
             self.assertEqual(self._json_response(response), 'some data')
     
+    def test_get_returns_show(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithShow)
+        with self._test_client() as client:
+            response = client.get(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some specific data')
+
     def test_delete_returns_delete(self):
         klass = api_resource(self.uri_path)(APIResourceMocks.MockWithDelete)
         with self._test_client() as client:
@@ -78,6 +84,11 @@ class TestAPIResource(Spec):
             response = client.post(self.uri_path)
             self.assertEqual(self._json_response(response), 'some data')
         
+    def test_put_returns_update(self):
+        klass = api_resource(self.uri_path)(APIResourceMocks.MockWithUpdate)
+        with self._test_client() as client:
+            response = client.put(self.uri_path)
+            self.assertEqual(self._json_response(response), 'some updated data')
     
     def test_post_sets_params(self):
         def _callback(mock_instance):

@@ -33,21 +33,6 @@ class TestTensorboardEndpoint(Spec):
         return config_manager['redis_url']
     
     @let
-    def config(self):
-        return {
-            'results_config': {
-                'redis_end_point': self.redis_url
-            },
-            'ssh_config': {
-                'host': self.scheduler_host,
-                'port': 31222,
-                'code_path': '/jobs',
-                'key_path': '~/.ssh/id_foundations_scheduler',
-                'user': 'job-uploader'
-            }
-        }
-
-    @let
     def deployment(self) -> foundations.DeploymentWrapper:
         return foundations.submit(
             project_name='test', 
@@ -67,11 +52,9 @@ class TestTensorboardEndpoint(Spec):
     @set_up
     def set_up(self):
         import yaml
-        from acceptance.cleanup import cleanup
+        from scheduler_acceptance.cleanup import cleanup
         cleanup()
 
-        with open('scheduler_acceptance/fixtures/tensorboard_job/config/submission/scheduler.config.yaml', 'w+') as file:
-            file.write(yaml.dump(self.config))
         self.deployment.wait_for_deployment_to_complete()
 
     def test_upload_to_tensorflow(self):

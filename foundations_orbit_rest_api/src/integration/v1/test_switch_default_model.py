@@ -4,23 +4,33 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Susan Davis <s.davis@dessa.com>, 11 2018
 """
-
+import json
+import foundations_contrib
+import subprocess
 from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
+from os.path import abspath
 
-@skip('not implemented')
 class TestSwitchDefaultModel(Spec):
+    _contrib_source_root = abspath('../../foundations_contrib/src')
     client = app_manager.app().test_client()
-    base_url = '/api/v1/projects/'
+    base_url = '/api/v1/projects'
+    project_name = 'test-project'
+    
+    @set_up_class
+    def set_up_class(klass):
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=klass._contrib_source_root)
+
+    @tear_down_class
+    def tear_down_class(klass):
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=klass._contrib_source_root)
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
     @let
     def redis(self):
         from foundations_contrib.global_state import redis_connection
         return redis_connection
-
-    @let 
-    def project_name(self):
-        return 'test_project'
 
     @let
     def first_model_name(self):
@@ -33,6 +43,10 @@ class TestSwitchDefaultModel(Spec):
     @let
     def project_url(self):
         return f'{self.base_url}/{self.project_name}'
+
+    @let
+    def namespace(self):
+        return 'foundations-scheduler-test'
 
     @let
     def redis(self):
@@ -81,54 +95,71 @@ class TestSwitchDefaultModel(Spec):
     def set_up(self):
         self.redis.flushall()
 
-    @tear_down
-    def tear_down(self):
-        import os
-
     def test_put_request_changes_default_model(self):
-        # create at least two models (manually)
-        self._create_project('test_project')
-
-        self._create_model_information('model', self.model_information)
-        self._create_model_information('again_model', self.model_again_information)
-
-        # perform the put request with the details of the change
-        request_body = {'default_model': 'again_model'}
-        self._put_to_route(request_body)
+        self._create_two_models_and_change_default()
 
         # check with redis that change was completed successfully
-        models = self._get_from_route()
-        again_model = models[0]
-        again_model_default = again_model['default']
-        model = models[1]
-        model_default = model['default']
-        
+        response = self._get_from_route()
+        models = response['models']
+        for model in models:
+            if model['model_name'] == 'model':
+                first_model_default = model['default']
+            if model['model_name'] == 'again-model':
+                again_model_default = model['default']
+
         self.assertEqual(True, again_model_default)
-        self.assertEqual(False, model_default)
+        self.assertEqual(False, first_model_default)
+
+    def test_put_request_change_default_model_in_the_ingress(self):
+        import yaml, json
+        
+
+        self._create_two_models_and_change_default()
+
+        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress model-service-selection -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
+        ingress_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
+        ingress_resource = json.loads(ingress_configuration)
+        ingress_resource_paths = ingress_resource['spec']['rules'][0]['http']['paths']
+
+        for route in ingress_resource_paths:
+            if route['path'] == f'/projects/{self.project_name}/(.*)':
+                self.assertEqual(route['backend']['serviceName'], f'foundations-model-package-{self.project_name}-again-model-service')
+                return
+
+        self.fail()
 
     def _create_project(self, project_name):
         import time
         self.redis.execute_command('ZADD', 'projects', 'NX', time.time(), project_name)
 
-    def _create_model_information(self, model_name, model_information):
+    def _create_model_information(self, project_name, model_name, model_information):
         import pickle
 
-        hash_map_key = 'projects:test_project:model_listing'
+        hash_map_key = f'projects:{project_name}:model_listing'
         serialized_model_information = pickle.dumps(model_information)
         self.redis.hmset(hash_map_key, {model_name: serialized_model_information})
+        
+        self._deploy_model(project_name, model_name)
+
+    def _deploy_model(self, project_name, model_name):
+        subprocess.run(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {project_name} {model_name}'.split(), cwd=self._contrib_source_root)
 
     def _put_to_route(self, body):
-        import json
-
         response = self.client.put(self.project_url, json=body)
         response_data = response.data.decode()
         return json.loads(response_data)
 
     def _get_from_route(self):
-        import json
-
         url = f'{self.project_url}/model_listing'
-
         response = self.client.get(url)
         response_data = response.data.decode()
         return json.loads(response_data)
+    
+    def _create_two_models_and_change_default(self):
+        self._create_project(self.project_name)
+
+        self._create_model_information(self.project_name, 'model', self.model_information)
+        self._create_model_information(self.project_name, 'again-model', self.model_again_information)
+
+        request_body = {'default_model': 'again-model'}
+        self._put_to_route(request_body)

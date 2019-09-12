@@ -13,8 +13,6 @@ class ScriptEnvironment(object):
     def write_environment(self, file):
         from pipes import quote
         import os
-        if self._redis_password_is_set():
-            file.write('export FOUNDATIONS_REDIS_PASSWORD={}\n'.format(self._redis_password()))
 
         for name, value in self._run_script_environment().items():
             file.write('export {}={}\n'.format(quote(name), quote(str(value))))
@@ -27,10 +25,3 @@ class ScriptEnvironment(object):
     def _enable_stages(self):
         run_script_environment = self._run_script_environment()
         return run_script_environment.get('enable_stages', False)
-
-    def _redis_password_is_set(self):
-        return self._redis_password() is not None
-
-    def _redis_password(self):
-        import os
-        return os.environ.get('FOUNDATIONS_REDIS_PASSWORD')
