@@ -5,7 +5,5 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_schema_checker import TestSchemaChecker
-from .test_distribution_checker import TestDistributionChecker
-from .test_row_count_checker import TestRowCountChecker
-from .test_l_infinity import TestLInfinity
+def l_infinity(*args):
+    raise ValueError('cannot take l_infinity distance of empty arrays')
