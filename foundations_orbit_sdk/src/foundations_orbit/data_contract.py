@@ -66,7 +66,7 @@ class DataContract(object):
             validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
+            validation_report['row_cnt_diff'] = _RowCountChecker(self._number_of_rows).row_count_difference(row_count_to_check)
 
         if self.options.check_distribution:
             validation_report['dist_check_results'] = DistributionChecker(self.options.distribution).distribution_check_results(columns_to_validate)
@@ -106,3 +106,11 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
+
+class _RowCountChecker(object):
+
+    def __init__(self, reference_row_count):
+        self._number_of_rows = reference_row_count
+
+    def row_count_difference(self, row_count_to_check):
+        return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
