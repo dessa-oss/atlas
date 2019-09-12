@@ -31,6 +31,9 @@ def _with_normalized_type(value):
     if isinstance(value, numpy.int32) or isinstance(value, numpy.int64):
         return int(value)
 
+    if isinstance(value, numpy.float32) or isinstance(value, numpy.float64):
+        return float(value)
+
     return value
 
 def _existing_metrics_from_redis(redis_key, metric_name):
