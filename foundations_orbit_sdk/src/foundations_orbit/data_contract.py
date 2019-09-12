@@ -74,9 +74,6 @@ class DataContract(object):
 
         return validation_report
 
-    def _row_count_difference(self, row_count_to_check):
-        return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
-
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
 
