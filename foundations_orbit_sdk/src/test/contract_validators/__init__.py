@@ -6,3 +6,4 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from .test_schema_checker import TestSchemaChecker
+from .test_distribution_checker import TestDistributionChecker

@@ -56,6 +56,7 @@ class DataContract(object):
 
     def validate(self, dataframe_to_validate, *args):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
 
         validation_report = {}
 
@@ -68,7 +69,7 @@ class DataContract(object):
             validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
 
         if self.options.check_distribution:
-            validation_report['dist_check_results'] = _DistributionChecker(self.options.distribution).distribution_check_results(columns_to_validate)
+            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution).distribution_check_results(columns_to_validate)
 
         return validation_report
 
@@ -105,34 +106,3 @@ class DataContract(object):
         number_of_rows = len(dataframe)
 
         return column_names, column_types, number_of_rows
-
-class _DistributionChecker(object):
-
-    def __init__(self, distribution_options):
-        self._distribution_options = distribution_options
-
-    def distribution_check_results(self, columns_to_validate):
-        import numpy
-
-        if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
-            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
-
-        dist_check_results = {}
-
-        results_for_same_distribution = {
-            'binned_l_infinity': 0.0,
-            'binned_passed': True,
-            'special_values': {
-                numpy.nan: {
-                    'current_percentage': 0.0,
-                    'passed': True,
-                    'percentage_diff': 0.0,
-                    'ref_percentage': 0.0
-                }
-            }
-        }
-
-        for column_name in columns_to_validate:
-            dist_check_results[column_name] = results_for_same_distribution
-
-        return dist_check_results
