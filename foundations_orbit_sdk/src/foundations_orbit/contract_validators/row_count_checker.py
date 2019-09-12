@@ -5,6 +5,10 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from .test_schema_checker import TestSchemaChecker
-from .test_distribution_checker import TestDistributionChecker
-from .test_row_count_checker import TestRowCountChecker
+class RowCountChecker(object):
+
+    def __init__(self, reference_row_count):
+        self._number_of_rows = reference_row_count
+
+    def row_count_difference(self, row_count_to_check):
+        return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows

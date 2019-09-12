@@ -275,28 +275,18 @@ class TestDataContract(Spec):
         self.assertNotIn('row_cnt_diff', contract.validate(self.two_column_dataframe))
 
     def test_data_contract_validate_number_of_rows_if_option_set(self):
+        mock_row_count_check_results = Mock()
+        mock_row_count_checker_class = self.patch('foundations_orbit.contract_validators.row_count_checker.RowCountChecker', ConditionalReturn())
+        mock_row_count_checker = Mock()
+
+        mock_row_count_checker_class.return_when(mock_row_count_checker, 1)
+        mock_row_count_checker.row_count_difference = ConditionalReturn()
+        mock_row_count_checker.row_count_difference.return_when(mock_row_count_check_results, 1)
+
         contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe)
 
-        self.assertEqual(0.0, validation_report['row_cnt_diff'])
-
-    def test_data_contract_validate_number_of_rows_different_dataframe_lengths(self):
-        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe_two_rows)
-
-        self.assertEqual(1.0, validation_report['row_cnt_diff'])
-
-    def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again(self):
-        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
-        validation_report = contract.validate(self.one_column_dataframe_four_rows)
-
-        self.assertEqual(3.0, validation_report['row_cnt_diff'])
-
-    def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again_again(self):
-        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe_two_rows)
-        validation_report = contract.validate(self.one_column_dataframe)
-
-        self.assertEqual(0.5, validation_report['row_cnt_diff'])
+        self.assertEqual(mock_row_count_check_results, validation_report['row_cnt_diff'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
