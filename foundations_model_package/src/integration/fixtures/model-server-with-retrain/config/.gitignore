@@ -1,1 +1,2 @@
-*.config.yaml
+local.config.yaml
+scheduler.config.yaml
