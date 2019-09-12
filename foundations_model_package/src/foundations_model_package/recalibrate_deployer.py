@@ -1,5 +1,5 @@
 
-class RetrainDeployer(object):
+class RecalibrateDeployer(object):
 
     def __init__(self, job_id, project_name, model_name, project_directory):
         self.job_id = job_id

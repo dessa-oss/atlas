@@ -30,13 +30,13 @@ class TestCanDeployModelServer(Spec, DeployModelMixin):
     def _is_running_on_jenkins():
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
-    # @set_up_class
-    # def set_up_class(klass):
-    #     if not klass._is_running_on_jenkins():
-    #         return_code = subprocess.call(['bash', '-c', './build.sh'])
+    @set_up_class
+    def set_up_class(klass):
+        if not klass._is_running_on_jenkins():
+            return_code = subprocess.call(['bash', '-c', './build.sh'])
 
-    #         if return_code != 0:
-    #             raise AssertionError('docker build for model package failed :(')
+            if return_code != 0:
+                raise AssertionError('docker build for model package failed :(')
 
     @set_up
     def set_up(self):
@@ -44,7 +44,7 @@ class TestCanDeployModelServer(Spec, DeployModelMixin):
 
     @tear_down
     def tear_down(self):
-        self._tear_down_environment()
+        self._tear_down_environment(self.project_name, models=[self.model_name])
 
     def test_can_deploy_server(self):
         try:
@@ -85,21 +85,21 @@ class TestCanDeployModelServer(Spec, DeployModelMixin):
             self.fail('Interrupted by user')
 
     def _try_post_to_root_endpoint(self):
-        return self._try_post('/', {'a': 1, 'b': 2})
+        return self._try_post('', {'a': 1, 'b': 2})
 
     def _try_post_to_predict_endpoint(self):
-        return self._try_post('/predict', {'a': 20, 'b': 30})
+        return self._try_post('predict', {'a': 20, 'b': 30})
 
     def _try_post_to_evaluate_endpoint(self, eval_period):
-        response = self._try_post('/evaluate', {'eval_period': eval_period})
+        response = self._try_post('evaluate', {'eval_period': eval_period})
 
         if response is None:
-            self.fail('post to /evaluate failed :(')
+            self.fail('post to evaluate failed :(')
 
     def _try_post(self, endpoint, dict_payload):
         import requests
 
         try:
-            return requests.post(f'http://localhost:5000{endpoint}', json=dict_payload).json()
+            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
         except:
             return None

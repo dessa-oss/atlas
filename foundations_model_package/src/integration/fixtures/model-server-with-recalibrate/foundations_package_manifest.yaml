@@ -2,6 +2,6 @@ entrypoints:
   predict:
     module: project_code.predictor
     function: predict
-  retrain:
-    module: project_code.retraining
-    function: retrain
+  recalibrate:
+    module: project_code.recalibrating
+    function: recalibrate

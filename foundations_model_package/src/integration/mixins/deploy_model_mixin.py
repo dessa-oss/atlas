@@ -14,6 +14,7 @@ class DeployModelMixin(object):
 
     sleep_time = 2
     max_sleep_time = 60
+    port = 5000
 
     def _set_up_environment(self):
         from foundations_contrib.global_state import config_manager, redis_connection
@@ -26,15 +27,19 @@ class DeployModelMixin(object):
 
         self.redis_connection = redis_connection
 
-    def _tear_down_environment(self):
+    def _tear_down_environment(self, project_name, models):
         from foundations_contrib.global_state import config_manager
 
-        if self._proxy_process is not None:
-            self._proxy_process.terminate()
+        self._tear_down_proxy()
 
-        self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
+        for model in models:
+            self._tear_down_model_package(project_name, model, self.job_id)
 
         config_manager.reset()
+
+    def _tear_down_proxy(self):
+        if self._proxy_process is not None:
+            self._proxy_process.terminate()
 
     def _set_up_in_test(self, job_directory):
         self._generate_yaml_config_file(job_directory)
@@ -45,7 +50,7 @@ class DeployModelMixin(object):
         
     def _spin_up_model_package_and_proxy(self, project_name, model_name):
         self._deploy_model_package(project_name, model_name, self.job_id)
-        self._proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.model_name}-service 5000:80'])
+        self._proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.model_name}-service {self.port}:80'])
 
         self._wait_for_server(self.project_name, self.model_name)
 
@@ -54,7 +59,7 @@ class DeployModelMixin(object):
 
         if self.deployment is None:
             foundations.set_job_resources(num_gpus=0)
-            self.deployment = foundations.submit(project_name=self.project_name, entrypoint='project_code.driver', job_dir=f'integration/fixtures/{job_directory}', params=None)
+            self.deployment = foundations.submit(project_name=self.project_name, entrypoint='project_code/driver.py', job_dir=f'integration/fixtures/{job_directory}', params=None)
         return self.deployment
 
     def _deploy_model_package(self, project_name, model_name, job_id):
@@ -113,7 +118,7 @@ class DeployModelMixin(object):
 
         while time.time() - start_time < self.max_sleep_time:
             try:
-                requests.get('http://localhost:5000')
+                requests.get(f'http://localhost:{self.port}')
                 return
             except:
                 time.sleep(self.sleep_time)

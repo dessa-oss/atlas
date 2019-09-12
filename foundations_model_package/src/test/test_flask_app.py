@@ -50,5 +50,5 @@ class TestFlaskApp(Spec):
     def test_flask_app_adds_evaluate_resource_to_api(self):
         self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_evaluate_resource, '/evaluate')
 
-    def test_flask_app_adds_retrain_resource_to_api(self):
-        self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_retrain_resource, '/retrain')
+    def test_flask_app_adds_recalibreate_resource_to_api(self):
+        self.mock_flask_api_instance.add_resource.assert_any_call(self.mock_retrain_resource, '/recalibrate')
