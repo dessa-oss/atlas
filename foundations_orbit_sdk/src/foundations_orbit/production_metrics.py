@@ -28,18 +28,9 @@ def _metric_pair_with_normalized_type(key_value_pair):
 def _with_normalized_type(value):
     import numpy
 
-    if isinstance(value, numpy.float32) or isinstance(value, numpy.float64):
-        return float(value)
-
-    if isinstance(value, float):
-        return value
-
     try:
-        return int(value)
-    except (ValueError, TypeError):
-        pass
-
-    try:
+        if int(value) == float(value):
+            return int(value)
         return float(value)
     except (ValueError, TypeError):
         pass
