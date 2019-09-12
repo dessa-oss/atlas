@@ -26,16 +26,21 @@ def _metric_pair_with_normalized_type(key_value_pair):
     return (column_name, _with_normalized_type(column_value))
 
 def _with_normalized_type(value):
-    import numpy
+    as_int = _try_cast(value, int)
+    as_float = _try_cast(value, float)
 
+    if as_int is None:
+        return as_float if as_float is not None else value
+    elif as_float is None:
+        return as_int
+    else:
+        return as_int if as_int == as_float else as_float
+
+def _try_cast(value, target_class):
     try:
-        if int(value) == float(value):
-            return int(value)
-        return float(value)
+        return target_class(value)
     except (ValueError, TypeError):
-        pass
-
-    return value
+        return None
 
 def _existing_metrics_from_redis(redis_key, metric_name):
     import pickle
