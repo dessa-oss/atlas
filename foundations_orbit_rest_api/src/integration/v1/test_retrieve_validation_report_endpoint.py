@@ -53,7 +53,6 @@ class TestRetrieveValidationReportEndpoint(Spec):
         self.assertEqual(404, self._post_status_code_from_response(response))
         self.assertEqual(expected_response_data, self._post_data_from_response(response))
 
-    @skip('not implemented')
     def test_retrieve_validation_report_returns_report_if_exists_in_redis(self):
         import pickle
 

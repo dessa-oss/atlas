@@ -28,8 +28,17 @@ class TestValidationReportsController(Spec):
         return self.faker.date()
 
     @let
+    def num_rows(self):
+        return self.faker.random.randint(1, 1000)
+
+    @let
     def controller(self):
         return ValidationReportsController()
+
+    @let_now
+    def redis_connection(self):
+        import fakeredis
+        return self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @set_up
     def set_up(self):
@@ -54,3 +63,39 @@ class TestValidationReportsController(Spec):
         }
 
         self.assertEqual(expected_response_data, response.as_json())
+
+    def test_post_returns_200_as_response_if_report_in_redis(self):
+        expected_response_data = {
+            'schema_check': True,
+            'schema_information': {
+                'rows': self.num_rows
+            }
+        }
+
+        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period, expected_response_data)
+        response = self.controller.post()
+
+        self.assertEqual(200, response.status())
+
+    def test_post_returns_report_if_report_in_redis(self):
+        expected_response_data = {
+            'schema_check': True,
+            'schema_information': {
+                'rows': self.num_rows
+            }
+        }
+
+        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period, expected_response_data)
+        response = self.controller.post()
+
+        self.assertEqual(expected_response_data, response.as_json())
+
+    @staticmethod
+    def _key_to_write(project_name, model_package, data_contract):
+        return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+
+    def _register_report(self, project_name, model_package, data_contract, inference_period, validation_report):
+        import pickle
+
+        key_to_write = self._key_to_write(project_name, model_package, data_contract)
+        self.redis_connection.hset(key_to_write, inference_period, pickle.dumps(validation_report))

@@ -8,10 +8,25 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class ValidationReport(object):
     
     @staticmethod
-    def get(**kwargs):
+    def get(project_name=None, listing_object=None):
         from foundations_core_rest_api_components.lazy_result import LazyResult
-        return LazyResult(ValidationReport._get_internal)
+        return LazyResult(lambda: ValidationReport._get_internal(project_name, listing_object))
 
     @staticmethod
-    def _get_internal():
-        return None
+    def _get_internal(project_name, listing_object):
+        import pickle
+        from foundations_contrib.global_state import redis_connection
+
+        attributes = listing_object.attributes        
+
+        inference_period = attributes['inference_period']
+        model_package = attributes['model_package']
+        data_contract = attributes['data_contract']
+
+        redis_key = f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+        
+        report = redis_connection.hget(redis_key, inference_period)
+
+        if report is None:
+            return None
+        return pickle.loads(report)

@@ -33,6 +33,10 @@ class TestValidationReport(Spec):
     def inference_period(self):
         return self.faker.date()
 
+    @let
+    def num_rows(self):
+        return self.faker.random.randint(1, 1000)
+
     @set_up
     def set_up(self):
         self.redis_connection.flushall()
@@ -42,4 +46,30 @@ class TestValidationReport(Spec):
         promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
         self.assertIsNone(promise.evaluate())
 
+    def test_validation_report_get_returns_report_if_report_in_redis(self):
+        import pickle
+
+        expected_result = {
+            'schema_check': True,
+            'schema_information': {
+                'rows': self.num_rows
+            }
+        }
+
+        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period, expected_result)
+
+        listing_object = ValidationReportListing(inference_period=self.inference_period, model_package=self.model_package, data_contract=self.data_contract)
+        promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
+
+        self.assertEqual(expected_result, promise.evaluate())
+
+    @staticmethod
+    def _key_to_write(project_name, model_package, data_contract):
+        return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+
+    def _register_report(self, project_name, model_package, data_contract, inference_period, validation_report):
+        import pickle
+
+        key_to_write = self._key_to_write(project_name, model_package, data_contract)
+        self.redis_connection.hset(key_to_write, inference_period, pickle.dumps(validation_report))
     
