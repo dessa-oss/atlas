@@ -9,10 +9,13 @@ def track_production_metrics(metric_name, metric_values):
     _track_production_metrics_for_job(_redis_key(), metric_name, metric_values)
 
 def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
+    import functools
     import pickle
     from foundations_contrib.global_state import redis_connection
 
-    metrics_list = list(map(_metric_pair_with_normalized_type, metric_values.items()))
+    type_normalizer = functools.partial(_metric_pair_with_normalized_type, metric_name)
+
+    metrics_list = list(map(type_normalizer, metric_values.items()))
 
     existing_metrics = _existing_metrics_from_redis(redis_key, metric_name)
     metrics_to_store = existing_metrics + metrics_list
@@ -21,16 +24,22 @@ def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
 
     redis_connection.hmset(redis_key, metrics)
 
-def _metric_pair_with_normalized_type(key_value_pair):
+def _metric_pair_with_normalized_type(metric_name, key_value_pair):
     column_name, column_value = key_value_pair
-    return (column_name, _with_normalized_type(column_value))
+    normalized_value = _with_normalized_type(column_value)
+
+    if normalized_value is None:
+        error_message = f'cannot log metric `{metric_name}` with column name `{column_name}` of type `{type(column_value)}` - must be able to cast to int or float'
+        raise TypeError(error_message)
+
+    return (column_name, normalized_value)
 
 def _with_normalized_type(value):
     as_int = _try_cast(value, int)
     as_float = _try_cast(value, float)
 
     if as_int is None:
-        return as_float if as_float is not None else value
+        return as_float if as_float is not None else None
     elif as_float is None:
         return as_int
     else:

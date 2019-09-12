@@ -219,6 +219,11 @@ class TestTrackProductionMetrics(Spec):
 
         self.assertEqual(metric_value, self.column_value)
 
+    def test_track_production_metrics_throws_type_error_if_cannot_cast_to_float_or_int(self):
+        with self.assertRaises(TypeError) as ex:
+            track_production_metrics(self.metric_name, {self.column_name: self.dataframe})
+        self.assertIn(f'cannot log metric `{self.metric_name}` with column name `{self.column_name}` of type `{type(self.dataframe)}` - must be able to cast to int or float', ex.exception.args)
+
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
         return {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
