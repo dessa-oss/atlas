@@ -14,9 +14,8 @@ def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
 
     metrics_list = []
 
-    for column_name, column_value in metric_values.items():
-        column_value = _with_normalized_type(column_value)
-        metrics_list.append((column_name, column_value))
+    for key_value_pair in metric_values.items():
+        metrics_list.append(_metric_pair_with_normalized_type(key_value_pair))
 
     existing_metrics = _existing_metrics_from_redis(redis_key, metric_name)
     metrics_to_store = existing_metrics + metrics_list
@@ -24,6 +23,10 @@ def _track_production_metrics_for_job(redis_key, metric_name, metric_values):
     metrics = {metric_name: pickle.dumps(metrics_to_store)}
 
     redis_connection.hmset(redis_key, metrics)
+
+def _metric_pair_with_normalized_type(key_value_pair):
+    column_name, column_value = key_value_pair
+    return (column_name, _with_normalized_type(column_value))
 
 def _with_normalized_type(value):
     import numpy
