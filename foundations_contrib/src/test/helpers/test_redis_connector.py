@@ -48,34 +48,6 @@ class TestRedisConnector(unittest.TestCase):
         result = self._connector()
         self.assertEqual(self._connection, result)
 
-    def test_with_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
-
-        self._connector()
-        self._connection_callback.assert_called_once_with(
-            'redis://:hanahana@localhost:6379')
-
-    def test_with_password_with_different_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'camelcamel'
-
-        self._connector()
-        self._connection_callback.assert_called_once_with(
-            'redis://:camelcamel@localhost:6379')
-
-    def test_call_calls_callback_with_connection_string_with_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
-
-        self._config_manager['redis_url'] = 'redis://lou:7733'
-        self._connector()
-        self._connection_callback.assert_called_once_with('redis://:hanahana@lou:7733')
-
-    def test_call_calls_callback_with_connection_string_with_password_different_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'camelcamel'
-
-        self._config_manager['redis_url'] = 'redis://lou:7733'
-        self._connector()
-        self._connection_callback.assert_called_once_with('redis://:camelcamel@lou:7733')
-
     def test_call_raises_exception_when_a_connection_error_happens(self):
         self._connection.ping.side_effect = self._raise_connection_error
         with self.assertRaises(ConnectionError) as error_context:
@@ -113,24 +85,3 @@ class TestRedisConnector(unittest.TestCase):
         self._config_manager['redis_url'] = 'unix:///var/run/redis.sock?db=0'
         self._connector()
         self._connection_callback.assert_called_once_with('unix://:@/var/run/redis.sock?db=0')
-
-    def test_call_calls_callback_with_unix_connection_string_with_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
-
-        self._config_manager['redis_url'] = 'unix:///var/run/redis.sock?db=0'
-        self._connector()
-        self._connection_callback.assert_called_once_with('unix://:hanahana@/var/run/redis.sock?db=0')
-
-    def test_call_calls_callback_with_different_unix_connection_string_with_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'hanahana'
-
-        self._config_manager['redis_url'] = 'unix:///run/linux/sockets/redis5.sock?db=0'
-        self._connector()
-        self._connection_callback.assert_called_once_with('unix://:hanahana@/run/linux/sockets/redis5.sock?db=0')
-
-    def test_call_calls_callback_with_unix_connection_string_with_different_password(self):
-        self._environment['FOUNDATIONS_REDIS_PASSWORD'] = 'camelcamel'
-
-        self._config_manager['redis_url'] = 'unix:///run/linux/sockets/redis5.sock?db=0'
-        self._connector()
-        self._connection_callback.assert_called_once_with('unix://:camelcamel@/run/linux/sockets/redis5.sock?db=0')

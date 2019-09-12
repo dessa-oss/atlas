@@ -15,21 +15,28 @@ class APIResourceBuilder(object):
         self._base_path = base_path
         self._api_actions = {}
 
-    def _load_index_route(self):
+    def _load_get_route(self):
         if hasattr(self._klass, 'index'):
-            self._api_actions['get'] = self._get_api_index()
+            self._api_actions['get'] = self._api_get('index')
+        if hasattr(self._klass, 'show'):
+            self._api_actions['get'] = self._api_get('show')
     
     def _load_post_route(self):
         if hasattr(self._klass, 'post'):
-            self._api_actions['post'] = self._post_api_create()
+            self._api_actions['post'] = self._create_or_update_api('post')
+    
+    def _load_put_route(self):
+        if hasattr(self._klass, 'update'):
+            self._api_actions['put'] = self._create_or_update_api('update')
     
     def _load_delete_route(self):
         if hasattr(self._klass, 'delete'):
             self._api_actions['delete'] = self._delete_api_create()
     
     def _create_action(self):
-        self._load_index_route()
+        self._load_get_route()
         self._load_post_route()
+        self._load_put_route()
         self._load_delete_route()
         resource_class = self._create_api_resource()
         self._add_resource(resource_class)
@@ -44,27 +51,29 @@ class APIResourceBuilder(object):
         class_name = '_%08x' % random.getrandbits(32)
         return type(class_name, (Resource,), self._api_actions)
 
-    def _get_api_index(self):
+    def _api_get(self, method_name):
         def _get(resource_self, **kwargs):
             instance = self._klass()
             instance.params = self._api_params(kwargs)
+            method = getattr(instance, method_name)
 
-            response = instance.index()
+            response = method()
             if not Session.is_authorized(request.cookies):
                 return 'Unauthorized', 401
             return response.as_json(), response.status()
             
         return _get
     
-    def _post_api_create(self):
+    def _create_or_update_api(self, method_name):
         def _post(resource_self, **kwargs):
             instance = self._klass()
             instance.params = dict(request.form)
             if request.json is not None:
                 instance.params.update(request.json)
             instance.params.update(kwargs)
+            method = getattr(instance, method_name)
 
-            response = instance.post()
+            response = method()
             cookie = None
             if response.cookie():
                 cookie_key, cookie_value = list(response.cookie().items())[0]

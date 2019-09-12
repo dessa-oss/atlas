@@ -10,11 +10,6 @@ from foundations_spec import *
 from foundations import log_param
 
 class TestLogParam(Spec):
-    
-    @set_up
-    def set_up(self):
-        from foundations_contrib.global_state import redis_connection
-        redis_connection.flushall()
 
     @tear_down
     def tear_down(self):

@@ -14,6 +14,8 @@ class TestSubmit(Spec):
 
     random_parameter = let_mock()
     mock_submit = let_patch_mock('foundations_contrib.cli.job_submission.submit_job.submit')
+    mock_push_state = let_patch_mock('foundations_contrib.global_state.push_state')
+    mock_pop_state = let_patch_mock('foundations_contrib.global_state.pop_state')
 
     @set_up
     def set_up(self):
@@ -59,6 +61,23 @@ class TestSubmit(Spec):
     def test_submit_is_accessible_globally(self):
         import foundations
         self.assertEqual(submit, foundations.submit)
+
+    def test_submit_pushes_global_state(self):
+        submit()
+        self.mock_push_state.assert_called()
+
+    def test_submit_pops_global_state(self):
+        submit()
+        self.mock_pop_state.assert_called()
+
+    def test_submit_pops_global_state_even_when_an_error_happens(self):
+        self.mock_submit.side_effect = self._die
+        with self.assertRaises(Exception):
+            submit()
+        self.mock_pop_state.assert_called()
+
+    def _die(self, *args):
+        raise Exception('It died')
 
     def _set_value(self, arguments):
         self._arguments = arguments

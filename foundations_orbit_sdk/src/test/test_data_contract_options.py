@@ -13,19 +13,19 @@ class TestDataContractOptions(Spec):
 
     @let
     def random_int(self):
-        return self.faker.random.randint(0, 100)
+        return self.faker.random.randint(2, 100)
 
     @let
     def random_int_2(self):
-        return self.faker.random.randint(0, 100)
+        return self.faker.random.randint(101, 200)
 
     @let
     def random_int_3(self):
-        return self.faker.random.randint(0, 100)
+        return self.faker.random.randint(201, 300)
 
     @let
     def random_int_4(self):
-        return self.faker.random.randint(0, 100)
+        return self.faker.random.randint(301, 400)
 
     def test_data_contract_options_has_max_bins(self):
         self._test_data_contract_options_has_attribute('max_bins')

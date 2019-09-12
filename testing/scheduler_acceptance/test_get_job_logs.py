@@ -81,14 +81,8 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
 
     def test_get_logs_for_completed_job(self):
         import subprocess
-        from scheduler_acceptance.fixtures.stages import print_message
 
-        message = 'the quick brown fox jumps over the lazy dog'
-
-        print_message = foundations.create_stage(print_message)
-        stage_print_message = print_message(message)
-
-        job = stage_print_message.run()
+        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0)
         job.wait_for_deployment_to_complete()
         completed_job_id = job.job_name()
         self.assertEqual('completed', job.get_job_status())
@@ -99,21 +93,13 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         cli_stdout = cli_stdout.decode().rstrip('\n')
 
         self.assertEqual(0, cli_result.returncode)
-        self.assertIn(message, cli_stdout)
+        self.assertIn('the quick brown fox jumps over the lazy dog', cli_stdout)
 
     def test_get_logs_for_running_job(self):
         import subprocess
-        from scheduler_acceptance.fixtures.stages import print_message, wait
         from time import sleep
 
-        message = 'the quick brown fox jumps over the lazy dog'
-
-        print_message = foundations.create_stage(print_message)
-        wait = foundations.create_stage(wait)
-        stage_print_message = print_message(message)
-        stage_wait = wait(stage_print_message)
-
-        job = stage_wait.run()
+        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', entrypoint='main_with_wait.py', num_gpus=0)
         self._wait_for_job_to_run(job)
         running_job_id = job.job_name()
         sleep(60)
@@ -125,7 +111,7 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
         cli_stdout = cli_stdout.decode().rstrip('\n')
 
         self.assertEqual(0, cli_result.returncode)
-        self.assertIn(message, cli_stdout)
+        self.assertIn('the quick brown fox jumps over the lazy dog', cli_stdout)
 
     def _command_to_run_job(self, job_id):
         return ['python', '-m' 'foundations', 'get', 'logs', '--job_id', job_id, '--env', 'local_scheduler']

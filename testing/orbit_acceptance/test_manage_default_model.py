@@ -40,8 +40,6 @@ class TestManageDefaultModel(Spec):
     def set_up(self):
         self.config_file_path = './orbit_acceptance/fixtures/config/local.config.yaml'
         self._generate_yaml_config_file()
-        from foundations_contrib.global_state import redis_connection
-        redis_connection.flushall()
 
     @tear_down
     def tear_down(self):

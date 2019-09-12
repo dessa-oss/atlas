@@ -39,6 +39,24 @@ class APIResourceMocks(object):
             def _delete():
                 return 'some data'
             return Response('Mock', LazyResult(_delete))
+    
+    class MockWithPut(object):
+        def put(self):
+            from foundations_core_rest_api_components.lazy_result import LazyResult
+            from foundations_core_rest_api_components.response import Response
+            def _put():
+                return 'some put data'
+            return Response('Mock', LazyResult(_put))
+
+    class ParamsMockWithPutAndStatus(object):
+        status_code = -1
+
+        def put(self):
+            from foundations_core_rest_api_components.lazy_result import LazyResult
+            from foundations_core_rest_api_components.response import Response
+            def _put():
+                return self.params
+            return Response('Mock', LazyResult(_put), status=self.status_code)
 
     class MockWithDeleteAndStatus(object):
         def delete(self):

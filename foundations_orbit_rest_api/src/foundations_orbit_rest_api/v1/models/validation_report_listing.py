@@ -14,30 +14,38 @@ class ValidationReportListing(PropertyModel):
     data_contract = PropertyModel.define_property()
 
     @staticmethod
-    def all(**kwargs):
+    def all(project_name):
         from foundations_core_rest_api_components.lazy_result import LazyResult
-        return LazyResult(lambda: ValidationReportListing._all_internal())
+        return LazyResult(lambda: ValidationReportListing._all_internal(project_name))
 
     @staticmethod
-    def _all_internal():
-        keys = ValidationReportListing._all_keys()
-
-        if not keys:
-            return []
-
-        model_package, data_contract, inference_period = ValidationReportListing._parsed_information(keys)
-        return [ValidationReportListing(model_package=model_package, data_contract=data_contract, inference_period=inference_period)]
+    def _all_internal(project_name):
+        listing = list(ValidationReportListing._listing_stream(project_name))
+        listing.sort(key=ValidationReportListing._sort_key)
+        return listing
 
     @staticmethod
-    def _all_keys():
+    def _sort_key(listing_entry):
+        return (listing_entry.inference_period, listing_entry.model_package, listing_entry.data_contract)
+
+    @staticmethod
+    def _listing_stream(project_name):
+        keys = ValidationReportListing._all_keys(project_name)
+
+        for model_package, data_contract, inference_period in ValidationReportListing._parsed_information(keys):
+            yield ValidationReportListing(model_package=model_package, data_contract=data_contract, inference_period=inference_period)
+
+    @staticmethod
+    def _all_keys(project_name):
         from foundations_contrib.global_state import redis_connection
-        return redis_connection.keys()
+        return redis_connection.keys(f'projects:{project_name}:models:*:validation:*')
 
     @staticmethod
     def _parsed_information(keys):
         from foundations_contrib.global_state import redis_connection
 
-        key = keys[0]
-        date = redis_connection.hkeys(key)[0]
-        key_information = key.decode().split(':')
-        return key_information[3], key_information[5], date.decode()
+        for key in keys:
+            dates = redis_connection.hkeys(key)
+            for date in dates:
+                key_information = key.decode().split(':')
+                yield key_information[3], key_information[5], date.decode()
