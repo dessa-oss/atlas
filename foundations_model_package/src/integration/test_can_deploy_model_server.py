@@ -23,7 +23,8 @@ class TestCanDeployModelServer(Spec, DeployModelMixin):
 
     @let
     def job_id(self):
-        return self.deployment.job_name()
+        if self.deployment:
+            return self.deployment.job_name()
 
     @staticmethod
     def _is_running_on_jenkins():
