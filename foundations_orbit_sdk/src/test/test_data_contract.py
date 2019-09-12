@@ -270,57 +270,33 @@ class TestDataContract(Spec):
 
         self.assertNotIn('dist_check_results', contract.validate(self.two_column_dataframe))
 
+    def test_data_contract_validate_does_not_check_row_count_by_default(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        self.assertNotIn('row_cnt_diff', contract.validate(self.two_column_dataframe))
+
     def test_data_contract_validate_number_of_rows_if_option_set(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        contract.options.check_row_count = True
-        contract.options.check_distribution = False
+        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe)
 
-        expected_validation_report = {
-            'schema_check_results': {'passed': True},
-            'row_cnt_diff': 0.0
-        }
-
-        self.assertEqual(expected_validation_report, validation_report)
+        self.assertEqual(0.0, validation_report['row_cnt_diff'])
 
     def test_data_contract_validate_number_of_rows_different_dataframe_lengths(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        contract.options.check_row_count = True
-        contract.options.check_distribution = False
+        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe_two_rows)
 
-        expected_validation_report = {
-            'schema_check_results': {'passed': True},
-            'row_cnt_diff': 1.0
-        }
-
-        self.assertEqual(expected_validation_report, validation_report)
+        self.assertEqual(1.0, validation_report['row_cnt_diff'])
 
     def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe)
-        contract.options.check_row_count = True
-        contract.options.check_distribution = False
+        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe_four_rows)
 
-        expected_validation_report = {
-            'schema_check_results': {'passed': True},
-            'row_cnt_diff': 3.0
-        }
-
-        self.assertEqual(expected_validation_report, validation_report)
+        self.assertEqual(3.0, validation_report['row_cnt_diff'])
 
     def test_data_contract_validate_number_of_rows_different_dataframe_lengths_again_again(self):
-        contract = DataContract(self.contract_name, df=self.one_column_dataframe_two_rows)
-        contract.options.check_row_count = True
-        contract.options.check_distribution = False
+        contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe_two_rows)
         validation_report = contract.validate(self.one_column_dataframe)
 
-        expected_validation_report = {
-            'schema_check_results': {'passed': True},
-            'row_cnt_diff': 0.5
-        }
-
-        self.assertEqual(expected_validation_report, validation_report)
+        self.assertEqual(0.5, validation_report['row_cnt_diff'])
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
@@ -329,3 +305,11 @@ class TestDataContract(Spec):
     def _test_distribution_check_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, contract.options.distribution[option_name])
+
+    def _contract_from_dataframe_for_row_checking(self, dataframe):
+        contract = DataContract(self.contract_name, df=dataframe)
+        contract.options.check_row_count = True
+        contract.options.check_distribution = False
+        contract.options.check_schema = False
+
+        return contract
