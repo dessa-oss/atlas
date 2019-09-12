@@ -7,10 +7,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_model_package.job import Job
 from foundations_model_package.redis_actions import indicate_model_ran_to_redis
-from foundations_model_package.resource_factories import prediction_resource, evaluate_resource, retrain_resource
+from foundations_model_package.resource_factories import prediction_resource, evaluate_resource, recalibrate_resource
 from foundations_model_package.flask_app import flask_app
 from foundations_model_package.entrypoint_loader import EntrypointLoader
-from foundations_model_package.retrain_driver import RetrainDriver
+from foundations_model_package.recalibrate_driver import RecalibrateDriver
 
 def main():
     import os
@@ -33,19 +33,19 @@ def main():
 
     try:
         entrypoint_loader = EntrypointLoader(job)
-        retrain_function_name = entrypoint_loader.function_name('retrain')
-        retrain_module_name = entrypoint_loader.module_name('retrain')
+        recalibrate_function_name = entrypoint_loader.function_name('recalibrate')
+        recalibrate_module_name = entrypoint_loader.module_name('recalibrate')
 
-        retrain_driver = RetrainDriver(retrain_module_name, retrain_function_name)
+        recalibrate_driver = RecalibrateDriver(recalibrate_module_name, recalibrate_function_name)
             
     except Exception:
-        retrain_driver = None
+        recalibrate_driver = None
 
     root_model_serving_resource = prediction_resource(prediction_function)
     predict_model_serving_resource = prediction_resource(prediction_function)
     model_evaluation_resource = evaluate_resource(evaluate_function)
-    model_retrain_resource = retrain_resource(retrain_driver)
-    app = flask_app(root_model_serving_resource, predict_model_serving_resource, model_evaluation_resource, model_retrain_resource)
+    model_recalibrate_resource = recalibrate_resource(recalibrate_driver)
+    app = flask_app(root_model_serving_resource, predict_model_serving_resource, model_evaluation_resource, model_recalibrate_resource)
 
     indicate_model_ran_to_redis(job.id())
 

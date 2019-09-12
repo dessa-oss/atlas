@@ -11,7 +11,7 @@ from foundations_spec import *
 import foundations
 from integration.mixins.deploy_model_mixin import DeployModelMixin
 
-@skip('not implemented')
+@skip('Not Implemented')
 class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
     @let
@@ -47,9 +47,9 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         from foundations_contrib.global_state import config_manager
         self._set_up_environment()
 
-    @tear_down
-    def tear_down(self):
-        self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
+    # @tear_down
+    # def tear_down(self):
+    #     self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
     def test_can_recalibrate_and_redeploy_server(self):
         import time
@@ -62,6 +62,7 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
             # send post request to perform the recalibrate operatoin
             recalibrate_response = self._try_post_to_recalibrate_endpoint()
+            self.assertIsNotNone(recalibrate_response)
 
             import pprint
             pprint.pprint(recalibrate_response)
