@@ -13,3 +13,6 @@ def l_infinity(reference_percentages, current_percentages):
     
     absolute_difference = numpy.abs(reference_percentages - current_percentages)
     return numpy.max(absolute_difference)
+
+def bin_values(*args):
+    pass
