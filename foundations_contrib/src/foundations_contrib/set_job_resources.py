@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_contrib.global_state import current_foundations_context
 from foundations_internal.job_resources import JobResources
 
-def set_job_resources(num_gpus=1, ram=None):
+def set_job_resources(num_gpus=0, ram=None):
     """
     Specifies the resources to run a job with. The available amount will greatly depend on what is available on the infrastrcture that the Foundations job orchestrator is setup on.
 
