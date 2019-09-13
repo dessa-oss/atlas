@@ -254,17 +254,17 @@ class JobDeployment(object):
         else:
             worker_container['runtime'] = 'runc'
 
-        for override_key in ['command', 'image', 'imagePullPolicy', 'workingDir']:
+        for override_key in ['entrypoint', 'image', 'working_dir']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
 
-        if 'args' in worker_container_overrides:
-            worker_container['command'] = worker_container_overrides['args']
+        if 'command' in worker_container_overrides:
+            worker_container['command'] = worker_container_overrides['command']
         #
         # if not has_gpus:
         #     worker_container['env'] += [{'name': 'NVIDIA_VISIBLE_DEVICES', 'value': ''}]
 
-        for override_key in ['env', 'volumes']:
+        for override_key in ['environment', 'volumes']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] += worker_container_overrides[override_key]
 
