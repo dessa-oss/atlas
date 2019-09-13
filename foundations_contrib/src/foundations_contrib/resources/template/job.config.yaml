@@ -1,5 +1,5 @@
 # Project config #
-project_name: 'my-atlas-project'
+# project_name: 'my-atlas-project'
 log_level: INFO
 
 # Worker config #
