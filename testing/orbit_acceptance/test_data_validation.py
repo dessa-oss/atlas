@@ -60,6 +60,14 @@ class TestDataValidation(Spec):
     def contract_filepath(self):
         return f'{self.model_package_dirpath}/{self.contract_name}.pkl'
 
+    @let
+    def project_name(self):
+        return self.faker.word()
+
+    @let
+    def model_name(self):
+        return self.faker.word()
+
     @set_up_class
     def set_up_class(klass):
         import numpy
@@ -74,6 +82,26 @@ class TestDataValidation(Spec):
         if path.isdir(self.model_package_dirpath):
             shutil.rmtree(self.model_package_dirpath)
         os.makedirs(self.model_package_dirpath, exist_ok=True)
+
+        self._old_project_name = os.environ.get('PROJECT_NAME')
+        self._old_model_name = os.environ.get('MODEL_NAME')
+
+        os.environ['PROJECT_NAME'] = self.project_name
+        os.environ['MODEL_NAME'] = self.model_name
+
+    @tear_down
+    def tear_down(self):
+        import os
+
+        if self._old_project_name is not None:
+            os.environ['PROJECT_NAME'] = self._old_project_name
+        elif 'PROJECT_NAME' in os.environ:
+            os.environ.pop('PROJECT_NAME')
+
+        if self._old_model_name is not None:
+            os.environ['MODEL_NAME'] = self._old_model_name
+        elif 'MODEL_NAME' in os.environ:
+            os.environ.pop('MODEL_NAME')
 
     def test_can_load_saved_data_contract(self):
         import os.path as path
@@ -206,7 +234,6 @@ class TestDataValidation(Spec):
         self.assertEqual('column datatype mismatches', schema_failure_reason)
         self.assertEqual(expected_mismatch_information, datatype_mismatch_information)
 
-    @skip
     def test_dataframe_with_nans_passes_schema_validation_and_gives_different_distribution_report(self):
         import numpy
 
@@ -246,8 +273,10 @@ class TestDataValidation(Spec):
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
 
-    @skip
+    @skip('flakey boi')
     def test_data_with_shifted_distribution_passes_schema_check_with_different_distribution_report(self):
+        self.maxDiff = None
+
         import numpy
 
         expected_distribution_report = {
@@ -285,3 +314,7 @@ class TestDataValidation(Spec):
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+
+    @skip('PLEASE PUT ME IN WHEN ACCEPTANCE TESTING THE REDIS STUFF')
+    def test_fill_me_in(self):
+        self.fail('i have not been filled in :(')
