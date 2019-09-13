@@ -14,17 +14,14 @@ class DataContract(object):
         self._contract_name = contract_name
 
         if df is None:
-            dataframe = pandas.DataFrame()
+            self._dataframe = pandas.DataFrame()
         else:
-            dataframe = df
+            self._dataframe = df
 
-        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(dataframe)
-
-        ##### PROTOTYPE CODE - REMOVE ME PLEASE
-
-        from foundations_orbit.contract_validators.prototype import create_bin_stats
-
-        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, dataframe[column_name]) for column_name in self._column_names}
+        self._column_names = None
+        self._column_types = None
+        self._number_of_rows = None
+        self._bin_stats = None
 
     @staticmethod
     def _default_options():
@@ -65,7 +62,14 @@ class DataContract(object):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         # from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
 
-        ##### PROTOTYPE CODE - please remove
+        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+
+        ##### PROTOTYPE CODE - REMOVE ME PLEASE
+
+        from foundations_orbit.contract_validators.prototype import create_bin_stats
+
+        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
+
         import datetime
         from foundations_orbit.contract_validators.prototype import distribution_check, output_for_writing, write_to_redis
 
@@ -75,6 +79,8 @@ class DataContract(object):
         validation_report = {}
 
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
+
+        ##### Prototype code section end
 
         if self.options.check_schema:
             validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
