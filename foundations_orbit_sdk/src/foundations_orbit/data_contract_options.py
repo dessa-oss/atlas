@@ -5,16 +5,15 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations_contrib.models.property_model import PropertyModel
-
-class DataContractOptions(PropertyModel):
+class DataContractOptions(object):
     
-    max_bins = PropertyModel.define_property()
-    check_schema = PropertyModel.define_property()
-    check_row_count = PropertyModel.define_property()
-    special_values = PropertyModel.define_property()
-    check_distribution = PropertyModel.define_property()
-    distribution = PropertyModel.define_property()
+    def __init__(self, max_bins=None, check_schema=None, check_row_count=None, special_values=None, check_distribution=None, distribution=None):
+        self.max_bins = max_bins
+        self.check_schema = check_schema
+        self.check_row_count = check_row_count
+        self.special_values = special_values
+        self.check_distribution = check_distribution
+        self.distribution = distribution
 
     def __eq__(self, other):
         return isinstance(other, DataContractOptions) \
