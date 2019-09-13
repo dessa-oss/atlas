@@ -22,7 +22,9 @@ class Readme extends React.Component {
 
   reload() {
     const { location } = this.props;
-    BaseActions.getFromStaging(`projects/${location.state.project.name}/description`).then((result) => {
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/description`).then((result) => {
       this.setState({
         input: result.project_description,
       });
@@ -48,7 +50,9 @@ class Readme extends React.Component {
     const { input, editMode } = this.state;
     const { location } = this.props;
     let projectDescription = { project_description: input };
-    let descriptionUrl = `projects/${location.state.project.name}/description`;
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    let descriptionUrl = `projects/${selectedProjectName}/description`;
 
     if (editMode === true) {
       BaseActions.putStaging(descriptionUrl, projectDescription).then((result) => {
@@ -102,10 +106,12 @@ class Readme extends React.Component {
 
 Readme.propTypes = {
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 Readme.defaultProps = {
   location: {},
+  match: { params: {} },
 };
 
 export default Readme;

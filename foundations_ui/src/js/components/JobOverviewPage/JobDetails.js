@@ -54,18 +54,35 @@ class JobDetails extends React.Component {
       queryStatus: 200,
       modalJobDetailsVisible: false,
       selectedJob: {},
+      tags: [],
     };
   }
 
   async componentDidMount() {
     await this.setState({ isMount: true });
     this.getJobs();
+    this.getTags();
+  }
+
+  async getTags() {
+    const { location } = this.props;
+
+    if (!location.state || !location.state.project || location.state.project === {}) {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+      this.setState({
+        tags: selectedProject.tags,
+      });
+    }
   }
 
   async getJobs() {
     const { location } = this.props;
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
 
-    const fetchedJobs = await JobListActions.getJobs(location.state.project.name);
+    const fetchedJobs = await JobListActions.getJobs(selectedProjectName);
     const apiJobs = fetchedJobs;
     this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
     const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);
@@ -315,22 +332,40 @@ class JobDetails extends React.Component {
     });
   }
 
-  onClickProjectOverview() {
+  async onClickProjectOverview() {
     const { history, location } = this.props;
+    let selectedProject = {};
+
+    if (location.state && location.state.project && location.state.project !== {}) {
+      selectedProject = location.state.project;
+    } else {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
+    }
     history.push(
-      `/projects/${location.state.project.name}/overview`,
+      `/projects/${selectedProject.name}/overview`,
       {
-        project: location.state.project,
+        project: selectedProject,
       },
     );
   }
 
-  onClickJobDetails() {
+  async onClickJobDetails() {
     const { history, location } = this.props;
+    let selectedProject = {};
+
+    if (location.state && location.state.project && location.state.project !== {}) {
+      selectedProject = location.state.project;
+    } else {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
+    }
     history.push(
-      `/projects/${location.state.project.name}/details`,
+      `/projects/${selectedProject.name}/details`,
       {
-        project: location.state.project,
+        project: selectedProject,
       },
     );
   }
@@ -362,7 +397,7 @@ class JobDetails extends React.Component {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
-      queryStatus, selectedJob, modalJobDetailsVisible,
+      queryStatus, selectedJob, modalJobDetailsVisible, tags,
     } = this.state;
     const { location } = this.props;
 
@@ -421,7 +456,7 @@ class JobDetails extends React.Component {
                 Job Details
               </h3>
             </div>
-            <TagContainer tags={location.state.project.tags} />
+            <TagContainer tags={tags} />
           </div>
           <div className="job-detail-table-container">
             <div className="job-list-container">
@@ -461,6 +496,7 @@ JobDetails.propTypes = {
   queryStatus: PropTypes.number,
   history: PropTypes.object,
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 JobDetails.defaultProps = {
@@ -482,6 +518,7 @@ JobDetails.defaultProps = {
   queryStatus: 200,
   history: {},
   location: { state: {} },
+  match: { params: {} },
 };
 
 export default JobDetails;

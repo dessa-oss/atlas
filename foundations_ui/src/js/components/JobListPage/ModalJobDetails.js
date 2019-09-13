@@ -44,7 +44,9 @@ class ModalJobDetails extends React.Component {
   reload() {
     const { location } = this.props;
     const { job } = this.state;
-    BaseActions.getFromStaging(`projects/${location.state.project.name}/job_listing`)
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/job_listing`)
       .then((result) => {
         const filteredJob = result.jobs.find(item => item.job_id === job.job_id);
         let newTags = [];
@@ -87,7 +89,9 @@ class ModalJobDetails extends React.Component {
   onClickRemoveTag(tag) {
     const { job } = this.state;
     const { location } = this.props;
-    BaseActions.delStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags/${tag}`)
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    BaseActions.delStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags/${tag}`)
       .then((result) => {
         this.reload();
       });
@@ -130,6 +134,8 @@ class ModalJobDetails extends React.Component {
   onClickAddNewTag() {
     const { newTagKey, newTagValue, job } = this.state;
     const { location } = this.props;
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
 
     const body = {
       tag: {
@@ -138,7 +144,7 @@ class ModalJobDetails extends React.Component {
       },
     };
 
-    BaseActions.postStaging(`projects/${location.state.project.name}/job_listing/${job.job_id}/tags`, body)
+    BaseActions.postStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags`, body)
       .then((result) => {
         this.reload();
       });
@@ -270,6 +276,7 @@ ModalJobDetails.propTypes = {
   visible: PropTypes.bool,
   onToggle: PropTypes.func,
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 ModalJobDetails.defaultProps = {
@@ -277,6 +284,7 @@ ModalJobDetails.defaultProps = {
   visible: false,
   onToggle: () => null,
   location: { state: {} },
+  match: { params: {} },
 };
 
 export default withRouter(ModalJobDetails);

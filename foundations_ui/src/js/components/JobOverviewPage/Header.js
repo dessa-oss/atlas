@@ -1,17 +1,47 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import BaseActions from '../../actions/BaseActions';
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
+    let name = '';
+    let createdAt = '';
+    let owners = '';
+
+    if (this.props.location.state && this.props.location.state.project && this.props.location.state.project !== {}) {
+      name = this.props.location.state.project.name;
+      createdAt = this.props.location.state.project.created_at;
+      owners = this.props.location.state.project.owner;
+    }
+
     this.state = {
-      projectName: this.props.history.location.state.project.name,
-      dateCreated: this.props.history.location.state.project.created_at,
-      projectOwners: this.props.history.location.state.project.owner,
+      name,
+      dateCreated: createdAt,
+      projectOwners: owners,
     };
 
     this.onClickBack = this.onClickBack.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+  }
+
+  async reload() {
+    const { name, dateCreated, projectOwners } = this.state;
+
+    if (name === '' || dateCreated === '' || projectOwners === '') {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
+      this.setState({
+        name: selectedProject.name,
+        dateCreated: selectedProject.created_at,
+        projectOwners: selectedProject.owner,
+      });
+    }
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   onClickBack() {
@@ -24,7 +54,7 @@ class Header extends React.Component {
   onKeyDown() {}
 
   render() {
-    const { projectName, dateCreated, projectOwners } = this.state;
+    const { name, dateCreated, projectOwners } = this.state;
 
     return (
       <div>
@@ -41,7 +71,7 @@ class Header extends React.Component {
               />
               Project Directory
             </h3>
-            <h1 className="font-bold">{projectName}</h1>
+            <h1 className="font-bold">{name}</h1>
           </div>
           <div>
             <div className="container-label-date font-bold">Date Created: </div>
@@ -59,11 +89,15 @@ class Header extends React.Component {
 
 Header.propTypes = {
   history: PropTypes.object,
+  location: PropTypes.object,
+  match: PropTypes.object,
 
 };
 
 Header.defaultProps = {
   history: {},
+  location: {},
+  match: { params: {} },
 };
 
 export default Header;
