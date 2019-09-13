@@ -16,11 +16,11 @@ worker:
 
   volumes:
     volume1: # replace volume1 with path on host machine
-      - bind: # path inside the worker container
-      - mode: # one of rw, ro
+      bind: # path inside the worker container
+      mode: # one of rw, ro
     volume2:
-      - bind:
-      - mode:
+      bind:
+      mode:
 
   environment:
-    - variable: value # Set environment variables using key-value pairs
+    variable: value # Set environment variables using key-value pairs
