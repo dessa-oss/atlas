@@ -133,11 +133,7 @@ class DataContract(object):
 
     def _serialized_contract(self):
         import pickle
-
-        contract = DataContract(self._contract_name)
-        contract.options = self.options
-
-        return pickle.dumps(contract)
+        return pickle.dumps(self)
 
     @staticmethod
     def _deserialized_contract(serialized_contract):
