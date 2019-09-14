@@ -35,7 +35,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         response_data = response.data.decode()
         return json.loads(response_data)
 
-    def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis(self):
+    def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis_python_data_types(self):
         import os
         from foundations_orbit import track_production_metrics
 
@@ -44,33 +44,33 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         os.environ['MODEL_NAME'] = 'this_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': 1.077,
-            '2019-03-01': 1.074,
-            '2019-04-01': 1.09,
-            '2019-05-01': 1.086
+            '2019-02-01': int(1),
+            '2019-03-01': int(2),
+            '2019-04-01': int(3),
+            '2019-05-01': int(4)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': 17.56,
-            '2029-03-02': 17.57,
-            '2029-04-02': 17.53,
-            '2029-05-02': 17.43
+            '2029-02-02': float(17.56),
+            '2029-03-02': float(17.57),
+            '2029-04-02': float(17.53),
+            '2029-05-02': float(17.43)
         })
 
         os.environ['MODEL_NAME'] = 'that_job'
 
         track_production_metrics('MSE', {
-            '2019-02-01': 2.077,
-            '2019-03-01': 2.074,
-            '2019-04-01': 2.09,
-            '2019-05-01': 2.086
+            '2019-02-01': int(5),
+            '2019-03-01': int(6),
+            '2019-04-01': int(7),
+            '2019-05-01': int(8)
         })
 
         track_production_metrics('Customer Response (%)', {
-            '2029-02-02': 27.56,
-            '2029-03-02': 27.57,
-            '2029-04-02': 27.53,
-            '2029-05-02': 27.43
+            '2029-02-02': float(27.56),
+            '2029-03-02': float(27.57),
+            '2029-04-02': float(27.53),
+            '2029-05-02': float(27.43)
         })
 
         expected_data = [
@@ -99,11 +99,92 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 },
                 'series': [
                     {
-                        'data': [2.077, 2.074, 2.09, 2.086],
+                        'data': [5, 6, 7, 8],
                         'name': 'that_job'
                     },
                     {
-                        'data': [1.077, 1.074, 1.09, 1.086],
+                        'data': [1, 2, 3, 4],
+                        'name': 'this_job'
+                    }
+                ]
+            }
+        ]
+
+        data = self._get_from_route()
+        self._sort_series_entries(data)
+
+        self.assertEqual(expected_data, data)
+
+    def test_retrieve_evaluation_metrics_gets_stored_metrics_from_redis_numpy_data_types(self):
+        import os
+        import numpy
+        from foundations_orbit import track_production_metrics
+
+        os.environ['PROJECT_NAME'] = 'test_project'
+
+        os.environ['MODEL_NAME'] = 'this_job'
+
+        track_production_metrics('MSE', {
+            '2019-02-01': numpy.int8(1),
+            '2019-03-01': numpy.int16(2),
+            '2019-04-01': numpy.int32(3),
+            '2019-05-01': numpy.int64(4)
+        })
+
+        track_production_metrics('Customer Response (%)', {
+            '2029-02-02': numpy.float16(17.56),
+            '2029-03-02': numpy.float16(17.57),
+            '2029-04-02': numpy.float32(17.53),
+            '2029-05-02': numpy.float64(17.43)
+        })
+
+        os.environ['MODEL_NAME'] = 'that_job'
+
+        track_production_metrics('MSE', {
+            '2019-02-01': numpy.int8(5),
+            '2019-03-01': numpy.int16(6),
+            '2019-04-01': numpy.int32(7),
+            '2019-05-01': numpy.int64(8)
+        })
+
+        track_production_metrics('Customer Response (%)', {
+            '2029-02-02': numpy.float16(27.56),
+            '2029-03-02': numpy.float16(27.57),
+            '2029-04-02': numpy.float32(27.53),
+            '2029-05-02': numpy.float64(27.43)
+        })
+
+        expected_data = [
+            {
+                'title': {'text': 'Customer Response (%) over time'},
+                'yAxis': {'title': {'text': 'Customer Response (%)'}},
+                'xAxis': {
+                    'categories': ['2029-02-02', '2029-03-02', '2029-04-02', '2029-05-02']
+                },
+                'series': [
+                    {
+                        'data': _recasted_numpy_floats(27.56, 27.57, 27.53, 27.43),
+                        'name': 'that_job'
+                    },
+                    {
+                        'data': _recasted_numpy_floats(17.56, 17.57, 17.53, 17.43),
+                        'name': 'this_job'
+                    }
+                ]
+            },
+            {
+                'title': {'text': 'MSE over time'},
+                'yAxis': {'title': {'text': 'MSE'}},
+                'xAxis': {
+                    'categories': ['2019-02-01', '2019-03-01', '2019-04-01', '2019-05-01']
+                },
+                'series': [
+                    {
+                        'data': [5, 6, 7, 8],
+                        'name': 'that_job'
+                    },
+                    {
+                        'data': [1, 2, 3, 4],
                         'name': 'this_job'
                     }
                 ]
@@ -118,3 +199,16 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
     def _sort_series_entries(self, data_from_route):
         for metric_set in data_from_route:
             metric_set['series'].sort(key=lambda series_entry: series_entry['name'])
+
+def _recasted_numpy_floats(entry_0, entry_1, entry_2, entry_3):
+    import numpy
+
+    return [
+        _cast_to_float_like_and_then_back(entry_0, numpy.float16),
+        _cast_to_float_like_and_then_back(entry_1, numpy.float16),
+        _cast_to_float_like_and_then_back(entry_2, numpy.float32),
+        _cast_to_float_like_and_then_back(entry_3, numpy.float64)
+    ]
+
+def _cast_to_float_like_and_then_back(value, float_like_class):
+    return float(float_like_class(value))

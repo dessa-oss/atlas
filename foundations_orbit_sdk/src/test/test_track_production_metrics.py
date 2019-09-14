@@ -13,6 +13,8 @@ import pickle
 class TestTrackProductionMetrics(Spec):
 
     mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+    mock_int_like = let_mock()
+    mock_float_like = let_mock()
 
     @let_now
     def mock_environment(self):
@@ -46,10 +48,43 @@ class TestTrackProductionMetrics(Spec):
     def column_value_2(self):
         return self.faker.random.random()
 
+    @let
+    def numpy_int32(self):
+        import numpy
+        return numpy.int32(self.faker.random.randint(0, 100))
+
+    @let
+    def numpy_int64(self):
+        import numpy
+        return numpy.int64(self.faker.random.randint(0, 100))
+
+    @let
+    def numpy_float32(self):
+        import numpy
+        return numpy.float32(self.faker.random.random())
+
+    @let
+    def numpy_float64(self):
+        import numpy
+        return numpy.float64(self.faker.random.random())
+
+    @let
+    def int_value(self):
+        return self.faker.random.randint(1, 100)
+
+    @let
+    def dataframe(self):
+        import pandas
+        return pandas.DataFrame()
+
     @set_up
     def set_up(self):
         self.mock_environment['MODEL_NAME'] = self.model_name
         self.mock_environment['PROJECT_NAME'] = self.project_name
+        
+        self.mock_int_like.__int__ = lambda *args: self.int_value
+        self.mock_float_like.__float__ = lambda *args: self.column_value
+
 
     @tear_down
     def tear_down(self):
@@ -103,6 +138,91 @@ class TestTrackProductionMetrics(Spec):
         expected_metrics[self.metric_name].sort(key=lambda entry: entry[0])
 
         self.assertEqual(expected_metrics, production_metrics)   
+
+    def test_track_production_metrics_logs_numpy_int32_as_python_int(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, int)
+
+    def test_track_production_metrics_logs_numpy_int32_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, int(self.numpy_int32))
+
+    def test_track_production_metrics_logs_numpy_int64_as_python_int(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, int)
+
+    def test_track_production_metrics_logs_numpy_int64_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_int64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, int(self.numpy_int64))
+
+    def test_track_production_metrics_logs_numpy_float32_as_python_float(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_float32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, float)
+
+    def test_track_production_metrics_logs_numpy_float32_as_python_float_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_float32})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, float(self.numpy_float32))
+
+    def test_track_production_metrics_logs_numpy_float64_as_python_float(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_float64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertIsInstance(metric_value, float)
+
+    def test_track_production_metrics_logs_numpy_float64_as_python_float_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.numpy_float64})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, float(self.numpy_float64))
+
+    def test_track_production_metrics_logs_int_like_as_python_int_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.mock_int_like})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, self.int_value)
+
+    def test_track_production_metrics_logs_float_like_as_python_float_preserves_value(self):
+        track_production_metrics(self.metric_name, {self.column_name: self.mock_float_like})
+        
+        production_metrics = self._retrieve_tracked_metrics()
+        metric_value = production_metrics[self.metric_name][0][1]
+
+        self.assertEqual(metric_value, self.column_value)
+
+    def test_track_production_metrics_throws_type_error_if_cannot_cast_to_float_or_int(self):
+        with self.assertRaises(TypeError) as ex:
+            track_production_metrics(self.metric_name, {self.column_name: self.dataframe})
+        self.assertIn(f'cannot log metric `{self.metric_name}` with column name `{self.column_name}` of type `{type(self.dataframe)}` - must be able to cast to int or float', ex.exception.args)
 
     def _retrieve_tracked_metrics(self):
         production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')

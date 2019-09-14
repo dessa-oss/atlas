@@ -21,7 +21,9 @@ class Notes extends React.Component {
 
   reload() {
     const { location } = this.props;
-    BaseActions.getFromApiary(`projects/${location.state.project.name}/note_listing`).then((result) => {
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromApiary(`projects/${selectedProjectName}/note_listing`).then((result) => {
       if (result) {
         result.sort((a, b) => {
           let dateA = new Date(a.date);
@@ -60,13 +62,15 @@ class Notes extends React.Component {
   onClickAddNote() {
     const { message } = this.state;
     const { location } = this.props;
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
 
     const body = {
       message,
       author: 'Mohammed R.',
     };
 
-    BaseActions.postApiary(`projects/${location.state.project.name}/note_listing`, body).then(() => {
+    BaseActions.postApiary(`projects/${projectName}/note_listing`, body).then(() => {
       this.setState({
         message: '',
       }, () => {
@@ -112,10 +116,12 @@ class Notes extends React.Component {
 
 Notes.propTypes = {
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 Notes.defaultProps = {
   location: { state: {} },
+  match: { params: {} },
 };
 
 export default Notes;

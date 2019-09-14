@@ -22,7 +22,9 @@ class Readme extends React.Component {
 
   reload() {
     const { location } = this.props;
-    BaseActions.getFromApiary(`projects/${location.state.project.name}/description`).then((result) => {
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/description`).then((result) => {
       this.setState({
         input: result.project_description,
       });
@@ -45,11 +47,15 @@ class Readme extends React.Component {
   }
 
   onClickEdit() {
-    const { editMode } = this.state;
+    const { input, editMode } = this.state;
     const { location } = this.props;
+    let projectDescription = { project_description: input };
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state.project ? location.state.project.name : projectName;
+    let descriptionUrl = `projects/${selectedProjectName}/description`;
 
     if (editMode === true) {
-      BaseActions.putApiary(`projects/${location.state.project.name}/description`).then((result) => {
+      BaseActions.putStaging(descriptionUrl, projectDescription).then((result) => {
         this.reload();
       });
     }
@@ -100,10 +106,12 @@ class Readme extends React.Component {
 
 Readme.propTypes = {
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 Readme.defaultProps = {
   location: {},
+  match: { params: {} },
 };
 
 export default Readme;

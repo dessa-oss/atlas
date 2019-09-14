@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from .contract_validators import *
+
 from .test_track_production_metrics import TestTrackProductionMetrics
 from .test_data_contract import TestDataContract
 from .test_data_contract_options import TestDataContractOptions

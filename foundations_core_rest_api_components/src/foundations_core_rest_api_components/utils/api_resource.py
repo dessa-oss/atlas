@@ -62,9 +62,9 @@ class APIResourceBuilder(object):
         return _get
     
     def _post_api_create(self):
-        def _post(resource_self):
+        def _post(resource_self, **kwargs):
             instance = self._klass()
-            instance.params = request.form
+            instance.params = self._api_params(kwargs)
 
             response = instance.post()
             cookie = None

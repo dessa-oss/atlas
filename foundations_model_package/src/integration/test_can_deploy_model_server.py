@@ -5,29 +5,34 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import os
+import subprocess
 from foundations_spec import *
 import foundations
+from integration.mixins.deploy_model_mixin import DeployModelMixin
 
-class TestCanDeployModelServer(Spec):
-
+@skip('fails on jenkins')
+class TestCanDeployModelServer(Spec, DeployModelMixin):
 
     @let
     def model_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
+    
     @let
     def project_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
+
+    @let
+    def job_id(self):
+        if self.deployment:
+            return self.deployment.job_name()
 
     @staticmethod
     def _is_running_on_jenkins():
-        import os
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
     @set_up_class
     def set_up_class(klass):
-        import os
-        import subprocess
-
         if not klass._is_running_on_jenkins():
             return_code = subprocess.call(['bash', '-c', './build.sh'])
 
@@ -36,43 +41,11 @@ class TestCanDeployModelServer(Spec):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.global_state import config_manager, redis_connection
-
-        self._proxy_process = None
-        self.deployment = None
-
-        if self._is_running_on_jenkins():
-            config_manager.config()['redis_url'] = self._get_proxy_url()
-
-        self.redis_connection = redis_connection
-
-    def _set_up_in_test(self, job_directory):
-        import subprocess
-
-        self._generate_yaml_config_file(job_directory)
-
-        self._deploy_job(job_directory)
-        self.deployment.wait_for_deployment_to_complete()
-
-        self._deploy_model_package(self.project_name, self.model_name, self.job_id)
-        self._proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.model_name}-service 5000:80'])
-
-        self._wait_for_server(self.project_name, self.model_name)
+        self._set_up_environment()
 
     @tear_down
     def tear_down(self):
-        from foundations_contrib.global_state import config_manager
-
-        if self._proxy_process is not None:
-            self._proxy_process.terminate()
-
-        self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
-
-        config_manager.reset()
-
-    @let
-    def job_id(self):
-        return self.deployment.job_name()
+        self._tear_down_environment(self.project_name, models=[self.model_name])
 
     def test_can_deploy_server(self):
         try:
@@ -89,17 +62,15 @@ class TestCanDeployModelServer(Spec):
             self.fail('Interrupted by user')
 
     def test_can_hit_evaluate_endpoint(self):
+        import time
+        import pickle
         try:
-            import time
-            import pickle
-            import os
-
             self._set_up_in_test('model-server-with-evaluate')
 
             self._try_post_to_evaluate_endpoint('october')
-            time.sleep(5)
+            time.sleep(self.sleep_time)
             self._try_post_to_evaluate_endpoint('january')
-            time.sleep(5)
+            time.sleep(self.sleep_time)
 
             production_metrics_from_redis = self.redis_connection.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
             production_metrics = {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
@@ -114,161 +85,22 @@ class TestCanDeployModelServer(Spec):
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
-    def _generate_yaml_config_file(self, job_directory):
-        import yaml
-
-        config_path = f'integration/fixtures/{job_directory}/config/scheduler.config.yaml'
-        config_yaml = yaml.dump({
-            'log_level': 'DEBUG',
-            'job_deployment_env': 'scheduler_plugin', 
-            'results_config': {
-                'archive_end_point': '/archive',
-                'redis_end_point': self._get_redis_url(),
-                'artifact_path': 'artifacts',
-                'artifact_path': '.'
-            },
-            'cache_config': {
-                'end_point': '/cache'
-            },
-            'ssh_config': {
-                'host': self._get_scheduler_ip(),
-                'port': 31222,
-                'code_path': '/jobs',
-                'result_path': '/jobs',
-                'key_path': '~/.ssh/id_foundations_scheduler',
-                'user': 'job-uploader'
-            },
-            'obfuscate_foundations': False,
-            'enable_stages': False
-        })
-        with open(config_path, 'w+') as file:
-            file.write(config_yaml)
-
-    def _wait_for_model_package_pod(self, project_name, model_name):
-        import time
-
-        current_time = time.time()
-
-        while self._model_package_pod_status(project_name, model_name) != 'Running':
-            if time.time() - current_time > 30:
-                raise AssertionError('model package pod took too long to come up (> 30 sec)')
-
-            time.sleep(3)
-
-    def _model_package_pod_status(self, project_name, model_name):
-        import subprocess
-
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template={{(index .items 0).status.phase}}'], stdout=subprocess.PIPE)
-        return process.stdout.decode().rstrip('\n')
-
-    def _wait_for_server(self, project_name, model_name):
-        import subprocess
-        import requests
-        import time
-
-        start_time = time.time()
-
-        while time.time() - start_time < 15:
-            try:
-                requests.get('http://localhost:5000')
-                return
-            except:
-                time.sleep(0.200)
-
-
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'logs', '-l', f'app=foundations-model-package-{project_name}-{model_name}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        process_logs = process.stdout.decode().rstrip('\n')
-        self.fail(f'server never started:\n{process_logs}')
-
     def _try_post_to_root_endpoint(self):
-        return self._try_post('/', {'a': 1, 'b': 2})
+        return self._try_post('', {'a': 1, 'b': 2})
 
     def _try_post_to_predict_endpoint(self):
-        return self._try_post('/predict', {'a': 20, 'b': 30})
+        return self._try_post('predict', {'a': 20, 'b': 30})
 
     def _try_post_to_evaluate_endpoint(self, eval_period):
-        response = self._try_post('/evaluate', {'eval_period': eval_period})
+        response = self._try_post('evaluate', {'eval_period': eval_period})
 
         if response is None:
-            self.fail('post to /evaluate failed :(')
+            self.fail('post to evaluate failed :(')
 
     def _try_post(self, endpoint, dict_payload):
         import requests
 
         try:
-            return requests.post(f'http://localhost:5000{endpoint}', json=dict_payload).json()
+            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
         except:
             return None
-
-    def _get_scheduler_ip(self):
-        import os
-
-        if 'FOUNDATIONS_SCHEDULER_HOST' not in os.environ:
-            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_HOST env variable')
-
-        return os.environ['FOUNDATIONS_SCHEDULER_HOST']
-
-    def _get_redis_url(self):
-        import os
-
-        if self._is_running_on_jenkins():
-            return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_URL']
-        else:
-            return f'redis://{self._get_scheduler_ip()}:6379'
-
-    def _get_proxy_url(self):
-        import os
-        return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
-
-    def _deploy_job(self, job_directory):
-        import foundations
-
-        if self.deployment is None:
-            foundations.set_job_resources(num_gpus=0)
-            self.deployment = foundations.deploy(project_name=self.project_name, env='scheduler', entrypoint='project_code.driver', job_directory=f'integration/fixtures/{job_directory}', params=None)
-        return self.deployment
-
-    def _deploy_model_package(self, project_name, model_name, job_id):
-        self._peform_action_for_creating_config_map('apply')
-        self._perform_action_for_model_package(project_name, model_name, job_id, 'create')
-        self._wait_for_model_package_pod(project_name, model_name)
-
-    def _tear_down_model_package(self, project_name, model_name, job_id):
-        self._perform_action_for_model_package(project_name, model_name, job_id, 'delete')
-        self._peform_action_for_creating_config_map('delete')
-        self._wait_for_serving_pod_to_die(project_name, model_name)
-
-    def _peform_action_for_creating_config_map(self, action):
-        import os.path as path
-        import subprocess
-
-        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/scheduler_config_map.yaml')
-        command_to_run = f'FOUNDATIONS_SCHEDULER_HOST={self._get_scheduler_ip()} envsubst < {yaml_template_path} | kubectl {action} -f -'
-        subprocess.call(['bash', '-c', command_to_run])
-
-    def _perform_action_for_model_package(self, project_name, model_name, job_id, action):
-        import os.path as path
-        import subprocess
-
-        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
-        command_to_run = f'job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
-        subprocess.call(['bash', '-c', command_to_run])
-
-    def _wait_for_serving_pod_to_die(self, project_name, model_name):
-        import time
-
-        current_time = time.time()
-
-        while self._pod_exists(project_name, model_name):
-            if time.time() - current_time > 60:
-                raise AssertionError('model package pod took too long to go down (> 60 sec)')
-
-            time.sleep(3)
-
-    def _pod_exists(self, project_name, model_name):
-        import subprocess
-        import yaml
-
-        process = subprocess.run(['bash', '-c', f'kubectl -n foundations-scheduler-test get pod -l app=foundations-model-package-{project_name}-{model_name} -o yaml'], stdout=subprocess.PIPE)
-        pod_list_payload = yaml.load(process.stdout)
-        return pod_list_payload['items'] != []

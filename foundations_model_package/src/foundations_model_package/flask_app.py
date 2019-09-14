@@ -17,7 +17,7 @@ def flask_app(root_resource, predict_resource, evaluate_resource, retrain_resour
     api.add_resource(root_resource, '/')
     api.add_resource(predict_resource, '/predict')
     api.add_resource(evaluate_resource, '/evaluate')
-    api.add_resource(retrain_resource, '/retrain')
+    api.add_resource(retrain_resource, '/recalibrate')
     # app.logger.disabled = True
 
     return app

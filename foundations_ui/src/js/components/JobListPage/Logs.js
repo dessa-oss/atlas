@@ -14,7 +14,9 @@ class Logs extends React.Component {
 
   reload() {
     const { job, location } = this.props;
-    BaseActions.getFromApiary(`projects/${location.state.project.name}/job_listing/${job.job_id}/logs`)
+    const { projectName } = this.props.match.params;
+    let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
+    BaseActions.getFromApiary(`projects/${selectedProjectName}/job_listing/${job.job_id}/logs`)
       .then((result) => {
         this.setState({
           message: result.log,
@@ -50,11 +52,13 @@ class Logs extends React.Component {
 Logs.propTypes = {
   job: PropTypes.object,
   location: PropTypes.object,
+  match: PropTypes.object,
 };
 
 Logs.defaultProps = {
   job: {},
   location: { state: {} },
+  match: { params: {} },
 };
 
 export default Logs;

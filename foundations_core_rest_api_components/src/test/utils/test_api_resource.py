@@ -173,6 +173,12 @@ class TestAPIResource(Spec):
             response = client.delete('/path/to/resource/with/value/params')
             self.assertEqual(self._json_response(response), {'project_name': 'value'})
 
+    def test_post_returns_path_param(self):
+        klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithPost)
+        with self._test_client() as client:
+            response = client.post('/path/to/resource/with/value/params')
+            self.assertEqual(self._json_response(response), {'project_name': 'value'})
+
     def test_get_returns_path_param(self):
         klass = api_resource('/path/to/resource/with/<string:project_name>/params')(APIResourceMocks.ParamsMockWithIndex)
         with self._test_client() as client:

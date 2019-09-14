@@ -14,11 +14,14 @@ class DataContract(object):
         self._contract_name = contract_name
 
         if df is None:
-            dataframe = pandas.DataFrame()
+            self._dataframe = pandas.DataFrame()
         else:
-            dataframe = df
+            self._dataframe = df
 
-        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(dataframe)
+        self._column_names = None
+        self._column_types = None
+        self._number_of_rows = None
+        self._bin_stats = None
 
     @staticmethod
     def _default_options():
@@ -54,125 +57,75 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
-    def validate(self, dataframe_to_validate, *args):
+    def validate(self, dataframe_to_validate, inference_period=None):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+        # from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+
+        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+
+        ##### PROTOTYPE CODE - REMOVE ME PLEASE
+
+        from foundations_orbit.contract_validators.prototype import create_bin_stats
+
+        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
+
+        import datetime
+        from foundations_orbit.contract_validators.prototype import distribution_check, output_for_writing, write_to_redis
+
+        if inference_period is None:
+            inference_period = str(datetime.datetime.now())
+
         validation_report = {}
 
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
+        ##### Prototype code section end
+
         if self.options.check_schema:
-            validation_report['schema_check_results'] = self._schema_check_results(columns_to_validate, types_to_validate)
+            validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = self._row_count_difference(row_count_to_check)
+            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).row_count_difference(row_count_to_check)
 
         if self.options.check_distribution:
-            validation_report['dist_check_results'] = self._distribution_check_results(columns_to_validate)
+            ##### PROTOTYPE CODE - use distribution checker asap
+            validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
+
+        ##### PROTOTYPE CODE - replace with robust private methods
+        import os
+
+        project_name = os.environ['PROJECT_NAME']
+        model_name = os.environ['MODEL_NAME']
+
+        row_cnt_diff = validation_report.get('row_cnt_diff', 0)
+        schema_check_results = validation_report.get('schema_check_results', {})
+        schema_check_passed = schema_check_results.get('passed', True)
+        dist_check_results = validation_report.get('dist_check_results', {})
+
+        schema_check_failure_dict = schema_check_results.copy()
+        if 'passed' in schema_check_failure_dict:
+            schema_check_failure_dict.pop('passed')
+
+        output_to_write = output_for_writing(
+            inference_period,
+            model_name,
+            self._contract_name,
+            row_cnt_diff,
+            schema_check_passed,
+            len(self._column_names),
+            schema_check_failure_dict,
+            len(columns_to_validate),
+            types_to_validate,
+            self._column_types,
+            self.options.check_distribution,
+            dist_check_results,
+            self.options.special_values
+        )
+
+        write_to_redis(project_name, model_name, self._contract_name, inference_period, output_to_write)
 
         return validation_report
-
-    def _schema_check_results(self, columns_to_validate, types_to_validate):
-        import pandas
-
-        schema_check_results = {}
-
-        if self._column_names_match(columns_to_validate):
-            if self._data_types_match(types_to_validate):
-                schema_check_results['passed'] = True
-                return schema_check_results
-
-            schema_check_results['passed'] = False
-            schema_check_results['error_message'] = 'column datatype mismatches'
-            schema_check_results.update(self._type_mismatch_error_information(self._column_types, types_to_validate))
-            return schema_check_results
-
-        schema_check_results['passed'] = False
-
-        ref_column_names = set(self._column_names)
-        current_column_names = set(columns_to_validate)
-
-        if self._column_sets_not_equal(ref_column_names, current_column_names):
-            schema_check_results['error_message'] = 'column sets not equal'
-            schema_check_results.update(self._column_sets_not_equal_error_information(ref_column_names, current_column_names))
-            return schema_check_results
-
-        schema_check_results['error_message'] = 'columns not in order'
-
-        ref_column_series = pandas.Series(self._column_names)
-        current_column_series = pandas.Series(columns_to_validate)
-
-        schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
-        return schema_check_results
-
-    def _column_names_match(self, columns_to_validate):
-        return self._column_names == columns_to_validate
-
-    def _data_types_match(self, types_to_validate):
-        return self._column_types == types_to_validate
-
-    @staticmethod
-    def _type_mismatch_error_information(ref_column_types, types_to_validate):
-        mismatched_columns = {}
-
-        for column_name in ref_column_types.keys():
-            ref_type = ref_column_types[column_name]
-            current_type = types_to_validate[column_name]
-
-            if ref_type != current_type:
-                mismatched_columns[column_name] = {
-                    'ref_type': ref_type,
-                    'current_type': current_type
-                }
-
-        return {'cols': mismatched_columns}
-
-    @staticmethod
-    def _column_sets_not_equal(ref_column_names, current_column_names):
-        return ref_column_names != current_column_names
-
-    @staticmethod
-    def _column_sets_not_equal_error_information(ref_column_names, current_column_names):
-        missing_in_ref = current_column_names - ref_column_names
-        missing_in_current = ref_column_names - current_column_names
-
-        return {'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
-
-    @staticmethod
-    def _column_sets_in_wrong_order_information(ref_column_series, current_column_series):
-        columns_out_of_order = current_column_series[current_column_series != ref_column_series]
-        return {'columns_out_of_order': list(columns_out_of_order)}
-
-    def _row_count_difference(self, row_count_to_check):
-        return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
-
-    def _distribution_check_results(self, columns_to_validate):
-        import numpy
-
-        if self._distribution_option('cols_to_include') is not None and self._distribution_option('cols_to_ignore') is not None:
-            raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
-
-        dist_check_results = {}
-
-        results_for_same_distribution = {
-            'binned_l_infinity': 0.0,
-            'binned_passed': True,
-            'special_values': {
-                numpy.nan: {
-                    'current_percentage': 0.0,
-                    'passed': True,
-                    'percentage_diff': 0.0,
-                    'ref_percentage': 0.0
-                }
-            }
-        }
-
-        for column_name in columns_to_validate:
-            dist_check_results[column_name] = results_for_same_distribution
-
-        return dist_check_results
-
-    def _distribution_option(self, option_name):
-        distribution_options = self.options.distribution
-        return distribution_options[option_name]
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
@@ -186,11 +139,7 @@ class DataContract(object):
 
     def _serialized_contract(self):
         import pickle
-
-        contract = DataContract(self._contract_name)
-        contract.options = self.options
-
-        return pickle.dumps(contract)
+        return pickle.dumps(self)
 
     @staticmethod
     def _deserialized_contract(serialized_contract):
