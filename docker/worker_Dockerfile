@@ -1,0 +1,10 @@
+FROM python:3.6
+
+MAINTAINER Eric Kin Ho Lee version: 0.1
+
+COPY ./foundations_requirements.txt /tmp/foundations_requirements.txt
+
+RUN pip install --requirement /tmp/foundations_requirements.txt
+RUN pip install tensorflow
+RUN rm /tmp/foundations_requirements.txt
+ENTRYPOINT ["python"]
