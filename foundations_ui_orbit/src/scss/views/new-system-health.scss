@@ -450,8 +450,23 @@
 
         &:last-child,
         &:nth-last-child(2) {
-          border-top: solid 1px #dcdcdc;
+          // border-top: solid 1px #dcdcdc;
           padding-top: 15px;
+        }
+      }
+
+      div {
+        border-top: solid 1px #dcdcdc;
+        margin-bottom: 15px;
+        margin-top: 0px;
+
+        p {
+          display: inline-block;
+          width: 50%;
+
+          &:last-child {
+            vertical-align: top;
+          }
         }
       }
     }
