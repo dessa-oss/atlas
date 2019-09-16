@@ -212,9 +212,12 @@
   
       .container-tags {
         margin-top: 20px;
+
+        &.tag-icon {
+          height: 11px;
+        } 
   
         .job-tag:first-child() {
-          height: 11px;
           vertical-align: middle
         }
 

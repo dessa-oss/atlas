@@ -17,7 +17,7 @@ class Tag extends React.Component {
     const { removeVisible, removeTag } = this.props;
 
     return (
-      value === 'tf' ? <div className="job-tag i--icon-tf" />
+      value === 'tf' ? <div className="job-tag tag-icon i--icon-tf" />
         : (
           <div className="job-tag">{value}
             {removeVisible === true
