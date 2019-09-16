@@ -80,6 +80,8 @@ class JobDeployment(object):
                                            'metadata': {'project_name': project_name,
                                                         'username': username}
                                            })
+        except requests.exceptions.ConnectionError:
+            raise ConnectionError('Cannot currently find Atlas Scheduler. Start Atlas Scheduler with `atlas start`.')
         finally:
             self._job_bundler.cleanup()
 
@@ -99,12 +101,14 @@ class JobDeployment(object):
             "completed": "completed",
             "pending": "queued"
         }
-
-        r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
-        if r.status_code == requests.codes.ok:
-            return responses[r.json()['status']]
-        else:
-            return None
+        try:
+            r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
+            if r.status_code == requests.codes.ok:
+                return responses[r.json()['status']]
+            else:
+                return None
+        except:
+            raise ConnectionError('Cannot currently find Atlas Scheduler. Start Atlas Scheduler with `atlas start`.')
 
     def get_job_logs(self):
         import requests
