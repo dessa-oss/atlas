@@ -358,6 +358,42 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
+    def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_whencurrent_and_reference_each_have_one_column_the_other_does_not(self):
+        columns_in_current_dataframe = list(self.column_list)
+        column_missing_from_current = columns_in_current_dataframe.pop()
+
+        index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_current_dataframe))
+
+        column_missing_from_reference = self.column_name
+        columns_in_current_dataframe.insert(index_at_which_to_insert, column_missing_from_reference)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [column_missing_from_reference],
+            'missing_in_current': [column_missing_from_current]
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe,
+            'type_mapping': self.type_mapping
+        }
+
+        expected_detail_for_attribute = [{
+            'attribute_name': column_missing_from_current,
+            'data_type': self.type_mapping[column_missing_from_current],
+            'issue_type': 'missing in current',
+            'validation_outcome': 'error_state'
+        }, {
+            'attribute_name': column_missing_from_reference,
+            'data_type': self.type_mapping[column_missing_from_reference],
+            'issue_type': 'missing in reference',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     model_package=self.model_package,
