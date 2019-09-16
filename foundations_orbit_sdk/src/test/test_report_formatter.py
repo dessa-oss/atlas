@@ -48,6 +48,10 @@ class TestReportFormatter(Spec):
         return self.faker.word()
 
     @let
+    def column_name_2(self):
+        return self.faker.word()
+
+    @let
     def row_count_diff(self):
         return self.faker.random.random()
 
@@ -154,6 +158,69 @@ class TestReportFormatter(Spec):
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
             'critical': 1
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_reference_has_one_unshared_column_and_current_has_two_unshared_columns(self):
+        columns_in_current_dataframe = list(self.column_list)
+        column_missing_from_current = columns_in_current_dataframe.pop()
+
+        columns_missing_from_reference = [self.column_name, self.column_name_2]
+
+        for column_missing_from_reference in columns_missing_from_reference:
+            index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_current_dataframe))
+            columns_in_current_dataframe.insert(index_at_which_to_insert, column_missing_from_reference)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': columns_missing_from_reference,
+            'missing_in_current': [column_missing_from_current]
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
+            'critical': 2
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_reference_has_two_unshared_columns_and_current_has_one_unshared_column(self):
+        columns_in_current_dataframe = self.column_list
+        columns_in_reference_dataframe = list(self.column_list)
+        column_missing_from_reference = columns_in_reference_dataframe.pop()
+
+        columns_missing_from_current = [self.column_name, self.column_name_2]
+
+        for column_missing_from_current in columns_missing_from_current:
+            index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_reference_dataframe))
+            columns_in_reference_dataframe.insert(index_at_which_to_insert, column_missing_from_current)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [column_missing_from_reference],
+            'missing_in_current': columns_missing_from_current
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        self.validation_report['metadata']['reference_metadata'] = {
+            'column_names': columns_in_reference_dataframe
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
+            'critical': 2
         }
 
         formatted_report = self._generate_formatted_report()
