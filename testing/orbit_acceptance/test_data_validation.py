@@ -312,9 +312,7 @@ class TestDataValidation(Spec):
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
 
-
     def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
-        self.maxDiff = None
         import subprocess
         from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing

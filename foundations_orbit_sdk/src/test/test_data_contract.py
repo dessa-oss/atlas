@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-
+import fakeredis
 from foundations_orbit.data_contract import DataContract
 
 class TestDataContract(Spec):
@@ -155,6 +155,12 @@ class TestDataContract(Spec):
         mock_environ = self.patch('os.environ', {})
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MODEL_NAME'] = self.model_name
+
+        self.redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
+    @tear_down
+    def tear_down(self):
+        self.redis.flushall()
 
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
@@ -306,6 +312,39 @@ class TestDataContract(Spec):
         validation_report = contract.validate(self.one_column_dataframe)
 
         self.assertEqual(mock_row_count_check_results, validation_report['row_cnt_diff'])
+
+    def test_data_contract_validation_report_has_metadata_for_reference_and_current_dataframe(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_different_types)
+
+        expected_metadata = {
+            'reference_metadata': {
+                'column_names': [
+                    self.column_name, 
+                    self.column_name_2
+                ],
+                'type_mapping': {
+                    self.column_name: 'int64', 
+                    self.column_name_2: 'float64'
+                },
+            },
+            'current_metadata': {
+                'column_names': [
+                    self.column_name, 
+                    self.column_name_2
+                ],
+                'type_mapping': {
+                    self.column_name: 'int64', 
+                    self.column_name_2: 'int64'
+                }
+            }
+        }
+
+        self.assertEqual(expected_metadata, report['metadata'])
+
+    @skip('not implemented')
+    def test_data_contract_validate_writes_correct_info_to_redis(self):
+        pass
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)

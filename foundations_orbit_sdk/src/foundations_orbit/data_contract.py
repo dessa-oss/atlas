@@ -92,6 +92,17 @@ class DataContract(object):
             ##### PROTOTYPE CODE - use distribution checker asap
             validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
 
+        validation_report['metadata'] = {
+            'reference_metadata': {
+                'column_names': self._column_names,
+                'type_mapping': self._column_types
+            },
+            'current_metadata': {
+                'column_names': columns_to_validate,
+                'type_mapping': types_to_validate
+            }
+        }
+
         ##### PROTOTYPE CODE - replace with robust private methods
         import os
 
