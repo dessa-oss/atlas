@@ -16,11 +16,14 @@ class Logs extends React.Component {
     const { job, location } = this.props;
     const { projectName } = this.props.match.params;
     let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
-    BaseActions.getFromApiary(`projects/${selectedProjectName}/job_listing/${job.job_id}/logs`)
+    BaseActions.getFromStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/logs`)
       .then((result) => {
         this.setState({
           message: result.log,
         });
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 
