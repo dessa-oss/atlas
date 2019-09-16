@@ -9,9 +9,12 @@ from foundations_scheduler_plugin.config.scheduler import translate
 import subprocess
 import yaml
 
-nodes_yaml = subprocess.check_output(["/bin/bash", "-c", "kubectl get node -o yaml -l node-role.kubernetes.io/master="""]).decode()
-nodes = yaml.load(nodes_yaml)
-master_ip = nodes['items'][0]['status']['addresses'][0]['address']
+if os.path.exists("/root/.kube"):
+    nodes_yaml = subprocess.check_output(["/bin/bash", "-c", "kubectl get node -o yaml -l node-role.kubernetes.io/master="""]).decode()
+    nodes = yaml.load(nodes_yaml)
+    master_ip = nodes['items'][0]['status']['addresses'][0]['address']
+else:
+    master_ip = "127.0.0.1"
 
 submission_config = {
     'results_config': {

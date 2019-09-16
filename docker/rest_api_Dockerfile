@@ -14,7 +14,8 @@ ENV SERVER_NAME=localhost
 COPY ./tmp/pip_wheels /var/foundations/
 WORKDIR /var/foundations
 
-RUN pip install *.whl
+RUN echo *1.1.0* | xargs pip install
+RUN echo *2.0.1* | xargs pip install
 
 WORKDIR /app/
 COPY docker/${main_file} /app/main.py
