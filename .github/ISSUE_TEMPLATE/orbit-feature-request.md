@@ -2,7 +2,7 @@
 name: Orbit feature request
 about: "Suggest an \U0001F4A1 for Orbit"
 title: ''
-labels: request, Orbit
+labels: Orbit, request
 assignees: ''
 
 ---
