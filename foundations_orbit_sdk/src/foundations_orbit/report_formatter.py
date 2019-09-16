@@ -29,12 +29,10 @@ class ReportFormatter(object):
     def _formatted_schema_report(self):
         number_of_columns_in_reference, number_of_columns_in_current = self._number_of_columns_in_dataframes()
 
-        if number_of_columns_in_reference <= number_of_columns_in_current:
-            number_of_healthy_columns = number_of_columns_in_reference
-        else:
-            number_of_healthy_columns = number_of_columns_in_current
+        columns_in_reference, columns_in_current = self._columns_in_dataframes()
+        number_of_healthy_columns = len(set(columns_in_reference).intersection(set(columns_in_current)))
 
-        if number_of_columns_in_current == number_of_columns_in_reference:
+        if number_of_columns_in_current == number_of_healthy_columns and number_of_columns_in_reference == number_of_healthy_columns:
             number_of_critical_columns = 0
         else:
             number_of_critical_columns = 1
@@ -51,6 +49,18 @@ class ReportFormatter(object):
         number_of_columns_in_current = self._number_of_columns_for_dataframe('current')
 
         return number_of_columns_in_reference, number_of_columns_in_current
+
+    def _columns_in_dataframes(self):
+        columns_in_reference = self._columns_for_dataframe('reference')
+        columns_in_current = self._columns_for_dataframe('current')
+
+        return columns_in_reference, columns_in_current
+
+    def _columns_for_dataframe(self, dataframe_name):
+        report_metadata = self._validation_report['metadata']
+
+        metadata = report_metadata[f'{dataframe_name}_metadata']
+        return metadata['column_names']
 
     def _number_of_columns_for_dataframe(self, dataframe_name):
         report_metadata = self._validation_report['metadata']

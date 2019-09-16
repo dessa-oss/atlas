@@ -131,6 +131,34 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_and_reference_each_have_one_column_the_other_does_not(self):
+        columns_in_current_dataframe = list(self.column_list)
+        column_missing_from_current = columns_in_current_dataframe.pop()
+
+        index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_current_dataframe))
+
+        column_missing_from_reference = self.column_name
+        columns_in_current_dataframe.insert(index_at_which_to_insert, column_missing_from_reference)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [column_missing_from_reference],
+            'missing_in_current': [column_missing_from_current]
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
+            'critical': 1
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     model_package=self.model_package,
