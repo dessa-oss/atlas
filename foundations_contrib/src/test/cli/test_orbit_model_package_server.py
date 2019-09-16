@@ -273,6 +273,16 @@ class TestOrbitModelPackageServer(Spec):
         except Exception:
             self.fail('Invalid exception raised')
         
+    def test_raise_value_error_exception_with_invalid_model_name(self):
+        invalid_model_name = 'model-name'
+        try:
+            self._deploy(model_name=invalid_model_name)
+            self.fail('Failed to test for expected behaviour')
+        except ValueError as e:
+            self.assertTrue('invalid model name' in str(e).lower())
+        except Exception:
+            self.fail('Invalid exception raised')
+
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name
         model_name = model_name if model_name is not None else self.mock_model_name
