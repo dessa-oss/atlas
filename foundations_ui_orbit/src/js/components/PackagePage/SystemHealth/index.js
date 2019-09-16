@@ -64,7 +64,7 @@ const SystemHealth = props => {
 
         result.forEach(resultItem => {
           entries.forEach(entryItem => {
-            if (resultItem.inference_period === entryItem.inference_period) {
+            if (moment(resultItem.inference_period).isSame(entryItem.inference_period, "day")) {
               const found = entryItem.model_packages.find(item => item.model_package === resultItem.model_package);
 
               if (!found) {
@@ -80,7 +80,7 @@ const SystemHealth = props => {
 
         result.forEach(resultItem => {
           entries.forEach(entry => {
-            if (entry.inference_period === resultItem.inference_period) {
+            if (moment(resultItem.inference_period).isSame(entry.inference_period, "day")) {
               entry.model_packages.forEach(modelPackage => {
                 if (modelPackage.model_package === resultItem.model_package) {
                   let dataContracts = modelPackage.data_contracts;

@@ -500,7 +500,9 @@
       }
 
       .container-health-options {
-        border: solid 1px #dcdcdc;
+        border-top: solid 1px #dcdcdc;
+        border-left: solid 1px #dcdcdc;
+        border-right: solid 1px #dcdcdc;
         line-height: 30px;
         padding-left: 15px;
   
@@ -510,6 +512,10 @@
           color: #443a25;
           @extend .f--din;
           font-size: 13px;
+        }
+
+        &:last-child {
+          border-bottom: solid 1px #dcdcdc;
         }
   
         .container-health-model-package {
