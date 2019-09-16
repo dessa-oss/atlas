@@ -62,6 +62,7 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
             # send post request to perform the recalibrate operatoin
             recalibrate_response = self._try_post_to_recalibrate_endpoint()
+            print(recalibrate_response.status_code)
             self.assertIsNotNone(recalibrate_response)
 
             import pprint

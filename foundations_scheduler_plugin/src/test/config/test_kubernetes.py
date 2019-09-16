@@ -36,6 +36,50 @@ class TestKubernetes(Spec):
  
         self.assertEqual(master_address, kubernetes_master_ip())
 
+    def test_kubernetes_master_ip_returns_ip_address_from_kube_config(self):
+        import yaml
+        from foundations_scheduler_plugin.config.kubernetes import kubernetes_master_ip
+
+        run_process_mock = self.patch('subprocess.check_output', ConditionalReturn())
+        master_address = self.faker.ipv4_private()
+        not_master_address = self.faker.ipv4_private()
+
+        kube_config = {
+            'apiVersion': 'v1',
+            'clusters': [],
+            'contexts': [],
+            'current-context': '',
+            'kind': 'Config',
+            'preferences': {},
+            'users': []
+        }
+
+
+        node_yaml = {
+            'items': [
+                {
+                    'status': {
+                        'addresses': [
+                            {
+                                'address': master_address,
+                                'type': 'InternalIP'
+                            },
+
+                            {
+                                'address': not_master_address,
+                                'type': 'NotInternalIP'
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+
+        run_process_mock.return_when(yaml.dump(kube_config).encode(), ['kubectl', 'config', 'view'])
+        run_process_mock.return_when(yaml.dump(node_yaml).encode(), ['kubectl', 'get', 'no', '-o', 'yaml', '-l', 'node-role.kubernetes.io/master='])
+
+        self.assertEqual(master_address, kubernetes_master_ip())
+
     def test_kubernetes_redis_url_returns_redis_endpoint_from_kubernetes_service(self):
         import yaml
         from foundations_scheduler_plugin.config.kubernetes import kubernetes_redis_url
