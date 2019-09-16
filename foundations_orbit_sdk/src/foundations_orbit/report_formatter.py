@@ -17,11 +17,21 @@ class ReportFormatter(object):
     def formatted_report(self):
         row_cnt_diff = self._validation_report.get('row_cnt_diff', 0)
 
+        report_metadata = self._validation_report['metadata']
+        reference_metadata = report_metadata['reference_metadata']
+        number_of_columns = len(reference_metadata['column_names'])
+
         report = {
             'date': self._inference_period,
             'model_package': self._model_package,
             'data_contract': self._contract_name,
-            'row_cnt_diff': row_cnt_diff
+            'row_cnt_diff': row_cnt_diff,
+            'schema': {
+                'summary': {
+                    'healthy': number_of_columns,
+                    'critical': 0
+                }
+            }
         }
 
         return report

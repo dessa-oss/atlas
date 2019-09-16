@@ -23,8 +23,22 @@ class TestReportFormatter(Spec):
         return self.faker.word()
 
     @let
+    def column_list(self):
+        return [self.faker.word() for _ in range(self.number_of_columns)]
+
+    @let
+    def number_of_columns(self):
+        return self.faker.random.randint(1, 5)
+
+    @let
     def validation_report(self):
-        return {}
+        return {
+            'metadata': {
+                'reference_metadata': {
+                    'column_names': self.column_list
+                }
+            }
+        }
 
     @let
     def row_count_diff(self):
@@ -50,6 +64,19 @@ class TestReportFormatter(Spec):
         self.validation_report['row_cnt_diff'] = self.row_count_diff
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.row_count_diff, formatted_report['row_cnt_diff'])
+
+    def test_report_formatter_returns_healthy_schema_summary_if_schema_check_passed(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
+        expected_schema_summary = {
+            'summary': {
+                'healthy': self.number_of_columns,
+                'critical': 0
+            }
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
