@@ -198,7 +198,7 @@ class JobDeployment(object):
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
         worker_container = {
-            'image': "f9s-worker-base:0.1",
+            'image': "atlas-ce/worker:latest",
             'volumes':
                 {
                     job_mount_path:
