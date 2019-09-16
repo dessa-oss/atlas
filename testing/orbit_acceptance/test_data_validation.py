@@ -312,6 +312,75 @@ class TestDataValidation(Spec):
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
 
-    @skip('PLEASE PUT ME IN WHEN ACCEPTANCE TESTING THE REDIS STUFF')
-    def test_fill_me_in(self):
-        self.fail('i have not been filled in :(')
+
+    def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
+        self.maxDiff = None
+        import subprocess
+        from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
+        from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
+
+        subprocess.run(['python', 'create_data_contract.py'], cwd='orbit_acceptance/fixtures/data_validation')
+        
+        inference_period='2019-09-01'
+        contract_name = 'dv_contract'
+        data_contract = DataContract.load('/tmp', contract_name)
+
+        data_contract.validate(self.dataframe_with_shifted_distribution, inference_period=inference_period)
+        
+        report_listing = ValidationReportListing(inference_period=inference_period, model_package=self.model_name, data_contract=contract_name)
+        api_validation_report = ValidationReport.get(project_name=self.project_name, listing_object=report_listing).evaluate()
+
+        expected_validation_report = {
+            'date': inference_period,
+            'model_package': self.model_name,
+            'data_contract': contract_name,
+            'row_cnt_diff': 0,
+            'schema': {
+                'summary': {
+                    'healthy': 2, 'critical': 0
+                }
+            },
+            'data_quality': {
+                'details_by_attribute': [
+                    {
+                        'attribute_name': 'feat_1',
+                        'value': 'nan',
+                        'pct_in_reference_data': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'difference_in_pct': 0.0,
+                        'validation_outcome': 'healthy'
+                    },
+                    {
+                        'attribute_name': 'feat_2',
+                        'value': 'nan',
+                        'pct_in_reference_data': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'difference_in_pct': 0.0,
+                        'validation_outcome': 'healthy'
+                    }
+                ],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 2
+                }
+            },
+            'population_shift': {
+                'details_by_attribute': [
+                    {
+                        'attribute_name': 'feat_1',
+                        'L-infinity': 0.0,
+                        'validation_outcome': 'healthy'
+                    },
+                    {
+                        'attribute_name': 'feat_2',
+                        'L-infinity': 0.58,
+                        'validation_outcome': 'critical'
+                    }
+                ],
+                'summary': {
+                    'critical': 1, 'healthy': 1
+                }
+            }
+        }
+
+        self.assertEqual(expected_validation_report, api_validation_report)
