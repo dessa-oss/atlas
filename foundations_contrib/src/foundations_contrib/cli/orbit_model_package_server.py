@@ -144,7 +144,7 @@ def _check_for_invalid_names(project_name, model_name):
     elif '-' in model_name:
         raise ValueError(error_message.format('Model'))
 
-def deploy(project_name, model_name, project_directory, env='default'):
+def deploy(project_name, model_name, project_directory, env='local'):
     _check_for_invalid_names(project_name, model_name)
 
     _setup_environment(project_name, env)
