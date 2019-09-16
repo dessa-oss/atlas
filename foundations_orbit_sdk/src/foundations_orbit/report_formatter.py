@@ -52,19 +52,25 @@ class ReportFormatter(object):
 
         columns_missing_in_current = self._validation_report['schema_check_results']['missing_in_current']
         if len(columns_missing_in_current) > 0:
-            schema_report['details_by_attribute'] = details_by_attribute = []
-            
-            for missing_in_current in columns_missing_in_current:
-                missing_in_current_data_type = self._validation_report['metadata']['reference_metadata']['type_mapping'][missing_in_current]
-
-                details_by_attribute.append({
-                    'attribute_name': missing_in_current,
-                    'data_type': missing_in_current_data_type,
-                    'issue_type': 'missing in current',
-                    'validation_outcome': 'error_state'
-                })
+            schema_report['details_by_attribute'] = self._attribute_details_for_missing_columns_in_current(columns_missing_in_current)
 
         return schema_report
+
+    def _attribute_details_for_missing_columns_in_current(self, columns_missing_in_current):
+        details_by_attribute = []
+        type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+        
+        for missing_in_current in columns_missing_in_current:
+            missing_in_current_data_type = type_mapping[missing_in_current]
+
+            details_by_attribute.append({
+                'attribute_name': missing_in_current,
+                'data_type': missing_in_current_data_type,
+                'issue_type': 'missing in current',
+                'validation_outcome': 'error_state'
+            })
+
+        return details_by_attribute
 
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')
