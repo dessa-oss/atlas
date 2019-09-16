@@ -272,6 +272,46 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'][0])
 
+    def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_two_difference_column(self):
+        columns_in_current_dataframe = self.column_list
+        columns_in_reference_dataframe = list(self.column_list)
+
+        columns_missing_from_current = [self.column_name, self.column_name_2]
+
+        for column_missing_from_current in columns_missing_from_current:
+            index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_reference_dataframe))
+            columns_in_reference_dataframe.insert(index_at_which_to_insert, column_missing_from_current)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [],
+            'missing_in_current': columns_missing_from_current
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe,
+            'type_mapping': self.type_mapping
+        }
+        self.validation_report['metadata']['reference_metadata'] = {
+            'column_names': columns_in_reference_dataframe,
+            'type_mapping': self.type_mapping
+        }
+
+        expected_detail_for_attribute = [{
+            'attribute_name': self.column_name,
+            'data_type': self.type_mapping[self.column_name],
+            'issue_type': 'missing in current',
+            'validation_outcome': 'error_state'
+        }, {
+            'attribute_name': self.column_name_2,
+            'data_type': self.type_mapping[self.column_name_2],
+            'issue_type': 'missing in current',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,

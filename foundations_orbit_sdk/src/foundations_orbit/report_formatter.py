@@ -52,15 +52,17 @@ class ReportFormatter(object):
 
         columns_missing_in_current = self._validation_report['schema_check_results']['missing_in_current']
         if len(columns_missing_in_current) > 0:
-            missing_in_current = columns_missing_in_current[0]
-            missing_in_current_data_type = self._validation_report['metadata']['reference_metadata']['type_mapping'][missing_in_current]
+            schema_report['details_by_attribute'] = details_by_attribute = []
+            
+            for missing_in_current in columns_missing_in_current:
+                missing_in_current_data_type = self._validation_report['metadata']['reference_metadata']['type_mapping'][missing_in_current]
 
-            schema_report['details_by_attribute'] = [{
-                'attribute_name': missing_in_current,
-                'data_type': missing_in_current_data_type,
-                'issue_type': 'missing in current',
-                'validation_outcome': 'error_state'
-            }]
+                details_by_attribute.append({
+                    'attribute_name': missing_in_current,
+                    'data_type': missing_in_current_data_type,
+                    'issue_type': 'missing in current',
+                    'validation_outcome': 'error_state'
+                })
 
         return schema_report
 
