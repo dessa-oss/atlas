@@ -15,6 +15,7 @@ spec:
       labels: 
         app: foundations-model-package-${project_name}-${model_name}
     spec:
+      serviceAccountName: "foundations-model-package-service-account"
       nodeSelector:
         jobRunner: "True"
       containers:
@@ -58,3 +59,22 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: foundations-model-package-service-account
+  namespace: foundations-scheduler-test
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: foundations-model-package-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: foundations-model-package-service-account
+    namespace: foundations-scheduler-test
