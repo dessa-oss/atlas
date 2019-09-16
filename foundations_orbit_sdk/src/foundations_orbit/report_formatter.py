@@ -52,21 +52,27 @@ class ReportFormatter(object):
 
         columns_missing_in_current = self._validation_report['schema_check_results']['missing_in_current']
         if len(columns_missing_in_current) > 0:
-            schema_report['details_by_attribute'] = self._attribute_details_for_missing_columns_in_current(columns_missing_in_current)
+            schema_report['details_by_attribute'] = self._attribute_details_for_missing_columns(columns_missing_in_current, 'current')
+
+        columns_missing_in_reference = self._validation_report['schema_check_results']['missing_in_ref']
+        if len(columns_missing_in_reference) > 0:
+            schema_report['details_by_attribute'] = self._attribute_details_for_missing_columns(columns_missing_in_reference, 'reference')
 
         return schema_report
 
-    def _attribute_details_for_missing_columns_in_current(self, columns_missing_in_current):
+    def _attribute_details_for_missing_columns(self, missing_columns, column_type):
+        metadata = 'current_metadata' if column_type == 'reference' else 'reference_metadata'
+
         details_by_attribute = []
-        type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+        type_mapping = self._validation_report['metadata'][metadata]['type_mapping']
         
-        for missing_in_current in columns_missing_in_current:
-            missing_in_current_data_type = type_mapping[missing_in_current]
+        for missing_column in missing_columns:
+            missing_data_type = type_mapping[missing_column]
 
             details_by_attribute.append({
-                'attribute_name': missing_in_current,
-                'data_type': missing_in_current_data_type,
-                'issue_type': 'missing in current',
+                'attribute_name': missing_column,
+                'data_type': missing_data_type,
+                'issue_type': f'missing in {column_type}',
                 'validation_outcome': 'error_state'
             })
 
