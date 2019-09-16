@@ -68,16 +68,14 @@ class TestDataValidation(Spec):
     def model_name(self):
         return self.faker.word()
 
-    @set_up_class
-    def set_up_class(klass):
-        import numpy
-        numpy.random.seed(42)
-
     @set_up
     def set_up(self):
         import os
         import os.path as path
         import shutil
+
+        import numpy
+        numpy.random.seed(42)
 
         if path.isdir(self.model_package_dirpath):
             shutil.rmtree(self.model_package_dirpath)
@@ -273,7 +271,6 @@ class TestDataValidation(Spec):
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
 
-    @skip('flakey boi')
     def test_data_with_shifted_distribution_passes_schema_check_with_different_distribution_report(self):
         self.maxDiff = None
 
