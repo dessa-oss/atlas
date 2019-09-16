@@ -137,7 +137,13 @@ def _setup_environment(project_name, env):
     foundations.set_environment(env)
     _retrieve_configuration_secrets()
 
-def deploy(project_name, model_name, project_directory, env='local'):
+def _check_for_invalid_names(project_name, model_name):
+    if '-' in project_name:
+        raise ValueError('Invalid Project Name: Project names cannot contain "-". Use "_" instead')
+
+def deploy(project_name, model_name, project_directory, env='default'):
+    _check_for_invalid_names(project_name, model_name)
+
     _setup_environment(project_name, env)
 
     if _model_exists_in_project(project_name, model_name):
