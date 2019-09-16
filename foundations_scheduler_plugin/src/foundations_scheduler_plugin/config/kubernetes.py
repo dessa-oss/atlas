@@ -20,11 +20,17 @@ def kubernetes_master_ip():
 def kubernetes_redis_url():
     import subprocess
     import yaml
+    import os
 
-    endpoint_yaml = subprocess.check_output(['kubectl', 'get', 'endpoints', '-n', 'foundations-scheduler-test', 'redis', '-o', 'yaml'])
-    endpoint = yaml.load(endpoint_yaml)
-    subset = endpoint['subsets'][0]
-    address = subset['addresses'][0]['ip']
-    port = subset['ports'][0]['port']
+    address = "foundations-redis"
+    port = "6379"
+
+    if os.path.exists("/root/.kube"):
+        endpoint_yaml = subprocess.check_output(['kubectl', 'get', 'endpoints', '-n', 'foundations-scheduler-test', 'redis', '-o', 'yaml'])
+        endpoint = yaml.load(endpoint_yaml)
+        subset = endpoint['subsets'][0]
+        address = subset['addresses'][0]['ip']
+        port = subset['ports'][0]['port']
+
     return f'redis://{address}:{port}'
 
