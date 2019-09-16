@@ -30,7 +30,10 @@ class ReportFormatter(object):
         number_of_columns_in_reference, number_of_columns_in_current = self._number_of_columns_in_dataframes()
 
         columns_in_reference, columns_in_current = self._columns_in_dataframes()
-        number_of_healthy_columns = len(set(columns_in_reference).intersection(set(columns_in_current)))
+
+        columns_in_reference = set(columns_in_reference)
+        columns_in_current = set(columns_in_current)
+        number_of_healthy_columns = len(columns_in_reference.intersection(columns_in_current))
 
         if number_of_columns_in_current == number_of_healthy_columns and number_of_columns_in_reference == number_of_healthy_columns:
             number_of_critical_columns = 0
