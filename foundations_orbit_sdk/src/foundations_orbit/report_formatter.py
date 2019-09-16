@@ -15,8 +15,18 @@ class ReportFormatter(object):
         self._options = options
 
     def formatted_report(self):
-        row_cnt_diff = self._validation_report.get('row_cnt_diff', 0)
+        return {
+            'date': self._inference_period,
+            'model_package': self._model_package,
+            'data_contract': self._contract_name,
+            'row_cnt_diff': self._formatted_row_count_difference_report(),
+            'schema': self._formatted_schema_report()
+        }
 
+    def _formatted_row_count_difference_report(self):
+        return self._validation_report.get('row_cnt_diff', 0)
+
+    def _formatted_schema_report(self):
         number_of_columns_in_reference, number_of_columns_in_current = self._number_of_columns_in_dataframes()
 
         if number_of_columns_in_reference <= number_of_columns_in_current:
@@ -29,20 +39,12 @@ class ReportFormatter(object):
         else:
             number_of_critical_columns = 1
 
-        report = {
-            'date': self._inference_period,
-            'model_package': self._model_package,
-            'data_contract': self._contract_name,
-            'row_cnt_diff': row_cnt_diff,
-            'schema': {
-                'summary': {
-                    'healthy': number_of_healthy_columns,
-                    'critical': number_of_critical_columns
-                }
+        return {
+            'summary': {
+                'healthy': number_of_healthy_columns,
+                'critical': number_of_critical_columns
             }
         }
-
-        return report
 
     def _number_of_columns_in_dataframes(self):
         number_of_columns_in_reference = self._number_of_columns_for_dataframe('reference')
