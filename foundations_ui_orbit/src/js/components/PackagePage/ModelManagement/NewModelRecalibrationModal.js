@@ -109,6 +109,18 @@ const NewModelRecalibrationModal = props => {
     setUpdatedParameters(prevUpdatedParameters => [...prevUpdatedParameters, newParameter]);
   };
 
+  const onClickRemoveParameter = () => {
+    let newParameters = [];
+    parameters.forEach((element, i) => {
+      if (i !== parameters.length - 1) {
+        newParameters.push(element);
+      }
+    });
+
+    setParameters(prevParameters => [...newParameters]);
+    setUpdatedParameters(prevUpdatedParameters => [...newParameters]);
+  };
+
 
   const onClickSave = () => {
     setError("");
@@ -302,6 +314,12 @@ const NewModelRecalibrationModal = props => {
                 }
                 <div className="container-parameter-row">
                   <div className="container-add">
+                    <button
+                      type="button"
+                      onClick={onClickRemoveParameter}
+                    >
+                      <span>-</span>
+                    </button>
                     <button
                       type="button"
                       onClick={onClickAddNewParameter}
