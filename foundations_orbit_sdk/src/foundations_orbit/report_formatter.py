@@ -38,11 +38,8 @@ class ReportFormatter(object):
         columns_in_common = columns_in_reference.intersection(columns_in_current)
         number_of_healthy_columns = len(columns_in_common)
 
-        if number_of_columns_in_current == number_of_healthy_columns and number_of_columns_in_reference == number_of_healthy_columns:
-            number_of_critical_columns = 0
-        else:
-            width_of_widest_dataframe = max(number_of_columns_in_current, number_of_columns_in_reference)
-            number_of_critical_columns = width_of_widest_dataframe - number_of_healthy_columns
+        width_of_widest_dataframe = max(number_of_columns_in_current, number_of_columns_in_reference)
+        number_of_critical_columns = width_of_widest_dataframe - number_of_healthy_columns
 
         return {
             'summary': {
