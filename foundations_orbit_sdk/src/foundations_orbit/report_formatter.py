@@ -18,8 +18,13 @@ class ReportFormatter(object):
         row_cnt_diff = self._validation_report.get('row_cnt_diff', 0)
 
         report_metadata = self._validation_report['metadata']
+
         reference_metadata = report_metadata['reference_metadata']
-        number_of_columns = len(reference_metadata['column_names'])
+        reference_column_names = reference_metadata['column_names']
+        number_of_columns_in_reference = len(reference_column_names)
+
+        current_metadata = report_metadata['current_metadata']
+        current_column_names = current_metadata['column_names']
 
         report = {
             'date': self._inference_period,
@@ -28,8 +33,8 @@ class ReportFormatter(object):
             'row_cnt_diff': row_cnt_diff,
             'schema': {
                 'summary': {
-                    'healthy': number_of_columns,
-                    'critical': 0
+                    'healthy': number_of_columns_in_reference,
+                    'critical': 0 if current_column_names == reference_column_names else 1
                 }
             }
         }

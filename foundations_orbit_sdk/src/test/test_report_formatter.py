@@ -36,9 +36,16 @@ class TestReportFormatter(Spec):
             'metadata': {
                 'reference_metadata': {
                     'column_names': self.column_list
+                },
+                'current_metadata': {
+                    'column_names': self.column_list
                 }
             }
         }
+
+    @let
+    def column_name(self):
+        return self.faker.word()
 
     @let
     def row_count_diff(self):
@@ -68,7 +75,7 @@ class TestReportFormatter(Spec):
     def test_report_formatter_returns_healthy_schema_summary_if_schema_check_passed(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
-        expected_schema_summary = {
+        expected_schema_report = {
             'summary': {
                 'healthy': self.number_of_columns,
                 'critical': 0
@@ -76,7 +83,30 @@ class TestReportFormatter(Spec):
         }
 
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_schema_summary, formatted_report['schema'])
+        self.assertEqual(expected_schema_report, formatted_report['schema'])
+
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_with_column_sets_not_equal(self):
+        columns_in_current_dataframe = list(self.column_list)
+        columns_in_current_dataframe.append(self.column_name)
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [self.column_name],
+            'missing_in_current': []
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns,
+            'critical': 1
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
