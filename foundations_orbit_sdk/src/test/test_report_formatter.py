@@ -85,7 +85,7 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_report, formatted_report['schema'])
 
-    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_with_column_sets_not_equal(self):
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_has_one_more_column(self):
         columns_in_current_dataframe = list(self.column_list)
         columns_in_current_dataframe.append(self.column_name)
 
@@ -102,6 +102,29 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns,
+            'critical': 1
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+    def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_has_one_less_column(self):
+        columns_in_current_dataframe = list(self.column_list)
+        missing_in_current = columns_in_current_dataframe.pop()
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [],
+            'missing_in_current': [missing_in_current]
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
             'critical': 1
         }
 

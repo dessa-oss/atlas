@@ -17,14 +17,17 @@ class ReportFormatter(object):
     def formatted_report(self):
         row_cnt_diff = self._validation_report.get('row_cnt_diff', 0)
 
-        report_metadata = self._validation_report['metadata']
+        number_of_columns_in_reference, number_of_columns_in_current = self._number_of_columns_in_dataframes()
 
-        reference_metadata = report_metadata['reference_metadata']
-        reference_column_names = reference_metadata['column_names']
-        number_of_columns_in_reference = len(reference_column_names)
+        if number_of_columns_in_reference <= number_of_columns_in_current:
+            number_of_healthy_columns = number_of_columns_in_reference
+        else:
+            number_of_healthy_columns = number_of_columns_in_current
 
-        current_metadata = report_metadata['current_metadata']
-        current_column_names = current_metadata['column_names']
+        if number_of_columns_in_current == number_of_columns_in_reference:
+            number_of_critical_columns = 0
+        else:
+            number_of_critical_columns = 1
 
         report = {
             'date': self._inference_period,
@@ -33,10 +36,23 @@ class ReportFormatter(object):
             'row_cnt_diff': row_cnt_diff,
             'schema': {
                 'summary': {
-                    'healthy': number_of_columns_in_reference,
-                    'critical': 0 if current_column_names == reference_column_names else 1
+                    'healthy': number_of_healthy_columns,
+                    'critical': number_of_critical_columns
                 }
             }
         }
 
         return report
+
+    def _number_of_columns_in_dataframes(self):
+        number_of_columns_in_reference = self._number_of_columns_for_dataframe('reference')
+        number_of_columns_in_current = self._number_of_columns_for_dataframe('current')
+
+        return number_of_columns_in_reference, number_of_columns_in_current
+
+    def _number_of_columns_for_dataframe(self, dataframe_name):
+        report_metadata = self._validation_report['metadata']
+
+        metadata = report_metadata[f'{dataframe_name}_metadata']
+        column_names = metadata['column_names']
+        return len(column_names)
