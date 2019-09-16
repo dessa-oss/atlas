@@ -27,18 +27,31 @@ class TestReportFormatter(Spec):
         return [self.faker.word() for _ in range(self.number_of_columns)]
 
     @let
+    def type_mapping(self):
+        mapping = {column: self.faker.word() for column in self.column_list}
+        mapping[self.column_name] = self.faker.word()
+        mapping[self.column_name_2] = self.faker.word()
+
+        return mapping
+
+    @let
     def number_of_columns(self):
         return self.faker.random.randint(1, 5)
 
     @let
     def validation_report(self):
         return {
+            'schema_check_results': {
+                'passed': False
+            },
             'metadata': {
                 'reference_metadata': {
-                    'column_names': self.column_list
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
                 },
                 'current_metadata': {
-                    'column_names': self.column_list
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
                 }
             }
         }
@@ -56,22 +69,27 @@ class TestReportFormatter(Spec):
         return self.faker.random.random()
 
     def test_report_formatter_returns_formatted_report_with_expected_date(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.inference_period, formatted_report['date'])
 
     def test_report_formatter_returns_formatted_report_with_expected_model_package(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.model_package, formatted_report['model_package'])
 
     def test_report_formatter_returns_formatted_report_with_expected_data_contract(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.contract_name, formatted_report['data_contract'])
 
     def test_report_formatter_returns_formatted_report_with_expected_row_cnt_diff_if_does_not_exist(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
         self.assertEqual(0, formatted_report['row_cnt_diff'])
 
     def test_report_formatter_returns_formatted_report_with_expected_row_cnt_diff_if_exist(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
         self.validation_report['row_cnt_diff'] = self.row_count_diff
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.row_count_diff, formatted_report['row_cnt_diff'])
@@ -101,7 +119,8 @@ class TestReportFormatter(Spec):
         }
 
         self.validation_report['metadata']['current_metadata'] = {
-            'column_names': columns_in_current_dataframe
+            'column_names': columns_in_current_dataframe,
+            'type_mapping': self.type_mapping
         }
 
         expected_schema_summary = {
@@ -211,11 +230,13 @@ class TestReportFormatter(Spec):
         }
 
         self.validation_report['metadata']['current_metadata'] = {
-            'column_names': columns_in_current_dataframe
+            'column_names': columns_in_current_dataframe,
+            'type_mapping': self.type_mapping
         }
 
         self.validation_report['metadata']['reference_metadata'] = {
-            'column_names': columns_in_reference_dataframe
+            'column_names': columns_in_reference_dataframe,
+            'type_mapping': self.type_mapping
         }
 
         expected_schema_summary = {
@@ -225,6 +246,32 @@ class TestReportFormatter(Spec):
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+    def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_has_one_less_column(self):
+        columns_in_current_dataframe = list(self.column_list)
+        missing_in_current = columns_in_current_dataframe.pop()
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column sets not equal',
+            'missing_in_ref': [],
+            'missing_in_current': [missing_in_current]
+        }
+
+        self.validation_report['metadata']['current_metadata'] = {
+            'column_names': columns_in_current_dataframe
+        }
+
+        expected_detail_for_attribute = {
+            'attribute_name': missing_in_current,
+            'data_type': self.type_mapping[missing_in_current],
+            'issue_type': 'missing in current',
+            'validation_outcome': 'error_state'
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'][0])
+
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,

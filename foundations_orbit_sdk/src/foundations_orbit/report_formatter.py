@@ -41,12 +41,28 @@ class ReportFormatter(object):
         width_of_widest_dataframe = max(number_of_columns_in_current, number_of_columns_in_reference)
         number_of_critical_columns = width_of_widest_dataframe - number_of_healthy_columns
 
-        return {
+        schema_report = {
             'summary': {
                 'healthy': number_of_healthy_columns,
                 'critical': number_of_critical_columns
             }
         }
+        if self._validation_report['schema_check_results']['passed']:
+            return schema_report
+
+        columns_missing_in_current = self._validation_report['schema_check_results']['missing_in_current']
+        if len(columns_missing_in_current) > 0:
+            missing_in_current = columns_missing_in_current[0]
+            missing_in_current_data_type = self._validation_report['metadata']['reference_metadata']['type_mapping'][missing_in_current]
+
+            schema_report['details_by_attribute'] = [{
+                'attribute_name': missing_in_current,
+                'data_type': missing_in_current_data_type,
+                'issue_type': 'missing in current',
+                'validation_outcome': 'error_state'
+            }]
+
+        return schema_report
 
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')
