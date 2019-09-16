@@ -30,9 +30,6 @@ class TestDataContractOptions(Spec):
     def test_data_contract_options_has_max_bins(self):
         self._test_data_contract_options_has_attribute('max_bins')
 
-    def test_data_contract_options_has_check_schema(self):
-        self._test_data_contract_options_has_attribute('check_schema')
-
     def test_data_contract_options_has_check_row_count(self):
         self._test_data_contract_options_has_attribute('check_row_count')
     
@@ -115,12 +112,6 @@ class TestDataContractOptions(Spec):
     def test_data_contract_special_values_not_equal_if_only_one_is_none(self):
         options = DataContractOptions()
         other_options = DataContractOptions(special_values=[])
-
-        self.assertNotEqual(options, other_options)
-
-    def test_data_contract_special_values_not_equal_if_check_schema_not_equal(self):
-        options = DataContractOptions(check_schema=False)
-        other_options = DataContractOptions(check_schema=True)
 
         self.assertNotEqual(options, other_options)
 

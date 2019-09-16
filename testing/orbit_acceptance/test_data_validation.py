@@ -105,7 +105,6 @@ class TestDataValidation(Spec):
         import os.path as path
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
-        data_contract.options.schema_check = False
         data_contract.save(self.model_package_dirpath)
 
         self.assertTrue(path.isfile(self.contract_filepath))

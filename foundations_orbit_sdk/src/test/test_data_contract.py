@@ -175,9 +175,6 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_max_bins_50(self):
         self._test_data_contract_has_default_option('max_bins', 50)
 
-    def test_data_contract_has_options_with_default_check_schema_True(self):
-        self._test_data_contract_has_default_option('check_schema', True)
-
     def test_data_contract_has_options_with_default_check_row_count_False(self):
         self._test_data_contract_has_default_option('check_row_count', False)
 
@@ -266,13 +263,6 @@ class TestDataContract(Spec):
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
-    def test_data_contract_validate_does_not_perform_schema_check_if_check_schema_option_is_false(self):
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        contract.options.check_schema = False
-        contract.options.check_distribution = False
-        validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-        self.assertNotIn('schema_check_results', validation_report)
-
     @skip('PLEASE PUT ME BACK IN WHEN REMOVING PROTOTYPE CODE')
     def test_data_contract_validate_check_distributions_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -358,6 +348,5 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=dataframe)
         contract.options.check_row_count = True
         contract.options.check_distribution = False
-        contract.options.check_schema = False
 
         return contract

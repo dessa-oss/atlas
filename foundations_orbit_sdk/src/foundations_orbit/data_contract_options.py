@@ -7,9 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DataContractOptions(object):
     
-    def __init__(self, max_bins=None, check_schema=None, check_row_count=None, special_values=None, check_distribution=None, distribution=None):
+    def __init__(self, max_bins=None, check_row_count=None, special_values=None, check_distribution=None, distribution=None):
         self.max_bins = max_bins
-        self.check_schema = check_schema
         self.check_row_count = check_row_count
         self.special_values = special_values
         self.check_distribution = check_distribution
@@ -22,7 +21,6 @@ class DataContractOptions(object):
 
     def _other_attributes_equal(self, other):
         return self.max_bins == other.max_bins \
-            and self.check_schema == other.check_schema \
             and self.check_row_count == other.check_row_count \
             and self.check_distribution == other.check_distribution \
             and self.distribution == other.distribution
