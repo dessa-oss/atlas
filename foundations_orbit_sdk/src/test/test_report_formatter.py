@@ -30,7 +30,6 @@ class TestReportFormatter(Spec):
     def row_count_diff(self):
         return self.faker.random.random()
 
-
     def test_report_formatter_returns_formatted_report_with_expected_date(self):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.inference_period, formatted_report['date'])
@@ -51,11 +50,6 @@ class TestReportFormatter(Spec):
         self.validation_report['row_cnt_diff'] = self.row_count_diff
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.row_count_diff, formatted_report['row_cnt_diff'])
-
-    @skip('not implemented')
-    def test_report_formatter_generates_healthy_report_if_schema_passed(self):
-        # report_formatter = ReportFormatter()
-        pass
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
