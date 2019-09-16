@@ -241,8 +241,7 @@ class JobDeployment(object):
                     "PYTHONPATH": "/job/",
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
-            "network": "foundations-atlas",
-            "entrypoint": ["python"]
+            "network": "foundations-atlas"
         }
 
         if current_foundations_context().job_resources().ram is not None:
