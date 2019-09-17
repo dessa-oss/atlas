@@ -151,13 +151,11 @@ class ReportFormatter(object):
 
     def _formatted_data_quality_report(self):
         dist_check_results = self._validation_report['dist_check_results']
-        
-        data_quality_report = {
-            'summary': {
-                'healthy': len(dist_check_results),
-                'critical': 0,
-                'warning': 0
-            }
+
+        data_quality_summary = {
+            'healthy': 0,
+            'critical': 0,
+            'warning': 0
         }
         data_quality_attribute_details = []
         
@@ -171,9 +169,15 @@ class ReportFormatter(object):
                 attribute_details["difference_in_pct"] = sv_dict['percentage_diff']
                 attribute_details["validation_outcome"] = "healthy" if sv_dict["passed"] else "critical"
                 data_quality_attribute_details.append(attribute_details)
+                if sv_dict["passed"]:
+                    data_quality_summary['healthy'] += 1
+                else:
+                    data_quality_summary['critical'] += 1
 
-        data_quality_report['details_by_attribute'] = data_quality_attribute_details
-        return data_quality_report
+        return {
+            'summary': data_quality_summary,
+            'details_by_attribute': data_quality_attribute_details
+        }
     
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')

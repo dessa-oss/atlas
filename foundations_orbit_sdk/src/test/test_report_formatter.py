@@ -570,7 +570,7 @@ class TestReportFormatter(Spec):
 
     def test_return_data_quality_attribute_details_when_all_is_healthy(self):
         data_quality_attribute_details = []
-
+        
         for column, details in self.distribution_checks.items():
             for sv in details['special_values']:
                 attribute_details = {
@@ -586,6 +586,39 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
 
+    def test_return_data_quality_summary_when_one_column_is_unhealthy(self):
+        unhealthy_column = list(self.column_list)[0]
+        self.validation_report['dist_check_results'][unhealthy_column]['special_values']['nan']['passed'] = False
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
+            'critical': 1,
+            'warning': 0
+        }
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['data_quality']['summary'])
+
+    def test_return_data_quality_details_when_one_column_is_unhealthy(self):
+        data_quality_attribute_details = []
+        
+        unhealthy_column = list(self.column_list)[0]
+        self.validation_report['dist_check_results'][unhealthy_column]['special_values']['nan']['passed'] = False
+
+        for column, details in self.distribution_checks.items():
+            for sv in details['special_values']:
+                attribute_details = {
+                    'attribute_name': column,
+                    'value': f'{sv}',
+                    'pct_in_reference_data': 0,
+                    'pct_in_current_data': 0.15,
+                    'difference_in_pct': 0.15,
+                    'validation_outcome': 'critical' if column == unhealthy_column else 'healthy',
+                }
+                data_quality_attribute_details.append(attribute_details)
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
