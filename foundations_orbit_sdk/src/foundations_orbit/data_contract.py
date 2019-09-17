@@ -56,6 +56,11 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
+    def _save_to_redis(self, project_name, model_name, contract_name, inference_period, serialized_output):
+        from foundations_contrib.global_state import redis_connection
+        key = f'projects:{project_name}:models:{model_name}:validation:{contract_name}'
+        redis_connection.hset(key, inference_period, serialized_output)
+
     def validate(self, dataframe_to_validate, inference_period=None):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
@@ -132,7 +137,7 @@ class DataContract(object):
             self.options.special_values
         )
 
-        write_to_redis(project_name, model_name, self._contract_name, inference_period, output_to_write)
+        self._save_to_redis(project_name, model_name, self._contract_name, inference_period, output_to_write)
 
         return validation_report
 

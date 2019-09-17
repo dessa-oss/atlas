@@ -25,6 +25,10 @@ class ReportFormatter(object):
             'population_shift': self._formatted_population_shift_report() or {}
         }
 
+    def export_for_redis(self):
+        import pickle
+        pickle.dumps(self.formatted_report())
+
     def _formatted_row_count_difference_report(self):
         return self._validation_report.get('row_cnt_diff', 0)
 
@@ -185,7 +189,7 @@ class ReportFormatter(object):
     def _formatted_population_shift_report(self):
         if not self._options.check_distribution:
             return None
-            
+
         dist_check_results = self._validation_report['dist_check_results']
         
         population_shift_summary = {
