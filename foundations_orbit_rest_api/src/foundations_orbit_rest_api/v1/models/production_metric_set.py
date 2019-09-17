@@ -70,7 +70,7 @@ def _metric_set_from_simple_metric_information(metric_name, metric_series):
     return ProductionMetricSet(
         title={'text': f'{metric_name} over time'},
         yAxis={'title': {'text': metric_name}},
-        xAxis={'type': 'category'},
+        xAxis={'type': 'datetime'},
         series=metric_series
     )
 

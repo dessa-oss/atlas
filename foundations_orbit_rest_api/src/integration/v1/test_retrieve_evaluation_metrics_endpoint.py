@@ -78,7 +78,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'Customer Response (%) over time'},
                 'yAxis': {'title': {'text': 'Customer Response (%)'}},
                 'xAxis': {
-                    'type': 'category'
+                    'type': 'datetime'
                 },
                 'series': [
                     {
@@ -95,7 +95,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'MSE over time'},
                 'yAxis': {'title': {'text': 'MSE'}},
                 'xAxis': {
-                    'type': 'category'
+                    'type': 'datetime'
                 },
                 'series': [
                     {
@@ -159,7 +159,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'Customer Response (%) over time'},
                 'yAxis': {'title': {'text': 'Customer Response (%)'}},
                 'xAxis': {
-                    'type': 'category'
+                    'type': 'datetime'
                 },
                 'series': [
                     {
@@ -186,7 +186,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'MSE over time'},
                 'yAxis': {'title': {'text': 'MSE'}},
                 'xAxis': {
-                    'type': 'category'
+                    'type': 'datetime'
                 },
                 'series': [
                     {
@@ -209,16 +209,6 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
     def _sort_series_entries(self, data_from_route):
         for metric_set in data_from_route:
             metric_set['series'].sort(key=lambda series_entry: series_entry['name'])
-
-# def _recasted_numpy_floats(entry_0, entry_1, entry_2, entry_3):
-#     import numpy
-
-#     return [
-#         _cast_to_float_like_and_then_back(entry_0, numpy.float16),
-#         _cast_to_float_like_and_then_back(entry_1, numpy.float16),
-#         _cast_to_float_like_and_then_back(entry_2, numpy.float32),
-#         _cast_to_float_like_and_then_back(entry_3, numpy.float64)
-#     ]
 
 def _cast_to_float_like_and_then_back(value, float_like_class):
     return float(float_like_class(value))
