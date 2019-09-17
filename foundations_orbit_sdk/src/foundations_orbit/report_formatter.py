@@ -21,8 +21,8 @@ class ReportFormatter(object):
             'data_contract': self._contract_name,
             'row_cnt_diff': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),
-            'data_quality': self._formatted_data_quality_report(),
-            'population_shift': self._formatted_population_shift_report()
+            'data_quality': self._formatted_data_quality_report() or {},
+            'population_shift': self._formatted_population_shift_report() or {}
         }
 
     def _formatted_row_count_difference_report(self):
@@ -151,6 +151,8 @@ class ReportFormatter(object):
         return details_by_attribute
 
     def _formatted_data_quality_report(self):
+        if not self._options.check_distribution:
+            return None
         dist_check_results = self._validation_report['dist_check_results']
 
         data_quality_summary = {
@@ -181,6 +183,9 @@ class ReportFormatter(object):
         }
     
     def _formatted_population_shift_report(self):
+        if not self._options.check_distribution:
+            return None
+            
         dist_check_results = self._validation_report['dist_check_results']
         
         population_shift_summary = {

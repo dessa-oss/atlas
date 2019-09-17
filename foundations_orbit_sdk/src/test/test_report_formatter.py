@@ -36,15 +36,17 @@ class TestReportFormatter(Spec):
 
     @let
     def number_of_columns(self):
-        return self.faker.random.randint(2, 6)
+        return 6
 
     @let
     def distribution_checks(self):
         return {column: self.gen_dist_chect_result() for column in self.column_list}
 
-    @let
-    def data_contract_options(self):
-        return Mock()
+    @set_up
+    def set_up(self):
+        self.data_contract_options = Mock()
+        self.data_contract_options.check_distribution = True
+
     @let
     def validation_report(self):
         return {
@@ -672,6 +674,15 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
+    def test_return_no_data_quality_if_check_distribution_is_false(self):
+        self.data_contract_options.check_distribution = False
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual({}, formatted_report['data_quality'])
+
+    def test_return_no_population_shift_if_check_distribution_is_false(self):
+        self.data_contract_options.check_distribution = False
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual({}, formatted_report['population_shift'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
