@@ -50,12 +50,28 @@ class ReportFormatter(object):
         if self._validation_report['schema_check_results']['passed']:
             return schema_report
 
+        error_message = self._validation_report['schema_check_results']['error_message']
 
-        missing_current_attribute_details = self._attribute_details_for_missing_columns('current')
-        missing_reference_attribute_details = self._attribute_details_for_missing_columns('reference')
-        details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
-        if details_by_attribute:
-            schema_report['details_by_attribute'] = details_by_attribute
+        if error_message == 'column sets not equal':
+            missing_current_attribute_details = self._attribute_details_for_missing_columns('current')
+            missing_reference_attribute_details = self._attribute_details_for_missing_columns('reference')
+            details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
+            if details_by_attribute:
+                schema_report['details_by_attribute'] = details_by_attribute
+
+        elif error_message == 'columns not in order':
+            type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+            columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
+            schema_report['details_by_attribute'] = []
+            for column_out_of_order in columns_out_of_order:
+                col_data_type = type_mapping[column_out_of_order]
+                
+                schema_report['details_by_attribute'].append({
+                    'attribute_name': column_out_of_order,
+                    'data_type': col_data_type,
+                    'issue_type': 'column is out of order',
+                    'validation_outcome': 'error_state'
+                })
 
         return schema_report
 

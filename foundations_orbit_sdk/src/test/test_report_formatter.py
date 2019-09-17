@@ -36,7 +36,7 @@ class TestReportFormatter(Spec):
 
     @let
     def number_of_columns(self):
-        return self.faker.random.randint(1, 5)
+        return self.faker.random.randint(2, 6)
 
     @let
     def validation_report(self):
@@ -394,7 +394,51 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
-    
+    def test_report_formatter_returns_details_by_attribute_for_one_column_not_in_order(self):
+        
+        column_out_of_order = list(self.column_list)[0]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'columns not in order',
+            'columns_out_of_order': [column_out_of_order],
+        }
+
+        expected_detail_for_attribute = [{
+            'attribute_name': column_out_of_order,
+            'data_type': self.type_mapping[column_out_of_order],
+            'issue_type': 'column is out of order',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
+    def test_report_formatter_returns_details_by_attribute_for_two_columns_not_in_order(self):
+        
+        column_out_of_order = list(self.column_list)[0]
+        column_2_out_of_order = list(self.column_list)[1]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'columns not in order',
+            'columns_out_of_order': [column_out_of_order,  column_2_out_of_order],
+        }
+
+        expected_detail_for_attribute = [{
+            'attribute_name': column_out_of_order,
+            'data_type': self.type_mapping[column_out_of_order],
+            'issue_type': 'column is out of order',
+            'validation_outcome': 'error_state'
+        },{
+            'attribute_name': column_2_out_of_order,
+            'data_type': self.type_mapping[column_2_out_of_order],
+            'issue_type': 'column is out of order',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
