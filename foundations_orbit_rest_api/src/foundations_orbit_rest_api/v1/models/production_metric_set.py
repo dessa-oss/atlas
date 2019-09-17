@@ -57,27 +57,23 @@ class _IntermediateDataHierarchy(object):
         return list(self._hierarchy.values())
 
     def _append_to_metric_set_series(self, metric_name, model_name, metric_pairs):
-        metric_columns, metric_values = _unzip_list_of_pairs(metric_pairs)
-
+        converted_metric_pairs = convert_date_strings_to_timestamps(metric_pairs)
         if metric_name not in self._hierarchy:
-            self._hierarchy[metric_name] = _metric_set_from_simple_metric_information(metric_name, metric_columns, [])
+            self._hierarchy[metric_name] = _metric_set_from_simple_metric_information(metric_name, [])
 
-        self._hierarchy[metric_name].series.append({'data': metric_values, 'name': model_name})
+        self._hierarchy[metric_name].series.append({'data': converted_metric_pairs, 'name': model_name})
 
-def _unzip_list_of_pairs(list_of_pairs):
-    first_elements = []
-    second_elements = []
+def convert_date_strings_to_timestamps(list_of_pairs):
+    return [[_convert_date_string_to_timestamp(date_string), second_element] for date_string, second_element in list_of_pairs]
 
-    for first_element, second_element in list_of_pairs:
-        first_elements.append(first_element)
-        second_elements.append(second_element)
-
-    return first_elements, second_elements
-
-def _metric_set_from_simple_metric_information(metric_name, metric_columns, metric_series):
+def _metric_set_from_simple_metric_information(metric_name, metric_series):
     return ProductionMetricSet(
         title={'text': f'{metric_name} over time'},
         yAxis={'title': {'text': metric_name}},
-        xAxis={'categories': metric_columns},
+        xAxis={'type': 'category'},
         series=metric_series
     )
+
+def _convert_date_string_to_timestamp(date_string):
+    from datetime import datetime
+    return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000

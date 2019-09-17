@@ -80,7 +80,7 @@ class TestProductionMetricSet(Spec):
 
     @let
     def metric_column(self):
-        return self.faker.word()
+        return self.faker.date()
 
     @let
     def metric_value(self):
@@ -92,7 +92,7 @@ class TestProductionMetricSet(Spec):
 
     @let
     def metric_column_2(self):
-        return self.faker.word()
+        return self.faker.date()
 
     @let
     def metric_value_2(self):
@@ -105,6 +105,20 @@ class TestProductionMetricSet(Spec):
     @let
     def metric_value_4(self):
         return self.faker.random.random()
+
+    @let
+    def timestamp(self):
+        date_string = self.metric_column
+        return self._convert_date_string_to_timestamp(date_string)
+
+    @let
+    def timestamp_2(self):
+        date_string = self.metric_column_2
+        return self._convert_date_string_to_timestamp(date_string)
+
+    def _convert_date_string_to_timestamp(self, date_string):
+        from datetime import datetime
+        return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000
 
     def test_has_title(self):
         model = ProductionMetricSet(title=self.title)
@@ -139,7 +153,7 @@ class TestProductionMetricSet(Spec):
         expected_metric_set = ProductionMetricSet(
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
-            xAxis={'categories': []},
+            xAxis={'type': 'category'},
             series=[{'data': [], 'name': self.model_name}]
         )
 
@@ -158,8 +172,8 @@ class TestProductionMetricSet(Spec):
         expected_metric_set = ProductionMetricSet(
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
-            xAxis={'categories': [self.metric_column]},
-            series=[{'data': [self.metric_value], 'name': self.model_name}]
+            xAxis={'type': 'category'},
+            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.model_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -177,8 +191,8 @@ class TestProductionMetricSet(Spec):
         expected_metric_set = ProductionMetricSet(
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
-            xAxis={'categories': [self.metric_column, self.metric_column_2]},
-            series=[{'data': [self.metric_value, self.metric_value_2], 'name': self.model_name}]
+            xAxis={'type': 'category'},
+            series=[{'data': [[self.timestamp, self.metric_value], [self.timestamp_2, self.metric_value_2]], 'name': self.model_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -197,15 +211,15 @@ class TestProductionMetricSet(Spec):
         expected_metric_set_0 = ProductionMetricSet(
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
-            xAxis={'categories': [self.metric_column]},
-            series=[{'data': [self.metric_value], 'name': self.model_name}]
+            xAxis={'type': 'category'},
+            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.model_name}]
         )
 
         expected_metric_set_1 = ProductionMetricSet(
             title={'text': f'{self.metric_name_2} over time'},
             yAxis={'title': {'text': self.metric_name_2}},
-            xAxis={'categories': [self.metric_column_2]},
-            series=[{'data': [self.metric_value_2], 'name': self.model_name}]
+            xAxis={'type': 'category'},
+            series=[{'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.model_name}]
         )
 
         self.assertEqual([expected_metric_set_0, expected_metric_set_1], promise.evaluate())
@@ -231,20 +245,20 @@ class TestProductionMetricSet(Spec):
         expected_metric_set_0 = ProductionMetricSet(
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
-            xAxis={'categories': [self.metric_column]},
+            xAxis={'type': 'category'},
             series=[
-                {'data': [self.metric_value], 'name': self.model_name},
-                {'data': [self.metric_value_3], 'name': self.model_name_2}
+                {'data': [[self.timestamp, self.metric_value]], 'name': self.model_name},
+                {'data': [[self.timestamp, self.metric_value_3]], 'name': self.model_name_2}
             ]
         )
 
         expected_metric_set_1 = ProductionMetricSet(
             title={'text': f'{self.metric_name_2} over time'},
             yAxis={'title': {'text': self.metric_name_2}},
-            xAxis={'categories': [self.metric_column_2]},
+            xAxis={'type': 'category'},
             series=[
-                {'data': [self.metric_value_2], 'name': self.model_name},
-                {'data': [self.metric_value_4], 'name': self.model_name_2}
+                {'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.model_name},
+                {'data': [[self.timestamp_2, self.metric_value_4]], 'name': self.model_name_2}
             ]
         )
 
