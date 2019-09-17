@@ -100,7 +100,8 @@ class TestReportFormatter(Spec):
         expected_schema_report = {
             'summary': {
                 'healthy': self.number_of_columns,
-                'critical': 0
+                'critical': 0,
+                'warning': 0
             }
         }
 
@@ -125,7 +126,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns,
-            'critical': 1
+            'critical': 1,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -149,7 +151,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 1
+            'critical': 1,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -178,7 +181,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 1
+            'critical': 1,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -208,7 +212,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 2
+            'critical': 2,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -244,7 +249,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 2
+            'critical': 2,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -452,7 +458,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 2,
-            'critical': 2
+            'critical': 2,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
@@ -521,7 +528,8 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 2,
-            'critical': 2
+            'critical': 2,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()

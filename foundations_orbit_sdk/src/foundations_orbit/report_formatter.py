@@ -44,7 +44,8 @@ class ReportFormatter(object):
         schema_report = {
             'summary': {
                 'healthy': number_of_healthy_columns,
-                'critical': number_of_critical_columns
+                'critical': number_of_critical_columns,
+                'warning': 0
             }
         }
         if self._validation_report['schema_check_results']['passed']:
@@ -67,7 +68,8 @@ class ReportFormatter(object):
             schema_report = {
                 'summary': {
                     'healthy': number_of_columns - number_of_columns_out_of_order,
-                    'critical': number_of_columns_out_of_order
+                    'critical': number_of_columns_out_of_order,
+                    'warning': 0
                 }
             }
 
@@ -83,7 +85,8 @@ class ReportFormatter(object):
             schema_report = {
                 'summary': {
                     'healthy': number_of_columns - number_of_columns_mismatched,
-                    'critical': number_of_columns_mismatched
+                    'critical': number_of_columns_mismatched,
+                    'warning': 0
                 }
             }
 
