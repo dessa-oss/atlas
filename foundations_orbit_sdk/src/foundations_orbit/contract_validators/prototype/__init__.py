@@ -42,7 +42,7 @@ def create_bin_stats(special_values, max_bins, col_values):
 def distribution_check(config_dict, column_names, bin_stats, current_df):
     '''
         Expected format of dist_check_results
-    {'col1': {'binned_passed': False,
+        {'col1': {'binned_passed': False,
                 'binned_l_infinity': 0.2,
                 'special_values':
                     {'nan':
