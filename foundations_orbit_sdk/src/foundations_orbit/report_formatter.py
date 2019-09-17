@@ -60,53 +60,36 @@ class ReportFormatter(object):
                 schema_report['details_by_attribute'] = details_by_attribute
 
         elif error_message == 'columns not in order':
-            type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
             columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
             number_of_columns_out_of_order = len(columns_out_of_order)
             number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
-            
+
             schema_report = {
                 'summary': {
                     'healthy': number_of_columns - number_of_columns_out_of_order,
                     'critical': number_of_columns_out_of_order
                 }
             }
-            schema_report['details_by_attribute'] = []
-            
-            for column_out_of_order in columns_out_of_order:
-                col_data_type = type_mapping[column_out_of_order]
-                
-                schema_report['details_by_attribute'].append({
-                    'attribute_name': column_out_of_order,
-                    'data_type': col_data_type,
-                    'issue_type': 'column is out of order',
-                    'validation_outcome': 'error_state'
-                })
+
+            details_by_attribute = self._attribute_details_for_out_of_order_columns()
+            if details_by_attribute:
+                schema_report['details_by_attribute'] = details_by_attribute
 
         elif error_message == 'column datatype mismatches':
-            reference_type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
-            current_type_mapping = self._validation_report['metadata']['current_metadata']['type_mapping']
-            
             columns_mismatched = self._validation_report['schema_check_results']['cols']
             number_of_columns_mismatched = len(columns_mismatched)
             number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
-            
+
             schema_report = {
                 'summary': {
                     'healthy': number_of_columns - number_of_columns_mismatched,
                     'critical': number_of_columns_mismatched
                 }
             }
-            schema_report['details_by_attribute'] = []
-            
-            columns_mismatched = self._validation_report['schema_check_results']['cols']
-            for column_mismatched in columns_mismatched:
-                schema_report['details_by_attribute'].append({
-                    'attribute_name': column_mismatched,
-                    'data_type': current_type_mapping[column_mismatched],
-                    'issue_type': f'datatype in reference dataframe is {reference_type_mapping[column_mismatched]}',
-                    'validation_outcome': 'error_state'
-                })
+
+            details_by_attribute = self._attribute_details_for_mismatched_columns()
+            if details_by_attribute:
+                schema_report['details_by_attribute'] = details_by_attribute
 
         return schema_report
 
@@ -118,7 +101,7 @@ class ReportFormatter(object):
         details_by_attribute = []
         missing_columns = self._validation_report['schema_check_results'][missing_column_check]
         type_mapping = self._validation_report['metadata'][metadata]['type_mapping']
-        
+
         for missing_column in missing_columns:
             missing_data_type = type_mapping[missing_column]
 
@@ -129,6 +112,38 @@ class ReportFormatter(object):
                 'validation_outcome': 'error_state'
             })
 
+        return details_by_attribute
+
+    def _attribute_details_for_out_of_order_columns(self):
+        details_by_attribute = []
+
+        type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+        columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
+        for column_out_of_order in columns_out_of_order:
+            col_data_type = type_mapping[column_out_of_order]
+
+            details_by_attribute.append({
+                'attribute_name': column_out_of_order,
+                'data_type': col_data_type,
+                'issue_type': 'column is out of order',
+                'validation_outcome': 'error_state'
+            })
+
+        return details_by_attribute
+
+    def _attribute_details_for_mismatched_columns(self):
+        reference_type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+        current_type_mapping = self._validation_report['metadata']['current_metadata']['type_mapping']
+        details_by_attribute = []
+
+        columns_mismatched = self._validation_report['schema_check_results']['cols']
+        for column_mismatched in columns_mismatched:
+            details_by_attribute.append({
+                'attribute_name': column_mismatched,
+                'data_type': current_type_mapping[column_mismatched],
+                'issue_type': f'datatype in reference dataframe is {reference_type_mapping[column_mismatched]}',
+                'validation_outcome': 'error_state'
+            })
         return details_by_attribute
 
     def _columns_in_dataframes(self):
