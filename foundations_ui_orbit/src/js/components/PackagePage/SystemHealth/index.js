@@ -190,7 +190,7 @@ const SystemHealth = props => {
                 return (
                   <tr key={row.attribute_name}>
                     <td>{row.attribute_name}</td>
-                    <td>{row.PSI}</td>
+                    <td>{row["L-infinity"]}</td>
                     <td className={getValidationColor(row.validation_outcome)}>
                       {row.validation_outcome}
                       <div className="circle" />{" "}
@@ -235,7 +235,7 @@ const SystemHealth = props => {
                     <td>{row.attribute_name}</td>
                     <td>{row.value}</td>
                     <td>{row.pct_in_reference_data}</td>
-                    <td>{row.pct_in_inference_data}</td>
+                    <td>{row.pct_in_current_data}</td>
                     <td>{row.difference_in_pct}</td>
                     <td className={getValidationColor(row.validation_outcome)}>
                       {row.validation_outcome}
