@@ -257,7 +257,7 @@ class JobDeployment(object):
         else:
             worker_container['runtime'] = 'runc'
 
-        for override_key in ['command', 'image', 'workingDir', 'imagePullPolicy']:
+        for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
 
