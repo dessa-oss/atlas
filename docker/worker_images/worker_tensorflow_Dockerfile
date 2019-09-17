@@ -3,9 +3,12 @@ FROM tensorflow/tensorflow:1.13.2-py3-jupyter
 MAINTAINER Eric Kin Ho Lee version: 0.1
 
 COPY ./foundations_requirements.txt /tmp/foundations_requirements.txt
-COPY ./run.sh /job/run2.sh
+COPY ./run.sh /prejob/run.sh
+
+RUN chmod +x /prejob/run.sh
 
 RUN pip install --requirement /tmp/foundations_requirements.txt
 RUN rm /tmp/foundations_requirements.txt
 
-ENTRYPOINT ["/job/run2.sh"]
+ENTRYPOINT ["/prejob/run.sh"]
+

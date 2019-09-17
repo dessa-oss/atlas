@@ -7,5 +7,4 @@ if [ -f requirements.txt ]; then
 else
     echo "No user requirements found."
 fi
-
 python "$@"
