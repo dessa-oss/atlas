@@ -64,6 +64,7 @@ class DataContract(object):
     def validate(self, dataframe_to_validate, inference_period=None):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+        from foundations_orbit.report_formatter import ReportFormatter
         # from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
@@ -121,23 +122,15 @@ class DataContract(object):
         if 'passed' in schema_check_failure_dict:
             schema_check_failure_dict.pop('passed')
 
-        output_to_write = output_for_writing(
-            inference_period,
-            model_name,
-            self._contract_name,
-            row_cnt_diff,
-            schema_check_passed,
-            len(self._column_names),
-            schema_check_failure_dict,
-            len(columns_to_validate),
-            types_to_validate,
-            self._column_types,
-            self.options.check_distribution,
-            dist_check_results,
-            self.options.special_values
-        )
+        report_formatter = ReportFormatter(inference_period=inference_period,
+                                    model_package=model_name,
+                                    contract_name=self._contract_name,
+                                    validation_report=validation_report,
+                                    options=self.options)
+        
+        serialized_output = report_formatter.serialized_output()
 
-        self._save_to_redis(project_name, model_name, self._contract_name, inference_period, output_to_write)
+        self._save_to_redis(project_name, model_name, self._contract_name, inference_period, serialized_output)
 
         return validation_report
 

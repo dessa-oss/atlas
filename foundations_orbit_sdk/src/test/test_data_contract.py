@@ -360,16 +360,11 @@ class TestDataContract(Spec):
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2
+                    'healthy': 2,
+                    'warning': 0
                 }
             },
             'date': f'{inference_period}',
-            'details_by_attribute': [{
-                'attribute_name': f'{self.column_name_2}',
-                'data_type': 'int64',
-                'issue_type': 'datatype in reference is float64',
-                'validation_outcome': 'error_state'
-            }],
             'model_package': f'{self.model_name}',
             'population_shift': {
                 'details_by_attribute': [{
@@ -385,14 +380,22 @@ class TestDataContract(Spec):
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2
+                    'healthy': 2,
+                    'warning': 0
                 }
             },
             'row_cnt_diff': 0,
             'schema': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name_2}',
+                    'data_type': 'int64',
+                    'issue_type': 'datatype in reference dataframe is float64',
+                    'validation_outcome': 'critical'
+                }],
                 'summary': {
                     'critical': 1,
-                    'healthy': 1
+                    'healthy': 1,
+                    'warning': 0
                 }
             }
         }

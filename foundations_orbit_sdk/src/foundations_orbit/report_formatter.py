@@ -25,9 +25,9 @@ class ReportFormatter(object):
             'population_shift': self._formatted_population_shift_report() or {}
         }
 
-    def export_for_redis(self):
+    def serialized_output(self):
         import pickle
-        pickle.dumps(self.formatted_report())
+        return pickle.dumps(self.formatted_report())
 
     def _formatted_row_count_difference_report(self):
         return self._validation_report.get('row_cnt_diff', 0)
