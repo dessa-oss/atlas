@@ -40,6 +40,7 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         import requests
+        import os
 
         try:
             self._job_bundler.bundle()
@@ -64,6 +65,8 @@ class JobDeployment(object):
 
             project_name = self._job.pipeline_context().provenance.project_name
             username = self._job.pipeline_context().provenance.user_name
+            uid = os.environ.get("FOUNDATIONS_UID", os.getuid())
+            gid = os.environ.get("FOUNDATIONS_GID", os.getgid())
 
             job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
                                              working_dir_root_path=str(working_dir_root_path.absolute()),
@@ -72,6 +75,8 @@ class JobDeployment(object):
                                              job_id=self._job_id,
                                              project_name=project_name,
                                              username=username,
+                                             uid=uid,
+                                             gid=gid,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
@@ -199,10 +204,11 @@ class JobDeployment(object):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
 
-    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
+    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, uid, gid, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
         worker_container = {
             'image': "atlas-ce/worker:latest",
+            'user': str(uid)+":"+str(gid),
             'volumes':
                 {
                     job_mount_path:
@@ -240,6 +246,8 @@ class JobDeployment(object):
             'environment':
                 {
                     "FOUNDATIONS_USER": username,
+                    "FOUNDATIONS_UID": uid,
+                    "FOUNDATIONS_GID": gid,
                     "FOUNDATIONS_JOB_ID": job_id,
                     "FOUNDATIONS_PROJECT_NAME": project_name,
                     "PYTHONPATH": "/job/",
