@@ -190,3 +190,22 @@ class TestDistributionChecker(Spec):
 
         checker = DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats_one_column_no_special_value, self.one_column_dataframe)
         self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+
+    def test_distribution_check_two_column_dataframe_with_upper_edge_and_non_special_values_in_bin(self):
+        self.maxDiff = None
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
+                'special_values': {}
+            },
+            self.column_name_2: {
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
+                'special_values': {}
+            }
+        }
+
+        checker = DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats_two_column_no_special_value_with_upper_edge, self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+    
