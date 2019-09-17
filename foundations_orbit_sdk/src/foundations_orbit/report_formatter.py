@@ -62,7 +62,6 @@ class ReportFormatter(object):
         elif error_message == 'columns not in order':
             type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
             columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
-            
             number_of_columns_out_of_order = len(columns_out_of_order)
             number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
             
@@ -84,8 +83,34 @@ class ReportFormatter(object):
                     'validation_outcome': 'error_state'
                 })
 
+        elif error_message == 'column datatype mismatches':
+            reference_type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
+            current_type_mapping = self._validation_report['metadata']['current_metadata']['type_mapping']
+            
+            columns_mismatched = self._validation_report['schema_check_results']['cols']
+            number_of_columns_mismatched = len(columns_mismatched)
+            number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
+            
+            schema_report = {
+                'summary': {
+                    'healthy': number_of_columns - number_of_columns_mismatched,
+                    'critical': number_of_columns_mismatched
+                }
+            }
+            schema_report['details_by_attribute'] = []
+            
+            columns_mismatched = self._validation_report['schema_check_results']['cols']
+            for column_mismatched in columns_mismatched:
+                schema_report['details_by_attribute'].append({
+                    'attribute_name': column_mismatched,
+                    'data_type': current_type_mapping[column_mismatched],
+                    'issue_type': f'datatype in reference dataframe is {reference_type_mapping[column_mismatched]}',
+                    'validation_outcome': 'error_state'
+                })
+
         return schema_report
 
+    
     def _attribute_details_for_missing_columns(self, column_type):
         missing_column_check = 'missing_in_ref' if column_type == 'reference' else 'missing_in_current'
         metadata = 'current_metadata' if column_type == 'reference' else 'reference_metadata'

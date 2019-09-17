@@ -458,6 +458,74 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
+    def test_report_formatter_returns_details_by_attribute_for_column_datatype_mismatches_when_one_current_column_is_mismatched(self):
+        
+        column_mismatched = list(self.column_list)[0]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column datatype mismatches',
+            'cols': [column_mismatched],
+        }
+
+        self.validation_report['metadata']['current_metadata']['type_mapping'][column_mismatched] = 'unknown'
+
+        expected_detail_for_attribute = [{
+            'attribute_name': column_mismatched,
+            'data_type': 'unknown',
+            'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_mismatched]}',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
+    def test_report_formatter_returns_details_by_attribute_for_column_datatype_mismatches_when_two_current_column_is_mismatched(self):
+        
+        column_mismatched = list(self.column_list)[0]
+        column_2_mismatched = list(self.column_list)[1]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column datatype mismatches',
+            'cols': [column_mismatched, column_2_mismatched],
+        }
+
+        self.validation_report['metadata']['current_metadata']['type_mapping'][column_mismatched] = 'unknown'
+        self.validation_report['metadata']['current_metadata']['type_mapping'][column_2_mismatched] = 'unknown'
+
+        expected_detail_for_attribute = [{
+            'attribute_name': column_mismatched,
+            'data_type': 'unknown',
+            'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_mismatched]}',
+            'validation_outcome': 'error_state'
+        }, {
+            'attribute_name': column_2_mismatched,
+            'data_type': 'unknown',
+            'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_2_mismatched]}',
+            'validation_outcome': 'error_state'
+        }]
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
+    def test_report_formatter_return_summary_for_column_datatype_mismatches_when_two_current_column_is_mismatched(self):
+        column_mismatched = list(self.column_list)[0]
+        column_2_mismatched = list(self.column_list)[1]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'column datatype mismatches',
+            'cols': [column_mismatched,  column_2_mismatched],
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 2,
+            'critical': 2
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
 
     def _generate_formatted_report(self):
