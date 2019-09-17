@@ -81,7 +81,7 @@ class JobDeployment(object):
                                                         'username': username}
                                            })
         except requests.exceptions.ConnectionError:
-            raise ConnectionError('Cannot currently find Atlas Scheduler. Start Atlas Scheduler with `atlas start`.')
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
         finally:
             self._job_bundler.cleanup()
 
@@ -108,7 +108,7 @@ class JobDeployment(object):
             else:
                 return None
         except:
-            raise ConnectionError('Cannot currently find Atlas Scheduler. Start Atlas Scheduler with `atlas start`.')
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
 
     def get_job_logs(self):
         import requests
@@ -257,7 +257,7 @@ class JobDeployment(object):
         else:
             worker_container['runtime'] = 'runc'
 
-        for override_key in ['command', 'image', 'workingDir', 'imagePullPolicy']:
+        for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
 

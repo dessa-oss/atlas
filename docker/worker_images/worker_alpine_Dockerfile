@@ -5,9 +5,11 @@ MAINTAINER Eric Kin Ho Lee
 RUN apk --update add --no-cache g++
 
 COPY ./foundations_alpine_requirements.txt /tmp/foundations_alpine_requirements.txt
-COPY ./run.sh /job/run.sh
+COPY ./run.sh /prejob/run.sh
+
+RUN chmod +x /prejob/run.sh
 
 RUN pip install --requirement /tmp/foundations_alpine_requirements.txt
 RUN rm /tmp/foundations_alpine_requirements.txt
 
-ENTRYPOINT ["/job/run.sh"]
+ENTRYPOINT ["/prejob/run.sh"]
