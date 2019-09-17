@@ -114,8 +114,8 @@ class DistributionChecker(object):
 
     def _bin_current_values(self, current_values, ref_edges, n_current_vals, unique_ref_value):
         if len(ref_edges) > 0: # typical case where there was more than 1 unique-valued bin in the reference
-            current_bin_value_counts = apply_edges(current_values, ref_edges)
-            current_bin_value_counts = spread_counts_over_identical_edges(current_bin_value_counts, ref_edges)
+            current_bin_value_counts = self._apply_edges(current_values, ref_edges)
+            current_bin_value_counts = self._spread_counts_over_identical_edges(current_bin_value_counts, ref_edges)
             current_bin_percentages = np.array(current_bin_value_counts) / n_current_vals
         else: # case where there is only one bin in the reference
             current_unique_ref_value_count = len(current_values[current_values == unique_ref_value])
@@ -141,4 +141,32 @@ class DistributionChecker(object):
         return special_values
 
     def _l_infinity(self, ref_percentages, current_percentages):
+        # print('REF PERCENTAGES')
+        # print(ref_percentages)
+
+
+        # print('CURRENT PERCENTAGES')
+        # print(current_percentages)
+
         return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
+
+    def _apply_edges(self, values, edges):
+        '''find corresponding bin counts using provided bin edges'''
+        binned_values = [0] + [values[values <= i].shape[0] for i in edges]
+        binned_values = np.diff(binned_values, axis=0)
+        binned_values = np.append(binned_values, values[values > edges[-1]].shape[0])
+        return binned_values
+    
+    def _spread_counts_over_identical_edges(self, binned_values, edges):
+        '''check for edges that are consecutive; spread out counts over bins with identical edges'''
+        i = 0
+        while i < len(edges) - 1:
+            j = i + 1
+            while j < len(edges) and edges[j] == edges[i]:
+                j += 1
+            if j - i > 1:
+                s = binned_values[i:j].sum()
+                binned_values[i:j] = s // (j - i)
+                binned_values[i] = binned_values[i] + (s % (j - i))
+            i = j
+        return binned_values
