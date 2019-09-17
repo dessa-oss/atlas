@@ -440,6 +440,26 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
+    def test_report_formatter_return_summary_for_two_columns_not_in_order(self):
+        column_out_of_order = list(self.column_list)[0]
+        column_2_out_of_order = list(self.column_list)[1]
+
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': 'columns not in order',
+            'columns_out_of_order': [column_out_of_order,  column_2_out_of_order],
+        }
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 2,
+            'critical': 2
+        }
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+
+
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     model_package=self.model_package,

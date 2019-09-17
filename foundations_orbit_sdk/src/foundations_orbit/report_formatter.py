@@ -62,7 +62,18 @@ class ReportFormatter(object):
         elif error_message == 'columns not in order':
             type_mapping = self._validation_report['metadata']['reference_metadata']['type_mapping']
             columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
+            
+            number_of_columns_out_of_order = len(columns_out_of_order)
+            number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
+            
+            schema_report = {
+                'summary': {
+                    'healthy': number_of_columns - number_of_columns_out_of_order,
+                    'critical': number_of_columns_out_of_order
+                }
+            }
             schema_report['details_by_attribute'] = []
+            
             for column_out_of_order in columns_out_of_order:
                 col_data_type = type_mapping[column_out_of_order]
                 
