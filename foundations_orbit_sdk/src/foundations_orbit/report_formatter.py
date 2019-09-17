@@ -21,7 +21,8 @@ class ReportFormatter(object):
             'data_contract': self._contract_name,
             'row_cnt_diff': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),
-            'data_quality': self._formatted_data_quality_report()
+            'data_quality': self._formatted_data_quality_report(),
+            'population_shift': self._formatted_population_shift_report()
         }
 
     def _formatted_row_count_difference_report(self):
@@ -179,6 +180,33 @@ class ReportFormatter(object):
             'details_by_attribute': data_quality_attribute_details
         }
     
+    def _formatted_population_shift_report(self):
+        dist_check_results = self._validation_report['dist_check_results']
+        
+        population_shift_summary = {
+            'healthy': 0,
+            'critical': 0,
+            'warning': 0
+        }
+        population_shift_attribute_details = []
+
+        for column, col_results in dist_check_results.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'L-infinity': col_results['binned_l_infinity'],
+                'validation_outcome': 'healthy' if col_results['binned_passed'] else 'critical',
+            })
+            
+            if col_results['binned_passed']:
+                population_shift_summary['healthy'] += 1
+            else:
+                population_shift_summary['critical'] += 1
+
+        return {
+            'summary': population_shift_summary,
+            'details_by_attribute': population_shift_attribute_details
+        }
+
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')
         columns_in_current = self._columns_for_dataframe('current')

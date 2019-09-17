@@ -79,7 +79,7 @@ class TestReportFormatter(Spec):
 
     def gen_dist_chect_result(self):
         return {
-            'binned_passed': False,
+            'binned_passed': True,
             'binned_l_infinity': 0.2,
             'special_values':{
                 'nan':{
@@ -619,6 +619,59 @@ class TestReportFormatter(Spec):
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
+
+    def test_return_population_shift_summary_when_all_columns_are_healthy(self):
+        expected_schema_summary = {
+            'healthy': self.number_of_columns,
+            'critical': 0,
+            'warning': 0
+        }
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['population_shift']['summary'])
+
+    def test_return_population_shift_details_when_all_columns_are_healthy(self):
+        population_shift_attribute_details = []
+
+        for column, details in self.distribution_checks.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'L-infinity': 0.2,
+                'validation_outcome': 'healthy',
+            })
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
+    
+    def test_return_population_shift_summary_when_one_columns_is_unhealthy(self):
+        unhealthy_column = list(self.column_list)[0]
+        self.validation_report['dist_check_results'][unhealthy_column]['binned_passed'] = False
+
+        expected_schema_summary = {
+            'healthy': self.number_of_columns - 1,
+            'critical': 1,
+            'warning': 0
+        }
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['population_shift']['summary'])
+    
+    def test_return_population_shift_details_when_one_columns_is_unhealthy(self):
+        unhealthy_column = list(self.column_list)[0]
+        self.validation_report['dist_check_results'][unhealthy_column]['binned_passed'] = False
+
+        population_shift_attribute_details = []
+        
+        for column, details in self.distribution_checks.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'L-infinity': 0.2,
+                'validation_outcome': 'critical' if column == unhealthy_column else 'healthy',
+            })
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
+    
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
