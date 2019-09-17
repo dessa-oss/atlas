@@ -13,6 +13,7 @@ class JobOverviewGraph extends Component {
       formattedGraphData: [],
       allMetrics: this.props.allMetrics,
       setMetric: this.props.setMetric,
+      failedToConvert: false,
     };
 
     this.formatGraphData = this.formatGraphData.bind(this);
@@ -70,7 +71,9 @@ class JobOverviewGraph extends Component {
   }
 
   render() {
-    const { metric, formattedGraphData, allMetrics } = this.state;
+    const {
+      metric, formattedGraphData, allMetrics, failedToConvert,
+    } = this.state;
 
     const options = {
       chart: {
@@ -114,6 +117,8 @@ class JobOverviewGraph extends Component {
       metrics.push(<option key={metricName}>{metricName}</option>);
     });
 
+    const failedConversionMessage = <p className="not-graphable-message">This metric cannot be graphed.</p>;
+
     return (
       <div>
         <h3 className="section-title">Recent Jobs</h3>
@@ -122,7 +127,7 @@ class JobOverviewGraph extends Component {
             {metrics}
           </select>
           <div className="highchart-chart">
-            <HighchartsReact highcharts={Highcharts} options={options} />
+            {failedToConvert ? failedConversionMessage : <HighchartsReact highcharts={Highcharts} options={options} />}
           </div>
         </div>
       </div>
