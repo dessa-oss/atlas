@@ -109,7 +109,7 @@ class ReportFormatter(object):
                 'attribute_name': missing_column,
                 'data_type': missing_data_type,
                 'issue_type': f'missing in {column_type} dataframe',
-                'validation_outcome': 'error_state'
+                'validation_outcome': 'critical'
             })
 
         return details_by_attribute
@@ -126,7 +126,7 @@ class ReportFormatter(object):
                 'attribute_name': column_out_of_order,
                 'data_type': col_data_type,
                 'issue_type': 'column is out of order',
-                'validation_outcome': 'error_state'
+                'validation_outcome': 'critical'
             })
 
         return details_by_attribute
@@ -142,7 +142,7 @@ class ReportFormatter(object):
                 'attribute_name': column_mismatched,
                 'data_type': current_type_mapping[column_mismatched],
                 'issue_type': f'datatype in reference dataframe is {reference_type_mapping[column_mismatched]}',
-                'validation_outcome': 'error_state'
+                'validation_outcome': 'critical'
             })
         return details_by_attribute
 

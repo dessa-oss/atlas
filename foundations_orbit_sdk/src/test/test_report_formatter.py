@@ -270,7 +270,7 @@ class TestReportFormatter(Spec):
             'attribute_name': missing_in_current,
             'data_type': self.type_mapping[missing_in_current],
             'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }
 
         formatted_report = self._generate_formatted_report()
@@ -306,12 +306,12 @@ class TestReportFormatter(Spec):
             'attribute_name': self.column_name,
             'data_type': self.type_mapping[self.column_name],
             'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }, {
             'attribute_name': self.column_name_2,
             'data_type': self.type_mapping[self.column_name_2],
             'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -347,12 +347,12 @@ class TestReportFormatter(Spec):
             'attribute_name': self.column_name,
             'data_type': self.type_mapping[self.column_name],
             'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }, {
             'attribute_name': self.column_name_2,
             'data_type': self.type_mapping[self.column_name_2],
             'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -383,12 +383,12 @@ class TestReportFormatter(Spec):
             'attribute_name': column_missing_from_current,
             'data_type': self.type_mapping[column_missing_from_current],
             'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }, {
             'attribute_name': column_missing_from_reference,
             'data_type': self.type_mapping[column_missing_from_reference],
             'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -408,7 +408,7 @@ class TestReportFormatter(Spec):
             'attribute_name': column_out_of_order,
             'data_type': self.type_mapping[column_out_of_order],
             'issue_type': 'column is out of order',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -429,12 +429,12 @@ class TestReportFormatter(Spec):
             'attribute_name': column_out_of_order,
             'data_type': self.type_mapping[column_out_of_order],
             'issue_type': 'column is out of order',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         },{
             'attribute_name': column_2_out_of_order,
             'data_type': self.type_mapping[column_2_out_of_order],
             'issue_type': 'column is out of order',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -474,7 +474,7 @@ class TestReportFormatter(Spec):
             'attribute_name': column_mismatched,
             'data_type': 'unknown',
             'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_mismatched]}',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -498,12 +498,12 @@ class TestReportFormatter(Spec):
             'attribute_name': column_mismatched,
             'data_type': 'unknown',
             'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_mismatched]}',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }, {
             'attribute_name': column_2_mismatched,
             'data_type': 'unknown',
             'issue_type': f'datatype in reference dataframe is {self.type_mapping[column_2_mismatched]}',
-            'validation_outcome': 'error_state'
+            'validation_outcome': 'critical'
         }]
 
         formatted_report = self._generate_formatted_report()
@@ -526,6 +526,8 @@ class TestReportFormatter(Spec):
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
+
+
 
 
     def _generate_formatted_report(self):
