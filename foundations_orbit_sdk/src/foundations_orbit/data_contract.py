@@ -38,7 +38,6 @@ class DataContract(object):
 
         return DataContractOptions(
             max_bins=50,
-            check_schema=True,
             check_row_count=False,
             special_values=[numpy.nan],
             check_distribution=True,
@@ -82,8 +81,7 @@ class DataContract(object):
 
         ##### Prototype code section end
 
-        if self.options.check_schema:
-            validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
+        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).row_count_difference(row_count_to_check)
@@ -91,6 +89,17 @@ class DataContract(object):
         if self.options.check_distribution:
             ##### PROTOTYPE CODE - use distribution checker asap
             validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
+
+        validation_report['metadata'] = {
+            'reference_metadata': {
+                'column_names': self._column_names,
+                'type_mapping': self._column_types
+            },
+            'current_metadata': {
+                'column_names': columns_to_validate,
+                'type_mapping': types_to_validate
+            }
+        }
 
         ##### PROTOTYPE CODE - replace with robust private methods
         import os

@@ -179,12 +179,13 @@
   width: 60%;
   min-width: 480px;
   margin-left: 20% !important; // important needed to override the reactstrap library
-  margin-top: 12% !important;
+  position: absolute;
+  top: 40%;
   height: 50%;
 
   .container-tutorial {
     width: 100%;
-    height: 500px;
+    height: 400px;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

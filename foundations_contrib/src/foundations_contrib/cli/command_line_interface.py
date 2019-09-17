@@ -377,17 +377,21 @@ class CommandLineInterface(object):
 
         env = self._arguments.env if self._arguments.env is not None else 'local'
 
-        successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
+        try:
+            successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
 
-        if successfully_added:
-            message_router.push_message('orbit_project_model_served', {
-                'project_name': self._arguments.project_name,
-                'model_name': self._arguments.model_name,
-                'project_directory': self._arguments.project_directory
-            })
-        # else:
-        #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
-        #     self._fail_with_message(message)
+            if successfully_added:
+                message_router.push_message('orbit_project_model_served', {
+                    'project_name': self._arguments.project_name,
+                    'model_name': self._arguments.model_name,
+                    'project_directory': self._arguments.project_directory
+                })
+            # else:
+            #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
+            #     self._fail_with_message(message)
+        except ValueError as e:
+            self._fail_with_message(e)
+
 
     def _kubernetes_orbit_model_serving_stop(self):
         from foundations_contrib.cli.orbit_model_package_server import stop

@@ -47,7 +47,7 @@ class InputMetricCell extends Component {
   }
 
   isTagContentOverMaxLength(displayText) {
-    return displayText.length >= maxLength;
+    return displayText.length > maxLength;
   }
 
   isContentOverMaxLength(displayText) {

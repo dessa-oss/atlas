@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-
+import fakeredis
 from foundations_orbit.data_contract import DataContract
 
 class TestDataContract(Spec):
@@ -156,6 +156,12 @@ class TestDataContract(Spec):
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MODEL_NAME'] = self.model_name
 
+        self.redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+
+    @tear_down
+    def tear_down(self):
+        self.redis.flushall()
+
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
         self.assertEqual(DataContract, foundations_orbit.DataContract)
@@ -168,9 +174,6 @@ class TestDataContract(Spec):
 
     def test_data_contract_has_options_with_default_max_bins_50(self):
         self._test_data_contract_has_default_option('max_bins', 50)
-
-    def test_data_contract_has_options_with_default_check_schema_True(self):
-        self._test_data_contract_has_default_option('check_schema', True)
 
     def test_data_contract_has_options_with_default_check_row_count_False(self):
         self._test_data_contract_has_default_option('check_row_count', False)
@@ -260,13 +263,6 @@ class TestDataContract(Spec):
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
-    def test_data_contract_validate_does_not_perform_schema_check_if_check_schema_option_is_false(self):
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        contract.options.check_schema = False
-        contract.options.check_distribution = False
-        validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
-        self.assertNotIn('schema_check_results', validation_report)
-
     @skip('PLEASE PUT ME BACK IN WHEN REMOVING PROTOTYPE CODE')
     def test_data_contract_validate_check_distributions_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
@@ -307,6 +303,39 @@ class TestDataContract(Spec):
 
         self.assertEqual(mock_row_count_check_results, validation_report['row_cnt_diff'])
 
+    def test_data_contract_validation_report_has_metadata_for_reference_and_current_dataframe(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_different_types)
+
+        expected_metadata = {
+            'reference_metadata': {
+                'column_names': [
+                    self.column_name, 
+                    self.column_name_2
+                ],
+                'type_mapping': {
+                    self.column_name: 'int64', 
+                    self.column_name_2: 'float64'
+                },
+            },
+            'current_metadata': {
+                'column_names': [
+                    self.column_name, 
+                    self.column_name_2
+                ],
+                'type_mapping': {
+                    self.column_name: 'int64', 
+                    self.column_name_2: 'int64'
+                }
+            }
+        }
+
+        self.assertEqual(expected_metadata, report['metadata'])
+
+    @skip('not implemented')
+    def test_data_contract_validate_writes_correct_info_to_redis(self):
+        pass
+
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)
         self.assertEqual(default_value, getattr(contract.options, option_name))
@@ -319,6 +348,5 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=dataframe)
         contract.options.check_row_count = True
         contract.options.check_distribution = False
-        contract.options.check_schema = False
 
         return contract

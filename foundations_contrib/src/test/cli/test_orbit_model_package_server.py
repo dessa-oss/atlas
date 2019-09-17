@@ -263,9 +263,33 @@ class TestOrbitModelPackageServer(Spec):
         model_created_at = self._get_model_param(self.mock_project_name, self.mock_model_name, 'created_at')
         self.assertEqual(self.mock_time(), model_created_at)
 
-    def _deploy(self):
+    def test_raise_value_error_exception_with_invalid_project_name(self):
+        invalid_project_name = 'project@name'
+        try:
+            self._deploy(project_name=invalid_project_name)
+            self.fail('Failed to test for expected behaviour')
+        except ValueError as e:
+            self.assertTrue('invalid project name' in str(e).lower())
+        except Exception:
+            self.fail('Invalid exception raised')
+        
+    def test_raise_value_error_exception_with_invalid_model_name(self):
+        invalid_model_name = 'model-name'
+        try:
+            self._deploy(model_name=invalid_model_name)
+            self.fail('Failed to test for expected behaviour')
+        except ValueError as e:
+            self.assertTrue('invalid model name' in str(e).lower())
+        except Exception:
+            self.fail('Invalid exception raised')
+
+    def _deploy(self, project_name=None, model_name=None, project_directory=None):
+        project_name = project_name if project_name is not None else self.mock_project_name
+        model_name = model_name if model_name is not None else self.mock_model_name
+        project_directory = project_directory if project_directory is not None else self.mock_project_directory
+
         from foundations_contrib.cli.orbit_model_package_server import deploy
-        return deploy(self.mock_project_name, self.mock_model_name, self.mock_project_directory)
+        return deploy(project_name, model_name, project_directory)
 
     def _deploy_second(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy

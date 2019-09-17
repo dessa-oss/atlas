@@ -123,6 +123,10 @@
           -webkit-appearance: none;
           border: none;
 
+          &:first-child {
+            margin-right: 10px;
+          }
+
           span {
             font-size: 21px;
             font-weight: bold;

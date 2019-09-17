@@ -1,7 +1,7 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
 import Layout from "../Layout";
-import { get } from "../../../actions/BaseActions";
+import { get, post } from "../../../actions/BaseActions";
 import PropTypes from "prop-types";
 import moment from "moment";
 import ModalTutorial from "../../common/ModalTutorial";
@@ -64,7 +64,7 @@ const SystemHealth = props => {
 
         result.forEach(resultItem => {
           entries.forEach(entryItem => {
-            if (resultItem.inference_period === entryItem.inference_period) {
+            if (moment(resultItem.inference_period).isSame(entryItem.inference_period, "day")) {
               const found = entryItem.model_packages.find(item => item.model_package === resultItem.model_package);
 
               if (!found) {
@@ -80,7 +80,7 @@ const SystemHealth = props => {
 
         result.forEach(resultItem => {
           entries.forEach(entry => {
-            if (entry.inference_period === resultItem.inference_period) {
+            if (moment(resultItem.inference_period).isSame(entry.inference_period, "day")) {
               entry.model_packages.forEach(modelPackage => {
                 if (modelPackage.model_package === resultItem.model_package) {
                   let dataContracts = modelPackage.data_contracts;
@@ -142,9 +142,9 @@ const SystemHealth = props => {
               <th>Issue Type</th>
               <th>Validation Outcome</th>
             </tr>
-            {data.schema.details_by_attribute.length > 0
+            {data.schema.details_by_attribute
+              && data.schema.details_by_attribute.length > 0
               && data.schema.details_by_attribute.map(row => {
-                console.log("ROW: ", row);
                 if (row === "") return;
                 return (
                   <tr key={row.attribute_name}>
@@ -180,10 +180,11 @@ const SystemHealth = props => {
           <table>
             <tr>
               <th>Attribute Name</th>
-              <th>Population Shift Index</th>
+              <th>Distribution Shift (measured by L-infinity)</th>
               <th>Validation Outcome</th>
             </tr>
-            {data.population_shift.details_by_attribute.length > 0
+            {data.population_shift.details_by_attribute
+              && data.population_shift.details_by_attribute.length > 0
               && data.population_shift.details_by_attribute.map(row => {
                 if (row === "") return;
                 return (
@@ -225,7 +226,8 @@ const SystemHealth = props => {
               <th>Difference</th>
               <th>Validation Outcome</th>
             </tr>
-            {data.data_quality.details_by_attribute.length > 0
+            {data.data_quality.details_by_attribute
+              && data.data_quality.details_by_attribute.length > 0
               && data.data_quality.details_by_attribute.map(row => {
                 if (row === "") return;
                 return (
@@ -271,7 +273,13 @@ const SystemHealth = props => {
 
     const { location } = props;
 
-    get(`projects/${location.state.project.name}/validation_results`).then(result => {
+    const body = {
+      inference_period: selectedInferencePeriod,
+      model_package: selectedModelPackage,
+      data_contract: value
+    };
+
+    post(`projects/${location.state.project.name}/validation_results`, body).then(result => {
       if (result) {
         setData(result);
       }
@@ -366,10 +374,12 @@ const SystemHealth = props => {
               <p>{data !== undefined ? data.model_package : "No Report Selected"}</p>
               <p>Data Contract:</p>
               <p>{data !== undefined ? data.data_contract : "No Report Selected"}</p>
-              <p>Row count difference:</p>
-              <p>
-                {data !== undefined ? data.row_cnt_diff : "No Report Selected"}
-              </p>
+              <div>
+                <p>Row count percentage difference:</p>
+                <p>
+                  {data !== undefined ? data.row_cnt_diff : "No Report Selected"}
+                </p>
+              </div>
             </div>
           </div>
           <div className="right-side">
@@ -388,6 +398,7 @@ const SystemHealth = props => {
                 <div
                   className={
                     data === undefined
+                      || !data.schema.summary.warning
                       || data.schema.summary.warning === 0
                       ? "warning none"
                       : "warning"
@@ -395,7 +406,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.schema.summary.warning}
+                    : data.schema.summary.warning || 0}
                   <p>Warning</p>
                 </div>
                 <div
@@ -408,7 +419,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.schema.summary.healthy}
+                    : data.schema.summary.healthy || 0}
                   <p>Healthy</p>
                 </div>
                 <div
@@ -421,7 +432,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.schema.summary.critical}
+                    : data.schema.summary.critical || 0}
                   <p>Critical</p>
                 </div>
               </div>
@@ -441,6 +452,7 @@ const SystemHealth = props => {
                 <div
                   className={
                     data === undefined
+                      || !data.population_shift.summary.warning
                       || data.population_shift.summary.warning === 0
                       ? "warning none"
                       : "warning"
@@ -448,7 +460,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.population_shift.summary.warning}
+                    : data.population_shift.summary.warning || 0}
                   <p>Warning</p>
                 </div>
                 <div
@@ -461,7 +473,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.population_shift.summary.healthy}
+                    : data.population_shift.summary.healthy || 0}
                   <p>Healthy</p>
                 </div>
                 <div
@@ -474,7 +486,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.population_shift.summary.critical}
+                    : data.population_shift.summary.critical || 0}
                   <p>Critical</p>
                 </div>
               </div>
@@ -493,14 +505,16 @@ const SystemHealth = props => {
               <div className="header-summary">
                 <div
                   className={
-                    data === undefined || data.data_quality.summary.warning === 0
+                    data === undefined
+                      || !data.data_quality.summary.warning
+                      || data.data_quality.summary.warning === 0
                       ? "warning none"
                       : "warning"
                   }
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.data_quality.summary.warning}
+                    : data.data_quality.summary.warning || 0}
                   <p>Warning</p>
                 </div>
                 <div
@@ -512,7 +526,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.data_quality.summary.healthy}
+                    : data.data_quality.summary.healthy || 0}
                   <p>Healthy</p>
                 </div>
                 <div
@@ -525,7 +539,7 @@ const SystemHealth = props => {
                 >
                   {data === undefined
                     ? "N/A"
-                    : data.data_quality.summary.critical}
+                    : data.data_quality.summary.critical || 0}
                   <p>Critical</p>
                 </div>
               </div>
