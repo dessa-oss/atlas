@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+import numpy
+import pandas
 from foundations_spec import *
 
 from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
@@ -12,7 +14,7 @@ from foundations_orbit.contract_validators.distribution_checker import Distribut
 class TestDistributionChecker(Spec):
 
     @let
-    def default_distribution_options(self):
+    def distribution_options(self):
         return {
             'distance_metric': 'l_infinity',
             'default_threshold': 0.1,
@@ -23,7 +25,7 @@ class TestDistributionChecker(Spec):
 
     @let
     def checker_with_one_column_df(self):
-        return DistributionChecker(self.default_distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
+        return DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
 
     @let_now
     def empty_dataframe(self):
@@ -32,7 +34,26 @@ class TestDistributionChecker(Spec):
 
     @let
     def bin_stats(self):
-        return {}
+        return {
+            self.column_name: [{
+                'value':  numpy.nan,
+		        'percentage': 0.0
+            },
+            {
+                'value': 1,
+                'percentage': 1.0,
+                'upper_edge': None
+            }],
+            self.column_name_2: [{
+                'value':  numpy.nan,
+		        'percentage': 0.0
+            },
+            {
+                'value': 1,
+                'percentage': 1.0,
+                'upper_edge': None
+            }]
+        }
 
     @let
     def column_name(self):
@@ -44,14 +65,14 @@ class TestDistributionChecker(Spec):
 
     @let_now
     def one_column_dataframe(self):
-        import numpy
-        import pandas
-
         return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
 
     @let_now
+    def two_column_dataframe(self):
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[5,6],[10,32]], dtype=numpy.int8)
+
+    @let_now
     def two_column_dataframe_no_rows(self):
-        import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
 
     def _generate_distinct(self, reference_values, generating_callback):
@@ -59,11 +80,11 @@ class TestDistributionChecker(Spec):
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
 
     def test_distribution_checker_cannot_validate_if_checking_distribution_if_both_column_whitelist_and_column_blacklist_are_set(self):
-        options = self.default_distribution_options.copy()
+        options = self.distribution_options.copy()
         options['cols_to_ignore'] = []
         options['cols_to_include'] = []
 
-        checker = DistributionChecker(options, [self.column_name], {}, self.one_column_dataframe)
+        checker = DistributionChecker(options, [self.column_name], self.bin_stats, self.one_column_dataframe)
 
         with self.assertRaises(ValueError) as ex:
             checker.distribution_check_results()
@@ -71,16 +92,14 @@ class TestDistributionChecker(Spec):
         self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
     def test_distribution_check_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
-        distribution_checker = DistributionChecker(self.default_distribution_options, [], None, None)
+        distribution_checker = DistributionChecker(self.distribution_options, [], self.bin_stats, None)
         self.assertEqual({}, distribution_checker.distribution_check_results())
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
-        import numpy
-
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
                 'special_values': {
                     numpy.nan: {
                         'current_percentage': 0.0,
@@ -91,16 +110,14 @@ class TestDistributionChecker(Spec):
                 }
             }
         }
-        distribution_checker = DistributionChecker(self.default_distribution_options, [self.column_name], None, None)
+        distribution_checker = DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
         self.assertEqual(expected_dist_check_result, distribution_checker.distribution_check_results())
 
     def test_distribution_check_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
-        import numpy
-
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
                 'special_values': {
                     numpy.nan: {
                         'current_percentage': 0.0,
@@ -111,8 +128,8 @@ class TestDistributionChecker(Spec):
                 }
             },
             self.column_name_2: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
                 'special_values': {
                     numpy.nan: {
                         'current_percentage': 0.0,
@@ -124,5 +141,5 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        distribution_checker = DistributionChecker(self.default_distribution_options, [self.column_name, self.column_name_2], None, None)
-        self.assertEqual(expected_dist_check_result, distribution_checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, [self.column_name, self.column_name_2], self.bin_stats, self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
