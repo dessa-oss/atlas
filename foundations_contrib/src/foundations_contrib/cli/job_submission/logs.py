@@ -19,3 +19,4 @@ def stream_job_logs(deployment):
                 logger.info('Job is running; streaming logs')
                 job_running = True
             print(item)
+        logger.info('Job process finished.')
