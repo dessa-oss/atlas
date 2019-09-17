@@ -264,7 +264,7 @@ class TestOrbitModelPackageServer(Spec):
         self.assertEqual(self.mock_time(), model_created_at)
 
     def test_raise_value_error_exception_with_invalid_project_name(self):
-        invalid_project_name = 'project-name'
+        invalid_project_name = 'project@name'
         try:
             self._deploy(project_name=invalid_project_name)
             self.fail('Failed to test for expected behaviour')

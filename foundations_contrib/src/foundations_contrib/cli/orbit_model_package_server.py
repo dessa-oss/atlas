@@ -138,11 +138,12 @@ def _setup_environment(project_name, env):
     _retrieve_configuration_secrets()
 
 def _check_for_invalid_names(project_name, model_name):
+    import re
     error_message = 'Invalid {0} Name: {0} names cannot contain "-". Use "_" instead'
-    if '-' in project_name:
-        raise ValueError(error_message.format('Project'))
-    elif '-' in model_name:
+    if '-' in model_name:
         raise ValueError(error_message.format('Model'))
+    elif re.match("^[A-Za-z0-9_-]*$", project_name) == None:
+        raise ValueError(f'Invalid Project Name: Project names cannot contain special characters.')
 
 def deploy(project_name, model_name, project_directory, env='local'):
     _check_for_invalid_names(project_name, model_name)
