@@ -20,7 +20,8 @@ class ReportFormatter(object):
             'model_package': self._model_package,
             'data_contract': self._contract_name,
             'row_cnt_diff': self._formatted_row_count_difference_report(),
-            'schema': self._formatted_schema_report()
+            'schema': self._formatted_schema_report(),
+            'data_quality': self._formatted_data_quality_report()
         }
 
     def _formatted_row_count_difference_report(self):
@@ -96,7 +97,6 @@ class ReportFormatter(object):
 
         return schema_report
 
-    
     def _attribute_details_for_missing_columns(self, column_type):
         missing_column_check = 'missing_in_ref' if column_type == 'reference' else 'missing_in_current'
         metadata = 'current_metadata' if column_type == 'reference' else 'reference_metadata'
@@ -149,6 +149,32 @@ class ReportFormatter(object):
             })
         return details_by_attribute
 
+    def _formatted_data_quality_report(self):
+        dist_check_results = self._validation_report['dist_check_results']
+        
+        data_quality_report = {
+            'summary': {
+                'healthy': len(dist_check_results),
+                'critical': 0,
+                'warning': 0
+            }
+        }
+        data_quality_attribute_details = []
+        
+        for col, col_results in dist_check_results.items():
+            for sv, sv_dict in col_results['special_values'].items():
+                attribute_details = dict()
+                attribute_details["attribute_name"] = col
+                attribute_details["value"] = str(sv)
+                attribute_details["pct_in_reference_data"] = sv_dict['ref_percentage']
+                attribute_details["pct_in_current_data"] = sv_dict['current_percentage']
+                attribute_details["difference_in_pct"] = sv_dict['percentage_diff']
+                attribute_details["validation_outcome"] = "healthy" if sv_dict["passed"] else "critical"
+                data_quality_attribute_details.append(attribute_details)
+
+        data_quality_report['details_by_attribute'] = data_quality_attribute_details
+        return data_quality_report
+    
     def _columns_in_dataframes(self):
         columns_in_reference = self._columns_for_dataframe('reference')
         columns_in_current = self._columns_for_dataframe('current')

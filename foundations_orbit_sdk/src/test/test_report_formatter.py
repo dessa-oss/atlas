@@ -39,10 +39,18 @@ class TestReportFormatter(Spec):
         return self.faker.random.randint(2, 6)
 
     @let
+    def distribution_checks(self):
+        return {column: self.gen_dist_chect_result() for column in self.column_list}
+
+    @let
+    def data_contract_options(self):
+        return Mock()
+    @let
     def validation_report(self):
         return {
             'schema_check_results': {
-                'passed': False
+                'passed': False,
+                'error_message': ''
             },
             'metadata': {
                 'reference_metadata': {
@@ -53,7 +61,8 @@ class TestReportFormatter(Spec):
                     'column_names': self.column_list,
                     'type_mapping': self.type_mapping
                 }
-            }
+            },
+            'dist_check_results': self.distribution_checks
         }
 
     @let
@@ -67,6 +76,20 @@ class TestReportFormatter(Spec):
     @let
     def row_count_diff(self):
         return self.faker.random.random()
+
+    def gen_dist_chect_result(self):
+        return {
+            'binned_passed': False,
+            'binned_l_infinity': 0.2,
+            'special_values':{
+                'nan':{
+                    'percentage_diff': 0.15,
+                    'ref_percentage': 0,
+                    'current_percentage': 0.15,
+                    'passed': True
+                }
+            }
+        }
 
     def test_report_formatter_returns_formatted_report_with_expected_date(self):
         self.validation_report['schema_check_results'] = {'passed': True}
@@ -535,7 +558,33 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
+    def test_return_data_quality_summary_when_all_is_healthy(self):
+        expected_schema_summary = {
+            'healthy': self.number_of_columns,
+            'critical': 0,
+            'warning': 0
+        }
+        
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_schema_summary, formatted_report['data_quality']['summary'])
 
+    def test_return_data_quality_attribute_details_when_all_is_healthy(self):
+        data_quality_attribute_details = []
+
+        for column, details in self.distribution_checks.items():
+            for sv in details['special_values']:
+                attribute_details = {
+                    'attribute_name': column,
+                    'value': f'{sv}',
+                    'pct_in_reference_data': 0,
+                    'pct_in_current_data': 0.15,
+                    'difference_in_pct': 0.15,
+                    'validation_outcome': 'healthy',
+                }
+                data_quality_attribute_details.append(attribute_details)
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
 
 
     def _generate_formatted_report(self):
@@ -543,6 +592,6 @@ class TestReportFormatter(Spec):
                                     model_package=self.model_package,
                                     contract_name=self.contract_name,
                                     validation_report=self.validation_report,
-                                    options=Mock())
+                                    options=self.data_contract_options)
 
         return formatter.formatted_report()
