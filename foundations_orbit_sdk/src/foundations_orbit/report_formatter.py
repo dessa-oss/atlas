@@ -73,7 +73,7 @@ class ReportFormatter(object):
             details_by_attribute.append({
                 'attribute_name': missing_column,
                 'data_type': missing_data_type,
-                'issue_type': f'missing in {column_type}',
+                'issue_type': f'missing in {column_type} dataframe',
                 'validation_outcome': 'error_state'
             })
 

@@ -269,7 +269,7 @@ class TestReportFormatter(Spec):
         expected_detail_for_attribute = {
             'attribute_name': missing_in_current,
             'data_type': self.type_mapping[missing_in_current],
-            'issue_type': 'missing in current',
+            'issue_type': 'missing in current dataframe',
             'validation_outcome': 'error_state'
         }
 
@@ -305,12 +305,12 @@ class TestReportFormatter(Spec):
         expected_detail_for_attribute = [{
             'attribute_name': self.column_name,
             'data_type': self.type_mapping[self.column_name],
-            'issue_type': 'missing in current',
+            'issue_type': 'missing in current dataframe',
             'validation_outcome': 'error_state'
         }, {
             'attribute_name': self.column_name_2,
             'data_type': self.type_mapping[self.column_name_2],
-            'issue_type': 'missing in current',
+            'issue_type': 'missing in current dataframe',
             'validation_outcome': 'error_state'
         }]
 
@@ -346,19 +346,19 @@ class TestReportFormatter(Spec):
         expected_detail_for_attribute = [{
             'attribute_name': self.column_name,
             'data_type': self.type_mapping[self.column_name],
-            'issue_type': 'missing in reference',
+            'issue_type': 'missing in reference dataframe',
             'validation_outcome': 'error_state'
         }, {
             'attribute_name': self.column_name_2,
             'data_type': self.type_mapping[self.column_name_2],
-            'issue_type': 'missing in reference',
+            'issue_type': 'missing in reference dataframe',
             'validation_outcome': 'error_state'
         }]
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
-    def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_whencurrent_and_reference_each_have_one_column_the_other_does_not(self):
+    def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_and_reference_each_have_one_column_the_other_does_not(self):
         columns_in_current_dataframe = list(self.column_list)
         column_missing_from_current = columns_in_current_dataframe.pop()
 
@@ -382,17 +382,19 @@ class TestReportFormatter(Spec):
         expected_detail_for_attribute = [{
             'attribute_name': column_missing_from_current,
             'data_type': self.type_mapping[column_missing_from_current],
-            'issue_type': 'missing in current',
+            'issue_type': 'missing in current dataframe',
             'validation_outcome': 'error_state'
         }, {
             'attribute_name': column_missing_from_reference,
             'data_type': self.type_mapping[column_missing_from_reference],
-            'issue_type': 'missing in reference',
+            'issue_type': 'missing in reference dataframe',
             'validation_outcome': 'error_state'
         }]
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
+    
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
