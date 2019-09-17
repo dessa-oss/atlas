@@ -213,23 +213,34 @@ class CommandLineInterface(object):
             self._remove_pid_file()
 
     def _retrieve_artifacts(self):
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.archiving.artifact_downloader import ArtifactDownloader
         from foundations_contrib.archiving import get_pipeline_archiver_for_job
         from foundations_contrib.cli.job_submission.config import load
         from foundations_contrib.change_directory import ChangeDirectory
         import os
 
+        env_name = self._arguments.scheduler_config
+        job_id = self._arguments.job_id
         current_directory = os.getcwd()
 
         if self._arguments.save_dir is None:
-            self._arguments.save_dir = os.path.join(current_directory, str(self._arguments.job_id))
+            self._arguments.save_dir = os.path.join(current_directory, str(job_id))
 
         with ChangeDirectory(current_directory):
             load(self._arguments.scheduler_config or 'scheduler')
 
-        pipeline_archiver = get_pipeline_archiver_for_job(self._arguments.job_id)
-        artifact_downloader = ArtifactDownloader(pipeline_archiver)
-        artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        job_status = job_deployment.get_job_status()
+
+        if job_status is None:
+            self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+        else:
+            pipeline_archiver = get_pipeline_archiver_for_job(job_id)
+            artifact_downloader = ArtifactDownloader(pipeline_archiver)
+            artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
 
     def _retrieve_logs(self):
         from foundations_contrib.global_state import config_manager
