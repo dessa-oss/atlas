@@ -49,6 +49,11 @@
   position: relative;
   overflow: hidden;
   overflow-x: scroll;
+
+  .input-metric-column-container:nth-of-type(2) {
+    min-height: 350px;
+    vertical-align: top;
+  }
 }
 
 .input-metric-column-container {
