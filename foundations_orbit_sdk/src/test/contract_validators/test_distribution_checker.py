@@ -22,13 +22,17 @@ class TestDistributionChecker(Spec):
         }
 
     @let
-    def checker_with_defaults(self):
-        return DistributionChecker(self.default_distribution_options)
+    def checker_with_one_column_df(self):
+        return DistributionChecker(self.default_distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
 
     @let_now
     def empty_dataframe(self):
         import pandas
         return pandas.DataFrame()
+
+    @let
+    def bin_stats(self):
+        return {}
 
     @let
     def column_name(self):
@@ -59,15 +63,16 @@ class TestDistributionChecker(Spec):
         options['cols_to_ignore'] = []
         options['cols_to_include'] = []
 
-        checker = DistributionChecker(options)
+        checker = DistributionChecker(options, [self.column_name], {}, self.one_column_dataframe)
 
         with self.assertRaises(ValueError) as ex:
-            checker.distribution_check_results([self.one_column_dataframe])
+            checker.distribution_check_results()
 
         self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
     def test_distribution_check_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
-        self.assertEqual({}, self.checker_with_defaults.distribution_check_results([]))
+        distribution_checker = DistributionChecker(self.default_distribution_options, [], None, None)
+        self.assertEqual({}, distribution_checker.distribution_check_results())
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
         import numpy
@@ -86,8 +91,8 @@ class TestDistributionChecker(Spec):
                 }
             }
         }
-
-        self.assertEqual(expected_dist_check_result, self.checker_with_defaults.distribution_check_results([self.column_name]))
+        distribution_checker = DistributionChecker(self.default_distribution_options, [self.column_name], None, None)
+        self.assertEqual(expected_dist_check_result, distribution_checker.distribution_check_results())
 
     def test_distribution_check_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
         import numpy
@@ -119,4 +124,5 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        self.assertEqual(expected_dist_check_result, self.checker_with_defaults.distribution_check_results([self.column_name, self.column_name_2]))
+        distribution_checker = DistributionChecker(self.default_distribution_options, [self.column_name, self.column_name_2], None, None)
+        self.assertEqual(expected_dist_check_result, distribution_checker.distribution_check_results())

@@ -59,6 +59,7 @@ def distribution_check(config_dict, column_names, bin_stats, current_df):
     cols_to_check = set(current_df.columns).intersection(set(column_names))
     # only one of cols_to_check and cols_to_ignore can be non-None
     assert nand(dist_check_config['cols_to_include'] is not None, dist_check_config['cols_to_ignore'] is not None)
+    
     if dist_check_config['cols_to_include'] is not None:
         cols_to_check = set(dist_check_config['cols_to_include']).intersection(cols_to_check)
     elif dist_check_config['cols_to_ignore'] is not None:
@@ -115,6 +116,7 @@ def distribution_check(config_dict, column_names, bin_stats, current_df):
 
     return dist_check_results
 
+# deprecated (functionality replaces by the ReportFormatter) code to be removed
 def output_for_writing(
     corresponding_date,
     model_package_name,
