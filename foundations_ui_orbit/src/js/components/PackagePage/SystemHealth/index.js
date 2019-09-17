@@ -145,7 +145,6 @@ const SystemHealth = props => {
             {data.schema.details_by_attribute
               && data.schema.details_by_attribute.length > 0
               && data.schema.details_by_attribute.map(row => {
-                console.log("ROW: ", row);
                 if (row === "") return;
                 return (
                   <tr key={row.attribute_name}>
@@ -277,7 +276,7 @@ const SystemHealth = props => {
     const body = {
       inference_period: selectedInferencePeriod,
       model_package: selectedModelPackage,
-      data_contract: selectedDataContract
+      data_contract: value
     };
 
     post(`projects/${location.state.project.name}/validation_results`, body).then(result => {
