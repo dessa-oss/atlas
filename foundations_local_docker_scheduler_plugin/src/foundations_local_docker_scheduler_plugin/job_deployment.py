@@ -208,7 +208,7 @@ class JobDeployment(object):
         from foundations_contrib.global_state import current_foundations_context
         worker_container = {
             'image': "atlas-ce/worker:latest",
-            'user': str(uid)+":"+str(gid),
+            #'user': str(uid)+":"+str(gid),
             'volumes':
                 {
                     job_mount_path:
