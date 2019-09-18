@@ -286,3 +286,9 @@ class JobDeployment(object):
                         worker_container_overrides['resources'][override_key])
 
         return worker_container
+
+    def stop_running_job(self):
+        import requests
+
+        r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}")
+        return r.status_code == requests.codes.ok

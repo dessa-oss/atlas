@@ -25,6 +25,7 @@ class CommandLineInterface(object):
         self._initialize_model_serve_parser()
         self._initialize_retrieve_parser()
         self._initialize_orbit_model_serve_parser()
+        self._initialize_stop()
 
     def add_sub_parser(self, name, help=None):
         return self._subparsers.add_parser(name, help=help)
@@ -137,6 +138,11 @@ class CommandLineInterface(object):
         serving_destroy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
         serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
 
+    def _initialize_stop(self):
+        stop_parser = self.add_sub_parser('stop', help='Stops a running job')
+        stop_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment the job is running in ')
+        stop_parser.add_argument('job_id', type=str, help='Specify job uuid of running job')
+        stop_parser.set_defaults(function=self._stop)
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -402,3 +408,36 @@ class CommandLineInterface(object):
         from foundations_contrib.cli.orbit_model_package_server import destroy
         env = self._arguments.env if self._arguments.env is not None else 'local'
         successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name, env)
+
+    def _stop(self):
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.cli.job_submission.config import load
+        from foundations_contrib.change_directory import ChangeDirectory
+        import os
+
+        env_name = self._arguments.scheduler_config
+        job_id = self._arguments.job_id
+        current_directory = os.getcwd()
+
+        with ChangeDirectory(current_directory):
+            load(self._arguments.scheduler_config or 'scheduler')
+
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        try:
+            job_status = job_deployment.get_job_status()
+
+            if job_status is None:
+                self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+            elif job_status == 'queued':
+                self._fail_with_message('Error: Job `{}` is queued and cannot be stopped'.format(job_id))
+            elif job_status == 'completed':
+                self._fail_with_message('Error: Job `{}` is completed and cannot be stopped'.format(job_id))
+            else:
+                if job_deployment.stop():
+                    print('Stopped running job {}'.format(job_id))
+                else:
+                    print('Error stopping job {}'.format(job_id))
+        except AttributeError:
+            print('The specified scheduler does not support this functionality')
