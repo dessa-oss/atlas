@@ -28,9 +28,8 @@ class TestReportFormatter(Spec):
 
     @let
     def type_mapping(self):
-        mapping = {column: self.faker.sentence() for column in self.column_list}
-        mapping[self.column_name] = self.faker.sentence()
-        mapping[self.column_name_2] = self.faker.sentence()
+        mapping = {column: self.faker.word() for column in self.column_list}
+        mapping[self.column_name_4] = self.faker.word()
 
         return mapping
 
@@ -77,6 +76,10 @@ class TestReportFormatter(Spec):
 
     @let
     def column_name_3(self):
+        return self.faker.word()
+
+    @let
+    def column_name_4(self):
         return self.faker.word()
 
     @let
@@ -153,12 +156,12 @@ class TestReportFormatter(Spec):
 
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_has_one_more_column(self):
         columns_in_current_dataframe = list(self.column_list)
-        columns_in_current_dataframe.append(self.column_name)
+        columns_in_current_dataframe.append(self.column_name_4)
 
         self.validation_report['schema_check_results'] = {
             'passed': False,
             'error_message': 'column sets not equal',
-            'missing_in_ref': [self.column_name],
+            'missing_in_ref': [self.column_name_4],
             'missing_in_current': []
         }
 
@@ -235,16 +238,13 @@ class TestReportFormatter(Spec):
         columns_in_current_dataframe = list(self.column_list)
         column_missing_from_current = columns_in_current_dataframe.pop()
 
-        columns_missing_from_reference = [self.column_name, self.column_name_2]
-
-        for column_missing_from_reference in columns_missing_from_reference:
-            index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_current_dataframe))
-            columns_in_current_dataframe.insert(index_at_which_to_insert, column_missing_from_reference)
+        column_missing_from_reference = self.column_name_4
+        columns_in_current_dataframe.append(column_missing_from_reference)
 
         self.validation_report['schema_check_results'] = {
             'passed': False,
             'error_message': 'column sets not equal',
-            'missing_in_ref': columns_missing_from_reference,
+            'missing_in_ref': [column_missing_from_reference],
             'missing_in_current': [column_missing_from_current]
         }
 
@@ -255,7 +255,7 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 2,
+            'critical': 1,
             'warning': 0
         }
 
@@ -265,19 +265,17 @@ class TestReportFormatter(Spec):
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_reference_has_two_unshared_columns_and_current_has_one_unshared_column(self):
         columns_in_current_dataframe = self.column_list
         columns_in_reference_dataframe = list(self.column_list)
+
         column_missing_from_reference = columns_in_reference_dataframe.pop()
-
-        columns_missing_from_current = [self.column_name, self.column_name_2]
-
-        for column_missing_from_current in columns_missing_from_current:
-            index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_reference_dataframe))
-            columns_in_reference_dataframe.insert(index_at_which_to_insert, column_missing_from_current)
+        
+        column_missing_from_current = self.column_name_4
+        columns_in_reference_dataframe.append(column_missing_from_current)
 
         self.validation_report['schema_check_results'] = {
             'passed': False,
             'error_message': 'column sets not equal',
             'missing_in_ref': [column_missing_from_reference],
-            'missing_in_current': columns_missing_from_current
+            'missing_in_current': [column_missing_from_current]
         }
 
         self.validation_report['metadata']['current_metadata'] = {
@@ -292,7 +290,7 @@ class TestReportFormatter(Spec):
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
-            'critical': 2,
+            'critical': 1,
             'warning': 0
         }
 
