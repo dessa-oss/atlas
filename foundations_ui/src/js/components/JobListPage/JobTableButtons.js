@@ -73,6 +73,9 @@ class JobTableButtons extends Component {
     const {
       isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns, reload,
     } = this.state;
+    const {
+      buttonTensorboardEnabled,
+    } = this.props;
     let filter = null;
     if (isShowingFilter) {
       filter = (
@@ -97,6 +100,8 @@ class JobTableButtons extends Component {
         <button
           onClick={this.onClickTensor}
           type="button"
+          disabled={!buttonTensorboardEnabled}
+          className={!buttonTensorboardEnabled && 'disabled'}
         >
           <span className="i--icon-tf" /> <p className="text-upper">Send to tensorboard</p>
         </button>
@@ -129,6 +134,7 @@ JobTableButtons.propTypes = {
   getJobs: PropTypes.array,
   selectNoJobs: PropTypes.func,
   reload: PropTypes.func,
+  buttonTensorboardEnabled: PropTypes.bool,
 };
 
 JobTableButtons.defaultProps = {
@@ -141,6 +147,7 @@ JobTableButtons.defaultProps = {
   getJobs: () => {},
   selectNoJobs: () => {},
   reload: () => {},
+  buttonTensorboardEnabled: false,
 };
 
 export default JobTableButtons;

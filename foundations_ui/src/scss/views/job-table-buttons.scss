@@ -58,6 +58,11 @@
       cursor: pointer;
       vertical-align: middle;
     }
+    
+    &.disabled {
+      background: #700;
+      color: #333;
+    }
   }
 
   button:nth-of-type(3) {

@@ -49,6 +49,7 @@ class JobTable extends Component {
       projectName: this.props.projectName,
       getJobs: this.props.getJobs,
       reload: this.props.reload,
+      tensorboardEnabled: false,
     };
   }
 
@@ -135,13 +136,36 @@ class JobTable extends Component {
       });
     } else {
       newSelectedJobs.push(jobID);
+      const selectedJob = jobs.find((job) => {
+        return job.job_id === jobID;
+      });
     }
     let newAllJobsSelected = false;
     if (jobs.length === newSelectedJobs.length) {
       newAllJobsSelected = true;
     }
 
-    this.setState({ selectedJobs: newSelectedJobs, allJobsSelected: newAllJobsSelected });
+    const newTensorboardEnabled = this.canGoToTensorboard(newSelectedJobs);
+
+    this.setState({
+      selectedJobs: newSelectedJobs,
+      allJobsSelected: newAllJobsSelected,
+      tensorboardEnabled: newTensorboardEnabled,
+    });
+  }
+
+  canGoToTensorboard(newSelectedJobs) {
+    const { jobs } = this.state;
+    const jobsByID = {};
+    jobs.forEach((job) => {
+      jobsByID[job.job_id] = job;
+    });
+    const selectedJobObjects = newSelectedJobs.map((singleJobID) => {
+      return jobsByID[singleJobID];
+    });
+    return !!selectedJobObjects.length && selectedJobObjects.every((job) => {
+      return !!job.tags.tf;
+    });
   }
 
   selectAllJobs() {
@@ -154,7 +178,12 @@ class JobTable extends Component {
       });
       areAllSelected = true;
     }
-    this.setState({ selectedJobs: jobIds, allJobsSelected: areAllSelected });
+    const newTensorboardEnabled = this.canGoToTensorboard(jobIds);
+    this.setState({
+      selectedJobs: jobIds,
+      allJobsSelected: areAllSelected,
+      tensorboardEnabled: newTensorboardEnabled,
+    });
   }
 
   selectNoJobs() {
@@ -167,7 +196,7 @@ class JobTable extends Component {
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
       startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn, selectedJobs, allJobsSelected,
-      projectName, getJobs, reload,
+      projectName, getJobs, reload, tensorboardEnabled,
     } = this.state;
 
     const jobRows = [];
@@ -175,14 +204,6 @@ class JobTable extends Component {
     const rowNumbers = [];
 
     const handleClick = (job) => {};
-
-    const selectedJob = () => {
-      for (let i = 0; i < jobs.length; i += 1) {
-        if (jobs[i].job_id === this.state.selectedRow) {
-          return jobs[i];
-        }
-      }
-    };
 
     const allFilterableColumns = allMetrics.concat(allInputParams);
     const visibleMetrics = allMetrics.filter((col) => {
@@ -217,6 +238,7 @@ class JobTable extends Component {
             getJobs={getJobs}
             selectNoJobs={this.selectNoJobs}
             reload={reload}
+            buttonTensorboardEnabled={tensorboardEnabled}
           />
           <JobTableHeader
             allInputParams={visibleParams}
