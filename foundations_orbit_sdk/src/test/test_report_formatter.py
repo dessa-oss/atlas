@@ -320,9 +320,8 @@ class TestReportFormatter(Spec):
                 'issue_type': 'missing in current dataframe' if column == missing_in_current else None,
                 'validation_outcome': 'critical' if column == missing_in_current else 'healthy'
             })
-
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_details_for_attribute, formatted_report['schema']['details_by_attribute'])
+        
+        self._sort_check_for_details_by_activity(expected_details_for_attribute)
 
     def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_two_difference_column(self):
         columns_in_current_dataframe = self.column_list
@@ -350,21 +349,24 @@ class TestReportFormatter(Spec):
             'type_mapping': self.type_mapping
         }
 
-        expected_detail_for_attribute = [{
-            'attribute_name': self.column_name,
-            'data_type': self.type_mapping[self.column_name],
-            'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'critical'
-        }, {
-            'attribute_name': self.column_name_2,
-            'data_type': self.type_mapping[self.column_name_2],
-            'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'critical'
-        }]
+        all_columns = self.column_list
+        expected_detail_for_attribute = []
 
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+        for column in all_columns:
+            detail = {
+                'attribute_name': column,
+                'data_type': self.type_mapping[column],
+                'issue_type': None,
+                'validation_outcome': 'healthy'
+            }
+            if column == self.column_name or column == self.column_name_2:
+                detail['issue_type'] = 'missing in current dataframe'
+                detail['validation_outcome'] = 'critical'
 
+            expected_detail_for_attribute.append(detail)
+        
+        self._sort_check_for_details_by_activity(expected_detail_for_attribute)
+        
     def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_reference_has_two_difference_column(self):
         columns_in_reference_dataframe = self.column_list
         columns_in_current_dataframe = list(self.column_list)
@@ -407,10 +409,7 @@ class TestReportFormatter(Spec):
 
             expected_detail_for_attribute.append(detail)
 
-        expected_detail_for_attribute.sort(key=lambda detail: detail['attribute_name'])
-
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+        self._sort_check_for_details_by_activity(expected_detail_for_attribute)
 
     def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_and_reference_each_have_one_column_the_other_does_not(self):
         columns_in_current_dataframe = list(self.column_list)
@@ -452,9 +451,7 @@ class TestReportFormatter(Spec):
 
             expected_detail_for_attribute.append(detail)
 
-        expected_detail_for_attribute.sort(key=lambda column: column['attribute_name'])
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+        self._sort_check_for_details_by_activity(expected_detail_for_attribute)
 
     def test_report_formatter_returns_details_by_attribute_for_one_column_not_in_order(self):
         
@@ -715,6 +712,12 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['population_shift'])
 
+    def _sort_check_for_details_by_activity(self, expected_detail_for_attribute):
+        expected_detail_for_attribute.sort(key=lambda detail: detail['attribute_name'])
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
+    
     def _get_all_columns_list(self, columns_in_current_dataframe, columns_in_reference_dataframe):
         in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
         return columns_in_reference_dataframe + list(in_current_not_in_reference)
