@@ -129,9 +129,15 @@ class JobDeployment(object):
         import time
 
         status = self.get_job_status()
+        counter = 0
+        timeout = 15
 
         while status == "queued" or status is None:
             time.sleep(1)
+            if status is None:
+                counter += 1
+            if counter >= timeout:
+                raise TimeoutError('Job timed out')
             status = self.get_job_status()
 
         if status == "running":
@@ -299,13 +305,11 @@ class JobDeployment(object):
 
         config = JobDeployment._get_config()
 
-        queued_jobs = requests.get(f"{config['scheduler_url']}/queued_jobs").json()
-        
-        counter = 0
+        num_removed = 0
+        status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0").status_code
 
-        for job in queued_jobs.values():
-            r = requests.delete(f"{config['scheduler_url']}/queued_jobs/{job['position']}")
-            if r.status_code == requests.codes.ok:
-                counter += 1
-        
-        return counter
+        while status_code == 204:
+            status_code = requests.delete(f"{config['scheduler_url']}/queued_jobs/0").status_code
+            num_removed += 1
+
+        return num_removed
