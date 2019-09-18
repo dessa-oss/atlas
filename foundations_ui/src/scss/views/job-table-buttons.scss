@@ -48,7 +48,13 @@
 
   button:nth-of-type(2) {
     width: 220px;
-    background: #7B7B7B;
+    background: #fff;
+    color: #444;
+    border: 2px solid orange;
+
+    &:hover {
+      background-color: #ececec;
+    }
 
     span {
       display: inline-block;
@@ -60,8 +66,9 @@
     }
     
     &.disabled {
-      background: #700;
+      background: #867878;
       color: #333;
+      border: 2px solid #90610c;
     }
   }
 

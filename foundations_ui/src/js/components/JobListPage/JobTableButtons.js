@@ -89,6 +89,9 @@ class JobTableButtons extends Component {
       );
     }
 
+    const buttonTensorboardDisabled = !buttonTensorboardEnabled;
+    const iconClassName = buttonTensorboardDisabled ? 'i--icon-tf-disabled' : 'i--icon-tf';
+
     return (
       <div className="job-details-header">
         <button
@@ -100,10 +103,10 @@ class JobTableButtons extends Component {
         <button
           onClick={this.onClickTensor}
           type="button"
-          disabled={!buttonTensorboardEnabled}
-          className={!buttonTensorboardEnabled && 'disabled'}
+          disabled={buttonTensorboardDisabled}
+          className={buttonTensorboardDisabled && 'disabled'}
         >
-          <span className="i--icon-tf" /> <p className="text-upper">Send to tensorboard</p>
+          <span className={iconClassName} /> <p className="text-upper">Send to tensorboard</p>
         </button>
         <button onClick={this.onDeleteJobs} type="button" className="text-upper">Delete</button>
         <div
