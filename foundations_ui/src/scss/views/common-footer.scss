@@ -4,7 +4,12 @@
   padding-top: 3px;
   background-color: #3A3D3D; 
   color: $color-white;
-
+  
+  p {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
   p:first-of-type() {
     cursor: pointer;
     color: $color-light-blue;
