@@ -24,7 +24,6 @@ class ErrorMessage extends Component {
     if (errorCode === 400) {
       return this.setBadRequestError();
     }
-    console.log('Error code not valid');
 
     return {
       errorBanner: '',

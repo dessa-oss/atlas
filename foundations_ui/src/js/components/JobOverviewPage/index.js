@@ -7,6 +7,7 @@ import JobDetails from './JobDetails';
 import CommonHeader from '../common/CommonHeader';
 import TagContainer from './TagContainer';
 import BaseActions from '../../actions/BaseActions';
+import ErrorPage from '../common/ErrorPage';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class JobOverviewPage extends Component {
     this.state = {
       tab: 'overview',
       tags: [],
+      showErrorPage: false,
     };
 
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
@@ -24,14 +26,24 @@ class JobOverviewPage extends Component {
 
   async reload() {
     const { location } = this.props;
-    if (!location.state.project || location.state.project === {}) {
+    if (!location.state || !location.state.project || location.state.project === {}) {
       const { projectName } = this.props.match.params;
       const fetchedProjects = await BaseActions.getFromStaging('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName);
-      this.setState({
-        tags: selectedProject.tags,
-      });
+      if (selectedProject.length === 0 || selectedProject === undefined) {
+        this.setState({
+          showErrorPage: true,
+        });
+      } else {
+        this.setState({
+          tags: selectedProject.tags,
+        });
+      }
     }
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   async onClickProjectOverview() {
@@ -81,8 +93,17 @@ class JobOverviewPage extends Component {
   onKeyDown() {}
 
   render() {
-    const { tab, tags } = this.state;
+    const { tab, tags, showErrorPage } = this.state;
     const { location } = this.props;
+
+    if (showErrorPage === true) {
+      return (
+        <div>
+          <CommonHeader {...this.props} />
+          <ErrorPage {...this.props} />
+        </div>
+      );
+    }
 
     return (
       <div>

@@ -25,10 +25,6 @@ class App extends Component {
             <Route exact path="/contact" component={ContactPage} />
             <Redirect exact from="/" to="/projects" />
             <Route
-              path="/projects/:projectName/job_listing"
-              component={JobListPage}
-            />
-            <Route
               path="/projects/:projectName/overview"
               component={JobOverviewPage}
             />
