@@ -26,6 +26,7 @@ class CommandLineInterface(object):
         self._initialize_retrieve_parser()
         self._initialize_orbit_model_serve_parser()
         self._initialize_stop()
+        self._initialize_clear_queue()
 
     def add_sub_parser(self, name, help=None):
         return self._subparsers.add_parser(name, help=help)
@@ -140,9 +141,14 @@ class CommandLineInterface(object):
 
     def _initialize_stop(self):
         stop_parser = self.add_sub_parser('stop', help='Stops a running job')
-        stop_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment the job is running in ')
+        stop_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment the job is running in')
         stop_parser.add_argument('job_id', type=str, help='Specify job uuid of running job')
         stop_parser.set_defaults(function=self._stop)
+
+    def _initialize_clear_queue(self):
+        clear_queue_parser = self.add_sub_parser('clear-queue', help='Clears all scheduled jobs from the queue')
+        clear_queue_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment to clear the queue')
+        clear_queue_parser.set_defaults(function=self._clear_queue)
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -439,5 +445,25 @@ class CommandLineInterface(object):
                     print('Stopped running job {}'.format(job_id))
                 else:
                     print('Error stopping job {}'.format(job_id))
+        except AttributeError:
+            print('The specified scheduler does not support this functionality')
+
+    def _clear_queue(self):
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.cli.job_submission.config import load
+        from foundations_contrib.change_directory import ChangeDirectory
+        import os
+
+        env_name = self._arguments.scheduler_config
+        current_directory = os.getcwd()
+
+        with ChangeDirectory(current_directory):
+            load(self._arguments.scheduler_config or 'scheduler')
+
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+
+        try:
+            num_jobs_dequeued = job_deployment_class.clear_queue()
+            print('Removed {} job(s) from queue'.format(num_jobs_dequeued))
         except AttributeError:
             print('The specified scheduler does not support this functionality')
