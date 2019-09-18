@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ProfilePlaceholder from '../../../assets/images/icons/profile-placeholder.png';
+import ProfilePlaceholder from '../../../assets/svgs/profile-placeholder.svg';
 
 class CommonHeader extends React.Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class CommonHeader extends React.Component {
           </div>
           <div className="header-container-profile">
             <img alt="" src={ProfilePlaceholder} />
-            <p>Mohammed R.</p>
+            <p>CE User</p>
             <i
               onKeyPress={this.onKeyPress}
               tabIndex={0}

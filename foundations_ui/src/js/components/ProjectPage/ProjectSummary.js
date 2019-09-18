@@ -33,7 +33,7 @@ const ProjectSummary = (props) => {
         </h2>
         {/* <p>Data Source: Unknown</p> */}
         <p className="font-bold">
-          Project owner: <span>{project.owner}</span>
+          Project owner: <span>CE User</span>
         </p>
         <p className="font-bold">
           Created at: <span>{project.created_at}</span>

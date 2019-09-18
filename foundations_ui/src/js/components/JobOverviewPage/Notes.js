@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import ProfilePlaceholder from '../../../assets/images/icons/profile-placeholder.png';
+import ProfilePlaceholder from '../../../assets/svgs/profile-placeholder.svg';
 import BaseActions from '../../actions/BaseActions';
 
 class Notes extends React.Component {
@@ -67,7 +67,7 @@ class Notes extends React.Component {
 
     const body = {
       message,
-      author: 'Mohammed R.',
+      author: 'CE User',
     };
 
     BaseActions.postStaging(`projects/${projectName}/note_listing`, body).then(() => {
@@ -101,7 +101,7 @@ class Notes extends React.Component {
               <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">
                   <img alt="" src={ProfilePlaceholder} />
-                  <p>{note.author} <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
+                  <p>CE User <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
                 </div>
                 <p>{note.message}</p>
               </div>

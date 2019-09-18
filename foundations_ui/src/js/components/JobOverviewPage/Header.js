@@ -81,7 +81,7 @@ class Header extends React.Component {
           </div>
           <div>
             <div className="container-label-date font-bold">Project Owners: </div>
-            <div className="container-text-date">{projectOwners}</div>
+            <div className="container-text-date">CE User</div>
           </div>
         </div>
       </div>
