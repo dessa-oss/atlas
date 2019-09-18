@@ -24,7 +24,7 @@ class TestReportFormatter(Spec):
 
     @let
     def column_list(self):
-        return [self.faker.sentence() for _ in range(self.number_of_columns)]
+        return [self.column_name, self.column_name_2, self.column_name_3]
 
     @let
     def type_mapping(self):
@@ -74,6 +74,10 @@ class TestReportFormatter(Spec):
     @let
     def column_name_2(self):
         return self.faker.sentence()
+
+    @let
+    def column_name_3(self):
+        return self.faker.word()
 
     @let
     def row_count_diff(self):
