@@ -55,6 +55,8 @@ class ReportFormatter(object):
             schema_report = self._build_validation_report_for_columns_not_in_order()
         elif error_message == 'column datatype mismatches':
             schema_report = self._build_validation_report_for_datatype_mismatch()
+        else:
+            raise ValueError('Invalid error message')
         return schema_report
 
     

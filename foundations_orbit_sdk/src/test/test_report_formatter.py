@@ -270,7 +270,7 @@ class TestReportFormatter(Spec):
 
         with self.assertRaises(ValueError) as error:
             self._generate_formatted_report()
-        self.assertIn('Invalid error message: ', error.exception.args)
+        self.assertIn('Invalid error message', error.exception.args)
 
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_reference_has_two_unshared_columns_and_current_has_one_unshared_column(self):
         columns_in_current_dataframe = self.column_list
