@@ -78,15 +78,15 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'Customer Response (%) over time'},
                 'yAxis': {'title': {'text': 'Customer Response (%)'}},
                 'xAxis': {
-                    'categories': ['2029-02-02', '2029-03-02', '2029-04-02', '2029-05-02']
+                    'type': 'datetime'
                 },
                 'series': [
                     {
-                        'data': [27.56, 27.57, 27.53, 27.43],
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02'), 27.56], [_convert_date_string_to_timestamp('2029-03-02'), 27.57], [_convert_date_string_to_timestamp('2029-04-02'), 27.53], [_convert_date_string_to_timestamp('2029-05-02'), 27.43]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [17.56, 17.57, 17.53, 17.43],
+                        'data': [[_convert_date_string_to_timestamp('2029-02-02'), 17.56], [_convert_date_string_to_timestamp('2029-03-02'), 17.57], [_convert_date_string_to_timestamp('2029-04-02'), 17.53], [_convert_date_string_to_timestamp('2029-05-02'), 17.43]],
                         'name': 'this_job'
                     }
                 ]
@@ -95,15 +95,15 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'MSE over time'},
                 'yAxis': {'title': {'text': 'MSE'}},
                 'xAxis': {
-                    'categories': ['2019-02-01', '2019-03-01', '2019-04-01', '2019-05-01']
+                    'type': 'datetime'
                 },
                 'series': [
                     {
-                        'data': [5, 6, 7, 8],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 5], [_convert_date_string_to_timestamp('2019-03-01'), 6], [_convert_date_string_to_timestamp('2019-04-01'), 7], [_convert_date_string_to_timestamp('2019-05-01'), 8]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [1, 2, 3, 4],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 1], [_convert_date_string_to_timestamp('2019-03-01'), 2], [_convert_date_string_to_timestamp('2019-04-01'), 3], [_convert_date_string_to_timestamp('2019-05-01'), 4]],
                         'name': 'this_job'
                     }
                 ]
@@ -159,15 +159,25 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'Customer Response (%) over time'},
                 'yAxis': {'title': {'text': 'Customer Response (%)'}},
                 'xAxis': {
-                    'categories': ['2029-02-02', '2029-03-02', '2029-04-02', '2029-05-02']
+                    'type': 'datetime'
                 },
                 'series': [
                     {
-                        'data': _recasted_numpy_floats(27.56, 27.57, 27.53, 27.43),
+                        'data': [
+                            [_convert_date_string_to_timestamp('2029-02-02'),_cast_to_float_like_and_then_back(27.56,numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-03-02'), _cast_to_float_like_and_then_back(27.57, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-04-02'), _cast_to_float_like_and_then_back(27.53, numpy.float32)],
+                            [_convert_date_string_to_timestamp('2029-05-02'), _cast_to_float_like_and_then_back(27.43, numpy.float64)]
+                        ],
                         'name': 'that_job'
                     },
                     {
-                        'data': _recasted_numpy_floats(17.56, 17.57, 17.53, 17.43),
+                        'data': [
+                            [_convert_date_string_to_timestamp('2029-02-02'), _cast_to_float_like_and_then_back(17.56, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-03-02'), _cast_to_float_like_and_then_back(17.57, numpy.float16)],
+                            [_convert_date_string_to_timestamp('2029-04-02'), _cast_to_float_like_and_then_back(17.53, numpy.float32)],
+                            [_convert_date_string_to_timestamp('2029-05-02'), _cast_to_float_like_and_then_back(17.43, numpy.float64)]
+                        ],
                         'name': 'this_job'
                     }
                 ]
@@ -176,15 +186,15 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
                 'title': {'text': 'MSE over time'},
                 'yAxis': {'title': {'text': 'MSE'}},
                 'xAxis': {
-                    'categories': ['2019-02-01', '2019-03-01', '2019-04-01', '2019-05-01']
+                    'type': 'datetime'
                 },
                 'series': [
                     {
-                        'data': [5, 6, 7, 8],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 5], [_convert_date_string_to_timestamp('2019-03-01'), 6], [_convert_date_string_to_timestamp('2019-04-01'), 7], [_convert_date_string_to_timestamp('2019-05-01'), 8]],
                         'name': 'that_job'
                     },
                     {
-                        'data': [1, 2, 3, 4],
+                        'data': [[_convert_date_string_to_timestamp('2019-02-01'), 1], [_convert_date_string_to_timestamp('2019-03-01'), 2], [_convert_date_string_to_timestamp('2019-04-01'), 3], [_convert_date_string_to_timestamp('2019-05-01'), 4]],
                         'name': 'this_job'
                     }
                 ]
@@ -200,15 +210,9 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
         for metric_set in data_from_route:
             metric_set['series'].sort(key=lambda series_entry: series_entry['name'])
 
-def _recasted_numpy_floats(entry_0, entry_1, entry_2, entry_3):
-    import numpy
-
-    return [
-        _cast_to_float_like_and_then_back(entry_0, numpy.float16),
-        _cast_to_float_like_and_then_back(entry_1, numpy.float16),
-        _cast_to_float_like_and_then_back(entry_2, numpy.float32),
-        _cast_to_float_like_and_then_back(entry_3, numpy.float64)
-    ]
-
 def _cast_to_float_like_and_then_back(value, float_like_class):
     return float(float_like_class(value))
+
+def _convert_date_string_to_timestamp(date_string):
+    from datetime import datetime
+    return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000
