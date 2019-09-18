@@ -137,7 +137,7 @@ class ConfigManager(object):
         if implementation_key in config:
             reflected_implementation = config[implementation_key]
             if implementation_key == 'deployment_implementation':
-                self._log().info('Configured with {}'.format(reflected_implementation))
+                self._log().debug('Configured with {}'.format(reflected_implementation))
             else:
                 self._log().debug('Configured with {}'.format(reflected_implementation))
 

@@ -37,11 +37,11 @@ class DeploymentManager(object):
         deployment.config().update(deployment_config)
 
         if isinstance(deployment, LocalShellJobDeployment):
-            logger.info("Job '{}' deployed.".format(job_name))
+            logger.info("Job submitted with ID '{}'.".format(job_name))
             deployment.deploy()
         else:
             deployment.deploy()
-            logger.info("Job '{}' deployed.".format(job_name))
+            logger.info("Job submitted with ID '{}'.".format(job_name))
 
         return deployment
 
