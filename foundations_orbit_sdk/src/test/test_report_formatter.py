@@ -149,8 +149,7 @@ class TestReportFormatter(Spec):
                 'validation_outcome': 'healthy'
             })
 
-        formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+        self._sort_check_for_details_by_activity(expected_detail_for_attribute)
 
 
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_has_one_more_column(self):

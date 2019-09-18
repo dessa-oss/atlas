@@ -58,7 +58,7 @@ class ReportFormatter(object):
         all_details_by_attributes = self._attribute_details_for_all_columns_as_healthy()
 
         if all_details_by_attributes:
-            schema_report['details_by_attribute'] = all_details_by_attributes
+            schema_report['details_by_attribute'] = self._sort_details_by_attribute(all_details_by_attributes)
 
         if self._validation_report['schema_check_results']['passed']:
             return schema_report
@@ -73,8 +73,8 @@ class ReportFormatter(object):
             if missing_details_by_attribute:
                 healthy_details_by_attribute = self._healthy_columns_details(all_details_by_attributes, missing_details_by_attribute)
                 final_details_by_attribute = list(healthy_details_by_attribute) + missing_details_by_attribute
-                final_details_by_attribute.sort(key=lambda detail: detail['attribute_name'])
-                schema_report['details_by_attribute'] = final_details_by_attribute
+                
+                schema_report['details_by_attribute'] = self._sort_details_by_attribute(final_details_by_attribute)
 
         elif error_message == 'columns not in order':
             columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
@@ -111,6 +111,11 @@ class ReportFormatter(object):
                 schema_report['details_by_attribute'] = details_by_attribute
 
         return schema_report
+
+
+    @staticmethod
+    def _sort_details_by_attribute(details_by_attribute):
+        return sorted(details_by_attribute, key=lambda detail: (detail['validation_outcome'], detail['attribute_name']))
 
     def _healthy_columns_details(self, all_columns_details, error_columns_details):
         error_column_names = set(map(lambda column: column['attribute_name'], error_columns_details))
