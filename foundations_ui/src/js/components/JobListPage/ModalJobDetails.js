@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-closing-bracket-location */
+/* eslint-disable react/jsx-closing-tag-location */
 import React from 'react';
 import { Modal, ModalBody } from 'reactstrap';
 import PropTypes from 'prop-types';
@@ -39,6 +41,7 @@ class ModalJobDetails extends React.Component {
     this.onClickCancelAddNewTag = this.onClickCancelAddNewTag.bind(this);
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
     this.onClickArtifact = this.onClickArtifact.bind(this);
+    this.onClickAtlasDocs = this.onClickAtlasDocs.bind(this);
   }
 
   reload() {
@@ -160,6 +163,10 @@ class ModalJobDetails extends React.Component {
     this.setState({ selectedArtifact: newArtifact });
   }
 
+  onClickAtlasDocs() {
+    window.location = 'https://www.atlas.dessa.com/docs';
+  }
+
   render() {
     const { visible, onToggle } = this.props;
     const {
@@ -177,7 +184,18 @@ class ModalJobDetails extends React.Component {
         case 'audio':
           return <AudioPlayer url={artifact.uri} />;
         default:
-          return <p className="media">This filetype is not viewable.</p>;
+          return (
+            <p className="media">
+              No artifacts available
+              <span>
+                Check out the <span
+                  role="button"
+                  onKeyPress={this.onClickAtlasDocs}
+                  tabIndex={0}
+                  onClick={this.onClickAtlasDocs}>Atlas Documentation</span> to learn about saving artifacts.
+              </span>
+            </p>
+          );
       }
     };
 

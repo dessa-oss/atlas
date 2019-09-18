@@ -48,6 +48,7 @@ class JobTable extends Component {
       allJobsSelected: false,
       projectName: this.props.projectName,
       getJobs: this.props.getJobs,
+      reload: this.props.reload,
     };
   }
 
@@ -166,7 +167,7 @@ class JobTable extends Component {
       updateNumberFilter, numberFilters, updateContainsFilter, cotainFilters, updateBoolFilter, boolFilters,
       boolCheckboxes, updateDurationFilter, durationFilters, updateJobIdFilter, jobIdFilters, updateStartTimeFilter,
       startTimeFilters, filters, filteredColumns, hiddenColumns, sortedColumn, selectedJobs, allJobsSelected,
-      projectName, getJobs,
+      projectName, getJobs, reload,
     } = this.state;
 
     const jobRows = [];
@@ -215,6 +216,7 @@ class JobTable extends Component {
             projectName={projectName}
             getJobs={getJobs}
             selectNoJobs={this.selectNoJobs}
+            reload={reload}
           />
           <JobTableHeader
             allInputParams={visibleParams}
@@ -292,6 +294,7 @@ JobTable.propTypes = {
   onDataUpdated: PropTypes.func,
   onClickJob: PropTypes.func,
   getJobs: PropTypes.func,
+  reload: PropTypes.func,
 };
 
 JobTable.defaultProps = {
@@ -324,6 +327,7 @@ JobTable.defaultProps = {
   onDataUpdated: () => window.location.reload(),
   onClickJob: (job) => {},
   getJobs: () => {},
+  reload: () => {},
 };
 
 export default JobTable;

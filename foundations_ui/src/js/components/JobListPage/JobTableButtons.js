@@ -16,10 +16,12 @@ class JobTableButtons extends Component {
       projectName: this.props.projectName,
       getJobs: this.props.getJobs,
       selectNoJobs: this.props.selectNoJobs,
+      reload: this.props.reload,
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
     this.onDeleteJobs = this.onDeleteJobs.bind(this);
     this.onClickTensor = this.onClickTensor.bind(this);
+    this.onClickRefresh = this.onClickRefresh.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,10 +63,15 @@ class JobTableButtons extends Component {
     window.open(resp.url, resp.url);
   }
 
+  async onClickRefresh() {
+    const { reload } = this.props;
+    reload();
+  }
+
 
   render() {
     const {
-      isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns,
+      isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns, reload,
     } = this.state;
     let filter = null;
     if (isShowingFilter) {
@@ -81,6 +88,12 @@ class JobTableButtons extends Component {
 
     return (
       <div className="job-details-header">
+        <button
+          onClick={this.onClickRefresh}
+          type="button"
+        >
+          <span className="i--icon-refresh"> <p className="text-upper font-bold">Refresh Table</p></span>
+        </button>
         <button
           onClick={this.onClickTensor}
           type="button"
@@ -115,6 +128,7 @@ JobTableButtons.propTypes = {
   projectName: PropTypes.string,
   getJobs: PropTypes.array,
   selectNoJobs: PropTypes.func,
+  reload: PropTypes.func,
 };
 
 JobTableButtons.defaultProps = {
@@ -126,6 +140,7 @@ JobTableButtons.defaultProps = {
   projectName: '',
   getJobs: () => {},
   selectNoJobs: () => {},
+  reload: () => {},
 };
 
 export default JobTableButtons;

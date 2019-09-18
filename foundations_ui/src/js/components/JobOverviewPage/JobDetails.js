@@ -413,6 +413,7 @@ class JobDetails extends React.Component {
     this.getJobs = this.getJobs.bind(this);
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
     this.onClickJobDetails = this.onClickJobDetails.bind(this);
+    this.reload = this.reload.bind(this);
   }
 
   render() {
@@ -453,6 +454,7 @@ class JobDetails extends React.Component {
           this.onToggleModalJobDetails(job);
         }}
         getJobs={this.getJobs}
+        reload={this.reload}
       />
     );
 
