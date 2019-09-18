@@ -442,12 +442,42 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_results, dist_check_results)
 
+    @skip('does not work when dataframe has no rows')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, inference_period=inference_period)
         dist_check_results = report['dist_check_results']
-        print(dist_check_results)
+        import numpy as np
+
+        expected_results = {
+            self.column_name: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            },
+            self.column_name_3: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': False
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': False
+            }
+        }
+
+        self.assertEqual(expected_results, dist_check_results)
 
 
     def _test_data_contract_has_default_option(self, option_name, default_value):

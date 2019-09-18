@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+
+# NB - KD - Insufficiently tested... Feel free to disregard and follow proper TDD
 import numpy as np
 class DistributionChecker(object):
     '''
