@@ -44,7 +44,7 @@
       input::placeholder {
         font-size: 12px;
         margin-left: 10px;
-        @extend .f--din-pro;
+        @extend .f--roboto;
         font-style: oblique;
       }
 
@@ -93,7 +93,7 @@
           input {
             margin-left: 10px;
             border: none;
-            @extend .f--din-pro;
+            @extend .f--roboto;
             font-size: 12px;
             width: 200px;
           }
@@ -101,7 +101,7 @@
           input::placeholder {
             font-size: 12px;
             margin-left: 20px;
-            @extend .f--din-pro;
+            @extend .f--roboto;
             font-style: oblique;
           }
         }
