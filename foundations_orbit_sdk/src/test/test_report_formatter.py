@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.report_formatter import ReportFormatter
 
-@skip('not yet completed')
 class TestReportFormatter(Spec):
 
     @let
@@ -76,11 +75,11 @@ class TestReportFormatter(Spec):
 
     @let
     def column_name_3(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def column_name_4(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def row_count_diff(self):
@@ -392,8 +391,7 @@ class TestReportFormatter(Spec):
             'type_mapping': self.type_mapping
         }
 
-        in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
-        all_columns = columns_in_reference_dataframe + list(in_current_not_in_reference)
+        all_columns = self._get_all_columns_list(columns_in_current_dataframe, columns_in_reference_dataframe)
 
         expected_detail_for_attribute = []
         for column in all_columns:
@@ -420,7 +418,7 @@ class TestReportFormatter(Spec):
 
         index_at_which_to_insert = self.faker.random.randint(0, len(columns_in_current_dataframe))
 
-        column_missing_from_reference = self.column_name
+        column_missing_from_reference = self.column_name_4
         columns_in_current_dataframe.insert(index_at_which_to_insert, column_missing_from_reference)
 
         self.validation_report['schema_check_results'] = {
@@ -435,18 +433,26 @@ class TestReportFormatter(Spec):
             'type_mapping': self.type_mapping
         }
 
-        expected_detail_for_attribute = [{
-            'attribute_name': column_missing_from_current,
-            'data_type': self.type_mapping[column_missing_from_current],
-            'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'critical'
-        }, {
-            'attribute_name': column_missing_from_reference,
-            'data_type': self.type_mapping[column_missing_from_reference],
-            'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'critical'
-        }]
+        all_columns = self._get_all_columns_list(columns_in_current_dataframe, list(self.column_list))
+        
+        expected_detail_for_attribute = []
+        for column in all_columns:
+            detail = {
+                'attribute_name': column,
+                'data_type': self.type_mapping[column],
+                'issue_type': None,
+                'validation_outcome': 'healthy'
+            }
+            if column == column_missing_from_current:
+                detail['issue_type'] = 'missing in current dataframe'
+                detail['validation_outcome'] = 'critical'
+            if column == column_missing_from_reference:
+                detail['issue_type'] = 'missing in reference dataframe'
+                detail['validation_outcome'] = 'critical'
 
+            expected_detail_for_attribute.append(detail)
+
+        expected_detail_for_attribute.sort(key=lambda column: column['attribute_name'])
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
@@ -708,6 +714,10 @@ class TestReportFormatter(Spec):
         self.data_contract_options.check_distribution = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['population_shift'])
+
+    def _get_all_columns_list(self, columns_in_current_dataframe, columns_in_reference_dataframe):
+        in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
+        return columns_in_reference_dataframe + list(in_current_not_in_reference)
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
