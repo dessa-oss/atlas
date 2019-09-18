@@ -16,21 +16,21 @@ class TestReportFormatter(Spec):
         return self.faker.date()
     @let
     def model_package(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def contract_name(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def column_list(self):
-        return [self.faker.word() for _ in range(self.number_of_columns)]
+        return [self.faker.sentence() for _ in range(self.number_of_columns)]
 
     @let
     def type_mapping(self):
-        mapping = {column: self.faker.word() for column in self.column_list}
-        mapping[self.column_name] = self.faker.word()
-        mapping[self.column_name_2] = self.faker.word()
+        mapping = {column: self.faker.sentence() for column in self.column_list}
+        mapping[self.column_name] = self.faker.sentence()
+        mapping[self.column_name_2] = self.faker.sentence()
 
         return mapping
 
@@ -69,11 +69,11 @@ class TestReportFormatter(Spec):
 
     @let
     def column_name(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def column_name_2(self):
-        return self.faker.word()
+        return self.faker.sentence()
 
     @let
     def row_count_diff(self):
