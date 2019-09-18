@@ -80,9 +80,7 @@ def count_and_remove_special_values(ref_special_values, current_values):
     n_current_vals = len(current_values)
     # count and remove special values
     current_special_value_percentages = list()
-    print(ref_special_values)
     for sv in ref_special_values:
-        print(f'THE SV IS {sv}')
         if np.isnan(sv):
             sv_count = len(current_values[np.isnan(current_values)])
         else:

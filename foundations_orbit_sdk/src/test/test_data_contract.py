@@ -333,7 +333,6 @@ class TestDataContract(Spec):
         self.assertEqual(expected_metadata, report['metadata'])
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
-        self.maxDiff = None
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
@@ -406,6 +405,42 @@ class TestDataContract(Spec):
         deserialized_report = pickle.loads(serialized_report)
 
         self.assertEqual(expected_output, deserialized_report)
+
+    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df(self):
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
+        dist_check_results = report['dist_check_results']
+        import numpy as np
+
+        expected_results = {
+            self.column_name: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            },
+            self.column_name_2: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            }
+        }
+
+        self.assertEqual(expected_results, dist_check_results)
 
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
