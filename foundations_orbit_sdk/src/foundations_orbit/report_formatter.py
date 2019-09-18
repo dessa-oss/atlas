@@ -54,8 +54,13 @@ class ReportFormatter(object):
                 'warning': 0
             }
         }
+
+        all_details_by_attributes = self._attribute_details_for_all_columns_as_healthy()
+
+        if all_details_by_attributes:
+            schema_report['details_by_attribute'] = all_details_by_attributes
+
         if self._validation_report['schema_check_results']['passed']:
-            schema_report['details_by_attribute'] = self._attribute_details_for_all_columns_as_healthy()
             return schema_report
 
         error_message = self._validation_report['schema_check_results']['error_message']
@@ -63,9 +68,13 @@ class ReportFormatter(object):
         if error_message == 'column sets not equal':
             missing_current_attribute_details = self._attribute_details_for_missing_columns('current')
             missing_reference_attribute_details = self._attribute_details_for_missing_columns('reference')
-            details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
-            if details_by_attribute:
-                schema_report['details_by_attribute'] = details_by_attribute
+            missing_details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
+            
+            if missing_details_by_attribute:
+                healthy_details_by_attribute = self._healthy_columns_details(all_details_by_attributes, missing_details_by_attribute)
+                final_details_by_attribute = list(healthy_details_by_attribute) + missing_details_by_attribute
+                final_details_by_attribute.sort(key=lambda detail: detail['attribute_name'])
+                schema_report['details_by_attribute'] = final_details_by_attribute
 
         elif error_message == 'columns not in order':
             columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
@@ -102,6 +111,12 @@ class ReportFormatter(object):
                 schema_report['details_by_attribute'] = details_by_attribute
 
         return schema_report
+
+    def _healthy_columns_details(self, all_columns_details, error_columns_details):
+        error_column_names = set(map(lambda column: column['attribute_name'], error_columns_details))
+        for column in all_columns_details:
+            if column['attribute_name'] not in error_column_names:
+                yield column
 
     def _attribute_details_for_all_columns_as_healthy(self):
         type_mapping = self._validation_report['metadata']['current_metadata']['type_mapping']

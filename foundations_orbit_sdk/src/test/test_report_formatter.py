@@ -8,7 +8,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 from foundations_orbit.report_formatter import ReportFormatter
 
-
+@skip('not yet completed')
 class TestReportFormatter(Spec):
 
     @let
@@ -313,15 +313,17 @@ class TestReportFormatter(Spec):
             'type_mapping': self.type_mapping
         }
 
-        expected_detail_for_attribute = {
-            'attribute_name': missing_in_current,
-            'data_type': self.type_mapping[missing_in_current],
-            'issue_type': 'missing in current dataframe',
-            'validation_outcome': 'critical'
-        }
+        expected_details_for_attribute = []
+        for column in self.column_list:
+            expected_details_for_attribute.append({
+                'attribute_name': column,
+                'data_type': self.type_mapping[column],
+                'issue_type': 'missing in current dataframe' if column == missing_in_current else None,
+                'validation_outcome': 'critical' if column == missing_in_current else 'healthy'
+            })
 
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'][0])
+        self.assertEqual(expected_details_for_attribute, formatted_report['schema']['details_by_attribute'])
 
     def test_report_formatter_returns_details_by_attribute_if_schema_check_failed_when_current_two_difference_column(self):
         columns_in_current_dataframe = self.column_list
@@ -390,17 +392,24 @@ class TestReportFormatter(Spec):
             'type_mapping': self.type_mapping
         }
 
-        expected_detail_for_attribute = [{
-            'attribute_name': self.column_name,
-            'data_type': self.type_mapping[self.column_name],
-            'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'critical'
-        }, {
-            'attribute_name': self.column_name_2,
-            'data_type': self.type_mapping[self.column_name_2],
-            'issue_type': 'missing in reference dataframe',
-            'validation_outcome': 'critical'
-        }]
+        in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
+        all_columns = columns_in_reference_dataframe + list(in_current_not_in_reference)
+
+        expected_detail_for_attribute = []
+        for column in all_columns:
+            detail = {
+                'attribute_name': column,
+                'data_type': self.type_mapping[column],
+                'issue_type': None,
+                'validation_outcome': 'healthy'
+            }
+            if column == self.column_name or column == self.column_name_2:
+                detail['issue_type'] = 'missing in reference dataframe'
+                detail['validation_outcome'] = 'critical'
+
+            expected_detail_for_attribute.append(detail)
+
+        expected_detail_for_attribute.sort(key=lambda detail: detail['attribute_name'])
 
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
