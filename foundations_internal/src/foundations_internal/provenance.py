@@ -29,7 +29,12 @@ class Provenance(object):
         self.python_version = None
         self.job_run_data = {}
         self.project_name = 'default'
-        self.user_name = os.environ.get("FOUNDATIONS_USER", getuser())
+        self.user_name = os.getenv("FOUNDATIONS_USER", None)
+        if self.user_name is None:
+            try:
+                self.user_name = getuser()
+            except KeyError:
+                self.user_name = ""
         self.annotations = {}
 
     def fill_python_version(self):
