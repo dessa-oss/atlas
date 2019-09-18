@@ -33,6 +33,33 @@ class ReportFormatter(object):
         return self._validation_report.get('row_cnt_diff', 0)
 
     def _formatted_schema_report(self):
+        if self._validation_report['schema_check_results']['passed']:
+            all_details_by_attributes = self._attribute_details_for_all_columns_as_healthy()
+            number_of_healthy_columns, _ = self._number_of_healthy_critical_columns()
+
+            schema_report = {
+                'summary': {
+                    'healthy': number_of_healthy_columns,
+                    'critical': 0,
+                    'warning': 0
+                },
+                'details_by_attribute': self._sort_details_by_attribute(all_details_by_attributes)
+            }
+            
+            return schema_report
+        
+        error_message = self._validation_report['schema_check_results']['error_message']
+        if error_message == 'column sets not equal':
+            schema_report = self._build_validation_report_for_column_sets_not_equal()
+        elif error_message == 'columns not in order':
+            schema_report = self._build_validation_report_for_columns_not_in_order()
+        elif error_message == 'column datatype mismatches':
+            schema_report = self._build_validation_report_for_datatype_mismatch()
+
+        return schema_report
+
+    
+    def _number_of_healthy_critical_columns(self):
         columns_in_reference, columns_in_current = self._columns_in_dataframes()
 
         columns_in_reference = set(columns_in_reference)
@@ -47,6 +74,12 @@ class ReportFormatter(object):
         width_of_widest_dataframe = max(number_of_columns_in_current, number_of_columns_in_reference)
         number_of_critical_columns = width_of_widest_dataframe - number_of_healthy_columns
 
+        return number_of_healthy_columns, number_of_critical_columns
+
+    
+    def _build_validation_report_for_column_sets_not_equal(self):
+        number_of_healthy_columns, number_of_critical_columns = self._number_of_healthy_critical_columns()
+
         schema_report = {
             'summary': {
                 'healthy': number_of_healthy_columns,
@@ -55,63 +88,56 @@ class ReportFormatter(object):
             }
         }
 
-        all_details_by_attributes = self._attribute_details_for_all_columns_as_healthy()
-
-        if all_details_by_attributes:
-            schema_report['details_by_attribute'] = self._sort_details_by_attribute(all_details_by_attributes)
-
-        if self._validation_report['schema_check_results']['passed']:
-            return schema_report
-
-        error_message = self._validation_report['schema_check_results']['error_message']
-
-        if error_message == 'column sets not equal':
-            missing_current_attribute_details = self._attribute_details_for_missing_columns('current')
-            missing_reference_attribute_details = self._attribute_details_for_missing_columns('reference')
-            missing_details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
+        missing_current_attribute_details = self._attribute_details_for_missing_columns('current')
+        missing_reference_attribute_details = self._attribute_details_for_missing_columns('reference')
+        missing_details_by_attribute = missing_current_attribute_details + missing_reference_attribute_details
+        
+        if missing_details_by_attribute:
+            all_details_by_attributes = self._attribute_details_for_all_columns_as_healthy()
+            healthy_details_by_attribute = self._healthy_columns_details(all_details_by_attributes, missing_details_by_attribute)
+            final_details_by_attribute = list(healthy_details_by_attribute) + missing_details_by_attribute
             
-            if missing_details_by_attribute:
-                healthy_details_by_attribute = self._healthy_columns_details(all_details_by_attributes, missing_details_by_attribute)
-                final_details_by_attribute = list(healthy_details_by_attribute) + missing_details_by_attribute
-                
-                schema_report['details_by_attribute'] = self._sort_details_by_attribute(final_details_by_attribute)
-
-        elif error_message == 'columns not in order':
-            columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
-            number_of_columns_out_of_order = len(columns_out_of_order)
-            number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
-
-            schema_report = {
-                'summary': {
-                    'healthy': number_of_columns - number_of_columns_out_of_order,
-                    'critical': number_of_columns_out_of_order,
-                    'warning': 0
-                }
-            }
-
-            details_by_attribute = self._attribute_details_for_out_of_order_columns()
-            if details_by_attribute:
-                schema_report['details_by_attribute'] = details_by_attribute
-
-        elif error_message == 'column datatype mismatches':
-            columns_mismatched = self._validation_report['schema_check_results']['cols']
-            number_of_columns_mismatched = len(columns_mismatched)
-            number_of_columns = len(self._validation_report['metadata']['reference_metadata']['column_names'])
-
-            schema_report = {
-                'summary': {
-                    'healthy': number_of_columns - number_of_columns_mismatched,
-                    'critical': number_of_columns_mismatched,
-                    'warning': 0
-                }
-            }
-
-            details_by_attribute = self._attribute_details_for_mismatched_columns()
-            if details_by_attribute:
-                schema_report['details_by_attribute'] = details_by_attribute
-
+            schema_report['details_by_attribute'] = self._sort_details_by_attribute(final_details_by_attribute)
         return schema_report
 
+    def _build_validation_report_for_columns_not_in_order(self):
+        columns_out_of_order = self._validation_report['schema_check_results']['columns_out_of_order']
+        reference_column_names = self._validation_report['metadata']['reference_metadata']['column_names']
+        number_of_columns_out_of_order = len(columns_out_of_order)
+        number_of_columns = len(reference_column_names)
+
+        schema_report = {
+            'summary': {
+                'healthy': number_of_columns - number_of_columns_out_of_order,
+                'critical': number_of_columns_out_of_order,
+                'warning': 0
+            }
+        }
+
+        details_by_attribute = self._attribute_details_for_out_of_order_columns()
+        if details_by_attribute:
+            schema_report['details_by_attribute'] = details_by_attribute
+        return schema_report
+
+    def _build_validation_report_for_datatype_mismatch(self):
+        columns_mismatched = self._validation_report['schema_check_results']['cols']
+        reference_column_names = self._validation_report['metadata']['reference_metadata']['column_names']
+        number_of_columns_mismatched = len(columns_mismatched)
+        number_of_columns = len(reference_column_names)
+
+        schema_report = {
+            'summary': {
+                'healthy': number_of_columns - number_of_columns_mismatched,
+                'critical': number_of_columns_mismatched,
+                'warning': 0
+            }
+        }
+
+        details_by_attribute = self._attribute_details_for_mismatched_columns()
+        if details_by_attribute:
+            schema_report['details_by_attribute'] = details_by_attribute
+        
+        return schema_report
 
     @staticmethod
     def _sort_details_by_attribute(details_by_attribute):

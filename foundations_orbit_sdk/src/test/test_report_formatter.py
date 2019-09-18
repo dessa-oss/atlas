@@ -588,6 +588,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
     def test_return_data_quality_summary_when_all_is_healthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         expected_schema_summary = {
             'healthy': self.number_of_columns,
             'critical': 0,
@@ -598,6 +600,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_schema_summary, formatted_report['data_quality']['summary'])
 
     def test_return_data_quality_attribute_details_when_all_is_healthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         data_quality_attribute_details = []
         
         for column, details in self.distribution_checks.items():
@@ -616,6 +620,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
 
     def test_return_data_quality_summary_when_one_column_is_unhealthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         unhealthy_column = list(self.column_list)[0]
         self.validation_report['dist_check_results'][unhealthy_column]['special_values']['nan']['passed'] = False
 
@@ -629,6 +635,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_schema_summary, formatted_report['data_quality']['summary'])
 
     def test_return_data_quality_details_when_one_column_is_unhealthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         data_quality_attribute_details = []
         
         unhealthy_column = list(self.column_list)[0]
@@ -650,6 +658,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(data_quality_attribute_details, formatted_report['data_quality']['details_by_attribute'])
 
     def test_return_population_shift_summary_when_all_columns_are_healthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         expected_schema_summary = {
             'healthy': self.number_of_columns,
             'critical': 0,
@@ -660,6 +670,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_schema_summary, formatted_report['population_shift']['summary'])
 
     def test_return_population_shift_details_when_all_columns_are_healthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         population_shift_attribute_details = []
 
         for column, details in self.distribution_checks.items():
@@ -673,6 +685,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
     def test_return_population_shift_summary_when_one_columns_is_unhealthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         unhealthy_column = list(self.column_list)[0]
         self.validation_report['dist_check_results'][unhealthy_column]['binned_passed'] = False
 
@@ -686,6 +700,8 @@ class TestReportFormatter(Spec):
         self.assertEqual(expected_schema_summary, formatted_report['population_shift']['summary'])
     
     def test_return_population_shift_details_when_one_columns_is_unhealthy(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         unhealthy_column = list(self.column_list)[0]
         self.validation_report['dist_check_results'][unhealthy_column]['binned_passed'] = False
 
@@ -702,11 +718,15 @@ class TestReportFormatter(Spec):
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
     def test_return_no_data_quality_if_check_distribution_is_false(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+
         self.data_contract_options.check_distribution = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['data_quality'])
 
     def test_return_no_population_shift_if_check_distribution_is_false(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+        
         self.data_contract_options.check_distribution = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['population_shift'])
