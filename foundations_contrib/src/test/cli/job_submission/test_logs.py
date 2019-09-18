@@ -15,6 +15,7 @@ class TestJobSubmissionLogs(Spec):
     mock_get_logger = let_patch_mock_with_conditional_return('foundations_contrib.global_state.log_manager.get_logger')
     mock_logger = let_mock()
     print_mock = let_patch_mock('builtins.print')
+    mock_sleep = let_patch_mock('time.sleep')
     
     @let
     def mock_environment(self):
@@ -55,3 +56,7 @@ class TestJobSubmissionLogs(Spec):
         self.mock_environment['DISABLE_LOG_STREAMING'] = 'True'
         stream_job_logs(self.deployment)
         self.mock_logger.info.assert_not_called()
+
+    def test_sleeps_for_1_sec_before_streaming(self):
+        stream_job_logs(self.deployment)
+        self.mock_sleep.assert_called_with(1)
