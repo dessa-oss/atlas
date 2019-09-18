@@ -129,9 +129,15 @@ class JobDeployment(object):
         import time
 
         status = self.get_job_status()
+        counter = 0
+        timeout = 15
 
         while status == "queued" or status is None:
             time.sleep(1)
+            if status is None:
+                counter += 1
+            if counter >= timeout:
+                raise TimeoutError('Job timed out')
             status = self.get_job_status()
 
         if status == "running":

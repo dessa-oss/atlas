@@ -17,9 +17,12 @@ def stream_job_logs(deployment):
 
         time.sleep(1)
 
-        for item in deployment.stream_job_logs():
-            if not job_running:
-                logger.info('Job running, streaming logs.')
-                job_running = True
-            print(item)
-        logger.info("Job '{}' has finished.".format(deployment.job_name()))
+        try:
+            for item in deployment.stream_job_logs():
+                if not job_running:
+                    logger.info('Job running, streaming logs.')
+                    job_running = True
+                print(item)
+            logger.info("Job '{}' has finished.".format(deployment.job_name()))
+        except TimeoutError:
+            logger.info('Job cannot be found. Possibly because it has beeen removed from the queue.')
