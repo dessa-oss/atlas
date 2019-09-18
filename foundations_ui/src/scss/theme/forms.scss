@@ -1,5 +1,5 @@
 label {
-  @extend .f--din;
+  @extend .f--roboto;
   display: block;
   font-size: 14px;
   color: $color-label-text;
@@ -8,7 +8,7 @@ label {
 
 :not(.date-time-picker) {
   input[type="text"] {
-    @extend .f--din;
+    @extend .f--roboto;
     box-sizing: border-box;
     position: relative;
     background-color: white;
@@ -28,7 +28,7 @@ input[type="text"]:placeholder {
 }
 
 .helper-text {
-  @extend .f--din;
+  @extend .f--roboto;
   font-size: 14px;
   color: $color-label-placeholder;
   margin-top: 4px;
@@ -36,7 +36,7 @@ input[type="text"]:placeholder {
 }
 
 button.b--mat {
-  @extend .f--din;
+  @extend .f--roboto;
   margin-right: $margin-width;
   overflow: hidden;
   border-width: 0;

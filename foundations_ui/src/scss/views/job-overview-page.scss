@@ -21,7 +21,7 @@
 
   h3 {
     color: $color-text;
-    @extend .f--din;
+    @extend .f--roboto;
     cursor: pointer;
     width: 200px;
 
@@ -65,11 +65,11 @@
     color: $color-text;
     padding: 10px 25px;
     margin: 6px 0px;
-    @extend .f--din;
+    @extend .f--roboto;
     cursor: pointer;
 
     &.active {
-      @extend .f--din-bold;
+      @extend .f--roboto-bold;
       color: #00A4B2;
       border-bottom: solid 3px #00A4B2;
       margin: -6px 0px;
@@ -220,7 +220,7 @@
 }
 
 .section-title {
-  @extend .f--din-bold;
+  @extend .f--roboto-bold;
   color: #3D518C;
   margin: 0px;
   font-size: 18px;
@@ -239,7 +239,7 @@
   overflow-y: scroll;
 
   h2 {
-    @extend .f--din-bold;
+    @extend .f--roboto-bold;
     color: #3D518C;
     margin: 0px;
     font-size: 25px;
@@ -324,7 +324,7 @@ button {
       line-height: 60px;
 
       &.active {
-        @extend .f--din-bold;
+        @extend .f--roboto-bold;
       }
     }
   }
@@ -344,7 +344,7 @@ button {
     }
 
     p {
-      @extend .f--din-bold;
+      @extend .f--roboto-bold;
       display: inline-block;
       color: white;
       margin-left: 20px;

@@ -21,7 +21,7 @@ html, body, .App {
 }
 
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
-  @extend .f--din;
+  @extend .f--roboto;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -40,7 +40,7 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
 }
 
 span, p, a {
-  @extend .f--din;
+  @extend .f--roboto;
   font-size: 13px;
 }
 
@@ -51,17 +51,17 @@ h2 {
 }
 
 h3 {
-  @extend .f--din-bold;
+  @extend .f--roboto-bold;
   font-size: 16px;
 }
 
 h4 {
-  @extend .f--din;
+  @extend .f--roboto;
   font-size: 13px;
 }
 
 .font-bold {
-  @extend .f--din-bold;
+  @extend .f--roboto-bold;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -69,7 +69,7 @@ h4 {
 }
 
 .font-regular {
-  @extend .f--din;
+  @extend .f--roboto;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -77,7 +77,7 @@ h4 {
 }
 
 .font-italic {
-  @extend .f--din-italic;
+  @extend .f--roboto-italic;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
