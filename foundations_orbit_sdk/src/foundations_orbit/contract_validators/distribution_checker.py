@@ -125,7 +125,6 @@ class DistributionChecker(object):
 
     def _special_value_l_infinity(self, threshold, ref_special_values, ref_special_value_percentages, current_special_value_percentages):
         special_values = {}
-        
         for sv, ref_pct, cur_pct in zip(ref_special_values, ref_special_value_percentages, current_special_value_percentages):
             special_values[sv] = {}
             l_infinity_score = self._l_infinity(ref_pct, cur_pct)
@@ -141,15 +140,9 @@ class DistributionChecker(object):
         return special_values
 
     def _l_infinity(self, ref_percentages, current_percentages):
-        # print('REF PERCENTAGES')
-        # print(ref_percentages)
-
-
-        # print('CURRENT PERCENTAGES')
-        # print(current_percentages)
-
         return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
 
+    # NB - apply edges changes (2, ) vector to (3, ) causes test with upper edge and non special values to break
     def _apply_edges(self, values, edges):
         '''find corresponding bin counts using provided bin edges'''
         binned_values = [0] + [values[values <= i].shape[0] for i in edges]
