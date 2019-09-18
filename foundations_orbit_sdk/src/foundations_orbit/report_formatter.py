@@ -55,6 +55,7 @@ class ReportFormatter(object):
             }
         }
         if self._validation_report['schema_check_results']['passed']:
+            schema_report['details_by_attribute'] = self._attribute_details_for_all_columns_as_healthy()
             return schema_report
 
         error_message = self._validation_report['schema_check_results']['error_message']
@@ -101,6 +102,19 @@ class ReportFormatter(object):
                 schema_report['details_by_attribute'] = details_by_attribute
 
         return schema_report
+
+    def _attribute_details_for_all_columns_as_healthy(self):
+        type_mapping = self._validation_report['metadata']['current_metadata']['type_mapping']
+        columns_in_current = self._columns_for_dataframe('current')
+        details_for_attribute = []
+        for column in columns_in_current:
+            details_for_attribute.append({
+                'attribute_name': column,
+                'data_type': type_mapping[column],
+                'issue_type': None,
+                'validation_outcome': 'healthy'
+            })
+        return details_for_attribute
 
     def _attribute_details_for_missing_columns(self, column_type):
         missing_column_check = 'missing_in_ref' if column_type == 'reference' else 'missing_in_current'

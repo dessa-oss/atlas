@@ -36,7 +36,7 @@ class TestReportFormatter(Spec):
 
     @let
     def number_of_columns(self):
-        return 6
+        return 3
 
     @let
     def distribution_checks(self):
@@ -123,15 +123,29 @@ class TestReportFormatter(Spec):
         self.validation_report['schema_check_results'] = {'passed': True}
 
         expected_schema_report = {
-            'summary': {
-                'healthy': self.number_of_columns,
-                'critical': 0,
-                'warning': 0
-            }
+            'healthy': self.number_of_columns,
+            'critical': 0,
+            'warning': 0
         }
 
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(expected_schema_report, formatted_report['schema'])
+        self.assertEqual(expected_schema_report, formatted_report['schema']['summary'])
+
+    def test_report_formatter_return_details_by_attribute_when_all_schema_check_passed(self):
+        self.validation_report['schema_check_results'] = {'passed': True}
+        expected_detail_for_attribute = []
+        
+        for column in self.column_list:
+            expected_detail_for_attribute.append({
+                'attribute_name': column,
+                'data_type': self.type_mapping[column],
+                'issue_type': None,
+                'validation_outcome': 'healthy'
+            })
+
+        formatted_report = self._generate_formatted_report()
+        self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
+
 
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_current_has_one_more_column(self):
         columns_in_current_dataframe = list(self.column_list)
