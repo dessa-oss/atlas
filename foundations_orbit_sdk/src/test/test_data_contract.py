@@ -406,7 +406,7 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_output, deserialized_report)
 
-    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df(self):
+    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
@@ -441,6 +441,13 @@ class TestDataContract(Spec):
         }
 
         self.assertEqual(expected_results, dist_check_results)
+
+    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, inference_period=inference_period)
+        dist_check_results = report['dist_check_results']
+        print(dist_check_results)
 
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
