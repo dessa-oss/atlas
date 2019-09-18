@@ -713,7 +713,7 @@ class TestReportFormatter(Spec):
         self.assertEqual({}, formatted_report['population_shift'])
 
     def _sort_check_for_details_by_activity(self, expected_detail_for_attribute):
-        expected_detail_for_attribute.sort(key=lambda detail: detail['attribute_name'])
+        expected_detail_for_attribute.sort(key=lambda detail: (detail['validation_outcome'], detail['attribute_name']))
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_detail_for_attribute, formatted_report['schema']['details_by_attribute'])
 
