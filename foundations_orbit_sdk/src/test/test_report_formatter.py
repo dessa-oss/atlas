@@ -260,6 +260,18 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(expected_schema_summary, formatted_report['schema']['summary'])
 
+    def test_report_formatter_return_throws_exception_when_schema_check_failed_and_no_error_msg(self):
+        self.validation_report['schema_check_results'] = {
+            'passed': False,
+            'error_message': '',
+            'missing_in_ref': [],
+            'missing_in_current': []
+        }
+
+        with self.assertRaises(ValueError) as error:
+            self._generate_formatted_report()
+        self.assertIn('Invalid error message: ', error.exception.args)
+
     def test_report_formatter_returns_critical_schema_summary_if_schema_check_failed_when_reference_has_two_unshared_columns_and_current_has_one_unshared_column(self):
         columns_in_current_dataframe = self.column_list
         columns_in_reference_dataframe = list(self.column_list)
@@ -726,7 +738,7 @@ class TestReportFormatter(Spec):
 
     def test_return_no_population_shift_if_check_distribution_is_false(self):
         self.validation_report['schema_check_results'] = {'passed': True}
-        
+
         self.data_contract_options.check_distribution = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['population_shift'])
