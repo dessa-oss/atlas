@@ -8,6 +8,7 @@ import CommonHeader from '../common/CommonHeader';
 import TagContainer from './TagContainer';
 import BaseActions from '../../actions/BaseActions';
 import ErrorPage from '../common/ErrorPage';
+import CommonFooter from '../common/CommonFooter';
 
 class JobOverviewPage extends Component {
   constructor(props) {
@@ -132,6 +133,7 @@ class JobOverviewPage extends Component {
           {tab === 'overview' && <ProjectOverview {...this.props} />}
           {tab === 'details' && <JobDetails {...this.props} />}
         </div>
+        <CommonFooter />
       </div>
     );
   }

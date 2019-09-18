@@ -1,0 +1,14 @@
+.common-footer {
+  text-align: center;
+  padding-bottom: 3px;
+  padding-top: 3px;
+  background-color: #3A3D3D; 
+  color: $color-white;
+
+  p:first-of-type() {
+    cursor: pointer;
+    color: $color-light-blue;
+    text-decoration: underline;
+  }
+  
+}

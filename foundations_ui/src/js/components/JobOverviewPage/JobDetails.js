@@ -11,6 +11,7 @@ import CommonHeader from '../common/CommonHeader';
 import TagContainer from './TagContainer';
 import Header from './Header';
 import ErrorPage from '../common/ErrorPage';
+import CommonFooter from '../common/CommonFooter';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -505,6 +506,7 @@ class JobDetails extends React.Component {
             )}
           </div>
         </div>
+        <CommonFooter />
       </div>
     );
   }

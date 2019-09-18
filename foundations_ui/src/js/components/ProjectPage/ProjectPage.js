@@ -7,6 +7,7 @@ import Loading from '../common/Loading';
 import BaseActions from '../../actions/BaseActions';
 import ProjectSummary from './ProjectSummary';
 import CommonHeader from '../common/CommonHeader';
+import CommonFooter from '../common/CommonFooter';
 
 const ProjectPage = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -108,6 +109,7 @@ const ProjectPage = (props) => {
         <h1>Project Directory</h1>
         <div className="projects-body-container">{renderProjects()}</div>
       </div>
+      <CommonFooter />
     </div>
   );
 };
