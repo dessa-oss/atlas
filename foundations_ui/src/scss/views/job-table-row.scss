@@ -9,4 +9,10 @@
     border-bottom: 1px solid $color-border-bottom;
   }
 
+  .job-cell:last-child() {
+    position: relative;
+    left: -30px;
+    width: calc(#{$column-width} + 30px);
+  }
+
 }
