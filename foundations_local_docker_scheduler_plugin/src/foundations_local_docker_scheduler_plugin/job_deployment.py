@@ -292,3 +292,20 @@ class JobDeployment(object):
 
         r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}")
         return r.status_code == requests.codes.ok
+
+    @staticmethod
+    def clear_queue():
+        import requests
+
+        config = JobDeployment._get_config()
+
+        queued_jobs = requests.get(f"{config['scheduler_url']}/queued_jobs").json()
+        
+        counter = 0
+
+        for job in queued_jobs.values():
+            r = requests.delete(f"{config['scheduler_url']}/queued_jobs/{job['position']}")
+            if r.status_code == requests.codes.ok:
+                counter += 1
+        
+        return counter
