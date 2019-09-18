@@ -101,13 +101,13 @@ class CommandLineJobDeployer(object):
         log_stream = self._get_log_stream(deployment_wrapper)
 
         if self._log_streaming_is_enabled() and log_stream is not None:
-            foundations_cli_logger.info('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled')                    
+            foundations_cli_logger.info('Job queued. Ctrl-C to stop streaming - job will not be interrupted or cancelled.')
             is_running = False
 
             for log_line in log_stream:
                 if not is_running:
                     is_running = True
-                    foundations_cli_logger.info('Job is running; streaming logs')
+                    foundations_cli_logger.info('Job running, streaming logs')
 
                 print(log_line, flush=True)
 

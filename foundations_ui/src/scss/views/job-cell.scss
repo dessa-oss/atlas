@@ -23,6 +23,12 @@
     background-color: #fff;
     border-top: 1px solid $color-border-bottom;
   }
+
+  &.Tags {
+    width: calc(#{$standard-cell-width} + 10px);
+    position: relative;
+    left: -10px;
+  }
 }
 
 .launch-date {

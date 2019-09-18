@@ -25,8 +25,13 @@ class Readme extends React.Component {
     const { projectName } = this.props.match.params;
     let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
     BaseActions.getFromStaging(`projects/${selectedProjectName}/description`).then((result) => {
+      result.project_description = String.raw`${result.project_description.replace(/(\r\n|\n|\r)/g, '<br/>')}`;
+      let rawDescription = String.raw`${result.project_description}`;
+      // eslint-disable-next-line no-useless-escape
+      rawDescription = rawDescription.replace(/<br\s*[\/>]?>/gi, '\n');
+      rawDescription = rawDescription.replace(/\r/gi, '\n');
       this.setState({
-        input: result.project_description,
+        input: rawDescription,
       });
     });
   }

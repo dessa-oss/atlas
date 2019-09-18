@@ -10,6 +10,7 @@ import BaseActions from '../../actions/BaseActions';
 import CommonHeader from '../common/CommonHeader';
 import TagContainer from './TagContainer';
 import Header from './Header';
+import ErrorPage from '../common/ErrorPage';
 
 const baseStatus = [
   { name: 'Completed', hidden: false },
@@ -55,13 +56,34 @@ class JobDetails extends React.Component {
       modalJobDetailsVisible: false,
       selectedJob: {},
       tags: [],
+      showErrorPage: false,
     };
   }
 
-  async componentDidMount() {
+  async reload() {
     await this.setState({ isMount: true });
-    this.getJobs();
-    this.getTags();
+    const { location } = this.props;
+    let foundProject = true;
+    if (!location.state || !location.state.project || location.state.project === {}) {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+      if (selectedProject.length === 0 || selectedProject === undefined) {
+        foundProject = false;
+        this.setState({
+          showErrorPage: true,
+        });
+      }
+    }
+
+    if (foundProject === true) {
+      this.getJobs();
+      this.getTags();
+    }
+  }
+
+  componentDidMount() {
+    this.reload();
   }
 
   async getTags() {
@@ -397,7 +419,7 @@ class JobDetails extends React.Component {
     const {
       projectName, project, filters, statuses, isLoaded, allInputParams, jobs, allMetrics, allUsers, hiddenUsers,
       numberFilters, containFilters, boolCheckboxes, boolFilters, durationFilter, jobIdFilter, startTimeFilter,
-      queryStatus, selectedJob, modalJobDetailsVisible, tags,
+      queryStatus, selectedJob, modalJobDetailsVisible, tags, showErrorPage,
     } = this.state;
     const { location } = this.props;
 
@@ -433,6 +455,15 @@ class JobDetails extends React.Component {
         getJobs={this.getJobs}
       />
     );
+
+    if (showErrorPage === true) {
+      return (
+        <div className="container-main-error-page">
+          <CommonHeader {...this.props} />
+          <ErrorPage {...this.props} />
+        </div>
+      );
+    }
 
     return (
       <div>

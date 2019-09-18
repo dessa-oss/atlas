@@ -182,7 +182,7 @@ class TestCliDeployment(Spec, MetricsFetcher, NodeAwareMixin):
         self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
 
     def _assert_job_queued_message_printed(self, job_process_stdout_stream):
-        queued_message = 'Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'
+        queued_message = 'Job queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled'
         self._wait_for_message_to_be_printed(queued_message, 'job queued message was never printed', job_process_stdout_stream)
 
     def _wait_for_job_to_start(self, job_process_stdout_stream):

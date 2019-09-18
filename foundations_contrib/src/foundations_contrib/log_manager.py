@@ -37,14 +37,18 @@ class LogManager(object):
         self._loggers = {}
 
     def _load_logger_configuration(self):
-        import yaml
         import logging.config
+        
+        if self._config_manager.config().get('log_level', 'INFO') == "INFO":
+            format = 'Foundations %(levelname)s: %(message)s'
+        else:
+            format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
         config = {
             'version': 1,
             'formatters': {
                 'simple': {
-                    'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                    'format': format
                 }
             },
             'handlers': {

@@ -32,11 +32,13 @@ class Header extends React.Component {
       const { projectName } = this.props.match.params;
       const fetchedProjects = await BaseActions.getFromStaging('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
-      this.setState({
-        name: selectedProject.name,
-        dateCreated: selectedProject.created_at,
-        projectOwners: selectedProject.owner,
-      });
+      if (selectedProject && selectedProject.length > 0) {
+        this.setState({
+          name: selectedProject.name,
+          dateCreated: selectedProject.created_at,
+          projectOwners: selectedProject.owner,
+        });
+      }
     }
   }
 

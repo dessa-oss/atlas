@@ -41,6 +41,10 @@
     .job-column-header, .job-cell {
       width: calc(100% / 6 - 42px / 5);
     }
+
+    .job-column-header:last-of-type(), .job-cell:last-of-type() {
+      width: calc(100% / 6 - 42px / 5 + 30px);
+    }
   }
 }
 
@@ -122,7 +126,7 @@
       }
 
       &.type-number, &.type-array {
-        text-align: right;
+        text-align: center;
 
         &.string {
           text-align: center;
