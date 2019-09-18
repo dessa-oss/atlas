@@ -10,7 +10,7 @@ def set_tensorboard_logdir(path):
     import foundations
 
     atexit.register(_create_tensorboard_logdir(path))
-    foundations.set_tag('tb', 'tb')
+    foundations.set_tag('tf', 'tf')
 
 def _create_tensorboard_logdir(path):
     from foundations import create_syncable_directory
