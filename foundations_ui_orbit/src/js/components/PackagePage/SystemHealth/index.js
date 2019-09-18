@@ -99,7 +99,7 @@ const SystemHealth = props => {
           const dateA = new Date(a.inference_period);
           const dateB = new Date(b.inference_period);
 
-          return dateA - dateB;
+          return dateB - dateA;
         });
 
         setOptions(sortedEntries);
