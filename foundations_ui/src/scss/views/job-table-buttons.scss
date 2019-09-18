@@ -5,15 +5,6 @@
     height: 30px;
   }
 
-  span {
-    display: inline-block;
-    height: 11px;
-    width: 11px;
-    margin-left: 0px;
-    cursor: pointer;
-    vertical-align: middle;
-  }
-
   p {
     display: inline-block;
     font-size: 12px;
@@ -32,12 +23,44 @@
     cursor: pointer;
   }
 
-  button:first-of-type {
-    width: 220px;
-    background: #7B7B7B;
+  button:nth-of-type(1) {
+    width: 160px;
+    background: #0083E7;
+    margin-right: 50px;
+
+    p {
+      vertical-align: super;
+      margin-left: 16px;
+    }
+
+    span {
+      display: inline-block;
+      height: 11px;
+      width: 11px;
+      margin-left: 0px;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+      left: -50px;
+    }
+
   }
 
   button:nth-of-type(2) {
+    width: 220px;
+    background: #7B7B7B;
+
+    span {
+      display: inline-block;
+      height: 11px;
+      width: 11px;
+      margin-left: 0px;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+  }
+
+  button:nth-of-type(3) {
     background: #DC5454;
     margin-left: 50px;
     padding-left: 15px;

@@ -354,6 +354,10 @@
 
 .close:hover {
   opacity: 1;
+  cursor: pointer;
+  &:before, &:after {
+    background-color: $color-black;
+  }
 }
 
 .close:before, .close:after {
