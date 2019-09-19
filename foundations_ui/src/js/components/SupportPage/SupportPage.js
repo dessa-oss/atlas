@@ -46,7 +46,7 @@ class SupportPage extends Component {
           <div>
             <h2 className="font-bold">Need immediate help?</h2>
             <p>If the documentation and StackOverflow weren&apos;t helpful you can reach out to us via e-mail at
-              <span> </span>
+              <span />
               <span
                 tabIndex={0}
                 role="button"
@@ -69,8 +69,8 @@ class SupportPage extends Component {
           <div>
             <h2 className="font-bold">Get Foundations Enterprise</h2>
             <p>Love using Foundations? Want to implement it for your team? Or want to learn more about what Enterprise
-              version has to offer? Get in touch with us at
-              <span> </span>
+              version has to offer? Get in touch with us at 
+              <span />
               <span
                 tabIndex={0}
                 role="button"
