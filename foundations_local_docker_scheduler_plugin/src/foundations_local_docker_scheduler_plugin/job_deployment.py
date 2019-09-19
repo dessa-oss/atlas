@@ -113,7 +113,7 @@ class JobDeployment(object):
             else:
                 return None
         except:
-            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
 
     def get_job_logs(self):
         import requests
