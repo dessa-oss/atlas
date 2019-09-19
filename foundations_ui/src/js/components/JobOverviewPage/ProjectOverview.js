@@ -30,7 +30,7 @@ class ProjectOverview extends React.Component {
     const { location } = this.props;
     if (location) {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName);
       if (selectedProject.length > 0) {
         this.setState({
@@ -102,7 +102,7 @@ class ProjectOverview extends React.Component {
       selectedProject = location.state.project;
     } else {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
     history.push(
@@ -121,7 +121,7 @@ class ProjectOverview extends React.Component {
       selectedProject = location.state.project;
     } else {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
     history.push(
