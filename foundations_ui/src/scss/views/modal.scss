@@ -304,6 +304,7 @@
       
           &.active {
             @extend .f--roboto-bold;
+            font-weight: normal;
             color: #00A4B2;
             border-bottom: solid 3px #00A4B2;
             margin: -6px 0px;
@@ -356,6 +357,7 @@
 
                 p {
                     @extend .f--roboto;
+                    font-weight: normal;
                     width: 100%;
                     text-align: center;
                 }
@@ -377,6 +379,7 @@
     
                     p {
                         @extend .f--roboto;
+                        font-weight: normal;
                         width: 100%;
                         text-align: center;
                         float: left;

@@ -188,6 +188,7 @@
   
           &:last-child {
             @extend .f--roboto;
+            font-weight: normal;
             padding-top: 5%;
             font-weight: normal;
           }

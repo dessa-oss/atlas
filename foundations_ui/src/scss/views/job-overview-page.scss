@@ -22,6 +22,7 @@
   h3 {
     color: $color-text;
     @extend .f--roboto;
+    font-weight: normal;
     cursor: pointer;
     width: 200px;
 
@@ -66,6 +67,7 @@
     padding: 10px 25px;
     margin: 6px 0px;
     @extend .f--roboto;
+    font-weight: normal;
     cursor: pointer;
 
     &.active {
