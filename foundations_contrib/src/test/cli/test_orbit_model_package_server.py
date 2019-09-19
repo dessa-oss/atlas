@@ -19,19 +19,19 @@ class TestOrbitModelPackageServer(Spec):
 
     @let
     def mock_project_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
 
     @let
     def mock_2nd_project_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
 
     @let
     def mock_model_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
 
     @let
     def mock_2nd_model_name(self):
-        return self.faker.word()
+        return self.faker.word().lower()
 
     @let
     def mock_project_directory(self):
@@ -336,8 +336,26 @@ class TestOrbitModelPackageServer(Spec):
     def test_raise_value_error_exception_with_invalid_underscore_in_project_name(self):
         self._helper_test_for_invalid_names_for_deploy('project_name', 'project_with_underscore')
 
-    def test_raise_value_error_exception_with_invalid_model_name(self):
+    def test_raise_value_error_exception_with_invalid_underscore_in_model_name(self):
         self._helper_test_for_invalid_names_for_deploy('model_name', 'model_with_underscore')
+
+    def test_raise_value_error_exception_with_invalid_uppercase_in_project_name(self):
+        self._helper_test_for_invalid_names_for_deploy('project_name', 'Project')
+
+    def test_raise_value_error_exception_with_invalid_uppercase_in_model_name(self):
+        self._helper_test_for_invalid_names_for_deploy('model_name', 'Model')
+
+    def test_raise_value_error_exception_with_invalid_empty_string_in_project_name(self):
+        self._helper_test_for_invalid_names_for_deploy('project_name', '')
+
+    def test_raise_value_error_exception_with_invalid_empty_string_in_model_name(self):
+        self._helper_test_for_invalid_names_for_deploy('model_name', '')
+
+    def test_raise_value_error_exception_with_invalid_special_characters_in_project_name(self):
+        self._helper_test_for_invalid_names_for_deploy('project_name', 'project@name')
+
+    def test_raise_value_error_exception_with_invalid_special_characters_in_model_name(self):
+        self._helper_test_for_invalid_names_for_deploy('model_name', 'model&name')
 
     def test_raise_file_not_found_exception_if_directory_does_not_exist(self):
         self._generate_patch_for_exists(dir_state=False)
