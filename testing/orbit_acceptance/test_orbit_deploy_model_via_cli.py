@@ -24,7 +24,7 @@ class TestOrbitDeployModelViaCli(Spec):
         cleanup()
 
         subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
-    
+
     @tear_down_class
     def tear_down_class(self):
         subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
@@ -73,7 +73,7 @@ class TestOrbitDeployModelViaCli(Spec):
             # ensure deployed
             self._deploy_default_job()
             self.assertIsNotNone(self._check_if_endpoint_available())
-            
+
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
@@ -81,8 +81,13 @@ class TestOrbitDeployModelViaCli(Spec):
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
-    @skip('not implemented')
     def test_can_retrieve_the_entrypoints_of_deployed_model_from_rest_api(self):
+        import redis
+        import foundations_contrib.global_state as global_state
+
+        old_redis = global_state.redis_connection
+        global_state.redis_connection = redis.Redis.from_url(self._get_redis_ip())
+
         try:
             from foundations_orbit_rest_api.v1.models.model import Model
 
@@ -94,10 +99,14 @@ class TestOrbitDeployModelViaCli(Spec):
                 'evaluate': {'module': 'src.main', 'function': 'evaluate'}
             }
 
-            default_model = Model.all()[0]
-            self.assertEqual(expected_entrypoint, default_model['entrypoints'])
+            models_promise = Model.all(project_name=self.mock_project_name)
+
+            default_model = models_promise.evaluate()[0]
+            self.assertEqual(expected_entrypoint, default_model.entrypoints)
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
+        finally:
+            global_state.redis = old_redis
 
     def _deploy_default_job(self):
         self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
@@ -167,9 +176,9 @@ class TestOrbitDeployModelViaCli(Spec):
 
         if not self._is_running_on_jenkins():
             return f'redis://{self._get_scheduler_ip()}:6379'
-        
+
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
-    
+
     def _wait_for_server_to_be_available(self):
         import time
 
@@ -200,11 +209,11 @@ class TestOrbitDeployModelViaCli(Spec):
     def _check_if_process_successful(self, cli_deploy_process):
         if self._check_if_error_exists(cli_deploy_process):
             raise AssertionError(f'deploy failed:\nstdout:\n{cli_deploy_process.stdout.decode()}\nstderr:\n{cli_deploy_process.stderr.decode()}')
-    
+
     def _check_if_unsuccessful(self, cli_deploy_process):
         if not self._check_if_error_exists(cli_deploy_process):
             raise AssertionError('deploy succeeded when it should have failed')
-    
+
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}predict'
         try:
