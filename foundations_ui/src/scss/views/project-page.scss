@@ -1,6 +1,7 @@
 .project-page-container{
   background-color: $color-background-grey;
   margin: 50px;
+  min-height: calc(100% - #{$footer-height} - #{$header-height} - 107px);
 
   h1 {
     color: #637081;

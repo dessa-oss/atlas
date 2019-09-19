@@ -7,6 +7,7 @@ import BaseActions from '../../actions/BaseActions';
 import CommonHeader from '../common/CommonHeader';
 import Header from './Header';
 import TagContainer from './TagContainer';
+import CommonFooter from '../common/CommonFooter';
 
 class ProjectOverview extends React.Component {
   constructor(props) {
@@ -172,6 +173,7 @@ class ProjectOverview extends React.Component {
             <Notes {...this.props} />
           </div>
         </div>
+        <CommonFooter />
       </div>
     );
   }
