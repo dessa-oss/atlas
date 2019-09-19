@@ -73,6 +73,9 @@ class JobDeployment(object):
                 return None
             raise
 
+    def get_true_job_status(self):
+        return self.get_job_status()
+
     def get_job_logs(self):
         return self._scheduler.get_job_logs(self._job_id)
 
