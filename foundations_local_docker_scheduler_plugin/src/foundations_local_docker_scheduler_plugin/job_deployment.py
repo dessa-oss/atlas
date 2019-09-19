@@ -115,6 +115,18 @@ class JobDeployment(object):
         except:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
 
+    def get_true_job_status(self):
+        import requests
+
+        try:
+            r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
+            if r.status_code == requests.codes.ok:
+                return r.json()['status']
+            else:
+                return None
+        except:
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
+
     def get_job_logs(self):
         import requests
 
@@ -297,7 +309,7 @@ class JobDeployment(object):
         import requests
 
         r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}")
-        return r.status_code == requests.codes.ok
+        return 200 <= r.status_code < 300
 
     @staticmethod
     def clear_queue():
