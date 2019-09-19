@@ -25,4 +25,4 @@ def stream_job_logs(deployment):
                 print(item)
             logger.info("Job '{}' has finished.".format(deployment.job_name()))
         except TimeoutError:
-            logger.info('Job cannot be found. Possibly because it has beeen removed from the queue.')
+            logger.info('Job cannot be found. Possibly because it has been removed from the queue.')
