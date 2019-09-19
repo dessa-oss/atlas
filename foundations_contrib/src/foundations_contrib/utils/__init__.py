@@ -5,14 +5,12 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from foundations_internal.utils import *
+
 def foundations_home():
     import os
 
     return os.environ.get('FOUNDATIONS_HOME', '~/.foundations')
-
-
-def is_string(string):
-    return isinstance(string, str)
 
 
 def is_number(number):

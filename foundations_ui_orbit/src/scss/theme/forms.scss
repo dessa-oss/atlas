@@ -1,5 +1,6 @@
 label {
-  @extend .f--din-pro;
+  @extend .f--roboto;
+  font-weight: normal;
   display: block;
   font-size: 14px;
   color: $color-label-text;
@@ -8,7 +9,8 @@ label {
 
 :not(.date-time-picker) {
   input[type="text"] {
-    @extend .f--din-pro;
+    @extend .f--roboto;
+    font-weight: normal;
     box-sizing: border-box;
     position: relative;
     background-color: white;
@@ -28,7 +30,8 @@ input[type="text"]:placeholder {
 }
 
 .helper-text {
-  @extend .f--din-pro;
+  @extend .f--roboto;
+  font-weight: normal;
   font-size: 14px;
   color: $color-label-placeholder;
   margin-top: 4px;
@@ -88,7 +91,7 @@ button.b--secondary {
 }
 
 button.b--secondary-text {
-  @extend .f--din-pro-bold;
+  @extend .f--roboto-bold;
   background: white;
   vertical-align: middle;
   -webkit-appearance: none;
@@ -137,7 +140,7 @@ button.b--secondary-text {
   }
 
   span {
-    @extend .f--din-pro-bold;
+    @extend .f--roboto-bold;
     color: $color-border-bottom;
     text-transform: uppercase;
     font-size: 12px;
@@ -159,7 +162,7 @@ button.b--secondary-text {
 }
 
 button.b--mat {
-  @extend .f--din-pro-bold;
+  @extend .f--roboto-bold;
   margin-right: $margin-width;
   overflow: hidden;
   border-width: 0;

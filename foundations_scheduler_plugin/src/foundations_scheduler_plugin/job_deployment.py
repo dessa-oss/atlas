@@ -21,9 +21,10 @@ class JobDeployment(object):
     @staticmethod
     def _get_config():
         from foundations_contrib.global_state import config_manager
+        import copy
 
-        config = {}
-        config.update(config_manager.config())
+        config = copy.deepcopy(config_manager.config())
+        config['run_script_environment']['script_to_run'] = config['run_script_environment']['script_to_run'] or 'main.py'
         config['_is_deployment'] = True
 
         return config

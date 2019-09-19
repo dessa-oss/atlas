@@ -312,6 +312,7 @@ class TestDataValidation(Spec):
         self.assertEqual(expected_distribution_report, distribution_report)
 
     def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
+        self.maxDiff = None
         import subprocess
         from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
@@ -334,8 +335,22 @@ class TestDataValidation(Spec):
             'row_cnt_diff': 0,
             'schema': {
                 'summary': {
-                    'healthy': 2, 'critical': 0
-                }
+                    'healthy': 2, 'critical': 0, 'warning': 0
+                },
+                'details_by_attribute': [
+                    {
+                        'attribute_name': 'feat_1',
+                        'data_type': 'float64',
+                        'issue_type': None,
+                        'validation_outcome': 'healthy'
+                    },
+                    {
+                        'attribute_name': 'feat_2',
+                        'data_type': 'float64',
+                        'issue_type': None,
+                        'validation_outcome': 'healthy'
+                    }
+                ]
             },
             'data_quality': {
                 'details_by_attribute': [
@@ -358,7 +373,8 @@ class TestDataValidation(Spec):
                 ],
                 'summary': {
                     'critical': 0,
-                    'healthy': 2
+                    'healthy': 2,
+                    'warning': 0
                 }
             },
             'population_shift': {
@@ -375,9 +391,11 @@ class TestDataValidation(Spec):
                     }
                 ],
                 'summary': {
-                    'critical': 1, 'healthy': 1
+                    'critical': 1, 'healthy': 1, 'warning': 0
                 }
             }
         }
+
+        expected_validation_report['schema']
 
         self.assertEqual(expected_validation_report, api_validation_report)

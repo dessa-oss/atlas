@@ -9,7 +9,8 @@ class DataContract(object):
 
     def __init__(self, contract_name, df=None):
         import pandas
-
+        
+        
         self.options = self._default_options()
         self._contract_name = contract_name
 
@@ -56,31 +57,40 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
+    def _save_to_redis(self, project_name, model_name, contract_name, inference_period, serialized_output):
+        from foundations_contrib.global_state import redis_connection
+        key = f'projects:{project_name}:models:{model_name}:validation:{contract_name}'
+        redis_connection.hset(key, inference_period, serialized_output)
+
     def validate(self, dataframe_to_validate, inference_period=None):
+        import datetime
+        import os
+        
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+        from foundations_orbit.report_formatter import ReportFormatter
         # from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
 
+        project_name = os.environ['PROJECT_NAME']
+        model_name = os.environ['MODEL_NAME']
+
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+        
+        if inference_period is None:
+            inference_period = str(datetime.datetime.now())
 
         ##### PROTOTYPE CODE - REMOVE ME PLEASE
 
         from foundations_orbit.contract_validators.prototype import create_bin_stats
+        from foundations_orbit.contract_validators.prototype import distribution_check
 
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
-
-        import datetime
-        from foundations_orbit.contract_validators.prototype import distribution_check, output_for_writing, write_to_redis
-
-        if inference_period is None:
-            inference_period = str(datetime.datetime.now())
-
-        validation_report = {}
 
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
         ##### Prototype code section end
 
+        validation_report = {}
         validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
@@ -101,38 +111,14 @@ class DataContract(object):
             }
         }
 
-        ##### PROTOTYPE CODE - replace with robust private methods
-        import os
+        report_formatter = ReportFormatter(inference_period=inference_period,
+                                    model_package=model_name,
+                                    contract_name=self._contract_name,
+                                    validation_report=validation_report,
+                                    options=self.options)
+        serialized_output = report_formatter.serialized_output()
 
-        project_name = os.environ['PROJECT_NAME']
-        model_name = os.environ['MODEL_NAME']
-
-        row_cnt_diff = validation_report.get('row_cnt_diff', 0)
-        schema_check_results = validation_report.get('schema_check_results', {})
-        schema_check_passed = schema_check_results.get('passed', True)
-        dist_check_results = validation_report.get('dist_check_results', {})
-
-        schema_check_failure_dict = schema_check_results.copy()
-        if 'passed' in schema_check_failure_dict:
-            schema_check_failure_dict.pop('passed')
-
-        output_to_write = output_for_writing(
-            inference_period,
-            model_name,
-            self._contract_name,
-            row_cnt_diff,
-            schema_check_passed,
-            len(self._column_names),
-            schema_check_failure_dict,
-            len(columns_to_validate),
-            types_to_validate,
-            self._column_types,
-            self.options.check_distribution,
-            dist_check_results,
-            self.options.special_values
-        )
-
-        write_to_redis(project_name, model_name, self._contract_name, inference_period, output_to_write)
+        self._save_to_redis(project_name, model_name, self._contract_name, inference_period, serialized_output)
 
         return validation_report
 

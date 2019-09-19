@@ -156,11 +156,11 @@ class TestDataContract(Spec):
         mock_environ['PROJECT_NAME'] = self.project_name
         mock_environ['MODEL_NAME'] = self.model_name
 
-        self.redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
+        self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
     @tear_down
     def tear_down(self):
-        self.redis.flushall()
+        self._redis.flushall()
 
     def test_can_import_data_contract_from_foundations_orbit_top_level(self):
         import foundations_orbit
@@ -332,9 +332,153 @@ class TestDataContract(Spec):
 
         self.assertEqual(expected_metadata, report['metadata'])
 
-    @skip('not implemented')
     def test_data_contract_validate_writes_correct_info_to_redis(self):
-        pass
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
+
+        expected_output = {
+            'data_contract': f'{self.contract_name}',
+            'data_quality': {
+                'details_by_attribute': [{
+                        'attribute_name': f'{self.column_name}',
+                        'difference_in_pct': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'pct_in_reference_data': 0.0,
+                        'validation_outcome': 'healthy',
+                        'value': 'nan'
+                    },
+                    {
+                        'attribute_name': f'{self.column_name_2}',
+                        'difference_in_pct': 0.0,
+                        'pct_in_current_data': 0.0,
+                        'pct_in_reference_data': 0.0,
+                        'validation_outcome': 'healthy',
+                        'value': 'nan'
+                    }
+                ],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 2,
+                    'warning': 0
+                }
+            },
+            'date': f'{inference_period}',
+            'model_package': f'{self.model_name}',
+            'population_shift': {
+                'details_by_attribute': [{
+                        'L-infinity': 0.0,
+                        'attribute_name': f'{self.column_name}',
+                        'validation_outcome': 'healthy'
+                    },
+                    {
+                        'L-infinity': 0.0,
+                        'attribute_name': f'{self.column_name_2}',
+                        'validation_outcome': 'healthy'
+                    }
+                ],
+                'summary': {
+                    'critical': 0,
+                    'healthy': 2,
+                    'warning': 0
+                }
+            },
+            'row_cnt_diff': 0,
+            'schema': {
+                'details_by_attribute': [{
+                    'attribute_name': f'{self.column_name_2}',
+                    'data_type': 'int64',
+                    'issue_type': 'datatype in reference dataframe is float64',
+                    'validation_outcome': 'critical'
+                }],
+                'summary': {
+                    'critical': 1,
+                    'healthy': 1,
+                    'warning': 0
+                }
+            }
+        }
+
+        key = f'projects:{self.project_name}:models:{self.model_name}:validation:{self.contract_name}'
+        serialized_report = self._redis.hget(key, inference_period)
+        import pickle
+        deserialized_report = pickle.loads(serialized_report)
+
+        self.assertEqual(expected_output, deserialized_report)
+
+    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_different_types(self):
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
+        dist_check_results = report['dist_check_results']
+        import numpy as np
+
+        expected_results = {
+            self.column_name: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            },
+            self.column_name_2: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            }
+        }
+
+        self.assertEqual(expected_results, dist_check_results)
+
+    @skip('does not work when dataframe has no rows')
+    def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
+        inference_period='2019-09-17'
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, inference_period=inference_period)
+        dist_check_results = report['dist_check_results']
+        import numpy as np
+
+        expected_results = {
+            self.column_name: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': True
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': True
+            },
+            self.column_name_3: {
+                'special_values': {
+                    np.nan: {
+                        'percentage_diff': 0.0,
+                        'ref_percentage': 0.0,
+                        'current_percentage': 0.0,
+                        'passed': False
+                    }
+                },
+                'binned_l_infinity': 0.0,
+                'binned_passed': False
+            }
+        }
+
+        self.assertEqual(expected_results, dist_check_results)
+
 
     def _test_data_contract_has_default_option(self, option_name, default_value):
         contract = DataContract(self.contract_name)

@@ -73,6 +73,34 @@ Note: font file paths are relative to deployed file paths, not source paths
   font-style: normal
 }
 
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Regular'), 
+       local('Roboto-Regular'), 
+       url('http://themes.googleusercontent.com/static/fonts/roboto/v11/2UX7WLTfW3W8TclTUvlFyQ.woff') 
+       format('woff');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), 
+       local('Roboto-Bold'), 
+       url('http://themes.googleusercontent.com/static/fonts/roboto/v11/d-6IYplOFocCacKzxwXSOD8E0i7KZn-EPnyo3HZu7kw.woff') 
+       format('woff');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Roboto Italic'), 
+       local('Roboto-Italic'), 
+       url('http://themes.googleusercontent.com/static/fonts/roboto/v11/1pO9eUAp8pSF8VnRTP3xnvesZW2xOQ-xsNqO47m55DA.woff') 
+       format('woff');
+}
+
 //extensible classes
 //-----------------------------
 
@@ -107,4 +135,19 @@ Note: font file paths are relative to deployed file paths, not source paths
 
 .f--din-pro-italic {
   font-family: DINProItalic, Arial, sans-serif;
+}
+
+.f--roboto {
+  font-family: Roboto, sans-serif;
+}
+
+.f--roboto-bold {
+  font-family: Roboto, sans-serif;
+  font-weight: bold;
+}
+
+.f--roboto-italic {
+  font-family: Roboto;
+  font-style : italic;
+  font-weight: 400;
 }
