@@ -28,13 +28,15 @@ class ProjectOverview extends React.Component {
 
   async reload() {
     const { location } = this.props;
-    if (!location.state || !location.state.project || location.state.project === {}) {
+    if (location) {
       const { projectName } = this.props.match.params;
       const fetchedProjects = await BaseActions.getFromStaging('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName);
-      this.setState({
-        tags: selectedProject.tags,
-      });
+      if (selectedProject.length > 0) {
+        this.setState({
+          tags: selectedProject[0].tags,
+        });
+      }
     }
 
     const { projectName, metric } = this.state;
@@ -115,7 +117,7 @@ class ProjectOverview extends React.Component {
     const { history, location } = this.props;
     let selectedProject = {};
 
-    if (location.state.project && location.state.project !== {}) {
+    if (location && location.state && location.state.project && location.state.project !== {}) {
       selectedProject = location.state.project;
     } else {
       const { projectName } = this.props.match.params;

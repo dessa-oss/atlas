@@ -65,18 +65,15 @@ class JobDetails extends React.Component {
     await this.setState({ isMount: true });
     const { location } = this.props;
     let foundProject = true;
-    if (!location.state || !location.state.project || location.state.project === {}) {
-      const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
-      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
-      if (selectedProject.length === 0 || selectedProject === undefined) {
-        foundProject = false;
-        this.setState({
-          showErrorPage: true,
-        });
-      }
+    const { projectName } = this.props.match.params;
+    const fetchedProjects = await BaseActions.getFromStaging('projects');
+    const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+    if (selectedProject.length === 0 || selectedProject === undefined) {
+      foundProject = false;
+      this.setState({
+        showErrorPage: true,
+      });
     }
-
     if (foundProject === true) {
       this.getJobs();
       this.getTags();
@@ -89,13 +86,12 @@ class JobDetails extends React.Component {
 
   async getTags() {
     const { location } = this.props;
-
-    if (!location.state || !location.state.project || location.state.project === {}) {
-      const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
-      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+    const { projectName } = this.props.match.params;
+    const fetchedProjects = await BaseActions.getFromStaging('projects');
+    const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+    if (selectedProject.length > 0) {
       this.setState({
-        tags: selectedProject.tags,
+        tags: selectedProject[0].tags,
       });
     }
   }
