@@ -61,8 +61,7 @@ class Project(PropertyModel):
 
         def callback():
             listing = Project._construct_project_listing()
-            project_names = [project['name'] for project in listing]
-            return [Project.find_by(project_name) for project_name in project_names]
+            return [Project.find_by(project) for project in listing]
 
         return LazyResult(callback)
 
@@ -74,8 +73,10 @@ class Project(PropertyModel):
         return ProjectListing.list_projects(redis_connection)
 
     @staticmethod
-    def _find_by_internal(name):
-        project = Project(name=name)
-        project.created_at = None
+    def _find_by_internal(input_project):
+        from datetime import datetime
+
+        project = Project(name=input_project['name'])
+        project.created_at = datetime.fromtimestamp(input_project['created_at']).strftime('%c')
         project.owner = None
         return project

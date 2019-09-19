@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BaseActions from '../../actions/BaseActions';
+import CommonActions from '../../actions/CommonActions';
 
 class Header extends React.Component {
   constructor(props) {
@@ -77,7 +78,7 @@ class Header extends React.Component {
           </div>
           <div>
             <div className="container-label-date font-bold">Date Created: </div>
-            <div className="container-text-date">{dateCreated}</div>
+            <div className="container-text-date">{CommonActions.formatDate(dateCreated)}</div>
           </div>
           <div>
             <div className="container-label-date font-bold">Project Owners: </div>

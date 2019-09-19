@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import JobColumnHeader from '../components/common/JobColumnHeader';
 import InputMetricCell from '../components/common/InputMetricCell';
 import InputMetricRow from '../components/common/InputMetricRow';
@@ -439,6 +440,11 @@ class CommonActions {
 
   static deepCopyArray(originalArray) {
     return JSON.parse(JSON.stringify(originalArray));
+  }
+
+  static formatDate(date) {
+    return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
+            ${JobListActions.getFormatedTime(date)}`;
   }
 }
 
