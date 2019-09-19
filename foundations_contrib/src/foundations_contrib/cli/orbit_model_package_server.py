@@ -4,6 +4,7 @@ Unauthorized copying, distribution, reproduction, publication, use of this file,
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
+
 def _get_default_model_information():
     import time
 
@@ -139,14 +140,31 @@ def _setup_environment(project_name, env):
 
 def _check_for_invalid_names(project_name, model_name):
     import re
-    error_message = 'Invalid {0} Name: {0} names cannot contain "-". Use "_" instead'
-    if '-' in model_name:
+    # error_message = 'Invalid {0} Name: {0} names cannot contain "-". Use "_" instead'
+    error_message = 'Invalid Model Name: Model names cannot contain special characters.'
+    # if '-' in model_name:
+    if re.match("^[A-Za-z0-9_-]*$", model_name) == None:
         raise ValueError(error_message.format('Model'))
     elif re.match("^[A-Za-z0-9_-]*$", project_name) == None:
         raise ValueError(f'Invalid Project Name: Project names cannot contain special characters.')
 
+def _check_for_valid_project_directory(project_directory):
+    import os
+    if not os.path.exists(f'{project_directory}'):
+        raise FileNotFoundError(f'Invalid project directory. Unable to load the directory {project_directory}.')
+
+def _check_for_valid_manifest_file(project_directory):
+    import os
+    if not os.path.exists(f'{project_directory}/foundations_package_manifest.yaml'):
+        raise FileNotFoundError('No manifest file found. Create a foundations_package_manifest.yaml file before deploying.')
+
+def _load_entrypoints_from_manifest(project_directory):
+    return {}
+
 def deploy(project_name, model_name, project_directory, env='local'):
     _check_for_invalid_names(project_name, model_name)
+    _check_for_valid_project_directory(project_directory)
+    _check_for_valid_manifest_file(project_directory)
 
     _setup_environment(project_name, env)
 
@@ -156,7 +174,10 @@ def deploy(project_name, model_name, project_directory, env='local'):
     
     _save_project_to_redis(project_name)
 
-    _save_model_to_redis(project_name, model_name, _get_default_model_information())
+    model_information =  _get_default_model_information()
+    model_information['entrypoints']  = _load_entrypoints_from_manifest(project_directory)
+    
+    _save_model_to_redis(project_name, model_name, model_information)
     _upload_model_directory(project_name, model_name, project_directory)
     return _launch_model_package(project_name, model_name)
 

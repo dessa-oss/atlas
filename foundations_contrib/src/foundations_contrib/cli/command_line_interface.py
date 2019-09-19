@@ -364,7 +364,7 @@ class CommandLineInterface(object):
             # else:
             #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
             #     self._fail_with_message(message)
-        except ValueError as e:
+        except Exception as e:
             self._fail_with_message(e)
 
 

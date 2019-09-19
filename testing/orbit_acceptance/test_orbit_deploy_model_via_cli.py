@@ -60,9 +60,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def test_can_successfully_run_model_serve(self):
         try:
-            self._deploy_job(self.mock_project_name,self.mock_user_provided_model_name)
-
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
 
             result = self._check_if_endpoint_available()
             self.assertIsNotNone(result)
@@ -73,26 +71,45 @@ class TestOrbitDeployModelViaCli(Spec):
         try:
             import time
             # ensure deployed
-            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
             self.assertIsNotNone(self._check_if_endpoint_available())
             
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
             self.assertIsNone(self._check_if_endpoint_available())
-
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
+
+    @skip('not implemented')
+    def test_can_retrieve_the_entrypoints_of_deployed_model_from_rest_api(self):
+        try:
+            from foundations_orbit_rest_api.v1.models.model import Model
+
+            self._deploy_default_job()
+
+            expected_entrypoint = {
+                'predict': {'module': 'src.main', 'function': 'predict'},
+                'recalibrate': {'module': 'src.main', 'function': 'train'},
+                'evaluate': {'module': 'src.main', 'function': 'evaluate'}
+            }
+
+            default_model = Model.all()[0]
+            self.assertEqual(expected_entrypoint, default_model['entrypoints'])
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
+
+    def _deploy_default_job(self):
+        self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
+        self._wait_for_server_to_be_available()
 
     def test_can_successfully_resume_model_serve(self):
         try:
             import time
             # ensure deployed
-            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
             self.assertIsNotNone(self._check_if_endpoint_available())
-            
+
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
@@ -101,7 +118,6 @@ class TestOrbitDeployModelViaCli(Spec):
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_available()
             self.assertIsNotNone(self._check_if_endpoint_available())
-
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
@@ -160,11 +176,9 @@ class TestOrbitDeployModelViaCli(Spec):
         start_time = time.time()
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
-                # print(f'Attempting to make request at url: {self.base_url}')
                 requests.get(self.base_url, timeout=0.1).json()
                 return
             except Exception as e:
-                # print('waiting for server to respond .....')
                 time.sleep(1)
         self.fail('server never started')
 
@@ -174,7 +188,6 @@ class TestOrbitDeployModelViaCli(Spec):
         start_time = time.time()
         while time.time() - start_time < 6:
             try:
-                # print(f'Checking if {self.base_url} is alive')
                 requests.get(self.base_url,  timeout=0.01).json()
                 time.sleep(1)
             except:
@@ -195,7 +208,6 @@ class TestOrbitDeployModelViaCli(Spec):
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}predict'
         try:
-            # print(f'Checking if endpoint available: {end_point_url}')
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:

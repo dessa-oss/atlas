@@ -15,6 +15,7 @@ import fakeredis
 class TestOrbitModelPackageServer(Spec):
 
     mock_time = let_patch_mock('time.time')
+    
 
     @let
     def mock_project_name(self):
@@ -59,31 +60,29 @@ class TestOrbitModelPackageServer(Spec):
     @let
     def mock_expected_yaml(self):
         import yaml
-        return yaml.dump({
+        return yaml.dump(self.mock_expected_config)
+
+    @let
+    def mock_expected_config(self):
+        return {
             'apiVersion': 'v1',
             'kind': 'Secret',
             'data': {
                 'job-uploader': self.secret_key
             }
-        })
+        }
 
     @set_up
     def set_up(self):
         import os.path as path
 
-        self.maxDiff=None
-        
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
         self._redis.flushall()
         self._redis.execute_command = lambda x: x 
-        
-
         self.ssh_key_path = path.expanduser('~/.ssh/id_foundations_scheduler')
         self.mock_redis_execute_command = self.patch('foundations_contrib.global_state.redis_connection.execute_command')
         self._setup_mocks_for_config_retrival()
-
         self.mock_time.return_value = 10
-
 
     def _mock_enter(self, *args):
         return self.mock_ssh_file
@@ -111,8 +110,7 @@ class TestOrbitModelPackageServer(Spec):
         self.mock_subprocess_object_for_destroy = Mock()
         self.mock_subprocess_object_for_destroy.returncode = 0
 
-        mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
-        mock_path_exists.return_when(True, self.ssh_key_path)
+        self._generate_patch_for_exists()
 
         self.mock_ssh_file.__enter__ = self._mock_enter
         self.mock_ssh_file.__exit__ = self._mock_exit
@@ -128,6 +126,11 @@ class TestOrbitModelPackageServer(Spec):
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_2nd_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_destroy, ['bash', './remove_deployment.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         
+    def _generate_patch_for_exists(self, ssh_state=True, yaml_state=True, dir_state=True):
+        mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
+        mock_path_exists.return_when(ssh_state, self.ssh_key_path)
+        mock_path_exists.return_when(yaml_state, f'{self.mock_project_directory}/foundations_package_manifest.yaml')
+        mock_path_exists.return_when(dir_state, f'{self.mock_project_directory}')
 
     def test_retrieve_configuration_from_kubernetes(self):
         self._deploy()
@@ -135,19 +138,11 @@ class TestOrbitModelPackageServer(Spec):
         self.mock_ssh_file.write.assert_called_with(self.decoded_key)
 
     def test_setting_configuration_permissions(self):
-        
-        # self._setup_mocks_for_config_retrival()        
         mock_chmod = self.patch('os.chmod')
-
         self._deploy()
-        
         mock_chmod.assert_called_with(self.ssh_key_path,  stat.S_IREAD)
 
     def test_removing_previous_configuration_if_exists(self):
-        # self._setup_mocks_for_config_retrival()
-        mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
-        mock_path_exists.return_when(True, self.ssh_key_path)
-
         mock_remove = self.patch('os.remove')
 
         self._deploy()
@@ -155,8 +150,7 @@ class TestOrbitModelPackageServer(Spec):
         mock_remove.assert_called_with(self.ssh_key_path)
 
     def test_not_removing_if_configuration_does_not_exists(self):
-        mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
-        mock_path_exists.return_when(False, self.ssh_key_path)
+        self._generate_patch_for_exists(ssh_state=False)
 
         mock_remove = self.patch('os.remove')
 
@@ -270,18 +264,70 @@ class TestOrbitModelPackageServer(Spec):
             self.fail('Failed to test for expected behaviour')
         except ValueError as e:
             self.assertTrue('invalid project name' in str(e).lower())
-        except Exception:
-            self.fail('Invalid exception raised')
+
         
     def test_raise_value_error_exception_with_invalid_model_name(self):
-        invalid_model_name = 'model-name'
+        invalid_model_name = 'model@name'
         try:
             self._deploy(model_name=invalid_model_name)
             self.fail('Failed to test for expected behaviour')
         except ValueError as e:
             self.assertTrue('invalid model name' in str(e).lower())
-        except Exception:
-            self.fail('Invalid exception raised')
+
+    def test_raise_file_not_found_exception_if_directory_does_not_exist(self):
+        self._generate_patch_for_exists(dir_state=False)
+        try:
+            self._deploy()
+            self.fail('Failed to check for project directory')
+        except FileNotFoundError as e:
+            self.assertTrue('invalid project directory' in str(e).lower())
+
+
+    def test_raise_file_not_found_exception_if_no_model_foundations_file_provided(self):
+        self._generate_patch_for_exists(yaml_state=False)
+        try:
+            self._deploy()
+            self.fail('Failed to check for file')
+        except FileNotFoundError as e:
+            self.assertTrue('no manifest file found' in str(e).lower())
+
+    def test_entrypoint_is_available_in_yaml(self):
+        mock_yaml_load = self.patch('yaml.load', ConditionalReturn())
+        mock_yaml_file = Mock()
+        manifest = {
+            'entrypoints':{
+                'predict': {
+                    'module': 'src.main',
+                    'function': 'predict'
+                },
+                'recalibrate': {
+                    'module': 'src.main',
+                    'function': 'train'
+                },
+                'evaluate': {
+                    'module': 'src.main',
+                    'function': 'evaluate'
+                }
+            }
+        }
+
+        
+        mock_yaml_file.__enter__ = lambda *args: mock_yaml_file
+        mock_yaml_file.__exit__ = lambda *args: None
+
+        mock_yaml_load.return_when(manifest, mock_yaml_file)
+
+        mock_yaml_load.return_when(self.mock_expected_config, self.mock_expected_yaml)
+
+
+        self._deploy()
+
+        expected_manifest_entrypoint = {
+            'evaluate': {'module': 'src.main', 'function': 'evaluate'},
+            'predict': {'module': 'src.main', 'function': 'predict'},
+            'recalibrate': {'module': 'src.main', 'function': 'train'},
+        }
+        entrypoints = self._get_model_param(self.mock_project_name, self.mock_model_name, 'entrypoints')
 
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name
