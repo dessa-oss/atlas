@@ -110,10 +110,10 @@
 .job-details-filter-container {
   text-align: left;
   padding: 15px 15px 5px 15px;
-  width: 450px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
   position: absolute;
-  left: calc(100% - 500px);
+  left: calc(100% - 416px);
 
   .filter-container {
     background: $color-white;
@@ -124,14 +124,17 @@
   .column-filter-header {
     margin: 10px;
     height: 80px;
+
     input, button {
       display: inline-block;
       vertical-align: middle;
     }
+
     input {
       width: 86%;
       margin-right: 20px;
     }
+
     button {
       width: 30px;
       height: 30px;
@@ -142,7 +145,7 @@
         float: right;
         margin-left: 20px;
         width: 100px;
-        height: 35px;
+        height: 30px;
         padding: 10px;
         margin-top: 20px;
         margin-bottom: 20px;
@@ -158,7 +161,7 @@
   }
 
   .column-filter-list {
-    height: 320px;
+    height: 225px;
     margin-left: 10px;
     overflow-y: scroll;
     width: 100%;
@@ -171,15 +174,20 @@
     .column-filter-image-empty {
       width: 100%;
       height: 100%;
-      background-image: url('../assets/images/icons/astronaut-alone.png');
-      background-size: 50%;
+      background-image: url('../assets/svgs/empty_box_man.svg');
+      background-size: 75%;
       background-repeat: no-repeat;
       background-position: center;
 
       .container-text-empty {
-        width: 60%;
-        margin: auto;
-        padding-top: 30%;
+        width: 100%;
+        padding-left: 25%;
+        padding-top: 20%;
+
+        p {
+         display: block;
+         text-align: center;
+        }
 
         .column-filter-text-empty {
           @extend .f--roboto-bold;
@@ -209,6 +217,10 @@
       width: 100px;
       padding: 10px;
       margin-top: 25px;
+    }
+
+    button:nth-of-type(1) {
+      margin-right: 8px;
     }
   }
 }

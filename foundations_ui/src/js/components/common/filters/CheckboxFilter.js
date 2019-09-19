@@ -5,7 +5,7 @@ class CheckboxFilter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checkboxes: this.props.checkboxes,
+      checkboxes: [],
       onCancel: this.props.onCancel,
       onApply: this.props.onApply,
       submitSearchText: this.props.submitSearchText,
@@ -63,10 +63,12 @@ class CheckboxFilter extends Component {
             <div className="column-filter-image-empty">
               <div className="container-text-empty">
                 <div className="column-filter-text-empty">
-                  No parameters or metric columns available to filter.
+                  <p className="font-bold">No parameters or metric columns</p>
+                  <p className="font-bold">available to filter.</p>
                 </div>
                 <div className="column-filter-text-empty">
-                  Log some metrics or parameters on your next job run.
+                  <p>Log some metrics or parameters</p>
+                  <p>on your next job run.</p>
                 </div>
               </div>
             </div>
