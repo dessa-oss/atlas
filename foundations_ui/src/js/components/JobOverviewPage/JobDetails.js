@@ -386,7 +386,7 @@ class JobDetails extends React.Component {
       selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
     }
     history.push(
-      `/projects/${selectedProject.name}/details`,
+      `/projects/${selectedProject.name}/job_listing`,
       {
         project: selectedProject,
       },
