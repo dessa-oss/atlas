@@ -19,7 +19,6 @@ class CommandLineInterface(object):
 
         SetupParser(self).add_sub_parser()
         self._initialize_init_parser()
-        self._initialize_deploy_parser()
         self._initialize_submit_parser()
         self._initialize_info_parser()
         self._initialize_model_serve_parser()
@@ -45,16 +44,6 @@ class CommandLineInterface(object):
         init_parser = self.add_sub_parser('init', help='Creates a new Foundations project in the current directory')
         init_parser.add_argument('project_name', type=str, help='Name of the project to create')
         init_parser.set_defaults(function=self._init)
-
-    def _initialize_deploy_parser(self):
-        deploy_parser = self.add_sub_parser('deploy', help='Deploys a Foundations project to the specified environment')
-        deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
-        deploy_parser.add_argument('--env', help='Environment to run file in')
-        deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        deploy_parser.add_argument('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
-        deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
-        deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
-        deploy_parser.set_defaults(function=self._deploy)
 
     def _initialize_submit_parser(self):
         from argparse import REMAINDER
