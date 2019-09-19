@@ -109,7 +109,9 @@ class JobTableButtons extends Component {
         >
           <span className={iconClassName} /> <p className="text-upper font-bold">Send to tensorboard</p>
         </button>
-        <button onClick={this.onDeleteJobs} type="button" className="text-upper drop-shadow">Delete</button>
+        { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
+          && <button onClick={this.onDeleteJobs} type="button" className="text-upper drop-shadow">Delete</button>
+        }
         <div
           className="job-details-filter-button"
           role="button"
