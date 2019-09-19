@@ -19,8 +19,8 @@ def set_up_default_environment_if_present():
                 set_up_job_environment()
             except redis.exceptions.ConnectionError:
                 _get_logger().warn(
-                    'Foundations has been imported, but a connection to Redis could not be established '
-                    'No foundations code will run and a job will not be generated'
+                    'Foundations has been imported, but a connection to Redis could not be established. '
+                    'No foundations code will run and a job will not be generated. '
                     'Please make sure Atlas Server started up correctly.')
 
         else:
