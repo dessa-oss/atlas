@@ -140,12 +140,10 @@ def _setup_environment(project_name, env):
 
 def _check_for_invalid_names(project_name, model_name):
     import re
-    # error_message = 'Invalid {0} Name: {0} names cannot contain "-". Use "_" instead'
     error_message = 'Invalid Model Name: Model names cannot contain special characters.'
-    # if '-' in model_name:
-    if re.match("^[A-Za-z0-9_-]*$", model_name) == None:
+    if re.match("^[a-z0-9-]+$", model_name) == None:
         raise ValueError(error_message.format('Model'))
-    elif re.match("^[A-Za-z0-9_-]*$", project_name) == None:
+    elif re.match("^[a-z0-9-]+$", project_name) == None:
         raise ValueError(f'Invalid Project Name: Project names cannot contain special characters.')
 
 def _check_for_valid_project_directory(project_directory):

@@ -323,22 +323,21 @@ class TestOrbitModelPackageServer(Spec):
         model_created_at = self._get_model_param(self.mock_project_name, self.mock_model_name, 'created_at')
         self.assertEqual(self.mock_time(), model_created_at)
 
-    def test_raise_value_error_exception_with_invalid_project_name(self):
-        invalid_project_name = 'project@name'
+    def _helper_test_for_invalid_names_for_deploy(self, parameter_type, parameter_value):
         try:
-            self._deploy(project_name=invalid_project_name)
+            params = {
+                parameter_type: parameter_value
+            }
+            self._deploy(**params)
             self.fail('Failed to test for expected behaviour')
         except ValueError as e:
-            self.assertTrue('invalid project name' in str(e).lower())
+            self.assertTrue(f'invalid {parameter_type.replace("_", " ")}' in str(e).lower())
 
+    def test_raise_value_error_exception_with_invalid_underscore_in_project_name(self):
+        self._helper_test_for_invalid_names_for_deploy('project_name', 'project_with_underscore')
 
     def test_raise_value_error_exception_with_invalid_model_name(self):
-        invalid_model_name = 'model@name'
-        try:
-            self._deploy(model_name=invalid_model_name)
-            self.fail('Failed to test for expected behaviour')
-        except ValueError as e:
-            self.assertTrue('invalid model name' in str(e).lower())
+        self._helper_test_for_invalid_names_for_deploy('model_name', 'model_with_underscore')
 
     def test_raise_file_not_found_exception_if_directory_does_not_exist(self):
         self._generate_patch_for_exists(dir_state=False)
