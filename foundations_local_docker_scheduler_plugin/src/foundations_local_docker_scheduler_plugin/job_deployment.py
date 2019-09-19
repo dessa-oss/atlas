@@ -97,7 +97,12 @@ class JobDeployment(object):
         raise NotImplementedError
 
     def get_job_status(self):
+        return self._get_job_status(self._job_id)
+
+    @staticmethod
+    def _get_job_status(job_id):
         import requests
+        from foundations_contrib.global_state import config_manager
 
         responses = {
             "queued": "queued",
@@ -107,7 +112,7 @@ class JobDeployment(object):
             "pending": "queued"
         }
         try:
-            r = requests.get(f"{self._config['scheduler_url']}/jobs/{self._job_id}")
+            r = requests.get(f"{config_manager['scheduler_url']}/jobs/{ job_id }")
             if r.status_code == requests.codes.ok:
                 return responses[r.json()['status']]
             else:
@@ -172,39 +177,26 @@ class JobDeployment(object):
 
     @staticmethod
     def cancel_jobs(jobs):
-        # from foundations_scheduler.kubernetes_api_wrapper import KubernetesApiWrapper
-        #
-        # config = JobDeployment._get_config()
-        # scheduler = JobDeployment._get_scheduler(config)
-        #
-        # api = KubernetesApiWrapper()
-        # custom_objects_api = api.custom_objects_api()
-        # batch_api = api.batch_api()
-        #
-        # return {job: JobDeployment._cancel_job(job, scheduler, custom_objects_api, batch_api) for job in jobs}
-        pass
+        from foundations_contrib.global_state import config_manager
+        archive_path = config_manager['job_results_root']+'archive'
+        scheduler_url = config_manager['scheduler_url']
+
+        return {job: JobDeployment._cancel_job(job, scheduler_url, archive_path) for job in jobs}
+
 
     @staticmethod
-    def _cancel_job(job_id, scheduler, custom_objects_api, batch_api):
-        pass
-        # from kubernetes.client.rest import ApiException
-        # from foundations_scheduler.kubernetes_api_wrapper import delete_options
-        #
-        # try:
-        #     custom_objects_api.delete_namespaced_custom_object(
-        #         'foundations.dessa.com',
-        #         'v1',
-        #         'foundations-scheduler-test',
-        #         'foundations-jobs',
-        #         job_id,
-        #         delete_options()
-        #     )
-        #
-        #     JobDeployment._try_to_delete_kubernetes_job(batch_api, job_id)
-        #
-        #     return True
-        # except Exception as ex:
-        #     return False
+    def _cancel_job(job_id, scheduler_url, archive_path):
+        import os
+        import shutil
+        import requests
+
+        try:
+            shutil.rmtree(os.path.join(archive_path, job_id))
+            requests.delete(f"{scheduler_url}/completed_jobs/{job_id}")
+            return True
+        except Exception as ex:
+            return False
+
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
@@ -238,17 +230,17 @@ class JobDeployment(object):
                             "mode": "rw"
                         }
                 },
-             "working_dir": "/job/job_source",
-                # [
-                # {
-                #     'name': 'logging',
-                #     'mountPath': '/root/.foundations/logs',
-                # },
-                # {
-                #     'name': 'execution-config',
-                #     'mountPath': '/root/.foundations/config/execution'
-                # }
-                # ]
+            "working_dir": "/job/job_source",
+            # [
+            # {
+            #     'name': 'logging',
+            #     'mountPath': '/root/.foundations/logs',
+            # },
+            # {
+            #     'name': 'execution-config',
+            #     'mountPath': '/root/.foundations/config/execution'
+            # }
+            # ]
             'environment':
                 {
                     "FOUNDATIONS_USER": username,

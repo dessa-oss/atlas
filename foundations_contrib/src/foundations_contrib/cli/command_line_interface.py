@@ -27,6 +27,7 @@ class CommandLineInterface(object):
         self._initialize_orbit_model_serve_parser()
         self._initialize_stop()
         self._initialize_clear_queue()
+        self._initialize_delete_parser()
 
     def add_sub_parser(self, name, help=None):
         return self._subparsers.add_parser(name, help=help)
@@ -149,6 +150,17 @@ class CommandLineInterface(object):
         clear_queue_parser = self.add_sub_parser('clear-queue', help='Clears all scheduled jobs from the queue')
         clear_queue_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment to clear the queue')
         clear_queue_parser.set_defaults(function=self._clear_queue)
+
+    def _initialize_delete_parser(self):
+        delete_parser = self.add_sub_parser('delete', help='Delete items from execution environment')
+        delete_subparsers = delete_parser.add_subparsers()
+        self._initialize_delete_job_parser(delete_subparsers)
+
+    def _initialize_delete_job_parser(self, delete_subparsers):
+        delete_job_parser = delete_subparsers.add_parser('job', help='Delete jobs')
+        delete_job_parser.add_argument('scheduler_config', type=str, help='Environment to delete job from')
+        delete_job_parser.add_argument('job_id', type=str, help='Specify job uuid of already deployed job')
+        delete_job_parser.set_defaults(function=self._delete_job)
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -279,6 +291,34 @@ class CommandLineInterface(object):
         else:
             logs = job_deployment.get_job_logs()
             print(logs)
+
+    def _delete_job(self):
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.cli.job_submission.config import load
+        from foundations_contrib.change_directory import ChangeDirectory
+        import os
+
+        env_name = self._arguments.scheduler_config
+        job_id = self._arguments.job_id
+        current_directory = os.getcwd()
+
+        with ChangeDirectory(current_directory):
+            load(self._arguments.scheduler_config or 'scheduler')
+
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        job_status = job_deployment.get_job_status()
+
+        if job_status is None:
+            self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+        elif job_status in ('queued', 'running', 'pending'):
+            self._fail_with_message('Error: Job `{}` has status `{}` and cannot be deleted'.format(job_id, job_status))
+        else:
+            if job_deployment.cancel_jobs([job_id])[job_id]:
+                print(f"Job {job_id} successfully deleted")
+            else:
+                print(f"Could not delete job {job_id}. Please try again with sudo")
 
     def _load_configuration(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
