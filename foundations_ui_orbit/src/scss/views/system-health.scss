@@ -61,7 +61,7 @@
       tr:nth-child(2) {
         background-color: $color-lighter-blue;
         p {
-          @extend .f--din-bold;
+          @extend .f--roboto-bold;
           color: white;
         }
       }

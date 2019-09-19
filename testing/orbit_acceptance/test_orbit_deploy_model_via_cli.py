@@ -24,7 +24,7 @@ class TestOrbitDeployModelViaCli(Spec):
         cleanup()
 
         subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
-    
+
     @tear_down_class
     def tear_down_class(self):
         subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
@@ -60,9 +60,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def test_can_successfully_run_model_serve(self):
         try:
-            self._deploy_job(self.mock_project_name,self.mock_user_provided_model_name)
-
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
 
             result = self._check_if_endpoint_available()
             self.assertIsNotNone(result)
@@ -73,26 +71,54 @@ class TestOrbitDeployModelViaCli(Spec):
         try:
             import time
             # ensure deployed
-            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
             self.assertIsNotNone(self._check_if_endpoint_available())
-            
+
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
             self.assertIsNone(self._check_if_endpoint_available())
-
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
+
+    def test_can_retrieve_the_entrypoints_of_deployed_model_from_rest_api(self):
+        import redis
+        import foundations_contrib.global_state as global_state
+
+        old_redis = global_state.redis_connection
+        global_state.redis_connection = redis.Redis.from_url(self._get_redis_ip())
+
+        try:
+            from foundations_orbit_rest_api.v1.models.model import Model
+
+            self._deploy_default_job()
+
+            expected_entrypoint = {
+                'predict': {'module': 'src.main', 'function': 'predict'},
+                'recalibrate': {'module': 'src.main', 'function': 'train'},
+                'evaluate': {'module': 'src.main', 'function': 'evaluate'}
+            }
+
+            models_promise = Model.all(project_name=self.mock_project_name)
+
+            default_model = models_promise.evaluate()[0]
+            self.assertEqual(expected_entrypoint, default_model.entrypoints)
+        except KeyboardInterrupt:
+            self.fail('Interrupted by user')
+        finally:
+            global_state.redis = old_redis
+
+    def _deploy_default_job(self):
+        self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
+        self._wait_for_server_to_be_available()
 
     def test_can_successfully_resume_model_serve(self):
         try:
             import time
             # ensure deployed
-            self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
-            self._wait_for_server_to_be_available()
+            self._deploy_default_job()
             self.assertIsNotNone(self._check_if_endpoint_available())
-            
+
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
@@ -101,7 +127,6 @@ class TestOrbitDeployModelViaCli(Spec):
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_available()
             self.assertIsNotNone(self._check_if_endpoint_available())
-
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
@@ -151,20 +176,18 @@ class TestOrbitDeployModelViaCli(Spec):
 
         if not self._is_running_on_jenkins():
             return f'redis://{self._get_scheduler_ip()}:6379'
-        
+
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
-    
+
     def _wait_for_server_to_be_available(self):
         import time
 
         start_time = time.time()
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
-                # print(f'Attempting to make request at url: {self.base_url}')
                 requests.get(self.base_url, timeout=0.1).json()
                 return
             except Exception as e:
-                # print('waiting for server to respond .....')
                 time.sleep(1)
         self.fail('server never started')
 
@@ -174,7 +197,6 @@ class TestOrbitDeployModelViaCli(Spec):
         start_time = time.time()
         while time.time() - start_time < 6:
             try:
-                # print(f'Checking if {self.base_url} is alive')
                 requests.get(self.base_url,  timeout=0.01).json()
                 time.sleep(1)
             except:
@@ -187,15 +209,14 @@ class TestOrbitDeployModelViaCli(Spec):
     def _check_if_process_successful(self, cli_deploy_process):
         if self._check_if_error_exists(cli_deploy_process):
             raise AssertionError(f'deploy failed:\nstdout:\n{cli_deploy_process.stdout.decode()}\nstderr:\n{cli_deploy_process.stderr.decode()}')
-    
+
     def _check_if_unsuccessful(self, cli_deploy_process):
         if not self._check_if_error_exists(cli_deploy_process):
             raise AssertionError('deploy succeeded when it should have failed')
-    
+
     def _check_if_endpoint_available(self):
         end_point_url = f'{self.base_url}predict'
         try:
-            # print(f'Checking if endpoint available: {end_point_url}')
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:

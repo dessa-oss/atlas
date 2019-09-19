@@ -59,11 +59,12 @@ class TestJobDeployment(Spec):
     def result_config(self):
         config = {'_is_deployment': True}
         config.update(self.config_manager_config)
+        config['run_script_environment']['script_to_run'] = 'main.py'
         return config
 
     @let
     def config_manager_config(self):
-        config = {'run_script_environment': {}}
+        config = {'run_script_environment': {'script_to_run': None}}
         config.update(self.faker.pydict())
         return config
 

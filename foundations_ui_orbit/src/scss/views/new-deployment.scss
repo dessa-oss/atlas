@@ -616,7 +616,7 @@
               display: inline-block;
               margin: 0px;
               margin-right: 0px;
-              @extend .f--din-bold;
+              @extend .f--roboto-bold;
 
               &.pred-active {
                 color: $color-status-green;
@@ -711,22 +711,22 @@
             }
 
             .pred-active {
-              @extend .f--din-pro-bold;
+              @extend .f--roboto-bold;
               color: $color-status-green;
             }
 
             .pred-error {
-              @extend .f--din-pro-bold;
+              @extend .f--roboto-bold;
               color: $color-status-red;
             }
 
             .pred-retired {
-              @extend .f--din-pro-bold;
+              @extend .f--roboto-bold;
               color: grey;
             }
 
             .pred-testing {
-              @extend .f--din-pro-bold;
+              @extend .f--roboto-bold;
               color: blue;
             }
             .pred-status {
@@ -738,7 +738,7 @@
     }
 
     .sum-error {
-      @extend .f--din-bold;
+      @extend .f--roboto-bold;
       margin-left: 20px;
       margin: 0px 0px 5px 20px;
       font-size: 12px;
