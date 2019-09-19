@@ -453,7 +453,7 @@ class CommandLineInterface(object):
             elif job_status == 'completed':
                 self._fail_with_message('Error: Job `{}` is completed and cannot be stopped'.format(job_id))
             else:
-                if job_deployment.stop():
+                if job_deployment.stop_running_job():
                     print('Stopped running job {}'.format(job_id))
                 else:
                     print('Error stopping job {}'.format(job_id))
