@@ -51,7 +51,7 @@ class CheckboxFilter extends Component {
             <button
               type="button"
               onClick={onClearFilters}
-              className="b--mat b--affirmative text-upper"
+              className="b--mat b--negation-grey grey text-upper"
             >
             SELECT ALL
             </button>
@@ -80,7 +80,7 @@ class CheckboxFilter extends Component {
         )}
         <div className="column-filter-buttons">
           <button type="button" onClick={onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={onApply} className={applyClass}>Apply</button>
+          <button type="button" onClick={onApply} className="b--mat b--negation-grey grey text-upper">Apply</button>
         </div>
       </div>
     );

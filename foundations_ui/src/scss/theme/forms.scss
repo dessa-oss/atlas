@@ -81,6 +81,11 @@ button.b--mat.b--negation:active {
   background-color: $color-negation-blue-active;
 }
 
+button.b--mat.b--negation-grey {
+  background-color: $color-label-text;
+  ;
+}
+
 select {
   -webkit-appearance: none !important;
   border: 1px solid $color-border;
