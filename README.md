@@ -17,10 +17,11 @@ Integration Documentation
 [Test Documentation](documentation/TESTGUIDE.md)
 
 ## Releases
-There is a new release on every second Friday. Old releases can be found by navigating to the *Switch branches/tags* tab, and selecting the tag of the desired release version. Each release has its own set of examples.
+There is a new release on every second Friday. Old releases can be found by navigating to the *Switch branches/tags* tab, and selecting the tag of the desired release version, or by navigating to the [Releases](https://github.com/DeepLearnI/foundations/releases) tab. Each release has its own set of examples. The latest release can be found below:
 
 |Release Version|Release|Examples|
 |---|-------|--------|
+|1.3.2|[release](https://github.com/DeepLearnI/foundations/releases/tag/1.3.2) | [examples](https://github.com/DeepLearnI/foundations/tree/1.3.2/examples) |
 |1.3.0.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/1.3.0.1) | [examples](https://github.com/DeepLearnI/foundations/tree/1.3.0.1/examples) |
 |1.3.0|[release](https://github.com/DeepLearnI/foundations/releases/tag/1.3.0) | [examples](https://github.com/DeepLearnI/foundations/tree/1.3.0/examples) |
 |1.2.0|[release](https://github.com/DeepLearnI/foundations/releases/tag/1.2.0) | [examples](https://github.com/DeepLearnI/foundations/tree/1.2.0/examples) |
