@@ -78,7 +78,7 @@ class JobOverviewPage extends Component {
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
     history.push(
-      `/projects/${selectedProject.name}/details`,
+      `/projects/${selectedProject.name}/job_listing`,
       {
         project: selectedProject,
       },
