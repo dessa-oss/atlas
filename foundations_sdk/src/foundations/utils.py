@@ -7,6 +7,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 from foundations_contrib.utils import *
+from foundations_internal.utils import *
 
 
 def using_python_2():
@@ -24,12 +25,6 @@ def byte_string(string):
     else:
         return bytes(force_encoding(string))
 
-
-def string_from_bytes(string):
-    if is_string(string):
-        return string
-    else:
-        return string.decode()
 
 
 def generate_uuid(string):
