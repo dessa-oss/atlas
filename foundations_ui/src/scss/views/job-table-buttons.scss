@@ -21,6 +21,12 @@
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
+
+    &.drop-shadow {
+      -webkit-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
+      -moz-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
+      box-shadow: 0px 2px 10px 1px rgba(114,167,211,0.57);
+    }
   }
 
   button:nth-of-type(1) {
@@ -50,7 +56,8 @@
     width: 220px;
     background: #fff;
     color: #444;
-    border: 2px solid orange;
+    border: 2px solid #3D518C;
+    opacity: 1;
 
     &.grey {
       background: $color-job-headers;
@@ -72,9 +79,7 @@
     }
     
     &.disabled {
-      background: #867878;
-      color: #333;
-      border: 2px solid #90610c;
+      opacity: 0.3;
     }
   }
 
