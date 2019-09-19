@@ -51,18 +51,38 @@ class CheckboxFilter extends Component {
             <button
               type="button"
               onClick={onClearFilters}
-              className="b--mat b--affirmative text-upper"
+              className="b--mat b--negation-grey grey text-upper"
             >
             SELECT ALL
             </button>
           </div>
         </div>
-        <div className="column-filter-list">
-          {checkboxes}
-        </div>
+        {checkboxes.length === 0
+        && (
+          <div className="column-filter-list empty">
+            <div className="column-filter-image-empty">
+              <div className="container-text-empty">
+                <div className="column-filter-text-empty">
+                  <p className="font-bold">No parameters or metric columns</p>
+                  <p className="font-bold">available to filter.</p>
+                </div>
+                <div className="column-filter-text-empty">
+                  <p>Log some metrics or parameters</p>
+                  <p>on your next job run.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {checkboxes.length > 0
+        && (
+          <div className="column-filter-list">
+            {checkboxes}
+          </div>
+        )}
         <div className="column-filter-buttons">
           <button type="button" onClick={onCancel} className="b--mat b--negation text-upper">Cancel</button>
-          <button type="button" onClick={onApply} className={applyClass}>Apply</button>
+          <button type="button" onClick={onApply} className="b--mat b--negation-grey grey text-upper">Apply</button>
         </div>
       </div>
     );

@@ -15,7 +15,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
       tags: [],
       showErrorPage: false,
     };
@@ -29,7 +29,7 @@ class JobOverviewPage extends Component {
     const { location } = this.props;
     if (!location.state || !location.state.project || location.state.project === {}) {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName);
       if (selectedProject.length === 0 || selectedProject === undefined) {
         this.setState({
@@ -55,12 +55,9 @@ class JobOverviewPage extends Component {
       selectedProject = location.state.project;
     } else {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
-    await this.setState({
-      tab: 'overview',
-    });
     history.push(
       `/projects/${selectedProject.name}/overview`,
       {
@@ -77,14 +74,11 @@ class JobOverviewPage extends Component {
       selectedProject = location.state.project;
     } else {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.getFromStaging('projects');
+      const fetchedProjects = await BaseActions.get('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
-    await this.setState({
-      tab: 'details',
-    });
     history.push(
-      `/projects/${selectedProject.name}/details`,
+      `/projects/${selectedProject.name}/job_listing`,
       {
         project: selectedProject,
       },

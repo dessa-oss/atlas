@@ -9,9 +9,20 @@ _exception_happened = False
 import yaml
 
 def set_up_default_environment_if_present():
+    import redis
+    from foundations_contrib.global_state import redis_connection
     if not _in_command_line():
         if load_execution_environment():
-            set_up_job_environment()
+            # This needs to be refactored to throw an exception at the message router level
+            try:
+                redis_connection.ping()
+                set_up_job_environment()
+            except redis.exceptions.ConnectionError:
+                _get_logger().warn(
+                    'Foundations has been imported, but a connection to Redis could not be established. '
+                    'No foundations code will run and a job will not be generated. '
+                    'Please make sure Atlas Server started up correctly.')
+
         else:
             _get_logger().warn(
                 'Foundations has been imported, but no default configuration file has been found. '
@@ -35,14 +46,17 @@ def set_up_job_environment():
     from foundations_contrib.producers.jobs.run_job import RunJob
     from foundations_contrib.global_state import current_foundations_context, message_router, config_manager, log_manager
     import atexit
+    import redis
 
     config_manager['_is_deployment'] = True
     _get_logger().debug(f'Foundations has been run with the following configuration:\n'
                 f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
     pipeline_context = current_foundations_context().pipeline_context()
     _set_job_state(pipeline_context)
+
     QueueJob(message_router, pipeline_context).push_message()
     RunJob(message_router, pipeline_context).push_message()
+
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
 
@@ -78,11 +92,14 @@ def _at_exit_callback():
 
     pipeline_context = current_foundations_context().pipeline_context()
     upload_artifacts(pipeline_context.job_id)
+    # This try-except block should be refactored at a later date
+
     if _exception_happened:
-        FailedJob(message_router, pipeline_context, { "type": Exception, "exception": '', "traceback": [] }).push_message()
+            FailedJob(message_router, pipeline_context, { "type": Exception, "exception": '', "traceback": [] }).push_message()
     else:
-        CompleteJob(message_router, pipeline_context).push_message()
-        
+            CompleteJob(message_router, pipeline_context).push_message()
+
+
 def _set_job_state(pipeline_context):
     from uuid import uuid4
     import os

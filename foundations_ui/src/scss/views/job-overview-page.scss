@@ -1,5 +1,6 @@
 .job-overview-container {
   margin: 0px 50px 30px 50px;
+  min-height: calc(100% - #{$footer-height} - #{$header-height} - 27px);
   p {
     margin: 0px;
   }
@@ -7,6 +8,7 @@
   .project-summary-tags-container {
     p {
       margin: 5px 0px;
+      float: right;
     }
   }
 }
@@ -21,7 +23,8 @@
 
   h3 {
     color: $color-text;
-    @extend .f--din;
+    @extend .f--roboto;
+    font-weight: normal;
     cursor: pointer;
     width: 200px;
 
@@ -65,11 +68,12 @@
     color: $color-text;
     padding: 10px 25px;
     margin: 6px 0px;
-    @extend .f--din;
+    @extend .f--roboto;
+    font-weight: normal;
     cursor: pointer;
 
     &.active {
-      @extend .f--din-bold;
+      @extend .f--roboto-bold;
       color: #00A4B2;
       border-bottom: solid 3px #00A4B2;
       margin: -6px 0px;
@@ -220,7 +224,7 @@
 }
 
 .section-title {
-  @extend .f--din-bold;
+  @extend .f--roboto-bold;
   color: #3D518C;
   margin: 0px;
   font-size: 18px;
@@ -239,7 +243,7 @@
   overflow-y: scroll;
 
   h2 {
-    @extend .f--din-bold;
+    @extend .f--roboto-bold;
     color: #3D518C;
     margin: 0px;
     font-size: 25px;
@@ -298,7 +302,7 @@ button {
 
 .foundations-header {
   background: #5480DC;
-  height: 60px;
+  height: $header-height;
   border-bottom: solid 1px #7C9EEB;
   -webkit-box-shadow: 0px 3px 9px 2px rgba(114,167,211,0.57);
   -moz-box-shadow: 0px 3px 9px 2px rgba(114,167,211,0.57);
@@ -324,7 +328,7 @@ button {
       line-height: 60px;
 
       &.active {
-        @extend .f--din-bold;
+        @extend .f--roboto-bold;
       }
     }
   }
@@ -344,7 +348,7 @@ button {
     }
 
     p {
-      @extend .f--din-bold;
+      @extend .f--roboto-bold;
       display: inline-block;
       color: white;
       margin-left: 20px;
@@ -357,4 +361,8 @@ button {
   }
 }
 
-
+@media only screen and (max-width: 1415px) {
+  .job-overview-container {
+    min-height: calc(100% - #{$footer-height} - #{$header-height} - 77px);
+  }
+}

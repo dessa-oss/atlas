@@ -19,7 +19,6 @@ class CommandLineInterface(object):
 
         SetupParser(self).add_sub_parser()
         self._initialize_init_parser()
-        self._initialize_deploy_parser()
         self._initialize_submit_parser()
         self._initialize_info_parser()
         self._initialize_model_serve_parser()
@@ -27,14 +26,18 @@ class CommandLineInterface(object):
         self._initialize_orbit_model_serve_parser()
         self._initialize_stop()
         self._initialize_clear_queue()
+        self._initialize_delete_parser()
 
     def add_sub_parser(self, name, help=None):
-        return self._subparsers.add_parser(name, help=help)
+        sub_parser = self._subparsers.add_parser(name, help=help)
+        sub_parser.add_argument('--debug', action='store_true', help='Sets debug mode for the CLI')
+        return sub_parser
 
     def _initialize_argument_parser(self):
         from argparse import ArgumentParser
         argument_parser = ArgumentParser(prog='foundations')
         argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
+        argument_parser.add_argument('--debug', action='store_true', help='Sets debug mode for the CLI')
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
 
@@ -42,16 +45,6 @@ class CommandLineInterface(object):
         init_parser = self.add_sub_parser('init', help='Creates a new Foundations project in the current directory')
         init_parser.add_argument('project_name', type=str, help='Name of the project to create')
         init_parser.set_defaults(function=self._init)
-
-    def _initialize_deploy_parser(self):
-        deploy_parser = self.add_sub_parser('deploy', help='Deploys a Foundations project to the specified environment')
-        deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
-        deploy_parser.add_argument('--env', help='Environment to run file in')
-        deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        deploy_parser.add_argument('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
-        deploy_parser.add_argument('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
-        deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
-        deploy_parser.set_defaults(function=self._deploy)
 
     def _initialize_submit_parser(self):
         from argparse import REMAINDER
@@ -150,9 +143,29 @@ class CommandLineInterface(object):
         clear_queue_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment to clear the queue')
         clear_queue_parser.set_defaults(function=self._clear_queue)
 
+    def _initialize_delete_parser(self):
+        delete_parser = self.add_sub_parser('delete', help='Delete items from execution environment')
+        delete_subparsers = delete_parser.add_subparsers()
+        self._initialize_delete_job_parser(delete_subparsers)
+
+    def _initialize_delete_job_parser(self, delete_subparsers):
+        delete_job_parser = delete_subparsers.add_parser('job', help='Delete jobs')
+        delete_job_parser.add_argument('scheduler_config', type=str, help='Environment to delete job from')
+        delete_job_parser.add_argument('job_id', type=str, help='Specify job uuid of already deployed job')
+        delete_job_parser.set_defaults(function=self._delete_job)
+
     def execute(self):
+        from foundations_contrib.global_state import log_manager
+
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
-        self._arguments.function()
+        try:
+            self._arguments.function()
+        except Exception as error:
+            if self._arguments.debug == True:
+                raise
+            else:
+                print(f'Error running command: {error}')
+                exit(1)
 
     def _no_command(self):
         import foundations
@@ -280,6 +293,34 @@ class CommandLineInterface(object):
             logs = job_deployment.get_job_logs()
             print(logs)
 
+    def _delete_job(self):
+        from foundations_contrib.global_state import config_manager
+        from foundations_contrib.cli.job_submission.config import load
+        from foundations_contrib.change_directory import ChangeDirectory
+        import os
+
+        env_name = self._arguments.scheduler_config
+        job_id = self._arguments.job_id
+        current_directory = os.getcwd()
+
+        with ChangeDirectory(current_directory):
+            load(self._arguments.scheduler_config or 'scheduler')
+
+        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
+        job_deployment = job_deployment_class(job_id, None, None)
+
+        job_status = job_deployment.get_job_status()
+
+        if job_status is None:
+            self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
+        elif job_status in ('queued', 'running', 'pending'):
+            self._fail_with_message('Error: Job `{}` has status `{}` and cannot be deleted'.format(job_id, job_status))
+        else:
+            if job_deployment.cancel_jobs([job_id])[job_id]:
+                print(f"Job {job_id} successfully deleted")
+            else:
+                print(f"Could not delete job {job_id}. Please try again with sudo")
+
     def _load_configuration(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher
         from foundations_contrib.global_state import config_manager
@@ -401,7 +442,7 @@ class CommandLineInterface(object):
             # else:
             #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
             #     self._fail_with_message(message)
-        except ValueError as e:
+        except Exception as e:
             self._fail_with_message(e)
 
 
@@ -441,7 +482,7 @@ class CommandLineInterface(object):
             elif job_status == 'completed':
                 self._fail_with_message('Error: Job `{}` is completed and cannot be stopped'.format(job_id))
             else:
-                if job_deployment.stop():
+                if job_deployment.stop_running_job():
                     print('Stopped running job {}'.format(job_id))
                 else:
                     print('Error stopping job {}'.format(job_id))

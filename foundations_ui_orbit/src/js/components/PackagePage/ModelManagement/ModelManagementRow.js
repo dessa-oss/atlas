@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import ModelManagementDetail from "./ModelManagementDetails";
 import { put } from "../../../actions/BaseActions";
 import NewModelRecalibrationModal from "./NewModelRecalibrationModal";
+import moment from "moment";
+
 
 const ModelManagementRow = props => {
   const [recalibrateOpen, setRecalibrateOpen] = React.useState(false);
@@ -72,6 +74,7 @@ const ModelManagementRow = props => {
   };
 
   const { rowData, isDetail, reload } = props;
+  const convertedDate = moment.unix(rowData.created_at).format("YYYY-MM-DD HH:mm").toString();
 
   return (
     <div className="model-management-row">
@@ -87,7 +90,7 @@ const ModelManagementRow = props => {
         <p className="hide-text">{rowData.model_name}</p>
       </div>
       <div className="model-management-cell">
-        <p className="hide-text">{rowData.created_at}</p>
+        <p className="hide-text">{convertedDate}</p>
       </div>
       <div className="model-management-cell">
         <p className="hide-text">{rowData.created_by}</p>

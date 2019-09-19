@@ -23,6 +23,25 @@ def stream_job_logs(deployment):
                     logger.info('Job running, streaming logs.')
                     job_running = True
                 print(item)
-            logger.info("Job '{}' has finished.".format(deployment.job_name()))
+            
+            try:
+                counter = 0
+                timeout = 15
+                job_status = deployment.get_true_job_status()
+
+                while (job_status == 'running' or job_status is None) and counter < timeout:
+                    time.sleep(1)
+                    counter += 1
+                    job_status = deployment.get_true_job_status()
+
+                if job_status == 'failed':
+                    logger.error("Job '{}' has failed.".format(deployment.job_name()))
+                elif job_status == 'completed':
+                    logger.info("Job '{}' has completed.".format(deployment.job_name()))
+                else:
+                    logger.warning("Job status of job '{}' is unknown.".format(deployment.job_name()))
+            except AttributeError:
+                logger.info("Job '{}' has finished.".format(deployment.job_name()))
+
         except TimeoutError:
-            logger.info('Job cannot be found. Possibly because it has beeen removed from the queue.')
+            logger.info('Job cannot be found. Possibly because it has been removed from the queue.')

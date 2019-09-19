@@ -14,7 +14,7 @@
       width: 30%;
       display: inline-block;
       span {
-        @extend .f--din-bold;
+        @extend .f--roboto-bold;
       }
     }
 
@@ -60,11 +60,11 @@
     margin: 0px;
     margin-top: 30px;
     text-transform: uppercase;
-    @extend .f--din-bold;
+    @extend .f--roboto-bold;
   }
 
   .highcharts-sub {
-    @extend .f--din-bold;
+    @extend .f--roboto-bold;
     color: $color-9c-grey;
   }
 
@@ -137,6 +137,6 @@
     color: $color-dark-blue !important;
     font-size: 16px;
     text-transform: uppercase;
-    @extend .f--din-bold;
+    @extend .f--roboto-bold;
   }
 }

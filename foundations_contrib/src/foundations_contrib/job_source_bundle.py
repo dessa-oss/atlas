@@ -27,7 +27,7 @@ class JobSourceBundle(object):
         import tarfile
         import os
 
-        self._log().info('Bundling contents of {} for execution'.format(os.getcwd()))
+        self._log().info('Preparing to bundle contents of {} for execution. Estimating bundle size.'.format(os.getcwd()))
         size = self._get_size(os.getcwd())
         for i in [500, 100, 50]:
             if size/1024./1024. > i:
@@ -37,6 +37,7 @@ class JobSourceBundle(object):
                 self._log().warn('to avoid performance issues. Please see documentation for details.')
                 self._log().warn('Ctr-C to cancel the bundling and job submission process')
                 break
+        self._log().info('Bundling job contents.')
         with tarfile.open(self.job_archive(), "w:gz") as tar:
             tar.add(".")
             for item in tar:

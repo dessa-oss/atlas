@@ -80,7 +80,7 @@ class JobListActions {
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'HH:mm:ss AM/PM'
     const newDate = new Date(startTime);
-    return `${CommonActions.formatAMPM(newDate)} EST`;
+    return `${CommonActions.formatAMPM(newDate)}`;
   }
 
   static getDurationDays(durationTime) {

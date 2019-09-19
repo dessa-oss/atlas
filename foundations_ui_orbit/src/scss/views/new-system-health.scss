@@ -70,7 +70,7 @@
       // tr:nth-child(2) {
       //     background-color: $color-lighter-blue;
       //     p {
-      //         @extend .f--din-bold;
+      //         @extend .f--roboto-bold;
       //         color: white;
       //     }
       // }
@@ -83,7 +83,7 @@
         background-color: #f5f5f5;;
         font-size: 12px;
         padding: 10px;
-        @extend .f--din-pro;
+        @extend .f--roboto;
 
         td {
           border: none;
@@ -123,7 +123,7 @@
 
         &.warning {
           color: $color-status-yellow;
-          @extend .f--din-pro;
+          @extend .f--roboto;
 
           .circle {
             background: $color-status-yellow;
@@ -137,7 +137,7 @@
 
         &.healthy {
           color: $color-status-green;
-          @extend .f--din-pro;
+          @extend .f--roboto;
 
           .circle {
             background: $color-status-green;
@@ -151,7 +151,7 @@
 
         &.critical {
           color: $color-status-red;
-          @extend .f--din-pro;
+          @extend .f--roboto;
 
           .circle {
             background: $color-status-red;
@@ -280,7 +280,7 @@
     .model-performance-filter-container {
       label {
         float: left;
-        @extend .f--din-bold;
+        @extend .f--roboto-bold;
       }
     }
 
@@ -359,13 +359,13 @@
           padding-top: 15px;
           margin: 0px 15px;
           font-size: 24px;
-          @extend .f--din-bold;
+          @extend .f--roboto-bold;
 
           p {
             text-transform: uppercase;
             font-size: 12px;
             margin-top: 5px;
-            @extend .f--din-bold;
+            @extend .f--roboto-bold;
           }
         }
       }
@@ -445,7 +445,7 @@
         margin-top: 0px;
 
         &:nth-child(odd) {
-          @extend .f--din-bold;
+          @extend .f--roboto-bold;
         }
 
         &:last-child,
@@ -473,7 +473,7 @@
 
     .label-select-reports {
       display: inline-table;
-      @extend .f--din;
+      @extend .f--roboto;
       // font-family: DINBold, Arial, sans-serif;
 
     }
@@ -510,7 +510,7 @@
           cursor: pointer;
           // font-family: DINPro, Arial, sans-serif;
           color: #443a25;
-          @extend .f--din;
+          @extend .f--roboto;
           font-size: 13px;
         }
 
@@ -526,7 +526,7 @@
             margin-left: 20px;
             cursor: pointer;
             // font-family: DINPro, Arial, sans-serif;
-            @extend .f--din;
+            @extend .f--roboto;
             color: #443a25;
             font-size: 13px;
           }
@@ -545,7 +545,7 @@
               margin-left: 40px;
               cursor: pointer;
               // font-family: DINPro, Arial, sans-serif;
-              @extend .f--din;
+              @extend .f--roboto;
               font-size: 13px;
               color: #443a25;
   

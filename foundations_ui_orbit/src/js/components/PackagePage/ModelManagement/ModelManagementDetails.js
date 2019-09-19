@@ -40,6 +40,7 @@ const ModelManagementDetails = props => {
     return validationMetrics;
   };
 
+  const convertedDate = moment.unix(model.created_at).format("YYYY-MM-DD HH:mm").toString();
 
   return (
     <div className="model-management-details-container">
@@ -76,9 +77,7 @@ const ModelManagementDetails = props => {
             Created at:
           </p>
           <p className="model-management-details-text">
-            {moment(model.created_at)
-              .format("YYYY-MM-DD HH:mm")
-              .toString()}
+            {convertedDate}
           </p>
           <p className="model-management-details-text-label font-bold">
             Created By:

@@ -173,7 +173,7 @@
         .label-id {
           display: inline-block;
           font-size: 18px;
-          @extend .f--din-bold;
+          @extend .f--roboto-bold;
         }
   
         .container-id {
@@ -300,10 +300,11 @@
           color: $color-text;
           padding: 10px 25px;
           margin: 6px 0px;
-          @extend .f--din;
+          @extend .f--roboto;
       
           &.active {
-            @extend .f--din-bold;
+            @extend .f--roboto-bold;
+            font-weight: normal;
             color: #00A4B2;
             border-bottom: solid 3px #00A4B2;
             margin: -6px 0px;
@@ -355,7 +356,8 @@
                 }
 
                 p {
-                    @extend .f--din;
+                    @extend .f--roboto;
+                    font-weight: normal;
                     width: 100%;
                     text-align: center;
                 }
@@ -376,7 +378,8 @@
                     }
     
                     p {
-                        @extend .f--din;
+                        @extend .f--roboto;
+                        font-weight: normal;
                         width: 100%;
                         text-align: center;
                         float: left;

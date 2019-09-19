@@ -4,6 +4,10 @@ import Notes from './Notes';
 import Readme from './Readme';
 import JobOverviewGraph from './JobOverviewGraph';
 import BaseActions from '../../actions/BaseActions';
+import CommonHeader from '../common/CommonHeader';
+import Header from './Header';
+import TagContainer from './TagContainer';
+import CommonFooter from '../common/CommonFooter';
 
 class ProjectOverview extends React.Component {
   constructor(props) {
@@ -14,11 +18,27 @@ class ProjectOverview extends React.Component {
       allMetrics: [],
       graphData: [],
       timerId: -1,
+      tags: [],
     };
     this.setMetric = this.setMetric.bind(this);
+    this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
+    this.onClickJobDetails = this.onClickJobDetails.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   async reload() {
+    const { location } = this.props;
+    if (location) {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.get('projects');
+      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
+      if (selectedProject.length > 0) {
+        this.setState({
+          tags: selectedProject[0].tags,
+        });
+      }
+    }
+
     const { projectName, metric } = this.state;
     let URL = `projects/${projectName}/overview_metrics`;
     if (metric) {
@@ -74,18 +94,88 @@ class ProjectOverview extends React.Component {
     this.reload();
   }
 
+  async onClickProjectOverview() {
+    const { history, location } = this.props;
+    let selectedProject = {};
+
+    if (location.state.project && location.state.project !== {}) {
+      selectedProject = location.state.project;
+    } else {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.get('projects');
+      selectedProject = fetchedProjects.filter(item => item.name === projectName);
+    }
+    history.push(
+      `/projects/${selectedProject.name}/overview`,
+      {
+        project: selectedProject,
+      },
+    );
+  }
+
+  async onClickJobDetails() {
+    const { history, location } = this.props;
+    let selectedProject = {};
+
+    if (location && location.state && location.state.project && location.state.project !== {}) {
+      selectedProject = location.state.project;
+    } else {
+      const { projectName } = this.props.match.params;
+      const fetchedProjects = await BaseActions.get('projects');
+      selectedProject = fetchedProjects.filter(item => item.name === projectName);
+    }
+    history.push(
+      `/projects/${selectedProject.name}/job_listing`,
+      {
+        project: selectedProject,
+      },
+    );
+  }
+
+  onKeyDown() {}
+
   render() {
     const {
-      metric, graphData, allMetrics,
+      metric, graphData, allMetrics, tags,
     } = this.state;
 
     return (
-      <div className="dashboard-content-container row">
-        <section className="chart-and-notes col-md-8">
-          <JobOverviewGraph metric={metric} graphData={graphData} allMetrics={allMetrics} setMetric={this.setMetric} />
-          <Readme {...this.props} />
-        </section>
-        <Notes {...this.props} />
+      <div>
+        <CommonHeader {...this.props} />
+        <div className="job-overview-container">
+          <Header {...this.props} />
+          <div className="job-overview-tabs-tags-container">
+            <div>
+              <h3
+                className="active"
+                onClick={this.onClickProjectOverview}
+                onKeyDown={this.onKeyDown}
+              >
+                Project Overview
+              </h3>
+              <h3
+                onClick={this.onClickJobDetails}
+                onKeyDown={this.onKeyDown}
+              >
+                Job Details
+              </h3>
+            </div>
+            <TagContainer tags={tags} />
+          </div>
+          <div className="dashboard-content-container row">
+            <section className="chart-and-notes col-md-8">
+              <JobOverviewGraph
+                metric={metric}
+                graphData={graphData}
+                allMetrics={allMetrics}
+                setMetric={this.setMetric}
+              />
+              <Readme {...this.props} />
+            </section>
+            <Notes {...this.props} />
+          </div>
+        </div>
+        <CommonFooter />
       </div>
     );
   }
@@ -94,11 +184,13 @@ class ProjectOverview extends React.Component {
 ProjectOverview.propTypes = {
   history: PropTypes.object,
   match: PropTypes.object,
+  location: PropTypes.object,
 };
 
 ProjectOverview.defaultProps = {
   history: {},
   match: { params: {} },
+  location: { state: {} },
 };
 
 export default ProjectOverview;

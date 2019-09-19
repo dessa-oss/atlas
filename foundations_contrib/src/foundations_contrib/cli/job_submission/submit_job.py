@@ -17,7 +17,7 @@ def submit(arguments):
     from foundations_contrib.cli.job_submission.deployment import deploy
     from foundations_contrib.cli.job_submission.logs import stream_job_logs
     from foundations_contrib.change_directory import ChangeDirectory
-    from foundations_contrib.global_state import config_manager
+    from foundations_contrib.global_state import config_manager, log_manager
     from foundations_contrib.set_job_resources import set_job_resources
     from jsonschema import validate
     import os
@@ -45,8 +45,14 @@ def submit(arguments):
         if 'ram' in job_config:
             job_resource_args['ram'] = job_config['ram']
 
+        logger = log_manager.get_logger(__name__)
+
         if arguments.command:
             config_manager['worker_container_overrides']['args'] = arguments.command
+            if not os.path.exists(arguments.command[0]):
+                logger.warning(f"Hey 👋, seems like your command '{' '.join(arguments.command)}' is not an existing file in your current directory. If you are using Atlas's advanced custom docker image functionality and know what you are doing, you can ignore this message.")
+        else:
+            logger.warning('No command was specified.')
 
         if arguments.num_gpus is not None:
             job_resource_args['num_gpus'] = arguments.num_gpus
