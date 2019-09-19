@@ -15,7 +15,7 @@ class JobOverviewPage extends Component {
     super(props);
 
     this.state = {
-      tab: 'overview',
+      tab: 'details',
       tags: [],
       showErrorPage: false,
     };
@@ -58,9 +58,6 @@ class JobOverviewPage extends Component {
       const fetchedProjects = await BaseActions.getFromStaging('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
-    await this.setState({
-      tab: 'overview',
-    });
     history.push(
       `/projects/${selectedProject.name}/overview`,
       {
@@ -80,9 +77,6 @@ class JobOverviewPage extends Component {
       const fetchedProjects = await BaseActions.getFromStaging('projects');
       selectedProject = fetchedProjects.filter(item => item.name === projectName);
     }
-    await this.setState({
-      tab: 'details',
-    });
     history.push(
       `/projects/${selectedProject.name}/details`,
       {
