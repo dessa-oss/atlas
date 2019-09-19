@@ -32,7 +32,7 @@ class TensorboardController:
     
     @staticmethod
     def _transform_request(job_ids):
-        path = '/archive/job_data/archive/{}/synced_directories/__tensorboard__'
+        path = 'archive/{}/synced_directories/__tensorboard__'
         tb_locations = [{'job_id': str(job_id), 'synced_directory': path.format(job_id)} 
                         for job_id in job_ids]
         return {'tensorboard_locations': tb_locations}
