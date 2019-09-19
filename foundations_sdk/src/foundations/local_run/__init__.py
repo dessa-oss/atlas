@@ -9,9 +9,20 @@ _exception_happened = False
 import yaml
 
 def set_up_default_environment_if_present():
+    import redis
+    from foundations_contrib.global_state import redis_connection
     if not _in_command_line():
         if load_execution_environment():
-            set_up_job_environment()
+            # This needs to be refactored to throw an exception at the message router level
+            try:
+                redis_connection.ping()
+                set_up_job_environment()
+            except redis.exceptions.ConnectionError:
+                _get_logger().warn(
+                    'Foundations has been imported, but a connection to Redis could not be established '
+                    'No foundations code will run and a job will not be generated'
+                    'Please make sure Atlas Server started up correctly.')
+
         else:
             _get_logger().warn(
                 'Foundations has been imported, but no default configuration file has been found. '
@@ -42,16 +53,9 @@ def set_up_job_environment():
                 f'{yaml.dump(config_manager.config(), default_flow_style=False)}')
     pipeline_context = current_foundations_context().pipeline_context()
     _set_job_state(pipeline_context)
-    # This try-except block should be refactored at a later date
-    try:
-        QueueJob(message_router, pipeline_context).push_message()
-        RunJob(message_router, pipeline_context).push_message()
-    except redis.exceptions.ConnectionError as e:
-        _get_logger().warn(
-            'Foundations has been imported but a connection to Redis could not be made. '
-            'No foundations code will be executed or job related information will be tracked. '
-            'Please ensure that Atlas server properly intialized. '
-        )
+
+    QueueJob(message_router, pipeline_context).push_message()
+    RunJob(message_router, pipeline_context).push_message()
 
     atexit.register(_at_exit_callback)
     _set_up_exception_handling()
@@ -83,24 +87,17 @@ def _at_exit_callback():
     from foundations_contrib.archiving.upload_artifacts import upload_artifacts
     from foundations_contrib.producers.jobs.complete_job import CompleteJob
     from foundations_contrib.producers.jobs.failed_job import FailedJob
-    import redis
     
     global _exception_happened
 
     pipeline_context = current_foundations_context().pipeline_context()
     upload_artifacts(pipeline_context.job_id)
     # This try-except block should be refactored at a later date
-    try:
-        if _exception_happened:
+
+    if _exception_happened:
             FailedJob(message_router, pipeline_context, { "type": Exception, "exception": '', "traceback": [] }).push_message()
-        else:
+    else:
             CompleteJob(message_router, pipeline_context).push_message()
-    except redis.exceptions.ConnectionError as e:
-        _get_logger().warn(
-            'Foundations has been imported but a connection to Redis could not be made. '
-            'No foundations code will be executed or job related information will be tracked. '
-            'Please ensure that Atlas server properly intialized. '
-        )
 
 
 def _set_job_state(pipeline_context):
