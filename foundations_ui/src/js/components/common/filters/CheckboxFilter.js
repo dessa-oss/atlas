@@ -57,9 +57,27 @@ class CheckboxFilter extends Component {
             </button>
           </div>
         </div>
-        <div className="column-filter-list">
-          {checkboxes}
-        </div>
+        {checkboxes.length === 0
+        && (
+          <div className="column-filter-list empty">
+            <div className="column-filter-image-empty">
+              <div className="container-text-empty">
+                <div className="column-filter-text-empty">
+                  No parameters or metric columns available to filter.
+                </div>
+                <div className="column-filter-text-empty">
+                  Log some metrics or parameters on your next job run.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {checkboxes.length > 0
+        && (
+          <div className="column-filter-list">
+            {checkboxes}
+          </div>
+        )}
         <div className="column-filter-buttons">
           <button type="button" onClick={onCancel} className="b--mat b--negation text-upper">Cancel</button>
           <button type="button" onClick={onApply} className={applyClass}>Apply</button>

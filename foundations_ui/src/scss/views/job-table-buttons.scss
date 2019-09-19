@@ -157,6 +157,38 @@
     overflow-y: scroll;
     width: 100%;
 
+    &.empty {
+      overflow: hidden;
+      margin-left: 0;
+    }
+
+    .column-filter-image-empty {
+      width: 100%;
+      height: 100%;
+      background-image: url('../assets/images/icons/astronaut-alone.png');
+      background-size: 50%;
+      background-repeat: no-repeat;
+      background-position: center;
+
+      .container-text-empty {
+        width: 60%;
+        margin: auto;
+        padding-top: 30%;
+
+        .column-filter-text-empty {
+          @extend .f--roboto-bold;
+          text-align: center;
+          word-wrap:break-word;
+  
+          &:last-child {
+            @extend .f--roboto;
+            padding-top: 5%;
+            font-weight: normal;
+          }
+        }
+      }
+    }
+
     div {
       margin: 0px;
     }
