@@ -151,8 +151,14 @@ class CommandLineInterface(object):
         clear_queue_parser.set_defaults(function=self._clear_queue)
 
     def execute(self):
+        from foundations_contrib.global_state import log_manager
+
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
-        self._arguments.function()
+        try:
+            self._arguments.function()
+        except Exception as error:
+            print(f'Error running command: {error}')
+            exit(1)
 
     def _no_command(self):
         import foundations
