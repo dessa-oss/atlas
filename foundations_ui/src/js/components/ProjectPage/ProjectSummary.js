@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import HoverCell from '../JobListPage/cells/HoverCell';
+import CommonActions from '../../actions/CommonActions';
 
 const ProjectSummary = (props) => {
   const [showAllTags, setShowAllTags] = React.useState(false);
@@ -54,7 +55,7 @@ const ProjectSummary = (props) => {
           Project owner: <span>CE User</span>
         </p>
         <p className="font-bold">
-          Created at: <span>{project.created_at}</span>
+          Created at: <span>{CommonActions.formatDate(project.created_at)}</span>
         </p>
         <div className="project-summary-button-container" />
       </div>

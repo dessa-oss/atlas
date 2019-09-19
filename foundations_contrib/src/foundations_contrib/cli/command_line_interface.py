@@ -30,12 +30,15 @@ class CommandLineInterface(object):
         self._initialize_delete_parser()
 
     def add_sub_parser(self, name, help=None):
-        return self._subparsers.add_parser(name, help=help)
+        sub_parser = self._subparsers.add_parser(name, help=help)
+        sub_parser.add_argument('--debug', action='store_true', help='Sets debug mode for the CLI')
+        return sub_parser
 
     def _initialize_argument_parser(self):
         from argparse import ArgumentParser
         argument_parser = ArgumentParser(prog='foundations')
         argument_parser.add_argument('--version', action='store_true', help='Displays the current Foundations version')
+        argument_parser.add_argument('--debug', action='store_true', help='Sets debug mode for the CLI')
         argument_parser.set_defaults(function=self._no_command)
         return argument_parser
 
@@ -163,8 +166,17 @@ class CommandLineInterface(object):
         delete_job_parser.set_defaults(function=self._delete_job)
 
     def execute(self):
+        from foundations_contrib.global_state import log_manager
+
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
-        self._arguments.function()
+        try:
+            self._arguments.function()
+        except Exception as error:
+            if self._arguments.debug == True:
+                raise
+            else:
+                print(f'Error running command: {error}')
+                exit(1)
 
     def _no_command(self):
         import foundations
@@ -481,7 +493,7 @@ class CommandLineInterface(object):
             elif job_status == 'completed':
                 self._fail_with_message('Error: Job `{}` is completed and cannot be stopped'.format(job_id))
             else:
-                if job_deployment.stop():
+                if job_deployment.stop_running_job():
                     print('Stopped running job {}'.format(job_id))
                 else:
                     print('Error stopping job {}'.format(job_id))

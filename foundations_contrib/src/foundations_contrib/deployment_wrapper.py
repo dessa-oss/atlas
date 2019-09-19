@@ -214,7 +214,35 @@ class DeploymentWrapper(object):
         """
 
         return self._deployment.get_job_status()
-    
+
+    def get_true_job_status(self):
+        """
+        Similar to get_job_status, but with more information
+
+        Arguments:
+            - This method doesn't receive any arguments.
+
+        Returns:
+            status {string} -- String, which is either "Queued", "Running", "Completed", or "Error"
+
+        Raises:
+            - This method doesn't raise any exception.
+
+        Example:
+            ```python
+            import foundations
+            from algorithms import train_model
+
+            train_model = foundations.create_stage(train_model)
+            model = train_model()
+            deployment = model.run()
+            status = deployment.get_job_status()
+            print('Current job status:', status)
+            ```
+        """
+
+        return self._deployment.get_true_job_status()
+
     def get_job_logs(self):
         """
         Get stdout log for job deployed with SSH job deployment

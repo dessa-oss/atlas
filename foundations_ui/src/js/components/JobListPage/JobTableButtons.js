@@ -97,6 +97,7 @@ class JobTableButtons extends Component {
         <button
           onClick={this.onClickRefresh}
           type="button"
+          className="drop-shadow"
         >
           <span className="i--icon-refresh"> <p className="text-upper font-bold">Refresh Table</p></span>
         </button>
@@ -104,11 +105,11 @@ class JobTableButtons extends Component {
           onClick={this.onClickTensor}
           type="button"
           disabled={buttonTensorboardDisabled}
-          className={buttonTensorboardDisabled && 'disabled'}
+          className={buttonTensorboardDisabled && 'disabled drop-shadow'}
         >
-          <span className={iconClassName} /> <p className="text-upper">Send to tensorboard</p>
+          <span className={iconClassName} /> <p className="text-upper font-bold">Send to tensorboard</p>
         </button>
-        <button onClick={this.onDeleteJobs} type="button" className="text-upper">Delete</button>
+        <button onClick={this.onDeleteJobs} type="button" className="text-upper drop-shadow">Delete</button>
         <div
           className="job-details-filter-button"
           role="button"
