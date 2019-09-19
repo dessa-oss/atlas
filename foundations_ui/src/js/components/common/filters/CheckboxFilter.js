@@ -5,7 +5,7 @@ class CheckboxFilter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checkboxes: [],
+      checkboxes: this.props.checkboxes,
       onCancel: this.props.onCancel,
       onApply: this.props.onApply,
       submitSearchText: this.props.submitSearchText,
