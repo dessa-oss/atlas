@@ -15,28 +15,30 @@ def recalibrate_resource(recalibrate_driver):
         def post(self):
             import os
             import foundations
+            import subprocess
             from foundations.global_state import message_router
             from foundations_model_package.recalibrate_deployer import RecalibrateDeployer
+            from kubernetes import config
 
             if recalibrate_driver is None:
                 return {'error': 'recalibrate not set in manifest'}, 404
 
+            params = dict(request.json)
             project_name = os.environ['PROJECT_NAME']
-            model_name = os.environ['MODEL_NAME']
+            model_name = params.pop('model-name')
             project_directory = os.getcwd()
 
             with recalibrate_driver as driver_file:
                 entrypoint = driver_file
 
-            params = request.json
+                config.load_incluster_config()
+                job_deployment = foundations.submit(project_name=project_name, entrypoint=entrypoint, params=params)
+                job_id = job_deployment.job_name()
 
-            job_deployment = foundations.submit(project_name=project_name, entrypoint=entrypoint, params=params)
-            job_id = job_deployment.job_name()
+                retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
+                message_router.add_listener(retrain_deployer, 'complete_job')
 
-            retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
-            message_router.add_listener(retrain_deployer, 'complete_job')
-
-            return {'job_id': job_id}, 202
+                return {'job_id': job_id}, 202
 
     _RecalibrateResource.__name__ = f'_RecalibrateResource_{uuid4()}'
 

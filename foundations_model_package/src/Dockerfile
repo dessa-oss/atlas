@@ -14,5 +14,6 @@ RUN apt-get update && apt-get install -y gettext-base netcat && \
 RUN mkdir -p /job
 COPY ./foundations_model_package /job/foundations_model_package
 COPY ./run.sh /job
+RUN mkdir -p /root/.ssh
 
 ENV PYTHONPATH /job

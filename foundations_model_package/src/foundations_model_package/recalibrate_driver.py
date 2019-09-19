@@ -14,6 +14,7 @@ class RecalibrateDriver(object):
 
     def __enter__(self):
         import random
+        import subprocess
         
         self._recalibrate_driver_file_name = f'recalibrate_driver_{random.randint(0, 1000000)}.py'
 
@@ -34,6 +35,6 @@ class RecalibrateDriver(object):
         file_contents += f'from {self._module_name} import {self._function_name}\n\n'
         file_contents += 'params = foundations.load_parameters()\n'
         file_contents += f'{self._function_name}(**params)\n'
-        file_contents += f'os.remove({self._recalibrate_driver_file_name})\n'
+        file_contents += f'os.remove(\'{self._recalibrate_driver_file_name}\')\n'
 
         return file_contents

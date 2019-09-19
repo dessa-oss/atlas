@@ -60,17 +60,14 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
             predict_result = self._try_post_to_predict_endpoint()
             self.assertEqual({'a': 21, 'b': 32}, predict_result)
 
-            # send post request to perform the recalibrate operatoin
-            recalibrate_response = self._try_post_to_recalibrate_endpoint()
-            print(recalibrate_response.status_code)
-            self.assertIsNotNone(recalibrate_response)
+            # # send post request to perform the recalibrate operatoin
+            # recalibrate_response = self._try_post_to_recalibrate_endpoint()
+            # print(recalibrate_response)
+            # self.assertIsNotNone(recalibrate_response)
 
-            import pprint
-            pprint.pprint(recalibrate_response)
-
-            recalibrate_job_id = recalibrate_response['job_id']
-            self.job_id = recalibrate_job_id
-            self._wait_for_job_to_complete(recalibrate_job_id)
+            # recalibrate_job_id = recalibrate_response['job_id']
+            # self.job_id = recalibrate_job_id
+            # self._wait_for_job_to_complete(recalibrate_job_id)
             
             # attempting to replace default model by ensuring only one model package exists 
             # self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
@@ -96,6 +93,9 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         import requests
 
         try:
-            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
-        except:
+            out = requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload)
+            print(out.text)
+            return out.json()
+        except Exception as e:
+            print(e)
             return None
