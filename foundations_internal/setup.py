@@ -17,6 +17,10 @@ build_version = environ.get('build_version', '0.0.0')
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+package_source = "src"
+if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
+    package_source = "obfuscated_dist"
+
 setup(
     name='foundations-internal',
     version=build_version,
@@ -32,9 +36,10 @@ setup(
         'PyYAML==3.13',
         'promise==2.2.1'
     ],
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages(package_source),
+    package_dir={'': package_source},
     package_data={
-        'foundations_internal': ['resources/*'],
-    }
+        'foundations_internal': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"],
+    },
+    include_package_data=True
 )

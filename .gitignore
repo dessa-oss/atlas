@@ -83,6 +83,7 @@ site/
 build
 dist
 **/.eggs/
+**/obfuscated_dist
 
 !foundations_ui/package.json
 !foundations_ui_orbit/package.json

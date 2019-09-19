@@ -13,6 +13,8 @@ build_module () {
     cwd=$3
     wheel_path=${directory}/dist/${module_name}-${wheel_name_tail}
 
+    unset BUILD_FOUNDATIONS_OBFUSCATED
+
     cd ${directory} && \
         python setup.py sdist bdist_wheel && \
         cd .. && \
