@@ -30,7 +30,7 @@ def _retrieve_configuration_secrets():
     secret_data = yaml.load(process.stdout)
     base64.b64decode(secret_data['data']['job-uploader'])
     expected_key_path = join(expanduser('~'), '.ssh/id_foundations_scheduler')
-    
+
     if os.path.exists(expected_key_path):
         os.remove(expected_key_path)
 
@@ -45,14 +45,14 @@ def _save_model_to_redis(project_name, model_name, model_details):
     project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
     model_details['default'] = True if not project_model_listings else False
     serialized_model_information = pickle.dumps(model_details)
-    
+
     project_model_listings.update({model_name: serialized_model_information})
     redis_connection.hmset(f'projects:{project_name}:model_listing', project_model_listings)
 
 def _save_project_to_redis(project_name):
     from time import time
     from foundations_contrib.global_state import redis_connection
-    
+
     timestamp = time()
     redis_connection.execute_command('ZADD', 'projects', 'NX', timestamp, project_name)
 
@@ -80,7 +80,7 @@ def _update_model_in_redis(project_name, model_name, dict_of_updates = {}):
     for key, value in dict_of_updates.items():
         model_details[key] = value
     serialized_model_information = pickle.dumps(model_details) 
-    
+
     project_model_listings = _retrieve_project_model_listings_from_redis(project_name)
     if model_name in project_model_listings:
         project_model_listings.pop(model_name)
@@ -110,7 +110,7 @@ def _upload_model_directory(project_name, model_name, project_directory):
         local_directory_key,
         None,
         package_name='artifacts')
-        
+
     syncable_directory.upload()
 
 def _orbit_command_handler(project_name, model_name, file_name):
@@ -153,30 +153,34 @@ def _check_for_valid_project_directory(project_directory):
     if not os.path.exists(f'{project_directory}'):
         raise FileNotFoundError(f'Invalid project directory. Unable to load the directory {project_directory}.')
 
-def _check_for_valid_manifest_file(project_directory):
+def _check_for_valid_manifest_file(project_manifest_file):
     import os
-    if not os.path.exists(f'{project_directory}/foundations_package_manifest.yaml'):
+    if not os.path.exists(project_manifest_file):
         raise FileNotFoundError('No manifest file found. Create a foundations_package_manifest.yaml file before deploying.')
 
-def _load_entrypoints_from_manifest(project_directory):
-    return {}
+def _load_entrypoints_from_manifest(project_manifest_file):
+    import yaml
+    with open(project_manifest_file, 'r') as manifest_file:
+        return yaml.load(manifest_file)['entrypoints']
 
 def deploy(project_name, model_name, project_directory, env='local'):
     _check_for_invalid_names(project_name, model_name)
     _check_for_valid_project_directory(project_directory)
-    _check_for_valid_manifest_file(project_directory)
+
+    project_manifest_file = f'{project_directory}/foundations_package_manifest.yaml'
+    _check_for_valid_manifest_file(project_manifest_file)
 
     _setup_environment(project_name, env)
 
     if _model_exists_in_project(project_name, model_name):
         if _is_model_activated(project_name, model_name):
             return False
-    
+
     _save_project_to_redis(project_name)
 
     model_information =  _get_default_model_information()
-    model_information['entrypoints']  = _load_entrypoints_from_manifest(project_directory)
-    
+    model_information['entrypoints']  = _load_entrypoints_from_manifest(project_manifest_file)
+
     _save_model_to_redis(project_name, model_name, model_information)
     _upload_model_directory(project_name, model_name, project_directory)
     return _launch_model_package(project_name, model_name)
