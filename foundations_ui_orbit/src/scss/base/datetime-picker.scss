@@ -730,6 +730,7 @@ span.flatpickr-weekday {
 
 .flatpickr-input {
   @extend .f--roboto;
+  font-weight: normal;
   box-sizing: border-box;
   position: relative;
   background-color: white;

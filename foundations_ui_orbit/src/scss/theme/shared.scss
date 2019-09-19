@@ -28,6 +28,7 @@ html {
 
 h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
   @extend .f--roboto;
+  font-weight: normal;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;
@@ -47,11 +48,13 @@ h1,h2,h3,h4,h5,p,a,blockquote,span,div,input,textarea,select,option {
 
 span, p, a {
   @extend .f--roboto;
+  font-weight: normal;
   font-size: 13px;
 }
 
 h2 {
   @extend .f--roboto;
+  font-weight: normal;
   font-size: 20px;
   color: $color-dark-blue;
   span {
@@ -66,6 +69,7 @@ h3 {
 
 h4 {
   @extend .f--roboto;
+  font-weight: normal;
   font-size: 13px;
 }
 
@@ -79,6 +83,7 @@ h4 {
 
 .font-regular {
   @extend .f--roboto;
+  font-weight: normal;
   color: $color-font-black;
   .font-alert{
     color: $color-alert;

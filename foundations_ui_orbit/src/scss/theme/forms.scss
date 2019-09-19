@@ -1,5 +1,6 @@
 label {
   @extend .f--roboto;
+  font-weight: normal;
   display: block;
   font-size: 14px;
   color: $color-label-text;
@@ -9,6 +10,7 @@ label {
 :not(.date-time-picker) {
   input[type="text"] {
     @extend .f--roboto;
+    font-weight: normal;
     box-sizing: border-box;
     position: relative;
     background-color: white;
@@ -29,6 +31,7 @@ input[type="text"]:placeholder {
 
 .helper-text {
   @extend .f--roboto;
+  font-weight: normal;
   font-size: 14px;
   color: $color-label-placeholder;
   margin-top: 4px;
