@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import ProfilePlaceholder from '../../../assets/svgs/profile-placeholder.svg';
+import ProfilePlaceholder from '../../../assets/images/icons/person-with-outline.png';
 import BaseActions from '../../actions/BaseActions';
 
 class Notes extends React.Component {

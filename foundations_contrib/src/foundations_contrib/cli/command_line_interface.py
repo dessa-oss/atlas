@@ -10,20 +10,15 @@ from tabulate import tabulate
 class CommandLineInterface(object):
 
     def __init__(self, args):
-        from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
-
         self._input_arguments = args
 
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
 
-        SetupParser(self).add_sub_parser()
         self._initialize_init_parser()
         self._initialize_submit_parser()
         self._initialize_info_parser()
-        self._initialize_model_serve_parser()
         self._initialize_retrieve_parser()
-        self._initialize_orbit_model_serve_parser()
         self._initialize_stop()
         self._initialize_clear_queue()
         self._initialize_delete_parser()
@@ -49,14 +44,14 @@ class CommandLineInterface(object):
     def _initialize_submit_parser(self):
         from argparse import REMAINDER
         deploy_parser = self.add_sub_parser('submit', help='Deploys a Foundations project to the specified environment')
-        deploy_parser.add_argument('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
-        deploy_parser.add_argument('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        deploy_parser.add_argument('--num-gpus', type=int, help='A non-zero value will run a GPU-enabled job with all available GPUs. Does not currently allocate GPU quantity')
-        deploy_parser.add_argument('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
-        deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs')
+        deploy_parser.add_argument('--entrypoint', type=str, help='Command process will execute with (default: python)')
+        deploy_parser.add_argument('--project-name', help='Project name for job (default: base name of cwd directory)')
+        deploy_parser.add_argument('--num-gpus', type=int, help='A non-zero value will run a GPU-enabled job with all available GPUs. Does not currently support allocate GPU quantity (default: 0)')
+        deploy_parser.add_argument('--ram', type=float, help='GB of RAM to allocate for job (default: no limit)')
+        deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs (default: True)')
         deploy_parser.add_argument('scheduler_config', metavar="scheduler-config", help='Environment to run file in')
         deploy_parser.add_argument('job_dir', type=str, metavar="job-dir", help='Directory from which to deploy')
-        deploy_parser.add_argument('command', type=str, nargs=REMAINDER, help='Command to run in docker image')
+        deploy_parser.add_argument('command', type=str, nargs=REMAINDER, help='Arguments to be used by the entrypoint')
         deploy_parser.set_defaults(function=self._submit)
         deploy_parser.set_defaults(params={})
 
@@ -135,7 +130,7 @@ class CommandLineInterface(object):
     def _initialize_stop(self):
         stop_parser = self.add_sub_parser('stop', help='Stops a running job')
         stop_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment the job is running in')
-        stop_parser.add_argument('job_id', type=str, help='Specify job uuid of running job')
+        stop_parser.add_argument('job_id', type=str, help='Specify job ID of running job')
         stop_parser.set_defaults(function=self._stop)
 
     def _initialize_clear_queue(self):
@@ -151,7 +146,7 @@ class CommandLineInterface(object):
     def _initialize_delete_job_parser(self, delete_subparsers):
         delete_job_parser = delete_subparsers.add_parser('job', help='Delete jobs')
         delete_job_parser.add_argument('scheduler_config', type=str, help='Environment to delete job from')
-        delete_job_parser.add_argument('job_id', type=str, help='Specify job uuid of already deployed job')
+        delete_job_parser.add_argument('job_id', type=str, help='Specify job ID of already deployed job')
         delete_job_parser.set_defaults(function=self._delete_job)
 
     def execute(self):
