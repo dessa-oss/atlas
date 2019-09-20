@@ -35,7 +35,7 @@ setup(
     packages=find_packages(package_source),
     package_dir={'': package_source},
     package_data={
-        'foundations_local_docker_scheduler_plugin': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"],
+        'foundations_local_docker_scheduler_plugin': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*", 'licenses/*/*', 'licenses/*'],
     },
     include_package_data=True
 )

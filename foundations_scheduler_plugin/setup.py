@@ -34,6 +34,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
-        'foundations_scheduler_plugin': ['resources/*'],
+        'foundations_scheduler_plugin': ['resources/*', 'licenses/*/*', 'licenses/*'],
     }
 )

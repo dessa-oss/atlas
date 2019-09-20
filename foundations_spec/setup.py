@@ -30,4 +30,7 @@ setup(
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    package_data={
+        'foundations_spec': ['resources/*', 'licenses/*/*', 'licenses/*'],
+    }
 )

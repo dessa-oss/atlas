@@ -33,6 +33,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
-        'foundations_orbit': ['resources/*'],
+        'foundations_orbit_sdk': ['resources/*', 'licenses/*/*', 'licenses/*'],
     }
 )
