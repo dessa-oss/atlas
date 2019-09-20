@@ -1,11 +1,11 @@
 .common-footer {
   text-align: center;
   padding-bottom: 3px;
-  padding-top: 3px;
+  padding-top: 10px;
   background-color: #3A3D3D; 
   color: $color-white;
   height: $footer-height;
-  
+  box-sizing: border-box;
   p {
     margin-top: 3px;
     margin-bottom: 3px;
@@ -17,4 +17,10 @@
     text-decoration: underline;
   }
   
+}
+
+@media only screen and (max-width: 1415px) {
+  .common-footer {
+    height: calc(#{$footer-height + 17px});
+  }
 }

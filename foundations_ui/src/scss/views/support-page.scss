@@ -1,6 +1,6 @@
 .support-page-container {
-  min-height: calc(100% - #{$header-height} - #{$footer-height} - 7px);
-  height: calc(100% - #{$header-height} - #{$footer-height} - 7px);
+  min-height: calc(100% - #{$header-height} - #{$footer-height} - 1px);
+  height: calc(100% - #{$header-height} - #{$footer-height} - 1px);
   box-sizing: border-box;
   overflow-y: scroll;
 
