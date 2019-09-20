@@ -41,18 +41,17 @@ const SystemHealth = props => {
     setShowDataQualityTab(true);
   };
 
-  const formatPercentage = (val) => {
-    if (!Number.isNaN(val)){
-      val = val * 100;
-      if (Number.isInteger(val)) {
-        return val;
+  const formatPercentage = val => {
+    if (!Number.isNaN(val)) {
+      let percentage = val * 100;
+      if (Number.isInteger(percentage)) {
+        return percentage;
       }
-      else {
-        return val.toFixed(1);
-      }
+      return percentage.toFixed(1);
     }
     return 0;
-  }
+  };
+
   const reload = () => {
     const { location } = props;
 
