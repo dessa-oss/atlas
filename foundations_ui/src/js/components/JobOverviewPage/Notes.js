@@ -101,7 +101,9 @@ class Notes extends React.Component {
               <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">
                   <img alt="" src={ProfilePlaceholder} />
-                  <p>CE User <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span></p>
+                  <p><span className="font-bold">CE User </span>
+                    <span>{moment(note.date).format('MMMM Do, YYYY').toString()}</span>
+                  </p>
                 </div>
                 <p>{note.message}</p>
               </div>
