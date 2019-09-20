@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ProfilePlaceholder from '../../../assets/svgs/profile-placeholder.svg';
+import ProfilePlaceholder from '../../../assets/images/icons/person-with-outline.png';
 
 class CommonHeader extends React.Component {
   constructor(props) {
