@@ -81,7 +81,7 @@ const ModelManagementRow = props => {
       <div className="model-management-cell">
         <input
           className="model-checkbox-default"
-          type="checkbox"
+          type="radio"
           onClick={onChangeDefault}
           checked={rowData.default === true}
         />
@@ -98,7 +98,7 @@ const ModelManagementRow = props => {
       <div className="model-management-cell">
         <p
           className={
-            rowData.status === "activated" ? "hide-text active" : "hide-text"
+            rowData.status === "activated" ? "hide-text status-text active" : "hide-text status-text"
           }
         >
           {rowData.status}

@@ -53,7 +53,8 @@ const ModelManagement = props => {
                 <button
                   type="button"
                   onClick={onClickOpenDefineNew}
-                  className="b--mat b--affirmative button-management-load"
+                  className="b--mat button-management-load"
+                  disabled
                 >
                   <i className="plus-button" />
                   Define New

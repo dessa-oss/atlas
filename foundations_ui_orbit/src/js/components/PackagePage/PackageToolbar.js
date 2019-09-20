@@ -87,7 +87,7 @@ const PackageToolbar = props => {
         <div className="icon-tutorial" onClick={openTutorial}>
           <p>?</p>
         </div>
-        {demoOpen === true ? (
+        {/* {demoOpen === true ? (
           <div className="container-layout-demo">
             <div className="container-demo-arrow">
               <i
@@ -120,7 +120,7 @@ const PackageToolbar = props => {
               onClick={onClickOpenDemo}
             />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
