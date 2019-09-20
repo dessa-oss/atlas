@@ -122,7 +122,7 @@ def get_metrics_for_all_jobs(project_name, include_input_params=False):
     
     return DataFrame(metric_rows)
 
-def set_tag(key, value):
+def set_tag(key, value=''):
     """
     Adds additional static, predetermined information as a tag to the job. This is a way to categorize attributes of a job that is not dynamically generated during runtime.
 
