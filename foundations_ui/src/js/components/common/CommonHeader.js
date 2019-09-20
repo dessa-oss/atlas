@@ -33,7 +33,7 @@ class CommonHeader extends React.Component {
           />
           <div className="header-link-container">
             { isProject ? <a className="font-bold" href="/projects">Project</a> : <a href="/projects">Project</a> }
-            <a href="/documentation">Documentation</a>
+            <a href="https://www.atlas.dessa.com/docs">Documentation</a>
             <a href="/support">Support</a>
           </div>
           <div className="header-container-profile">
