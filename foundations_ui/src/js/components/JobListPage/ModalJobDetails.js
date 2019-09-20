@@ -246,7 +246,7 @@ class ModalJobDetails extends React.Component {
                 && (
                   <div className="container-add-new-tag">
                     <input onChange={this.onChangeTagKey} placeholder="Tag Key" />
-                    <input onChange={this.onChangeTagValue} placeholder="Tag Value" />
+                    {/* <input onChange={this.onChangeTagValue} placeholder="Tag Value" /> */}
                     <button type="button" onClick={this.onClickAddNewTag}>SAVE</button>
                     <button type="button" onClick={this.onClickCancelAddNewTag}>CANCEL</button>
                   </div>
