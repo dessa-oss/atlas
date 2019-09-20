@@ -27,6 +27,9 @@ istanbul-reports, joi, js-base64, makeerror, moo, node-pre-gyp, qs,
 react-transition-group, rst-selector-parser, serialize-javascript,
 source-map, sprintf-js, tmpl, topo, tough-cookie, and amdefine. 
 
+The file LICENSE-CC-BY contains the Creative Commons Attribution 
+license, which applies to caniuse-lite.
+
 The file LICENSE-ISC.txt contains the ISC license, which applies to
 the following software packages: helper-fsm, abbrev, aproba,
 are-we-there-yet, ast-types-flow, block-stream, boolbase,
