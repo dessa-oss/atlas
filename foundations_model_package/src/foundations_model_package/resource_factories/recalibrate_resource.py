@@ -36,7 +36,6 @@ def recalibrate_resource(recalibrate_driver):
                 job_id = job_deployment.job_name()
 
                 retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
-                message_router.add_listener(retrain_deployer, 'complete_job')
 
                 return {'job_id': job_id}, 202
 

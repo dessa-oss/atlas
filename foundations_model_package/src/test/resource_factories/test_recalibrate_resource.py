@@ -17,7 +17,8 @@ class TestRecalibrateResource(Spec):
     mock_recalibrate_driver = let_mock()
 
     mock_get_cwd = let_patch_mock('os.getcwd')
-
+    mock_time = let_patch_mock('time.sleep')
+    mock_time.return_value = None
 
     @let
     def project_name(self):
@@ -106,35 +107,6 @@ class TestRecalibrateResource(Spec):
         error_message, _ = self._perform_recalibrate(None)
         self.assertEqual({'error': 'recalibrate not set in manifest'}, error_message)
 
-    def test_recalibrate_resource_adds_listener_for_completed_job(self):
-        mock_add_listener = self.patch('foundations.global_state.message_router.add_listener')
-        mock_recalibrate_deployer_class = self.patch('foundations_model_package.recalibrate_deployer.RecalibrateDeployer', ConditionalReturn())
-        mock_recalibrate_deployer = Mock()
-        mock_recalibrate_deployer_class.return_when(mock_recalibrate_deployer, self.job_id, self.project_name, self.model_name, self.cwd)
-
-        self._perform_recalibrate(self.mock_recalibrate_driver)
-        mock_add_listener.assert_called_once_with(mock_recalibrate_deployer, 'complete_job')
-
-    def test_deployer_is_called_when_job_complete_event_is_triggered(self):
-        from foundations.global_state import message_router
-
-        mock_time = self.patch('time.time')
-        mock_time.return_value = self.time
-
-        mock_recalibrate_deployer_class = self.patch('foundations_model_package.recalibrate_deployer.RecalibrateDeployer', ConditionalReturn())
-        mock_recalibrate_deployer = Mock()
-        mock_recalibrate_deployer_class.return_when(mock_recalibrate_deployer, self.job_id, self.project_name, self.model_name, self.cwd)
-        self._perform_recalibrate(self.mock_recalibrate_driver)
-
-        message = {
-            'job_id': self.job_id,
-            'project_name': self.project_name
-        }
-
-        message_router.push_message('complete_job', message)
-
-        mock_recalibrate_deployer.call.assert_called_once_with(message, self.time, None)
-        
     def _perform_recalibrate(self, recalibrate_driver):
         self.mock_flask_request.json = self.params
 

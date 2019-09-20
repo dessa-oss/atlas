@@ -50,9 +50,9 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         self._set_up_environment()
         self._core_api = KubernetesApiWrapper().core_api()
 
-    @tear_down
-    def tear_down(self):
-        self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
+    # @tear_down
+    # def tear_down(self):
+    #     self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
     def test_can_recalibrate_and_redeploy_server(self):
         import time
