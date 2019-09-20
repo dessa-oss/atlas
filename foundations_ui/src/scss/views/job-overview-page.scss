@@ -363,6 +363,6 @@ button {
 
 @media only screen and (max-width: 1415px) {
   .job-overview-container {
-    min-height: calc(100% - #{$footer-height} - #{$header-height} - 77px);
+    min-height: calc(100% - #{$footer-height} - #{$header-height} - 71px);
   }
 }

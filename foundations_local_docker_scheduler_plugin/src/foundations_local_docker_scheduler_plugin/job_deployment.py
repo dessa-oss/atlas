@@ -278,6 +278,8 @@ class JobDeployment(object):
         for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
             if override_key in worker_container_overrides:
                 worker_container[override_key] = worker_container_overrides[override_key]
+        if self._config['run_script_environment']['script_to_run']:
+            worker_container['entrypoint'] = self._config['run_script_environment']['script_to_run']
 
         if 'args' in worker_container_overrides:
             worker_container['command'] = worker_container_overrides['args']
