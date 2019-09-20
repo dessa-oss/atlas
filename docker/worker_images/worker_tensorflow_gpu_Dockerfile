@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.13.2-py3-jupyter
+FROM tensorflow/tensorflow:1.13.2-gpu-py3-jupyter
 
 MAINTAINER Eric Kin Ho Lee version: 0.1
 
