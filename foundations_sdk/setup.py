@@ -17,6 +17,10 @@ build_version = environ.get('build_version', '0.0.0')
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+package_source = "src"
+if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
+    package_source = "obfuscated_dist"
+
 setup(
     name='dessa-foundations',
     version=build_version,
@@ -31,13 +35,14 @@ setup(
         'pandas==0.23.3',
         'PyYAML==3.13',
         'promise==2.2.1',
-        'pyarmor==5.2.3',
+        'pyarmor==5.5.6',
         'foundations-contrib=={}'.format(build_version)
     ],
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages(package_source),
+    package_dir={'': package_source},
     package_data={
-        'foundations': ['resources/*'],
+        'foundations': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"]
     },
-    scripts=['foundations']
+    scripts=['foundations'],
+    include_package_data=True
 )
