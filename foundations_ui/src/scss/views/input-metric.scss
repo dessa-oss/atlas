@@ -65,7 +65,7 @@
   overflow-y: scroll;
   width: fit-content;
 
-  .empty-columns-message {
+  .empty-columns-message-no-jobs {
     padding-left: calc(2 * #{$margin-width});
   }
 
@@ -157,4 +157,23 @@
   .f9-active-row {
     background-color: $color-job-row-select!important;
     background: $color-job-row-select!important;
+  }
+
+  .no-rows-container {
+    text-align: center;
+    p, span {
+      font-size: 9px;
+      padding-left: 0px;
+    }
+
+    .underline {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    img {
+      width: 150px;
+      height: 150px;
+      margin-top: 10px;
+    }
   }

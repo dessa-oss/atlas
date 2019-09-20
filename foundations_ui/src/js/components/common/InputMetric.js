@@ -1,8 +1,10 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollSyncPane } from 'react-scroll-sync';
 import TableSectionHeader from './TableSectionHeader';
 import CommonActions from '../../actions/CommonActions';
+import NoRowsImage from '../../../assets/svgs/clipboards.svg';
 
 class InputMetric extends Component {
   constructor(props) {
@@ -11,6 +13,7 @@ class InputMetric extends Component {
     this.changeHiddenParams = this.changeHiddenParams.bind(this);
     this.updateSearchText = this.updateSearchText.bind(this);
     this.hasNoRows = this.hasNoRows.bind(this);
+    this.onClickDocs = this.onClickDocs.bind(this);
     this.state = {
       header: this.props.header,
       hiddenInputParams: [],
@@ -54,6 +57,10 @@ class InputMetric extends Component {
     return rows === null || rows.length === 0 || flatParams.length === hiddenInputParams.length;
   }
 
+  onClickDocs() {
+    window.location = 'https://www.atlas.dessa.com/docs';
+  }
+
   render() {
     const {
       header, hiddenInputParams, allInputParams, isMetaData,
@@ -74,9 +81,17 @@ class InputMetric extends Component {
     if (this.hasNoRows(rows, flatParams)) {
       rows = [];
       if (isMetaData) {
-        rows.push(<p key="no-rows-message" className="empty-columns-message">No jobs found</p>);
+        rows.push(<p key="no-rows-message" className="empty-columns-message-no-jobs">No jobs found</p>);
       } else {
-        rows.push(<p key="no-rows-message" className="empty-columns-message">There are no columns selected.</p>);
+        const labelName = isMetric ? 'metrics' : 'parameters';
+        rows.push(
+          <div className="no-rows-container">
+            <p key="no-rows-message-line-1" className="empty-columns-message">No {labelName} have been logged.</p>
+            <p key="no-rows-message-line-2" className="empty-columns-message">Check out the <span tabIndex={0} role="button" onKeyPress={this.onClickDocs} onClick={this.onClickDocs} className="underline">documentation</span> on how to log {labelName}.
+            </p>
+            <img alt="" src={NoRowsImage} />
+          </div>,
+        );
       }
     }
 
