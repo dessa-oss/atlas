@@ -201,12 +201,15 @@ class JobDeployment(object):
         import os
         import shutil
         import requests
+        import subprocess
+
+        path_to_delete = os.path.join(archive_path, job_id)
 
         try:
-            shutil.rmtree(os.path.join(archive_path, job_id))
-            requests.delete(f"{scheduler_url}/completed_jobs/{job_id}")
+            requests.delete(f"{scheduler_url}/completed_jobs/{job_id}").raise_for_status()
+            subprocess.call(f'sudo rm -rf path_to_delete'.split())
             return True
-        except Exception as ex:
+        except Exception:
             return False
 
 
