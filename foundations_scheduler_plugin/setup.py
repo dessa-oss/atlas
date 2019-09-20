@@ -28,8 +28,7 @@ setup(
     install_requires=[
         'pysftp==0.2.8',
         'paramiko==2.4.1',
-        'foundations-ssh=={}'.format(build_version),
-        'foundations-scheduler>=0.0.0'
+        'foundations-ssh=={}'.format(build_version)
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
