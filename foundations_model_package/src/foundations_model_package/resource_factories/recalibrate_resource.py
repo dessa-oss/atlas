@@ -37,6 +37,8 @@ def recalibrate_resource(recalibrate_driver):
 
                 retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
 
+                retrain_deployer.start()
+
                 return {'job_id': job_id}, 202
 
     _RecalibrateResource.__name__ = f'_RecalibrateResource_{uuid4()}'

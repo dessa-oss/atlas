@@ -34,13 +34,13 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
     def _is_running_on_jenkins():
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
-    # @set_up_class
-    # def set_up_class(klass):
-    #     if not klass._is_running_on_jenkins():
-    #         return_code = subprocess.call(['bash', '-c', './build.sh'])
+    @set_up_class
+    def set_up_class(klass):
+        if not klass._is_running_on_jenkins():
+            return_code = subprocess.call(['bash', '-c', './build.sh'])
 
-    #         if return_code != 0:
-    #             raise AssertionError('docker build for model package failed :(')
+            if return_code != 0:
+                raise AssertionError('docker build for model package failed :(')
 
     @set_up
     def set_up(self):
@@ -50,32 +50,34 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         self._set_up_environment()
         self._core_api = KubernetesApiWrapper().core_api()
 
-    # @tear_down
-    # def tear_down(self):
-    #     self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
+    @tear_down
+    def tear_down(self):
+        self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
     def test_can_recalibrate_and_redeploy_server(self):
         import time
+        import subprocess
         try:
             self._set_up_in_test('model-server-with-recalibrate')
             
-            # similar to orbit (serve)
             predict_result = self._try_post_to_predict_endpoint()
-            self.assertEqual({'a': 21, 'b': 32}, predict_result)
+            self.assertEqual({'a': 27, 'b': 38}, predict_result)
 
-            # send post request to perform the recalibrate operatoin
             recalibrate_response = self._try_post_to_recalibrate_endpoint()
             self.assertIsNotNone(recalibrate_response)
 
             self.job_id = recalibrate_response['job_id']
             self._wait_for_job_to_complete(self.job_id)
 
+            self._tear_down_proxy()
+            time.sleep(10)
+            subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.recalibrated_model_name}-service {self.port}:80'])
+            time.sleep(10)
             new_predict_result = self._try_post_to_predict_endpoint()
 
-            # print(new_predict_result) # Temporary for now
-
             self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
-            self.assertEqual({'a': 20 + 24 * 3600 - 60}, new_predict_result)
+            self.assertEqual({'a': 86360, 'b': 86371}, new_predict_result)
+
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
@@ -91,7 +93,6 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         try:
             return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
         except Exception as e:
-            print(e)
             return None
 
     def _wait_for_statuses(self, job_id, statuses, error_message):

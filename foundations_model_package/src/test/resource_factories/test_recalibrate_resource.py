@@ -17,8 +17,7 @@ class TestRecalibrateResource(Spec):
     mock_recalibrate_driver = let_mock()
 
     mock_get_cwd = let_patch_mock('os.getcwd')
-    mock_time = let_patch_mock('time.sleep')
-    mock_time.return_value = None
+    mock_wait = let_patch_mock('foundations_model_package.recalibrate_deployer._wait_for_job_to_complete')
 
     @let
     def project_name(self):
