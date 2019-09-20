@@ -19,8 +19,10 @@ ENV SERVER_NAME=localhost
 COPY ./tmp/pip_wheels /var/foundations/
 WORKDIR /var/foundations
 
-RUN echo *1.1.* | xargs pip install
-RUN echo *2.0.1* | xargs pip install
+RUN pip install foundations_scheduler_deployment*.whl
+RUN pip install foundations_scheduler_core*.whl
+RUN pip install foundations_scheduler-*.whl
+RUN echo *.whl | xargs pip install
 
 WORKDIR /app/
 COPY docker/${main_file} /app/main.py
