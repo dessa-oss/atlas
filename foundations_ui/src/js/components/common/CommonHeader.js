@@ -8,18 +8,29 @@ class CommonHeader extends React.Component {
     this.state = {
       isProject: this.props.isProject,
     };
+    this.clickLogo = this.clickLogo.bind(this);
   }
 
   onKeyPress() {}
 
   onClickArrowDown() {}
 
+  clickLogo() {
+    window.location = 'http://www.dessa.com';
+  }
+
   render() {
     const { isProject } = this.state;
     return (
       <div>
         <div className="foundations-header">
-          <div className="i--icon-dessa-logo" />
+          <div
+            tabIndex={0}
+            role="button"
+            onKeyPress={this.clickLogo}
+            onClick={this.clickLogo}
+            className="i--icon-dessa-logo"
+          />
           <div className="header-link-container">
             { isProject ? <a className="font-bold" href="/projects">Project</a> : <a href="/projects">Project</a> }
             <a href="/documentation">Documentation</a>

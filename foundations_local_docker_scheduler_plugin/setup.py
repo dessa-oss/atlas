@@ -17,6 +17,10 @@ build_version = environ.get('build_version', '0.0.0')
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+package_source = "src"
+if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
+    package_source = "obfuscated_dist"
+
 setup(
     name='foundations-local-docker-scheduler-plugin',
     version=build_version,
@@ -28,9 +32,10 @@ setup(
     install_requires=[
         'docker==4.0.2',
     ],
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages(package_source),
+    package_dir={'': package_source},
     package_data={
-        'foundations_local_docker_scheduler_plugin': ['resources/*'],
-    }
+        'foundations_local_docker_scheduler_plugin': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"],
+    },
+    include_package_data=True
 )

@@ -26,7 +26,9 @@ submission_config = {
         'code_path': '/jobs',
         'key_path': '~/.ssh/id_foundations_scheduler',
         'user': 'job-uploader'
-    }
+    },
+    'job_deployment_env': os.environ['DEPLOYMENT_ENV'],
+    'scheduler_url': os.environ['SCHEDULER_URL'],
 }
 translated_submission_config = translate(submission_config)
 configuration = config_manager.config()
