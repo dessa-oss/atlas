@@ -22,7 +22,7 @@ class ModalJobDetails extends React.Component {
 
     this.state = {
       tags: [],
-      tab: 'logs',
+      tab: process.env.REACT_APP_SCHEDULER_TYPE === 'CE' ? 'artifacts' : 'logs',
       newTagKey: '',
       newTagValue: '',
       timerId: -1,
@@ -254,20 +254,44 @@ class ModalJobDetails extends React.Component {
             </div>
             <div className="container-tabs">
               <div>
-                <h3
-                  className={tab === 'logs' ? 'active' : ''}
-                  onClick={this.onClickLogs}
-                  onKeyDown={this.onKeyDown}
-                >
-                  Logs
-                </h3>
-                <h3
-                  className={tab === 'artifacts' ? 'active' : ''}
-                  onClick={this.onClickArtifacts}
-                  onKeyDown={this.onKeyDown}
-                >
-                  Artifacts
-                </h3>
+                { process.env.REACT_APP_SCHEDULER_TYPE === 'CE'
+                  && (
+                    <h3
+                      className={tab === 'artifacts' ? 'active' : ''}
+                      onClick={this.onClickArtifacts}
+                      onKeyDown={this.onKeyDown}
+                    >
+                      Artifacts
+                    </h3>
+                  )
+                }
+                {
+                  process.env.REACT_APP_SCHEDULER_TYPE === 'CE' && <h3 style={{ visibility: 'hidden' }}>Logs</h3>
+                }
+                {
+                  process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
+                  && (
+                    <h3
+                      className={tab === 'logs' ? 'active' : ''}
+                      onClick={this.onClickLogs}
+                      onKeyDown={this.onKeyDown}
+                    >
+                      Logs
+                    </h3>
+                  )
+                }
+                {
+                  process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
+                  && (
+                    <h3
+                      className={tab === 'artifacts' ? 'active' : ''}
+                      onClick={this.onClickArtifacts}
+                      onKeyDown={this.onKeyDown}
+                    >
+                      Artifacts
+                    </h3>
+                  )
+                }
               </div>
             </div>
             {tab === 'logs' && <Logs job={job} {...this.props} />}
