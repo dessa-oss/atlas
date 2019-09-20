@@ -45,11 +45,14 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
     @set_up
     def set_up(self):
         from foundations_contrib.global_state import config_manager
-        self._set_up_environment()
+        from foundations_scheduler_core.kubernetes_api_wrapper import KubernetesApiWrapper
 
-    # @tear_down
-    # def tear_down(self):
-    #     self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
+        self._set_up_environment()
+        self._core_api = KubernetesApiWrapper().core_api()
+
+    @tear_down
+    def tear_down(self):
+        self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
     def test_can_recalibrate_and_redeploy_server(self):
         import time
@@ -60,26 +63,19 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
             predict_result = self._try_post_to_predict_endpoint()
             self.assertEqual({'a': 21, 'b': 32}, predict_result)
 
-            # # send post request to perform the recalibrate operatoin
-            # recalibrate_response = self._try_post_to_recalibrate_endpoint()
-            # print(recalibrate_response)
-            # self.assertIsNotNone(recalibrate_response)
+            # send post request to perform the recalibrate operatoin
+            recalibrate_response = self._try_post_to_recalibrate_endpoint()
+            self.assertIsNotNone(recalibrate_response)
 
-            # recalibrate_job_id = recalibrate_response['job_id']
-            # self.job_id = recalibrate_job_id
-            # self._wait_for_job_to_complete(recalibrate_job_id)
-            
-            # attempting to replace default model by ensuring only one model package exists 
-            # self._tear_down_model_package(self.project_name, self.model_name, self.job_id)
-            # self._tear_down_proxy()
-            # self._spin_up_model_package_and_proxy(self.project_name, self.recalibrated_model_name)
+            self.job_id = recalibrate_response['job_id']
+            self._wait_for_job_to_complete(self.job_id)
 
-            # new_predict_result = self._try_post_to_predict_endpoint()
+            new_predict_result = self._try_post_to_predict_endpoint()
 
             # print(new_predict_result) # Temporary for now
 
-            # self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
-            # self.assertEqual({'a': 20 + 24 * 3600 - 60}, new_predict_result)
+            self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
+            self.assertEqual({'a': 20 + 24 * 3600 - 60}, new_predict_result)
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
 
@@ -93,9 +89,33 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
         import requests
 
         try:
-            out = requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload)
-            print(out.text)
-            return out.json()
+            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
         except Exception as e:
             print(e)
             return None
+
+    def _wait_for_statuses(self, job_id, statuses, error_message):
+        import time
+
+        time_elapsed = 0
+        timeout = 60
+
+        while self._job_status(job_id) in statuses:
+            if time_elapsed >= timeout:
+                raise AssertionError(error_message)
+
+            time_elapsed += 5
+            time.sleep(5)
+
+    def _job_status(self, job_id):
+        from foundations_scheduler.pod_fetcher import get_latest_for_job
+
+        pod = get_latest_for_job(self._core_api, job_id)
+
+        if pod is None:
+            return 'Pending'
+        else:
+            return pod.status.phase
+
+    def _wait_for_job_to_complete(self, job_id):
+        self._wait_for_statuses(job_id, ['Pending', 'Running'], 'job did not finish')
