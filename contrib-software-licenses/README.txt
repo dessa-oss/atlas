@@ -172,6 +172,18 @@ License, which applies to the following software packages: certifi
 The file LICENSE-Python.txt contains version 2.0 of the Python
 license, which applies to the following software packages: futures
 
+The file LICENSE-LGPL.txt contains the Lesser GNU Public License, 
+which applies to the following software packages: chardet, gettext,
+and paramiko.
+
+The file LICENSE-GPL.txt contains the GNU Public License, which 
+applies to the following programs: apt-transport-https, bc, git,
+uWSGI, and all of Debian. DESSA NEITHER INCORPORATES ANY GPL CODE 
+IN ITS OWN SOFTWARE RELEASES, NOR RELEASES ANY SOFTWARE UNDER THE 
+GPL. All these programs are merely released alongside the software 
+you're licensing from Dessa. Unmodified source code to these programs 
+is available under the terms of the GPL.
+
 See the file LICENSE.txt in the root directory of this distribution
 for information about the terms, if any, with which Dessa Foundations
 (including Atlas, Orbit, and others) is licensed to you. 
