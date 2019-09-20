@@ -50,18 +50,10 @@ build_module () {
 cwd=`pwd`
 
 rm -rf obi/* && \
-    build_module foundations_spec foundations_spec ${cwd} "foundations_spec" && \
     build_module foundations_internal foundations_internal ${cwd} "foundations_internal" && \
     build_module foundations_events foundations_events ${cwd} "foundations_events" && \
     build_module foundations_contrib foundations_contrib ${cwd} "foundations_contrib" && \
-    build_module foundations_orbit_sdk foundations_orbit ${cwd} "foundations_orbit" && \
-    build_module gcp_utils foundations_gcp ${cwd} "foundations_gcp" && \
-    build_module ssh_utils foundations_ssh ${cwd} "foundations_ssh" && \
-    build_module aws_utils foundations_aws ${cwd} "foundations_aws" && \
-    build_module foundations_scheduler_plugin foundations_scheduler_plugin ${cwd} "foundations_scheduler_plugin" && \
     build_module foundations_local_docker_scheduler_plugin foundations_local_docker_scheduler_plugin ${cwd} "foundations_local_docker_scheduler_plugin" && \
     build_module foundations_sdk dessa_foundations ${cwd} "foundations" && \
-    build_module foundations_production foundations_production ${cwd} "foundations_production" && \
     build_module foundations_core_rest_api_components foundations_core_rest_api_components ${cwd} "foundations_core_rest_api_components" && \
-    build_module foundations_rest_api foundations_rest_api ${cwd} "foundations_rest_api" && \
-    build_module foundations_orbit_rest_api foundations_orbit_rest_api ${cwd} "foundations_orbit_rest_api"
+    build_module foundations_rest_api foundations_rest_api ${cwd} "foundations_rest_api"
