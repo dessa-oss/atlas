@@ -27,7 +27,6 @@ class CommandLineInterface(object):
         self._initialize_info_parser()
         self._initialize_model_serve_parser()
         self._initialize_retrieve_parser()
-        # self._initialize_orbit_model_serve_parser()
 
     def add_sub_parser(self, name, help=None):
         return self._subparsers.add_parser(name, help=help)
@@ -114,33 +113,6 @@ class CommandLineInterface(object):
     def _initialize_serving_stop_parser(self, serving_subparsers):
         serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
         serving_deploy_parser.set_defaults(function=self._model_serving_stop)
-
-    def _initialize_orbit_model_serve_parser(self):
-        orbit_parser = self.add_sub_parser('orbit', help='Provides operations for managing projects and models in Orbit')
-        orbit_subparsers = orbit_parser.add_subparsers()
-
-        serving_parser = orbit_subparsers.add_parser('serve')
-        serving_subparsers = serving_parser.add_subparsers()
-
-        serving_deploy_parser = serving_subparsers.add_parser('start')
-        serving_deploy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_deploy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_deploy_parser.add_argument('--project_directory', required=True, type=str, help='The location of the code and resources used to define the model')
-        serving_deploy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_deploy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_deploy)
-
-        serving_stop_parser = serving_subparsers.add_parser('stop')
-        serving_stop_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_stop_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_stop_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_stop_parser.set_defaults(function=self._kubernetes_orbit_model_serving_stop)
-
-        serving_destroy_parser = serving_subparsers.add_parser('destroy')
-        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_destroy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_destroy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
-
 
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
@@ -351,35 +323,3 @@ class CommandLineInterface(object):
     def _kubernetes_model_serving_destroy(self):
         from foundations_contrib.cli.model_package_server import destroy
         destroy(self._arguments.project_name, self._arguments.model_name)
-
-    def _kubernetes_orbit_model_serving_deploy(self):
-        from foundations_contrib.cli.orbit_model_package_server import deploy
-        from foundations_contrib.global_state import message_router
-
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-
-        try:
-            successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
-
-            if successfully_added:
-                message_router.push_message('orbit_project_model_served', {
-                    'project_name': self._arguments.project_name,
-                    'model_name': self._arguments.model_name,
-                    'project_directory': self._arguments.project_directory
-                })
-            else:
-                message = f'Error: failed to serve model {self._arguments.model_name} in project {self._arguments.project_name}.'
-                self._fail_with_message(message)
-        except Exception as e:
-            self._fail_with_message(e)
-
-
-    def _kubernetes_orbit_model_serving_stop(self):
-        from foundations_contrib.cli.orbit_model_package_server import stop
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-        successfully_stopped = stop(self._arguments.project_name, self._arguments.model_name, env)
-
-    def _kubernetes_orbit_model_serving_destroy(self):
-        from foundations_contrib.cli.orbit_model_package_server import destroy
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-        successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name, env)
