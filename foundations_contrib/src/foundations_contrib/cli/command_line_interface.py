@@ -11,6 +11,7 @@ class CommandLineInterface(object):
 
     def __init__(self, args):
         from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
+        from foundations_contrib.cli.sub_parsers.orbit_parser import OrbitParser
 
         self._input_arguments = args
 
@@ -18,13 +19,15 @@ class CommandLineInterface(object):
         self._subparsers = self._argument_parser.add_subparsers()
 
         SetupParser(self).add_sub_parser()
+        OrbitParser(self).add_sub_parser()
+
         self._initialize_init_parser()
         self._initialize_deploy_parser()
         self._initialize_submit_parser()
         self._initialize_info_parser()
         self._initialize_model_serve_parser()
         self._initialize_retrieve_parser()
-        self._initialize_orbit_model_serve_parser()
+        # self._initialize_orbit_model_serve_parser()
 
     def add_sub_parser(self, name, help=None):
         return self._subparsers.add_parser(name, help=help)
@@ -142,6 +145,9 @@ class CommandLineInterface(object):
     def execute(self):
         self._arguments = self._argument_parser.parse_args(self._input_arguments)
         self._arguments.function()
+
+    def arguments(self):
+        return self._arguments
 
     def _no_command(self):
         import foundations
