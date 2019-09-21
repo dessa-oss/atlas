@@ -361,9 +361,9 @@ class CommandLineInterface(object):
                     'model_name': self._arguments.model_name,
                     'project_directory': self._arguments.project_directory
                 })
-            # else:
-            #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
-            #     self._fail_with_message(message)
+            else:
+                message = f'Error: failed to serve model {self._arguments.model_name} in project {self._arguments.project_name}.'
+                self._fail_with_message(message)
         except Exception as e:
             self._fail_with_message(e)
 
