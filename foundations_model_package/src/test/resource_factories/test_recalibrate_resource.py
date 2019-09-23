@@ -8,6 +8,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 from foundations_model_package.resource_factories import recalibrate_resource
+class MockThread(object):
+
+    def __init__(self, target=None, args=(), kwargs={}):
+        self.target = target
+        self.args = args
+        self.kwargs = kwargs
+
+    def start(self):
+        self.target(self.args, kwargs=self.kwargs)
 
 class TestRecalibrateResource(Spec):
     
@@ -18,6 +27,9 @@ class TestRecalibrateResource(Spec):
 
     mock_get_cwd = let_patch_mock('os.getcwd')
     mock_wait = let_patch_mock('foundations_model_package.recalibrate_deployer._wait_for_job_to_complete')
+    mock_recalibrate_deployer_class = let_patch_mock('foundations_model_package.recalibrate_deployer.RecalibrateDeployer')
+    mock_recalibrate_deployer = let_mock()
+    mock_thread = let_patch_mock('threading.Thread')
 
     @let
     def project_name(self):
@@ -105,6 +117,12 @@ class TestRecalibrateResource(Spec):
     def test_recalibrate_resource_returns_error_message_if_callback_is_none(self):
         error_message, _ = self._perform_recalibrate(None)
         self.assertEqual({'error': 'recalibrate not set in manifest'}, error_message)
+
+    def test_recalibrate_deployer_start_is_called_by_thread(self):
+        self.mock_thread.return_value = MockThread(target=self.mock_recalibrate_deployer.start)
+        self.mock_recalibrate_deployer_class.return_value = self.mock_recalibrate_deployer
+        self._perform_recalibrate(self.mock_recalibrate_driver)
+        self.mock_recalibrate_deployer.start.assert_called()
 
     def _perform_recalibrate(self, recalibrate_driver):
         self.mock_flask_request.json = self.params

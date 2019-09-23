@@ -19,6 +19,7 @@ def recalibrate_resource(recalibrate_driver):
             from foundations.global_state import message_router
             from foundations_model_package.recalibrate_deployer import RecalibrateDeployer
             from kubernetes import config
+            from threading import Thread
 
             if recalibrate_driver is None:
                 return {'error': 'recalibrate not set in manifest'}, 404
@@ -37,7 +38,8 @@ def recalibrate_resource(recalibrate_driver):
 
                 retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
 
-                retrain_deployer.start()
+                new_model_package_thread = Thread(target=retrain_deployer.start)
+                new_model_package_thread.start()
 
                 return {'job_id': job_id}, 202
 

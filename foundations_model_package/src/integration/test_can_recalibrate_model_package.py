@@ -11,8 +11,9 @@ from foundations_spec import *
 import foundations
 from integration.mixins.deploy_model_mixin import DeployModelMixin
 
-@skip('Not Implemented')
 class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
+
+    second_proxy_process = None
 
     @let
     def model_name(self):
@@ -52,6 +53,9 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
     @tear_down
     def tear_down(self):
+        if self.second_proxy_process is not None:
+                self.second_proxy_process.terminate()
+
         self._tear_down_environment(self.project_name, models=[self.model_name, self.recalibrated_model_name])
 
     def test_can_recalibrate_and_redeploy_server(self):
@@ -71,7 +75,7 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
             self._tear_down_proxy()
             time.sleep(10)
-            subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.recalibrated_model_name}-service {self.port}:80'])
+            self.second_proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.recalibrated_model_name}-service {self.port}:80'])
             time.sleep(10)
             new_predict_result = self._try_post_to_predict_endpoint()
 
