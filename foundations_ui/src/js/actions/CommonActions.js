@@ -446,6 +446,26 @@ class CommonActions {
     return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
             ${JobListActions.getFormatedTime(date)}`;
   }
+
+  static getTagsFromJob(jobs) {
+    let set = new Set();
+    jobs.forEach((job) => {
+      if (job.tags) {
+        if (Array.isArray(job.tags)) {
+          job.tags.forEach((tag) => {
+            set.add(tag);
+          });
+        } else {
+          const keys = Object.keys(job.tags);
+          keys.forEach((tag) => {
+            set.add(tag);
+          });
+        }
+      }
+    });
+    const tags = Array.from(set);
+    return tags;
+  }
 }
 
 export default CommonActions;
