@@ -172,7 +172,7 @@ def deploy(project_name, model_name, project_directory, env='local'):
 
     if _model_exists_in_project(project_name, model_name):
         if _is_model_activated(project_name, model_name):
-            return False
+            raise ValueError(f'{model_name} exists and is activated in {project_name}. The model name must be unique.')
 
     _save_project_to_redis(project_name)
 

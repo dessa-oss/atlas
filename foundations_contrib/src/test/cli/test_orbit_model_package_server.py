@@ -365,6 +365,14 @@ class TestOrbitModelPackageServer(Spec):
         except FileNotFoundError as e:
             self.assertTrue('invalid project directory' in str(e).lower())
 
+    def test_raise_value_error_exception_if_model_exists_in_project(self):
+        self._generate_patch_for_exists()
+        try:
+            self._deploy(project_name=self.mock_project_name, model_name=self.mock_model_name)
+            self._deploy(project_name=self.mock_project_name, model_name=self.mock_model_name)
+            self.fail('Failed to throw error for duplicated model')
+        except ValueError as e:
+            self.assertTrue('model name must be unique' in str(e).lower())
 
     def test_raise_file_not_found_exception_if_no_model_foundations_file_provided(self):
         self._generate_patch_for_exists(yaml_state=False)
