@@ -220,8 +220,8 @@ class JobDeployment(object):
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, uid, gid, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
+
         worker_container = {
-            'image': "atlas-ce/worker:latest",
             #'user': str(uid)+":"+str(gid),
             'volumes':
                 {
@@ -275,9 +275,13 @@ class JobDeployment(object):
 
         if (current_foundations_context().job_resources().num_gpus is not None
                 and current_foundations_context().job_resources().num_gpus > 0):
+            worker_container['image'] = 'us.gcr.io/atlas-ce/worker-gpu:latest'
             worker_container['runtime'] = 'nvidia'
+
         else:
+            worker_container['image'] = 'us.gcr.io/atlas-ce/worker:latest'
             worker_container['runtime'] = 'runc'
+
 
         for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
             if override_key in worker_container_overrides:
