@@ -97,7 +97,7 @@ class TestRecalibrateResource(Spec):
     def test_recalibrate_resource_calls_foundations_submit_with_entrypoint_equal_to_recalibrate_driver_path(self):
         self._perform_recalibrate(self.mock_recalibrate_driver)
         self.params.pop('model-name')
-        self.mock_submit.assert_called_with(project_name=self.project_name, entrypoint=self.recalibrate_driver_path, params=self.params)
+        self.mock_submit.assert_called_with(project_name=self.project_name, entrypoint=self.recalibrate_driver_path, params=self.params, num_gpus=0)
 
     def test_recalibrate_resource_serves_new_model(self):
         payload, code = self._perform_recalibrate(self.mock_recalibrate_driver)

@@ -33,7 +33,7 @@ def recalibrate_resource(recalibrate_driver):
                 entrypoint = driver_file
 
                 config.load_incluster_config()
-                job_deployment = foundations.submit(project_name=project_name, entrypoint=entrypoint, params=params)
+                job_deployment = foundations.submit(project_name=project_name, entrypoint=entrypoint, params=params, num_gpus=0)
                 job_id = job_deployment.job_name()
 
                 retrain_deployer = RecalibrateDeployer(job_id, project_name, model_name, project_directory)
