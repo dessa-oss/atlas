@@ -26,6 +26,10 @@ class TestOrbitModelPackageServer(Spec):
         return self.faker.word().lower()
 
     @let
+    def mock_job_id(self):
+        return self.faker.uuid4()
+
+    @let
     def mock_model_name(self):
         return self.faker.word().lower()
 
@@ -188,9 +192,11 @@ class TestOrbitModelPackageServer(Spec):
 
         self.mock_subprocess_run_with_return.return_when(mock_subprocess_object, ['bash', '-c', 'kubectl -n foundations-scheduler-test get secret job-server-private-keys -o yaml'], stdout=subprocess.PIPE)
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+        self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_model_name, 'none', self.mock_job_id],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_project_name, self.mock_2nd_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_deploy, ['bash', './deploy_serving.sh', self.mock_2nd_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
         self.mock_subprocess_run_with_return.return_when(self.mock_subprocess_object_for_destroy, ['bash', './remove_deployment.sh', self.mock_project_name, self.mock_model_name, 'none'],cwd=foundations_contrib.root() / 'resources/model_serving/orbit')
+
 
     def _generate_patch_for_exists(self, ssh_state=True, yaml_state=True, dir_state=True):
         mock_path_exists = self.patch('os.path.exists', ConditionalReturn())
@@ -235,7 +241,6 @@ class TestOrbitModelPackageServer(Spec):
         self.assertFalse(result)
 
     def test_deploy_create_new_project_in_redis(self):
-
         self._deploy()
         self.mock_redis_execute_command.assert_called_once()
 
@@ -255,6 +260,26 @@ class TestOrbitModelPackageServer(Spec):
         self.assertIsNotNone(decoded_results.get(self.mock_model_name))
         self.assertIsNotNone(decoded_results.get(self.mock_2nd_model_name))
 
+    def test_deploy_without_uploading_returns_true_if_run_process_successful(self):
+        result = self._deploy_without_uploading()
+        self.assertTrue(result)
+
+    def test_with_deploy_without_uploading_without_uploading_returns_false_if_run_process_fails(self):
+        self.mock_subprocess_object_for_deploy.returncode = 1
+
+        result = self._deploy_without_uploading()
+        self.assertFalse(result)
+
+    def test_deploy_without_uploading_create_new_project_in_redis(self):
+        self._deploy_without_uploading()
+        self.mock_redis_execute_command.assert_called_once()
+
+    def test_deploy_without_uploading_sends_information_to_redis_about_new_model_in_project(self):
+        self._deploy_without_uploading()
+        expected_results = { self.mock_model_name: pickle.dumps(self.model_information)}
+        decoded_results = self._retrieve_results_from_redis(self.mock_project_name)
+
+        self.assertEqual(expected_results, decoded_results)
 
     def test_deploy_upload_user_specified_model_directory(self):
         self._deploy()
@@ -269,7 +294,6 @@ class TestOrbitModelPackageServer(Spec):
             local_job_id,
             None,
             package_name='artifacts')
-
 
     def test_stop_returns_true_if_successful(self):
         result = self._stop()
@@ -388,6 +412,11 @@ class TestOrbitModelPackageServer(Spec):
         entrypoints = self._get_model_param(self.mock_project_name, self.mock_model_name, 'entrypoints')
         self.assertEqual(self.manifest['entrypoints'],  entrypoints)
 
+    def test_launch_model_package_from_job_id_calls_subprocess_run_with_right_arguments(self):
+        import foundations_contrib
+        status_code = self._deploy_without_uploading()
+        self.assertEqual(True, status_code)
+
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name
         model_name = model_name if model_name is not None else self.mock_model_name
@@ -396,10 +425,21 @@ class TestOrbitModelPackageServer(Spec):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         return deploy(project_name, model_name, project_directory)
 
+    def _deploy_without_uploading(self, project_name=None, model_name=None, project_directory=None):
+        project_name = project_name if project_name is not None else self.mock_project_name
+        model_name = model_name if model_name is not None else self.mock_model_name
+        project_directory = project_directory if project_directory is not None else self.mock_project_directory
+
+        from foundations_contrib.cli.orbit_model_package_server import deploy_without_uploading
+        return deploy_without_uploading(project_name, model_name, project_directory, self.mock_job_id)
+
     def _deploy_second(self):
         from foundations_contrib.cli.orbit_model_package_server import deploy
         return deploy(self.mock_project_name, self.mock_2nd_model_name, self.mock_project_directory)
 
+    def _deploy_second_without_uploading(self):
+        from foundations_contrib.cli.orbit_model_package_server import deploy_without_uploading
+        return deploy_without_uploading(self.mock_project_name, self.mock_2nd_model_name, self.mock_project_directory, self.mock_job_id)
 
     def _stop(self):
         from foundations_contrib.cli.orbit_model_package_server import stop

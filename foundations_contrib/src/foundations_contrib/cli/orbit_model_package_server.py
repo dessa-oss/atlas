@@ -116,14 +116,25 @@ def _upload_model_directory(project_name, model_name, project_directory):
 def _orbit_command_handler(project_name, model_name, file_name):
     import foundations_contrib
     import subprocess
-
     process_result = subprocess.run(
-        ['bash', 
-        file_name, 
-        project_name,
-        model_name, 'none' ], 
-        cwd=foundations_contrib.root() / 'resources/model_serving/orbit'
-    )
+            ['bash',
+            file_name,
+            project_name,
+            model_name, 'none' ],
+            cwd=foundations_contrib.root() / 'resources/model_serving/orbit'
+        )
+    return process_result.returncode == 0
+
+def _launch_model_package_with_job_id(project_name, model_name, job_id):
+    import subprocess
+    import foundations_contrib
+    process_result = subprocess.run(
+            ['bash',
+            './deploy_serving.sh',
+            project_name,
+            model_name, 'none', job_id],
+            cwd=foundations_contrib.root() / 'resources/model_serving/orbit'
+        )
     return process_result.returncode == 0
 
 def _launch_model_package(project_name, model_name):
@@ -161,7 +172,7 @@ def _load_entrypoints_from_manifest(project_manifest_file):
     with open(project_manifest_file, 'r') as manifest_file:
         return yaml.load(manifest_file)['entrypoints']
 
-def deploy(project_name, model_name, project_directory, env='local'):
+def _deploy_setup(project_name, model_name, project_directory, env='local'):
     _check_for_invalid_names(project_name, model_name)
     _check_for_valid_project_directory(project_directory)
 
@@ -180,8 +191,15 @@ def deploy(project_name, model_name, project_directory, env='local'):
     model_information['entrypoints']  = _load_entrypoints_from_manifest(project_manifest_file)
 
     _save_model_to_redis(project_name, model_name, model_information)
+
+def deploy(project_name, model_name, project_directory, env='local'):
+    _deploy_setup(project_name, model_name, project_directory, env)
     _upload_model_directory(project_name, model_name, project_directory)
     return _launch_model_package(project_name, model_name)
+
+def deploy_without_uploading(project_name, model_name, project_directory, job_id, env='local'):
+    _deploy_setup(project_name, model_name, project_directory, env)
+    return _launch_model_package_with_job_id(project_name, model_name, job_id)
 
 def stop(project_name, model_name, env='local'):
     _setup_environment(project_name, env)

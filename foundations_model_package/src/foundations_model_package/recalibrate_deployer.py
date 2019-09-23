@@ -8,11 +8,11 @@ class RecalibrateDeployer(object):
         self.project_directory = project_directory
 
     def start(self):
-        from foundations_contrib.cli.orbit_model_package_server import deploy
+        from foundations_contrib.cli.orbit_model_package_server import deploy_without_uploading
 
         _wait_for_job_to_complete(self.job_id)
 
-        deploy(project_name=self.project_name, model_name=self.model_name, project_directory=self.project_directory, env='scheduler')
+        deploy_without_uploading(project_name=self.project_name, model_name=self.model_name, project_directory=self.project_directory, job_id=self.job_id, env='scheduler')
 
 def _wait_for_statuses(job_id, statuses, error_message):
     import time

@@ -3,7 +3,11 @@ export namespace="foundations-scheduler-test"
 export project_name=$1
 export model_name=$2
 no_follow=$3
-export job_id=$project_name-$model_name
+export job_id=$4
+
+if [[-z $job_id]]; then
+    job_id=$project_name-$model_name
+fi
 
 echo 'configuring config map for model package server'
 envsubst < ../scheduler_config_map.yaml | kubectl apply -f -

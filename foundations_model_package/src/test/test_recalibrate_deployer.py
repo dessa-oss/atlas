@@ -10,7 +10,7 @@ import time
 
 class TestRecalibrateDeployer(Spec):
 
-    mock_orbit_deployer = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy')
+    mock_orbit_deployer = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy_without_uploading')
     mock_get_latest_for_job = let_patch_mock('foundations_scheduler.pod_fetcher.get_latest_for_job')
     mock_time = let_patch_mock('time.sleep')
     mock_time.return_value = None
@@ -40,7 +40,7 @@ class TestRecalibrateDeployer(Spec):
         retrain_deployer = RecalibrateDeployer(job_id=self.job_id, project_name=self.project_name, model_name=self.model_name, project_directory=self.project_directory)
         retrain_deployer.start()
 
-        self.mock_orbit_deployer.assert_called_with(project_name=self.project_name, model_name=self.model_name, project_directory=self.project_directory, env='scheduler')
+        self.mock_orbit_deployer.assert_called_with(project_name=self.project_name, model_name=self.model_name, project_directory=self.project_directory, job_id=self.job_id ,env='scheduler')
 
     def test_job_status_when_given_job_id_returns_pending_get_latest_for_job_returns_none(self):
         from foundations_model_package.recalibrate_deployer import _job_status
