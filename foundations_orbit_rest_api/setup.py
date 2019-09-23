@@ -37,6 +37,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
-        'foundations_orbit_rest_api': ['resources/*'],
+        'foundations_orbit_rest_api': ['resources/*', 'licenses/*/*', 'licenses/*'],
     }
 )

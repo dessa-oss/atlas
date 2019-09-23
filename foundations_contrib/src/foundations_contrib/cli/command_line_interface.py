@@ -314,7 +314,7 @@ class CommandLineInterface(object):
             if job_deployment.cancel_jobs([job_id])[job_id]:
                 print(f"Job {job_id} successfully deleted")
             else:
-                print(f"Could not delete job {job_id}. Please try again with sudo")
+                print(f"Could not delete job {job_id}. Please make sure that the job bundle exists under ~/.foundations/job_data/")
 
     def _load_configuration(self):
         from foundations_contrib.cli.environment_fetcher import EnvironmentFetcher

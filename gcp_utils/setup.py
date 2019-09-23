@@ -34,6 +34,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'':'src'},
     package_data={
-        'foundations_gcp': ['resources/*'],
+        'foundations_gcp': ['resources/*', 'licenses/*/*'],
     }
 )

@@ -41,7 +41,7 @@ setup(
     packages=find_packages(package_source),
     package_dir={'': package_source},
     package_data={
-        'foundations': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"]
+        'foundations': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*", 'licenses/*/*', 'licenses/*']
     },
     scripts=['foundations'],
     include_package_data=True

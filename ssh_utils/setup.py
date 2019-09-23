@@ -33,6 +33,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
-        'foundations_ssh': ['resources/*'],
+        'foundations_ssh': ['resources/*', 'licenses/*/*'],
     }
 )

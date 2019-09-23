@@ -27,7 +27,7 @@ def list_files_recursively(root, start_directory):
             yield os.path.join(directory, file)
     os.chdir(previous_directory)
 
-package_data = list(list_files_recursively('src/foundations_contrib', 'resources')) + ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*"]
+package_data = list(list_files_recursively('src/foundations_contrib', 'resources')) + ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*", 'licenses/*/*', 'licenses/*']
 
 package_source = "src"
 if environ.get("BUILD_FOUNDATIONS_OBFUSCATED", False):
