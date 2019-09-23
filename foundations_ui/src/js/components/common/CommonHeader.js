@@ -39,13 +39,17 @@ class CommonHeader extends React.Component {
           <div className="header-container-profile">
             <img alt="" src={ProfilePlaceholder} />
             <p>CE User</p>
-            <i
-              onKeyPress={this.onKeyPress}
-              tabIndex={0}
-              role="button"
-              onClick={this.onClickArrowDown}
-              className="i--icon-arrow-down"
-            />
+            { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
+              && (
+                <i
+                  onKeyPress={this.onKeyPress}
+                  tabIndex={0}
+                  role="button"
+                  onClick={this.onClickArrowDown}
+                  className="i--icon-arrow-down"
+                />
+              )
+            }
           </div>
         </div>
       </div>
