@@ -232,8 +232,8 @@ const SystemHealth = props => {
             <tr>
               <th>Attribute Name</th>
               <th>Value</th>
-              <th>% In Reference Data</th>
-              <th>% In Production Data</th>
+              <th>Expected (%)</th>
+              <th>Actual (%)</th>
               <th>Difference</th>
               <th>Validation Outcome</th>
             </tr>
