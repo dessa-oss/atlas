@@ -263,7 +263,8 @@ class JobDeployment(object):
                     "PYTHONPATH": "/job/",
                     "FOUNDATIONS_HOME": "/root/.foundations/"
                 },
-            "network": "foundations-atlas"
+            "network": "foundations-atlas",
+            "auto_remove": True
         }
 
         if current_foundations_context().job_resources().ram is not None:
