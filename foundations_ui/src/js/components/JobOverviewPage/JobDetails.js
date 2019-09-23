@@ -498,6 +498,7 @@ class JobDetails extends React.Component {
                 job={selectedJob}
                 visible={modalJobDetailsVisible}
                 onToggle={this.onToggleModalJobDetails}
+                reloadJobTable={this.reload}
               />
             )}
           </div>
