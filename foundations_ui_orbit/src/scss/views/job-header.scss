@@ -51,10 +51,11 @@
 
       p {
         color: black;
-        margin-left: 9px;
-        margin-top: 4px;
         font-size: 15px;
         font-weight: bold;
+        text-align: center;
+        line-height: 1.6;
+        margin: 0;
 
         @media
           (-webkit-min-device-pixel-ratio: 2),
