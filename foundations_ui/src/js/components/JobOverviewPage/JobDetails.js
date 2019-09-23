@@ -75,8 +75,8 @@ class JobDetails extends React.Component {
       });
     }
     if (foundProject === true) {
-      this.getJobs();
       this.getTags();
+      this.getJobs();
     }
   }
 
@@ -86,13 +86,16 @@ class JobDetails extends React.Component {
 
   async getTags() {
     const { location } = this.props;
-    const { projectName } = this.props.match.params;
-    const fetchedProjects = await BaseActions.get('projects');
-    const selectedProject = fetchedProjects.filter(item => item.name === projectName);
-    if (selectedProject.length > 0) {
-      this.setState({
-        tags: selectedProject[0].tags,
-      });
+    if (location) {
+      const { projectName } = this.props.match.params;
+      BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
+        .then((result) => {
+          if (result && result.jobs) {
+            this.setState({
+              tags: CommonActions.getTagsFromJob(result.jobs),
+            });
+          }
+        });
     }
   }
 

@@ -5,6 +5,7 @@ import Toolbar from '../common/Toolbar';
 import ProjectHeader from './ProjectHeader';
 import Loading from '../common/Loading';
 import BaseActions from '../../actions/BaseActions';
+import CommonActions from '../../actions/CommonActions';
 import ProjectSummary from './ProjectSummary';
 import CommonHeader from '../common/CommonHeader';
 import CommonFooter from '../common/CommonFooter';
@@ -13,26 +14,6 @@ const ProjectPage = (props) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [projects, setProjects] = React.useState([]);
 
-  const getTagsFromJob = (jobs) => {
-    let set = new Set();
-    jobs.forEach((job) => {
-      if (job.tags) {
-        if (Array.isArray(job.tags)) {
-          job.tags.forEach((tag) => {
-            set.add(tag);
-          });
-        } else {
-          const keys = Object.keys(job.tags);
-          keys.forEach((tag) => {
-            set.add(tag);
-          });
-        }
-      }
-    });
-    const tags = Array.from(set);
-    return tags;
-  };
-
   const setTagsForProjects = (fetchedProjects) => {
     let newProjects = [];
     const promises = fetchedProjects.map((fetchedProject) => {
@@ -40,7 +21,7 @@ const ProjectPage = (props) => {
       return BaseActions.getFromStaging(`projects/${fetchedProject.name}/job_listing`)
         .then((result) => {
           if (result && result.jobs) {
-            const tags = getTagsFromJob(result.jobs);
+            const tags = CommonActions.getTagsFromJob(result.jobs);
             newProject.tags = tags;
             return newProject;
           }
