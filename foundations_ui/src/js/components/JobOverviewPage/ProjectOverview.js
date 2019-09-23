@@ -4,6 +4,7 @@ import Notes from './Notes';
 import Readme from './Readme';
 import JobOverviewGraph from './JobOverviewGraph';
 import BaseActions from '../../actions/BaseActions';
+import CommonActions from '../../actions/CommonActions';
 import CommonHeader from '../common/CommonHeader';
 import Header from './Header';
 import TagContainer from './TagContainer';
@@ -30,13 +31,14 @@ class ProjectOverview extends React.Component {
     const { location } = this.props;
     if (location) {
       const { projectName } = this.props.match.params;
-      const fetchedProjects = await BaseActions.get('projects');
-      const selectedProject = fetchedProjects.filter(item => item.name === projectName);
-      if (selectedProject.length > 0) {
-        this.setState({
-          tags: selectedProject[0].tags,
+      BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
+        .then((result) => {
+          if (result && result.jobs) {
+            this.setState({
+              tags: CommonActions.getTagsFromJob(result.jobs),
+            });
+          }
         });
-      }
     }
 
     const { projectName, metric } = this.state;
