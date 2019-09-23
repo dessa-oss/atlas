@@ -15,6 +15,7 @@ class JobDeployment(object):
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
         self._job = job
+        self._namedVolumes = None
 
     @staticmethod
     def _get_config():
@@ -79,11 +80,14 @@ class JobDeployment(object):
                                              gid=gid,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
+            self._namedVolumes = [str(self._job_id)]
+
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
                                            'spec': job_spec,
                                            'metadata': {'project_name': project_name,
-                                                        'username': username}
+                                                        'username': username},
+                                           'volumes': self._create_named_volumes(self._namedVolumes)
                                            })
         except requests.exceptions.ConnectionError:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
@@ -216,6 +220,15 @@ class JobDeployment(object):
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
+
+
+    def _create_named_volumes(self, volumeNames):
+        volume_label = {"foundations_atlas": ""}
+        volumes = {}
+        for i, name in enumerate(volumeNames):
+            volumes[str(i)] = {"name": name, "labels": volume_label}
+        return volumes
+
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, uid, gid, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
