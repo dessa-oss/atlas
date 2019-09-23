@@ -79,11 +79,14 @@ class JobDeployment(object):
                                              gid=gid,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
+            cleanup_spec = self._create_cleanup_spec(working_dir_root_path=str(working_dir_root_path.absolute()))
+
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
                                            'spec': job_spec,
                                            'metadata': {'project_name': project_name,
-                                                        'username': username}
+                                                        'username': username},
+                                           'cleanup_spec': cleanup_spec
                                            })
         except requests.exceptions.ConnectionError:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
@@ -217,6 +220,27 @@ class JobDeployment(object):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
 
+    def _create_cleanup_spec(self, working_dir_root_path):
+        import os
+        container_mount_point = "/workspace"
+
+        job_bundle_path = os.path.join(container_mount_point, str(self._job_id))
+        delete_command = f"rm -rf {job_bundle_path}"
+
+        cleanup_container = {
+            'image': 'alpine:latest',
+            'entrypoint': '/bin/sh',
+            'volumes': {
+                working_dir_root_path:
+                    {
+                        "bind": container_mount_point,
+                        "mode": "rw"
+                    }
+            },
+            'command':
+                ["-c", delete_command]
+            }
+        return cleanup_container
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, uid, gid, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
