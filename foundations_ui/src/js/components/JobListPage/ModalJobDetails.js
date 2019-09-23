@@ -18,7 +18,7 @@ class ModalJobDetails extends React.Component {
   constructor(props) {
     super(props);
 
-    const { job } = this.props;
+    const { job, reloadJobTable } = this.props;
 
     this.state = {
       tags: [],
@@ -29,6 +29,7 @@ class ModalJobDetails extends React.Component {
       addNewTagVisible: false,
       job,
       selectedArtifact: {},
+      reloadJobTable,
     };
 
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
@@ -75,6 +76,7 @@ class ModalJobDetails extends React.Component {
   componentWillUnmount() {
     const { timerId } = this.state;
     clearInterval(timerId);
+    this.state.reloadJobTable();
   }
 
   onToggleModal() {
@@ -97,6 +99,7 @@ class ModalJobDetails extends React.Component {
     BaseActions.delStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags/${tag}`)
       .then((result) => {
         this.reload();
+        this.state.reloadJobTable();
       });
   }
 
@@ -150,6 +153,7 @@ class ModalJobDetails extends React.Component {
     BaseActions.postStaging(`projects/${selectedProjectName}/job_listing/${job.job_id}/tags`, body)
       .then((result) => {
         this.reload();
+        this.state.reloadJobTable();
       });
   }
 
@@ -319,6 +323,7 @@ ModalJobDetails.propTypes = {
   onToggle: PropTypes.func,
   location: PropTypes.object,
   match: PropTypes.object,
+  reloadJobTable: PropTypes.func,
 };
 
 ModalJobDetails.defaultProps = {
@@ -327,6 +332,7 @@ ModalJobDetails.defaultProps = {
   onToggle: () => null,
   location: { state: {} },
   match: { params: {} },
+  reloadJobTable: () => null,
 };
 
 export default withRouter(ModalJobDetails);
