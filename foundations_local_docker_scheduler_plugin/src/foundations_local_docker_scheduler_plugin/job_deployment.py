@@ -15,7 +15,6 @@ class JobDeployment(object):
         self._job_id = job_id
         self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
         self._job = job
-        self._named_volumes = None
 
     @staticmethod
     def _get_config():
@@ -80,14 +79,11 @@ class JobDeployment(object):
                                              gid=gid,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
-            self._named_volumes = [str(self._job_id)]
-
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
                                            'spec': job_spec,
                                            'metadata': {'project_name': project_name,
-                                                        'username': username},
-                                           'volumes': [{'name': v, 'labels': {"foundations_atlas": ""}} for v in self._named_volumes]
+                                                        'username': username}
                                            })
         except requests.exceptions.ConnectionError:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
