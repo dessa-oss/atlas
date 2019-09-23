@@ -85,14 +85,14 @@ class DeployModelMixin(object):
     def _wait_for_model_package_pod(self, project_name, model_name):
         current_time = time.time()
 
-        while self._model_package_pod_status(project_name, model_name) != 'Running':
+        while self._model_package_pod_status(project_name, model_name) != "'Running'":
             if time.time() - current_time > self.max_sleep_time:
                 raise AssertionError('model package pod took too long to come up (> 30 sec)')
 
             time.sleep(self.sleep_time)
     
     def _model_package_pod_status(self, project_name, model_name):
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template={{(index .items 0).status.phase}}'], stdout=subprocess.PIPE)
+        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template=\'{{(index .items 0).status.phase}}\''], stdout=subprocess.PIPE)
         return process.stdout.decode().rstrip('\n')
 
     def _wait_for_serving_pod_to_die(self, project_name, model_name):
