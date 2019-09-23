@@ -5,8 +5,8 @@ export model_name=$2
 no_follow=$3
 export job_id=$4
 
-if [[-z $job_id]]; then
-    job_id=$project_name-$model_name
+if [[ -z $job_id ]]; then
+    export job_id=$project_name-$model_name
 fi
 
 echo 'configuring config map for model package server'
