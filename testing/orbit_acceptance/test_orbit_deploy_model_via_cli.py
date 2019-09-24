@@ -275,9 +275,6 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
-        command = f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'
-        subprocess.run(command.split())
-        command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
-        subprocess.run(command.split())
-        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'
-        subprocess.run(command.split())
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'))
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'))
+        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'))
