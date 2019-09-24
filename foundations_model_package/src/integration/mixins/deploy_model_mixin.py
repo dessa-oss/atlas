@@ -73,7 +73,7 @@ class DeployModelMixin(object):
         self._wait_for_serving_pod_to_die(project_name, model_name)
 
     def _peform_action_for_creating_config_map(self, action):
-        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/scheduler_config_map.yaml')
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/submission_config.yaml')
         command_to_run = f'FOUNDATIONS_SCHEDULER_HOST={self._get_scheduler_ip()} envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
