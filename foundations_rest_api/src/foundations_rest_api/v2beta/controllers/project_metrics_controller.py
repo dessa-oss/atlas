@@ -20,18 +20,24 @@ class ProjectMetricsController(object):
 
     def _project_metrics_or_single_metric(self):
         if 'metric_name' in self.params:
-            return [self._single_metric()]
+            return self._single_metric()
         else:
-            return list(self._get_metrics())
+            return self._get_metrics()
 
     def _single_metric(self):
         metric_name = self.params['metric_name']
-        metrics = self._grouped_metrics()[metric_name]
-        return self._metric(metric_name, metrics)
+        grouped_metrics = self._grouped_metrics()
+
+        metrics = grouped_metrics[metric_name]
+        all_metric_names = list(grouped_metrics.keys())
+        return {'all_metric_names': all_metric_names, 'metric_query': [self._metric(metric_name, metrics)]}
 
     def _get_metrics(self):
-        for metric_name, metrics in self._grouped_metrics().items():
-            yield self._metric(metric_name, metrics)
+        grouped_metrics = self._grouped_metrics()
+
+        all_metric_names = list(grouped_metrics.keys())
+        all_metrics = [self._metric(metric_name, metrics) for metric_name, metrics in grouped_metrics.items()]
+        return {'all_metric_names': all_metric_names, 'metric_query': all_metrics}
     
     def _metric(self, metric_name, metrics):
         return {

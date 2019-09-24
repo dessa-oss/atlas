@@ -49,9 +49,9 @@ class ProjectOverview extends React.Component {
 
     const APIGraphData = await BaseActions.getFromStaging(URL);
 
-    if (APIGraphData.length > 0) {
+    if (APIGraphData) {
       let correctGraphData = [];
-      APIGraphData.forEach((graph) => {
+      APIGraphData.metric_query.forEach((graph) => {
         let addGraph = true;
         graph.values.forEach((value) => {
           if (typeof value[1] !== 'number') {
@@ -64,9 +64,7 @@ class ProjectOverview extends React.Component {
         }
       });
 
-      const allMetrics = correctGraphData.map((graphMetric) => {
-        return graphMetric.metric_name;
-      });
+      const allMetrics = APIGraphData.all_metric_names;
 
       if (correctGraphData.length > 0) {
         this.setState({ graphData: correctGraphData[0].values, metric: correctGraphData[0].metric_name, allMetrics });
