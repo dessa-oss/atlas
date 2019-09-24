@@ -1,6 +1,6 @@
 const baseURL = process.env.REACT_APP_API_URL;
 const baseApiaryURL = process.env.REACT_APP_APIARY_URL;
-const baseMasterURL = process.env.REACT_APP_APIARY_URL;
+const baseMasterURL = process.env.REACT_APP_MASTER_URL;
 
 const get = url => {
   const fullURL = baseURL.concat(url);
