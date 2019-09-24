@@ -132,8 +132,8 @@ const ModelManagementRow = props => {
             type="button"
             className={
               isDetail
-                ? "b--secondary-text button-management active"
-                : "b--secondary-text button-management"
+                ? "b--secondary-text button-management details active"
+                : "b--secondary-text button-management details"
             }
             onClick={clickDetails}
           >
