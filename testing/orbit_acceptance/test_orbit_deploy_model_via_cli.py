@@ -23,11 +23,11 @@ class TestOrbitDeployModelViaCli(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
 
     @tear_down_class
     def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -38,7 +38,6 @@ class TestOrbitDeployModelViaCli(Spec):
 
     @tear_down
     def tear_down(self):
-        print(f'Tearing down deployment and service for {self.mock_project_name}-{self.mock_user_provided_model_name}')
         self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
 
     @staticmethod
@@ -221,7 +220,6 @@ class TestOrbitDeployModelViaCli(Spec):
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:
-            print(e)
             return None
 
     def _generate_yaml_config_file(self):
@@ -275,6 +273,7 @@ class TestOrbitDeployModelViaCli(Spec):
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
-        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'))
-        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'))
-        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'))
+        import shlex
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE)
+        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE)

@@ -9,11 +9,9 @@ if [[ -z $job_id ]]; then
     export job_id=$project_name-$model_name
 fi
 
-echo 'configuring config map for model package server'
-envsubst < ../submission_config.yaml | kubectl apply -f -
-echo 'Successfully configured config map for $job_id'
+envsubst < ../submission_config.yaml | kubectl apply -f - > /dev/null 2>&1
 
-envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f -
+envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
 echo "Preparing $model_name for serving"
 
 python ingress_modifier.py $project_name $model_name > /dev/null 2>&1

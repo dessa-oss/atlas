@@ -26,15 +26,14 @@ class TestManageDefaultModel(Spec):
 
         klass._flask_process = subprocess.Popen(f'python launch_rest_api.py {klass._get_redis_ip()} {klass.api_port} {klass._get_scheduler_ip()}'.split(), cwd='./orbit_acceptance/fixtures/rest_api/')
         print(f'Flask process pid is {klass._flask_process.pid}')
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
         
     
     @tear_down_class
     def tear_down_class(klass):
         if klass._flask_process is not None:
             klass._flask_process.terminate()
-            print('Successfully tore down the flask subprocess')
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -106,7 +105,6 @@ class TestManageDefaultModel(Spec):
             self.fail('Interrupted by user')
 
     def _retrieve_model_listing_from_api(self):
-        print(f'{self.api_project_base_url}/model_listing')
         results = requests.get(f'{self.api_project_base_url}/model_listing').json()
         models = results['models']
         return models
@@ -171,11 +169,9 @@ class TestManageDefaultModel(Spec):
         while time.time() - start_time < self.max_time_out_in_sec:
             try:
                 url = f'{self.project_base_url}/{model_name}/'
-                print(f'Attempting to make request at url: {url}')
                 requests.get(url, timeout=0.1).json()
                 return
             except Exception as e:
-                # print('waiting for server to respond .....')
                 time.sleep(1)
         self.fail('server never started')
 
@@ -209,9 +205,8 @@ class TestManageDefaultModel(Spec):
             file.write(config_yaml)
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
-        command = f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'
-        subprocess.run(command.split())
-        command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
-        subprocess.run(command.split())
-        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-server-configuration'
-        subprocess.run(command.split())
+        import subprocess
+        import shlex
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE)
+        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE)
