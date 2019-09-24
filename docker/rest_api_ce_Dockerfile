@@ -1,0 +1,23 @@
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
+
+FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.8
+
+ARG main_file
+
+COPY --from=lachlanevenson/k8s-kubectl:v1.10.13 /usr/local/bin/kubectl /usr/local/bin/kubectl
+RUN mkdir -p /var/foundations ~/.ssh
+
+ENV SERVER_NAME=localhost
+
+WORKDIR /var/foundations
+
+RUN apk add --update --no-cache alpine-sdk python-dev libressl-dev libffi-dev linux-headers
+RUN pip install -U pip setuptools wheel
+COPY ./tmp/pip_wheels /var/foundations/
+RUN find -iname "*.whl" | xargs pip install
+
+WORKDIR /app/
+COPY docker/${main_file} /app/main.py
