@@ -22,11 +22,11 @@ ENV SERVER_NAME=localhost
 
 COPY ./ /var/foundations_ui/
 
-RUN npm install -g -s --no-progress yarn && \
+RUN yarn install && \
     yarn && \
     yarn run build && \
     yarn run prune && \
-    yarn cache clean
+    yarn cache clean && \
 
 EXPOSE 8011
 COPY deploy/nginx.conf /etc/nginx/nginx.conf.template
