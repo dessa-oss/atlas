@@ -172,14 +172,15 @@ def _load_entrypoints_from_manifest(project_manifest_file):
     with open(project_manifest_file, 'r') as manifest_file:
         return yaml.load(manifest_file)['entrypoints']
 
-def _deploy_setup(project_name, model_name, project_directory, env='local'):
+def _deploy_setup(project_name, model_name, project_directory, env='local', setup_env=True):
     _check_for_invalid_names(project_name, model_name)
     _check_for_valid_project_directory(project_directory)
 
     project_manifest_file = f'{project_directory}/foundations_package_manifest.yaml'
     _check_for_valid_manifest_file(project_manifest_file)
 
-    _setup_environment(project_name, env)
+    if setup_env:
+        _setup_environment(project_name, env)
 
     if _model_exists_in_project(project_name, model_name):
         if _is_model_activated(project_name, model_name):
@@ -198,7 +199,7 @@ def deploy(project_name, model_name, project_directory, env='local'):
     return _launch_model_package(project_name, model_name)
 
 def deploy_without_uploading(project_name, model_name, project_directory, job_id, env='local'):
-    _deploy_setup(project_name, model_name, project_directory, env)
+    _deploy_setup(project_name, model_name, project_directory, env, setup_env=False)
     return _launch_model_package_with_job_id(project_name, model_name, job_id)
 
 def stop(project_name, model_name, env='local'):
