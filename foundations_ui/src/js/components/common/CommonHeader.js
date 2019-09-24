@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ProfilePlaceholder from '../../../assets/images/icons/person-with-outline.png';
 
@@ -8,15 +9,6 @@ class CommonHeader extends React.Component {
     this.state = {
       isProject: this.props.isProject,
     };
-    this.clickLogo = this.clickLogo.bind(this);
-  }
-
-  onKeyPress() {}
-
-  onClickArrowDown() {}
-
-  clickLogo() {
-    window.location = 'http://www.dessa.com';
   }
 
   render() {
@@ -24,16 +16,17 @@ class CommonHeader extends React.Component {
     return (
       <div>
         <div className="foundations-header">
-          <div
-            tabIndex={0}
-            role="button"
-            onKeyPress={this.clickLogo}
-            onClick={this.clickLogo}
-            className="i--icon-dessa-logo"
-          />
+          <Link to="/projects">
+            <div
+              tabIndex={0}
+              role="button"
+              className="i--icon-dessa-logo"
+            />
+          </Link>
+
           <div className="header-link-container">
             { isProject ? <a className="font-bold" href="/projects">Project</a> : <a href="/projects">Project</a> }
-            <a href="https://www.atlas.dessa.com/docs">Documentation</a>
+            <a target="_blank" rel="noopener noreferrer" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/">Documentation</a>
             <a href="/support">Support</a>
           </div>
           <div className="header-container-profile">
