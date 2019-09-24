@@ -26,8 +26,9 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'foundations_contrib=={}'.format(build_version),
-        'foundations_core_rest_api_components=={}'.format(build_version),
+        'foundations-contrib=={}'.format(build_version),
+        'foundations-scheduler-plugin=={}'.format(build_version),
+        'foundations-core-rest-api-components=={}'.format(build_version),
         'flask-restful==0.3.6',
         'Flask-Cors==3.0.6',
         'Flask==1.1.0',
