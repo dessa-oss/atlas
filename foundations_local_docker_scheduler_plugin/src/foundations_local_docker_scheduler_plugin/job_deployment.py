@@ -164,18 +164,24 @@ class JobDeployment(object):
             r = requests.get(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}/container_id")
             if r.status_code == requests.codes.ok:
                 import docker
-                client = docker.from_env()
+                from docker.errors import APIError
 
-                container = client.containers.get(r.json())
+                try:
+                    client = docker.from_env()
+                    container = client.containers.get(r.json())
+                    log_stream = container.logs(stream=True)
 
-                log_stream = container.logs(stream=True)
+                    for line in log_stream:
+                        if strip_new_line:
+                            line = line.decode().strip('\n')
+                        else:
+                            line = line.decode()
+                        yield line
 
-                for line in log_stream:
-                    if strip_new_line:
-                        line = line.decode().strip('\n')
-                    else:
-                        line = line.decode()
-                    yield line
+                except APIError as e:
+                    APIError(f"Could not find container for job {self._job_id}. Job may have completed. ")
+                    status = "completed"
+
             else:
                 # try and see if it completed in between requests
                 status = "completed"
