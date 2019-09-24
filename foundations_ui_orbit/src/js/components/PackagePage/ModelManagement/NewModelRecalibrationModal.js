@@ -148,8 +148,6 @@ const NewModelRecalibrationModal = props => {
         body[parameter.key] = parameter.value;
       });
 
-      console.log("MODEL: ", props.model);
-
       postMaster(`projects/${props.location.state.project.name}/${props.model.model_name}/recalibrate`,
         body)
         .then(() => {

@@ -65,6 +65,7 @@ const postApiary = (url, body) => {
 };
 
 const postMaster = (url, body) => {
+  console.log("ENV VARIABLES: ", process.env);
   const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL, {
     method: "post",
