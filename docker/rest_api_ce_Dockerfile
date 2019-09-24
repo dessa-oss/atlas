@@ -17,7 +17,12 @@ WORKDIR /var/foundations
 RUN apk add --update --no-cache alpine-sdk python-dev libressl-dev libffi-dev linux-headers
 RUN pip install -U pip setuptools wheel
 COPY ./tmp/pip_wheels /var/foundations/
-RUN find -iname "*.whl" | xargs pip install
+RUN find -iname "foundations_internal-*.whl" | xargs pip install && \
+    find -iname "foundations_events-*.whl" | xargs pip install && \
+    find -iname "foundations_contrib-*.whl" | xargs pip install && \
+    find -iname "foundations_local_docker_scheduler_plugin-*.whl" | xargs pip install && \
+    find -iname "foundations_core_rest_api_components-*.whl" | xargs pip install && \
+    find -iname "foundations_rest_api-*.whl" | xargs pip install
 
 WORKDIR /app/
 COPY docker/${main_file} /app/main.py
