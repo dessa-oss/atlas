@@ -25,11 +25,14 @@ class TestRecalibrateResource(Spec):
     mock_flask_request = let_patch_mock('flask.request')
     mock_recalibrate_driver = let_mock()
 
-    mock_get_cwd = let_patch_mock('os.getcwd')
     mock_wait = let_patch_mock('foundations_model_package.recalibrate_deployer._wait_for_job_to_complete')
     mock_recalibrate_deployer_class = let_patch_mock('foundations_model_package.recalibrate_deployer.RecalibrateDeployer')
     mock_recalibrate_deployer = let_mock()
     mock_thread = let_patch_mock('threading.Thread')
+
+    @let_now
+    def mock_get_cwd(self):
+        return self.patch('os.getcwd', return_value=self.cwd)
 
     @let
     def project_name(self):
@@ -49,7 +52,7 @@ class TestRecalibrateResource(Spec):
 
     @let
     def cwd(self):
-        return self.faker.file_path
+        return self.faker.file_path()
 
     @let
     def time(self):
