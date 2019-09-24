@@ -8,8 +8,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 def upload_artifacts(job_id):
     from foundations_contrib.archiving import get_pipeline_archiver_for_job
 
-    pipeline_archiver = get_pipeline_archiver_for_job(job_id)
-    _upload_artifacts_to_archiver(pipeline_archiver)
+    if _artifact_path() is not None:
+        pipeline_archiver = get_pipeline_archiver_for_job(job_id)
+        _upload_artifacts_to_archiver(pipeline_archiver)
 
 def _upload_artifacts_to_archiver(pipeline_archiver):
     list_of_files_to_upload = list_of_files_to_upload_from_artifact_path(_artifact_path())
@@ -37,4 +38,4 @@ def _file_name_without_artifact_path(file_name):
 
 def _artifact_path():
     from foundations_contrib.global_state import config_manager
-    return config_manager['artifact_path']
+    return config_manager.config().get('artifact_path')

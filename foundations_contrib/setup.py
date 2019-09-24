@@ -38,15 +38,11 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'dill==0.2.8.2',
-        'redis==2.10.6',
-        'pandas==0.23.3',
-        'PyYAML==3.13',
-        'promise==2.2.1',
         'tabulate==0.8.3',
         'slackclient==1.3.0',
         'psutil==5.6.2',
         'jsonschema==3.0.2',
+        'pyarmor==5.5.6',
         'foundations-internal=={}'.format(build_version),
         'foundations-events=={}'.format(build_version)
     ],

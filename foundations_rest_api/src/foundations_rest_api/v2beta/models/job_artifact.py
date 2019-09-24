@@ -34,9 +34,9 @@ class JobArtifact(PropertyModel):
     @staticmethod
     def _build_artifact_model(job_id, artifact_properities):
         import os.path as path
-        import foundations
+        from foundations_contrib.global_state import config_manager
 
-        archive_host = foundations.config_manager['ARCHIVE_HOST']
+        archive_host = config_manager['ARCHIVE_HOST']
         key, file_path, metadata = artifact_properities['artifact']
         file_extension = JobArtifact._file_extension(file_path)
 

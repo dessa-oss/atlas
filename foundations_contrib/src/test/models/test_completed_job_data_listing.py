@@ -37,7 +37,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_without_inputs(self, mock_shaper, mock, mock_input_param_formatter):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         some_data = [{'input_params': [], 'job_parameters': 'something', 'output_metrics': 'idk'}]
         mock.return_value = some_data
@@ -57,7 +57,7 @@ class TestCompletedJobDataListing(unittest.TestCase):
     @patch.object(JobDataRedis, 'get_all_jobs_data')
     @patch.object(JobDataShaper, 'shape_output_metrics')
     def test_gets_completed_job_data_without_inputs_different_project(self, mock_shaper, mock, mock_input_param_formatter):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         some_data = [{'input_params': [], 'job_parameters': 'something', 'output_metrics': 'idk'}]
         mock.return_value = some_data

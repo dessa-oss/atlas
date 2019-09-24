@@ -12,9 +12,9 @@ from mock import Mock
 class TestConsumers(unittest.TestCase):
 
     def setUp(self):
-        from foundations.global_state import redis_connection
-        from foundations.global_state import message_router
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import redis_connection
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.global_state import config_manager
         from foundations_internal.pipeline_context import PipelineContext
         from foundations_internal.pipeline import Pipeline
         from slackclient import SlackClient
@@ -46,7 +46,7 @@ class TestConsumers(unittest.TestCase):
         self._testing_channel_id = config_manager['job_notification_channel_id']
 
     def test_queue_job_consumers(self):
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
         from foundations_contrib.models.project_listing import ProjectListing
         from foundations_contrib.producers.jobs.queue_job import QueueJob
         from time import time
@@ -136,8 +136,8 @@ class TestConsumers(unittest.TestCase):
         return 'projects:{}:stage_time'.format(project_name)
 
     def test_running_job_consumers(self):
-        from foundations.global_state import message_router
-        from foundations.utils import byte_string
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.utils import byte_string
         from foundations_contrib.producers.jobs.run_job import RunJob
         from time import time
 
@@ -170,8 +170,8 @@ class TestConsumers(unittest.TestCase):
         self.assertIn('Running', notification)
 
     def test_completed_job_consumers(self):
-        from foundations.global_state import message_router
-        from foundations.utils import byte_string
+        from foundations_contrib.global_state import message_router
+        from foundations_contrib.utils import byte_string
         from time import time
 
         project_name = self._faker.name()
@@ -201,7 +201,7 @@ class TestConsumers(unittest.TestCase):
         self.assertEqual(expected_jobs, running_and_completed_jobs)
 
     def test_failed_job_consumers(self):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from time import time
 
         project_name = self._faker.name()
@@ -232,9 +232,9 @@ class TestConsumers(unittest.TestCase):
         self.assertIn('Failed', notification)
 
     def test_job_metric_consumers(self):
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
         from foundations_internal.fast_serializer import deserialize
-        from foundations.utils import byte_string
+        from foundations_contrib.utils import byte_string
         from time import time
 
         project_name = self._str_random_uuid()

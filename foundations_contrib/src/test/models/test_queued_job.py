@@ -20,7 +20,7 @@ class TestQueuedJob(Spec):
 
     mock_time = let_patch_mock('time.time')
 
-    mock_redis = let_patch_mock('foundations.global_state.redis_connection', FakeRedis())
+    mock_redis = let_patch_mock('foundations_contrib.global_state.redis_connection', FakeRedis())
 
     @let
     def mock_redis_pipeline(self):

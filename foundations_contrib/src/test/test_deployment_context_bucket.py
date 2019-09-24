@@ -18,7 +18,7 @@ class TestDeploymentContextBucket(Spec):
         from foundations.config_manager import ConfigManager
 
         config_manager = ConfigManager()
-        return self.patch('foundations.global_state.config_manager', config_manager)
+        return self.patch('foundations_contrib.global_state.config_manager', config_manager)
 
     @set_up
     def set_up(self):

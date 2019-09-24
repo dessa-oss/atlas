@@ -121,7 +121,7 @@ class ConfigManager(object):
     @staticmethod
     def _string_to_type(type_as_string):
         from pydoc import locate
-        from foundations.utils import is_string
+        from foundations_contrib.utils import is_string
 
         if is_string(type_as_string):
             return locate(type_as_string)
@@ -154,5 +154,5 @@ class ConfigManager(object):
             return default_callback, [], {}
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)

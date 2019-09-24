@@ -65,7 +65,7 @@ def mock_whoami():
 @patch("foundations.utils.whoami", mock_whoami)
 class TestSchedulerLocalBackend(unittest.TestCase):
     def setUp(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         config_manager["archive_listing_implementation"] = {
             "archive_listing_type": MockListing

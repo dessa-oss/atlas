@@ -109,5 +109,5 @@ class SimpleWorker(object):
             tar.extractall()
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)

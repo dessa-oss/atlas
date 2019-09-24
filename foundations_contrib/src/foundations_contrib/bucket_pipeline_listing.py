@@ -22,7 +22,7 @@ class BucketPipelineListing(object):
             self._log().debug('{} already exists!'.format(pipeline_name))
 
     def get_pipeline_names(self):
-        from foundations.utils import string_from_bytes
+        from foundations_contrib.utils import string_from_bytes
         from foundations_contrib.helpers.future import Future
 
         file_names = self._bucket.list_files('*.tracker')
@@ -34,5 +34,5 @@ class BucketPipelineListing(object):
         return [get_pipeline_name(name) for name in file_names]
 
     def _log(self):
-        from foundations.global_state import log_manager
+        from foundations_contrib.global_state import log_manager
         return log_manager.get_logger(__name__)

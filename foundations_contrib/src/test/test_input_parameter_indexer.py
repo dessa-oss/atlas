@@ -14,7 +14,7 @@ from foundations_contrib.input_parameter_formatter import InputParameterFormatte
 class TestInputParameterIndexer(unittest.TestCase):
 
     def setUp(self):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
 
         self._redis = redis_connection
         self._redis.flushall()

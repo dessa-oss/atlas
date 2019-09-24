@@ -26,7 +26,7 @@ class QueuedJob(PropertyModel):
 
     @staticmethod
     def all():
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
         from promise import Promise
         from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
 

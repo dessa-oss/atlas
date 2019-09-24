@@ -18,7 +18,7 @@ class Future(object):
     
     @staticmethod
     def execute(target, *args, **kwargs):
-        from foundations.global_state import default_executor
+        from foundations_contrib.global_state import default_executor
         from promise import Promise
 
         def callback(resolve, reject):

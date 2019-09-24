@@ -70,6 +70,8 @@ start_ui () {
         --name ${image_name}-rest-api \
         -e REDIS_URL="${redis_url}" \
         -e FOUNDATIONS_ARCHIVE_HOST="${FOUNDATIONS_ARCHIVE_HOST}" \
+        -e FOUNDATIONS_TENSORBOARD_API_HOST="${FOUNDATIONS_TENSORBOARD_API_HOST}" \
+        -e FOUNDATIONS_TENSORBOARD_HOST="${FOUNDATIONS_TENSORBOARD_HOST}" \
         --network foundations-gui \
         -v $HOME/.kube:/root/.kube:ro \
         docker.shehanigans.net/${image_name}-rest-api:${image_tag} \

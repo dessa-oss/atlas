@@ -13,6 +13,24 @@ def foundations_home():
     return os.environ.get('FOUNDATIONS_HOME', '~/.foundations')
 
 
+def force_encoding(string):
+    return string.encode('utf-8', 'ignore')
+
+
+def byte_string(string):
+    if isinstance(string, bytes):
+        return string
+    else:
+        return bytes(force_encoding(string))
+
+
+def string_from_bytes(string):
+    if is_string(string):
+        return string
+    else:
+        return string.decode()
+
+
 def is_number(number):
     return isinstance(number, (int, float))
 

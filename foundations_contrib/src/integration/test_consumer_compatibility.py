@@ -12,7 +12,7 @@ from mock import Mock
 class TestConsumerCompatibility(unittest.TestCase):
 
     def setUp(self):
-        from foundations.global_state import redis_connection
+        from foundations_contrib.global_state import redis_connection
         from uuid import uuid4
 
         self._redis = redis_connection

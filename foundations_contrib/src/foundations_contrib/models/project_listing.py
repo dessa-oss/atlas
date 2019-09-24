@@ -19,7 +19,7 @@ class ProjectListing(object):
             list -- The list of project names and creation dates
         """
 
-        from foundations.utils import string_from_bytes
+        from foundations_contrib.utils import string_from_bytes
 
         projects = redis_connection.zrange('projects', 0, -1, withscores=True)
         return [{'name': string_from_bytes(name), 'created_at': created_at} for name, created_at in projects]
