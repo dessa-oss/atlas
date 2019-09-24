@@ -35,15 +35,20 @@ spec:
         volumeMounts:
         - mountPath: /archive
           name: archive
-        - mountPath: /root/.foundations/config
-          name: scheduler-config
+        - mountPath: /root/.foundations/config/execution
+          name: execution-config
+        - mountPath: /root/.foundations/config/submission
+          name: submission-config
       volumes: 
         - name: 'archive'
           persistentVolumeClaim: 
             claimName: 'archive-storage'
-        - name: scheduler-config
+        - name: execution-config
           configMap:
-            name: model-package-server-configuration
+            name: worker-execution-configuration
+        - name: submission-config
+          configMap:
+            name: model-package-submission-config
       imagePullSecrets:
       - name: dessa-registry-credentials
 ---

@@ -10,10 +10,10 @@ if [[ -z $job_id ]]; then
 fi
 
 echo 'configuring config map for model package server'
-envsubst < ../scheduler_config_map.yaml | kubectl apply -f -
+envsubst < ../submission_config.yaml | kubectl apply -f -
 echo 'Successfully configured config map for $job_id'
 
-envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl create -f -
+envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f -
 echo "Preparing $model_name for serving"
 
 python ingress_modifier.py $project_name $model_name > /dev/null 2>&1

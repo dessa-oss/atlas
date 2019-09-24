@@ -122,6 +122,7 @@ class TestOrbitDeployModelViaCli(Spec):
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
+            self._wait_for_deployment_pod_to_delete(f'foundations-model-package-{self.mock_project_name}-{self.mock_user_provided_model_name}')
             self.assertIsNone(self._check_if_endpoint_available())
 
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
@@ -250,6 +251,27 @@ class TestOrbitDeployModelViaCli(Spec):
         with open(self.config_file_path, 'w+') as file:
             file.write(config_yaml)
 
+    def _wait_for_deployment_pod_to_delete(self, deployment):
+        import subprocess
+
+        import time
+
+        start_time = time.time()
+        while time.time() - start_time < 60:
+            if self._deployment_pods(deployment) == []:
+                return
+            time.sleep(2)
+
+        self.fail('deployment pod failed to stop')
+
+    def _deployment_pods(self, deployment):
+        import subprocess
+        import yaml
+        import shlex
+
+        process = subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test get pods -l app={deployment} -o yaml'), stdout=subprocess.PIPE)
+        yaml_output = yaml.load(process.stdout.decode())
+        return yaml_output['items']
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
@@ -257,5 +279,5 @@ class TestOrbitDeployModelViaCli(Spec):
         subprocess.run(command.split())
         command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
         subprocess.run(command.split())
-        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-server-configuration'
+        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'
         subprocess.run(command.split())
