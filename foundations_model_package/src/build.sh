@@ -15,7 +15,7 @@ export build_version=`echo $pip_version | sed 's/+/_/g'`
 rm -rf tmp/pip_wheels && \
     mkdir -p tmp/pip_wheels && \
     cp ../../dist/* tmp/pip_wheels && \
-    python -m pip download --find-links=tmp/pip_wheels foundations-rest-api==${pip_version} --dest tmp/pip_wheels
+    python -m pip download --find-links=tmp/pip_wheels dessa_foundations==${pip_version} foundations-rest-api==${pip_version} --dest tmp/pip_wheels
 
 image_name=docker.shehanigans.net/foundations-model-package
 

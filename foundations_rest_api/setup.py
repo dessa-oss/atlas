@@ -26,7 +26,7 @@ setup(
         'Intended Audience :: Developers',
     ],
     install_requires=[
-        'dessa_foundations=={}'.format(build_version),
+        'foundations_contrib=={}'.format(build_version),
         'foundations_core_rest_api_components=={}'.format(build_version),
         'flask-restful==0.3.6',
         'Flask-Cors==3.0.6',
