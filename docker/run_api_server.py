@@ -10,30 +10,32 @@ os.environ['FOUNDATIONS_COMMAND_LINE'] = 'True'
 
 from foundations_contrib.global_state import config_manager
 from foundations_rest_api.global_state import app_manager
-from foundations_scheduler_plugin.config.scheduler import translate
 import subprocess
 import yaml
 
 if os.path.exists("/root/.kube"):
+    from foundations_scheduler_plugin.config.scheduler import translate
+    
     nodes_yaml = subprocess.check_output(["/bin/bash", "-c", "kubectl get node -o yaml -l node-role.kubernetes.io/master="""]).decode()
     nodes = yaml.load(nodes_yaml)
     master_ip = nodes['items'][0]['status']['addresses'][0]['address']
-else:
-    master_ip = "127.0.0.1"
 
-submission_config = {
-    'results_config': {
-        'redis_end_point': os.environ["REDIS_URL"]
-    },
-    'ssh_config': {
-        'host': master_ip,
-        'port': 31222,
-        'code_path': '/jobs',
-        'key_path': '~/.ssh/id_foundations_scheduler',
-        'user': 'job-uploader'
+    submission_config = {
+        'results_config': {
+            'redis_end_point': os.environ["REDIS_URL"]
+        },
+        'ssh_config': {
+            'host': master_ip,
+            'port': 31222,
+            'code_path': '/jobs',
+            'key_path': '~/.ssh/id_foundations_scheduler',
+            'user': 'job-uploader'
+        }
     }
-}
-translated_submission_config = translate(submission_config)
+    translated_submission_config = translate(submission_config)
+else:
+    translated_submission_config = {'redis_url': os.environ["REDIS_URL"]}
+
 configuration = config_manager.config()
 configuration.update(translated_submission_config)
 

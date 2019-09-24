@@ -5,7 +5,7 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-from foundations.global_state import message_router, config_manager
+from foundations_contrib.global_state import message_router, config_manager
 from foundations_contrib.notifiers.slack_notifier import SlackNotifier
 from foundations_contrib.notifiers.job_notifier import JobNotifier
 
@@ -103,7 +103,7 @@ def _add_consumers_for_fail_job(redis):
 
 
 def _create_redis_instance_and_add_consumers():
-    from foundations.global_state import redis_connection
+    from foundations_contrib.global_state import redis_connection
 
     _add_consumers_for_stage_log_middleware(redis_connection)
     _add_consumers_for_queue_job(redis_connection)

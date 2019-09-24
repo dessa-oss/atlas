@@ -9,7 +9,7 @@ import unittest
 from mock import Mock, patch, call
 
 from foundations_contrib.middleware.metric_log_middleware import MetricLogMiddleware
-from foundations.global_state import message_router
+from foundations_contrib.global_state import message_router
 from uuid import uuid4
 
 

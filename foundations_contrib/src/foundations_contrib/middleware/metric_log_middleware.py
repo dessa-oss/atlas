@@ -48,7 +48,7 @@ class MetricLogMiddleware(BasicStageMiddleware):
         Return:
             return_value - result from callback execution
         """
-        from foundations.global_state import message_router
+        from foundations_contrib.global_state import message_router
 
         return_value = callback(args, kwargs)
 

@@ -63,6 +63,19 @@
 
     .button-management {
       margin-top: 8px;
+      font-weight: normal;
+
+      &.recalibrate {
+        background: #2bab89;
+      }
+
+      &.deactivate {
+        background: #dc5454;
+      }
+
+      &.activate {
+        background: #71a0f6;
+      }
     }
   }
 }
@@ -457,8 +470,13 @@
     line-height: 30px;
     text-align: center;
     display: inline-block;
-    width: calc(100% - 30px);
+    width: calc(100% - 60px);
     vertical-align: middle;
+
+    &.status-text {
+      width: calc(100% - 130px);
+      padding-left: 15px;
+    }
 
     &.active {
       color: $color-status-green;

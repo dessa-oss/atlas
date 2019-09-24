@@ -47,11 +47,7 @@ class RunningJob(PropertyModel):
 
     @staticmethod
     def contexts():
-        from foundations.job_persister import JobPersister
-
-        with JobPersister.load_archiver_fetch() as archiver_fetch:
-            for archiver in archiver_fetch.fetch_archivers():
-                yield archiver.pipeline_name(), RunningJob.load_context(archiver)
+        raise NotImplementedError()
 
     @staticmethod
     def load_context(archiver):

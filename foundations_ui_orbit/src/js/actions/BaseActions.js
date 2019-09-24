@@ -1,5 +1,6 @@
 const baseURL = process.env.REACT_APP_API_URL;
 const baseApiaryURL = process.env.REACT_APP_APIARY_URL;
+const baseMasterURL = process.env.REACT_APP_APIARY_URL;
 
 const get = url => {
   const fullURL = baseURL.concat(url);
@@ -46,6 +47,25 @@ const post = (url, body) => {
 
 const postApiary = (url, body) => {
   const fullURL = baseApiaryURL.concat(url);
+  return fetch(fullURL, {
+    method: "post",
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => res.json())
+    .then(result => {
+      return result;
+    })
+    .catch(() => {
+      return null;
+    });
+};
+
+const postMaster = (url, body) => {
+  const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL, {
     method: "post",
     body: JSON.stringify(body),
@@ -141,5 +161,5 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getFromApiary, post, postApiary, put, putApiary, del, postJSONFile
+  get, getFromApiary, post, postApiary, postMaster, put, putApiary, del, postJSONFile
 };

@@ -58,7 +58,7 @@ class TestCompletedJobData(unittest.TestCase):
     def setUp(self):
         from foundations_internal.pipeline import Pipeline
         from foundations_internal.pipeline_context import PipelineContext
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.bucket_pipeline_archive import BucketPipelineArchive
 
         self._listing = self.MockArchiveListing()
@@ -89,7 +89,7 @@ class TestCompletedJobData(unittest.TestCase):
         self._pipeline = Pipeline(self._pipeline_context)
 
     def tearDown(self):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
 
         keys = list(config_manager.config().keys())
         for key in keys:

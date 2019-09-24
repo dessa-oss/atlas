@@ -21,7 +21,6 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         from copy import deepcopy
         import shutil
         
-        import foundations
         import foundations_contrib.global_state as global_state
         from foundations_internal.foundations_context import FoundationsContext
 
@@ -37,11 +36,11 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
         klass._make_completed_job(klass._no_artifacts, 'beethoven', start_timestamp=100000000, end_timestamp=100086400)
         klass._make_completed_job(klass._some_artifacts, 'beethoven', start_timestamp=100000001, end_timestamp=100086400)
 
-        klass._old_config = deepcopy(foundations.config_manager.config())
+        klass._old_config = deepcopy(global_state.config_manager.config())
         klass._old_context = global_state.foundations_context
 
-        foundations.config_manager.reset()
-        foundations.config_manager.add_simple_config_path('acceptance/v2beta/fixtures/stageless_local.config.yaml')
+        global_state.config_manager.reset()
+        global_state.config_manager.add_simple_config_path('acceptance/v2beta/fixtures/stageless_local.config.yaml')
 
         global_state.foundations_context = FoundationsContext(klass._pipeline)        
 
@@ -49,14 +48,13 @@ class TestArtifactLoading(JobsTestsHelperMixinV2, APIAcceptanceTestCaseBase):
 
     @classmethod
     def tearDownClass(klass):
-        import foundations
         import foundations_contrib.global_state as global_state
         from foundations_contrib.global_state import redis_connection as redis
 
         redis.flushall()
 
-        foundations.config_manager.reset()
-        foundations.config_manager.config().update(klass._old_config)
+        global_state.config_manager.reset()
+        global_state.config_manager.config().update(klass._old_config)
 
         global_state.foundations_context = klass._old_context
 

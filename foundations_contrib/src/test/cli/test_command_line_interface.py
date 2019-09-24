@@ -424,10 +424,6 @@ class TestCommandLineInterface(Spec):
     mock_deploy_job = let_patch_mock('foundations_contrib.job_deployer.deploy_job')
     mock_deploy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.deploy')
     mock_destroy_model_package = let_patch_mock('foundations_contrib.cli.model_package_server.destroy')
-    # orbit
-    mock_orbit_deploy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy')
-    mock_orbit_stop_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.stop')
-    mock_orbit_destroy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.destroy')
 
     def _process_constructor(self, pid):
         from psutil import NoSuchProcess
@@ -451,37 +447,6 @@ class TestCommandLineInterface(Spec):
     def test_server_destroys_model_server_with_specified_model_name(self):
         CommandLineInterface(['serve', 'stop', f'--project_name={self.fake_project_name}', self.mock_model_name]).execute()
         self.mock_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_model_name)
-
-    def test_orbit_serve_start_with_specificed_project_model_and_directory(self):
-        self._run_model_within_orbit_with_specified_project_name_model_name_project_directory(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory)
-        self.mock_orbit_deploy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, self.fake_directory, 'local')
-
-    def test_orbit_serve_stop_with_specificed_project_and_model(self):
-        self._launch_orbit_with_specified_command_using_project_name_model_name('stop', self.fake_project_name, self.mock_user_provided_model_name)
-        self.mock_orbit_stop_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
-
-    def test_orbit_serve_destroy_with_specified_project_and_model(self):
-        self._launch_orbit_with_specified_command_using_project_name_model_name('destroy', self.fake_project_name, self.mock_user_provided_model_name)
-        self.mock_orbit_destroy_model_package.assert_called_with(self.fake_project_name, self.mock_user_provided_model_name, 'local')
-
-    def _run_model_within_orbit_with_specified_project_name_model_name_project_directory(self, project_name, model_name, project_directory):
-        CommandLineInterface([
-                'orbit',
-                'serve', 
-                'start',
-                '--project_name={}'.format(project_name),
-                '--model_name={}'.format(model_name),
-                '--project_directory={}'.format(project_directory)
-            ]).execute()
-
-    def _launch_orbit_with_specified_command_using_project_name_model_name(self, command, project_name, model_name):
-        CommandLineInterface([
-                'orbit',
-                'serve', 
-                command,
-                '--project_name={}'.format(project_name),
-                '--model_name={}'.format(model_name)
-            ]).execute()
 
     def test_retrieve_artifacts_calls_environment_fetcher(self):
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--env={}'.format(self.fake_env)]).execute()

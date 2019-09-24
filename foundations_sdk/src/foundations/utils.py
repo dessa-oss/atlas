@@ -15,10 +15,6 @@ def using_python_2():
     return version_info[0] < 3
 
 
-def force_encoding(string):
-    return string.encode('utf-8', 'ignore')
-
-
 def byte_string(string):
     if isinstance(string, bytes):
         return string

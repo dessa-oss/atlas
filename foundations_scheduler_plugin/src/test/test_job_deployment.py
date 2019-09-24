@@ -208,6 +208,10 @@ class TestJobDeployment(Spec):
 
         self.assertEqual(mock_log_stream, self.deployment.stream_job_logs())
 
+    def test_config_has_reasonable_default_set_when_script_to_run_is_not_set_in_config_manager(self):
+        self.config_manager.config()['run_script_environment'] = {}
+        self.assertEqual('main.py', self.deployment.config()['run_script_environment']['script_to_run'])
+
     @staticmethod
     def _error_callback():
         raise Exception

@@ -56,4 +56,4 @@ class TestRecalibrateDriver(Spec, MockFileSystem):
         self.assertFalse(path.isfile(entrypoint_script_name))
 
     def _expected_file_contents(self, entrypoint_name):
-        return f'import os\n\nimport foundations\nfrom {self.module_name} import {self.function_name}\n\nparams = foundations.load_parameters()\n{self.function_name}(**params)\nos.remove({entrypoint_name})\n'
+        return f'import os\n\nimport foundations\nfrom {self.module_name} import {self.function_name}\n\nparams = foundations.load_parameters()\n{self.function_name}(**params)\nos.remove(\'{entrypoint_name}\')\n'

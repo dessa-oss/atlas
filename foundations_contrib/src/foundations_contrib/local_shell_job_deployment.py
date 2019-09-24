@@ -9,7 +9,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class LocalShellJobDeployment(object):
 
     def __init__(self, job_name, job, job_source_bundle):
-        from foundations.global_state import config_manager
+        from foundations_contrib.global_state import config_manager
         from foundations_contrib.job_bundler import JobBundler
 
         self._config = {}

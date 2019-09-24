@@ -41,6 +41,17 @@ const SystemHealth = props => {
     setShowDataQualityTab(true);
   };
 
+  const formatPercentage = val => {
+    if (!Number.isNaN(val)) {
+      let percentage = val * 100;
+      if (Number.isInteger(percentage)) {
+        return percentage;
+      }
+      return percentage.toFixed(1);
+    }
+    return 0;
+  };
+
   const reload = () => {
     const { location } = props;
 
@@ -221,8 +232,8 @@ const SystemHealth = props => {
             <tr>
               <th>Attribute Name</th>
               <th>Value</th>
-              <th>% In Reference Data</th>
-              <th>% In Production Data</th>
+              <th>Expected (%)</th>
+              <th>Actual (%)</th>
               <th>Difference</th>
               <th>Validation Outcome</th>
             </tr>
@@ -234,9 +245,9 @@ const SystemHealth = props => {
                   <tr key={row.attribute_name}>
                     <td>{row.attribute_name}</td>
                     <td>{row.value}</td>
-                    <td>{row.pct_in_reference_data}</td>
-                    <td>{row.pct_in_current_data}</td>
-                    <td>{row.difference_in_pct}</td>
+                    <td>{formatPercentage(row.pct_in_reference_data)}</td>
+                    <td>{formatPercentage(row.pct_in_current_data)}</td>
+                    <td>{formatPercentage(row.difference_in_pct)}</td>
                     <td className={getValidationColor(row.validation_outcome)}>
                       {row.validation_outcome}
                       <div className="circle" />

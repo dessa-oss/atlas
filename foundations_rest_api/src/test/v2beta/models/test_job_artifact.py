@@ -40,7 +40,7 @@ class TestJobArtifact(Spec):
 
         self.config_manager = ConfigManager()
         self.config_manager['ARCHIVE_HOST'] = self.archive_host
-        self.patch('foundations.config_manager', self.config_manager)
+        self.patch('foundations_contrib.global_state.config_manager', self.config_manager)
 
     def test_artifact_has_filename(self):
         job_artifact = JobArtifact(filename=self.filename)

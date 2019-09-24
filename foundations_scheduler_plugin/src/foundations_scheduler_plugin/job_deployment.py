@@ -24,7 +24,7 @@ class JobDeployment(object):
         import copy
 
         config = copy.deepcopy(config_manager.config())
-        config['run_script_environment']['script_to_run'] = config['run_script_environment']['script_to_run'] or 'main.py'
+        config['run_script_environment']['script_to_run'] = config['run_script_environment'].get('script_to_run') or 'main.py'
         config['_is_deployment'] = True
 
         return config

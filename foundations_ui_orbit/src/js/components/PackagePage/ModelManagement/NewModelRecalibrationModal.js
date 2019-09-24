@@ -3,7 +3,7 @@ import Flatpickr from "react-flatpickr";
 import PropTypes from "prop-types";
 import { Modal, ModalBody } from "reactstrap";
 import moment from "moment";
-import { post } from "../../../actions/BaseActions";
+import { post, postMaster } from "../../../actions/BaseActions";
 
 const NewModelRecalibrationModal = props => {
   const [startDate, setStartDate] = React.useState("");
@@ -148,7 +148,9 @@ const NewModelRecalibrationModal = props => {
         body[parameter.key] = parameter.value;
       });
 
-      post(`/projects/${props.location.state.project.name}/${modelName}/recalibrate`,
+      console.log("MODEL: ", props.model);
+
+      postMaster(`projects/${props.location.state.project.name}/${props.model.model_name}/recalibrate`,
         body)
         .then(() => {
           props.reload();

@@ -8,6 +8,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 from foundations_spec import *
 
 from foundations_model_package.resource_factories import recalibrate_resource
+class MockThread(object):
+
+    def __init__(self, target=None, args=(), kwargs={}):
+        self.target = target
+        self.args = args
+        self.kwargs = kwargs
+
+    def start(self):
+        self.target(self.args, kwargs=self.kwargs)
 
 class TestRecalibrateResource(Spec):
     
@@ -16,8 +25,14 @@ class TestRecalibrateResource(Spec):
     mock_flask_request = let_patch_mock('flask.request')
     mock_recalibrate_driver = let_mock()
 
-    mock_get_cwd = let_patch_mock('os.getcwd')
+    mock_wait = let_patch_mock('foundations_model_package.recalibrate_deployer._wait_for_job_to_complete')
+    mock_recalibrate_deployer_class = let_patch_mock('foundations_model_package.recalibrate_deployer.RecalibrateDeployer')
+    mock_recalibrate_deployer = let_mock()
+    mock_thread = let_patch_mock('threading.Thread')
 
+    @let_now
+    def mock_get_cwd(self):
+        return self.patch('os.getcwd', return_value=self.cwd)
 
     @let
     def project_name(self):
@@ -37,7 +52,7 @@ class TestRecalibrateResource(Spec):
 
     @let
     def cwd(self):
-        return self.faker.file_path
+        return self.faker.file_path()
 
     @let
     def time(self):
@@ -65,6 +80,10 @@ class TestRecalibrateResource(Spec):
 
         self.mock_get_cwd.return_value = self.cwd
 
+        mock_load_incluster_config = self.patch('kubernetes.config.load_incluster_config')
+        mock_placeholder = Mock()
+        mock_load_incluster_config.return_value = mock_placeholder
+
     def test_recalibrate_resource_is_instance_of_flask_restful_resource(self):
         from flask_restful import Resource
 
@@ -80,7 +99,8 @@ class TestRecalibrateResource(Spec):
 
     def test_recalibrate_resource_calls_foundations_submit_with_entrypoint_equal_to_recalibrate_driver_path(self):
         self._perform_recalibrate(self.mock_recalibrate_driver)
-        self.mock_submit.assert_called_with(project_name=self.project_name, entrypoint=self.recalibrate_driver_path, params=self.params)
+        self.params.pop('model-name')
+        self.mock_submit.assert_called_with(project_name=self.project_name, entrypoint=self.recalibrate_driver_path, params=self.params, num_gpus=0)
 
     def test_recalibrate_resource_serves_new_model(self):
         payload, code = self._perform_recalibrate(self.mock_recalibrate_driver)
@@ -101,35 +121,12 @@ class TestRecalibrateResource(Spec):
         error_message, _ = self._perform_recalibrate(None)
         self.assertEqual({'error': 'recalibrate not set in manifest'}, error_message)
 
-    def test_recalibrate_resource_adds_listener_for_completed_job(self):
-        mock_add_listener = self.patch('foundations.global_state.message_router.add_listener')
-        mock_recalibrate_deployer_class = self.patch('foundations_model_package.recalibrate_deployer.RecalibrateDeployer', ConditionalReturn())
-        mock_recalibrate_deployer = Mock()
-        mock_recalibrate_deployer_class.return_when(mock_recalibrate_deployer, self.job_id, self.project_name, self.model_name, self.cwd)
-
+    def test_recalibrate_deployer_start_is_called_by_thread(self):
+        self.mock_thread.return_value = MockThread(target=self.mock_recalibrate_deployer.start)
+        self.mock_recalibrate_deployer_class.return_value = self.mock_recalibrate_deployer
         self._perform_recalibrate(self.mock_recalibrate_driver)
-        mock_add_listener.assert_called_once_with(mock_recalibrate_deployer, 'complete_job')
+        self.mock_recalibrate_deployer.start.assert_called()
 
-    def test_deployer_is_called_when_job_complete_event_is_triggered(self):
-        from foundations.global_state import message_router
-
-        mock_time = self.patch('time.time')
-        mock_time.return_value = self.time
-
-        mock_recalibrate_deployer_class = self.patch('foundations_model_package.recalibrate_deployer.RecalibrateDeployer', ConditionalReturn())
-        mock_recalibrate_deployer = Mock()
-        mock_recalibrate_deployer_class.return_when(mock_recalibrate_deployer, self.job_id, self.project_name, self.model_name, self.cwd)
-        self._perform_recalibrate(self.mock_recalibrate_driver)
-
-        message = {
-            'job_id': self.job_id,
-            'project_name': self.project_name
-        }
-
-        message_router.push_message('complete_job', message)
-
-        mock_recalibrate_deployer.call.assert_called_once_with(message, self.time, None)
-        
     def _perform_recalibrate(self, recalibrate_driver):
         self.mock_flask_request.json = self.params
 

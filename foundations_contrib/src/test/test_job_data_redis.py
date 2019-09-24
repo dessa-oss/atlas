@@ -15,7 +15,7 @@ import six
 from foundations_spec import *
 from foundations_contrib.job_data_redis import JobDataRedis
 from foundations_contrib.redis_pipeline_wrapper import RedisPipelineWrapper
-from foundations.global_state import redis_connection
+from foundations_contrib.global_state import redis_connection
 
 
 class TestJobDataRedis(Spec):

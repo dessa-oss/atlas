@@ -10,18 +10,21 @@ from tabulate import tabulate
 class CommandLineInterface(object):
 
     def __init__(self, args):
+        from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
+        from foundations_contrib.cli.sub_parsers.orbit_parser import OrbitParser
+
         self._input_arguments = args
 
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
 
+        SetupParser(self).add_sub_parser()
+        OrbitParser(self).add_sub_parser()
+
         self._initialize_init_parser()
         self._initialize_submit_parser()
         self._initialize_info_parser()
         self._initialize_retrieve_parser()
-        self._initialize_stop()
-        self._initialize_clear_queue()
-        self._initialize_delete_parser()
 
     def add_sub_parser(self, name, help=None):
         sub_parser = self._subparsers.add_parser(name, help=help)
@@ -101,54 +104,6 @@ class CommandLineInterface(object):
         serving_deploy_parser = serving_subparsers.add_parser('stop', help='Stop foundations model package server')
         serving_deploy_parser.set_defaults(function=self._model_serving_stop)
 
-    def _initialize_orbit_model_serve_parser(self):
-        orbit_parser = self.add_sub_parser('orbit', help='Provides operations for managing projects and models in Orbit')
-        orbit_subparsers = orbit_parser.add_subparsers()
-
-        serving_parser = orbit_subparsers.add_parser('serve')
-        serving_subparsers = serving_parser.add_subparsers()
-
-        serving_deploy_parser = serving_subparsers.add_parser('start')
-        serving_deploy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_deploy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_deploy_parser.add_argument('--project_directory', required=True, type=str, help='The location of the code and resources used to define the model')
-        serving_deploy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_deploy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_deploy)
-
-        serving_stop_parser = serving_subparsers.add_parser('stop')
-        serving_stop_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_stop_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_stop_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_stop_parser.set_defaults(function=self._kubernetes_orbit_model_serving_stop)
-
-        serving_destroy_parser = serving_subparsers.add_parser('destroy')
-        serving_destroy_parser.add_argument('--project_name', required=True, type=str, help='The user specified name for the project that the model will be added to')
-        serving_destroy_parser.add_argument('--model_name', required=True, type=str, help='The unique name of the model within the project')
-        serving_destroy_parser.add_argument('--env', required=False, type=str, help='Specifies the execution environment where jobs are ran')
-        serving_destroy_parser.set_defaults(function=self._kubernetes_orbit_model_serving_destroy)
-
-    def _initialize_stop(self):
-        stop_parser = self.add_sub_parser('stop', help='Stops a running job')
-        stop_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment the job is running in')
-        stop_parser.add_argument('job_id', type=str, help='Specify job ID of running job')
-        stop_parser.set_defaults(function=self._stop)
-
-    def _initialize_clear_queue(self):
-        clear_queue_parser = self.add_sub_parser('clear-queue', help='Clears all scheduled jobs from the queue')
-        clear_queue_parser.add_argument('scheduler_config', metavar='scheduler-config', help='Environment to clear the queue')
-        clear_queue_parser.set_defaults(function=self._clear_queue)
-
-    def _initialize_delete_parser(self):
-        delete_parser = self.add_sub_parser('delete', help='Delete items from execution environment')
-        delete_subparsers = delete_parser.add_subparsers()
-        self._initialize_delete_job_parser(delete_subparsers)
-
-    def _initialize_delete_job_parser(self, delete_subparsers):
-        delete_job_parser = delete_subparsers.add_parser('job', help='Delete jobs')
-        delete_job_parser.add_argument('scheduler_config', type=str, help='Environment to delete job from')
-        delete_job_parser.add_argument('job_id', type=str, help='Specify job ID of already deployed job')
-        delete_job_parser.set_defaults(function=self._delete_job)
-
     def execute(self):
         from foundations_contrib.global_state import log_manager
 
@@ -161,6 +116,9 @@ class CommandLineInterface(object):
             else:
                 print(f'Error running command: {error}')
                 exit(1)
+
+    def arguments(self):
+        return self._arguments
 
     def _no_command(self):
         import foundations
@@ -418,88 +376,3 @@ class CommandLineInterface(object):
     def _kubernetes_model_serving_destroy(self):
         from foundations_contrib.cli.model_package_server import destroy
         destroy(self._arguments.project_name, self._arguments.model_name)
-
-    def _kubernetes_orbit_model_serving_deploy(self):
-        from foundations_contrib.cli.orbit_model_package_server import deploy
-        from foundations_contrib.global_state import message_router
-
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-
-        try:
-            successfully_added = deploy(self._arguments.project_name, self._arguments.model_name, self._arguments.project_directory, env)
-
-            if successfully_added:
-                message_router.push_message('orbit_project_model_served', {
-                    'project_name': self._arguments.project_name,
-                    'model_name': self._arguments.model_name,
-                    'project_directory': self._arguments.project_directory
-                })
-            # else:
-            #     message = f'Error: model {self._arguments.model_name} exists in project {self._arguments.project_name}. Aborting'
-            #     self._fail_with_message(message)
-        except Exception as e:
-            self._fail_with_message(e)
-
-
-    def _kubernetes_orbit_model_serving_stop(self):
-        from foundations_contrib.cli.orbit_model_package_server import stop
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-        successfully_stopped = stop(self._arguments.project_name, self._arguments.model_name, env)
-
-    def _kubernetes_orbit_model_serving_destroy(self):
-        from foundations_contrib.cli.orbit_model_package_server import destroy
-        env = self._arguments.env if self._arguments.env is not None else 'local'
-        successfully_destroy = destroy(self._arguments.project_name, self._arguments.model_name, env)
-
-    def _stop(self):
-        from foundations_contrib.global_state import config_manager
-        from foundations_contrib.cli.job_submission.config import load
-        from foundations_contrib.change_directory import ChangeDirectory
-        import os
-
-        env_name = self._arguments.scheduler_config
-        job_id = self._arguments.job_id
-        current_directory = os.getcwd()
-
-        with ChangeDirectory(current_directory):
-            load(self._arguments.scheduler_config or 'scheduler')
-
-        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
-        job_deployment = job_deployment_class(job_id, None, None)
-
-        try:
-            job_status = job_deployment.get_job_status()
-
-            if job_status is None:
-                self._fail_with_message('Error: Job `{}` does not exist for environment `{}`'.format(job_id, env_name))
-            elif job_status == 'queued':
-                self._fail_with_message('Error: Job `{}` is queued and cannot be stopped'.format(job_id))
-            elif job_status == 'completed':
-                self._fail_with_message('Error: Job `{}` is completed and cannot be stopped'.format(job_id))
-            else:
-                if job_deployment.stop_running_job():
-                    print('Stopped running job {}'.format(job_id))
-                else:
-                    print('Error stopping job {}'.format(job_id))
-        except AttributeError:
-            print('The specified scheduler does not support this functionality')
-
-    def _clear_queue(self):
-        from foundations_contrib.global_state import config_manager
-        from foundations_contrib.cli.job_submission.config import load
-        from foundations_contrib.change_directory import ChangeDirectory
-        import os
-
-        env_name = self._arguments.scheduler_config
-        current_directory = os.getcwd()
-
-        with ChangeDirectory(current_directory):
-            load(self._arguments.scheduler_config or 'scheduler')
-
-        job_deployment_class = config_manager['deployment_implementation']['deployment_type']
-
-        try:
-            num_jobs_dequeued = job_deployment_class.clear_queue()
-            print('Removed {} job(s) from queue'.format(num_jobs_dequeued))
-        except AttributeError:
-            print('The specified scheduler does not support this functionality')
