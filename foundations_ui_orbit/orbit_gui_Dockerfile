@@ -23,7 +23,6 @@ RUN openssl genrsa -des3 -passout pass:x -out /etc/nginx/localhost.pass.key \
 
 ENV REACT_APP_API_URL="/foundations_rest_api/api/v1/"
 ENV REACT_APP_APIARY_URL="http://private-d03986-iannelladessa.apiary-mock.com/api/v1/"
-ENV REACT_APP_MASTER_URL=http://104.196.97.126:31998/
 ENV SERVER_NAME=localhost
 
 COPY ./ /var/foundations_ui_orbit/
