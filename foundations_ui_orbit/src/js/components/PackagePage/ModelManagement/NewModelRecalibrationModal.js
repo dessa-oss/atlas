@@ -141,7 +141,7 @@ const NewModelRecalibrationModal = props => {
       setError("Please fill the form to run the recalibration");
     } else {
       let body = {
-        model_name: modelName
+        "model-name": modelName
       };
 
       updatedParameters.forEach(parameter => {
