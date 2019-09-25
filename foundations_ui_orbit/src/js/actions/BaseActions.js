@@ -26,6 +26,13 @@ const getFromApiary = url => {
     });
 };
 
+const getMaster = (url, body) => {
+  const fullURL = baseMasterURL.concat(url);
+  return fetch(fullURL).then(res => {
+    return res.json();
+  });
+};
+
 const post = (url, body) => {
   const fullURL = baseURL.concat(url);
   return fetch(fullURL, {
@@ -65,7 +72,6 @@ const postApiary = (url, body) => {
 };
 
 const postMaster = (url, body) => {
-  console.log("ENV VARIABLES: ", process.env);
   const fullURL = baseMasterURL.concat(url);
   return fetch(fullURL, {
     method: "post",
@@ -162,5 +168,5 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getFromApiary, post, postApiary, postMaster, put, putApiary, del, postJSONFile
+  get, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile
 };

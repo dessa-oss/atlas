@@ -2,28 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import PackagePageHeader from "./PackagePageHeader";
-import { get } from "../../actions/BaseActions";
+import { get, getMaster, postMaster } from "../../actions/BaseActions";
 import moment from "moment";
 
 const PackageToolbar = props => {
-  const [demoOpen, setDemoOpen] = React.useState(false);
+  const [demoOpen, setDemoOpen] = React.useState(true);
   const [selectedDate, setSelectedDate] = React.useState("");
+  const [resetting, setResetting] = React.useState(false);
+  const [attribute, setAttribute] = React.useState("");
 
   const reload = () => {
-    get("dates/inference").then(result => {
-      let formattedDate = "July 12, 2019";
-
-      if (result) {
-        const items = result.data.length > 0 ? result.data : result.meta.fields;
-        const sortedItems = items.sort((a, b) => {
-          const date1 = new Date(a);
-          const date2 = new Date(b);
-          return date2 - date1;
-        });
-        formattedDate = moment(sortedItems[0])
-          .format("MMMM Do, YYYY")
-          .toString();
-      }
+    getMaster("simulator/get_date").then(result => {
+      let formattedDate = moment(result.current_date).format("YYYY-MM-DD").toString();
 
       setSelectedDate(formattedDate);
     });
@@ -41,33 +31,30 @@ const PackageToolbar = props => {
     setDemoOpen(false);
   };
 
-  const onClickReset = () => {
-    const { onLoading } = props;
-    onLoading(true, "Demo resetting...");
+  const onChangeAttribute = e => {
+    setAttribute(e.target.value);
+  };
 
-    get("reset")
+  const onClickReset = () => {
+    postMaster("simulator_admin/restart", {})
       .then(() => {
-        onLoading(false, "");
         reload();
-      })
-      .catch(() => {
-        onLoading(false, "");
       });
   };
 
-  const onClickFastForward = () => {
-    const { onLoading } = props;
+  const onClickSendIssue = () => {
+    if (attribute !== "") {
+      setResetting(true);
 
-    onLoading(true, "Fast forwarding...");
-
-    get("fastforward")
-      .then(() => {
-        onLoading(false, "");
-        reload();
-      })
-      .catch(() => {
-        onLoading(false, "");
-      });
+      getMaster(`simulator/fix_special_value?column_name=${attribute}`)
+        .then(() => {
+          setResetting(false);
+          reload();
+        })
+        .catch(() => {
+          setResetting(false);
+        });
+    }
   };
 
   const { project, title, openTutorial } = props;
@@ -87,7 +74,7 @@ const PackageToolbar = props => {
         <div className="icon-tutorial" onClick={openTutorial}>
           <p>?</p>
         </div>
-        {/* {demoOpen === true ? (
+        {demoOpen === true ? (
           <div className="container-layout-demo">
             <div className="container-demo-arrow">
               <i
@@ -95,23 +82,28 @@ const PackageToolbar = props => {
                 onClick={onClickCloseDemo}
               />
             </div>
-
-            <div className="container-demo-actions">
-              <p>Demo Management</p>
-              <p>{selectedDate}</p>
-              <div className="container-demo-buttons">
-                <button type="button" className="b--secondary-text" onClick={onClickReset}>
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="b--secondary-text"
-                  onClick={onClickFastForward}
-                >
-                  FAST FORWARD
-                </button>
+            {resetting === true && (
+              <div className="container-resetting">
+                <p>Request sent. This might take a moment.</p>
               </div>
-            </div>
+            )}
+            {resetting === false && (
+              <div className="container-demo-actions">
+                <div className="container-reset">
+                  <p className="label-date">{selectedDate}</p>
+                  <button type="button" className="b--secondary-text button-reset" onClick={onClickReset}>
+                    RESET TRIAL
+                  </button>
+                </div>
+                <div className="container-issue">
+                  <p>Report Data Issue</p>
+                  <input value={attribute} placeholder="Attribute name" onChange={onChangeAttribute} />
+                  <button type="button" className="b--secondary-text button-reset" onClick={onClickSendIssue}>
+                    SEND
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="container-layout-demo hidden">
@@ -120,7 +112,7 @@ const PackageToolbar = props => {
               onClick={onClickOpenDemo}
             />
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );
