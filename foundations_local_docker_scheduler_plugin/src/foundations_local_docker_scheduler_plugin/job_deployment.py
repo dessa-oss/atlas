@@ -89,7 +89,7 @@ class JobDeployment(object):
                                            'cleanup_spec': cleanup_spec
                                            })
         except requests.exceptions.ConnectionError:
-            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
         finally:
             self._job_bundler.cleanup()
 
@@ -133,7 +133,7 @@ class JobDeployment(object):
             else:
                 return None
         except:
-            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas start`.')
+            raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
 
     def get_job_logs(self):
         import requests
