@@ -8,7 +8,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import sys
 
 from foundations import Job, JobPersister, config_manager, log_manager, message_router
-from foundations_internal.error_printer import ErrorPrinter
 from foundations_contrib.job_source_bundle import JobSourceBundle
 from foundations_internal.serializer import serialize_to_file
 from foundations_contrib.global_state import foundations_context

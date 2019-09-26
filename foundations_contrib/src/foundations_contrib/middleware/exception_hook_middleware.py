@@ -10,14 +10,17 @@ import sys
 
 class ExceptionHookMiddleware(object):
     def __init__(self):
-        from foundations_internal.error_printer import ErrorPrinter
-
-        self._error_printer = ErrorPrinter(sys.__excepthook__)
+        self._error = sys.__excepthook__
 
     def call(self, upstream_result_callback, filler_builder, filler_kwargs, args, kwargs, callback):
-        sys.excepthook = self._error_printer.get_callback()
+
+        self._log().error(self._error)
 
         callback_result = callback(args, kwargs)
 
-        sys.excepthook = self._error_printer.get_old_excepthook()
+        sys.excepthook = self._error
         return callback_result
+
+    def _log(self):
+        from foundations.global_state import log_manager
+        return log_manager.get_logger(__name__) 
