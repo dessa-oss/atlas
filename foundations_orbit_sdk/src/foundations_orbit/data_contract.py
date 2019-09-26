@@ -39,7 +39,7 @@ class DataContract(object):
 
         return DataContractOptions(
             max_bins=50,
-            check_row_count=False,
+            check_row_count=True,
             special_values=[numpy.nan],
             check_distribution=True,
             distribution=default_distribution

@@ -175,8 +175,8 @@ class TestDataContract(Spec):
     def test_data_contract_has_options_with_default_max_bins_50(self):
         self._test_data_contract_has_default_option('max_bins', 50)
 
-    def test_data_contract_has_options_with_default_check_row_count_False(self):
-        self._test_data_contract_has_default_option('check_row_count', False)
+    def test_data_contract_has_options_with_default_check_row_count_True(self):
+        self._test_data_contract_has_default_option('check_row_count', True)
 
     def test_data_contract_has_options_with_default_special_values_numpy_nan(self):
         import numpy
@@ -285,9 +285,9 @@ class TestDataContract(Spec):
 
         self.assertNotIn('dist_check_results', contract.validate(self.two_column_dataframe))
 
-    def test_data_contract_validate_does_not_check_row_count_by_default(self):
+    def test_data_contract_validate_checks_row_count_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
-        self.assertNotIn('row_cnt_diff', contract.validate(self.two_column_dataframe))
+        self.assertIn('row_cnt_diff', contract.validate(self.two_column_dataframe))
 
     def test_data_contract_validate_number_of_rows_if_option_set(self):
         mock_row_count_check_results = self.row_count_results
