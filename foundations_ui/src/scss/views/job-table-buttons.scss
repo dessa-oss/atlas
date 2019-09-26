@@ -22,6 +22,10 @@
     font-size: 12px;
     cursor: pointer;
 
+    &:hover {
+      opacity: 0.75;
+    }
+
     &.drop-shadow {
       -webkit-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
       -moz-box-shadow: 0px 2px 9px 1px rgba(114,167,211,0.57);
@@ -98,6 +102,7 @@
   border: 2px solid $color-border-bottom;
   border-radius: 4px;
   width: 170px;
+  cursor: pointer;
 
   .i--icon-arrow-down {
     width: 10px;
