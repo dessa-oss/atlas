@@ -51,6 +51,7 @@ class JobsSortController(object):
         return self.params['direction']
 
     def sort_jobs(self, lazy_job_result):
+        import functools
         from foundations_core_rest_api_components.lazy_result import LazyResult
 
         def _sort_job_internal():
@@ -60,10 +61,26 @@ class JobsSortController(object):
                 return None
 
             result = lazy_job_result.evaluate()
+            sort_descending = self._direction == 'desc'
+
             if self._sort_by_detail in ['input_params', 'output_metrics']:
-                pass
+                def _sub_detail_comparator(job1, job2):
+                    all_sub_details1 = getattr(job1, self._sort_by_detail)
+                    all_sub_details2 = getattr(job2, self._sort_by_detail)
+
+                    sub_detail1 = list(filter(lambda sub_detail: sub_detail['name'] == self._sort_by_sub_detail, all_sub_details1))
+                    sub_detail2 = list(filter(lambda sub_detail: sub_detail['name'] == self._sort_by_sub_detail, all_sub_details2))
+
+                    if not sub_detail1 and not sub_detail2:
+                        return 0
+                    if not sub_detail1:
+                        return -1
+                    if not sub_detail2:
+                        return 1
+                    return sub_detail1[0]['value'] - sub_detail2[0]['value']
+
+                result['jobs'].sort(key=functools.cmp_to_key(_sub_detail_comparator), reverse=sort_descending)
             else:
-                sort_descending = self._direction == 'desc'
                 result['jobs'].sort(key=lambda job: getattr(job, self._sort_by_detail), reverse=sort_descending)
 
             return result
