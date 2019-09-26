@@ -118,23 +118,30 @@ class JobTable extends Component {
     this.setState({ hiddenColumns: newHidden });
   }
 
-  sortTable(clickedColumn, isAscending, mainHeader) {
+  sortTable(clickedColumn, mainHeader) {
     const { sortedColumn, getJobs } = this.state;
 
-    if (clickedColumn !== sortedColumn.column || isAscending !== sortedColumn.isAscending) {
-      let clickedColumnWithMainHeader = clickedColumn;
+    let clickedColumnWithMainHeader = clickedColumn;
+    let isAscending = true;
 
-      if (mainHeader === 'Parameters') {
-        clickedColumnWithMainHeader = `input_params:${clickedColumn}`;
-      }
-      if (mainHeader === 'Metrics') {
-        clickedColumnWithMainHeader = `output_metrics:${clickedColumn}`;
-      }
-
-      this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending } }, () => {
-        getJobs(this.state.sortedColumn);
-      });
+    if (mainHeader === 'Parameters') {
+      clickedColumnWithMainHeader = `input_params:${clickedColumn}`;
     }
+    if (mainHeader === 'Metrics') {
+      clickedColumnWithMainHeader = `output_metrics:${clickedColumn}`;
+    }
+
+    if (clickedColumnWithMainHeader === sortedColumn.column) {
+      if (sortedColumn.isAscending === true) {
+        clickedColumnWithMainHeader = '';
+      }
+    } else {
+      isAscending = false;
+    }
+
+    this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending } }, () => {
+      getJobs(this.state.sortedColumn);
+    });
   }
 
   selectJob(jobID) {

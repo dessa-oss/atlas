@@ -6,8 +6,7 @@ import JobListActions from '../../actions/JobListActions';
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
-    this.onClickSortAsc = this.onClickSortAsc.bind(this);
-    this.onClickSortDesc = this.onClickSortDesc.bind(this);
+    this.onClickSort = this.onClickSort.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
@@ -38,16 +37,10 @@ class JobColumnHeader extends Component {
     );
   }
 
-  onClickSortAsc() {
+  onClickSort() {
     const { sortTable, title, mainHeader } = this.state;
 
-    sortTable(title, true, mainHeader);
-  }
-
-  onClickSortDesc() {
-    const { sortTable, title, mainHeader } = this.state;
-
-    sortTable(title, false, mainHeader);
+    sortTable(title, mainHeader);
   }
 
   render() {
@@ -74,20 +67,20 @@ class JobColumnHeader extends Component {
       && title !== 'SelectAllCheckboxes') {
       arrowUp = (
         <i
-          onKeyPress={this.onClickSortAsc}
+          onKeyPress={this.onClickSort}
           tabIndex={0}
           role="button"
-          onClick={this.onClickSortAsc}
+          onClick={this.onClickSort}
           className={isSortedColumn && (isAscending === null || isAscending)
             ? 'i--icon-arrow-up' : 'i--icon-arrow-up-unfilled'}
         />
       );
       arrowDown = (
         <i
-          onKeyPress={this.onClickSortDesc}
+          onKeyPress={this.onClickSort}
           tabIndex={0}
           role="button"
-          onClick={this.onClickSortDesc}
+          onClick={this.onClickSort}
           className={isSortedColumn && (isAscending === null || !isAscending)
             ? 'i--icon-arrow-down' : 'i--icon-arrow-down-unfilled'}
         />
