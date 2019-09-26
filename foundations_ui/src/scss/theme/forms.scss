@@ -9,6 +9,7 @@ label {
 
 :not(.date-time-picker) {
   input[type="text"] {
+
     @extend .f--roboto;
     font-weight: normal;
     box-sizing: border-box;
@@ -19,7 +20,7 @@ label {
     font-size: 14px;
     border-radius: 0;
     border: 1px solid $color-border-bottom;
-    cursor: pointer;
+    cursor: text;
     height: 30px;
     outline: none;
   }
