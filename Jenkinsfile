@@ -92,11 +92,11 @@ pipeline {
                 }
             }
         }
-        stage('Python3 Foundations Orbit Acceptance Tests for Remote Deploys') {
+        stage('Python3 Foundations Orbit Acceptance Tests') {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/testing") {
-                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
+                        sh '. ../dev_env.sh && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                     }
                 }
             }
