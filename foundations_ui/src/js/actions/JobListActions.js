@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import BaseActions from './BaseActions';
 import CommonActions from './CommonActions';
 
@@ -88,9 +89,9 @@ class JobListActions {
     }
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'YYYY/MM/DD'
-    const onlyDate = startTime.split('T')[0];
-    const formatedDate = onlyDate.replace(/-/g, '/');
-    return formatedDate;
+    const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
+    return moment(newDate).format('YYYY/MM/DD');
   }
 
   static getFormatedTime(startTime) {
@@ -100,6 +101,7 @@ class JobListActions {
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'HH:mm:ss AM/PM'
     const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
     return `${CommonActions.formatAMPM(newDate)}`;
   }
 

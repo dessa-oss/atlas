@@ -67,8 +67,7 @@ class CommonActions {
   }
 
   static formatAMPM(date) {
-    const updatedTime = new Date(date.setHours(date.getHours() - 4));
-    let hours = updatedTime.getHours();
+    let hours = date.getHours();
     let minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
@@ -453,6 +452,8 @@ class CommonActions {
   }
 
   static formatDate(date) {
+    date = new Date(date);
+    date.setHours(date.getHours() + 4);  // Dealing with inconsistencies with dates in backend
     return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
             ${JobListActions.getFormatedTime(date)}`;
   }
