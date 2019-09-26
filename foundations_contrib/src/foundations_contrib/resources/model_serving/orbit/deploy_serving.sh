@@ -9,11 +9,12 @@ if [[ -z $job_id ]]; then
     export job_id=$project_name-$model_name
 fi
 
-envsubst < ../submission_config.yaml | kubectl apply -f - > /dev/null 2>&1
-
-envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
 echo "Preparing $model_name for serving"
 
+envsubst < ../submission_config.yaml | kubectl apply -f - > /dev/null 2>&1
+envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
+
+echo "Creating endpoint for model at $project_name/$model_name"
 python ingress_modifier.py $project_name $model_name > /dev/null 2>&1
 
 model_pod=$(kubectl -n $namespace get po | grep $project_name-$model_name | awk '{print $1}')

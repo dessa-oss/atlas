@@ -9,11 +9,18 @@ const ModelManagementDetails = props => {
     const entrypoints = [];
 
     Object.keys(model.entrypoints).forEach(key => {
-      let entrypointString = `${key}: `;
-      Object.keys(model.entrypoints[key]).forEach(subkey => {
-        const entrypointStringSubkey = `${subkey}: ${model.entrypoints[key][subkey]}`;
+      let entrypointString = `${key}: {`;
+      const lastIndex = Object.keys(model.entrypoints[key]).length - 1;
+      Object.keys(model.entrypoints[key]).forEach((subkey, i) => {
+        let entrypointStringSubkey = `${subkey}: ${model.entrypoints[key][subkey]}, `;
+
+        if (i === lastIndex) {
+          entrypointStringSubkey = `${subkey}: ${model.entrypoints[key][subkey]}`;
+        }
+
         entrypointString += entrypointStringSubkey;
       });
+      entrypointString += "}";
       entrypoints.push(
         <p className="model-management-details-entrypoint">
           {entrypointString}

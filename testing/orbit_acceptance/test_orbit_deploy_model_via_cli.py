@@ -12,8 +12,9 @@ import requests
 import foundations_contrib
 from foundations_spec import *
 from typing import List
+from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
-class TestOrbitDeployModelViaCli(Spec):
+class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
     port = 31998
     max_time_out_in_sec = 60
@@ -23,11 +24,11 @@ class TestOrbitDeployModelViaCli(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @tear_down_class
     def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -38,7 +39,10 @@ class TestOrbitDeployModelViaCli(Spec):
 
     @tear_down
     def tear_down(self):
-        self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
+        try:
+            self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
+        except:
+            print('Unable to remove model pacakge. Probably terminated in the test')
 
     @staticmethod
     def _is_running_on_jenkins():
@@ -274,6 +278,6 @@ class TestOrbitDeployModelViaCli(Spec):
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
         import shlex
-        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE)
-        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE)
-        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)

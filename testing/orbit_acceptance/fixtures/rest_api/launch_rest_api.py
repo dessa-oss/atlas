@@ -33,11 +33,11 @@ configuration.update(translated_submission_config)
 
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler = logging.FileHandler('/var/foundations/orbit_test_rest_api.log')
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-root_logger.addHandler(file_handler)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# file_handler = logging.FileHandler('/var/foundations/orbit_test_rest_api.log')
+# file_handler.setLevel(logging.DEBUG)
+# file_handler.setFormatter(formatter)
+# root_logger.addHandler(file_handler)
 
 root_logger.info("Running with configuration {}".format(configuration))
 
