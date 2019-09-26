@@ -13,12 +13,12 @@ class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-    selectAllJobs, allJobsSelected,
+    selectAllJobs, allJobsSelected, header,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
-        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-        selectAllJobs, allJobsSelected,
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn,
+        sortTable, selectAllJobs, allJobsSelected, header,
       );
     }
     return null;
@@ -26,7 +26,7 @@ class CommonActions {
 
   static getInputParamHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-    selectAllJobs, allJobsSelected,
+    selectAllJobs, allJobsSelected, header,
   ) {
     const inputParams = [];
     allInputParams.forEach((input) => {
@@ -50,6 +50,7 @@ class CommonActions {
           sortTable={sortTable}
           selectAllJobs={selectAllJobs}
           allJobsSelected={allJobsSelected}
+          mainHeader={header}
         />);
       }
     });

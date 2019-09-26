@@ -118,11 +118,20 @@ class JobTable extends Component {
     this.setState({ hiddenColumns: newHidden });
   }
 
-  sortTable(clickedColumn, isAscending) {
+  sortTable(clickedColumn, isAscending, mainHeader) {
     const { sortedColumn, getJobs } = this.state;
 
     if (clickedColumn !== sortedColumn.column || isAscending !== sortedColumn.isAscending) {
-      this.setState({ sortedColumn: { column: clickedColumn, isAscending } }, () => {
+      let clickedColumnWithMainHeader = clickedColumn;
+
+      if (mainHeader === 'Parameters') {
+        clickedColumnWithMainHeader = `input_params:${clickedColumn}`;
+      }
+      if (mainHeader === 'Metrics') {
+        clickedColumnWithMainHeader = `output_metrics:${clickedColumn}`;
+      }
+
+      this.setState({ sortedColumn: { column: clickedColumnWithMainHeader, isAscending } }, () => {
         getJobs(this.state.sortedColumn);
       });
     }

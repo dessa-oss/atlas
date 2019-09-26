@@ -16,6 +16,7 @@ class JobColumnHeader extends Component {
       toggleFilter: this.props.toggleFilter,
       colType: this.props.colType,
       isMetric: this.props.isMetric,
+      mainHeader: this.props.mainHeader,
       isFiltered: this.props.isFiltered,
       isSortedColumn: this.props.isSortedColumn,
       isAscending: this.props.isAscending,
@@ -38,15 +39,15 @@ class JobColumnHeader extends Component {
   }
 
   onClickSortAsc() {
-    const { sortTable, title } = this.state;
+    const { sortTable, title, mainHeader } = this.state;
 
-    sortTable(title, true);
+    sortTable(title, true, mainHeader);
   }
 
   onClickSortDesc() {
-    const { sortTable, title } = this.state;
+    const { sortTable, title, mainHeader } = this.state;
 
-    sortTable(title, false);
+    sortTable(title, false, mainHeader);
   }
 
   render() {
@@ -128,6 +129,7 @@ JobColumnHeader.propTypes = {
   sortTable: PropTypes.func,
   selectAllJobs: PropTypes.func,
   allJobsSelected: PropTypes.bool,
+  mainHeader: PropTypes.string,
 };
 
 JobColumnHeader.defaultProps = {
@@ -144,6 +146,7 @@ JobColumnHeader.defaultProps = {
   sortTable: () => {},
   selectAllJobs: () => {},
   allJobsSelected: false,
+  mainHeader: '',
 };
 
 export default JobColumnHeader;

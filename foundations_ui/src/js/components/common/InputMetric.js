@@ -72,7 +72,7 @@ class InputMetric extends Component {
 
     const inputParams = CommonActions.getInputMetricColumnHeaders(
       allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-      selectAllJobs, allJobsSelected,
+      selectAllJobs, allJobsSelected, header,
     );
 
     let rows = CommonActions.getInputMetricRows(jobs, isMetric, flatParams, hiddenInputParams,

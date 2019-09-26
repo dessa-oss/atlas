@@ -15,16 +15,19 @@ class JobListActions {
     let url = this.getBaseJobListingURL(projectName);
 
     if (sortedColumn && sortedColumn.column) {
-      const columNameTranslator = {
-        Status: 'status',
-        Launched: 'start_time',
-        Duration: 'duration',
-        User: 'user',
-      };
+      let translatedColumnName = sortedColumn.column;
 
-      // TODO: Account for parameter/metrics
+      if (!sortedColumn.column.startsWith('input_params') && !sortedColumn.column.startsWith('output_metrics')) {
+        const columNameTranslator = {
+          Status: 'status',
+          Launched: 'start_time',
+          Duration: 'duration',
+          User: 'user',
+        };
 
-      const translatedColumnName = columNameTranslator[sortedColumn.column];
+        translatedColumnName = columNameTranslator[translatedColumnName];
+      }
+
       const isAscending = sortedColumn.isAscending ? 'asc' : 'desc';
 
       url = `${url}/${translatedColumnName}/${isAscending}`;
