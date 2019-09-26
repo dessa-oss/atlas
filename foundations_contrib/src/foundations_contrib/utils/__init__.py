@@ -7,10 +7,16 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_internal.utils import *
 
+
 def foundations_home():
     import os
+    from sys import platform
+    from os.path import expanduser
 
-    return os.environ.get('FOUNDATIONS_HOME', '~/.foundations')
+    if platform == 'win32':
+        return os.environ.get('FOUNDATIONS_HOME', expanduser(os.path.join('~', '.foundations')))
+    else:
+        return os.environ.get('FOUNDATIONS_HOME', '~/.foundations')
 
 
 def force_encoding(string):
