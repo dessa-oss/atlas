@@ -115,7 +115,7 @@ class JobDeployment(object):
             "pending": "queued"
         }
         try:
-            r = requests.get(f"{config_manager['scheduler_url']}/jobs/{ job_id }")
+            r = requests.get(f"{config_manager['scheduler_url']}/jobs/{job_id}")
             if r.status_code == requests.codes.ok:
                 return responses[r.json()['status']]
             else:

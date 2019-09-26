@@ -34,7 +34,13 @@ if os.path.exists("/root/.kube"):
     }
     translated_submission_config = translate(submission_config)
 else:
-    translated_submission_config = {'redis_url': os.environ["REDIS_URL"]}
+    from foundations_local_docker_scheduler_plugin.job_deployment import JobDeployment
+    translated_submission_config = {'redis_url': os.environ["REDIS_URL"],
+                                    'deployment_implementation': {
+                                        'deployment_type': JobDeployment,
+                                        },
+                                    'scheduler_url': os.environ["FOUNDATIONS_SCHEDULER_URL"],
+                                    }
 
 configuration = config_manager.config()
 configuration.update(translated_submission_config)
