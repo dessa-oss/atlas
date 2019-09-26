@@ -34,8 +34,17 @@ class CommonActions {
         const key = input.name;
         const colType = input.type;
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
-        const isSorted = sortedColumn.column === key || sortedColumn.column === '';
-        const isAscending = sortedColumn.column === '' ? null : sortedColumn.isAscending;
+
+        let column = sortedColumn.column;
+        if (column.startsWith('input_params')) {
+          column = column.substring('input_params:'.length);
+        }
+        if (column.startsWith('output_metrics')) {
+          column = column.substring('output_metrics:'.length);
+        }
+
+        const isSorted = column === key || column === '';
+        const isAscending = column === '' ? null : sortedColumn.isAscending;
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
