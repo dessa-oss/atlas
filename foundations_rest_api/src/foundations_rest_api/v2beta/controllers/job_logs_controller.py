@@ -15,5 +15,11 @@ class JobLogsController(object):
 
     def index(self):
         from foundations_contrib.jobs.logs import job_logs
-
-        return Response('Jobs', LazyResult(lambda: job_logs(self.params['job_id'])))
+        try:
+            logs = job_logs(self.params['job_id'])
+            return Response('Jobs', LazyResult(lambda: {'log': logs}))
+        except Exception as exc:
+            msg = str(exc)
+            return Response('Error', LazyResult(lambda: {'message': 'Internal Server Error'}))
+            # For debugging purposes:
+            # return Response('Error', LazyResult(lambda: msg), status=500)

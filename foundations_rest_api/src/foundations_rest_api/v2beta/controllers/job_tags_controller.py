@@ -6,20 +6,31 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_rest_api.utils.api_resource import api_resource
-
-from foundations_core_rest_api_components.lazy_result import LazyResult
+from foundations_contrib.global_state import redis_connection
 from foundations_core_rest_api_components.response import Response
+from foundations_core_rest_api_components.lazy_result import LazyResult
 
 @api_resource('/api/v2beta/projects/<string:project_name>/job_listing/<string:job_id>/tags')
 class JobTagsController(object):
 
-    def post(self):
-        from foundations_contrib.producers.tag_set import TagSet
-        from foundations_contrib.global_state import message_router
+    def __init__(self):
+        self._redis = redis_connection
 
-        TagSet(message_router, self._job_id(), self._key(), self._value()).push_message()
+    def post(self):
+        job_annotations_key = 'jobs:{}:annotations'.format(self._job_id())
+
+        if self._is_tag_set(job_annotations_key, self._tag):
+            self._logger().warning('Tag `{}` updated to `{}`'.format(self._tag, self._value))
+        
+        self._redis.hmset(job_annotations_key, {self._key(): self._value()})
 
         return Response('Jobs', LazyResult(lambda: f'Tag key: {self._key()}, value: {self._value()} created for job {self._job_id()}'))
+    
+    def _is_tag_set(self, job_annotations_key, tag):
+        annotations = self._redis.hgetall(job_annotations_key)
+        decoded_annotations = {key.decode(): value.decode() for key, value in annotations.items()}
+
+        return tag in decoded_annotations
 
     def _job_id(self):
         return self.params['job_id']
@@ -32,3 +43,7 @@ class JobTagsController(object):
 
     def _tag(self):
         return self.params['tag']
+    
+    def _logger(self):
+        from foundations_contrib.global_state import log_manager
+        return log_manager.get_logger(__name__)

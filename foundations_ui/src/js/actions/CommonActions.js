@@ -13,12 +13,12 @@ class CommonActions {
   // Helper Functions
   static getInputMetricColumnHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-    selectAllJobs, allJobsSelected,
+    selectAllJobs, allJobsSelected, header,
   ) {
     if (allInputParams.length > 0) {
       return this.getInputParamHeaders(
-        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-        selectAllJobs, allJobsSelected,
+        allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn,
+        sortTable, selectAllJobs, allJobsSelected, header,
       );
     }
     return null;
@@ -26,7 +26,7 @@ class CommonActions {
 
   static getInputParamHeaders(
     allInputParams, hiddenInputParams, toggleNumberFilter, isMetric, filteredArray, sortedColumn, sortTable,
-    selectAllJobs, allJobsSelected,
+    selectAllJobs, allJobsSelected, header,
   ) {
     const inputParams = [];
     allInputParams.forEach((input) => {
@@ -34,8 +34,17 @@ class CommonActions {
         const key = input.name;
         const colType = input.type;
         const isFiltered = JobListActions.isColumnFiltered(filteredArray, key);
-        const isSorted = sortedColumn.column === key || sortedColumn.column === '';
-        const isAscending = sortedColumn.column === '' ? null : sortedColumn.isAscending;
+
+        let column = sortedColumn.column;
+        if (column.startsWith('input_params')) {
+          column = column.substring('input_params:'.length);
+        }
+        if (column.startsWith('output_metrics')) {
+          column = column.substring('output_metrics:'.length);
+        }
+
+        const isSorted = column === key || column === '';
+        const isAscending = column === '' ? null : sortedColumn.isAscending;
         inputParams.push(<JobColumnHeader
           key={key}
           title={key}
@@ -50,6 +59,7 @@ class CommonActions {
           sortTable={sortTable}
           selectAllJobs={selectAllJobs}
           allJobsSelected={allJobsSelected}
+          mainHeader={header}
         />);
       }
     });
@@ -57,8 +67,7 @@ class CommonActions {
   }
 
   static formatAMPM(date) {
-    const updatedTime = new Date(date.setHours(date.getHours() - 4));
-    let hours = updatedTime.getHours();
+    let hours = date.getHours();
     let minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours %= 12;
@@ -443,6 +452,8 @@ class CommonActions {
   }
 
   static formatDate(date) {
+    date = new Date(date);
+    date.setHours(date.getHours() + 4); // Dealing with inconsistencies with dates in backend
     return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
             ${JobListActions.getFormatedTime(date)}`;
   }

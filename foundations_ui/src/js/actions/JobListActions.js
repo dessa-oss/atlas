@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import BaseActions from './BaseActions';
 import CommonActions from './CommonActions';
 
@@ -11,8 +12,28 @@ const statusText = 'Status';
 
 class JobListActions {
   // API Calls
-  static getJobs(projectName) {
-    const url = this.getBaseJobListingURL(projectName);
+  static getJobs(projectName, sortedColumn) {
+    let url = this.getBaseJobListingURL(projectName);
+
+    if (sortedColumn && sortedColumn.column) {
+      let translatedColumnName = sortedColumn.column;
+
+      if (!sortedColumn.column.startsWith('input_params') && !sortedColumn.column.startsWith('output_metrics')) {
+        const columNameTranslator = {
+          Status: 'status',
+          Launched: 'start_time',
+          Duration: 'duration',
+          User: 'user',
+        };
+
+        translatedColumnName = columNameTranslator[translatedColumnName];
+      }
+
+      const isAscending = sortedColumn.isAscending ? 'asc' : 'desc';
+
+      url = `${url}/${translatedColumnName}/${isAscending}`;
+    }
+
     // TODO get Jobs is currently in Beta
     return BaseActions.getFromStaging(url)
       .then((results) => {
@@ -68,9 +89,9 @@ class JobListActions {
     }
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'YYYY/MM/DD'
-    const onlyDate = startTime.split('T')[0];
-    const formatedDate = onlyDate.replace(/-/g, '/');
-    return formatedDate;
+    const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
+    return moment(newDate).format('YYYY/MM/DD');
   }
 
   static getFormatedTime(startTime) {
@@ -80,6 +101,7 @@ class JobListActions {
     // API Format is '2018-08-23T09:30:00'
     // Desired Format is 'HH:mm:ss AM/PM'
     const newDate = new Date(startTime);
+    newDate.setHours(newDate.getHours() - 4);
     return `${CommonActions.formatAMPM(newDate)}`;
   }
 

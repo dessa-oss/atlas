@@ -278,6 +278,7 @@
             margin-left: 10px;
             border-radius: 5px;
             vertical-align: middle;
+            cursor: pointer;
 
             &:last-child {
               background: #d84247;
@@ -301,6 +302,7 @@
           padding: 10px 25px;
           margin: 6px 0px;
           @extend .f--roboto;
+          cursor: pointer;
       
           &.active {
             @extend .f--roboto-bold;

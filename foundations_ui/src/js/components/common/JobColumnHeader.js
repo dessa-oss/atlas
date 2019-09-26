@@ -6,8 +6,7 @@ import JobListActions from '../../actions/JobListActions';
 class JobColumnHeader extends Component {
   constructor(props) {
     super(props);
-    this.onClickSortAsc = this.onClickSortAsc.bind(this);
-    this.onClickSortDesc = this.onClickSortDesc.bind(this);
+    this.onClickSort = this.onClickSort.bind(this);
     this.state = {
       title: this.props.title,
       isStatus: this.props.isStatus,
@@ -16,6 +15,7 @@ class JobColumnHeader extends Component {
       toggleFilter: this.props.toggleFilter,
       colType: this.props.colType,
       isMetric: this.props.isMetric,
+      mainHeader: this.props.mainHeader,
       isFiltered: this.props.isFiltered,
       isSortedColumn: this.props.isSortedColumn,
       isAscending: this.props.isAscending,
@@ -37,16 +37,10 @@ class JobColumnHeader extends Component {
     );
   }
 
-  onClickSortAsc() {
-    const { sortTable, title } = this.state;
+  onClickSort() {
+    const { sortTable, title, mainHeader } = this.state;
 
-    sortTable(title, true);
-  }
-
-  onClickSortDesc() {
-    const { sortTable, title } = this.state;
-
-    sortTable(title, false);
+    sortTable(title, mainHeader);
   }
 
   render() {
@@ -73,20 +67,20 @@ class JobColumnHeader extends Component {
       && title !== 'SelectAllCheckboxes') {
       arrowUp = (
         <i
-          onKeyPress={this.onClickSortAsc}
+          onKeyPress={this.onClickSort}
           tabIndex={0}
           role="button"
-          onClick={this.onClickSortAsc}
+          onClick={this.onClickSort}
           className={isSortedColumn && (isAscending === null || isAscending)
             ? 'i--icon-arrow-up' : 'i--icon-arrow-up-unfilled'}
         />
       );
       arrowDown = (
         <i
-          onKeyPress={this.onClickSortDesc}
+          onKeyPress={this.onClickSort}
           tabIndex={0}
           role="button"
-          onClick={this.onClickSortDesc}
+          onClick={this.onClickSort}
           className={isSortedColumn && (isAscending === null || !isAscending)
             ? 'i--icon-arrow-down' : 'i--icon-arrow-down-unfilled'}
         />
@@ -106,8 +100,8 @@ class JobColumnHeader extends Component {
             {headerName}
             <ReactTooltip place="top" type="dark" effect="solid" />
           </h4>
-          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && arrowUp}
-          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && arrowDown}
+          {arrowUp}
+          {arrowDown}
         </div>
       </div>
     );
@@ -128,6 +122,7 @@ JobColumnHeader.propTypes = {
   sortTable: PropTypes.func,
   selectAllJobs: PropTypes.func,
   allJobsSelected: PropTypes.bool,
+  mainHeader: PropTypes.string,
 };
 
 JobColumnHeader.defaultProps = {
@@ -144,6 +139,7 @@ JobColumnHeader.defaultProps = {
   sortTable: () => {},
   selectAllJobs: () => {},
   allJobsSelected: false,
+  mainHeader: '',
 };
 
 export default JobColumnHeader;

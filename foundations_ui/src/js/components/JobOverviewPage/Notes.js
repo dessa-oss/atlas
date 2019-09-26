@@ -90,6 +90,7 @@ class Notes extends React.Component {
             <button
               disabled={message === ''}
               className={message === '' ? 'disabled' : ''}
+              style={message === '' ? {} : { cursor: 'pointer' }}
               type="button"
               onClick={this.onClickAddNote}
             >

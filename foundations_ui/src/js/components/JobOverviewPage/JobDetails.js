@@ -99,12 +99,12 @@ class JobDetails extends React.Component {
     }
   }
 
-  async getJobs() {
+  async getJobs(sortedColumn) {
     const { location } = this.props;
     const { projectName } = this.props.match.params;
     let selectedProjectName = location.state && location.state.project ? location.state.project.name : projectName;
 
-    const fetchedJobs = await JobListActions.getJobs(selectedProjectName);
+    const fetchedJobs = await JobListActions.getJobs(selectedProjectName, sortedColumn);
     const apiJobs = fetchedJobs;
     this.setState({ queryStatus: apiJobs === null ? 400 : 200 });
     const allUsers = JobListActions.getAllJobUsers(apiJobs.jobs);

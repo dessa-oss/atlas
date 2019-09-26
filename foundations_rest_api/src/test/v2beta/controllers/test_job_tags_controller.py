@@ -46,10 +46,6 @@ class TestJobTagsController(Spec):
         self.controller.params = {'job_id': self.job_id, 'tag': {'key': self.key, 'value': self.value}}
         self.mock_tag_set_klass.return_when(self.mock_tag_set, self.mock_message_router, self.job_id, self.key, self.value)
 
-    def test_post_adds_a_new_tag_to_an_existing_job(self):
-        self.controller.post()
-        self.mock_tag_set.push_message.assert_called()
-
     def test_post_returns_a_confirmation_message(self):
         expected_result = f'Tag key: {self.key}, value: {self.value} created for job {self.job_id}'
         self.assertEqual(expected_result, self.controller.post().as_json())
