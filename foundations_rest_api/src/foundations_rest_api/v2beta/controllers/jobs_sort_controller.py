@@ -81,7 +81,7 @@ class JobsSortController(object):
 
                 result['jobs'].sort(key=functools.cmp_to_key(_sub_detail_comparator), reverse=sort_descending)
             else:
-                result['jobs'].sort(key=lambda job: getattr(job, self._sort_by_detail), reverse=sort_descending)
+                result['jobs'].sort(key=lambda job: (getattr(job, self._sort_by_detail) is not None, getattr(job, self._sort_by_detail)), reverse=sort_descending)
 
             return result
 
