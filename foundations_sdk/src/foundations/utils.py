@@ -108,8 +108,6 @@ def concat_strings(iterable):
 def pretty_error(pipeline_name, error_info):
     import traceback
 
-    from foundations_internal.error_printer import ErrorPrinter
-
     if error_info is None:
         return None
 
@@ -117,16 +115,24 @@ def pretty_error(pipeline_name, error_info):
                   ": ", str(error_info["exception"]), "\n"]
     traceback_items = error_info["traceback"]
 
-    error_printer = ErrorPrinter()
-    filtered_traceback = error_printer.transform_extracted_traceback(
-        traceback_items)
-    filtered_traceback_strings = traceback.format_list(filtered_traceback)
+    filtered_traceback_strings = traceback.format_list(traceback_items)
 
-    error_message = concat_strings(
-        error_name + filtered_traceback_strings).rstrip("\n")
+    error_message = concat_strings(error_name + filtered_traceback_strings).rstrip("\n")
 
-    return error_message, error_printer.get_callback()
+    return error_message, generate_compatible_error_callback()
 
+    def generate_compatible_error_callback():
+        def _callback(ex_type, ex_value, ex_traceback):
+            """
+            Arguments:
+                ex_type: {type} -- The type of the exception to which the stack trace belongs.
+                ex_value: {Exception} -- The exception value itself.
+                ex_traceback: {TracebackType} -- The traceback for the exception.
+            """
+            error_msg = f'Type: {ex_type}, Value: {ex_value}, Traceback: {ex_traceback}'
+            self._log().error(error_msg)
+            
+        return _callback
 
 def split_process_output(output):
     lines = output.decode().strip().split("\n")
