@@ -11,8 +11,25 @@ const statusText = 'Status';
 
 class JobListActions {
   // API Calls
-  static getJobs(projectName) {
-    const url = this.getBaseJobListingURL(projectName);
+  static getJobs(projectName, sortedColumn) {
+    let url = this.getBaseJobListingURL(projectName);
+
+    if (sortedColumn && sortedColumn.column) {
+      const columNameTranslator = {
+        Status: 'status',
+        Launched: 'start_time',
+        Duration: 'duration',
+        User: 'user',
+      };
+
+      // TODO: Account for parameter/metrics
+
+      const translatedColumnName = columNameTranslator[sortedColumn.column];
+      const isAscending = sortedColumn.isAscending ? 'asc' : 'desc';
+
+      url = `${url}/${translatedColumnName}/${isAscending}`;
+    }
+
     // TODO get Jobs is currently in Beta
     return BaseActions.getFromStaging(url)
       .then((results) => {

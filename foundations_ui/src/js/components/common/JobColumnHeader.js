@@ -106,8 +106,8 @@ class JobColumnHeader extends Component {
             {headerName}
             <ReactTooltip place="top" type="dark" effect="solid" />
           </h4>
-          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && arrowUp}
-          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && arrowDown}
+          {arrowUp}
+          {arrowDown}
         </div>
       </div>
     );

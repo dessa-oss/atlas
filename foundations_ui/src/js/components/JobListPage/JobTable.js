@@ -119,11 +119,12 @@ class JobTable extends Component {
   }
 
   sortTable(clickedColumn, isAscending) {
-    const { sortedColumn } = this.state;
-    if (sortedColumn.column === clickedColumn && sortedColumn.isAscending === isAscending) {
-      this.setState({ sortedColumn: { column: '', isAscending: true } });
-    } else {
-      this.setState({ sortedColumn: { column: clickedColumn, isAscending } });
+    const { sortedColumn, getJobs } = this.state;
+
+    if (clickedColumn !== sortedColumn.column || isAscending !== sortedColumn.isAscending) {
+      this.setState({ sortedColumn: { column: clickedColumn, isAscending } }, () => {
+        getJobs(this.state.sortedColumn);
+      });
     }
   }
 
