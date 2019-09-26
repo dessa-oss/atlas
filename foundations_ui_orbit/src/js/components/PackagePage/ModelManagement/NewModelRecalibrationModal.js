@@ -15,6 +15,7 @@ const NewModelRecalibrationModal = props => {
   const [scheduleMessageVisible, setScheduleMessageVisible] = React.useState(false);
   const [swapMessageVisible, setSwapMessageVisible] = React.useState(false);
   const [triggeredMessageVisible, setTriggeredMessageVisible] = React.useState(false);
+  const [recalibrationLoading, setRecalibrationLoading] = React.useState(false);
   const [parameters, setParameters] = React.useState([
     {
       key: "",
@@ -124,6 +125,7 @@ const NewModelRecalibrationModal = props => {
 
   const onClickSave = () => {
     setError("");
+    setRecalibrationLoading(true);
 
     let errorFound = false;
 
@@ -138,6 +140,7 @@ const NewModelRecalibrationModal = props => {
     });
 
     if (errorFound === true) {
+      setRecalibrationLoading(false);
       setError("Please fill the form to run the recalibration");
     } else {
       let body = {
@@ -151,8 +154,12 @@ const NewModelRecalibrationModal = props => {
       postMaster(`projects/${props.location.state.project.name}/${props.model.model_name}/recalibrate`,
         body)
         .then(() => {
+          setRecalibrationLoading(false);
           props.reload();
           props.onClose();
+        })
+        .catch(err => {
+          setRecalibrationLoading(false);
         });
     }
   };
@@ -342,9 +349,13 @@ const NewModelRecalibrationModal = props => {
             <button
               type="button"
               onClick={onClickSave}
-              className="b--mat b--affirmative text-upper"
+              className={`b--mat b--affirmative text-upper ${recalibrationLoading === true
+                ? "button-recal-disabled"
+                : ""}`
+              }
+              disabled={recalibrationLoading === true}
             >
-              Run Recalibration
+              {recalibrationLoading === true ? "Launching..." : "Run Recalibration"}
             </button>
             <div className="new-dep-container-button">
               {error !== "" && <p>{error}</p>}
