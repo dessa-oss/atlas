@@ -302,6 +302,7 @@
           padding: 10px 25px;
           margin: 6px 0px;
           @extend .f--roboto;
+          cursor: pointer;
       
           &.active {
             @extend .f--roboto-bold;
