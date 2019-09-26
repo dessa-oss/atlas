@@ -76,7 +76,6 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
             self._tear_down_proxy()
             time.sleep(5)
             self.second_proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.recalibrated_model_name}-service {self.port}:80'])
-            time.sleep(5)
             new_predict_result = self._try_post_to_predict_endpoint()
 
             self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
@@ -93,11 +92,15 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
     def _try_post(self, endpoint, dict_payload):
         import requests
+        import time
 
-        try:
-            return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
-        except Exception as e:
-            return None
+        start_time = time.time()
+        while time.time() - start_time < 60:
+            try:
+                return requests.post(f'http://localhost:{self.port}/{endpoint}', json=dict_payload).json()
+            except Exception as e:
+                time.sleep(1)
+        self.fail('server failed to stop')
 
     def _wait_for_statuses(self, job_id, statuses, error_message):
         import time
