@@ -92,15 +92,15 @@ pipeline {
                 }
             }
         }
-        // stage('Python3 Foundations Orbit Acceptance Tests') {
-        //     steps {
-        //         container("python3") {
-        //             ws("${WORKSPACE}/testing") {
-        //                 sh '. ../dev_env.sh && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Python3 Foundations Orbit Acceptance Tests') {
+            steps {
+                container("python3") {
+                    ws("${WORKSPACE}/testing") {
+                        sh '. ../dev_env.sh && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
+                    }
+                }
+            }
+        }
         stage('Python3 Foundations REST API Acceptance Tests') {
             steps {
                 container("python3") {
