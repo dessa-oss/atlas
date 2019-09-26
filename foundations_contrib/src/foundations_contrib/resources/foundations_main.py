@@ -11,7 +11,6 @@ from foundations import Job, JobPersister, config_manager, log_manager, message_
 from foundations_internal.error_printer import ErrorPrinter
 from foundations_contrib.job_source_bundle import JobSourceBundle
 from foundations_internal.serializer import serialize_to_file
-from foundations_internal.compat import compat_raise
 from foundations_contrib.global_state import foundations_context
 from foundations_contrib.archiving.upload_artifacts import upload_artifacts
 
