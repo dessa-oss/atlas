@@ -10,9 +10,9 @@ from foundations_spec import *
 import requests
 import subprocess
 import foundations_contrib
+from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
-@skip('Not implemented')
-class TestManageDefaultModel(Spec):
+class TestManageDefaultModel(Spec, ContribPathMixin):
 
     api_port = 8080
     
@@ -24,16 +24,15 @@ class TestManageDefaultModel(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
-        klass._flask_process = subprocess.Popen(f'python launch_rest_api.py {klass._get_redis_ip()} {klass.api_port} {klass._get_scheduler_ip()}'.split(), cwd='./orbit_acceptance/fixtures/rest_api/')
-        print(f'Flask process pid is {klass._flask_process.pid}')
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        klass._flask_process = subprocess.Popen(f'python launch_rest_api.py {klass._get_redis_ip()} {klass.api_port} {klass._get_scheduler_ip()}'.split(), cwd='./orbit_acceptance/fixtures/rest_api/', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=klass.resolve_f9s_contrib(), stdout=subprocess.PIPE)
         
     
     @tear_down_class
     def tear_down_class(klass):
         if klass._flask_process is not None:
             klass._flask_process.terminate()
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=klass.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -209,4 +208,4 @@ class TestManageDefaultModel(Spec):
         import shlex
         subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE)
         subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE)
-        subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE)
+        # subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE)

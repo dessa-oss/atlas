@@ -12,8 +12,9 @@ import requests
 import foundations_contrib
 from foundations_spec import *
 from typing import List
+from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
-class TestOrbitDeployModelViaCli(Spec):
+class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
     port = 31998
     max_time_out_in_sec = 60
@@ -23,11 +24,11 @@ class TestOrbitDeployModelViaCli(Spec):
         from acceptance.cleanup import cleanup
         cleanup()
 
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @tear_down_class
     def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..', stdout=subprocess.PIPE)
+        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
