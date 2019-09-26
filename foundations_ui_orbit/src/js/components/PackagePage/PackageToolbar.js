@@ -14,7 +14,9 @@ class PackageToolbar extends React.Component {
       selectedDate: "",
       resetting: false,
       attribute: "",
-      timerId: -1
+      timerId: -1,
+      timeoutResetId: -1,
+      timeoutSendId: -1
     };
 
     this.onClickOpenDemo = this.onClickOpenDemo.bind(this);
@@ -44,13 +46,15 @@ class PackageToolbar extends React.Component {
     });
   }
 
-  clearTimer() {
-    const { timerId } = this.state;
+  clearTimers() {
+    const { timerId, timeoutSendId, timeoutResetId } = this.state;
     clearInterval(timerId);
+    clearTimeout(timeoutSendId);
+    clearTimeout(timeoutResetId);
   }
 
   componentWillUnmount() {
-    this.clearTimer();
+    this.clearTimers();
   }
 
   onClickOpenDemo() {
@@ -72,9 +76,26 @@ class PackageToolbar extends React.Component {
   }
 
   onClickReset() {
+    this.setState({
+      resetting: true
+    });
     postMaster("simulator_admin/restart", {})
       .then(() => {
-        this.reload();
+        const id = setTimeout(() => {
+          this.setState({
+            resetting: false
+          });
+          this.reload();
+        }, 5000);
+
+        this.setState({
+          timeoutResetId: id
+        });
+      })
+      .catch(error => {
+        this.setState({
+          resetting: false
+        });
       });
   }
 
@@ -87,12 +108,18 @@ class PackageToolbar extends React.Component {
 
       getMaster(`simulator/fix_special_value?column_name=${attribute}`)
         .then(() => {
+          const id = setTimeout(() => {
+            this.setState({
+              resetting: false
+            });
+            this.reload();
+          }, 5000);
+
           this.setState({
-            resetting: false
+            timeoutSendId: id
           });
-          this.reload();
         })
-        .catch(() => {
+        .catch(err => {
           this.setState({
             resetting: false
           });
