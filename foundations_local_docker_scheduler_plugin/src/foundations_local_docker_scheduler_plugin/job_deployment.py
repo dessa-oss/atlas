@@ -39,8 +39,8 @@ class JobDeployment(object):
     def deploy(self):
         import tarfile
         from pathlib import Path
+        from sys import platform
         import requests
-        import os
 
         try:
             self._job_bundler.bundle()
@@ -65,21 +65,29 @@ class JobDeployment(object):
 
             project_name = self._job.pipeline_context().provenance.project_name
             username = self._job.pipeline_context().provenance.user_name
-            uid = os.environ.get("FOUNDATIONS_UID", os.getuid())
-            gid = os.environ.get("FOUNDATIONS_GID", os.getgid())
 
-            job_spec = self._create_job_spec(job_mount_path=str(job_mount_path.absolute()),
-                                             working_dir_root_path=str(working_dir_root_path.absolute()),
-                                             job_results_root_path=self._config['job_results_root'],
-                                             container_config_root_path=self._config['container_config_root'],
+            if platform == 'win32':
+                working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
+                job_mount_path = convert_win_path_to_posix(job_mount_path)
+                job_results_root_path = convert_win_path_to_posix(Path(self._config['job_results_root']))
+                container_config_root_path = convert_win_path_to_posix(Path(self._config['container_config_root']))
+
+            else:
+                job_mount_path = str(job_mount_path.absolute())
+                working_dir_root_path = str(working_dir_root_path.absolute())
+                job_results_root_path = self._config['job_results_root']
+                container_config_root_path = self._config['container_config_root']
+
+            job_spec = self._create_job_spec(job_mount_path=job_mount_path,
+                                             working_dir_root_path=working_dir_root_path,
+                                             job_results_root_path=job_results_root_path,
+                                             container_config_root_path=container_config_root_path,
                                              job_id=self._job_id,
                                              project_name=project_name,
                                              username=username,
-                                             uid=uid,
-                                             gid=gid,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
-            cleanup_spec = self._create_cleanup_spec(working_dir_root_path=str(working_dir_root_path.absolute()))
+            cleanup_spec = self._create_cleanup_spec(working_dir_root_path=working_dir_root_path)
 
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
@@ -221,16 +229,14 @@ class JobDeployment(object):
         except Exception:
             return False
 
-
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
 
     def _create_cleanup_spec(self, working_dir_root_path):
-        import os
         container_mount_point = "/workspace"
 
-        job_bundle_path = os.path.join(container_mount_point, str(self._job_id))
+        job_bundle_path = container_mount_point + '/' + str(self._job_id)
         delete_command = f"rm -rf {job_bundle_path}"
 
         cleanup_container = {
@@ -248,11 +254,11 @@ class JobDeployment(object):
             }
         return cleanup_container
 
-    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, uid, gid, worker_container_overrides):
+    def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
 
         worker_container = {
-            #'user': str(uid)+":"+str(gid),
+
             'volumes':
                 {
                     job_mount_path:
@@ -290,8 +296,6 @@ class JobDeployment(object):
             'environment':
                 {
                     "FOUNDATIONS_USER": username,
-                    "FOUNDATIONS_UID": uid,
-                    "FOUNDATIONS_GID": gid,
                     "FOUNDATIONS_JOB_ID": job_id,
                     "FOUNDATIONS_PROJECT_NAME": project_name,
                     "PYTHONPATH": "/job/",
@@ -311,7 +315,6 @@ class JobDeployment(object):
         else:
             worker_container['image'] = 'us.gcr.io/atlas-ce/worker:latest'
             worker_container['runtime'] = 'runc'
-
 
         for override_key in ['command', 'image', 'working_dir', 'entrypoint']:
             if override_key in worker_container_overrides:
@@ -357,3 +360,10 @@ class JobDeployment(object):
             num_removed += 1
 
         return num_removed
+
+def convert_win_path_to_posix(win_path):
+    win_path_full = str(win_path.absolute().as_posix()).split(':')
+    win_drive = '/' + win_path_full[0].lower()
+    win_path = win_path_full[1]
+    posix_path = ''.join((win_drive, win_path))
+    return posix_path
