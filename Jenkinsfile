@@ -96,7 +96,7 @@ pipeline {
             steps {
                 container("python3") {
                     ws("${WORKSPACE}/testing") {
-                        sh '. ../dev_env.sh && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
+                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                     }
                 }
             }
