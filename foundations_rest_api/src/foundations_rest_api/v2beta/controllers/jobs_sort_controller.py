@@ -77,7 +77,16 @@ class JobsSortController(object):
                         return -1
                     if not sub_detail2:
                         return 1
-                    return sub_detail1[0]['value'] - sub_detail2[0]['value']
+
+                    value1 = sub_detail1[0]['value']
+                    value2 = sub_detail2[0]['value']
+
+                    if type(value1) != type(value2):
+                        return -1 if type(value1).__name__ < type(value2).__name__ else 1
+
+                    if value1 is None or value1 == value2:
+                        return 0
+                    return -1 if value1 < value2 else 1
 
                 result['jobs'].sort(key=functools.cmp_to_key(_sub_detail_comparator), reverse=sort_descending)
             else:
