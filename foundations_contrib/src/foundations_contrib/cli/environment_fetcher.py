@@ -42,7 +42,7 @@ class EnvironmentFetcher(object):
         from os.path import expanduser, join
         from foundations_contrib.utils import foundations_home
 
-        config_directory = expanduser(foundations_home() + '/config/execution')
+        config_directory = expanduser(join(foundations_home(), 'config', 'execution'))
         search_path = join(config_directory, 'default.config.yaml')
         return glob(search_path)
 
@@ -51,6 +51,6 @@ class EnvironmentFetcher(object):
         from os.path import expanduser, join
         from foundations_contrib.utils import foundations_home
 
-        global_config_directory = expanduser(foundations_home() + '/config/submission')
+        global_config_directory = expanduser(join(foundations_home(), 'config', 'submission'))
         search_path = join(global_config_directory, '*.config.yaml')
         return glob(search_path)

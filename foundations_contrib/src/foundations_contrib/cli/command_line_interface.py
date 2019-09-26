@@ -168,9 +168,10 @@ class CommandLineInterface(object):
         return tabulate(environment_array, headers = ['env_name', 'env_path'])
 
     def _create_environment_list(self, available_environments):
+        import os
         environment_names = []
         for env in available_environments:
-            environment_names.append([env.split('/')[-1].split('.')[0], env])
+            environment_names.append([env.split(os.path.sep)[-1].split('.')[0], env])
         return environment_names
 
     def _deploy(self):
