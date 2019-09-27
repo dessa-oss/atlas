@@ -99,7 +99,7 @@ class JobTableButtons extends Component {
           type="button"
           className="drop-shadow"
         >
-          <span className="i--icon-refresh"> <p className="text-upper font-bold">Refresh Table</p></span>
+          <span className="i--icon-refresh"> <p>Refresh Table</p></span>
         </button>
         <button
           onClick={this.onClickTensor}
@@ -107,10 +107,14 @@ class JobTableButtons extends Component {
           disabled={buttonTensorboardDisabled}
           className={buttonTensorboardDisabled && 'disabled drop-shadow'}
         >
-          <span className={iconClassName} /> <p className="text-upper font-bold">Send to tensorboard</p>
+          <span className={iconClassName} /> <p>Send to Tensorboard</p>
         </button>
         { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
-          && <button onClick={this.onDeleteJobs} type="button" className="text-upper drop-shadow">Delete</button>
+          && (
+          <button onClick={this.onDeleteJobs} type="button" className="drop-shadow">
+            <p>Delete</p>
+          </button>
+          )
         }
         <div
           className="job-details-filter-button"
