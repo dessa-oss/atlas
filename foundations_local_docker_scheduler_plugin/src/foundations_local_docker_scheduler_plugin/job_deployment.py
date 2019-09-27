@@ -207,7 +207,8 @@ class JobDeployment(object):
     @staticmethod
     def cancel_jobs(jobs):
         from foundations_contrib.global_state import config_manager
-        archive_path = config_manager['job_results_root']+'archive'
+        from pathlib import Path
+        archive_path = str(Path(config_manager['job_results_root']) / 'archive')
         scheduler_url = config_manager['scheduler_url']
 
         return {job: JobDeployment._cancel_job(job, scheduler_url, archive_path) for job in jobs}
@@ -216,15 +217,18 @@ class JobDeployment(object):
     @staticmethod
     def _cancel_job(job_id, scheduler_url, archive_path):
         import os
-        import shutil
         import requests
         import subprocess
+        from sys import platform
 
         path_to_delete = os.path.join(archive_path, job_id)
 
         try:
             requests.delete(f"{scheduler_url}/completed_jobs/{job_id}").raise_for_status()
-            subprocess.call(f'sudo rm -rf path_to_delete'.split())
+            if platform == 'win32':
+                subprocess.call(f'rm -rf {path_to_delete}'.split())
+            else:
+                subprocess.call(f'sudo rm -rf {path_to_delete}'.split())
             return True
         except Exception:
             return False
