@@ -34,7 +34,8 @@ def _upload_file_listing(list_of_files_to_upload, pipeline_archiver):
     pipeline_archiver.append_miscellaneous('job_artifact_listing.pkl', target_file_names)
     
 def _file_name_without_artifact_path(file_name):
-    return file_name.split(_artifact_path() + '/')[1]
+    import os
+    return file_name.split(_artifact_path() + os.path.sep)[1]
 
 def _artifact_path():
     from foundations_contrib.global_state import config_manager
