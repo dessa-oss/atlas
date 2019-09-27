@@ -29,21 +29,19 @@ class CommonHeader extends React.Component {
             <a target="_blank" rel="noopener noreferrer" href="https://dessa-atlas-community-docs.readthedocs-hosted.com/en/latest/">Documentation</a>
             <a href="/support">Support</a>
           </div>
+          { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE' && (
           <div className="header-container-profile">
             <img alt="" src={ProfilePlaceholder} />
             <p>CE User</p>
-            { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
-              && (
-                <i
-                  onKeyPress={this.onKeyPress}
-                  tabIndex={0}
-                  role="button"
-                  onClick={this.onClickArrowDown}
-                  className="i--icon-arrow-down"
-                />
-              )
-            }
+            <i
+              onKeyPress={this.onKeyPress}
+              tabIndex={0}
+              role="button"
+              onClick={this.onClickArrowDown}
+              className="i--icon-arrow-down"
+            />
           </div>
+          )}
         </div>
       </div>
     );
