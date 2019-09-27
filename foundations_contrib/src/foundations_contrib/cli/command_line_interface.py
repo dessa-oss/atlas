@@ -240,6 +240,7 @@ class CommandLineInterface(object):
             pipeline_archiver = get_pipeline_archiver_for_job(job_id)
             artifact_downloader = ArtifactDownloader(pipeline_archiver)
             artifact_downloader.download_files(self._arguments.source_dir, self._arguments.save_dir)
+            print(f"Successfully retrieved Job {job_id} from archive store")
 
     def _retrieve_logs(self):
         from foundations_contrib.global_state import config_manager
