@@ -169,6 +169,7 @@
         height: 30%;
         display: inline-block;
         font-size: 9px;
+        vertical-align: bottom;
       }
 
       input::placeholder {
@@ -180,7 +181,7 @@
         width: 40%;
         display: inline-block;
         height: 45%;
-        vertical-align: top;
+        vertical-align: bottom;
         margin-left: 0.5em;
         background-color: #7FBD75;
         border-color: #7FBD75;

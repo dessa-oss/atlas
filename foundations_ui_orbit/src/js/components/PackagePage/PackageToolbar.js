@@ -120,8 +120,15 @@ class PackageToolbar extends React.Component {
           });
         })
         .catch(err => {
+          const id = setTimeout(() => {
+            this.setState({
+              resetting: false
+            });
+            this.reload();
+          }, 5000);
+
           this.setState({
-            resetting: false
+            timeoutSendId: id
           });
         });
     }
