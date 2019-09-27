@@ -106,7 +106,7 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
             models = models_promise.evaluate()
             for model in models:
-                if model.model_name == self.mock_user_provided_model_name():
+                if model.model_name == self.mock_user_provided_model_name:
                     self.assertEqual(expected_entrypoint, model.entrypoints)
                     return
             
