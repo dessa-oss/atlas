@@ -16,7 +16,7 @@ class TestOrbitModelPackageServer(Spec):
 
     mock_time = let_patch_mock('time.time')
     mock_set_project_name = let_patch_mock('foundations.set_project_name')
-
+    existing_words = []
 
     @let
     def mock_project_name(self):
@@ -30,13 +30,21 @@ class TestOrbitModelPackageServer(Spec):
     def mock_job_id(self):
         return self.faker.uuid4()
 
+    def _gen_unique_word(self):
+        word = self.faker.word().lower()
+        while word in self.existing_words:
+            word = self.faker.word().lower()
+        self.existing_words.append(word)
+
+        return word
+
     @let
     def mock_model_name(self):
-        return self.faker.word().lower()
+        return self._gen_unique_word()
 
     @let
     def mock_2nd_model_name(self):
-        return self.faker.word().lower()
+        return self._gen_unique_word()
 
     @let
     def mock_project_directory(self):
