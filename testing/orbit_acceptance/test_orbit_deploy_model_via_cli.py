@@ -104,8 +104,13 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
             models_promise = Model.all(project_name=self.mock_project_name)
 
-            default_model = models_promise.evaluate()[0]
-            self.assertEqual(expected_entrypoint, default_model.entrypoints)
+            models = models_promise.evaluate()
+            for model in models:
+                if model.model_name == self.mock_user_provided_model_name():
+                    self.assertEqual(expected_entrypoint, model.entrypoints)
+                    return
+            
+            self.fail('Failed to find entrypoint (model name not found)')
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
         finally:
