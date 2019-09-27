@@ -422,9 +422,9 @@ class TestOrbitModelPackageServer(Spec):
         self._deploy_without_uploading()
         self.mock_foundations_set_environment.assert_not_called()
 
-    def test_deploy_without_serving_does_not_run_set_project(self):
+    def test_deploy_without_serving_calls_set_project(self):
         self._deploy_without_uploading()
-        self.mock_set_project_name.assert_not_called()
+        self.mock_set_project_name.assert_called()
 
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name

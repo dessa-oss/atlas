@@ -143,11 +143,12 @@ def _launch_model_package(project_name, model_name):
 def _remove_model_package(project_name, model_name):
     return _orbit_command_handler(project_name, model_name, './remove_deployment.sh')
 
-def _setup_environment(project_name, env):
+def _setup_environment(project_name, env, setup_env=True):
     import foundations
     foundations.set_project_name(project_name)
-    foundations.set_environment(env)
-    _retrieve_configuration_secrets()
+    if setup_env:
+        foundations.set_environment(env)
+        _retrieve_configuration_secrets()
 
 def _check_for_invalid_names(project_name, model_name):
     import re
@@ -179,9 +180,9 @@ def _deploy_setup(project_name, model_name, project_directory, env='local', setu
     project_manifest_file = f'{project_directory}/foundations_package_manifest.yaml'
     _check_for_valid_manifest_file(project_manifest_file)
     _log().debug('All input from the user was entered correctly')
-    if setup_env:
-        _log().debug('Using the option to setup the environment with deploy')
-        _setup_environment(project_name, env)
+    
+    _log().debug('Using the option to setup the environment with deploy')
+    _setup_environment(project_name, env, setup_env=setup_env)
 
     if _model_exists_in_project(project_name, model_name):
         if _is_model_activated(project_name, model_name):
@@ -198,8 +199,10 @@ def _deploy_setup(project_name, model_name, project_directory, env='local', setu
 def deploy(project_name, model_name, project_directory, env='local'):
     _log().debug(f'Attempting to deploy model {model_name} within the project {project_name} using {project_directory}')
     _deploy_setup(project_name, model_name, project_directory, env)
+    
     _log().debug(f'Configuration successfully set up. Attempting to upload files in directory {project_directory}')
     _upload_model_directory(project_name, model_name, project_directory)
+    
     _log().debug('Upload was successful. Attempting to laund the model package')
     return _launch_model_package(project_name, model_name)
 
