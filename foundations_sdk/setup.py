@@ -38,6 +38,6 @@ setup(
     package_data={
         'foundations': ['resources/*', "**/*pytransform*", "**/license.lic", "*pytransform*", "license.lic", "pytransform.py", "*", "**/*", 'licenses/*/*', 'licenses/*']
     },
-    scripts=['foundations'],
+    scripts=['foundations', 'foundations.cmd'],
     include_package_data=True
 )
