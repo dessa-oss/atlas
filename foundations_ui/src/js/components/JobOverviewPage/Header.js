@@ -16,6 +16,8 @@ class Header extends React.Component {
       owners = this.props.location.state.project.owner;
     }
 
+    // console.log('this.props.location.state.project:  ', this.props.location.state.project);
+
     this.state = {
       name,
       dateCreated: createdAt,
@@ -33,6 +35,7 @@ class Header extends React.Component {
       const { projectName } = this.props.match.params;
       const fetchedProjects = await BaseActions.get('projects');
       const selectedProject = fetchedProjects.filter(item => item.name === projectName)[0];
+      console.log('projectName)[0]: ', selectedProject);
       if (selectedProject && selectedProject.length > 0) {
         this.setState({
           name: selectedProject.name,
@@ -58,6 +61,8 @@ class Header extends React.Component {
 
   render() {
     const { name, dateCreated, projectOwners } = this.state;
+
+    console.log('dateCreated: ', dateCreated);
 
     return (
       <div>

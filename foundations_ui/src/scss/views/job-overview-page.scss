@@ -74,8 +74,8 @@
 
     &.active {
       @extend .f--roboto-bold;
-      color: #00A4B2;
-      border-bottom: solid 3px #00A4B2;
+      color: $color-dark-blue;
+      border-bottom: solid 3px $color-dark-blue;
       margin: -6px 0px;
       padding-bottom: 16px;
     }
