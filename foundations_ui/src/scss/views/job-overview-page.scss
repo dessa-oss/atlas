@@ -133,6 +133,10 @@
     &.disabled {
       background-color: #D4D4D4;
     }
+
+    &:hover {
+      opacity: 0.75;
+    }
   }
 }
 
@@ -253,6 +257,9 @@
 
     .button-edit-md {
       cursor: pointer;
+      &:hover {
+        opacity: 0.75;
+      }
     }
   }
 }
