@@ -22,19 +22,14 @@
   color: white;
   border-radius: 3px;
   margin-left: 10px;
-  padding: 3px 10px;
+  padding: 2px 10px 4px 10px;
   background-size: 15px 15px;
   vertical-align: middle;
   display: inline-block;
   margin-bottom: 5px;
   line-height: normal;
-
-  &.i--icon-tf {
-    background-color: rgb(13, 171, 126);
-    padding: 8px 10px;
-  }
+  height: 20px;
   .close-button {
-    background-color: rgb(13, 171, 126);
     border-radius: 0px;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
