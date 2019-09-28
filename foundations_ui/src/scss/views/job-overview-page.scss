@@ -125,7 +125,7 @@
     position:absolute; 
     bottom: 15px; 
     right: 15px;
-    background-color: #0FA3B1;
+    background-color: $color-dessa-blue;
     font-size: 80%;
     padding: 10px;
     line-height: 0.5;
@@ -209,14 +209,10 @@
   
     button {
       float: right;
-      background-color: #0FA3B1;
+      background-color: $color-dessa-blue;
       font-size: 80%;
       padding: 10px;
       line-height: 0.5;
-
-      &.save {
-        background-color: #F9C80E;
-      }
     }
   
     div {
