@@ -43,6 +43,7 @@ class ModalJobDetails extends React.Component {
     this.onClickRemoveTag = this.onClickRemoveTag.bind(this);
     this.onClickArtifact = this.onClickArtifact.bind(this);
     this.onClickAtlasDocs = this.onClickAtlasDocs.bind(this);
+    this.onTagKeyPress = this.onTagKeyPress.bind(this);
   }
 
   reload() {
@@ -129,6 +130,12 @@ class ModalJobDetails extends React.Component {
     this.setState({
       newTagKey: e.target.value,
     });
+  }
+
+  onTagKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.onClickAddNewTag();
+    }
   }
 
   onChangeTagValue(e) {
@@ -249,7 +256,7 @@ class ModalJobDetails extends React.Component {
               {addNewTagVisible === true
                 && (
                   <div className="container-add-new-tag">
-                    <input onChange={this.onChangeTagKey} placeholder="Tag Value" />
+                    <input onChange={this.onChangeTagKey} onKeyPress={this.onTagKeyPress} placeholder="Tag Value" />
                     {/* <input onChange={this.onChangeTagValue} placeholder="Tag Value" /> */}
                     <button type="button" onClick={this.onClickAddNewTag}>SAVE</button>
                     <button type="button" onClick={this.onClickCancelAddNewTag}>CANCEL</button>
