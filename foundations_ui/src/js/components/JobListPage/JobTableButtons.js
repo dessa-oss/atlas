@@ -17,6 +17,7 @@ class JobTableButtons extends Component {
       getJobs: this.props.getJobs,
       selectNoJobs: this.props.selectNoJobs,
       reload: this.props.reload,
+      isReloadRotating: false,
     };
     this.toggleShowingFilter = this.toggleShowingFilter.bind(this);
     this.onDeleteJobs = this.onDeleteJobs.bind(this);
@@ -65,13 +66,14 @@ class JobTableButtons extends Component {
 
   async onClickRefresh() {
     const { reload } = this.props;
+    this.setState({ isReloadRotating: true });
     reload();
   }
 
 
   render() {
     const {
-      isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns, reload,
+      isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns, reload, isReloadRotating,
     } = this.state;
     const {
       buttonTensorboardEnabled,
@@ -99,7 +101,11 @@ class JobTableButtons extends Component {
           type="button"
           className="drop-shadow"
         >
-          <span className="i--icon-refresh"> <p>Refresh Table</p></span>
+          <span
+            className={`i--icon-refresh ${isReloadRotating ? 'rotate' : ''}`}
+            onAnimationEnd={() => this.setState({ isReloadRotating: false })}
+          />
+          <p>Refresh Table</p>
         </button>
         <button
           onClick={this.onClickTensor}

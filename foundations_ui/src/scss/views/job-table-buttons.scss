@@ -49,7 +49,7 @@
       cursor: pointer;
       vertical-align: middle;
       position: relative;
-      left: -50px;
+      left: 20px;
     }
 
   }
@@ -57,9 +57,7 @@
   button:nth-of-type(2) {
     width: 220px;
     background: $color-dessa-blue;
-    // color: #444;
     opacity: 1;
-    margin-right: 30px;
 
     &.grey {
       background: $color-job-headers;
@@ -75,9 +73,13 @@
       display: inline-block;
       height: 15px;
       width: 15px;
-      margin-left: 0px;
       cursor: pointer;
       vertical-align: middle;
+      position: relative;
+    }
+
+    p {
+      margin-left: 0;
     }
     
     &.disabled {

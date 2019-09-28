@@ -243,4 +243,18 @@ See assets/svgs/README.md for further information on SVG conversion process
   cursor: pointer;
   opacity: 1;
   border: none;
-} 
+}
+
+.rotate {
+  animation: rotate-keyframes 1s;
+}
+ 
+@keyframes rotate-keyframes {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(180deg);
+  }
+}
