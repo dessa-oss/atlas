@@ -492,7 +492,7 @@ class JobDetails extends React.Component {
             <TagContainer tags={tags} />
           </div>
           <div className="job-detail-table-container">
-            <div className="job-list-container">
+            <div className="job-details-container">
               {jobList}
             </div>
             {modalJobDetailsVisible === true
