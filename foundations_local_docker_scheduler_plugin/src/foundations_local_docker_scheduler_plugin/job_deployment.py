@@ -225,11 +225,8 @@ class JobDeployment(object):
 
         try:
             requests.delete(f"{scheduler_url}/completed_jobs/{job_id}").raise_for_status()
-            if platform == 'win32':
-                subprocess.call(f'rm -rf {path_to_delete}'.split())
-            else:
-                subprocess.call(f'sudo rm -rf {path_to_delete}'.split())
             return True
+
         except Exception:
             return False
 
