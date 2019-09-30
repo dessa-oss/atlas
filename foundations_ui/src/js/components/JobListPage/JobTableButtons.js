@@ -74,6 +74,7 @@ class JobTableButtons extends Component {
   render() {
     const {
       isShowingFilter, columns, updateSearchText, hiddenColumns, updateHiddenColumns, reload, isReloadRotating,
+      selectedJobs,
     } = this.state;
     const {
       buttonTensorboardEnabled,
@@ -92,6 +93,7 @@ class JobTableButtons extends Component {
     }
 
     const buttonTensorboardDisabled = !buttonTensorboardEnabled;
+    const buttonDeleteDisabled = selectedJobs.length === 0;
     const iconClassName = buttonTensorboardDisabled ? 'i--icon-tf-disabled' : 'i--icon-tf';
 
     return (
@@ -115,7 +117,11 @@ class JobTableButtons extends Component {
         >
           <span className={iconClassName} /> <p>Send to Tensorboard</p>
         </button>
-        <button onClick={this.onDeleteJobs} type="button" className="drop-shadow">
+        <button
+          onClick={this.onDeleteJobs}
+          type="button"
+          className={`drop-shadow ${buttonDeleteDisabled ? 'disabled' : ''}`}
+        >
           <p>Delete</p>
         </button>
         <div
