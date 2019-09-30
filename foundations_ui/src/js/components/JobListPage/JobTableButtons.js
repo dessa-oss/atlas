@@ -48,7 +48,7 @@ class JobTableButtons extends Component {
     if (selectedJobs.length > 0) {
       await selectedJobs.forEach(async (job) => {
         const URL = 'projects/'.concat(projectName).concat('/job_listing/').concat(job);
-        await BaseActions.delAPIary(URL);
+        await BaseActions.delStaging(URL);
       });
       selectNoJobs();
       getJobs();
@@ -115,13 +115,9 @@ class JobTableButtons extends Component {
         >
           <span className={iconClassName} /> <p>Send to Tensorboard</p>
         </button>
-        { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
-          && (
-          <button onClick={this.onDeleteJobs} type="button" className="drop-shadow">
-            <p>Delete</p>
-          </button>
-          )
-        }
+        <button onClick={this.onDeleteJobs} type="button" className="drop-shadow">
+          <p>Delete</p>
+        </button>
         <div
           className="job-details-filter-button"
           role="button"
