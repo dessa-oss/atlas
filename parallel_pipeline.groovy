@@ -19,10 +19,9 @@ pipeline{
                 container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
                 }
-                
             }
         }
-        stage('Python3 Foundations Install Test Requirements') {
+        stage('Foundations Install Test Requirements') {
             steps {
                 container("python3") {
                     sh "./ci_install_requirements.sh"
@@ -36,7 +35,7 @@ pipeline{
                 }
             }
         }
-        stage('Python3 Run Unit Tests') {
+        stage('Run Unit Tests') {
             steps {
                 container("python3") {
                     sh "./run_unit_tests.sh"
@@ -56,27 +55,27 @@ pipeline{
                 }
             }
         }
-        stage('Rebuild Python package using the wheels') {
-            steps {
-                container("python3") {
-                    sh 'python -m pip install ./dist/*.whl'
-                }
-            }
-        }
-        stage('Python3 Run Integration Tests') {
+        stage('Run Integration Tests') {
             steps {
                 container("python3") {
                     sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
                 }
             }
         }
-        stage('Python3 All Foundations Acceptance Tests'){
+        stage('Rebuild Python package using the wheels') {
+            steps {
+                container("python3") {
+                    sh "./ci_install_requirements.sh"
+                    sh 'python -m pip install ./dist/*.whl'
+                }
+            }
+        }
+        stage('All Foundations Acceptance Tests'){
             failFast true
             parallel{
-                
                 stage('Parallel Foundations Acceptance Tests') {
                     stages {
-                        stage('Python3 Foundations Acceptance Tests'){
+                        stage('Foundations Acceptance Tests'){
                             steps{
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
@@ -102,7 +101,7 @@ pipeline{
                 }
                 stage('Parallel Foundations Scheduler Acceptance Tests for Remote Deploys') {
                     stages{
-                        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                        stage('Foundations Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
@@ -115,7 +114,7 @@ pipeline{
                 }
                 stage('Parallel Foundations Orbit Acceptance Tests') {
                     stages{
-                        stage('Python3 Foundations Orbit Acceptance Tests') {
+                        stage('Foundations Orbit Acceptance Tests') {
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
@@ -128,7 +127,7 @@ pipeline{
                 }
                 stage('Parallel Foundations REST API Acceptance Tests') {
                     stages{
-                        stage('Python3 Foundations REST API Acceptance Tests') {
+                        stage('Foundations REST API Acceptance Tests') {
                             steps {
                                 container("python3-5") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
@@ -141,7 +140,6 @@ pipeline{
                 }
             }
         }
-        
         stage('Install dependencies for Foundations UI') {
             steps {
                 container("yarn") {
