@@ -87,14 +87,11 @@ class JobDeployment(object):
                                              username=username,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
-            cleanup_spec = self._create_cleanup_spec(working_dir_root_path=working_dir_root_path)
-
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
                                            'spec': job_spec,
                                            'metadata': {'project_name': project_name,
-                                                        'username': username},
-                                           'cleanup_spec': cleanup_spec
+                                                        'username': username}
                                            })
         except requests.exceptions.ConnectionError:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
@@ -218,45 +215,17 @@ class JobDeployment(object):
     def _cancel_job(job_id, scheduler_url, archive_path):
         import os
         import requests
-        import subprocess
-        from sys import platform
-
-        path_to_delete = os.path.join(archive_path, job_id)
 
         try:
             requests.delete(f"{scheduler_url}/completed_jobs/{job_id}").raise_for_status()
-            if platform == 'win32':
-                subprocess.call(f'rm -rf {path_to_delete}'.split())
-            else:
-                subprocess.call(f'sudo rm -rf {path_to_delete}'.split())
             return True
+
         except Exception:
             return False
 
     def _job_resources(self):
         from foundations_contrib.global_state import current_foundations_context
         return current_foundations_context().job_resources()
-
-    def _create_cleanup_spec(self, working_dir_root_path):
-        container_mount_point = "/workspace"
-
-        job_bundle_path = container_mount_point + '/' + str(self._job_id)
-        delete_command = f"rm -rf {job_bundle_path}"
-
-        cleanup_container = {
-            'image': 'alpine:latest',
-            'entrypoint': '/bin/sh',
-            'volumes': {
-                working_dir_root_path:
-                    {
-                        "bind": container_mount_point,
-                        "mode": "rw"
-                    }
-            },
-            'command':
-                ["-c", delete_command]
-            }
-        return cleanup_container
 
     def _create_job_spec(self, job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path, job_id, project_name, username, worker_container_overrides):
         from foundations_contrib.global_state import current_foundations_context
