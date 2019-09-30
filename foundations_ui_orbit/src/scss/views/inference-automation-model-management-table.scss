@@ -74,6 +74,20 @@
         border-color: #2bab89;
         color: white;
         font-size: 9px;
+
+        &:hover {
+          background-color: #259678;
+          color: white;
+          border: solid 1px transparent;
+      
+          i {
+            border-color: white;
+          }
+      
+          span {
+            color: white;
+          }
+        }
       }
 
       &.deactivate {
@@ -82,6 +96,20 @@
         border-color: #dc5454;
         color: white;
         font-size: 9px;
+
+        &:hover {
+          background-color: #b64747;
+          color: white;
+          border: solid 1px transparent;
+      
+          i {
+            border-color: white;
+          }
+      
+          span {
+            color: white;
+          }
+        }
       }
 
       &.activate {
@@ -90,6 +118,20 @@
         border-color: #71a0f6;
         color: white;
         font-size: 9px;
+
+        &:hover {
+          background-color: #5d83ca;
+          color: white;
+          border: solid 1px transparent;
+      
+          i {
+            border-color: white;
+          }
+      
+          span {
+            color: white;
+          }
+        }
       }
 
       &.details {

@@ -38,6 +38,8 @@ const NewModelRecalibrationModal = props => {
   ]);
 
   const [error, setError] = React.useState("");
+  const [missingFieldsVisible, setMissingFieldsVisible] = React.useState(false);
+  const [updated, setUpdated] = React.useState(false);
 
   const clickSchedule = () => {
     let value = !scheduleMessageVisible;
@@ -64,6 +66,8 @@ const NewModelRecalibrationModal = props => {
 
   const onChangeModelName = e => {
     setModelName(e.target.value);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onChangeDescription = e => {
@@ -87,6 +91,8 @@ const NewModelRecalibrationModal = props => {
     });
 
     setUpdatedParameters(updatedParameters);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onChangeParameterValue = (e, i) => {
@@ -98,6 +104,8 @@ const NewModelRecalibrationModal = props => {
     });
 
     setUpdatedParameters(updatedParameters);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onClickAddNewParameter = () => {
@@ -126,6 +134,7 @@ const NewModelRecalibrationModal = props => {
   const onClickSave = () => {
     setError("");
     setRecalibrationLoading(true);
+    setMissingFieldsVisible(false);
 
     let errorFound = false;
 
@@ -142,6 +151,7 @@ const NewModelRecalibrationModal = props => {
     if (errorFound === true) {
       setRecalibrationLoading(false);
       setError("Please fill the form to run the recalibration");
+      setMissingFieldsVisible(true);
     } else {
       let body = {
         "model-name": modelName
@@ -155,11 +165,13 @@ const NewModelRecalibrationModal = props => {
         body)
         .then(() => {
           setRecalibrationLoading(false);
+          setMissingFieldsVisible(false);
           props.reload();
           props.onClose();
         })
         .catch(err => {
           setRecalibrationLoading(false);
+          setMissingFieldsVisible(false);
         });
     }
   };
@@ -277,7 +289,10 @@ const NewModelRecalibrationModal = props => {
             <div className="recalibrate-property-container">
               <p className="recalibrate-label-date">Model Name:</p>
               <input
-                className="recalibrate-container-date input"
+                className={(missingFieldsVisible === true && modelName === "")
+                  ? "recalibrate-container-date input missing"
+                  : "recalibrate-container-date input"
+                }
                 value={modelName}
                 onChange={onChangeModelName}
                 placeholder="Enter the name of the new model package (must be unique)"
@@ -300,17 +315,26 @@ const NewModelRecalibrationModal = props => {
                   <div className="parameter"><p className="parameter-header">VALUE</p></div>
                 </div>
                 {
-                  parameters.map((parameter, i) => {
+                  (updated || !updated) && parameters.map((parameter, i) => {
+                    console.log("KEY: ", updatedParameters[i].key, " VALUE: ", updatedParameters[i].value);
                     return (
                       <div key={parameter.key} className="container-parameter-row">
                         <div className="parameter">
                           <input
+                            className={(missingFieldsVisible === true && updatedParameters[i].key === "")
+                              ? "missing"
+                              : ""
+                            }
                             placeholder="Specify Parameter Key"
                             onChange={e => onChangeParameterKey(e, i)}
                           />
                         </div>
                         <div className="parameter">
                           <input
+                            className={(missingFieldsVisible === true && updatedParameters[i].value === "")
+                              ? "missing"
+                              : ""
+                            }
                             placeholder="Specify Parameter Value"
                             onChange={e => onChangeParameterValue(e, i)}
                           />

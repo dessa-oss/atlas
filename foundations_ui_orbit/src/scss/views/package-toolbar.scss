@@ -150,6 +150,20 @@
         color: white;
         font-size: 8px;
         @extend .f--roboto;
+
+        &:hover {
+          background-color: rgb(219, 131, 30);
+          color: white;
+          border: solid 1px transparent;
+      
+          i {
+            border-color: white;
+          }
+      
+          span {
+            color: white;
+          }
+        }
       }
     }
 
@@ -188,6 +202,20 @@
         color: white;
         font-size: 9px;
         @extend .f--roboto;
+
+        &:hover {
+          background-color: rgb(105, 156, 97);
+          color: white;
+          border: solid 1px transparent;
+      
+          i {
+            border-color: white;
+          }
+      
+          span {
+            color: white;
+          }
+        }
       }
     }
   }

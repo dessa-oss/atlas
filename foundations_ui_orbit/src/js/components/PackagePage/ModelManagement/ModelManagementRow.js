@@ -22,6 +22,13 @@ const ModelManagementRow = props => {
   const clickRecalibrate = () => {
     const value = !recalibrateOpen;
     setRecalibrateOpen(value);
+
+    const { stopTimer, startTimer } = props;
+    if (value === true) {
+      stopTimer();
+    } else {
+      startTimer();
+    }
   };
 
   const onChangeDefault = () => {
@@ -168,7 +175,9 @@ ModelManagementRow.propTypes = {
   rowNum: PropTypes.number,
   isRecalibrate: PropTypes.bool,
   location: PropTypes.object,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  startTimer: PropTypes.func,
+  stopTimer: PropTypes.func
 };
 
 ModelManagementRow.defaultProps = {
@@ -178,7 +187,9 @@ ModelManagementRow.defaultProps = {
   rowNum: -1,
   isRecalibrate: false,
   location: { state: {} },
-  reload: () => null
+  reload: () => null,
+  startTimer: () => null,
+  stopTimer: () => null
 };
 
 export default ModelManagementRow;

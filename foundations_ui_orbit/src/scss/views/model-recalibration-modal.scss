@@ -41,6 +41,10 @@
         width: 100%;
       }
 
+      &.missing {
+        color: #dc5454;
+      }
+
       input::placeholder {
         font-size: 12px;
         margin-left: 10px;
@@ -76,6 +80,12 @@
           display: inline-block;
           width: 46%;
           padding: 10px;
+
+          input {
+            &.missing {
+              color: #dc5454;
+            }
+          }
 
           &:last-child {
             border-left: solid 1px #d3d3d3;
