@@ -16,6 +16,7 @@ class StartTimeCell extends Component {
       isError: this.props.isError,
       rowNumber: this.props.rowNumber,
       expand: this.props.expand,
+      status: this.props.status,
     };
   }
 
@@ -31,6 +32,7 @@ class StartTimeCell extends Component {
         rowNumber: nextProps.rowNumber,
         isError: nextProps.isError,
         expand: nextProps.expand,
+        status: nextProps.status,
       });
     }
   }
@@ -38,7 +40,7 @@ class StartTimeCell extends Component {
 
   render() {
     const {
-      date, time, isError, rowNumber, expand,
+      date, time, isError, rowNumber, expand, status,
     } = this.state;
     let hover;
 
@@ -49,10 +51,13 @@ class StartTimeCell extends Component {
       ? `job-cell start-cell error row-${rowNumber}`
       : `job-cell start-cell row-${rowNumber}`;
 
+    const launchDate = status === 'queued' ? 'Queued' : moment(date).format('MMM DD').toString();
+    const launchTime = status === 'queued' ? '' : time;
+
     const dateTimeFormatted = (
       <span className="font-bold">
-        <span className="launch-date">{moment(date).format('MMM DD').toString()} </span>
-        <span className={spanClass}>{time}</span>
+        <span className="launch-date">{launchDate} </span>
+        <span className={spanClass}>{launchTime}</span>
       </span>
     );
 
@@ -78,6 +83,7 @@ StartTimeCell.propTypes = {
   isError: PropTypes.bool,
   rowNumber: PropTypes.number,
   expand: PropTypes.bool,
+  status: PropTypes.string,
 };
 
 StartTimeCell.defaultProps = {
@@ -85,6 +91,7 @@ StartTimeCell.defaultProps = {
   isError: false,
   rowNumber: -1,
   expand: false,
+  status: '',
 };
 
 export default StartTimeCell;

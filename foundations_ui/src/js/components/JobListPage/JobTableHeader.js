@@ -338,7 +338,7 @@ class JobTableHeader extends Component {
       });
       neededColums.push({
         name: 'Launched',
-        value: new StartTimeCell({ startTime: el.start_time }).render(),
+        value: new StartTimeCell({ startTime: el.start_time, status: el.status }).render(),
         type: 'string',
       });
       neededColums.push({
