@@ -87,11 +87,14 @@ class JobDeployment(object):
                                              username=username,
                                              worker_container_overrides=self._config['worker_container_overrides'])
 
+            gpu_spec = self._create_gpu_spec()
+
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
             r = requests.post(myurl, json={'job_id': self._job_id,
                                            'spec': job_spec,
                                            'metadata': {'project_name': project_name,
-                                                        'username': username}
+                                                        'username': username},
+                                           'gpu_spec': gpu_spec
                                            })
         except requests.exceptions.ConnectionError:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
@@ -312,6 +315,14 @@ class JobDeployment(object):
                         worker_container_overrides['resources'][override_key])
 
         return worker_container
+
+    def _create_gpu_spec(self):
+        from foundations_contrib.global_state import foundations_context
+        resources = foundations_context.job_resources()
+        gpu_spec = {
+            "num_gpus": resources.num_gpus
+        }
+        return gpu_spec
 
     def stop_running_job(self):
         import requests
