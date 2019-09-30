@@ -1,5 +1,6 @@
 /* eslint-disable react/no-string-refs */
 import React, { Component } from 'react';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -64,9 +65,9 @@ class JobOverviewGraph extends Component {
     this.setState({ formattedGraphData: seriesArray });
   }
 
-  onChangeMetric(e) {
+  onChangeMetric(selectedOption) {
     const { setMetric } = this.state;
-    const metric = e.target.value;
+    const metric = selectedOption.value;
     setMetric(metric);
   }
 
@@ -112,9 +113,8 @@ class JobOverviewGraph extends Component {
     };
 
     const metrics = [];
-    metrics.push(<option key="Metrics" selected disabled hidden>Metrics</option>);
     allMetrics.forEach((metricName) => {
-      metrics.push(<option key={metricName}>{metricName}</option>);
+      metrics.push({ value: metricName, label: metricName });
     });
 
     const failedConversionMessage = <p className="not-graphable-message">This metric cannot be graphed.</p>;
