@@ -77,7 +77,7 @@ pipeline{
                     stages {
                         stage('Foundations Acceptance Tests'){
                             steps{
-                                container("python3-1") {
+                                container("python3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh "python -m pip install --no-index ../dist/*.whl && python -Wi -m unittest -f -v acceptance"
                                     }
@@ -90,7 +90,7 @@ pipeline{
                     stages{
                         stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
                             steps {
-                                container("python3-2") {
+                                container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . && python -Wi -m unittest -f -v stageless_acceptance'
                                     }
@@ -103,7 +103,7 @@ pipeline{
                     stages{
                         stage('Foundations Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
-                                container("python3-3") {
+                                container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . &&  export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
@@ -116,7 +116,7 @@ pipeline{
                     stages{
                         stage('Foundations Orbit Acceptance Tests') {
                             steps {
-                                container("python3-4") {
+                                container("python3-3") {
                                     ws("${WORKSPACE}/testing") {
                                         sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
@@ -129,7 +129,7 @@ pipeline{
                     stages{
                         stage('Foundations REST API Acceptance Tests') {
                             steps {
-                                container("python3-5") {
+                                container("python3-4") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
                                         sh "python -m pip install  --no-index ../../dist/*.whl && python -Wi -m unittest -f -v acceptance"
                                     }
@@ -140,51 +140,51 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Foundations UI') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "yarn install"
-                    }
-                }
-            }
-        }
-        stage('Run Front End Unit Tests') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "yarn run test"
-                    }
-                }
-            }
-        }
-        stage('Check for linting') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui/") {
-                        sh "node_modules/.bin/eslint ."
-                    }
-                }
-            }
-        }
-        stage('Upload Wheels to Releases') {
-            steps {
-                container("python3"){
-                    sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
-                }
-            }
-        }
-        stage('Build GUI and Rest API Images'){
-            steps {
-                container("python3"){
-                    sh "./build_gui.sh"
-                }
-            }
-        }
-        stage('Results') {
-            steps {
-                archiveArtifacts artifacts: '**/*.whl', fingerprint: true
-            }
-        }
+        // stage('Install dependencies for Foundations UI') {
+        //     steps {
+        //         container("yarn") {
+        //             ws("${WORKSPACE}/foundations_ui/") {
+        //                 sh "yarn install"
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Run Front End Unit Tests') {
+        //     steps {
+        //         container("yarn") {
+        //             ws("${WORKSPACE}/foundations_ui/") {
+        //                 sh "yarn run test"
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Check for linting') {
+        //     steps {
+        //         container("yarn") {
+        //             ws("${WORKSPACE}/foundations_ui/") {
+        //                 sh "node_modules/.bin/eslint ."
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Upload Wheels to Releases') {
+        //     steps {
+        //         container("python3"){
+        //             sh "./upload_modules_to_artifactory.sh $NEXUS_PYPI"
+        //         }
+        //     }
+        // }
+        // stage('Build GUI and Rest API Images'){
+        //     steps {
+        //         container("python3"){
+        //             sh "./build_gui.sh"
+        //         }
+        //     }
+        // }
+        // stage('Results') {
+        //     steps {
+        //         archiveArtifacts artifacts: '**/*.whl', fingerprint: true
+        //     }
+        // }
     }
 }
