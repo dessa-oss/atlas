@@ -174,6 +174,10 @@ def _load_entrypoints_from_manifest(project_manifest_file):
         return yaml.load(manifest_file)['entrypoints']
 
 def _deploy_setup(project_name, model_name, project_directory, env='local', setup_env=True):
+    import warnings
+    from cryptography.utils import CryptographyDeprecationWarning
+    warnings.filterwarnings('ignore', category=CryptographyDeprecationWarning)
+
     _check_for_invalid_names(project_name, model_name)
     _check_for_valid_project_directory(project_directory)
 

@@ -16,6 +16,7 @@ class TestOrbitModelPackageServer(Spec):
 
     mock_time = let_patch_mock('time.time')
     mock_set_project_name = let_patch_mock('foundations.set_project_name')
+    mock_filterwarnings = let_patch_mock('warnings.filterwarnings')
     existing_words = []
 
     @let
@@ -433,6 +434,12 @@ class TestOrbitModelPackageServer(Spec):
     def test_deploy_without_serving_calls_set_project(self):
         self._deploy_without_uploading()
         self.mock_set_project_name.assert_called()
+
+    def test_crypto_warning_should_not_be_printed(self):
+        from cryptography.utils import CryptographyDeprecationWarning
+
+        self._deploy()
+        self.mock_filterwarnings.assert_called_with('ignore', category=CryptographyDeprecationWarning)
 
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name
