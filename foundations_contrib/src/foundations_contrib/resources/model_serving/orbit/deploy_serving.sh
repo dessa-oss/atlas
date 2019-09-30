@@ -32,9 +32,9 @@ done
 
 if [[ "Running" == $(model_status) ]]; then
     echo ''
-    echo Model $model_name in the project $project_name has started, please run:
+    echo Model $model_name in the project $project_name has started.
+    echo if an error has occurred or you wish to stop the server, please run:
     echo -e '    ' foundations orbit serve stop --project_name=$project_name --model_name=$model_name
-    echo if an error has occurred or you wish to stop the server
     echo ''
     if [[ -z $no_follow ]]; then
         kubectl logs -f -n $namespace $model_pod
