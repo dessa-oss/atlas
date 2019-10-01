@@ -121,8 +121,8 @@ class JobOverviewGraph extends Component {
 
     return (
       <div>
-        <h3 className="section-title">Recent Jobs</h3>
         <div className="chart section-container">
+          <h3 className="section-title">Recent Jobs</h3>
           <select onChange={this.onChangeMetric}>
             {metrics}
           </select>
