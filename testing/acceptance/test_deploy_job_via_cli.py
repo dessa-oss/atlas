@@ -10,7 +10,6 @@ from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctio
 
 import foundations
 from contextlib import contextmanager
-from acceptance.mixins.run_local_job import RunLocalJob
 
 class TestDeployJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 

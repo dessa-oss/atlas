@@ -152,6 +152,11 @@ class TestExecution(Spec):
         result_config = self.translator.translate(self._configuration)
         self.assertEqual('.', result_config['artifact_path'])
 
+    def test_returns_archive_end_point(self):
+        self._configuration['results_config']['archive_end_point'] = self.fake_artifact_path
+        result_config = self.translator.translate(self._configuration)
+        self.assertEqual(self.fake_artifact_path, result_config['archive_end_point'])
+
     def test_validates_schema(self):
         import jsonschema
 
