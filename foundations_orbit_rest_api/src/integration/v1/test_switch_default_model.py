@@ -23,7 +23,7 @@ class TestSwitchDefaultModel(Spec):
 
     @tear_down_class
     def tear_down_class(klass):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=klass._contrib_source_root)
+        subprocess.run(f'./integration/resources/fixtures/test_server/tear_down.sh {klass.project_name}'.split(), cwd=klass._contrib_source_root)
         subprocess.run(f'./remove_deployment.sh {klass.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
         subprocess.run(f'./remove_deployment.sh {klass.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
@@ -112,11 +112,10 @@ class TestSwitchDefaultModel(Spec):
 
     def test_put_request_change_default_model_in_the_ingress(self):
         import yaml, json
-        
 
         self._create_two_models_and_change_default()
 
-        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress model-service-selection -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
+        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress foundations-model-package-{self.project_name}-ingress -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
         ingress_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
         ingress_resource = json.loads(ingress_configuration)
         ingress_resource_paths = ingress_resource['spec']['rules'][0]['http']['paths']

@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from faker import Faker
+
 import foundations
 import time
 import subprocess
@@ -19,6 +21,10 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
     port = 31998
     max_time_out_in_sec = 60
 
+    faker = Faker()
+    mock_project_name = faker.word().lower()
+    mock_user_provided_model_name = faker.word().lower()
+
     @set_up_class
     def set_up_class(self):
         from acceptance.cleanup import cleanup
@@ -28,7 +34,7 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
     @tear_down_class
     def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
+        subprocess.run(f'./integration/resources/fixtures/test_server/tear_down.sh {self.mock_project_name}'.split(), cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -40,22 +46,16 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
     @tear_down
     def tear_down(self):
         try:
-            self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
+            self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
+            self._wait_for_server_to_be_unavailable()
+            self._wait_for_deployment_pod_to_delete(f'foundations-model-package-{self.mock_project_name}-{self.mock_user_provided_model_name}')
         except:
-            print('Unable to remove model pacakge. Probably terminated in the test')
+            print('Unable to remove model package. Probably terminated in the test')
 
     @staticmethod
     def _is_running_on_jenkins():
         import os
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
-
-    @let
-    def mock_project_name(self):
-        return self.faker.word().lower()
-
-    @let
-    def mock_user_provided_model_name(self):
-        return self.faker.word().lower()
 
     @let
     def project_directory(self):
@@ -285,4 +285,4 @@ class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
         import shlex
         subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # subprocess.run(shlex.split('kubectl -n foundations-scheduler-test delete configmap model-package-submission-config'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete ingress foundations-model-package-{project_name}-{model_name}-ingress'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -13,26 +13,8 @@ import sys
 import os
 import json
 
-def add_new_model_to_ingress(project_name, model_name, namespace='foundations-scheduler-test'):
-
-    ingress_resource = yaml.load(_run_command(f'kubectl get ingress model-service-selection -n {namespace} -o yaml'.split()).stdout.decode())
-
-    previous_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
-
-    ingress_resource_to_modify = json.loads(previous_configuration)
-
-    modified_ingress_resource = ingress.set_model_endpoint(ingress_resource_to_modify, project_name, model_name)
-
-    temp_file_path = _temp_file_path()
-    with open(f'{temp_file_path}', 'w') as yaml_file:
-        yaml.dump(modified_ingress_resource, yaml_file, default_flow_style=False)
-
-    _run_command(f'kubectl apply -f {temp_file_path}'.split())
-
-    os.remove(f'{temp_file_path}')
-
 def update_default_model_for_project(project_name, model_name, namespace='foundations-scheduler-test'):
-    ingress_resource = yaml.load(_run_command(f'kubectl get ingress model-service-selection -n {namespace} -o yaml'.split()).stdout.decode())
+    ingress_resource = yaml.load(_run_command(f'kubectl get ingress foundations-model-package-{project_name}-ingress -n {namespace} -o yaml'.split()).stdout.decode())
     previous_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
     ingress_resource_to_modify = json.loads(previous_configuration)
     modified_ingress_resource = ingress.update_default_model_for_project(ingress_resource_to_modify, project_name, model_name)
