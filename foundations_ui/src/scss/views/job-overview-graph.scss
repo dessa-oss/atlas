@@ -4,6 +4,7 @@
 
 .chart {
   min-height: 475px;
+  overflow-y: hidden;
 
   .highchart-chart {
     position: relative;

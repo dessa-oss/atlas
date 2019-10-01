@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import { Remarkable } from 'remarkable';
 import PropTypes from 'prop-types';
 import BaseActions from '../../actions/BaseActions';
+import NoDescriptionImage from '../../../assets/svgs/empty-description.svg';
 
 class Readme extends React.Component {
   constructor(props) {
@@ -87,8 +88,8 @@ class Readme extends React.Component {
     const { input, editMode } = this.state;
     return (
       <div>
-        <h3 className="section-title">Project overview</h3>
         <div className="readme section-container">
+          <h3 className="section-title">Project Overview</h3>
           <button
             className={editMode === true ? 'button-edit-md save' : 'button-edit-md'}
             type="button"
@@ -99,8 +100,15 @@ class Readme extends React.Component {
           {editMode === true && (
             <textarea value={input} onChange={this.onChangeMD} placeholder="Type something..." />
           )}
-          {editMode === false && (
+          {editMode === false && input !== '' && (
             <div dangerouslySetInnerHTML={this.renderMD()} />
+          )}
+          {editMode === false && input === '' && (
+            <div className="no-description">
+              <h3>Your project overview is empty!</h3>
+              <h3>Click on Edit to add a description.</h3>
+              <img className="no-description-image" alt="" src={NoDescriptionImage} />
+            </div>
           )}
         </div>
       </div>
