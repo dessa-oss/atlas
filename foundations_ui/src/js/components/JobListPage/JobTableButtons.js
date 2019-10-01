@@ -117,13 +117,16 @@ class JobTableButtons extends Component {
         >
           <span className={iconClassName} /> <p>Send to Tensorboard</p>
         </button>
-        <button
-          onClick={this.onDeleteJobs}
-          type="button"
-          className={`drop-shadow ${buttonDeleteDisabled ? 'disabled' : ''}`}
-        >
-          <p>Delete</p>
-        </button>
+        { process.env.REACT_APP_SCHEDULER_TYPE !== 'CE'
+          && (
+            <button
+              onClick={this.onDeleteJobs}
+              type="button"
+              className={`drop-shadow ${buttonDeleteDisabled ? 'disabled' : ''}`}
+            >
+              <p>Delete</p>
+            </button>
+          )}
         <div
           className="job-details-filter-button"
           role="button"
