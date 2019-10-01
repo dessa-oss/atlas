@@ -42,7 +42,7 @@ class DeploymentManager(object):
             deployment.deploy()
         else:
             deployment.deploy()
-            logger.info("Job submitted with IDb '{}' in project '{}'.".format(job_name, project_name))
+            logger.info("Job submitted with ID '{}' in project '{}'.".format(job_name, project_name))
 
         return deployment
 
