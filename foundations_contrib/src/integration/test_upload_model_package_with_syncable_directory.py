@@ -59,7 +59,7 @@ class TestUploadModelPackageWithSyncableDirectory(Spec):
         archive_end_point_from_config = 'integration/fixtures/model_package'
         return Path('{}/archive'.format(archive_end_point_from_config)) / self.model_name / (self.package_name + '_directories') / self.key
 
-    def test_upload_model_package_with_sycable_directory(self):
+    def test_upload_model_package_with_syncable_directory(self):
         model_package_path = 'integration/fixtures/model_package'
 
         syncable_directory = SyncableDirectory(self.key, model_package_path, self.model_id, None, auto_download=False, package_name=self.package_name)
@@ -68,7 +68,7 @@ class TestUploadModelPackageWithSyncableDirectory(Spec):
         with open(self.model_result_path / 'some_content.txt', 'r') as file:
             self.assertEqual('Content of file.', file.read())
 
-    def test_upload_model_package_with_syncable_directory_from_config(self):
+    def test_syncable_directory_uploads_to_expected_path_based_on_details_in_config(self):
         expected_job_output_path = 'integration/fixtures/model_package'
         with self.change_config():
             from foundations_contrib.global_state import config_manager
