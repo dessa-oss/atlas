@@ -68,13 +68,12 @@ class TestUploadModelPackageWithSyncableDirectory(Spec):
         with open(self.model_result_path / 'some_content.txt', 'r') as file:
             self.assertEqual('Content of file.', file.read())
 
-    @skip('need to fix path')
     def test_upload_model_package_with_syncable_directory_from_config(self):
         expected_job_output_path = 'integration/fixtures/model_package'
         with self.change_config():
             from foundations_contrib.global_state import config_manager
             from foundations_internal.config.execution import translate
-            yaml_path = './integration/fixtures/config/model_package/execution/default.config.yaml'
+            yaml_path = 'integration/fixtures/config/model_package_config/execution/default.config.yaml'
             config_manager.add_simple_config_path(yaml_path, translate)
 
             project_directory_from_config = config_manager.config()['archive_end_point']
