@@ -168,21 +168,6 @@ class TestConfigManager(Spec):
         self.config_translator.translate.assert_called_with({'value': 'different value'})
         self._assert_is_subset({'some different configuration': 'a value of great importance'}, self.config)
 
-    def test_add_simple_config_path_uses_translator_passed_in_as_parameter_avoids_calling_config_translator(self):
-        translator = lambda yaml: yaml
-        self.config_manager.add_simple_config_path('test/fixtures/multiple_configs/second.config.yaml', translator=translator)
-        self.config_translator.translate.assert_not_called()
-
-    def test_add_simple_config_path_uses_translator_passed_in_as_parameter_translate_using_passed_translator(self):
-        self.config_manager.add_simple_config_path('test/fixtures/single_config/test.config.yaml', translator=self._config_transformer)
-        config = self.config_manager.config()
-        self._assert_is_subset({'title': 'modified title'}, config)
-
-    @staticmethod
-    def _config_transformer(config_data):
-        config_data['title'] = 'modified title'
-        return config_data
-
     def test_add_config_path_after_configured(self):
         config_manager = ConfigManager()
         config_manager.add_config_path(
