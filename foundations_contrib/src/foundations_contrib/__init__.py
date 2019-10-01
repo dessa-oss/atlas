@@ -30,4 +30,4 @@ def _inject_config_translate():
     config_translator.add_translator('local', translator)
 
 
-# _inject_config_translate()
+_inject_config_translate()
