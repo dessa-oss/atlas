@@ -208,14 +208,13 @@ class JobDeployment(object):
     def cancel_jobs(jobs):
         from foundations_contrib.global_state import config_manager
         from pathlib import Path
-        archive_path = str(Path(config_manager['job_results_root']) / 'archive')
         scheduler_url = config_manager['scheduler_url']
 
-        return {job: JobDeployment._cancel_job(job, scheduler_url, archive_path) for job in jobs}
+        return {job: JobDeployment._cancel_job(job, scheduler_url) for job in jobs}
 
 
     @staticmethod
-    def _cancel_job(job_id, scheduler_url, archive_path):
+    def _cancel_job(job_id, scheduler_url):
         import os
         import requests
 
