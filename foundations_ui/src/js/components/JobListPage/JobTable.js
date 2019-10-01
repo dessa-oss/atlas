@@ -70,6 +70,7 @@ class JobTable extends Component {
         jobIdFilters: nextProps.jobIdFilters,
         startTimeFilters: nextProps.startTimeFilters,
         filters: nextProps.filters,
+        projectName: nextProps.projectName,
       },
     );
   }

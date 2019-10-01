@@ -426,7 +426,7 @@ class JobDetails extends React.Component {
 
     const jobList = (
       <JobTable
-        projectName={projectName}
+        projectName={project.name}
         statuses={statuses}
         updateHiddenStatus={this.updateHiddenStatus}
         updateHiddenUser={this.updateHiddenUser}
