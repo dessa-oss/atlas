@@ -56,6 +56,9 @@ pipeline{
             }
         }
         stage('Run Integration Tests') {
+            options {
+                lock('ingress-tests')
+            }
             steps {
                 container("python3") {
                     sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
@@ -70,29 +73,36 @@ pipeline{
                 }
             }
         }
-        stage('All Foundations Acceptance Tests'){
+        stage('Python3 All Foundations Acceptance Tests'){
             failFast true
             parallel{
-                stage('Parallel Foundations Acceptance Tests') {
-                    stages {
-                        stage('Foundations Acceptance Tests'){
-                            steps{
+                stage('Parallel Foundations Acceptance Tests for Stageless Deploys') {
+                    stages{
+                        stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
+                            steps {
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh "python -m pip install --no-index ../dist/*.whl && python -Wi -m unittest -f -v acceptance"
+                                        sh 'python -m pip install ../dist/*.whl'
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'python -Wi -m unittest -f -v stageless_acceptance'
                                     }
                                 }
                             }
                         }
                     }
                 }
-                stage('Parallel Foundations Acceptance Tests for Stageless Deploys') {
-                    stages{
-                        stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
-                            steps {
+                stage('Parallel Foundations Acceptance Tests') {
+                    stages {
+                        stage('Python3 Foundations Acceptance Tests'){
+                            options {
+                                lock('ingress-tests')
+                            }
+                            steps{
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . && python -Wi -m unittest -f -v stageless_acceptance'
+                                        sh 'python -m pip install ../dist/*.whl'
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
                             }
@@ -101,24 +111,13 @@ pipeline{
                 }
                 stage('Parallel Foundations Scheduler Acceptance Tests for Remote Deploys') {
                     stages{
-                        stage('Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . &&  export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                stage('Parallel Foundations Orbit Acceptance Tests') {
-                    stages{
-                        stage('Foundations Orbit Acceptance Tests') {
-                            steps {
-                                container("python3-3") {
-                                    ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install --no-index ../dist/*.whl && cp -r ../testing/* . && export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
+                                        sh 'python -m pip install ../dist/*.whl'
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
                                 }
                             }
@@ -127,11 +126,30 @@ pipeline{
                 }
                 stage('Parallel Foundations REST API Acceptance Tests') {
                     stages{
-                        stage('Foundations REST API Acceptance Tests') {
+                        stage('Python3 Foundations REST API Acceptance Tests') {
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/foundations_rest_api/src") {
+                                        sh 'python -m pip install ../../dist/*.whl'
+                                        sh "python -Wi -m unittest -f -v acceptance"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations Orbit Acceptance Tests') {
+                    stages{
+                        stage('Python3 Foundations Orbit Acceptance Tests') {
+                            options {
+                                lock('ingress-tests')
+                            }
                             steps {
                                 container("python3-4") {
-                                    ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh "python -m pip install  --no-index ../../dist/*.whl && python -Wi -m unittest -f -v acceptance"
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
                                 }
                             }
