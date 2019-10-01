@@ -3,6 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import ProfilePlaceholder from '../../../assets/images/icons/person-with-outline.png';
 import BaseActions from '../../actions/BaseActions';
+import NoCommentsImage from '../../../assets/svgs/empty-notes.svg';
 
 class Notes extends React.Component {
   constructor(props) {
@@ -81,10 +82,11 @@ class Notes extends React.Component {
 
   render() {
     const { notes, message } = this.state;
+    console.log('notes.length: ', notes.length);
     return (
       <div className="container-notes">
-        <h3 className="section-title">Comments</h3>
         <div className="notes section-container">
+          <h3 className="section-title">Comments</h3>
           <div className="notes-textarea">
             <textarea placeholder="Add a comment..." value={message} onChange={this.onChangeMessage} />
             <button
@@ -97,7 +99,13 @@ class Notes extends React.Component {
               Add Note
             </button>
           </div>
-          {notes.map((note) => {
+          { notes.length === 0 && (
+            <div className="no-comments-block">
+              <h3>No comments yet, try adding one!</h3>
+              <img alt="" className="no-comments-image" src={NoCommentsImage} />
+            </div>
+          )}
+          { notes.length !== 0 && notes.map((note) => {
             return (
               <div key={note.date} className="notes-blocks">
                 <div className="container-note-profile">

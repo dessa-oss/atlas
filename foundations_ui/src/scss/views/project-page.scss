@@ -3,6 +3,10 @@
   margin: 50px;
   min-height: calc(100% - #{$footer-height} - #{$header-height} - 101px);
 
+  * {
+    font-family: DIN, Arial, sans-serif;
+  }
+
   h1 {
     color: #637081;
     font-size: 24px;
