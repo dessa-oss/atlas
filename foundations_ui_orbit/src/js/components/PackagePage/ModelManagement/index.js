@@ -43,8 +43,7 @@ class ModelManagement extends React.Component {
   startTimer() {
     const id = setInterval(() => {
       this.reload();
-    }, 1000);
-    console.log("CREATED ID: ", id);
+    }, 10000);
     this.setState({
       timerId: id
     });
@@ -52,7 +51,6 @@ class ModelManagement extends React.Component {
 
   stopTimer() {
     const { timerId } = this.state;
-    console.log("TIMER ID: ", timerId);
     clearInterval(timerId);
   }
 

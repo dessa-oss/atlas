@@ -158,6 +158,7 @@ const ModelManagementRow = props => {
       )}
       {recalibrateOpen === true && (
         <NewModelRecalibrationModal
+          isOpen={recalibrateOpen}
           onClose={clickRecalibrate}
           model={rowData}
           reload={reload}

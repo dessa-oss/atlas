@@ -166,8 +166,8 @@ const NewModelRecalibrationModal = props => {
         .then(() => {
           setRecalibrationLoading(false);
           setMissingFieldsVisible(false);
-          props.reload();
           props.onClose();
+          props.reload();
         })
         .catch(err => {
           setRecalibrationLoading(false);
@@ -176,11 +176,11 @@ const NewModelRecalibrationModal = props => {
     }
   };
 
-  const { onClose, model } = props;
+  const { onClose, model, isOpen } = props;
 
   return (
     <Modal
-      isOpen
+      isOpen={isOpen}
       toggle={onClose}
       className="new-model-recalibration-modal-container"
     >
@@ -316,7 +316,6 @@ const NewModelRecalibrationModal = props => {
                 </div>
                 {
                   (updated || !updated) && parameters.map((parameter, i) => {
-                    console.log("KEY: ", updatedParameters[i].key, " VALUE: ", updatedParameters[i].value);
                     return (
                       <div key={parameter.key} className="container-parameter-row">
                         <div className="parameter">
@@ -395,14 +394,16 @@ NewModelRecalibrationModal.propTypes = {
   onClose: PropTypes.func,
   reload: PropTypes.func,
   location: PropTypes.object,
-  model: PropTypes.object
+  model: PropTypes.object,
+  isOpen: PropTypes.bool
 };
 
 NewModelRecalibrationModal.defaultProps = {
   onClose: () => null,
   reload: () => null,
   location: { state: {} },
-  model: {}
+  model: {},
+  isOpen: false
 };
 
 export default NewModelRecalibrationModal;
