@@ -20,9 +20,9 @@ class TestOrbitIngress(Spec):
     namespace = 'foundations-scheduler-test'
     faker = Faker()
 
-    model_name = faker.word()
-    second_model_name = faker.word()
-    project_name = faker.word()
+    model_name = faker.word().lower()
+    second_model_name = faker.word().lower()
+    project_name = faker.word().lower()
 
     @let
     def sleep_time(self):
