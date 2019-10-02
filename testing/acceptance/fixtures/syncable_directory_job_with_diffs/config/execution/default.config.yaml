@@ -1,4 +1,3 @@
-job_deployment_env: local
 results_config:
   archive_end_point: /tmp/foundations_acceptance
 cache_config: {}

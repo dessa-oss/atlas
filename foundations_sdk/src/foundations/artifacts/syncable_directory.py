@@ -82,7 +82,7 @@ class SyncableDirectory(object):
         dirname = path.dirname(result_path)
         os.makedirs(dirname, exist_ok=True)
 
-        if not path.isfile(result_path) or os.stat(result_path).st_mtime < decoded_old_timestamps[file]:
+        if not path.isfile(result_path) or os.stat(result_path).st_mtime < decoded_old_timestamps.get(file, 0):
             self._archive.fetch_file_path_to_target_file_path(
                 f'{self._package_name}_directories/{self._key}', 
                 file, 
