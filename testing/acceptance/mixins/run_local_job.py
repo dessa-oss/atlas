@@ -26,3 +26,5 @@ class RunLocalJob(object):
         foundations_home = f'{working_directory}/foundations_home'
         return run_process(['python', entrypoint], path, environment={'FOUNDATIONS_HOME': foundations_home, 'FOUNDATIONS_JOB_ID': job_id, 'FOUNDATIONS_COMMAND_LINE': 'False'})
 
+    def _run_job_file(self, path, job_id=None, entrypoint='main.py'):
+        return self._deploy_job_file(path, job_id, entrypoint)
