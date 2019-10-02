@@ -7,12 +7,27 @@ import { get } from "../../actions/BaseActions";
 import ProjectSummary from "./ProjectSummary";
 import moment from "moment";
 
-const ProjectPage = props => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [projects, setProjects] = React.useState([]);
+class ProjectPage extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const reload = () => {
-    setIsLoading(true);
+    this.state = {
+      isLoading: false,
+      projects: [],
+      timerId: -1
+    };
+
+    this.reload = this.reload.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+  }
+
+  reload(showAnimation) {
+    if (showAnimation === true) {
+      this.setState({
+        isLoading: true
+      });
+    }
 
     get("projects").then(result => {
       if (result != null) {
@@ -22,19 +37,46 @@ const ProjectPage = props => {
 
           return dateB - dateA;
         });
-        setProjects(result);
+        this.setState({
+          projects: result
+        });
       }
-      setIsLoading(false);
+      this.setState({
+        isLoading: false
+      });
     }).catch(() => {
-      setIsLoading(false);
+      this.setState({
+        isLoading: false
+      });
     });
-  };
+  }
 
-  React.useEffect(() => {
-    reload();
-  }, []);
+  startTimer() {
+    const id = setInterval(() => {
+      this.reload(false);
+    }, 30000);
+    this.setState({
+      timerId: id
+    });
+  }
 
-  const renderProjects = () => {
+  stopTimer() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
+  }
+
+  componentDidMount() {
+    this.reload(true);
+    this.startTimer();
+  }
+
+  componentWillUnmount() {
+    this.stopTimer();
+  }
+
+  renderProjects() {
+    const { isLoading, projects } = this.state;
+    const { selectProject, changePage } = this.props;
     if (isLoading) {
       return <Loading loadingMessage="We are currently loading your projects" />;
     }
@@ -52,24 +94,26 @@ const ProjectPage = props => {
         <ProjectSummary
           key={key}
           project={newProject}
-          selectProject={props.selectProject}
-          changePage={props.changePage}
+          selectProject={selectProject}
+          changePage={changePage}
         />
       );
     });
-  };
+  }
 
-  return (
-    <div className="project-page-container">
-      <div className="header">
-        <Toolbar />
-        <ProjectHeader numProjects={projects.length} />
+  render() {
+    const { projects } = this.state;
+    return (
+      <div className="project-page-container">
+        <div className="header">
+          <Toolbar />
+          <ProjectHeader numProjects={projects.length} />
+        </div>
+        <div className="projects-body-container">{this.renderProjects()}</div>
       </div>
-      <div className="projects-body-container">{renderProjects()}</div>
-    </div>
-  );
-};
-
+    );
+  }
+}
 
 ProjectPage.propTypes = {
   selectProject: PropTypes.func,

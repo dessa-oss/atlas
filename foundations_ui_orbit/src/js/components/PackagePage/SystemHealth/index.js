@@ -361,6 +361,10 @@ const SystemHealth = props => {
     });
   };
 
+  const onClickRefreshList = () => {
+    reload();
+  };
+
   // data != undefined ?
   const mainWindow = (
     <Layout tab="Health" title="Data Health" openTutorial={onToggleTutorial}>
@@ -375,7 +379,10 @@ const SystemHealth = props => {
               to catch data abnormalities in real-time. Please select a data
               validation report to review.
             </p>
-            <p className="label-select-reports">Select report:</p>
+            <div>
+              <p className="label-select-reports">Select report:</p>
+              <div className="label-refresh-list" onClick={onClickRefreshList}>REFRESH LIST</div>
+            </div>
             <div className="container-health-reports">
               {renderOptions()}
             </div>
