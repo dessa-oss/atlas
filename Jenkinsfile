@@ -146,15 +146,6 @@ pipeline {
                 }
             }
         }
-        stage('Run Front End Unit Tests (Orbit)') {
-            steps {
-                container("yarn") {
-                    ws("${WORKSPACE}/foundations_ui_orbit/") {
-                        sh "yarn run test"
-                    }
-                }
-            }
-        }
         stage('Check for linting (Orbit)') {
             steps {
                 container("yarn") {
