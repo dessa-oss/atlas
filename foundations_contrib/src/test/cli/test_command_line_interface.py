@@ -95,6 +95,8 @@ class TestCommandLineInterface(Spec):
 
     @patch('argparse.ArgumentParser')
     def test_correct_option_setup(self, parser_class_mock):
+        mock_str_to_bool = self.patch('foundations_contrib.cli.command_line_interface.CommandLineInterface._str_to_bool')
+
         parser_mock = Mock()
         parser_class_mock.return_value = parser_mock
 
@@ -112,31 +114,35 @@ class TestCommandLineInterface(Spec):
 
 
         init_call = call('init', help='Creates a new Foundations project in the current directory')
-        deploy_call = call('deploy', help='Deploys a Foundations project to the specified environment')
+        submit_call = call('submit', help='Deploys a Foundations project to the specified environment')
         info_call = call('info', help='Provides information about your Foundations project')
 
-        self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, deploy_call, info_call], any_order=True)
+        self.level_1_subparsers_mock.add_parser.assert_has_calls([init_call, submit_call, info_call], any_order=True)
 
         init_argument_call = call('project_name', type=str, help='Name of the project to create')
         info_argument_env_call = call('--env', action='store_true')
         
-        deploy_argument_file_call = call('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
-        deploy_argument_job_directory_call = call('--job-directory', type=str, help='Directory from which to deploy (defaults to cwd)')
-        deploy_argument_env_call = call('--env', help='Environment to run file in')
-        deploy_argument_project_name_call = call('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
-        deploy_argument_num_gpus_call = call('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
-        deploy_argument_ram_call = call('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
+        submit_argument_file_call = call('--entrypoint', type=str, help='Name of file to deploy (defaults to main.py)')
+        submit_argument_config_call = call('--scheduler-config', help='Environment to run file in')
+        submit_argument_project_name_call = call('--project-name', help='Project name for job (optional, defaults to basename(cwd))')
+        submit_argument_job_dir_call = call('--job-dir', type=str, help='Directory from which to deploy (defaults to cwd)')
+        submit_argument_num_gpus_call = call('--num-gpus', type=int, help='Number of gpus to allocate for job (defaults to 1)')
+        submit_argument_ram_call = call('--ram', type=float, help='GB of ram to allocate for job (defaults to no limit)')
+        submit_argument_stream_job_logs_call = call('--stream-job-logs', type=CommandLineInterface._str_to_bool, default=True, help='Whether or not to stream job logs')
+        submit_argument_command_call = call('--command', type=str, help='Command to run in docker image')
 
         self.level_2_parser_mock.add_argument.assert_has_calls(
             [
                 init_argument_call,
                 info_argument_env_call,
-                deploy_argument_env_call,
-                deploy_argument_file_call,
-                deploy_argument_job_directory_call,
-                deploy_argument_project_name_call,
-                deploy_argument_num_gpus_call,
-                deploy_argument_ram_call
+                submit_argument_file_call,
+                submit_argument_config_call,
+                submit_argument_project_name_call,
+                submit_argument_job_dir_call,
+                submit_argument_num_gpus_call,
+                submit_argument_ram_call,
+                submit_argument_stream_job_logs_call,
+                submit_argument_command_call
             ],
             any_order=True
         )
@@ -482,48 +488,6 @@ class TestCommandLineInterface(Spec):
         self.artifact_downloader_class_mock.return_value = self.artifact_downloader_mock
         CommandLineInterface(['get', 'artifacts', '--job_id={}'.format(self.mock_job_id), '--source_dir={}'.format(self.fake_source_dir), '--save_dir={}'.format(self.fake_save_dir)]).execute()
         self.artifact_downloader_mock.download_files.assert_called_with(self.fake_source_dir, self.fake_save_dir)
-
-    def test_deploy_forwards_default_arguments_to_command_line_job_deployer(self):
-        self.patch('foundations_contrib.cli.command_line_job_deployer.CommandLineJobDeployer', MockCommandLineJobDeployer)
-
-        expected_arguments = Mock()
-        expected_arguments.env = None
-        expected_arguments.job_directory = None
-        expected_arguments.entrypoint = None
-        expected_arguments.project_name = None
-        expected_arguments.ram = None
-        expected_arguments.num_gpus = None
-
-        CommandLineInterface(['deploy']).execute()
-        arguments = MockCommandLineJobDeployer.arguments
-
-        self._assert_deploy_arguments_equal(expected_arguments, arguments)
-
-    def test_deploy_forwards_specified_arguments_to_command_line_job_deployer(self):
-        self.patch('foundations_contrib.cli.command_line_job_deployer.CommandLineJobDeployer', MockCommandLineJobDeployer)
-
-        expected_arguments = Mock()
-        expected_arguments.env = self.fake_env
-        expected_arguments.job_directory = self.fake_directory
-        expected_arguments.entrypoint = self.fake_script_file_name
-        expected_arguments.project_name = self.fake_project_name
-        expected_arguments.ram = self.ram
-        expected_arguments.num_gpus = self.num_gpus
-
-        command_to_run = [
-            'deploy',
-            f'--env={self.fake_env}',
-            f'--job-directory={self.fake_directory}',
-            f'--entrypoint={self.fake_script_file_name}',
-            f'--project-name={self.fake_project_name}',
-            f'--ram={self.ram}',
-            f'--num-gpus={self.num_gpus}'
-        ]
-
-        CommandLineInterface(command_to_run).execute()
-        arguments = MockCommandLineJobDeployer.arguments
-
-        self._assert_deploy_arguments_equal(expected_arguments, arguments)
 
     def test_submit_forwards_default_arguments_to_command_line_job_submission(self):
         self.patch('foundations_contrib.cli.job_submission.submit_job.submit', MockCommandLineJobDeployer)
