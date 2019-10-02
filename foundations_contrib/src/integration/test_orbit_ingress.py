@@ -48,7 +48,7 @@ class TestOrbitIngress(Spec):
         except:
             print('Second test may not have created the pod')
 
-        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
+        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh', 'project'])
 
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.model_name}'.split())
