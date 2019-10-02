@@ -453,7 +453,6 @@ class CommonActions {
 
   static formatDate(date) {
     date = new Date(date);
-    date.setHours(date.getHours() + 4); // Dealing with inconsistencies with dates in backend
     return `${moment(JobListActions.getFormatedDate(date)).format('MMM DD').toString()}
             ${JobListActions.getFormatedTime(date)}`;
   }
