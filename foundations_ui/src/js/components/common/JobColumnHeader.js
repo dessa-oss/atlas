@@ -54,7 +54,7 @@ class JobColumnHeader extends Component {
     let headerName = title;
 
     if (title === 'Tags') {
-      divClassName = 'job-column-header job-cell tag-cell';
+      divClassName = 'job-column-header tag-cell';
     }
 
     if (title === 'SelectAllCheckboxes') {
