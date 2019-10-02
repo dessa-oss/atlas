@@ -93,7 +93,7 @@ class TestCommandLineJobDeployer(Spec):
         self.mock_pipeline_context_wrapper_class = self.patch('foundations_internal.pipeline_context_wrapper.PipelineContextWrapper', ConditionalReturn())
         self.mock_pipeline_context_wrapper_class.return_when(self.mock_pipeline_context_wrapper, self.current_foundations_context_instance.pipeline_context())
 
-        self.mock_deploy.return_value = self.mock_deployment_wrapper
+        self.mock_submit.return_value = self.mock_deployment_wrapper
         self.mock_deployment_wrapper.stream_job_logs.return_value = self.pod_logs
 
         self.mock_logger = Mock()
@@ -236,7 +236,7 @@ class TestCommandLineJobDeployer(Spec):
     current_foundations_context = let_patch_mock('foundations_contrib.global_state.current_foundations_context')
     mock_deploy_job = let_patch_mock('foundations_contrib.job_deployer.deploy_job')
     mock_set_job_resources = let_patch_mock('foundations.set_job_resources')
-    mock_deploy = let_patch_mock('foundations.deploy')
+    mock_submit = let_patch_mock('foundations.submit')
     mock_deployment_wrapper = let_mock()
 
     def _process_constructor(self, pid):
@@ -443,28 +443,28 @@ class TestCommandLineJobDeployer(Spec):
 
         cli_args = {}
         CommandLineJobDeployer(self.arguments(cli_args)).deploy()
-        self.mock_deploy.assert_called_with(env='local')
+        self.mock_submit.assert_called_with(env='local')
 
     def test_foundations_deploy_with_project_name_set_calls_deploy_with_same_project_name(self):
         self._set_run_script_environment({})
 
         cli_args = {'project-name': self.fake_project_name}
         CommandLineJobDeployer(self.arguments(cli_args)).deploy()
-        self.mock_deploy.assert_called_with(env='local', project_name=self.fake_project_name)
+        self.mock_submit.assert_called_with(env='local', project_name=self.fake_project_name)
 
     def test_foundations_deploy_with_env_set_calls_deploy_with_same_environment(self):
         self._set_run_script_environment({})
 
         cli_args = {'env': self.environment}
         CommandLineJobDeployer(self.arguments(cli_args)).deploy()
-        self.mock_deploy.assert_called_with(env=self.environment)
+        self.mock_submit.assert_called_with(env=self.environment)
 
     def test_foundations_deploy_with_entrypoint_set_calls_deploy_with_same_entrypoint(self):
         self._set_run_script_environment({})
 
         cli_args = {'entrypoint': self.entrypoint}
         CommandLineJobDeployer(self.arguments(cli_args)).deploy()
-        self.mock_deploy.assert_called_with(env='local', entrypoint=self.entrypoint)
+        self.mock_submit.assert_called_with(env='local', entrypoint=self.entrypoint)
 
     def test_foundations_deploy_with_job_directory_chdirs_to_job_directory(self):
         self._set_run_script_environment({})
@@ -491,7 +491,7 @@ class TestCommandLineJobDeployer(Spec):
         }
 
         CommandLineJobDeployer(self.arguments(cli_args)).deploy()
-        self.mock_deploy.assert_called_with(project_name=self.fake_project_name, entrypoint=self.entrypoint, env=self.environment)
+        self.mock_submit.assert_called_with(project_name=self.fake_project_name, entrypoint=self.entrypoint, env=self.environment)
 
     def test_foundations_deploy_with_deployment_wrapper_that_supports_log_streaming_prints_logs_to_screen(self):
         self._set_run_script_environment({})
