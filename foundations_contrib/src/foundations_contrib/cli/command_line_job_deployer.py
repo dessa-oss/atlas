@@ -38,7 +38,7 @@ class CommandLineJobDeployer(object):
         else:
             self._check_and_set_job_resources()
             deploy_kwargs = self._stageless_deploy_kwargs()
-            deployment_wrapper = foundations.deploy(**deploy_kwargs)
+            deployment_wrapper = foundations.submit(**deploy_kwargs)
             self._with_clean_exit(self._stream_logs_if_possible, deployment_wrapper)
 
     def _check_environment_valid(self, environment_file_path):
