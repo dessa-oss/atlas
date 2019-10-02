@@ -16,6 +16,7 @@ def build_and_tag_gui_image(path, dockerfile, repository, buildargs=None):
         print_logs(image_logs)
     except docker.errors.BuildError as ex:
         print_logs(ex.build_log)
+        raise
 
 def print_logs(logs):
     for line in logs:
