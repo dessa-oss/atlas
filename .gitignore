@@ -74,6 +74,8 @@ tmp
 **/*.csv
 foundations.zip
 .vscode
+.venv/
+.env
 **/spike*
 .history
 site/
