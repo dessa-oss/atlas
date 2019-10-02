@@ -4,6 +4,7 @@ import Select from 'react-select';
 import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import EmptyGraphImage from '../../../assets/svgs/empty-graph.svg';
 
 class JobOverviewGraph extends Component {
   constructor(props) {
@@ -119,13 +120,27 @@ class JobOverviewGraph extends Component {
 
     const failedConversionMessage = <p className="not-graphable-message">This metric cannot be graphed.</p>;
 
+    let chart = failedConversionMessage;
+    if (!failedToConvert) {
+      if (metrics.length === 0) {
+        chart = (
+          <div className="empty-graph-block">
+            <h4>No metrics have been logged yet!</h4>
+            <img alt="" className="empty-graph-image" src={EmptyGraphImage} />
+          </div>
+        );
+      } else {
+        chart = <HighchartsReact highcharts={Highcharts} options={options} />;
+      }
+    }
+
     return (
       <div>
         <div className="chart section-container">
           <h3 className="section-title">Recent Jobs</h3>
           <Select onChange={this.onChangeMetric} options={metrics} placeholder="Metrics" className="react-select" />
           <div className="highchart-chart">
-            {failedToConvert ? failedConversionMessage : <HighchartsReact highcharts={Highcharts} options={options} />}
+            {chart}
           </div>
         </div>
       </div>

@@ -29,3 +29,29 @@
   left: 50px;
   font-size: 15px;
 }
+
+.empty-graph-block {
+  font-family: DIN, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  top: 0;
+
+  h4 {
+    color: $color-dessa-blue;
+    font-size: 18px;
+    margin-top: 0;
+  }
+
+  .invisible {
+    display: none;
+  }
+
+  .empty-graph-image {
+    margin-top: 20px;
+    width: 400px;
+    text-align: right;
+  }
+}
