@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: model-service-selection
+  name: foundations-model-package-${project_name}-${model_name}-ingress
   namespace: foundations-scheduler-test
   annotations:
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -13,7 +13,7 @@ spec:
   - host:
     http:
       paths:
-      - path: /projects/project/model/(.*)
+      - path: /projects/${project_name}/${model_name}/(.*)
         backend:
-          serviceName: foundations-model-package-project-model-service
+          serviceName: foundations-model-package-${project_name}-${model_name}-service
           servicePort: 80

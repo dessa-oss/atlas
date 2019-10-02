@@ -1,7 +1,5 @@
 #!/bin/bash
 
-kubectl config set-context kubernetes-admin@kubernetes 
+export project_name=$1
 
-kubectl delete -f integration/resources/fixtures/test_server/ingress.yaml && \
-kubectl delete -f integration/resources/fixtures/test_server/ingress-controller.yaml && \
-kubectl delete -f integration/resources/fixtures/test_server/ingress-controller-mandatory.yaml 
+kubectl -n foundations-scheduler-test delete ingress foundations-model-package-${project_name}-ingress

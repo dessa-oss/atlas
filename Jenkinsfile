@@ -110,7 +110,7 @@ pipeline {
                 }
             }
         }
-        stage('Install dependencies for Foundations UI') {
+        stage('Install dependencies for Foundations UI (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -119,7 +119,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Front End Unit Tests') {
+        stage('Run Front End Unit Tests (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -128,10 +128,28 @@ pipeline {
                 }
             }
         }
-        stage('Check for linting') {
+        stage('Check for linting (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
+                        sh "node_modules/.bin/eslint ."
+                    }
+                }
+            }
+        }
+         stage('Install dependencies for Foundations UI (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                        sh "yarn install"
+                    }
+                }
+            }
+        }
+        stage('Check for linting (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }

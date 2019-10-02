@@ -10,12 +10,15 @@ import subprocess
 from foundations_spec import *
 from foundations_orbit_rest_api.global_state import app_manager
 from os.path import abspath
+from faker import Faker
 
 class TestSwitchDefaultModel(Spec):
     _contrib_source_root = abspath('../../foundations_contrib/src')
     client = app_manager.app().test_client()
     base_url = '/api/v1/projects'
-    project_name = 'test-project'
+    project_name = Faker().word().lower()
+    model_name = Faker().word().lower()
+    second_model_name = Faker().word().lower()
     
     @set_up_class
     def set_up_class(klass):
@@ -23,22 +26,14 @@ class TestSwitchDefaultModel(Spec):
 
     @tear_down_class
     def tear_down_class(klass):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=klass._contrib_source_root)
-        subprocess.run(f'./remove_deployment.sh {klass.project_name} model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
-        subprocess.run(f'./remove_deployment.sh {klass.project_name} again-model'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(f'./integration/resources/fixtures/test_server/tear_down.sh {klass.project_name}'.split(), cwd=klass._contrib_source_root)
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} {klass.model_name}'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
+        subprocess.run(f'./remove_deployment.sh {klass.project_name} {klass.second_model_name}'.split(), cwd=abspath(foundations_contrib.root() / 'resources/model_serving/orbit'))
 
     @let
     def redis(self):
         from foundations_contrib.global_state import redis_connection
         return redis_connection
-
-    @let
-    def first_model_name(self):
-        return self.faker.word()
-
-    @let
-    def second_model_name(self):
-        return self.faker.word()
 
     @let
     def project_url(self):
@@ -102,9 +97,9 @@ class TestSwitchDefaultModel(Spec):
         response = self._get_from_route()
         models = response['models']
         for model in models:
-            if model['model_name'] == 'model':
+            if model['model_name'] == self.model_name:
                 first_model_default = model['default']
-            if model['model_name'] == 'again-model':
+            if model['model_name'] == self.second_model_name:
                 again_model_default = model['default']
 
         self.assertEqual(True, again_model_default)
@@ -112,18 +107,17 @@ class TestSwitchDefaultModel(Spec):
 
     def test_put_request_change_default_model_in_the_ingress(self):
         import yaml, json
-        
 
         self._create_two_models_and_change_default()
 
-        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress model-service-selection -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
+        ingress_resource = yaml.load(subprocess.run(f'kubectl get ingress foundations-model-package-{self.project_name}-ingress -n {self.namespace} -o yaml'.split(), stdout=subprocess.PIPE, check=True).stdout.decode())
         ingress_configuration = ingress_resource['metadata']['annotations']['kubectl.kubernetes.io/last-applied-configuration'].strip('\n')
         ingress_resource = json.loads(ingress_configuration)
         ingress_resource_paths = ingress_resource['spec']['rules'][0]['http']['paths']
 
         for route in ingress_resource_paths:
             if route['path'] == f'/projects/{self.project_name}/(.*)':
-                self.assertEqual(route['backend']['serviceName'], f'foundations-model-package-{self.project_name}-again-model-service')
+                self.assertEqual(route['backend']['serviceName'], f'foundations-model-package-{self.project_name}-{self.second_model_name}-service')
                 return
 
         self.fail()
@@ -158,8 +152,8 @@ class TestSwitchDefaultModel(Spec):
     def _create_two_models_and_change_default(self):
         self._create_project(self.project_name)
 
-        self._create_model_information(self.project_name, 'model', self.model_information)
-        self._create_model_information(self.project_name, 'again-model', self.model_again_information)
+        self._create_model_information(self.project_name, self.model_name, self.model_information)
+        self._create_model_information(self.project_name, self.second_model_name, self.model_again_information)
 
-        request_body = {'default_model': 'again-model'}
+        request_body = {'default_model': self.second_model_name}
         self._put_to_route(request_body)

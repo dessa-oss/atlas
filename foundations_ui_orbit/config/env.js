@@ -32,8 +32,8 @@ const dotenvFiles = [
 // https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile)) {
-    require("dotenv-expand")(
-      require("dotenv").config({
+    require("dotenv-expand")( // eslint-disable-line global-require
+      require("dotenv").config({ // eslint-disable-line global-require
         path: dotenvFile
       }),
     );

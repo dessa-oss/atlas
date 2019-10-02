@@ -472,13 +472,28 @@
     }
 
     .label-select-reports {
-      display: inline-table;
       @extend .f--roboto;
       // font-family: DINBold, Arial, sans-serif;
+      margin: 0;
+      float: left;
 
     }
 
+    .label-refresh-list {
+      float: right;
+      @extend .f--roboto;
+      color: #004a9c;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 13px;
+
+      &:hover {
+        color: #013b7c;
+      }
+    }
+
     .container-health-reports {
+      margin-top: 16px;
       display: inline-table;
       width: 100%;
       margin-bottom: 20px;
