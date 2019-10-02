@@ -174,7 +174,7 @@ const Predictors = props => {
     parentClassName = "container-row-parent expanded";
   }
 
-
+  /* eslint-disable react/jsx-curly-brace-presence */
   return (
     <div
       className={parentClassName}
@@ -324,6 +324,7 @@ const Predictors = props => {
       </Modal>
     </div>
   );
+  /* eslint-enable react/jsx-curly-brace-presence */
 };
 
 Predictors.propTypes = {

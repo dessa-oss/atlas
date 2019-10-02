@@ -67,6 +67,7 @@ const Timeline = props => {
 
   const { tab } = props;
 
+  /* eslint-disable react/jsx-curly-brace-presence */
   return (
     <Layout tab={tab} title="History">
       {events.length > 0 ? (
@@ -97,6 +98,7 @@ const Timeline = props => {
       </Modal>
     </Layout>
   );
+  /* eslint-enable react/jsx-curly-brace-presence */
 };
 
 Timeline.propTypes = {

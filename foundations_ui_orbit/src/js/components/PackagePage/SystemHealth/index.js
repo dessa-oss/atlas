@@ -133,6 +133,7 @@ const SystemHealth = props => {
     return "none";
   };
 
+  /* eslint-disable react/jsx-curly-brace-presence */
   const renderSchemaTab = () => {
     if (showSchemaTab) {
       if (data === undefined) {
@@ -260,6 +261,7 @@ const SystemHealth = props => {
       );
     }
   };
+  /* eslint-enable react/jsx-curly-brace-presence */
 
   const onClickInferencePeriod = value => {
     if (value === selectedInferencePeriod) {
