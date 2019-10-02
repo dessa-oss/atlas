@@ -123,9 +123,7 @@ class JobOverviewGraph extends Component {
       <div>
         <div className="chart section-container">
           <h3 className="section-title">Recent Jobs</h3>
-          <select onChange={this.onChangeMetric}>
-            {metrics}
-          </select>
+          <Select onChange={this.onChangeMetric} options={metrics} placeholder="Metrics" className="react-select" />
           <div className="highchart-chart">
             {failedToConvert ? failedConversionMessage : <HighchartsReact highcharts={Highcharts} options={options} />}
           </div>
