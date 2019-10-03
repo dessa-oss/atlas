@@ -47,7 +47,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format('stageless_project_nested_project_code')
 
-        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy --entrypoint={} --env=local'.format(change_to_fixture_directory_command, 'project_code/driver2.py')]
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations submit --entrypoint={} '.format(change_to_fixture_directory_command, 'project_code/driver2.py')]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.assertIn('found all expected files in cwd!', self._driver_stdout(driver_deploy_completed_process))
 
@@ -56,7 +56,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         fixture_directory = 'stageless_acceptance/fixtures/stageless_project_but_not_really'
 
-        command_to_run = ['python', '-m', 'foundations', 'deploy', '--entrypoint={}'.format('project_code/driver.py'), '--job-directory={}'.format(fixture_directory), '--env=local']
+        command_to_run = ['python', '-m', 'foundations', 'submit', '--entrypoint={}'.format('project_code/driver.py'), '--job-dir={}'.format(fixture_directory)]
         driver_deploy_completed_process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         error_message = 'Cannot create stages in a running stageless job - was code written with stages deployed in a stageless job?'
@@ -70,7 +70,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         change_to_fixture_directory_command = 'cd stageless_acceptance/fixtures/{}'.format(fixture_directory)
 
-        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations deploy --entrypoint={} --env=local --project-name={}'.format(change_to_fixture_directory_command, driver_path, project_name)]
+        command_to_run = ['/bin/bash', '-c', '{} && python -m foundations submit --entrypoint={} --project-name={}'.format(change_to_fixture_directory_command, driver_path, project_name)]
         job_id = self._test_deploy_with_command(command_to_run)
 
         self._assert_can_log_metrics(project_name, job_id)
@@ -81,7 +81,7 @@ class TestLocalDeployWithoutStages(Spec):
 
         fixture_directory = 'stageless_acceptance/fixtures/{}'.format(fixture_directory)
 
-        command_to_run = ['python', '-m', 'foundations', 'deploy', '--job-directory={}'.format(fixture_directory), '--entrypoint={}'.format(driver_path), '--env=local', '--project-name={}'.format(project_name)]
+        command_to_run = ['python', '-m', 'foundations', 'submit', '--job-dir={}'.format(fixture_directory), '--entrypoint={}'.format(driver_path),'--project-name={}'.format(project_name)]
         job_id = self._test_deploy_with_command(command_to_run)
 
         self._assert_can_log_metrics(project_name, job_id)
