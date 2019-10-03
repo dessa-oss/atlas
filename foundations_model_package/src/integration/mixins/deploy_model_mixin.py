@@ -96,7 +96,10 @@ class DeployModelMixin(object):
             time.sleep(self.sleep_time)
     
     def _model_package_pod_status(self, project_name, model_name):
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template=\'{{(index .items 0).status.phase}}\''], stdout=subprocess.PIPE)
+        command_to_run = ['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template=\'{{(index .items 0).status.phase}}\'']
+        process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        if process.returncode != 0:
+            return 'does not exist'
         return process.stdout.decode().rstrip('\n')
 
     def _wait_for_serving_pod_to_die(self, project_name, model_name):
