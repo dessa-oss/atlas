@@ -35,7 +35,7 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
     def _is_running_on_jenkins():
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
-    @set_up_class
+   @set_up_class
     def set_up_class(klass):
         if not klass._is_running_on_jenkins():
             return_code = subprocess.call(['bash', '-c', './build.sh'])

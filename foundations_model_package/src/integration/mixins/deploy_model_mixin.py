@@ -82,6 +82,10 @@ class DeployModelMixin(object):
         command_to_run = f'job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
+    def _force_delete_pod(self, project_name, model_name):
+        command_to_run = f'kubectl -n foundations-scheduler-test delete pod --force -l app=foundations-model-package-{project_name}-{model_name}'
+        subprocess.call(['bash', '-c', command_to_run])
+
     def _wait_for_model_package_pod(self, project_name, model_name):
         current_time = time.time()
 
@@ -100,7 +104,7 @@ class DeployModelMixin(object):
 
         while self._pod_exists(project_name, model_name):
             if time.time() - current_time > self.max_sleep_time:
-                raise AssertionError('model package pod took too long to go down (> 60 sec)')
+                self._force_delete_pod(project_name, model_name)
 
             time.sleep(self.sleep_time)
 
