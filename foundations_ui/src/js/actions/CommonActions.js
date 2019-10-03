@@ -416,7 +416,7 @@ class CommonActions {
     columns, changeLocalParams, showAllFilters, unsetClearFilters, hideAllFilters,
     statusCheckbox = false, unsetHideFilters = () => {},
   ) {
-    let checkboxes = null;
+    let checkboxes = [];
     let hasSeenParams = false;
     if (columns.length > 0) {
       checkboxes = [];
