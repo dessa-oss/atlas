@@ -1,5 +1,0 @@
-results_config:
-  archive_end_point: /tmp/foundations_acceptance
-cache_config: {}
-obfuscate_foundations: False
-log_level: FATAL
