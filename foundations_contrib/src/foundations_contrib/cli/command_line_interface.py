@@ -159,10 +159,6 @@ class CommandLineInterface(object):
         for env in available_environments:
             environment_names.append([env.split('/')[-1].split('.')[0], env])
         return environment_names
-
-    def _deploy(self):
-        from foundations_contrib.cli.command_line_job_deployer import CommandLineJobDeployer
-        CommandLineJobDeployer(self._arguments).deploy()
    
     def _submit(self):
         from foundations_contrib.cli.job_submission.submit_job import submit
