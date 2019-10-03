@@ -629,26 +629,3 @@ class TestCommandLineJobDeployer(Spec):
     def _set_run_script_environment(self, environment_to_set):
         self.config_manager_mock.__getitem__ = ConditionalReturn()
         self.config_manager_mock.__getitem__.return_when(environment_to_set, 'run_script_environment')
-
-    def _set_job_status(self, status):
-        self.mock_job_deployment.get_job_status.return_value = status
-
-        mock_job_deployment_class = ConditionalReturn()
-        mock_job_deployment_class.return_when(self.mock_job_deployment, self.mock_job_id, None, None)
-
-        mock_get_item = ConditionalReturn()
-        mock_get_item.return_when({'deployment_type': mock_job_deployment_class}, 'deployment_implementation')
-        self.config_manager_mock.__getitem__ = mock_get_item
-
-    def _bring_server_up(self):
-        self._create_server_pidfile()
-        self._spawn_server_process()
-
-    def _spawn_server_process(self):
-        self.server_process.cmdline.return_value = ['foundations_production.serving.foundations_model_server']
-        self._server_running = True
-
-    def _create_server_pidfile(self):
-        self.mock_pid_file.read.return_value = '{}'.format(self.fake_model_server_pid)
-        self.open_mock = self.patch('builtins.open', ConditionalReturn())
-        self.open_mock.return_when(self.mock_pid_file, FoundationsModelServer.pid_file_path, 'r')
