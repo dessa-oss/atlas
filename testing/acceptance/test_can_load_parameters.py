@@ -70,7 +70,7 @@ class TestCanLoadParameters(Spec):
         self._test_command_that_loads_parameters_in_directory_for_python(['python', 'main.py'], script_directory, expected_loaded_parameters, check_for_warning)
 
     def _test_can_load_parameters_within_foundations_submit(self, script_directory, expected_loaded_parameters):
-        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'submit','--project-name', self.project_name, '--entrypoint', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
+        self._test_command_that_loads_parameters_in_directory(['python', '-m', 'foundations', 'submit', '--entrypoint', 'project_code/script_to_run.py'], script_directory, expected_loaded_parameters)
 
     def _test_command_that_loads_parameters_in_directory(self, command, script_directory, expected_loaded_parameters):
         from foundations_internal.change_directory import ChangeDirectory
@@ -85,7 +85,7 @@ class TestCanLoadParameters(Spec):
 
         params_json = process_output[-1]
         job_id = process_output[-2]
-        project_name = self.project_name
+        project_name = path.basename(script_directory)
 
         result_parameters = json.loads(params_json)
         self.assertEqual(expected_loaded_parameters, result_parameters)
