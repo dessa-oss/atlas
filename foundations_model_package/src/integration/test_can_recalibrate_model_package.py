@@ -76,6 +76,7 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
             self._tear_down_proxy()
             time.sleep(5)
             self.second_proxy_process = subprocess.Popen(['bash', '-c', f'kubectl -n foundations-scheduler-test port-forward service/foundations-model-package-{self.project_name}-{self.recalibrated_model_name}-service {self.port}:80'])
+            time.sleep(10)
             new_predict_result = self._try_post_to_predict_endpoint()
 
             self.assertEqual('1', self.redis_connection.get(f'models:{self.job_id}:served').decode())
