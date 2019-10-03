@@ -91,7 +91,7 @@ class DeployModelMixin(object):
 
         while self._model_package_pod_status(project_name, model_name) != "'Running'":
             if time.time() - current_time > self.max_sleep_time:
-                raise AssertionError('model package pod took too long to come up (> 30 sec)')
+                raise AssertionError(f'model package pod took too long to come up (> 60 sec), Last Status: {self._model_package_pod_status(project_name, model_name)}')
 
             time.sleep(self.sleep_time)
     
