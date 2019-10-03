@@ -25,6 +25,12 @@ class TestJobSubmissionLogs(Spec):
     def log_stream(self):
         return self.faker.sentences()
 
+    @let
+    def log_stream_with_run_time_error(self):
+        log_stream = self.log_stream
+        log_stream.append('RuntimeError X')
+        return log_stream
+
     @set_up
     def set_up(self):
         self.deployment.stream_job_logs.return_value = self.log_stream
@@ -60,3 +66,12 @@ class TestJobSubmissionLogs(Spec):
     def test_sleeps_for_1_sec_before_streaming(self):
         stream_job_logs(self.deployment)
         self.mock_sleep.assert_called_with(1)
+
+    def test_log_runtime_error_in_error_produces_system_exit_with_correct_error_message(self):
+        self.deployment.stream_job_logs.return_value = self.log_stream_with_run_time_error
+        
+        mock_sys_exit = self.patch('sys.exit')
+        stream_job_logs(self.deployment)
+        calls = [call(item) for item in self.log_stream_with_run_time_error]
+
+        mock_sys_exit.assert_called_with('RuntimeError X')

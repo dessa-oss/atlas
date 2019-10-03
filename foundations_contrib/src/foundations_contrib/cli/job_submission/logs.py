@@ -21,4 +21,7 @@ def stream_job_logs(deployment):
             if not job_running:
                 logger.info('Job is running; streaming logs')
                 job_running = True
+            if 'RuntimeError' in item:
+                import sys
+                sys.exit(item)
             print(item)
