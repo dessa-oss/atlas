@@ -84,6 +84,8 @@ site/
 build
 dist
 **/.eggs/
+Pipfile
+Pipfile.lock
 
 !foundations_ui/package.json
 !foundations_ui_orbit/package.json
