@@ -54,21 +54,71 @@ pipeline{
                 }
             }
         }
-        stage('Run Integration Tests') {
-            // options {
-            //     lock('ingress-tests')
-            // }
-            steps {
-                container("python3") {
-                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
+        stage('Run Integration Tests and Prepare for Acceptance Tests'){
+            failFast true
+            parallel{
+                stage('Run Integration Tests') {
+                    stages {
+                        stage('Run Integration Tests') {
+                            steps {
+                                container("python3") {
+                                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        stage('Rebuild Python package using the wheels') {
-            steps {
-                container("python3") {
-                    sh "./ci_install_requirements.sh"
-                    sh 'python -m pip install ./dist/*.whl'
+                stage('Install Foundations (container 1)') {
+                    stages{
+                        stage('Install Foundations (container 1)'){
+                            steps {
+                                container("python3-1") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 2)') {
+                    stages{
+                        stage('Install Foundations (container 2)'){
+                            steps {
+                                container("python3-2") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 3)') {
+                    stages{
+                        stage('Install Foundations (container 3)'){
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 4)') {
+                    stages{
+                        stage('Install Foundations (container 4)'){
+                            steps {
+                                container("python3-4") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -78,13 +128,9 @@ pipeline{
                 stage('Parallel Foundations Acceptance Tests') {
                     stages {
                         stage('Python3 Foundations Acceptance Tests'){
-                            // options {
-                            //     lock('ingress-tests')
-                            // }
                             steps{
                                 container("python3") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
                                         sh 'cp -r ../testing/* . || true'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
@@ -99,7 +145,6 @@ pipeline{
                             steps {
                                 container("python3-1") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'python -Wi -m unittest -f -v stageless_acceptance'
                                     }
@@ -114,7 +159,6 @@ pipeline{
                             steps {
                                 container("python3-2") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
                                     }
@@ -129,7 +173,6 @@ pipeline{
                             steps {
                                 container("python3-3") {
                                     ws("${WORKSPACE}/foundations_rest_api/src") {
-                                        sh 'python -m pip install ../../dist/*.whl'
                                         sh "python -Wi -m unittest -f -v acceptance"
                                     }
                                 }
@@ -140,13 +183,9 @@ pipeline{
                 stage('Parallel Foundations Orbit Acceptance Tests') {
                     stages{
                         stage('Python3 Foundations Orbit Acceptance Tests') {
-                            // options {
-                            //     lock('ingress-tests')
-                            // }
                             steps {
                                 container("python3-4") {
                                     ws("${WORKSPACE}/testing") {
-                                        sh 'python -m pip install ../dist/*.whl'
                                         sh 'cp -r ../testing/* . || true'
                                         sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
                                     }
