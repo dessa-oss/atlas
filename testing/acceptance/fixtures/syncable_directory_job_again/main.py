@@ -7,8 +7,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 
-print(foundations.config_manager.config())
-
 parameters = foundations.load_parameters(log_parameters=False)
 job_id = parameters['source_job_id']
 

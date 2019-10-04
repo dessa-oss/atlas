@@ -11,16 +11,16 @@ from acceptance.mixins.run_local_job import RunLocalJob
 
 class TestSyncableDirectory(Spec, RunLocalJob):
 
-    # @set_up
-    # def set_up(self):
-    #     from acceptance.cleanup import cleanup
-    #     cleanup()
+    @set_up
+    def set_up(self):
+        from acceptance.cleanup import cleanup
+        cleanup()
     
     def run_job(self):
-        print(self._run_job_file('acceptance/fixtures/syncable_directory_job', job_id=self.job_id_1, entrypoint='main.py'))
+        self._run_job_file('acceptance/fixtures/syncable_directory_job', job_id=self.job_id_1, entrypoint='main.py')
 
     def run_job_2(self):
-        print(self._run_job_file('acceptance/fixtures/syncable_directory_job_again', job_id=self.job_id_2, entrypoint='main.py'))
+        self._run_job_file('acceptance/fixtures/syncable_directory_job_again', job_id=self.job_id_2, entrypoint='main.py')
 
     def run_job_with_diffs(self):
         self._run_job_file('acceptance/fixtures/syncable_directory_job_with_diffs', job_id=self.job_id_with_diffs, entrypoint='main.py')
@@ -146,7 +146,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
 
         local_syncable_directory = SyncableDirectory('some data', self.first_directory_path, self.job_id_multiple_files, self.job_id_multiple_files)
         local_syncable_directory.download()
-        self.assertEqual(['some_metadata.txt', 'some_data_for_multiple_files.txt'], os.listdir(self.first_directory_path))
+        self.assertEqual(sorted(['some_data_for_multiple_files.txt', 'some_metadata.txt']), sorted(os.listdir(self.first_directory_path)))
         
         time_of_download = time.time()
         temp_workspace = mkdtemp()
