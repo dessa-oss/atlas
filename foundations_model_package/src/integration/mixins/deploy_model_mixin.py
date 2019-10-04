@@ -108,6 +108,7 @@ class DeployModelMixin(object):
         while self._pod_exists(project_name, model_name):
             if time.time() - current_time > self.max_sleep_time:
                 self._force_delete_pod(project_name, model_name)
+                break
 
             time.sleep(self.sleep_time)
 
