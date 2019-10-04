@@ -110,11 +110,15 @@ class JobDataRedis(object):
         return list_of_properties.then(self._seperate_args)
 
     def get_formatted_job_data(self):
-        from datetime import datetime
-
         promise = self.get_job_data(False)
         self._pipe.execute()
         job_details = promise.get()
+        self._format_job_details(job_details)
+
+        return job_details
+
+    def _format_job_details(self, job_details):
+        from datetime import datetime
 
         if job_details:
             if 'input_params' in job_details:
@@ -129,8 +133,6 @@ class JobDataRedis(object):
                 job_details['completed_time'] = datetime.utcfromtimestamp(job_details['completed_time'])
             if 'tags' in job_details:
                 job_details['tags'] = list(job_details['tags'].keys())
-
-        return job_details
 
     @staticmethod
     def _format_all_metrics(metrics):
