@@ -45,8 +45,7 @@ class TestCanLoadParameters(Spec, RunLocalJob):
 
     @set_up_class
     def set_up_class(klass):
-        from acceptance.cleanup import cleanup
-        cleanup()
+        pass
 
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
@@ -81,7 +80,6 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         import os.path as path
 
         env = self._update_environment_with_home_directory()
-        print('ENVIRONMENT IS: ', env)
 
         with ChangeDirectory(script_directory):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
