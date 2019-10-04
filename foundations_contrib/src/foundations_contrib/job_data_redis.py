@@ -152,13 +152,17 @@ class JobDataRedis(object):
         if filtered_metric:
             return filtered_metric[0][2]
         else:
-            return None
+            raise KeyError(f"Metric '{metric_to_find}' does not exist.")
 
     def get_job_param(self, param_name):
         promise = self._add_decoded_get_to_pipe('parameters').then(self._deserialize_dict)
         self._pipe.execute()
         all_params = promise.get()
-        return all_params.get(param_name, None)
+
+        if param_name in all_params:
+            return all_params[param_name]
+        else:
+            raise KeyError(f"Parameter '{param_name}' does not exist.")
 
     def _seperate_args(self, args):
         def seperate_args_inner(project_name,
