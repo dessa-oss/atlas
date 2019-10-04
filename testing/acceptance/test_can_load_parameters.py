@@ -45,21 +45,23 @@ class TestCanLoadParameters(Spec, RunLocalJob):
 
     @set_up_class
     def set_up_class(klass):
-        from acceptance.cleanup import cleanup
-        cleanup()
+        pass
 
     def test_can_load_parameters_within_python(self):
         self._test_can_load_parameters_within_python(self.script_directory, self.job_parameters, check_for_warning=True)
 
+    @skip('to be moved to scheduler acceptance')
     def test_can_load_parameters_within_foundations_submit(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory, self.job_parameters)
 
     def test_can_load_parameters_as_empty_dict_within_python_empty_params(self):
         self._test_can_load_parameters_within_python(self.script_directory_empty_params, {})
 
+    @skip('to be moved to scheduler acceptance')
     def test_can_load_parameters_as_empty_dict_within_foundations_submit_empty_params(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_empty_params, {})
 
+    @skip('to be moved to scheduler acceptance')
     def test_can_load_default_parameters_within_foundations_submit_when_parameters_json_not_found(self):
         self._test_can_load_parameters_within_foundations_submit(self.deployable_script_directory_no_parameters, {})
 
@@ -81,7 +83,6 @@ class TestCanLoadParameters(Spec, RunLocalJob):
         import os.path as path
 
         env = self._update_environment_with_home_directory()
-        print('ENVIRONMENT IS: ', env)
 
         with ChangeDirectory(script_directory):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
@@ -112,7 +113,6 @@ class TestCanLoadParameters(Spec, RunLocalJob):
             completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
             process_output = completed_process.stdout.decode()
 
-        
         warnings, _, params_json = process_output.strip().rpartition('\n')
         if check_for_warning:
             self.assertIn('Script not run with Foundations.', warnings)
