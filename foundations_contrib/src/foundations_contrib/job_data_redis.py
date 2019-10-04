@@ -109,6 +109,55 @@ class JobDataRedis(object):
 
         return list_of_properties.then(self._seperate_args)
 
+    def get_formatted_job_data(self):
+        from datetime import datetime
+
+        promise = self.get_job_data(False)
+        self._pipe.execute()
+        job_details = promise.get()
+
+        if job_details:
+            if 'input_params' in job_details:
+                del job_details['input_params']
+            if 'output_metrics' in job_details:
+                job_details['metrics'] = self._format_all_metrics(job_details.pop('output_metrics'))
+            if 'job_parameters' in job_details:
+                job_details['parameters'] = job_details.pop('job_parameters')
+            if 'start_time' in job_details:
+                job_details['start_time'] = datetime.utcfromtimestamp(job_details['start_time'])
+            if 'completed_time' in job_details:
+                job_details['completed_time'] = datetime.utcfromtimestamp(job_details['completed_time'])
+            if 'tags' in job_details:
+                job_details['tags'] = list(job_details['tags'].keys())
+
+        return job_details
+
+    @staticmethod
+    def _format_all_metrics(metrics):
+        return {metric[1]: metric[2] for metric in metrics}
+
+    def get_job_metric(self, metric_name):
+        promise = self._add_lrange_to_pipe_and_deserialize('metrics')
+        self._pipe.execute()
+        all_metrics = promise.get()
+
+        metric = self._filter_metric_from_all_metrics(all_metrics, metric_name)
+        return metric
+
+    @staticmethod
+    def _filter_metric_from_all_metrics(metrics, metric_to_find):
+        filtered_metric = [m for m in metrics if m[1] == metric_to_find]
+        if filtered_metric:
+            return filtered_metric[0][2]
+        else:
+            return None
+
+    def get_job_param(self, param_name):
+        promise = self._add_decoded_get_to_pipe('parameters').then(self._deserialize_dict)
+        self._pipe.execute()
+        all_params = promise.get()
+        return all_params.get(param_name, None)
+
     def _seperate_args(self, args):
         def seperate_args_inner(project_name,
                                 user,

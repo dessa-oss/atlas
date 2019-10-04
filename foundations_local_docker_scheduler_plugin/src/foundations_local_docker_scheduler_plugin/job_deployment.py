@@ -110,10 +110,8 @@ class JobDeployment(object):
     def get_job_status(self):
         return self._get_job_status(self._job_id)
 
-    @staticmethod
-    def _get_job_status(job_id):
+    def _get_job_status(self, job_id):
         import requests
-        from foundations_contrib.global_state import config_manager
 
         responses = {
             "queued": "queued",
@@ -123,7 +121,7 @@ class JobDeployment(object):
             "pending": "queued"
         }
         try:
-            r = requests.get(f"{config_manager['scheduler_url']}/jobs/{job_id}")
+            r = requests.get(f"{self._config['scheduler_url']}/jobs/{job_id}")
             if r.status_code == requests.codes.ok:
                 return responses[r.json()['status']]
             else:

@@ -76,76 +76,37 @@ class DeploymentWrapper(object):
 
         return self._deployment.is_job_complete()
 
-    def fetch_job_results(self, wait_seconds=5):
-        """
-        Waits for the job to complete and then fetches the results for the job.
-        It checks the status of the job periodically to test for completion.
+    def get_job_details(self, wait_seconds=5):
+        from foundations_contrib.job_data_redis import JobDataRedis
+        from foundations_contrib.global_state import redis_connection
 
-        Arguments:
-            wait_seconds {float} -- The number of seconds to wait between job status check attempts (defaults to 5)
+        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds, log_output=False)
 
-        Returns:
-            results_dict {dict} -- Dict containing results for the stages. See a description below in Notes.
+        pipe = JobDataRedis._create_redis_pipeline(redis_connection)
+        formatted_job_data = JobDataRedis(pipe, self.job_name()).get_formatted_job_data()
+        return formatted_job_data
 
-        Raises:
-            RemoteException -- In the event of an exception thrown in the execution environment
+    def get_metric(self, metric_name, wait_seconds=5):
+        from foundations_contrib.job_data_redis import JobDataRedis
+        from foundations_contrib.global_state import redis_connection
 
-        Notes:
-            A job is completed when it finishes running due to success or failure. This method will wait for
-            any of these events to occur. It's a user responsibility to ensure his job is not programmed in a
-            way that makes it run forever.
+        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds, log_output=False)
 
-            The *results_dict* has three keys: *provenance*, *global_stage_context* and *stage_contexts*.
-            The value of *provenance* is an object that contains internal information about the execution
-            environment.
+        pipe = JobDataRedis._create_redis_pipeline(redis_connection)
+        metric = JobDataRedis(pipe, self.job_name()).get_job_metric(metric_name)
+        return metric
 
-            The *global_stage_context* value is a dictionary containing the following keys and respective values
+    def get_param(self, param_name, wait_seconds=5):
+        from foundations_contrib.job_data_redis import JobDataRedis
+        from foundations_contrib.global_state import redis_connection
 
-            - *uuid*: the universally unique identifier that identifies this stage
-            - *stage_log*: log information about this stage
-            - *meta_data*: metadata associated to this stage
-            - *data_uuid*: the universally unique identifier that identifies data associated to this stage
-            - *stage_output*: the stage output
-            - *error_information*: any error information associated to this stage
-            - *start_time*: the time at which this stage started execution
-            - *end_time*: the time at which this stage finished execution
-            - *delta_time*: the time difference between *end_time* and *start_time*
-            - *is_context_aware*: if this stage is context aware
-            - *used_cache*: if the stage is using cache
-            - *cache_uuid*: the universally unique identifier that identifies this stage cache
-            - *cache_read_time*: the time at which the cache was read
-            - *cache_write_time*: the time at which the cache was written
-            - *has_stage_output*: if the stage has output
+        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds, log_output=False)
 
-            The *stage_contexts* value is a dictionary in which each key is a UUID identifiying the stages
-            upon which this stage depends on. Each value associated to these keys correspond to the
-            *global_stage_context* of the corresponding stage.
+        pipe = JobDataRedis._create_redis_pipeline(redis_connection)
+        param = JobDataRedis(pipe, self.job_name()).get_job_param(param_name)
+        return param
 
-        Example:
-            ```python
-            import foundations
-            from algorithms import train_model
-
-            train_model = foundations.create_stage(train_model)
-            model = train_model()
-            deployment = model.run()
-            results = deployment.fetch_job_results(wait_seconds=10)
-            stage_context = results['global_stage_context']
-            if stage_context['has_stage_output']:
-                print('Stage output:', stage_context['stage_output'])
-            else:
-                print('Got some error:', stage_context['error_information'])
-            ```
-        """
-
-        from foundations_internal.remote_exception import check_result
-
-        self.wait_for_deployment_to_complete(wait_seconds=wait_seconds)
-
-        result = self._deployment.fetch_job_results()
-        return check_result(self.job_name(), result)
-
-    def wait_for_deployment_to_complete(self, wait_seconds=5):
+    def wait_for_deployment_to_complete(self, wait_seconds=5, log_output=True):
         """
         Waits for the job to complete. It checks the status of the job periodically to test for completion.
 
@@ -182,10 +143,12 @@ class DeploymentWrapper(object):
         log = log_manager.get_logger(__name__)
 
         while not self.is_job_complete():
-            log.info("waiting for job `" + self.job_name() + "` to finish")
+            if log_output:
+                log.info("waiting for job `" + self.job_name() + "` to finish")
             time.sleep(wait_seconds)
 
-        log.info("job `" + self.job_name() + "` completed")
+        if log_output:
+            log.info("job `" + self.job_name() + "` completed")
 
     def get_job_status(self):
         """
