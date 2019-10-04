@@ -24,6 +24,11 @@ expected_files = set(
     ]
 )
 
+import os
+print('WITHIN DRIVER2.PY')
+print(os.getcwd())
+print(os.listdir(os.getcwd()))
+
 actual_files = set(all_files())
 
 if expected_files.issubset(actual_files):

@@ -168,7 +168,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
 
         expected_files = ['some_metadata.txt', 'some_data_for_multiple_files.txt',  'new_file.txt']
         files_with_stats = {file_name: os.stat(f'{local_syncable_directory}/{file_name}') for file_name in expected_files}
-        self.assertEqual(expected_files, os.listdir(self.first_directory_path))
+        self.assertEqual(sorted(expected_files), sorted(os.listdir(self.first_directory_path)))
 
         try:
             for unchanged_file in ['some_data_for_multiple_files.txt']:
