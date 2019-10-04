@@ -6,8 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-
-class TestCanLoadParameters(Spec):
+from acceptance.mixins.run_local_job import RunLocalJob
+class TestCanLoadParameters(Spec, RunLocalJob):
 
     @let
     def job_parameters(self):
@@ -77,10 +77,13 @@ class TestCanLoadParameters(Spec):
 
         import subprocess
         import json
+        import os
         import os.path as path
 
+        env = self._update_environment_with_home_directory()
+
         with ChangeDirectory(script_directory):
-            completed_process = subprocess.run(command, stdout=subprocess.PIPE)
+            completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
             process_output = completed_process.stdout.decode().strip().split('\n')
 
         params_json = process_output[-1]
@@ -101,8 +104,11 @@ class TestCanLoadParameters(Spec):
         import json
         import os.path as path
 
+        env = self._update_environment_with_home_directory()
+
         with ChangeDirectory(script_directory):
-            completed_process = subprocess.run(command, stdout=subprocess.PIPE)
+            env = None if check_for_warning else env
+            completed_process = subprocess.run(command, stdout=subprocess.PIPE, env=env)
             process_output = completed_process.stdout.decode()
 
         
