@@ -25,24 +25,6 @@ class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
     def tear_down(self):
         self._tear_down()
 
-    @contextmanager
-    def _change_config(self, key, value):
-        from foundations_contrib.global_state import config_manager
-
-        config = config_manager.config()
-        has_previous = key in config
-        if has_previous:
-            previous = config[key]
-
-        try:
-            config[key] = value
-            yield
-        finally:
-            if has_previous:
-                config[key] = previous
-            else:
-                del config[key]
-
     def test_submit_job_with_all_arguments_specified_submits_job(self):
         self._test_submit_job_with_all_arguments_specified_submits_job()
 

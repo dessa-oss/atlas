@@ -11,22 +11,22 @@ from acceptance.mixins.run_local_job import RunLocalJob
 
 class TestSyncableDirectory(Spec, RunLocalJob):
 
-    @set_up
-    def set_up(self):
-        from acceptance.cleanup import cleanup
-        cleanup()
+    # @set_up
+    # def set_up(self):
+    #     from acceptance.cleanup import cleanup
+    #     cleanup()
     
-    def submit_job(self):
-        self._run_job_file('acceptance/fixtures/syncable_directory_job', job_id=self.job_id_1, entrypoint='main.py')
+    def run_job(self):
+        print(self._run_job_file('acceptance/fixtures/syncable_directory_job', job_id=self.job_id_1, entrypoint='main.py'))
 
-    def submit_job_2(self):
-        self._run_job_file('acceptance/fixtures/syncable_directory_job_again', job_id=self.job_id_2, entrypoint='main.py')
+    def run_job_2(self):
+        print(self._run_job_file('acceptance/fixtures/syncable_directory_job_again', job_id=self.job_id_2, entrypoint='main.py'))
 
-    def submit_job_with_diffs(self):
+    def run_job_with_diffs(self):
         self._run_job_file('acceptance/fixtures/syncable_directory_job_with_diffs', job_id=self.job_id_with_diffs, entrypoint='main.py')
 
-    def submit_multiple_files(self):
-        self._run_job_file('acceptance/fixtures/syncable_directory_job_multiple_files', job_id=self.job_multiple_files, entrypoint='main.py')
+    def run_job_multiple_files(self):
+        self._run_job_file('acceptance/fixtures/syncable_directory_job_multiple_files', job_id=self.job_id_multiple_files, entrypoint='main.py')
 
     @let
     def job_id_1(self):
@@ -41,7 +41,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
         return self.faker.uuid4()
 
     @let
-    def job_multiple_files(self):
+    def job_id_multiple_files(self):
         return self.faker.uuid4()
 
     @let
@@ -69,7 +69,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
     def test_can_download_from_synced_directory(self):
         import os
 
-        self.submit_job()
+        self.run_job()
 
         self.first_directory(self.job_id_1).download()
         self.assertEqual(['some_data.txt'], os.listdir(self.first_directory_path))
@@ -80,7 +80,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
     def test_can_download_when_no_synced_directory_specified(self):
         import os
 
-        self.submit_job()
+        self.run_job()
 
         sync_dir = self.temporary_syncable_directory(self.job_id_1)
         sync_dir.download()
@@ -96,9 +96,14 @@ class TestSyncableDirectory(Spec, RunLocalJob):
 
     def test_can_download_from_one_job_and_upload_same_data_to_another(self):
         import os
+        import json
 
-        self.submit_job()
-        self.submit_job_2()
+        self.run_job()
+
+        with open('acceptance/fixtures/syncable_directory_job_again/foundations_job_parameters.json', 'w') as params_file:
+            json.dump({'source_job_id': self.job_id_1}, params_file)
+
+        self.run_job_2()
 
         syncable_directory_data = foundations.create_syncable_directory('some data', self.first_directory_path, source_job_id=self.job_id_2)
         syncable_directory_data.download()
@@ -112,7 +117,7 @@ class TestSyncableDirectory(Spec, RunLocalJob):
         import os
         from foundations_contrib.global_state import config_manager
 
-        self.submit_job_with_diffs()
+        self.run_job_with_diffs()
         synced_directory_path = f'/tmp/foundations_acceptance/archive/{self.job_id_with_diffs}/synced_directories/some data'
         expected_files = ['new_file.txt', 'some_data.txt', 'some_metadata.txt']
 
@@ -137,16 +142,16 @@ class TestSyncableDirectory(Spec, RunLocalJob):
 
         SLEEP_TIME = 1
 
-        self._run_job_file('acceptance/fixtures/syncable_directory_job_multiple_files', job_id=self.job_multiple_files, entrypoint='main.py')
+        self._run_job_file('acceptance/fixtures/syncable_directory_job_multiple_files', job_id=self.job_id_multiple_files, entrypoint='main.py')
 
-        local_syncable_directory = SyncableDirectory('some data', self.first_directory_path, self.job_multiple_files, self.job_multiple_files)
+        local_syncable_directory = SyncableDirectory('some data', self.first_directory_path, self.job_id_multiple_files, self.job_id_multiple_files)
         local_syncable_directory.download()
         self.assertEqual(['some_metadata.txt', 'some_data_for_multiple_files.txt'], os.listdir(self.first_directory_path))
         
         time_of_download = time.time()
         temp_workspace = mkdtemp()
 
-        hack_directory = SyncableDirectory('some data', temp_workspace, self.job_multiple_files, self.job_multiple_files)
+        hack_directory = SyncableDirectory('some data', temp_workspace, self.job_id_multiple_files, self.job_id_multiple_files)
         os.remove(f'{temp_workspace}/some_data_for_multiple_files.txt')
         
         time.sleep(SLEEP_TIME)
