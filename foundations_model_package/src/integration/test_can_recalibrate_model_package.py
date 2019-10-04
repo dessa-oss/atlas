@@ -116,6 +116,8 @@ class TestCanRecalibrateModelPackage(Spec, DeployModelMixin):
 
             time_elapsed += 5
             time.sleep(5)
+        if self._job_status(job_id) == 'Error':
+            raise AssertionError('Recalibration Job Failed')
 
     def _job_status(self, job_id):
         from foundations_scheduler.pod_fetcher import get_latest_for_job
