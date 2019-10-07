@@ -14,8 +14,8 @@ class TestTensorboardServer(Spec, ContainerTestMixin):
     @set_up
     def set_up(self):
         from foundations_contrib.utils import run_command, cd
-        with cd('tensorboard_server'):
-            run_command(f'./build.sh {self.tag}')
+        with cd('docker/tensorboard_server'):
+            run_command(f'./build_image.sh {self.tag}')
         super().set_up_container('tensorboard-server')
     
     @tear_down

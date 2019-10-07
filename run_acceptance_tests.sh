@@ -8,7 +8,7 @@ do
     python -Wi -m unittest -f -v $acceptance_directory
 done
 
-cd ../docker
+cd ../tensorboard
 for acceptance_directory in $(echo *acceptance)
 do
     python -Wi -m unittest -f -v $acceptance_directory
