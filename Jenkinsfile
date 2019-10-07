@@ -1,3 +1,4 @@
+def build_number = env.BUILD_URL
 def customMetrics = [:]
 def customMetricsMap = [:]
 
@@ -9,7 +10,8 @@ pipeline{
         stage('Preparation') {
             steps {
                 script {
-                    git branch: 'trunk', credentialsId: 'devops', url: 'git@github.com:DeepLearnI/foundations.git'
+                    customMetricsMap["jenkins_data"] = customMetrics
+                    checkout scm
                 }
             }
         }
