@@ -82,7 +82,6 @@ class Notes extends React.Component {
 
   render() {
     const { notes, message } = this.state;
-    console.log('notes.length: ', notes.length);
     return (
       <div className="container-notes">
         <div className="notes section-container">
