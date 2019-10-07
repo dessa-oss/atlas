@@ -42,22 +42,28 @@ class TestTensorboardController(Spec):
     
     @let
     def job_id(self):
-        return [self.faker.uuid4()]
+        return self.faker.uuid4()
 
     @let
     def params(self):
-        return {'tensorboard_locations': [{'job_id': self.job_id, 'synced_directory': 'tb_data'}]}
+        return {'job_ids': [self.job_id]}
+
+    @let
+    def transformed_params(self):
+        return {'tensorboard_locations': [{
+                    'job_id': self.job_id,
+                    'synced_directory': f'archive/{self.job_id}/synced_directories/__tensorboard__'}]
+                    }
 
     @set_up
     def set_up(self):
         self.controller.params = self.params
 
-    def test_tensorboard_controller_post_posts_to_the_tensorboard_api_server_with_given_params(self):
+    def test_tensorboard_controller_post_posts_to_the_tensorboard_api_server_with_transformed_params(self):
         self.controller.post()
-        self.mock_request_post.assert_called_with(f'{self.api_host_name}/create_sym_links', json=self.params)
+        self.mock_request_post.assert_called_with(f'{self.api_host_name}/create_sym_links', json=self.transformed_params)
 
-    def test_tensorboard_controller_post(self):
+    def test_tensorboard_controller_post_returns_host_url(self):
         self.controller.post()
         self.assertEqual({'url': f'{self.host_name}'}, self.controller.post().as_json())
  
-        
