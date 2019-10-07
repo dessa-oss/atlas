@@ -11,7 +11,6 @@ from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctio
 import foundations
 from contextlib import contextmanager
 
-@skip('To be moved to the scheduler acceptance')
 class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
     def _log_level(self):
