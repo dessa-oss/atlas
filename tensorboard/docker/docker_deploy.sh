@@ -1,4 +1,4 @@
-# Usage: ./docker_deploy.sh <tag> <archive_mount> <logdir_mount>
+# Usage: ./docker_deploy.sh <repo> <tag> <archive_mount> <logdir_mount> <tb_port>
 
 repo=${1:-docker.shehanigans.net}
 tag=${2:-latest}

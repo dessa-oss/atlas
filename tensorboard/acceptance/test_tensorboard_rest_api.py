@@ -6,16 +6,16 @@ Written by Susan Davis <s.davis@dessa.com>, 06 2018
 """
 
 from foundations_spec import Spec, set_up, tear_down
+from foundations_contrib.utils import run_command, cd
 from .mixins.container_test_mixin import ContainerTestMixin
+
 
 class TestTensorboardRestAPI(Spec, ContainerTestMixin):
 
     @set_up
     def set_up(self):
-        from foundations_contrib.utils import run_command, cd
-    
         with cd('docker/tensorboard_rest_api'):
-            run_command(f'./build_image.sh {self.tag}')
+            run_command(f'./build_image.sh {self.repo} {self.tag}')
         super().set_up_container('tensorboard-rest-api')
 
     @tear_down
