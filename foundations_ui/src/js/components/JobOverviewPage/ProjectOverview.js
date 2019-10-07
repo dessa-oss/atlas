@@ -15,7 +15,7 @@ class ProjectOverview extends React.Component {
     super(props);
     this.state = {
       projectName: this.props.match.params.projectName,
-      metric: '',
+      metrics: '',
       allMetrics: [],
       graphData: [],
       timerId: -1,
@@ -41,10 +41,14 @@ class ProjectOverview extends React.Component {
         });
     }
 
-    const { projectName, metric } = this.state;
+    const { projectName, metrics } = this.state;
     let URL = `projects/${projectName}/overview_metrics`;
-    if (metric) {
-      URL = `${URL}?metric_name=${metric}`;
+    if (metrics) {
+      URL = `${URL}?metric_name=`;
+      metrics.forEach((m) => {
+        URL = `${URL}${m}|`;
+      });
+      URL = URL.substring(0, URL.length - 1);
     }
 
     const APIGraphData = await BaseActions.getFromStaging(URL);
@@ -67,9 +71,9 @@ class ProjectOverview extends React.Component {
       const allMetrics = APIGraphData.all_metric_names;
 
       if (correctGraphData.length > 0) {
-        this.setState({ graphData: correctGraphData[0].values, metric: correctGraphData[0].metric_name, allMetrics });
+        this.setState({ graphData: correctGraphData, allMetrics });
       } else {
-        this.setState({ graphData: [], metric: '', allMetrics: [] });
+        this.setState({ graphData: [], allMetrics: [] });
       }
     }
   }
@@ -89,8 +93,8 @@ class ProjectOverview extends React.Component {
     clearInterval(timerId);
   }
 
-  async setMetric(newMetric) {
-    await this.setState({ metric: newMetric });
+  async setMetric(newMetrics) {
+    await this.setState({ metrics: newMetrics });
     this.reload();
   }
 
@@ -136,7 +140,7 @@ class ProjectOverview extends React.Component {
 
   render() {
     const {
-      metric, graphData, allMetrics, tags,
+      metrics, graphData, allMetrics, tags,
     } = this.state;
 
     return (
@@ -165,7 +169,7 @@ class ProjectOverview extends React.Component {
           <div className="dashboard-content-container row">
             <section className="chart-and-notes col-md-8">
               <JobOverviewGraph
-                metric={metric}
+                metrics={metrics}
                 graphData={graphData}
                 allMetrics={allMetrics}
                 setMetric={this.setMetric}

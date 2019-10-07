@@ -6,19 +6,25 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import EmptyGraphImage from '../../../assets/svgs/empty-graph.svg';
 
+Highcharts.theme = {
+  colors: ['#BFDFFF', '#5291FB', '#5480DC', '#243A8E', '#230E4C'],
+};
+Highcharts.setOptions(Highcharts.theme);
+
 class JobOverviewGraph extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      metric: this.props.metric,
       graphData: this.props.graphData,
       formattedGraphData: [],
       allMetrics: this.props.allMetrics,
       setMetric: this.props.setMetric,
       failedToConvert: false,
+      metricNames: [],
     };
 
     this.formatGraphData = this.formatGraphData.bind(this);
+    this.formatGraphMetric = this.formatGraphMetric.bind(this);
     this.onChangeMetric = this.onChangeMetric.bind(this);
   }
 
@@ -27,9 +33,6 @@ class JobOverviewGraph extends Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    if (nextProps.metric) {
-      await this.setState({ metric: nextProps.metric });
-    }
     if (nextProps.graphData) {
       await this.setState({ graphData: nextProps.graphData });
       await this.formatGraphData();
@@ -40,6 +43,13 @@ class JobOverviewGraph extends Component {
   formatGraphData() {
     const { graphData } = this.state;
     let graphCopy = [...graphData];
+
+    const allSeries = graphCopy.map(this.formatGraphMetric);
+    this.setState({ formattedGraphData: allSeries });
+    this.setState({ metricNames: graphData.map(m => m.metric_name) });
+  }
+
+  formatGraphMetric(graphData) {
     // Assumes the following format
     /*
     [
@@ -53,28 +63,31 @@ class JobOverviewGraph extends Component {
       [...]
     ]
     */
-    let seriesArray = [];
     let seriesObject = {};
     seriesObject.showInLegend = false;
-    seriesObject.data = graphCopy;
-    seriesArray.push(seriesObject);
+    seriesObject.marker = {
+      symbol: 'circle',
+      radius: 4,
+    };
+    seriesObject.name = graphData.metric_name;
+    seriesObject.data = graphData.values;
 
-    if (seriesArray.length === 0) {
-      seriesArray = [{ showInLegend: false, data: {} }];
-    }
-
-    this.setState({ formattedGraphData: seriesArray });
+    return seriesObject;
   }
 
   onChangeMetric(selectedOption) {
     const { setMetric } = this.state;
-    const metric = selectedOption.value;
-    setMetric(metric);
+    if (selectedOption && selectedOption.length > 0) {
+      const metrics = selectedOption.map(m => m.value);
+      setMetric(metrics);
+    } else {
+      setMetric(null);
+    }
   }
 
   render() {
     const {
-      metric, formattedGraphData, allMetrics, failedToConvert,
+      formattedGraphData, allMetrics, failedToConvert, metricNames,
     } = this.state;
 
     const options = {
@@ -82,18 +95,12 @@ class JobOverviewGraph extends Component {
         type: 'spline',
       },
       xAxis: {
-        type: 'category',
+        categories: metricNames,
         labels: {
           enabled: false,
         },
         title: {
           text: 'Job Id',
-        },
-        showEmpty: true,
-      },
-      yAxis: {
-        title: {
-          text: metric,
         },
         showEmpty: true,
       },
@@ -103,26 +110,29 @@ class JobOverviewGraph extends Component {
       series: formattedGraphData,
       tooltip: {
         formatter() {
-          let tooltip = '';
+          let tooltip = `Job ID: ${this.points[0].key}<br/>`;
           this.points.forEach((point) => {
-            tooltip += `Job ID: ${point.key}<br/>${metric}: ${point.y}`;
+            tooltip += `${point.series.name}: ${point.y}<br />`;
           });
           return tooltip;
+        },
+        crosshairs: {
+          width: '3px',
         },
         shared: true,
       },
     };
 
-    const metrics = [];
+    const metricOptions = [];
     allMetrics.forEach((metricName) => {
-      metrics.push({ value: metricName, label: metricName });
+      metricOptions.push({ value: metricName, label: metricName });
     });
 
     const failedConversionMessage = <p className="not-graphable-message">This metric cannot be graphed.</p>;
 
     let chart = failedConversionMessage;
     if (!failedToConvert) {
-      if (metrics.length === 0) {
+      if (metricOptions.length === 0) {
         chart = (
           <div className="empty-graph-block">
             <h4>No metrics have been logged yet!</h4>
@@ -138,7 +148,13 @@ class JobOverviewGraph extends Component {
       <div>
         <div className="chart section-container">
           <h3 className="section-title">Recent Jobs</h3>
-          <Select onChange={this.onChangeMetric} options={metrics} placeholder="Metrics" className="react-select" />
+          <Select
+            onChange={this.onChangeMetric}
+            options={metricOptions}
+            placeholder="Metrics"
+            className="react-select"
+            isMulti
+          />
           <div className="highchart-chart">
             {chart}
           </div>
@@ -149,14 +165,12 @@ class JobOverviewGraph extends Component {
 }
 
 JobOverviewGraph.propTypes = {
-  metric: PropTypes.string,
   graphData: PropTypes.array,
   allMetrics: PropTypes.array,
   setMetric: PropTypes.func,
 };
 
 JobOverviewGraph.defaultProps = {
-  metric: '',
   graphData: [
     [
       [Date.UTC(2019, 1, 1), 9], [Date.UTC(2019, 2, 1), 7], [Date.UTC(2019, 4, 1), 7],
