@@ -214,7 +214,7 @@ pipeline {
         }
         failure {
             script {
-                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(100))
+                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
                 def attachments = [
                     [
                         pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
