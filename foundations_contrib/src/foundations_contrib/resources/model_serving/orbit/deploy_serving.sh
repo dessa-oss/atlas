@@ -13,6 +13,7 @@ echo "Preparing $model_name for serving"
 
 envsubst < ../submission_config.yaml | kubectl apply -f - > /dev/null 2>&1
 envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
+kubectl apply -f ../model-serving-environment.yaml > /dev/null 2>&1
 
 echo "Creating endpoint for model at $project_name/$model_name"
 envsubst < ../ingress.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
