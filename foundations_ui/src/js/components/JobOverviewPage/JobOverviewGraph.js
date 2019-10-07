@@ -69,7 +69,7 @@ class JobOverviewGraph extends Component {
     seriesObject.name = graphData.metric_name;
     seriesObject.color = '#5480DC';
     // n^2 time, needs refactoring
-    seriesObject.data = graphData.values.map(p => [jobIDs.length - jobIDs.indexOf(p[0]), p[1]]);
+    seriesObject.data = graphData.values.map(p => [jobIDs.length - jobIDs.indexOf(p[0]) - 1, p[1]]);
 
     return seriesObject;
   }
