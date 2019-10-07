@@ -20,6 +20,7 @@ class ProjectOverview extends React.Component {
       graphData: [],
       timerId: -1,
       tags: [],
+      jobIDs: [],
     };
     this.setMetric = this.setMetric.bind(this);
     this.onClickProjectOverview = this.onClickProjectOverview.bind(this);
@@ -36,6 +37,7 @@ class ProjectOverview extends React.Component {
           if (result && result.jobs) {
             this.setState({
               tags: CommonActions.getTagsFromJob(result.jobs),
+              jobIDs: result.jobs.map(job => job.job_id),
             });
           }
         });
@@ -140,7 +142,7 @@ class ProjectOverview extends React.Component {
 
   render() {
     const {
-      metrics, graphData, allMetrics, tags,
+      metrics, graphData, allMetrics, tags, jobIDs,
     } = this.state;
 
     return (
@@ -173,6 +175,7 @@ class ProjectOverview extends React.Component {
                 graphData={graphData}
                 allMetrics={allMetrics}
                 setMetric={this.setMetric}
+                jobIDs={jobIDs}
               />
               <Readme {...this.props} />
             </section>

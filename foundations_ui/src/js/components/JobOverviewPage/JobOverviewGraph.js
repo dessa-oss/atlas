@@ -14,8 +14,9 @@ class JobOverviewGraph extends Component {
       formattedGraphData: [],
       allMetrics: this.props.allMetrics,
       setMetric: this.props.setMetric,
+      jobIDs: this.props.jobIDs,
       failedToConvert: false,
-      metricNames: [],
+      // metricNames: [],
     };
 
     this.formatGraphData = this.formatGraphData.bind(this);
@@ -32,7 +33,7 @@ class JobOverviewGraph extends Component {
       await this.setState({ graphData: nextProps.graphData });
       await this.formatGraphData();
     }
-    this.setState({ allMetrics: nextProps.allMetrics });
+    this.setState({ allMetrics: nextProps.allMetrics, jobIDs: nextProps.jobIDs });
   }
 
   formatGraphData() {
@@ -41,10 +42,11 @@ class JobOverviewGraph extends Component {
 
     const allSeries = graphCopy.map(this.formatGraphMetric);
     this.setState({ formattedGraphData: allSeries });
-    this.setState({ metricNames: graphData.map(m => m.metric_name) });
+    // this.setState({ metricNames: graphData.map(m => m.metric_name) });
   }
 
   formatGraphMetric(graphData) {
+    const { jobIDs } = this.state;
     // Assumes the following format
     /*
     [
@@ -66,7 +68,8 @@ class JobOverviewGraph extends Component {
     };
     seriesObject.name = graphData.metric_name;
     seriesObject.color = '#5480DC';
-    seriesObject.data = graphData.values;
+    // n^2 time, needs refactoring
+    seriesObject.data = graphData.values.map(p => [jobIDs.length - jobIDs.indexOf(p[0]), p[1]]);
 
     return seriesObject;
   }
@@ -83,15 +86,19 @@ class JobOverviewGraph extends Component {
 
   render() {
     const {
-      formattedGraphData, allMetrics, failedToConvert, metricNames,
+      formattedGraphData, allMetrics, failedToConvert, jobIDs,
     } = this.state;
 
     const options = {
       chart: {
         type: 'spline',
+        parallelCoordinates: true,
+        parallelAxes: {
+          lineWidth: 2,
+        },
       },
       xAxis: {
-        categories: metricNames,
+        categories: jobIDs,
         labels: {
           enabled: false,
         },
@@ -105,13 +112,6 @@ class JobOverviewGraph extends Component {
       },
       series: formattedGraphData,
       tooltip: {
-        formatter() {
-          let tooltip = `Job ID: ${this.points[0].key}<br/>`;
-          this.points.forEach((point) => {
-            tooltip += `${point.series.name}: ${point.y}<br />`;
-          });
-          return tooltip;
-        },
         crosshairs: {
           width: '3px',
         },
@@ -164,6 +164,7 @@ JobOverviewGraph.propTypes = {
   graphData: PropTypes.array,
   allMetrics: PropTypes.array,
   setMetric: PropTypes.func,
+  jobIDs: PropTypes.array,
 };
 
 JobOverviewGraph.defaultProps = {
@@ -189,6 +190,7 @@ JobOverviewGraph.defaultProps = {
   ],
   allMetrics: [],
   setMetric: () => {},
+  jobIDs: [],
 };
 
 export default JobOverviewGraph;
