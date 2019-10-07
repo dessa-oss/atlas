@@ -32,7 +32,7 @@ class ProjectOverview extends React.Component {
     const { location } = this.props;
     if (location) {
       const { projectName } = this.props.match.params;
-      BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
+      await BaseActions.getFromStaging(`projects/${projectName}/job_listing`)
         .then((result) => {
           if (result && result.jobs) {
             this.setState({
