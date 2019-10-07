@@ -196,7 +196,7 @@ pipeline{
                 }
             }
         }
-        stage('Install dependencies for Foundations UI') {
+         stage('Install dependencies for Foundations UI (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -205,7 +205,7 @@ pipeline{
                 }
             }
         }
-        stage('Run Front End Unit Tests') {
+        stage('Run Front End Unit Tests (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -214,10 +214,28 @@ pipeline{
                 }
             }
         }
-        stage('Check for linting') {
+        stage('Check for linting (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
+                        sh "node_modules/.bin/eslint ."
+                    }
+                }
+            }
+        }
+        stage('Install dependencies for Foundations UI (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                        sh "yarn install"
+                    }
+                }
+            }
+        }
+        stage('Check for linting (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
@@ -236,6 +254,67 @@ pipeline{
                     sh "./build_gui.sh"
                 }
             }
+        }
+        stage('Push GUI and Rest API Images'){
+            steps {
+                container("python3"){
+                    sh "./push_gui_images.sh"
+                }
+            }
+        }
+        stage('Push Model Package Images') {
+            steps {
+                container("python3"){
+                    ws("${WORKSPACE}/foundations_model_package/src"){
+                        sh './push_green_images.sh'
+                    }
+                }
+            }
+        }
+        stage("Calculate Recovery Metrics") {
+            steps {
+                script {
+                    def last_build = currentBuild.getPreviousBuild()
+                    def last_failed_build
+                    def current_time = System.currentTimeMillis()
+                    
+                    while(last_build != null && last_build.result == "FAILURE") {
+                        last_failed_build = last_build
+                        last_build = last_build.getPreviousBuild()
+                    }
+                    
+                    if(last_failed_build != null) {
+                        time_to_recovery = current_time - last_failed_build.getTimeInMillis() 
+                        customMetrics["time_to_recovery"] = time_to_recovery
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                customMetricsMap["jenkins_data"] = customMetrics
+            }
+            influxDbPublisher selectedTarget: 'foundations', customPrefix: 'foundations', customProjectName: 'foundations', jenkinsEnvParameterField: '', jenkinsEnvParameterTag: '', customDataMap: customMetricsMap
+        }
+        failure {
+            script {
+                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
+                def attachments = [
+                    [
+                        pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                        text: output_logs,
+                        fallback: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',
+                        color: '#FF0000'
+                    ]
+                ]
+
+                slackSend(channel: '#f9s-builds', attachments: attachments)
+            }
+        }
+        success {
+            slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
         }
     }
 }
