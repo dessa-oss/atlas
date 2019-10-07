@@ -185,11 +185,6 @@ pipeline {
                 }
             }
         }
-        stage('Results') {
-            steps {
-                archiveArtifacts artifacts: '**/*.whl', fingerprint: true
-            }
-        }
         stage("Calculate Recovery Metrics") {
             steps {
                 script {

@@ -237,10 +237,5 @@ pipeline{
                 }
             }
         }
-        stage('Results') {
-            steps {
-                archiveArtifacts artifacts: '**/*.whl', fingerprint: true
-            }
-        }
     }
 }
