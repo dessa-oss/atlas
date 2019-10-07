@@ -13,6 +13,7 @@ docker run --rm -d \
     -p 5000:5000 \
     -v $(realpath $archive):/archive \
     -v $(realpath $logdir):/logs \
+    --name tensorboard-rest-api \
     $repo/tensorboard-rest-api:$tag \
     python /app/tensorboard_rest_api_server.py 5000 False && \
 
@@ -20,6 +21,7 @@ docker run --rm -d \
     -p $tb_port:$tb_port \
     -v $(realpath $archive):/archive \
     -v $(realpath $logdir):/logs \
+    --name tensorboard-server \
     $repo/tensorboard-server:$tag \
     tensorboard --logdir /logs
 

@@ -35,3 +35,40 @@ class TestTensorboardServer(Spec, ContainerTestMixin):
                 [f'Expected regex {expected_message.pattern} was not found in the container logs.',
                  'Container logs:', container_logs])
             self.fail(msg)
+    
+    # def test_tensorboard_rest_api_creates_symbolic_links_in_logdir_to_archive(self):
+    #     test_file_content = 'hello'
+    #     job_id = 123
+    #     sync_dir_name = 'abc'
+    #     sync_dir = f'/archive/archive/{job_id}/synced_directories/{sync_dir_name}'
+    #     test_file_path = f'{sync_dir}/test.txt'
+    #     test_link_path = f'/logs/{job_id}/{sync_dir_name}/test.txt'
+
+    #     create_test_file = (
+    #         f'kubectl exec -n {self._namespace} -it {self.pod_name} -c tensorboard-rest-api -- '
+    #         f'sh -c "mkdir -p {sync_dir} && echo \"{test_file_content}\" > {test_file_path}"')
+    #     self.kubernetes_api_wrapper.run_process(
+    #         create_test_file, shell=True, check=True, stdout=PIPE)
+
+    #     payload_from_frontend = {
+    #         'tensorboard_locations': [
+    #             {
+    #                 'job_id': f'{job_id}',
+    #                 'synced_directory': f'{sync_dir_name}'
+    #             }
+    #         ]
+    #     }
+    #     try:
+    #         _make_request(
+    #             'POST',
+    #             f'http://{self.kubernetes_master_ip}:32767/create_sym_links',
+    #             json=payload_from_frontend)
+    #     except requests.HTTPError as e:
+    #         msg = f'HTTP Error -> {e.response.text}'
+    #         raise AssertionError(msg)
+
+    #     cat_linked_file = (f'kubectl exec -n {self._namespace} {self.pod_name} '
+    #                        f'-c tensorboard-server -- cat {test_link_path}')
+    #     linked_file_content = self.kubernetes_api_wrapper.run_process(
+    #         cat_linked_file, shell=True, check=True, stdout=PIPE).stdout.decode().strip()
+    #     self.assertEqual(test_file_content, linked_file_content)
