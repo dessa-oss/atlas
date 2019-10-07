@@ -54,20 +54,13 @@ class TestGetJobLogs(Spec, NodeAwareMixin):
 
     def test_get_logs_for_queued_job_prints_error_message(self):
         import subprocess
-        from scheduler_acceptance.fixtures.stages import get_ram_in_gb_when_limit_set, get_ram_in_gb_when_limit_not_set
 
         largest_memory = self._get_memory_capacity_for_largest_node()
-        foundations.set_job_resources(0, largest_memory * 0.51)
 
-        get_ram_in_gb = foundations.create_stage(get_ram_in_gb_when_limit_set)
-        get_ram_in_gb_when_limit_not_set = foundations.create_stage(get_ram_in_gb_when_limit_not_set)
-        stage_get_ram_in_gb = get_ram_in_gb()
-        stage_get_ram_in_gb_when_limit_not_set = get_ram_in_gb_when_limit_not_set()
-
-        job = stage_get_ram_in_gb.run()
+        job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
         self._wait_for_job_to_run(job)
 
-        queued_job = stage_get_ram_in_gb_when_limit_not_set.run()
+        queued_job = foundations.submit(job_dir='scheduler_acceptance/fixtures/job_logs', num_gpus=0, ram=largest_memory * 0.51)
         queued_job_id = queued_job.job_name()
 
         error_message = 'Error: Job `{}` is queued and has not produced any logs'.format(queued_job_id)
