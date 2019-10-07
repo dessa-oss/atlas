@@ -7,7 +7,7 @@ import HighchartsReact from 'highcharts-react-official';
 import EmptyGraphImage from '../../../assets/svgs/empty-graph.svg';
 
 Highcharts.theme = {
-  colors: ['#BFDFFF', '#5291FB', '#5480DC', '#243A8E', '#230E4C'],
+  colors: ['#BFDFFF', '#5291FB', '#5480DC'],
 };
 Highcharts.setOptions(Highcharts.theme);
 
