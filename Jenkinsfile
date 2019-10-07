@@ -317,5 +317,4 @@ pipeline{
             slackSend color: '#00FF00', message: 'Build succeeded for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.'
         }
     }
-    // Hello
 }
