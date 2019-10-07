@@ -69,7 +69,7 @@ class DeployModelMixin(object):
 
     def _tear_down_model_package(self, project_name, model_name, job_id):
         self._perform_action_for_model_package(project_name, model_name, job_id, 'delete')
-        self._peform_action_for_creating_config_map('delete')
+        # self._peform_action_for_creating_config_map('delete')
         self._wait_for_serving_pod_to_die(project_name, model_name)
 
     def _peform_action_for_creating_config_map(self, action):

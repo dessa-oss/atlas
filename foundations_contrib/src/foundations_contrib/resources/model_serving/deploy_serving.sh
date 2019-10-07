@@ -10,6 +10,8 @@ envsubst < submission_config.yaml | kubectl apply -f -
 echo 'Successfully configured config map for $job_id'
 
 cat kubernetes-deployment.envsubst.yaml | envsubst | kubectl create -f -
+kubectl apply -f model-serving-environment.yaml
+
 echo "Preparing $model_name for serving"
 
 model_pod=$(kubectl -n foundations-scheduler-test get po | grep $model_name | awk '{print $1}')
