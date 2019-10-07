@@ -6,11 +6,6 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import EmptyGraphImage from '../../../assets/svgs/empty-graph.svg';
 
-Highcharts.theme = {
-  colors: ['#BFDFFF', '#5291FB', '#5480DC'],
-};
-Highcharts.setOptions(Highcharts.theme);
-
 class JobOverviewGraph extends Component {
   constructor(props) {
     super(props);
@@ -70,6 +65,7 @@ class JobOverviewGraph extends Component {
       radius: 4,
     };
     seriesObject.name = graphData.metric_name;
+    seriesObject.color = '#5480DC';
     seriesObject.data = graphData.values;
 
     return seriesObject;
