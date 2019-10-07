@@ -23,7 +23,32 @@ def print_logs(logs):
         if 'stream' in line:
             print(line['stream'].strip())
 
-build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', '{}/foundations-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_api_server.py'})
-build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', '{}/foundations-orbit-rest-api'.format(nexus_registry), buildargs={'main_file': 'run_orbit_api_server.py'})
-build_and_tag_gui_image('foundations_ui', 'gui_Dockerfile', '{}/foundations-gui'.format(nexus_registry))
-build_and_tag_gui_image('foundations_ui_orbit', 'orbit_gui_Dockerfile', '{}/foundations-orbit-gui'.format(nexus_registry))
+def main(argv):
+    if len(argv) != 2:
+        print('expected 1 argument')
+        exit(1)
+
+    atlas_or_orbit = argv[1]
+
+    if atlas_or_orbit == 'atlas':
+        rest_api_docker_image = 'foundations-rest-api'
+        rest_api_main_file = 'run_api_server.py'
+        gui_directory = 'foundations_ui'
+        gui_docker_file = 'gui_Dockerfile'
+        gui_docker_image = 'foundations-gui'
+    elif atlas_or_orbit == 'orbit':
+        rest_api_docker_image = 'foundations-orbit-rest-api'
+        rest_api_main_file = 'run_orbit_api_server.py'
+        gui_directory = 'foundations_ui_orbit'
+        gui_docker_file = 'orbit_gui_Dockerfile'
+        gui_docker_image = 'foundations-orbit-gui'
+    else:
+        print(f'invalid argument {atlas_or_orbit}; expected "atlas" or "orbit"')
+        exit(1)
+
+    build_and_tag_gui_image('.', 'docker/rest_api_Dockerfile', f'{nexus_registry}/{rest_api_docker_image}', buildargs={'main_file': rest_api_main_file})
+    build_and_tag_gui_image(gui_directory, gui_docker_file, f'{nexus_registry}/{gui_docker_image}')
+
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)

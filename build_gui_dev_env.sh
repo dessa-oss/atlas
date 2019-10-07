@@ -15,6 +15,7 @@ then
         cp dist/* tmp/pip_wheels && \
         pip download --dest tmp/pip_wheels foundations-scheduler && \
         cp docker/gui_Dockerfile foundations_ui && \
-        python build_gui.py && \
+        python build_gui.py atlas && \
+        python build_gui.py orbit && \
         rm -rf foundations_ui/gui_Dockerfile
 fi
