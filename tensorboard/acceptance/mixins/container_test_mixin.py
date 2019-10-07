@@ -15,29 +15,29 @@ from .docker_test_mixin import DockerTestMixin
 
 class ContainerTestMixin(DockerTestMixin):
 
-    DOCKER_REPOSITORY = 'docker.shehanigans.net/'
+    repo = 'docker.shehanigans.net'
 
-    def set_up_container(self, image_name, **kwargs):
-        image_name = f'{self.DOCKER_REPOSITORY}{image_name}:{self.tag}'
+    def set_up_container(self, image_name, timeout=60, **kwargs):
+        image_name = f'{self.repo}/{image_name}:{self.tag}'
         self.container = self.docker_client.containers.run(
             image_name,
             detach=True,
+            remove=True,
             **kwargs)
     
         _time = 0
-        while self.container.status != 'running' and _time < 60:
+        while self.container.status != 'running' and _time < timeout:
             time.sleep(0.5)
             _time += 0.5
             self.container.reload()
         self.container.reload()
-        
+
     @let
     def tag(self):
         return self.faker.word()
 
     def tear_down(self):
         self.container.stop()
-        self.container.remove()
 
     def wait_for_container_logs(self, retries=1, log_pattern=''):
         for _ in range(retries):

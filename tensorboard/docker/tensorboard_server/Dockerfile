@@ -3,7 +3,7 @@
 # Proprietary and confidential
 # Written by Jinnah Ali-Clarke <j.ali-clarke@dessa.com>, 11 2018
 
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:1.14.0-py3
 
 # Where the tensorboard log dir mounts
 VOLUME /logs
