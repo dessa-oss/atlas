@@ -1,0 +1,22 @@
+.job-details-par-coords-graph-container {
+  margin-top: 50px;
+  margin-bottom: 80px;
+  padding: 25px;
+  padding-bottom: 0;
+  border-radius: 10px;
+  box-shadow: 0px 6px 4px 0px #e2e2e2;
+  background-color: white;
+
+  .react-select {
+    width: 500px;
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-bottom: -20px;
+    z-index: 99;
+    float: right;
+  }
+
+  .js-plotly-plot {
+    width: 100%;
+  }
+}

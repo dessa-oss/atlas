@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import JobTable from '../JobListPage/JobTable';
 import JobHeader from '../JobListPage/JobHeader';
+import ParCoordsGraph from '../JobListPage/ParCoordsGraph';
 import CommonActions from '../../actions/CommonActions';
 import JobListActions from '../../actions/JobListActions';
 import hoverActions from '../../../scss/jquery/rowHovers';
@@ -491,6 +492,11 @@ class JobDetails extends React.Component {
             </div>
             <TagContainer tags={tags} />
           </div>
+          <ParCoordsGraph
+            jobs={jobs}
+            allInputParams={allInputParams}
+            allMetrics={allMetrics}
+          />
           <div className="job-detail-table-container">
             <div className="job-details-container">
               {jobList}
