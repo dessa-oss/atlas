@@ -9,7 +9,7 @@ import abc
 from subprocess import CompletedProcess
 from foundations_spec import *
 
-from acceptance.mixins.metrics_fetcher import MetricsFetcher
+from scheduler_acceptance.mixins.metrics_fetcher import MetricsFetcher
 class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
     
     @abc.abstractmethod

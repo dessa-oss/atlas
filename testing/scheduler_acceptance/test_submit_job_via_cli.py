@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 from foundations_spec import *
-from acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctionTestScaffold
+from scheduler_acceptance.mixins.job_deploy_function_test_scaffold import JobDeployFunctionTestScaffold
 
 import foundations
 from contextlib import contextmanager
