@@ -30,13 +30,13 @@ class TestCanDeployModelServer(Spec, DeployModelMixin):
     def _is_running_on_jenkins():
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
 
-    # @set_up_class
-    # def set_up_class(klass):
-    #     if not klass._is_running_on_jenkins():
-    #         return_code = subprocess.call(['bash', '-c', './build.sh'])
+    @set_up_class
+    def set_up_class(klass):
+        if not klass._is_running_on_jenkins():
+            return_code = subprocess.call(['bash', '-c', './build.sh'])
 
-    #         if return_code != 0:
-    #             raise AssertionError('docker build for model package failed :(')
+            if return_code != 0:
+                raise AssertionError('docker build for model package failed :(')
 
     @set_up
     def set_up(self):
