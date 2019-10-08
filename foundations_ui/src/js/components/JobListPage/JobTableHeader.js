@@ -570,7 +570,7 @@ class JobTableHeader extends Component {
       <ScrollSync>
         <div className="job-list-container">
           <InputMetric
-            header="Job Details"
+            header="Experiment Details"
             allInputParams={jobsInputParams}
             jobs={jobsMetaData}
             isMetric={isMetric}

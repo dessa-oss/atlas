@@ -163,7 +163,7 @@ class ProjectOverview extends React.Component {
                 onClick={this.onClickJobDetails}
                 onKeyDown={this.onKeyDown}
               >
-                Job Details
+                Experiment Details
               </h3>
             </div>
             <TagContainer tags={tags} />
