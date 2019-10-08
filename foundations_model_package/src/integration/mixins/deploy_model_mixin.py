@@ -27,6 +27,11 @@ class DeployModelMixin(object):
 
         self.redis_connection = redis_connection
 
+    def _apply_environment_yaml(self):
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/model-serving-environment.yaml')
+        command_to_run = f'kubectl apply -f {yaml_template_path}'
+        subprocess.call(['bash', '-c', command_to_run])
+
     def _tear_down_environment(self, project_name, models):
         from foundations_contrib.global_state import config_manager
 
@@ -181,4 +186,8 @@ class DeployModelMixin(object):
 
     def _get_proxy_url(self):
         import os
+
+        if 'FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY' not in os.environ:
+            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY env variable')
+
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
