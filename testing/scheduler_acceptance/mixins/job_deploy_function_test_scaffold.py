@@ -66,7 +66,7 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
             'log_level': self._log_level()
         }
 
-    @property
+    @let
     def scheduler_config_file_contents(self):
         return {
             'results_config': {},
@@ -123,7 +123,7 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
         import copy
 
         import foundations
-        from acceptance.cleanup import cleanup
+        from scheduler_acceptance.cleanup import cleanup
 
         cleanup()
 
@@ -137,6 +137,8 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
         with open(self.execution_config_file_path, 'w') as local_config_file:
             yaml.dump(self.execution_config_file_contents, local_config_file)
 
+        self.scheduler_config_file_contents['results_config']['redis_end_point'] = foundations.config_manager.config()['redis_url']
+
         with open(self.scheduler_config_file_path, 'w') as scheduler_config_file:
             yaml.dump(self.scheduler_config_file_contents, scheduler_config_file)
 
@@ -144,7 +146,7 @@ class JobDeployFunctionTestScaffold(abc.ABC, MetricsFetcher):
         import os
 
         import foundations
-        from acceptance.config import config
+        from scheduler_acceptance.config import remote_config
 
         if self._should_remove_config_files_on_cleanup:
             os.remove(self.execution_config_file_path)

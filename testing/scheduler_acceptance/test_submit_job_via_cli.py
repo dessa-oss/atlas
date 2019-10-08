@@ -13,6 +13,18 @@ from contextlib import contextmanager
 
 class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
+    @let
+    def submission_environment(self):
+        return 'scheduler_with_remote_redis'
+
+    @let
+    def base_config_path(self):
+        return f'foundations_home/config/submission/scheduler.config.yaml'
+
+    @let
+    def config_path(self):
+        return f'foundations_home/config/submission/{self.submission_environment}.config.yaml'
+
     def _log_level(self):
         return 'INFO'
 
@@ -51,7 +63,7 @@ class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
             'python', '-m', 'foundations', 'submit',
             '--job-dir={}'.format(job_directory),
             '--entrypoint={}'.format(kwargs['entrypoint']),
-            '--project-name={}'.format(kwargs['project_name']),
+            '--project-name={}'.format(kwargs['project_name'])
         ]
 
         cli_submit_process = self._run_process(command_to_run)
