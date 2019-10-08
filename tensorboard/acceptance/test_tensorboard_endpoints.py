@@ -36,7 +36,7 @@ class TestTensorboardEndpoint(Spec):
         return foundations.submit(
             project_name='tensorboard',
             entrypoint='tensorboard_job',
-            job_dir='scheduler_acceptance/fixtures/tensorboard_job'
+            job_dir='fixtures/tensorboard_job'
         )
 
     @let
@@ -50,8 +50,6 @@ class TestTensorboardEndpoint(Spec):
 
     @set_up
     def set_up(self):
-        import yaml
-        from scheduler_acceptance.cleanup import cleanup
         cleanup()
 
         self.deployment.wait_for_deployment_to_complete()
@@ -59,7 +57,26 @@ class TestTensorboardEndpoint(Spec):
     def test_upload_to_tensorflow(self):
         from foundations_contrib.global_state import config_manager
 
-        data = self.client.post(self.url, json={'tensorboard_locations': [{'job_id': self.job_id, 'synced_directory': 'tb_data'}]})
+        data = self.client.post(self.url, json={'job_ids': [self.job_id]})
         url = data.get_json()['url']
         self.assertEqual(f'{config_manager["TENSORBOARD_HOST"]}', url)
 
+def cleanup():
+    import shutil
+    from os import getcwd, remove
+    from os.path import isdir
+    from glob import glob
+    from foundations_contrib.global_state import redis_connection, foundations_context
+    from foundations_internal.pipeline_context import PipelineContext
+    from foundations_internal.pipeline import Pipeline
+
+    tmp_dir = getcwd() + '/foundations_home/job_data'
+    if isdir(tmp_dir):
+        shutil.rmtree(tmp_dir)
+
+    for file in glob('*.tgz'):
+        remove(file)
+
+    pipeline_context = PipelineContext()
+    pipeline = Pipeline(pipeline_context)
+    foundations_context._pipeline = pipeline
