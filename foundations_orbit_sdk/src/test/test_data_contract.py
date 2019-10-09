@@ -311,7 +311,7 @@ class TestDataContract(Spec):
 
         mock_row_count_checker_class.return_when(mock_row_count_checker, 1)
         mock_row_count_checker.validate = ConditionalReturn()
-        mock_row_count_checker.validate.return_when(mock_row_count_check_results, 1)
+        mock_row_count_checker.validate.return_when(mock_row_count_check_results, self.one_column_dataframe)
 
         contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe)

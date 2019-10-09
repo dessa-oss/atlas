@@ -10,5 +10,6 @@ class RowCountChecker(object):
     def __init__(self, reference_row_count):
         self._number_of_rows = reference_row_count
 
-    def validate(self, row_count_to_check):
+    def validate(self, dataframe_to_validate):
+        row_count_to_check = len(dataframe_to_validate)
         return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
