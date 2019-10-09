@@ -25,9 +25,10 @@ class DistributionChecker(object):
         }
     '''
     
-    def __init__(self, distribution_options, bin_stats):
+    def __init__(self, distribution_options, bin_stats, reference_column_names):
         self._distribution_options = distribution_options
         self._bin_stats = bin_stats
+        self._reference_column_names = reference_column_names
 
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
@@ -37,7 +38,7 @@ class DistributionChecker(object):
 
         from foundations_orbit.contract_validators.prototype import distribution_check
 
-        return distribution_check(self._distribution_options, list(dataframe_to_validate.columns), self._bin_stats, dataframe_to_validate)
+        return distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
 
     def _count_special_values(self, ref_special_values, current_values):
         n_current_vals = len(current_values)

@@ -286,7 +286,7 @@ class TestDataContract(Spec):
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker = Mock()
 
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats)
+        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2])
         mock_distribution_checker.validate = ConditionalReturn()
         mock_distribution_checker.validate.return_when(mock_distribution_check_results, self.two_column_dataframe)
 
