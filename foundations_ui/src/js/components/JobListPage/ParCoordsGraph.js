@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
@@ -149,7 +148,7 @@ class ParCoordsGraph extends React.Component {
             />
           </div>
         </div>
-        <Plot data={data} />
+        <Plot data={data} layout={{ autosize: true }} useResizeHandler />
       </div>
     );
   }
