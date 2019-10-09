@@ -70,13 +70,13 @@ class TestSchemaChecker(Spec):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
 
-    @let_now
-    def two_column_dataframe(self):
+    @let_now 
+    def two_column_dataframe_different_types(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2.0]])
 
     @let_now
-    def two_column_dataframe_different_types(self):
+    def two_column_dataframe(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
 
@@ -191,8 +191,8 @@ class TestSchemaChecker(Spec):
             'error_message': 'column datatype mismatches',
             'cols': {
                 self.column_name_2: {
-                    'ref_type': 'float64',
-                    'current_type': 'int64'
+                    'ref_type': 'int64',
+                    'current_type': 'float64'
                 }
             }
         }
@@ -211,6 +211,14 @@ class TestSchemaChecker(Spec):
         }
 
         self.assertEqual(json.dumps(expected_information), str(schema_checker))
+    
+    def test_schema_checker_can_accept_configurations(self):
+        # 2 column in reference
+        # 1 column in current
+        # if specifies only 1 in configure, then schema check is passed
+
+        schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
+        
 
     def _dataframe_statistics(self, dataframe):
         column_names = list(dataframe.columns)
