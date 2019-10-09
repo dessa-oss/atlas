@@ -58,6 +58,7 @@ def spread_counts_over_identical_edges(binned_values, edges):
 
 
 def bin_values(values, max_num_bins):
+    values = values[values != np.inf]
     n_unique_values = values.nunique()
     if n_unique_values > 1:
         n_bins = get_num_bins(values, max_num_bins)
@@ -69,7 +70,7 @@ def bin_values(values, max_num_bins):
     return bin_counts, bin_edges
 
 def l_infinity(ref_percentages, current_percentages):
-    return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
+    return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
 def l_infinity_test(ref_percentages, current_percentages, threshold):
     l_infinity_score = l_infinity(ref_percentages, current_percentages)

@@ -68,6 +68,18 @@ class TestDataContract(Spec):
     @let
     def row_count_results(self):
         return self.faker.random.random()
+    
+    @let
+    def bin_return_value(self):
+        return {'percentage': .5, 'upper_edge': None}
+
+
+    @let
+    def bin_stats(self):
+        return {
+            self.column_name: self.bin_return_value,
+            self.column_name_2: self.bin_return_value
+        }
 
     @let_now
     def one_column_dataframe(self):
@@ -256,24 +268,27 @@ class TestDataContract(Spec):
 
         mock_schema_checker_class.return_when(mock_schema_checker, [self.column_name, self.column_name_2], {self.column_name: 'int64', self.column_name_2: 'float64'})
         mock_schema_checker.validate = ConditionalReturn()
-        mock_schema_checker.validate.return_when(mock_schema_check_results, [self.column_name, self.column_name_3], {self.column_name: 'object', self.column_name_3: 'object'})
+        mock_schema_checker.validate.return_when(mock_schema_check_results, self.two_column_dataframe_no_rows_different_second_column)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_distribution = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
-    @skip('PLEASE PUT ME BACK IN WHEN REMOVING PROTOTYPE CODE')
     def test_data_contract_validate_check_distributions_by_default(self):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+
+        mock_report_validator = self.patch('foundations_orbit.report_formatter.ReportFormatter')
+        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.prototype.create_bin_stats')
+        mock_bin_create_stats.return_value = self.bin_return_value
 
         mock_distribution_check_results = Mock()
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker = Mock()
 
-        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution)
-        mock_distribution_checker.distribution_check_results = ConditionalReturn()
-        mock_distribution_checker.distribution_check_results.return_when(mock_distribution_check_results, [self.column_name, self.column_name_2])
+        mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2])
+        mock_distribution_checker.validate = ConditionalReturn()
+        mock_distribution_checker.validate.return_when(mock_distribution_check_results, self.two_column_dataframe)
 
         validation_report = contract.validate(self.two_column_dataframe)
 
@@ -296,7 +311,7 @@ class TestDataContract(Spec):
 
         mock_row_count_checker_class.return_when(mock_row_count_checker, 1)
         mock_row_count_checker.validate = ConditionalReturn()
-        mock_row_count_checker.validate.return_when(mock_row_count_check_results, 1)
+        mock_row_count_checker.validate.return_when(mock_row_count_check_results, self.one_column_dataframe)
 
         contract = self._contract_from_dataframe_for_row_checking(self.one_column_dataframe)
         validation_report = contract.validate(self.one_column_dataframe)

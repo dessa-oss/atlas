@@ -13,8 +13,18 @@ class SchemaChecker(object):
 
         self._column_types = column_types
 
-    def validate(self, columns_to_validate, types_to_validate):
+    def __str__(self):
+        import json
+        test_information = {
+            'column_names': self._column_names,
+            'column_types': self._column_types
+        }
+        return json.dumps(test_information)
+
+    def validate(self, current_dataframe):
         import pandas
+
+        columns_to_validate, types_to_validate = self._dataframe_statistics(current_dataframe)
 
         schema_check_results = {}
 
@@ -79,3 +89,10 @@ class SchemaChecker(object):
                 }
 
         return {'cols': mismatched_columns}
+
+    @staticmethod
+    def _dataframe_statistics(dataframe):
+        column_names = list(dataframe.columns)
+        column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
+
+        return column_names, column_types

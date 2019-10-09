@@ -68,8 +68,8 @@ class DataContract(object):
         
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.report_formatter import ReportFormatter
-        # from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
 
         project_name = os.environ['PROJECT_NAME']
         model_name = os.environ['MODEL_NAME']
@@ -91,14 +91,15 @@ class DataContract(object):
         ##### Prototype code section end
 
         validation_report = {}
-        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(columns_to_validate, types_to_validate)
+        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(dataframe_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(row_count_to_check)
+            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
             ##### PROTOTYPE CODE - use distribution checker asap
-            validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
+            #validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
+            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {

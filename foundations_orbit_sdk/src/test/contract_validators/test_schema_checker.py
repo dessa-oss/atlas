@@ -199,6 +199,19 @@ class TestSchemaChecker(Spec):
 
         self._assert_schema_check_results_for_dataframe(self.two_column_dataframe, self.two_column_dataframe_different_types, expected_schema_check_results)
 
+    def test_string_cast_for_schema_check_returns_expected_information(self):
+        import json
+        import numpy
+
+        schema_checker = self._schema_checker_from_dataframe(self.one_column_dataframe)
+
+        expected_information = {
+            'column_names': [self.column_name],
+            'column_types': {self.column_name: 'int8'}
+        }
+
+        self.assertEqual(json.dumps(expected_information), str(schema_checker))
+
     def _dataframe_statistics(self, dataframe):
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}
@@ -211,6 +224,4 @@ class TestSchemaChecker(Spec):
 
     def _assert_schema_check_results_for_dataframe(self, ref_dataframe, current_dataframe, expected_results):
         schema_checker = self._schema_checker_from_dataframe(ref_dataframe)
-        column_names, column_types = self._dataframe_statistics(current_dataframe)
-
-        self.assertEqual(expected_results, schema_checker.validate(column_names, column_types))
+        self.assertEqual(expected_results, schema_checker.validate(current_dataframe))

@@ -10,3 +10,4 @@ from .test_distribution_checker import TestDistributionChecker
 from .test_row_count_checker import TestRowCountChecker
 from .test_l_infinity import TestLInfinity
 from .test_bin_values import TestBinValues
+from .test_create_bin_stats import TestCreateBinStats

@@ -25,76 +25,31 @@ class DistributionChecker(object):
         }
     '''
     
-    def __init__(self, distribution_options, column_names, bin_stats, current_df):
+    def __init__(self, distribution_options, bin_stats, reference_column_names):
         self._distribution_options = distribution_options
-        self._column_names = column_names
         self._bin_stats = bin_stats
-        self._current_df = current_df
+        self._reference_column_names = reference_column_names
 
-    def distribution_check_results(self):
+    def __str__(self):
+        import json
+
+        information =  {
+            'distribution_options': self._distribution_options,
+            'bin_stats': self._bin_stats,
+            'reference_column_names': self._reference_column_names
+        }
+
+        return json.dumps(information)
+
+    def validate(self, dataframe_to_validate):
+        if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
+            raise ValueError('Invalid Dataframe provided')
         if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
             raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
 
-        dist_check_results = {}
+        from foundations_orbit.contract_validators.prototype import distribution_check
 
-        results_for_same_distribution = {
-            'binned_l_infinity': 0.0,
-            'binned_passed': True,
-            'special_values': {
-                np.nan: {
-                    'current_percentage': 0.0,
-                    'passed': True,
-                    'percentage_diff': 0.0,
-                    'ref_percentage': 0.0
-                }
-            }
-        }
-
-        columns_to_check = self._column_names.copy()
-
-        for column_name in columns_to_check:
-            dist_check_results[column_name] = results_for_same_distribution
-            column_check_resuls = dist_check_results[column_name]
-            current_values = self._current_df[column_name].copy()
-            n_current_vals = len(current_values)
-            ref_special_value_percentages = []
-            ref_bin_percentages = []
-            ref_special_values = []
-            ref_edges = []
-            unique_ref_value = None
-            ref_bin_stats = self._bin_stats[column_name]
-
-            for bin in ref_bin_stats:
-                if 'upper_edge' not in bin: # special value
-                    ref_special_values.append(bin['value'])
-                    ref_special_value_percentages.append(bin['percentage'])
-                elif 'upper_edge' in bin and bin['upper_edge'] is None: # unique value
-                    unique_ref_value = bin['value']
-                    ref_bin_percentages.append(bin['percentage'])
-                    ref_bin_percentages.append(0)  # to compare with current_other_value_counts percentage
-                else: # normal nin
-                    ref_bin_percentages.append(bin['percentage'])
-                    # the upper_edge of the bin with the largest values is np.inf, ref_edges shouldn't include this
-                    if bin['upper_edge'] != np.inf:
-                        ref_edges.append(bin['upper_edge'])
-
-            current_special_value_percentages = self._count_special_values(ref_special_values, current_values)
-            current_values = self._remove_special_values(ref_special_values, current_values)
-            current_bin_percentages = self._bin_current_values(current_values, ref_edges, n_current_vals, unique_ref_value)
-
-            # define threshold for l_infinity tests
-            custom_threshold = self._distribution_options['custom_thresholds'].get(column_name, None)
-            threshold = custom_threshold if custom_threshold != None else self._distribution_options['default_threshold']
-
-            column_check_resuls['special_values'] = self._special_value_l_infinity(threshold,
-                                                                            ref_special_values, 
-                                                                            ref_special_value_percentages, 
-                                                                            current_special_value_percentages)
-
-            column_check_resuls['binned_l_infinity'] = self._l_infinity(ref_bin_percentages, current_bin_percentages)
-            column_check_resuls['binned_passed'] = column_check_resuls['binned_l_infinity'] < threshold
-
-        return dist_check_results
+        return distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
 
     def _count_special_values(self, ref_special_values, current_values):
         n_current_vals = len(current_values)
@@ -142,7 +97,7 @@ class DistributionChecker(object):
         return special_values
 
     def _l_infinity(self, ref_percentages, current_percentages):
-        return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
+        return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
     # NB - apply edges changes (2, ) vector to (3, ) causes test with upper edge and non special values to break
     def _apply_edges(self, values, edges):
