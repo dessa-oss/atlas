@@ -57,8 +57,7 @@ class TestCreateBinStats(Spec):
 
 
         output = create_bin_stats(special_values, max_bins, col_values)
-        print(output)
-        # self.assertEqual(expected_output, output)
+        self.assertEqual(expected_output, output)
 
     def test_creates_bin_for_column_with_no_special_values(self):
         special_values = []
