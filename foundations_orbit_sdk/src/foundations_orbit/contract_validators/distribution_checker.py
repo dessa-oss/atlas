@@ -25,13 +25,12 @@ class DistributionChecker(object):
         }
     '''
     
-    def __init__(self, distribution_options, column_names, bin_stats, current_df):
+    def __init__(self, distribution_options, bin_stats, current_df):
         self._distribution_options = distribution_options
-        self._column_names = column_names
         self._bin_stats = bin_stats
         self._current_df = current_df
 
-    def distribution_check_results(self):
+    def validate(self, column_names):
         if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
             raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
 
@@ -50,7 +49,7 @@ class DistributionChecker(object):
             }
         }
 
-        columns_to_check = self._column_names.copy()
+        columns_to_check = column_names.copy()
 
         for column_name in columns_to_check:
             dist_check_results[column_name] = results_for_same_distribution

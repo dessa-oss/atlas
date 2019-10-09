@@ -23,10 +23,6 @@ class TestDistributionChecker(Spec):
             'custom_thresholds': {}
         }
 
-    @let
-    def checker_with_one_column_df(self):
-        return DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
-
     @let_now
     def empty_dataframe(self):
         import pandas
@@ -95,16 +91,16 @@ class TestDistributionChecker(Spec):
         options['cols_to_ignore'] = []
         options['cols_to_include'] = []
 
-        checker = DistributionChecker(options, [self.column_name], self.bin_stats, self.one_column_dataframe)
+        checker = DistributionChecker(options, self.bin_stats, self.one_column_dataframe)
 
         with self.assertRaises(ValueError) as ex:
-            checker.distribution_check_results()
+            checker.validate([self.column_name])
 
         self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
     def test_distribution_check_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
-        distribution_checker = DistributionChecker(self.distribution_options, [], self.bin_stats, None)
-        self.assertEqual({}, distribution_checker.distribution_check_results())
+        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats, None)
+        self.assertEqual({}, distribution_checker.validate([]))
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
         expected_dist_check_result = {
@@ -121,8 +117,8 @@ class TestDistributionChecker(Spec):
                 }
             }
         }
-        distribution_checker = DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, distribution_checker.distribution_check_results())
+        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats, self.one_column_dataframe)
+        self.assertEqual(expected_dist_check_result, distribution_checker.validate([self.column_name]))
 
     def test_distribution_check_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
         expected_dist_check_result = {
@@ -152,8 +148,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, [self.column_name, self.column_name_2], self.bin_stats, self.two_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, self.bin_stats, self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name, self.column_name_2]))
 
     def test_distribution_check_single_column_dataframe_for_non_special_values_in_bin(self):
         self.maxDiff = None
@@ -165,8 +161,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, [self.column_name], self.bin_stats_one_column_no_special_value, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column_no_special_value, self.one_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
 
     def test_distribution_check_one_column_dataframe_with_upper_edge(self):
         bin_stats = {
@@ -185,8 +181,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, [self.column_name], bin_stats, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, bin_stats, self.one_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
 
 
     def test_distribution_check_two_column_dataframe_with_both_containing_upper_edges(self):
@@ -217,8 +213,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, [self.column_name, self.column_name_2], bin_stats, self.two_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, bin_stats, self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name, self.column_name_2]))
 
     @skip('need to confirm behaviour with MLE ... behaviour of apply edges causes test to break')
     def test_distribution_check_two_column_dataframe_with_upper_edge_and_non_special_values_in_bin(self):
@@ -257,5 +253,5 @@ class TestDistributionChecker(Spec):
         }
 
 
-        checker = DistributionChecker(self.distribution_options, [self.column_name], bin_stats, self.two_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.distribution_check_results())
+        checker = DistributionChecker(self.distribution_options, bin_stats, self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
