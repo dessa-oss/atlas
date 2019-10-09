@@ -25,6 +25,9 @@ class SchemaChecker(object):
         if column_types:
             self._column_types = column_types
 
+    def exclude(self, attributes):
+        self._column_names = set(self._column_names) - set(attributes)
+
     def validate(self, current_dataframe):
         import pandas
 
