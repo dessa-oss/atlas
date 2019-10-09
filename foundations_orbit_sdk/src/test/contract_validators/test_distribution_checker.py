@@ -96,8 +96,6 @@ class TestDistributionChecker(Spec):
     def column_name_2(self):
         return self._generate_distinct([self.column_name], self.faker.word)
 
-    
-
     @let_now
     def two_column_dataframe_no_rows(self):
         return pandas.DataFrame(columns=[self.column_name, self.column_name_2])
@@ -188,3 +186,27 @@ class TestDistributionChecker(Spec):
 
         checker = DistributionChecker(self.distribution_options, bin_stats, self.one_column_dataframe)
         self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
+
+    def test_distribution_check_with_large_value_ranges(self):
+        data = {
+            self.column_name: [100,25,46],
+            self.column_name_2: [50, 2, 400]
+        }
+        dataframe = pandas.DataFrame(data)
+        
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 1.0,
+                'binned_passed': False,
+                'special_values': {}
+            },
+            self.column_name_2: {
+                'binned_l_infinity':  0.6666666666666667,
+                'binned_passed': False,
+                'special_values': {}
+            }
+        }
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, dataframe)
+        validate_results = checker.validate([self.column_name, self.column_name_2])
+        self.assertEqual(expected_dist_check_result, validate_results)
