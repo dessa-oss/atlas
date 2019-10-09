@@ -30,6 +30,17 @@ class DistributionChecker(object):
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names
 
+    def __str__(self):
+        import json
+
+        information =  {
+            'distribution_options': self._distribution_options,
+            'bin_stats': self._bin_stats,
+            'reference_column_names': self._reference_column_names
+        }
+
+        return json.dumps(information)
+
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')

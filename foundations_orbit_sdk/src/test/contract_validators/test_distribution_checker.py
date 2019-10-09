@@ -104,6 +104,19 @@ class TestDistributionChecker(Spec):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
 
+    def test_string_cast_for_distribution_checker_returns_expected_information(self):
+        import json
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats, [self.column_name])
+
+        expected_information = {
+            'distribution_options': self.distribution_options,
+            'bin_stats': self.bin_stats,
+            'reference_column_names': [self.column_name]
+        }
+
+        self.assertEqual(json.dumps(expected_information), str(checker))
+
     def test_distribution_checker_cannot_validate_if_checking_distribution_if_both_column_whitelist_and_column_blacklist_are_set(self):
         options = self.distribution_options.copy()
         options['cols_to_ignore'] = []
