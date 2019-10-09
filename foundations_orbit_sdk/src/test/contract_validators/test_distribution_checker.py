@@ -28,15 +28,42 @@ class TestDistributionChecker(Spec):
         import pandas
         return pandas.DataFrame()
 
+
+    @let_now
+    def one_column_dataframe(self):
+        return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
+
+    @let
+    def bin_stats_one_column(self):
+        return {
+            self.column_name: [{
+                'value': 4,
+                'percentage': 1.0,
+                'upper_edge': None
+            }]
+        }
+    
+    @let_now
+    def two_column_dataframe(self):
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[5,6],[10,32]], dtype=numpy.int8)
+
+    @let
+    def bin_stats_two_column_no_special_value(self):
+        return {
+            self.column_name: [{
+                'percentage': 1.0,
+                'upper_edge': 10
+            },  {'percentage': 0.0, 'upper_edge': numpy.inf}],
+            self.column_name_2: [{
+		        'percentage': 1.0,
+                'upper_edge': 32
+            },  {'percentage': 0.0, 'upper_edge': numpy.inf}]
+        }
+
     @let
     def bin_stats(self):
         return {
             self.column_name: [{
-                'value':  numpy.nan,
-		        'percentage': 0.0
-            },
-            {
-                'value': 1,
                 'percentage': 1.0,
                 'upper_edge': None
             }],
@@ -69,14 +96,7 @@ class TestDistributionChecker(Spec):
     def column_name_2(self):
         return self._generate_distinct([self.column_name], self.faker.word)
 
-
-    @let_now
-    def one_column_dataframe(self):
-        return pandas.DataFrame(columns=[self.column_name], data=[4], dtype=numpy.int8)
-
-    @let_now
-    def two_column_dataframe(self):
-        return pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[5,6],[10,32]], dtype=numpy.int8)
+    
 
     @let_now
     def two_column_dataframe_no_rows(self):
@@ -98,58 +118,43 @@ class TestDistributionChecker(Spec):
 
         self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
-    def test_distribution_check_empty_dataframe_against_itself_returns_empty_dist_check_results(self):
-        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats, None)
-        self.assertEqual({}, distribution_checker.validate([]))
+    def test_distribution_check_throws_error_if_dataframe_is_none(self):
+        with self.assertRaises(ValueError) as ex:
+            DistributionChecker(self.distribution_options, self.bin_stats, None)
+
+    def test_distribution_check_throws_error_if_dataframe_is_empty(self):
+        with self.assertRaises(ValueError) as ex:
+            DistributionChecker(self.distribution_options, self.bin_stats, self.empty_dataframe)
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 1.0,
-                'binned_passed': False,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_l_infinity': 0.0,
+                'binned_passed': True,
+                'special_values': {}
             }
         }
-        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats, self.one_column_dataframe)
+        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column, self.one_column_dataframe)
+        
         self.assertEqual(expected_dist_check_result, distribution_checker.validate([self.column_name]))
 
     def test_distribution_check_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
+        
         expected_dist_check_result = {
             self.column_name: {
-                'binned_l_infinity': 1.0,
-                'binned_passed': False,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
-            },
+                'special_values': {}, 
+                'binned_l_infinity': 0.0, 
+                'binned_passed': True
+            }, 
             self.column_name_2: {
-                'binned_l_infinity': 1.0,
-                'binned_passed': False,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
-            }
-        }
+                'special_values': {}, 
+                'binned_l_infinity': 0.0, 
+                'binned_passed': True
+            }}
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats, self.two_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name, self.column_name_2]))
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, self.two_column_dataframe)
+        validate_results = checker.validate([self.column_name, self.column_name_2])
+        self.assertEqual(expected_dist_check_result, validate_results)
 
     def test_distribution_check_single_column_dataframe_for_non_special_values_in_bin(self):
         self.maxDiff = None
@@ -182,76 +187,4 @@ class TestDistributionChecker(Spec):
         }
 
         checker = DistributionChecker(self.distribution_options, bin_stats, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
-
-
-    def test_distribution_check_two_column_dataframe_with_both_containing_upper_edges(self):
-        self.maxDiff = None
-        bin_stats = {
-             self.column_name: [{
-                'value': 1,
-                'percentage': 0.5,
-                'upper_edge': 20
-            }],
-            self.column_name_2: [{
-                'value': 1,
-                'percentage': 0.5,
-                'upper_edge': 20
-            }]
-        }
-        
-        expected_dist_check_result = {
-            self.column_name: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {}
-            },
-            self.column_name_2: {
-                'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {}
-            }
-        }
-
-        checker = DistributionChecker(self.distribution_options, bin_stats, self.two_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name, self.column_name_2]))
-
-    @skip('need to confirm behaviour with MLE ... behaviour of apply edges causes test to break')
-    def test_distribution_check_two_column_dataframe_with_upper_edge_and_non_special_values_in_bin(self):
-        bin_stats = {
-            self.column_name: [{
-                'value': 1,
-                'percentage': 0.5,
-                'upper_edge': 20
-            },{
-                'value': 2,
-                'percentage': 0.5,
-                'upper_edge': 20
-            }],
-            self.column_name_2: [{
-                'value': 1,
-                'percentage': 0.6,
-                'upper_edge': 20
-            },{
-                'value': 2,
-                'percentage': 0.4,
-                'upper_edge': 20
-            }]
-        }
-
-        expected_dist_check_result = {
-            self.column_name: {
-                'binned_l_infinity': 1.0,
-                'binned_passed': False,
-                'special_values': {}
-            },
-            self.column_name_2: {
-                'binned_l_infinity': 1.0,
-                'binned_passed': False,
-                'special_values': {}
-            }
-        }
-
-
-        checker = DistributionChecker(self.distribution_options, bin_stats, self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
