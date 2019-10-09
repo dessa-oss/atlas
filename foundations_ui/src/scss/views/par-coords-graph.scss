@@ -1,4 +1,4 @@
-.job-details-par-coords-graph-container {
+.par-coords-graph-container {
   margin-top: 50px;
   margin-bottom: 80px;
   padding: 25px;
@@ -6,6 +6,12 @@
   border-radius: 10px;
   box-shadow: 0px 6px 4px 0px #e2e2e2;
   background-color: white;
+  display: block;
+
+  .par-coords-graph-header {
+    display: flex;
+    justify-content: space-between;
+  }
 
   .react-select {
     width: 500px;
@@ -13,7 +19,6 @@
     margin-left: 25px;
     margin-bottom: -20px;
     z-index: 99;
-    float: right;
   }
 
   .js-plotly-plot {
