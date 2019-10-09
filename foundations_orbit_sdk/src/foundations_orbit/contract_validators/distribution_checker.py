@@ -86,7 +86,7 @@ class DistributionChecker(object):
         return special_values
 
     def _l_infinity(self, ref_percentages, current_percentages):
-        return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
+        return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
     # NB - apply edges changes (2, ) vector to (3, ) causes test with upper edge and non special values to break
     def _apply_edges(self, values, edges):

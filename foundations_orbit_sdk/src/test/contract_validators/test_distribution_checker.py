@@ -201,7 +201,7 @@ class TestDistributionChecker(Spec):
                 'special_values': {}
             },
             self.column_name_2: {
-                'binned_l_infinity':  0.6666666666666667,
+                'binned_l_infinity':  0.667,
                 'binned_passed': False,
                 'special_values': {}
             }

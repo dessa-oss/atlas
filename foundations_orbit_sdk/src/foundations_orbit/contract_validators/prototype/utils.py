@@ -70,7 +70,7 @@ def bin_values(values, max_num_bins):
     return bin_counts, bin_edges
 
 def l_infinity(ref_percentages, current_percentages):
-    return np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages)))
+    return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
 def l_infinity_test(ref_percentages, current_percentages, threshold):
     l_infinity_score = l_infinity(ref_percentages, current_percentages)
