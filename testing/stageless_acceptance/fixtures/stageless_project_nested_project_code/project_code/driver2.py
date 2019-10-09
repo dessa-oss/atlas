@@ -9,19 +9,22 @@ from lib.list_dir import all_files
 
 expected_files = set(
     [
-        './config/local.config.yaml',
+        './config/execution/default.config.yaml',
+        './config/submission/scheduler.config.yaml',
         './data/nested/more_data.csv',
         './project_code/model.py',
         './project_code/driver2.py',
         './data/other_data.csv',
-        './lib/list_dir.py',
+        './project_code/lib/list_dir.py',
         './data/some_data.csv',
-        './lib/utils/__init__.py',
-        './lib/__init__.py',
-        './lib/utils/filtering.py',
+        './project_code/lib/utils/__init__.py',
+        './project_code/lib/__init__.py',
+        './project_code/lib/utils/filtering.py',
         './project_code/driver.py'
     ]
 )
+
+import os
 
 actual_files = set(all_files())
 

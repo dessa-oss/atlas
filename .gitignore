@@ -75,6 +75,8 @@ tmp
 **/*.csv
 foundations.zip
 .vscode
+.venv/
+.env
 **/spike*
 .history
 site/
@@ -83,7 +85,6 @@ site/
 build
 dist
 **/.eggs/
-**/obfuscated_dist
 
 !foundations_ui/package.json
 !foundations_ui_orbit/package.json
@@ -102,4 +103,4 @@ yarn.lock
 .mypy_cache/
 .env
 .venv/
-Pipfile
+Pipfile*

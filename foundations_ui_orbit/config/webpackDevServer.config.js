@@ -86,6 +86,7 @@ module.exports = function (proxy, allowedHost) {
     before: function (app, server) {
       if (fs.existsSync(paths.proxySetup)) {
         // This registers user provided middleware for proxy reasons
+        // eslint-disable-next-line global-require, import/no-dynamic-require
         require(paths.proxySetup)(app);
       }
 

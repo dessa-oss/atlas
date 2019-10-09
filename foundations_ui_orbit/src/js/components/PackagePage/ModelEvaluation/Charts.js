@@ -76,6 +76,7 @@ class Charts extends React.Component {
       );
     }
 
+    /* eslint-disable react/jsx-curly-brace-presence */
     return (
       <div className="container-evaluation">
         <p className="new-dep-section font-bold">MODEL METRICS</p>
@@ -100,6 +101,7 @@ class Charts extends React.Component {
         )}
       </div>
     );
+    /* eslint-enable react/jsx-curly-brace-presence */
   }
 }
 

@@ -42,13 +42,16 @@ class ConfigManager(object):
         if self._config is not None:
             self._load_config(self._config, path)
 
-    def add_simple_config_path(self, path):
-        from foundations_internal.global_state import config_translator
-
+    def add_simple_config_path(self, path, translator=None):
         config = self._load_yaml(path)
-        new_config = config_translator.translate(config)
-        self.config().update(new_config)
 
+        if translator is None:
+            from foundations_internal.global_state import config_translator
+            new_config = config_translator.translate(config)
+        else:
+            new_config = translator(config)
+
+        self.config().update(new_config)
         self._config_paths.append(path)
 
     def config_paths(self):

@@ -213,4 +213,4 @@ class TestSchemaChecker(Spec):
         schema_checker = self._schema_checker_from_dataframe(ref_dataframe)
         column_names, column_types = self._dataframe_statistics(current_dataframe)
 
-        self.assertEqual(expected_results, schema_checker.schema_check_results(column_names, column_types))
+        self.assertEqual(expected_results, schema_checker.validate(column_names, column_types))

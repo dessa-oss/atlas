@@ -26,17 +26,3 @@ class TestExceptionHookMiddleware(unittest.TestCase):
             None, None, None, args, kwargs, good_boi)
         self.assertEqual(result, 100)
         self.assertEqual(sys.excepthook, sys.__excepthook__)
-
-    def test_bad_callback_changes_excepthook(self):
-        def bad_boi(args, kwargs):
-            return args[0] / kwargs["no"]
-
-        args = [1]
-        kwargs = {"no": 0}
-
-        try:
-            self._exception_hook_middleware.call(
-                None, None, None, args, kwargs, bad_boi)
-            self.fail("Bad test - should have thrown an exception")
-        except:
-            self.assertNotEqual(sys.excepthook, sys.__excepthook__)

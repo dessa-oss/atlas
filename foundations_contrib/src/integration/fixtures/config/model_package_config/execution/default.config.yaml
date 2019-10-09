@@ -1,0 +1,3 @@
+results_config:
+  archive_end_point: integration/fixtures/model_package
+cache_config: {}

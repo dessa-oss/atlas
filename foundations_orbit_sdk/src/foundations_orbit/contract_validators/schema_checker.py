@@ -13,7 +13,7 @@ class SchemaChecker(object):
 
         self._column_types = column_types
 
-    def schema_check_results(self, columns_to_validate, types_to_validate):
+    def validate(self, columns_to_validate, types_to_validate):
         import pandas
 
         schema_check_results = {}

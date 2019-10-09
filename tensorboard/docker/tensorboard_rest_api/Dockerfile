@@ -1,0 +1,29 @@
+# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+# Written by Austin Mackillop <a.mackillop@dessa.com>, 08 2019
+
+FROM python:3.6.8-alpine as base
+
+# Install requirements in a separate container
+FROM base as builder
+RUN mkdir /install
+WORKDIR /install
+RUN pip install --upgrade pip
+COPY requirements.txt requirements.txt
+RUN pip install --install-option="--prefix=/install" -r requirements.txt
+
+FROM base
+COPY --from=builder /install /usr/local
+RUN mkdir /app
+WORKDIR /app
+ADD . /app/
+
+# Where the tensorboard logdir mounts
+VOLUME /logs
+# Where the job archive mounts
+VOLUME /archive
+
+EXPOSE 5000
+
+CMD ["python", "/app/tensorboard_rest_api_server.py"]

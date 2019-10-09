@@ -9,14 +9,21 @@ if [[ -z $job_id ]]; then
     export job_id=$project_name-$model_name
 fi
 
-echo 'configuring config map for model package server'
-envsubst < ../scheduler_config_map.yaml | kubectl apply -f -
-echo 'Successfully configured config map for $job_id'
-
-envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl create -f -
 echo "Preparing $model_name for serving"
 
-python ingress_modifier.py $project_name $model_name > /dev/null 2>&1
+envsubst < ../submission_config.yaml | kubectl apply -f - > /dev/null 2>&1
+envsubst < ../kubernetes-deployment.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
+kubectl apply -f ../model-serving-environment.yaml > /dev/null 2>&1
+
+echo "Creating endpoint for model at $project_name/$model_name"
+envsubst < ../ingress.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
+
+kubectl -n $namespace get ingress foundations-model-package-${project_name}-ingress > /dev/null 2>&1
+
+if [[ $? -ne 0 ]]
+then
+    envsubst < ../project-ingress.envsubst.yaml | kubectl apply -f - > /dev/null 2>&1
+fi
 
 model_pod=$(kubectl -n $namespace get po | grep $project_name-$model_name | awk '{print $1}')
 
@@ -33,9 +40,9 @@ done
 
 if [[ "Running" == $(model_status) ]]; then
     echo ''
-    echo Model $model_name in the project $project_name has started, please run:
+    echo Model $model_name in the project $project_name has started.
+    echo if an error has occurred or you wish to stop the server, please run:
     echo -e '    ' foundations orbit serve stop --project_name=$project_name --model_name=$model_name
-    echo if an error has occurred or you wish to stop the server
     echo ''
     if [[ -z $no_follow ]]; then
         kubectl logs -f -n $namespace $model_pod

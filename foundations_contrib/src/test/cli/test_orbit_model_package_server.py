@@ -15,7 +15,9 @@ import fakeredis
 class TestOrbitModelPackageServer(Spec):
 
     mock_time = let_patch_mock('time.time')
-
+    mock_set_project_name = let_patch_mock('foundations.set_project_name')
+    mock_filterwarnings = let_patch_mock('warnings.filterwarnings')
+    existing_words = []
 
     @let
     def mock_project_name(self):
@@ -29,13 +31,21 @@ class TestOrbitModelPackageServer(Spec):
     def mock_job_id(self):
         return self.faker.uuid4()
 
+    def _gen_unique_word(self):
+        word = self.faker.word().lower()
+        while word in self.existing_words:
+            word = self.faker.word().lower()
+        self.existing_words.append(word)
+
+        return word
+
     @let
     def mock_model_name(self):
-        return self.faker.word().lower()
+        return self._gen_unique_word()
 
     @let
     def mock_2nd_model_name(self):
-        return self.faker.word().lower()
+        return self._gen_unique_word()
 
     @let
     def mock_project_directory(self):
@@ -416,6 +426,20 @@ class TestOrbitModelPackageServer(Spec):
         import foundations_contrib
         status_code = self._deploy_without_uploading()
         self.assertEqual(True, status_code)
+
+    def test_deploy_without_uploading_does_not_run_set_environment(self):
+        self._deploy_without_uploading()
+        self.mock_foundations_set_environment.assert_not_called()
+
+    def test_deploy_without_serving_calls_set_project(self):
+        self._deploy_without_uploading()
+        self.mock_set_project_name.assert_called()
+
+    def test_crypto_warning_should_not_be_printed(self):
+        from cryptography.utils import CryptographyDeprecationWarning
+
+        self._deploy()
+        self.mock_filterwarnings.assert_called_with('ignore', category=CryptographyDeprecationWarning)
 
     def _deploy(self, project_name=None, model_name=None, project_directory=None):
         project_name = project_name if project_name is not None else self.mock_project_name

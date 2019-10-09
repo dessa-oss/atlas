@@ -2,8 +2,7 @@ def build_number = env.BUILD_URL
 def customMetrics = [:]
 def customMetricsMap = [:]
 
-pipeline {
-
+pipeline{
     agent {
         label 'ci-pipeline-jenkins-slave'
     }
@@ -21,10 +20,9 @@ pipeline {
                 container("python3") {
                     sh 'python -m pip install -U foundations-scheduler'
                 }
-                
             }
         }
-        stage('Python3 Foundations Install Test Requirements') {
+        stage('Foundations Install Test Requirements') {
             steps {
                 container("python3") {
                     sh "./ci_install_requirements.sh"
@@ -38,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('Python3 Run Unit Tests') {
+        stage('Run Unit Tests') {
             steps {
                 container("python3") {
                     sh "./run_unit_tests.sh"
@@ -58,50 +56,149 @@ pipeline {
                 }
             }
         }
-        stage('Python3 Run Integration Tests') {
-            steps {
-                container("python3") {
-                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
+        stage('Run Integration Tests and Prepare for Acceptance Tests'){
+            failFast true
+            parallel{
+                stage('Run Integration Tests') {
+                    stages {
+                        stage('Run Integration Tests') {
+                            steps {
+                                container("python3") {
+                                    sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && ./run_integration_tests.sh'
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        stage('Python3 Foundations Acceptance Tests') {
-            steps {
-                container("python3") {
-                    ws("${WORKSPACE}/testing") {
-                        sh "python -Wi -m unittest -f -v acceptance"
+                stage('Install Foundations (container 1)') {
+                    stages{
+                        stage('Install Foundations (container 1)'){
+                            steps {
+                                container("python3-1") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 2)') {
+                    stages{
+                        stage('Install Foundations (container 2)'){
+                            steps {
+                                container("python3-2") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 3)') {
+                    stages{
+                        stage('Install Foundations (container 3)'){
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Install Foundations (container 4)') {
+                    stages{
+                        stage('Install Foundations (container 4)'){
+                            steps {
+                                container("python3-4") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'python -m pip install ../dist/*.whl'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-        stage('Python3 Foundations Acceptance Tests for Stageless Deploys') {
-            steps {
-                container("python3") {
-                    ws("${WORKSPACE}/testing") {
-                        sh 'python -Wi -m unittest -f -v stageless_acceptance'
+        stage('Python3 All Foundations Acceptance Tests'){
+            failFast true
+            parallel{
+                stage('Parallel Foundations Acceptance Tests') {
+                    stages {
+                        stage('Python3 Foundations Acceptance Tests'){
+                            steps{
+                                container("python3") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh "python -Wi -m unittest -f -v acceptance"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations Acceptance Tests for Stageless Deploys') {
+                    stages{
+                        stage('Parallel Foundations Acceptance Tests for Stageless Deploys'){
+                            steps {
+                                container("python3-1") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'python -Wi -m unittest -f -v stageless_acceptance'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                    stages{
+                        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
+                            steps {
+                                container("python3-2") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations REST API Acceptance Tests') {
+                    stages{
+                        stage('Python3 Foundations REST API Acceptance Tests') {
+                            steps {
+                                container("python3-3") {
+                                    ws("${WORKSPACE}/foundations_rest_api/src") {
+                                        sh "python -Wi -m unittest -f -v acceptance"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stage('Parallel Foundations Orbit Acceptance Tests') {
+                    stages{
+                        stage('Python3 Foundations Orbit Acceptance Tests') {
+                            steps {
+                                container("python3-4") {
+                                    ws("${WORKSPACE}/testing") {
+                                        sh 'cp -r ../testing/* . || true'
+                                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v orbit_acceptance'
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-        stage('Python3 Foundations Scheduler Acceptance Tests for Remote Deploys') {
-            steps {
-                container("python3") {
-                    ws("${WORKSPACE}/testing") {
-                        sh 'export FOUNDATIONS_SCHEDULER_HOST=$FOUNDATIONS_SCHEDULER_ACCEPTANCE_HOST && python -Wi -m unittest -f -v scheduler_acceptance'
-                    }
-                }
-            }
-        }
-        stage('Python3 Foundations REST API Acceptance Tests') {
-            steps {
-                container("python3") {
-                    ws("${WORKSPACE}/foundations_rest_api/src") {
-                        sh "python -Wi -m unittest -f -v acceptance"
-                    }
-                }
-            }
-        }
-        stage('Install dependencies for Foundations UI') {
+         stage('Install dependencies for Foundations UI (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -110,7 +207,7 @@ pipeline {
                 }
             }
         }
-        stage('Run Front End Unit Tests') {
+        stage('Run Front End Unit Tests (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
@@ -119,10 +216,28 @@ pipeline {
                 }
             }
         }
-        stage('Check for linting') {
+        stage('Check for linting (Atlas)') {
             steps {
                 container("yarn") {
                     ws("${WORKSPACE}/foundations_ui/") {
+                        sh "node_modules/.bin/eslint ."
+                    }
+                }
+            }
+        }
+        stage('Install dependencies for Foundations UI (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
+                        sh "yarn install"
+                    }
+                }
+            }
+        }
+        stage('Check for linting (Orbit)') {
+            steps {
+                container("yarn") {
+                    ws("${WORKSPACE}/foundations_ui_orbit/") {
                         sh "node_modules/.bin/eslint ."
                     }
                 }
@@ -158,11 +273,6 @@ pipeline {
                 }
             }
         }
-        stage('Results') {
-            steps {
-                archiveArtifacts artifacts: '**/*.whl', fingerprint: true
-            }
-        }
         stage("Calculate Recovery Metrics") {
             steps {
                 script {
@@ -192,7 +302,7 @@ pipeline {
         }
         failure {
             script {
-                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(100))
+                def output_logs = String.join('\n', currentBuild.rawBuild.getLog(200))
                 def attachments = [
                     [
                         pretext: '@channel Build failed for `' + env.JOB_NAME + '` please visit ' + env.BUILD_URL + ' for more details.',

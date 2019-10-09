@@ -35,15 +35,20 @@ spec:
         volumeMounts:
         - mountPath: /archive
           name: archive
-        - mountPath: /root/.foundations/config
-          name: scheduler-config
+        - mountPath: /root/.foundations/config/execution
+          name: execution-config
+        - mountPath: /root/.foundations/config/submission
+          name: submission-config
       volumes: 
         - name: 'archive'
           persistentVolumeClaim: 
             claimName: 'archive-storage'
-        - name: scheduler-config
+        - name: execution-config
           configMap:
-            name: model-package-server-configuration
+            name: worker-execution-configuration
+        - name: submission-config
+          configMap:
+            name: model-package-submission-config
       imagePullSecrets:
       - name: dessa-registry-credentials
 ---
@@ -59,22 +64,3 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: foundations-model-package-service-account
-  namespace: foundations-scheduler-test
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: foundations-model-package-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: foundations-model-package-service-account
-    namespace: foundations-scheduler-test

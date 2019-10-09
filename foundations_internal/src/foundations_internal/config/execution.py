@@ -39,6 +39,7 @@ def translate(config):
         },
         'enable_stages': config.get('enable_stages', False),
         'artifact_path': '.',
+        'archive_end_point': result_end_point
     }
     if 'ssh_config' in config:
         result.update(ssh_configuration(config))

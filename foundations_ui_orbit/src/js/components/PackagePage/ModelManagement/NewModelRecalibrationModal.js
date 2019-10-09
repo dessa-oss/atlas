@@ -15,6 +15,7 @@ const NewModelRecalibrationModal = props => {
   const [scheduleMessageVisible, setScheduleMessageVisible] = React.useState(false);
   const [swapMessageVisible, setSwapMessageVisible] = React.useState(false);
   const [triggeredMessageVisible, setTriggeredMessageVisible] = React.useState(false);
+  const [recalibrationLoading, setRecalibrationLoading] = React.useState(false);
   const [parameters, setParameters] = React.useState([
     {
       key: "",
@@ -37,6 +38,8 @@ const NewModelRecalibrationModal = props => {
   ]);
 
   const [error, setError] = React.useState("");
+  const [missingFieldsVisible, setMissingFieldsVisible] = React.useState(false);
+  const [updated, setUpdated] = React.useState(false);
 
   const clickSchedule = () => {
     let value = !scheduleMessageVisible;
@@ -63,6 +66,8 @@ const NewModelRecalibrationModal = props => {
 
   const onChangeModelName = e => {
     setModelName(e.target.value);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onChangeDescription = e => {
@@ -86,6 +91,8 @@ const NewModelRecalibrationModal = props => {
     });
 
     setUpdatedParameters(updatedParameters);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onChangeParameterValue = (e, i) => {
@@ -97,6 +104,8 @@ const NewModelRecalibrationModal = props => {
     });
 
     setUpdatedParameters(updatedParameters);
+    const value = !updated;
+    setUpdated(value);
   };
 
   const onClickAddNewParameter = () => {
@@ -124,6 +133,8 @@ const NewModelRecalibrationModal = props => {
 
   const onClickSave = () => {
     setError("");
+    setRecalibrationLoading(true);
+    setMissingFieldsVisible(false);
 
     let errorFound = false;
 
@@ -138,32 +149,38 @@ const NewModelRecalibrationModal = props => {
     });
 
     if (errorFound === true) {
+      setRecalibrationLoading(false);
       setError("Please fill the form to run the recalibration");
+      setMissingFieldsVisible(true);
     } else {
       let body = {
-        model_name: modelName
+        "model-name": modelName
       };
 
       updatedParameters.forEach(parameter => {
         body[parameter.key] = parameter.value;
       });
 
-      console.log("MODEL: ", props.model);
-
       postMaster(`projects/${props.location.state.project.name}/${props.model.model_name}/recalibrate`,
         body)
         .then(() => {
-          props.reload();
+          setRecalibrationLoading(false);
+          setMissingFieldsVisible(false);
           props.onClose();
+          props.reload();
+        })
+        .catch(err => {
+          setRecalibrationLoading(false);
+          setMissingFieldsVisible(false);
         });
     }
   };
 
-  const { onClose, model } = props;
+  const { onClose, model, isOpen } = props;
 
   return (
     <Modal
-      isOpen
+      isOpen={isOpen}
       toggle={onClose}
       className="new-model-recalibration-modal-container"
     >
@@ -272,7 +289,10 @@ const NewModelRecalibrationModal = props => {
             <div className="recalibrate-property-container">
               <p className="recalibrate-label-date">Model Name:</p>
               <input
-                className="recalibrate-container-date input"
+                className={(missingFieldsVisible === true && modelName === "")
+                  ? "recalibrate-container-date input missing"
+                  : "recalibrate-container-date input"
+                }
                 value={modelName}
                 onChange={onChangeModelName}
                 placeholder="Enter the name of the new model package (must be unique)"
@@ -295,17 +315,25 @@ const NewModelRecalibrationModal = props => {
                   <div className="parameter"><p className="parameter-header">VALUE</p></div>
                 </div>
                 {
-                  parameters.map((parameter, i) => {
+                  (updated || !updated) && parameters.map((parameter, i) => {
                     return (
                       <div key={parameter.key} className="container-parameter-row">
                         <div className="parameter">
                           <input
+                            className={(missingFieldsVisible === true && updatedParameters[i].key === "")
+                              ? "missing"
+                              : ""
+                            }
                             placeholder="Specify Parameter Key"
                             onChange={e => onChangeParameterKey(e, i)}
                           />
                         </div>
                         <div className="parameter">
                           <input
+                            className={(missingFieldsVisible === true && updatedParameters[i].value === "")
+                              ? "missing"
+                              : ""
+                            }
                             placeholder="Specify Parameter Value"
                             onChange={e => onChangeParameterValue(e, i)}
                           />
@@ -344,9 +372,13 @@ const NewModelRecalibrationModal = props => {
             <button
               type="button"
               onClick={onClickSave}
-              className="b--mat b--affirmative text-upper"
+              className={`b--mat b--affirmative text-upper ${recalibrationLoading === true
+                ? "button-recal-disabled"
+                : ""}`
+              }
+              disabled={recalibrationLoading === true}
             >
-              Run Recalibration
+              {recalibrationLoading === true ? "Launching..." : "Run Recalibration"}
             </button>
             <div className="new-dep-container-button">
               {error !== "" && <p>{error}</p>}
@@ -362,14 +394,16 @@ NewModelRecalibrationModal.propTypes = {
   onClose: PropTypes.func,
   reload: PropTypes.func,
   location: PropTypes.object,
-  model: PropTypes.object
+  model: PropTypes.object,
+  isOpen: PropTypes.bool
 };
 
 NewModelRecalibrationModal.defaultProps = {
   onClose: () => null,
   reload: () => null,
   location: { state: {} },
-  model: {}
+  model: {},
+  isOpen: false
 };
 
 export default NewModelRecalibrationModal;

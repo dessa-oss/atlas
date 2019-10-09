@@ -10,11 +10,16 @@ from tabulate import tabulate
 class CommandLineInterface(object):
 
     def __init__(self, args):
+        from foundations_contrib.cli.sub_parsers.setup_parser import SetupParser
+        from foundations_contrib.cli.sub_parsers.orbit_parser import OrbitParser
 
         self._input_arguments = args
 
         self._argument_parser = self._initialize_argument_parser()
         self._subparsers = self._argument_parser.add_subparsers()
+
+        SetupParser(self).add_sub_parser()
+        OrbitParser(self).add_sub_parser()
 
         self._initialize_init_parser()
         self._initialize_submit_parser()
@@ -78,7 +83,8 @@ class CommandLineInterface(object):
         deploy_parser.set_defaults(function=self._submit)
         deploy_parser.set_defaults(params={})
 
-    def _str_to_bool(self, string_value):
+    @staticmethod
+    def _str_to_bool(string_value):
         return string_value == 'True'
 
     def _initialize_info_parser(self):
@@ -140,6 +146,9 @@ class CommandLineInterface(object):
     def arguments(self):
         return self._arguments
 
+    def arguments(self):
+        return self._arguments
+
     def _no_command(self):
         import foundations
 
@@ -193,23 +202,10 @@ class CommandLineInterface(object):
         for env in available_environments:
             environment_names.append([env.split(os.path.sep)[-1].split('.')[0], env])
         return environment_names
-
-    def _deploy(self):
-        from foundations_contrib.cli.command_line_job_deployer import CommandLineJobDeployer
-        CommandLineJobDeployer(self._arguments).deploy()
    
     def _submit(self):
         from foundations_contrib.cli.job_submission.submit_job import submit
         submit(self._arguments)
-   
-    def _model_serving_stop(self):
-        import os
-        import signal
-
-        if self._is_model_server_running():
-            pid = self._get_model_server_pid()
-            os.kill(int(pid), signal.SIGTERM)
-            self._remove_pid_file()
 
     def _retrieve_artifacts(self):
         from foundations_contrib.global_state import config_manager
@@ -314,38 +310,6 @@ class CommandLineInterface(object):
         print(message)
         sys.exit(1)
 
-    def _start_model_server_if_not_running(self):
-        import subprocess
-        import sys
-        import os
-
-        if self._is_model_server_running():
-            print('Model server is already running.')
-        else:
-            model_server_config_path = os.environ['MODEL_SERVER_CONFIG_PATH']
-
-            subprocess_command_to_run = [
-                'python', '-m', 'foundations_production.serving.foundations_model_server',
-                '--domain={}'.format(self._arguments.domain),
-                '--config-file={}'.format(model_server_config_path)
-            ]
-
-            subprocess.Popen(subprocess_command_to_run, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-            self._wait_for_model_server_to_start()
-            if not self._is_model_server_running():
-                print('Failed to start model server.', file=sys.stderr)
-                sys.exit(10)
-
-    def _wait_for_model_server_to_start(self):
-        from time import sleep
-
-        max_attempts = 30
-        attempts = 1
-        while attempts < max_attempts and not self._is_model_server_running():
-            sleep(0.1)
-            attempts += 1
-
     def _deploy_model_package(self):
         import requests
         import sys
@@ -356,37 +320,6 @@ class CommandLineInterface(object):
         else:
             print('Failed to deploy model package to model server.', file=sys.stderr)
             sys.exit(11)
-
-    def _is_model_server_running(self):
-        from psutil import NoSuchProcess
-
-        try:
-            pid = self._get_model_server_pid()
-            command_line = self._get_model_server_command_line(pid)
-            return 'foundations_production.serving.foundations_model_server' in command_line
-        except (OSError, NoSuchProcess):
-            return False
-
-    def _get_model_server_pid(self):
-        from foundations_production.serving.foundations_model_server import FoundationsModelServer
-
-        with open(FoundationsModelServer.pid_file_path, 'r') as pidfile:
-            return pidfile.read()
-
-    def _remove_pid_file(self):
-        from os import remove
-        from foundations_production.serving.foundations_model_server import FoundationsModelServer
-
-        try:
-            remove(FoundationsModelServer.pid_file_path)
-        except OSError:
-            pass
-
-    def _get_model_server_command_line(self, pid):
-        import psutil
-
-        process = psutil.Process(int(pid))
-        return process.cmdline()
 
     def _kubernetes_model_serving_deploy(self):
         from foundations_contrib.cli.model_package_server import deploy

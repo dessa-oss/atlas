@@ -38,7 +38,6 @@ from foundations_contrib.local_file_system_pipeline_archive import LocalFileSyst
 from foundations_contrib.local_file_system_bucket import LocalFileSystemBucket
 from foundations_contrib.simple_worker import SimpleWorker
 from foundations_contrib.simple_bucket_worker import SimpleBucketWorker
-from foundations_internal.compat import compat_raise
 from foundations_contrib.local_file_system_pipeline_listing import LocalFileSystemPipelineListing
 from foundations_contrib.local_shell_job_deployment import LocalShellJobDeployment
 from foundations_contrib.local_file_system_cache_backend import LocalFileSystemCacheBackend
@@ -65,7 +64,6 @@ import foundations_internal.import_installer
 import foundations_contrib.consumers
 import foundations_events
 from foundations_contrib.set_job_resources import set_job_resources
-from foundations.deploy import *
 from foundations.submission import *
 #Commented for Atlas CE
 #from foundations.backup_before_teardown import BackupBeforeTeardown

@@ -7,12 +7,14 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 import foundations
 from foundations import set_tag
+from foundations_contrib.global_state import current_foundations_context
 
 from model import *
 
 set_tag('model', 'cnn')
 
 def print_words():
+    print(f'Job \'{current_foundations_context().job_id()}\' deployed')
     print('Hello World!')
 
 print_words()
@@ -20,8 +22,8 @@ print_words()
 addition_result = add(82,2)
 set_tag('Loss', addition_result)
 
-subtraction_result = subtract(44,2)
+subtraction_result = subtract(44, 2)
 foundations.log_metric('Accuracy', subtraction_result)
 
-cached_subtraction_result = subtract(44,2)
+cached_subtraction_result = subtract(44, 2)
 foundations.log_metric('Cached_accuracy', cached_subtraction_result)

@@ -5,6 +5,8 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+from faker import Faker
+
 import foundations
 import time
 import subprocess
@@ -12,22 +14,27 @@ import requests
 import foundations_contrib
 from foundations_spec import *
 from typing import List
+from orbit_acceptance.mixins.contrib_path_mixin import ContribPathMixin
 
-class TestOrbitDeployModelViaCli(Spec):
+class TestOrbitDeployModelViaCli(Spec, ContribPathMixin):
 
     port = 31998
     max_time_out_in_sec = 60
+
+    faker = Faker()
+    mock_project_name = faker.word().lower()
+    mock_user_provided_model_name = faker.word().lower()
 
     @set_up_class
     def set_up_class(self):
         from acceptance.cleanup import cleanup
         cleanup()
 
-        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(['./integration/resources/fixtures/test_server/spin_up.sh'], cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @tear_down_class
     def tear_down_class(self):
-        subprocess.run(['./integration/resources/fixtures/test_server/tear_down.sh'], cwd=foundations_contrib.root() / '..')
+        subprocess.run(f'./integration/resources/fixtures/test_server/tear_down.sh {self.mock_project_name}'.split(), cwd=self.resolve_f9s_contrib(), stdout=subprocess.PIPE)
 
     @set_up
     def set_up(self):
@@ -38,21 +45,17 @@ class TestOrbitDeployModelViaCli(Spec):
 
     @tear_down
     def tear_down(self):
-        print(f'Tearing down deployment and service for {self.mock_project_name}-{self.mock_user_provided_model_name}')
-        self._perform_tear_down_for_model_package(self.mock_project_name, self.mock_user_provided_model_name)
+        try:
+            self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
+            self._wait_for_server_to_be_unavailable()
+            self._wait_for_deployment_pod_to_delete(f'foundations-model-package-{self.mock_project_name}-{self.mock_user_provided_model_name}')
+        except:
+            print('Unable to remove model package. Probably terminated in the test')
 
     @staticmethod
     def _is_running_on_jenkins():
         import os
         return os.environ.get('RUNNING_ON_CI', 'FALSE') == 'TRUE'
-
-    @let
-    def mock_project_name(self):
-        return self.faker.word().lower()
-
-    @let
-    def mock_user_provided_model_name(self):
-        return self.faker.word().lower()
 
     @let
     def project_directory(self):
@@ -101,8 +104,13 @@ class TestOrbitDeployModelViaCli(Spec):
 
             models_promise = Model.all(project_name=self.mock_project_name)
 
-            default_model = models_promise.evaluate()[0]
-            self.assertEqual(expected_entrypoint, default_model.entrypoints)
+            models = models_promise.evaluate()
+            for model in models:
+                if model.model_name == self.mock_user_provided_model_name:
+                    self.assertEqual(expected_entrypoint, model.entrypoints)
+                    return
+            
+            self.fail('Failed to find entrypoint (model name not found)')
         except KeyboardInterrupt:
             self.fail('Interrupted by user')
         finally:
@@ -122,6 +130,7 @@ class TestOrbitDeployModelViaCli(Spec):
             # stop and ensure that its unavailable
             self._stop_job(self.mock_project_name, self.mock_user_provided_model_name)
             self._wait_for_server_to_be_unavailable()
+            self._wait_for_deployment_pod_to_delete(f'foundations-model-package-{self.mock_project_name}-{self.mock_user_provided_model_name}')
             self.assertIsNone(self._check_if_endpoint_available())
 
             self._deploy_job(self.mock_project_name, self.mock_user_provided_model_name)
@@ -220,7 +229,6 @@ class TestOrbitDeployModelViaCli(Spec):
             result = requests.post(end_point_url, json={'a': 20, 'b': 30}).json()
             return result
         except Exception as e:
-            print(e)
             return None
 
     def _generate_yaml_config_file(self):
@@ -250,12 +258,31 @@ class TestOrbitDeployModelViaCli(Spec):
         with open(self.config_file_path, 'w+') as file:
             file.write(config_yaml)
 
+    def _wait_for_deployment_pod_to_delete(self, deployment):
+        import subprocess
+
+        import time
+
+        start_time = time.time()
+        while time.time() - start_time < 60:
+            if self._deployment_pods(deployment) == []:
+                return
+            time.sleep(2)
+
+        self.fail('deployment pod failed to stop')
+
+    def _deployment_pods(self, deployment):
+        import subprocess
+        import yaml
+        import shlex
+
+        process = subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test get pods -l app={deployment} -o yaml'), stdout=subprocess.PIPE)
+        yaml_output = yaml.load(process.stdout.decode())
+        return yaml_output['items']
 
     def _perform_tear_down_for_model_package(self, project_name, model_name):
         import subprocess
-        command = f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'
-        subprocess.run(command.split())
-        command = f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'
-        subprocess.run(command.split())
-        command = 'kubectl -n foundations-scheduler-test delete configmap model-package-server-configuration'
-        subprocess.run(command.split())
+        import shlex
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete deployment foundations-model-package-{project_name}-{model_name}-deployment'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete svc foundations-model-package-{project_name}-{model_name}-service'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(shlex.split(f'kubectl -n foundations-scheduler-test delete ingress foundations-model-package-{project_name}-{model_name}-ingress'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)

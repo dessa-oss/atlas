@@ -13,10 +13,16 @@ import time
 from foundations_spec import *
 from foundations_contrib.cli import model_package_server
 import foundations_contrib
+from faker import Faker
 
 class TestOrbitIngress(Spec):
     
     namespace = 'foundations-scheduler-test'
+    faker = Faker()
+
+    model_name = faker.word().lower()
+    second_model_name = faker.word().lower()
+    project_name = faker.word().lower()
 
     @let
     def sleep_time(self):
@@ -26,46 +32,33 @@ class TestOrbitIngress(Spec):
     def set_up(self):
         _run_command(['./integration/resources/fixtures/test_server/spin_up.sh'])
 
-    @let
-    def model_name(self):
-        return 'model'
-
-    @let
-    def second_model_name(self):
-        return 'modeltwo'
-
-    @let
-    def project_name(self):
-        return 'project'
-    
     @tear_down_class
     def tear_down(self):
-        command = f'bash ./remove_deployment.sh project model'
+        command = f'bash ./remove_deployment.sh {self.project_name} {self.model_name}'
         _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         try:
-            command = f'bash ./remove_deployment.sh project modeltwo'
+            command = f'bash ./remove_deployment.sh {self.project_name} {self.second_model_name}'
             _run_command(command.split(), foundations_contrib.root() / 'resources/model_serving/orbit')
         except:
             print('Second test may not have created the pod')
 
-        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh'])
+        _run_command(['./integration/resources/fixtures/test_server/tear_down.sh', self.project_name])
 
     def test_first_served_model_can_be_reached_through_ingress_using_default_and_model_endpoint(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.model_name}'.split())
 
-        self._assert_endpoint_accessable('/projects/project/model/', 'Test Passed')
-        self._assert_endpoint_accessable('/projects/project/model/predict', 'get on predict')
-        self._assert_endpoint_accessable('/projects/project/model/evaluate', 'get on evaluate')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/{self.model_name}/', 'Test Passed')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/{self.model_name}/predict', 'get on predict')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/{self.model_name}/evaluate', 'get on evaluate')
 
-        self._assert_endpoint_accessable('/projects/project/', 'Test Passed')
-        self._assert_endpoint_accessable('/projects/project/predict', 'get on predict')
-        self._assert_endpoint_accessable('/projects/project/evaluate', 'get on evaluate')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/', 'Test Passed')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/predict', 'get on predict')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/evaluate', 'get on evaluate')
 
-    @skip('not yet ready ... working local but failing on jenkins')
     def test_second_served_model_can_be_accessed(self):
         _run_command(f'./integration/resources/fixtures/test_server/setup_test_server.sh {self.namespace} {self.project_name} {self.second_model_name}'.split())
 
-        self._assert_endpoint_accessable('/projects/project/modeltwo/predict', 'get on predict')
+        self._assert_endpoint_accessable(f'/projects/{self.project_name}/{self.model_name}/predict', 'get on predict')
 
     def _assert_endpoint_accessable(self, endpoint, expected_text):
         scheduler_host = os.environ.get('FOUNDATIONS_SCHEDULER_HOST', 'localhost')

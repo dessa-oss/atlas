@@ -12,6 +12,7 @@ const ModelManagementTable = props => {
   const renderRows = () => {
     const rows = [];
     let curRow = 0;
+    const { startTimer, stopTimer } = props;
     props.tableData.forEach(row => {
       const isDetail = curRow === detailRow;
       rows.push(
@@ -22,6 +23,8 @@ const ModelManagementTable = props => {
           isDetail={isDetail}
           toggleDetailRow={toggleDetailRow}
           reload={props.reload}
+          startTimer={startTimer}
+          stopTimer={stopTimer}
           {...props}
         />
       );
@@ -58,12 +61,16 @@ const ModelManagementTable = props => {
 
 ModelManagementTable.propTypes = {
   tableData: PropTypes.array,
-  reload: PropTypes.func
+  reload: PropTypes.func,
+  startTimer: PropTypes.func,
+  stopTimer: PropTypes.func
 };
 
 ModelManagementTable.defaultProps = {
   tableData: [],
-  reload: () => null
+  reload: () => null,
+  startTimer: () => null,
+  stopTimer: () => null
 };
 
 export default ModelManagementTable;

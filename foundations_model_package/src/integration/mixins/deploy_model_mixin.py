@@ -27,6 +27,11 @@ class DeployModelMixin(object):
 
         self.redis_connection = redis_connection
 
+    def _apply_environment_yaml(self):
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/model-serving-environment.yaml')
+        command_to_run = f'kubectl apply -f {yaml_template_path}'
+        subprocess.call(['bash', '-c', command_to_run])
+
     def _tear_down_environment(self, project_name, models):
         from foundations_contrib.global_state import config_manager
 
@@ -69,11 +74,11 @@ class DeployModelMixin(object):
 
     def _tear_down_model_package(self, project_name, model_name, job_id):
         self._perform_action_for_model_package(project_name, model_name, job_id, 'delete')
-        self._peform_action_for_creating_config_map('delete')
+        # self._peform_action_for_creating_config_map('delete')
         self._wait_for_serving_pod_to_die(project_name, model_name)
 
     def _peform_action_for_creating_config_map(self, action):
-        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/scheduler_config_map.yaml')
+        yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/submission_config.yaml')
         command_to_run = f'FOUNDATIONS_SCHEDULER_HOST={self._get_scheduler_ip()} envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
@@ -82,17 +87,24 @@ class DeployModelMixin(object):
         command_to_run = f'job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
+    def _force_delete_pod(self, project_name, model_name):
+        command_to_run = f'kubectl -n foundations-scheduler-test delete pod --force -l app=foundations-model-package-{project_name}-{model_name}'
+        subprocess.call(['bash', '-c', command_to_run])
+
     def _wait_for_model_package_pod(self, project_name, model_name):
         current_time = time.time()
 
         while self._model_package_pod_status(project_name, model_name) != "'Running'":
             if time.time() - current_time > self.max_sleep_time:
-                raise AssertionError('model package pod took too long to come up (> 30 sec)')
+                raise AssertionError(f'model package pod took too long to come up (> 60 sec), Last Status: {self._model_package_pod_status(project_name, model_name)}')
 
             time.sleep(self.sleep_time)
     
     def _model_package_pod_status(self, project_name, model_name):
-        process = subprocess.run(['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template=\'{{(index .items 0).status.phase}}\''], stdout=subprocess.PIPE)
+        command_to_run = ['kubectl', '-n', 'foundations-scheduler-test', 'get', 'pod', '-l', f'app=foundations-model-package-{project_name}-{model_name}', '-o', 'go-template=\'{{(index .items 0).status.phase}}\'']
+        process = subprocess.run(command_to_run, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        if process.returncode != 0:
+            return 'does not exist'
         return process.stdout.decode().rstrip('\n')
 
     def _wait_for_serving_pod_to_die(self, project_name, model_name):
@@ -100,7 +112,8 @@ class DeployModelMixin(object):
 
         while self._pod_exists(project_name, model_name):
             if time.time() - current_time > self.max_sleep_time:
-                raise AssertionError('model package pod took too long to go down (> 60 sec)')
+                self._force_delete_pod(project_name, model_name)
+                break
 
             time.sleep(self.sleep_time)
 
@@ -173,4 +186,8 @@ class DeployModelMixin(object):
 
     def _get_proxy_url(self):
         import os
+
+        if 'FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY' not in os.environ:
+            raise RuntimeError('please set FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY env variable')
+
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']

@@ -38,7 +38,6 @@ class StageContext(object):
         import traceback
 
         from foundations_internal.serializer import serialize
-        from foundations_internal.error_printer import ErrorPrinter
 
         try:
             serialize(exception_info[1])
@@ -46,22 +45,13 @@ class StageContext(object):
         except:
             exception_value = repr(exception_info[1])
 
-        error_printer = ErrorPrinter()
         traceback_to_send = traceback.extract_tb(exception_info[2])
 
-        transformed_traceback = StageContext._transformed_traceback(
-            error_printer, traceback_to_send)
         return {
             "type": exception_info[0],
             "exception": exception_value,
-            "traceback": transformed_traceback
+            "traceback": traceback_to_send
         }
-
-    @staticmethod
-    def _transformed_traceback(error_printer, traceback_to_send):
-        traceback_generator = error_printer.transform_extracted_traceback(
-            traceback_to_send)
-        return list(traceback_generator)
 
     def save_to_archive(self, archiver):
         self.save_all_but_persisted_data(archiver)

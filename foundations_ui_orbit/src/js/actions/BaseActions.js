@@ -1,6 +1,6 @@
 const baseURL = process.env.REACT_APP_API_URL;
 const baseApiaryURL = process.env.REACT_APP_APIARY_URL;
-const baseMasterURL = process.env.REACT_APP_APIARY_URL;
+const baseMasterURL = process.env.REACT_APP_MASTER_URL;
 
 const get = url => {
   const fullURL = baseURL.concat(url);
@@ -24,6 +24,13 @@ const getFromApiary = url => {
     .catch(() => {
       return null;
     });
+};
+
+const getMaster = (url, body) => {
+  const fullURL = baseMasterURL.concat(url);
+  return fetch(fullURL).then(res => {
+    return res.json();
+  });
 };
 
 const post = (url, body) => {
@@ -161,5 +168,5 @@ const postJSONFile = (url, fileName, data) => {
 };
 
 export {
-  get, getFromApiary, post, postApiary, postMaster, put, putApiary, del, postJSONFile
+  get, getFromApiary, getMaster, post, postApiary, postMaster, put, putApiary, del, postJSONFile
 };

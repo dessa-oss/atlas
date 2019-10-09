@@ -1,8 +1,9 @@
-# Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
-# Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-# Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
-
+"""
+Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
+Proprietary and confidential
+Written by Susan Davis <s.davis@dessa.com>, 06 2018
+"""
 import logging
 import os
 
@@ -15,7 +16,7 @@ import yaml
 
 if os.path.exists("/root/.kube"):
     from foundations_scheduler_plugin.config.scheduler import translate
-    
+
     nodes_yaml = subprocess.check_output(["/bin/bash", "-c", "kubectl get node -o yaml -l node-role.kubernetes.io/master="""]).decode()
     nodes = yaml.load(nodes_yaml)
     master_ip = nodes['items'][0]['status']['addresses'][0]['address']
@@ -38,7 +39,7 @@ else:
     translated_submission_config = {'redis_url': os.environ["REDIS_URL"],
                                     'deployment_implementation': {
                                         'deployment_type': JobDeployment,
-                                        },
+                                    },
                                     'scheduler_url': os.environ["FOUNDATIONS_SCHEDULER_URL"],
                                     }
 

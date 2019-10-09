@@ -10,6 +10,7 @@ from foundations_spec import *
 from contextlib import contextmanager
 from acceptance.mixins.run_local_job import RunLocalJob
 
+@skip('evaluate if submit is needed')
 class TestResultJobBundle(Spec, RunLocalJob):
 
     @contextmanager

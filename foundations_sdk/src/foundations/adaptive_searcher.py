@@ -8,10 +8,10 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class AdaptiveSearcher(object):
     def __init__(self, set_of_initial_params, params_generator_function, error_handler):
-        from foundations_internal.compat import make_queue
+        from queue import Queue
         from foundations.global_state import log_manager
 
-        self._params_queue = make_queue()
+        self._params_queue = Queue()
         self._deployments_map = {}
 
         self._params_generator_function = params_generator_function

@@ -39,7 +39,7 @@ class DataContract(object):
 
         return DataContractOptions(
             max_bins=50,
-            check_row_count=False,
+            check_row_count=True,
             special_values=[numpy.nan],
             check_distribution=True,
             distribution=default_distribution
@@ -91,10 +91,10 @@ class DataContract(object):
         ##### Prototype code section end
 
         validation_report = {}
-        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).schema_check_results(columns_to_validate, types_to_validate)
+        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(columns_to_validate, types_to_validate)
 
         if self.options.check_row_count:
-            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).row_count_difference(row_count_to_check)
+            validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(row_count_to_check)
 
         if self.options.check_distribution:
             ##### PROTOTYPE CODE - use distribution checker asap

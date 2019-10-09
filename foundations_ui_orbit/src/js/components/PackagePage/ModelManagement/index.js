@@ -9,90 +9,149 @@ import Schedule from "./Schedule";
 import ModalTutorial from "../../common/ModalTutorial";
 import PropTypes from "prop-types";
 
-const ModelManagement = props => {
-  const [modelManagementData, setModelManagementData] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [tutorialVisible, setTutorialVisible] = React.useState(false);
+class ModelManagement extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const reload = () => {
+    this.state = {
+      modelManagementData: [],
+      open: false,
+      tutorialVisible: false,
+      timerId: -1
+    };
+
+    this.onClickOpenDefineNew = this.onClickOpenDefineNew.bind(this);
+    this.onClickCloseDefineNew = this.onClickCloseDefineNew.bind(this);
+    this.onToggleTutorial = this.onToggleTutorial.bind(this);
+    this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+  }
+
+  reload() {
+    const { location } = this.props;
     get(
-      `projects/${props.location.state.project.name}/model_listing`
+      `projects/${location.state.project.name}/model_listing`
     ).then(result => {
       if (result) {
-        setModelManagementData(result.models);
+        this.setState({
+          modelManagementData: result.models
+        });
       }
     });
-  };
+  }
 
-  React.useEffect(() => {
-    reload();
-  }, []);
+  startTimer() {
+    const id = setInterval(() => {
+      this.reload();
+    }, 10000);
+    this.setState({
+      timerId: id
+    });
+  }
 
-  const onClickOpenDefineNew = () => {
-    setOpen(true);
-  };
+  stopTimer() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
+  }
 
-  const onClickCloseDefineNew = () => {
-    setOpen(false);
-  };
+  componentDidMount() {
+    this.reload();
+    this.startTimer();
+  }
 
-  const onToggleTutorial = () => {
-    let value = !tutorialVisible;
-    setTutorialVisible(value);
-  };
+  componentWillUnmount() {
+    this.stopTimer();
+  }
 
-  return (
-    <Layout tab="Management" title="Model Management" openTutorial={onToggleTutorial}>
-      <div className="package-deployment-container">
-        {modelManagementData.length > 0 ? (
-          <div>
-            <Schedule />
-            <div className="package-deployment-table-container">
-              <p className="new-dep-section font-bold management">MODEL REGISTRY</p>
-              <div className="container-management-top-section text-right">
-                <button
-                  type="button"
-                  onClick={onClickOpenDefineNew}
-                  className="b--mat button-management-load"
-                  disabled
-                >
-                  <i className="plus-button" />
-                  Define New
-                </button>
+  onClickOpenDefineNew() {
+    this.setState({
+      open: true
+    });
+  }
+
+  onClickCloseDefineNew() {
+    this.setState({
+      open: false
+    });
+    const id = setInterval(() => {
+      this.reload();
+    }, 1000);
+    this.setState({
+      timerId: id
+    });
+  }
+
+  onToggleTutorial() {
+    const { tutorialVisible } = this.state;
+    const value = !tutorialVisible;
+    this.setState({
+      tutorialVisible: value
+    });
+  }
+
+  render() {
+    const {
+      modelManagementData,
+      open,
+      tutorialVisible,
+      timerId
+    } = this.state;
+
+    return (
+      <Layout tab="Management" title="Model Management" openTutorial={this.onToggleTutorial}>
+        <div className="package-deployment-container">
+          {modelManagementData.length > 0 ? (
+            <div>
+              <Schedule />
+              <div className="package-deployment-table-container">
+                <p className="new-dep-section font-bold management">MODEL REGISTRY</p>
+                <div className="container-management-top-section text-right">
+                  <button
+                    type="button"
+                    onClick={this.onClickOpenDefineNew}
+                    className="b--mat button-management-load"
+                    disabled
+                  >
+                    <i className="plus-button" />
+                    Define New
+                  </button>
+                </div>
+                <ModelManagementTable
+                  tableData={modelManagementData}
+                  reload={this.reload}
+                  startTimer={this.startTimer}
+                  stopTimer={this.stopTimer}
+                  {...this.props}
+                />
               </div>
-              <ModelManagementTable
-                tableData={modelManagementData}
-                reload={reload}
-                {...props}
-              />
+              <Modal
+                isOpen={open}
+                toggle={this.onClickCloseDefineNew}
+                className="define-new-modal-container"
+              >
+                <ModalBody>
+                  <DefineNewModal onClickClose={this.onClickCloseDefineNew} />
+                </ModalBody>
+              </Modal>
             </div>
-            <Modal
-              isOpen={open}
-              toggle={onClickCloseDefineNew}
-              className="define-new-modal-container"
-            >
-              <ModalBody>
-                <DefineNewModal onClickClose={onClickCloseDefineNew} />
-              </ModalBody>
-            </Modal>
-          </div>
-        ) : (
-          <div className="container-management-empty">
-            <p>You have not loaded any reports</p>
-            <p>
-                Adding a model package can only be done using the command line
-                interface
-            </p>
-          </div>
-        )}
-        <ModalTutorial
-          tutorialVisible={tutorialVisible}
-          onToggleTutorial={onToggleTutorial}
-        />
-      </div>
-    </Layout>
-  );
-};
+          ) : (
+            <div className="container-management-empty">
+              <p>You have not loaded any reports</p>
+              <p>
+                  Adding a model package can only be done using the command line
+                  interface
+              </p>
+            </div>
+          )}
+          <ModalTutorial
+            tutorialVisible={tutorialVisible}
+            onToggleTutorial={this.onToggleTutorial}
+          />
+        </div>
+      </Layout>
+    );
+  }
+}
 
 ModelManagement.propTypes = {
   location: PropTypes.object

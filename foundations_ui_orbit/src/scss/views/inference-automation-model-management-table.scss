@@ -63,18 +63,84 @@
 
     .button-management {
       margin-top: 8px;
-      font-weight: normal;
+
+      span {
+        font-weight: normal;
+      }
 
       &.recalibrate {
+        @extend .f--roboto;
         background: #2bab89;
+        border-color: #2bab89;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #259678;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
       }
 
       &.deactivate {
+        @extend .f--roboto;
         background: #dc5454;
+        border-color: #dc5454;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #b64747;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
       }
 
       &.activate {
+        @extend .f--roboto;
         background: #71a0f6;
+        border-color: #71a0f6;
+        color: white;
+        font-size: 9px;
+
+        &:hover {
+          background-color: #5d83ca;
+          color: white;
+          border: solid 1px transparent;
+
+          i {
+            border-color: white;
+          }
+
+          span {
+            color: white;
+          }
+        }
+      }
+
+      &.details {
+        font-weight: normal !important;
+        font-size: 9px;
+
+        span {
+          font-size: 9px;
+        }
       }
     }
   }
