@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
@@ -129,23 +128,27 @@ class ParCoordsGraph extends React.Component {
     });
 
     return (
-      <div className="job-details-par-coords-graph-container">
-        <h3 className="section-title">Metrics and Parameters</h3>
-        <Select
-          onChange={this.onChangeParam}
-          options={paramOptions}
-          placeholder="Parameters"
-          className="react-select"
-          isMulti
-        />
-        <Select
-          onChange={this.onChangeMetric}
-          options={metricOptions}
-          placeholder="Metrics"
-          className="react-select"
-          isMulti
-        />
-        <Plot data={data} />
+      <div className="par-coords-graph-container">
+        <div className="par-coords-graph-header">
+          <h3 className="section-title">Metrics and Parameters</h3>
+          <div className="par-coords-graph-select">
+            <Select
+              onChange={this.onChangeParam}
+              options={paramOptions}
+              placeholder="Parameters"
+              className="react-select"
+              isMulti
+            />
+            <Select
+              onChange={this.onChangeMetric}
+              options={metricOptions}
+              placeholder="Metrics"
+              className="react-select"
+              isMulti
+            />
+          </div>
+        </div>
+        <Plot data={data} layout={{ autosize: true }} useResizeHandler />
       </div>
     );
   }
