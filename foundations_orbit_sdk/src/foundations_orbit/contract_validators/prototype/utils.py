@@ -58,6 +58,7 @@ def spread_counts_over_identical_edges(binned_values, edges):
 
 
 def bin_values(values, max_num_bins):
+    values = values[values != np.inf]
     n_unique_values = values.nunique()
     if n_unique_values > 1:
         n_bins = get_num_bins(values, max_num_bins)
