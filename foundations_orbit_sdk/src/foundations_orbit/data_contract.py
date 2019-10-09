@@ -99,7 +99,7 @@ class DataContract(object):
         if self.options.check_distribution:
             ##### PROTOTYPE CODE - use distribution checker asap
             #validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
-            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, dataframe_to_validate).validate(self._column_names)
+            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats).validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {

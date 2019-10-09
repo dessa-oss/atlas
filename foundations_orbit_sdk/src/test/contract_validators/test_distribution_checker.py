@@ -109,20 +109,20 @@ class TestDistributionChecker(Spec):
         options['cols_to_ignore'] = []
         options['cols_to_include'] = []
 
-        checker = DistributionChecker(options, self.bin_stats, self.one_column_dataframe)
+        checker = DistributionChecker(options, self.bin_stats)
 
         with self.assertRaises(ValueError) as ex:
-            checker.validate([self.column_name])
+            checker.validate(self.one_column_dataframe)
 
         self.assertIn('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes', ex.exception.args)
 
-    def test_distribution_check_throws_error_if_dataframe_is_none(self):
+    def test_distribution_check_throws_error_if_dataframe_is_none_when_validate_called(self):
         with self.assertRaises(ValueError) as ex:
-            DistributionChecker(self.distribution_options, self.bin_stats, None)
+            DistributionChecker(self.distribution_options, self.bin_stats).validate(None)
 
-    def test_distribution_check_throws_error_if_dataframe_is_empty(self):
+    def test_distribution_check_throws_error_if_dataframe_is_empty_when_validate_called(self):
         with self.assertRaises(ValueError) as ex:
-            DistributionChecker(self.distribution_options, self.bin_stats, self.empty_dataframe)
+            DistributionChecker(self.distribution_options, self.bin_stats).validate(self.empty_dataframe)
 
     def test_distribution_check_single_column_dataframe_against_itself_returns_dist_check_result_with_one_entry(self):
         expected_dist_check_result = {
@@ -132,9 +132,9 @@ class TestDistributionChecker(Spec):
                 'special_values': {}
             }
         }
-        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column, self.one_column_dataframe)
+        distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column)
         
-        self.assertEqual(expected_dist_check_result, distribution_checker.validate([self.column_name]))
+        self.assertEqual(expected_dist_check_result, distribution_checker.validate(self.one_column_dataframe))
 
     def test_distribution_check_multiple_column_dataframe_against_itself_returns_dist_check_result_with_multiple_entries(self):
         
@@ -150,8 +150,8 @@ class TestDistributionChecker(Spec):
                 'binned_passed': True
             }}
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, self.two_column_dataframe)
-        validate_results = checker.validate([self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value)
+        validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
 
     def test_distribution_check_single_column_dataframe_for_non_special_values_in_bin(self):
@@ -164,8 +164,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column_no_special_value, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column_no_special_value)
+        self.assertEqual(expected_dist_check_result, checker.validate(self.one_column_dataframe))
 
     def test_distribution_check_one_column_dataframe_with_upper_edge(self):
         bin_stats = {
@@ -184,8 +184,8 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, bin_stats, self.one_column_dataframe)
-        self.assertEqual(expected_dist_check_result, checker.validate([self.column_name]))
+        checker = DistributionChecker(self.distribution_options, bin_stats)
+        self.assertEqual(expected_dist_check_result, checker.validate(self.one_column_dataframe))
 
     def test_distribution_check_with_large_value_ranges(self):
         data = {
@@ -207,6 +207,6 @@ class TestDistributionChecker(Spec):
             }
         }
 
-        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, dataframe)
-        validate_results = checker.validate([self.column_name, self.column_name_2])
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value)
+        validate_results = checker.validate(dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)

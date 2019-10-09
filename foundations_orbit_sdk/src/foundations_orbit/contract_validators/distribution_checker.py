@@ -25,20 +25,19 @@ class DistributionChecker(object):
         }
     '''
     
-    def __init__(self, distribution_options, bin_stats, current_df):
+    def __init__(self, distribution_options, bin_stats):
         self._distribution_options = distribution_options
         self._bin_stats = bin_stats
-        if current_df is None or len(current_df) == 0:
-            raise ValueError('Invalid Dataframe provided')
-        self._current_df = current_df
 
-    def validate(self, column_names):
+    def validate(self, dataframe_to_validate):
+        if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
+            raise ValueError('Invalid Dataframe provided')
         if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
             raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
 
         from foundations_orbit.contract_validators.prototype import distribution_check
 
-        return distribution_check(self._distribution_options, column_names, self._bin_stats, self._current_df)
+        return distribution_check(self._distribution_options, list(dataframe_to_validate.columns), self._bin_stats, dataframe_to_validate)
 
     def _count_special_values(self, ref_special_values, current_values):
         n_current_vals = len(current_values)
