@@ -1,5 +1,5 @@
 """
-Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
+C`op`yright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
 Unauthorized copying, distribution, reproduction, publication, use of this file, via any medium is strictly prohibited
 Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
@@ -10,7 +10,6 @@ class SchemaChecker(object):
     def __init__(self, column_names, column_types):
         self._column_names = column_names
         self._column_names_set = set(column_names)
-
         self._column_types = column_types
 
     def __str__(self):
@@ -20,6 +19,11 @@ class SchemaChecker(object):
             'column_types': self._column_types
         }
         return json.dumps(test_information)
+
+    def configure(self, attributes, column_types=None):
+        self._column_names = attributes
+        if column_types:
+            self._column_types = column_types
 
     def validate(self, current_dataframe):
         import pandas
