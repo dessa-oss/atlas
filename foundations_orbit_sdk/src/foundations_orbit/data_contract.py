@@ -91,7 +91,7 @@ class DataContract(object):
         ##### Prototype code section end
 
         validation_report = {}
-        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(columns_to_validate, types_to_validate)
+        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(dataframe_to_validate)
 
         if self.options.check_row_count:
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(row_count_to_check)

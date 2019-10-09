@@ -268,7 +268,7 @@ class TestDataContract(Spec):
 
         mock_schema_checker_class.return_when(mock_schema_checker, [self.column_name, self.column_name_2], {self.column_name: 'int64', self.column_name_2: 'float64'})
         mock_schema_checker.validate = ConditionalReturn()
-        mock_schema_checker.validate.return_when(mock_schema_check_results, [self.column_name, self.column_name_3], {self.column_name: 'object', self.column_name_3: 'object'})
+        mock_schema_checker.validate.return_when(mock_schema_check_results, self.two_column_dataframe_no_rows_different_second_column)
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_distribution = False
