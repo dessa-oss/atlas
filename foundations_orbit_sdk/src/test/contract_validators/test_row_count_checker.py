@@ -16,6 +16,10 @@ class TestRowCountChecker(Spec):
         return self.faker.word()
 
     @let
+    def row_count(self):
+        return self.faker.random_number()
+
+    @let
     def column_name_2(self):
         return self._generate_distinct([self.column_name], self.faker.word)
 
@@ -49,6 +53,15 @@ class TestRowCountChecker(Spec):
     def test_row_count_difference_is_50_percent_if_current_row_count_is_half_the_reference(self):
         checker = RowCountChecker(2)
         self.assertEqual(0.5, checker.validate(self.dataframe_one_row))
+
+    def test_string_cast_for_row_count_checker_returns_expected_information(self):
+        import json
+        checker = RowCountChecker(self.row_count)
+
+        expected_information = {
+            'number_of_rows': self.row_count
+        }
+        self.assertEqual(json.dumps(expected_information), str(checker))
 
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
