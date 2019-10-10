@@ -216,9 +216,11 @@ class ReportFormatter(object):
         return details_by_attribute
 
     def _formatted_data_quality_report(self):
-        if not self._options.check_distribution:
+        if not self._options.check_special_values:
             return None
-        dist_check_results = self._validation_report['dist_check_results']
+
+        special_values = self._validation_report['special_values_check_results']
+
 
         data_quality_summary = {
             'healthy': 0,
@@ -227,8 +229,8 @@ class ReportFormatter(object):
         }
         data_quality_attribute_details = []
         
-        for col, col_results in dist_check_results.items():
-            for sv, sv_dict in col_results['special_values'].items():
+        for col, col_results in special_values.items():
+            for sv, sv_dict in col_results.items():
                 attribute_details = dict()
                 attribute_details["attribute_name"] = col
                 attribute_details["value"] = str(sv)
