@@ -6,7 +6,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import numpy as np
-from foundations_orbit.contract_validators.prototype.utils import nand, bin_values
+from foundations_orbit.contract_validators.prototype.utils import spread_counts_over_identical_edges
+
 
 def create_bin_stats(special_values, max_bins, col_values):
     bin_dicts = []
@@ -50,3 +51,38 @@ def create_bin_stats(special_values, max_bins, col_values):
                 bin_dicts.append(bin_dict)
 
     return bin_dicts
+
+
+def bin_values(values, max_num_bins):
+    values = values[values != np.inf]
+    n_unique_values = values.nunique()
+    if n_unique_values > 1:
+        n_bins = get_num_bins(values, max_num_bins)
+        bin_counts, bin_edges = find_and_apply_edges(values, n_bins)
+        bin_counts = spread_counts_over_identical_edges(bin_counts, bin_edges)
+    else:
+        bin_counts = [len(values), 0]
+        bin_edges = []
+    return bin_counts, bin_edges
+
+
+def get_num_bins(values, max_num_bins):
+    '''based on the number of unique values provided, return the number of bins to apply'''
+    # get number of unique values in the reference data
+    unique_num = values.nunique()
+    if unique_num < max_num_bins:
+        return unique_num
+    else:
+        return max_num_bins
+
+
+def find_and_apply_edges(values, n_bins):
+    '''find edges and find count in each bin'''
+    values_sorted = values.sort_values().dropna()
+    values_length = values_sorted.shape[0]
+    # edges are values from values_sorted taken such that each bin contains the same number of elements
+    edges = [values_sorted.iloc[int(np.floor(values_length * i / n_bins))] for i in range(1, n_bins)]
+    binned_values = [0] + [values_sorted[values_sorted <= i].shape[0] for i in edges]
+    binned_values = np.diff(binned_values, axis=0)
+    binned_values = np.append(binned_values, values_sorted[values_sorted > edges[-1]].shape[0])
+    return binned_values, edges

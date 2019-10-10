@@ -8,10 +8,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import numpy as np
 import pickle
 
-from .utils import nand, bin_values, count_and_remove_special_values, bin_current_values, add_special_value_l_infinity, \
+from .utils import nand, count_and_remove_special_values, bin_current_values, add_special_value_l_infinity, \
     add_binned_l_infinity
-
-from foundations_contrib.global_state import redis_connection
 
 
 def distribution_check(config_dict, column_names, bin_stats, current_df):
