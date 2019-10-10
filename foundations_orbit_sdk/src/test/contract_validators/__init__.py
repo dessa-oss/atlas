@@ -10,5 +10,6 @@ from .utils import *
 from .test_schema_checker import TestSchemaChecker
 from .test_distribution_checker import TestDistributionChecker
 from .test_row_count_checker import TestRowCountChecker
+from .test_special_value_checker import TestSpecialValuesChecker
 from .test_l_infinity import TestLInfinity
 from .test_bin_values import TestBinValues

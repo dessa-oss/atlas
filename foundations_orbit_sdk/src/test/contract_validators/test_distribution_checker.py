@@ -141,8 +141,7 @@ class TestDistributionChecker(Spec):
         expected_dist_check_result = {
             self.column_name: {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {}
+                'binned_passed': True
             }
         }
         distribution_checker = DistributionChecker(self.distribution_options, self.bin_stats_one_column, [self.column_name])
@@ -153,12 +152,10 @@ class TestDistributionChecker(Spec):
         
         expected_dist_check_result = {
             self.column_name: {
-                'special_values': {}, 
                 'binned_l_infinity': 0.0, 
                 'binned_passed': True
             }, 
             self.column_name_2: {
-                'special_values': {}, 
                 'binned_l_infinity': 0.0, 
                 'binned_passed': True
             }}
@@ -173,7 +170,6 @@ class TestDistributionChecker(Spec):
             self.column_name: {
                 'binned_l_infinity': 1.0,
                 'binned_passed': False,
-                'special_values': {}
             }
         }
 
@@ -193,7 +189,6 @@ class TestDistributionChecker(Spec):
             self.column_name: {
                 'binned_l_infinity': 1.0,
                 'binned_passed': False,
-                'special_values': {}
             }
         }
 
@@ -211,12 +206,10 @@ class TestDistributionChecker(Spec):
             self.column_name: {
                 'binned_l_infinity': 1.0,
                 'binned_passed': False,
-                'special_values': {}
             },
             self.column_name_2: {
                 'binned_l_infinity':  0.667,
                 'binned_passed': False,
-                'special_values': {}
             }
         }
 
@@ -228,7 +221,6 @@ class TestDistributionChecker(Spec):
         
         expected_dist_check_result = {
             self.column_name: {
-                'special_values': {}, 
                 'binned_l_infinity': 0.0, 
                 'binned_passed': True
             }}
@@ -242,7 +234,6 @@ class TestDistributionChecker(Spec):
         
         expected_dist_check_result = {
             self.column_name_2: {
-                'special_values': {}, 
                 'binned_l_infinity': 0.0, 
                 'binned_passed': True
             }}

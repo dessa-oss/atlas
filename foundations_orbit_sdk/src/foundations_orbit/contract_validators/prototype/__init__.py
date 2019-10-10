@@ -12,7 +12,7 @@ from .utils import nand, count_and_remove_special_values, bin_current_values, ad
     add_binned_l_infinity
 
 
-def distribution_check(config_dict, column_names, bin_stats, current_df):
+def distribution_and_special_values_check(config_dict, column_names, bin_stats, current_df):
     '''
         Expected format of dist_check_results
         {'col1': {'binned_passed': False,

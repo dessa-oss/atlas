@@ -6,7 +6,6 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 
-# NB - KD - Insufficiently tested... Feel free to disregard and follow proper TDD
 import numpy as np
 class DistributionChecker(object):
     '''
@@ -50,9 +49,15 @@ class DistributionChecker(object):
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
             raise ValueError('Invalid Dataframe provided')
+        
         if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
             raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
 
-        ##### PROTOTYPE CODE - use distribution checker asap
-        from foundations_orbit.contract_validators.prototype import distribution_check
-        return distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
+        ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap
+        from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
+        test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
+        
+        for column_name, distribution_results in test_data.items():
+            del distribution_results['special_values']
+        
+        return test_data
