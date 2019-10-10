@@ -119,26 +119,28 @@ class TestDataValidation(Spec):
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': True
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{ 
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
@@ -148,9 +150,11 @@ class TestDataValidation(Spec):
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_get_schema_validation_failure_when_column_missing(self):
         import datetime
@@ -237,26 +241,28 @@ class TestDataValidation(Spec):
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.02,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.5,
-                        'passed': False,
-                        'percentage_diff': 0.5,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': True
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{ 
+                numpy.nan: {
+                    'current_percentage': 0.5,
+                    'passed': False,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
@@ -266,9 +272,11 @@ class TestDataValidation(Spec):
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_data_with_shifted_distribution_passes_schema_check_with_different_distribution_report(self):
         self.maxDiff = None
@@ -278,26 +286,28 @@ class TestDataValidation(Spec):
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.58,
-                'binned_passed': False,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': False
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{ 
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
@@ -307,9 +317,11 @@ class TestDataValidation(Spec):
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
         self.maxDiff = None
@@ -395,7 +407,5 @@ class TestDataValidation(Spec):
                 }
             }
         }
-
-        expected_validation_report['schema']
 
         self.assertEqual(expected_validation_report, api_validation_report)

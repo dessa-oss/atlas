@@ -272,6 +272,7 @@ class TestDataContract(Spec):
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_distribution = False
+        contract.options.check_special_values = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
@@ -282,6 +283,8 @@ class TestDataContract(Spec):
         mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.utils.create_bin_stats.create_bin_stats')
         mock_bin_create_stats.return_value = self.bin_return_value
 
+        mock_special_value_checker_class = self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
+        
         mock_distribution_check_results = Mock()
         mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker = Mock()
@@ -348,6 +351,7 @@ class TestDataContract(Spec):
         self.assertEqual(expected_metadata, report['metadata'])
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
+        self.maxDiff = None
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
@@ -398,7 +402,7 @@ class TestDataContract(Spec):
                     'warning': 0
                 }
             },
-            'row_cnt_diff': 0,
+            'row_cnt_diff': 0.0,
             'schema': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name_2}',
@@ -430,26 +434,10 @@ class TestDataContract(Spec):
 
         expected_results = {
             self.column_name: {
-                'special_values': {
-                    np.nan: {
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0,
-                        'current_percentage': 0.0,
-                        'passed': True
-                    }
-                },
                 'binned_l_infinity': 0.0,
                 'binned_passed': True
             },
             self.column_name_2: {
-                'special_values': {
-                    np.nan: {
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0,
-                        'current_percentage': 0.0,
-                        'passed': True
-                    }
-                },
                 'binned_l_infinity': 0.0,
                 'binned_passed': True
             }

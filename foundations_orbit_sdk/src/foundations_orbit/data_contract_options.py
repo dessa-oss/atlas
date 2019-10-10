@@ -11,7 +11,7 @@ class DataContractOptions(object):
         self.max_bins = max_bins
         self.check_row_count = check_row_count
         self.special_values = special_values
-        self.check_special_value = check_special_values
+        self.check_special_values = check_special_values
         self.check_distribution = check_distribution
         self.distribution = distribution
 
@@ -24,7 +24,7 @@ class DataContractOptions(object):
         return self.max_bins == other.max_bins \
             and self.check_row_count == other.check_row_count \
             and self.check_distribution == other.check_distribution \
-            and self.check_special_value == other.check_special_value \
+            and self.check_special_values == other.check_special_values \
             and self.distribution == other.distribution
 
     def _special_values_equal(self, other):

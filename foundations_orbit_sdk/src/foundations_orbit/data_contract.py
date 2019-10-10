@@ -42,6 +42,7 @@ class DataContract(object):
             check_row_count=True,
             special_values=[numpy.nan],
             check_distribution=True,
+            check_special_values=True,
             distribution=default_distribution
         )
 
@@ -69,6 +70,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         from foundations_orbit.report_formatter import ReportFormatter
 
@@ -91,6 +93,9 @@ class DataContract(object):
 
         if self.options.check_distribution:
             validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
+
+        if self.options.check_special_values:
+            validation_report['special_values_check_results'] = SpecialValuesChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {
