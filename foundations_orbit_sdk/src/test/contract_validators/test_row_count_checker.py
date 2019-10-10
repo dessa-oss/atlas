@@ -63,6 +63,14 @@ class TestRowCountChecker(Spec):
         }
         self.assertEqual(json.dumps(expected_information), str(checker))
 
+    def test_row_count_checker_can_accept_configurations(self):
+        checker = RowCountChecker(self.row_count)
+        self.assertIsNotNone(getattr(checker, "configure", None))
+        
+    def test_row_count_checker_can_accept_exclusions(self):
+        checker = RowCountChecker(self.row_count)
+        self.assertIsNotNone(getattr(checker, "exclude", None))
+
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
