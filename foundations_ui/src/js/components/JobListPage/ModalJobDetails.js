@@ -197,7 +197,7 @@ class ModalJobDetails extends React.Component {
         default:
           return (
             <p className="media">
-              No artifacts available
+              This type of artifact is not viewable. Download the artifact to be able to view it.
               <span>
                 Check out the <span
                   role="button"
