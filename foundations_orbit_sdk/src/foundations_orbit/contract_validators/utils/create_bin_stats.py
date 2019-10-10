@@ -22,7 +22,11 @@ def create_bin_stats(special_values, max_bins, col_values):
         raise ValueError('Invalid Max Bin: Cannot create bin stats with bins less than 1.')
     # for every special value, make a bin for it
     for sv in special_values:
-        sv_count = len(col_values[col_values == sv])
+        if sv is np.nan:
+            sv_count = col_values.isna().sum()
+        else:
+            sv_count = len(col_values[col_values == sv])
+
         sv_dict = {'value': sv, "percentage": sv_count/n_vals}
         # drop current special value
         col_values = col_values[col_values != sv]

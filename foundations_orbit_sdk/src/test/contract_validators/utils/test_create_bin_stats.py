@@ -61,7 +61,6 @@ class TestCreateBinStats(Spec):
         output = create_bin_stats(special_values, max_bins, col_values)
         self.assertEqual(expected_output, output)
 
-
         output = create_bin_stats(special_values, max_bins, col_values)
         self.assertEqual(expected_output, output)
 
@@ -108,7 +107,7 @@ class TestCreateBinStats(Spec):
 
         expected_output = [{
             'value': np.nan,
-            'percentage': 0.0
+            'percentage': 0.3333333333333333
         }, {
             'percentage': 0.6666666666666666,
             'upper_edge': 2.0
@@ -118,7 +117,6 @@ class TestCreateBinStats(Spec):
         }]
 
         output = create_bin_stats(special_values, max_bins, col_values)
-        # print(output)
         self.assertEqual(expected_output, output)
 
     def test_creates_bin_for_column_with_special_values_defined_and_only_special_values_in_column(self):
@@ -182,4 +180,34 @@ class TestCreateBinStats(Spec):
         output = create_bin_stats(special_values, max_bins, col_values)
         self.assertEqual(expected_output, output)
 
-    
+    def test_create_bin_for_columns_with_singel_nan_generate_expected_bins(self):
+        import numpy
+        special_values = [numpy.nan]
+        max_bins = 10
+        col_values = pd.Series([numpy.nan])
+
+        expected_output = [
+            {
+                'value': str(numpy.nan), 
+                'percentage': 1.0,
+            }, 
+            {
+                'value': str(numpy.nan),
+                'percentage': 1.0, 
+                'upper_edge': None
+            }
+        ]
+
+        # converted nan to string for actual comparison
+        output = create_bin_stats(special_values, max_bins, col_values)
+        temp_output = []
+        for out in output:
+            temp = {}
+            for key, value in out.items():
+                if key == 'value':
+                    temp[key] = str(value)
+                else:
+                    temp[key] = value
+            temp_output.append(temp)
+
+        self.assertEqual(expected_output, temp_output)
