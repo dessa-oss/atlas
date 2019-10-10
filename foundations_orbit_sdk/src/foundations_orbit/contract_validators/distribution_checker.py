@@ -53,6 +53,6 @@ class DistributionChecker(object):
         if self._distribution_options['cols_to_include'] is not None and self._distribution_options['cols_to_ignore'] is not None:
             raise ValueError('cannot set both cols_to_ignore and cols_to_include - user may set at most one of these attributes')
 
+        ##### PROTOTYPE CODE - use distribution checker asap
         from foundations_orbit.contract_validators.prototype import distribution_check
-
         return distribution_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)

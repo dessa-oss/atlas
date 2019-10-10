@@ -279,7 +279,7 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
 
         mock_report_validator = self.patch('foundations_orbit.report_formatter.ReportFormatter')
-        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.prototype.create_bin_stats')
+        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.utils.create_bin_stats.create_bin_stats')
         mock_bin_create_stats.return_value = self.bin_return_value
 
         mock_distribution_check_results = Mock()

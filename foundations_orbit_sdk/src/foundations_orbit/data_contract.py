@@ -69,6 +69,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ['PROJECT_NAME']
@@ -78,17 +79,9 @@ class DataContract(object):
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
-
-        ##### PROTOTYPE CODE - REMOVE ME PLEASE
-
-        from foundations_orbit.contract_validators.prototype import create_bin_stats
-        from foundations_orbit.contract_validators.prototype import distribution_check
-
+        
         self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
-
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
-
-        ##### Prototype code section end
 
         validation_report = {}
         validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(dataframe_to_validate)
@@ -97,8 +90,6 @@ class DataContract(object):
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
-            ##### PROTOTYPE CODE - use distribution checker asap
-            #validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
             validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
