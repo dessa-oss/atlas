@@ -444,6 +444,16 @@ class TestDataContract(Spec):
         }
 
         self.assertEqual(expected_results, dist_check_results)
+    
+    def test_data_contract_has_schema_checker(self):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        self.assertIsNotNone(getattr(contract, "schema_test", None))
+    
+    def test_data_contract_has_schema_checker_configured(self):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        self.assertIsInstance(contract.schema_test, SchemaChecker)
 
     @skip('does not work when dataframe has no rows')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):

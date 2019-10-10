@@ -9,7 +9,7 @@ class DataContract(object):
 
     def __init__(self, contract_name, df=None):
         import pandas
-        
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -19,10 +19,10 @@ class DataContract(object):
         else:
             self._dataframe = df
 
-        self._column_names = None
-        self._column_types = None
-        self._number_of_rows = None
+        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         self._bin_stats = None
+        
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
 
     @staticmethod
     def _default_options():
@@ -67,7 +67,6 @@ class DataContract(object):
         import datetime
         import os
         
-        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
@@ -76,8 +75,6 @@ class DataContract(object):
 
         project_name = os.environ['PROJECT_NAME']
         model_name = os.environ['MODEL_NAME']
-
-        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
@@ -86,7 +83,7 @@ class DataContract(object):
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
         validation_report = {}
-        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(dataframe_to_validate)
+        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
 
         if self.options.check_row_count:
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
