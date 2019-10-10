@@ -18,8 +18,9 @@ class RowCountChecker(object):
         row_count_to_check = len(dataframe_to_validate)
         return abs(row_count_to_check - self._number_of_rows) / self._number_of_rows
 
-    def configure(self):
-        pass
+    def configure(self, attributes = None, row_count = None):
+        if row_count:
+            self._number_of_rows = row_count
 
     def exclude(self):
         pass

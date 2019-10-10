@@ -71,6 +71,11 @@ class TestRowCountChecker(Spec):
         checker = RowCountChecker(self.row_count)
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
+    def test_row_count_checker_is_zero_if_configured_with_correct_row_number(self):
+        checker = RowCountChecker(1)
+        checker.configure(row_count = 2)
+        self.assertEqual(0.0, checker.validate(self.dataframe_two_rows))
+    
     def _generate_distinct(self, reference_values, generating_callback):
         candidate_value = generating_callback()
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
