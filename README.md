@@ -44,6 +44,7 @@ There is a new release on every second Friday. Old releases can be found by navi
 |0.0.1|[release](https://github.com/DeepLearnI/foundations/releases/tag/0.0.1)| |
 
 
+
 ## License
 
 Copyright (C) DeepLearning Financial Technologies Inc. - All Rights Reserved
