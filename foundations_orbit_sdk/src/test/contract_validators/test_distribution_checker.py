@@ -223,3 +223,31 @@ class TestDistributionChecker(Spec):
         checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
         validate_results = checker.validate(dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
+
+    def test_multiple_column_dataframe_will_only_produce_results_for_columns_specified_in_configure(self):
+        
+        expected_dist_check_result = {
+            self.column_name: {
+                'special_values': {}, 
+                'binned_l_infinity': 0.0, 
+                'binned_passed': True
+            }}
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.configure(attributes = [self.column_name])
+        validate_results = checker.validate(self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, validate_results)
+
+    def test_multiple_column_dataframe_will_only_produce_results_for_columns_specified_in_configure(self):
+        
+        expected_dist_check_result = {
+            self.column_name_2: {
+                'special_values': {}, 
+                'binned_l_infinity': 0.0, 
+                'binned_passed': True
+            }}
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.exclude(attributes = [self.column_name])
+        validate_results = checker.validate(self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, validate_results)
