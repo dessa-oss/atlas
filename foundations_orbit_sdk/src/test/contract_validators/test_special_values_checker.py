@@ -9,7 +9,7 @@ import numpy
 import pandas
 from foundations_spec import *
 
-from foundations_orbit.contract_validators.special_value_checker import SpecialValueChecker
+from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
 
 class TestSpecialValuesChecker(Spec):
 
@@ -125,11 +125,11 @@ class TestSpecialValuesChecker(Spec):
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
     
     def test_schema_checker_can_accept_configurations(self):
-        checker = SpecialValueChecker({}, None, None)
+        checker = SpecialValuesChecker({}, None, None)
         self.assertIsNotNone(getattr(checker, "configure", None))
         
     def test_schema_checker_can_accept_exclusions(self):
-        checker = SpecialValueChecker({}, None, None)
+        checker = SpecialValuesChecker({}, None, None)
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
     def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed(self):
@@ -167,7 +167,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValueChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -214,7 +214,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValueChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -234,7 +234,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValueChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
         checker.configure(attributes=[self.column_name])
 
         results = checker.validate(dataframe)
@@ -256,7 +256,7 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValueChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
         checker.exclude(attributes=[self.column_name])
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)

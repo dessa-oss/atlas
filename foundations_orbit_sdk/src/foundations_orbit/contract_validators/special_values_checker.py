@@ -6,7 +6,7 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
 import numpy as np
-class SpecialValueChecker(object):
+class SpecialValuesChecker(object):
 
     def __init__(self, config_options, bin_stats, reference_column_names):
         self._config_options = config_options
