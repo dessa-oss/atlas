@@ -8,34 +8,42 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class SchemaChecker(object):
     
     def __init__(self, column_names, column_types):
-        self._column_names = column_names
-        self._column_names_set = set(column_names)
+        self._reference_column_names = column_names
         self._column_types = column_types
+        self._excluded_columns = []
 
     def __str__(self):
         import json
         test_information = {
-            'column_names': self._column_names,
+            'column_names': self._reference_column_names,
             'column_types': self._column_types
         }
         return json.dumps(test_information)
 
     def configure(self, attributes, column_types=None):
-        self._column_names = attributes
+        self._reference_column_names = attributes
         if column_types:
             self._column_types = column_types
 
-    def exclude(self, attributes):
-        self._column_names = set(self._column_names) - set(attributes)
+    def exclude(self, attributes=None):
+        if attributes:
+            self._reference_column_names = self._update_column_names_to_be_removed(self._reference_column_names, attributes)
+            self._excluded_columns = list(set(attributes).union(set(self._excluded_columns)))
+        else:
+            self._excluded_columns = self._reference_column_names
+            self._reference_column_names = []
+
+        self._column_types = self._update_column_types(self._reference_column_names, self._column_types)
 
     def validate(self, current_dataframe):
         import pandas
 
-        columns_to_validate, types_to_validate = self._dataframe_statistics(current_dataframe)
+        current_df_columns, current_df_types = self._dataframe_statistics(current_dataframe)
+        columns_to_validate = self._update_column_names_to_be_removed(current_df_columns, self._excluded_columns)
+        types_to_validate = self._update_column_types(columns_to_validate, current_df_types)
 
         schema_check_results = {}
-
-        if self._column_names_match(columns_to_validate):
+        if self._reference_column_names_match(columns_to_validate):
             if self._data_types_match(types_to_validate):
                 schema_check_results['passed'] = True
                 return schema_check_results
@@ -56,24 +64,39 @@ class SchemaChecker(object):
 
         schema_check_results['error_message'] = 'columns not in order'
 
-        ref_column_series = pandas.Series(self._column_names)
+        ref_column_series = pandas.Series(self._reference_column_names)
         current_column_series = pandas.Series(columns_to_validate)
 
         schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
         return schema_check_results
 
-    def _column_names_match(self, columns_to_validate):
-        return self._column_names == columns_to_validate
+    def _update_column_types(self, column_names, column_types):
+        new_column_types = {}
+        for columns in column_names:
+            new_column_types[columns] = column_types[columns]
+        return new_column_types
+
+    def _update_column_names_to_be_removed(self, column_names, columns_to_be_removed):
+        new_column_names = column_names.copy()
+        for column in columns_to_be_removed:
+            try:
+                new_column_names.remove(column)
+            except:
+                pass
+        return new_column_names
+
+    def _reference_column_names_match(self, columns_to_validate):
+        return self._reference_column_names == columns_to_validate
 
     def _data_types_match(self, types_to_validate):
         return self._column_types == types_to_validate
 
     def _column_sets_not_equal(self, current_column_names):
-        return self._column_names_set != current_column_names
+        return set(self._reference_column_names) != current_column_names
 
     def _column_sets_not_equal_error_information(self, current_column_names):
-        missing_in_ref = current_column_names - self._column_names_set
-        missing_in_current = self._column_names_set - current_column_names
+        missing_in_ref = current_column_names - set(self._reference_column_names)
+        missing_in_current = set(self._reference_column_names) - current_column_names
 
         return {'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
 

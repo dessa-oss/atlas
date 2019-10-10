@@ -239,6 +239,17 @@ class TestSchemaChecker(Spec):
         schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
         schema_checker.exclude(attributes=[self.column_name])
         validation_result = schema_checker.validate(current_dataframe)
+        self.assertEqual({'passed': True}, validation_result)
+
+    def test_schema_checker_excludes_all_columns_by_default_and_tests_passed(self):
+        import pandas, numpy
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
+        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
+
+        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
+        schema_checker.exclude()
+        validation_result = schema_checker.validate(current_dataframe)
+        self.assertEqual({'passed': True}, validation_result)
 
     def _dataframe_statistics(self, dataframe):
         column_names = list(dataframe.columns)
