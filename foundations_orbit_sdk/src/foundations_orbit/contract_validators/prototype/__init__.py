@@ -130,7 +130,7 @@ def distribution_check(config_dict, column_names, bin_stats, current_df):
 # deprecated (functionality replaces by the ReportFormatter) code to be removed
 def output_for_writing(
     corresponding_date,
-    model_package_name,
+    monitor_name,
     contract_name,
     row_cnt_diff,
     schema_check_passed_flag,
@@ -146,7 +146,7 @@ def output_for_writing(
 
     output_dict = {}
     output_dict['date'] = str(corresponding_date)
-    output_dict['model_package'] = model_package_name
+    output_dict['monitor_name'] = monitor_name
     output_dict['data_contract'] = contract_name
     output_dict['row_cnt_diff'] = row_cnt_diff
     if schema_check_passed_flag:
@@ -257,5 +257,5 @@ def output_for_writing(
     return pickle.dumps(output_dict)
 
 def write_to_redis(project_name, model_name, contract_name, inference_period, serialized_output):
-    key = f'projects:{project_name}:models:{model_name}:validation:{contract_name}'
+    key = f'projects:{project_name}:monitors:{model_name}:validation:{contract_name}'
     redis_connection.hset(key, inference_period, serialized_output)

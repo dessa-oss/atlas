@@ -53,19 +53,19 @@ class TestDataValidation(Spec):
         return 'test_data_contract'
 
     @let
-    def model_package_dirpath(self):
+    def monitor_package_dirpath(self):
         return 'models/test_model'
 
     @let
     def contract_filepath(self):
-        return f'{self.model_package_dirpath}/{self.contract_name}.pkl'
+        return f'{self.monitor_package_dirpath}/{self.contract_name}.pkl'
 
     @let
     def project_name(self):
         return self.faker.word()
 
     @let
-    def model_name(self):
+    def monitor_name(self):
         return self.faker.word()
 
     @set_up
@@ -77,15 +77,15 @@ class TestDataValidation(Spec):
         import numpy
         numpy.random.seed(42)
 
-        if path.isdir(self.model_package_dirpath):
-            shutil.rmtree(self.model_package_dirpath)
-        os.makedirs(self.model_package_dirpath, exist_ok=True)
+        if path.isdir(self.monitor_package_dirpath):
+            shutil.rmtree(self.monitor_package_dirpath)
+        os.makedirs(self.monitor_package_dirpath, exist_ok=True)
 
         self._old_project_name = os.environ.get('PROJECT_NAME')
-        self._old_model_name = os.environ.get('MODEL_NAME')
+        self._old_monitor_name = os.environ.get('MONITOR_NAME')
 
         os.environ['PROJECT_NAME'] = self.project_name
-        os.environ['MODEL_NAME'] = self.model_name
+        os.environ['MONITOR_NAME'] = self.monitor_name
 
     @tear_down
     def tear_down(self):
@@ -96,20 +96,20 @@ class TestDataValidation(Spec):
         elif 'PROJECT_NAME' in os.environ:
             os.environ.pop('PROJECT_NAME')
 
-        if self._old_model_name is not None:
-            os.environ['MODEL_NAME'] = self._old_model_name
-        elif 'MODEL_NAME' in os.environ:
-            os.environ.pop('MODEL_NAME')
+        if self._old_monitor_name is not None:
+            os.environ['MONITOR_NAME'] = self._old_monitor_name
+        elif 'MONITOR_NAME' in os.environ:
+            os.environ.pop('MONITOR_NAME')
 
     def test_can_load_saved_data_contract(self):
         import os.path as path
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
-        data_contract.save(self.model_package_dirpath)
+        data_contract.save(self.monitor_package_dirpath)
 
         self.assertTrue(path.isfile(self.contract_filepath))
 
-        loaded_data_contract = DataContract.load(self.model_package_dirpath, self.contract_name)
+        loaded_data_contract = DataContract.load(self.monitor_package_dirpath, self.contract_name)
         self.assertEqual(data_contract, loaded_data_contract)
 
     def test_validate_dataframe_against_own_schema_passes_all_tests(self):
@@ -325,12 +325,12 @@ class TestDataValidation(Spec):
 
         data_contract.validate(self.dataframe_with_shifted_distribution, inference_period=inference_period)
         
-        report_listing = ValidationReportListing(inference_period=inference_period, model_package=self.model_name, data_contract=contract_name)
+        report_listing = ValidationReportListing(inference_period=inference_period, monitor_package=self.monitor_name, data_contract=contract_name)
         api_validation_report = ValidationReport.get(project_name=self.project_name, listing_object=report_listing).evaluate()
 
         expected_validation_report = {
             'date': inference_period,
-            'model_package': self.model_name,
+            'monitor_package': self.monitor_name,
             'data_contract': contract_name,
             'row_cnt_diff': 0,
             'schema': {

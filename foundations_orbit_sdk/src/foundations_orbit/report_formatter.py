@@ -7,9 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class ReportFormatter(object):
 
-    def __init__(self, inference_period, model_package, contract_name, validation_report, options):
+    def __init__(self, inference_period, monitor_package, contract_name, validation_report, options):
         self._inference_period = inference_period
-        self._model_package = model_package
+        self._monitor_package = monitor_package
         self._contract_name = contract_name
         self._validation_report = validation_report
         self._options = options
@@ -17,7 +17,7 @@ class ReportFormatter(object):
     def formatted_report(self):
         return {
             'date': self._inference_period,
-            'model_package': self._model_package,
+            'monitor_package': self._monitor_package,
             'data_contract': self._contract_name,
             'row_cnt_diff': self._formatted_row_count_difference_report(),
             'schema': self._formatted_schema_report(),

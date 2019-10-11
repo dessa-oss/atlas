@@ -33,32 +33,32 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
         expected_data = [
             {
                 'inference_period': '2019-02-01',
-                'model_package': 'model_one',
+                'monitor_package': 'model_one',
                 'data_contract': 'data_contract_1'
             },
             {
                 'inference_period': '2019-02-01',
-                'model_package': 'model_one',
+                'monitor_package': 'model_one',
                 'data_contract': 'data_contract_2'
             },
             {
                 'inference_period': '2019-02-02',
-                'model_package': 'model_one',
+                'monitor_package': 'model_one',
                 'data_contract': 'data_contract_1'
             },
             {
                 'inference_period': '2019-02-02',
-                'model_package': 'model_two',
+                'monitor_package': 'model_two',
                 'data_contract': 'data_contract_1'
             },
             {
                 'inference_period': '2019-02-02',
-                'model_package': 'model_two',
+                'monitor_package': 'model_two',
                 'data_contract': 'data_contract_2'
             },
             {
                 'inference_period': '2019-02-05',
-                'model_package': 'model_one',
+                'monitor_package': 'model_one',
                 'data_contract': 'data_contract_2'
             }
         ]
@@ -66,8 +66,8 @@ class TestRetrieveValidationReportListingEndpoint(Spec):
         for listing_entry in expected_data:
             contract_name = listing_entry['data_contract']
             inference_period = listing_entry['inference_period']
-            model_name = listing_entry['model_package']
-            self.redis.hset(f'projects:test_project:models:{model_name}:validation:{contract_name}', inference_period, 'dummy')
+            monitor_package = listing_entry['monitor_package']
+            self.redis.hset(f'projects:test_project:monitors:{monitor_package}:validation:{contract_name}', inference_period, 'dummy')
 
         data = self._get_from_route()
 

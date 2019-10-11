@@ -16,7 +16,7 @@ class TestValidationReportListingsController(Spec):
         return self.faker.word()
 
     @let
-    def model_package(self):
+    def monitor_package(self):
         return self.faker.word()
 
     @let
@@ -28,7 +28,7 @@ class TestValidationReportListingsController(Spec):
         return self.faker.date()
 
     @let
-    def model_package_2(self):
+    def monitor_package_2(self):
         return self.faker.word()
 
     @let
@@ -61,13 +61,13 @@ class TestValidationReportListingsController(Spec):
         self.assertEqual('ValidationReportListings', result.resource_name())
 
     def test_index_returns_list_with_one_listing_if_exists_in_redis(self):
-        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period)
+        self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period)
         result = self.controller.index()
 
         expected_result = [
             {
                 'data_contract': self.data_contract,
-                'model_package': self.model_package,
+                'monitor_package': self.monitor_package,
                 'inference_period': self.inference_period
             }
         ]
@@ -75,26 +75,26 @@ class TestValidationReportListingsController(Spec):
         self.assertEqual(expected_result, result.as_json())
 
     def test_index_returns_list_with_all_listings_is_sorted_by_inference_period(self):
-        self._register_report(self.project_name, self.model_package, self.data_contract, '2019-10-13')
-        self._register_report(self.project_name, self.model_package_2, self.data_contract_2, '2019-03-04')
+        self._register_report(self.project_name, self.monitor_package, self.data_contract, '2019-10-13')
+        self._register_report(self.project_name, self.monitor_package_2, self.data_contract_2, '2019-03-04')
         result = self.controller.index()
 
         expected_result = [
             {
                 'data_contract': self.data_contract_2,
-                'model_package': self.model_package_2,
+                'monitor_package': self.monitor_package_2,
                 'inference_period': '2019-03-04'
             },
             {
                 'data_contract': self.data_contract,
-                'model_package': self.model_package,
+                'monitor_package': self.monitor_package,
                 'inference_period': '2019-10-13'
             }
         ]
 
         self.assertEqual(expected_result, result.as_json())
 
-    def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_model_package(self):
+    def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_monitor_package(self):
         self._register_report(self.project_name, 'dog_bark', self.data_contract_2, '2019-10-13')
         self._register_report(self.project_name, 'cat_meow', self.data_contract, '2019-10-13')
         result = self.controller.index()
@@ -102,19 +102,19 @@ class TestValidationReportListingsController(Spec):
         expected_result = [
             {
                 'data_contract': self.data_contract,
-                'model_package': 'cat_meow',
+                'monitor_package': 'cat_meow',
                 'inference_period': '2019-10-13'
             },
             {
                 'data_contract': self.data_contract_2,
-                'model_package': 'dog_bark',
+                'monitor_package': 'dog_bark',
                 'inference_period': '2019-10-13'
             }
         ]
 
         self.assertEqual(expected_result, result.as_json())
 
-    def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_model_package_followed_by_data_contract(self):
+    def test_index_returns_list_with_all_listings_is_sorted_by_inference_period_followed_by_monitor_package_followed_by_data_contract(self):
         self._register_report(self.project_name, 'cat_meow', 'data_contract_2', '2019-10-13')
         self._register_report(self.project_name, 'cat_meow', 'data_contract', '2019-10-13')
         result = self.controller.index()
@@ -122,12 +122,12 @@ class TestValidationReportListingsController(Spec):
         expected_result = [
             {
                 'data_contract': 'data_contract',
-                'model_package': 'cat_meow',
+                'monitor_package': 'cat_meow',
                 'inference_period': '2019-10-13'
             },
             {
                 'data_contract': 'data_contract_2',
-                'model_package': 'cat_meow',
+                'monitor_package': 'cat_meow',
                 'inference_period': '2019-10-13'
             }
         ]
@@ -135,9 +135,9 @@ class TestValidationReportListingsController(Spec):
         self.assertEqual(expected_result, result.as_json())
 
     @staticmethod
-    def _key_to_write(project_name, model_package, data_contract):
-        return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+    def _key_to_write(project_name, monitor_package, data_contract):
+        return f'projects:{project_name}:monitors:{monitor_package}:validation:{data_contract}'
 
-    def _register_report(self, project_name, model_package, data_contract, inference_period):
-        key_to_write = self._key_to_write(project_name, model_package, data_contract)
+    def _register_report(self, project_name, monitor_package, data_contract, inference_period):
+        key_to_write = self._key_to_write(project_name, monitor_package, data_contract)
         self.redis_connection.hset(key_to_write, inference_period, 'dummy_report')

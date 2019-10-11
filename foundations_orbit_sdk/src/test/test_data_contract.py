@@ -24,12 +24,12 @@ class TestDataContract(Spec):
         return self._generate_distinct([self.contract_name], self.faker.word)
 
     @let
-    def model_package_directory(self):
+    def monitor_package_directory(self):
         return self.faker.file_path()
 
     @let
     def data_contract_file_path(self):
-        return f'{self.model_package_directory}/{self.contract_name}.pkl'
+        return f'{self.monitor_package_directory}/{self.contract_name}.pkl'
 
     @let
     def project_name(self):
@@ -166,7 +166,7 @@ class TestDataContract(Spec):
 
         mock_environ = self.patch('os.environ', {})
         mock_environ['PROJECT_NAME'] = self.project_name
-        mock_environ['MODEL_NAME'] = self.model_name
+        mock_environ['MONITOR_NAME'] = self.model_name
 
         self._redis = self.patch('foundations_contrib.global_state.redis_connection', fakeredis.FakeRedis())
 
@@ -216,7 +216,7 @@ class TestDataContract(Spec):
         import pickle
 
         contract = DataContract(self.contract_name)
-        contract.save(self.model_package_directory)
+        contract.save(self.monitor_package_directory)
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
@@ -226,7 +226,7 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name)
         contract.options = {'asdf': 'value'}
 
-        contract.save(self.model_package_directory)
+        contract.save(self.monitor_package_directory)
 
         self.mock_file_for_write.write.assert_called_once_with(pickle.dumps(contract))
 
@@ -250,7 +250,7 @@ class TestDataContract(Spec):
         contract = DataContract(self.contract_name)
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
-        self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
+        self.assertEqual(contract, DataContract.load(self.monitor_package_directory, self.contract_name))
 
     def test_data_contract_load_actually_loads(self):
         import pickle
@@ -259,7 +259,7 @@ class TestDataContract(Spec):
         contract.options = {'some_option': 'with_value'}
         self.mock_file_for_read.read.return_value = pickle.dumps(contract)
 
-        self.assertEqual(contract, DataContract.load(self.model_package_directory, self.contract_name))
+        self.assertEqual(contract, DataContract.load(self.monitor_package_directory, self.contract_name))
 
     def test_data_contract_validate_performs_schema_check_by_default(self):
         mock_schema_check_results = {'passed': True}
@@ -379,7 +379,7 @@ class TestDataContract(Spec):
                 }
             },
             'date': f'{inference_period}',
-            'model_package': f'{self.model_name}',
+            'monitor_package': f'{self.model_name}',
             'population_shift': {
                 'details_by_attribute': [{
                         'L-infinity': 0.0,
@@ -414,7 +414,7 @@ class TestDataContract(Spec):
             }
         }
 
-        key = f'projects:{self.project_name}:models:{self.model_name}:validation:{self.contract_name}'
+        key = f'projects:{self.project_name}:monitors:{self.model_name}:validation:{self.contract_name}'
         serialized_report = self._redis.hget(key, inference_period)
         import pickle
         deserialized_report = pickle.loads(serialized_report)

@@ -14,7 +14,7 @@ class TestReportFormatter(Spec):
     def inference_period(self):
         return self.faker.date()
     @let
-    def model_package(self):
+    def monitor_package(self):
         return self.faker.sentence()
 
     @let
@@ -104,10 +104,10 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(self.inference_period, formatted_report['date'])
 
-    def test_report_formatter_returns_formatted_report_with_expected_model_package(self):
+    def test_report_formatter_returns_formatted_report_with_expected_monitor_package(self):
         self.validation_report['schema_check_results'] = {'passed': True}
         formatted_report = self._generate_formatted_report()
-        self.assertEqual(self.model_package, formatted_report['model_package'])
+        self.assertEqual(self.monitor_package, formatted_report['monitor_package'])
 
     def test_report_formatter_returns_formatted_report_with_expected_data_contract(self):
         self.validation_report['schema_check_results'] = {'passed': True}
@@ -755,7 +755,7 @@ class TestReportFormatter(Spec):
 
     def _generate_formatted_report(self):
         formatter = ReportFormatter(inference_period=self.inference_period,
-                                    model_package=self.model_package,
+                                    monitor_package=self.monitor_package,
                                     contract_name=self.contract_name,
                                     validation_report=self.validation_report,
                                     options=self.data_contract_options)

@@ -17,16 +17,16 @@ class ValidationReportsController(object):
         from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
 
         inference_period = self.params.pop('inference_period')
-        model_package = self.params.pop('model_package')
+        monitor_package = self.params.pop('monitor_package')
         data_contract = self.params.pop('data_contract')
         project_name = self.params.pop('project_name')
 
-        listing_object = ValidationReportListing(inference_period=inference_period, model_package=model_package, data_contract=data_contract)
+        listing_object = ValidationReportListing(inference_period=inference_period, monitor_package=monitor_package, data_contract=data_contract)
         response = ValidationReport.get(project_name=project_name, listing_object=listing_object)
         
         failure_response_data = {
             'inference_period': inference_period,
-            'model_package': model_package,
+            'monitor_package': monitor_package,
             'data_contract': data_contract,
             'error': 'does not exist'
         }

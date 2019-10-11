@@ -45,21 +45,21 @@ class DataContract(object):
             distribution=default_distribution
         )
 
-    def save(self, model_package_directory):
-        with open(self._data_contract_file_path(model_package_directory), 'wb') as contract_file:
+    def save(self, monitor_package_directory):
+        with open(self._data_contract_file_path(monitor_package_directory), 'wb') as contract_file:
             contract_file.write(self._serialized_contract())
 
     @staticmethod
-    def load(model_package_directory, contract_name):
+    def load(monitor_package_directory, contract_name):
         import pickle
 
-        data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(model_package_directory, contract_name)
+        data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(monitor_package_directory, contract_name)
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
     def _save_to_redis(self, project_name, model_name, contract_name, inference_period, serialized_output):
         from foundations_contrib.global_state import redis_connection
-        key = f'projects:{project_name}:models:{model_name}:validation:{contract_name}'
+        key = f'projects:{project_name}:monitors:{model_name}:validation:{contract_name}'
         redis_connection.hset(key, inference_period, serialized_output)
 
     def validate(self, dataframe_to_validate, inference_period=None):
@@ -72,7 +72,7 @@ class DataContract(object):
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ['PROJECT_NAME']
-        model_name = os.environ['MODEL_NAME']
+        monitor_name = os.environ['MONITOR_NAME']
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         
@@ -113,25 +113,25 @@ class DataContract(object):
         }
 
         report_formatter = ReportFormatter(inference_period=inference_period,
-                                    model_package=model_name,
+                                    monitor_package=monitor_name,
                                     contract_name=self._contract_name,
                                     validation_report=validation_report,
                                     options=self.options)
         serialized_output = report_formatter.serialized_output()
 
-        self._save_to_redis(project_name, model_name, self._contract_name, inference_period, serialized_output)
+        self._save_to_redis(project_name, monitor_name, self._contract_name, inference_period, serialized_output)
 
         return validation_report
 
     def __eq__(self, other):
         return self._contract_name == other._contract_name and self.options == other.options
 
-    def _data_contract_file_path(self, model_package_directory):
-        return self._data_contract_file_path_with_contract_name(model_package_directory, self._contract_name)
+    def _data_contract_file_path(self, monitor_package_directory):
+        return self._data_contract_file_path_with_contract_name(monitor_package_directory, self._contract_name)
 
     @staticmethod
-    def _data_contract_file_path_with_contract_name(model_package_directory, contract_name):
-        return f'{model_package_directory}/{contract_name}.pkl'
+    def _data_contract_file_path_with_contract_name(monitor_package_directory, contract_name):
+        return f'{monitor_package_directory}/{contract_name}.pkl'
 
     def _serialized_contract(self):
         import pickle
