@@ -36,7 +36,7 @@ def _config():
         exit(1)
 
     for template_file_name in _flattened_config_walk():
-        output_file_name = template_file_name.rstrip('.envsubst.yaml') + '.yaml'
+        output_file_name = template_file_name[:-len('.envsubst.yaml')] + '.yaml'
         subprocess.run(f'envsubst < {template_file_name} > {output_file_name}', shell=True)
 
 set_foundations_home()
