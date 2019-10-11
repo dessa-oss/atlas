@@ -327,6 +327,19 @@ class JobDeployment(object):
         r = requests.delete(f"{self._config['scheduler_url']}/running_jobs/{self._job_id}")
         return 200 <= r.status_code < 300
 
+    def get_job_archive(self):
+        import requests
+        import os
+
+        res = requests.get(f"{self._config['scheduler_url']}/job_bundle/{self._job_id}")
+
+        if res.status_code in [401, 404]:
+            return False
+        else:
+            with open(f"{os.getcwd()}/{self._job_id}.tgz", "wb") as file:
+                file.write(res.content)
+            return True
+
     @staticmethod
     def clear_queue():
         import requests
