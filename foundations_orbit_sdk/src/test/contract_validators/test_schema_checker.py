@@ -274,6 +274,30 @@ class TestSchemaChecker(Spec):
         validation_result = schema_checker.validate(current_dataframe)
         self.assertEqual({'passed': True}, validation_result)
 
+    def test_schema_checker_exclude_throws_value_error_if_non_list_parameter_which_is_not_all(self):
+        import pandas, numpy
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
+        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
+
+        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
+        try:
+            schema_checker.exclude('random_column')
+            self.fail('Failed to throw exception for invalid option')
+        except ValueError as ve:
+            self.assertTrue('invalid option' in str(ve).lower())
+
+    def test_schema_checker_configure_throws_error_if_non_list_parameter_used_for_attributes(self):
+        import pandas, numpy
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
+        current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
+
+        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
+        try:
+            schema_checker.configure('random_column')
+            self.fail('Failed to throw exception for invalid option')
+        except ValueError as ve:
+            self.assertTrue('invalid option' in str(ve).lower())
+
     def _dataframe_statistics(self, dataframe):
         column_names = list(dataframe.columns)
         column_types = {column_name: str(dataframe.dtypes[column_name]) for column_name in column_names}

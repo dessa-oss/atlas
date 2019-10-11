@@ -22,23 +22,26 @@ class SchemaChecker(object):
         return json.dumps(test_information)
 
     def configure(self, attributes):
-        self._configured_columns =  self._union_of_column_names_preserving_order(self._configured_columns, attributes)
-        
-        for column in attributes:
-            try:
-                self._excluded_columns.remove(column)
-            except:
-                pass
+        if isinstance(attributes, list):
+            self._configured_columns =  self._union_of_column_names_preserving_order(self._configured_columns, attributes)
+            
+            for column in attributes:
+                try:
+                    self._excluded_columns.remove(column)
+                except:
+                    pass
+        else:
+            raise ValueError('Invalid option specified. Configure requires a list of column names')
 
     def exclude(self, attributes=None):
         if attributes == 'all':
             self._excluded_columns = self._configured_columns
             self._configured_columns = []
-        else:
+        elif isinstance(attributes, list):
             self._configured_columns = self._update_column_names_to_be_removed(self._configured_columns, attributes)
             self._excluded_columns = list(set(attributes).union(set(self._excluded_columns)))
-
-        # self._column_types = self._update_column_types(self._configured_columns, self._column_types)
+        else:
+            raise ValueError('Invalid option specified. Exclude requires a list of column names to be removed or "all" to exclue all columns')
 
     def validate(self, current_dataframe):
         import pandas
