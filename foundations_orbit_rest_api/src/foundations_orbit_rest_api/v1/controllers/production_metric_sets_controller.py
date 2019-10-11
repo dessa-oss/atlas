@@ -16,7 +16,7 @@ class ProductionMetricSetsController(object):
 
         project_name = self.params.pop('project_name')
         response_body = ProductionMetricSet.all(project_name=project_name).map(self._sort_alphabetically)
-        return Response('Models', response_body)
+        return Response('Monitors', response_body)
 
     def _sort_alphabetically(self, body):
         body.sort(key=lambda entry: entry.title['text'])

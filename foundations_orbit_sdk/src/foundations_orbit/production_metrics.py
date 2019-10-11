@@ -65,12 +65,12 @@ def _existing_metrics_from_redis(redis_key, metric_name):
 def _redis_key():
     import os
 
-    model_name = os.environ['MODEL_NAME']
+    monitor_name = os.environ['MONITOR_NAME']
     project_name = os.environ['PROJECT_NAME']
 
-    if not model_name:
-        raise RuntimeError('Model name not set')
+    if not monitor_name:
+        raise RuntimeError('Monitor name not set')
     if not project_name:
         raise RuntimeError('Project name not set')
     
-    return f'projects:{project_name}:models:{model_name}:production_metrics'
+    return f'projects:{project_name}:monitors:{monitor_name}:production_metrics'

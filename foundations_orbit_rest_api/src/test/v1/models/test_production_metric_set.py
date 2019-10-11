@@ -19,7 +19,7 @@ class TestProductionMetricSet(Spec):
     @let_now
     def environ(self):
         fake_environ = {}
-        fake_environ['MODEL_NAME'] = self.model_name
+        fake_environ['MONITOR_NAME'] = self.monitor_name
         fake_environ['PROJECT_NAME'] = self.project_name
         return self.patch('os.environ', fake_environ)
 
@@ -28,11 +28,11 @@ class TestProductionMetricSet(Spec):
         self.redis_connection.flushall()
 
     @let
-    def model_name(self):
+    def monitor_name(self):
         return self.faker.uuid4()
 
     @let
-    def model_name_2(self):
+    def monitor_name_2(self):
         return self.faker.uuid4()
 
     @let
@@ -121,20 +121,20 @@ class TestProductionMetricSet(Spec):
         return datetime.strptime(date_string, "%Y-%m-%d").timestamp() * 1000
 
     def test_has_title(self):
-        model = ProductionMetricSet(title=self.title)
-        self.assertEqual(self.title, model.title)
+        monitor = ProductionMetricSet(title=self.title)
+        self.assertEqual(self.title, monitor.title)
 
     def test_has_y_axis(self):
-        model = ProductionMetricSet(yAxis=self.yAxis)
-        self.assertEqual(self.yAxis, model.yAxis)
+        monitor = ProductionMetricSet(yAxis=self.yAxis)
+        self.assertEqual(self.yAxis, monitor.yAxis)
     
     def test_has_x_axis(self):
-        model = ProductionMetricSet(xAxis=self.xAxis)
-        self.assertEqual(self.xAxis, model.xAxis)
+        monitor = ProductionMetricSet(xAxis=self.xAxis)
+        self.assertEqual(self.xAxis, monitor.xAxis)
     
     def test_has_series(self):
-        model = ProductionMetricSet(series=self.series)
-        self.assertEqual(self.series, model.series)
+        monitor = ProductionMetricSet(series=self.series)
+        self.assertEqual(self.series, monitor.series)
 
     def test_all_returns_promise_with_empty_list_if_no_metrics_logged(self):
         promise = ProductionMetricSet.all(self.project_name)
@@ -144,7 +144,7 @@ class TestProductionMetricSet(Spec):
         from foundations_orbit import track_production_metrics
 
         self.environ['PROJECT_NAME'] = self.project_name
-        self.environ['MODEL_NAME'] = self.model_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
 
         track_production_metrics(self.metric_name, {})
 
@@ -154,7 +154,7 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
-            series=[{'data': [], 'name': self.model_name}]
+            series=[{'data': [], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -163,7 +163,7 @@ class TestProductionMetricSet(Spec):
         from foundations_orbit import track_production_metrics
 
         self.environ['PROJECT_NAME'] = self.project_name
-        self.environ['MODEL_NAME'] = self.model_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
 
         track_production_metrics(self.metric_name, {self.metric_column: self.metric_value})
 
@@ -173,7 +173,7 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
-            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.model_name}]
+            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -182,7 +182,7 @@ class TestProductionMetricSet(Spec):
         from foundations_orbit import track_production_metrics
 
         self.environ['PROJECT_NAME'] = self.project_name
-        self.environ['MODEL_NAME'] = self.model_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
 
         track_production_metrics(self.metric_name, {self.metric_column: self.metric_value, self.metric_column_2: self.metric_value_2})
 
@@ -192,7 +192,7 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
-            series=[{'data': [[self.timestamp, self.metric_value], [self.timestamp_2, self.metric_value_2]], 'name': self.model_name}]
+            series=[{'data': [[self.timestamp, self.metric_value], [self.timestamp_2, self.metric_value_2]], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set], promise.evaluate())
@@ -201,7 +201,7 @@ class TestProductionMetricSet(Spec):
         from foundations_orbit import track_production_metrics
 
         self.environ['PROJECT_NAME'] = self.project_name
-        self.environ['MODEL_NAME'] = self.model_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
 
         track_production_metrics(self.metric_name, {self.metric_column: self.metric_value})
         track_production_metrics(self.metric_name_2, {self.metric_column_2: self.metric_value_2})
@@ -212,30 +212,30 @@ class TestProductionMetricSet(Spec):
             title={'text': f'{self.metric_name} over time'},
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
-            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.model_name}]
+            series=[{'data': [[self.timestamp, self.metric_value]], 'name': self.monitor_name}]
         )
 
         expected_metric_set_1 = ProductionMetricSet(
             title={'text': f'{self.metric_name_2} over time'},
             yAxis={'title': {'text': self.metric_name_2}},
             xAxis={'type': 'datetime'},
-            series=[{'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.model_name}]
+            series=[{'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.monitor_name}]
         )
 
         self.assertEqual([expected_metric_set_0, expected_metric_set_1], promise.evaluate())
 
 
-    def test_all_returns_promise_with_list_containing_metric_sets_if_multiple_metric_names_logged_multiple_with_model_names(self):
+    def test_all_returns_promise_with_list_containing_metric_sets_if_multiple_metric_names_logged_multiple_with_monitor_names(self):
         from foundations_orbit import track_production_metrics
 
         self.environ['PROJECT_NAME'] = self.project_name
 
-        self.environ['MODEL_NAME'] = self.model_name
+        self.environ['MONITOR_NAME'] = self.monitor_name
 
         track_production_metrics(self.metric_name, {self.metric_column: self.metric_value})
         track_production_metrics(self.metric_name_2, {self.metric_column_2: self.metric_value_2})
 
-        self.environ['MODEL_NAME'] = self.model_name_2
+        self.environ['MONITOR_NAME'] = self.monitor_name_2
 
         track_production_metrics(self.metric_name, {self.metric_column: self.metric_value_3})
         track_production_metrics(self.metric_name_2, {self.metric_column_2: self.metric_value_4})
@@ -247,8 +247,8 @@ class TestProductionMetricSet(Spec):
             yAxis={'title': {'text': self.metric_name}},
             xAxis={'type': 'datetime'},
             series=[
-                {'data': [[self.timestamp, self.metric_value]], 'name': self.model_name},
-                {'data': [[self.timestamp, self.metric_value_3]], 'name': self.model_name_2}
+                {'data': [[self.timestamp, self.metric_value]], 'name': self.monitor_name},
+                {'data': [[self.timestamp, self.metric_value_3]], 'name': self.monitor_name_2}
             ]
         )
 
@@ -257,8 +257,8 @@ class TestProductionMetricSet(Spec):
             yAxis={'title': {'text': self.metric_name_2}},
             xAxis={'type': 'datetime'},
             series=[
-                {'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.model_name},
-                {'data': [[self.timestamp_2, self.metric_value_4]], 'name': self.model_name_2}
+                {'data': [[self.timestamp_2, self.metric_value_2]], 'name': self.monitor_name},
+                {'data': [[self.timestamp_2, self.metric_value_4]], 'name': self.monitor_name_2}
             ]
         )
 

@@ -25,7 +25,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
     @tear_down
     def tear_down(self):
         import os
-        os.environ.pop('MODEL_NAME')
+        os.environ.pop('MONITOR_NAME')
         os.environ.pop('PROJECT_NAME')
 
     def _get_from_route(self):
@@ -41,7 +41,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
 
         os.environ['PROJECT_NAME'] = 'test_project'
 
-        os.environ['MODEL_NAME'] = 'this_job'
+        os.environ['MONITOR_NAME'] = 'this_job'
 
         track_production_metrics('MSE', {
             '2019-02-01': int(1),
@@ -57,7 +57,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
             '2029-05-02': float(17.43)
         })
 
-        os.environ['MODEL_NAME'] = 'that_job'
+        os.environ['MONITOR_NAME'] = 'that_job'
 
         track_production_metrics('MSE', {
             '2019-02-01': int(5),
@@ -122,7 +122,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
 
         os.environ['PROJECT_NAME'] = 'test_project'
 
-        os.environ['MODEL_NAME'] = 'this_job'
+        os.environ['MONITOR_NAME'] = 'this_job'
 
         track_production_metrics('MSE', {
             '2019-02-01': numpy.int8(1),
@@ -138,7 +138,7 @@ class TestRetrieveEvaluationMetricsEndpoint(Spec):
             '2029-05-02': numpy.float64(17.43)
         })
 
-        os.environ['MODEL_NAME'] = 'that_job'
+        os.environ['MONITOR_NAME'] = 'that_job'
 
         track_production_metrics('MSE', {
             '2019-02-01': numpy.int8(5),
