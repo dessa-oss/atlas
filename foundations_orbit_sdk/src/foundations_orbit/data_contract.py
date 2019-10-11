@@ -10,6 +10,8 @@ class DataContract(object):
     def __init__(self, contract_name, df=None):
         import pandas
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -20,9 +22,10 @@ class DataContract(object):
             self._dataframe = df
 
         self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
-        self._bin_stats = None
+        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
         
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self.special_value_test = SpecialValuesChecker(self.options.distribution, self._bin_stats, self._column_names)
 
     @staticmethod
     def _default_options():
@@ -70,7 +73,6 @@ class DataContract(object):
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
         from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ['PROJECT_NAME']
@@ -79,7 +81,6 @@ class DataContract(object):
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
         
-        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
         validation_report = {}
@@ -92,7 +93,7 @@ class DataContract(object):
             validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
 
         if self.options.check_special_values:
-            validation_report['special_values_check_results'] = SpecialValuesChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
+            validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {
