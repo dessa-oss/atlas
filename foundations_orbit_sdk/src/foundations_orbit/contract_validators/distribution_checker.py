@@ -57,7 +57,7 @@ class DistributionChecker(object):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
         test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
         
-        for column_name, distribution_results in test_data.items():
-            del distribution_results['special_values']
+        # for column_name, distribution_results in test_data.items():
+        #     del distribution_results['special_values']
         
         return test_data

@@ -37,7 +37,8 @@ class DataContract(object):
             'default_threshold': 0.1,
             'cols_to_include': None,
             'cols_to_ignore': None,
-            'custom_thresholds': {}
+            'custom_thresholds': {},
+            'special_value_thresholds': {}
         }
 
         return DataContractOptions(

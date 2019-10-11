@@ -12,7 +12,7 @@ from .utils import nand, count_and_remove_special_values, bin_current_values, ad
     add_binned_l_infinity
 
 
-def distribution_and_special_values_check(config_dict, column_names, bin_stats, current_df):
+def distribution_and_special_values_check(config_dict, column_names, bin_stats, current_df, is_special_value_check=False):
     '''
         Expected format of dist_check_results
         {'col1': {'binned_passed': False,
@@ -79,11 +79,11 @@ def distribution_and_special_values_check(config_dict, column_names, bin_stats, 
         # define threshold for l_infinity tests
         custom_threshold = dist_check_config['custom_thresholds'].get(col, None)
         threshold = custom_threshold if custom_threshold != None else dist_check_config['default_threshold']
-        
-        sv_threshold = dist_check_config['special_value_thresholds']
-        # add l_infinity test results to dist_check_results (special_values)
-        add_special_value_l_infinity(col, sv_threshold, dist_check_results, ref_special_values,
-                                        ref_special_value_percentages, current_special_value_percentages)
+        if is_special_value_check:
+            sv_threshold = dist_check_config['special_value_thresholds']
+            # add l_infinity test results to dist_check_results (special_values)
+            add_special_value_l_infinity(col, sv_threshold, dist_check_results, ref_special_values,
+                                            ref_special_value_percentages, current_special_value_percentages)
 
         # add l_infinity test results to dist_check_results (distribution)
         add_binned_l_infinity(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages)

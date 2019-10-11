@@ -17,7 +17,7 @@ class SpecialValuesChecker(object):
 
     def validate(self, dataframe_to_validate):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        full_distribution_check_results = distribution_and_special_values_check(self._config_options, self._config_columns, self._bin_stats, dataframe_to_validate)
+        full_distribution_check_results = distribution_and_special_values_check(self._config_options, self._config_columns, self._bin_stats, dataframe_to_validate, True)
         
         special_values_results = {}
         for column, column_results in full_distribution_check_results.items():

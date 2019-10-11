@@ -352,9 +352,10 @@ class TestDataContract(Spec):
         self.assertEqual(expected_metadata, report['metadata'])
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
-        self.maxDiff = None
+        import numpy
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
