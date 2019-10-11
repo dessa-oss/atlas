@@ -11,11 +11,13 @@ class SpecialValuesChecker(object):
     def __init__(self, config_options, bin_stats, reference_column_names):
         self._config_options = config_options.copy()
         self._bin_stats = bin_stats
-        self._reference_column_names = reference_column_names
+        self._reference_column_names = reference_column_names.copy() if reference_column_names else []
+        self._config_columns = []
+        self._config_options['special_value_thresholds'] = {}
 
     def validate(self, dataframe_to_validate):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        full_distribution_check_results = distribution_and_special_values_check(self._config_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
+        full_distribution_check_results = distribution_and_special_values_check(self._config_options, self._config_columns, self._bin_stats, dataframe_to_validate)
         
         special_values_results = {}
         for column, column_results in full_distribution_check_results.items():
@@ -32,11 +34,17 @@ class SpecialValuesChecker(object):
             raise ValueError('Invalid threshold: The threshold is required for configuration')
         if not isinstance(thresholds, dict):
             raise ValueError('Invalid threshold: thresholds must be specified using dictionaries')
-        
-        self._reference_column_names = list(set(self._reference_column_names).union(set(attributes)))
+
+        for column in attributes:
+            column_threshold = {
+                column: thresholds
+            }
+            self._config_options['special_value_thresholds'].update(column_threshold)
+
+        self._config_columns = list(set(self._config_columns).union(set(attributes)))
 
     def exclude(self, attributes):
         if attributes == 'all':
-            self._reference_column_names = []
+            self._config_columns = []
         else:
-            self._reference_column_names = set(self._reference_column_names) - set(attributes)
+            self._config_columns = set(self._config_columns) - set(attributes)

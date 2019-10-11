@@ -85,7 +85,7 @@ def add_special_value_l_infinity(col, threshold, dist_check_results, ref_special
         dist_check_results[col]['special_values'][sv]['ref_percentage'] = ref_pct
         dist_check_results[col]['special_values'][sv]['current_percentage'] = cur_pct
 
-        if l_infinity_score < threshold:
+        if l_infinity_score < threshold[col][sv]:
             dist_check_results[col]['special_values'][sv]['passed'] = True
         else:
             dist_check_results[col]['special_values'][sv]['passed'] = False

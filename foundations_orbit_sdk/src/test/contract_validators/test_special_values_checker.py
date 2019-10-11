@@ -132,7 +132,7 @@ class TestSpecialValuesChecker(Spec):
         checker = SpecialValuesChecker({}, None, None)
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
-    def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed(self):
+    def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed_using_not_previously_defined_special_value(self):
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
         data = {
             self.column_name: [5, 10, 15, -1],
@@ -168,6 +168,7 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ -1: 0.1 })
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -204,7 +205,7 @@ class TestSpecialValuesChecker(Spec):
                     'current_percentage': 0.25,
                     'passed': True
                 }
-            }, 
+            },
             self.column_name_2:{
                 numpy.nan: {
                     'percentage_diff': 0.0,
@@ -216,6 +217,7 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -233,7 +235,7 @@ class TestSpecialValuesChecker(Spec):
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes='all')
-        checker.configure(attributes=[self.column_name], thresholds={})
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1})
 
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
@@ -251,6 +253,8 @@ class TestSpecialValuesChecker(Spec):
         }
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
+
         checker.exclude(attributes=[self.column_name])
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
@@ -273,12 +277,12 @@ class TestSpecialValuesChecker(Spec):
                     'current_percentage': 0.25,
                     'passed': True
                 }
-            }, 
+            },
             self.column_name_2:{
                 numpy.nan: {
                     'percentage_diff': 0.0,
                     'ref_percentage': 0.25,
-                    'current_percentage': 0.25, 
+                    'current_percentage': 0.25,
                     'passed': True
                 }
             }
@@ -286,8 +290,8 @@ class TestSpecialValuesChecker(Spec):
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes='all')
-        checker.configure(attributes=[self.column_name], thresholds={})
-        checker.configure(attributes=[self.column_name_2], thresholds={})
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1 })
+        checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1 })
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -314,3 +318,61 @@ class TestSpecialValuesChecker(Spec):
             self.fail('Failed to throw appropraite error message for incorrectly specified threshold')
         except ValueError as ve:
             self.assertTrue('invalid threshold' in str(ve).lower())
+
+    def test_special_values_check_configure_uses_values_in_thresholds_to_determine_if_passed(self):
+        self.maxDiff = None
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.5,
+                    'passed': False
+                }
+            },
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.5,
+                    'passed': True
+                }
+            }
+        }
+
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name], thresholds={ numpy.nan: 0.1 })
+        checker.configure(attributes=[self.column_name_2], thresholds={ numpy.nan: 0.5 })
+        
+        dataframe_to_validate = dataframe.copy()
+        dataframe_to_validate.iloc[-2,:2] = numpy.nan
+
+        results = checker.validate(dataframe_to_validate)
+        self.assertEqual(expected_check_results, results)
+
+    def test_special_values_check_configure_applies_values_in_thresholds_to_all_specified_columns_to_determine_if_passed(self):
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            },
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            }
+        }
+
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ numpy.nan: 0.1 })
+        results = checker.validate(dataframe)
+        self.assertEqual(expected_check_results, results)
