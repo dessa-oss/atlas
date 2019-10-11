@@ -226,9 +226,9 @@ class TestSchemaChecker(Spec):
         current_dataframe = pandas.DataFrame(columns=[self.column_name], data=[[10]])
 
         schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        schema_checker.configure(attributes=[self.column_name], column_types = {self.column_name: str(self.two_column_dataframe.dtypes[self.column_name])})
+        schema_checker.exclude(attributes='all')
+        schema_checker.configure(attributes=[self.column_name])
         validation_result = schema_checker.validate(current_dataframe)
-
         self.assertEqual({'passed': True}, validation_result)
 
     def test_check_schema_excludes_columns_passes_on_mismatched_reference_and_current_dataframes(self):
@@ -241,13 +241,36 @@ class TestSchemaChecker(Spec):
         validation_result = schema_checker.validate(current_dataframe)
         self.assertEqual({'passed': True}, validation_result)
 
+    def test_check_schema_with_multiple_calls_to_configuration_appends_to_previous_configurations(self):
+        import pandas
+        num_rows_columns = 4
+        records = []
+        
+        for row in range(num_rows_columns):
+            records.append([])
+            for col in range(num_rows_columns):
+                records[row].append(col)
+        
+        reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2, self.column_name_3, self.column_name_4], data=records)
+        current_dataframe = reference_dataframe.copy()
+        schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
+        
+        schema_checker.exclude(attributes='all')
+
+        schema_checker.configure(attributes=[self.column_name, self.column_name_2])
+        schema_checker.configure(attributes=[self.column_name_3, self.column_name_4])
+
+        validation_result = schema_checker.validate(current_dataframe)
+
+        self.assertEqual({'passed': True}, validation_result)
+
     def test_schema_checker_excludes_all_columns_by_default_and_tests_passed(self):
         import pandas, numpy
         reference_dataframe = pandas.DataFrame(columns=[self.column_name, self.column_name_2], data=[[1, 2]])
         current_dataframe = pandas.DataFrame(columns=[self.column_name_2], data=[[10]])
 
         schema_checker = self._schema_checker_from_dataframe(reference_dataframe)
-        schema_checker.exclude()
+        schema_checker.exclude(attributes='all')
         validation_result = schema_checker.validate(current_dataframe)
         self.assertEqual({'passed': True}, validation_result)
 

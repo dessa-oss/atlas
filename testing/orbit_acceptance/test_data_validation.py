@@ -174,7 +174,6 @@ class TestDataValidation(Spec):
         self.assertEqual(['feat_x'], missing_in_ref)
         self.assertEqual(['feat_1'], missing_in_current)
 
-    @skip('NOT IMPLEMENTED')
     def test_get_schema_validation_passes_when_column_missing_but_configured_without_it(self):
         import datetime
         
@@ -182,7 +181,7 @@ class TestDataValidation(Spec):
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
         columns= current_dataframe_different_schema.columns.tolist()
-        data_contract.schema_test.exclude()
+        data_contract.schema_test.exclude(attributes='all')
         data_contract.schema_test.configure(attributes=columns)
 
         validation_report = data_contract.validate(current_dataframe_different_schema, datetime.datetime.today())
@@ -190,7 +189,6 @@ class TestDataValidation(Spec):
         schema_check_passed = validation_report['schema_check_results']['passed']
         self.assertTrue(schema_check_passed)
 
-    @skip('NOT IMPLEMENTED')
     def test_get_schema_validation_passes_when_column_missing_but_excluded_without_it(self):
         import datetime
 
@@ -204,14 +202,13 @@ class TestDataValidation(Spec):
         schema_check_passed = validation_report['schema_check_results']['passed']
         self.assertTrue(schema_check_passed)
 
-    @skip('NOT IMPLEMENTED')
     def test_get_schema_validation_passes_when_column_names_configured_using_two_calls(self):
         import datetime
 
         current_dataframe_different_schema = self.reference_dataframe_different_schema.copy()
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
         columns= current_dataframe_different_schema.columns.tolist()
-        data_contract.schema_test.exclude()
+        data_contract.schema_test.exclude(attributes='all')
         data_contract.schema_test.configure(attributes=['feat_1', 'feat_2'])
         data_contract.schema_test.configure(attributes=['feat_0', 'feat_3'])
 

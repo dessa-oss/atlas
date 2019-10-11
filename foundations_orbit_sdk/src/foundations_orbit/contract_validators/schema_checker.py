@@ -8,32 +8,37 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class SchemaChecker(object):
     
     def __init__(self, column_names, column_types):
-        self._reference_column_names = column_names
+        self._reference_column_names = column_names.copy()
         self._column_types = column_types
         self._excluded_columns = []
+        self._configured_columns = column_names.copy()
 
     def __str__(self):
         import json
         test_information = {
-            'column_names': self._reference_column_names,
+            'column_names': self._configured_columns,
             'column_types': self._column_types
         }
         return json.dumps(test_information)
 
-    def configure(self, attributes, column_types=None):
-        self._reference_column_names = attributes
-        if column_types:
-            self._column_types = column_types
+    def configure(self, attributes):
+        self._configured_columns =  self._union_of_column_names_preserving_order(self._configured_columns, attributes)
+        
+        for column in attributes:
+            try:
+                self._excluded_columns.remove(column)
+            except:
+                pass
 
     def exclude(self, attributes=None):
-        if attributes:
-            self._reference_column_names = self._update_column_names_to_be_removed(self._reference_column_names, attributes)
-            self._excluded_columns = list(set(attributes).union(set(self._excluded_columns)))
+        if attributes == 'all':
+            self._excluded_columns = self._configured_columns
+            self._configured_columns = []
         else:
-            self._excluded_columns = self._reference_column_names
-            self._reference_column_names = []
+            self._configured_columns = self._update_column_names_to_be_removed(self._configured_columns, attributes)
+            self._excluded_columns = list(set(attributes).union(set(self._excluded_columns)))
 
-        self._column_types = self._update_column_types(self._reference_column_names, self._column_types)
+        # self._column_types = self._update_column_types(self._configured_columns, self._column_types)
 
     def validate(self, current_dataframe):
         import pandas
@@ -64,7 +69,7 @@ class SchemaChecker(object):
 
         schema_check_results['error_message'] = 'columns not in order'
 
-        ref_column_series = pandas.Series(self._reference_column_names)
+        ref_column_series = pandas.Series(self._configured_columns)
         current_column_series = pandas.Series(columns_to_validate)
 
         schema_check_results.update(self._column_sets_in_wrong_order_information(ref_column_series, current_column_series))
@@ -77,6 +82,11 @@ class SchemaChecker(object):
         return new_column_types
 
     def _update_column_names_to_be_removed(self, column_names, columns_to_be_removed):
+        """
+            removes the column listed in columns_to_be_removed while preserving the order
+            of the column names in the column_names list.
+            (NB The use of the set operation of list changes the order)
+        """
         new_column_names = column_names.copy()
         for column in columns_to_be_removed:
             try:
@@ -85,18 +95,33 @@ class SchemaChecker(object):
                 pass
         return new_column_names
 
+    def _union_of_column_names_preserving_order(self, column_names, columns_to_be_added):
+        new_column_names = []
+        for original_column in self._reference_column_names:
+            if original_column in column_names or original_column in columns_to_be_added:
+                new_column_names.append(original_column)
+        return new_column_names
+
     def _reference_column_names_match(self, columns_to_validate):
-        return self._reference_column_names == columns_to_validate
+        return self._configured_columns == columns_to_validate
 
     def _data_types_match(self, types_to_validate):
-        return self._column_types == types_to_validate
+        bool_result = True
+        for column, col_type in types_to_validate.items():
+            try:
+                bool_result = bool_result and self._column_types[column] == col_type
+                if not bool_result:
+                    return bool_result
+            except:
+                pass
+        return bool_result
 
     def _column_sets_not_equal(self, current_column_names):
-        return set(self._reference_column_names) != current_column_names
+        return set(self._configured_columns) != current_column_names
 
     def _column_sets_not_equal_error_information(self, current_column_names):
-        missing_in_ref = current_column_names - set(self._reference_column_names)
-        missing_in_current = set(self._reference_column_names) - current_column_names
+        missing_in_ref = current_column_names - set(self._configured_columns)
+        missing_in_current = set(self._configured_columns) - current_column_names
 
         return {'missing_in_ref': list(missing_in_ref), 'missing_in_current': list(missing_in_current)}
 
