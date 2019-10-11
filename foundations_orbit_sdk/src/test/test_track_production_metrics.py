@@ -21,7 +21,7 @@ class TestTrackProductionMetrics(Spec):
         return self.patch('os.environ', {})
 
     @let
-    def model_name(self):
+    def monitor_name(self):
         return self.faker.uuid4()
 
     @let
@@ -79,7 +79,7 @@ class TestTrackProductionMetrics(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_environment['MODEL_NAME'] = self.model_name
+        self.mock_environment['MONITOR_NAME'] = self.monitor_name
         self.mock_environment['PROJECT_NAME'] = self.project_name
         
         self.mock_int_like.__int__ = lambda *args: self.int_value
@@ -95,13 +95,13 @@ class TestTrackProductionMetrics(Spec):
         production_metrics = self._retrieve_tracked_metrics()
         self.assertEqual({self.metric_name: []}, production_metrics)
 
-    def test_track_production_metrics_with_nonexistent_model_name_throws_exception(self):
-        self.mock_environment['MODEL_NAME'] = ''
+    def test_track_production_metrics_with_nonexistent_monitor_name_throws_exception(self):
+        self.mock_environment['MONITOR_NAME'] = ''
     
         with self.assertRaises(RuntimeError) as error_context:
             track_production_metrics(self.metric_name, {})
         
-        self.assertIn('Model name not set', error_context.exception.args)
+        self.assertIn('Monitor name not set', error_context.exception.args)
 
     def test_track_production_metrics_with_nonexistent_project_name_throws_exception(self):
         self.mock_environment['PROJECT_NAME'] = ''
@@ -225,6 +225,6 @@ class TestTrackProductionMetrics(Spec):
         self.assertIn(f'cannot log metric `{self.metric_name}` with column name `{self.column_name}` of type `{type(self.dataframe)}` - must be able to cast to int or float', ex.exception.args)
 
     def _retrieve_tracked_metrics(self):
-        production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:models:{self.model_name}:production_metrics')
+        production_metrics_from_redis = self.mock_redis.hgetall(f'projects:{self.project_name}:monitors:{self.monitor_name}:production_metrics')
         return {metric_name.decode(): pickle.loads(serialized_metrics) for metric_name, serialized_metrics in production_metrics_from_redis.items()}
 

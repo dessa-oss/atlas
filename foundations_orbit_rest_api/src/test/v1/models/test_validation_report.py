@@ -22,7 +22,7 @@ class TestValidationReport(Spec):
         return self.faker.word()
 
     @let
-    def model_package(self):
+    def monitor_package(self):
         return self.faker.word()
 
     @let
@@ -42,7 +42,7 @@ class TestValidationReport(Spec):
         self.redis_connection.flushall()
 
     def test_validation_report_get_returns_none_if_report_not_in_redis(self):
-        listing_object = ValidationReportListing(inference_period=self.inference_period, model_package=self.model_package, data_contract=self.data_contract)
+        listing_object = ValidationReportListing(inference_period=self.inference_period, monitor_package=self.monitor_package, data_contract=self.data_contract)
         promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
         self.assertIsNone(promise.evaluate())
 
@@ -56,20 +56,20 @@ class TestValidationReport(Spec):
             }
         }
 
-        self._register_report(self.project_name, self.model_package, self.data_contract, self.inference_period, expected_result)
+        self._register_report(self.project_name, self.monitor_package, self.data_contract, self.inference_period, expected_result)
 
-        listing_object = ValidationReportListing(inference_period=self.inference_period, model_package=self.model_package, data_contract=self.data_contract)
+        listing_object = ValidationReportListing(inference_period=self.inference_period, monitor_package=self.monitor_package, data_contract=self.data_contract)
         promise = ValidationReport.get(project_name=self.project_name, listing_object=listing_object)
 
         self.assertEqual(expected_result, promise.evaluate())
 
     @staticmethod
-    def _key_to_write(project_name, model_package, data_contract):
-        return f'projects:{project_name}:models:{model_package}:validation:{data_contract}'
+    def _key_to_write(project_name, monitor_package, data_contract):
+        return f'projects:{project_name}:monitors:{monitor_package}:validation:{data_contract}'
 
-    def _register_report(self, project_name, model_package, data_contract, inference_period, validation_report):
+    def _register_report(self, project_name, monitor_package, data_contract, inference_period, validation_report):
         import pickle
 
-        key_to_write = self._key_to_write(project_name, model_package, data_contract)
+        key_to_write = self._key_to_write(project_name, monitor_package, data_contract)
         self.redis_connection.hset(key_to_write, inference_period, pickle.dumps(validation_report))
     

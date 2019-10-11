@@ -37,13 +37,13 @@ class TestRetrieveValidationReportEndpoint(Spec):
     def test_retrieve_validation_report_gives_a_404_if_not_exists(self):
         post_data = {
             'inference_period': '2019-05-01',
-            'model_package': 'model_abcdefg',
+            'monitor_package': 'model_abcdefg',
             'data_contract': 'data_contract_1'
         }
 
         expected_response_data = {
             'inference_period': '2019-05-01',
-            'model_package': 'model_abcdefg',
+            'monitor_package': 'model_abcdefg',
             'data_contract': 'data_contract_1',
             'error': 'does not exist'
         }
@@ -58,7 +58,7 @@ class TestRetrieveValidationReportEndpoint(Spec):
 
         post_data = {
             'inference_period': '2019-05-01',
-            'model_package': 'model_abcdefg',
+            'monitor_package': 'model_abcdefg',
             'data_contract': 'data_contract_1'
         }
 
@@ -69,7 +69,7 @@ class TestRetrieveValidationReportEndpoint(Spec):
             }
         }
 
-        self.redis.hset(f'projects:test_project:models:model_abcdefg:validation:data_contract_1', '2019-05-01', pickle.dumps(expected_response_data))
+        self.redis.hset(f'projects:test_project:monitors:model_abcdefg:validation:data_contract_1', '2019-05-01', pickle.dumps(expected_response_data))
 
         response = self._post_response_from_route(data=post_data)
 
