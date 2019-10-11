@@ -24,7 +24,6 @@ class SchemaChecker(object):
     def configure(self, attributes):
         if isinstance(attributes, list):
             self._configured_columns =  self._union_of_column_names_preserving_order(self._configured_columns, attributes)
-            
             for column in attributes:
                 try:
                     self._excluded_columns.remove(column)

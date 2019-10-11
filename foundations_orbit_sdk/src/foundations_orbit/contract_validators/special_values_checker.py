@@ -9,7 +9,7 @@ import numpy as np
 class SpecialValuesChecker(object):
 
     def __init__(self, config_options, bin_stats, reference_column_names):
-        self._config_options = config_options
+        self._config_options = config_options.copy()
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names
 
@@ -25,8 +25,18 @@ class SpecialValuesChecker(object):
         
         return special_values_results
 
-    def configure(self, attributes):
-        self._reference_column_names = attributes
+    def configure(self, attributes=None, thresholds=None):
+        if attributes == None:
+            raise ValueError('Invalid attribute: The attribute is required for configuration')
+        if thresholds == None:
+            raise ValueError('Invalid threshold: The threshold is required for configuration')
+        if not isinstance(thresholds, dict):
+            raise ValueError('Invalid threshold: thresholds must be specified using dictionaries')
+        
+        self._reference_column_names = list(set(self._reference_column_names).union(set(attributes)))
 
     def exclude(self, attributes):
-        self._reference_column_names = set(self._reference_column_names) - set(attributes)
+        if attributes == 'all':
+            self._reference_column_names = []
+        else:
+            self._reference_column_names = set(self._reference_column_names) - set(attributes)

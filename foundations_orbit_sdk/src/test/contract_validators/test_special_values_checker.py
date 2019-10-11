@@ -189,12 +189,13 @@ class TestSpecialValuesChecker(Spec):
 
         dataframe = pandas.DataFrame(data)
         return data, dataframe
+
+    def _create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(self, special_character):
+        data, dataframe = self._create_two_column_data_and_dataframe_with_special_characeters(special_character)
+        bin_stats = self._create_two_column_bin_stats_from_data(data, special_character)
+        return SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2]), dataframe
     
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed(self):
-        
-        data, dataframe = self._create_two_column_data_and_dataframe_with_special_characeters(numpy.nan)
-        bin_stats = self._create_two_column_bin_stats_from_data(data, numpy.nan)
-
         expected_check_results = {
             self.column_name:{
                 numpy.nan: {
@@ -214,15 +215,11 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed_for_configured_column(self):
-        
-        data, dataframe = self._create_two_column_data_and_dataframe_with_special_characeters(numpy.nan)
-        bin_stats = self._create_two_column_bin_stats_from_data(data, numpy.nan)
-
         expected_check_results = {
             self.column_name:{
                 numpy.nan: {
@@ -234,17 +231,14 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
-        checker.configure(attributes=[self.column_name])
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name], thresholds={})
 
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed_excluding_column(self):
-        
-        data, dataframe = self._create_two_column_data_and_dataframe_with_special_characeters(numpy.nan)
-        bin_stats = self._create_two_column_bin_stats_from_data(data, numpy.nan)
-
         expected_check_results = {
             self.column_name_2:{
                 numpy.nan: {
@@ -256,7 +250,67 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes=[self.column_name])
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
+    
+    def test_special_values_checker_allows_exclude_all(self):
+        expected_check_results = {}
+
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        results = checker.validate(dataframe)
+        self.assertEqual(expected_check_results, results)
+
+
+    def test_special_values_check_configure_multiple_times_appends_to_previous_configurations(self):
+        expected_check_results = {
+            self.column_name:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25,
+                    'passed': True
+                }
+            }, 
+            self.column_name_2:{
+                numpy.nan: {
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.25,
+                    'current_percentage': 0.25, 
+                    'passed': True
+                }
+            }
+        }
+
+        checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name], thresholds={})
+        checker.configure(attributes=[self.column_name_2], thresholds={})
+        results = checker.validate(dataframe)
+        self.assertEqual(expected_check_results, results)
+
+    def test_special_values_check_requires_attributes_as_a_parameter(self):
+        checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        try:
+            checker.configure()
+            self.fail('Failed to throw appropraite error message for missing attribute')
+        except ValueError as ve:
+            self.assertTrue('attribute is required' in str(ve).lower())
+
+    def test_special_values_check_requires_threshold_as_a_parameter(self):
+        checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        try:
+            checker.configure(attributes=[])
+            self.fail('Failed to throw appropraite error message for missing attribute')
+        except ValueError as ve:
+            self.assertTrue('threshold is required' in str(ve).lower())
+
+    def test_special_values_check_requires_threshold_as_a_parameter(self):
+        checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
+        try:
+            checker.configure(attributes=[], thresholds=[])
+            self.fail('Failed to throw appropraite error message for incorrectly specified threshold')
+        except ValueError as ve:
+            self.assertTrue('invalid threshold' in str(ve).lower())
