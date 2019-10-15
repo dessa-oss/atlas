@@ -9,7 +9,7 @@ import numpy as np
 import pickle
 
 from .utils import nand, count_and_remove_special_values, bin_current_values, add_special_value_l_infinity, \
-    add_binned_l_infinity
+    add_binned_metric
 
 
 def distribution_and_special_values_check(config_dict, column_names, bin_stats, current_df, is_special_value_check=False):
@@ -85,7 +85,8 @@ def distribution_and_special_values_check(config_dict, column_names, bin_stats, 
             add_special_value_l_infinity(col, sv_threshold, dist_check_results, ref_special_values,
                                             ref_special_value_percentages, current_special_value_percentages)
 
-        # add l_infinity test results to dist_check_results (distribution)
-        add_binned_l_infinity(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages)
+        custom_method = dist_check_config['custom_methods'].get(col, None)
+        method = custom_method if custom_method is not None else dist_check_config['distance_metric']
+        add_binned_metric(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages, method)
 
     return dist_check_results

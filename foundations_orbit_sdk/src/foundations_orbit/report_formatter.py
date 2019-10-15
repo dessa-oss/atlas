@@ -263,12 +263,16 @@ class ReportFormatter(object):
         population_shift_attribute_details = []
 
         for column, col_results in dist_check_results.items():
-            population_shift_attribute_details.append({
+            details = {
                 'attribute_name': column,
-                'L-infinity': col_results['binned_l_infinity'],
                 'validation_outcome': 'healthy' if col_results['binned_passed'] else 'critical',
-            })
-            
+            }
+            if 'binned_l_infinity' in col_results:
+                details['L-infinity'] = col_results['binned_l_infinity']
+            elif 'binned_psi' in col_results:
+                details['PSI'] = col_results['binned_psi']
+            population_shift_attribute_details.append(details)
+
             if col_results['binned_passed']:
                 population_shift_summary['healthy'] += 1
             else:

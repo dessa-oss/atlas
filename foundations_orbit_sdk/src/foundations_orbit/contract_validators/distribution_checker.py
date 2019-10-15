@@ -24,10 +24,14 @@ class DistributionChecker(object):
 
         return json.dumps(information)
 
-    def configure(self, attributes, threshold=None):
-        if threshold != None:
+    def configure(self, attributes, threshold=None, method=None):
+        if threshold is not None:
             for column_name in attributes:
                 self._distribution_options['custom_thresholds'][column_name] = threshold
+        if method is not None:
+            for column_name in attributes:
+                self._distribution_options['custom_methods'][column_name] = method
+
         self._reference_column_names = set(self._reference_column_names).union(set(attributes))
 
     def exclude(self, attributes):

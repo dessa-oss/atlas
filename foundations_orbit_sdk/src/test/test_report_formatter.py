@@ -39,6 +39,10 @@ class TestReportFormatter(Spec):
     @let
     def distribution_checks(self):
         return {column: self._gen_dist_check_result() for column in self.column_list}
+    
+    @let
+    def distribution_checks_with_psi(self):
+        return {column: self._gen_dist_check_result(psi=True) for column in self.column_list}
 
     @let
     def special_values_check(self):
@@ -72,6 +76,28 @@ class TestReportFormatter(Spec):
         }
 
     @let
+    def validation_report_with_psi(self):
+        return {
+            'schema_check_results': {
+                'passed': False,
+                'error_message': ''
+            },
+            'metadata': {
+                'reference_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                },
+                'current_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                }
+            },
+            'dist_check_results': self.distribution_checks_with_psi,
+            'special_values_check_results': self.special_values_check
+        }
+
+
+    @let
     def column_name(self):
         return self.faker.sentence()
 
@@ -101,7 +127,12 @@ class TestReportFormatter(Spec):
             }
         }
 
-    def _gen_dist_check_result(self):
+    def _gen_dist_check_result(self, psi=False):
+        if psi == True:
+            return {
+                'binned_passed': True,
+                'binned_psi': 0.256
+            }
         return {
             'binned_passed': True,
             'binned_l_infinity': 0.2
@@ -704,6 +735,21 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
+    def test_return_population_shift_details_when_all_columns_are_healthy_and_psi_metric_used(self):
+        self.validation_report_with_psi['schema_check_results'] = {'passed': True}
+
+        population_shift_attribute_details = []
+
+        for column, details in self.distribution_checks_with_psi.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'PSI': 0.256,
+                'validation_outcome': 'healthy',
+            })
+        
+        formatted_report = self._generate_formatted_report(psi=True)
+        self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
+    
     def test_return_population_shift_summary_when_one_columns_is_unhealthy(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
@@ -761,11 +807,11 @@ class TestReportFormatter(Spec):
         in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
         return columns_in_reference_dataframe + list(in_current_not_in_reference)
 
-    def _generate_formatted_report(self):
+    def _generate_formatted_report(self, psi=False):
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     model_package=self.model_package,
                                     contract_name=self.contract_name,
-                                    validation_report=self.validation_report,
+                                    validation_report=self.validation_report if not psi else self.validation_report_with_psi,
                                     options=self.data_contract_options)
 
         return formatter.formatted_report()

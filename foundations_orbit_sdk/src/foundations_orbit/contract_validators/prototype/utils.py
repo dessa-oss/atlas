@@ -39,11 +39,13 @@ def spread_counts_over_identical_edges(binned_values, edges):
 def l_infinity(ref_percentages, current_percentages):
     return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
+def entropy(pk, qk):
+    return round(np.sum(pk * np.log(pk/qk), axis=0), 3)
 
-def l_infinity_test(ref_percentages, current_percentages, threshold):
-    l_infinity_score = l_infinity(ref_percentages, current_percentages)
-    return l_infinity_score < threshold
-
+def psi_score(ref_percentages, current_percentages):
+    ref_percentages_array = np.array(ref_percentages)
+    current_percentages_array = np.array(current_percentages)
+    return entropy(ref_percentages_array, current_percentages_array) + entropy(current_percentages_array, ref_percentages_array)
 
 def count_and_remove_special_values(ref_special_values, current_values):
     n_current_vals = len(current_values)
@@ -98,11 +100,13 @@ def add_special_value_l_infinity(col, threshold, dist_check_results, ref_special
             dist_check_results[col]['special_values'][sv]['passed'] = False
 
 
-def add_binned_l_infinity(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages):
-    # l-infinity test for the rest of the bins
-    l_infinity_score = l_infinity(ref_bin_percentages, current_bin_percentages)
-    dist_check_results[col]['binned_l_infinity'] = l_infinity_score
-    if l_infinity_score < threshold:
-        dist_check_results[col]['binned_passed'] = True
+def add_binned_metric(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages, method_name):
+    if method_name == 'l_infinity':
+        distance_metric = l_infinity(ref_bin_percentages, current_bin_percentages)
+    elif method_name == 'psi':
+        distance_metric = psi_score(ref_bin_percentages, current_bin_percentages)
     else:
-        dist_check_results[col]['binned_passed'] = False
+        return
+
+    dist_check_results[col][f'binned_{method_name}'] = distance_metric
+    dist_check_results[col]['binned_passed'] = distance_metric < threshold

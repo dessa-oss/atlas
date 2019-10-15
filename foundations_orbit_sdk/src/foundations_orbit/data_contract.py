@@ -38,6 +38,7 @@ class DataContract(object):
             'cols_to_include': None,
             'cols_to_ignore': None,
             'custom_thresholds': {},
+            'custom_methods': {},
             'special_value_thresholds': {}
         }
 
