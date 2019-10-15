@@ -13,6 +13,11 @@ class TestDeployMonitor(Spec):
     def job_name(self):
         return self.faker.uuid4()
 
+    @let_now
+    def config_manager(self):
+        from foundations_contrib.config_manager import ConfigManager
+        return self.patch('foundations_contrib.global_state.config_manager', ConfigManager())
+
     def test_job_bundle_returns_job_bundler_with_correct_params(self):
         from foundations_local_docker_scheduler_plugin.deploy_monitor import job_bundle
 
@@ -35,4 +40,24 @@ class TestDeployMonitor(Spec):
 
         self.assertEqual(mock_job_bundler, job_bundle(self.job_name))
 
-        
+    def test_submit_job_bundle_posts_to_correct_endpoint_with_file(self):
+        from foundations_local_docker_scheduler_plugin.deploy_monitor import submit_job_bundle
+        from foundations_contrib.job_bundling.folder_job_source_bundle import FolderJobSourceBundle
+
+        self.config_manager['scheduler_url'] = 'http://localhost:5000'
+
+        folder_job_bundle = FolderJobSourceBundle()
+
+        mock_open = self.patch('builtins.open', ConditionalReturn())
+        mock_file = Mock()
+        mock_open.return_when(mock_file, '.', 'rb')
+        mock_file.__enter__ = lambda *_: mock_file
+        mock_file.__exit__ = Mock()
+
+        mock_post = self.patch('requests.post', ConditionalReturn())
+        mock_response = Mock()
+        mock_post.return_when(mock_response, 'http://localhost:5000/job_bundle', files={'job_bundle': mock_file})
+
+        response = submit_job_bundle(folder_job_bundle)
+
+        self.assertEquals(mock_response, response)
