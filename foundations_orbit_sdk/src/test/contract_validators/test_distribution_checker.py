@@ -241,3 +241,112 @@ class TestDistributionChecker(Spec):
         checker.exclude(attributes = [self.column_name])
         validate_results = checker.validate(self.two_column_dataframe)
         self.assertEqual(expected_dist_check_result, validate_results)
+    
+    def test_distribution_checker_run_with_all_columns_excluded_returns_empty_dictionary(self):
+
+        expected_dist_check_result = {}
+    
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.exclude(attributes='all')
+        validate_results = checker.validate(self.two_column_dataframe)
+        self.assertEqual(expected_dist_check_result, validate_results)
+    
+    def test_distribution_checker_uses_defaults_when_run(self):
+
+        data = {
+            self.column_name: [1,2,3,4,5,6,7,8,9,1.5,100],
+            self.column_name_2: [50,2,400,51,52,53,54,55,56,57,58]
+        }
+        dataframe = pandas.DataFrame(data)
+        
+
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 0.091,
+                'binned_passed': 0.091 < checker._distribution_options['default_threshold'],
+            },
+            self.column_name_2: {
+                'binned_l_infinity':  0.909,
+                'binned_passed': 0.909 < checker._distribution_options['default_threshold'],
+            }
+        }
+
+        validate_results = checker.validate(dataframe)
+        self.assertEqual(expected_dist_check_result, validate_results)
+    
+    def test_distribution_checker_runs_test_on_all_column_names_that_are_configured(self):
+
+        data = {
+            self.column_name: [1,2,3],
+            self.column_name_2: [4,5,6]
+        }
+        dataframe = pandas.DataFrame(data)
+        
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name])
+        checker.configure(attributes=[self.column_name_2])
+
+        validate_results = checker.validate(dataframe)
+
+        self.assertIn(self.column_name, validate_results)
+        self.assertIn(self.column_name_2, validate_results)
+
+    def test_distribution_checker_runs_test_on_all_column_names_that_are_configured_with_threshold(self):
+
+        data = {
+            self.column_name: [1,2,12],
+            self.column_name_2: [50, 2, 400]
+        }
+        dataframe = pandas.DataFrame(data)
+
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 0.333,
+                'binned_passed': False,
+            },
+            self.column_name_2: {
+                'binned_l_infinity':  0.667,
+                'binned_passed': True,
+            }
+        }
+        
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name])
+        checker.configure(attributes=[self.column_name_2], threshold=0.7)
+
+        validate_results = checker.validate(dataframe)
+
+        self.assertEqual(expected_dist_check_result, validate_results)
+    
+    @skip('not implemented')
+    def test_distribution_checker_runs_test_as_expected_on_columns_configured_with_a_certain_method(self):
+        data = {
+            self.column_name: [1,2,12],
+            self.column_name_2: [50, 2, 400]
+        }
+        dataframe = pandas.DataFrame(data)
+
+        expected_dist_check_result = {
+            self.column_name: {
+                'binned_l_infinity': 0.333,
+                'binned_passed': False,
+            },
+            self.column_name_2: {
+                'binned_l_infinity':  0.667,
+                'binned_passed': True,
+            }
+        }
+        
+        checker = DistributionChecker(self.distribution_options, self.bin_stats_two_column_no_special_value, [self.column_name, self.column_name_2])
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name])
+        checker.configure(attributes=[self.column_name_2], method='psi')
+
+        validate_results = checker.validate(dataframe)
+
+        self.assertEqual(expected_dist_check_result, validate_results)
+    

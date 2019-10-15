@@ -7,25 +7,9 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 
 import numpy as np
-class DistributionChecker(object):
-    '''
-    Expected format of dist_check_results
-        {
-            'col1': {
-                'binned_passed': False,
-                'binned_l_infinity': 0.2,
-                'special_values':{
-                    'nan':{
-                        'percentage_diff': 0.15, 'ref_percentage': 0, 
-                        'current_percentage': 0.15, 'passed': True
-                    }
-                }
-            }
-        }
-    '''
-    
+class DistributionChecker(object):   
     def __init__(self, distribution_options, bin_stats, reference_column_names):
-        self._distribution_options = distribution_options
+        self._distribution_options = distribution_options.copy()
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names
 
@@ -40,11 +24,17 @@ class DistributionChecker(object):
 
         return json.dumps(information)
 
-    def configure(self, attributes):
-        self._reference_column_names = attributes
+    def configure(self, attributes, threshold=None):
+        if threshold != None:
+            for column_name in attributes:
+                self._distribution_options['custom_thresholds'][column_name] = threshold
+        self._reference_column_names = set(self._reference_column_names).union(set(attributes))
 
     def exclude(self, attributes):
-        self._reference_column_names = set(self._reference_column_names) - set(attributes)
+        if attributes == 'all':
+            self._reference_column_names = set()
+        else:
+            self._reference_column_names = set(self._reference_column_names) - set(attributes)
 
     def validate(self, dataframe_to_validate):
         if dataframe_to_validate is None or len(dataframe_to_validate) == 0:
@@ -56,8 +46,5 @@ class DistributionChecker(object):
         ##### PROTOTYPE CODE - rebuild distribution checker using TDD or Black-box based approach asap
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
         test_data = distribution_and_special_values_check(self._distribution_options, self._reference_column_names, self._bin_stats, dataframe_to_validate)
-        
-        # for column_name, distribution_results in test_data.items():
-        #     del distribution_results['special_values']
         
         return test_data
