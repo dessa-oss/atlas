@@ -367,7 +367,6 @@ class TestDataValidation(Spec):
         self.assertEqual(expected_distribution_report, distribution_report)
         self.assertEqual(expected_special_values_report, special_values_report)
 
-    @skip('need to convert special values to strings')
     def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
         import numpy
         import subprocess
@@ -560,8 +559,6 @@ class TestDataValidation(Spec):
 
         dc.special_value_test.configure(attributes=['feat_1', 'feat_2'], thresholds={numpy.nan: 0.6, -1: 0.1})
         validation_report = dc.validate(dataframe_to_validate)
-        # from pprint import pprint
-        # pprint(validation_report)
 
         special_values_report = validation_report['special_values_check_results']
 
