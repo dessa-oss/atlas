@@ -87,7 +87,7 @@ class JobBundler(object):
     def _tar_job_source_bundle_archive(self, tarfile):
         import os
 
-        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, 'job.tgz'))
+        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, 'job_source'))
     
     def _tar_job_binary(self, tarfile):
         import os
