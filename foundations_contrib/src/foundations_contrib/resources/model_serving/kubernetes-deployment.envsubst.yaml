@@ -19,7 +19,7 @@ spec:
       nodeSelector:
         jobRunner: "True"
       containers:
-      - image: docker.shehanigans.net/foundations-model-package
+      - image: docker.shehanigans.net/foundations-model-package:${foundations_version}
         imagePullPolicy: IfNotPresent
         env:
           - name: JOB_ID
