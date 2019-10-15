@@ -320,7 +320,6 @@ class TestSpecialValuesChecker(Spec):
             self.assertTrue('invalid threshold' in str(ve).lower())
 
     def test_special_values_check_configure_uses_values_in_thresholds_to_determine_if_passed(self):
-        self.maxDiff = None
         expected_check_results = {
             self.column_name:{
                 numpy.nan: {

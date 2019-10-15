@@ -165,7 +165,6 @@ class TestDistributionChecker(Spec):
         self.assertEqual(expected_dist_check_result, validate_results)
 
     def test_distribution_check_single_column_dataframe_for_non_special_values_in_bin(self):
-        self.maxDiff = None
         expected_dist_check_result = {
             self.column_name: {
                 'binned_l_infinity': 1.0,

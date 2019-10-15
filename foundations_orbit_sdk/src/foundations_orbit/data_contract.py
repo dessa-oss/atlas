@@ -57,10 +57,10 @@ class DataContract(object):
     @staticmethod
     def load(model_package_directory, contract_name):
         import pickle
-
         data_contract_file_name = DataContract._data_contract_file_path_with_contract_name(model_package_directory, contract_name)
         with open(data_contract_file_name, 'rb') as contract_file:
-            return DataContract._deserialized_contract(contract_file.read())
+            dc = DataContract._deserialized_contract(contract_file.read())
+        return dc
 
     def _save_to_redis(self, project_name, model_name, contract_name, inference_period, serialized_output):
         from foundations_contrib.global_state import redis_connection
