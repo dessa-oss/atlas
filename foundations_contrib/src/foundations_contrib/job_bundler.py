@@ -10,7 +10,7 @@ from foundations_contrib.working_directory_stack import WorkingDirectoryStack
 
 class JobBundler(object):
 
-    def __init__(self, job_name, config, job, job_source_bundle):
+    def __init__(self, job_name, config, job, job_source_bundle, job_source_name='job.tgz'):
         import os
         from tempfile import mkdtemp
 
@@ -21,6 +21,7 @@ class JobBundler(object):
         self._job = job
         self._job_source_bundle = job_source_bundle
         self._path = mkdtemp()
+        self._job_source_name = job_source_name
 
     def job_name(self):
         return self._job_name
@@ -87,7 +88,7 @@ class JobBundler(object):
     def _tar_job_source_bundle_archive(self, tarfile):
         import os
 
-        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, 'job_source'))
+        tarfile.add(self._job_source_bundle.job_archive(), arcname=os.path.join(self._job_name, self._job_source_name))
     
     def _tar_job_binary(self, tarfile):
         import os
