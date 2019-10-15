@@ -47,10 +47,11 @@ class TestScheduleMonitorPackageViaCli(Spec):
         
         result = subprocess.run(
             [
+                'python', '-m',
                 'foundations', 'orbit', 'monitor', 'start',
                 f'--monitor={self.monitor_name}',
-                f'--project_name={self.project_name}',
-                f'--job_directory={self.monitor_package_dir}'
+                f'--project-name={self.project_name}',
+                f'--job-directory={self.monitor_package_dir}'
             ]
         )
 
