@@ -48,6 +48,7 @@ class TestJobSubmissionConfig(Spec):
         load(self.config_name)
         self.print_mock.assert_not_called()
 
+    @skip('Pending merge from trunk')
     def test_loads_config_into_config_manager_when_config_present(self):
         from foundations_scheduler_plugin.config.scheduler import translate
 

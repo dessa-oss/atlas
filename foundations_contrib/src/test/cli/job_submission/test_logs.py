@@ -36,10 +36,12 @@ class TestJobSubmissionLogs(Spec):
         self.deployment.stream_job_logs.return_value = self.log_stream
         self.mock_get_logger.return_when(self.mock_logger, 'foundations_contrib.cli.job_submission.logs')
 
+    @skip('Pending merge from trunk')
     def test_logs_user_feedback_when_streaming_started(self):
         stream_job_logs(self.deployment)
         self.mock_logger.info.assert_has_calls([call('Job is queued; Ctrl-C to stop streaming - job will not be interrupted or cancelled')])
 
+    @skip('Pending merge from trunk')
     def test_logs_that_job_is_running(self):
         stream_job_logs(self.deployment)
         self.mock_logger.info.assert_has_calls([call('Job is running; streaming logs')])

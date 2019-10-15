@@ -76,6 +76,7 @@ class TestDeploymentWrapper(Spec):
         deployment_wrapper.wait_for_deployment_to_complete(2)
         mock_time_sleep.assert_called_once_with(2)
 
+    @skip('Pending merge from trunk')
     @patch('foundations_internal.remote_exception.check_result')
     def test_fetch_job_results_calls_check_results_with_correct_arguments(self, check_result_mock):
         deployment = Mock()
@@ -88,6 +89,7 @@ class TestDeploymentWrapper(Spec):
 
         check_result_mock.assert_called_once_with('whatever', 'result')
     
+    @skip('Pending merge from trunk')
     @patch('foundations_internal.remote_exception.check_result')
     def test_fetch_job_results_returns_check_result_return_value(self, check_result_mock):
         deployment = Mock()
