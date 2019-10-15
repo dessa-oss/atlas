@@ -34,6 +34,15 @@ class TestScheduleMonitorPackageViaCli(Spec):
         import os
         return os.environ['FOUNDATIONS_HOME']
 
+    @set_up
+    def set_up(self):
+        from foundations_contrib.global_state import redis_connection
+        redis_connection.flushall()
+
+    @tear_down
+    def tear_down(self):
+        self._delete_scheduled_job(self.monitor_package_id)
+
     @staticmethod
     def _delete_scheduled_job(job_name):
         import os
@@ -47,6 +56,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
         
         result = subprocess.run(
             [
+                'python', '-m',
                 'foundations', 'orbit', 'monitor', 'start',
                 f'--monitor={self.monitor_name}',
                 f'--project-name={self.project_name}',
@@ -68,3 +78,43 @@ class TestScheduleMonitorPackageViaCli(Spec):
         for metric_set in metric_sets:
             self.assertEqual('current_time', metric_set.yAxis['title']['text'])
             print(metric_set.series)
+
+    def test_pause_scheduled_monitor_package_via_cli_halts_execution_but_can_resume_later(self):
+        import time
+
+        subprocess.run(
+            [
+                'foundations', 'orbit', 'monitor', 'start',
+                f'--monitor={self.monitor_name}',
+                f'--project_name={self.project_name}',
+                f'--job_directory={self.monitor_package_dir}'
+            ]
+        )
+
+        pause_result = subprocess.run(
+            [
+                'foundations', 'orbit', 'monitor', 'pause',
+                f'--monitor={self.monitor_name}',
+                f'--project_name={self.project_name}'
+            ]
+        )
+
+        self.assertEqual(0, pause_result.returncode)
+
+        time.sleep(7)
+        metric_sets_before_resume = ProductionMetricSet.all(self.project_name).evaluate()
+        self.assertIn(len(metric_sets_before_resume), [0, 1])
+
+        resume_result = subprocess.run(
+            [
+                'foundations', 'orbit', 'monitor', 'resume',
+                f'--monitor={self.monitor_name}',
+                f'--project_name={self.project_name}'
+            ]
+        )
+
+        self.assertEqual(0, resume_result.returncode)
+
+        time.sleep(7)
+        metric_sets_after_resume = ProductionMetricSet.all(self.project_name).evaluate()
+        self.assertIn(len(metric_sets_after_resume), [3, 4, 5])

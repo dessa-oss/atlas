@@ -5,6 +5,8 @@ export model_name=$2
 no_follow=$3
 export job_id=$4
 
+export foundations_version=$(bash ../../get_version.sh | tr '+' '_')
+
 if [[ -z $job_id ]]; then
     export job_id=$project_name-$model_name
 fi

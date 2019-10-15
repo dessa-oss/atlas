@@ -5,6 +5,8 @@ export job_id=$2
 export model_name=model-$model_number
 export namespace="foundations-scheduler-test"
 
+export foundations_version=$(bash ../get_version.sh | tr '+' '_')
+
 echo 'configuring config map for model package server'
 envsubst < submission_config.yaml | kubectl apply -f -
 echo 'Successfully configured config map for $job_id'
