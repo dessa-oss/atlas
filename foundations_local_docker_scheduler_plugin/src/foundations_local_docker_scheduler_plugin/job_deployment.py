@@ -40,22 +40,16 @@ class JobDeployment(object):
         import tarfile
         from pathlib import Path
         from sys import platform
+        import tempfile
         import requests
 
         try:
             self._job_bundler.bundle()
 
-            #TODO feature request on local docker scheduler to support copying instead of mounting the working dir
-            working_dir_root_path = Path(self._config['working_dir_root'])
+            working_dir_root_path = Path(tempfile.mkdtemp())
             bundle_path = Path(self._job_bundler.job_archive())
             job_mount_path = working_dir_root_path / bundle_path.stem
             job_working_dir_path = working_dir_root_path / bundle_path.stem / "job_source"
-
-            # # If we need to capture and persist the starting state of the job bundle
-            # # put job bundle to job_bundle_path
-            # job_store_root_path = Path(config['job_store_root'])
-            # from shutil import copy
-            # copy(bundle_path, job_store_root_path)
 
             with tarfile.open(bundle_path) as tar:
                 tar.extractall(path=working_dir_root_path)
@@ -63,8 +57,23 @@ class JobDeployment(object):
             with tarfile.open(job_mount_path / "job.tgz") as tar:
                 tar.extractall(path=job_working_dir_path)
 
+            temp_tarfile = tempfile.NamedTemporaryFile()
+            with tarfile.open(fileobj=temp_tarfile, mode='w:gz') as tar:
+                tar.add(job_mount_path, arcname=self.job_name())
+            temp_tarfile.seek(0)
+
+            with open(temp_tarfile.name, 'rb') as tarball:
+                request_payload = {
+                    'job_bundle': tarball
+                }
+                response = requests.post(f'{self._config["scheduler_url"]}/job_bundle', files=request_payload)
+
             project_name = self._job.pipeline_context().provenance.project_name
             username = self._job.pipeline_context().provenance.user_name
+
+            working_dir_root_path = Path(self._config['working_dir_root'])
+            bundle_path = Path(self._job_bundler.job_archive())
+            job_mount_path = working_dir_root_path / bundle_path.stem
 
             if platform == 'win32':
                 working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
@@ -90,13 +99,16 @@ class JobDeployment(object):
             gpu_spec = self._create_gpu_spec()
 
             myurl = f"{self._config['scheduler_url']}/queued_jobs"
-            r = requests.post(myurl, json={'job_id': self._job_id,
-                                           'spec': job_spec,
-                                           'metadata': {'project_name': project_name,
-                                                        'username': username},
-                                           'gpu_spec': gpu_spec
-                                           })
-        except requests.exceptions.ConnectionError:
+            r = requests.post(myurl, json={
+                                'job_id': self._job_id,
+                                 'spec': job_spec,
+                                 'metadata': {
+                                     'project_name': project_name,
+                                     'username': username
+                                 },
+                                'gpu_spec': gpu_spec
+                                })
+        except requests.exceptions.ConnectionError as e:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
         finally:
             self._job_bundler.cleanup()
