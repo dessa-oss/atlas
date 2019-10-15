@@ -281,16 +281,17 @@ class TestDataContract(Spec):
         mock_report_validator = self.patch('foundations_orbit.report_formatter.ReportFormatter')
         mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.utils.create_bin_stats.create_bin_stats')
         mock_bin_create_stats.return_value = self.bin_return_value
-
-        self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
-        
-        mock_distribution_check_results = Mock()
-        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker = Mock()
+        mock_distribution_check_results = Mock()
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
 
+        self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
+        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2])
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        
         mock_distribution_checker.validate = ConditionalReturn()
         mock_distribution_checker.validate.return_when(mock_distribution_check_results, self.two_column_dataframe)
 
@@ -453,6 +454,9 @@ class TestDataContract(Spec):
     def test_data_contract_has_special_values_checker(self):
         self._test_data_contract_has_test_as_attribute('special_value_test')
     
+    def test_data_contract_has_distribution_checker(self):
+        self._test_data_contract_has_test_as_attribute('distribution_test')
+    
     def test_data_contract_has_schema_checker_configured(self):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         self._test_data_contract_has_test_which_is_an_instance_of_expected_class('schema_test', SchemaChecker)
@@ -460,6 +464,10 @@ class TestDataContract(Spec):
     def test_data_contract_has_special_values_test_configured(self):
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         self._test_data_contract_has_test_which_is_an_instance_of_expected_class('special_value_test', SpecialValuesChecker)
+    
+    def test_data_contract_has_distribution_test_configured(self):
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('distribution_test', DistributionChecker)
 
     @skip('does not work when dataframe has no rows')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):

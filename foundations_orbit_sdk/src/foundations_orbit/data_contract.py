@@ -12,6 +12,7 @@ class DataContract(object):
         from foundations_orbit.contract_validators.schema_checker import SchemaChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -26,6 +27,7 @@ class DataContract(object):
         
         self.schema_test = SchemaChecker(self._column_names, self._column_types)
         self.special_value_test = SpecialValuesChecker(self.options.distribution, self._bin_stats, self._column_names)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
 
     @staticmethod
     def _default_options():
@@ -73,7 +75,6 @@ class DataContract(object):
         import os
         
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
-        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
 
@@ -92,7 +93,7 @@ class DataContract(object):
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
-            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
+            validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
 
         if self.options.check_special_values:
             validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
