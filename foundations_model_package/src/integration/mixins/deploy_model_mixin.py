@@ -84,7 +84,7 @@ class DeployModelMixin(object):
 
     def _perform_action_for_model_package(self, project_name, model_name, job_id, action):
         yaml_template_path = path.realpath('../../foundations_contrib/src/foundations_contrib/resources/model_serving/kubernetes-deployment.envsubst.yaml')
-        command_to_run = f'job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
+        command_to_run = f'foundations_version={self._image_version()} job_id={job_id} model_name={model_name} project_name={project_name} namespace=foundations-scheduler-test envsubst < {yaml_template_path} | kubectl {action} -f -'
         subprocess.call(['bash', '-c', command_to_run])
 
     def _force_delete_pod(self, project_name, model_name):
@@ -191,3 +191,7 @@ class DeployModelMixin(object):
             raise RuntimeError('please set FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY env variable')
 
         return os.environ['FOUNDATIONS_SCHEDULER_ACCEPTANCE_REDIS_PROXY']
+
+    def _image_version(self):
+        import foundations_internal.versioning
+        return foundations_internal.versioning.__version__.replace('+', '_')
