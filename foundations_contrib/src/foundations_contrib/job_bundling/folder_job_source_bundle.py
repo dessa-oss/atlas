@@ -13,3 +13,6 @@ class FolderJobSourceBundle(object):
 
     def bundle(self):
         pass
+
+    def cleanup(self):
+        pass

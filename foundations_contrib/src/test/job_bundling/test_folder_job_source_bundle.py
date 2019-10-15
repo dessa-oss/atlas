@@ -23,3 +23,7 @@ class TestFolderJobSourceBundle(Spec):
         with self.assert_does_not_raise():
             self.bundle.bundle()
 
+    def test_folder_job_source_bundle_has_cleanup_method(self):
+        with self.assert_does_not_raise():
+            self.bundle.cleanup()
+
