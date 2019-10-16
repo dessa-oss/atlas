@@ -158,3 +158,7 @@ class TestCronJobScheduler(Spec):
             self.scheduler.get_job(self.job_id)
 
         self.assertIn(self.error_message, ex.exception.args)
+
+    def test_get_all_scheduled_jobs_calls_correct_endpoint(self):
+        self.scheduler.get_jobs()
+        self.mock_get.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs')
