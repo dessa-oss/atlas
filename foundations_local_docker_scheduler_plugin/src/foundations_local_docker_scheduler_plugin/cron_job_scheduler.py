@@ -21,7 +21,7 @@ def _expect_code(status_code):
 class CronJobScheduler(object):
 
     def __init__(self, host=None, port=None):
-        import importlib
+        import requests
         
         if host is None:
             host = 'localhost'
@@ -30,7 +30,7 @@ class CronJobScheduler(object):
             port = 5000
 
         self._scheduler_uri = f'http://{host}:{port}'
-        self._raw_api = importlib.import_module('requests')
+        self._raw_api = requests
 
     def pause_job(self, job_id):
         self._change_job_status(job_id, 'paused')
