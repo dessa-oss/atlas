@@ -162,3 +162,7 @@ class TestCronJobScheduler(Spec):
     def test_get_all_scheduled_jobs_calls_correct_endpoint(self):
         self.scheduler.get_jobs()
         self.mock_get.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs')
+
+    def test_get_all_scheduled_jobs_returns_payload_from_request(self):
+        response = self.scheduler.get_jobs()
+        self.assertEqual(self.mock_successful_response_body, response)
