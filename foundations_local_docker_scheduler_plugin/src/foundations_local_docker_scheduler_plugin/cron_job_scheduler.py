@@ -7,9 +7,15 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class CronJobScheduler(object):
 
-    def __init__(self, host, port):
+    def __init__(self, host=None, port=None):
         import importlib
         
+        if host is None:
+            host = 'localhost'
+        
+        if port is None:
+            port = 5000
+
         self._scheduler_uri = f'http://{host}:{port}'
         self._raw_api = importlib.import_module('requests')
 

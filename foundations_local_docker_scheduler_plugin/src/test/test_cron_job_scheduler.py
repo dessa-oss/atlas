@@ -46,3 +46,9 @@ class TestCronJobScheduler(Spec):
 
         request_payload = {'status': 'paused'}
         self.mock_put.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}', json=request_payload)
+
+    def test_pause_scheduled_job_calls_correct_endpoint_when_constructed_with_defaults(self):
+        self.scheduler_default_args.pause_job(self.job_id)
+
+        request_payload = {'status': 'paused'}
+        self.mock_put.assert_called_once_with(f'{self.default_scheduler_uri}/scheduled_jobs/{self.job_id}', json=request_payload)
