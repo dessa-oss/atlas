@@ -11,8 +11,11 @@ from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJob
 
 class TestCronJobScheduler(Spec):
 
-    mock_put = let_patch_mock('requests.put')
+    mock_get = let_patch_mock('requests.get')
     mock_delete = let_patch_mock('requests.delete')
+    mock_put = let_patch_mock('requests.put')
+
+    mock_successful_response_body = let_mock()
 
     @let
     def scheduler_host(self):
@@ -58,10 +61,19 @@ class TestCronJobScheduler(Spec):
         response.status_code = 204
         return response
 
+    @let
+    def success_response_200(self):
+        response = Mock()
+        response.status_code = 200
+        response.json.return_value = self.mock_successful_response_body
+
+        return response
+
     @set_up
     def set_up(self):
         self.mock_put.return_value = self.success_response_204
         self.mock_delete.return_value = self.success_response_204
+        self.mock_get.return_value = self.success_response_200
 
     def test_pause_scheduled_job_calls_correct_endpoint(self):
         self.scheduler.pause_job(self.job_id)
@@ -129,3 +141,7 @@ class TestCronJobScheduler(Spec):
             self.scheduler.delete_job(self.job_id)
 
         self.assertIn(self.error_message, ex.exception.args)
+
+    def test_get_scheduled_job_calls_correct_endpoint(self):
+        self.scheduler.get_job(self.job_id)
+        self.mock_get.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}')
