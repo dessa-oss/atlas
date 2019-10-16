@@ -13,3 +13,4 @@ from .test_row_count_checker import TestRowCountChecker
 from .test_special_values_checker import TestSpecialValuesChecker
 from .test_l_infinity import TestLInfinity
 from .test_bin_values import TestBinValues
+from .test_min_max import TestMinMax
