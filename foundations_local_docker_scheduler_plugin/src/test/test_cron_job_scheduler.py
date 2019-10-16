@@ -37,7 +37,7 @@ class TestCronJobScheduler(Spec):
 
     @let
     def scheduler(self):
-        return CronJobScheduler(host=self.scheduler_host, port=self.scheduler_port)
+        return CronJobScheduler(scheduler_url=self.scheduler_uri)
 
     @let
     def scheduler_default_args(self):

@@ -20,16 +20,13 @@ def _expect_code(status_code):
 
 class CronJobScheduler(object):
 
-    def __init__(self, host=None, port=None):
+    def __init__(self, scheduler_url=None):
         import requests
         
-        if host is None:
-            host = 'localhost'
-        
-        if port is None:
-            port = 5000
+        if scheduler_url is None:
+            scheduler_url = 'http://localhost:5000'
 
-        self._scheduler_uri = f'http://{host}:{port}'
+        self._scheduler_uri = scheduler_url
         self._raw_api = requests
 
     def pause_job(self, job_id):
