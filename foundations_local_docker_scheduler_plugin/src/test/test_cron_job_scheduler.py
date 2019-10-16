@@ -166,3 +166,12 @@ class TestCronJobScheduler(Spec):
     def test_get_all_scheduled_jobs_returns_payload_from_request(self):
         response = self.scheduler.get_jobs()
         self.assertEqual(self.mock_successful_response_body, response)
+
+    def test_get_all_scheduled_jobs_raises_cron_job_scheduler_error_if_500(self):
+        self.error_response.status_code = 500
+        self.mock_get.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.get_jobs()
+
+        self.assertIn(self.error_message, ex.exception.args)
