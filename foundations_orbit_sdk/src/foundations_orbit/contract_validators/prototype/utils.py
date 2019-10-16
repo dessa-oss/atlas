@@ -12,27 +12,6 @@ from copy import deepcopy
 def nand(a,b):
     return not (a and b)
 
-def get_num_bins(values, max_num_bins):
-    '''based on the number of unique values provided, return the number of bins to apply'''
-    # get number of unique values in the reference data
-    unique_num = values.nunique()
-    if unique_num < max_num_bins:
-        return unique_num
-    else:
-        return max_num_bins
-
-
-def find_and_apply_edges(values, n_bins):
-    '''find edges and find count in each bin'''
-    values_sorted = values.sort_values().dropna()
-    values_length = values_sorted.shape[0]
-    # edges are values from values_sorted taken such that each bin contains the same number of elements
-    edges = [values_sorted.iloc[int(np.floor(values_length * i / n_bins))] for i in range(1, n_bins)]
-    binned_values = [0] + [values_sorted[values_sorted <= i].shape[0] for i in edges]
-    binned_values = np.diff(binned_values, axis=0)
-    binned_values = np.append(binned_values, values_sorted[values_sorted > edges[-1]].shape[0])
-    return binned_values, edges
-
 
 def apply_edges(values, edges):
     '''find corresponding bin counts using provided bin edges'''
@@ -57,25 +36,16 @@ def spread_counts_over_identical_edges(binned_values, edges):
     return binned_values
 
 
-def bin_values(values, max_num_bins):
-    values = values[values != np.inf]
-    n_unique_values = values.nunique()
-    if n_unique_values > 1:
-        n_bins = get_num_bins(values, max_num_bins)
-        bin_counts, bin_edges = find_and_apply_edges(values, n_bins)
-        bin_counts = spread_counts_over_identical_edges(bin_counts, bin_edges)
-    else:
-        bin_counts = [len(values), 0]
-        bin_edges = []
-    return bin_counts, bin_edges
-
 def l_infinity(ref_percentages, current_percentages):
     return round(np.max(np.abs(np.array(ref_percentages) - np.array(current_percentages))), 3)
 
-def l_infinity_test(ref_percentages, current_percentages, threshold):
-    l_infinity_score = l_infinity(ref_percentages, current_percentages)
-    return l_infinity_score < threshold
+def entropy(pk, qk):
+    return round(np.sum(pk * np.log(pk/qk), axis=0), 3)
 
+def psi_score(ref_percentages, current_percentages):
+    ref_percentages_array = np.array(ref_percentages)
+    current_percentages_array = np.array(current_percentages)
+    return entropy(ref_percentages_array, current_percentages_array) + entropy(current_percentages_array, ref_percentages_array)
 
 def count_and_remove_special_values(ref_special_values, current_values):
     n_current_vals = len(current_values)
@@ -117,17 +87,26 @@ def add_special_value_l_infinity(col, threshold, dist_check_results, ref_special
         dist_check_results[col]['special_values'][sv]['ref_percentage'] = ref_pct
         dist_check_results[col]['special_values'][sv]['current_percentage'] = cur_pct
 
-        if l_infinity_score < threshold:
+        if np.isnan(sv):
+            for key, value in threshold[col].items():
+                if np.isnan(key):
+                    value_to_check = value
+        else:
+            value_to_check = threshold[col][sv]
+
+        if l_infinity_score < value_to_check:
             dist_check_results[col]['special_values'][sv]['passed'] = True
         else:
             dist_check_results[col]['special_values'][sv]['passed'] = False
 
 
-def add_binned_l_infinity(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages):
-    # l-infinity test for the rest of the bins
-    l_infinity_score = l_infinity(ref_bin_percentages, current_bin_percentages)
-    dist_check_results[col]['binned_l_infinity'] = l_infinity_score
-    if l_infinity_score < threshold:
-        dist_check_results[col]['binned_passed'] = True
+def add_binned_metric(col, threshold, dist_check_results, ref_bin_percentages, current_bin_percentages, method_name):
+    if method_name == 'l_infinity':
+        distance_metric = l_infinity(ref_bin_percentages, current_bin_percentages)
+    elif method_name == 'psi':
+        distance_metric = psi_score(ref_bin_percentages, current_bin_percentages)
     else:
-        dist_check_results[col]['binned_passed'] = False
+        return
+
+    dist_check_results[col][f'binned_{method_name}'] = distance_metric
+    dist_check_results[col]['binned_passed'] = distance_metric < threshold

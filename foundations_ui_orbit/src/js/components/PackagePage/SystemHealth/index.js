@@ -187,22 +187,25 @@ const SystemHealth = props => {
           </div>
         );
       }
+
       return (
         <div className="system-health-table table-2">
           <table>
             <tr>
               <th>Attribute Name</th>
-              <th>Distribution Shift (measured by L-infinity)</th>
+              <th>Distribution Shift</th>
               <th>Validation Outcome</th>
             </tr>
             {data.population_shift.details_by_attribute
               && data.population_shift.details_by_attribute.length > 0
               && data.population_shift.details_by_attribute.map(row => {
                 if (row === "") return;
+                const isLInfinity = "L-infinity" in row;
+                const shiftMetric = isLInfinity ? row["L-infinity"] : row.PSI;
                 return (
                   <tr key={row.attribute_name}>
                     <td>{row.attribute_name}</td>
-                    <td>{row["L-infinity"]}</td>
+                    <td>{shiftMetric}</td>
                     <td className={getValidationColor(row.validation_outcome)}>
                       {row.validation_outcome}
                       <div className="circle" />{" "}

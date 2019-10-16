@@ -272,21 +272,26 @@ class TestDataContract(Spec):
 
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
         contract.options.check_distribution = False
+        contract.options.check_special_values = False
         validation_report = contract.validate(self.two_column_dataframe_no_rows_different_second_column, self.datetime_today)
         self.assertEqual(mock_schema_check_results, validation_report['schema_check_results'])
 
     def test_data_contract_validate_check_distributions_by_default(self):
-        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
 
         mock_report_validator = self.patch('foundations_orbit.report_formatter.ReportFormatter')
-        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.prototype.create_bin_stats')
+        mock_bin_create_stats = self.patch('foundations_orbit.contract_validators.utils.create_bin_stats.create_bin_stats')
         mock_bin_create_stats.return_value = self.bin_return_value
-
-        mock_distribution_check_results = Mock()
-        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker = Mock()
+        mock_distribution_check_results = Mock()
 
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+
+        self.patch('foundations_orbit.contract_validators.special_values_checker.SpecialValuesChecker')
+        mock_distribution_checker_class = self.patch('foundations_orbit.contract_validators.distribution_checker.DistributionChecker', ConditionalReturn())
         mock_distribution_checker_class.return_when(mock_distribution_checker, contract.options.distribution, self.bin_stats, [self.column_name, self.column_name_2])
+
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        
         mock_distribution_checker.validate = ConditionalReturn()
         mock_distribution_checker.validate.return_when(mock_distribution_check_results, self.two_column_dataframe)
 
@@ -348,8 +353,10 @@ class TestDataContract(Spec):
         self.assertEqual(expected_metadata, report['metadata'])
 
     def test_data_contract_validate_writes_correct_info_to_redis(self):
+        import numpy
         inference_period='2019-09-17'
         contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        contract.special_value_test.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         report = contract.validate(self.two_column_dataframe_different_types, inference_period=inference_period)
 
         expected_output = {
@@ -398,7 +405,7 @@ class TestDataContract(Spec):
                     'warning': 0
                 }
             },
-            'row_cnt_diff': 0,
+            'row_cnt_diff': 0.0,
             'schema': {
                 'details_by_attribute': [{
                     'attribute_name': f'{self.column_name_2}',
@@ -430,32 +437,37 @@ class TestDataContract(Spec):
 
         expected_results = {
             self.column_name: {
-                'special_values': {
-                    np.nan: {
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0,
-                        'current_percentage': 0.0,
-                        'passed': True
-                    }
-                },
                 'binned_l_infinity': 0.0,
                 'binned_passed': True
             },
             self.column_name_2: {
-                'special_values': {
-                    np.nan: {
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0,
-                        'current_percentage': 0.0,
-                        'passed': True
-                    }
-                },
                 'binned_l_infinity': 0.0,
                 'binned_passed': True
             }
         }
 
         self.assertEqual(expected_results, dist_check_results)
+    
+    def test_data_contract_has_schema_checker(self):
+        self._test_data_contract_has_test_as_attribute('schema_test')
+    
+    def test_data_contract_has_special_values_checker(self):
+        self._test_data_contract_has_test_as_attribute('special_value_test')
+    
+    def test_data_contract_has_distribution_checker(self):
+        self._test_data_contract_has_test_as_attribute('distribution_test')
+    
+    def test_data_contract_has_schema_checker_configured(self):
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('schema_test', SchemaChecker)
+    
+    def test_data_contract_has_special_values_test_configured(self):
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('special_value_test', SpecialValuesChecker)
+    
+    def test_data_contract_has_distribution_test_configured(self):
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        self._test_data_contract_has_test_which_is_an_instance_of_expected_class('distribution_test', DistributionChecker)
 
     @skip('does not work when dataframe has no rows')
     def test_data_contract_distribution_check_produces_correct_output_for_two_column_df_no_rows_different_second_column(self):
@@ -509,3 +521,11 @@ class TestDataContract(Spec):
         contract.options.check_distribution = False
 
         return contract
+    
+    def _test_data_contract_has_test_as_attribute(self, test_name):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        self.assertIsNotNone(getattr(contract, test_name, None))
+    
+    def _test_data_contract_has_test_which_is_an_instance_of_expected_class(self, test_name, class_type):
+        contract = DataContract(self.contract_name, df=self.two_column_dataframe)
+        self.assertIsInstance(getattr(contract, test_name, None), class_type)

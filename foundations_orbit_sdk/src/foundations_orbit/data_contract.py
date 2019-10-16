@@ -9,7 +9,10 @@ class DataContract(object):
 
     def __init__(self, contract_name, df=None):
         import pandas
-        
+        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
         
         self.options = self._default_options()
         self._contract_name = contract_name
@@ -19,10 +22,12 @@ class DataContract(object):
         else:
             self._dataframe = df
 
-        self._column_names = None
-        self._column_types = None
-        self._number_of_rows = None
-        self._bin_stats = None
+        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
+        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
+
+        self.schema_test = SchemaChecker(self._column_names, self._column_types)
+        self.special_value_test = SpecialValuesChecker(self.options, self._bin_stats, self._column_names, self._dataframe)
+        self.distribution_test = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names)
 
     @staticmethod
     def _default_options():
@@ -34,7 +39,9 @@ class DataContract(object):
             'default_threshold': 0.1,
             'cols_to_include': None,
             'cols_to_ignore': None,
-            'custom_thresholds': {}
+            'custom_thresholds': {},
+            'custom_methods': {},
+            'special_value_thresholds': {}
         }
 
         return DataContractOptions(
@@ -42,6 +49,7 @@ class DataContract(object):
             check_row_count=True,
             special_values=[numpy.nan],
             check_distribution=True,
+            check_special_values=True,
             distribution=default_distribution
         )
 
@@ -57,49 +65,38 @@ class DataContract(object):
         with open(data_contract_file_name, 'rb') as contract_file:
             return DataContract._deserialized_contract(contract_file.read())
 
-    def _save_to_redis(self, project_name, model_name, contract_name, inference_period, serialized_output):
+    def _save_to_redis(self, project_name, monitor_name, contract_name, inference_period, serialized_output):
         from foundations_contrib.global_state import redis_connection
-        key = f'projects:{project_name}:monitors:{model_name}:validation:{contract_name}'
+        key = f'projects:{project_name}:monitors:{monitor_name}:validation:{contract_name}'
         redis_connection.hset(key, inference_period, serialized_output)
 
     def validate(self, dataframe_to_validate, inference_period=None):
         import datetime
         import os
-        
-        from foundations_orbit.contract_validators.schema_checker import SchemaChecker
+
         from foundations_orbit.contract_validators.row_count_checker import RowCountChecker
-        from foundations_orbit.contract_validators.distribution_checker import DistributionChecker
+        from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
         from foundations_orbit.report_formatter import ReportFormatter
 
         project_name = os.environ['PROJECT_NAME']
         monitor_name = os.environ['MONITOR_NAME']
-
-        self._column_names, self._column_types, self._number_of_rows = self._dataframe_statistics(self._dataframe)
         
         if inference_period is None:
             inference_period = str(datetime.datetime.now())
 
-        ##### PROTOTYPE CODE - REMOVE ME PLEASE
-
-        from foundations_orbit.contract_validators.prototype import create_bin_stats
-        from foundations_orbit.contract_validators.prototype import distribution_check
-
-        self._bin_stats = {column_name: create_bin_stats(self.options.special_values, self.options.max_bins, self._dataframe[column_name]) for column_name in self._column_names}
-
         columns_to_validate, types_to_validate, row_count_to_check = self._dataframe_statistics(dataframe_to_validate)
 
-        ##### Prototype code section end
-
         validation_report = {}
-        validation_report['schema_check_results'] = SchemaChecker(self._column_names, self._column_types).validate(dataframe_to_validate)
+        validation_report['schema_check_results'] = self.schema_test.validate(dataframe_to_validate)
 
         if self.options.check_row_count:
             validation_report['row_cnt_diff'] = RowCountChecker(self._number_of_rows).validate(dataframe_to_validate)
 
         if self.options.check_distribution:
-            ##### PROTOTYPE CODE - use distribution checker asap
-            #validation_report['dist_check_results'] = distribution_check(self.options.distribution, self._column_names, self._bin_stats, dataframe_to_validate)
-            validation_report['dist_check_results'] = DistributionChecker(self.options.distribution, self._bin_stats, self._column_names).validate(dataframe_to_validate)
+            validation_report['dist_check_results'] = self.distribution_test.validate(dataframe_to_validate)
+
+        if self.options.check_special_values:
+            validation_report['special_values_check_results'] = self.special_value_test.validate(dataframe_to_validate)
 
         validation_report['metadata'] = {
             'reference_metadata': {

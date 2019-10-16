@@ -119,38 +119,43 @@ class TestDataValidation(Spec):
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': True
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
+        data_contract.special_value_test.configure(attributes=['feat_1', 'feat_2'], thresholds={numpy.nan: 0.1})
         validation_report = data_contract.validate(self.reference_dataframe, datetime.datetime.today())
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_get_schema_validation_failure_when_column_missing(self):
         import datetime
@@ -169,6 +174,49 @@ class TestDataValidation(Spec):
         self.assertEqual('column sets not equal', schema_failure_reason)
         self.assertEqual(['feat_x'], missing_in_ref)
         self.assertEqual(['feat_1'], missing_in_current)
+
+    def test_get_schema_validation_passes_when_column_missing_but_configured_without_it(self):
+        import datetime
+
+        current_dataframe_different_schema = self.reference_dataframe_different_schema.copy().drop(['feat_1'], axis=1)
+
+        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
+        columns= current_dataframe_different_schema.columns.tolist()
+        data_contract.schema_test.exclude(attributes='all')
+        data_contract.schema_test.configure(attributes=columns)
+
+        validation_report = data_contract.validate(current_dataframe_different_schema, datetime.datetime.today())
+
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        self.assertTrue(schema_check_passed)
+
+    def test_get_schema_validation_passes_when_column_missing_but_excluded_without_it(self):
+        import datetime
+
+        current_dataframe_different_schema = self.reference_dataframe_different_schema.copy().drop(['feat_1'], axis=1)
+        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
+        columns = current_dataframe_different_schema.columns.tolist()
+        data_contract.schema_test.exclude(attributes=['feat_1'])
+
+        validation_report = data_contract.validate(current_dataframe_different_schema, datetime.datetime.today())
+
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        self.assertTrue(schema_check_passed)
+
+    def test_get_schema_validation_passes_when_column_names_configured_using_two_calls(self):
+        import datetime
+
+        current_dataframe_different_schema = self.reference_dataframe_different_schema.copy()
+        data_contract = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
+        columns= current_dataframe_different_schema.columns.tolist()
+        data_contract.schema_test.exclude(attributes='all')
+        data_contract.schema_test.configure(attributes=['feat_1', 'feat_2'])
+        data_contract.schema_test.configure(attributes=['feat_0', 'feat_3'])
+
+        validation_report = data_contract.validate(current_dataframe_different_schema, datetime.datetime.today())
+
+        schema_check_passed = validation_report['schema_check_results']['passed']
+        self.assertTrue(schema_check_passed)
 
     def test_get_schema_validation_error_when_new_column_added(self):
         import datetime
@@ -237,92 +285,99 @@ class TestDataValidation(Spec):
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.02,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.5,
-                        'passed': False,
-                        'percentage_diff': 0.5,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': True
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{
+                numpy.nan: {
+                    'current_percentage': 0.5,
+                    'passed': False,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
+        data_contract.special_value_test.configure(attributes=['feat_1', 'feat_2'], thresholds={numpy.nan: 0.1})
         validation_report = data_contract.validate(self.dataframe_with_nans)
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_data_with_shifted_distribution_passes_schema_check_with_different_distribution_report(self):
-        self.maxDiff = None
-
         import numpy
 
         expected_distribution_report = {
             'feat_1': {
                 'binned_l_infinity': 0.0,
-                'binned_passed': True,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
-                }
+                'binned_passed': True
             },
             'feat_2': {
                 'binned_l_infinity': 0.58,
-                'binned_passed': False,
-                'special_values': {
-                    numpy.nan: {
-                        'current_percentage': 0.0,
-                        'passed': True,
-                        'percentage_diff': 0.0,
-                        'ref_percentage': 0.0
-                    }
+                'binned_passed': False
+            }
+        }
+        expected_special_values_report = {
+            'feat_1':{
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
                 }
             }
         }
 
         data_contract = DataContract(self.contract_name, df=self.reference_dataframe)
+        data_contract.special_value_test.configure(attributes=['feat_1', 'feat_2'], thresholds={numpy.nan: 0.1})
         validation_report = data_contract.validate(self.dataframe_with_shifted_distribution)
 
         schema_check_passed = validation_report['schema_check_results']['passed']
         distribution_report = validation_report['dist_check_results']
+        special_values_report = validation_report['special_values_check_results']
 
         self.assertTrue(schema_check_passed)
         self.assertEqual(expected_distribution_report, distribution_report)
+        self.assertEqual(expected_special_values_report, special_values_report)
 
     def test_ensure_can_retrieve_validation_results_from_rest_api_via_the_dv_model(self):
-        self.maxDiff = None
+        import numpy
         import subprocess
         from foundations_orbit_rest_api.v1.models.validation_report import ValidationReport
         from foundations_orbit_rest_api.v1.models.validation_report_listing import ValidationReportListing
 
         subprocess.run(['python', 'create_data_contract.py'], cwd='orbit_acceptance/fixtures/data_validation')
-        
+
         inference_period='2019-09-01'
         contract_name = 'dv_contract'
         data_contract = DataContract.load('/tmp', contract_name)
-
         data_contract.validate(self.dataframe_with_shifted_distribution, inference_period=inference_period)
         
         report_listing = ValidationReportListing(inference_period=inference_period, monitor_package=self.monitor_name, data_contract=contract_name)
@@ -396,6 +451,116 @@ class TestDataValidation(Spec):
             }
         }
 
-        expected_validation_report['schema']
-
         self.assertEqual(expected_validation_report, api_validation_report)
+
+    def test_dataframe_with_nans_for_configuring_and_excluding_method_on_special_values_test(self):
+        import numpy
+
+        expected_special_values_report = {
+            'feat_1':{
+                numpy.nan: {
+                    'current_percentage': 0.5,
+                    'passed': True,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                }
+            }
+        }
+
+        dc = DataContract(self.contract_name, df=self.reference_dataframe)
+        dc.special_value_test.exclude(attributes='all')
+        dc.special_value_test.configure(attributes=['feat_1'], thresholds={ numpy.nan: 0.6 })
+        validation_report = dc.validate(self.dataframe_with_nans)
+        special_values_report = validation_report['special_values_check_results']
+
+        self.assertEqual(expected_special_values_report, special_values_report)
+
+    def test_dataframe_with_nans_for_multiple_call_of_configure_method_on_special_values_test(self):
+        import numpy
+
+        expected_special_values_report = {
+            'feat_1':{
+                numpy.nan: {
+                    'current_percentage': 0.5,
+                    'passed': True,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            }
+        }
+
+        dc = DataContract(self.contract_name, df=self.reference_dataframe)
+        dc.special_value_test.exclude(attributes='all')
+        dc.special_value_test.configure(attributes=['feat_1'], thresholds={ numpy.nan: 0.6 })
+        dc.special_value_test.configure(attributes=['feat_2'], thresholds={ numpy.nan: 0.6 })
+        validation_report = dc.validate(self.dataframe_with_nans)
+        special_values_report = validation_report['special_values_check_results']
+
+        self.assertEqual(expected_special_values_report, special_values_report)
+
+    def test_dataframe_with_nans_and_minus_one_as_special_values_for_different_columns(self):
+        self.maxDiff = None
+        import numpy
+
+        expected_special_values_report = {
+            'feat_0':{
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_1': {
+                numpy.nan: {
+                    'current_percentage': 0.5,
+                    'passed': True,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                },
+                -1: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                }
+            },
+            'feat_2': {
+                numpy.nan: {
+                    'current_percentage': 0.0,
+                    'passed': True,
+                    'percentage_diff': 0.0,
+                    'ref_percentage': 0.0
+                },
+                -1: {
+                    'current_percentage': 0.5,
+                    'passed': False,
+                    'percentage_diff': 0.5,
+                    'ref_percentage': 0.0
+                }
+            }
+        }
+
+        dc = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
+        dataframe_to_validate = self.reference_dataframe_different_schema.copy()
+
+        dataframe_to_validate.iloc[:50, 1] = numpy.nan
+        dataframe_to_validate.iloc[:50, 2] = -1
+
+        dc.special_value_test.exclude(attributes='all')
+        dc.special_value_test.configure(attributes=['feat_0'], thresholds={numpy.nan: 0.6})
+
+        dc.special_value_test.configure(attributes=['feat_1', 'feat_2'], thresholds={numpy.nan: 0.6, -1: 0.1})
+        validation_report = dc.validate(dataframe_to_validate)
+
+        special_values_report = validation_report['special_values_check_results']
+
+        self.assertEqual(expected_special_values_report, special_values_report)

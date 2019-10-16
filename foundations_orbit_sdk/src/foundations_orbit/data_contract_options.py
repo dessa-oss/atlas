@@ -7,10 +7,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class DataContractOptions(object):
     
-    def __init__(self, max_bins=None, check_row_count=None, special_values=None, check_distribution=None, distribution=None):
+    def __init__(self, max_bins=None, check_row_count=None, check_special_values=None, special_values=None, check_distribution=None, distribution=None):
         self.max_bins = max_bins
         self.check_row_count = check_row_count
         self.special_values = special_values
+        self.check_special_values = check_special_values
         self.check_distribution = check_distribution
         self.distribution = distribution
 
@@ -23,6 +24,7 @@ class DataContractOptions(object):
         return self.max_bins == other.max_bins \
             and self.check_row_count == other.check_row_count \
             and self.check_distribution == other.check_distribution \
+            and self.check_special_values == other.check_special_values \
             and self.distribution == other.distribution
 
     def _special_values_equal(self, other):

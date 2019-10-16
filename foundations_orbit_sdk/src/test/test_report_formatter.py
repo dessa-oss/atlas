@@ -38,12 +38,21 @@ class TestReportFormatter(Spec):
 
     @let
     def distribution_checks(self):
-        return {column: self.gen_dist_chect_result() for column in self.column_list}
+        return {column: self._gen_dist_check_result() for column in self.column_list}
+    
+    @let
+    def distribution_checks_with_psi(self):
+        return {column: self._gen_dist_check_result(psi=True) for column in self.column_list}
+
+    @let
+    def special_values_check(self):
+        return {column: self._gen_sv_check_result() for column in self.column_list}
 
     @set_up
     def set_up(self):
         self.data_contract_options = Mock()
         self.data_contract_options.check_distribution = True
+        self.data_contract_options.check_special_values = True
 
     @let
     def validation_report(self):
@@ -62,8 +71,31 @@ class TestReportFormatter(Spec):
                     'type_mapping': self.type_mapping
                 }
             },
-            'dist_check_results': self.distribution_checks
+            'dist_check_results': self.distribution_checks,
+            'special_values_check_results': self.special_values_check
         }
+
+    @let
+    def validation_report_with_psi(self):
+        return {
+            'schema_check_results': {
+                'passed': False,
+                'error_message': ''
+            },
+            'metadata': {
+                'reference_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                },
+                'current_metadata': {
+                    'column_names': self.column_list,
+                    'type_mapping': self.type_mapping
+                }
+            },
+            'dist_check_results': self.distribution_checks_with_psi,
+            'special_values_check_results': self.special_values_check
+        }
+
 
     @let
     def column_name(self):
@@ -85,18 +117,25 @@ class TestReportFormatter(Spec):
     def row_count_diff(self):
         return self.faker.random.random()
 
-    def gen_dist_chect_result(self):
+    def _gen_sv_check_result(self):
+        return { 
+            'nan': {
+                'percentage_diff': 0.15,
+                'ref_percentage': 0,
+                'current_percentage': 0.15,
+                'passed': True
+            }
+        }
+
+    def _gen_dist_check_result(self, psi=False):
+        if psi == True:
+            return {
+                'binned_passed': True,
+                'binned_psi': 0.256
+            }
         return {
             'binned_passed': True,
-            'binned_l_infinity': 0.2,
-            'special_values':{
-                'nan':{
-                    'percentage_diff': 0.15,
-                    'ref_percentage': 0,
-                    'current_percentage': 0.15,
-                    'passed': True
-                }
-            }
+            'binned_l_infinity': 0.2
         }
 
     def test_report_formatter_returns_formatted_report_with_expected_date(self):
@@ -616,8 +655,8 @@ class TestReportFormatter(Spec):
 
         data_quality_attribute_details = []
         
-        for column, details in self.distribution_checks.items():
-            for sv in details['special_values']:
+        for column, details in self.special_values_check.items():
+            for sv in details:
                 attribute_details = {
                     'attribute_name': column,
                     'value': f'{sv}',
@@ -635,7 +674,7 @@ class TestReportFormatter(Spec):
         self.validation_report['schema_check_results'] = {'passed': True}
 
         unhealthy_column = list(self.column_list)[0]
-        self.validation_report['dist_check_results'][unhealthy_column]['special_values']['nan']['passed'] = False
+        self.validation_report['special_values_check_results'][unhealthy_column]['nan']['passed'] = False
 
         expected_schema_summary = {
             'healthy': self.number_of_columns - 1,
@@ -652,10 +691,10 @@ class TestReportFormatter(Spec):
         data_quality_attribute_details = []
         
         unhealthy_column = list(self.column_list)[0]
-        self.validation_report['dist_check_results'][unhealthy_column]['special_values']['nan']['passed'] = False
+        self.validation_report['special_values_check_results'][unhealthy_column]['nan']['passed'] = False
 
-        for column, details in self.distribution_checks.items():
-            for sv in details['special_values']:
+        for column, details in self.special_values_check.items():
+            for sv in details:
                 attribute_details = {
                     'attribute_name': column,
                     'value': f'{sv}',
@@ -696,6 +735,21 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
+    def test_return_population_shift_details_when_all_columns_are_healthy_and_psi_metric_used(self):
+        self.validation_report_with_psi['schema_check_results'] = {'passed': True}
+
+        population_shift_attribute_details = []
+
+        for column, details in self.distribution_checks_with_psi.items():
+            population_shift_attribute_details.append({
+                'attribute_name': column,
+                'PSI': 0.256,
+                'validation_outcome': 'healthy',
+            })
+        
+        formatted_report = self._generate_formatted_report(psi=True)
+        self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
+    
     def test_return_population_shift_summary_when_one_columns_is_unhealthy(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
@@ -729,10 +783,10 @@ class TestReportFormatter(Spec):
         formatted_report = self._generate_formatted_report()
         self.assertEqual(population_shift_attribute_details, formatted_report['population_shift']['details_by_attribute'])
     
-    def test_return_no_data_quality_if_check_distribution_is_false(self):
+    def test_return_no_data_quality_if_check_special_value_is_false(self):
         self.validation_report['schema_check_results'] = {'passed': True}
 
-        self.data_contract_options.check_distribution = False
+        self.data_contract_options.check_special_values = False
         formatted_report = self._generate_formatted_report()
         self.assertEqual({}, formatted_report['data_quality'])
 
@@ -753,11 +807,11 @@ class TestReportFormatter(Spec):
         in_current_not_in_reference = set(columns_in_current_dataframe) - set(columns_in_reference_dataframe)
         return columns_in_reference_dataframe + list(in_current_not_in_reference)
 
-    def _generate_formatted_report(self):
+    def _generate_formatted_report(self, psi=False):
         formatter = ReportFormatter(inference_period=self.inference_period,
                                     monitor_package=self.monitor_package,
                                     contract_name=self.contract_name,
-                                    validation_report=self.validation_report,
+                                    validation_report=self.validation_report if not psi else self.validation_report_with_psi,
                                     options=self.data_contract_options)
 
         return formatter.formatted_report()
