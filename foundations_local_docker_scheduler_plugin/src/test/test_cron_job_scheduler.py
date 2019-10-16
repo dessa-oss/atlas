@@ -7,6 +7,8 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 from foundations_spec import *
 
+from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler, CronJobSchedulerError
+
 class TestCronJobScheduler(Spec):
 
     mock_put = let_patch_mock('requests.put')
@@ -29,17 +31,25 @@ class TestCronJobScheduler(Spec):
 
     @let
     def scheduler(self):
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
         return CronJobScheduler(host=self.scheduler_host, port=self.scheduler_port)
 
     @let
     def scheduler_default_args(self):
-        from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJobScheduler
         return CronJobScheduler()
 
     @let
     def job_id(self):
         return self.faker.word()
+
+    @let
+    def error_message(self):
+        return self.faker.sentence()
+
+    @let
+    def error_response(self):
+        response = Mock()
+        response.text = self.error_message
+        return response
 
     def test_pause_scheduled_job_calls_correct_endpoint(self):
         self.scheduler.pause_job(self.job_id)
@@ -52,3 +62,12 @@ class TestCronJobScheduler(Spec):
 
         request_payload = {'status': 'paused'}
         self.mock_put.assert_called_once_with(f'{self.default_scheduler_uri}/scheduled_jobs/{self.job_id}', json=request_payload)
+
+    def test_pause_scheduled_job_raises_cron_job_scheduler_error_if_job_does_not_exist(self):
+        self.error_response.status_code = 404
+        self.mock_put.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.pause_job(self.job_id)
+        
+        self.assertIn(self.error_message, ex.exception.args)

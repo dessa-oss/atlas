@@ -20,7 +20,10 @@ class CronJobScheduler(object):
         self._raw_api = importlib.import_module('requests')
 
     def pause_job(self, job_id):
-        self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
+        response = self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
+        
+        if response.status_code == 404:
+            raise CronJobSchedulerError(response.text)
 
     def resume_job(self, job_id):
         pass
@@ -39,3 +42,6 @@ class CronJobScheduler(object):
 
     def delete_job(self, job_id):
         pass
+
+class CronJobSchedulerError(Exception):
+    pass
