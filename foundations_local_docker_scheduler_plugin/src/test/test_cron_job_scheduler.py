@@ -90,3 +90,27 @@ class TestCronJobScheduler(Spec):
             self.scheduler.pause_job(self.job_id)
 
         self.assertIn(self.error_message, ex.exception.args)
+
+    def test_resume_scheduled_job_calls_correct_endpoint(self):
+        self.scheduler.resume_job(self.job_id)
+
+        request_payload = {'status': 'active'}
+        self.mock_put.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}', json=request_payload)
+
+    def test_resume_scheduled_job_raises_cron_job_scheduler_error_if_job_does_not_exist(self):
+        self.error_response.status_code = 404
+        self.mock_put.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.resume_job(self.job_id)
+
+        self.assertIn(self.error_message, ex.exception.args)
+
+    def test_resume_scheduled_job_raises_cron_job_scheduler_error_if_bad_request(self):
+        self.error_response.status_code = 400
+        self.mock_put.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.resume_job(self.job_id)
+
+        self.assertIn(self.error_message, ex.exception.args)

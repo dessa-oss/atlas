@@ -30,12 +30,15 @@ class CronJobScheduler(object):
         self._scheduler_uri = f'http://{host}:{port}'
         self._raw_api = importlib.import_module('requests')
 
-    @_expect_code(204)
     def pause_job(self, job_id):
-        return self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
-
+        self._change_job_status(job_id, 'paused')
+    
     def resume_job(self, job_id):
-        pass
+        self._change_job_status(job_id, 'active')
+
+    @_expect_code(204)
+    def _change_job_status(self, job_id, status):
+        return self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': status})
 
     def schedule_job(self, job_id, spec, schedule, job_bundle_path, metadata=None, gpu_spec=None):
         pass
