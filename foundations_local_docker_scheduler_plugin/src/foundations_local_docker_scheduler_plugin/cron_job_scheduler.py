@@ -38,7 +38,7 @@ class CronJobScheduler(object):
 
     @_expect_code(204)
     def _change_job_status(self, job_id, status):
-        return self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': status})
+        return self._raw_api.put(self._job_uri(job_id), json={'status': status})
 
     def schedule_job(self, job_id, spec, schedule, job_bundle_path, metadata=None, gpu_spec=None):
         pass
@@ -54,7 +54,10 @@ class CronJobScheduler(object):
 
     @_expect_code(204)
     def delete_job(self, job_id):
-        return self._raw_api.delete(f'{self._scheduler_uri}/scheduled_jobs/{job_id}')
+        return self._raw_api.delete(self._job_uri(job_id))
+
+    def _job_uri(self, job_id):
+        return f'{self._scheduler_uri}/scheduled_jobs/{job_id}'
 
 class CronJobSchedulerError(Exception):
     pass
