@@ -13,7 +13,7 @@ class JobDeployment(object):
         self._config = self._get_config()
 
         self._job_id = job_id
-        self._job_bundler = JobBundler(self._job_id, self._config, job, job_source_bundle)
+        self._job_bundler = None #JobBundler(self._job_id, self._config, job, job_source_bundle)
         self._job = job
 
     @staticmethod
@@ -36,37 +36,25 @@ class JobDeployment(object):
     def job_name(self):
         return self._job_id
 
+    def _is_local_deployment(self):
+        return '127.0.0.1' in self._config['scheduler_url'] or 'localhost' in self._config['scheduler_url']
+
+    def _is_remote_deployment(self):
+        return not self._is_local_deployment()
+
     def deploy(self):
-        import tarfile
-        from pathlib import Path
+        from pathlib import Path, PurePosixPath
         from sys import platform
-        import tempfile
         import requests
+        from foundations_local_docker_scheduler_plugin.deploy_monitor import job_bundle, submit_job_bundle
+
 
         try:
-            self._job_bundler.bundle()
+            self._job_bundler = job_bundle(self._job_id)
+            response = submit_job_bundle(self._job_bundler)
 
-            working_dir_root_path = Path(tempfile.mkdtemp())
-            bundle_path = Path(self._job_bundler.job_archive())
-            job_mount_path = working_dir_root_path / bundle_path.stem
-            job_working_dir_path = working_dir_root_path / bundle_path.stem / "job_source"
-
-            with tarfile.open(bundle_path) as tar:
-                tar.extractall(path=working_dir_root_path)
-
-            with tarfile.open(job_mount_path / "job.tgz") as tar:
-                tar.extractall(path=job_working_dir_path)
-
-            temp_tarfile = tempfile.NamedTemporaryFile()
-            with tarfile.open(fileobj=temp_tarfile, mode='w:gz') as tar:
-                tar.add(job_mount_path, arcname=self.job_name())
-            temp_tarfile.seek(0)
-
-            with open(temp_tarfile.name, 'rb') as tarball:
-                request_payload = {
-                    'job_bundle': tarball
-                }
-                response = requests.post(f'{self._config["scheduler_url"]}/job_bundle', files=request_payload)
+            if response.status_code != 200:
+                 raise RuntimeError(f'Unable to submit job bundle. {response.text}')
 
             project_name = self._job.pipeline_context().provenance.project_name
             username = self._job.pipeline_context().provenance.user_name
@@ -76,11 +64,19 @@ class JobDeployment(object):
             job_mount_path = working_dir_root_path / bundle_path.stem
 
             if platform == 'win32':
-                working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
-                job_mount_path = convert_win_path_to_posix(job_mount_path)
-                job_results_root_path = convert_win_path_to_posix(Path(self._config['job_results_root']))
-                container_config_root_path = convert_win_path_to_posix(Path(self._config['container_config_root']))
-
+                if self._is_local_deployment():
+                    working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
+                    job_mount_path = convert_win_path_to_posix(job_mount_path)
+                    job_results_root_path = convert_win_path_to_posix(Path(self._config['job_results_root']))
+                    container_config_root_path = convert_win_path_to_posix(Path(self._config['container_config_root']))
+                else:
+                    working_dir_root_path = PurePosixPath(self._config['working_dir_root'])
+                    bundle_path = PurePosixPath(self._job_bundler.job_archive())
+                    job_mount_path = working_dir_root_path / bundle_path.stem
+                    job_mount_path = str(job_mount_path)
+                    working_dir_root_path = str(working_dir_root_path)
+                    job_results_root_path = self._config['job_results_root']
+                    container_config_root_path = self._config['container_config_root']
             else:
                 job_mount_path = str(job_mount_path.absolute())
                 working_dir_root_path = str(working_dir_root_path.absolute())
