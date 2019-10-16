@@ -8,12 +8,11 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 
 class JobDeployment(object):
     def __init__(self, job_id, job, job_source_bundle):
-        from foundations_contrib.job_bundler import JobBundler
 
         self._config = self._get_config()
 
         self._job_id = job_id
-        self._job_bundler = None #JobBundler(self._job_id, self._config, job, job_source_bundle)
+        self._job_bundler = None
         self._job = job
 
     @staticmethod
@@ -39,12 +38,36 @@ class JobDeployment(object):
     def _is_local_deployment(self):
         return '127.0.0.1' in self._config['scheduler_url'] or 'localhost' in self._config['scheduler_url']
 
-    def _is_remote_deployment(self):
-        return not self._is_local_deployment()
-
-    def deploy(self):
+    def _get_paths(self):
         from pathlib import Path, PurePosixPath
         from sys import platform
+        working_dir_root_path = Path(self._config['working_dir_root'])
+        bundle_path = Path(self._job_bundler.job_archive())
+        job_mount_path = working_dir_root_path / bundle_path.stem
+
+        if platform == 'win32':
+            if self._is_local_deployment():
+                working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
+                job_mount_path = convert_win_path_to_posix(job_mount_path)
+                job_results_root_path = convert_win_path_to_posix(Path(self._config['job_results_root']))
+                container_config_root_path = convert_win_path_to_posix(Path(self._config['container_config_root']))
+            else:
+                working_dir_root_path = PurePosixPath(self._config['working_dir_root'])
+                bundle_path = PurePosixPath(self._job_bundler.job_archive())
+                job_mount_path = working_dir_root_path / bundle_path.stem
+                job_mount_path = str(job_mount_path)
+                working_dir_root_path = str(working_dir_root_path)
+                job_results_root_path = self._config['job_results_root']
+                container_config_root_path = self._config['container_config_root']
+        else:
+            job_mount_path = str(job_mount_path.absolute())
+            working_dir_root_path = str(working_dir_root_path.absolute())
+            job_results_root_path = self._config['job_results_root']
+            container_config_root_path = self._config['container_config_root']
+
+        return job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path
+
+    def deploy(self):
         import requests
         from foundations_local_docker_scheduler_plugin.deploy_monitor import job_bundle, submit_job_bundle
 
@@ -59,29 +82,7 @@ class JobDeployment(object):
             project_name = self._job.pipeline_context().provenance.project_name
             username = self._job.pipeline_context().provenance.user_name
 
-            working_dir_root_path = Path(self._config['working_dir_root'])
-            bundle_path = Path(self._job_bundler.job_archive())
-            job_mount_path = working_dir_root_path / bundle_path.stem
-
-            if platform == 'win32':
-                if self._is_local_deployment():
-                    working_dir_root_path = convert_win_path_to_posix(working_dir_root_path)
-                    job_mount_path = convert_win_path_to_posix(job_mount_path)
-                    job_results_root_path = convert_win_path_to_posix(Path(self._config['job_results_root']))
-                    container_config_root_path = convert_win_path_to_posix(Path(self._config['container_config_root']))
-                else:
-                    working_dir_root_path = PurePosixPath(self._config['working_dir_root'])
-                    bundle_path = PurePosixPath(self._job_bundler.job_archive())
-                    job_mount_path = working_dir_root_path / bundle_path.stem
-                    job_mount_path = str(job_mount_path)
-                    working_dir_root_path = str(working_dir_root_path)
-                    job_results_root_path = self._config['job_results_root']
-                    container_config_root_path = self._config['container_config_root']
-            else:
-                job_mount_path = str(job_mount_path.absolute())
-                working_dir_root_path = str(working_dir_root_path.absolute())
-                job_results_root_path = self._config['job_results_root']
-                container_config_root_path = self._config['container_config_root']
+            job_mount_path, working_dir_root_path, job_results_root_path, container_config_root_path = self._get_paths()
 
             job_spec = self._create_job_spec(job_mount_path=job_mount_path,
                                              working_dir_root_path=working_dir_root_path,
@@ -94,16 +95,21 @@ class JobDeployment(object):
 
             gpu_spec = self._create_gpu_spec()
 
-            myurl = f"{self._config['scheduler_url']}/queued_jobs"
-            r = requests.post(myurl, json={
-                                'job_id': self._job_id,
-                                 'spec': job_spec,
-                                 'metadata': {
-                                     'project_name': project_name,
-                                     'username': username
-                                 },
-                                'gpu_spec': gpu_spec
-                                })
+            queue_job_url = f"{self._config['scheduler_url']}/queued_jobs"
+            payload = {
+                'job_id': self._job_id,
+                'spec': job_spec,
+                'metadata': {
+                    'project_name': project_name,
+                    'username': username
+                },
+                'gpu_spec': gpu_spec
+            }
+
+            response = requests.post(queue_job_url, json=payload)
+            if response.status_code != 201:
+                 raise RuntimeError(f'Unable to add job to the queue. {response.text}')
+
         except requests.exceptions.ConnectionError as e:
             raise ConnectionError('Cannot currently find Atlas server. Start Atlas server with `atlas-server start`.')
         finally:
