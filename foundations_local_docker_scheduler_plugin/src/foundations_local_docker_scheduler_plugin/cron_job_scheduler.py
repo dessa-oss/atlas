@@ -13,6 +13,8 @@ def _expect_code(status_code):
             if response.status_code != status_code:
                 raise CronJobSchedulerError(response.text)
         
+            return response
+
         return _wrapped_method
     return _decorator
 
@@ -43,7 +45,7 @@ class CronJobScheduler(object):
         pass
 
     def get_job(self, job_id):
-        return self._raw_api.get(self._job_uri(job_id)).json()
+        return self._get_job(job_id).json()
 
     def update_job_schedule(self, job_id):
         pass
@@ -55,6 +57,10 @@ class CronJobScheduler(object):
     @_expect_code(204)
     def _change_job_status(self, job_id, status):
         return self._raw_api.put(self._job_uri(job_id), json={'status': status})
+
+    @_expect_code(200)
+    def _get_job(self, job_id):
+        return self._raw_api.get(self._job_uri(job_id))
 
     def _job_uri(self, job_id):
         return f'{self._scheduler_uri}/scheduled_jobs/{job_id}'

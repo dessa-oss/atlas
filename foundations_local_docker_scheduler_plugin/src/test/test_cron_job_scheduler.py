@@ -149,3 +149,12 @@ class TestCronJobScheduler(Spec):
     def test_get_scheduled_job_returns_job_data_from_scheduler(self):
         response = self.scheduler.get_job(self.job_id)
         self.assertEqual(self.mock_successful_response_body, response)
+
+    def test_get_scheduled_job_raises_cron_job_scheduler_error_if_job_does_not_exist(self):
+        self.error_response.status_code = 404
+        self.mock_get.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.get_job(self.job_id)
+
+        self.assertIn(self.error_message, ex.exception.args)
