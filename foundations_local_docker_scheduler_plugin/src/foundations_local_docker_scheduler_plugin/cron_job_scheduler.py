@@ -5,6 +5,17 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
+def _expect_code(status_code):
+    def _decorator(method):
+        def _wrapped_method(*args, **kwargs):
+            response = method(*args, **kwargs)
+
+            if response.status_code != status_code:
+                raise CronJobSchedulerError(response.text)
+        
+        return _wrapped_method
+    return _decorator
+
 class CronJobScheduler(object):
 
     def __init__(self, host=None, port=None):
@@ -19,11 +30,9 @@ class CronJobScheduler(object):
         self._scheduler_uri = f'http://{host}:{port}'
         self._raw_api = importlib.import_module('requests')
 
+    @_expect_code(204)
     def pause_job(self, job_id):
-        response = self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
-        
-        if response.status_code != 204:
-            raise CronJobSchedulerError(response.text)
+        return self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
 
     def resume_job(self, job_id):
         pass
