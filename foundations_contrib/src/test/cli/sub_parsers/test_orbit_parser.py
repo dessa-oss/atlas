@@ -16,7 +16,7 @@ class TestOrbitParser(Spec):
     mock_orbit_deploy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.deploy')
     mock_orbit_stop_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.stop')
     mock_orbit_destroy_model_package = let_patch_mock('foundations_contrib.cli.orbit_model_package_server.destroy')
-
+    # mock_monitor_delete = let_patch_mock('foundations_contrib.cli.sub_parsers.orbit_parser.delete')
 
     @let_now
     def mock_contrib_root(self):
@@ -91,3 +91,9 @@ class TestOrbitParser(Spec):
             '--project_name={}'.format(project_name),
             '--model_name={}'.format(model_name)
         ]).execute()
+
+    def test_sub_parser_called_specifically_for_monitor(self):
+        mock_argument_parser = self.patch('foundations_contrib.cli.command_line_interface.CommandLineInterface.add_sub_parser')
+        CommandLineInterface([''])
+        help_msg = 'Provides operations for managing monitors in Orbit'
+        mock_argument_parser.assert_any_call('monitor', help=help_msg)

@@ -13,7 +13,9 @@ class OrbitParser(object):
 
     def add_sub_parser(self):
         help_msg = 'Provides operations for managing projects and models in Orbit'
+        monitor_help = 'Provides operations for managing monitors in Orbit'
         orbit_parser = self._cli.add_sub_parser('orbit', help=help_msg)
+        monitor_parser = self._cli.add_sub_parser('monitor', help=monitor_help)
         orbit_subparsers = orbit_parser.add_subparsers()
         self._add_serving_sub_parser(orbit_subparsers)
 
