@@ -78,7 +78,7 @@ class CommandLineInterface(object):
         deploy_parser.add_argument('--ram', type=float, help='GB of RAM to allocate for job (default: no limit)')
         deploy_parser.add_argument('--stream-job-logs', type=self._str_to_bool, default=True, help='Whether or not to stream job logs (default: True)')
         deploy_parser.add_argument('scheduler_config', metavar="scheduler-config", help='Environment to run file in')
-        deploy_parser.add_argument('job-directory', type=str, metavar="job-directory", help='Directory from which to deploy')
+        deploy_parser.add_argument('job_directory', type=str, metavar="job-directory", help='Directory from which to deploy')
         deploy_parser.add_argument('command', type=str, nargs=REMAINDER, help='Arguments to be used by the entrypoint')
         deploy_parser.set_defaults(function=self._submit)
         deploy_parser.set_defaults(params={})

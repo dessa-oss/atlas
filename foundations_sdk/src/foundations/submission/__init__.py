@@ -10,7 +10,7 @@ from collections import namedtuple
 
 _attribute_list = [
     'scheduler_config',
-    'job_dir',
+    'job_directory',
     'project_name',
     'entrypoint',
     'params',

@@ -61,7 +61,7 @@ class TestSubmitJobViaCLI(Spec, JobDeployFunctionTestScaffold):
 
         command_to_run = [
             'python', '-m', 'foundations', 'submit',
-            '--job-dir={}'.format(job_directory),
+            '--job-directory={}'.format(job_directory),
             '--entrypoint={}'.format(kwargs['entrypoint']),
             '--project-name={}'.format(kwargs['project_name'])
         ]

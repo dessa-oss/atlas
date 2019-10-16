@@ -24,7 +24,7 @@ def submit(arguments):
     import os.path
 
     current_directory = os.getcwd()
-    with ChangeDirectory(arguments.job_dir or current_directory):
+    with ChangeDirectory(arguments.job_directory or current_directory):
         load(arguments.scheduler_config or 'scheduler')
 
         job_config = {}
