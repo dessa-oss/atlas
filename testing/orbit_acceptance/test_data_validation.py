@@ -505,8 +505,8 @@ class TestDataValidation(Spec):
 
         self.assertEqual(expected_special_values_report, special_values_report)
 
-    @skip('deffered for getting other test to work')
     def test_dataframe_with_nans_and_minus_one_as_special_values_for_different_columns(self):
+        self.maxDiff = None
         import numpy
 
         expected_special_values_report = {
@@ -551,8 +551,8 @@ class TestDataValidation(Spec):
         dc = DataContract(self.contract_name, df=self.reference_dataframe_different_schema)
         dataframe_to_validate = self.reference_dataframe_different_schema.copy()
 
-        dataframe_to_validate.iloc[:50,1] = numpy.nan
-        dataframe_to_validate.iloc[:50,2] = -1
+        dataframe_to_validate.iloc[:50, 1] = numpy.nan
+        dataframe_to_validate.iloc[:50, 2] = -1
 
         dc.special_value_test.exclude(attributes='all')
         dc.special_value_test.configure(attributes=['feat_0'], thresholds={numpy.nan: 0.6})

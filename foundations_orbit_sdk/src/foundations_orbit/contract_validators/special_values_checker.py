@@ -5,20 +5,31 @@ Proprietary and confidential
 Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 """
 
-import numpy as np
+
 class SpecialValuesChecker(object):
 
-    def __init__(self, config_options, bin_stats, reference_column_names):
-        self._config_options = config_options.copy()
+    def __init__(self, config_options, bin_stats, reference_column_names, reference_dataframe=None):
+        self._config_options = config_options
         self._bin_stats = bin_stats
         self._reference_column_names = reference_column_names.copy() if reference_column_names else []
         self._config_columns = []
-        self._config_options['special_value_thresholds'] = {}
+        self._config_options.distribution['special_value_thresholds'] = {}
+        self._default_special_values = self._config_options.special_values
+        self._column_special_values = self._initialize_columns_special_values()
+        self._reference_dataframe = reference_dataframe
+
+
+    def _initialize_columns_special_values(self):
+        _column_special_values = {}
+        for column in self._reference_column_names:
+            _column_special_values[column] = []
+            for special_value in self._default_special_values:
+                _column_special_values[column].append(special_value)
+        return _column_special_values
 
     def validate(self, dataframe_to_validate):
         from foundations_orbit.contract_validators.prototype import distribution_and_special_values_check
-        full_distribution_check_results = distribution_and_special_values_check(self._config_options, self._config_columns, self._bin_stats, dataframe_to_validate, True)
-        
+        full_distribution_check_results = distribution_and_special_values_check(self._config_options.distribution, self._config_columns, self._bin_stats, dataframe_to_validate, True)
         special_values_results = {}
         for column, column_results in full_distribution_check_results.items():
             special_values_results[column] = {}
@@ -28,20 +39,43 @@ class SpecialValuesChecker(object):
         return special_values_results
 
     def configure(self, attributes=None, thresholds=None):
-        if attributes == None:
+        if attributes is None:
             raise ValueError('Invalid attribute: The attribute is required for configuration')
-        if thresholds == None:
+        if thresholds is None:
             raise ValueError('Invalid threshold: The threshold is required for configuration')
         if not isinstance(thresholds, dict):
             raise ValueError('Invalid threshold: thresholds must be specified using dictionaries')
 
+        to_be_recalculate = False
+        columns_to_be_recalculation = {}
         for column in attributes:
+            to_be_recalculate = self._check_if_column_needs_bin_recalculation(columns_to_be_recalculation, column, thresholds) or to_be_recalculate
             column_threshold = {
                 column: thresholds
             }
-            self._config_options['special_value_thresholds'].update(column_threshold)
+
+            self._config_options.distribution['special_value_thresholds'].update(column_threshold)
 
         self._config_columns = list(set(self._config_columns).union(set(attributes)))
+
+        if to_be_recalculate:
+            self._recalculate_column_bin_stats(columns_to_be_recalculation)
+
+    def _check_if_column_needs_bin_recalculation(self, columns_need_bin_recalculation, column, thresholds):
+        needs_bin_recalculation = False
+        columns_need_bin_recalculation[column] = False
+        for special_value, threshold in thresholds.items():
+            if special_value not in self._column_special_values[column]:
+                needs_bin_recalculation = True
+                columns_need_bin_recalculation[column] = True
+                self._column_special_values[column].append(special_value)
+        return needs_bin_recalculation
+
+    def _recalculate_column_bin_stats(self, columns_need_bin_recalculation):
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+        for column in columns_need_bin_recalculation:
+            if columns_need_bin_recalculation[column]:
+                self._bin_stats[column] = create_bin_stats(self._column_special_values[column], self._config_options.max_bins, self._reference_dataframe[column])
 
     def exclude(self, attributes):
         if attributes == 'all':

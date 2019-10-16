@@ -8,11 +8,22 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 import numpy
 import pandas
 from foundations_spec import *
-
 from foundations_orbit.contract_validators.special_values_checker import SpecialValuesChecker
+
 
 class TestSpecialValuesChecker(Spec):
 
+    @let
+    def contract_options(self):
+        from foundations_orbit.data_contract_options import DataContractOptions
+        return DataContractOptions(
+            max_bins=50,
+            check_row_count=True,
+            special_values=[numpy.nan],
+            check_distribution=True,
+            check_special_values=True,
+            distribution=self.distribution_options
+        )
     @let
     def distribution_options(self):
         return {
@@ -54,11 +65,11 @@ class TestSpecialValuesChecker(Spec):
             self.column_name: [{
                 'percentage': 1.0,
                 'upper_edge': 10
-            },  {'percentage': 0.0, 'upper_edge': numpy.inf}],
+            }, {'percentage': 0.0, 'upper_edge': numpy.inf}],
             self.column_name_2: [{
-		        'percentage': 1.0,
+                'percentage': 1.0,
                 'upper_edge': 32
-            },  {'percentage': 0.0, 'upper_edge': numpy.inf}]
+            }, {'percentage': 0.0, 'upper_edge': numpy.inf}]
         }
 
     @let
@@ -68,13 +79,13 @@ class TestSpecialValuesChecker(Spec):
                 'percentage': 1.0,
                 'upper_edge': None
             }, {
-                'value':  numpy.nan,
-		        'percentage': 0.0
+                'value': numpy.nan,
+                'percentage': 0.0
             }],
             self.column_name_2: [{
-                'value':  numpy.nan,
-		        'percentage': 0.0
-            },{
+                'value': numpy.nan,
+                'percentage': 0.0
+            }, {
                 'value': 1,
                 'percentage': 1.0,
                 'upper_edge': None
@@ -89,10 +100,9 @@ class TestSpecialValuesChecker(Spec):
                 'upper_edge': None
             }],
             self.column_name_2: [{
-                'value':  numpy.nan,
-		        'percentage': 0.0
-            },
-            {
+                'value': numpy.nan,
+                'percentage': 0.0
+            }, {
                 'value': 1,
                 'percentage': 1.0,
                 'upper_edge': None
@@ -126,11 +136,11 @@ class TestSpecialValuesChecker(Spec):
         return candidate_value if candidate_value not in reference_values else self._generate_distinct(reference_values, generating_callback)
     
     def test_schema_checker_can_accept_configurations(self):
-        checker = SpecialValuesChecker({}, None, None)
+        checker = SpecialValuesChecker(self.contract_options, None, None)
         self.assertIsNotNone(getattr(checker, "configure", None))
         
     def test_schema_checker_can_accept_exclusions(self):
-        checker = SpecialValuesChecker({}, None, None)
+        checker = SpecialValuesChecker(self.contract_options, None, None)
         self.assertIsNotNone(getattr(checker, "exclude", None))
 
     def test_special_values_check_for_mulitple_column_df_against_itself_returns_all_passed_using_not_previously_defined_special_value(self):
@@ -142,12 +152,12 @@ class TestSpecialValuesChecker(Spec):
 
         dataframe = pandas.DataFrame(data)
         special_values = [-1]
+        self.contract_options.special_values = special_values
 
         bin_stats = {
             self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
             self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
         }
-
 
         expected_check_results = {
             self.column_name:{
@@ -168,34 +178,28 @@ class TestSpecialValuesChecker(Spec):
             }
         }
 
-        checker = SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2])
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe)
         checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ -1: 0.1 })
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
-    def _create_two_column_bin_stats_from_data(self, data, special_character):
-        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
-        special_values = [special_character]
-
-        return {
-            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
-            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
-        }
-
-    def _create_two_column_data_and_dataframe_with_special_characeters(self, special_character):
+    def _create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(self, special_character):
         data = {
             self.column_name: [5, 10, 15, special_character],
             self.column_name_2: [6, 32, 40, special_character]
         }
 
         dataframe = pandas.DataFrame(data)
-        return data, dataframe
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
 
-    def _create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(self, special_character):
-        data, dataframe = self._create_two_column_data_and_dataframe_with_special_characeters(special_character)
-        bin_stats = self._create_two_column_bin_stats_from_data(data, special_character)
-        return SpecialValuesChecker(self.distribution_options, bin_stats, [self.column_name, self.column_name_2]), dataframe
+        special_values = [special_character]
+
+        bin_stats = {
+            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name])),
+            self.column_name_2: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name_2]))
+        }
+        return SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe), dataframe
     
     def test_special_values_check_for_mulitple_column_df_against_itself_including_nans_returns_all_passed(self):
         expected_check_results = {
@@ -268,7 +272,6 @@ class TestSpecialValuesChecker(Spec):
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
-
     def test_special_values_check_configure_multiple_times_appends_to_previous_configurations(self):
         expected_check_results = {
             self.column_name:{
@@ -291,8 +294,8 @@ class TestSpecialValuesChecker(Spec):
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes='all')
-        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1 })
-        checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1 })
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1})
+        checker.configure(attributes=[self.column_name_2], thresholds={numpy.nan: 0.1})
         results = checker.validate(dataframe)
         self.assertEqual(expected_check_results, results)
 
@@ -300,7 +303,7 @@ class TestSpecialValuesChecker(Spec):
         checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         try:
             checker.configure()
-            self.fail('Failed to throw appropraite error message for missing attribute')
+            self.fail('Failed to throw appropriate error message for missing attribute')
         except ValueError as ve:
             self.assertTrue('attribute is required' in str(ve).lower())
 
@@ -308,7 +311,7 @@ class TestSpecialValuesChecker(Spec):
         checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         try:
             checker.configure(attributes=[])
-            self.fail('Failed to throw appropraite error message for missing attribute')
+            self.fail('Failed to throw appropriate error message for missing attribute')
         except ValueError as ve:
             self.assertTrue('threshold is required' in str(ve).lower())
 
@@ -316,7 +319,7 @@ class TestSpecialValuesChecker(Spec):
         checker, _ = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         try:
             checker.configure(attributes=[], thresholds=[])
-            self.fail('Failed to throw appropraite error message for incorrectly specified threshold')
+            self.fail('Failed to throw appropriate error message for incorrectly specified threshold')
         except ValueError as ve:
             self.assertTrue('invalid threshold' in str(ve).lower())
 
@@ -373,6 +376,45 @@ class TestSpecialValuesChecker(Spec):
 
         checker, dataframe = self._create_special_values_checker_and_dataframe_with_two_columns_with_special_characters(numpy.nan)
         checker.exclude(attributes='all')
-        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={ numpy.nan: 0.1 })
+        checker.configure(attributes=[self.column_name, self.column_name_2], thresholds={numpy.nan: 0.1})
         results = checker.validate(dataframe)
+        self.assertEqual(expected_check_results, results)
+
+    def test_single_column_with_two_special_characters_produce_two_special_value_results(self):
+        from foundations_orbit.contract_validators.utils.create_bin_stats import create_bin_stats
+        special_values = [numpy.nan]
+        data = {
+            self.column_name: [5, 10, 15, 7, 7, 6, 8, numpy.nan]
+        }
+
+        dataframe = pandas.DataFrame(data)
+        bin_stats = {
+            self.column_name: create_bin_stats(special_values, 10, pandas.Series(data[self.column_name]))
+        }
+        checker = SpecialValuesChecker(self.contract_options, bin_stats, [self.column_name, self.column_name_2], dataframe)
+        checker.exclude(attributes='all')
+        checker.configure(attributes=[self.column_name], thresholds={numpy.nan: 0.1, -1: 0.1})
+
+        # modify the dataframe for there to be a difference between the bin stats generation and current state
+        dataframe_to_be_validated = dataframe.copy()
+        dataframe_to_be_validated.iloc[:2] = numpy.nan
+        dataframe_to_be_validated.iloc[-2:] = -1
+
+        expected_check_results = {
+            self.column_name: {
+                numpy.nan: {
+                    'percentage_diff': 0.125,
+                    'ref_percentage': 0.125,
+                    'current_percentage': 0.25,
+                    'passed': False
+                },
+                -1: {
+                    'percentage_diff': 0.25,
+                    'ref_percentage': 0.0,
+                    'current_percentage': 0.25,
+                    'passed': False
+                }
+            }
+        }
+        results = checker.validate(dataframe_to_be_validated)
         self.assertEqual(expected_check_results, results)
