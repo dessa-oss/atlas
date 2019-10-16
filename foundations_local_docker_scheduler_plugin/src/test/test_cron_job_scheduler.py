@@ -13,9 +13,11 @@ class TestCronJobScheduler(Spec):
 
     mock_get = let_patch_mock('requests.get')
     mock_delete = let_patch_mock('requests.delete')
+    mock_patch = let_patch_mock('requests.patch')
     mock_put = let_patch_mock('requests.put')
 
     mock_successful_response_body = let_mock()
+    mock_cron_schedule = let_mock()
 
     @let
     def scheduler_host(self):
@@ -175,3 +177,9 @@ class TestCronJobScheduler(Spec):
             self.scheduler.get_jobs()
 
         self.assertIn(self.error_message, ex.exception.args)
+
+    def test_update_job_schedule_calls_correct_endpoint(self):
+        self.scheduler.update_job_schedule(self.job_id, self.mock_cron_schedule)
+
+        patch_payload = {'schedule': self.mock_cron_schedule}
+        self.mock_patch.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}', json=patch_payload)
