@@ -8,48 +8,66 @@ Written by Thomas Rogers <t.rogers@dessa.com>, 06 2018
 class MinMaxChecker(object):
 
     def __init__(self):
-        self._attributes = None
+        self._attribute_and_bounds = {}
 
     def configure(self, attributes, lower_bound=None, upper_bound=None):
         if lower_bound is None and upper_bound is None:
             raise ValueError('expected either lower and/or upper bound')
-        self._attributes = attributes
-        self._lower_bound = lower_bound
-        self._upper_bound = upper_bound
+        for attribute in attributes:
+            self._attribute_and_bounds[attribute] = {
+                'lower_bound': lower_bound,
+                'upper_bound': upper_bound
+            }
+    
+    def exclude(self, attributes=None):
+        if attributes == 'all':
+            self._attribute_and_bounds = {}
+            return
+
+        for attribute in attributes:
+            del self._attribute_and_bounds[attribute]
 
     def validate(self, dataframe_to_validate):
-        if not self._attributes or len(dataframe_to_validate) == 0:
+        if not self._attribute_and_bounds or len(dataframe_to_validate) == 0:
             return {}
 
-        min_value = dataframe_to_validate[self._attributes[0]].min()
+        data_to_return = {}
 
-        if self._lower_bound:
-            data_to_return = {
-                self._attributes[0]: {
+        for attribute, bounds in self._attribute_and_bounds.items():
+            min_value = dataframe_to_validate[attribute].min()
+            max_value = dataframe_to_validate[attribute].max()
+
+            data_to_return[attribute] = {}
+
+            if bounds['lower_bound'] is not None:
+                data_to_return[attribute].update({
                     'min_test': {
-                        'lower_bound': self._lower_bound,
-                        'passed': min_value >= self._lower_bound,
+                        'lower_bound': bounds['lower_bound'],
+                        'passed': min_value >= bounds['lower_bound'],
                         'min_value': min_value
                     }
-                }
-            }
-        else:
-            data_to_return = {
-                self._attributes[0]: {
+                })
+            if bounds['upper_bound'] is not None:
+                data_to_return[attribute].update({
                     'max_test': {
-                        'upper_bound': self._upper_bound,
-                        'passed': True,
-                        'max_value': 110
+                        'upper_bound': bounds['upper_bound'],
+                        'passed': max_value <= bounds['upper_bound'],
+                        'max_value': max_value
                     }
-                }
-            }
+                })
 
-        if self._lower_bound and min_value < self._lower_bound:
-            data_to_return[self._attributes[0]]['min_test']['percentage_out_of_bounds'] = self._min_test_percentage(dataframe_to_validate, self._attributes[0], self._lower_bound)
+            if bounds['lower_bound'] and min_value < bounds['lower_bound']:
+                data_to_return[attribute]['min_test']['percentage_out_of_bounds'] = self._min_test_percentage(dataframe_to_validate, attribute, bounds['lower_bound'])
+            if bounds['upper_bound'] and max_value > bounds['upper_bound']:
+                data_to_return[attribute]['max_test']['percentage_out_of_bounds'] = self._max_test_percentage(dataframe_to_validate, attribute, bounds['upper_bound'])
 
         return data_to_return
 
     @staticmethod
     def _min_test_percentage(dataframe_to_validate, column_name, lower_bound):
         return len(dataframe_to_validate[dataframe_to_validate[column_name] < lower_bound]) / len(dataframe_to_validate)
+
+    @staticmethod
+    def _max_test_percentage(dataframe_to_validate, column_name, upper_bound):
+        return len(dataframe_to_validate[dataframe_to_validate[column_name] > upper_bound]) / len(dataframe_to_validate)
     

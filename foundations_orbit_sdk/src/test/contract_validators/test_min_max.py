@@ -14,10 +14,19 @@ class TestMinMax(Spec):
     def column_name(self):
         return self.faker.word()
 
+    @let
+    def column_name_two(self):
+        return self.faker.word()
+
     @let_now
     def dataframe_one_column(self):
         import pandas
         return pandas.DataFrame(columns=[self.column_name], data=[20, 40, 50, 100, 110])
+
+    @let_now
+    def dataframe_two_columns(self):
+        import pandas
+        return pandas.DataFrame(columns=[self.column_name, self.column_name_two], data=[[20, 0], [40, 4], [50, 10], [100, 40], [110, 99]])
 
     def test_min_max_test_returns_empty_dictionary_when_checker_not_configured(self):
         min_max_checker = MinMaxChecker()
@@ -101,5 +110,248 @@ class TestMinMax(Spec):
         result = min_max_checker.validate(pandas.DataFrame())
 
         expected_result = {}
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_fails_when_upper_bound_provided_lesser_than_max_value(self):
+        max_val_of_dataframe = self.dataframe_one_column[self.column_name].max()
+        upper_bound = max_val_of_dataframe - 1
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
+        result = min_max_checker.validate(self.dataframe_one_column)
+
+        expected_result = {
+            self.column_name: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': False,
+                    'max_value': max_val_of_dataframe,
+                    'percentage_out_of_bounds': 0.2
+                }
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_runs_both_min_and_max_test_on_one_column_when_upper_bound_and_lower_bound_provided(self):
+        min_val_of_dataframe = self.dataframe_one_column[self.column_name].min()
+        max_val_of_dataframe = self.dataframe_one_column[self.column_name].max()
+
+        lower_bound = self.faker.random.randint(0, min_val_of_dataframe - 1)
+        upper_bound = self.faker.random.randint(max_val_of_dataframe + 1, max_val_of_dataframe + 100)
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound, upper_bound=upper_bound)
+        result = min_max_checker.validate(self.dataframe_one_column)
+
+        expected_result = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': lower_bound,
+                    'passed': True,
+                    'min_value': min_val_of_dataframe,
+                },
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_of_dataframe,
+                }
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_runs_min_test_and_passes_on_two_columns(self):
+        min_val_one = self.dataframe_two_columns[self.column_name].min()
+        min_val_two = self.dataframe_two_columns[self.column_name_two].min()
+
+        min_val_of_dataframes = min(min_val_one, min_val_two)
+        lower_bound = min_val_of_dataframes - 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=lower_bound)
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': lower_bound,
+                    'passed': True,
+                    'min_value': min_val_one,
+                },
+            },
+            self.column_name_two: {
+                'min_test': {
+                    'lower_bound': lower_bound,
+                    'passed': True,
+                    'min_value': min_val_two,
+                },
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+    
+    def test_min_max_test_runs_max_test_and_passes_on_two_columns(self):
+        max_val_one = self.dataframe_two_columns[self.column_name].max()
+        max_val_two = self.dataframe_two_columns[self.column_name_two].max()
+
+        max_val_of_dataframes = max(max_val_one, max_val_two)
+        upper_bound = max_val_of_dataframes + 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name, self.column_name_two], upper_bound=upper_bound)
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_one,
+                },
+            },
+            self.column_name_two: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_two,
+                },
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_with_multiple_configure_statements_returns_expected_data(self):
+        max_val_one = self.dataframe_two_columns[self.column_name].max()
+        min_val_two = self.dataframe_two_columns[self.column_name_two].min()
+
+        upper_bound = max_val_one + 1
+        lower_bound = min_val_two - 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
+        min_max_checker.configure(attributes=[self.column_name_two], lower_bound=lower_bound)
+        
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_one,
+                },
+            },
+            self.column_name_two: {
+                'min_test': {
+                    'lower_bound': lower_bound,
+                    'passed': True,
+                    'min_value': min_val_two,
+                },
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+    
+    def test_min_max_test_with_configure_on_same_column_twice_overwrites_test(self):
+        max_val_one = self.dataframe_two_columns[self.column_name].max()
+
+        upper_bound = max_val_one + 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], lower_bound=100)
+        min_max_checker.configure(attributes=[self.column_name], upper_bound=upper_bound)
+        
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_one,
+                },
+            },
+        }
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_with_both_max_and_min_tests_on_two_columns(self):
+        max_val_one = self.dataframe_two_columns[self.column_name].max()
+        max_val_two = self.dataframe_two_columns[self.column_name_two].max()
+        min_val_one = self.dataframe_two_columns[self.column_name].min()
+        min_val_two = self.dataframe_two_columns[self.column_name_two].min()
+
+        upper_bound_one = max_val_one + 1
+        lower_bound_one = min_val_one - 1
+        upper_bound_two = max_val_two + 1
+        lower_bound_two = min_val_two - 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name], lower_bound=lower_bound_one, upper_bound=upper_bound_one)
+        min_max_checker.configure(attributes=[self.column_name_two], lower_bound=lower_bound_two, upper_bound=upper_bound_two)
+        
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'min_test': {
+                    'lower_bound': lower_bound_one,
+                    'passed': True,
+                    'min_value': min_val_one,
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_one,
+                    'passed': True,
+                    'max_value': max_val_one,
+                },
+            },
+            self.column_name_two: {
+                'min_test': {
+                    'lower_bound': lower_bound_two,
+                    'passed': True,
+                    'min_value': min_val_two,
+                },
+                'max_test': {
+                    'upper_bound': upper_bound_two,
+                    'passed': True,
+                    'max_value': max_val_two,
+                },
+            }
+        }
+
+        self.assertEqual(expected_result, result)
+    
+    def test_min_max_test_excluding_all_columns(self):
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name, self.column_name_two], lower_bound=0)
+        min_max_checker.exclude(attributes='all')
+        
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {}
+
+        self.assertEqual(expected_result, result)
+
+    def test_min_max_test_excluding_one_column(self):
+        max_val_one = self.dataframe_two_columns[self.column_name].max()
+
+        upper_bound = max_val_one + 1
+
+        min_max_checker = MinMaxChecker()
+        min_max_checker.configure(attributes=[self.column_name, self.column_name_two], upper_bound=upper_bound)
+        min_max_checker.exclude([self.column_name_two])
+
+        result = min_max_checker.validate(self.dataframe_two_columns)
+
+        expected_result = {
+            self.column_name: {
+                'max_test': {
+                    'upper_bound': upper_bound,
+                    'passed': True,
+                    'max_value': max_val_one,
+                },
+            },
+        }
 
         self.assertEqual(expected_result, result)
