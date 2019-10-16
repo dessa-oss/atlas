@@ -43,7 +43,7 @@ class CronJobScheduler(object):
         pass
 
     def get_job(self, job_id):
-        self._raw_api.get(self._job_uri(job_id))
+        return self._raw_api.get(self._job_uri(job_id)).json()
 
     def update_job_schedule(self, job_id):
         pass
