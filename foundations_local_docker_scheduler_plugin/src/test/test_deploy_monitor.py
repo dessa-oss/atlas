@@ -60,4 +60,4 @@ class TestDeployMonitor(Spec):
 
         response = submit_job_bundle(folder_job_bundle)
 
-        self.assertEquals(mock_response, response)
+        self.assertEqual(mock_response, response)

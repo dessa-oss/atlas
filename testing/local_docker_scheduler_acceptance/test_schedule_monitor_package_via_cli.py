@@ -84,6 +84,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
         subprocess.run(
             [
+                'python', '-m',
                 'foundations', 'orbit', 'monitor', 'start',
                 f'--monitor={self.monitor_name}',
                 f'--project_name={self.project_name}',
@@ -93,6 +94,7 @@ class TestScheduleMonitorPackageViaCli(Spec):
 
         pause_result = subprocess.run(
             [
+                'python', '-m',
                 'foundations', 'orbit', 'monitor', 'pause',
                 f'--monitor={self.monitor_name}',
                 f'--project_name={self.project_name}'
