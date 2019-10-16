@@ -52,8 +52,9 @@ class CronJobScheduler(object):
     def update_job_schedule(self, job_id):
         pass
 
+    @_expect_code(204)
     def delete_job(self, job_id):
-        pass
+        return self._raw_api.delete(f'{self._scheduler_uri}/scheduled_jobs/{job_id}')
 
 class CronJobSchedulerError(Exception):
     pass

@@ -12,6 +12,7 @@ from foundations_local_docker_scheduler_plugin.cron_job_scheduler import CronJob
 class TestCronJobScheduler(Spec):
 
     mock_put = let_patch_mock('requests.put')
+    mock_delete = let_patch_mock('requests.delete')
 
     @let
     def scheduler_host(self):
@@ -60,6 +61,7 @@ class TestCronJobScheduler(Spec):
     @set_up
     def set_up(self):
         self.mock_put.return_value = self.success_response_204
+        self.mock_delete.return_value = self.success_response_204
 
     def test_pause_scheduled_job_calls_correct_endpoint(self):
         self.scheduler.pause_job(self.job_id)
@@ -112,5 +114,18 @@ class TestCronJobScheduler(Spec):
 
         with self.assertRaises(CronJobSchedulerError) as ex:
             self.scheduler.resume_job(self.job_id)
+
+        self.assertIn(self.error_message, ex.exception.args)
+
+    def test_delete_scheduled_job_calls_correct_endpoint(self):
+        self.scheduler.delete_job(self.job_id)
+        self.mock_delete.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}')
+
+    def test_delete_scheduled_job_raises_cron_job_scheduler_error_if_job_does_not_exist(self):
+        self.error_response.status_code = 404
+        self.mock_delete.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.delete_job(self.job_id)
 
         self.assertIn(self.error_message, ex.exception.args)
