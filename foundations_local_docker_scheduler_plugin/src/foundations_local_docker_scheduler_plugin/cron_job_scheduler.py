@@ -22,7 +22,7 @@ class CronJobScheduler(object):
     def pause_job(self, job_id):
         response = self._raw_api.put(f'{self._scheduler_uri}/scheduled_jobs/{job_id}', json={'status': 'paused'})
         
-        if response.status_code == 404:
+        if response.status_code != 204:
             raise CronJobSchedulerError(response.text)
 
     def resume_job(self, job_id):

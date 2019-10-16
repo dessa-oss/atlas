@@ -51,6 +51,16 @@ class TestCronJobScheduler(Spec):
         response.text = self.error_message
         return response
 
+    @let
+    def success_response_204(self):
+        response = Mock()
+        response.status_code = 204
+        return response
+
+    @set_up
+    def set_up(self):
+        self.mock_put.return_value = self.success_response_204
+
     def test_pause_scheduled_job_calls_correct_endpoint(self):
         self.scheduler.pause_job(self.job_id)
 
@@ -69,5 +79,14 @@ class TestCronJobScheduler(Spec):
 
         with self.assertRaises(CronJobSchedulerError) as ex:
             self.scheduler.pause_job(self.job_id)
-        
+
+        self.assertIn(self.error_message, ex.exception.args)
+
+    def test_pause_scheduled_job_raises_cron_job_scheduler_error_if_bad_request(self):
+        self.error_response.status_code = 400
+        self.mock_put.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.pause_job(self.job_id)
+
         self.assertIn(self.error_message, ex.exception.args)
