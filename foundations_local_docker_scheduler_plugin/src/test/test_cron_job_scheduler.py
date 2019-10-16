@@ -73,8 +73,9 @@ class TestCronJobScheduler(Spec):
 
     @set_up
     def set_up(self):
-        self.mock_put.return_value = self.success_response_204
         self.mock_delete.return_value = self.success_response_204
+        self.mock_patch.return_value = self.success_response_204
+        self.mock_put.return_value = self.success_response_204
         self.mock_get.return_value = self.success_response_200
 
     def test_pause_scheduled_job_calls_correct_endpoint(self):
@@ -183,3 +184,21 @@ class TestCronJobScheduler(Spec):
 
         patch_payload = {'schedule': self.mock_cron_schedule}
         self.mock_patch.assert_called_once_with(f'{self.scheduler_uri}/scheduled_jobs/{self.job_id}', json=patch_payload)
+
+    def test_update_job_schedule_raises_cron_job_scheduler_error_if_job_does_not_exist(self):
+        self.error_response.status_code = 404
+        self.mock_patch.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.update_job_schedule(self.job_id, self.mock_cron_schedule)
+
+        self.assertIn(self.error_message, ex.exception.args)
+
+    def test_update_job_schedule_raises_cron_job_scheduler_error_if_bad_request(self):
+        self.error_response.status_code = 400
+        self.mock_patch.return_value = self.error_response
+
+        with self.assertRaises(CronJobSchedulerError) as ex:
+            self.scheduler.update_job_schedule(self.job_id, self.mock_cron_schedule)
+
+        self.assertIn(self.error_message, ex.exception.args)

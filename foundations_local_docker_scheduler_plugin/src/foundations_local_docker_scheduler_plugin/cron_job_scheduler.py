@@ -47,8 +47,9 @@ class CronJobScheduler(object):
     def get_job(self, job_id):
         return self._get_job(job_id).json()
 
+    @_expect_code(204)
     def update_job_schedule(self, job_id, schedule):
-        self._raw_api.patch(self._job_uri(job_id), json={'schedule': schedule})
+        return self._raw_api.patch(self._job_uri(job_id), json={'schedule': schedule})
 
     @_expect_code(204)
     def delete_job(self, job_id):
