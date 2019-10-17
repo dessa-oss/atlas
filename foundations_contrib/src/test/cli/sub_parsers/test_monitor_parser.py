@@ -70,3 +70,14 @@ class TestMonitorParser(Spec):
     def _call_pause_monitor_command(self, command):
         cmd = f'monitor {command} {self.monitor_name} {self.project_name}'
         CommandLineInterface(cmd.split()).execute()
+
+    def test_monitor_delete_with_specified_monitor_name_and_project_name_calls_delete(self):
+        mock_monitor_delete = self.patch('foundations_contrib.cli.orbit_monitor_package_server.delete')
+        CommandLineInterface([
+            'monitor',
+            'delete',
+            self.project_name,
+            self.monitor_name
+        ]).execute()
+
+        mock_monitor_delete.assert_called_with(self.project_name, self.monitor_name, 'scheduler')
